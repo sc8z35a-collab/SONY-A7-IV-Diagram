@@ -636,6 +636,540 @@ body,
   font-size: 12px;
 }
 
+/* ============================================================================
+   OPTICAL MECHANISM MOTION CTA INSIDE EXPLANATION DRAWER
+   ============================================================================ */
+
+.exp-optics-cta {
+  appearance: none;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  border: 1px solid rgba(13, 91, 217, 0.24);
+  background: linear-gradient(135deg, #f2f7ff 0%, #eaf1ff 100%);
+  color: #0b4ec0;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.14s ease, box-shadow 0.2s ease;
+}
+
+.exp-optics-cta svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.exp-optics-cta:hover {
+  background: #0d5bd9;
+  border-color: #0d5bd9;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(13, 91, 217, 0.22);
+  transform: translateY(-1px);
+}
+
+.exp-optics-cta:active {
+  transform: translateY(0);
+}
+
+/* ============================================================================
+   INTERACTIVE 60FPS OPTICAL MECHANISM MOTION STUDIO (50mm F1.2 LAB)
+   Zero text in DOM when closed — slides up smoothly as bottom split-lab stage
+   ============================================================================ */
+
+#app.has-optics-studio .cad-dock {
+  top: 20px;
+  bottom: auto;
+  left: auto;
+  right: 20px;
+  transform: none;
+  max-width: calc(100vw - 180px);
+}
+
+#app.has-optics-studio.has-drawer .cad-dock {
+  right: 446px;
+  max-width: calc(100vw - 606px);
+}
+
+#app.has-optics-studio .layer-rail {
+  top: 76px;
+  transform: none;
+  max-height: calc(100vh - min(46vh, 420px) - 110px);
+}
+
+#app.has-optics-expanded .layer-rail {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.optics-studio {
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  height: min(46vh, 420px);
+  min-height: 295px;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.985);
+  border: 1px solid rgba(18, 20, 26, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(15, 20, 30, 0.11), 0 2px 8px rgba(15, 20, 30, 0.05);
+  overflow: hidden;
+  transform: translateY(calc(100% + 36px));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.26s ease,
+    height 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    right 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.optics-studio.is-open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.optics-studio.is-expanded {
+  height: min(80vh, 720px);
+}
+
+#app.has-drawer .optics-studio {
+  right: 446px;
+}
+
+#app.has-drawer .optics-title-wrap {
+  display: none;
+}
+
+#app.has-drawer .optics-tab-btn {
+  padding: 5px 7px;
+  font-size: 11px;
+}
+
+.optics-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px 9px 14px;
+  border-bottom: 1px solid rgba(18, 20, 26, 0.08);
+  background: rgba(250, 251, 253, 0.9);
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.optics-header::-webkit-scrollbar {
+  display: none;
+}
+
+.optics-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.optics-title-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0d5bd9;
+  box-shadow: 0 0 0 3px rgba(13, 91, 217, 0.16);
+}
+
+.optics-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #111318;
+  white-space: nowrap;
+}
+
+.optics-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.optics-tab-btn {
+  appearance: none;
+  border: 1px solid rgba(18, 20, 26, 0.1);
+  background: #ffffff;
+  color: #374151;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.optics-tab-btn:hover {
+  background: #f3f5f8;
+  border-color: rgba(18, 20, 26, 0.2);
+  color: #111318;
+}
+
+.optics-tab-btn.is-active {
+  background: #14161a;
+  border-color: #14161a;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(14, 16, 20, 0.16);
+}
+
+.optics-tab-num {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.optics-tab-btn.is-active .optics-tab-num {
+  color: #7dd3fc;
+  opacity: 1;
+}
+
+.optics-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.optics-action-btn {
+  appearance: none;
+  border: 1px solid rgba(18, 20, 26, 0.12);
+  background: #ffffff;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.optics-action-btn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.optics-action-btn:hover {
+  background: #f3f5f8;
+  border-color: rgba(18, 20, 26, 0.22);
+}
+
+.optics-action-btn.is-primary.is-active {
+  background: #0d5bd9;
+  border-color: #0d5bd9;
+  color: #ffffff;
+}
+
+.optics-close-btn {
+  appearance: none;
+  border: 1px solid rgba(18, 20, 26, 0.1);
+  background: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.optics-close-btn:hover {
+  background: #fee2e2;
+  border-color: rgba(220, 38, 38, 0.22);
+  color: #b91c1c;
+}
+
+.optics-close-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.optics-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(276px, 340px);
+  gap: 0;
+}
+
+.optics-bench-wrap {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: #fbfcfe;
+  border-right: 1px solid rgba(18, 20, 26, 0.08);
+  overflow: hidden;
+}
+
+.optics-bench-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.optics-hover-pill {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  max-width: calc(100% - 24px);
+  padding: 5px 10px;
+  border-radius: 9px;
+  background: rgba(20, 22, 26, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  line-height: 1.45;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  box-shadow: 0 6px 18px rgba(15, 20, 30, 0.18);
+}
+
+.optics-hover-pill strong {
+  font-weight: 700;
+  color: #93c5fd;
+  white-space: nowrap;
+}
+
+.optics-hover-pill span {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  color: #e5e7eb;
+}
+
+.optics-side {
+  min-width: 0;
+  min-height: 0;
+  padding: 8px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(18, 20, 26, 0.16) transparent;
+}
+
+.optics-bokeh-card {
+  width: 100%;
+  height: 82px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(18, 20, 26, 0.09);
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.optics-bokeh-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.optics-compare-wrap {
+  display: none;
+  flex-shrink: 0;
+}
+
+.optics-compare-btn {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 9px;
+  border-radius: 9px;
+  border: 1px solid rgba(220, 38, 38, 0.28);
+  background: #fef2f2;
+  color: #7f1d1d;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.optics-compare-btn.is-on {
+  border-color: rgba(13, 91, 217, 0.28);
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.optics-compare-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  background: #dc2626;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.optics-compare-btn.is-on .optics-compare-pill {
+  background: #0d5bd9;
+}
+
+.optics-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.optics-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optics-slider-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.optics-slider-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.optics-slider-val {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: 700;
+  color: #111318;
+}
+
+.optics-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(18, 20, 26, 0.11);
+  outline: none;
+  cursor: pointer;
+}
+
+.optics-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #0d5bd9;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 5px rgba(13, 91, 217, 0.35);
+  cursor: pointer;
+  transition: transform 0.14s ease;
+}
+
+.optics-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.optics-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #0d5bd9;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 5px rgba(13, 91, 217, 0.35);
+  cursor: pointer;
+}
+
+.optics-caption {
+  margin-top: auto;
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: #f8fafc;
+  border: 1px solid rgba(18, 20, 26, 0.08);
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.optics-caption-head {
+  font-size: 10.5px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.optics-caption-text {
+  font-size: 11px;
+  line-height: 1.54;
+  color: #334155;
+}
+
+@media (max-width: 960px) {
+  .optics-studio {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    height: 56vh;
+  }
+  #app.has-drawer .optics-studio {
+    right: 10px;
+  }
+  .optics-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(175px, 1.2fr) minmax(0, 1fr);
+  }
+  .optics-bench-wrap {
+    border-right: none;
+    border-bottom: 1px solid rgba(18, 20, 26, 0.08);
+  }
+}
+
 @media (max-width: 768px) {
   .cad-dock {
     bottom: 14px;

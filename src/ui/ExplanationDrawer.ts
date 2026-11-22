@@ -1,4 +1,6 @@
 import { CadPart, PartExplanation } from '../assemblies/types';
+import { OpticalScenarioId } from '../assemblies/lens/lensOpticalSim';
+import { renderUltraLensSchematicSvg } from './lensUltraSchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -6,6 +8,7 @@ export interface ExplanationDrawerHandlers {
   onNext: () => void;
   onToggleIsolate: () => void;
   onHideCurrent: () => void;
+  onOpenOpticsMotion?: (scenario: OpticalScenarioId, partId: string) => void;
 }
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -33,12 +36,53 @@ const DRAWER_ICONS = {
   close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
 };
 
+function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
+  if (
+    partId.includes('ed') ||
+    partId.includes('flint') ||
+    partId.includes('focus-b-front')
+  ) {
+    return 'ed_chromatic';
+  }
+  if (
+    partId.includes('xa') ||
+    partId.includes('rear-element') ||
+    partId.includes('rear-cell-spacer') ||
+    partId.includes('front-meniscus')
+  ) {
+    return 'xa_aspheric';
+  }
+  if (
+    partId.includes('xd') ||
+    partId.includes('focus-') ||
+    partId.includes('guide') ||
+    partId.includes('antirot') ||
+    partId.includes('mr-encoders') ||
+    partId.includes('af-origin') ||
+    partId.includes('mf-') ||
+    partId.includes('control-rings')
+  ) {
+    return 'floating_xd';
+  }
+  if (
+    partId.includes('hood') ||
+    partId.includes('baffle') ||
+    partId.includes('filter')
+  ) {
+    return 'nano_ar_baffle';
+  }
+  return 'aperture_bokeh';
+}
+
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 function renderSchematicSvg(type: PartExplanation['diagramType']): string {
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;
+
+  const ultraLensSvg = renderUltraLensSchematicSvg(type, wrap);
+  if (ultraLensSvg) return ultraLensSvg;
 
   switch (type) {
     case 'baffle':
@@ -2907,6 +2951,9 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="136" y="79" font-size="7.5" fill="#c2410c">・部分弧シムで個体別チルト(片ボケ)零</text>
         <text x="32" y="111" font-size="8" fill="#334155">マウント直下の極薄シム選定が全個体で当たり玉級の無限遠・四隅解像を保証</text>
       `);
+
+    default:
+      return wrap('');
   }
 }
 
@@ -2920,8 +2967,10 @@ export class ExplanationDrawer {
   private swatchEl: HTMLElement;
   private isolateBtn: HTMLButtonElement;
   private bodyEl: HTMLElement;
+  private handlers: ExplanationDrawerHandlers;
 
   constructor(root: HTMLElement, handlers: ExplanationDrawerHandlers) {
+    this.handlers = handlers;
     this.drawerEl = document.createElement('aside');
     this.drawerEl.className = 'explanation-drawer';
     this.drawerEl.setAttribute('aria-hidden', 'true');
@@ -2998,12 +3047,28 @@ export class ExplanationDrawer {
         </div>`
       : '';
 
+    const opticsMotionBtnHtml =
+      part.subsystem === 'lens' && this.handlers.onOpenOpticsMotion
+        ? `
+        <button type="button" class="exp-optics-cta" data-open-optics-motion>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 7h5l4 5 4-4h5"/>
+            <path d="M3 17h5l4-5 4 4h5"/>
+            <path d="M3 12h18" opacity="0.45"/>
+            <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+          </svg>
+          <span>このレンズの光学メカニズムをモーションで体感する</span>
+        </button>`
+        : '';
+
     this.bodyEl.innerHTML = `
       <div>
         <div class="exp-category">${exp.category}</div>
         <h2 class="exp-title">${exp.title}</h2>
         <div class="exp-subtitle">${exp.subtitle}</div>
       </div>
+
+      ${opticsMotionBtnHtml}
 
       ${analogyHtml}
 
@@ -3029,6 +3094,13 @@ export class ExplanationDrawer {
         <div class="exp-specs">${specsHtml}</div>
       </div>
     `;
+
+    const ctaBtn = this.bodyEl.querySelector<HTMLButtonElement>('[data-open-optics-motion]');
+    if (ctaBtn && this.handlers.onOpenOpticsMotion) {
+      ctaBtn.addEventListener('click', () => {
+        this.handlers.onOpenOpticsMotion?.(recommendedScenarioForLensPart(part.id), part.id);
+      });
+    }
 
     this.bodyEl.scrollTop = 0;
     this.drawerEl.classList.add('is-open');

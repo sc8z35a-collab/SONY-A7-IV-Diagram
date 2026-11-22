@@ -1,8 +1,10 @@
 import './styles/main.css';
 import { SectionAxis } from './assemblies/types';
+import { sharedLensOpticalSim } from './assemblies/lens/lensOpticalSim';
 import { CadViewport } from './engine/CadViewport';
 import { ZeroTextControls } from './ui/ZeroTextControls';
 import { ExplanationDrawer } from './ui/ExplanationDrawer';
+import { LensOpticsStudio } from './ui/LensOpticsStudio';
 
 const appRoot = document.getElementById('app')!;
 const viewportEl = document.getElementById('viewport')!;
@@ -14,6 +16,7 @@ let zenFullscreen = false;
 let drawer!: ExplanationDrawer;
 let controls!: ZeroTextControls;
 let viewport!: CadViewport;
+let opticsStudio!: LensOpticsStudio;
 
 const isNativeFullscreen = (): boolean => {
   const doc = document as Document & { webkitFullscreenElement?: Element | null };
@@ -98,6 +101,7 @@ viewport = new CadViewport(viewportEl, {
   },
   onHoverPart: (partId) => {
     hoveredPartId = partId;
+    sharedLensOpticalSim.setHoveredElement(partId);
     controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
   },
   onVisibilityChanged: () => {
@@ -108,6 +112,9 @@ viewport = new CadViewport(viewportEl, {
 
 controls = new ZeroTextControls(appRoot, {
   onModeChange: (mode) => {
+    if (mode !== 'lens' && mode !== 'integrated' && opticsStudio?.getIsOpen()) {
+      opticsStudio.close();
+    }
     viewport.setMode(mode);
     controls.setExplodeValue(viewport.getExplode());
     syncRail();
@@ -128,6 +135,9 @@ controls = new ZeroTextControls(appRoot, {
   onPhysicsToggle: (active) => {
     viewport.setPhysicsActive(active);
   },
+  onOpticsStudioToggle: () => {
+    opticsStudio.toggle();
+  },
   onResetVisibility: () => {
     viewport.resetAllVisibility();
   },
@@ -142,7 +152,37 @@ controls = new ZeroTextControls(appRoot, {
     if (currentId === partId) {
       viewport.selectPart(null, false);
     } else {
-      viewport.selectPart(partId, true);
+      viewport.selectPart(partId, !opticsStudio?.getIsOpen());
+    }
+  },
+  onHoverPart: (partId) => {
+    hoveredPartId = partId;
+    sharedLensOpticalSim.setHoveredElement(partId);
+    viewport.setHoveredPartFromUI(partId);
+    controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
+  },
+  onToggleHidePart: (partId) => {
+    viewport.togglePartHidden(partId);
+  },
+});
+
+opticsStudio = new LensOpticsStudio(appRoot, {
+  onOpenChange: (open) => {
+    controls.syncOpticsStudio(open);
+    if (open) {
+      viewport.setMode('lens', true);
+      controls.syncMode('lens');
+      viewport.setExplode(0);
+      controls.setExplodeValue(0);
+      viewport.setPhysicsActive(true);
+      controls.syncPhysics(true);
+      viewport.frameLensForOpticsStudio(false);
+      syncRail();
+    } else {
+      if (viewport.getMode() === 'lens') {
+        viewport.setCameraPreset('iso', false);
+      }
+      viewport.requestRenderFrame();
     }
   },
   onHoverPart: (partId) => {
@@ -150,8 +190,11 @@ controls = new ZeroTextControls(appRoot, {
     viewport.setHoveredPartFromUI(partId);
     controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
   },
-  onToggleHidePart: (partId) => {
-    viewport.togglePartHidden(partId);
+  onSelectPart: (partId) => {
+    viewport.selectPart(partId, false);
+  },
+  onRequestRenderFrame: () => {
+    viewport.requestRenderFrame();
   },
 });
 
@@ -163,6 +206,10 @@ drawer = new ExplanationDrawer(appRoot, {
   onHideCurrent: () => {
     const sel = viewport.getSelectedPart();
     if (sel) viewport.togglePartHidden(sel.id);
+  },
+  onOpenOpticsMotion: (scenario, partId) => {
+    viewport.selectPart(null, false);
+    opticsStudio.open(scenario, partId);
   },
 });
 
@@ -181,7 +228,11 @@ window.addEventListener('keydown', (e) => {
       zenFullscreen = false;
       syncFullscreenState();
     }
-    viewport.selectPart(null, false);
+    if (viewport.getSelectedPart()) {
+      viewport.selectPart(null, false);
+    } else if (opticsStudio.getIsOpen()) {
+      opticsStudio.close();
+    }
   } else if (
     (e.key === 'f' || e.key === 'F') &&
     !e.ctrlKey &&
@@ -200,12 +251,13 @@ window.addEventListener('keydown', (e) => {
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
+  opticsStudio,
   toggleFullscreen,
 };
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 138-part Camera mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 160-part Camera mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
 if (preset === 'complete_assembled') {
   viewport.setMode('integrated', true);
@@ -303,6 +355,40 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('lens-bayonet-shims', false);
   syncRail();
+} else if (preset === 'lens_ultra62_exploded') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lens_ultra62_drawer') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.9, true);
+  controls.setExplodeValue(0.9);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-front-tilt-shims', false);
+  syncRail();
+} else if (preset === 'lens_optics_motion') {
+  opticsStudio.open('aperture_bokeh');
+  viewport.frameLensForOpticsStudio(true);
+} else if (preset === 'lens_optics_floating') {
+  opticsStudio.open('floating_xd');
+  viewport.frameLensForOpticsStudio(true);
+} else if (preset === 'lens_optics_ed') {
+  opticsStudio.open('ed_chromatic');
+  viewport.frameLensForOpticsStudio(true);
+} else if (preset === 'lens_optics_xa') {
+  opticsStudio.open('xa_aspheric');
+  viewport.frameLensForOpticsStudio(true);
+} else if (preset === 'lens_optics_nano') {
+  opticsStudio.open('nano_ar_baffle');
+  viewport.frameLensForOpticsStudio(true);
 } else if (preset === 'sensor_super_drawer') {
   viewport.setMode('sensor', true);
   controls.syncMode('sensor');

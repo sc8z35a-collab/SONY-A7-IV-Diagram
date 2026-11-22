@@ -103,6 +103,8 @@ export interface MaterialLibrary {
   lensBarrelAnodized: THREE.MeshPhysicalMaterial;
   lensRubberGrip: THREE.MeshStandardMaterial;
   lensAccentRing: THREE.MeshPhysicalMaterial;
+  lensFoamSeal: THREE.MeshStandardMaterial;
+  lensPermalloyShield: THREE.MeshPhysicalMaterial;
   lcdCoverGlass: THREE.MeshPhysicalMaterial;
   lcdLiveViewActive: THREE.MeshStandardMaterial;
   lcdBacklightPrism: THREE.MeshPhysicalMaterial;
@@ -1949,6 +1951,23 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.45,
   });
 
+  // Closed-cell micro-porous EPDM/urethane weather-sealing foam gasket
+  const lensFoamSeal = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x262932,
+    metalness: 0.02,
+    roughness: 0.96,
+  });
+
+  // High-permeability Ni-Fe Mu-metal / Permalloy magnetic flux & EMI shield
+  const lensPermalloyShield = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x526072,
+    metalness: 0.88,
+    roughness: 0.25,
+    clearcoat: 0.22,
+  });
+
   // OCA optically bonded tempered aluminosilicate PCAP touch cover glass
   const lcdCoverGlass = new THREE.MeshPhysicalMaterial({
     ...glassCommon,
@@ -2137,6 +2156,8 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     lensBarrelAnodized,
     lensRubberGrip,
     lensAccentRing,
+    lensFoamSeal,
+    lensPermalloyShield,
     lcdCoverGlass,
     lcdLiveViewActive,
     lcdBacklightPrism,
@@ -2244,6 +2265,8 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     lensBarrelAnodized,
     lensRubberGrip,
     lensAccentRing,
+    lensFoamSeal,
+    lensPermalloyShield,
     lcdCoverGlass,
     lcdLiveViewActive,
     lcdBacklightPrism,
