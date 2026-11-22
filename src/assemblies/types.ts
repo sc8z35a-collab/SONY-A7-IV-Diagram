@@ -1,6 +1,16 @@
 import * as THREE from 'three';
 
-export type ScaleMode = 'integrated' | 'mount' | 'shutter' | 'sensor' | 'mainboard' | 'evf' | 'micro';
+export type ScaleMode =
+  | 'integrated'
+  | 'lens'
+  | 'mount'
+  | 'shutter'
+  | 'sensor'
+  | 'mainboard'
+  | 'evf'
+  | 'lcd'
+  | 'body'
+  | 'micro';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
@@ -105,13 +115,44 @@ export interface PartExplanation {
     | 'mount_baffle'
     | 'mount_flare_mask'
     | 'mount_mg_throat'
-    | 'mount_chassis_if';
+    | 'mount_chassis_if'
+    // 50mm F1.2 Prime Lens & 4x XD Linear Motors (10)
+    | 'lens_hood'
+    | 'lens_front_xa'
+    | 'lens_ed_doublet'
+    | 'lens_iris_11'
+    | 'lens_focus_a'
+    | 'lens_xd_motors'
+    | 'lens_focus_b'
+    | 'lens_rear_hero'
+    | 'lens_control_rings'
+    | 'lens_barrel'
+    // 4-Axis Multi-Angle Rear LCD Monitor (6)
+    | 'lcd_touch_glass'
+    | 'lcd_ips_cell'
+    | 'lcd_backlight'
+    | 'lcd_shell'
+    | 'lcd_swivel_hinge'
+    | 'lcd_tilt_cradle'
+    // Battery, Magnesium Monocoque Body & Dials (12)
+    | 'body_battery'
+    | 'body_batt_chamber'
+    | 'body_grip'
+    | 'body_shutter_dials'
+    | 'body_top_dials'
+    | 'body_hotshoe'
+    | 'body_front_shell'
+    | 'body_top_deck'
+    | 'body_rear_controls'
+    | 'body_card_door'
+    | 'body_io_doors'
+    | 'body_baseplate';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
-  subsystem: 'mount' | 'sensor' | 'micro' | 'shutter' | 'mainboard' | 'evf';
+  subsystem: 'lens' | 'mount' | 'sensor' | 'micro' | 'shutter' | 'mainboard' | 'evf' | 'lcd' | 'body';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */

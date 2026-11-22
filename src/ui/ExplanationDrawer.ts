@@ -1556,6 +1556,549 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="242" y="80" font-size="8" font-weight="bold" fill="#fde047">底面三脚座</text>
         <text x="44" y="111" font-size="8" fill="#334155">4点ダウエルピン＋全周防塵シール＋荷重バイパスで光学精度を永続保護</text>
       `);
+
+    // =========================================================================
+    // 50mm F1.2 Prime Lens & Quad XD Linear AF Motors Schematics (10 diagrams)
+    // =========================================================================
+    case 'lens_hood':
+      return wrap(`
+        <!-- Lens Hood Cutoff Angle vs Stray Sunlight -->
+        <rect x="24" y="24" width="70" height="64" rx="4" fill="#334155" stroke="#0f172a"/>
+        <rect x="94" y="16" width="56" height="80" rx="3" fill="#1e293b"/>
+        <line x1="102" y1="22" x2="144" y2="22" stroke="#64748b" stroke-dasharray="3 2"/>
+        <line x1="102" y1="90" x2="144" y2="90" stroke="#64748b" stroke-dasharray="3 2"/>
+        <path d="M90 26 Q104 56 90 86" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5"/>
+        <!-- Valid 47° FOV Cone -->
+        <polygon points="94,34 94,78 286,18 286,94" fill="rgba(14,165,233,0.14)" stroke="#0284c7" stroke-width="1.3"/>
+        <text x="172" y="59" font-size="8.5" font-weight="bold" fill="#0369a1">有効画角 47° (ケラレなし)</text>
+        <!-- Stray Oblique Sunlight Blocked! -->
+        <line x1="210" y1="6" x2="132" y2="18" stroke="#f59e0b" stroke-width="2.4"/>
+        <text x="216" y="14" font-size="8" font-weight="bold" fill="#d97706">斜め太陽光ブロック!</text>
+        <text x="34" y="111" font-size="8" fill="#334155">内壁の同心遮光リブが画角外の斜光を吸収し、フレア・白浮きを完全防止</text>
+      `);
+
+    case 'lens_front_xa':
+      return wrap(`
+        <!-- Normal Aspheric (Onion-Ring Bokeh) vs 0.01um XA Extreme Aspheric (Creamy Smooth Bokeh) -->
+        <rect x="16" y="14" width="132" height="80" rx="5" fill="#fff1f2" stroke="#fda4af"/>
+        <text x="24" y="29" font-size="8" font-weight="bold" fill="#be123c">通常非球面 (年輪ボケ)</text>
+        <circle cx="82" cy="60" r="22" fill="#fecdd3" stroke="#e11d48" stroke-width="1.4"/>
+        <circle cx="82" cy="60" r="15" fill="none" stroke="#e11d48" stroke-width="1.1" stroke-dasharray="3 2"/>
+        <circle cx="82" cy="60" r="8" fill="none" stroke="#e11d48" stroke-width="1.1"/>
+        <!-- Right: 0.01um XA -->
+        <rect x="162" y="14" width="144" height="80" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="170" y="29" font-size="8" font-weight="bold" fill="#0369a1">XA 0.01μm研磨 + Nano AR II</text>
+        <circle cx="234" cy="60" r="22" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+        <circle cx="234" cy="60" r="14" fill="#e0f2fe" opacity="0.65"/>
+        <text x="206" y="63" font-size="8" font-weight="bold" fill="#0369a1">滑らか丸ボケ!</text>
+        <text x="34" y="111" font-size="8" fill="#334155">10nm精度XA研磨＋フッ素撥油＋Nano AR IIコートでF1.2開放から極上描写</text>
+      `);
+
+    case 'lens_ed_doublet':
+      return wrap(`
+        <!-- Chromatic Aberration Correction: Super-ED Positive + Flint Negative Doublet -->
+        <path d="M58 20 Q82 54 58 88 Q46 54 58 20 Z" fill="#6ee7b7" stroke="#059669" stroke-width="1.5"/>
+        <path d="M74 20 Q92 54 74 88 L88 88 Q80 54 88 20 Z" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.5"/>
+        <text x="24" y="14" font-size="7.5" font-weight="bold" fill="#047857">スーパーED(凸)</text>
+        <text x="82" y="14" font-size="7.5" font-weight="bold" fill="#4338ca">高分散フリント(凹)</text>
+        <!-- R/G/B converging to one exact focal point -->
+        <line x1="88" y1="34" x2="220" y2="54" stroke="#ef4444" stroke-width="1.8"/>
+        <line x1="88" y1="54" x2="220" y2="54" stroke="#10b981" stroke-width="1.8"/>
+        <line x1="88" y1="74" x2="220" y2="54" stroke="#2563eb" stroke-width="1.8"/>
+        <circle cx="220" cy="54" r="5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>
+        <rect x="232" y="34" width="72" height="40" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="238" y="50" font-size="8" font-weight="bold" fill="#047857">RGB一致!</text>
+        <text x="238" y="64" font-size="7.5" fill="#065f46">紫にじみ 0</text>
+        <text x="40" y="110" font-size="8" fill="#334155">φ₁/ν₁ + φ₂/ν₂ = 0 の色消し接合でF1.2開放の軸上色収差を徹底除去</text>
+      `);
+
+    case 'lens_iris_11':
+      return wrap(`
+        <!-- 11-Blade Circular Iris Open (F1.2) vs Stopped Down (F5.6) -->
+        <circle cx="82" cy="54" r="34" fill="#1e293b" stroke="#0f172a" stroke-width="1.8"/>
+        <circle cx="82" cy="54" r="24" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="66" y="57" font-size="9" font-weight="bold" fill="#0369a1">F1.2</text>
+        <text x="48" y="98" font-size="7.5" fill="#0369a1">φ41.7mm 超大口径</text>
+        <!-- Arrow -->
+        <path d="M126 54 L164 54" stroke="#d97706" stroke-width="2.2"/>
+        <polygon points="169,54 160,49 160,59" fill="#d97706"/>
+        <text x="128" y="45" font-size="7.5" font-weight="bold" fill="#b45309">11枚同期</text>
+        <!-- Stopped down circular 11-blade iris -->
+        <circle cx="226" cy="54" r="34" fill="#1e293b" stroke="#0f172a" stroke-width="1.8"/>
+        <circle cx="226" cy="54" r="11" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.4"/>
+        ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          .map((i) => {
+            const a = (i / 11) * Math.PI * 2;
+            const x1 = (226 + Math.cos(a) * 11).toFixed(1);
+            const y1 = (54 + Math.sin(a) * 11).toFixed(1);
+            const x2 = (226 + Math.cos(a + 0.52) * 33).toFixed(1);
+            const y2 = (54 + Math.sin(a + 0.52) * 33).toFixed(1);
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#64748b" stroke-width="1.1"/>`;
+          })
+          .join('')}
+        <text x="190" y="98" font-size="7.5" fill="#334155">真円維持＋22本光芒</text>
+        <text x="42" y="112" font-size="8" fill="#334155">11枚羽根の電磁ステッピング制御で美しい丸ボケと静音動画絞りを両立</text>
+      `);
+
+    case 'lens_focus_a':
+      return wrap(`
+        <!-- Floating Focus Group A Moving Along Linear Rails -->
+        <rect x="24" y="24" width="268" height="6" rx="2" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="24" y="82" width="268" height="6" rx="2" fill="#cbd5e1" stroke="#475569"/>
+        <!-- Group A Lens Carrier -->
+        <rect x="92" y="22" width="38" height="68" rx="4" fill="#0ea5e9" opacity="0.22" stroke="#0284c7" stroke-width="1.6"/>
+        <ellipse cx="111" cy="56" rx="10" ry="26" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="86" y="16" font-size="8" font-weight="bold" fill="#0369a1">前側フォーカス群 A</text>
+        <!-- Bidirectional Linear Stroke Arrows -->
+        <path d="M56 56 L86 56 M136 56 L170 56" stroke="#d97706" stroke-width="2.4"/>
+        <polygon points="52,56 60,51 60,61" fill="#d97706"/>
+        <polygon points="174,56 166,51 166,61" fill="#d97706"/>
+        <!-- Group B Reference -->
+        <rect x="210" y="28" width="28" height="56" rx="4" fill="#10b981" opacity="0.2" stroke="#059669" stroke-dasharray="3 2"/>
+        <text x="200" y="16" font-size="7.5" fill="#047857">後群Bと独立移動</text>
+        <text x="34" y="110" font-size="8" fill="#334155">軽量鏡枠＋2基XDモーター直動により最短0.40m〜∞まで収差ゼロ合焦</text>
+      `);
+
+    case 'lens_xd_motors':
+      return wrap(`
+        <!-- Quad XD Linear Motor Cross-Section: N52 Magnet Stator + Copper Coil Mover + MR Scale -->
+        <rect x="22" y="18" width="184" height="14" rx="2" fill="#475569" stroke="#0f172a"/>
+        <text x="58" y="28" font-size="7.5" font-weight="bold" fill="#f8fafc">N52 ネオジム磁石ステーター</text>
+        <!-- Copper Coil Mover -->
+        <rect x="86" y="38" width="56" height="24" rx="3" fill="#d97706" stroke="#92400e" stroke-width="1.5"/>
+        <text x="92" y="53" font-size="7.5" font-weight="bold" fill="#fff">銅コイル可動子</text>
+        <!-- Guide Shaft & MR Magnetic Scale -->
+        <rect x="22" y="68" width="184" height="8" rx="2" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="22" y="82" width="184" height="10" rx="2" fill="#065f46"/>
+        <text x="48" y="90" font-size="7.5" fill="#fde047">0.1μm MR磁気スケールセンサー ×4</text>
+        <!-- Thrust Vectors -->
+        <path d="M40 50 L80 50 M148 50 L188 50" stroke="#dc2626" stroke-width="2.5"/>
+        <polygon points="36,50 44,45 44,55" fill="#dc2626"/>
+        <polygon points="192,50 184,45 184,55" fill="#dc2626"/>
+        <!-- Right Badge -->
+        <rect x="218" y="20" width="88" height="70" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="226" y="38" font-size="8.5" font-weight="bold" fill="#b45309">4基対称配置</text>
+        <text x="226" y="53" font-size="7.5" fill="#78350f">F = 4·N·B·I·L</text>
+        <text x="226" y="67" font-size="7.5" fill="#78350f">歯車ゼロ・無音</text>
+        <text x="226" y="80" font-size="7.5" fill="#78350f">120fps AI追従</text>
+        <text x="42" y="111" font-size="8" fill="#334155">45°対称4基リニアモーターが重いF1.2フォーカス群を瞬間・無音駆動</text>
+      `);
+
+    case 'lens_focus_b':
+      return wrap(`
+        <!-- Differential Floating Curve: Distance vs Group A / Group B Spacing d(s) -->
+        <rect x="18" y="16" width="144" height="76" rx="5" fill="#f0fdf4" stroke="#10b981"/>
+        <text x="26" y="30" font-size="8" font-weight="bold" fill="#047857">電子カム差動フローティング</text>
+        <ellipse cx="62" cy="60" rx="8" ry="20" fill="#7dd3fc" stroke="#0284c7"/>
+        <ellipse cx="114" cy="60" rx="8" ry="20" fill="#6ee7b7" stroke="#059669"/>
+        <path d="M72 60 L104 60" stroke="#0f172a" stroke-width="1.8"/>
+        <text x="76" y="54" font-size="8" font-weight="bold" fill="#0f172a">d(s)</text>
+        <text x="38" y="87" font-size="7.5" fill="#065f46">距離に応じ間隔を自動変化</text>
+        <!-- Right: Low Breathing & Flat Field -->
+        <rect x="174" y="16" width="132" height="76" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="182" y="33" font-size="8" font-weight="bold" fill="#1d4ed8">後群B 独立補正効果</text>
+        <text x="182" y="50" font-size="7.5" fill="#1e40af">・像面湾曲 → 平坦化</text>
+        <text x="182" y="64" font-size="7.5" fill="#1e40af">・周辺コマ収差 → 抑制</text>
+        <text x="182" y="78" font-size="7.5" fill="#1e40af">・動画ブリージング最小</text>
+        <text x="38" y="111" font-size="8" fill="#334155">前群A＋後群Bの2組独立リニア駆動により近接から無限遠まで隅々シャープ</text>
+      `);
+
+    case 'lens_rear_hero':
+      return wrap(`
+        <!-- Large Rear Hero Element Right Ahead of 55mm Mount & Full-Frame Sensor -->
+        <path d="M74 16 Q96 54 74 92 Q112 54 74 16 Z" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.8"/>
+        <text x="36" y="13" font-size="8" font-weight="bold" fill="#4338ca">φ44mm 大口径後玉</text>
+        <!-- 55mm Mount Plane -->
+        <line x1="132" y1="14" x2="132" y2="94" stroke="#64748b" stroke-width="2.2" stroke-dasharray="4 2"/>
+        <text x="112" y="102" font-size="7.5" fill="#475569">55mmマウント</text>
+        <!-- Shallow Chief Ray Angle to Full-Frame Sensor -->
+        <line x1="94" y1="24" x2="218" y2="28" stroke="#0284c7" stroke-width="2"/>
+        <line x1="96" y1="54" x2="218" y2="54" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="94" y1="84" x2="218" y2="80" stroke="#0284c7" stroke-width="2"/>
+        <rect x="218" y="22" width="12" height="64" rx="2" fill="#0f766e" stroke="#0f172a"/>
+        <text x="236" y="48" font-size="8" font-weight="bold" fill="#0f766e">CRA ≤ 14°</text>
+        <text x="236" y="62" font-size="7.5" fill="#334155">四隅まで明るく</text>
+        <text x="236" y="74" font-size="7.5" fill="#334155">高解像!</text>
+        <text x="42" y="114" font-size="8" fill="#334155">ショートフランジ専用の大口径後玉が周辺減光と四隅の像流れを根絶</text>
+      `);
+
+    case 'lens_control_rings':
+      return wrap(`
+        <!-- Linear-Response MF Graph (Constant Slope) + De-Clickable Iris Detent -->
+        <rect x="16" y="16" width="140" height="78" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="24" y="30" font-size="8" font-weight="bold" fill="#0f172a">リニアレスポンスMF</text>
+        <line x1="30" y1="80" x2="142" y2="80" stroke="#334155"/>
+        <line x1="30" y1="80" x2="30" y2="38" stroke="#334155"/>
+        <line x1="30" y1="80" x2="136" y2="40" stroke="#0284c7" stroke-width="2.4"/>
+        <text x="60" y="54" font-size="7.5" font-weight="bold" fill="#0284c7">Δz ∝ Δθ (完全比例)</text>
+        <text x="58" y="90" font-size="7" fill="#475569">回転角 Δθ →</text>
+        <!-- Right: Click ON / OFF Iris Switch -->
+        <rect x="168" y="16" width="138" height="78" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="176" y="31" font-size="8" font-weight="bold" fill="#92400e">絞りリング クリック切替</text>
+        <rect x="180" y="42" width="114" height="18" rx="3" fill="#fef3c7" stroke="#d97706"/>
+        <text x="186" y="54" font-size="7.5" fill="#78350f">CLICK ON : 静止画 1/3段</text>
+        <rect x="180" y="66" width="114" height="18" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="186" y="78" font-size="7.5" fill="#0369a1">CLICK OFF : 動画 無音連続</text>
+        <text x="38" y="111" font-size="8" fill="#334155">高分解能非接触エンコーダー＋ラビリンス防塵パッキンで極上の操作感</text>
+      `);
+
+    case 'lens_barrel':
+      return wrap(`
+        <!-- Weather-Sealed Barrel Cutaway & Load Path to 55mm Mount -->
+        <rect x="20" y="24" width="188" height="62" rx="8" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <rect x="64" y="24" width="96" height="26" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-dasharray="3 2"/>
+        <text x="72" y="40" font-size="7.5" font-weight="bold" fill="#0369a1">上部カット窓(内部視認)</text>
+        <rect x="208" y="28" width="12" height="54" rx="2" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="220" y="24" width="6" height="62" rx="1" fill="#0f172a"/>
+        <text x="232" y="44" font-size="8" font-weight="bold" fill="#0f172a">SUSバヨネット</text>
+        <text x="232" y="58" font-size="7.5" fill="#0369a1">＋ゴム防水リング</text>
+        <text x="232" y="72" font-size="7.5" fill="#d97706">＋12ピン金接点</text>
+        <text x="40" y="110" font-size="8" fill="#334155">高剛性マグネシウム・アルミ鏡筒＋全周シーリングで55mmマウントへ直結</text>
+      `);
+
+    // =========================================================================
+    // 4-Axis Multi-Angle Rear LCD Monitor Schematics (6 diagrams)
+    // =========================================================================
+    case 'lcd_touch_glass':
+      return wrap(`
+        <!-- Air Gap Reflection (4.1%) vs OCA Optical Bonding (0.004%) -->
+        <rect x="16" y="16" width="136" height="76" rx="5" fill="#fff1f2" stroke="#fda4af"/>
+        <text x="24" y="30" font-size="8" font-weight="bold" fill="#be123c">従来：空気層あり</text>
+        <rect x="28" y="38" width="112" height="10" fill="#bae6fd" stroke="#0284c7"/>
+        <text x="58" y="58" font-size="7.5" fill="#dc2626">空気層で反射4.1%!</text>
+        <rect x="28" y="64" width="112" height="12" fill="#334155"/>
+        <text x="40" y="87" font-size="7.5" fill="#9f1239">屋外で白っぽく見にくい</text>
+        <!-- Right: OCA Direct Bonding -->
+        <rect x="164" y="16" width="142" height="76" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="172" y="30" font-size="8" font-weight="bold" fill="#0369a1">OCA光学接着 + PCAPタッチ</text>
+        <rect x="176" y="40" width="118" height="10" fill="#7dd3fc" stroke="#0284c7"/>
+        <rect x="176" y="50" width="118" height="8" fill="#bae6fd"/>
+        <rect x="176" y="58" width="118" height="12" fill="#0f766e"/>
+        <text x="180" y="84" font-size="7.5" font-weight="bold" fill="#0369a1">内部反射 0.004% ⇒ 炎天下クッキリ</text>
+        <text x="38" y="110" font-size="8" fill="#334155">屈折率整合OCA樹脂＋ITO静電容量タッチ格子で高視認性と直感AF操作を両立</text>
+      `);
+
+    case 'lcd_ips_cell':
+      return wrap(`
+        <!-- IPS In-Plane Liquid Crystal Switching Cross-Section -->
+        <rect x="22" y="20" width="14" height="68" rx="2" fill="#334155"/>
+        <text x="14" y="99" font-size="7" fill="#334155">偏光板1</text>
+        <!-- Parallel Rotating LC Molecules -->
+        <rect x="44" y="20" width="76" height="68" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+        <ellipse cx="66" cy="40" rx="10" ry="3.5" fill="#0284c7" transform="rotate(-25 66 40)"/>
+        <ellipse cx="98" cy="40" rx="10" ry="3.5" fill="#0284c7" transform="rotate(-25 98 40)"/>
+        <ellipse cx="66" cy="68" rx="10" ry="3.5" fill="#0284c7" transform="rotate(25 66 68)"/>
+        <ellipse cx="98" cy="68" rx="10" ry="3.5" fill="#0284c7" transform="rotate(25 98 68)"/>
+        <text x="52" y="16" font-size="7.5" font-weight="bold" fill="#0369a1">IPS面内回転液晶</text>
+        <!-- RGB Color Filter -->
+        <rect x="126" y="20" width="12" height="22" fill="#ef4444"/>
+        <rect x="126" y="43" width="12" height="22" fill="#10b981"/>
+        <rect x="126" y="66" width="12" height="22" fill="#2563eb"/>
+        <rect x="144" y="20" width="14" height="68" rx="2" fill="#334155"/>
+        <!-- 178° Wide Viewing Angle Cone -->
+        <path d="M164 54 L260 22 M164 54 L260 54 M164 54 L260 86" stroke="#0ea5e9" stroke-width="1.8"/>
+        <text x="206" y="48" font-size="8.5" font-weight="bold" fill="#0369a1">視野角 178°</text>
+        <text x="202" y="64" font-size="7.5" fill="#334155">斜めでも色転びなし!</text>
+        <text x="42" y="112" font-size="8" fill="#334155">3.2型210万ドットIPS液晶＋COFドライバで正確なピントと発色を確認</text>
+      `);
+
+    case 'lcd_backlight':
+      return wrap(`
+        <!-- Edge LED -> Acrylic LGP (TIR) -> Dual Crossed BEF Prisms -> Bright Collimated Light -->
+        <rect x="20" y="66" width="14" height="22" rx="2" fill="#facc15" stroke="#ca8a04"/>
+        <text x="12" y="99" font-size="7.5" font-weight="bold" fill="#a16207">LED×10</text>
+        <!-- LGP Acrylic Light Guide -->
+        <rect x="38" y="68" width="144" height="18" rx="2" fill="#bae6fd" stroke="#0284c7"/>
+        <path d="M38 77 L68 70 L102 84 L138 70 L172 82" fill="none" stroke="#0369a1" stroke-width="1.4" stroke-dasharray="3 2"/>
+        <text x="78" y="80" font-size="7.5" font-weight="bold" fill="#0c4a6e">導光板(全反射均一化)</text>
+        <!-- Dual BEF Micro-Prism Sawtooth -->
+        <path d="M38 56 L50 44 L62 56 L74 44 L86 56 L98 44 L110 56 L122 44 L134 56 L146 44 L158 56 L170 44 L182 56 Z" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="192" y="54" font-size="8" font-weight="bold" fill="#0369a1">直交デュアルBEF</text>
+        <text x="192" y="68" font-size="8" font-weight="bold" fill="#0284c7">正面輝度 約1.9倍!</text>
+        <!-- Upward Bright Arrows -->
+        <path d="M70 40 L70 18 M110 40 L110 18 M150 40 L150 18" stroke="#0ea5e9" stroke-width="2.2"/>
+        <polygon points="70,13 65,21 75,21" fill="#0ea5e9"/>
+        <polygon points="110,13 105,21 115,21" fill="#0ea5e9"/>
+        <polygon points="150,13 145,21 155,21" fill="#0ea5e9"/>
+        <text x="40" y="112" font-size="8" fill="#334155">1.2mm超薄型エッジLED＋直交マイクロプリズム集光で省電力・高輝度を実現</text>
+      `);
+
+    case 'lcd_shell':
+      return wrap(`
+        <!-- Slim Metal Rear Tray + Graphite Thermal Foil + Hall Magnet Stow Detection -->
+        <rect x="24" y="20" width="166" height="70" rx="6" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <rect x="38" y="30" width="122" height="50" rx="3" fill="#475569" stroke="#94a3b8"/>
+        <text x="52" y="53" font-size="8" font-weight="bold" fill="#f8fafc">薄肉Mg/Al剛性トレイ</text>
+        <text x="50" y="67" font-size="7.5" fill="#cbd5e1">＋グラファイト放熱＋EMI遮蔽</text>
+        <!-- Hinge Boss & Hall Magnet -->
+        <rect x="174" y="34" width="14" height="42" rx="2" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="34" y="76" width="16" height="8" rx="1" fill="#38bdf8"/>
+        <!-- Specs Right -->
+        <rect x="202" y="20" width="104" height="70" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="210" y="37" font-size="8" font-weight="bold" fill="#0f172a">片持ちねじれ防止</text>
+        <text x="210" y="52" font-size="7.5" fill="#334155">・0.6mm薄肉リブ</text>
+        <text x="210" y="66" font-size="7.5" fill="#334155">・磁石格納自動消灯</text>
+        <text x="210" y="80" font-size="7.5" fill="#334155">・外周防水シール</text>
+        <text x="44" y="110" font-size="8" fill="#334155">バリアングル展開時のタッチ操作でも歪まない高ねじり剛性金属外装</text>
+      `);
+
+    case 'lcd_swivel_hinge':
+      return wrap(`
+        <!-- Dual-Axis 176° Open + 270° Swivel Friction Hinge & Coiled FPC -->
+        <rect x="52" y="18" width="18" height="72" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <rect x="46" y="42" width="66" height="24" rx="4" fill="#334155"/>
+        <rect x="112" y="46" width="38" height="16" rx="3" fill="#cbd5e1" stroke="#334155"/>
+        <!-- Coiled Orange FPC inside hollow shaft -->
+        <path d="M61 24 C74 34, 48 44, 61 54 C74 64, 96 54, 146 54" fill="none" stroke="#f59e0b" stroke-width="2.4"/>
+        <!-- Rotation Arcs -->
+        <path d="M36 22 Q20 54 36 86" fill="none" stroke="#0284c7" stroke-width="2"/>
+        <text x="10" y="56" font-size="8" font-weight="bold" fill="#0284c7">176°</text>
+        <path d="M126 30 Q144 54 126 78" fill="none" stroke="#d97706" stroke-width="2"/>
+        <text x="148" y="34" font-size="8" font-weight="bold" fill="#b45309">270°回転</text>
+        <!-- Right Info -->
+        <rect x="188" y="20" width="118" height="70" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="196" y="37" font-size="8" font-weight="bold" fill="#92400e">皿ばね摩擦ヒンジ</text>
+        <text x="196" y="52" font-size="7.5" fill="#78350f">・任意角度ピタッと保持</text>
+        <text x="196" y="66" font-size="7.5" fill="#78350f">・中空軸に高屈曲FPC</text>
+        <text x="196" y="80" font-size="7.5" fill="#78350f">・10万回開閉耐久設計</text>
+        <text x="42" y="110" font-size="8" fill="#334155">カメラ左側面(+X)へ展開し、縦位置ローアングルや自撮りへ自由変形</text>
+      `);
+
+    case 'lcd_tilt_cradle':
+      return wrap(`
+        <!-- 4-Axis Magic: Optical-Axis Tilt (Left) + Side Vari-Angle Cable Bypass (Right) -->
+        <rect x="16" y="16" width="136" height="78" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="24" y="30" font-size="8" font-weight="bold" fill="#0369a1">軸1・2：光軸上チルト</text>
+        <rect x="34" y="42" width="14" height="40" fill="#334155"/>
+        <line x1="48" y1="54" x2="80" y2="62" stroke="#64748b" stroke-width="2.6"/>
+        <line x1="48" y1="72" x2="78" y2="78" stroke="#f59e0b" stroke-width="2.2"/>
+        <rect x="78" y="44" width="10" height="38" rx="2" fill="#0284c7" transform="rotate(-32 83 63)"/>
+        <text x="96" y="56" font-size="7.5" font-weight="bold" fill="#0369a1">上98°/下40°</text>
+        <text x="96" y="70" font-size="7.5" fill="#0369a1">ワンアクション!</text>
+        <!-- Right: Axis 3-4 Vari-Angle clearing cables -->
+        <rect x="162" y="16" width="144" height="78" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="170" y="30" font-size="8" font-weight="bold" fill="#166534">軸3・4：後方引出バリアングル</text>
+        <rect x="176" y="44" width="46" height="26" rx="3" fill="#334155"/>
+        <line x1="176" y1="54" x2="164" y2="54" stroke="#dc2626" stroke-width="2.5"/>
+        <rect x="234" y="48" width="52" height="30" rx="3" fill="#0ea5e9" opacity="0.28" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="238" y="66" font-size="7.5" font-weight="bold" fill="#0369a1">ケーブル回避</text>
+        <text x="172" y="88" font-size="7.5" fill="#15803d">HDMI/マイク挿したまま全開!</text>
+        <text x="42" y="111" font-size="8" fill="#334155">チルトの速写性とバリアングルの自由度を融合した最新フラッグシップ4軸機構</text>
+      `);
+
+    // =========================================================================
+    // Complete Camera Body, 7.2V Battery, Hot Shoe & Dials Schematics (12 diagrams)
+    // =========================================================================
+    case 'body_battery':
+      return wrap(`
+        <!-- 2S1P Dual-Cell 7.2V / 6.0A High-Drain Battery Cutaway -->
+        <rect x="20" y="18" width="114" height="74" rx="6" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <rect x="30" y="36" width="38" height="48" rx="5" fill="#0284c7" stroke="#bae6fd" stroke-width="1.2"/>
+        <rect x="86" y="36" width="38" height="48" rx="5" fill="#0284c7" stroke="#bae6fd" stroke-width="1.2"/>
+        <text x="36" y="63" font-size="8" font-weight="bold" fill="#fff">3.6V</text>
+        <text x="92" y="63" font-size="8" font-weight="bold" fill="#fff">3.6V</text>
+        <rect x="28" y="22" width="98" height="10" rx="2" fill="#10b981"/>
+        <text x="40" y="30" font-size="7" font-weight="bold" fill="#fff">スマートBMS残量・認証基板</text>
+        <!-- Right Output Specs -->
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">7.2V × 6.0A = 43.2W 供給</text>
+        <text x="156" y="51" font-size="7.5" fill="#1e40af">・2直列で配線損失 I²R を1/4に</text>
+        <text x="156" y="65" font-size="7.5" fill="#1e40af">・AI NPU + 8K RAW + 4基XD駆動</text>
+        <text x="156" y="79" font-size="7.5" fill="#1e40af">・1%単位残量＆USB-PD急速充電</text>
+        <text x="44" y="110" font-size="8" fill="#334155">高出力2セル直列＋スマートBMSで最新フラッグシップの大電流負荷を支える</text>
+      `);
+
+    case 'body_batt_chamber':
+      return wrap(`
+        <!-- Sealed Chamber + Gold Twin-Leaf Terminals + Eject Spring + EPDM Hatch -->
+        <rect x="34" y="18" width="98" height="68" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+        <!-- 4 Gold Twin-Contacts at Ceiling -->
+        ${[0, 1, 2, 3].map((i) => `<rect x="${48 + i * 20}" y="20" width="8" height="10" rx="1" fill="#eab308" stroke="#a16207"/>`).join('')}
+        <text x="44" y="45" font-size="7.5" font-weight="bold" fill="#92400e">金メッキ二股4極端子</text>
+        <text x="48" y="58" font-size="7.5" fill="#334155">接触抵抗 &lt; 5 mΩ</text>
+        <!-- Bottom Sealed Door & Blue Catch -->
+        <rect x="28" y="84" width="110" height="9" rx="2" fill="#1e293b"/>
+        <rect x="38" y="78" width="14" height="6" rx="1" fill="#0284c7"/>
+        <text x="150" y="34" font-size="8.5" font-weight="bold" fill="#0f172a">防水バッテリー室</text>
+        <text x="150" y="50" font-size="7.5" fill="#334155">・＋ / − / NTC温度 / 通信</text>
+        <text x="150" y="64" font-size="7.5" fill="#334155">・脱落防止青色ラッチ爪</text>
+        <text x="150" y="78" font-size="7.5" fill="#0284c7">・全周EPDM防水パッキン扉</text>
+        <text x="42" y="111" font-size="8" fill="#334155">6A連続通電時の電圧降下と雨天時の浸水を同時に防ぐ高信頼給電ベイ</text>
+      `);
+
+    case 'body_grip':
+      return wrap(`
+        <!-- Top-Down Cross Section of Deep Ergonomic Grip & Lens Clearance -->
+        <path d="M52 24 L150 24 L150 84 L52 84 C26 84 22 60 32 36 C38 22 46 20 52 24 Z" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <ellipse cx="62" cy="54" rx="18" ry="22" fill="#0284c7" opacity="0.35" stroke="#38bdf8" stroke-dasharray="3 2"/>
+        <text x="46" y="57" font-size="7.5" font-weight="bold" fill="#fff">電池内蔵</text>
+        <!-- Deep Finger Undercut Arrow -->
+        <path d="M120 18 Q106 38 124 44" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+        <text x="166" y="34" font-size="8.5" font-weight="bold" fill="#0f172a">深型中指フック構造</text>
+        <text x="166" y="50" font-size="7.5" fill="#334155">・シボ加工高摩擦エラストマー</text>
+        <text x="166" y="64" font-size="7.5" fill="#334155">・F1.2鏡筒との指隙間を確保</text>
+        <text x="166" y="78" font-size="7.5" fill="#dc2626">・前荷重モーメントを掌へ分散</text>
+        <text x="44" y="110" font-size="8" fill="#334155">人間工学3D曲面＋シボ革調グリップで重量級大口径レンズも片手で安定保持</text>
+      `);
+
+    case 'body_shutter_dials':
+      return wrap(`
+        <!-- 2-Stage Metal Snap-Dome Force Curve + Front/Rear Optical Encoder Dials -->
+        <rect x="16" y="16" width="144" height="76" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="24" y="30" font-size="8" font-weight="bold" fill="#0f172a">2段スナップドーム荷重曲線</text>
+        <path d="M28 80 L58 64 L74 70 L108 38 L138 38" fill="none" stroke="#dc2626" stroke-width="2.2"/>
+        <circle cx="58" cy="64" r="3.5" fill="#0284c7"/>
+        <text x="36" y="58" font-size="7.5" font-weight="bold" fill="#0369a1">半押し1.2N</text>
+        <circle cx="108" cy="38" r="3.5" fill="#dc2626"/>
+        <text x="86" y="53" font-size="7.5" font-weight="bold" fill="#dc2626">全押し2.8N</text>
+        <!-- Right: Quadrature Optical Dial -->
+        <rect x="170" y="16" width="136" height="76" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="178" y="31" font-size="8" font-weight="bold" fill="#1d4ed8">前後コマンドダイヤル</text>
+        <path d="M182 52 L194 52 L194 42 L208 42 L208 52 L222 52 L222 42 L236 42" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <path d="M188 70 L200 70 L200 60 L214 60 L214 70 L228 70 L228 60 L242 60" fill="none" stroke="#10b981" stroke-width="1.8"/>
+        <text x="248" y="50" font-size="7.5" fill="#0369a1">A相</text>
+        <text x="248" y="68" font-size="7.5" fill="#047857">B相(90°)</text>
+        <text x="178" y="85" font-size="7.5" fill="#1e40af">非接触エンコーダー＋防塵軸</text>
+        <text x="44" y="111" font-size="8" fill="#334155">前傾28°シャッター＋前後2ダイヤル＋独立RECボタンで指先直感操作</text>
+      `);
+
+    case 'body_top_dials':
+      return wrap(`
+        <!-- Center Push-Lock Dial Mechanism + Top Status Sub-OLED -->
+        <rect x="20" y="20" width="126" height="72" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <rect x="44" y="42" width="78" height="32" rx="4" fill="#334155"/>
+        <rect x="70" y="28" width="26" height="16" rx="3" fill="#cbd5e1" stroke="#334155"/>
+        <path d="M83 18 L83 26" stroke="#dc2626" stroke-width="2"/>
+        <text x="36" y="86" font-size="7.5" font-weight="bold" fill="#0f172a">中央プッシュロック解除</text>
+        <!-- Right: Top Shoulder Graphical Sub-OLED -->
+        <rect x="158" y="20" width="146" height="72" rx="5" fill="#0f172a" stroke="#334155" stroke-width="1.8"/>
+        <rect x="170" y="34" width="122" height="10" rx="2" fill="#38bdf8" opacity="0.8"/>
+        <rect x="170" y="52" width="54" height="12" rx="2" fill="#10b981"/>
+        <circle cx="268" cy="58" r="10" fill="none" stroke="#f8fafc" stroke-width="1.6"/>
+        <text x="170" y="82" font-size="7.5" fill="#cbd5e1">省電力・高コントラスト肩部OLED</text>
+        <text x="40" y="110" font-size="8" fill="#334155">アルミ削り出しロック付きダイヤル群＋反射透過肩部OLEDで即座に設定確認</text>
+      `);
+
+    case 'body_hotshoe':
+      return wrap(`
+        <!-- 21-Pin Digital Audio Multi-Interface Hot Shoe -->
+        <rect x="20" y="20" width="118" height="70" rx="5" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <rect x="34" y="26" width="90" height="12" rx="2" fill="#1e293b"/>
+        ${Array.from({ length: 12 }, (_, i) => `<rect x="${38 + i * 7}" y="29" width="3.5" height="6" fill="#facc15"/>`).join('')}
+        <circle cx="79" cy="60" r="8" fill="#eab308" stroke="#a16207"/>
+        <text x="42" y="84" font-size="7.5" font-weight="bold" fill="#0f172a">先端21ピン高速デジタル接点</text>
+        <!-- Right: Digital Audio & Global Flash Sync -->
+        <rect x="150" y="20" width="154" height="70" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="158" y="37" font-size="8.5" font-weight="bold" fill="#166534">ケーブルレス直結I/F</text>
+        <text x="158" y="53" font-size="7.5" fill="#15803d">・24bit/48kHz 4chデジタル音声</text>
+        <text x="158" y="67" font-size="7.5" fill="#15803d">・1/80,000s全速同調通信</text>
+        <text x="158" y="81" font-size="7.5" fill="#15803d">・マイク給電＆防水ブーツ対応</text>
+        <text x="42" y="110" font-size="8" fill="#334155">高剛性ステンレスシュー＋21ピンI2Sデジタル伝送でノイズゼロ音声収録</text>
+      `);
+
+    case 'body_front_shell':
+      return wrap(`
+        <!-- Thixomolded AZ91D Magnesium Monocoque Front Shell -->
+        <rect x="22" y="18" width="132" height="74" rx="8" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <circle cx="88" cy="55" r="26" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+        <text x="70" y="58" font-size="8" font-weight="bold" fill="#0f172a">φ69.4</text>
+        <circle cx="38" cy="30" r="3.5" fill="#dc2626"/>
+        <circle cx="136" cy="68" r="4" fill="#94a3b8"/>
+        <!-- Right: Material Properties -->
+        <rect x="166" y="18" width="138" height="74" rx="5" fill="#f1f5f9" stroke="#64748b"/>
+        <text x="174" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">AZ91D マグネシウム外殻</text>
+        <text x="174" y="51" font-size="7.5" fill="#334155">・比重 1.81 (アルミの2/3)</text>
+        <text x="174" y="65" font-size="7.5" fill="#334155">・高い比剛性＆振動減衰</text>
+        <text x="174" y="79" font-size="7.5" fill="#334155">・強力なEMI電磁波シールド</text>
+        <text x="42" y="110" font-size="8" fill="#334155">チクソモールド一体モノコック外装が55mm大口径マウントを強固に保持</text>
+      `);
+
+    case 'body_top_deck':
+      return wrap(`
+        <!-- Sculpted Top Deck & EVF Pentaprism Dome Seal -->
+        <path d="M24 72 L94 72 L116 26 L194 26 L216 72 L292 72 L292 86 L24 86 Z" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <rect x="128" y="38" width="54" height="30" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-dasharray="3 2"/>
+        <text x="135" y="56" font-size="8" font-weight="bold" fill="#0369a1">EVF光学室</text>
+        <rect x="132" y="18" width="46" height="8" rx="2" fill="#cbd5e1" stroke="#334155"/>
+        <text x="124" y="14" font-size="7.5" font-weight="bold" fill="#0f172a">21ピンホットシュー</text>
+        <!-- Waterproof Seal Line -->
+        <line x1="24" y1="88" x2="292" y2="88" stroke="#0ea5e9" stroke-width="2.5" stroke-dasharray="5 2"/>
+        <text x="90" y="99" font-size="7.5" font-weight="bold" fill="#0369a1">全周シリコン防塵防滴ガスケット接合</text>
+        <text x="44" y="112" font-size="8" fill="#334155">マグネシウム一体トップ屋根がEVF保護・放熱・撥水マイク収音を統合</text>
+      `);
+
+    case 'body_rear_controls':
+      return wrap(`
+        <!-- Rear Blind-Touch Ergonomics: LCD Window + Thumb Rest + AF Joystick + Control Wheel -->
+        <rect x="18" y="16" width="156" height="76" rx="6" fill="#334155" stroke="#0f172a"/>
+        <rect x="28" y="28" width="84" height="54" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="48" y="58" font-size="8" font-weight="bold" fill="#0369a1">4軸LCD窓</text>
+        <rect x="124" y="22" width="38" height="12" rx="4" fill="#1e293b"/>
+        <circle cx="136" cy="48" r="7" fill="#0ea5e9" stroke="#fff" stroke-width="1.2"/>
+        <circle cx="142" cy="72" r="11" fill="none" stroke="#cbd5e1" stroke-width="3"/>
+        <!-- Right Description -->
+        <rect x="186" y="16" width="120" height="76" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="194" y="34" font-size="8" font-weight="bold" fill="#0f172a">親指ブラインド操作系</text>
+        <text x="194" y="49" font-size="7.5" fill="#0369a1">・8方向AFジョイスティック</text>
+        <text x="194" y="63" font-size="7.5" fill="#334155">・独立親指AF-ONボタン</text>
+        <text x="194" y="77" font-size="7.5" fill="#334155">・回転＋4方向ホイール</text>
+        <text x="42" y="111" font-size="8" fill="#334155">ファインダーから目を離さず指先の触覚だけで瞳AFと露出を自在に操作</text>
+      `);
+
+    case 'body_card_door':
+      return wrap(`
+        <!-- 2-Action Slide-Lock Dual CFexpress/SD Door -->
+        <rect x="24" y="18" width="96" height="74" rx="5" fill="#1e293b" stroke="#0f172a"/>
+        <rect x="38" y="30" width="16" height="22" rx="2" fill="#cbd5e1"/>
+        <path d="M46 56 L46 72" stroke="#f59e0b" stroke-width="2.4"/>
+        <polygon points="46,76 41,68 51,68" fill="#f59e0b"/>
+        <rect x="78" y="24" width="34" height="62" rx="3" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/>
+        <!-- Right Info -->
+        <rect x="134" y="18" width="170" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="35" font-size="8.5" font-weight="bold" fill="#92400e">二重スライドロック防水扉</text>
+        <text x="142" y="51" font-size="7.5" fill="#78350f">・撮影中の手のひら誤開放を防止</text>
+        <text x="142" y="65" font-size="7.5" fill="#78350f">・開放検知スイッチでデータ保護</text>
+        <text x="142" y="79" font-size="7.5" fill="#78350f">・CFexpress発熱の補助放熱＆防水</text>
+        <text x="42" y="111" font-size="8" fill="#334155">2,000MB/s級超高速メディアを雨塵と誤開放から守る高信頼カードドア</text>
+      `);
+
+    case 'body_io_doors':
+      return wrap(`
+        <!-- 3-Way Split Independent Weather-Sealed I/O Port Doors -->
+        <rect x="26" y="16" width="84" height="22" rx="4" fill="#334155" stroke="#0ea5e9" stroke-width="1.5"/>
+        <text x="36" y="30" font-size="7.5" font-weight="bold" fill="#fff">① 音声(Mic/HP)</text>
+        <rect x="26" y="42" width="84" height="24" rx="4" fill="#0284c7" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="32" y="57" font-size="7.5" font-weight="bold" fill="#fff">② HDMI / USB-C</text>
+        <rect x="26" y="70" width="84" height="22" rx="4" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
+        <text x="34" y="84" font-size="7.5" font-weight="bold" fill="#fff">③ 2.5GbE LAN</text>
+        <!-- Right Benefit -->
+        <rect x="128" y="18" width="176" height="72" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="136" y="36" font-size="8.5" font-weight="bold" fill="#0369a1">3分割独立カバーの利点</text>
+        <text x="136" y="52" font-size="7.5" fill="#0c4a6e">・使う端子だけ開け他を防水保護</text>
+        <text x="136" y="66" font-size="7.5" fill="#0c4a6e">・硬質外皮＋軟質パッキン2色成形</text>
+        <text x="136" y="80" font-size="7.5" fill="#0c4a6e">・4軸LCD展開や動画リグに非干渉</text>
+        <text x="42" y="111" font-size="8" fill="#334155">露出開口面積を66%削減し、雨天のライブ配信・音声収録でも安心</text>
+      `);
+
+    case 'body_baseplate':
+      return wrap(`
+        <!-- Optical-Axis Aligned 1/4-20 UNC Stainless Tripod Load Socket -->
+        <rect x="20" y="26" width="166" height="58" rx="7" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
+        <!-- Optical Axis Dashed Line -->
+        <line x1="103" y1="12" x2="103" y2="96" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="4 2"/>
+        <circle cx="103" cy="55" r="14" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.5"/>
+        <circle cx="103" cy="55" r="5.5" fill="#0f172a"/>
+        <circle cx="103" cy="35" r="3" fill="#0f172a"/>
+        <rect x="30" y="36" width="34" height="38" rx="3" fill="#475569" stroke="#94a3b8"/>
+        <text x="34" y="58" font-size="7" fill="#e2e8f0">電池蓋</text>
+        <!-- Right Spec -->
+        <rect x="198" y="20" width="108" height="70" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="206" y="36" font-size="8" font-weight="bold" fill="#dc2626">光軸直下 (x = 0)</text>
+        <text x="206" y="51" font-size="7.5" fill="#334155">・SUS 1/4-20 UNC</text>
+        <text x="206" y="65" font-size="7.5" fill="#334155">・動画回り止めピン穴</text>
+        <text x="206" y="79" font-size="7.5" fill="#334155">・引抜耐荷重 &gt;1500N</text>
+        <text x="42" y="111" font-size="8" fill="#334155">レンズ光軸直下の高荷重ステンレス三脚座が三脚・ジンバルでブレを根絶</text>
+      `);
   }
 }
 

@@ -34,9 +34,13 @@ function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButto
 
 // Crisp industrial CAD SVG pictograms — strictly zero letters or numbers
 const ICONS = {
-  // Integrated 5-subsystem camera core (Mount + Shutter + Sensor + Mainboard + EVF stacked optical planes)
-  integratedCore:
-    '<rect x="2.5" y="3.5" width="9.5" height="9.5" rx="1.4"/><line x1="2.5" y1="7.8" x2="12" y2="7.8"/><path d="M14 7.5h2.5a1.5 1.5 0 0 1 1.5 1.5v6.5a1.5 1.5 0 0 1-1.5 1.5H10a1.5 1.5 0 0 1-1.5-1.5V15"/><path d="M18 11.5h2a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V18"/>',
+  // Complete Flagship Mirrorless Camera (Body + Pentaprism EVF + Grip + 50mm F1.2 Lens)
+  completeCamera:
+    '<path d="M3 9.5a2 2 0 0 1 2-2h2.2l1.6-2.5h6.4l1.6 2.5H19a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8z"/><circle cx="12" cy="13.5" r="3.8"/><circle cx="12" cy="13.5" r="1.4" fill="currentColor" stroke="none"/><line x1="17" y1="10.2" x2="18.6" y2="10.2"/>',
+
+  // 50mm F1.2 Prime Lens & XD Linear Motors: side cross-section barrel with curved XA/ED lens elements
+  lensModule:
+    '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 6.5c1.8 3.2 1.8 7.8 0 11"/><path d="M12.5 6.5c-1.5 3.2-1.5 7.8 0 11"/><path d="M17 6.5c1.6 3.2 1.6 7.8 0 11"/><line x1="10.2" y1="6" x2="10.2" y2="18" stroke-dasharray="2 2"/>',
 
   // Large-Diameter Bayonet Lens Mount: outer flange ring + inner throat + 4 bayonet lugs + top index dot + bottom contact dots
   mountModule:
@@ -57,6 +61,14 @@ const ICONS = {
   // EVF Optical & Eye-Control Viewfinder: pentaprism hump + eyepiece reticle + optical cone (zero text!)
   evfModule:
     '<path d="M4 17v-5l3.5-5h9L20 12v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M7.5 13.5c1.2-2.2 3-3.3 4.5-3.3s3.3 1.1 4.5 3.3c-1.2 2.2-3 3.3-4.5 3.3s-3.3-1.1-4.5-3.3z"/><circle cx="12" cy="13.5" r="1.4" fill="currentColor" stroke="none"/><line x1="9" y1="4.5" x2="15" y2="4.5"/>',
+
+  // 4-Axis Multi-Angle Rear LCD Monitor: side-hinged articulated display panel with dual motion arcs
+  lcdModule:
+    '<rect x="6.5" y="6" width="14" height="10.5" rx="1.6"/><line x1="4" y1="7.5" x2="4" y2="15"/><line x1="4" y1="11.2" x2="6.5" y2="11.2"/><path d="M8.5 19.2c2.5 1.1 5.5 1.1 8 0"/><polyline points="15.2 18 17 19.1 15.6 20.6"/>',
+
+  // Battery, Magnesium Monocoque Body & Dials: battery power cell + top rotary dial contour
+  bodyModule:
+    '<rect x="4" y="6.5" width="9.5" height="13" rx="1.8"/><line x1="6.8" y1="4" x2="10.7" y2="4"/><path d="M9.6 10.2l-2 3.2h2.4l-1.8 3.2"/><circle cx="17.8" cy="9.5" r="2.7"/><rect x="15.5" y="14.2" width="4.6" height="5.3" rx="1.2"/>',
 
   // Micro 2x2 microlens & stacked wafer icon
   microPixel:
@@ -126,11 +138,14 @@ export class ZeroTextControls {
   private handlers: ZeroTextUIHandlers;
 
   private integratedBtn: HTMLButtonElement;
+  private lensBtn: HTMLButtonElement;
   private mountBtn: HTMLButtonElement;
   private shutterBtn: HTMLButtonElement;
   private sensorBtn: HTMLButtonElement;
   private mainboardBtn: HTMLButtonElement;
   private evfBtn: HTMLButtonElement;
+  private lcdBtn: HTMLButtonElement;
+  private bodyBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
@@ -149,7 +164,7 @@ export class ZeroTextControls {
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
 
-  private currentMode: ScaleMode = 'mount';
+  private currentMode: ScaleMode = 'integrated';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -190,33 +205,42 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 7-Mode Subsystem Switch (Integrated Core / Mount / Shutter / Sensor / Mainboard / EVF / Micro)
+    // Group A: 10-Mode Subsystem Switch (Complete Camera / Lens / Mount / Shutter / Sensor / Mainboard / EVF / LCD / Body / Micro)
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
-    this.integratedBtn = createIconButton(ICONS.integratedCore);
+    this.integratedBtn = createIconButton(ICONS.completeCamera);
+    this.integratedBtn.classList.add('is-active');
+    this.lensBtn = createIconButton(ICONS.lensModule);
     this.mountBtn = createIconButton(ICONS.mountModule);
-    this.mountBtn.classList.add('is-active');
     this.shutterBtn = createIconButton(ICONS.shutterModule);
     this.sensorBtn = createIconButton(ICONS.macroSensor);
     this.mainboardBtn = createIconButton(ICONS.mainboardIsp);
     this.evfBtn = createIconButton(ICONS.evfModule);
+    this.lcdBtn = createIconButton(ICONS.lcdModule);
+    this.bodyBtn = createIconButton(ICONS.bodyModule);
     this.microBtn = createIconButton(ICONS.microPixel);
 
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
+    this.lensBtn.addEventListener('click', () => this.setMode('lens'));
     this.mountBtn.addEventListener('click', () => this.setMode('mount'));
     this.shutterBtn.addEventListener('click', () => this.setMode('shutter'));
     this.sensorBtn.addEventListener('click', () => this.setMode('sensor'));
     this.mainboardBtn.addEventListener('click', () => this.setMode('mainboard'));
     this.evfBtn.addEventListener('click', () => this.setMode('evf'));
+    this.lcdBtn.addEventListener('click', () => this.setMode('lcd'));
+    this.bodyBtn.addEventListener('click', () => this.setMode('body'));
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
     scaleGroup.append(
       this.integratedBtn,
+      this.lensBtn,
       this.mountBtn,
       this.shutterBtn,
       this.sensorBtn,
       this.mainboardBtn,
       this.evfBtn,
+      this.lcdBtn,
+      this.bodyBtn,
       this.microBtn
     );
 
@@ -337,11 +361,14 @@ export class ZeroTextControls {
 
   private applyModeButtons(mode: ScaleMode): void {
     this.integratedBtn.classList.toggle('is-active', mode === 'integrated');
+    this.lensBtn.classList.toggle('is-active', mode === 'lens');
     this.mountBtn.classList.toggle('is-active', mode === 'mount');
     this.shutterBtn.classList.toggle('is-active', mode === 'shutter');
     this.sensorBtn.classList.toggle('is-active', mode === 'sensor');
     this.mainboardBtn.classList.toggle('is-active', mode === 'mainboard');
     this.evfBtn.classList.toggle('is-active', mode === 'evf');
+    this.lcdBtn.classList.toggle('is-active', mode === 'lcd');
+    this.bodyBtn.classList.toggle('is-active', mode === 'body');
     this.microBtn.classList.toggle('is-active', mode === 'micro');
   }
 
@@ -440,7 +467,23 @@ export class ZeroTextControls {
       const bar = document.createElement('span');
       bar.className = 'layer-bar';
       let widthPx = 20;
-      if (part.subsystem === 'mount') {
+      if (part.subsystem === 'lens') {
+        widthPx =
+          part.order === 1 || part.order === 10
+            ? 32
+            : part.order === 2 || part.order === 6 || part.order === 9
+              ? 27
+              : 21;
+      } else if (part.subsystem === 'lcd') {
+        widthPx = part.order === 1 || part.order === 4 || part.order === 6 ? 30 : 23;
+      } else if (part.subsystem === 'body') {
+        widthPx =
+          part.order === 3 || part.order === 7 || part.order === 8 || part.order === 9 || part.order === 12
+            ? 32
+            : part.order === 1 || part.order === 5 || part.order === 6
+              ? 25
+              : 19;
+      } else if (part.subsystem === 'mount') {
         widthPx =
           part.order === 1 || part.order === 11 || part.order === 12
             ? 32
