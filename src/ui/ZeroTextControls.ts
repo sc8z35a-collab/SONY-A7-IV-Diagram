@@ -1,0 +1,427 @@
+import { CadPart, CameraPreset, RenderMode, ScaleMode, SectionAxis } from '../assemblies/types';
+
+export interface ZeroTextUIHandlers {
+  onModeChange: (mode: ScaleMode) => void;
+  onExplodeChange: (value: number) => void;
+  onSectionAxisChange: (axis: SectionAxis) => void;
+  onSectionValueChange: (value: number) => void;
+  onRenderModeChange: (mode: RenderMode) => void;
+  onPhysicsToggle: (active: boolean) => void;
+  onResetVisibility: () => void;
+  onCameraPreset: (preset: CameraPreset) => void;
+  onSelectPart: (partId: string) => void;
+  onHoverPart: (partId: string | null) => void;
+  onToggleHidePart: (partId: string) => void;
+}
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svgIcon(inner: string, viewBox = '0 0 24 24'): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', viewBox);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = inner;
+  return svg;
+}
+
+function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButtonElement {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = className;
+  btn.appendChild(svgIcon(svgContent));
+  return btn;
+}
+
+// Crisp industrial CAD SVG pictograms — strictly zero letters or numbers
+const ICONS = {
+  // Macro sensor frame icon
+  macroSensor:
+    '<rect x="3" y="5" width="18" height="14" rx="2"/><rect x="7" y="8.5" width="10" height="7" rx="1"/><line x1="7" y1="3" x2="7" y2="5"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="17" y1="3" x2="17" y2="5"/><line x1="7" y1="19" x2="7" y2="21"/><line x1="12" y1="19" x2="12" y2="21"/><line x1="17" y1="19" x2="17" y2="21"/>',
+
+  // Micro 2x2 microlens & stacked wafer icon
+  microPixel:
+    '<path d="M4 10c0-2.5 2-4 4-4s4 1.5 4 4"/><path d="M12 10c0-2.5 2-4 4-4s4 1.5 4 4"/><rect x="4" y="10" width="16" height="3.5" rx="0.5"/><rect x="4" y="15.5" width="16" height="3.5" rx="0.5"/>',
+
+  // Assembled compact stack
+  assembled:
+    '<polygon points="12 5 20 9.5 12 14 4 9.5 12 5"/><polyline points="4 13 12 17.5 20 13"/>',
+
+  // Exploded separated layers
+  exploded:
+    '<polygon points="12 2.5 20 6.5 12 10.5 4 6.5 12 2.5"/><polyline points="4 12 12 16 20 12"/><polyline points="4 17.5 12 21.5 20 17.5"/>',
+
+  // Section cut off (full cube)
+  sectionOff:
+    '<rect x="4" y="4" width="16" height="16" rx="2"/><line x1="12" y1="2" x2="12" y2="22" stroke-dasharray="2.5 2.5"/>',
+
+  // Section cut vertical slice (X plane)
+  sectionX:
+    '<path d="M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6"/><line x1="12" y1="2" x2="12" y2="22"/><path d="M15 8l4 4-4 4" opacity="0.55"/>',
+
+  // Section cut horizontal slice (Y plane)
+  sectionY:
+    '<path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M8 9l4-4 4 4" opacity="0.55"/>',
+
+  // Solid PBR shading
+  renderSolid:
+    '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5"/><path d="M12 12v9"/><path d="M12 12L4 7.5"/>',
+
+  // X-ray translucent dissection
+  renderXray:
+    '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" stroke-dasharray="2.5 2"/><circle cx="12" cy="12" r="3"/>',
+
+  // Technical CAD wireframe/line art
+  renderCad:
+    '<polygon points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="4" y1="7.5" x2="20" y2="16.5" opacity="0.45"/><line x1="20" y1="7.5" x2="4" y2="16.5" opacity="0.45"/>',
+
+  // Optical rays + IBIS live physics toggle
+  physicsRays:
+    '<line x1="3" y1="6" x2="12" y2="12"/><line x1="3" y1="12" x2="12" y2="12"/><line x1="3" y1="18" x2="12" y2="12"/><line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="21" y2="17"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>',
+
+  // Reset all visibility (show all)
+  eyeAll:
+    '<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
+
+  eyeClosed:
+    '<path d="M3 3l18 18"/><path d="M10.6 10.6a2.5 2.5 0 0 0 3.5 3.5"/><path d="M6.4 6.7C4 8.2 2.4 10.5 2 12c1.2 3.2 5 6.5 10 6.5 1.8 0 3.5-.5 4.9-1.2"/><path d="M9.8 5.7A10.6 10.6 0 0 1 12 5.5c5 0 8.8 3.3 10 6.5-.4 1.1-1.2 2.4-2.4 3.6"/>',
+
+  // Camera viewpoints (pure geometric cube faces, zero letters)
+  viewIso:
+    '<path d="M12 3l7.5 4.2v8.6L12 20l-7.5-4.2V7.2L12 3z"/><path d="M12 11.5L19.5 7.2"/><path d="M12 11.5V20"/><path d="M12 11.5L4.5 7.2"/>',
+  viewFront:
+    '<rect x="5" y="5" width="14" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/>',
+  viewSide:
+    '<rect x="9" y="4" width="6" height="16" rx="1.5"/><line x1="4" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="20" y2="12"/>',
+  viewBack:
+    '<rect x="5" y="5" width="14" height="14" rx="2"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="8.5" x2="8.5" y2="15.5"/>',
+};
+
+/**
+ * Strictly Zero-Text CAD HUD:
+ * Contains ONLY SVG pictograms, geometric sliders, and color/bar layer strips.
+ * Zero visible letters, zero numbers, zero text tooltips.
+ */
+export class ZeroTextControls {
+  private root: HTMLElement;
+  private handlers: ZeroTextUIHandlers;
+
+  private macroBtn: HTMLButtonElement;
+  private microBtn: HTMLButtonElement;
+  private explodeRange: HTMLInputElement;
+  private assembleBtn: HTMLButtonElement;
+  private explodeBtn: HTMLButtonElement;
+
+  private sectionBtn: HTMLButtonElement;
+  private sectionRange: HTMLInputElement;
+
+  private solidBtn: HTMLButtonElement;
+  private xrayBtn: HTMLButtonElement;
+  private cadBtn: HTMLButtonElement;
+
+  private physicsBtn: HTMLButtonElement;
+  private resetVisBtn: HTMLButtonElement;
+
+  private layerRail: HTMLElement;
+  private layerRowMap = new Map<string, HTMLElement>();
+
+  private currentMode: ScaleMode = 'macro';
+  private currentSectionAxis: SectionAxis = 'off';
+  private currentRenderMode: RenderMode = 'solid';
+  private physicsActive = false;
+
+  constructor(root: HTMLElement, handlers: ZeroTextUIHandlers) {
+    this.root = root;
+    this.handlers = handlers;
+
+    // -----------------------------------------------------------------------
+    // 1. Top-Left Camera Viewpoint Cluster
+    // -----------------------------------------------------------------------
+    const viewCluster = document.createElement('div');
+    viewCluster.className = 'view-cluster';
+
+    const vIso = createIconButton(ICONS.viewIso);
+    const vFront = createIconButton(ICONS.viewFront);
+    const vSide = createIconButton(ICONS.viewSide);
+    const vBack = createIconButton(ICONS.viewBack);
+
+    vIso.addEventListener('click', () => this.handlers.onCameraPreset('iso'));
+    vFront.addEventListener('click', () => this.handlers.onCameraPreset('front'));
+    vSide.addEventListener('click', () => this.handlers.onCameraPreset('side'));
+    vBack.addEventListener('click', () => this.handlers.onCameraPreset('back'));
+
+    viewCluster.append(vIso, vFront, vSide, vBack);
+    this.root.appendChild(viewCluster);
+
+    // -----------------------------------------------------------------------
+    // 2. Left Vertical Layer Dissection Strip (Swatches + Geometric Bars)
+    // -----------------------------------------------------------------------
+    this.layerRail = document.createElement('div');
+    this.layerRail.className = 'layer-rail';
+    this.root.appendChild(this.layerRail);
+
+    // -----------------------------------------------------------------------
+    // 3. Bottom Floating CAD Dock
+    // -----------------------------------------------------------------------
+    const dock = document.createElement('div');
+    dock.className = 'cad-dock';
+
+    // Group A: Macro <-> Micro Pixel Scale Switch
+    const scaleGroup = document.createElement('div');
+    scaleGroup.className = 'cad-dock-group';
+
+    this.macroBtn = createIconButton(ICONS.macroSensor);
+    this.macroBtn.classList.add('is-active');
+    this.microBtn = createIconButton(ICONS.microPixel);
+
+    this.macroBtn.addEventListener('click', () => this.setMode('macro'));
+    this.microBtn.addEventListener('click', () => this.setMode('micro'));
+    scaleGroup.append(this.macroBtn, this.microBtn);
+
+    // Group B: Exploded View Dissection Slider
+    const explodeGroup = document.createElement('div');
+    explodeGroup.className = 'slider-cluster';
+
+    this.assembleBtn = createIconButton(ICONS.assembled);
+    this.explodeRange = document.createElement('input');
+    this.explodeRange.type = 'range';
+    this.explodeRange.min = '0';
+    this.explodeRange.max = '1000';
+    this.explodeRange.value = '0';
+    this.explodeRange.className = 'cad-range';
+    this.explodeBtn = createIconButton(ICONS.exploded);
+
+    this.assembleBtn.addEventListener('click', () => {
+      this.explodeRange.value = '0';
+      this.handlers.onExplodeChange(0);
+      this.updateExplodeButtons(0);
+    });
+    this.explodeBtn.addEventListener('click', () => {
+      this.explodeRange.value = '1000';
+      this.handlers.onExplodeChange(1);
+      this.updateExplodeButtons(1);
+    });
+    this.explodeRange.addEventListener('input', () => {
+      const v = Number(this.explodeRange.value) / 1000;
+      this.handlers.onExplodeChange(v);
+      this.updateExplodeButtons(v);
+    });
+    this.updateExplodeButtons(0);
+    explodeGroup.append(this.assembleBtn, this.explodeRange, this.explodeBtn);
+
+    // Group C: Real-Time CAD Section Cut (Off -> X -> Y + Slider)
+    const sectionGroup = document.createElement('div');
+    sectionGroup.className = 'slider-cluster';
+
+    this.sectionBtn = createIconButton(ICONS.sectionOff);
+    this.sectionRange = document.createElement('input');
+    this.sectionRange.type = 'range';
+    this.sectionRange.min = '0';
+    this.sectionRange.max = '1000';
+    this.sectionRange.value = '500';
+    this.sectionRange.className = 'cad-range is-disabled';
+
+    this.sectionBtn.addEventListener('click', () => {
+      const next: SectionAxis =
+        this.currentSectionAxis === 'off'
+          ? 'x'
+          : this.currentSectionAxis === 'x'
+            ? 'y'
+            : 'off';
+      this.setSectionAxis(next);
+    });
+
+    this.sectionRange.addEventListener('input', () => {
+      this.handlers.onSectionValueChange(Number(this.sectionRange.value) / 1000);
+    });
+    sectionGroup.append(this.sectionBtn, this.sectionRange);
+
+    // Group D: Render Shading Modes (Solid / X-Ray / CAD Line)
+    const renderGroup = document.createElement('div');
+    renderGroup.className = 'cad-dock-group';
+
+    this.solidBtn = createIconButton(ICONS.renderSolid);
+    this.solidBtn.classList.add('is-active');
+    this.xrayBtn = createIconButton(ICONS.renderXray);
+    this.cadBtn = createIconButton(ICONS.renderCad);
+
+    this.solidBtn.addEventListener('click', () => this.setRenderMode('solid'));
+    this.xrayBtn.addEventListener('click', () => this.setRenderMode('xray'));
+    this.cadBtn.addEventListener('click', () => this.setRenderMode('cad'));
+    renderGroup.append(this.solidBtn, this.xrayBtn, this.cadBtn);
+
+    // Group E: Optical Ray / Physics Simulation & Visibility Reset
+    const actionGroup = document.createElement('div');
+    actionGroup.className = 'cad-dock-group';
+
+    this.physicsBtn = createIconButton(ICONS.physicsRays);
+    this.physicsBtn.classList.add('is-accent');
+    this.physicsBtn.addEventListener('click', () => {
+      this.physicsActive = !this.physicsActive;
+      this.physicsBtn.classList.toggle('is-active', this.physicsActive);
+      this.handlers.onPhysicsToggle(this.physicsActive);
+    });
+
+    this.resetVisBtn = createIconButton(ICONS.eyeAll);
+    this.resetVisBtn.disabled = true;
+    this.resetVisBtn.addEventListener('click', () => {
+      this.handlers.onResetVisibility();
+    });
+
+    actionGroup.append(this.physicsBtn, this.resetVisBtn);
+
+    const div1 = document.createElement('div');
+    div1.className = 'cad-divider';
+    const div2 = document.createElement('div');
+    div2.className = 'cad-divider';
+    const div3 = document.createElement('div');
+    div3.className = 'cad-divider';
+    const div4 = document.createElement('div');
+    div4.className = 'cad-divider';
+
+    dock.append(
+      scaleGroup,
+      div1,
+      explodeGroup,
+      div2,
+      sectionGroup,
+      div3,
+      renderGroup,
+      div4,
+      actionGroup
+    );
+    this.root.appendChild(dock);
+  }
+
+  private setMode(mode: ScaleMode): void {
+    if (this.currentMode === mode) return;
+    this.currentMode = mode;
+    this.macroBtn.classList.toggle('is-active', mode === 'macro');
+    this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.handlers.onModeChange(mode);
+  }
+
+  private updateExplodeButtons(v: number): void {
+    this.assembleBtn.classList.toggle('is-active', v < 0.04);
+    this.explodeBtn.classList.toggle('is-active', v > 0.96);
+  }
+
+  private setSectionAxis(axis: SectionAxis): void {
+    this.currentSectionAxis = axis;
+    this.sectionBtn.replaceChildren(
+      svgIcon(
+        axis === 'off' ? ICONS.sectionOff : axis === 'x' ? ICONS.sectionX : ICONS.sectionY
+      )
+    );
+    this.sectionBtn.classList.toggle('is-active', axis !== 'off');
+    this.sectionRange.classList.toggle('is-disabled', axis === 'off');
+    this.handlers.onSectionAxisChange(axis);
+  }
+
+  private setRenderMode(mode: RenderMode): void {
+    if (this.currentRenderMode === mode) return;
+    this.currentRenderMode = mode;
+    this.solidBtn.classList.toggle('is-active', mode === 'solid');
+    this.xrayBtn.classList.toggle('is-active', mode === 'xray');
+    this.cadBtn.classList.toggle('is-active', mode === 'cad');
+    this.handlers.onRenderModeChange(mode);
+  }
+
+  public setExplodeValue(v: number): void {
+    this.explodeRange.value = String(Math.round(v * 1000));
+    this.updateExplodeButtons(v);
+  }
+
+  public syncMode(mode: ScaleMode): void {
+    this.currentMode = mode;
+    this.macroBtn.classList.toggle('is-active', mode === 'macro');
+    this.microBtn.classList.toggle('is-active', mode === 'micro');
+  }
+
+  public syncSectionAxis(axis: SectionAxis, value = 0.5): void {
+    this.currentSectionAxis = axis;
+    this.sectionBtn.replaceChildren(
+      svgIcon(
+        axis === 'off' ? ICONS.sectionOff : axis === 'x' ? ICONS.sectionX : ICONS.sectionY
+      )
+    );
+    this.sectionBtn.classList.toggle('is-active', axis !== 'off');
+    this.sectionRange.classList.toggle('is-disabled', axis === 'off');
+    this.sectionRange.value = String(Math.round(value * 1000));
+  }
+
+  public syncPhysics(active: boolean): void {
+    this.physicsActive = active;
+    this.physicsBtn.classList.toggle('is-active', active);
+  }
+
+  public renderLayerRail(
+    parts: CadPart[],
+    selectedId: string | null,
+    hoveredId: string | null,
+    isHidden: (id: string) => boolean,
+    hasAnyHidden: boolean
+  ): void {
+    this.layerRail.replaceChildren();
+    this.layerRowMap.clear();
+    this.resetVisBtn.disabled = !hasAnyHidden;
+
+    // Bar width rhythmically reflects real physical breadth of optical vs silicon vs IBIS chassis layers
+    const total = Math.max(1, parts.length);
+
+    parts.forEach((part, idx) => {
+      const row = document.createElement('div');
+      row.className = 'layer-item';
+      const hidden = isHidden(part.id);
+      if (part.id === selectedId) row.classList.add('is-selected');
+      if (part.id === hoveredId) row.classList.add('is-hovered');
+      if (hidden) row.classList.add('is-hidden');
+
+      const swatch = document.createElement('span');
+      swatch.className = 'layer-swatch';
+      swatch.style.backgroundColor = part.swatchColor;
+
+      const bar = document.createElement('span');
+      bar.className = 'layer-bar';
+      const ratio = idx / Math.max(1, total - 1);
+      // Subtle geometric profile mirroring optical filter stack -> die -> wider IBIS stage
+      const widthPx =
+        part.mode === 'macro'
+          ? Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (idx >= 9 ? 10 : 0))
+          : Math.round(18 + (idx === 3 || idx === 4 ? 10 : 4));
+      bar.style.width = `${widthPx}px`;
+
+      const eyeBtn = document.createElement('button');
+      eyeBtn.type = 'button';
+      eyeBtn.className = 'layer-eye-btn';
+      eyeBtn.appendChild(svgIcon(hidden ? ICONS.eyeClosed : ICONS.eyeAll));
+
+      eyeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handlers.onToggleHidePart(part.id);
+      });
+
+      row.addEventListener('click', () => {
+        this.handlers.onSelectPart(part.id);
+      });
+
+      row.addEventListener('pointerenter', () => {
+        this.handlers.onHoverPart(part.id);
+      });
+
+      row.addEventListener('pointerleave', () => {
+        this.handlers.onHoverPart(null);
+      });
+
+      row.append(swatch, bar, eyeBtn);
+      this.layerRail.appendChild(row);
+      this.layerRowMap.set(part.id, row);
+    });
+  }
+
+  public syncHighlight(selectedId: string | null, hoveredId: string | null): void {
+    this.layerRowMap.forEach((row, id) => {
+      row.classList.toggle('is-selected', id === selectedId);
+      row.classList.toggle('is-hovered', id === hoveredId);
+    });
+  }
+}
