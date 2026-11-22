@@ -292,3 +292,48 @@ export function tagPartMeshes(group: THREE.Object3D, partId: string): void {
     obj.userData.partId = partId;
   });
 }
+
+/**
+ * Create a rotationally symmetric precision optical lens element centered along the Z axis.
+ * - `sagFront` (>0 bulges toward +Z, <0 concaves inward on +Z face)
+ * - `sagRear`  (>0 bulges toward -Z, <0 concaves inward on -Z face)
+ * - `asphericFront`, `asphericRear`: 4th-order aspheric departure terms shaping inflection
+ */
+export function createOpticalLensGeometry(
+  radius: number,
+  edgeThickness: number,
+  sagFront: number,
+  sagRear: number,
+  asphericFront = 0,
+  asphericRear = 0,
+  profileSteps = 22,
+  radialSegments = 48
+): THREE.BufferGeometry {
+  const halfEdge = edgeThickness * 0.5;
+  const pts: THREE.Vector2[] = [];
+
+  // Front optical surface (+Z side in final orientation; +Y in lathe coordinates) from axis -> rim
+  for (let i = 0; i <= profileSteps; i++) {
+    const u = i / profileSteps; // 0 at optical axis, 1 at rim
+    const r = Math.max(0.0001, u * radius);
+    const r2 = u * u;
+    const zF = halfEdge + sagFront * (1 - r2) + asphericFront * r2 * (1 - r2);
+    pts.push(new THREE.Vector2(r, zF));
+  }
+
+  // Rear optical surface (-Z side; -Y in lathe coordinates) from rim -> axis
+  for (let i = profileSteps; i >= 0; i--) {
+    const u = i / profileSteps;
+    const r = Math.max(0.0001, u * radius);
+    const r2 = u * u;
+    const zR = -halfEdge - sagRear * (1 - r2) - asphericRear * r2 * (1 - r2);
+    pts.push(new THREE.Vector2(r, zR));
+  }
+
+  const geo = new THREE.LatheGeometry(pts, radialSegments);
+  // Rotate so Lathe +Y axis aligns with optical +Z axis
+  geo.rotateX(Math.PI / 2);
+  geo.computeVertexNormals();
+  return geo;
+}
+

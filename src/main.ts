@@ -121,9 +121,56 @@ window.addEventListener('keydown', (e) => {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Mainboard mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in EVF mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
-if (preset === 'mainboard_exploded') {
+if (preset === 'evf_assembled') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'evf_exploded') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'evf_section') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.52);
+  controls.syncSectionAxis('x', 0.52);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'evf_drawer') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('evf-oled-panel', false);
+  syncRail();
+} else if (preset === 'evf_eye_af_drawer') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('evf-dichroic-mirror', false);
+  syncRail();
+} else if (preset === 'mainboard_exploded') {
   viewport.setMode('mainboard', true);
   controls.syncMode('mainboard');
   viewport.setExplode(0.95, true);

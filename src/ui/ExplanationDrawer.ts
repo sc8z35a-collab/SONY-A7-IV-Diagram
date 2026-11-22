@@ -953,6 +953,352 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="178" y="85" font-size="7.5" font-weight="bold" fill="#c2410c">背面ベイパーチャンバーへ逃がす!</text>
         <text x="48" y="110" font-size="8" fill="#334155">高剛性マグネシウム骨格＋熱分離構造で高画質と8K連続収録を両立</text>
       `);
+
+    // =========================================================================
+    // EVF Optical & Eye-Tracking Anatomy Schematics (14 bespoke diagrams)
+    // =========================================================================
+    case 'evf_eyecup':
+      return wrap(`
+        <!-- Eyepiece Lens + Silicone Eyecup + 25mm High Eyepoint + Spectacles -->
+        <rect x="24" y="28" width="16" height="58" rx="4" fill="#bae6fd" stroke="#0284c7" stroke-width="1.4"/>
+        <text x="16" y="98" font-size="7.5" fill="#0369a1">接眼最終面</text>
+        <!-- Deep Eyecup Shroud -->
+        <path d="M40 24 L82 14 L82 26 L48 34 Z" fill="#334155"/>
+        <path d="M40 90 L82 100 L82 88 L48 80 Z" fill="#334155"/>
+        <text x="50" y="12" font-size="8" font-weight="bold" fill="#1e293b">深型遮光カップ</text>
+        <!-- Stray sunlight blocked -->
+        <path d="M98 10 L74 20" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <text x="98" y="16" font-size="7.5" fill="#d97706">外光遮断!</text>
+        <!-- 41° FoV Ray Cone -->
+        <polygon points="40,36 40,78 196,57" fill="rgba(14,165,233,0.16)" stroke="#0284c7" stroke-width="1.3"/>
+        <line x1="40" y1="88" x2="196" y2="88" stroke="#0f172a" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <text x="88" y="84" font-size="8.5" font-weight="bold" fill="#0f172a">ハイアイポイント 25 mm</text>
+        <!-- Eyeglasses + Human Eye -->
+        <line x1="158" y1="26" x2="158" y2="86" stroke="#64748b" stroke-width="2.4"/>
+        <text x="148" y="22" font-size="7.5" fill="#475569">眼鏡OK</text>
+        <path d="M196 57 Q226 30 264 57 Q226 84 196 57 Z" fill="#f8fafc" stroke="#1e293b" stroke-width="1.6"/>
+        <circle cx="212" cy="57" r="9" fill="#0284c7" opacity="0.75"/>
+        <circle cx="210" cy="57" r="4" fill="#0f172a"/>
+        <text x="198" y="99" font-size="8" font-weight="bold" fill="#0284c7">射出瞳・対角視野角 41°</text>
+        <text x="56" y="114" font-size="8" fill="#334155">眼鏡着用でも四隅までケラレない25mmアイポイント＆迷光完全遮断</text>
+      `);
+
+    case 'evf_antifog':
+      return wrap(`
+        <!-- Cold Outside Air vs Warm Camera Interior with Airtight Dry-Air Gap -->
+        <rect x="14" y="16" width="84" height="76" rx="5" fill="#eff6ff" stroke="#38bdf8"/>
+        <text x="26" y="34" font-size="8.5" font-weight="bold" fill="#0369a1">外気 (極寒/多湿)</text>
+        <text x="26" y="50" font-size="8" fill="#0284c7">−10℃ / 呼気</text>
+        <text x="24" y="76" font-size="7.5" fill="#0369a1">フッ素撥水・撥油膜</text>
+        <!-- Outer Glass -->
+        <rect x="104" y="16" width="16" height="76" rx="2" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.3"/>
+        <!-- Airtight Dry Air Chamber -->
+        <rect x="120" y="22" width="44" height="64" fill="#f8fafc" stroke="#64748b" stroke-dasharray="3 2"/>
+        <rect x="120" y="16" width="44" height="6" fill="#1e293b"/>
+        <rect x="120" y="86" width="44" height="6" fill="#1e293b"/>
+        <text x="124" y="50" font-size="8" font-weight="bold" fill="#0f172a">乾燥空気</text>
+        <text x="125" y="63" font-size="7.5" fill="#475569">密閉断熱</text>
+        <!-- Inner Glass -->
+        <rect x="164" y="16" width="16" height="76" rx="2" fill="#bae6fd" stroke="#0284c7" stroke-width="1.3"/>
+        <!-- Camera EVF Optics Side -->
+        <rect x="186" y="16" width="118" height="76" rx="5" fill="#fff7ed" stroke="#fb923c"/>
+        <text x="196" y="36" font-size="8.5" font-weight="bold" fill="#c2410c">EVF光学室 (+30℃)</text>
+        <text x="196" y="53" font-size="8" fill="#9a3412">内面温度 &gt; 露点温度</text>
+        <text x="196" y="70" font-size="8.5" font-weight="bold" fill="#16a34a">⇒ 結露・曇りゼロ!</text>
+        <text x="196" y="84" font-size="7.5" fill="#64748b">可視光＋850nm NIR透過</text>
+        <text x="48" y="110" font-size="8" fill="#334155">断熱ペアガラス構造＋Oリング気密封止で寒冷地・雨天でも曇らない</text>
+      `);
+
+    case 'evf_eye_sensor':
+      return wrap(`
+        <!-- 940nm VCSEL ToF Proximity + Ambient Sensor -->
+        <rect x="18" y="24" width="76" height="62" rx="6" fill="#1e293b"/>
+        <circle cx="40" cy="46" r="9" fill="#e11d48" stroke="#facc15" stroke-width="1.4"/>
+        <text x="27" y="66" font-size="7.5" fill="#fda4af">940nm発光</text>
+        <circle cx="72" cy="46" r="9" fill="#0284c7" stroke="#facc15" stroke-width="1.4"/>
+        <text x="60" y="66" font-size="7.5" fill="#7dd3fc">SPAD受光</text>
+        <!-- Outgoing & Returning ToF Pulses -->
+        <path d="M94 42 L182 42" stroke="#f43f5e" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="186,42 178,38 178,46" fill="#f43f5e"/>
+        <path d="M182 58 L98 58" stroke="#0284c7" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="94,58 102,54 102,62" fill="#0284c7"/>
+        <text x="108" y="34" font-size="8" font-weight="bold" fill="#be123c">往復時間 Δt 測距</text>
+        <text x="104" y="74" font-size="8" fill="#0369a1">距離 d &lt; 25mm で瞬時切替</text>
+        <!-- Eye / Face Profile + Auto Brightness Badge -->
+        <path d="M192 32 Q216 50 192 68" fill="none" stroke="#1e293b" stroke-width="2.2"/>
+        <circle cx="198" cy="50" r="6" fill="#38bdf8"/>
+        <rect x="220" y="22" width="88" height="66" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="228" y="40" font-size="8.5" font-weight="bold" fill="#166534">応答 &lt; 40 ms</text>
+        <text x="228" y="55" font-size="7.5" fill="#15803d">EVF ON / LCD OFF</text>
+        <text x="228" y="70" font-size="7.5" fill="#0369a1">環境照度センサーで</text>
+        <text x="228" y="81" font-size="7.5" fill="#0369a1">4,000nit自動調光</text>
+        <text x="48" y="110" font-size="8" fill="#334155">850nm視線AFと干渉しない940nm帯ToF測距＋周囲明るさ自動順応</text>
+      `);
+
+    case 'evf_ir_leds':
+      return wrap(`
+        <!-- 8-LED Ring Left + Corneal Purkinje Reflection Geometry Right -->
+        <ellipse cx="78" cy="56" rx="50" ry="38" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+        <ellipse cx="78" cy="56" rx="34" ry="24" fill="#eff6ff" stroke="#94a3b8"/>
+        ${[0, 1, 2, 3, 4, 5, 6, 7]
+          .map((i) => {
+            const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+            const cx = (78 + Math.cos(a) * 42).toFixed(1);
+            const cy = (56 + Math.sin(a) * 31).toFixed(1);
+            return `<circle cx="${cx}" cy="${cy}" r="4.2" fill="#e11d48" stroke="#fde047" stroke-width="1"/>`;
+          })
+          .join('')}
+        <text x="53" y="59" font-size="8" font-weight="bold" fill="#0369a1">850nm × 8灯</text>
+        <!-- Right: Pupil Center vs Purkinje Glint Vector -->
+        <rect x="148" y="14" width="156" height="82" rx="6" fill="#fff1f2" stroke="#fda4af"/>
+        <circle cx="224" cy="52" r="24" fill="#fff" stroke="#1e293b" stroke-width="1.6"/>
+        <circle cx="231" cy="49" r="10" fill="#0f172a"/>
+        <circle cx="218" cy="53" r="3.4" fill="#e11d48"/>
+        <line x1="218" y1="53" x2="231" y2="49" stroke="#f59e0b" stroke-width="2"/>
+        <text x="156" y="28" font-size="8" font-weight="bold" fill="#be123c">角膜反射法 (PCCR)</text>
+        <text x="156" y="86" font-size="7.5" fill="#9f1239">黒目中心と角膜反射点(赤)のズレ→視線!</text>
+        <text x="54" y="111" font-size="8" fill="#334155">8方向からの安全850nm近赤外光で眼鏡越しでも瞳孔と角膜反射を捕捉</text>
+      `);
+
+    case 'evf_dichroic':
+      return wrap(`
+        <!-- 45° Dichroic Hot Mirror: Visible Straight Through, 850nm IR 90° Down! -->
+        <!-- OLED Left -->
+        <rect x="14" y="34" width="32" height="40" rx="3" fill="#2563eb"/>
+        <text x="17" y="57" font-size="8" font-weight="bold" fill="#fff">OLED</text>
+        <!-- Visible Light Passing Straight Through (Cyan/Gold) -->
+        <line x1="46" y1="50" x2="256" y2="50" stroke="#0284c7" stroke-width="2.6"/>
+        <polygon points="260,50 251,45 251,55" fill="#0284c7"/>
+        <text x="50" y="38" font-size="8" font-weight="bold" fill="#0369a1">可視光 98.5% 透過</text>
+        <!-- 45° Dichroic Mirror Glass -->
+        <line x1="146" y1="22" x2="200" y2="76" stroke="#db2777" stroke-width="5" stroke-linecap="round"/>
+        <line x1="146" y1="22" x2="200" y2="76" stroke="#fbcfe8" stroke-width="1.5"/>
+        <text x="176" y="21" font-size="8" font-weight="bold" fill="#be185d">45° 誘電体多層膜</text>
+        <!-- Eye on Right -->
+        <path d="M266 54 Q284 38 304 54 Q284 70 266 54 Z" fill="#f8fafc" stroke="#1e293b" stroke-width="1.5"/>
+        <circle cx="277" cy="54" r="5.5" fill="#0284c7"/>
+        <!-- 850nm IR Reflecting 90° Downward! -->
+        <line x1="264" y1="60" x2="178" y2="60" stroke="#e11d48" stroke-width="2.2" stroke-dasharray="4 2"/>
+        <line x1="178" y1="60" x2="178" y2="94" stroke="#e11d48" stroke-width="2.6"/>
+        <polygon points="178,99 173,90 183,90" fill="#e11d48"/>
+        <text x="188" y="88" font-size="8" font-weight="bold" fill="#be123c">850nm赤外線 95% 反射</text>
+        <rect x="152" y="99" width="52" height="14" rx="2" fill="#7e22ce"/>
+        <text x="157" y="109" font-size="7.5" fill="#fff">視線CMOSへ</text>
+        <text x="14" y="108" font-size="7.5" fill="#475569">画質劣化ゼロで光路分離</text>
+      `);
+
+    case 'evf_gaze_cam':
+      return wrap(`
+        <!-- Vertical Cross-Section: 90° IR Beam -> Aspheric Relay Lens -> 850nm BPF -> 307K NIR CMOS -> AI NPU -->
+        <line x1="68" y1="10" x2="68" y2="30" stroke="#e11d48" stroke-width="2.4"/>
+        <polygon points="68,34 63,26 73,26" fill="#e11d48"/>
+        <text x="82" y="24" font-size="8" font-weight="bold" fill="#be123c">90°反射された眼球赤外像</text>
+        <!-- Relay Lens -->
+        <ellipse cx="68" cy="44" rx="24" ry="7" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="100" y="47" font-size="8" fill="#0369a1">非球面IRリレーレンズ</text>
+        <!-- 850nm Bandpass Filter -->
+        <rect x="44" y="58" width="48" height="7" rx="2" fill="#f43f5e" opacity="0.78"/>
+        <text x="100" y="65" font-size="8" fill="#be123c">850nm狭帯域フィルター (外光遮断)</text>
+        <!-- 307K-px NIR CMOS -->
+        <rect x="38" y="74" width="60" height="14" rx="2" fill="#1e1b4b" stroke="#eab308" stroke-width="1.4"/>
+        <text x="44" y="84" font-size="7.5" fill="#fde047">30.7万画素CMOS</text>
+        <!-- Arrow to AI NPU -->
+        <path d="M104 81 L176 81" stroke="#7c3aed" stroke-width="2.2"/>
+        <polygon points="181,81 173,76 173,86" fill="#7c3aed"/>
+        <rect x="184" y="68" width="122" height="28" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text x="192" y="80" font-size="8" font-weight="bold" fill="#5b21b6">AIアクセラレーター解析</text>
+        <text x="192" y="91" font-size="7.5" fill="#6d28d9">2倍速でAF枠を視線先へ!</text>
+        <text x="38" y="110" font-size="8" fill="#334155">メイン基板上端のEVF専用ノッチへ収容し、見るだけでピント位置を移動</text>
+      `);
+
+    case 'evf_lens_rear':
+      return wrap(`
+        <!-- Spherical vs Double-Aspheric Comparison (Distortion & Astigmatism) -->
+        <rect x="16" y="16" width="126" height="76" rx="5" fill="#fff1f2" stroke="#fda4af"/>
+        <text x="26" y="31" font-size="8" font-weight="bold" fill="#be123c">一般球面レンズ (周辺歪み)</text>
+        <path d="M40 42 Q78 52 116 42 M40 80 Q78 70 116 80 M40 42 Q50 61 40 80 M116 42 Q106 61 116 80" fill="none" stroke="#e11d48" stroke-width="1.5"/>
+        <text x="34" y="88" font-size="7.5" fill="#9f1239">糸巻き歪み・視線移動で像揺れ</text>
+        <!-- Right: Double-Sided Aspheric G4 -->
+        <rect x="156" y="16" width="150" height="76" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="166" y="31" font-size="8" font-weight="bold" fill="#0369a1">G4 大口径両面非球面 (GMo)</text>
+        <rect x="182" y="42" width="96" height="36" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="214" y1="42" x2="214" y2="78" stroke="#38bdf8" stroke-width="1"/>
+        <line x1="246" y1="42" x2="246" y2="78" stroke="#38bdf8" stroke-width="1"/>
+        <text x="168" y="88" font-size="7.5" fill="#0369a1">視野角41°全域で直進・像揺れゼロ!</text>
+        <text x="44" y="110" font-size="8" fill="#334155">高次非球面＋超低反射T*級コートにより0.90×大倍率と端までの切れを両立</text>
+      `);
+
+    case 'evf_lens_ed':
+      return wrap(`
+        <!-- Cemented ED Crown + High-Index Flint Doublet + Diopter Slide Arrows -->
+        <!-- Left Doublet Cross Section -->
+        <path d="M54 22 Q74 22 74 56 Q74 90 54 90 L44 90 Q54 56 44 22 Z" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.4"/>
+        <path d="M74 22 Q98 56 74 90 Q82 56 74 22 Z" fill="#6ee7b7" stroke="#059669" stroke-width="1.4"/>
+        <text x="26" y="16" font-size="7.5" font-weight="bold" fill="#4338ca">高分散凹(G2)</text>
+        <text x="76" y="16" font-size="7.5" font-weight="bold" fill="#047857">ED低分散凸(G3)</text>
+        <!-- R/G/B Rays Converging to Single Sharp Point (Zero Chromatic Aberration!) -->
+        <line x1="94" y1="36" x2="216" y2="56" stroke="#ef4444" stroke-width="1.7"/>
+        <line x1="96" y1="56" x2="216" y2="56" stroke="#10b981" stroke-width="1.7"/>
+        <line x1="94" y1="76" x2="216" y2="56" stroke="#2563eb" stroke-width="1.7"/>
+        <circle cx="216" cy="56" r="4.5" fill="#facc15" stroke="#0f172a" stroke-width="1.2"/>
+        <text x="148" y="34" font-size="8" font-weight="bold" fill="#047857">R/G/B 完全一致(色収差ゼロ)</text>
+        <!-- Diopter Movement Indicator -->
+        <path d="M36 98 L104 98" stroke="#d97706" stroke-width="2.2"/>
+        <polygon points="32,98 40,94 40,102" fill="#d97706"/>
+        <polygon points="108,98 100,94 100,102" fill="#d97706"/>
+        <text x="116" y="101" font-size="8" font-weight="bold" fill="#b45309">前後3.4mm移動 ⇒ 視度 −4.0 〜 +3.0 m⁻¹</text>
+        <rect x="228" y="38" width="76" height="36" rx="4" fill="#fefce8" stroke="#eab308"/>
+        <text x="234" y="53" font-size="7.5" font-weight="bold" fill="#854d0e">Δz = −f²·ΔD</text>
+        <text x="234" y="66" font-size="7.5" fill="#a16207">裸眼くっきり</text>
+      `);
+
+    case 'evf_diopter':
+      return wrap(`
+        <!-- Pop-out Knurled Dial -> Gears -> Brass Lead Screw + Guide Rod + Anti-Backlash Spring -->
+        <rect x="18" y="36" width="38" height="40" rx="5" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="26" y1="36" x2="26" y2="76" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="36" y1="36" x2="36" y2="76" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="46" y1="36" x2="46" y2="76" stroke="#94a3b8" stroke-width="1.2"/>
+        <text x="16" y="90" font-size="7.5" font-weight="bold" fill="#1e293b">引出しロック</text>
+        <!-- Lead Screw -->
+        <rect x="56" y="51" width="144" height="10" rx="2" fill="#f59e0b" stroke="#b45309"/>
+        ${[0, 1, 2, 3, 4, 5, 6, 7, 8]
+          .map((i) => `<line x1="${66 + i * 15}" y1="51" x2="${72 + i * 15}" y2="61" stroke="#78350f" stroke-width="1.4"/>`)
+          .join('')}
+        <text x="86" y="44" font-size="8" font-weight="bold" fill="#b45309">真鍮リードスクリュー</text>
+        <!-- Sliding Lens Carriage Nut + Anti-Backlash Spring -->
+        <rect x="136" y="38" width="24" height="36" rx="3" fill="#64748b" stroke="#0f172a"/>
+        <path d="M160 56 L168 48 L174 64 L180 48 L186 64 L194 56" fill="none" stroke="#0284c7" stroke-width="2"/>
+        <text x="154" y="88" font-size="7.5" font-weight="bold" fill="#0369a1">予圧バネ(ガタ0)</text>
+        <!-- Guide Rod -->
+        <rect x="86" y="22" width="194" height="6" rx="2" fill="#cbd5e1" stroke="#475569"/>
+        <text x="208" y="44" font-size="8" fill="#334155">2軸ガイドレール</text>
+        <text x="208" y="58" font-size="7.5" fill="#475569">チルト公差 &lt; 0.02°</text>
+        <text x="46" y="110" font-size="8" fill="#334155">回転をサブmm直進へ変換し、予圧スプリングとOリングでズレと水滴を防止</text>
+      `);
+
+    case 'evf_lens_field':
+      return wrap(`
+        <!-- Flat OLED -> Curved Petzval Error vs Flattened by G1 Field Flattener -->
+        <rect x="20" y="24" width="12" height="62" rx="2" fill="#2563eb"/>
+        <text x="12" y="98" font-size="7.5" font-weight="bold" fill="#1d4ed8">平面OLED</text>
+        <!-- G1 Positive Meniscus Lens -->
+        <path d="M68 20 Q84 55 68 90 Q96 55 68 20 Z" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.6"/>
+        <text x="58" y="14" font-size="8" font-weight="bold" fill="#4338ca">G1 フィールドフラットナー</text>
+        <!-- Telecentric Rays -->
+        <path d="M32 32 L74 30 L178 24" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <path d="M32 55 L78 55 L178 55" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <path d="M32 78 L74 80 L178 86" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <!-- Uncorrected Curved Image Plane (dashed red) vs Corrected Flat Plane (solid green) -->
+        <path d="M196 22 Q164 55 196 88" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <text x="198" y="34" font-size="7.5" fill="#dc2626">像面湾曲 (端ボケ)</text>
+        <line x1="218" y1="22" x2="218" y2="88" stroke="#16a34a" stroke-width="2.6"/>
+        <text x="224" y="54" font-size="8" font-weight="bold" fill="#15803d">平坦結像!</text>
+        <text x="224" y="68" font-size="7.5" fill="#166534">画面四隅まで</text>
+        <text x="224" y="79" font-size="7.5" fill="#166534">シャープ</text>
+        <text x="44" y="112" font-size="8" fill="#334155">ペッツバール和を補正し、OLEDのMLA指向光束を隅までムラなく集光</text>
+      `);
+
+    case 'evf_oled':
+      return wrap(`
+        <!-- Nano-Scale Cross-Section of 2-Stack Tandem WOLED on Silicon (OLEDoS) + Micro-Cavity + MLA! -->
+        <!-- Bottom: Single-Crystal CMOS Silicon Backplane -->
+        <rect x="24" y="84" width="272" height="15" rx="2" fill="#334155"/>
+        <text x="64" y="95" font-size="8" font-weight="bold" fill="#f8fafc">単結晶シリコンCMOSバックプレーン (3,900 PPI駆動回路)</text>
+        <!-- Reflective Al Anode -->
+        <rect x="24" y="79" width="272" height="4" fill="#cbd5e1"/>
+        <!-- 2-Stack Tandem OLED + CGL -->
+        <rect x="24" y="61" width="272" height="17" fill="#fef3c7" stroke="#d97706" stroke-width="0.9"/>
+        <text x="46" y="72.5" font-size="7.8" font-weight="bold" fill="#92400e">2スタック・タンデムWOLED ＋ 電荷発生層(CGL) 2倍効率</text>
+        <!-- RGB Color Filter + Micro-Cavity Resonance -->
+        <rect x="24" y="45" width="90" height="15" fill="#ef4444" opacity="0.88"/>
+        <rect x="115" y="45" width="90" height="15" fill="#10b981" opacity="0.88"/>
+        <rect x="206" y="45" width="90" height="15" fill="#3b82f6" opacity="0.88"/>
+        <text x="46" y="56" font-size="8" font-weight="bold" fill="#fff">R 共振器</text>
+        <text x="137" y="56" font-size="8" font-weight="bold" fill="#fff">G 共振器</text>
+        <text x="228" y="56" font-size="8" font-weight="bold" fill="#fff">B 共振器</text>
+        <!-- On-Chip Microlens Array (MLA) domes -->
+        <path d="M24 45 Q69 24 114 45 M115 45 Q160 24 205 45 M206 45 Q251 24 296 45" fill="#bae6fd" opacity="0.72" stroke="#0284c7" stroke-width="1.4"/>
+        <text x="50" y="20" font-size="8.5" font-weight="bold" fill="#0369a1">オンチップMLA (光取出し1.8倍 ⇒ 4,000 cd/m² &amp; DCI-P3)</text>
+        <text x="46" y="112" font-size="8" fill="#334155">2階建て発光層＋波長別マイクロキャビティ＋極小レンズの三位一体構造</text>
+      `);
+
+    case 'evf_tcon':
+      return wrap(`
+        <!-- Dual-Stream Blackout-Free Pipeline: ISP -> Shielded FPC -> TCON Demura -> 240Hz OLED -->
+        <rect x="14" y="28" width="64" height="52" rx="5" fill="#1d4ed8"/>
+        <text x="24" y="50" font-size="8" font-weight="bold" fill="#fff">4nm ISP</text>
+        <text x="20" y="64" font-size="7" fill="#bfdbfe">デュアル系統</text>
+        <!-- Shielded FPC MIPI-DSI -->
+        <path d="M78 54 L120 54" stroke="#d97706" stroke-width="6"/>
+        <polygon points="124,54 116,48 116,60" fill="#b45309"/>
+        <text x="80" y="42" font-size="7.5" font-weight="bold" fill="#b45309">22.6 Gbps</text>
+        <text x="82" y="72" font-size="7" fill="#78350f">MIPI-DSI</text>
+        <!-- TCON Board -->
+        <rect x="126" y="22" width="96" height="64" rx="5" fill="#065f46" stroke="#10b981"/>
+        <text x="136" y="40" font-size="8.5" font-weight="bold" fill="#fff">240Hz TCON</text>
+        <text x="134" y="54" font-size="7.5" fill="#a7f3d0">・10bit HDR-PQ変換</text>
+        <text x="134" y="66" font-size="7.5" fill="#a7f3d0">・944万画素Demura</text>
+        <text x="134" y="78" font-size="7.5" fill="#fde047">・ELVDD/ELVSS電源</text>
+        <!-- Output to OLED -->
+        <path d="M222 54 L248 54" stroke="#0284c7" stroke-width="3"/>
+        <polygon points="252,54 244,49 244,59" fill="#0284c7"/>
+        <rect x="254" y="28" width="52" height="52" rx="5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+        <text x="261" y="50" font-size="8" font-weight="bold" fill="#38bdf8">240 fps</text>
+        <text x="260" y="65" font-size="7" fill="#e2e8f0">暗転ゼロ</text>
+        <text x="40" y="109" font-size="8" fill="#334155">連写中も一切ブラックアウトしない専用超低遅延パイプライン(&lt;5ms)</text>
+      `);
+
+    case 'evf_heatsink':
+      return wrap(`
+        <!-- Micro-OLED Rear Thermal Conduction Path: Si Wafer -> TIM -> Cu Plate -> Aluminum Fins -->
+        <rect x="20" y="24" width="52" height="60" rx="4" fill="#1e3a8a"/>
+        <text x="26" y="50" font-size="8" font-weight="bold" fill="#fff">OLED</text>
+        <text x="26" y="64" font-size="7" fill="#bfdbfe">Si基板発熱</text>
+        <!-- TIM Pad -->
+        <rect x="76" y="28" width="18" height="52" rx="2" fill="#38bdf8"/>
+        <text x="72" y="94" font-size="7.5" fill="#0369a1">TIMパッド</text>
+        <!-- Copper Spreader -->
+        <rect x="98" y="24" width="22" height="60" rx="2" fill="#d97742" stroke="#9a3412"/>
+        <text x="98" y="18" font-size="7.5" font-weight="bold" fill="#c2410c">純銅板</text>
+        <!-- Aluminum Cooling Fins -->
+        ${[0, 1, 2, 3, 4]
+          .map((i) => `<rect x="120" y="${26 + i * 12}" width="32" height="7" rx="1" fill="#475569"/>`)
+          .join('')}
+        <!-- Heat Flow Arrows -->
+        <path d="M162 40 L196 40 M162 54 L196 54 M162 68 L196 68" stroke="#ea580c" stroke-width="2"/>
+        <polygon points="200,54 192,49 192,59" fill="#ea580c"/>
+        <!-- Benefit Box -->
+        <rect x="206" y="22" width="100" height="64" rx="5" fill="#fff7ed" stroke="#fb923c"/>
+        <text x="214" y="39" font-size="8" font-weight="bold" fill="#c2410c">ΔT = −15℃ 冷却</text>
+        <text x="214" y="54" font-size="7.5" fill="#9a3412">・OLED寿命 約3倍</text>
+        <text x="214" y="67" font-size="7.5" fill="#9a3412">・焼き付き防止</text>
+        <text x="214" y="80" font-size="7.5" fill="#9a3412">・DCI-P3色温度安定</text>
+        <text x="48" y="111" font-size="8" fill="#334155">4,000 cd/m²超高輝度駆動の発熱を純銅＆フィンで逃がし劣化を防止</text>
+      `);
+
+    case 'evf_housing':
+      return wrap(`
+        <!-- Sawtooth Internal Anti-Reflection Baffle Ridges Trapping Stray Light -->
+        <rect x="22" y="16" width="276" height="10" fill="#4b5563"/>
+        <rect x="22" y="84" width="276" height="10" fill="#4b5563"/>
+        <!-- Knife-edge sawtooth baffles top & bottom -->
+        ${[0, 1, 2, 3, 4, 5, 6]
+          .map((i) => {
+            const bx = 46 + i * 36;
+            return `<polygon points="${bx},26 ${bx + 10},26 ${bx + 4},37" fill="#111827"/>
+                    <polygon points="${bx},84 ${bx + 10},84 ${bx + 4},73" fill="#111827"/>`;
+          })
+          .join('')}
+        <!-- Clean Central Optical Beam -->
+        <line x1="26" y1="55" x2="292" y2="55" stroke="#0284c7" stroke-width="2.5"/>
+        <text x="116" y="51" font-size="8.5" font-weight="bold" fill="#0369a1">正規映像光路 (偏心 ±10μm)</text>
+        <!-- Stray light ray getting trapped & killed by sawtooth baffles -->
+        <polyline points="38,44 84,32 94,26 116,35" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <circle cx="116" cy="35" r="3.5" fill="#dc2626"/>
+        <text x="124" y="38" font-size="7.5" font-weight="bold" fill="#b45309">迷光を多重反射で完全吸収!</text>
+        <text x="36" y="111" font-size="8" fill="#334155">AZ91Dマグネシウム鏡筒＋鋸歯状遮光バッフルで黒浮きゼロ＆防塵防滴</text>
+      `);
   }
 }
 

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'mainboard' | 'micro';
+export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'mainboard' | 'evf' | 'micro';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
@@ -77,13 +77,28 @@ export interface PartExplanation {
     | 'mb_rf_wifi'
     | 'mb_hdi_pcb'
     | 'mb_b2b'
-    | 'mb_chassis';
+    | 'mb_chassis'
+    // EVF Optical & Eye-Tracking Anatomy (14)
+    | 'evf_eyecup'
+    | 'evf_antifog'
+    | 'evf_eye_sensor'
+    | 'evf_ir_leds'
+    | 'evf_dichroic'
+    | 'evf_gaze_cam'
+    | 'evf_lens_rear'
+    | 'evf_lens_ed'
+    | 'evf_diopter'
+    | 'evf_lens_field'
+    | 'evf_oled'
+    | 'evf_tcon'
+    | 'evf_heatsink'
+    | 'evf_housing';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
-  subsystem: 'sensor' | 'micro' | 'shutter' | 'mainboard';
+  subsystem: 'sensor' | 'micro' | 'shutter' | 'mainboard' | 'evf';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */

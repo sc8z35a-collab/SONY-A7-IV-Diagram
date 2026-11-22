@@ -77,6 +77,17 @@ export interface MaterialLibrary {
   zifIvoryPlastic: THREE.MeshStandardMaterial;
   coaxShieldCopper: THREE.MeshStandardMaterial;
   solderBallSilver: THREE.MeshPhysicalMaterial;
+  // EVF Optical & Eye-Tracking materials
+  evfEyecupRubber: THREE.MeshStandardMaterial;
+  evfAntiFogGlass: THREE.MeshPhysicalMaterial;
+  evfDichroicMirror: THREE.MeshPhysicalMaterial;
+  evfLensAspheric: THREE.MeshPhysicalMaterial;
+  evfLensEd: THREE.MeshPhysicalMaterial;
+  evfLensField: THREE.MeshPhysicalMaterial;
+  evfGlassEdgeRim: THREE.MeshPhysicalMaterial;
+  evfOledActive: THREE.MeshStandardMaterial;
+  evfIrEmitter: THREE.MeshPhysicalMaterial;
+  evfHousingMg: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -723,6 +734,203 @@ function createPcbLaminateEdgeTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+/**
+ * Procedural 0.64-inch 9.44M-dot Quad-XGA Tandem Micro-OLED (OLEDoS) viewfinder display texture.
+ * STRICTLY ZERO TEXT / ZERO DIGITS: displays a vivid DCI-P3 4,000-nit HDR alpine twilight scene,
+ * subtle 3,300+ PPI RGB micro-subpixel structure, geometric framing brackets, rule-of-thirds lines,
+ * glowing cyan Eye-Control AF reticle ring, and pure-graphical histogram curve (no letters/numbers).
+ */
+function createOledViewfinderTexture(): THREE.CanvasTexture {
+  const w = 640;
+  const h = 480;
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d')!;
+
+  // True-black OLED border (0.000 cd/m² pixel-off state)
+  ctx.fillStyle = '#03050a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Active 3:2 full-frame live-view viewport inside 4:3 Quad-XGA OLED
+  const vx = 24;
+  const vy = 42;
+  const vw = w - 48;
+  const vh = 394;
+
+  // Vivid DCI-P3 HDR golden-hour alpine twilight sky
+  const sky = ctx.createLinearGradient(vx, vy, vx, vy + vh * 0.68);
+  sky.addColorStop(0.0, '#0a1d4e');
+  sky.addColorStop(0.32, '#1d4ed8');
+  sky.addColorStop(0.62, '#7c3aed');
+  sky.addColorStop(0.84, '#f43f5e');
+  sky.addColorStop(1.0, '#fbbf24');
+  ctx.fillStyle = sky;
+  ctx.fillRect(vx, vy, vw, vh * 0.68);
+
+  // 4,000-nit specular HDR sun bloom
+  const sunX = vx + vw * 0.62;
+  const sunY = vy + vh * 0.44;
+  const sunGlow = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 130);
+  sunGlow.addColorStop(0.0, '#ffffff');
+  sunGlow.addColorStop(0.18, '#fef08a');
+  sunGlow.addColorStop(0.45, 'rgba(251, 146, 60, 0.55)');
+  sunGlow.addColorStop(1.0, 'rgba(244, 63, 94, 0)');
+  ctx.fillStyle = sunGlow;
+  ctx.fillRect(vx, vy, vw, vh * 0.72);
+
+  // Mirror lake reflection (bottom 32%)
+  const lakeY = vy + vh * 0.68;
+  const lakeH = vh * 0.32;
+  const lake = ctx.createLinearGradient(vx, lakeY, vx, lakeY + lakeH);
+  lake.addColorStop(0.0, '#fb923c');
+  lake.addColorStop(0.35, '#4338ca');
+  lake.addColorStop(1.0, '#091124');
+  ctx.fillStyle = lake;
+  ctx.fillRect(vx, lakeY, vw, lakeH);
+
+  // Crisp layered alpine mountain silhouettes
+  ctx.fillStyle = '#1e1b4b';
+  ctx.beginPath();
+  ctx.moveTo(vx, lakeY);
+  ctx.lineTo(vx + vw * 0.14, vy + vh * 0.48);
+  ctx.lineTo(vx + vw * 0.28, vy + vh * 0.56);
+  ctx.lineTo(vx + vw * 0.46, vy + vh * 0.34);
+  ctx.lineTo(vx + vw * 0.60, vy + vh * 0.52);
+  ctx.lineTo(vx + vw * 0.79, vy + vh * 0.38);
+  ctx.lineTo(vx + vw * 0.92, vy + vh * 0.50);
+  ctx.lineTo(vx + vw, vy + vh * 0.46);
+  ctx.lineTo(vx + vw, lakeY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Foreground dark ridge silhouette
+  ctx.fillStyle = '#0b1020';
+  ctx.beginPath();
+  ctx.moveTo(vx, lakeY);
+  ctx.lineTo(vx + vw * 0.22, vy + vh * 0.56);
+  ctx.lineTo(vx + vw * 0.40, vy + vh * 0.62);
+  ctx.lineTo(vx + vw * 0.68, vy + vh * 0.54);
+  ctx.lineTo(vx + vw * 0.88, vy + vh * 0.60);
+  ctx.lineTo(vx + vw, vy + vh * 0.57);
+  ctx.lineTo(vx + vw, lakeY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Horizontal golden specular water shimmer streaks
+  ctx.fillStyle = 'rgba(254, 240, 138, 0.42)';
+  for (let i = 0; i < 9; i++) {
+    const wy = lakeY + 8 + i * 11;
+    const ww = 92 - i * 7;
+    ctx.fillRect(sunX - ww * 0.5 + Math.sin(i * 1.9) * 8, wy, ww, 2.5);
+  }
+
+  // Subtle rule-of-thirds composition hairlines (pure geometry, zero text)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 2; i++) {
+    const gx = vx + (vw / 3) * i;
+    ctx.beginPath();
+    ctx.moveTo(gx, vy);
+    ctx.lineTo(gx, vy + vh);
+    ctx.stroke();
+
+    const gy = vy + (vh / 3) * i;
+    ctx.beginPath();
+    ctx.moveTo(vx, gy);
+    ctx.lineTo(vx + vw, gy);
+    ctx.stroke();
+  }
+
+  // Crisp white 4-corner frame crop brackets
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+  ctx.lineWidth = 2.4;
+  const br = 20;
+  const corners = [
+    [vx + 10, vy + 10, 1, 1],
+    [vx + vw - 10, vy + 10, -1, 1],
+    [vx + 10, vy + vh - 10, 1, -1],
+    [vx + vw - 10, vy + vh - 10, -1, -1],
+  ];
+  for (const [cx, cy, dx, dy] of corners) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + dy * br);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + dx * br, cy);
+    ctx.stroke();
+  }
+
+  // Electronic Horizon Level Indicator (center pitch bar — zero numbers)
+  const midX = vx + vw * 0.5;
+  const midY = vy + vh * 0.5;
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(midX - 52, midY);
+  ctx.lineTo(midX - 18, midY);
+  ctx.moveTo(midX + 18, midY);
+  ctx.lineTo(midX + 52, midY);
+  ctx.stroke();
+
+  // Glowing Cyan-Emerald Eye-Control AF Gaze Reticle locked onto main peak
+  const afX = vx + vw * 0.46;
+  const afY = vy + vh * 0.36;
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.arc(afX, afY, 22, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = '#67e8f9';
+  ctx.lineWidth = 1.6;
+  ctx.strokeRect(afX - 30, afY - 22, 60, 44);
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.arc(afX, afY, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pure-graphical live-view luminance histogram curve in bottom-right black bar (ZERO text/digits)
+  const hx = vx + vw - 110;
+  const hy = h - 34;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
+  ctx.fillRect(hx, hy, 102, 24);
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.85)';
+  ctx.beginPath();
+  ctx.moveTo(hx + 2, hy + 22);
+  for (let i = 0; i <= 24; i++) {
+    const t = i / 24;
+    const amp =
+      Math.exp(-Math.pow((t - 0.32) / 0.18, 2)) * 16 +
+      Math.exp(-Math.pow((t - 0.72) / 0.14, 2)) * 13;
+    ctx.lineTo(hx + 2 + t * 98, hy + 22 - amp);
+  }
+  ctx.lineTo(hx + 100, hy + 22);
+  ctx.closePath();
+  ctx.fill();
+
+  // Pure-graphical exposure meter tick dots in bottom-center black bar (ZERO numbers)
+  for (let i = -4; i <= 4; i++) {
+    ctx.fillStyle = i === 0 ? '#34d399' : 'rgba(226, 232, 240, 0.55)';
+    const r = i === 0 ? 3.5 : 2.0;
+    ctx.beginPath();
+    ctx.arc(w * 0.5 + i * 16, h - 22, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Subtle RGB Micro-OLED subpixel stripe grid shimmer
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
+  for (let x = vx; x < vx + vw; x += 4) {
+    ctx.fillRect(x, vy, 1, vh);
+  }
+  for (let y = vy; y < vy + vh; y += 4) {
+    ctx.fillRect(vx, y, vw, 1);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
 export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLibrary {
   const dieTex = createSensorDieTexture();
   const pcbTex = createPcbTexture();
@@ -734,6 +942,7 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const npuDieTex = createNpuSystolicDieTexture();
   const hdiPcbTex = createHdiMotherboardTexture();
   const pcbEdgeTex = createPcbLaminateEdgeTexture();
+  const oledViewfinderTex = createOledViewfinderTexture();
 
   const common = {
     clippingPlanes,
@@ -1370,6 +1579,121 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.35,
   });
 
+  // -------------------------------------------------------------------------
+  // EVF Optical & Eye-Tracking Materials (crisp optical readability on #FFFFFF)
+  // -------------------------------------------------------------------------
+  const evfEyecupRubber = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x262930,
+    metalness: 0.04,
+    roughness: 0.86,
+  });
+
+  const evfAntiFogGlass = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x6ec3f0,
+    metalness: 0.0,
+    roughness: 0.05,
+    opacity: 0.24,
+    iridescence: 0.82,
+    iridescenceIOR: 1.44,
+    iridescenceThicknessRange: [240, 420],
+    clearcoat: 0.4,
+  });
+
+  // 45-degree multi-layer dielectric Dichroic Hot Mirror (magenta-gold IR reflection sheen!)
+  const evfDichroicMirror = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0xd9569c,
+    metalness: 0.08,
+    roughness: 0.04,
+    opacity: 0.36,
+    iridescence: 1.0,
+    iridescenceIOR: 1.72,
+    iridescenceThicknessRange: [340, 620],
+    clearcoat: 0.55,
+  });
+
+  // Rear Large-Aperture Double-Sided Aspheric Eyepiece Glass (ZEISS T* emerald-cyan sheen)
+  const evfLensAspheric = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x38bdf8,
+    metalness: 0.0,
+    roughness: 0.04,
+    opacity: 0.30,
+    iridescence: 0.9,
+    iridescenceIOR: 1.56,
+    iridescenceThicknessRange: [280, 520],
+    clearcoat: 0.45,
+  });
+
+  // Movable Diopter ED Low-Dispersion + High-Index Lanthanum Cemented Doublet (emerald-teal optical flint/crown)
+  const evfLensEd = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x10b981,
+    metalness: 0.0,
+    roughness: 0.04,
+    opacity: 0.32,
+    iridescence: 0.92,
+    iridescenceIOR: 1.62,
+    iridescenceThicknessRange: [300, 540],
+    clearcoat: 0.48,
+  });
+
+  // Front Aspheric Field-Flattener Condenser Lens (cobalt-indigo optical glass)
+  const evfLensField = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x6366f1,
+    metalness: 0.0,
+    roughness: 0.05,
+    opacity: 0.30,
+    iridescence: 0.88,
+    iridescenceIOR: 1.52,
+    iridescenceThicknessRange: [260, 480],
+    clearcoat: 0.42,
+  });
+
+  // Polished frosted ground-glass outer bevel rim for razor-sharp optical silhouettes on white
+  const evfGlassEdgeRim = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x76b8db,
+    metalness: 0.04,
+    roughness: 0.28,
+    transparent: true,
+    opacity: 0.72,
+  });
+
+  // Self-luminous 4,000-nit DCI-P3 0.64-inch Tandem Micro-OLED active surface (strictly zero text)
+  const evfOledActive = new THREE.MeshStandardMaterial({
+    ...common,
+    map: oledViewfinderTex,
+    emissive: 0xffffff,
+    emissiveMap: oledViewfinderTex,
+    emissiveIntensity: 0.72,
+    metalness: 0.08,
+    roughness: 0.14,
+  });
+
+  // 850nm Near-Infrared Illumination Emitter Dome (deep ruby optical resin)
+  const evfIrEmitter = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xbe123c,
+    emissive: 0xe11d48,
+    emissiveIntensity: 0.55,
+    metalness: 0.08,
+    roughness: 0.12,
+    clearcoat: 0.75,
+  });
+
+  // Weather-sealed magnesium-aluminum EVF optical housing shell (distinct cool slate gunmetal)
+  const evfHousingMg = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x4b5563,
+    metalness: 0.68,
+    roughness: 0.36,
+    clearcoat: 0.14,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -1442,6 +1766,16 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     zifIvoryPlastic,
     coaxShieldCopper,
     solderBallSilver,
+    evfEyecupRubber,
+    evfAntiFogGlass,
+    evfDichroicMirror,
+    evfLensAspheric,
+    evfLensEd,
+    evfLensField,
+    evfGlassEdgeRim,
+    evfOledActive,
+    evfIrEmitter,
+    evfHousingMg,
   ];
 
   return {
@@ -1517,6 +1851,16 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     zifIvoryPlastic,
     coaxShieldCopper,
     solderBallSilver,
+    evfEyecupRubber,
+    evfAntiFogGlass,
+    evfDichroicMirror,
+    evfLensAspheric,
+    evfLensEd,
+    evfLensField,
+    evfGlassEdgeRim,
+    evfOledActive,
+    evfIrEmitter,
+    evfHousingMg,
     allMaterials,
   };
 }
