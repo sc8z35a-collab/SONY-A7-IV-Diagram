@@ -50,6 +50,10 @@ const ICONS = {
   mainboardIsp:
     '<rect x="3" y="4" width="18" height="16" rx="2"/><rect x="8.5" y="8.5" width="7" height="7" rx="1"/><line x1="8.5" y1="12" x2="5.5" y2="12"/><line x1="15.5" y1="12" x2="18.5" y2="12"/><line x1="12" y1="8.5" x2="12" y2="5.5"/><line x1="12" y1="15.5" x2="12" y2="18.5"/><circle cx="5.5" cy="7.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="7.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="16.5" r="0.9" fill="currentColor" stroke="none"/>',
 
+  // EVF Optical & Eye-Control Viewfinder: pentaprism hump + eyepiece reticle + optical cone (zero text!)
+  evfModule:
+    '<path d="M4 17v-5l3.5-5h9L20 12v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M7.5 13.5c1.2-2.2 3-3.3 4.5-3.3s3.3 1.1 4.5 3.3c-1.2 2.2-3 3.3-4.5 3.3s-3.3-1.1-4.5-3.3z"/><circle cx="12" cy="13.5" r="1.4" fill="currentColor" stroke="none"/><line x1="9" y1="4.5" x2="15" y2="4.5"/>',
+
   // Micro 2x2 microlens & stacked wafer icon
   microPixel:
     '<path d="M4 10c0-2.5 2-4 4-4s4 1.5 4 4"/><path d="M12 10c0-2.5 2-4 4-4s4 1.5 4 4"/><rect x="4" y="10" width="16" height="3.5" rx="0.5"/><rect x="4" y="15.5" width="16" height="3.5" rx="0.5"/>',
@@ -121,6 +125,7 @@ export class ZeroTextControls {
   private shutterBtn: HTMLButtonElement;
   private sensorBtn: HTMLButtonElement;
   private mainboardBtn: HTMLButtonElement;
+  private evfBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
@@ -139,7 +144,7 @@ export class ZeroTextControls {
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
 
-  private currentMode: ScaleMode = 'mainboard';
+  private currentMode: ScaleMode = 'evf';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -180,7 +185,7 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 5-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Mainboard ISP / Micro Pixel)
+    // Group A: 6-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Mainboard / EVF / Micro)
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
@@ -188,19 +193,22 @@ export class ZeroTextControls {
     this.shutterBtn = createIconButton(ICONS.shutterModule);
     this.sensorBtn = createIconButton(ICONS.macroSensor);
     this.mainboardBtn = createIconButton(ICONS.mainboardIsp);
-    this.mainboardBtn.classList.add('is-active');
+    this.evfBtn = createIconButton(ICONS.evfModule);
+    this.evfBtn.classList.add('is-active');
     this.microBtn = createIconButton(ICONS.microPixel);
 
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.shutterBtn.addEventListener('click', () => this.setMode('shutter'));
     this.sensorBtn.addEventListener('click', () => this.setMode('sensor'));
     this.mainboardBtn.addEventListener('click', () => this.setMode('mainboard'));
+    this.evfBtn.addEventListener('click', () => this.setMode('evf'));
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
     scaleGroup.append(
       this.integratedBtn,
       this.shutterBtn,
       this.sensorBtn,
       this.mainboardBtn,
+      this.evfBtn,
       this.microBtn
     );
 
@@ -324,6 +332,7 @@ export class ZeroTextControls {
     this.shutterBtn.classList.toggle('is-active', mode === 'shutter');
     this.sensorBtn.classList.toggle('is-active', mode === 'sensor');
     this.mainboardBtn.classList.toggle('is-active', mode === 'mainboard');
+    this.evfBtn.classList.toggle('is-active', mode === 'evf');
     this.microBtn.classList.toggle('is-active', mode === 'micro');
   }
 
@@ -422,7 +431,16 @@ export class ZeroTextControls {
       const bar = document.createElement('span');
       bar.className = 'layer-bar';
       let widthPx = 20;
-      if (part.subsystem === 'mainboard') {
+      if (part.subsystem === 'evf') {
+        widthPx =
+          part.order === 1 || part.order === 14
+            ? 32
+            : part.order === 5 || part.order === 7 || part.order === 8 || part.order === 11
+              ? 26
+              : part.order === 2 || part.order === 10 || part.order === 13
+                ? 22
+                : 17;
+      } else if (part.subsystem === 'mainboard') {
         widthPx =
           part.order === 14 || part.order === 16
             ? 32
