@@ -2952,6 +2952,747 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="32" y="111" font-size="8" fill="#334155">マウント直下の極薄シム選定が全個体で当たり玉級の無限遠・四隅解像を保証</text>
       `);
 
+    // =========================================================================
+    // Phase 9: Ultra-Dissected Shutter Internal Mechanics Schematics (+14)
+    // =========================================================================
+    case 'shutter_shield_actuator':
+      return wrap(`
+        <!-- Power-Off Sensor Dust Shield Rotary Actuator & Safety Slip Clutch -->
+        <circle cx="58" cy="54" r="24" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <circle cx="58" cy="54" r="10" fill="#d97706" stroke="#92400e"/>
+        <text x="38" y="88" font-size="7.5" font-weight="bold" fill="#334155">小型駆動モーター</text>
+        <path d="M84 54 L122 54" stroke="#0284c7" stroke-width="2.4"/>
+        <polygon points="127,54 118,49 118,59" fill="#0284c7"/>
+        <text x="86" y="46" font-size="7" font-weight="bold" fill="#0369a1">スリップクラッチ</text>
+        <!-- Protective Curtain Closed -->
+        <rect x="132" y="20" width="52" height="68" rx="4" fill="#1e293b" stroke="#0f172a"/>
+        <line x1="134" y1="36" x2="182" y2="36" stroke="#64748b"/>
+        <line x1="134" y1="54" x2="182" y2="54" stroke="#64748b"/>
+        <line x1="134" y1="72" x2="182" y2="72" stroke="#64748b"/>
+        <text x="139" y="57" font-size="8" font-weight="bold" fill="#38bdf8">防塵シャッター</text>
+        <rect x="196" y="18" width="110" height="72" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="204" y="36" font-size="8" font-weight="bold" fill="#0369a1">電源OFF自動閉鎖</text>
+        <text x="204" y="51" font-size="7.5" fill="#334155">・レンズ交換時のホコリ遮断</text>
+        <text x="204" y="65" font-size="7.5" fill="#334155">・指接触時は空転保護</text>
+        <text x="204" y="79" font-size="7.5" fill="#0284c7">・自己保持ギアで無電力維持</text>
+        <text x="36" y="111" font-size="8" fill="#334155">電源OFF連動アクチュエーターがセンサー前の保護幕を安全確実に開閉</text>
+      `);
+
+    case 'shutter_curtain1_guide':
+      return wrap(`
+        <!-- Front Curtain Slit Guide Rails & PTFE Micro-Clearance -->
+        <rect x="24" y="16" width="12" height="78" rx="2" fill="#475569" stroke="#0f172a"/>
+        <rect x="120" y="16" width="12" height="78" rx="2" fill="#475569" stroke="#0f172a"/>
+        <!-- Curtain 1 Carbon Blades Sliding Inside 0.35mm Track -->
+        <rect x="38" y="24" width="80" height="14" rx="1.5" fill="#0ea5e9" stroke="#0369a1"/>
+        <rect x="38" y="42" width="80" height="14" rx="1.5" fill="#38bdf8" stroke="#0369a1"/>
+        <rect x="38" y="60" width="80" height="14" rx="1.5" fill="#7dd3fc" stroke="#0369a1"/>
+        <path d="M78 78 L78 92" stroke="#dc2626" stroke-width="2.4"/>
+        <polygon points="78,95 73,87 83,87" fill="#dc2626"/>
+        <text x="14" y="102" font-size="7" font-weight="bold" fill="#334155">0.35mm精密溝</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">先幕専用 遮光ガイドレール</text>
+        <text x="156" y="51" font-size="7.5" fill="#1e3a8a">・PTFE低摩擦コーティング内壁</text>
+        <text x="156" y="65" font-size="7.5" fill="#1e3a8a">・時速35km超でも羽根のバタつきゼロ</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・0.1mm段差迷路で側面光漏れ遮断</text>
+        <text x="34" y="111" font-size="8" fill="#334155">わずか0.35mmの超精密ガイド溝が高速走行する先幕羽根の直進性を死守</text>
+      `);
+
+    case 'shutter_pivot_jewels':
+      return wrap(`
+        <!-- Watchmaker Parallel Linkage Pivot Pins, Bushings & Low-Friction Bearings -->
+        <line x1="36" y1="30" x2="122" y2="30" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+        <line x1="36" y1="74" x2="122" y2="74" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+        <line x1="56" y1="26" x2="56" y2="78" stroke="#0284c7" stroke-width="4"/>
+        <line x1="106" y1="26" x2="106" y2="78" stroke="#0284c7" stroke-width="4"/>
+        <!-- Precision Jewels/Bushings -->
+        <circle cx="56" cy="30" r="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.6"/>
+        <circle cx="56" cy="74" r="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.6"/>
+        <circle cx="106" cy="30" r="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.6"/>
+        <circle cx="106" cy="74" r="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.6"/>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#b45309">50万回耐摩耗ピボット軸受</text>
+        <text x="156" y="51" font-size="7.5" fill="#78350f">・DLC硬質炭素コート焼入れピン</text>
+        <text x="156" y="65" font-size="7.5" fill="#78350f">・無給油自己潤滑リングブッシュ</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・μ &lt; 0.08 ⇒ 500G加減速も滑らか</text>
+        <text x="34" y="111" font-size="8" fill="#334155">高級機械式時計のルビー軸受思想でリンク関節の摩耗と摩擦損失を極小化</text>
+      `);
+
+    case 'shutter_curtain2_guide':
+      return wrap(`
+        <!-- Rear Curtain Independent Guide Rail & Optical Slit Separation -->
+        <rect x="26" y="18" width="44" height="74" rx="3" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="34" y="56" font-size="8" font-weight="bold" fill="#1d4ed8">先幕室</text>
+        <!-- Middle Partition Divider -->
+        <rect x="74" y="16" width="10" height="78" fill="#1e293b"/>
+        <text x="58" y="13" font-size="7" font-weight="bold" fill="#dc2626">中仕切り遮光板</text>
+        <!-- Rear Curtain Track -->
+        <rect x="88" y="18" width="44" height="74" rx="3" fill="#fef3c7" stroke="#d97706"/>
+        <text x="96" y="56" font-size="8" font-weight="bold" fill="#b45309">後幕室</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fefce8" stroke="#eab308"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#854d0e">後幕専用 独立レール溝</text>
+        <text x="156" y="51" font-size="7.5" fill="#713f12">・1/8000s時の0.8mm極細スリット維持</text>
+        <text x="156" y="65" font-size="7.5" fill="#713f12">・先幕との高速すれ違い接触を完全防止</text>
+        <text x="156" y="79" font-size="7.5" fill="#c2410c">・画面上下の露出ムラを±0.05 EV以下へ</text>
+        <text x="34" y="111" font-size="8" fill="#334155">先幕と後幕を独立レーンで隔離し1/8000秒の極細スリット幅を完全一定化</text>
+      `);
+
+    case 'shutter_tension_drums':
+      return wrap(`
+        <!-- Dual Torsion Spring Tension Drums & Worm-Gear Factory Timing Calibration -->
+        <circle cx="56" cy="54" r="24" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+        <circle cx="56" cy="54" r="14" fill="none" stroke="#92400e" stroke-width="2" stroke-dasharray="4 2"/>
+        <text x="41" y="57" font-size="8" font-weight="bold" fill="#92400e">先幕バネ</text>
+        <circle cx="118" cy="54" r="24" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <circle cx="118" cy="54" r="14" fill="none" stroke="#1e40af" stroke-width="2" stroke-dasharray="4 2"/>
+        <text x="103" y="57" font-size="8" font-weight="bold" fill="#1e40af">後幕バネ</text>
+        <!-- Calibration Worm -->
+        <rect x="158" y="18" width="148" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="166" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">幕速マイクロ秒調律ドラム</text>
+        <text x="166" y="51" font-size="7.5" fill="#334155">・先幕/後幕トーションバネ張力調整</text>
+        <text x="166" y="65" font-size="7.5" fill="#334155">・走行時間 2.2 ms ± 0.02 ms 精密同調</text>
+        <text x="166" y="79" font-size="7.5" fill="#dc2626">・1/400秒ストロボ同調の心臓部</text>
+        <text x="32" y="111" font-size="8" fill="#334155">工場でウォームギアを回して先幕と後幕の走行カーブをマイクロ秒単位で一致</text>
+      `);
+
+    case 'shutter_counterweight':
+      return wrap(`
+        <!-- Counter-Phase Tungsten Balancer Mass Cancelling Curtain Recoil Momentum -->
+        <rect x="24" y="20" width="54" height="24" rx="3" fill="#0ea5e9" stroke="#0369a1"/>
+        <text x="31" y="35" font-size="7.5" font-weight="bold" fill="#fff">幕 m₁ (下走)</text>
+        <path d="M51 48 L51 82" stroke="#0284c7" stroke-width="2.6"/>
+        <polygon points="51,87 46,78 56,78" fill="#0284c7"/>
+        <!-- Opposite Balancer Mass -->
+        <rect x="96" y="64" width="58" height="24" rx="3" fill="#b45309" stroke="#78350f"/>
+        <text x="101" y="79" font-size="7.5" font-weight="bold" fill="#fef3c7">重り m₂ (上走)</text>
+        <path d="M125 60 L125 26" stroke="#dc2626" stroke-width="2.6"/>
+        <polygon points="125,21 120,30 130,30" fill="#dc2626"/>
+        <rect x="170" y="18" width="136" height="74" rx="5" fill="#fff7ed" stroke="#f97316"/>
+        <text x="178" y="36" font-size="8.5" font-weight="bold" fill="#c2410c">逆位相運動量キャンセル</text>
+        <text x="178" y="52" font-size="8" font-weight="bold" fill="#9a3412">m₁·v₁ + m₂·v₂ ≈ 0</text>
+        <text x="178" y="67" font-size="7.5" fill="#7c2d12">・高密度タングステン銅重り</text>
+        <text x="178" y="80" font-size="7.5" fill="#7c2d12">・微ブレ(シャッターショック)激減</text>
+        <text x="34" y="111" font-size="8" fill="#334155">羽根と反対向きに重りを動かすことで高画素機の微細なシャッターブレを相殺</text>
+      `);
+
+    case 'shutter_armature_levers':
+      return wrap(`
+        <!-- Electromagnet Armature Latch Release Levers (10us Precision Drop) -->
+        <rect x="20" y="24" width="44" height="32" rx="4" fill="#d97706" stroke="#92400e"/>
+        <text x="27" y="43" font-size="7.5" font-weight="bold" fill="#fff">電磁石</text>
+        <!-- Pivoting Armature Lever -->
+        <line x1="66" y1="40" x2="132" y2="54" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="98" cy="47" r="5" fill="#eab308" stroke="#854d0e"/>
+        <text x="68" y="26" font-size="7" font-weight="bold" fill="#dc2626">電流OFF → 10μsで開放!</text>
+        <path d="M132 54 L132 76" stroke="#dc2626" stroke-width="2.2"/>
+        <polygon points="132,81 127,73 137,73" fill="#dc2626"/>
+        <rect x="152" y="18" width="154" height="74" rx="5" fill="#fef2f2" stroke="#ef4444"/>
+        <text x="160" y="35" font-size="8.5" font-weight="bold" fill="#b91c1c">パーマロイ吸着レバー ×2</text>
+        <text x="160" y="51" font-size="7.5" fill="#7f1d1d">・鏡面研磨の磁性アーマチュア面</text>
+        <text x="160" y="65" font-size="7.5" fill="#7f1d1d">・残留磁気ゼロの高透磁率合金</text>
+        <text x="160" y="79" font-size="7.5" fill="#dc2626">・遅延 Δt &lt; 10 μs で1/8000s成立</text>
+        <text x="34" y="111" font-size="8" fill="#334155">電磁石を切った瞬間に10マイクロ秒以内で幕を解き放つ超精密トリガーレバー</text>
+      `);
+
+    case 'shutter_charge_gears':
+      return wrap(`
+        <!-- Multi-Stage POM/Brass Reduction Charge Gear Train -->
+        <circle cx="46" cy="54" r="14" fill="#d97706" stroke="#78350f" stroke-width="1.6"/>
+        <circle cx="80" cy="54" r="20" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <circle cx="122" cy="54" r="24" fill="#94a3b8" stroke="#1e293b" stroke-width="1.6"/>
+        <text x="38" y="57" font-size="7" font-weight="bold" fill="#fff">M</text>
+        <text x="72" y="57" font-size="7.5" font-weight="bold" fill="#0f172a">×4</text>
+        <text x="110" y="57" font-size="7.5" font-weight="bold" fill="#fff">×28</text>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#f1f5f9" stroke="#475569"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">4段遊星・平歯車減速列</text>
+        <text x="168" y="51" font-size="7.5" fill="#334155">・減速比 1:28 で強力バネを瞬時巻上</text>
+        <text x="168" y="65" font-size="7.5" fill="#334155">・POM樹脂×真鍮の異材静音噛み合い</text>
+        <text x="168" y="79" font-size="7.5" fill="#0284c7">・毎秒15コマ連写の連続チャージ対応</text>
+        <text x="34" y="111" font-size="8" fill="#334155">超高速モーターの回転を4段歯車で強力トルクに変換し50ms未満でバネ巻上げ</text>
+      `);
+
+    case 'shutter_cocking_cam':
+      return wrap(`
+        <!-- Asymmetric Eccentric Cocking Cam & Roller Follower Arm -->
+        <ellipse cx="66" cy="54" rx="28" ry="20" transform="rotate(-22 66 54)" fill="#cbd5e1" stroke="#1e293b" stroke-width="1.8"/>
+        <circle cx="58" cy="54" r="6" fill="#475569"/>
+        <!-- Roller Follower Pushing Lever -->
+        <circle cx="99" cy="45" r="7" fill="#f59e0b" stroke="#92400e" stroke-width="1.6"/>
+        <line x1="99" y1="45" x2="140" y2="28" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+        <text x="42" y="88" font-size="7.5" font-weight="bold" fill="#334155">非対称偏心カム</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#92400e">低衝撃サイクロイド巻上カム</text>
+        <text x="164" y="51" font-size="7.5" fill="#78350f">・ローラーフォロワーで滑り摩擦を転がり化</text>
+        <text x="164" y="65" font-size="7.5" fill="#78350f">・先幕/後幕を時間差なく同時チャージ</text>
+        <text x="164" y="79" font-size="7.5" fill="#b45309">・巻上完了後は退避して走行妨害ゼロ</text>
+        <text x="34" y="111" font-size="8" fill="#334155">滑らかなカム曲線と転がりローラーで静音・低消費電力の高速シャッター巻上げ</text>
+      `);
+
+    case 'shutter_cam_switch':
+      return wrap(`
+        <!-- Cam Phase Rotary Encoder & Optical Curtain-Travel Monitor -->
+        <circle cx="64" cy="54" r="24" fill="#065f46" stroke="#064e3b" stroke-width="1.6"/>
+        <path d="M64 54 L64 32 A22 22 0 0 1 85 60 Z" fill="#facc15"/>
+        <line x1="64" y1="54" x2="80" y2="42" stroke="#fff" stroke-width="2.2"/>
+        <text x="32" y="89" font-size="7.5" font-weight="bold" fill="#065f46">カム位相ワイパー</text>
+        <rect x="108" y="28" width="44" height="52" rx="4" fill="#1e293b"/>
+        <line x1="114" y1="54" x2="146" y2="54" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="112" y="23" font-size="7" font-weight="bold" fill="#dc2626">光速度計</text>
+        <rect x="164" y="18" width="142" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="172" y="35" font-size="8.5" font-weight="bold" fill="#047857">自己診断＆巻上完了検知</text>
+        <text x="172" y="51" font-size="7.5" fill="#065f46">・カム回転角を金メッキ接点で監視</text>
+        <text x="172" y="65" font-size="7.5" fill="#065f46">・実幕速を毎ショット光学計測</text>
+        <text x="172" y="79" font-size="7.5" fill="#059669">・経年変化を自動補正し露出高精度維持</text>
+        <text x="32" y="111" font-size="8" fill="#334155">巻上げ位置と毎回の幕走行時間をリアルタイム監視してシャッター精度を自動校正</text>
+      `);
+
+    case 'shutter_blade_brakes':
+      return wrap(`
+        <!-- Elastomer & Spring Bounce-Elimination Curtain Terminal Brakes -->
+        <rect x="20" y="32" width="46" height="14" rx="2" fill="#0ea5e9"/>
+        <path d="M70 39 L106 39" stroke="#dc2626" stroke-width="2.4"/>
+        <polygon points="111,39 102,34 102,44" fill="#dc2626"/>
+        <text x="20" y="26" font-size="7.5" font-weight="bold" fill="#0369a1">超高速羽根到着</text>
+        <!-- Multi-Stage Urethane + Friction Brake Pad -->
+        <rect x="114" y="20" width="18" height="68" rx="4" fill="#0f766e" stroke="#134e4a" stroke-width="1.6"/>
+        <rect x="134" y="24" width="10" height="60" rx="2" fill="#94a3b8"/>
+        <text x="98" y="96" font-size="7.5" font-weight="bold" fill="#0f766e">高減衰ブレーキ</text>
+        <rect x="158" y="18" width="148" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="166" y="35" font-size="8.5" font-weight="bold" fill="#0f766e">跳ね返り(バウンド)ゼロ制動</text>
+        <text x="166" y="51" font-size="7.5" fill="#115e59">・高ヒステリシス・ウレタン緩衝材</text>
+        <text x="166" y="65" font-size="7.5" fill="#115e59">・2次跳ね返りによる再露出ムラ防止</text>
+        <text x="166" y="79" font-size="7.5" fill="#0d9488">・金属打撃音を静音マイルド化</text>
+        <text x="34" y="111" font-size="8" fill="#334155">終端へ突入する羽根の運動エネルギーを瞬時に熱へ変換し跳ね返りを完全封殺</text>
+      `);
+
+    case 'shutter_shock_piston':
+      return wrap(`
+        <!-- Hydraulic/Pneumatic Micro-Piston & Friction Clutch End-Stop Damper -->
+        <rect x="22" y="36" width="82" height="36" rx="5" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
+        <rect x="66" y="40" width="16" height="28" rx="2" fill="#d97706" stroke="#92400e"/>
+        <line x1="82" y1="54" x2="128" y2="54" stroke="#475569" stroke-width="5"/>
+        <!-- Damping Curve Arrow -->
+        <path d="M108 32 Q122 44 108 54" fill="none" stroke="#dc2626" stroke-width="2"/>
+        <text x="28" y="86" font-size="7.5" font-weight="bold" fill="#334155">マイクロ減衰ピストン</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">駆動アーム終端ショックアブソーバー</text>
+        <text x="156" y="51" font-size="7.5" fill="#334155">・高粘度シリコーン粘性減衰＋コイルバネ</text>
+        <text x="156" y="65" font-size="7.5" fill="#334155">・F_damp = −c·v で終端衝撃ピーク半減</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・50万回連写のリンク疲労破損を防止</text>
+        <text x="36" y="111" font-size="8" fill="#334155">高速駆動レバーの停止衝撃を自動車のサスペンションのように滑らかに吸収</text>
+      `);
+
+    case 'shutter_fpc_driver':
+      return wrap(`
+        <!-- High-Current Shutter FPC & H-Bridge Electromagnet/Motor Driver -->
+        <rect x="20" y="22" width="110" height="68" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+        <rect x="36" y="34" width="34" height="24" rx="2" fill="#1e293b"/>
+        <text x="40" y="49" font-size="7" font-weight="bold" fill="#fde047">H-Bridge</text>
+        <rect x="82" y="32" width="36" height="12" rx="2" fill="#065f46"/>
+        <rect x="82" y="50" width="36" height="12" rx="2" fill="#065f46"/>
+        <rect x="34" y="68" width="84" height="12" rx="2" fill="#eab308"/>
+        <text x="48" y="77" font-size="7" font-weight="bold" fill="#451a03">メイン基板 ZIF直結</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#b45309">シャッター専用フレキ＆駆動回路</text>
+        <text x="156" y="51" font-size="7.5" fill="#78350f">・先幕/後幕マグネットのμs逆電流消磁</text>
+        <text x="156" y="65" font-size="7.5" fill="#78350f">・巻上モーターの高速PWM制動制御</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・大電流ノイズをEMIシールド遮蔽</text>
+        <text x="34" y="111" font-size="8" fill="#334155">電磁石の瞬時消磁パルスとモーター駆動電流を低インピーダンスで一括伝送</text>
+      `);
+
+    case 'shutter_floating_grommets':
+      return wrap(`
+        <!-- 4-Point Elastomer Floating Mount Isolating Shutter Shock from IBIS -->
+        <rect x="24" y="20" width="112" height="70" rx="6" fill="#f1f5f9" stroke="#334155" stroke-width="1.6"/>
+        <text x="52" y="58" font-size="8.5" font-weight="bold" fill="#0f172a">シャッター本体</text>
+        <!-- 4 Corner Floating Elastomer Grommets -->
+        <circle cx="32" cy="28" r="7" fill="#0d9488" stroke="#115e59" stroke-width="1.5"/>
+        <circle cx="128" cy="28" r="7" fill="#0d9488" stroke="#115e59" stroke-width="1.5"/>
+        <circle cx="32" cy="82" r="7" fill="#0d9488" stroke="#115e59" stroke-width="1.5"/>
+        <circle cx="128" cy="82" r="7" fill="#0d9488" stroke="#115e59" stroke-width="1.5"/>
+        <rect x="152" y="18" width="154" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="160" y="35" font-size="8.5" font-weight="bold" fill="#0f766e">4点フローティング防振マウント</text>
+        <text x="160" y="51" font-size="7.5" fill="#115e59">・段付カラー＋低硬度ブチルゴム4点</text>
+        <text x="160" y="65" font-size="7.5" fill="#115e59">・高周波シャッター衝撃を−14 dB遮断</text>
+        <text x="160" y="79" font-size="7.5" fill="#0284c7">・IBISジャイロ誤検知＆微ブレを根絶</text>
+        <text x="32" y="111" font-size="8" fill="#334155">シャッター全体をゴムの座布団4点で浮かせてボディ・センサーへの振動伝達を遮断</text>
+      `);
+
+    // =========================================================================
+    // Phase 9: Ultra-Dissected EVF Internal Mechanics Schematics (+4)
+    // =========================================================================
+    case 'evf_eyecup_latch':
+      return wrap(`
+        <!-- Dual Stainless Quick-Release Eyecup Slide-Lock Rails & Springs -->
+        <rect x="28" y="20" width="96" height="70" rx="8" fill="none" stroke="#475569" stroke-width="6"/>
+        <rect x="18" y="58" width="14" height="18" rx="2" fill="#0284c7" stroke="#0369a1"/>
+        <rect x="120" y="58" width="14" height="18" rx="2" fill="#0284c7" stroke="#0369a1"/>
+        <path d="M14 67 L4 67 M138 67 L148 67" stroke="#d97706" stroke-width="2"/>
+        <text x="50" y="58" font-size="8" font-weight="bold" fill="#334155">双葉ロック爪</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">誤脱落防止スライドロック</text>
+        <text x="164" y="51" font-size="7.5" fill="#334155">・左右対称SUSロック爪＋圧縮バネ×2</text>
+        <text x="164" y="65" font-size="7.5" fill="#334155">・両側同時摘みで1秒クイック交換</text>
+        <text x="164" y="79" font-size="7.5" fill="#0284c7">・耐誤脱落保持力 &gt; 18 N 達成</text>
+        <text x="36" y="111" font-size="8" fill="#334155">標準型と深型遮光アイカップを現場で素早く確実に交換できるステンレス鎖錠</text>
+      `);
+
+    case 'evf_diopter_rails':
+      return wrap(`
+        <!-- Centerless-Ground Twin Stainless Diopter Guide Rods & Anti-Backlash Springs -->
+        <line x1="22" y1="30" x2="146" y2="30" stroke="#64748b" stroke-width="4"/>
+        <line x1="22" y1="78" x2="146" y2="78" stroke="#64748b" stroke-width="4"/>
+        <!-- Movable ED Lens Sled -->
+        <rect x="64" y="22" width="32" height="64" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1.6"/>
+        <ellipse cx="80" cy="54" rx="8" ry="20" fill="#6ee7b7" stroke="#047857"/>
+        <!-- Preload Coil Springs -->
+        <path d="M98 30 L106 25 L112 35 L118 25 L124 35 L132 30" fill="none" stroke="#d97706" stroke-width="2"/>
+        <path d="M98 78 L106 73 L112 83 L118 73 L124 83 L132 78" fill="none" stroke="#d97706" stroke-width="2"/>
+        <rect x="158" y="18" width="148" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="166" y="35" font-size="8.5" font-weight="bold" fill="#047857">2軸キネマティック案内軸</text>
+        <text x="166" y="51" font-size="7.5" fill="#065f46">・真直度1μmセンタレス研磨SUS軸</text>
+        <text x="166" y="65" font-size="7.5" fill="#065f46">・対角2軸で光軸傾き0.019°以下</text>
+        <text x="166" y="79" font-size="7.5" fill="#b45309">・予圧コイルバネでバックラッシュ零</text>
+        <text x="34" y="111" font-size="8" fill="#334155">2本の鏡面ガイド軸と予圧バネが視度可動レンズの片ボケと遊びを完全追放</text>
+      `);
+
+    case 'evf_diopter_helicoid':
+      return wrap(`
+        <!-- 3-Track Helical Spiral-Cam Barrel Sleeve & Brass Sector Pinion -->
+        <rect x="28" y="22" width="104" height="64" rx="8" fill="#334155" stroke="#0f172a" stroke-width="1.8"/>
+        <path d="M40 32 L116 46 M40 54 L116 68" stroke="#facc15" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="78" cy="39" r="4.5" fill="#f8fafc" stroke="#0f172a"/>
+        <circle cx="78" cy="61" r="4.5" fill="#f8fafc" stroke="#0f172a"/>
+        <text x="36" y="96" font-size="7.5" font-weight="bold" fill="#b45309">120°×3条スパイラル溝</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#eab308"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#854d0e">3点均等推力ヘリコイド鏡筒</text>
+        <text x="156" y="51" font-size="7.5" fill="#713f12">・回転角 φ → 3点同軸Z推力へ変換</text>
+        <text x="156" y="65" font-size="7.5" fill="#713f12">・リード角 6.8° ⇒ 衝撃逆転ゼロ</text>
+        <text x="156" y="79" font-size="7.5" fill="#c2410c">・繰り返し位置精度 ±5 μm 達成</text>
+        <text x="32" y="111" font-size="8" fill="#334155">交換レンズ直系の3条らせんカム溝で大型ED接眼群をこじれゼロで前後駆動</text>
+      `);
+
+    case 'evf_oled_alignment':
+      return wrap(`
+        <!-- 3-Point Kinematic Micron Tilt & Centering OLED Calibration Frame -->
+        <rect x="28" y="22" width="102" height="66" rx="5" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <rect x="44" y="34" width="70" height="42" rx="2" fill="#2563eb"/>
+        <text x="58" y="58" font-size="8" font-weight="bold" fill="#fff">944万OLED</text>
+        <!-- 3 Triangular Brass Calibration Screws -->
+        <circle cx="79" cy="24" r="6" fill="#d97706" stroke="#78350f" stroke-width="1.5"/>
+        <circle cx="36" cy="84" r="6" fill="#d97706" stroke="#78350f" stroke-width="1.5"/>
+        <circle cx="122" cy="84" r="6" fill="#d97706" stroke="#78350f" stroke-width="1.5"/>
+        <polygon points="79,24 36,84 122,84" fill="none" stroke="#b45309" stroke-dasharray="3 2"/>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">3点μm光軸チルト調芯枠</text>
+        <text x="156" y="51" font-size="7.5" fill="#1e3a8a">・極細P0.2mm真鍮レベリングネジ×3</text>
+        <text x="156" y="65" font-size="7.5" fill="#1e3a8a">・低膨張コバール枠＋セラミック球座</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・像面チルト ±0.03°以内へ工場校正</text>
+        <text x="34" y="111" font-size="8" fill="#334155">3本の極細真鍮ネジで6.4μm画素の平面度を追い込み四隅まで完璧な解像を実現</text>
+      `);
+
+    // =========================================================================
+    // Phase 9: Ultra-Dissected 4-Axis LCD Hinge Mechanics Schematics (+8)
+    // =========================================================================
+    case 'lcd_orientation_hall':
+      return wrap(`
+        <!-- 3D Hall-Effect Magnetic Orientation Sensor & Neodymium Magnets -->
+        <rect x="24" y="24" width="48" height="62" rx="4" fill="#1e293b" stroke="#0f172a"/>
+        <rect x="58" y="38" width="10" height="28" rx="2" fill="#dc2626"/>
+        <text x="27" y="56" font-size="7.5" font-weight="bold" fill="#f8fafc">磁石</text>
+        <!-- Magnetic Flux Arcs -->
+        <path d="M72 44 Q94 34 114 48" fill="none" stroke="#3b82f6" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <path d="M72 60 Q94 70 114 56" fill="none" stroke="#3b82f6" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <rect x="114" y="42" width="24" height="24" rx="3" fill="#065f46" stroke="#10b981"/>
+        <text x="117" y="57" font-size="7" font-weight="bold" fill="#fde047">Hall</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#047857">非接触3Dホール反転検知</text>
+        <text x="162" y="51" font-size="7.5" fill="#065f46">・180°自撮り展開で自動ミラー反転</text>
+        <text x="162" y="65" font-size="7.5" fill="#065f46">・画面裏返し収納で自動消灯節電</text>
+        <text x="162" y="79" font-size="7.5" fill="#0284c7">・接点摩耗ゼロ＆防塵防滴に有利</text>
+        <text x="34" y="111" font-size="8" fill="#334155">極小磁石の磁界変化をホールICが非接触検知し画面反転と省電力を自動制御</text>
+      `);
+
+    case 'lcd_swivel_clutch':
+      return wrap(`
+        <!-- Stacked Belleville Disc-Spring Friction Torque Clutch (2-Axis Swivel) -->
+        <line x1="20" y1="54" x2="146" y2="54" stroke="#475569" stroke-width="7"/>
+        <!-- Belleville Disc Springs (< > < >) -->
+        <path d="M44 36 L52 54 L44 72 M62 36 L54 54 L62 72 M72 36 L80 54 L72 72 M90 36 L82 54 L90 72" fill="none" stroke="#d97706" stroke-width="2.6"/>
+        <rect x="104" y="34" width="24" height="40" rx="3" fill="#94a3b8" stroke="#1e293b"/>
+        <text x="36" y="88" font-size="7.5" font-weight="bold" fill="#b45309">皿バネ積層クラッチ</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#92400e">フリーストップ皿バネ機構</text>
+        <text x="164" y="51" font-size="7.5" fill="#78350f">・SUS301皿バネを交互積層し定圧保持</text>
+        <text x="164" y="65" font-size="7.5" fill="#78350f">・静止トルク ≈ 0.35 N·m (10万回維持)</text>
+        <text x="164" y="79" font-size="7.5" fill="#dc2626">・指1本で動き任意角度でピタッと静止</text>
+        <text x="34" y="111" font-size="8" fill="#334155">6枚の皿バネが摩擦板を挟み込み10万回開閉しても緩まない上質なトルクを実現</text>
+      `);
+
+    case 'lcd_detent_stops':
+      return wrap(`
+        <!-- 0° / 180° / 270° Hardened Cam Detent Stops & End-Limit Bumpers -->
+        <circle cx="76" cy="54" r="30" fill="#e2e8f0" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="76" cy="24" r="4.5" fill="#dc2626"/>
+        <circle cx="106" cy="54" r="4.5" fill="#0284c7"/>
+        <circle cx="76" cy="84" r="4.5" fill="#10b981"/>
+        <text x="66" y="17" font-size="7" font-weight="bold" fill="#dc2626">180°自撮り</text>
+        <text x="112" y="57" font-size="7" font-weight="bold" fill="#0284c7">0°収納</text>
+        <text x="62" y="96" font-size="7" font-weight="bold" fill="#047857">−90°下向</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#f1f5f9" stroke="#64748b"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">角度クリック＆過回転ストッパー</text>
+        <text x="164" y="51" font-size="7.5" fill="#334155">・0°/180°位置で鋼球がカチッと係合</text>
+        <text x="164" y="65" font-size="7.5" fill="#334155">・焼入れ鋼ストッパーで270°以上を阻止</text>
+        <text x="164" y="79" font-size="7.5" fill="#dc2626">・内部フレキ断線を物理的に100%防止</text>
+        <text x="34" y="111" font-size="8" fill="#334155">決まった角度の心地よいクリック感と内部ケーブルねじ切れ防止の頑丈な終端止め</text>
+      `);
+
+    case 'lcd_coaxial_fpc':
+      return wrap(`
+        <!-- Helical Coaxial / Rolled Polyimide Flex Harness Inside Hollow Hinge Shaft -->
+        <rect x="20" y="32" width="124" height="44" rx="22" fill="none" stroke="#475569" stroke-width="4"/>
+        <!-- Helical Flex Ribbon Passing Through Center -->
+        <path d="M16 54 Q42 38 66 54 T114 54 T152 54" fill="none" stroke="#f59e0b" stroke-width="5"/>
+        <path d="M16 54 Q42 38 66 54 T114 54 T152 54" fill="none" stroke="#78350f" stroke-width="1.2" stroke-dasharray="4 3"/>
+        <text x="36" y="92" font-size="7.5" font-weight="bold" fill="#b45309">中空軸内 らせん貫通配線</text>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#92400e">10万回屈曲耐性らせんFPC</text>
+        <text x="168" y="51" font-size="7.5" fill="#78350f">・圧延焼鈍銅箔(RA銅)で疲労断線ゼロ</text>
+        <text x="168" y="65" font-size="7.5" fill="#78350f">・270°回転をらせん伸縮へ逃がす構造</text>
+        <text x="168" y="79" font-size="7.5" fill="#0284c7">・MIPI映像＋タッチ＋電源を一括伝送</text>
+        <text x="32" y="111" font-size="8" fill="#334155">ヒンジの空洞をらせん状に巻いて通すことで開閉と回転の捻れ応力を極小化</text>
+      `);
+
+    case 'lcd_pantograph_links':
+      return wrap(`
+        <!-- 4-Bar Pantograph Parallel Rear Tilt Linkage Arms -->
+        <rect x="24" y="22" width="14" height="66" rx="2" fill="#475569"/>
+        <line x1="38" y1="32" x2="108" y2="44" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
+        <line x1="38" y1="74" x2="108" y2="86" stroke="#0284c7" stroke-width="4" stroke-linecap="round"/>
+        <rect x="108" y="36" width="14" height="56" rx="2" fill="#0ea5e9"/>
+        <circle cx="38" cy="32" r="4" fill="#facc15"/><circle cx="108" cy="44" r="4" fill="#facc15"/>
+        <circle cx="38" cy="74" r="4" fill="#facc15"/><circle cx="108" cy="86" r="4" fill="#facc15"/>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">4節パンタグラフチルトリンク</text>
+        <text x="156" y="51" font-size="7.5" fill="#075985">・画面を後方へ引き出してから上98°チルト</text>
+        <text x="156" y="65" font-size="7.5" fill="#075985">・EVFアイカップとぶつからない軌跡設計</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・光軸の真後ろでローアングル撮影可能</text>
+        <text x="34" y="111" font-size="8" fill="#334155">4本のステンレス平行リンクがEVFを避けつつ光軸直後の素早い上下チルトを実現</text>
+      `);
+
+    case 'lcd_tilt_torque_cams':
+      return wrap(`
+        <!-- Asymmetric Gravity-Compensating Tilt Friction Torque Cams -->
+        <rect x="26" y="24" width="108" height="62" rx="6" fill="#f8fafc" stroke="#64748b"/>
+        <!-- Angle vs Torque Curve -->
+        <path d="M36 74 Q74 34 124 44" fill="none" stroke="#dc2626" stroke-width="2.6"/>
+        <line x1="36" y1="78" x2="128" y2="78" stroke="#334155"/>
+        <line x1="36" y1="30" x2="36" y2="78" stroke="#334155"/>
+        <text x="44" y="38" font-size="7.5" font-weight="bold" fill="#dc2626">水平45°で保持力UP!</text>
+        <text x="52" y="84" font-size="7" fill="#475569">チルト角度 (0° → 98°)</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fef2f2" stroke="#ef4444"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#b91c1c">重力補償非対称トルクカム</text>
+        <text x="156" y="51" font-size="7.5" fill="#7f1d1d">・液晶の自重が最大になる角度で自動増圧</text>
+        <text x="156" y="65" font-size="7.5" fill="#7f1d1d">・引き始めは軽く、止めたい位置で高剛性</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・タッチ操作で画面が押されても下がらない</text>
+        <text x="32" y="111" font-size="8" fill="#334155">カム形状でバネ圧を角度制御しタッチ操作してもお辞儀しない絶妙な保持感</text>
+      `);
+
+    case 'lcd_tilt_slide_rails':
+      return wrap(`
+        <!-- Twin Stainless Linear Slide Rails & PTFE Glider Shoes -->
+        <rect x="22" y="24" width="122" height="10" rx="2" fill="#94a3b8" stroke="#334155"/>
+        <rect x="22" y="74" width="122" height="10" rx="2" fill="#94a3b8" stroke="#334155"/>
+        <rect x="64" y="20" width="36" height="18" rx="3" fill="#0ea5e9" stroke="#0369a1"/>
+        <rect x="64" y="70" width="36" height="18" rx="3" fill="#0ea5e9" stroke="#0369a1"/>
+        <path d="M40 54 L124 54" stroke="#d97706" stroke-width="2.4"/>
+        <polygon points="128,54 120,49 120,59" fill="#d97706"/>
+        <polygon points="36,54 44,49 44,59" fill="#d97706"/>
+        <text x="48" y="49" font-size="7.5" font-weight="bold" fill="#b45309">22 mm 水平スライド</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">上下ステンレス摺動レール</text>
+        <text x="164" y="51" font-size="7.5" fill="#075985">・PTFE低摩擦シューでガタつきゼロ</text>
+        <text x="164" y="65" font-size="7.5" fill="#075985">・側面ケーブル(HDMI/マイク)回避</text>
+        <text x="164" y="79" font-size="7.5" fill="#0284c7">・チルト＋バリアングル両立の要</text>
+        <text x="34" y="111" font-size="8" fill="#334155">クレードル内を滑らかにスライドして側面ケーブルとの干渉を鮮やかに回避</text>
+      `);
+
+    case 'lcd_cradle_locks':
+      return wrap(`
+        <!-- Rear Cradle Magnetic & Spring Parking Locks + Vibration Pads -->
+        <rect x="24" y="20" width="110" height="70" rx="6" fill="none" stroke="#334155" stroke-width="4"/>
+        <!-- 4 Corner Elastomer Cushion & Latch Clips -->
+        <rect x="22" y="18" width="16" height="10" rx="2" fill="#dc2626"/>
+        <rect x="120" y="18" width="16" height="10" rx="2" fill="#dc2626"/>
+        <rect x="22" y="82" width="16" height="10" rx="2" fill="#0d9488"/>
+        <rect x="120" y="82" width="16" height="10" rx="2" fill="#0d9488"/>
+        <text x="46" y="58" font-size="8" font-weight="bold" fill="#334155">収納ロック4点</text>
+        <rect x="152" y="18" width="154" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="160" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">ガタつき防止ドッキング爪</text>
+        <text x="160" y="51" font-size="7.5" fill="#334155">・収納時に磁石＋板バネ爪で完全密着</text>
+        <text x="160" y="65" font-size="7.5" fill="#334155">・4隅エラストマー座で衝撃・ビビり吸収</text>
+        <text x="160" y="79" font-size="7.5" fill="#0f766e">・固定式モニター同等のボディ一体感</text>
+        <text x="34" y="111" font-size="8" fill="#334155">モニターを閉じた瞬間に4点クリップと磁石でボディ背面へピタッと隙間なく固定</text>
+      `);
+
+    // =========================================================================
+    // Phase 9: Ultra-Dissected Body Internal Electromechanical Schematics (+14)
+    // =========================================================================
+    case 'body_battery_ejector':
+      return wrap(`
+        <!-- Battery Retention Claw, 45deg Auto-Lock Cam & Torsion Spring -->
+        <rect x="28" y="16" width="52" height="58" rx="4" fill="#0284c7" stroke="#0369a1" stroke-width="1.6"/>
+        <text x="34" y="48" font-size="8" font-weight="bold" fill="#fff">バッテリー</text>
+        <!-- Blue Retention Claw Locking Under Corner -->
+        <polygon points="64,74 106,74 106,86 72,86" fill="#2563eb" stroke="#1d4ed8" stroke-width="1.5"/>
+        <circle cx="100" cy="80" r="6" fill="#facc15" stroke="#92400e"/>
+        <path d="M54 88 L54 78" stroke="#dc2626" stroke-width="2.2"/>
+        <text x="86" y="68" font-size="7.5" font-weight="bold" fill="#1d4ed8">青色ロック爪</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">二重安全 脱落防止ラッチ</text>
+        <text x="156" y="51" font-size="7.5" fill="#1e3a8a">・45°斜面で押込だけで自動カチッと係合</text>
+        <text x="156" y="65" font-size="7.5" fill="#1e3a8a">・底蓋を開けても電池落下を完全阻止</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・解除と同時に排出バネが8mm押出し</text>
+        <text x="34" y="111" font-size="8" fill="#334155">トーションバネ付勢の青いストッパー爪が高価なバッテリーの誤落下を防止</text>
+      `);
+
+    case 'body_battery_terminals':
+      return wrap(`
+        <!-- 4-Pin Gold Twin-Contact Leaf Springs & 2oz Heavy-Copper Power FPC -->
+        <rect x="20" y="20" width="114" height="22" rx="3" fill="#334155"/>
+        ${[34, 58, 82, 106]
+          .map(
+            (x) =>
+              `<rect x="${x}" y="42" width="4" height="22" rx="1" fill="#eab308"/><rect x="${x + 6}" y="42" width="4" height="22" rx="1" fill="#facc15"/>`
+          )
+          .join('')}
+        <rect x="28" y="72" width="96" height="16" rx="3" fill="#f59e0b" stroke="#92400e"/>
+        <text x="42" y="83" font-size="7.5" font-weight="bold" fill="#fff">2oz 厚銅パワーFPC</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fefce8" stroke="#eab308"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#854d0e">6A大電流 金メッキ二股端子</text>
+        <text x="156" y="51" font-size="7.5" fill="#713f12">・1極2本バネ冗長接触で瞬断ゼロ</text>
+        <text x="156" y="65" font-size="7.5" fill="#713f12">・接触抵抗 &lt; 5 mΩ (発熱わずか0.14W)</text>
+        <text x="156" y="79" font-size="7.5" fill="#c2410c">・+7.2V / GND / 温度 / BMS通信 4極</text>
+        <text x="32" y="111" font-size="8" fill="#334155">二股リン青銅金メッキ接点が激しい連写振動下でも6A大電流を途切れず供給</text>
+      `);
+
+    case 'body_shutter_switch':
+      return wrap(`
+        <!-- 2-Stage Coaxial Stainless Snap-Dome Shutter Release Force Curve -->
+        <path d="M24 80 L48 56 L62 64 L88 32 L106 44 L132 28" fill="none" stroke="#dc2626" stroke-width="2.4"/>
+        <line x1="20" y1="84" x2="138" y2="84" stroke="#334155"/>
+        <line x1="20" y1="20" x2="20" y2="84" stroke="#334155"/>
+        <circle cx="48" cy="56" r="4" fill="#f59e0b"/>
+        <circle cx="88" cy="32" r="4" fill="#dc2626"/>
+        <text x="26" y="48" font-size="7" font-weight="bold" fill="#b45309">S1半押 1.2N</text>
+        <text x="78" y="24" font-size="7" font-weight="bold" fill="#dc2626">S2全押 2.8N</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#b45309">2段SUSスナップドーム接点</text>
+        <text x="156" y="51" font-size="7.5" fill="#78350f">・スナップ比35%の明確な2段クリック</text>
+        <text x="156" y="65" font-size="7.5" fill="#78350f">・バウンス時間 &lt; 1ms の高速レリーズ</text>
+        <text x="156" y="79" font-size="7.5" fill="#dc2626">・50万回耐久＋同軸電源ワイパー一体</text>
+        <text x="34" y="111" font-size="8" fill="#334155">2枚重ねの極小金属ドームが指先だけで半押しと全押しをミリ秒判別する感触</text>
+      `);
+
+    case 'body_command_encoders':
+      return wrap(`
+        <!-- Non-Contact Optical Slotted Chopper Wheel & Steel Ball Detent -->
+        <circle cx="68" cy="54" r="28" fill="#cbd5e1" stroke="#334155" stroke-width="2" stroke-dasharray="6 4"/>
+        <circle cx="68" cy="54" r="10" fill="#d97706"/>
+        <!-- Photo Interrupter Fork -->
+        <rect x="92" y="44" width="24" height="20" rx="3" fill="#1e293b"/>
+        <text x="95" y="57" font-size="7" font-weight="bold" fill="#38bdf8">A/B</text>
+        <!-- Steel Ball + Spring -->
+        <circle cx="38" cy="54" r="5" fill="#f8fafc" stroke="#334155" stroke-width="1.5"/>
+        <path d="M16 54 L22 49 L26 59 L32 54" fill="none" stroke="#d97706" stroke-width="2"/>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">非接触光学エンコーダー＆鋼球</text>
+        <text x="144" y="51" font-size="7.5" fill="#075985">・A/B 90°位相差パルスで回転方向検出</text>
+        <text x="144" y="65" font-size="7.5" fill="#075985">・摩耗・接点飛び(チャタリング)完全零</text>
+        <text x="144" y="79" font-size="7.5" fill="#b45309">・焼入れ鋼球＋バネで小気味よいクリック</text>
+        <text x="34" y="111" font-size="8" fill="#334155">光のスリット検出と独立鋼球クリック機構で10万回回しても新品同様の操作感</text>
+      `);
+
+    case 'body_mode_lock_ratchet':
+      return wrap(`
+        <!-- Center-Push Mode Lock Ratchet & Dual-Deck Concentric Hollow Shaft -->
+        <circle cx="56" cy="54" r="24" fill="#cbd5e1" stroke="#334155" stroke-width="2" stroke-dasharray="5 3"/>
+        <rect x="78" y="48" width="18" height="12" rx="2" fill="#dc2626"/>
+        <text x="36" y="88" font-size="7.5" font-weight="bold" fill="#dc2626">ロック解除爪</text>
+        <!-- Concentric Dual Shaft Cross Section -->
+        <rect x="114" y="24" width="18" height="60" rx="3" fill="#d97706" stroke="#78350f"/>
+        <rect x="119" y="16" width="8" height="74" rx="2" fill="#94a3b8" stroke="#1e293b"/>
+        <text x="106" y="96" font-size="7" font-weight="bold" fill="#78350f">二重同軸</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#92400e">遊星ラチェット＆2段同軸軸</text>
+        <text x="156" y="51" font-size="7.5" fill="#78350f">・中央押下時のみロック爪が退避回転</text>
+        <text x="156" y="65" font-size="7.5" fill="#78350f">・耐誤操作トルク &gt; 1.5 N·m の絶対安全</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・中空外軸(AF)＋中芯軸(連写)独立駆動</text>
+        <text x="34" y="111" font-size="8" fill="#334155">プッシュ解除ラチェットと二重同軸シャフトがバッグ内誤操作をゼロにする</text>
+      `);
+
+    case 'body_top_switch_fpc':
+      return wrap(`
+        <!-- U-Shaped Top-Deck Rigid-Flex Harness Wrapping Around EVF + Gray-Code Rings -->
+        <path d="M26 24 H56 V78 H26 Z M106 24 H136 V78 H106 Z" fill="#065f46" stroke="#064e3b" stroke-width="1.5"/>
+        <rect x="52" y="22" width="58" height="14" rx="2" fill="#f59e0b" stroke="#92400e"/>
+        <text x="64" y="62" font-size="7.5" font-weight="bold" fill="#64748b">EVF回避</text>
+        <circle cx="41" cy="52" r="10" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="4 2"/>
+        <circle cx="121" cy="52" r="10" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="4 2"/>
+        <rect x="150" y="18" width="156" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="158" y="35" font-size="8.5" font-weight="bold" fill="#047857">U字リジッドフレキ＆グレイコード</text>
+        <text x="158" y="51" font-size="7.5" fill="#065f46">・EVF鏡筒を迂回する一体U字配線</text>
+        <text x="158" y="65" font-size="7.5" fill="#065f46">・1bit変化グレイコードで誤読完全零</text>
+        <text x="158" y="79" font-size="7.5" fill="#dc2626">・±15kV静電気保護TVSを直近実装</text>
+        <text x="32" y="111" font-size="8" fill="#334155">肩部ダイヤル・RECボタン・Sub-OLEDをEVF回避U字シートへ高密度統合</text>
+      `);
+
+    case 'body_hotshoe_springs':
+      return wrap(`
+        <!-- Hot-Shoe Dual Cantilever Leaf Springs + Silicone Rain-Seal Skirt + 21-Pin FPC -->
+        <rect x="24" y="28" width="108" height="10" rx="2" fill="#94a3b8" stroke="#334155"/>
+        <path d="M36 44 Q78 34 120 44" fill="none" stroke="#d97706" stroke-width="3.2"/>
+        <path d="M78 44 L78 24" stroke="#dc2626" stroke-width="2.2"/>
+        <polygon points="78,19 73,27 83,27" fill="#dc2626"/>
+        <text x="48" y="56" font-size="7.5" font-weight="bold" fill="#b45309">12 N 上向き板バネ圧着</text>
+        <rect x="28" y="64" width="100" height="10" rx="3" fill="#0f766e"/>
+        <rect x="52" y="76" width="52" height="12" rx="2" fill="#f59e0b"/>
+        <text x="58" y="85" font-size="7" font-weight="bold" fill="#fff">21ピンFPC</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">双葉板バネ＆21ピン防水FPC</text>
+        <text x="156" y="51" font-size="7.5" fill="#334155">・ストロボ脚のガタ除去＆確実GND接地</text>
+        <text x="156" y="65" font-size="7.5" fill="#334155">・成型シリコーンスカートで屋根浸水防止</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・EMI遮蔽FPCで24bitデジタル音声直結</text>
+        <text x="34" y="111" font-size="8" fill="#334155">ステンレス板バネのガタ止めと防水スカートが雨天ストロボ＆マイク収録を死守</text>
+      `);
+
+    case 'body_card_ejectors':
+      return wrap(`
+        <!-- Push-Push Mechanical Heart-Cam Closed Loop Track Diagram -->
+        <rect x="22" y="18" width="112" height="74" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+        <!-- Iconic Heart-Cam Closed Loop Path! -->
+        <path d="M78 82 L108 46 Q108 26 90 30 L78 44 L66 30 Q48 26 48 46 Z" fill="none" stroke="#1e293b" stroke-width="3.2"/>
+        <circle cx="78" cy="44" r="5" fill="#dc2626"/>
+        <text x="64" y="60" font-size="7.5" font-weight="bold" fill="#dc2626">ロック谷</text>
+        <text x="34" y="86" font-size="7" font-weight="bold" fill="#92400e">押す→ロック / 再押→排出</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#b45309">ハートカム双安定排出メカ</text>
+        <text x="156" y="51" font-size="7.5" fill="#78350f">・電力不要の純機械式プッシュ・プッシュ</text>
+        <text x="156" y="65" font-size="7.5" fill="#78350f">・一方向段差溝＋線ばねピンで逆流零</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・CFexpress/SD 5万回挿抜＋検知SW</text>
+        <text x="32" y="111" font-size="8" fill="#334155">ボールペンと同じハート型の迷路溝がカードを確実にロックしワンプッシュ排出</text>
+      `);
+
+    case 'body_card_door_latch':
+      return wrap(`
+        <!-- Card Door Dual-Hook Slide Lock & Sub-25ms Data-Safety Interlock Switch -->
+        <rect x="24" y="20" width="22" height="70" rx="3" fill="#475569"/>
+        <rect x="46" y="28" width="16" height="10" rx="2" fill="#94a3b8"/>
+        <rect x="46" y="70" width="16" height="10" rx="2" fill="#94a3b8"/>
+        <!-- Safety Interlock Micro-Switch -->
+        <rect x="80" y="62" width="46" height="24" rx="3" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+        <rect x="68" y="70" width="12" height="8" rx="1" fill="#dc2626"/>
+        <text x="86" y="77" font-size="7.5" font-weight="bold" fill="#dc2626">安全SW</text>
+        <text x="64" y="36" font-size="7.5" font-weight="bold" fill="#0f766e">2フック防水圧着</text>
+        <rect x="144" y="18" width="162" height="74" rx="5" fill="#fef2f2" stroke="#ef4444"/>
+        <text x="152" y="35" font-size="8.5" font-weight="bold" fill="#b91c1c">データ破損防止インターロック</text>
+        <text x="152" y="51" font-size="7.5" fill="#7f1d1d">・0.5mm開扉で即座にハード割り込み</text>
+        <text x="152" y="65" font-size="7.5" fill="#7f1d1d">・25ms未満で8K書込キャッシュ退避</text>
+        <text x="152" y="79" font-size="7.5" fill="#0f766e">・2フックでパッキン25%均一防水圧縮</text>
+        <text x="34" y="111" font-size="8" fill="#334155">指がカードに触れるより早く開扉を検知して8K記録中のデータ破損を完全阻止</text>
+      `);
+
+    case 'body_joystick_gimbal':
+      return wrap(`
+        <!-- 8-Way AF Joystick 4-Axis Cross-Gimbal & 5-Dome Tactile PCB -->
+        <circle cx="76" cy="54" r="32" fill="#ecfdf5" stroke="#10b981" stroke-width="1.6"/>
+        <!-- Cross Gimbal Bars -->
+        <rect x="46" y="49" width="60" height="10" rx="2" fill="#94a3b8" stroke="#334155"/>
+        <rect x="71" y="24" width="10" height="60" rx="2" fill="#94a3b8" stroke="#334155"/>
+        <!-- 5 Gold Snap Domes -->
+        <circle cx="76" cy="54" r="5" fill="#eab308" stroke="#854d0e"/>
+        <circle cx="76" cy="30" r="4.5" fill="#eab308"/>
+        <circle cx="76" cy="78" r="4.5" fill="#eab308"/>
+        <circle cx="52" cy="54" r="4.5" fill="#eab308"/>
+        <circle cx="100" cy="54" r="4.5" fill="#eab308"/>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#047857">4軸ジンバル＆5接点ドーム</text>
+        <text x="144" y="51" font-size="7.5" fill="#065f46">・±12°極短ストロークで8方向瞬時応答</text>
+        <text x="144" y="65" font-size="7.5" fill="#065f46">・斜め45°は隣接2ドームを均等同時押下</text>
+        <text x="144" y="79" font-size="7.5" fill="#0f766e">・シリコーン蛇腹シールで全天候防水</text>
+        <text x="34" y="111" font-size="8" fill="#334155">十字ジンバルと5つの金メッキ極小ドームでファインダーを覗いたまま自在AF操作</text>
+      `);
+
+    case 'body_rear_wheel_encoder':
+      return wrap(`
+        <!-- Hollow-Center 36-Pulse Optical Ring Encoder + 4-Way Cardinal Domes -->
+        <circle cx="76" cy="54" r="32" fill="none" stroke="#475569" stroke-width="8" stroke-dasharray="5 3"/>
+        <circle cx="76" cy="54" r="18" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+        <circle cx="76" cy="54" r="6" fill="#eab308"/>
+        <circle cx="76" cy="36" r="3.5" fill="#eab308"/><circle cx="76" cy="72" r="3.5" fill="#eab308"/>
+        <circle cx="58" cy="54" r="3.5" fill="#eab308"/><circle cx="94" cy="54" r="3.5" fill="#eab308"/>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#eef2ff" stroke="#6366f1"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#4338ca">中空3機能同軸エンコーダー</text>
+        <text x="144" y="51" font-size="7.5" fill="#312e81">・外周：36パルス非接触リング光学読取</text>
+        <text x="144" y="65" font-size="7.5" fill="#312e81">・内周：4方向＋中央決定 5点ドーム</text>
+        <text x="144" y="79" font-size="7.5" fill="#dc2626">・厚さわずか3.8mmの極薄積層メカ</text>
+        <text x="34" y="111" font-size="8" fill="#334155">真ん中が空洞のドーナツ型光学リングが回転・4方向・中央押下を極薄で一体化</text>
+      `);
+
+    case 'body_strap_anchors':
+      return wrap(`
+        <!-- Forged Stainless Tri-Bolt Internal Strap Lug Reinforcement Plate -->
+        <rect x="24" y="20" width="40" height="70" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="44" cy="34" r="5" fill="#475569"/><circle cx="34" cy="70" r="5" fill="#475569"/><circle cx="54" cy="70" r="5" fill="#475569"/>
+        <!-- External Strap Loop Pulling Load -->
+        <circle cx="94" cy="54" r="14" fill="none" stroke="#64748b" stroke-width="5"/>
+        <path d="M110 54 L134 54" stroke="#dc2626" stroke-width="2.6"/>
+        <polygon points="139,54 130,49 130,59" fill="#dc2626"/>
+        <text x="86" y="84" font-size="7.5" font-weight="bold" fill="#dc2626">500 N 引張保証</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">鍛造SUS 3点トライボルト裏板</text>
+        <text x="156" y="51" font-size="7.5" fill="#334155">・重い大口径レンズ携行時の動的衝撃吸収</text>
+        <text x="156" y="65" font-size="7.5" fill="#334155">・3点三角M2.0ボルトで緩み・外装割れ零</text>
+        <text x="156" y="79" font-size="7.5" fill="#0f766e">・EPDM防水グロメットで貫通部完全封止</text>
+        <text x="34" y="111" font-size="8" fill="#334155">約50kgの引張にも耐える鍛造ステンレス裏板がカメラ落下を内側から絶対阻止</text>
+      `);
+
+    case 'body_acoustic_breather':
+      return wrap(`
+        <!-- Hydrophobic ePTFE Membrane Blocking Raindrops While Passing Sound & Air -->
+        <rect x="20" y="46" width="118" height="10" rx="2" fill="#e2e8f0" stroke="#0284c7" stroke-width="1.6"/>
+        <text x="36" y="54" font-size="7" font-weight="bold" fill="#0369a1">ePTFE 0.2μm細孔膜</text>
+        <!-- Water Droplet Bounced Off Top -->
+        <circle cx="46" cy="30" r="10" fill="#38bdf8" stroke="#0284c7"/>
+        <text x="26" y="16" font-size="7" font-weight="bold" fill="#0369a1">水滴ブロック!</text>
+        <!-- Sound Waves & Air Passing Freely -->
+        <path d="M98 20 Q108 32 98 44 M98 58 Q108 72 98 84" fill="none" stroke="#10b981" stroke-width="2.2"/>
+        <text x="84" y="94" font-size="7.5" font-weight="bold" fill="#047857">音・気圧のみ透過</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0e7490">防水マイク・ブザー＆通気弁</text>
+        <text x="156" y="51" font-size="7.5" fill="#155e75">・耐水圧 &gt; 30 kPa で豪雨侵入を遮断</text>
+        <text x="156" y="65" font-size="7.5" fill="#155e75">・シリコーン防振室でAFモーター音−15dB</text>
+        <text x="156" y="79" font-size="7.5" fill="#0284c7">・飛行機や高山での内圧差を自動イコライズ</text>
+        <text x="34" y="111" font-size="8" fill="#334155">水滴を弾きつつ音波と空気だけを通すePTFE膜で防水収録と気圧調整を両立</text>
+      `);
+
+    case 'body_chassis_gaskets':
+      return wrap(`
+        <!-- Labyrinth Step Joint + 25% Compressed 3D Silicone Perimeter Gasket -->
+        <path d="M22 36 H68 V54 H128" fill="none" stroke="#334155" stroke-width="6"/>
+        <path d="M22 68 H68 V84 H128" fill="none" stroke="#64748b" stroke-width="6"/>
+        <!-- Compressed Silicone Gasket in Groove -->
+        <ellipse cx="96" cy="69" rx="14" ry="8" fill="#0f766e" stroke="#134e4a" stroke-width="1.6"/>
+        <text x="72" y="28" font-size="7.5" font-weight="bold" fill="#0284c7">段差ラビリンス迷路</text>
+        <text x="68" y="96" font-size="7.5" font-weight="bold" fill="#0f766e">圧縮率 25% 気密シール</text>
+        <rect x="148" y="18" width="158" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="156" y="35" font-size="8.5" font-weight="bold" fill="#0f766e">3D全周防塵防滴ガスケット網</text>
+        <text x="156" y="51" font-size="7.5" fill="#115e59">・前後上下外装＆マウント周りを立体封止</text>
+        <text x="156" y="65" font-size="7.5" fill="#115e59">・ラビリンス段差＋25%圧縮の二重防壁</text>
+        <text x="156" y="79" font-size="7.5" fill="#0d9488">・−20℃の極寒でも硬化しない高弾性ゴム</text>
+        <text x="34" y="111" font-size="8" fill="#334155">ボディのすべての継ぎ目を立体ゴムパッキン網で囲み豪雨や砂嵐から内部を守る</text>
+      `);
+
     default:
       return wrap('');
   }

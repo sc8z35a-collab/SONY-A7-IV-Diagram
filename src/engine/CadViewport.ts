@@ -465,30 +465,30 @@ export class CadViewport {
       d = 258 + e * 680;
       target = new THREE.Vector3(0, -2.0 * (1 - e), 82.0 + e * 14.0);
     } else if (this.mode === 'camera_body') {
-      // Complete 98-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 98-layer body dissection!
-      d = 328 + e * 430;
+      // Complete 138-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 138-layer body dissection!
+      d = 328 + e * 490;
       target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 14.0);
     } else if (this.mode === 'lcd') {
-      d = 155 + e * 102;
-      target = new THREE.Vector3(8.0 + e * 4.0, -7.0, -32.0 - e * 12.0);
+      d = 155 + e * 155;
+      target = new THREE.Vector3(8.0 + e * 4.0, -7.0, -32.0 - e * 16.0);
     } else if (this.mode === 'body') {
-      d = 285 + e * 235;
-      target = new THREE.Vector3(-8.0 - e * 10.0, 6.0 + e * 6.0, 2.0);
+      d = 285 + e * 315;
+      target = new THREE.Vector3(-8.0 - e * 10.0, 5.0 - e * 2.0, 2.0);
     } else if (this.mode === 'mount') {
       d = 178 + e * 158;
       target = new THREE.Vector3(2.0 + e * 3.0, -2.5 - e * 4.5, 25.0 + e * 22.0);
     } else if (this.mode === 'evf') {
-      d = 136 + e * 188;
+      d = 136 + e * 208;
       target = new THREE.Vector3(1.5 * (1 - e), 38.6 + e * 0.5, -16.5 - e * 18.0);
     } else if (this.mode === 'mainboard') {
       d = 186 + e * 124;
       target = new THREE.Vector3(0.0, -3.0, -21.5 - e * 14.5);
     } else if (this.mode === 'shutter') {
-      d = 166 + e * 82;
-      target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
+      d = 166 + e * 145;
+      target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 2.5);
     } else if (this.mode === 'integrated') {
-      // Assembled complete 160-macro-part flagship camera + 62-part 50mm F1.2 lens, vs panoramic ultra-dissection!
-      d = 385 + e * 1160;
+      // Assembled complete 200-macro-part flagship camera (138 body + 62-part 50mm F1.2 lens), vs panoramic ultra-dissection!
+      d = 385 + e * 1180;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
       d = 142 + e * 255;

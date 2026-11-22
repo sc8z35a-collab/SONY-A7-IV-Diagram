@@ -562,14 +562,19 @@ export class ZeroTextControls {
                 ? 21
                 : 16;
       } else if (part.subsystem === 'lcd') {
-        widthPx = part.order === 1 || part.order === 4 || part.order === 6 ? 30 : 23;
+        widthPx =
+          part.order === 1 || part.order === 4 || part.order === 9 || part.order === 14
+            ? 30
+            : part.order === 2 || part.order === 6 || part.order === 10 || part.order === 11
+              ? 24
+              : 18;
       } else if (part.subsystem === 'body') {
         widthPx =
-          part.order === 3 || part.order === 7 || part.order === 8 || part.order === 9 || part.order === 12
+          part.order === 3 || part.order === 7 || part.order === 8 || part.order === 9 || part.order === 12 || part.order === 26
             ? 32
-            : part.order === 1 || part.order === 5 || part.order === 6
+            : part.order === 1 || part.order === 5 || part.order === 6 || part.order === 14 || part.order === 16 || part.order === 17 || part.order === 18 || part.order === 20
               ? 25
-              : 19;
+              : 18;
       } else if (part.subsystem === 'mount') {
         widthPx =
           part.order === 1 || part.order === 11 || part.order === 12
@@ -579,12 +584,12 @@ export class ZeroTextControls {
               : 18;
       } else if (part.subsystem === 'evf') {
         widthPx =
-          part.order === 1 || part.order === 14
+          part.order === 1 || part.order === 14 || part.order === 18
             ? 32
-            : part.order === 5 || part.order === 7 || part.order === 8 || part.order === 11
+            : part.order === 6 || part.order === 8 || part.order === 9 || part.order === 11 || part.order === 12 || part.order === 16
               ? 26
-              : part.order === 2 || part.order === 10 || part.order === 13
-                ? 22
+              : part.order === 2 || part.order === 3 || part.order === 10 || part.order === 13 || part.order === 15 || part.order === 17
+                ? 21
                 : 17;
       } else if (part.subsystem === 'mainboard') {
         widthPx =
@@ -597,13 +602,13 @@ export class ZeroTextControls {
                 : 17;
       } else if (part.subsystem === 'shutter') {
         widthPx =
-          part.order === 1 || part.order === 12
-            ? 30
-            : part.order === 3 || part.order === 5 || part.order === 6
-              ? 24
-              : part.order >= 8 && part.order <= 10
-                ? 26
-                : 17;
+          part.order === 1 || part.order === 25 || part.order === 26
+            ? 32
+            : part.order === 4 || part.order === 8 || part.order === 12 || part.order === 14 || part.order === 16 || part.order === 20
+              ? 26
+              : part.order === 2 || part.order === 5 || part.order === 9 || part.order === 13 || part.order === 15 || part.order === 17 || part.order === 22 || part.order === 24
+                ? 21
+                : 16;
       } else if (part.subsystem === 'sensor') {
         const ratio = (part.order - 1) / 25;
         widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 15 ? 8 : 0));

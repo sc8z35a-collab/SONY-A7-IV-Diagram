@@ -451,6 +451,36 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('body-battery-pack', false);
   syncRail();
+} else if (preset === 'body_ultra_drawer') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-card-ejectors', false);
+  syncRail();
+} else if (preset === 'shutter_ultra_drawer') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-counterweight', false);
+  syncRail();
+} else if (preset === 'lcd_ultra_drawer') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-swivel-clutch', false);
+  syncRail();
 } else if (preset === 'mount_assembled') {
   viewport.setMode('mount', true);
   controls.syncMode('mount');

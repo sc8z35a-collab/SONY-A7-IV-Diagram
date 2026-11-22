@@ -8,6 +8,7 @@ import {
   createHelicalSpringGeometry,
   createPrecisionScrew,
   createRoundedRectShape,
+  createSpurGearGeometry,
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
@@ -84,18 +85,17 @@ function createKnurledDial(
 }
 
 /**
- * Build all 12 ultra-detailed CAD sub-assemblies of the 2024-2026 Flagship Mirrorless
- * Camera Body, High-Discharge 7.2V/6A Battery, Deep Leatherette Grip, 21-Pin Hot Shoe,
- * Sculpted Magnesium Monocoque Shell, Top/Rear Dials, AF Joystick, Card/I/O Doors & Tripod Baseplate.
+ * Build all 26 ultra-detailed CAD sub-assemblies of the 2024-2026 Flagship Mirrorless
+ * Camera Body — 12 external monocoque/battery/control assemblies + 14 deep internal
+ * watchmaker electromechanical assemblies (snap-dome switches, optical dial encoders,
+ * lock-pin ratchets, heart-cam card ejectors, gimbal joystick, hollow rear wheel encoder,
+ * hot-shoe leaf springs, forged strap anchors, ePTFE acoustic breather & 3D weather gaskets).
  *
  * TRUE CAMERA HANDEDNESS (1 unit = 1 mm, optical axis = (0, 0)):
  *  - +Z = Front (Lens Mount at z = +30.6..+32.0, 50mm F1.2 Lens at z = +32.5..+138)
  *  - -Z = Rear (EVF Eyecup at y=39.5, z=-37.2; 4-Axis LCD at x=+6, y=-7, z=-28.8..-35.8)
  *  - -X = Photographer's RIGHT-HAND SIDE (Deep Grip, 7.2V Battery, Shutter, Command Dials, Card Door, Thumb Controls)
  *  - +X = Photographer's LEFT-HAND SIDE (Split I/O Doors, Left Drive/AF Dial, LCD Swivel Hinge)
- *
- * Wraps cleanly around all 68 core camera layers with ZERO mesh collision and blooms outward
- * radially in 6 directions when exploded!
  */
 export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: BodyDynamicRig } {
   const parts: CadPart[] = [];
@@ -197,31 +197,12 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     const sleeve = new THREE.Mesh(sleeveGeo, mats.shutterChassis);
     chamberGroup.add(sleeve);
 
-    // Top ceiling plate with 4 Gold Twin-Contact Leaf Springs mating B01 terminals
-    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(24.0, 2.2, 39.2), mats.mountPpsInsulator);
-    ceiling.position.set(0, 26.8, 0);
+    // Top structural ceiling cap (B14 Gold Terminal Block mounts directly beneath this!)
+    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(24.0, 1.8, 39.2), mats.shutterChassis);
+    ceiling.position.set(0, 27.2, 0);
     chamberGroup.add(ceiling);
 
-    for (let i = 0; i < 4; i++) {
-      const leaf = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.4, 1.4), mats.goldPlating);
-      leaf.position.set(4.5, 25.0, -9.0 + i * 6.0);
-      chamberGroup.add(leaf);
-    }
-
-    // Ejection helper helical spring inside ceiling
-    const ejectSpring = new THREE.Mesh(
-      createHelicalSpringGeometry(2.4, 8.0, 5, 0.4).rotateX(Math.PI / 2),
-      mats.stainlessMachined
-    );
-    ejectSpring.position.set(-5.5, 23.0, 0);
-    chamberGroup.add(ejectSpring);
-
-    // Power-delivery orange heavy-current FPC strap routing +X toward Mainboard PMIC!
-    const pwrFpc = new THREE.Mesh(new THREE.BoxGeometry(12.0, 14.0, 1.2), mats.polyimideFpc);
-    pwrFpc.position.set(16.0, 14.0, -14.5);
-    chamberGroup.add(pwrFpc);
-
-    // Bottom waterproof slide-lock hinged battery bay door + EPDM rubber seal + blue retention latch
+    // Bottom waterproof slide-lock hinged battery bay door + EPDM rubber seal
     const doorPlate = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(26.4, 41.2, 3.8), 2.4, 0.2, 0.2, 16).rotateX(Math.PI / 2),
       mats.bodyMgShell
@@ -235,11 +216,6 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     );
     doorGasket.position.set(0, -27.8, 0);
     chamberGroup.add(doorGasket);
-
-    // Blue spring-loaded battery retention catch lever
-    const latch = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, 8.5), mats.mountThreadLockBlue);
-    latch.position.set(-9.2, -26.5, 13.5);
-    chamberGroup.add(latch);
   }
   parts.push(
     finalizeBodyPart(
@@ -345,11 +321,6 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     );
     shutterButtonCap.position.y = 2.2;
     shutterPod.add(shutterButtonCap);
-
-    // Internal dual-stage stainless metal snap-dome contact assembly (visible beneath)
-    const domeBase = new THREE.Mesh(new THREE.CylinderGeometry(4.6, 4.6, 1.8, 24), mats.goldPlating);
-    domeBase.position.y = -2.0;
-    shutterPod.add(domeBase);
 
     shutterDialsGroup.add(shutterPod);
 
@@ -517,19 +488,13 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       hotshoeGroup.add(topLip);
     }
 
-    // Center X-sync brass contact pad + leaf springs
+    // Center X-sync brass contact pad (B19 Leaf Spring Plate mounts directly beneath rails!)
     const xPad = new THREE.Mesh(
       new THREE.CylinderGeometry(1.9, 1.9, 0.8, 16),
       mats.goldPlating
     );
     xPad.position.set(0, 1.0, -2.5);
     hotshoeGroup.add(xPad);
-
-    for (const sx of [-5.2, 5.2]) {
-      const leaf = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.6, 13.0), mats.mountSpringSteel);
-      leaf.position.set(sx, 1.15, -1.5);
-      hotshoeGroup.add(leaf);
-    }
 
     // Front 21-Pin Digital Audio & Smart Flash Micro-Connector Block (+Z front of hot shoe!)
     const pinHousing = new THREE.Mesh(
@@ -1084,7 +1049,1072 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   );
 
   // =========================================================================
-  // Live Ergonomic Interaction Dynamics (Shutter Half/Full Press, Dials, AF Joystick)
+  // B13: Spring-Loaded Battery Retention Claw, Torsion Spring & Slide-Lock Latch
+  // =========================================================================
+  const battEjectGroup = new THREE.Group();
+  {
+    // Machined stainless slide-lock carrier bracket seated at battery bay mouth
+    const bracket = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(16.0, 22.0, 2.2), 1.4, 0.1, 0.1, 14).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    battEjectGroup.add(bracket);
+
+    // Signature Blue POM Pivoting Retention Claw (auto-locks battery against drop!)
+    const clawArm = new THREE.Mesh(new THREE.BoxGeometry(5.6, 2.8, 12.5), mats.mountThreadLockBlue);
+    clawArm.position.set(-4.2, 1.8, 3.2);
+    battEjectGroup.add(clawArm);
+
+    // 45° cam-chamfer nose lip that deflects on battery insertion
+    const clawNose = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.2, 3.4), mats.mountThreadLockBlue);
+    clawNose.position.set(-1.0, 2.2, 8.2);
+    clawNose.rotation.z = -0.55;
+    battEjectGroup.add(clawNose);
+
+    // Stainless pivot pin + helical torsion return spring
+    const pivotPin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.95, 0.95, 5.4, 14),
+      mats.stainlessMachined
+    );
+    pivotPin.position.set(-5.8, 1.4, -2.0);
+    battEjectGroup.add(pivotPin);
+
+    const torsionCoil = new THREE.Mesh(
+      createHelicalSpringGeometry(1.65, 2.8, 4, 0.24).rotateX(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    torsionCoil.position.set(-5.8, 1.6, -2.0);
+    torsionCoil.userData.noEdges = true;
+    battEjectGroup.add(torsionCoil);
+
+    // Bottom hatch dual-stage stainless slide-lock bar + compression return spring
+    const slideBar = new THREE.Mesh(new THREE.BoxGeometry(12.8, 1.6, 4.2), mats.matteBlackAnodized);
+    slideBar.position.set(1.5, -1.6, -6.5);
+    battEjectGroup.add(slideBar);
+
+    const slideSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(0.9, 5.2, 6, 0.18).rotateY(Math.PI / 2),
+      mats.brassGear
+    );
+    slideSpring.position.set(-5.8, -1.6, -6.5);
+    slideSpring.userData.noEdges = true;
+    battEjectGroup.add(slideSpring);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-battery-ejector',
+      13,
+      '#2563eb',
+      battEjectGroup,
+      new THREE.Vector3(-54.5, -31.8, 1.5),
+      new THREE.Vector3(-68, -32, -22),
+      new THREE.Vector3(-118, -44, -24),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B14: High-Current 6A 4-Pin Gold Twin-Contact Terminal Block & Power FPC
+  // =========================================================================
+  const battTermGroup = new THREE.Group();
+  {
+    // Heat-resistant PPS insulated terminal header block seated at battery bay ceiling
+    const header = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(21.4, 34.0, 2.6), 3.0, 0.14, 0.14, 16).rotateX(Math.PI / 2),
+      mats.mountPpsInsulator
+    );
+    battTermGroup.add(header);
+
+    // 4 Redundant Twin-Prong Gold-Plated Phosphor-Bronze High-Current Leaf Springs (+V / -GND / NTC / BMS)
+    for (let i = 0; i < 4; i++) {
+      const tz = -9.0 + i * 6.0;
+      for (const prongOff of [-0.65, 0.65]) {
+        const leaf = new THREE.Mesh(new THREE.BoxGeometry(5.6, 3.8, 0.55), mats.goldPlating);
+        leaf.position.set(4.2, -2.6, tz + prongOff);
+        battTermGroup.add(leaf);
+      }
+      // Top solder lug tab emerging into heavy-copper busbar
+      const lug = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.4, 2.2), mats.goldPlating);
+      lug.position.set(5.2, 1.8, tz);
+      battTermGroup.add(lug);
+    }
+
+    // Ceiling helical battery-ejection push spring + POM plunger cap
+    const ejectCoil = new THREE.Mesh(
+      createHelicalSpringGeometry(2.3, 6.2, 5, 0.36).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    ejectCoil.position.set(-5.2, -4.4, 0);
+    ejectCoil.userData.noEdges = true;
+    battTermGroup.add(ejectCoil);
+
+    const plungerCap = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.8, 2.8, 1.1, 18),
+      mats.pomGear
+    );
+    plungerCap.position.set(-5.2, -7.6, 0);
+    battTermGroup.add(plungerCap);
+
+    // Heavy-Copper 2oz Polyimide Power-Delivery Busbar FPC routing +X toward Mainboard PMIC
+    const pwrBus = new THREE.Mesh(new THREE.BoxGeometry(11.5, 0.65, 18.0), mats.polyimideFpc);
+    pwrBus.position.set(13.8, 1.4, -3.5);
+    battTermGroup.add(pwrBus);
+
+    const cuTrace = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.85, 5.2), mats.copperHeatSpreader);
+    cuTrace.position.set(13.8, 1.45, -3.5);
+    battTermGroup.add(cuTrace);
+
+    const b2bPlug = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.5, 12.0), mats.zifIvoryPlastic);
+    b2bPlug.position.set(18.6, 1.1, -3.5);
+    battTermGroup.add(b2bPlug);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-battery-terminals',
+      14,
+      '#eab308',
+      battTermGroup,
+      new THREE.Vector3(-54.5, 19.6, 1.5),
+      new THREE.Vector3(-54, 20, 18),
+      new THREE.Vector3(-102, 24, 14),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B15: Two-Stage Stainless Snap-Dome Shutter Switch & Coaxial Power Wiper
+  // =========================================================================
+  const shutterSwitchGroup = new THREE.Group();
+  const shutterPlunger = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.4, 1.4, 2.6, 18),
+    mats.stainlessMachined
+  );
+  {
+    const tiltedPod = new THREE.Group();
+    tiltedPod.rotation.x = THREE.MathUtils.degToRad(24);
+
+    // Precision circular switch carrier PCB + concentric gold S1/S2 contact rings
+    const swPcb = new THREE.Mesh(
+      new THREE.CylinderGeometry(7.4, 7.4, 1.1, 28),
+      mats.hdiMainboardPcb
+    );
+    tiltedPod.add(swPcb);
+
+    const outerGoldRing = new THREE.Mesh(
+      new THREE.TorusGeometry(5.8, 0.42, 8, 28).rotateX(Math.PI / 2),
+      mats.goldPlating
+    );
+    outerGoldRing.position.y = 0.65;
+    outerGoldRing.userData.noEdges = true;
+    tiltedPod.add(outerGoldRing);
+
+    // Lower Stage-2 Full-Press Stainless Snap Dome (2.8 N crisp actuation)
+    const domeS2 = new THREE.Mesh(
+      new THREE.SphereGeometry(4.1, 22, 12, 0, Math.PI * 2, 0, Math.PI * 0.42),
+      mats.mountSpringSteel
+    );
+    domeS2.position.y = -0.35;
+    domeS2.userData.noEdges = true;
+    tiltedPod.add(domeS2);
+
+    // Upper Stage-1 Half-Press Gold-Stainless Snap Dome (1.2 N AF-lock actuation)
+    const domeS1 = new THREE.Mesh(
+      new THREE.SphereGeometry(3.2, 22, 12, 0, Math.PI * 2, 0, Math.PI * 0.42),
+      mats.goldPlating
+    );
+    domeS1.position.y = 0.85;
+    domeS1.userData.noEdges = true;
+    tiltedPod.add(domeS1);
+
+    // Central stainless plunger pin driven by external shutter cap
+    shutterPlunger.position.y = 3.2;
+    tiltedPod.add(shutterPlunger);
+
+    // Coaxial Power-Ring Phosphor-Bronze Rotary Wiper Arc & Waterproof EPDM Gland
+    const wiperArc = new THREE.Mesh(
+      new THREE.TorusGeometry(6.3, 0.36, 8, 20, Math.PI * 0.85).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    wiperArc.position.y = 1.4;
+    wiperArc.userData.noEdges = true;
+    tiltedPod.add(wiperArc);
+
+    const sealRing = new THREE.Mesh(
+      new THREE.TorusGeometry(5.1, 0.45, 10, 26).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    sealRing.position.y = 2.1;
+    sealRing.userData.noEdges = true;
+    tiltedPod.add(sealRing);
+
+    // Kapton signal flex tail dropping toward top-deck switch PCB
+    const swTail = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.3, 9.2), mats.polyimideFpc);
+    swTail.position.set(1.5, -0.4, -7.8);
+    tiltedPod.add(swTail);
+
+    shutterSwitchGroup.add(tiltedPod);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-shutter-switch',
+      15,
+      '#f59e0b',
+      shutterSwitchGroup,
+      new THREE.Vector3(-54.5, 31.8, 20.5),
+      new THREE.Vector3(-34, 28, 42),
+      new THREE.Vector3(-72, 74, 44),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B16: Front & Rear Command Dial Optical Slotted Encoders & Steel-Ball Detents
+  // =========================================================================
+  const cmdEncodersGroup = new THREE.Group();
+  const frontEncoderWheel = new THREE.Group();
+  const rearEncoderWheel = new THREE.Group();
+  {
+    const buildDialEncoderUnit = (wheelOut: THREE.Group, tiltDeg: number): THREE.Group => {
+      const unit = new THREE.Group();
+      unit.rotation.x = THREE.MathUtils.degToRad(tiltDeg);
+
+      // Matte anodized encoder stator frame
+      const stator = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(16.0, 15.0, 3.0), 1.8, 0.1, 0.1, 14).rotateX(Math.PI / 2),
+        mats.matteBlackAnodized
+      );
+      unit.add(stator);
+
+      // Slotted Stainless Steel Optical Chopper Wheel (24 precision slots -> spins live!)
+      const chopper = new THREE.Mesh(
+        createSpurGearGeometry(24, 6.2, 1.0, 0.65).rotateX(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      wheelOut.add(chopper);
+
+      const hub = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.2, 2.2, 4.4, 18),
+        mats.brassGear
+      );
+      wheelOut.add(hub);
+
+      // Shaft EPDM weather-seal O-ring
+      const shaftSeal = new THREE.Mesh(
+        new THREE.TorusGeometry(2.45, 0.32, 8, 22).rotateX(Math.PI / 2),
+        mats.epdmGasket
+      );
+      shaftSeal.position.y = 1.6;
+      shaftSeal.userData.noEdges = true;
+      wheelOut.add(shaftSeal);
+
+      wheelOut.position.y = 1.5;
+      unit.add(wheelOut);
+
+      // Dual-Phase (A/B Quadrature) IR Optical Photo-Interrupter Fork straddling the wheel rim
+      const fork = new THREE.Mesh(new THREE.BoxGeometry(3.8, 3.6, 4.6), mats.icEpoxy);
+      fork.position.set(6.4, 1.8, 0);
+      unit.add(fork);
+
+      // Hardened Steel Detent Ball + Brass Compression Plunger Spring giving crisp tactile clicks!
+      const detentBall = new THREE.Mesh(new THREE.SphereGeometry(0.95, 14, 12), mats.stainlessMachined);
+      detentBall.position.set(0, 1.6, -6.4);
+      detentBall.userData.noEdges = true;
+      unit.add(detentBall);
+
+      const detentSpring = new THREE.Mesh(
+        createHelicalSpringGeometry(0.85, 3.8, 6, 0.16),
+        mats.brassGear
+      );
+      detentSpring.position.set(0, 1.6, -8.6);
+      detentSpring.userData.noEdges = true;
+      unit.add(detentSpring);
+
+      return unit;
+    };
+
+    // Front Command Dial Optical Encoder (tucked cleanly inside front grip shoulder)
+    const frontUnit = buildDialEncoderUnit(frontEncoderWheel, 24);
+    frontUnit.position.set(-0.5, -2.5, 22.0);
+    cmdEncodersGroup.add(frontUnit);
+
+    // Rear Command Dial Optical Encoder (tucked cleanly inside rear shoulder)
+    const rearUnit = buildDialEncoderUnit(rearEncoderWheel, 0);
+    rearUnit.position.set(1.5, 2.0, -25.0);
+    cmdEncodersGroup.add(rearUnit);
+
+    // Connecting amber polyimide encoder bus harness linking front & rear encoders
+    const harness = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.35, 44.0), mats.polyimideFpc);
+    harness.position.set(1.5, -0.5, -1.5);
+    cmdEncodersGroup.add(harness);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-command-encoders',
+      16,
+      '#0284c7',
+      cmdEncodersGroup,
+      new THREE.Vector3(-54.5, 25.8, 5.5),
+      new THREE.Vector3(-68, 40, 12),
+      new THREE.Vector3(-118, 88, 12),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B17: Center-Push Mode Dial Lock-Pin Ratchet & Left Dual-Deck Planetary Shaft
+  // =========================================================================
+  const modeRatchetGroup = new THREE.Group();
+  {
+    // 1. Right-Shoulder Center-Lock Mode Dial Ratchet Assembly (local x = -33.5, z = -6.5)
+    const rightLock = new THREE.Group();
+    rightLock.position.set(-33.5, 0, -6.5);
+
+    const ratchetGear = new THREE.Mesh(
+      createSpurGearGeometry(20, 7.6, 2.4, 0.85).rotateX(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    rightLock.add(ratchetGear);
+
+    // Center push-lock vertical plunger shaft + helical return spring
+    const lockPin = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.4, 1.4, 8.2, 16),
+      mats.brassGear
+    );
+    lockPin.position.y = 1.6;
+    rightLock.add(lockPin);
+
+    const lockSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(2.1, 4.2, 5, 0.24).rotateX(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    lockSpring.position.y = -0.8;
+    lockSpring.userData.noEdges = true;
+    rightLock.add(lockSpring);
+
+    // Spring-biased stainless ratchet locking pawl tooth
+    const pawl = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.8, 2.4), mats.mountSpringSteel);
+    pawl.position.set(8.6, 0.2, 0);
+    rightLock.add(pawl);
+
+    // Twin stainless detent balls seated at 180°
+    for (const sz of [-6.8, 6.8]) {
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.95, 12, 10), mats.stainlessMachined);
+      b.position.set(0, -1.6, sz);
+      b.userData.noEdges = true;
+      rightLock.add(b);
+    }
+    modeRatchetGroup.add(rightLock);
+
+    // 2. Left-Shoulder Dual-Deck Drive/AF Concentric Hollow Shaft & Planetary Cam Plate (local x = +38.5, z = +2.5)
+    const leftDual = new THREE.Group();
+    leftDual.position.set(38.5, 0, 2.5);
+
+    // Lower deck hollow outer planetary cam gear (controls AF mode independently!)
+    const outerCamGear = new THREE.Mesh(
+      createSpurGearGeometry(24, 9.2, 2.2, 0.8).rotateX(Math.PI / 2),
+      mats.pomGear
+    );
+    outerCamGear.position.y = -1.2;
+    leftDual.add(outerCamGear);
+
+    // Hollow outer brass sleeve shaft
+    const hollowOuterShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.4, 3.4, 5.2, 22),
+      mats.brassGear
+    );
+    hollowOuterShaft.position.y = 0.6;
+    leftDual.add(hollowOuterShaft);
+
+    // Concentric solid stainless inner shaft + upper ratchet gear (controls Drive speed independently!)
+    const innerSolidShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.6, 1.6, 8.8, 18),
+      mats.stainlessMachined
+    );
+    innerSolidShaft.position.y = 1.6;
+    leftDual.add(innerSolidShaft);
+
+    const upperRatchet = new THREE.Mesh(
+      createSpurGearGeometry(16, 6.2, 1.8, 0.75).rotateX(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    upperRatchet.position.y = 1.8;
+    leftDual.add(upperRatchet);
+
+    // Concentric lock return spring
+    const leftSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(2.2, 3.6, 5, 0.22).rotateX(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    leftSpring.position.y = -2.2;
+    leftSpring.userData.noEdges = true;
+    leftDual.add(leftSpring);
+
+    modeRatchetGroup.add(leftDual);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-mode-lock-ratchet',
+      17,
+      '#d97706',
+      modeRatchetGroup,
+      new THREE.Vector3(0, 32.8, -6.5),
+      new THREE.Vector3(0, 48, -16),
+      new THREE.Vector3(0, 112, -16),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B18: Top-Deck U-Shaped Rigid-Flex Control Sub-PCB & Gray-Code Wiper Pads
+  //      (Clears central EVF barrel completely with authentic horseshoe U-bridge!)
+  // =========================================================================
+  const topFpcGroup = new THREE.Group();
+  {
+    // U-shaped horseshoe rigid-flex harness wrapping neatly in front of EVF barrel (z = +13..+22)
+    const rightWing = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(34.0, 40.0, 3.2), 0.7, 0.06, 0.06, 16).rotateX(Math.PI / 2),
+      mats.hdiMainboardPcb
+    );
+    rightWing.position.set(-34.0, 0, -4.0);
+    topFpcGroup.add(rightWing);
+
+    const leftWing = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(24.0, 34.0, 3.0), 0.7, 0.06, 0.06, 16).rotateX(Math.PI / 2),
+      mats.hdiMainboardPcb
+    );
+    leftWing.position.set(42.5, 0, -6.0);
+    topFpcGroup.add(leftWing);
+
+    // Flexible polyimide front arch ribbon bridging right & left shoulder wings in front of EVF
+    const frontBridge = new THREE.Mesh(new THREE.BoxGeometry(76.0, 0.32, 7.6), mats.polyimideFpc);
+    frontBridge.position.set(4.5, 0.1, 14.5);
+    topFpcGroup.add(frontBridge);
+
+    // Twin Concentric Gold Gray-Code Absolute Rotary Wiper Track Rings (Mode Dial & Drive Dial!)
+    for (const [wx, wz, r] of [
+      [-27.5, -17.0, 7.2],
+      [44.5, -8.0, 8.2],
+    ]) {
+      for (const frac of [0.55, 0.78, 1.0]) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(r * frac, 0.35, 8, 28).rotateX(Math.PI / 2),
+          mats.goldPlating
+        );
+        ring.position.set(wx, 0.45, wz);
+        ring.userData.noEdges = true;
+        topFpcGroup.add(ring);
+      }
+    }
+
+    // REC & C1/ISO Stainless Metal-Dome Tactile Switches + Sub-OLED ZIF Ribbon Header
+    for (const [sx, sz] of [
+      [-41.5, 4.0],
+      [-34.0, 2.5],
+    ]) {
+      const dome = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.3, 2.6, 0.7, 18),
+        mats.stainlessMachined
+      );
+      dome.position.set(sx, 0.65, sz);
+      topFpcGroup.add(dome);
+    }
+
+    const oledZif = new THREE.Mesh(new THREE.BoxGeometry(11.0, 1.1, 2.6), mats.zifIvoryPlastic);
+    oledZif.position.set(-29.0, 0.65, 9.5);
+    topFpcGroup.add(oledZif);
+
+    // ESD TVS protection IC + downward drop tail to Mainboard
+    const esdIc = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.9, 4.2), mats.icEpoxy);
+    esdIc.position.set(-24.0, 0.65, -2.0);
+    topFpcGroup.add(esdIc);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-top-switch-fpc',
+      18,
+      '#059669',
+      topFpcGroup,
+      new THREE.Vector3(-6.0, 34.0, 4.0),
+      new THREE.Vector3(-6, 22, 16),
+      new THREE.Vector3(-6, 76, 16),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B19: Hot-Shoe Stainless Leaf-Spring Retention Plate, Rain Seal & 21-Pin FPC
+  // =========================================================================
+  const hotshoeSpringGroup = new THREE.Group();
+  {
+    // Stamped SUS301 stainless steel dual-cantilever leaf-spring grounding & retention plate
+    const springFrame = new THREE.Mesh(
+      extrudeCentered(createFrameShape(18.6, 19.6, 1.4, 12.0, 13.0, 1.0), 0.45, 0.04, 0.04, 14).rotateX(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    hotshoeSpringGroup.add(springFrame);
+
+    // Left & right arched cantilever leaf springs pressing flash foot upward with 12 N preload!
+    for (const sx of [-5.2, 5.2]) {
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.55, 13.4), mats.mountSpringSteel);
+      leaf.position.set(sx, 0.72, -1.2);
+      leaf.rotation.x = 0.06;
+      hotshoeSpringGroup.add(leaf);
+
+      const archTip = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.5, 3.2), mats.goldPlating);
+      archTip.position.set(sx, 1.0, 4.8);
+      hotshoeSpringGroup.add(archTip);
+    }
+
+    // Molded Silicone Perimeter Rain-Seal Skirt sealing EVF pentaprism roof pass-through
+    const rainSkirt = new THREE.Mesh(
+      extrudeCentered(createFrameShape(21.4, 22.0, 2.0, 17.8, 18.4, 1.4), 1.1, 0.08, 0.08, 16).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    rainSkirt.position.y = -0.85;
+    hotshoeSpringGroup.add(rainSkirt);
+
+    // 21-Pin Digital Audio Micro-Connector Rear Tail & Black EMI-Shielded Polyimide FPC
+    const fpcBridge = new THREE.Mesh(new THREE.BoxGeometry(12.4, 0.3, 6.2), mats.polyimideFpc);
+    fpcBridge.position.set(0, -1.2, 10.6);
+    hotshoeSpringGroup.add(fpcBridge);
+
+    const fpcDrop = new THREE.Mesh(new THREE.BoxGeometry(10.6, 8.2, 0.35), mats.emiShieldFilm);
+    fpcDrop.position.set(0, -5.2, 13.5);
+    hotshoeSpringGroup.add(fpcDrop);
+
+    const goldEnd = new THREE.Mesh(new THREE.BoxGeometry(10.2, 1.8, 0.4), mats.goldPlating);
+    goldEnd.position.set(0, -9.2, 13.5);
+    hotshoeSpringGroup.add(goldEnd);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-hotshoe-springs',
+      19,
+      '#94a3b8',
+      hotshoeSpringGroup,
+      new THREE.Vector3(0, 57.2, -7.5),
+      new THREE.Vector3(0, 56, -4),
+      new THREE.Vector3(0, 134, -6),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B20: Dual CFexpress / SD Push-Push "Heart-Cam" Card Ejector Rails & Switches
+  // =========================================================================
+  const cardEjectorGroup = new THREE.Group();
+  {
+    // Twin stacked push-push mechanical ejector modules (Upper Slot 1 + Lower Slot 2)
+    for (const [sy, accentMat] of [
+      [10.2, mats.brassGear],
+      [-10.2, mats.copperHeatSpreader],
+    ] as Array<[number, THREE.Material]>) {
+      const slotUnit = new THREE.Group();
+      slotUnit.position.set(0, sy, 0);
+
+      // Precision stamped stainless slider cage rails
+      const guideRail = new THREE.Mesh(new THREE.BoxGeometry(12.0, 16.0, 2.2), mats.stainlessMachined);
+      guideRail.position.set(0, 0, -7.2);
+      slotUnit.add(guideRail);
+
+      const carrierSlide = new THREE.Mesh(new THREE.BoxGeometry(9.6, 13.8, 3.2), mats.pomGear);
+      carrierSlide.position.set(1.0, 0, -3.5);
+      slotUnit.add(carrierSlide);
+
+      // Iconic Precision Brass Heart-Cam Closed-Loop Track Plate!
+      const heartPlate = new THREE.Mesh(new THREE.BoxGeometry(8.2, 6.4, 1.4), accentMat);
+      heartPlate.position.set(-1.5, 4.4, -0.5);
+      slotUnit.add(heartPlate);
+
+      // Recessed dark V-heart groove & stainless wire cam-follower pin riding the heart track!
+      const heartV1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.8, 0.7), mats.matteBlackAnodized);
+      heartV1.position.set(-1.6, 5.2, 0.15);
+      heartV1.rotation.z = 0.48;
+      slotUnit.add(heartV1);
+
+      const heartV2 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.8, 0.7), mats.matteBlackAnodized);
+      heartV2.position.set(-1.6, 3.6, 0.15);
+      heartV2.rotation.z = -0.48;
+      slotUnit.add(heartV2);
+
+      const followerWire = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.32, 0.32, 8.8, 10).rotateZ(Math.PI / 2),
+        mats.mountSpringSteel
+      );
+      followerWire.position.set(-4.2, 4.4, 0.45);
+      slotUnit.add(followerWire);
+
+      // High-Force Push-Push Card Ejection Helical Coil Spring
+      const ejectSpring = new THREE.Mesh(
+        createHelicalSpringGeometry(1.5, 9.8, 8, 0.24).rotateY(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      ejectSpring.position.set(-0.2, -3.8, -1.2);
+      ejectSpring.userData.noEdges = true;
+      slotUnit.add(ejectSpring);
+
+      // Gold-plated Card-Detect & Write-Protect Leaf Micro-Switch
+      const detectSwitch = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.2, 1.4), mats.goldPlating);
+      detectSwitch.position.set(3.2, -6.2, -4.2);
+      slotUnit.add(detectSwitch);
+
+      cardEjectorGroup.add(slotUnit);
+    }
+
+    // Common stainless vertical chassis mounting spine joining both card ejectors
+    const spine = new THREE.Mesh(new THREE.BoxGeometry(1.6, 36.0, 14.0), mats.shutterChassis);
+    spine.position.set(6.4, 0, -2.5);
+    cardEjectorGroup.add(spine);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-card-ejectors',
+      20,
+      '#b45309',
+      cardEjectorGroup,
+      new THREE.Vector3(-59.5, -5.0, -14.5),
+      new THREE.Vector3(-42, -6, -34),
+      new THREE.Vector3(-102, -6, -42),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B21: Card Door Dual-Action Slide-Lock Catch Cam & Safety Interlock Switch
+  // =========================================================================
+  const cardLatchGroup = new THREE.Group();
+  {
+    // Vertical stainless dual-hook slide-lock striker bar mounted inside door threshold
+    const camBar = new THREE.Mesh(new THREE.BoxGeometry(1.6, 36.0, 3.6), mats.mountStainlessFlange);
+    cardLatchGroup.add(camBar);
+
+    // Twin tapered stainless lock catch hooks compressing EPDM seal uniformly by 25%
+    for (const hy of [-12.0, 12.0]) {
+      const hook = new THREE.Mesh(new THREE.BoxGeometry(3.4, 4.4, 3.0), mats.stainlessMachined);
+      hook.position.set(-1.6, hy, 1.4);
+      cardLatchGroup.add(hook);
+    }
+
+    // Slide-return tension coil spring
+    const retSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(1.1, 8.2, 7, 0.2).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    retSpring.position.set(0.5, 0, 2.4);
+    retSpring.userData.noEdges = true;
+    cardLatchGroup.add(retSpring);
+
+    // Rear hinge pop-open torsion spring sleeve
+    const hingeTorsion = new THREE.Mesh(
+      createHelicalSpringGeometry(1.7, 9.0, 6, 0.25).rotateX(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    hingeTorsion.position.set(0.8, 0, -9.8);
+    hingeTorsion.userData.noEdges = true;
+    cardLatchGroup.add(hingeTorsion);
+
+    // Ultra-Fast Door-Open Data-Safety Interlock Micro-Switch (white housing + red plunger!)
+    const swBody = new THREE.Mesh(new THREE.BoxGeometry(3.2, 6.2, 4.4), mats.zifIvoryPlastic);
+    swBody.position.set(1.8, -14.5, 4.2);
+    cardLatchGroup.add(swBody);
+
+    const swPlunger = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.9, 0.9, 2.4, 14).rotateZ(Math.PI / 2),
+      mats.bodyRecRed
+    );
+    swPlunger.position.set(-0.8, -14.5, 4.2);
+    cardLatchGroup.add(swPlunger);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-card-door-latch',
+      21,
+      '#dc2626',
+      cardLatchGroup,
+      new THREE.Vector3(-67.8, -5.0, -13.5),
+      new THREE.Vector3(-56, 22, -26),
+      new THREE.Vector3(-124, 24, -36),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B22: 8-Way AF Multi-Selector 4-Axis Gimbal Rocker & 5-Dome Tactile PCB
+  // =========================================================================
+  const joyGimbalGroup = new THREE.Group();
+  {
+    // Miniature green 5-dome tactile switch sub-PCB right behind rear wall
+    const joyPcb = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(13.6, 13.6, 2.4), 0.9, 0.06, 0.06, 14),
+      mats.hdiMainboardPcb
+    );
+    joyPcb.position.z = 1.4;
+    joyGimbalGroup.add(joyPcb);
+
+    // 5 Gold-Plated Micro Snap Domes (4 cardinal directions + center push confirm)
+    for (const [dx, dy] of [
+      [0, 0],
+      [0, 4.0],
+      [0, -4.0],
+      [4.0, 0],
+      [-4.0, 0],
+    ]) {
+      const dome = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.35, 1.55, 0.55, 16).rotateX(Math.PI / 2),
+        mats.goldPlating
+      );
+      dome.position.set(dx, dy, 0.72);
+      joyGimbalGroup.add(dome);
+    }
+
+    // Stainless 4-Axis Cross-Gimbal Rocker Actuator Cage
+    const gimbalBarH = new THREE.Mesh(new THREE.BoxGeometry(10.8, 2.2, 1.4), mats.stainlessMachined);
+    gimbalBarH.position.z = -0.25;
+    const gimbalBarV = new THREE.Mesh(new THREE.BoxGeometry(2.2, 10.8, 1.4), mats.stainlessMachined);
+    gimbalBarV.position.z = -0.25;
+    joyGimbalGroup.add(gimbalBarH, gimbalBarV);
+
+    // Weather-sealing Silicone Bellows Ring around central actuator shaft
+    const bellows = new THREE.Mesh(
+      new THREE.TorusGeometry(3.2, 0.72, 10, 24),
+      mats.epdmGasket
+    );
+    bellows.position.z = -1.1;
+    bellows.userData.noEdges = true;
+    joyGimbalGroup.add(bellows);
+
+    // Amber Kapton tail routing inward
+    const flexTail = new THREE.Mesh(new THREE.BoxGeometry(4.6, 7.2, 0.25), mats.polyimideFpc);
+    flexTail.position.set(0, -9.2, 1.5);
+    joyGimbalGroup.add(flexTail);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-joystick-gimbal',
+      22,
+      '#10b981',
+      joyGimbalGroup,
+      new THREE.Vector3(-44.0, 7.5, -30.0),
+      new THREE.Vector3(-34, 16, -38),
+      new THREE.Vector3(-78, 18, -162),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B23: Rear Control Wheel Hollow-Center Optical Ring Encoder & 4-Way Domes
+  // =========================================================================
+  const rearWheelEncGroup = new THREE.Group();
+  const rearWheelRotor = new THREE.Group();
+  {
+    // Circular emerald sub-PCB mounting 4 cardinal + 1 center snap domes
+    const wheelPcb = new THREE.Mesh(
+      new THREE.CylinderGeometry(11.4, 11.4, 0.85, 32).rotateX(Math.PI / 2),
+      mats.hdiMainboardPcb
+    );
+    wheelPcb.position.z = 1.4;
+    rearWheelEncGroup.add(wheelPcb);
+
+    for (const [dx, dy] of [
+      [0, 0],
+      [0, 7.6],
+      [0, -7.6],
+      [7.6, 0],
+      [-7.6, 0],
+    ]) {
+      const dome = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.7, 1.9, 0.6, 18).rotateX(Math.PI / 2),
+        mats.goldPlating
+      );
+      dome.position.set(dx, dy, 0.72);
+      rearWheelEncGroup.add(dome);
+    }
+
+    // Hollow-Center Annular Optical Slotted Encoder Ring (36 teeth — rotates live!)
+    const outerRing = new THREE.Mesh(
+      createSpurGearGeometry(36, 10.6, 0.75, 0.55),
+      mats.stainlessMachined
+    );
+    rearWheelRotor.add(outerRing);
+
+    const brassDetentRing = new THREE.Mesh(
+      new THREE.TorusGeometry(8.4, 0.52, 8, 32),
+      mats.brassGear
+    );
+    brassDetentRing.position.z = -0.5;
+    brassDetentRing.userData.noEdges = true;
+    rearWheelRotor.add(brassDetentRing);
+
+    rearWheelRotor.position.z = -0.2;
+    rearWheelEncGroup.add(rearWheelRotor);
+
+    // Twin optical photo-interrupter sensors at 10 o'clock & 2 o'clock
+    for (const sx of [-8.8, 8.8]) {
+      const opto = new THREE.Mesh(new THREE.BoxGeometry(2.6, 3.2, 2.2), mats.icEpoxy);
+      opto.position.set(sx, 6.2, 0.2);
+      rearWheelEncGroup.add(opto);
+    }
+
+    // Thin waterproof silicone dome membrane rim
+    const sealRing = new THREE.Mesh(
+      new THREE.TorusGeometry(11.1, 0.45, 8, 32),
+      mats.epdmGasket
+    );
+    sealRing.position.z = -0.9;
+    sealRing.userData.noEdges = true;
+    rearWheelEncGroup.add(sealRing);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-rear-wheel-encoder',
+      23,
+      '#6366f1',
+      rearWheelEncGroup,
+      new THREE.Vector3(-48.0, -13.0, -30.0),
+      new THREE.Vector3(-36, -16, -38),
+      new THREE.Vector3(-84, -18, -162),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B24: Left & Right Forged Stainless Neck-Strap Lug Internal Anchor Plates
+  // =========================================================================
+  const strapAnchorsGroup = new THREE.Group();
+  {
+    // Both forged anchors positioned strictly INSIDE left (+49.5) and right (-54.5) body walls!
+    const anchorSpecs: Array<{ x: number; z: number; sx: number }> = [
+      { x: -54.5, z: 22.0, sx: -1 }, // Right-shoulder grip corner internal anchor
+      { x: 49.5, z: 13.6, sx: 1 }, // Left-shoulder side wall internal anchor
+    ];
+    for (const a of anchorSpecs) {
+      const plateGroup = new THREE.Group();
+      plateGroup.position.set(a.x, 0, a.z);
+
+      // Thick Forged SUS304 L-shaped high-load reinforcement backplate (500 N proof load!)
+      const verticalPlate = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(11.0, 17.5, 2.2), 2.2, 0.14, 0.14, 14).rotateY(Math.PI / 2),
+        mats.mountStainlessFlange
+      );
+      plateGroup.add(verticalPlate);
+
+      const topGusset = new THREE.Mesh(
+        new THREE.BoxGeometry(6.8, 2.2, 9.6),
+        mats.mountStainlessFlange
+      );
+      topGusset.position.set(-a.sx * 2.8, 7.2, 0);
+      plateGroup.add(topGusset);
+
+      // EPDM waterproof pass-through grommet ring backing the external eyelet
+      const grommet = new THREE.Mesh(
+        new THREE.TorusGeometry(2.6, 0.65, 8, 20).rotateY(Math.PI / 2),
+        mats.epdmGasket
+      );
+      grommet.position.set(a.sx * 1.4, 0.5, 0);
+      grommet.userData.noEdges = true;
+      plateGroup.add(grommet);
+
+      // 3 Triangular-pattern High-Tensile M2.0 Stainless Anchor Bolts
+      for (const [by, bz] of [
+        [5.2, -3.2],
+        [5.2, 3.2],
+        [-5.6, 0],
+      ]) {
+        const bolt = createPrecisionScrew(1.05, 0.5, 2.4, mats.stainlessMachined);
+        bolt.rotation.y = a.sx > 0 ? -Math.PI / 2 : Math.PI / 2;
+        bolt.position.set(-a.sx * 1.3, by, bz);
+        plateGroup.add(bolt);
+      }
+
+      strapAnchorsGroup.add(plateGroup);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-strap-anchors',
+      24,
+      '#64748b',
+      strapAnchorsGroup,
+      new THREE.Vector3(0, 22.5, 0),
+      new THREE.Vector3(0, 26, -34),
+      new THREE.Vector3(0, 44, -36),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // B25: Waterproof Stereo MEMS Mic Chambers, Piezo Buzzer & ePTFE Breather Vent
+  // =========================================================================
+  const acousticGroup = new THREE.Group();
+  {
+    // Left & Right Vibration-Isolated Silicone Stereo MEMS Microphone Acoustic Chambers
+    for (const sx of [-1, 1]) {
+      const micBoot = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(11.0, 7.6, 2.0), 3.4, 0.2, 0.2, 14).rotateX(Math.PI / 2),
+        mats.damperElastomer
+      );
+      micBoot.position.set(sx * 27.5, 0, 0);
+      acousticGroup.add(micBoot);
+
+      // White Hydrophobic Microporous ePTFE (Gore-Tex style) Acoustic Waterproof Membrane
+      const ptfeMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(8.2, 0.4, 4.8),
+        mats.ceramicAlumina
+      );
+      ptfeMesh.position.set(sx * 27.5, 1.85, 0);
+      acousticGroup.add(ptfeMesh);
+
+      // Gold-shielded digital MEMS microphone IC package tucked beneath boot
+      const memsCan = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.2, 3.4), mats.goldPlating);
+      memsCan.position.set(sx * 27.5, -1.5, 0);
+      acousticGroup.add(memsCan);
+    }
+
+    // Center Brass Diaphragm Piezo Confirmation Buzzer (AF-lock beep)
+    const piezoDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(5.6, 5.6, 1.2, 26),
+      mats.brassGear
+    );
+    piezoDisc.position.set(0, -0.4, 0.6);
+    acousticGroup.add(piezoDisc);
+
+    const piezoCeramic = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.8, 3.8, 0.45, 22),
+      mats.ceramicAlumina
+    );
+    piezoCeramic.position.set(0, 0.35, 0.6);
+    acousticGroup.add(piezoCeramic);
+
+    // Barometric Pressure-Equalizing ePTFE Breather Valve (right flank beside buzzer)
+    const breatherHousing = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.0, 3.0, 1.8, 20),
+      mats.matteBlackAnodized
+    );
+    breatherHousing.position.set(13.0, 0, -1.2);
+    acousticGroup.add(breatherHousing);
+
+    const breatherMembrane = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.1, 2.1, 0.35, 20),
+      mats.ceramicAlumina
+    );
+    breatherMembrane.position.set(13.0, 0.95, -1.2);
+    acousticGroup.add(breatherMembrane);
+
+    // Connecting slim polyimide stereo audio flex ribbon
+    const micFlex = new THREE.Mesh(new THREE.BoxGeometry(58.0, 0.25, 3.2), mats.polyimideFpc);
+    micFlex.position.set(0, -1.7, 0);
+    acousticGroup.add(micFlex);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-acoustic-breather',
+      25,
+      '#06b6d4',
+      acousticGroup,
+      new THREE.Vector3(0, 33.0, 17.5),
+      new THREE.Vector3(0, 26, 36),
+      new THREE.Vector3(0, 68, 42),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B26: Full-Body 3D Molded Silicone Weather-Sealing Perimeter Gaskets
+  //      (Sized strictly inset inside magnesium shell joints so ZERO protrusion
+  //       when assembled, blooming into a dramatic 3D weather-seal cage exploded!)
+  // =========================================================================
+  const gasketsGroup = new THREE.Group();
+  {
+    // 1. Top-Deck Perimeter Labyrinth Weather-Seal Loop (y = +34.6, inset inside top deck)
+    const topLoop = new THREE.Mesh(
+      extrudeCentered(createFrameShape(115.0, 53.0, 6.2, 111.0, 49.0, 5.2), 1.4, 0.12, 0.12, 22).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    topLoop.position.set(0, 34.4, 0);
+    topLoop.userData.noEdges = true;
+    gasketsGroup.add(topLoop);
+
+    // 2. Bottom Baseplate Perimeter Weather-Seal Loop (y = -34.8, inset inside baseplate)
+    const botLoop = new THREE.Mesh(
+      extrudeCentered(createFrameShape(115.0, 53.0, 6.2, 111.0, 49.0, 5.2), 1.4, 0.12, 0.12, 22).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    botLoop.position.set(0, -34.8, 0);
+    botLoop.userData.noEdges = true;
+    gasketsGroup.add(botLoop);
+
+    // 3. Front Monocoque Perimeter Seam Seal + Circular Lens-Mount Throat O-Ring (z = +26.4 -> local +26.4)
+    const frontPerimeter = new THREE.Mesh(
+      extrudeCentered(createFrameShape(110.0, 71.0, 6.5, 106.4, 67.4, 5.5), 1.3, 0.1, 0.1, 22),
+      mats.epdmGasket
+    );
+    frontPerimeter.position.set(3.0, 0, 26.8);
+    frontPerimeter.userData.noEdges = true;
+    gasketsGroup.add(frontPerimeter);
+
+    // Dedicated Circular Bayonet Mount Weather-Seal O-Ring centered on Optical Axis (world x = 0 -> local +6.0)
+    const mountSealRing = new THREE.Mesh(
+      new THREE.TorusGeometry(35.8, 0.95, 10, 48),
+      mats.epdmGasket
+    );
+    mountSealRing.position.set(6.0, 0, 27.0);
+    mountSealRing.userData.noEdges = true;
+    gasketsGroup.add(mountSealRing);
+
+    // 4. Rear Chassis Perimeter Seam Seal (local z = -28.8 -> world z = -30.8, strictly outside LCD recess!)
+    const rearPerimeter = new THREE.Mesh(
+      extrudeCentered(createFrameShape(118.0, 71.2, 6.4, 114.6, 68.0, 5.4), 1.3, 0.1, 0.1, 22),
+      mats.epdmGasket
+    );
+    rearPerimeter.position.set(0, 0, -28.8);
+    rearPerimeter.userData.noEdges = true;
+    gasketsGroup.add(rearPerimeter);
+
+    // 4 Vertical Corner Seal Pillars connecting top, bottom, front & rear weather-seal loops into one 3D cage!
+    for (const [cx, cz] of [
+      [-55.5, -26.5],
+      [55.5, -26.5],
+      [-52.0, 25.0],
+      [54.0, 25.0],
+    ]) {
+      const pillar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.95, 0.95, 68.0, 10),
+        mats.epdmGasket
+      );
+      pillar.position.set(cx, 0, cz);
+      pillar.userData.noEdges = true;
+      gasketsGroup.add(pillar);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-chassis-gaskets',
+      26,
+      '#0f766e',
+      gasketsGroup,
+      new THREE.Vector3(-6.0, 0, -2.0),
+      new THREE.Vector3(0, -26, -30),
+      new THREE.Vector3(0, -56, -30),
+      cp,
+      0.16
+    )
+  );
+
+  // =========================================================================
+  // Live Ergonomic & Internal Mechanical Dynamics (Shutter Switch, Encoders, Joystick)
   // =========================================================================
   const rig: BodyDynamicRig = {
     shutterButtonCap,
@@ -1094,22 +2124,32 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     applyDynamics: (elapsed, physicsActive) => {
       if (!physicsActive) {
         shutterButtonCap.position.y = 2.2;
+        shutterPlunger.position.y = 3.2;
         frontDialMesh.rotation.y = 0;
         rearDialMesh.rotation.y = 0;
+        frontEncoderWheel.rotation.y = 0;
+        rearEncoderWheel.rotation.y = 0;
+        rearWheelRotor.rotation.z = 0;
         afJoystickCap.rotation.set(0, 0, 0);
         return;
       }
 
-      // 2-stage shutter release pulse (half-press hold -> crisp full-press release)
+      // 2-stage shutter release pulse (half-press S1 dome -> full-press S2 dome!)
       const cycle = (elapsed * 0.75) % 1;
       let pressDepth = 0;
       if (cycle > 0.35 && cycle < 0.62) pressDepth = 0.65; // Half-press AF lock
       else if (cycle >= 0.62 && cycle < 0.76) pressDepth = 1.45; // Full-press shutter fire!
       shutterButtonCap.position.y = 2.2 - pressDepth;
+      shutterPlunger.position.y = 3.2 - pressDepth * 0.85;
 
-      // Subtle precision command dial clicks & 8-way AF joystick orbit sweep
+      // Synchronized external command dials & internal optical slotted encoder wheels!
       frontDialMesh.rotation.y = elapsed * 0.9;
+      frontEncoderWheel.rotation.y = elapsed * 0.9;
       rearDialMesh.rotation.y = -elapsed * 0.75;
+      rearEncoderWheel.rotation.y = -elapsed * 0.75;
+      rearWheelRotor.rotation.z = elapsed * 0.65;
+
+      // 8-way AF joystick orbit sweep
       afJoystickCap.rotation.x = Math.sin(elapsed * 2.1) * 0.18;
       afJoystickCap.rotation.y = Math.cos(elapsed * 1.6) * 0.18;
     },
