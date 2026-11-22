@@ -5,6 +5,7 @@ import {
   addCircleHoles,
   attachCadEdges,
   createFrameShape,
+  createHelicalSpringGeometry,
   createPrecisionScrew,
   createRoundedRectShape,
   createSpurGearGeometry,
@@ -24,6 +25,9 @@ export interface ShutterDynamicRig {
   shieldBlades: THREE.Mesh[];
   chargeGears: THREE.Mesh[];
   chargeCam: THREE.Group;
+  counterweightLever: THREE.Group;
+  armatureLever1: THREE.Group;
+  armatureLever2: THREE.Group;
   dualBoostCoilGlow: THREE.Mesh;
   magnet1Glow: THREE.Mesh;
   magnet2Glow: THREE.Mesh;
@@ -70,13 +74,34 @@ function finalizeShutterPart(
 }
 
 /**
- * Build all 12 independent CAD sub-assemblies of a modern flagship Dual-Driven
- * Carbon-Fiber Vertical-Travel Focal-Plane Shutter positioned directly in front
- * of the Full-Frame Sensor Module (z = +10.8 mm .. +17.6 mm, optical center at x=0, y=0).
- *
- * Right-hand drive bay (+X side, x = +20..+36 mm) houses the parallelogram linkage arms,
- * dual-drive torsion springs + electromagnetic booster, twin microsecond holding magnets,
- * 500k-cycle coreless DC motor + reduction gear train + cocking cam, and IR optical monitors.
+ * Build ALL 26 ultra-dissected watchmaker-grade CAD sub-assemblies of a modern flagship
+ * Dual-Driven Carbon-Fiber Vertical-Travel Focal-Plane Shutter (z = +10.8 .. +17.6 mm):
+ *  - SH01: Front Protective Cover Plate & Drive-Bay Window
+ *  - SH02: 3-Blade Power-Off Anti-Dust Protective Sensor Shield Curtain
+ *  - SH03: Dedicated Dust-Shield Micro-Stepper Actuator & POM Rack-Cam (NEW!)
+ *  - SH04: 1st Curtain — 4 Ultra-Thin Carbon Fiber (CFRP) Blades
+ *  - SH05: 1st Curtain Low-Friction POM Anti-Flutter Guide Tracks & Rollers (NEW!)
+ *  - SH06: 1st Curtain Parallelogram 4-Bar Linkage Arms
+ *  - SH07: DLC-Coated Pivot Spindles, Sintered Bronze Bushings & E-Clips (NEW!)
+ *  - SH08: 0.15 mm Ultra-Thin Steel Mid-Plate Partition
+ *  - SH09: 2nd Curtain — 4 Slit-Closing CFRP Blades
+ *  - SH10: 2nd Curtain Slit-Parallelism Guide Rails & Light-Trap Lip (NEW!)
+ *  - SH11: 2nd Curtain Parallelogram 4-Bar Linkage Arms
+ *  - SH12: Twin Torsion Springs & Brass Vernier Tension-Adjuster Worm Drums (NEW!)
+ *  - SH13: 1/400 s Flash-Sync Electromagnetic Boost Actuator (Coil + Yoke + Rotor)
+ *  - SH14: Counter-Rotating CuW Inertial Counterweight Balancer Lever (NEW!)
+ *  - SH15: Twin Microsecond Holding Electromagnets (Permalloy U-Core Solenoids)
+ *  - SH16: 10-Microsecond Curtain Latch Armature Levers & Release Springs (NEW!)
+ *  - SH17: 4-Stage POM/Brass Reduction Gear Train & One-Way Sprag Clutch (NEW!)
+ *  - SH18: 500,000-Cycle Coreless DC Charge Motor & Brass Pinion
+ *  - SH19: Heart-Profile Eccentric Cocking Cam & Twin Charging Rockers (NEW!)
+ *  - SH20: Cocking-Completion Rotary Cam Home-Position Leaf Switch & Disc (NEW!)
+ *  - SH21: Self-Diagnostic 940 nm IR Photo-Interrupter Optical Speed Monitors
+ *  - SH22: Dual High-Hysteresis Elastomer Blade-Bounce Brakes & Shoes (NEW!)
+ *  - SH23: Linkage End-Stop Kinetic Silicone Air-Dashpot Cylinders (NEW!)
+ *  - SH24: High-Current Solenoid/Boost FPC Harness & Flyback Diodes (NEW!)
+ *  - SH25: 4-Corner Floating Viscoelastic Silicone Isolation Grommets (NEW!)
+ *  - SH26: Glass-Fiber Reinforced PPS/Magnesium High-Rigidity Base Chassis
  */
 export function buildShutterParts(
   mats: MaterialLibrary
@@ -84,15 +109,13 @@ export function buildShutterParts(
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
 
-  // Frame overall bounds: centered slightly right (+6.5mm in X) because drive bay is on +X side,
-  // while optical aperture (37.6 x 25.6 mm) stays strictly centered at (x=0, y=0)!
   const frameW = 74.0;
   const frameH = 54.0;
   const frameCenterX = 7.5;
   const apW = 37.6;
   const apH = 25.6;
 
-  // Dynamic rig references populated below
+  // Dynamic rig references
   const curtain1Blades: THREE.Mesh[] = [];
   const curtain2Blades: THREE.Mesh[] = [];
   const shieldBlades: THREE.Mesh[] = [];
@@ -102,19 +125,19 @@ export function buildShutterParts(
   const link2Main = new THREE.Group();
   const link2Sub = new THREE.Group();
   const chargeCam = new THREE.Group();
+  const counterweightLever = new THREE.Group();
+  const armatureLever1 = new THREE.Group();
+  const armatureLever2 = new THREE.Group();
 
   // =========================================================================
-  // S01. Front Protective Cover Plate & Matte Baffle Frame (z = +17.6 mm)
+  // SH01. Front Protective Cover Plate & Matte Baffle Frame (z = +17.6 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
-
     const coverShape = createFrameShape(frameW, frameH, 4.2, apW, apH, 0.9, -frameCenterX, 0);
-    // Authentic flagship shutter drive-bay cutout framing the exposed solenoids, torsion springs,
-    // electromagnetic boost actuator & reduction gear train on the +X mechanical deck!
     const bayW = 20.4;
     const bayH = 42.0;
-    const bayCx = 23.2; // in coverShape local coords (mesh sits at x = +7.5 -> world x = +30.7)
+    const bayCx = 23.2;
     const bayR = 2.4;
     const bayHole = new THREE.Path();
     const bx0 = bayCx - bayW / 2;
@@ -132,7 +155,6 @@ export function buildShutterParts(
     bayHole.quadraticCurveTo(bx0, by0, bx0 + bayR, by0);
     coverShape.holes.push(bayHole);
 
-    // 4 corner precision screw holes
     addCircleHoles(coverShape, [
       [-frameW / 2 + 4.5, frameH / 2 - 4.5, 1.5],
       [frameW / 2 - 4.5, frameH / 2 - 4.5, 1.5],
@@ -140,22 +162,20 @@ export function buildShutterParts(
       [frameW / 2 - 4.5, -frameH / 2 + 4.5, 1.5],
     ]);
     const coverMesh = new THREE.Mesh(
-      extrudeCentered(coverShape, 0.72, 0.08, 0.08, 20),
+      extrudeCentered(coverShape, 0.72, 0.08, 0.08, 18),
       mats.matteBlackAnodized
     );
     coverMesh.position.x = frameCenterX;
     g.add(coverMesh);
 
-    // Inner stepped anti-reflection lip framing the 36x24mm optical gate
     const lipShape = createFrameShape(apW + 3.2, apH + 3.2, 1.2, apW, apH, 0.8);
     const lipMesh = new THREE.Mesh(
-      extrudeCentered(lipShape, 0.45, 0.06, 0.08, 16),
+      extrudeCentered(lipShape, 0.45, 0.06, 0.08, 14),
       mats.matteBlackAnodized
     );
     lipMesh.position.z = 0.36;
     g.add(lipMesh);
 
-    // 4 precision stainless mounting screws
     for (const [sx, sy] of [
       [frameCenterX - frameW / 2 + 4.5, frameH / 2 - 4.5],
       [frameCenterX + frameW / 2 - 4.5, frameH / 2 - 4.5],
@@ -174,7 +194,7 @@ export function buildShutterParts(
         '#202328',
         g,
         new THREE.Vector3(0, 0, 17.6),
-        new THREE.Vector3(0, 0, 44.0),
+        new THREE.Vector3(0, 0, 56.0),
         new THREE.Vector3(0, 0, 96.0),
         cp,
         0.26
@@ -183,31 +203,23 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S02. Dedicated Anti-Dust Protective Sensor Shield Curtain (z = +16.6 mm)
+  // SH02. Dedicated Anti-Dust Protective Sensor Shield Curtain (z = +16.6 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
-
-    // Thin guide track carrier frame for the 3-blade protective shield
     const railL = new THREE.Mesh(new THREE.BoxGeometry(1.6, 38.0, 0.62), mats.midPlateSteel);
     railL.position.set(-20.4, 2.0, 0);
     const railR = new THREE.Mesh(new THREE.BoxGeometry(1.6, 38.0, 0.62), mats.midPlateSteel);
     railR.position.set(20.4, 2.0, 0);
     g.add(railL, railR);
 
-    // 3 sturdy anodized aluminum dust-shield blades parked cleanly in upper pocket during active exposure
-    // (lower edge sits just above the 24mm aperture so users see the stacked shield blades clearly!)
     for (let i = 0; i < 3; i++) {
-      const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(39.4, 8.6, 0.16),
-        mats.shutterShieldBlade
-      );
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(39.4, 8.6, 0.16), mats.shutterShieldBlade);
       blade.position.set(0, 18.2 - i * 1.15, (1 - i) * 0.19);
       g.add(blade);
       shieldBlades.push(blade);
     }
 
-    // Small stepped side drive tab for power-off shield deployment
     const tab = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.4, 0.52), mats.linkArmSteel);
     tab.position.set(21.6, 17.2, 0);
     g.add(tab);
@@ -219,8 +231,8 @@ export function buildShutterParts(
         '#4c5869',
         g,
         new THREE.Vector3(0, 0, 16.6),
-        new THREE.Vector3(0, 0, 34.5),
-        new THREE.Vector3(0, 0, 86.0),
+        new THREE.Vector3(0, 0, 46.0),
+        new THREE.Vector3(0, 0, 88.0),
         cp,
         0.28
       )
@@ -228,31 +240,71 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S03. 1st (Front) Curtain — 4 Ultra-Thin Carbon Fiber (CFRP) Blades (z = +15.3 mm)
+  // SH03. [NEW!] Dedicated Dust-Shield Micro-Stepper & POM Rack-Cam (z = +16.4 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    // Mini cylindrical 2-phase shield stepper mounted at upper +X corner (x=25.5, y=21.2)
+    const stepCan = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.6, 2.6, 6.2, 16).rotateZ(Math.PI / 2),
+      mats.copperCoil
+    );
+    stepCan.position.set(28.5, 21.2, 0);
+    g.add(stepCan);
 
+    const stepCap = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.75, 2.75, 1.0, 16).rotateZ(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    stepCap.position.set(31.8, 21.2, 0);
+    g.add(stepCap);
+
+    // Brass pinion + POM vertical toothed rack bar driving dust-shield tab
+    const pinion = new THREE.Mesh(createSpurGearGeometry(10, 1.5, 1.4, 0.5), mats.brassGear);
+    pinion.position.set(24.6, 21.2, 0.2);
+    g.add(pinion);
+
+    const rackBar = new THREE.Mesh(new THREE.BoxGeometry(2.1, 11.5, 1.1), mats.pomGear);
+    rackBar.position.set(22.4, 18.2, 0.2);
+    g.add(rackBar);
+
+    const limitSw = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.8, 1.2), mats.icEpoxy);
+    limitSw.position.set(25.2, 15.0, -0.3);
+    g.add(limitSw);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-shield-actuator',
+        3,
+        '#0ea5e9',
+        g,
+        new THREE.Vector3(0, 0, 16.4),
+        new THREE.Vector3(28.0, 24.0, 42.0),
+        new THREE.Vector3(28.0, 22.0, 86.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH04. 1st (Front) Curtain — 4 Ultra-Thin Carbon Fiber (CFRP) Blades (z = +15.3 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     const bladeW = 41.2;
     const bladeH = 7.4;
     for (let i = 0; i < 4; i++) {
-      const bladeGeo = new THREE.BoxGeometry(bladeW, bladeH, 0.15);
-      const blade = new THREE.Mesh(bladeGeo, mats.carbonFiberBlade);
-      // Slight Z stagger so overlapping 0.05mm-class blades never z-fight and look genuinely layered
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(bladeW, bladeH, 0.15), mats.carbonFiberBlade);
       blade.position.set(0.6, 0, (1.5 - i) * 0.17);
 
-      // Lead edge reinforcement bead on slit-forming blade #0 (crisp edge catching light)
       if (i === 0) {
-        const bead = new THREE.Mesh(
-          new THREE.BoxGeometry(bladeW, 0.55, 0.22),
-          mats.stainlessMachined
-        );
+        const bead = new THREE.Mesh(new THREE.BoxGeometry(bladeW, 0.55, 0.22), mats.stainlessMachined);
         bead.position.set(0, bladeH / 2 - 0.28, 0.02);
         blade.add(bead);
       }
 
-      // 2 precision micro-rivet pins on right (+X) ear connecting to parallelogram linkage arms
-      const rivetGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.34, 12);
+      const rivetGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.34, 10);
       rivetGeo.rotateX(Math.PI / 2);
       const riv1 = new THREE.Mesh(rivetGeo, mats.brassGear);
       riv1.position.set(bladeW / 2 - 1.4, 1.4, 0);
@@ -267,12 +319,12 @@ export function buildShutterParts(
     parts.push(
       finalizeShutterPart(
         'shutter-curtain-1',
-        3,
+        4,
         '#1f242d',
         g,
         new THREE.Vector3(0, 0, 15.3),
-        new THREE.Vector3(0, 0, 25.0),
-        new THREE.Vector3(0, 0, 76.5),
+        new THREE.Vector3(0, 0, 34.0),
+        new THREE.Vector3(0, 0, 78.0),
         cp,
         0.3
       )
@@ -280,56 +332,93 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S04. 1st Curtain Parallelogram 4-Bar Linkage Arms (z = +14.8 mm)
+  // SH05. [NEW!] 1st Curtain Low-Friction POM Anti-Flutter Guide Tracks (z = +15.2 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    // Left-side (-X) slotted POM labyrinth rail + top/bottom pocket bridges
+    const leftRail = new THREE.Mesh(new THREE.BoxGeometry(2.6, 40.5, 0.88), mats.pomGear);
+    leftRail.position.set(-21.2, 0, 0);
+    g.add(leftRail);
 
+    // Light-trap black labyrinth groove channel on left rail inner edge
+    const trapLip = new THREE.Mesh(new THREE.BoxGeometry(1.0, 38.0, 1.05), mats.mountVelvetBaffle);
+    trapLip.position.set(-19.8, 0, 0);
+    g.add(trapLip);
+
+    // 4 micro titanium anti-flutter guide rollers along the vertical rail
+    for (const ry of [-13.5, -4.5, 4.5, 13.5]) {
+      const roller = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.75, 0.75, 1.2, 12).rotateX(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      roller.position.set(-21.2, ry, 0);
+      g.add(roller);
+    }
+
+    // Upper & lower thin POM tie-bars holding rail spacing cleanly
+    for (const ty of [20.4, -20.4]) {
+      const tie = new THREE.Mesh(new THREE.BoxGeometry(22.0, 1.2, 0.65), mats.pomGear);
+      tie.position.set(-10.5, ty, 0);
+      g.add(tie);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-curtain1-guide',
+        5,
+        '#e2e8f0',
+        g,
+        new THREE.Vector3(0, 0, 15.2),
+        new THREE.Vector3(-26.0, 0, 30.0),
+        new THREE.Vector3(-24.0, 0, 75.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH06. 1st Curtain Parallelogram 4-Bar Linkage Arms (z = +14.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     const buildLinkArm = (length: number, width: number) => {
       const armGrp = new THREE.Group();
       const shape = createRoundedRectShape(length, width, width * 0.45);
-      // Shift pivot to x = 0 so arm extends along -X toward blades
-      const geo = extrudeCentered(shape, 0.38, 0.04, 0.04, 14);
+      const geo = extrudeCentered(shape, 0.38, 0.04, 0.04, 12);
       geo.translate(-length / 2 + 1.4, 0, 0);
-      const mesh = new THREE.Mesh(geo, mats.linkArmSteel);
-      armGrp.add(mesh);
+      armGrp.add(new THREE.Mesh(geo, mats.linkArmSteel));
 
-      // Weight-reduction lightening slots along arm
       for (let k = 1; k <= 3; k++) {
-        const pinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.56, 12);
+        const pinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.56, 10);
         pinGeo.rotateX(Math.PI / 2);
         const pin = new THREE.Mesh(pinGeo, mats.brassGear);
         pin.position.set(-k * (length / 4.2), 0, 0);
         armGrp.add(pin);
       }
 
-      // Main stationary pivot boss at (0,0)
-      const bossGeo = new THREE.CylinderGeometry(1.45, 1.45, 0.72, 16);
+      const bossGeo = new THREE.CylinderGeometry(1.45, 1.45, 0.72, 14);
       bossGeo.rotateX(Math.PI / 2);
-      const boss = new THREE.Mesh(bossGeo, mats.brassGear);
-      armGrp.add(boss);
-
+      armGrp.add(new THREE.Mesh(bossGeo, mats.brassGear));
       return armGrp;
     };
 
-    // Main driving arm (upper pivot) & parallel follower arm (lower pivot)
     link1Main.add(buildLinkArm(14.5, 2.3));
     link1Main.position.set(27.0, 2.8, 0.14);
-
     link1Sub.add(buildLinkArm(14.5, 2.0));
     link1Sub.position.set(27.0, -3.2, -0.14);
-
     g.add(link1Main, link1Sub);
 
     parts.push(
       finalizeShutterPart(
         'shutter-link-1',
-        4,
+        6,
         '#adb8c7',
         g,
         new THREE.Vector3(0, 0, 14.8),
-        new THREE.Vector3(0, 0, 18.0),
-        new THREE.Vector3(0, 0, 69.5),
+        new THREE.Vector3(0, 0, 24.0),
+        new THREE.Vector3(0, 0, 70.0),
         cp,
         0.3
       )
@@ -337,14 +426,69 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S05. Intermediate Partition Plate (Mid-Plate Separator) (z = +14.0 mm)
+  // SH07. [NEW!] DLC-Coated Pivot Spindles, Sintered Bronze Bushings & E-Clips (z = +14.4 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    const pivotCoords: Array<[number, number]> = [
+      [27.0, 6.2],
+      [27.0, 2.8],
+      [27.0, 0.2],
+      [27.0, -3.2],
+    ];
+    for (const [px, py] of pivotCoords) {
+      // DLC-blackened hardened pivot axle pin
+      const axle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.75, 0.75, 4.2, 14).rotateX(Math.PI / 2),
+        mats.matteBlackAnodized
+      );
+      axle.position.set(px, py, -0.8);
+      g.add(axle);
 
-    // Ultra-thin precision steel separator isolating 1st and 2nd curtain chambers
+      // Porous sintered bronze journal bushing collar
+      const bush = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.38, 1.38, 1.4, 14).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
+      bush.position.set(px, py, -0.4);
+      g.add(bush);
+
+      // Stainless E-Clip retaining circlip on front (+Z) end
+      const eClip = new THREE.Mesh(
+        new THREE.TorusGeometry(1.15, 0.22, 8, 18, Math.PI * 1.6),
+        mats.stainlessMachined
+      );
+      eClip.position.set(px, py, 1.15);
+      eClip.userData.noEdges = true;
+      g.add(eClip);
+    }
+
+    // Thin stainless alignment carrier bar keeping all 4 spindles indexed
+    const bridge = new THREE.Mesh(new THREE.BoxGeometry(1.4, 11.8, 0.45), mats.stainlessMachined);
+    bridge.position.set(27.0, 1.5, -2.5);
+    g.add(bridge);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-pivot-jewels',
+        7,
+        '#eab308',
+        g,
+        new THREE.Vector3(0, 0, 14.4),
+        new THREE.Vector3(26.0, 10.0, 18.0),
+        new THREE.Vector3(24.0, 12.0, 66.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH08. Intermediate Partition Plate (Mid-Plate Separator) (z = +14.0 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     const midShape = createFrameShape(66.0, 48.0, 3.0, apW - 0.2, apH - 0.2, 0.7, -4.5, 0);
-    // Right-hand clearance slot for linkage drive pins
     const slot = new THREE.Path();
     slot.moveTo(20.5, -15.0);
     slot.lineTo(27.5, -15.0);
@@ -354,13 +498,12 @@ export function buildShutterParts(
     midShape.holes.push(slot);
 
     const midMesh = new THREE.Mesh(
-      extrudeCentered(midShape, 0.28, 0.03, 0.03, 16),
+      extrudeCentered(midShape, 0.28, 0.03, 0.03, 14),
       mats.midPlateSteel
     );
     midMesh.position.x = 4.5;
     g.add(midMesh);
 
-    // Subtle anti-flutter micro-guide ribs at top & bottom aperture borders
     for (const ry of [14.2, -14.2]) {
       const rib = new THREE.Mesh(new THREE.BoxGeometry(36.0, 0.8, 0.42), mats.matteBlackAnodized);
       rib.position.set(0, ry, 0);
@@ -370,11 +513,11 @@ export function buildShutterParts(
     parts.push(
       finalizeShutterPart(
         'shutter-mid-plate',
-        5,
+        8,
         '#4e5868',
         g,
         new THREE.Vector3(0, 0, 14.0),
-        new THREE.Vector3(0, 0, 10.5),
+        new THREE.Vector3(0, 0, 12.0),
         new THREE.Vector3(0, 0, 62.0),
         cp,
         0.3
@@ -383,29 +526,26 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S06. 2nd (Rear) Curtain — 4 Slit-Forming Carbon/Alloy Blades (z = +12.9 mm)
+  // SH09. 2nd (Rear) Curtain — 4 Slit-Closing CFRP Blades (z = +12.9 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
-
     const bladeW = 41.2;
     const bladeH = 7.4;
     for (let i = 0; i < 4; i++) {
-      const bladeGeo = new THREE.BoxGeometry(bladeW, bladeH, 0.15);
-      const blade = new THREE.Mesh(bladeGeo, mats.carbonFiberBladeRear);
+      const blade = new THREE.Mesh(
+        new THREE.BoxGeometry(bladeW, bladeH, 0.15),
+        mats.carbonFiberBladeRear
+      );
       blade.position.set(0.6, 0, (1.5 - i) * 0.17);
 
-      // Precision slit-closing bottom edge bead on rear curtain blade #0
       if (i === 0) {
-        const bead = new THREE.Mesh(
-          new THREE.BoxGeometry(bladeW, 0.55, 0.22),
-          mats.goldPlating
-        );
+        const bead = new THREE.Mesh(new THREE.BoxGeometry(bladeW, 0.55, 0.22), mats.goldPlating);
         bead.position.set(0, -bladeH / 2 + 0.28, 0.02);
         blade.add(bead);
       }
 
-      const rivetGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.34, 12);
+      const rivetGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.34, 10);
       rivetGeo.rotateX(Math.PI / 2);
       const riv1 = new THREE.Mesh(rivetGeo, mats.stainlessMachined);
       riv1.position.set(bladeW / 2 - 1.4, 1.4, 0);
@@ -420,12 +560,12 @@ export function buildShutterParts(
     parts.push(
       finalizeShutterPart(
         'shutter-curtain-2',
-        6,
+        9,
         '#56657c',
         g,
         new THREE.Vector3(0, 0, 12.9),
-        new THREE.Vector3(0, 0, 3.0),
-        new THREE.Vector3(0, 0, 54.5),
+        new THREE.Vector3(0, 0, 2.0),
+        new THREE.Vector3(0, 0, 54.0),
         cp,
         0.3
       )
@@ -433,52 +573,82 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S07. 2nd Curtain Parallelogram 4-Bar Linkage Arms (z = +12.4 mm)
+  // SH10. [NEW!] 2nd Curtain Precision Slit-Parallelism Guide Rails (z = +12.8 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    const railL = new THREE.Mesh(new THREE.BoxGeometry(2.4, 40.0, 0.85), mats.shutterChassis);
+    railL.position.set(-21.2, 0, 0);
+    g.add(railL);
 
+    // Anti-static micro-contact ribs preventing thin blade static stiction
+    for (const ry of [-14.0, -7.0, 0, 7.0, 14.0]) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.6, 1.05), mats.brassGear);
+      rib.position.set(-19.9, ry, 0);
+      g.add(rib);
+    }
+
+    // Upper pocket light-tight velvet labyrinth lip
+    const upperTrap = new THREE.Mesh(new THREE.BoxGeometry(39.0, 1.4, 0.9), mats.mountVelvetBaffle);
+    upperTrap.position.set(-1.5, 14.8, -0.2);
+    g.add(upperTrap);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-curtain2-guide',
+        10,
+        '#64748b',
+        g,
+        new THREE.Vector3(0, 0, 12.8),
+        new THREE.Vector3(-26.0, 0, -4.0),
+        new THREE.Vector3(-24.0, 0, 51.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH11. 2nd Curtain Parallelogram 4-Bar Linkage Arms (z = +12.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     const buildRearArm = (length: number, width: number) => {
       const armGrp = new THREE.Group();
       const shape = createRoundedRectShape(length, width, width * 0.45);
-      const geo = extrudeCentered(shape, 0.38, 0.04, 0.04, 14);
+      const geo = extrudeCentered(shape, 0.38, 0.04, 0.04, 12);
       geo.translate(-length / 2 + 1.4, 0, 0);
-      const mesh = new THREE.Mesh(geo, mats.stainlessMachined);
-      armGrp.add(mesh);
+      armGrp.add(new THREE.Mesh(geo, mats.stainlessMachined));
 
       for (let k = 1; k <= 3; k++) {
-        const pinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.56, 12);
+        const pinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.56, 10);
         pinGeo.rotateX(Math.PI / 2);
         const pin = new THREE.Mesh(pinGeo, mats.goldPlating);
         pin.position.set(-k * (length / 4.2), 0, 0);
         armGrp.add(pin);
       }
 
-      const bossGeo = new THREE.CylinderGeometry(1.45, 1.45, 0.72, 16);
+      const bossGeo = new THREE.CylinderGeometry(1.45, 1.45, 0.72, 14);
       bossGeo.rotateX(Math.PI / 2);
-      const boss = new THREE.Mesh(bossGeo, mats.goldPlating);
-      armGrp.add(boss);
-
+      armGrp.add(new THREE.Mesh(bossGeo, mats.goldPlating));
       return armGrp;
     };
 
     link2Main.add(buildRearArm(14.5, 2.3));
     link2Main.position.set(27.0, 6.2, 0.14);
-
     link2Sub.add(buildRearArm(14.5, 2.0));
     link2Sub.position.set(27.0, 0.2, -0.14);
-
     g.add(link2Main, link2Sub);
 
     parts.push(
       finalizeShutterPart(
         'shutter-link-2',
-        7,
+        11,
         '#8c99ab',
         g,
         new THREE.Vector3(0, 0, 12.4),
-        new THREE.Vector3(0, 0, -4.0),
-        new THREE.Vector3(0, 0, 48.0),
+        new THREE.Vector3(0, 0, -10.0),
+        new THREE.Vector3(0, 0, 46.0),
         cp,
         0.3
       )
@@ -486,17 +656,11 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S08. Dual-Driven Actuator: Torsion Springs x2 + Electromagnetic Boost Coil (z = +13.0 mm)
+  // SH12. [NEW!] Twin High-Tension Torsion Springs & Brass Vernier Adjuster Drums (z = +13.0 mm)
   // =========================================================================
-  let dualBoostCoilGlow!: THREE.Mesh;
   {
     const g = new THREE.Group();
-
-    // 1st & 2nd curtain high-tension stainless torsion springs + brass tension ratchet drums
-    for (const [sy, labelOffset] of [
-      [3.0, 0],
-      [-5.2, 1],
-    ] as Array<[number, number]>) {
+    for (const sy of [3.0, -5.2]) {
       const spring = new THREE.Mesh(
         createTorsionSpringGeometry(2.6, 2.8, 4.5, 0.32, 4.8),
         mats.stainlessMachined
@@ -505,41 +669,69 @@ export function buildShutterParts(
       spring.userData.noEdges = true;
       g.add(spring);
 
+      // Precision brass vernier tension calibration ratchet drum
       const ratchet = new THREE.Mesh(
-        createSpurGearGeometry(14, 3.1, 0.9, 1.1),
+        createSpurGearGeometry(14, 3.1, 1.0, 1.1),
         mats.brassGear
       );
-      ratchet.position.set(27.0, sy, -1.4);
+      ratchet.position.set(27.0, sy, -1.35);
       g.add(ratchet);
 
-      const axleGeo = new THREE.CylinderGeometry(0.95, 0.95, 4.2, 14);
-      axleGeo.rotateX(Math.PI / 2);
-      const axle = new THREE.Mesh(axleGeo, mats.linkArmSteel);
+      // Calibration lock pawl tab indexing the tension drum
+      const pawl = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.85, 0.9), mats.mountSpringSteel);
+      pawl.position.set(30.4, sy + 1.6, -1.35);
+      pawl.rotation.z = -0.35;
+      g.add(pawl);
+
+      const axle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.95, 0.95, 4.2, 12).rotateX(Math.PI / 2),
+        mats.linkArmSteel
+      );
       axle.position.set(27.0, sy, -0.2);
       g.add(axle);
-      void labelOffset;
     }
 
-    // Sony Alpha 1 / 1 II Style Electromagnetic Boost Actuator (Copper Stator + Neodymium Rotor)
+    parts.push(
+      finalizeShutterPart(
+        'shutter-tension-drums',
+        12,
+        '#f59e0b',
+        g,
+        new THREE.Vector3(0, 0, 13.0),
+        new THREE.Vector3(22.0, 10.0, -12.0),
+        new THREE.Vector3(22.0, 8.0, 44.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH13. 1/400 s Flash-Sync Electromagnetic Boost Actuator (Coil + Yoke + Rotor, z = +13.0 mm)
+  // =========================================================================
+  let dualBoostCoilGlow!: THREE.Mesh;
+  {
+    const g = new THREE.Group();
     const statorYoke = new THREE.Mesh(new THREE.BoxGeometry(8.2, 9.6, 2.8), mats.softIronYoke);
     statorYoke.position.set(36.2, -1.0, 0);
     g.add(statorYoke);
 
-    const boostCoilGeo = new THREE.CylinderGeometry(3.4, 3.4, 3.3, 24);
-    boostCoilGeo.rotateX(Math.PI / 2);
-    const boostCoil = new THREE.Mesh(boostCoilGeo, mats.copperCoil);
+    const boostCoil = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.4, 3.4, 3.3, 22).rotateX(Math.PI / 2),
+      mats.copperCoil
+    );
     boostCoil.position.set(36.2, -1.0, 0);
     g.add(boostCoil);
 
-    const rotorGeo = new THREE.CylinderGeometry(2.1, 2.1, 3.8, 18);
-    rotorGeo.rotateX(Math.PI / 2);
-    const rotor = new THREE.Mesh(rotorGeo, mats.neodymiumMagnet);
+    const rotor = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.1, 2.1, 3.8, 16).rotateX(Math.PI / 2),
+      mats.neodymiumMagnet
+    );
     rotor.position.set(36.2, -1.0, 0);
     g.add(rotor);
 
-    // Subtle electromagnetic boost pulse halo ring (visible during boost firing in simulation)
     dualBoostCoilGlow = new THREE.Mesh(
-      new THREE.TorusGeometry(3.9, 0.24, 10, 32),
+      new THREE.TorusGeometry(3.9, 0.24, 10, 28),
       new THREE.MeshBasicMaterial({
         color: 0x0d5bd9,
         transparent: true,
@@ -554,12 +746,12 @@ export function buildShutterParts(
     parts.push(
       finalizeShutterPart(
         'shutter-dual-drive',
-        8,
+        13,
         '#c86432',
         g,
         new THREE.Vector3(0, 0, 13.0),
-        new THREE.Vector3(12.0, 0, -10.5),
-        new THREE.Vector3(10.0, 0, 41.0),
+        new THREE.Vector3(38.0, 2.0, -14.0),
+        new THREE.Vector3(36.0, 2.0, 42.0),
         cp,
         0.24
       )
@@ -567,18 +759,57 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S09. Microsecond Twin Holding Electromagnets (Front & Rear Solenoids) (z = +12.5 mm)
+  // SH14. [NEW!] Counter-Rotating CuW Inertial Counterweight Balancer Lever (z = +13.2 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    counterweightLever.position.set(31.2, -6.0, 0);
+
+    // Pivot pinion gear meshing counter-phase with curtain drive
+    const cwGear = new THREE.Mesh(createSpurGearGeometry(12, 2.1, 1.1, 0.7), mats.stainlessMachined);
+    counterweightLever.add(cwGear);
+
+    // Lightweight steel lever arm extending out to dense Tungsten-Copper (CuW) counterbalance head
+    const cwArm = new THREE.Mesh(new THREE.BoxGeometry(1.8, 9.2, 0.9), mats.linkArmSteel);
+    cwArm.position.set(0, 4.6, 0.4);
+    counterweightLever.add(cwArm);
+
+    // High-density Tungsten-Copper (CuW) inertial mass block canceling curtain recoil!
+    const cwMass = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(4.8, 4.2, 1.2), 1.9, 0.12, 0.12, 12),
+      mats.tungstenCopper
+    );
+    cwMass.position.set(0, 9.4, 0.4);
+    counterweightLever.add(cwMass);
+
+    g.add(counterweightLever);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-counterweight',
+        14,
+        '#b45309',
+        g,
+        new THREE.Vector3(0, 0, 13.2),
+        new THREE.Vector3(28.0, -12.0, -6.0),
+        new THREE.Vector3(28.0, -12.0, 48.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH15. Microsecond Twin Holding Electromagnets (Permalloy U-Core Solenoids, z = +12.5 mm)
   // =========================================================================
   let magnet1Glow!: THREE.Mesh;
   let magnet2Glow!: THREE.Mesh;
   {
     const g = new THREE.Group();
-
     const buildSolenoid = (x: number, y: number) => {
       const sub = new THREE.Group();
       sub.position.set(x, y, 0);
 
-      // U-shaped Permalloy iron core
       const coreBase = new THREE.Mesh(new THREE.BoxGeometry(6.8, 2.2, 2.4), mats.softIronYoke);
       coreBase.position.set(0, 2.6, 0);
       const legL = new THREE.Mesh(new THREE.BoxGeometry(1.6, 5.2, 2.2), mats.softIronYoke);
@@ -587,21 +818,14 @@ export function buildShutterParts(
       legR.position.set(2.3, 0, 0);
       sub.add(coreBase, legL, legR);
 
-      // Precision copper solenoid bobbins wound around both core legs
       const bobL = new THREE.Mesh(new THREE.BoxGeometry(2.7, 3.6, 2.9), mats.copperCoil);
       bobL.position.set(-2.3, 0.2, 0);
       const bobR = new THREE.Mesh(new THREE.BoxGeometry(2.7, 3.6, 2.9), mats.copperCoil);
       bobR.position.set(2.3, 0.2, 0);
       sub.add(bobL, bobR);
 
-      // Precision flat steel holding armature (releases in microseconds when current cuts)
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(7.2, 1.1, 2.0), mats.stainlessMachined);
-      arm.position.set(0, -3.2, 0);
-      sub.add(arm);
-
-      // Status indicator micro-dot on top of yoke for physics animation
       const glow = new THREE.Mesh(
-        new THREE.SphereGeometry(0.62, 12, 10),
+        new THREE.SphereGeometry(0.62, 10, 8),
         new THREE.MeshBasicMaterial({
           color: 0x0ea5e9,
           transparent: true,
@@ -612,7 +836,6 @@ export function buildShutterParts(
       glow.position.set(0, 4.1, 1.3);
       glow.userData.noEdges = true;
       sub.add(glow);
-
       return { sub, glow };
     };
 
@@ -620,21 +843,17 @@ export function buildShutterParts(
     const m2 = buildSolenoid(36.0, 16.5);
     magnet1Glow = m1.glow;
     magnet2Glow = m2.glow;
-
-    // Polyimide drive flex bus linking both solenoids
-    const flexBus = new THREE.Mesh(new THREE.BoxGeometry(16.0, 1.8, 0.22), mats.polyimideFpc);
-    flexBus.position.set(31.2, 20.4, -0.5);
-    g.add(m1.sub, m2.sub, flexBus);
+    g.add(m1.sub, m2.sub);
 
     parts.push(
       finalizeShutterPart(
         'shutter-magnets',
-        9,
+        15,
         '#d97724',
         g,
         new THREE.Vector3(0, 0, 12.5),
-        new THREE.Vector3(16.0, 5.0, -17.0),
-        new THREE.Vector3(14.0, 4.0, 34.0),
+        new THREE.Vector3(24.0, 22.0, -22.0),
+        new THREE.Vector3(22.0, 18.0, 36.0),
         cp,
         0.24
       )
@@ -642,43 +861,56 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S10. 500k-Cycle Coreless DC Charge Motor, Reduction Gear Train & Cocking Cam (z = +12.2 mm)
+  // SH16. [NEW!] 10-Microsecond Curtain Latch Armature Levers & Release Springs (z = +12.5 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    const buildArmatureUnit = (target: THREE.Group, x: number, y: number) => {
+      target.position.set(x, y, 0);
+      // Mirror-lapped flat ferromagnetic armature bar mating against solenoid pole legs
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(7.2, 1.15, 2.0), mats.mountStainlessFlange);
+      plate.position.set(0, 0, 0);
+      target.add(plate);
 
-    // Cylindrical high-response coreless DC motor positioned in lower-right drive bay
-    const motorCan = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.4, 4.4, 13.5, 24),
-      mats.stainlessMachined
+      // Pivoted trigger latch tail hooking onto curtain drive drum
+      const hook = new THREE.Mesh(new THREE.BoxGeometry(1.5, 4.4, 1.2), mats.linkArmSteel);
+      hook.position.set(-3.2, -2.1, 0);
+      target.add(hook);
+
+      // Micro zero-bounce separation helical spring
+      const sepSpring = new THREE.Mesh(
+        createHelicalSpringGeometry(0.65, 2.2, 4, 0.16).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
+      sepSpring.position.set(2.4, -1.4, 0);
+      sepSpring.userData.noEdges = true;
+      target.add(sepSpring);
+    };
+
+    buildArmatureUnit(armatureLever1, 26.5, 13.3);
+    buildArmatureUnit(armatureLever2, 36.0, 13.3);
+    g.add(armatureLever1, armatureLever2);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-armature-levers',
+        16,
+        '#38bdf8',
+        g,
+        new THREE.Vector3(0, 0, 12.5),
+        new THREE.Vector3(38.0, 22.0, -18.0),
+        new THREE.Vector3(36.0, 18.0, 39.0),
+        cp,
+        0.26
+      )
     );
-    motorCan.position.set(36.2, -16.8, 0);
-    g.add(motorCan);
+  }
 
-    // Black insulated end-bell cap + gold power terminals
-    const endCap = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.3, 4.3, 1.8, 24),
-      mats.icEpoxy
-    );
-    endCap.position.set(36.2, -24.1, 0);
-    g.add(endCap);
-
-    for (const tx of [34.8, 37.6]) {
-      const term = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.6, 0.4), mats.goldPlating);
-      term.position.set(tx, -25.4, 0);
-      g.add(term);
-    }
-
-    // Brass worm / pinion gear on motor output shaft (+Y end)
-    const pinion = new THREE.Mesh(
-      createSpurGearGeometry(10, 1.8, 3.0, 0.6),
-      mats.brassGear
-    );
-    pinion.rotation.x = Math.PI / 2;
-    pinion.position.set(36.2, -8.5, 0);
-    g.add(pinion);
-
-    // 4-stage precision POM (ivory acetal) & Brass reduction spur gear train (visibly meshed!)
+  // =========================================================================
+  // SH17. [NEW!] 4-Stage POM/Brass Reduction Gear Train & One-Way Clutch (z = +12.2 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     const gearDefs: Array<{ x: number; y: number; z: number; teeth: number; r: number; mat: THREE.Material }> = [
       { x: 30.8, y: -11.5, z: 0.4, teeth: 20, r: 3.9, mat: mats.pomGear },
       { x: 25.0, y: -14.8, z: -0.2, teeth: 16, r: 3.1, mat: mats.brassGear },
@@ -694,37 +926,31 @@ export function buildShutterParts(
       g.add(gear);
       chargeGears.push(gear);
 
-      const pinGeo = new THREE.CylinderGeometry(0.75, 0.75, 2.2, 12);
-      pinGeo.rotateX(Math.PI / 2);
-      const pin = new THREE.Mesh(pinGeo, mats.stainlessMachined);
+      const pin = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.75, 0.75, 2.2, 10).rotateX(Math.PI / 2),
+        mats.stainlessMachined
+      );
       pin.position.set(gd.x, gd.y, gd.z);
       g.add(pin);
     }
 
-    // Eccentric Cocking Cam + Charge Arm resetting springs after each frame
-    const camShape = new THREE.Shape();
-    camShape.absarc(0, 0, 2.6, 0, Math.PI * 1.4, false);
-    camShape.lineTo(3.8, -1.8);
-    camShape.lineTo(2.6, 0);
-    const camMesh = new THREE.Mesh(
-      extrudeCentered(camShape, 1.3, 0.06, 0.06, 20),
-      mats.brassGear
+    // One-way anti-reverse sprag clutch hub collar seated on output shaft
+    const clutchHub = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.1, 2.1, 1.3, 14).rotateX(Math.PI / 2),
+      mats.mountStainlessFlange
     );
-    const leverArm = new THREE.Mesh(new THREE.BoxGeometry(1.6, 8.8, 0.55), mats.linkArmSteel);
-    leverArm.position.set(0.4, 4.4, 0.7);
-    chargeCam.add(camMesh, leverArm);
-    chargeCam.position.set(22.8, -21.0, 0.8);
-    g.add(chargeCam);
+    clutchHub.position.set(22.8, -21.0, -1.2);
+    g.add(clutchHub);
 
     parts.push(
       finalizeShutterPart(
-        'shutter-charge-motor',
-        10,
-        '#d4a948',
+        'shutter-charge-gears',
+        17,
+        '#facc15',
         g,
         new THREE.Vector3(0, 0, 12.2),
-        new THREE.Vector3(20.0, -4.0, -23.5),
-        new THREE.Vector3(18.0, -4.0, 27.5),
+        new THREE.Vector3(24.0, -18.0, -26.0),
+        new THREE.Vector3(22.0, -16.0, 31.0),
         cp,
         0.24
       )
@@ -732,12 +958,140 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S11. Self-Diagnostic IR Photo-Interrupter Optical Speed Monitors (z = +11.6 mm)
+  // SH18. 500,000-Cycle High-Response Coreless DC Charge Motor & Pinion (z = +12.2 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
+    const motorCan = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.4, 4.4, 13.5, 22),
+      mats.stainlessMachined
+    );
+    motorCan.position.set(36.2, -16.8, 0);
+    g.add(motorCan);
 
-    // Two U-shaped IR Photo-Interrupters measuring real-time curtain passage timing (upper & lower gates)
+    const endCap = new THREE.Mesh(new THREE.CylinderGeometry(4.3, 4.3, 1.8, 22), mats.icEpoxy);
+    endCap.position.set(36.2, -24.1, 0);
+    g.add(endCap);
+
+    for (const tx of [34.8, 37.6]) {
+      const term = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.6, 0.4), mats.goldPlating);
+      term.position.set(tx, -25.4, 0);
+      g.add(term);
+    }
+
+    const pinion = new THREE.Mesh(createSpurGearGeometry(10, 1.8, 3.0, 0.6), mats.brassGear);
+    pinion.rotation.x = Math.PI / 2;
+    pinion.position.set(36.2, -8.5, 0);
+    g.add(pinion);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-charge-motor',
+        18,
+        '#d4a948',
+        g,
+        new THREE.Vector3(0, 0, 12.2),
+        new THREE.Vector3(44.0, -14.0, -28.0),
+        new THREE.Vector3(42.0, -12.0, 29.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH19. [NEW!] Heart-Profile Eccentric Cocking Cam & Twin Charging Rockers (z = +12.2 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const camShape = new THREE.Shape();
+    camShape.absarc(0, 0, 2.7, 0, Math.PI * 1.4, false);
+    camShape.lineTo(4.0, -1.9);
+    camShape.lineTo(2.7, 0);
+    const camMesh = new THREE.Mesh(
+      extrudeCentered(camShape, 1.35, 0.06, 0.06, 18),
+      mats.brassGear
+    );
+
+    const leverArm1 = new THREE.Mesh(new THREE.BoxGeometry(1.5, 9.2, 0.55), mats.linkArmSteel);
+    leverArm1.position.set(0.4, 4.6, 0.72);
+    const leverArm2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 7.6, 0.55), mats.stainlessMachined);
+    leverArm2.position.set(2.4, 3.6, 1.25);
+    leverArm2.rotation.z = -0.18;
+
+    chargeCam.add(camMesh, leverArm1, leverArm2);
+    chargeCam.position.set(22.8, -21.0, 0.8);
+    g.add(chargeCam);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-cocking-cam',
+        19,
+        '#ca8a04',
+        g,
+        new THREE.Vector3(0, 0, 12.2),
+        new THREE.Vector3(16.0, -26.0, -20.0),
+        new THREE.Vector3(16.0, -24.0, 35.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH20. [NEW!] Cocking-Completion Rotary Cam Home-Position Leaf Switch & Disc (z = +11.9 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    // Conductive timing encoder disc on back of cam shaft
+    const encDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.2, 3.2, 0.45, 20).rotateX(Math.PI / 2),
+      mats.hdiMainboardPcb
+    );
+    encDisc.position.set(22.8, -21.0, -0.6);
+    g.add(encDisc);
+
+    // Gold sector contact trace arc on timing disc
+    const goldArc = new THREE.Mesh(
+      new THREE.TorusGeometry(2.3, 0.35, 6, 18, Math.PI * 1.25),
+      mats.goldPlating
+    );
+    goldArc.position.set(22.8, -21.0, -0.35);
+    goldArc.userData.noEdges = true;
+    g.add(goldArc);
+
+    // Dual phosphor-bronze wiping leaf contact fingers & PPS terminal block
+    const swBlock = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.8, 1.4), mats.mountPpsInsulator);
+    swBlock.position.set(27.8, -23.6, -0.6);
+    g.add(swBlock);
+
+    for (const dy of [-0.55, 0.55]) {
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.35, 0.35), mats.goldPlating);
+      leaf.position.set(25.2, -22.2 + dy, -0.35);
+      leaf.rotation.z = -0.32;
+      g.add(leaf);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-cam-switch',
+        20,
+        '#16a34a',
+        g,
+        new THREE.Vector3(0, 0, 11.9),
+        new THREE.Vector3(34.0, -28.0, -22.0),
+        new THREE.Vector3(32.0, -26.0, 33.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH21. Self-Diagnostic 940 nm IR Photo-Interrupter Optical Speed Monitors (z = +11.6 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     for (const [px, py] of [
       [19.8, 10.6],
       [19.8, -10.6],
@@ -746,34 +1100,28 @@ export function buildShutterParts(
       body.position.set(px, py, 0);
       g.add(body);
 
-      // Ruby-red IR LED emitter lens & phototransistor detector facing curtain edge
-      const led = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.5, 14), mats.irLedLens);
+      const led = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.5, 12), mats.irLedLens);
       led.rotation.z = Math.PI / 2;
       led.position.set(px - 1.75, py, 0.45);
-      const rx = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.5, 14), mats.siliconBulk);
+      const rx = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.5, 12), mats.siliconBulk);
       rx.rotation.z = Math.PI / 2;
       rx.position.set(px - 1.75, py, -0.45);
       g.add(led, rx);
     }
 
-    // Amber polyimide control & diagnostic FPC routing to main camera board
-    const fpcVert = new THREE.Mesh(new THREE.BoxGeometry(2.6, 26.0, 0.2), mats.polyimideFpc);
+    const fpcVert = new THREE.Mesh(new THREE.BoxGeometry(2.4, 24.5, 0.2), mats.polyimideFpc);
     fpcVert.position.set(21.4, 0, -0.85);
-    const fpcTail = new THREE.Mesh(new THREE.BoxGeometry(12.0, 6.2, 0.2), mats.polyimideFpc);
-    fpcTail.position.set(26.5, 22.8, -0.85);
-    const goldEnd = new THREE.Mesh(new THREE.BoxGeometry(2.0, 5.6, 0.24), mats.goldPlating);
-    goldEnd.position.set(32.0, 22.8, -0.82);
-    g.add(fpcVert, fpcTail, goldEnd);
+    g.add(fpcVert);
 
     parts.push(
       finalizeShutterPart(
         'shutter-optical-sensor',
-        11,
+        21,
         '#be123c',
         g,
         new THREE.Vector3(0, 0, 11.6),
-        new THREE.Vector3(8.0, 0, -29.5),
-        new THREE.Vector3(8.0, 0, 21.5),
+        new THREE.Vector3(12.0, 4.0, -34.0),
+        new THREE.Vector3(12.0, 4.0, 24.0),
         cp,
         0.26
       )
@@ -781,72 +1129,166 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // S12. High-Rigidity Base Chassis, Rebound Brake Dampers & Floating Anti-Vib Mounts (z = +10.8 mm)
+  // SH22. [NEW!] Dual High-Hysteresis Elastomer Blade-Bounce Brakes & Shoes (z = +11.4 mm)
   // =========================================================================
   {
     const g = new THREE.Group();
-
-    // Glass-fiber reinforced PPS/magnesium base chassis with full-frame optical window
-    const baseShape = createFrameShape(frameW + 2.0, frameH + 2.0, 4.6, apW, apH, 0.9, -frameCenterX, 0);
-    const baseMesh = new THREE.Mesh(
-      extrudeCentered(baseShape, 1.35, 0.12, 0.12, 20),
-      mats.shutterChassis
-    );
-    baseMesh.position.x = frameCenterX;
-    g.add(baseMesh);
-
-    // Side mechanical bay protective surround wall
-    const wallR = new THREE.Mesh(new THREE.BoxGeometry(1.4, frameH - 4.0, 4.2), mats.shutterChassis);
-    wallR.position.set(frameCenterX + frameW / 2 - 0.5, 0, 2.2);
-    g.add(wallR);
-
-    // 2 High-Hysteresis Elastomer Rebound Brake Dampers (crimson red cushions at top & bottom end-stops!)
     for (const by of [15.8, -15.8]) {
       const damperBlock = new THREE.Mesh(
         new THREE.BoxGeometry(22.0, 2.6, 2.4),
         mats.damperElastomer
       );
-      damperBlock.position.set(0, by, 1.45);
+      damperBlock.position.set(0, by, 0.85);
       g.add(damperBlock);
 
-      // Friction brake leaf contact shoes
       for (const sx of [-7.5, 7.5]) {
         const shoe = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.2, 2.7), mats.brassGear);
-        shoe.position.set(sx, by, 1.55);
+        shoe.position.set(sx, by, 0.95);
         g.add(shoe);
       }
     }
 
-    // 4 Corner Floating Anti-Vibration Silicone Isolator Bushings (vivid industrial cobalt blue rubber)
-    // Decouples shutter stop impulse from magnesium camera body & 5-axis IBIS sensor!
+    parts.push(
+      finalizeShutterPart(
+        'shutter-blade-brakes',
+        22,
+        '#dc2626',
+        g,
+        new THREE.Vector3(0, 0, 11.4),
+        new THREE.Vector3(0, 0, -24.0),
+        new THREE.Vector3(0, 0, 34.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH23. [NEW!] Linkage End-Stop Kinetic Silicone Air-Dashpot Cylinders (z = +11.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    for (const [dx, dy] of [
+      [32.5, 9.6],
+      [32.5, -9.2],
+    ] as Array<[number, number]>) {
+      // Stainless micro air-dashpot cylinder barrel
+      const cyl = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.75, 1.75, 4.8, 14),
+        mats.stainlessMachined
+      );
+      cyl.position.set(dx, dy, 0.5);
+      g.add(cyl);
+
+      // Viscoelastic crimson silicone impact bumper tip facing moving link lever
+      const tip = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.35, 1.35, 1.4, 12),
+        mats.damperElastomer
+      );
+      tip.position.set(dx, dy + (dy > 0 ? -2.9 : 2.9), 0.5);
+      g.add(tip);
+
+      // Internal brass return spring visible through side cutout slot
+      const spr = new THREE.Mesh(
+        createHelicalSpringGeometry(0.95, 3.2, 4, 0.2).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
+      spr.position.set(dx, dy, 0.5);
+      spr.userData.noEdges = true;
+      g.add(spr);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-shock-piston',
+        23,
+        '#ec4899',
+        g,
+        new THREE.Vector3(0, 0, 11.4),
+        new THREE.Vector3(42.0, 12.0, -28.0),
+        new THREE.Vector3(40.0, 10.0, 26.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH24. [NEW!] High-Current Solenoid/Boost Driver FPC Harness & Flyback Diodes (z = +11.2 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    // Main vertical high-current Kapton bus spanning magnets -> boost coil -> charge motor
+    const trunk = new THREE.Mesh(new THREE.BoxGeometry(5.6, 38.0, 0.28), mats.polyimideFpc);
+    trunk.position.set(32.0, 0.5, -0.5);
+    g.add(trunk);
+
+    // Top mainboard ZIF tail & gold finger strip
+    const topTail = new THREE.Mesh(new THREE.BoxGeometry(14.0, 6.2, 0.28), mats.polyimideFpc);
+    topTail.position.set(27.0, 22.8, -0.5);
+    g.add(topTail);
+
+    const goldEnd = new THREE.Mesh(new THREE.BoxGeometry(2.2, 5.6, 0.32), mats.goldPlating);
+    goldEnd.position.set(33.2, 22.8, -0.45);
+    g.add(goldEnd);
+
+    // 3 SMD fast-recovery Schottky flyback diodes clamping solenoid & boost back-EMF
+    for (const dy of [15.0, 4.0, -8.5]) {
+      const diode = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.5, 0.85), mats.icEpoxy);
+      diode.position.set(32.0, dy, 0.05);
+      g.add(diode);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-fpc-driver',
+        24,
+        '#f97316',
+        g,
+        new THREE.Vector3(0, 0, 11.2),
+        new THREE.Vector3(32.0, 28.0, -36.0),
+        new THREE.Vector3(30.0, 24.0, 20.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH25. [NEW!] 4-Corner Floating Viscoelastic Silicone Isolation Grommets (z = +10.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
     for (const [bx, by] of [
       [frameCenterX - frameW / 2 + 2.5, frameH / 2 - 2.5],
       [frameCenterX + frameW / 2 - 2.5, frameH / 2 - 2.5],
       [frameCenterX - frameW / 2 + 2.5, -frameH / 2 + 2.5],
       [frameCenterX + frameW / 2 - 2.5, -frameH / 2 + 2.5],
     ] as Array<[number, number]>) {
-      const bushGeo = new THREE.CylinderGeometry(3.2, 3.2, 2.4, 22);
-      bushGeo.rotateX(Math.PI / 2);
-      const bush = new THREE.Mesh(bushGeo, mats.antiVibRubber);
+      const bush = new THREE.Mesh(
+        new THREE.CylinderGeometry(3.2, 3.2, 2.4, 20).rotateX(Math.PI / 2),
+        mats.antiVibRubber
+      );
       bush.position.set(bx, by, 0);
       g.add(bush);
 
-      const sleeveGeo = new THREE.CylinderGeometry(1.65, 1.65, 2.65, 18);
-      sleeveGeo.rotateX(Math.PI / 2);
-      const sleeve = new THREE.Mesh(sleeveGeo, mats.brassGear);
+      const sleeve = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.65, 1.65, 2.65, 16).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
       sleeve.position.set(bx, by, 0);
       g.add(sleeve);
     }
 
     parts.push(
       finalizeShutterPart(
-        'shutter-base-damper',
-        12,
-        '#c44536',
+        'shutter-floating-grommets',
+        25,
+        '#2563eb',
         g,
         new THREE.Vector3(0, 0, 10.8),
-        new THREE.Vector3(0, 0, -37.0),
-        new THREE.Vector3(0, 0, 15.0),
+        new THREE.Vector3(0, 0, -40.0),
+        new THREE.Vector3(0, 0, 19.0),
         cp,
         0.24
       )
@@ -854,7 +1296,39 @@ export function buildShutterParts(
   }
 
   // =========================================================================
-  // PARALLELOGRAM KINEMATICS ENGINE FOR LIVE SLIT EXPOSURE & COCKING CYCLE
+  // SH26. High-Rigidity PPS/Magnesium Shutter Base Chassis Frame (z = +10.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const baseShape = createFrameShape(frameW + 2.0, frameH + 2.0, 4.6, apW, apH, 0.9, -frameCenterX, 0);
+    const baseMesh = new THREE.Mesh(
+      extrudeCentered(baseShape, 1.35, 0.12, 0.12, 18),
+      mats.shutterChassis
+    );
+    baseMesh.position.x = frameCenterX;
+    g.add(baseMesh);
+
+    const wallR = new THREE.Mesh(new THREE.BoxGeometry(1.4, frameH - 4.0, 4.2), mats.shutterChassis);
+    wallR.position.set(frameCenterX + frameW / 2 - 0.5, 0, 2.2);
+    g.add(wallR);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-base-damper',
+        26,
+        '#c44536',
+        g,
+        new THREE.Vector3(0, 0, 10.8),
+        new THREE.Vector3(0, 0, -48.0),
+        new THREE.Vector3(0, 0, 14.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // PARALLELOGRAM KINEMATICS ENGINE + COUNTERWEIGHT & ARMATURE DYNAMICS
   // =========================================================================
   const slitState: ShutterDynamicRig['slitState'] = {
     curtain1EdgeY: -2.2,
@@ -865,54 +1339,34 @@ export function buildShutterParts(
     irTrigger2: false,
   };
 
-  /**
-   * Position 4 telescoping blades for a curtain:
-   * - For 1st curtain (travels top -> bottom to OPEN):
-   *   p = 0 -> fully closed across aperture (blade 0 top edge at +13.0, blades cover [-13..+13])
-   *   p = 1 -> fully folded into bottom pocket (all 4 blades neatly stacked around y = -17.5)
-   */
   const positionCurtain1 = (p: number) => {
     const clamped = THREE.MathUtils.clamp(p, 0, 1);
-    // Blade 0 is the top slit-forming blade; blades 1,2,3 telescope beneath it into bottom pocket
     const topTargetsClosed = [9.5, 3.2, -3.1, -9.4];
     const pocketY = -17.6;
     for (let i = 0; i < 4; i++) {
-      const y = THREE.MathUtils.lerp(topTargetsClosed[i], pocketY - i * 0.35, clamped);
-      curtain1Blades[i].position.y = y;
+      curtain1Blades[i].position.y = THREE.MathUtils.lerp(topTargetsClosed[i], pocketY - i * 0.35, clamped);
     }
-    // Parallelogram link rotation tracks travel seamlessly
     const angle = THREE.MathUtils.lerp(0.56, -0.62, clamped);
     link1Main.rotation.z = angle;
     link1Sub.rotation.z = angle;
-    // Slit lower boundary = top edge of blade 0
     return curtain1Blades[0].position.y + 3.7;
   };
 
-  /**
-   * Position 4 telescoping blades for 2nd curtain (travels top -> bottom to CLOSE):
-   *   p = 0 -> fully folded into top pocket (all 4 blades neatly stacked around y = +17.6)
-   *   p = 1 -> fully closed across aperture (blade 0 bottom edge reaches -13.1)
-   */
   const positionCurtain2 = (p: number) => {
     const clamped = THREE.MathUtils.clamp(p, 0, 1);
     const closedY = [-9.4, -3.1, 3.2, 9.5];
     const pocketY = 17.6;
     for (let i = 0; i < 4; i++) {
-      const y = THREE.MathUtils.lerp(pocketY + i * 0.35, closedY[i], clamped);
-      curtain2Blades[i].position.y = y;
+      curtain2Blades[i].position.y = THREE.MathUtils.lerp(pocketY + i * 0.35, closedY[i], clamped);
     }
     const angle = THREE.MathUtils.lerp(0.62, -0.56, clamped);
     link2Main.rotation.z = angle;
     link2Sub.rotation.z = angle;
-    // Slit upper boundary = bottom edge of blade 0
     return curtain2Blades[0].position.y - 3.7;
   };
 
   const applyKinematics = (elapsed: number, physicsActive: boolean) => {
     if (!physicsActive) {
-      // Iconic static showcase pose: mid high-speed slit exposure (~1/2000s equivalent)!
-      // Instantly teaches beginners how 1st curtain opens downward while 2nd curtain chases behind it
-      // leaving a crisp horizontal light slit right across the full-frame aperture!
       const c1Edge = positionCurtain1(0.56);
       const c2Edge = positionCurtain2(0.36);
       slitState.curtain1EdgeY = c1Edge;
@@ -921,6 +1375,9 @@ export function buildShutterParts(
       slitState.boostActive = false;
       slitState.irTrigger1 = false;
       slitState.irTrigger2 = false;
+      counterweightLever.rotation.z = 0;
+      armatureLever1.rotation.z = 0;
+      armatureLever2.rotation.z = 0;
 
       (dualBoostCoilGlow.material as THREE.MeshBasicMaterial).opacity = 0;
       (magnet1Glow.material as THREE.MeshBasicMaterial).opacity = 0;
@@ -928,11 +1385,6 @@ export function buildShutterParts(
       return;
     }
 
-    // Slow-motion educational 7.0-second cycle (phase-shifted +1.6s so startup opens right in mid-slit scan!):
-    // 0.00 - 0.64: Extended Slow-Motion Slit Exposure! 1st curtain opens downward, 2nd chases -> glowing slit scans frame!
-    // 0.64 - 0.72: Exposure Complete / Damper Braking (Curtain 2 closed, Curtain 1 in bottom pocket)
-    // 0.72 - 0.92: Coreless DC Motor & Gears spin to cock/rewind both curtains overlapped (light-tight) back to ready!
-    // 0.92 - 1.00: Ready / Holding Magnets Energized
     const cycle = ((elapsed + 1.6) % 7.0) / 7.0;
     let p1 = 0;
     let p2 = 0;
@@ -941,7 +1393,6 @@ export function buildShutterParts(
     let mag2 = 0.85;
 
     if (cycle < 0.64) {
-      // Smooth S-curve acceleration matching spring + electromagnetic boost kinematics
       const t1 = THREE.MathUtils.clamp(cycle / 0.48, 0, 1);
       const t2 = THREE.MathUtils.clamp((cycle - 0.14) / 0.48, 0, 1);
       p1 = t1 * t1 * (3 - 2 * t1);
@@ -957,7 +1408,6 @@ export function buildShutterParts(
       mag2 = 0;
       slitState.phaseLabel = 'closed';
     } else if (cycle < 0.92) {
-      // Motorized high-speed recocking / charging phase (curtains overlap so zero light leaks!)
       const tc = THREE.MathUtils.clamp((cycle - 0.72) / 0.20, 0, 1);
       const ease = tc * tc * (3 - 2 * tc);
       p1 = 1 - ease;
@@ -966,7 +1416,6 @@ export function buildShutterParts(
       mag2 = tc > 0.82 ? 0.85 : 0;
       slitState.phaseLabel = 'charging';
 
-      // Spin reduction gears & cocking cam visibly during recocking!
       const spin = ease * Math.PI * 6;
       chargeGears[0].rotation.z = spin;
       chargeGears[1].rotation.z = -spin * 1.25;
@@ -981,6 +1430,12 @@ export function buildShutterParts(
 
     const c1Edge = positionCurtain1(p1);
     const c2Edge = positionCurtain2(p2);
+    // Counterweight lever swings in exact opposite phase to cancel vertical shutter recoil!
+    counterweightLever.rotation.z = THREE.MathUtils.lerp(-0.55, 0.55, (p1 + p2) * 0.5);
+    // Armature latches snap open instantaneously when their holding magnet de-energizes!
+    armatureLever1.rotation.z = mag1 > 0.2 ? 0 : -0.18;
+    armatureLever2.rotation.z = mag2 > 0.2 ? 0 : -0.18;
+
     slitState.curtain1EdgeY = c1Edge;
     slitState.curtain2EdgeY = c2Edge;
     slitState.boostActive = boost;
@@ -994,7 +1449,6 @@ export function buildShutterParts(
     (magnet2Glow.material as THREE.MeshBasicMaterial).opacity = mag2;
   };
 
-  // Initialize default showcase slit pose immediately
   applyKinematics(0, false);
 
   return {
@@ -1009,6 +1463,9 @@ export function buildShutterParts(
       shieldBlades,
       chargeGears,
       chargeCam,
+      counterweightLever,
+      armatureLever1,
+      armatureLever2,
       dualBoostCoilGlow,
       magnet1Glow,
       magnet2Glow,

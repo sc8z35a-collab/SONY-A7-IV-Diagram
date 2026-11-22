@@ -75,9 +75,10 @@ function createLensRetainerCell(
 }
 
 /**
- * Build all 14 ultra-detailed CAD sub-assemblies of a 2024-2026 Flagship Mirrorless
- * Electronic Viewfinder (EVF) + Eye-Control AF optical module positioned directly on top
- * of the Shutter/Sensor/Mainboard optical core (optical axis x = 0, y = 39.5 mm).
+ * Build all 18 ultra-detailed CAD sub-assemblies of a 2024-2026 Flagship Mirrorless
+ * Electronic Viewfinder (EVF) + Eye-Control AF optical & precision mechanical module
+ * positioned directly on top of the Shutter/Sensor/Mainboard optical core
+ * (optical axis x = 0, y = 39.5 mm).
  *
  * +Z = camera front (OLED thermal sink & TCON), -Z = camera rear (photographer's eye).
  */
@@ -85,6 +86,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const irLedMeshes: THREE.Mesh[] = [];
+  const helicoidSleeveGroup = new THREE.Group();
 
   // =========================================================================
   // E01: Ergonomic Deep Anti-Glare Silicone Eyecup & Quick-Release Bayonet
@@ -154,6 +156,64 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
+  // E02: Quick-Release Stainless Eyecup Slide-Lock Rails & Spring Latches
+  // =========================================================================
+  const eyecupLatchGroup = new THREE.Group();
+  {
+    // Thin stainless steel bayonet carrier frame nested flush against EVF rear collar
+    const carrierShape = createFrameShape(29.8, 23.4, 4.6, 24.4, 18.6, 3.4);
+    const carrier = new THREE.Mesh(
+      extrudeCentered(carrierShape, 1.1, 0.08, 0.08, 24),
+      mats.mountStainlessFlange
+    );
+    eyecupLatchGroup.add(carrier);
+
+    // Left & right dovetail slide rails + spring-loaded detent latch claws + return coil springs
+    for (const sx of [-1, 1]) {
+      const dovetail = new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 16.2, 1.5),
+        mats.stainlessMachined
+      );
+      dovetail.position.set(sx * 13.4, 0.4, -0.35);
+      eyecupLatchGroup.add(dovetail);
+
+      // Pivoting stainless spring-lock catch tooth
+      const claw = new THREE.Mesh(new THREE.BoxGeometry(2.4, 4.2, 1.2), mats.mountSpringSteel);
+      claw.position.set(sx * 14.8, -4.4, -0.4);
+      eyecupLatchGroup.add(claw);
+
+      // Miniature helical preload compression spring biasing the lock claw outward
+      const spring = new THREE.Mesh(
+        createHelicalSpringGeometry(0.65, 3.2, 6, 0.14).rotateY(Math.PI / 2),
+        mats.brassGear
+      );
+      spring.position.set(sx * 13.1, -4.4, 0.35);
+      spring.userData.noEdges = true;
+      eyecupLatchGroup.add(spring);
+
+      // Top & bottom micro M1.2 mounting screws anchoring latch frame to EVF magnesium collar
+      for (const sy of [-8.8, 8.8]) {
+        const scr = createPrecisionScrew(0.55, 0.28, 1.0, mats.stainlessMachined);
+        scr.position.set(sx * 11.4, sy, -0.55);
+        eyecupLatchGroup.add(scr);
+      }
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-eyecup-latch',
+      2,
+      '#94a3b8',
+      eyecupLatchGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -34.6),
+      new THREE.Vector3(-6, -24, -48),
+      new THREE.Vector3(-26, 22, -32),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
   // E02: Anti-Fog Airtight Double-Pane Fluorine-Coated Eyepiece Glass Window
   // =========================================================================
   const antifogGroup = new THREE.Group();
@@ -207,7 +267,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-antifog-window',
-      2,
+      3,
       '#38bdf8',
       antifogGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -32.2),
@@ -276,7 +336,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-eye-sensor',
-      3,
+      4,
       '#0ea5e9',
       eyeSensorGroup,
       new THREE.Vector3(0, 28.4, -30.6),
@@ -354,7 +414,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-ir-leds',
-      4,
+      5,
       '#e11d48',
       irLedsGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -28.0),
@@ -421,7 +481,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-dichroic-mirror',
-      5,
+      6,
       '#db2777',
       dichroicGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -22.2),
@@ -522,7 +582,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-gaze-camera',
-      6,
+      7,
       '#9333ea',
       gazeCamGroup,
       new THREE.Vector3(0, 25.4, -22.2),
@@ -572,7 +632,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-lens-rear',
-      7,
+      8,
       '#0284c7',
       lensRearGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -15.4),
@@ -644,7 +704,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   }
   const edLensPart = finalizeEvfPart(
     'evf-lens-ed-doublet',
-    8,
+    9,
     '#10b981',
     lensEdGroup,
     new THREE.Vector3(0, EVF_OPTICAL_Y, -9.2),
@@ -656,7 +716,145 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(edLensPart);
 
   // =========================================================================
-  // E09: Precision Helical Diopter Dial, Brass Lead Screw & Guide Rod Mechanism
+  // E10: Centerless-Ground Twin Stainless Diopter Guide Rods & Preload Springs
+  // =========================================================================
+  const diopterRailsGroup = new THREE.Group();
+  {
+    // Diagonal kinematic pair matching E09 ED-doublet linear sleeves at (+11.8, +7.6) & (-11.8, -6.8)
+    const rodCoords: Array<[number, number]> = [
+      [11.8, 7.6],
+      [-11.8, -6.8],
+    ];
+    for (const [rx, ry] of rodCoords) {
+      // Centerless-ground hardened stainless linear guide shaft
+      const shaft = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.74, 0.74, 20.4, 18).rotateX(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      shaft.position.set(rx, ry, 0);
+      diopterRailsGroup.add(shaft);
+
+      // Anti-backlash phosphor-bronze helical preload spring seated on each guide rod
+      const preloadSpring = new THREE.Mesh(
+        createHelicalSpringGeometry(1.22, 5.8, 7, 0.18),
+        mats.brassGear
+      );
+      preloadSpring.position.set(rx, ry, 5.2);
+      preloadSpring.userData.noEdges = true;
+      diopterRailsGroup.add(preloadSpring);
+
+      // Front & rear PTFE self-lubricating flange end-mounts + circlips
+      for (const sz of [-9.8, 9.8]) {
+        const endMount = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.45, 1.45, 1.3, 18).rotateX(Math.PI / 2),
+          mats.pomGear
+        );
+        endMount.position.set(rx, ry, sz);
+        diopterRailsGroup.add(endMount);
+
+        const circlip = new THREE.Mesh(
+          new THREE.TorusGeometry(1.05, 0.18, 8, 20),
+          mats.mountSpringSteel
+        );
+        circlip.position.set(rx, ry, sz + (sz > 0 ? -0.85 : 0.85));
+        circlip.userData.noEdges = true;
+        diopterRailsGroup.add(circlip);
+      }
+    }
+
+    // Thin anodized front & rear cross-tie alignment bridge straps linking both guide ends
+    for (const sz of [-9.8, 9.8]) {
+      const bridge = new THREE.Mesh(
+        extrudeCentered(createFrameShape(26.4, 18.4, 3.8, 23.2, 15.2, 2.8), 0.85, 0.06, 0.06, 20),
+        mats.matteBlackAnodized
+      );
+      bridge.position.z = sz;
+      diopterRailsGroup.add(bridge);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-diopter-rails',
+      10,
+      '#64748b',
+      diopterRailsGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -9.2),
+      new THREE.Vector3(-28, -14, 12),
+      new THREE.Vector3(-26, 20, 14),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E11: Helical Spiral-Cam Diopter Barrel Sleeve & Brass Sector Pinion
+  // =========================================================================
+  const helicoidGroup = new THREE.Group();
+  {
+    // Concentric CNC-machined helicoid cam barrel encircling the movable ED doublet (R = 12.1..13.2)
+    const barrelShell = createLensRetainerCell(12.0, 13.1, 10.6, mats.matteBlackAnodized);
+    helicoidSleeveGroup.add(barrelShell);
+
+    // Front & rear gleaming anodized bearing rings
+    for (const sz of [-5.2, 5.2]) {
+      const ring = createLensRetainerCell(11.95, 13.35, 0.8, mats.stainlessMachined);
+      ring.position.z = sz;
+      helicoidSleeveGroup.add(ring);
+    }
+
+    // 3x 120°-spaced spiral cam-slot ribs & stainless cam-follower guide pins around perimeter
+    for (let i = 0; i < 3; i++) {
+      const angle = (i * Math.PI * 2) / 3 + 0.35;
+      const slotTrack = new THREE.Group();
+      slotTrack.rotation.z = angle;
+
+      const camRib = new THREE.Mesh(
+        new THREE.BoxGeometry(0.95, 1.15, 7.6),
+        mats.brassGear
+      );
+      camRib.position.set(13.25, 0, 0);
+      camRib.rotation.x = 0.28; // Helical cam lead angle β!
+      slotTrack.add(camRib);
+
+      // Stainless cylindrical cam-follower pin riding inside the spiral slot
+      const follower = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.68, 0.68, 2.2, 14).rotateZ(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      follower.position.set(12.6, 0, 0);
+      slotTrack.add(follower);
+
+      helicoidSleeveGroup.add(slotTrack);
+    }
+
+    // Brass radial sector gear arc on +X flank meshing cleanly with the diopter drive pinion
+    for (let t = -4; t <= 4; t++) {
+      const a = t * 0.095;
+      const tooth = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.52, 2.2), mats.brassGear);
+      tooth.position.set(Math.cos(a) * 13.6, Math.sin(a) * 13.6, -3.4);
+      tooth.rotation.z = a;
+      tooth.userData.noEdges = true;
+      helicoidSleeveGroup.add(tooth);
+    }
+
+    helicoidGroup.add(helicoidSleeveGroup);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-diopter-helicoid',
+      11,
+      '#ca8a04',
+      helicoidGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -9.2),
+      new THREE.Vector3(30, 8, 12),
+      new THREE.Vector3(28, 46, 14),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E12: Precision Helical Diopter Dial & Brass Lead Screw Mechanism
   // =========================================================================
   const diopterGroup = new THREE.Group();
   const diopterDialGroup = new THREE.Group();
@@ -664,8 +862,6 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   {
     // Anchor bracket frame on right flank of EVF optical barrel (local x = 0 => world x = +15.0)
     const bracket = new THREE.Mesh(new THREE.BoxGeometry(2.6, 17.5, 18.0), mats.matteBlackAnodized);
-    bracket.position.set(2.2, 0.5, 0);
-    // Keep thin mounting rail profile rather than solid block
     bracket.scale.set(0.55, 0.22, 1.0);
     bracket.position.set(2.8, 8.2, 0);
     diopterGroup.add(bracket);
@@ -677,7 +873,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       diopterGroup.add(block);
     }
 
-    // Gleaming Precision Brass Helical Lead Screw (rotates live in sync with E08!)
+    // Gleaming Precision Brass Helical Lead Screw (rotates live in sync with E09!)
     const screwCore = new THREE.Mesh(
       new THREE.CylinderGeometry(0.95, 0.95, 17.6, 20).rotateX(Math.PI / 2),
       mats.brassGear
@@ -701,22 +897,6 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     leadScrewGroup.add(screwGear);
     leadScrewGroup.position.set(-0.2, 0, 0);
     diopterGroup.add(leadScrewGroup);
-
-    // Precision Ground Stainless Guide Rod (upper right) + Anti-Backlash Compression Spring!
-    const guideRod = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.72, 0.72, 18.8, 16).rotateX(Math.PI / 2),
-      mats.stainlessMachined
-    );
-    guideRod.position.set(-3.2, 7.6, 0);
-    diopterGroup.add(guideRod);
-
-    const antiBacklashSpring = new THREE.Mesh(
-      createHelicalSpringGeometry(1.25, 5.4, 7, 0.19),
-      mats.stainlessMachined
-    );
-    antiBacklashSpring.position.set(-3.2, 7.6, 4.6);
-    antiBacklashSpring.userData.noEdges = true;
-    diopterGroup.add(antiBacklashSpring);
 
     // External Knurled Push-Lock Diopter Adjustment Dial (protruding right at +X for thumb control!)
     diopterDialGroup.position.set(4.6, 0, -6.4);
@@ -780,12 +960,12 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-diopter-mech',
-      9,
+      12,
       '#d97706',
       diopterGroup,
       new THREE.Vector3(15.0, EVF_OPTICAL_Y, -9.2),
-      new THREE.Vector3(4, -24, 12),
-      new THREE.Vector3(24, 34, 14),
+      new THREE.Vector3(16, -24, 12),
+      new THREE.Vector3(24, 24, 14),
       cp,
       0.24
     )
@@ -826,7 +1006,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-lens-field',
-      10,
+      13,
       '#4f46e5',
       lensFieldGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -2.4),
@@ -838,7 +1018,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // E11: 0.64-inch 9.44M-Dot Quad-XGA 2-Stack Tandem Micro-OLED (OLEDoS)
+  // E14: 0.64-inch 9.44M-Dot Quad-XGA 2-Stack Tandem Micro-OLED (OLEDoS)
   // =========================================================================
   const oledGroup = new THREE.Group();
   let oledScreenMesh!: THREE.Mesh;
@@ -878,7 +1058,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     mlaGlass.userData.edgeOpacity = 0.32;
     oledGroup.add(mlaGlass);
 
-    // Rear thermal contact copper pad on +Z back of silicon package (mates with E13 TIM)
+    // Rear thermal contact copper pad on +Z back of silicon package (mates with E17 TIM)
     const rearPad = new THREE.Mesh(new THREE.BoxGeometry(15.6, 11.8, 0.25), mats.goldPlating);
     rearPad.position.z = 1.42;
     oledGroup.add(rearPad);
@@ -896,7 +1076,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-oled-panel',
-      11,
+      14,
       '#2563eb',
       oledGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 3.6),
@@ -908,7 +1088,64 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // E12: 240Hz MIPI-DSI Display Driver / TCON PCB & Shielded Dual-Stream FPC
+  // E15: Micro-OLED 3-Point Micron Optical Tilt & Centering Calibration Chassis
+  // =========================================================================
+  const oledAlignGroup = new THREE.Group();
+  {
+    // Low-CTE Kovar kinematic registration frame directly behind the Micro-OLED package
+    const kovarFrame = new THREE.Mesh(
+      extrudeCentered(createFrameShape(25.2, 20.2, 2.2, 17.8, 13.8, 1.2), 1.2, 0.08, 0.08, 18),
+      mats.kovarSeal
+    );
+    oledAlignGroup.add(kovarFrame);
+
+    // 3 Kinematic triangular leveling points: fine-pitch brass calibration screws + ceramic pivot balls + leaf clips
+    const triPts: Array<[number, number]> = [
+      [0, 8.6],
+      [-10.4, -7.8],
+      [10.4, -7.8],
+    ];
+    for (const [tx, ty] of triPts) {
+      // Brass threaded calibration collar + ultra-fine pitch M1.4×P0.20 leveling screw
+      const collar = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.75, 1.75, 1.8, 18).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
+      collar.position.set(tx, ty, 0.2);
+      oledAlignGroup.add(collar);
+
+      const calScrew = createPrecisionScrew(1.05, 0.48, 2.4, mats.brassGear);
+      calScrew.position.set(tx, ty, 0.9);
+      oledAlignGroup.add(calScrew);
+
+      // Ceramic spherical kinematic datum ball on -Z face touching OLED carrier
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.65, 12, 10), mats.ceramicAlumina);
+      ball.position.set(tx, ty, -0.85);
+      ball.userData.noEdges = true;
+      oledAlignGroup.add(ball);
+
+      // Stainless preload leaf-spring tension clip keeping OLED seated zero-stress
+      const clip = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.4, 0.35), mats.mountSpringSteel);
+      clip.position.set(tx * 0.85, ty * 0.85, -0.75);
+      oledAlignGroup.add(clip);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-oled-alignment',
+      15,
+      '#b45309',
+      oledAlignGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, 5.2),
+      new THREE.Vector3(28, 0, 46),
+      new THREE.Vector3(26, 34, 39),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E16: 240Hz MIPI-DSI Display Driver / TCON PCB & Shielded Dual-Stream FPC
   // =========================================================================
   const tconGroup = new THREE.Group();
   {
@@ -974,7 +1211,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-tcon-pcb',
-      12,
+      16,
       '#059669',
       tconGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 6.8),
@@ -986,7 +1223,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // E13: Micro-OLED Rear Copper/Aluminum Thermal Sink & High-k Silicone TIM
+  // E17: Micro-OLED Rear Copper/Aluminum Thermal Sink & High-k Silicone TIM
   // =========================================================================
   const heatsinkGroup = new THREE.Group();
   {
@@ -1034,7 +1271,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-thermal-sink',
-      13,
+      17,
       '#c25e28',
       heatsinkGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 10.2),
@@ -1046,7 +1283,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // E14: Weather-Sealed Magnesium-Aluminum EVF Optical Barrel & Baffles
+  // E18: Weather-Sealed Magnesium-Aluminum EVF Optical Barrel & Baffles
   //      (Authentic architectural -X CAD cutaway window so internal lenses,
   //       45° dichroic mirror & Micro-OLED gleam cleanly even when assembled!)
   // =========================================================================
@@ -1169,7 +1406,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   parts.push(
     finalizeEvfPart(
       'evf-magnesium-housing',
-      14,
+      18,
       '#4b5563',
       housingGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, -12.5),
@@ -1181,7 +1418,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // Live Kinematic Rig: Smooth Diopter Focus Drive + 850nm IR Ring Pulse
+  // Live Kinematic Rig: Smooth Diopter Focus Drive + Helicoid + 850nm IR Ring Pulse
   // =========================================================================
   const applyDynamics = (
     elapsed: number,
@@ -1197,6 +1434,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     if (!physicsActive) {
       diopterDialGroup.rotation.x = 0;
       leadScrewGroup.rotation.z = 0;
+      helicoidSleeveGroup.rotation.z = 0;
       for (const led of irLedMeshes) {
         (led.material as THREE.MeshPhysicalMaterial).emissiveIntensity = 0.55;
       }
@@ -1213,9 +1451,10 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       edLensPart.assembledPos.z + offset.z * explodeFactor + zShift
     );
 
-    // Synchronized rotation of the knurled diopter dial & brass helical lead screw!
+    // Synchronized rotation of the knurled diopter dial, brass helical lead screw & helicoid cam sleeve!
     diopterDialGroup.rotation.x = diopterWave * 2.6;
     leadScrewGroup.rotation.z = diopterWave * 5.2;
+    helicoidSleeveGroup.rotation.z = diopterWave * 0.42;
 
     // Sequential 8-LED Eye-Control AF IR corneal-reflection illumination shimmer
     irLedMeshes.forEach((led, idx) => {
