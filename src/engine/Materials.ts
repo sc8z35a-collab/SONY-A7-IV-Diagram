@@ -88,6 +88,15 @@ export interface MaterialLibrary {
   evfOledActive: THREE.MeshStandardMaterial;
   evfIrEmitter: THREE.MeshPhysicalMaterial;
   evfHousingMg: THREE.MeshPhysicalMaterial;
+  // Large-Diameter Lens Mount materials
+  mountStainlessFlange: THREE.MeshPhysicalMaterial;
+  mountSpringSteel: THREE.MeshStandardMaterial;
+  mountRedIndexDot: THREE.MeshPhysicalMaterial;
+  mountVelvetBaffle: THREE.MeshStandardMaterial;
+  mountShimBlue: THREE.MeshStandardMaterial;
+  mountPpsInsulator: THREE.MeshStandardMaterial;
+  mountMgBulkhead: THREE.MeshPhysicalMaterial;
+  mountThreadLockBlue: THREE.MeshStandardMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -1694,6 +1703,77 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.14,
   });
 
+  // -------------------------------------------------------------------------
+  // Large-Diameter Mirrorless Lens Mount Materials
+  // -------------------------------------------------------------------------
+  // CNC mirror-lapped hardened stainless steel (SUS420J2 / hard-chrome bayonet flange)
+  const mountStainlessFlange = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd8dee6,
+    metalness: 0.94,
+    roughness: 0.16,
+    clearcoat: 0.42,
+    clearcoatRoughness: 0.12,
+  });
+
+  // Tempered phosphor-bronze / beryllium-copper bayonet clamping leaf spring
+  const mountSpringSteel = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xc98a3c,
+    metalness: 0.86,
+    roughness: 0.28,
+  });
+
+  // Iconic red anodized circular lens alignment index dot (strictly zero text)
+  const mountRedIndexDot = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xdc2626,
+    metalness: 0.18,
+    roughness: 0.22,
+    clearcoat: 0.72,
+  });
+
+  // Ultra-low-reflectance optical light-trap velvet matte black (rho < 0.8%)
+  const mountVelvetBaffle = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x15171c,
+    metalness: 0.08,
+    roughness: 0.96,
+  });
+
+  // Factory color-coded 0.05 mm precision calibration shim foil (cobalt blue)
+  const mountShimBlue = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x2563eb,
+    metalness: 0.72,
+    roughness: 0.32,
+  });
+
+  // Glass-fiber reinforced PPS precision pogo-pin insulator block
+  const mountPpsInsulator = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x272a33,
+    metalness: 0.08,
+    roughness: 0.62,
+  });
+
+  // Thixomolded AZ91D magnesium-aluminum structural front bulkhead
+  const mountMgBulkhead = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x5c6675,
+    metalness: 0.72,
+    roughness: 0.42,
+    clearcoat: 0.1,
+  });
+
+  // Blue anaerobic vibration-proof thread-locker coating on mount bolts
+  const mountThreadLockBlue = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x0284c7,
+    metalness: 0.12,
+    roughness: 0.56,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -1776,6 +1856,14 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     evfOledActive,
     evfIrEmitter,
     evfHousingMg,
+    mountStainlessFlange,
+    mountSpringSteel,
+    mountRedIndexDot,
+    mountVelvetBaffle,
+    mountShimBlue,
+    mountPpsInsulator,
+    mountMgBulkhead,
+    mountThreadLockBlue,
   ];
 
   return {
@@ -1861,6 +1949,14 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     evfOledActive,
     evfIrEmitter,
     evfHousingMg,
+    mountStainlessFlange,
+    mountSpringSteel,
+    mountRedIndexDot,
+    mountVelvetBaffle,
+    mountShimBlue,
+    mountPpsInsulator,
+    mountMgBulkhead,
+    mountThreadLockBlue,
     allMaterials,
   };
 }

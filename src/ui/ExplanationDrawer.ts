@@ -1299,6 +1299,263 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="124" y="38" font-size="7.5" font-weight="bold" fill="#b45309">迷光を多重反射で完全吸収!</text>
         <text x="36" y="111" font-size="8" fill="#334155">AZ91Dマグネシウム鏡筒＋鋸歯状遮光バッフルで黒浮きゼロ＆防塵防滴</text>
       `);
+
+    // =========================================================================
+    // Large-Diameter Mirrorless Lens Mount Schematics (12 bespoke diagrams)
+    // =========================================================================
+    case 'mount_flange':
+      return wrap(`
+        <!-- Legacy Narrow Long-Flange DSLR vs 55mm Large-Diameter Short-Flange Mirrorless -->
+        <rect x="14" y="14" width="136" height="80" rx="5" fill="#fff1f2" stroke="#fda4af"/>
+        <text x="22" y="28" font-size="8" font-weight="bold" fill="#be123c">旧一眼レフ (小径・長フランジ)</text>
+        <line x1="36" y1="36" x2="36" y2="80" stroke="#64748b" stroke-width="3"/>
+        <line x1="126" y1="44" x2="126" y2="72" stroke="#1e293b" stroke-width="3"/>
+        <path d="M36 44 L126 44 M36 72 L126 72 M42 40 L126 44 M42 76 L126 72" stroke="#e11d48" stroke-width="1.3"/>
+        <text x="48" y="88" font-size="7.5" fill="#9f1239">44mm / 46.5mm (斜入射大)</text>
+        <!-- Right: 55mm Large Diameter Short Flange -->
+        <rect x="160" y="14" width="146" height="80" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="168" y="28" font-size="8" font-weight="bold" fill="#0369a1">最新55mm大口径・短フランジ</text>
+        <line x1="218" y1="34" x2="218" y2="82" stroke="#0284c7" stroke-width="3.5"/>
+        <line x1="274" y1="42" x2="274" y2="74" stroke="#0f172a" stroke-width="3"/>
+        <line x1="218" y1="44" x2="274" y2="44" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="218" y1="58" x2="274" y2="58" stroke="#f59e0b" stroke-width="1.8"/>
+        <line x1="218" y1="72" x2="274" y2="72" stroke="#0284c7" stroke-width="1.8"/>
+        <text x="168" y="88" font-size="7.5" font-weight="bold" fill="#0369a1">55mm / 16–20mm ⇒ 周辺直進＆F0.95!</text>
+        <text x="42" y="110" font-size="8" fill="#334155">センサー対角43.3mmを呑み込む55mm大口径と±2μm平面度基準面</text>
+      `);
+
+    case 'mount_bolts':
+      return wrap(`
+        <!-- Cantilever Telephoto Bending Moment vs 6-Bolt High-Tensile Reinforcement -->
+        <!-- Camera Mount Ring with 6 Bolts -->
+        <circle cx="74" cy="54" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+        <circle cx="74" cy="54" r="24" fill="#fff" stroke="#64748b" stroke-width="1.4"/>
+        ${[0, 60, 120, 180, 240, 300]
+          .map((deg) => {
+            const r = (deg * Math.PI) / 180;
+            const cx = (74 + Math.cos(r) * 29).toFixed(1);
+            const cy = (54 + Math.sin(r) * 29).toFixed(1);
+            return `<circle cx="${cx}" cy="${cy}" r="3.6" fill="#0284c7" stroke="#0f172a" stroke-width="0.9"/>`;
+          })
+          .join('')}
+        <text x="53" y="57" font-size="8" font-weight="bold" fill="#0f172a">6点均等</text>
+        <!-- Right: Cantilever Moment Force Diagram -->
+        <rect x="134" y="28" width="18" height="52" rx="2" fill="#64748b"/>
+        <rect x="152" y="34" width="118" height="40" rx="4" fill="#cbd5e1" stroke="#334155"/>
+        <text x="166" y="57" font-size="8.5" font-weight="bold" fill="#0f172a">600mm F4 (3kg超)</text>
+        <path d="M224 76 L224 94" stroke="#dc2626" stroke-width="2.4"/>
+        <polygon points="224,98 219,90 229,90" fill="#dc2626"/>
+        <path d="M134 34 L118 34" stroke="#0284c7" stroke-width="2.4"/>
+        <polygon points="114,34 122,29 122,39" fill="#0284c7"/>
+        <text x="148" y="24" font-size="8" font-weight="bold" fill="#0369a1">上部ボルト引張応力を6点分散＋緩み止め</text>
+        <text x="52" y="111" font-size="8" fill="#334155">片持ち曲げモーメントによるフランジ浮き(片ボケ)を6点高剛性締結で防止</text>
+      `);
+
+    case 'mount_gasket':
+      return wrap(`
+        <!-- Dual-Lip Labyrinth EPDM Gasket Blocking Rain & Dust -->
+        <rect x="20" y="22" width="100" height="68" rx="4" fill="#e2e8f0" stroke="#64748b"/>
+        <text x="38" y="52" font-size="8.5" font-weight="bold" fill="#334155">レンズ側フランジ</text>
+        <text x="38" y="66" font-size="7.5" fill="#475569">防滴ゴムスカート</text>
+        <!-- Dual-Lip EPDM Seal Cross-Section -->
+        <path d="M120 28 Q138 36 120 46 Q138 56 120 66 L146 66 L146 28 Z" fill="#1e293b" stroke="#0f172a"/>
+        <text x="116" y="84" font-size="7.5" font-weight="bold" fill="#0f172a">二重リップEPDM</text>
+        <!-- Rain Drops Deflected -->
+        <path d="M124 8 L124 24" stroke="#0284c7" stroke-width="2.2" stroke-dasharray="3 2"/>
+        <circle cx="114" cy="16" r="3" fill="#38bdf8"/>
+        <circle cx="134" cy="14" r="3" fill="#38bdf8"/>
+        <text x="146" y="18" font-size="8" font-weight="bold" fill="#0284c7">雨水・砂塵を2段で遮断!</text>
+        <!-- Camera Sensor Chamber Protected -->
+        <rect x="150" y="22" width="152" height="68" rx="4" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="172" y="48" font-size="8.5" font-weight="bold" fill="#166534">カメラ内部（センサー室）</text>
+        <text x="172" y="64" font-size="7.5" fill="#15803d">毛細管現象による浸水ゼロ</text>
+        <text x="172" y="78" font-size="7.5" fill="#15803d">−20℃氷点下でも弾性維持</text>
+        <text x="48" y="110" font-size="8" fill="#334155">全周360°の二重リップラビリンス構造で過酷な雨天・砂塵から内部を保護</text>
+      `);
+
+    case 'mount_leaf_springs':
+      return wrap(`
+        <!-- Bayonet Lug + Arched Bronze Leaf Spring Clamping Lens Flush to Datum Plane -->
+        <rect x="26" y="24" width="22" height="66" rx="2" fill="#cbd5e1" stroke="#475569" stroke-width="1.4"/>
+        <text x="16" y="18" font-size="7.5" font-weight="bold" fill="#334155">レンズ基準面</text>
+        <rect x="48" y="24" width="24" height="66" rx="2" fill="#94a3b8" stroke="#1e293b" stroke-width="1.4"/>
+        <text x="68" y="18" font-size="7.5" font-weight="bold" fill="#0f172a">ステンレス基準面(±2μm)</text>
+        <!-- Lens Lug Hooked Behind Body Flange -->
+        <rect x="72" y="42" width="26" height="24" rx="2" fill="#64748b"/>
+        <text x="74" y="57" font-size="7" fill="#fff">爪</text>
+        <!-- Bowed Leaf Spring Pushing Lens Lug Rearward (-Z) -> Pulling Flange Flush! -->
+        <path d="M98 32 Q122 54 98 76" fill="none" stroke="#d97706" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M126 54 L106 54" stroke="#dc2626" stroke-width="2.4"/>
+        <polygon points="102,54 110,49 110,59" fill="#dc2626"/>
+        <rect x="134" y="28" width="168" height="58" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="142" y="46" font-size="8.5" font-weight="bold" fill="#b45309">4枚バネ予圧：約 32 N</text>
+        <text x="142" y="61" font-size="7.5" fill="#92400e">・軸方向ガタ(遊び) ⇒ 0 μm</text>
+        <text x="142" y="75" font-size="7.5" fill="#92400e">・4点均等圧着で片ボケ防止</text>
+        <text x="48" y="110" font-size="8" fill="#334155">裏側からレンズ爪を強力に引き寄せ、基準面へミクロン単位で密着固定</text>
+      `);
+
+    case 'mount_shims':
+      return wrap(`
+        <!-- Sub-Micron Color-Coded Shim Stack Calibrating Depth of Focus ±8.9μm -->
+        <rect x="20" y="24" width="38" height="62" rx="3" fill="#cbd5e1" stroke="#475569"/>
+        <text x="23" y="58" font-size="7.5" font-weight="bold" fill="#0f172a">フランジ</text>
+        <!-- 3 Color-Coded Shims -->
+        <rect x="64" y="22" width="10" height="66" fill="#94a3b8" stroke="#334155"/>
+        <rect x="78" y="22" width="12" height="66" fill="#f59e0b" stroke="#b45309"/>
+        <rect x="94" y="22" width="14" height="66" fill="#2563eb" stroke="#1e40af"/>
+        <text x="58" y="16" font-size="7.5" font-weight="bold" fill="#1e40af">0.01 / 0.025 / 0.05 mm</text>
+        <!-- Magnesium Throat -->
+        <rect x="114" y="24" width="40" height="62" rx="3" fill="#64748b"/>
+        <text x="118" y="58" font-size="7.5" font-weight="bold" fill="#fff">Mg骨格</text>
+        <!-- Right: F1.2 Depth of Focus Formula Card -->
+        <rect x="166" y="20" width="138" height="70" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="174" y="37" font-size="8.5" font-weight="bold" fill="#1d4ed8">F1.2 許容焦点深度</text>
+        <text x="174" y="54" font-size="9" font-weight="bold" fill="#dc2626">Δz = ±8.9 μm!</text>
+        <text x="174" y="70" font-size="7.5" fill="#1e40af">工場レーザー干渉計計測で</text>
+        <text x="174" y="82" font-size="7.5" fill="#1e40af">傾き &lt; 0.005° へ全数調整</text>
+        <text x="48" y="110" font-size="8" fill="#334155">10μm刻みの極薄シム調整により無限遠精度と画面四隅の均一解像を保証</text>
+      `);
+
+    case 'mount_lock_pin':
+      return wrap(`
+        <!-- Release Button -> Rocker Lever -> Hardened Lock Pin + Spring -->
+        <!-- Release Button Top-Left -->
+        <rect x="22" y="26" width="38" height="24" rx="4" fill="#475569" stroke="#0f172a"/>
+        <text x="27" y="41" font-size="7.5" font-weight="bold" fill="#fff">解除ボタン</text>
+        <path d="M41 10 L41 23" stroke="#dc2626" stroke-width="2"/>
+        <polygon points="41,26 36,19 46,19" fill="#dc2626"/>
+        <!-- Rocker Lever + Pivot -->
+        <line x1="41" y1="54" x2="144" y2="54" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="92" cy="54" r="5" fill="#f59e0b" stroke="#0f172a"/>
+        <text x="72" y="72" font-size="7.5" font-weight="bold" fill="#92400e">支点ロッカー</text>
+        <!-- Hardened Lock Pin + Spring -->
+        <rect x="136" y="22" width="16" height="44" rx="2" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.4"/>
+        <path d="M144 66 L138 72 L150 78 L138 84 L150 90" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <text x="160" y="34" font-size="8" font-weight="bold" fill="#0f172a">硬化鋼ロックピン (HRC55+)</text>
+        <text x="160" y="50" font-size="7.5" fill="#0369a1">・装着時：バネで自動「カチッ」</text>
+        <text x="160" y="64" font-size="7.5" fill="#be123c">・ロック時せん断耐力 &gt; 500 N</text>
+        <text x="160" y="78" font-size="7.5" fill="#475569">・解除ボタン軸に防水Oリング</text>
+        <text x="48" y="110" font-size="8" fill="#334155">機械式フェイルセーフロックで重量級レンズの回転脱落を完全防止</text>
+      `);
+
+    case 'mount_contacts':
+      return wrap(`
+        <!-- 12-Pin Arc Contact Layout: Power / Ground / Ultra-High-Speed Bidirectional Bus -->
+        <rect x="16" y="20" width="288" height="58" rx="6" fill="#1e293b"/>
+        ${Array.from({ length: 12 })
+          .map((_, i) => {
+            const x = 30 + i * 22.8;
+            const col = i <= 2 ? '#f59e0b' : i >= 10 ? '#38bdf8' : '#10b981';
+            const h = i === 0 ? 28 : i === 11 ? 20 : 24;
+            return `<rect x="${x.toFixed(1)}" y="${(48 - h / 2).toFixed(1)}" width="12" height="${h}" rx="5" fill="#facc15" stroke="${col}" stroke-width="1.6"/>`;
+          })
+          .join('')}
+        <text x="26" y="16" font-size="7.5" font-weight="bold" fill="#b45309">大電力V_MOT (3A)</text>
+        <text x="116" y="16" font-size="7.5" font-weight="bold" fill="#047857">高速双方向SPI/UART (40倍帯域)</text>
+        <text x="244" y="16" font-size="7.5" font-weight="bold" fill="#0369a1">装着検知</text>
+        <text x="24" y="92" font-size="8" font-weight="bold" fill="#0f172a">独立スプリング内蔵・厚金めっき (接触抵抗 &lt; 20 mΩ) ＋ GND先行ホットスワップ安全設計</text>
+        <text x="40" y="109" font-size="8" fill="#334155">OIS×5軸IBIS毎秒1,000Hz協調・120fps AF・DLO光学補正データをリアルタイム伝送</text>
+      `);
+
+    case 'mount_contact_pcb':
+      return wrap(`
+        <!-- 12 Pogo Pins -> ±15kV ESD TVS Clamp -> High-Side Power Switch -> Shielded FPC -> 4nm ISP -->
+        <rect x="14" y="34" width="44" height="40" rx="4" fill="#facc15" stroke="#b45309"/>
+        <text x="19" y="57" font-size="8" font-weight="bold" fill="#78350f">12ピン</text>
+        <path d="M58 54 L82 54" stroke="#0f172a" stroke-width="2"/>
+        <!-- ESD Surge Spark Clamped to GND -->
+        <rect x="82" y="24" width="74" height="58" rx="5" fill="#fef2f2" stroke="#dc2626"/>
+        <text x="89" y="42" font-size="8" font-weight="bold" fill="#b91c1c">±15kV ESD</text>
+        <text x="89" y="55" font-size="7.5" fill="#991b1b">TVSダイオード</text>
+        <text x="89" y="68" font-size="7.5" font-weight="bold" fill="#dc2626">&lt; 1 ns 逃がす!</text>
+        <path d="M119 82 L119 95" stroke="#dc2626" stroke-width="2"/>
+        <line x1="108" y1="95" x2="130" y2="95" stroke="#0f172a" stroke-width="2"/>
+        <!-- Shielded FPC -> Mainboard -->
+        <path d="M156 54 L196 54" stroke="#d97706" stroke-width="6"/>
+        <polygon points="200,54 192,48 192,60" fill="#b45309"/>
+        <text x="158" y="44" font-size="7.5" font-weight="bold" fill="#92400e">EMIシールド</text>
+        <rect x="202" y="28" width="102" height="50" rx="5" fill="#065f46" stroke="#10b981"/>
+        <text x="210" y="48" font-size="8" font-weight="bold" fill="#fff">メイン基板 4nm ISP</text>
+        <text x="210" y="63" font-size="7.5" fill="#a7f3d0">＆ 2,000Hz サーボMCU</text>
+        <text x="48" y="112" font-size="8" fill="#334155">レンズ交換時の静電気サージ・過電流から心臓部ICをナノ秒保護</text>
+      `);
+
+    case 'mount_baffle':
+      return wrap(`
+        <!-- 5-Step Sawtooth Knife-Edge Light Trap Extinguishing Oblique Stray Rays -->
+        <rect x="20" y="16" width="280" height="10" fill="#18181b"/>
+        <rect x="20" y="84" width="280" height="10" fill="#18181b"/>
+        ${[0, 1, 2, 3, 4]
+          .map((i) => {
+            const bx = 56 + i * 44;
+            return `<polygon points="${bx},26 ${bx + 14},26 ${bx + 5},39" fill="#09090b"/>
+                    <polygon points="${bx},84 ${bx + 14},84 ${bx + 5},71" fill="#09090b"/>`;
+          })
+          .join('')}
+        <!-- Clean Imaging Light -->
+        <line x1="24" y1="55" x2="294" y2="55" stroke="#0284c7" stroke-width="2.6"/>
+        <text x="116" y="50" font-size="8.5" font-weight="bold" fill="#0369a1">正規結像光線 (55mm大口径)</text>
+        <!-- Stray light trapped in V-groove -->
+        <polyline points="26,42 98,28 112,38 124,27" fill="none" stroke="#ea580c" stroke-width="1.9" stroke-dasharray="3 2"/>
+        <circle cx="124" cy="27" r="3.8" fill="#dc2626"/>
+        <text x="132" y="37" font-size="7.5" font-weight="bold" fill="#b45309">ρ &lt; 0.8% × 3回反射 ⇒ 迷光 0.00005%!</text>
+        <text x="42" y="111" font-size="8" fill="#334155">5段ナイフエッジ鋸歯状ライトトラップが逆光時の内壁フレアを完全吸収</text>
+      `);
+
+    case 'mount_flare_mask':
+      return wrap(`
+        <!-- Circular 43.3mm Image Circle Trimmed to 36x24mm Full-Frame Rectangle -->
+        <circle cx="88" cy="54" r="38" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4 2"/>
+        <rect x="57" y="33" width="62" height="42" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+        <text x="64" y="57" font-size="8" font-weight="bold" fill="#1e3a8a">36×24 mm</text>
+        <text x="66" y="28" font-size="7" font-weight="bold" fill="#b45309">余剰光カット</text>
+        <!-- Right Explanation Box -->
+        <rect x="144" y="18" width="160" height="72" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="152" y="36" font-size="8.5" font-weight="bold" fill="#0f172a">丸い光束 → 3:2 矩形整形</text>
+        <text x="152" y="52" font-size="7.5" fill="#475569">・イメージサークル面積：1,472 mm²</text>
+        <text x="152" y="65" font-size="7.5" fill="#1d4ed8">・有効センサー面積：864 mm²</text>
+        <text x="152" y="79" font-size="7.8" font-weight="bold" fill="#dc2626">⇒ 不要な41%の光を直前遮断!</text>
+        <text x="44" y="110" font-size="8" fill="#334155">シャッター室での二次乱反射を防ぎ16ストップHDRの漆黒コントラストを死守</text>
+      `);
+
+    case 'mount_mg_throat':
+      return wrap(`
+        <!-- Thixomolded AZ91D Magnesium Bulkhead + Radial Load-Transfer Ribs + Helicoils -->
+        <rect x="20" y="18" width="128" height="74" rx="10" fill="#64748b" stroke="#1e293b" stroke-width="1.8"/>
+        <circle cx="84" cy="55" r="24" fill="#fff" stroke="#0f172a" stroke-width="1.6"/>
+        <!-- Radial Ribs -->
+        <line x1="32" y1="30" x2="64" y2="42" stroke="#cbd5e1" stroke-width="3"/>
+        <line x1="136" y1="30" x2="104" y2="42" stroke="#cbd5e1" stroke-width="3"/>
+        <line x1="32" y1="80" x2="64" y2="68" stroke="#cbd5e1" stroke-width="3"/>
+        <line x1="136" y1="80" x2="104" y2="68" stroke="#cbd5e1" stroke-width="3"/>
+        <text x="68" y="58" font-size="8" font-weight="bold" fill="#0f172a">φ55.6</text>
+        <!-- Spec Box Right -->
+        <rect x="160" y="18" width="144" height="74" rx="5" fill="#f1f5f9" stroke="#64748b"/>
+        <text x="168" y="36" font-size="8.5" font-weight="bold" fill="#0f172a">AZ91D マグネシウム骨格</text>
+        <text x="168" y="51" font-size="7.5" fill="#334155">・比重 1.81 (超軽量・高剛性)</text>
+        <text x="168" y="64" font-size="7.5" fill="#334155">・6か所SUSヘリサート内蔵</text>
+        <text x="168" y="77" font-size="7.5" fill="#334155">・高い内部振動減衰能</text>
+        <text x="48" y="110" font-size="8" fill="#334155">放射状ガセットリブで断面二次モーメントを高め重量級レンズのたわみを抑制</text>
+      `);
+
+    case 'mount_chassis_if':
+      return wrap(`
+        <!-- Load Path Bypass Diagram: Heavy Lens -> Mount -> Lower Gussets -> Tripod Socket (Skipping IBIS!) -->
+        <rect x="16" y="28" width="54" height="44" rx="4" fill="#cbd5e1" stroke="#334155"/>
+        <text x="23" y="53" font-size="8" font-weight="bold" fill="#0f172a">マウント</text>
+        <!-- Protected Optical Core (Shutter + IBIS) -->
+        <rect x="108" y="20" width="96" height="42" rx="5" fill="#eff6ff" stroke="#3b82f6" stroke-dasharray="3 2"/>
+        <text x="116" y="39" font-size="8" font-weight="bold" fill="#1d4ed8">シャッター＆IBIS</text>
+        <text x="122" y="53" font-size="7.5" fill="#1e40af">歪み応力ゼロ保護!</text>
+        <!-- Bypass Load Path Underneath -->
+        <path d="M70 64 L96 82 L226 82" fill="none" stroke="#dc2626" stroke-width="3.2"/>
+        <polygon points="232,82 222,76 222,88" fill="#dc2626"/>
+        <text x="98" y="76" font-size="8" font-weight="bold" fill="#b91c1c">下部ガセット荷重バイパス</text>
+        <!-- Tripod Base -->
+        <rect x="234" y="62" width="70" height="30" rx="4" fill="#334155"/>
+        <text x="242" y="80" font-size="8" font-weight="bold" fill="#fde047">底面三脚座</text>
+        <text x="44" y="111" font-size="8" fill="#334155">4点ダウエルピン＋全周防塵シール＋荷重バイパスで光学精度を永続保護</text>
+      `);
   }
 }
 

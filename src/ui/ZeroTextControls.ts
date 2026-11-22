@@ -34,9 +34,13 @@ function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButto
 
 // Crisp industrial CAD SVG pictograms — strictly zero letters or numbers
 const ICONS = {
-  // Integrated 3-subsystem camera core (Shutter + Sensor + Mainboard stacked optical planes)
+  // Integrated 5-subsystem camera core (Mount + Shutter + Sensor + Mainboard + EVF stacked optical planes)
   integratedCore:
     '<rect x="2.5" y="3.5" width="9.5" height="9.5" rx="1.4"/><line x1="2.5" y1="7.8" x2="12" y2="7.8"/><path d="M14 7.5h2.5a1.5 1.5 0 0 1 1.5 1.5v6.5a1.5 1.5 0 0 1-1.5 1.5H10a1.5 1.5 0 0 1-1.5-1.5V15"/><path d="M18 11.5h2a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V18"/>',
+
+  // Large-Diameter Bayonet Lens Mount: outer flange ring + inner throat + 4 bayonet lugs + top index dot + bottom contact dots
+  mountModule:
+    '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.3"/><circle cx="12" cy="5.1" r="1.05" fill="currentColor" stroke="none"/><line x1="8.3" y1="8.3" x2="9.7" y2="9.7"/><line x1="15.7" y1="8.3" x2="14.3" y2="9.7"/><line x1="8.3" y1="15.7" x2="9.7" y2="14.3"/><line x1="15.7" y1="15.7" x2="14.3" y2="14.3"/><circle cx="10" cy="18.6" r="0.7" fill="currentColor" stroke="none"/><circle cx="12" cy="18.9" r="0.7" fill="currentColor" stroke="none"/><circle cx="14" cy="18.6" r="0.7" fill="currentColor" stroke="none"/>',
 
   // Focal-plane shutter: upper & lower horizontal curtain blades with central exposure slit
   shutterModule:
@@ -122,6 +126,7 @@ export class ZeroTextControls {
   private handlers: ZeroTextUIHandlers;
 
   private integratedBtn: HTMLButtonElement;
+  private mountBtn: HTMLButtonElement;
   private shutterBtn: HTMLButtonElement;
   private sensorBtn: HTMLButtonElement;
   private mainboardBtn: HTMLButtonElement;
@@ -144,7 +149,7 @@ export class ZeroTextControls {
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
 
-  private currentMode: ScaleMode = 'evf';
+  private currentMode: ScaleMode = 'mount';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -185,19 +190,21 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 6-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Mainboard / EVF / Micro)
+    // Group A: 7-Mode Subsystem Switch (Integrated Core / Mount / Shutter / Sensor / Mainboard / EVF / Micro)
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
     this.integratedBtn = createIconButton(ICONS.integratedCore);
+    this.mountBtn = createIconButton(ICONS.mountModule);
+    this.mountBtn.classList.add('is-active');
     this.shutterBtn = createIconButton(ICONS.shutterModule);
     this.sensorBtn = createIconButton(ICONS.macroSensor);
     this.mainboardBtn = createIconButton(ICONS.mainboardIsp);
     this.evfBtn = createIconButton(ICONS.evfModule);
-    this.evfBtn.classList.add('is-active');
     this.microBtn = createIconButton(ICONS.microPixel);
 
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
+    this.mountBtn.addEventListener('click', () => this.setMode('mount'));
     this.shutterBtn.addEventListener('click', () => this.setMode('shutter'));
     this.sensorBtn.addEventListener('click', () => this.setMode('sensor'));
     this.mainboardBtn.addEventListener('click', () => this.setMode('mainboard'));
@@ -205,6 +212,7 @@ export class ZeroTextControls {
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
     scaleGroup.append(
       this.integratedBtn,
+      this.mountBtn,
       this.shutterBtn,
       this.sensorBtn,
       this.mainboardBtn,
@@ -329,6 +337,7 @@ export class ZeroTextControls {
 
   private applyModeButtons(mode: ScaleMode): void {
     this.integratedBtn.classList.toggle('is-active', mode === 'integrated');
+    this.mountBtn.classList.toggle('is-active', mode === 'mount');
     this.shutterBtn.classList.toggle('is-active', mode === 'shutter');
     this.sensorBtn.classList.toggle('is-active', mode === 'sensor');
     this.mainboardBtn.classList.toggle('is-active', mode === 'mainboard');
@@ -431,7 +440,14 @@ export class ZeroTextControls {
       const bar = document.createElement('span');
       bar.className = 'layer-bar';
       let widthPx = 20;
-      if (part.subsystem === 'evf') {
+      if (part.subsystem === 'mount') {
+        widthPx =
+          part.order === 1 || part.order === 11 || part.order === 12
+            ? 32
+            : part.order === 3 || part.order === 4 || part.order === 5 || part.order === 9 || part.order === 10
+              ? 25
+              : 18;
+      } else if (part.subsystem === 'evf') {
         widthPx =
           part.order === 1 || part.order === 14
             ? 32

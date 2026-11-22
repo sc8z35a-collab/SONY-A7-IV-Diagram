@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'mainboard' | 'evf' | 'micro';
+export type ScaleMode = 'integrated' | 'mount' | 'shutter' | 'sensor' | 'mainboard' | 'evf' | 'micro';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
@@ -92,13 +92,26 @@ export interface PartExplanation {
     | 'evf_oled'
     | 'evf_tcon'
     | 'evf_heatsink'
-    | 'evf_housing';
+    | 'evf_housing'
+    // Large-Diameter Mirrorless Lens Mount (12)
+    | 'mount_flange'
+    | 'mount_bolts'
+    | 'mount_gasket'
+    | 'mount_leaf_springs'
+    | 'mount_shims'
+    | 'mount_lock_pin'
+    | 'mount_contacts'
+    | 'mount_contact_pcb'
+    | 'mount_baffle'
+    | 'mount_flare_mask'
+    | 'mount_mg_throat'
+    | 'mount_chassis_if';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
-  subsystem: 'sensor' | 'micro' | 'shutter' | 'mainboard' | 'evf';
+  subsystem: 'mount' | 'sensor' | 'micro' | 'shutter' | 'mainboard' | 'evf';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
