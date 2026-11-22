@@ -44,7 +44,7 @@ function finalizePart(
     integratedExplodeOffset: new THREE.Vector3(
       explodeOffset.x,
       explodeOffset.y,
-      explodeOffset.z - 42
+      explodeOffset.z * 0.75 - 30
     ),
     interactiveMeshes: meshes,
     edgeLines: edges,

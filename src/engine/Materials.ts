@@ -62,6 +62,21 @@ export interface MaterialLibrary {
   damperElastomer: THREE.MeshStandardMaterial;
   antiVibRubber: THREE.MeshStandardMaterial;
   irLedLens: THREE.MeshPhysicalMaterial;
+  // Mainboard & ISP Engine materials
+  ispSiliconDie: THREE.MeshPhysicalMaterial;
+  npuSiliconDie: THREE.MeshPhysicalMaterial;
+  hdiMainboardPcb: THREE.MeshStandardMaterial;
+  pcbEdgeLaminate: THREE.MeshStandardMaterial;
+  abfSubstrate: THREE.MeshStandardMaterial;
+  emiShieldCan: THREE.MeshStandardMaterial;
+  vaporChamberCopper: THREE.MeshPhysicalMaterial;
+  thermalPadPink: THREE.MeshStandardMaterial;
+  thermalPadBlue: THREE.MeshStandardMaterial;
+  ferriteInductor: THREE.MeshStandardMaterial;
+  tantalumCapYellow: THREE.MeshStandardMaterial;
+  zifIvoryPlastic: THREE.MeshStandardMaterial;
+  coaxShieldCopper: THREE.MeshStandardMaterial;
+  solderBallSilver: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -408,6 +423,306 @@ function createCarbonFiberTexture(tintHex: string): { map: THREE.CanvasTexture; 
   return { map, bumpMap };
 }
 
+/**
+ * Procedural 4nm Main Image Signal Processor (ISP) bare silicon die floorplan.
+ * Strictly zero text: pure metallic lithography IP macro blocks (SLVS-EC SerDes,
+ * Dual-Stream 16-bit RAW Pipeline, 3D-LUT Color Engine, 8K60p Codec, Multi-Core ARM, SRAM).
+ */
+function createIspDieFloorplanTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const s = 512;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+
+  // Deep metallic obsidian silicon substrate
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, s, s);
+
+  // Outer I/O guard ring & perimeter power distribution mesh
+  ctx.strokeStyle = '#d4a948';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(8, 8, s - 16, s - 16);
+
+  // Helper to draw dense metallic sub-block lithography cells
+  const drawMacroBlock = (
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    c1: string,
+    c2: string,
+    pitchX: number,
+    pitchY: number
+  ) => {
+    const g = ctx.createLinearGradient(x, y, x + w, y + h);
+    g.addColorStop(0, c1);
+    g.addColorStop(1, c2);
+    ctx.fillStyle = g;
+    ctx.fillRect(x, y, w, h);
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+    ctx.lineWidth = 1;
+    for (let px = x + pitchX; px < x + w; px += pitchX) {
+      ctx.beginPath();
+      ctx.moveTo(px, y);
+      ctx.lineTo(px, y + h);
+      ctx.stroke();
+    }
+    for (let py = y + pitchY; py < y + h; py += pitchY) {
+      ctx.beginPath();
+      ctx.moveTo(x, py);
+      ctx.lineTo(x + w, py);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(226, 192, 92, 0.72)';
+    ctx.lineWidth = 1.6;
+    ctx.strokeRect(x, y, w, h);
+  };
+
+  // Top band: High-Speed SLVS-EC v3 & LPDDR5X PHY SerDes Lanes
+  drawMacroBlock(22, 22, 468, 66, '#0e7490', '#1d4ed8', 14, 16);
+  // Left-Mid: Dual-Stream 16-bit Linear RAW ISP Pipeline & Demosaic Engine
+  drawMacroBlock(22, 102, 218, 178, '#0f766e', '#115e59', 10, 8);
+  // Right-Mid: 8K60p Hardware Video Codec (HEVC / RAW) & 3D-LUT Color Matrix
+  drawMacroBlock(254, 102, 236, 178, '#1d4ed8', '#4338ca', 12, 10);
+  // Bottom-Left: Multi-Core ARM Cortex Real-Time Control Cluster (8 cores)
+  drawMacroBlock(22, 294, 180, 124, '#3730a3', '#6d28d9', 22, 20);
+  // Bottom-Center: Ultra-Dense On-Chip L2/L3 SRAM Cache Array
+  drawMacroBlock(214, 294, 146, 124, '#b45309', '#d97706', 6, 6);
+  // Bottom-Right: PCIe Gen4 x2 NVMe & Dual-Stream EVF Display Controller
+  drawMacroBlock(372, 294, 118, 124, '#0369a1', '#0e7490', 10, 12);
+  // Bottom perimeter: Analog PLL / High-Speed I/O Ring
+  drawMacroBlock(22, 430, 468, 60, '#1e293b', '#334155', 12, 14);
+
+  // Fine copper interconnect bus highways between macro blocks
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.55)';
+  ctx.lineWidth = 1.3;
+  for (let i = 0; i < 6; i++) {
+    const yy = 92 + i * 1.6;
+    ctx.beginPath();
+    ctx.moveTo(22, yy);
+    ctx.lineTo(490, yy);
+    ctx.stroke();
+    const yy2 = 283 + i * 1.6;
+    ctx.beginPath();
+    ctx.moveTo(22, yy2);
+    ctx.lineTo(490, yy2);
+    ctx.stroke();
+  }
+
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = 8;
+
+  const bumpMap = new THREE.CanvasTexture(c);
+  return { map, bumpMap };
+}
+
+/**
+ * Procedural AI / NPU Deep-Learning Accelerator bare silicon die featuring a crisp
+ * 2D Systolic Array MAC PE grid + flanking Weight SRAM banks (zero text).
+ */
+function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const s = 512;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+
+  ctx.fillStyle = '#140f2b';
+  ctx.fillRect(0, 0, s, s);
+
+  ctx.strokeStyle = '#e2b648';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(8, 8, s - 16, s - 16);
+
+  // Center-Left 16x16 Systolic Array Processing Element (PE) Matrix Grid!
+  const gx0 = 28;
+  const gy0 = 28;
+  const cell = 19;
+  for (let r = 0; r < 16; r++) {
+    for (let col = 0; col < 16; col++) {
+      const hue = 250 + ((r + col) % 8) * 9;
+      ctx.fillStyle = `hsl(${hue}, 74%, ${34 + ((r * col) % 3) * 7}%)`;
+      ctx.fillRect(gx0 + col * cell + 1.5, gy0 + r * cell + 1.5, cell - 3, cell - 3);
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(gx0 + col * cell + 4, gy0 + r * cell + 4, 4, 4);
+    }
+  }
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 2.2;
+  ctx.strokeRect(gx0 - 2, gy0 - 2, 16 * cell + 4, 16 * cell + 4);
+
+  // Right flanking Weight SRAM & Activation FIFO Buffers
+  const sramGrad = ctx.createLinearGradient(350, 28, 484, 332);
+  sramGrad.addColorStop(0, '#0284c7');
+  sramGrad.addColorStop(1, '#0d9488');
+  ctx.fillStyle = sramGrad;
+  ctx.fillRect(350, 28, 134, 304);
+  ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+  ctx.lineWidth = 1;
+  for (let y = 34; y < 330; y += 6) {
+    ctx.beginPath();
+    ctx.moveTo(350, y);
+    ctx.lineTo(484, y);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#e2b648';
+  ctx.lineWidth = 1.6;
+  ctx.strokeRect(350, 28, 134, 304);
+
+  // Bottom Transformer Attention / Vector DSP & High-Speed Die-to-Die Interconnect
+  const botGrad = ctx.createLinearGradient(28, 352, 484, 484);
+  botGrad.addColorStop(0, '#7c3aed');
+  botGrad.addColorStop(0.5, '#2563eb');
+  botGrad.addColorStop(1, '#0891b2');
+  ctx.fillStyle = botGrad;
+  ctx.fillRect(28, 352, 456, 132);
+  ctx.strokeStyle = 'rgba(255,255,255,0.24)';
+  for (let x = 44; x < 484; x += 16) {
+    ctx.beginPath();
+    ctx.moveTo(x, 352);
+    ctx.lineTo(x, 484);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = '#e2b648';
+  ctx.lineWidth = 1.8;
+  ctx.strokeRect(28, 352, 456, 132);
+
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = 8;
+  const bumpMap = new THREE.CanvasTexture(c);
+  return { map, bumpMap };
+}
+
+/**
+ * Procedural 12-Layer Any-Layer HDI Camera Motherboard PCB texture:
+ * Deep emerald solder mask, serpentine 100-ohm SLVS-EC / 85-ohm PCIe differential traces,
+ * gold ENIG BGA pads, copper-filled laser microvias, and ground stitching vias (zero text).
+ */
+function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const w = 1024;
+  const h = 712;
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d')!;
+
+  // Rich flagship dark emerald-teal HDI solder mask
+  ctx.fillStyle = '#0e3b2e';
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle buried copper ground pour zones
+  ctx.fillStyle = '#124939';
+  ctx.fillRect(24, 24, w - 48, h - 48);
+
+  // High-speed 100-ohm differential bus highways (SLVS-EC, LPDDR5X, PCIe Gen4)
+  ctx.strokeStyle = '#1d7a5b';
+  ctx.lineWidth = 2.2;
+  for (let lane = 0; lane < 18; lane++) {
+    const y = 76 + lane * 11;
+    ctx.beginPath();
+    ctx.moveTo(64, y);
+    ctx.lineTo(290, y);
+    ctx.lineTo(324, y + 18);
+    ctx.lineTo(660, y + 18);
+    ctx.lineTo(695, y - 6);
+    ctx.lineTo(940, y - 6);
+    ctx.stroke();
+  }
+
+  // Serpentine length-matched meander delay lines (signature high-speed LPDDR5X/SLVS-EC traces)
+  ctx.strokeStyle = '#289e74';
+  ctx.lineWidth = 2.0;
+  for (let m = 0; m < 8; m++) {
+    const baseY = 340 + m * 24;
+    ctx.beginPath();
+    ctx.moveTo(110, baseY);
+    for (let sx = 140; sx < 440; sx += 24) {
+      ctx.lineTo(sx, baseY);
+      ctx.lineTo(sx + 6, baseY - 7);
+      ctx.lineTo(sx + 12, baseY - 7);
+      ctx.lineTo(sx + 18, baseY + 7);
+      ctx.lineTo(sx + 24, baseY);
+    }
+    ctx.lineTo(860, baseY);
+    ctx.stroke();
+  }
+
+  // Vertical power/data bus trunks
+  ctx.strokeStyle = '#1b6e53';
+  ctx.lineWidth = 2;
+  for (let vx = 80; vx < w - 80; vx += 26) {
+    ctx.beginPath();
+    ctx.moveTo(vx, 42);
+    ctx.lineTo(vx, h - 42);
+    ctx.stroke();
+  }
+
+  // Fine gold ENIG laser microvia stitching grids & BGA escape pads
+  for (let gy = 54; gy < h - 54; gy += 36) {
+    for (let gx = 54; gx < w - 54; gx += 36) {
+      if ((gx + gy) % 72 === 0) {
+        ctx.fillStyle = '#e0b94f';
+        ctx.beginPath();
+        ctx.arc(gx, gy, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#09241c';
+        ctx.beginPath();
+        ctx.arc(gx, gy, 1.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // Perimeter EMI ground stitching via ring + gold fiducial pads
+  ctx.fillStyle = '#e6c25a';
+  for (let px = 32; px < w - 32; px += 18) {
+    ctx.beginPath();
+    ctx.arc(px, 20, 2.4, 0, Math.PI * 2);
+    ctx.arc(px, h - 20, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (let py = 32; py < h - 32; py += 18) {
+    ctx.beginPath();
+    ctx.arc(20, py, 2.4, 0, Math.PI * 2);
+    ctx.arc(w - 20, py, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = 8;
+  const bumpMap = new THREE.CanvasTexture(c);
+  return { map, bumpMap };
+}
+
+/**
+ * Procedural 12-layer copper + FR-4 dielectric cross-section striation texture
+ * visible along the exposed edge of the HDI motherboard PCB!
+ */
+function createPcbLaminateEdgeTexture(): THREE.CanvasTexture {
+  const c = document.createElement('canvas');
+  c.width = 64;
+  c.height = 128;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#5c5838'; // Low-Df FR-4 prepreg resin
+  ctx.fillRect(0, 0, 64, 128);
+  // 12 crisp laminated copper foil layers
+  ctx.fillStyle = '#d4864b';
+  for (let i = 0; i < 12; i++) {
+    const y = Math.round(6 + (i / 11) * 112);
+    ctx.fillRect(0, y, 64, 3);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  return tex;
+}
+
 export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLibrary {
   const dieTex = createSensorDieTexture();
   const pcbTex = createPcbTexture();
@@ -415,6 +730,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const graphiteTex = createGraphiteTexture();
   const carbon1Tex = createCarbonFiberTexture('#1d2128');
   const carbon2Tex = createCarbonFiberTexture('#262d38');
+  const ispDieTex = createIspDieFloorplanTexture();
+  const npuDieTex = createNpuSystolicDieTexture();
+  const hdiPcbTex = createHdiMotherboardTexture();
+  const pcbEdgeTex = createPcbLaminateEdgeTexture();
 
   const common = {
     clippingPlanes,
@@ -927,6 +1246,130 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.9,
   });
 
+  // --- Mainboard & ISP Engine PBR Materials ---
+  const ispSiliconDie = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: ispDieTex.map,
+    emissiveMap: ispDieTex.map,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.24,
+    bumpMap: ispDieTex.bumpMap,
+    bumpScale: 0.03,
+    metalness: 0.62,
+    roughness: 0.2,
+    iridescence: 0.95,
+    iridescenceIOR: 2.0,
+    iridescenceThicknessRange: [280, 620],
+    clearcoat: 0.45,
+    clearcoatRoughness: 0.12,
+  });
+
+  const npuSiliconDie = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: npuDieTex.map,
+    emissiveMap: npuDieTex.map,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.28,
+    bumpMap: npuDieTex.bumpMap,
+    bumpScale: 0.03,
+    metalness: 0.58,
+    roughness: 0.22,
+    iridescence: 1.0,
+    iridescenceIOR: 2.1,
+    iridescenceThicknessRange: [320, 680],
+    clearcoat: 0.48,
+    clearcoatRoughness: 0.12,
+  });
+
+  const hdiMainboardPcb = new THREE.MeshStandardMaterial({
+    ...common,
+    map: hdiPcbTex.map,
+    bumpMap: hdiPcbTex.bumpMap,
+    bumpScale: 0.04,
+    metalness: 0.24,
+    roughness: 0.42,
+  });
+
+  const pcbEdgeLaminate = new THREE.MeshStandardMaterial({
+    ...common,
+    map: pcbEdgeTex,
+    metalness: 0.36,
+    roughness: 0.52,
+  });
+
+  const abfSubstrate = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x164a41,
+    metalness: 0.22,
+    roughness: 0.44,
+  });
+
+  const emiShieldCan = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xc2cbd6,
+    metalness: 0.92,
+    roughness: 0.22,
+  });
+
+  const vaporChamberCopper = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd97d4e,
+    metalness: 0.94,
+    roughness: 0.2,
+    clearcoat: 0.2,
+    clearcoatRoughness: 0.24,
+  });
+
+  const thermalPadPink = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xe8798e,
+    metalness: 0.02,
+    roughness: 0.82,
+  });
+
+  const thermalPadBlue = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x62a8d8,
+    metalness: 0.02,
+    roughness: 0.8,
+  });
+
+  const ferriteInductor = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x3a3f4a,
+    metalness: 0.32,
+    roughness: 0.62,
+  });
+
+  const tantalumCapYellow = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xe3a82b,
+    metalness: 0.06,
+    roughness: 0.42,
+  });
+
+  const zifIvoryPlastic = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xece7dc,
+    metalness: 0.04,
+    roughness: 0.46,
+  });
+
+  const coaxShieldCopper = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xd27a44,
+    metalness: 0.9,
+    roughness: 0.24,
+  });
+
+  const solderBallSilver = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd9e0e8,
+    metalness: 0.96,
+    roughness: 0.14,
+    clearcoat: 0.35,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -985,6 +1428,20 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     damperElastomer,
     antiVibRubber,
     irLedLens,
+    ispSiliconDie,
+    npuSiliconDie,
+    hdiMainboardPcb,
+    pcbEdgeLaminate,
+    abfSubstrate,
+    emiShieldCan,
+    vaporChamberCopper,
+    thermalPadPink,
+    thermalPadBlue,
+    ferriteInductor,
+    tantalumCapYellow,
+    zifIvoryPlastic,
+    coaxShieldCopper,
+    solderBallSilver,
   ];
 
   return {
@@ -1046,6 +1503,20 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     damperElastomer,
     antiVibRubber,
     irLedLens,
+    ispSiliconDie,
+    npuSiliconDie,
+    hdiMainboardPcb,
+    pcbEdgeLaminate,
+    abfSubstrate,
+    emiShieldCan,
+    vaporChamberCopper,
+    thermalPadPink,
+    thermalPadBlue,
+    ferriteInductor,
+    tantalumCapYellow,
+    zifIvoryPlastic,
+    coaxShieldCopper,
+    solderBallSilver,
     allMaterials,
   };
 }
