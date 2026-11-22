@@ -97,6 +97,21 @@ export interface MaterialLibrary {
   mountPpsInsulator: THREE.MeshStandardMaterial;
   mountMgBulkhead: THREE.MeshPhysicalMaterial;
   mountThreadLockBlue: THREE.MeshStandardMaterial;
+  // 50mm F1.2 Lens, 4-Axis LCD & Complete Body Materials
+  lensXaGlass: THREE.MeshPhysicalMaterial;
+  lensEdGlass: THREE.MeshPhysicalMaterial;
+  lensBarrelAnodized: THREE.MeshPhysicalMaterial;
+  lensRubberGrip: THREE.MeshStandardMaterial;
+  lensAccentRing: THREE.MeshPhysicalMaterial;
+  lcdCoverGlass: THREE.MeshPhysicalMaterial;
+  lcdLiveViewActive: THREE.MeshStandardMaterial;
+  lcdBacklightPrism: THREE.MeshPhysicalMaterial;
+  bodyMgShell: THREE.MeshPhysicalMaterial;
+  bodyLeatherette: THREE.MeshStandardMaterial;
+  bodyBatteryShell: THREE.MeshPhysicalMaterial;
+  bodyBatteryCell: THREE.MeshPhysicalMaterial;
+  bodyTopSubOled: THREE.MeshStandardMaterial;
+  bodyRecRed: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -940,6 +955,109 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+/**
+ * Procedural fine pebble-grain elastomer camera grip leatherette texture (strictly zero text).
+ */
+function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+
+  ctx.fillStyle = '#1b1d22';
+  ctx.fillRect(0, 0, s, s);
+
+  // Deterministic pseudo-random leatherette pebble micro-relief
+  let seed = 4219;
+  const rand = () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+  for (let i = 0; i < 950; i++) {
+    const x = rand() * s;
+    const y = rand() * s;
+    const r = 1.6 + rand() * 3.1;
+    const shade = Math.floor(32 + rand() * 24);
+    ctx.fillStyle = `rgb(${shade},${shade + 1},${shade + 4})`;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.wrapS = THREE.RepeatWrapping;
+  map.wrapT = THREE.RepeatWrapping;
+  map.repeat.set(3, 3);
+
+  const bumpMap = new THREE.CanvasTexture(c);
+  bumpMap.wrapS = THREE.RepeatWrapping;
+  bumpMap.wrapT = THREE.RepeatWrapping;
+  bumpMap.repeat.set(3, 3);
+  return { map, bumpMap };
+}
+
+/**
+ * Procedural monochrome top-deck sub-status OLED texture:
+ * STRICTLY ZERO TEXT / ZERO NUMBERS — displays pure geometric battery bars,
+ * aperture circle pictogram, exposure meter dots, and wireless signal arcs.
+ */
+function createTopStatusOledTexture(): THREE.CanvasTexture {
+  const w = 256;
+  const h = 160;
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d')!;
+
+  ctx.fillStyle = '#070a10';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(8, 8, w - 16, h - 16);
+
+  // Pure geometric battery icon (top-right, 4 charge bars)
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(178, 22, 54, 24);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(232, 28, 6, 12);
+  ctx.fillStyle = '#34d399';
+  for (let i = 0; i < 4; i++) {
+    ctx.fillRect(184 + i * 11, 27, 8, 14);
+  }
+
+  // Pure geometric aperture blades icon (top-left)
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.arc(44, 46, 20, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(44, 46, 8, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Pure geometric signal strength bars (center-top)
+  ctx.fillStyle = '#38bdf8';
+  for (let i = 0; i < 5; i++) {
+    ctx.fillRect(92 + i * 13, 56 - i * 7, 8, 12 + i * 7);
+  }
+
+  // Pure geometric exposure scale dot bar (bottom)
+  for (let i = -5; i <= 5; i++) {
+    ctx.fillStyle = i === 0 ? '#34d399' : '#94a3b8';
+    ctx.beginPath();
+    ctx.arc(w / 2 + i * 18, 118, i === 0 ? 5.5 : 3.0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
 export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLibrary {
   const dieTex = createSensorDieTexture();
   const pcbTex = createPcbTexture();
@@ -952,6 +1070,8 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const hdiPcbTex = createHdiMotherboardTexture();
   const pcbEdgeTex = createPcbLaminateEdgeTexture();
   const oledViewfinderTex = createOledViewfinderTexture();
+  const leatherTex = createLeatheretteTexture();
+  const topOledTex = createTopStatusOledTexture();
 
   const common = {
     clippingPlanes,
@@ -1774,6 +1894,154 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     roughness: 0.56,
   });
 
+  // -------------------------------------------------------------------------
+  // 50mm F1.2 Prime Lens, 4-Axis Multi-Angle LCD & Complete Camera Body Materials
+  // -------------------------------------------------------------------------
+  // Nano AR II + Fluorine coated XA (Extreme Aspherical 0.01um) high-index glass
+  const lensXaGlass = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x5cc4f5,
+    metalness: 0.0,
+    roughness: 0.03,
+    opacity: 0.27,
+    iridescence: 0.96,
+    iridescenceIOR: 1.58,
+    iridescenceThicknessRange: [260, 520],
+    clearcoat: 0.52,
+  });
+
+  // Super ED (Extra-Low Dispersion) fluorite-class optical glass
+  const lensEdGlass = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x10b981,
+    metalness: 0.0,
+    roughness: 0.035,
+    opacity: 0.29,
+    iridescence: 0.92,
+    iridescenceIOR: 1.62,
+    iridescenceThicknessRange: [300, 560],
+    clearcoat: 0.48,
+  });
+
+  // Satin matte-black anodized aluminum/magnesium flagship lens barrel
+  const lensBarrelAnodized = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x282d36,
+    metalness: 0.62,
+    roughness: 0.38,
+    clearcoat: 0.16,
+  });
+
+  // Deep vulcanized EPDM tactile focus/control ring rubber
+  const lensRubberGrip = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x1b1f26,
+    metalness: 0.05,
+    roughness: 0.92,
+  });
+
+  // Flagship signature metallic anodized lens identity band
+  const lensAccentRing = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd97706,
+    metalness: 0.88,
+    roughness: 0.22,
+    clearcoat: 0.45,
+  });
+
+  // OCA optically bonded tempered aluminosilicate PCAP touch cover glass
+  const lcdCoverGlass = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0xdbeafe,
+    metalness: 0.0,
+    roughness: 0.04,
+    opacity: 0.16,
+    iridescence: 0.65,
+    iridescenceIOR: 1.51,
+    iridescenceThicknessRange: [240, 420],
+    clearcoat: 0.65,
+  });
+
+  // High-brightness 2.1M-dot 3.2-inch IPS live-view active display (strictly zero text)
+  const lcdLiveViewActive = new THREE.MeshStandardMaterial({
+    ...common,
+    map: oledViewfinderTex,
+    emissive: 0xffffff,
+    emissiveMap: oledViewfinderTex,
+    emissiveIntensity: 0.64,
+    metalness: 0.06,
+    roughness: 0.16,
+  });
+
+  // Dual BEF micro-prism luminance-collimating backlight stack
+  const lcdBacklightPrism = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xf1f5f9,
+    emissive: 0xbae6fd,
+    emissiveIntensity: 0.42,
+    metalness: 0.16,
+    roughness: 0.18,
+    iridescence: 0.72,
+    iridescenceIOR: 1.56,
+  });
+
+  // Thixomolded AZ91D magnesium-aluminum flagship monocoque body shell
+  const bodyMgShell = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x2c323d,
+    metalness: 0.66,
+    roughness: 0.39,
+    clearcoat: 0.15,
+  });
+
+  // Ergonomic pebble-grained elastomer leatherette grip skin
+  const bodyLeatherette = new THREE.MeshStandardMaterial({
+    ...common,
+    map: leatherTex.map,
+    bumpMap: leatherTex.bumpMap,
+    bumpScale: 0.22,
+    metalness: 0.06,
+    roughness: 0.86,
+  });
+
+  // Flame-retardant PC/ABS sealed dual-cell battery housing shell
+  const bodyBatteryShell = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x313846,
+    metalness: 0.14,
+    roughness: 0.46,
+    clearcoat: 0.18,
+  });
+
+  // High-discharge 6.0A Li-Ion 18650 cell with cobalt-blue PVC heat-shrink wrap
+  const bodyBatteryCell = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x0284c7,
+    metalness: 0.26,
+    roughness: 0.28,
+    clearcoat: 0.42,
+  });
+
+  // High-contrast top-deck graphical status sub-OLED (strictly zero text/digits)
+  const bodyTopSubOled = new THREE.MeshStandardMaterial({
+    ...common,
+    map: topOledTex,
+    emissive: 0xffffff,
+    emissiveMap: topOledTex,
+    emissiveIntensity: 0.75,
+    metalness: 0.08,
+    roughness: 0.14,
+  });
+
+  // Anodized crimson movie REC button & signature lock index accent
+  const bodyRecRed = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xdc2626,
+    metalness: 0.24,
+    roughness: 0.22,
+    clearcoat: 0.72,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -1864,6 +2132,20 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     mountPpsInsulator,
     mountMgBulkhead,
     mountThreadLockBlue,
+    lensXaGlass,
+    lensEdGlass,
+    lensBarrelAnodized,
+    lensRubberGrip,
+    lensAccentRing,
+    lcdCoverGlass,
+    lcdLiveViewActive,
+    lcdBacklightPrism,
+    bodyMgShell,
+    bodyLeatherette,
+    bodyBatteryShell,
+    bodyBatteryCell,
+    bodyTopSubOled,
+    bodyRecRed,
   ];
 
   return {
@@ -1957,6 +2239,20 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     mountPpsInsulator,
     mountMgBulkhead,
     mountThreadLockBlue,
+    lensXaGlass,
+    lensEdGlass,
+    lensBarrelAnodized,
+    lensRubberGrip,
+    lensAccentRing,
+    lcdCoverGlass,
+    lcdLiveViewActive,
+    lcdBacklightPrism,
+    bodyMgShell,
+    bodyLeatherette,
+    bodyBatteryShell,
+    bodyBatteryCell,
+    bodyTopSubOled,
+    bodyRecRed,
     allMaterials,
   };
 }

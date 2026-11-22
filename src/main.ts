@@ -121,9 +121,121 @@ window.addEventListener('keydown', (e) => {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Lens Mount mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 96-part Camera mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
-if (preset === 'mount_assembled') {
+if (preset === 'complete_assembled') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'complete_back') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('back', true);
+  syncRail();
+} else if (preset === 'complete_exploded') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'complete_section') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.54);
+  controls.syncSectionAxis('x', 0.54);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lens_assembled') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lens_exploded') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lens_drawer') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-xd-motors', false);
+  syncRail();
+} else if (preset === 'lcd_assembled') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lcd_exploded') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'lcd_drawer') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-4axis-tilt-frame', false);
+  syncRail();
+} else if (preset === 'body_assembled') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'body_exploded') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'body_drawer') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-battery-pack', false);
+  syncRail();
+} else if (preset === 'mount_assembled') {
   viewport.setMode('mount', true);
   controls.syncMode('mount');
   viewport.setExplode(0, true);
