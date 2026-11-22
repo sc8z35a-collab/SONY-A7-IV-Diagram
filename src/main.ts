@@ -121,9 +121,56 @@ window.addEventListener('keydown', (e) => {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in EVF mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Lens Mount mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
-if (preset === 'evf_assembled') {
+if (preset === 'mount_assembled') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mount_exploded') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mount_section') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.52);
+  controls.syncSectionAxis('x', 0.52);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mount_drawer') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-flange-ring', false);
+  syncRail();
+} else if (preset === 'mount_contacts_drawer') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-contact-pins', false);
+  syncRail();
+} else if (preset === 'evf_assembled') {
   viewport.setMode('evf', true);
   controls.syncMode('evf');
   viewport.setExplode(0, true);
