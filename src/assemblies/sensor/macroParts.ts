@@ -35,12 +35,17 @@ function finalizePart(
 
   return {
     id,
-    mode: 'macro',
+    subsystem: 'sensor',
     order,
     swatchColor,
     group,
     assembledPos,
     explodeOffset,
+    integratedExplodeOffset: new THREE.Vector3(
+      explodeOffset.x,
+      explodeOffset.y,
+      explodeOffset.z - 42
+    ),
     interactiveMeshes: meshes,
     edgeLines: edges,
     explanation: MACRO_EXPLANATIONS[id],

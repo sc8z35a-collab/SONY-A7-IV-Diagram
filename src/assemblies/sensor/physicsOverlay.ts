@@ -1,21 +1,28 @@
 import * as THREE from 'three';
-import { CadPart, ScaleMode } from '../types';
+import { CadPart } from '../types';
 
 export interface PhysicsOverlayController {
   macroOverlay: THREE.Group;
   microOverlay: THREE.Group;
   macroExplodeGuides: THREE.Group;
   microExplodeGuides: THREE.Group;
-  setVisible: (visible: boolean, mode: ScaleMode) => void;
-  update: (
+  setMacroVisible: (visible: boolean) => void;
+  setMicroVisible: (visible: boolean) => void;
+  updateMacro: (
     elapsed: number,
     explodeFactor: number,
     physicsActive: boolean,
-    mode: ScaleMode,
-    macroParts: CadPart[],
+    integrated: boolean,
+    macroParts: CadPart[]
+  ) => void;
+  updateMicro: (
+    elapsed: number,
+    explodeFactor: number,
+    physicsActive: boolean,
     microParts: CadPart[]
   ) => void;
-  updateGuides: (explodeFactor: number, mode: ScaleMode) => void;
+  updateMacroGuides: (explodeFactor: number, visible: boolean, macroParts: CadPart[]) => void;
+  updateMicroGuides: (explodeFactor: number, visible: boolean) => void;
 }
 
 interface RayPacket {
@@ -301,21 +308,51 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
   macroOverlay.visible = false;
   microOverlay.visible = false;
 
-  const setVisible = (visible: boolean, mode: ScaleMode) => {
-    macroOverlay.visible = visible && mode === 'macro';
-    microOverlay.visible = visible && mode === 'micro';
+  const setMacroVisible = (visible: boolean) => {
+    macroOverlay.visible = visible;
   };
 
-  const updateGuides = (explodeFactor: number, mode: ScaleMode) => {
-    const opacity = THREE.MathUtils.clamp((explodeFactor - 0.04) * 0.55, 0, 0.42);
-    macroExplodeGuides.visible = mode === 'macro' && opacity > 0.01;
-    microExplodeGuides.visible = mode === 'micro' && opacity > 0.01;
+  const setMicroVisible = (visible: boolean) => {
+    microOverlay.visible = visible;
+  };
 
+  const macroGuideCoords: Array<[number, number]> = [
+    [-21.5, 16.5],
+    [21.5, 16.5],
+    [-21.5, -16.5],
+    [21.5, -16.5],
+  ];
+
+  const updateMacroGuides = (explodeFactor: number, visible: boolean, macroParts: CadPart[]) => {
+    const opacity = THREE.MathUtils.clamp((explodeFactor - 0.04) * 0.55, 0, 0.42);
+    macroExplodeGuides.visible = visible && opacity > 0.01;
+
+    const frontPart = macroParts.find((p) => p.id === 'aperture-mask');
+    const backPart = macroParts.find((p) => p.id === 'sigma-graphite');
+    const zFront = (frontPart ? frontPart.group.position.z : 7.8) + 2.0;
+    const zBack = (backPart ? backPart.group.position.z : -9.6) - 2.0;
+
+    let idx = 0;
     macroExplodeGuides.traverse((o) => {
       if ((o as THREE.Line).isLine) {
-        ((o as THREE.Line).material as THREE.LineDashedMaterial).opacity = opacity;
+        const line = o as THREE.Line;
+        (line.material as THREE.LineDashedMaterial).opacity = opacity;
+        const coords = macroGuideCoords[idx++];
+        if (coords) {
+          const attr = line.geometry.attributes.position as THREE.BufferAttribute;
+          attr.setXYZ(0, coords[0], coords[1], zFront);
+          attr.setXYZ(1, coords[0], coords[1], zBack);
+          attr.needsUpdate = true;
+          line.computeLineDistances();
+        }
       }
     });
+  };
+
+  const updateMicroGuides = (explodeFactor: number, visible: boolean) => {
+    const opacity = THREE.MathUtils.clamp((explodeFactor - 0.04) * 0.55, 0, 0.42);
+    microExplodeGuides.visible = visible && opacity > 0.01;
+
     microExplodeGuides.traverse((o) => {
       if ((o as THREE.Line).isLine) {
         ((o as THREE.Line).material as THREE.LineDashedMaterial).opacity = opacity;
@@ -323,52 +360,52 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     });
   };
 
-  const update = (
+  const updateMacro = (
     elapsed: number,
     explodeFactor: number,
     physicsActive: boolean,
-    mode: ScaleMode,
-    macroParts: CadPart[],
-    microParts: CadPart[]
+    integrated: boolean,
+    macroParts: CadPart[]
   ) => {
-    // 1. Live IBIS 5-axis smooth motion & SSWF subtle shimmer when physics simulation is ON in macro mode
-    if (mode === 'macro') {
-      const ibisAmp = physicsActive ? (1 - explodeFactor * 0.72) : 0;
-      const dx = Math.sin(elapsed * 2.4) * 1.45 * ibisAmp;
-      const dy = Math.cos(elapsed * 1.9) * 1.2 * ibisAmp;
-      const dRoll = Math.sin(elapsed * 1.35) * 0.032 * ibisAmp;
+    // 1. Live IBIS 5-axis smooth motion & SSWF subtle shimmer when physics simulation is ON
+    const ibisAmp = physicsActive ? 1 - explodeFactor * 0.72 : 0;
+    const dx = Math.sin(elapsed * 2.4) * 1.45 * ibisAmp;
+    const dy = Math.cos(elapsed * 1.9) * 1.2 * ibisAmp;
+    const dRoll = Math.sin(elapsed * 1.35) * 0.032 * ibisAmp;
 
-      for (const p of macroParts) {
-        const baseX = p.assembledPos.x + p.explodeOffset.x * explodeFactor;
-        const baseY = p.assembledPos.y + p.explodeOffset.y * explodeFactor;
-        const baseZ = p.assembledPos.z + p.explodeOffset.z * explodeFactor;
+    for (const p of macroParts) {
+      const offset =
+        integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
+      const baseX = p.assembledPos.x + offset.x * explodeFactor;
+      const baseY = p.assembledPos.y + offset.y * explodeFactor;
+      const baseZ = p.assembledPos.z + offset.z * explodeFactor;
 
-        if (p.ibisMovable) {
-          p.group.position.set(baseX + dx, baseY + dy, baseZ);
-          p.group.rotation.z = dRoll;
-        } else {
-          p.group.position.set(baseX, baseY, baseZ);
-          p.group.rotation.z = 0;
-        }
-
-        if (p.ultrasonicElement && physicsActive) {
-          // Visual representation of high-frequency piezo flexural mode
-          p.group.position.z += Math.sin(elapsed * 52) * 0.14;
-        }
+      if (p.ibisMovable) {
+        p.group.position.set(baseX + dx, baseY + dy, baseZ);
+        p.group.rotation.z = dRoll;
+      } else {
+        p.group.position.set(baseX, baseY, baseZ);
+        p.group.rotation.z = 0;
       }
 
-      if (physicsActive) {
-        const sswfPart = macroParts.find((p) => p.id === 'sswf-piezo');
-        const olpfPart = macroParts.find((p) => p.id === 'olpf-16pt');
-        const irPart = macroParts.find((p) => p.id === 'ir-cut-filter');
-        const diePart = macroParts.find((p) => p.id === 'cmos-die');
-        const ibisPart = macroParts.find((p) => p.id === 'ibis-carrier');
+      if (p.ultrasonicElement && physicsActive) {
+        // Visual representation of high-frequency piezo flexural mode
+        p.group.position.z += Math.sin(elapsed * 52) * 0.14;
+      }
+    }
 
-        const zSswf = sswfPart ? sswfPart.group.position.z : 6.2;
-        const zOlpf = olpfPart ? olpfPart.group.position.z : 4.65;
-        const zIr = irPart ? irPart.group.position.z : 3.25;
-        const zDie = diePart ? diePart.group.position.z + 0.56 : 1.1;
-        const zStart = zSswf + 18.0;
+    if (physicsActive) {
+      const sswfPart = macroParts.find((p) => p.id === 'sswf-piezo');
+      const olpfPart = macroParts.find((p) => p.id === 'olpf-16pt');
+      const irPart = macroParts.find((p) => p.id === 'ir-cut-filter');
+      const diePart = macroParts.find((p) => p.id === 'cmos-die');
+      const ibisPart = macroParts.find((p) => p.id === 'ibis-carrier');
+
+      const zSswf = sswfPart ? sswfPart.group.position.z : 6.2;
+      const zOlpf = olpfPart ? olpfPart.group.position.z : 4.65;
+      const zIr = irPart ? irPart.group.position.z : 3.25;
+      const zDie = diePart ? diePart.group.position.z + 0.56 : 1.1;
+      const zStart = integrated ? zSswf + 7.5 : zSswf + 18.0;
 
         // Update ultrasonic wave rings on SSWF surface
         sswfWaveRings.forEach((ring, idx) => {
@@ -457,62 +494,68 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
           arrowX1.setDirection(new THREE.Vector3(fx >= 0 ? 1 : -1, 0, 0));
           arrowX1.setLength(3.2 + Math.abs(fx) * 5.0, 2.0, 1.2);
         }
-      }
-    } else {
-      // 2. MICRO PIXEL MODE POSITIONING & PHOTON -> ELECTRON TRANSFER FLOW
-      for (const p of microParts) {
-        p.group.position.set(
-          p.assembledPos.x + p.explodeOffset.x * explodeFactor,
-          p.assembledPos.y + p.explodeOffset.y * explodeFactor,
-          p.assembledPos.z + p.explodeOffset.z * explodeFactor
-        );
-      }
+    }
+  };
 
-      if (physicsActive) {
-        const ocl = microParts.find((p) => p.id === 'micro-ocl');
-        const pd = microParts.find((p) => p.id === 'micro-pd-cross');
-        const gs = microParts.find((p) => p.id === 'micro-2layer-gs');
-        const dram = microParts.find((p) => p.id === 'micro-adc-dram');
+  const updateMicro = (
+    elapsed: number,
+    explodeFactor: number,
+    physicsActive: boolean,
+    microParts: CadPart[]
+  ) => {
+    // 2. MICRO PIXEL MODE POSITIONING & PHOTON -> ELECTRON TRANSFER FLOW
+    for (const p of microParts) {
+      p.group.position.set(
+        p.assembledPos.x + p.explodeOffset.x * explodeFactor,
+        p.assembledPos.y + p.explodeOffset.y * explodeFactor,
+        p.assembledPos.z + p.explodeOffset.z * explodeFactor
+      );
+    }
 
-        const zTop = (ocl ? ocl.group.position.z : 11.6) + 12.0;
-        const zOcl = (ocl ? ocl.group.position.z : 11.6) + 2.4;
-        const zPd = pd ? pd.group.position.z : 2.4;
-        const zGs = gs ? gs.group.position.z : -3.4;
-        const zDram = dram ? dram.group.position.z : -11.4;
+    if (physicsActive) {
+      const ocl = microParts.find((p) => p.id === 'micro-ocl');
+      const pd = microParts.find((p) => p.id === 'micro-pd-cross');
+      const gs = microParts.find((p) => p.id === 'micro-2layer-gs');
+      const dram = microParts.find((p) => p.id === 'micro-adc-dram');
 
-        microRaySpecs.forEach((spec, sIdx) => {
-          const { center, subOffsets, lines, electronDots } = spec;
-          subOffsets.forEach(([ox, oy], subIdx) => {
-            const posAttr = lines[subIdx].geometry.attributes.position as THREE.BufferAttribute;
-            // Refracted light beam converging via Gapless Aspheric OCL onto Split Dual Pixel Photodiode
-            posAttr.setXYZ(0, center.x + ox * 1.65, center.y + oy * 1.65, zTop);
-            posAttr.setXYZ(1, center.x + ox * 1.45, center.y + oy * 1.45, zOcl);
-            posAttr.setXYZ(2, center.x + ox * 0.72, center.y + oy * 0.72, zPd);
-            posAttr.needsUpdate = true;
+      const zTop = (ocl ? ocl.group.position.z : 11.6) + 12.0;
+      const zOcl = (ocl ? ocl.group.position.z : 11.6) + 2.4;
+      const zPd = pd ? pd.group.position.z : 2.4;
+      const zGs = gs ? gs.group.position.z : -3.4;
+      const zDram = dram ? dram.group.position.z : -11.4;
 
-            // Photoelectron transfer cascade: PD -> Vertical Gate -> GS Memory -> Cu-Cu -> ADC/DRAM
-            const phase = (elapsed * 0.65 + sIdx * 0.21 + subIdx * 0.47) % 1;
-            const dot = electronDots[subIdx];
-            if (phase < 0.35) {
-              // Photodiode -> 2-Layer Global Shutter Memory Node
-              const t = phase / 0.35;
-              dot.position.set(
-                THREE.MathUtils.lerp(center.x + ox * 0.7, center.x + 2.2, t),
-                THREE.MathUtils.lerp(center.y + oy * 0.7, center.y + 2.0, t),
-                THREE.MathUtils.lerp(zPd, zGs + 0.4, t)
-              );
-            } else {
-              // GS Memory Node -> Cu-Cu Direct Hybrid Bond -> Column ADC & Stacked DRAM
-              const t = (phase - 0.35) / 0.65;
-              dot.position.set(
-                THREE.MathUtils.lerp(center.x + 2.2, center.x + 2.7, t),
-                THREE.MathUtils.lerp(center.y + 2.0, center.y + 2.7, t),
-                THREE.MathUtils.lerp(zGs + 0.4, zDram + 1.2, t)
-              );
-            }
-          });
+      microRaySpecs.forEach((spec, sIdx) => {
+        const { center, subOffsets, lines, electronDots } = spec;
+        subOffsets.forEach(([ox, oy], subIdx) => {
+          const posAttr = lines[subIdx].geometry.attributes.position as THREE.BufferAttribute;
+          // Refracted light beam converging via Gapless Aspheric OCL onto Split Dual Pixel Photodiode
+          posAttr.setXYZ(0, center.x + ox * 1.65, center.y + oy * 1.65, zTop);
+          posAttr.setXYZ(1, center.x + ox * 1.45, center.y + oy * 1.45, zOcl);
+          posAttr.setXYZ(2, center.x + ox * 0.72, center.y + oy * 0.72, zPd);
+          posAttr.needsUpdate = true;
+
+          // Photoelectron transfer cascade: PD -> Vertical Gate -> GS Memory -> Cu-Cu -> ADC/DRAM
+          const phase = (elapsed * 0.65 + sIdx * 0.21 + subIdx * 0.47) % 1;
+          const dot = electronDots[subIdx];
+          if (phase < 0.35) {
+            // Photodiode -> 2-Layer Global Shutter Memory Node
+            const t = phase / 0.35;
+            dot.position.set(
+              THREE.MathUtils.lerp(center.x + ox * 0.7, center.x + 2.2, t),
+              THREE.MathUtils.lerp(center.y + oy * 0.7, center.y + 2.0, t),
+              THREE.MathUtils.lerp(zPd, zGs + 0.4, t)
+            );
+          } else {
+            // GS Memory Node -> Cu-Cu Direct Hybrid Bond -> Column ADC & Stacked DRAM
+            const t = (phase - 0.35) / 0.65;
+            dot.position.set(
+              THREE.MathUtils.lerp(center.x + 2.2, center.x + 2.7, t),
+              THREE.MathUtils.lerp(center.y + 2.0, center.y + 2.7, t),
+              THREE.MathUtils.lerp(zGs + 0.4, zDram + 1.2, t)
+            );
+          }
         });
-      }
+      });
     }
   };
 
@@ -521,8 +564,11 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     microOverlay,
     macroExplodeGuides,
     microExplodeGuides,
-    setVisible,
-    update,
-    updateGuides,
+    setMacroVisible,
+    setMicroVisible,
+    updateMacro,
+    updateMicro,
+    updateMacroGuides,
+    updateMicroGuides,
   };
 }

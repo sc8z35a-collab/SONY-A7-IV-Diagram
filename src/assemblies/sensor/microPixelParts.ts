@@ -20,7 +20,7 @@ function finalizeMicroPart(
 
   return {
     id,
-    mode: 'micro',
+    subsystem: 'micro',
     order,
     swatchColor,
     group,

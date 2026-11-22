@@ -358,6 +358,261 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="58" y="84" font-size="8.5" fill="#334155">V_CDS = (V_sig + V_kTC) − (V_rst + V_kTC)</text>
         <text x="80" y="99" font-size="8" fill="#64748b">読み出しノイズ &lt; 1.0 e⁻ RMS（HCG時）</text>
       `);
+
+    case 'shutter_cover':
+      return wrap(`
+        <rect x="20" y="14" width="280" height="90" rx="5" fill="#ffffff" stroke="#dbe2eb"/>
+        <!-- Front cover wall -->
+        <rect x="82" y="20" width="12" height="24" fill="#1e293b"/>
+        <rect x="82" y="74" width="12" height="24" fill="#1e293b"/>
+        <!-- Narrow blade chamber -->
+        <rect x="104" y="22" width="4" height="74" fill="#334155"/>
+        <rect x="116" y="20" width="10" height="24" fill="#475569"/>
+        <rect x="116" y="74" width="10" height="24" fill="#475569"/>
+        <!-- Rays -->
+        <line x1="28" y1="59" x2="225" y2="59" stroke="#2563eb" stroke-width="2"/>
+        <line x1="28" y1="26" x2="82" y2="34" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="3 2"/>
+        <rect x="218" y="34" width="8" height="50" fill="#1d6d7c"/>
+        <text x="135" y="32" font-size="8.5" fill="#0f172a">すき間 δ ≈ 0.2 mm（羽根室）</text>
+        <text x="135" y="46" font-size="8" fill="#dc2626">斜め迷光を艶消し枠で吸収</text>
+        <text x="135" y="76" font-size="8" fill="#2563eb">空気バタつき（フラッター）抑制</text>
+        <text x="233" y="62" font-size="8.5" fill="#1d6d7c">センサー面</text>
+      `);
+
+    case 'shutter_shield':
+      return wrap(`
+        <!-- Left: Power OFF (Closed Shield) -->
+        <rect x="16" y="14" width="134" height="92" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+        <rect x="34" y="34" width="98" height="14" fill="#475569" stroke="#1e293b" stroke-width="0.8"/>
+        <rect x="34" y="48" width="98" height="14" fill="#64748b" stroke="#1e293b" stroke-width="0.8"/>
+        <rect x="34" y="62" width="98" height="14" fill="#475569" stroke="#1e293b" stroke-width="0.8"/>
+        <circle cx="62" cy="24" r="2.2" fill="#dc2626"/>
+        <circle cx="96" cy="21" r="1.8" fill="#dc2626"/>
+        <path d="M62 26 L62 32 M96 23 L96 32" stroke="#dc2626" stroke-width="1.2"/>
+        <text x="30" y="94" font-size="8.5" font-weight="bold" fill="#0f172a">電源OFF：自動閉鎖（防塵）</text>
+        <!-- Right: Power ON (Retracted) -->
+        <rect x="170" y="14" width="134" height="92" rx="5" fill="#ffffff" stroke="#cbd5e1"/>
+        <rect x="188" y="22" width="98" height="10" fill="#475569" stroke="#1e293b" stroke-width="0.8"/>
+        <rect x="188" y="36" width="98" height="40" fill="#e0f2fe" stroke="#0284c7" stroke-dasharray="3 2"/>
+        <text x="212" y="59" font-size="9" fill="#0369a1">撮影ウィンドウ</text>
+        <text x="184" y="94" font-size="8.5" font-weight="bold" fill="#0369a1">電源ON：上部ポケット退避</text>
+      `);
+
+    case 'shutter_curtain1':
+      return wrap(`
+        <!-- Expanded 4 blades -->
+        <rect x="24" y="16" width="100" height="74" rx="3" fill="#f8fafc" stroke="#94a3b8"/>
+        <rect x="30" y="20" width="88" height="16" fill="#1f242d" stroke="#64748b" stroke-width="0.7"/>
+        <rect x="30" y="37" width="88" height="16" fill="#2b313c" stroke="#64748b" stroke-width="0.7"/>
+        <rect x="30" y="54" width="88" height="16" fill="#1f242d" stroke="#64748b" stroke-width="0.7"/>
+        <rect x="30" y="71" width="88" height="15" fill="#2b313c" stroke="#64748b" stroke-width="0.7"/>
+        <text x="42" y="105" font-size="8.5" fill="#334155">閉鎖時（縦 24 mm）</text>
+        <!-- Arrow -->
+        <path d="M134 52 L172 52" stroke="#0d5bd9" stroke-width="2.4"/>
+        <polygon points="176,52 167,46 167,58" fill="#0d5bd9"/>
+        <text x="132" y="42" font-size="8.5" font-weight="bold" fill="#0d5bd9">約 2.2 ms</text>
+        <text x="133" y="68" font-size="8" fill="#475569">時速 40 km!</text>
+        <!-- Folded into bottom pocket -->
+        <rect x="186" y="16" width="110" height="74" rx="3" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="206" y="48" font-size="9.5" font-weight="bold" fill="#b45309">光がセンサーへ!</text>
+        <rect x="192" y="74" width="98" height="14" fill="#1f242d" stroke="#eab308" stroke-width="0.9"/>
+        <text x="191" y="105" font-size="8.5" fill="#334155">4枚折り畳み収納（幅 7 mm）</text>
+      `);
+
+    case 'shutter_link1':
+      return wrap(`
+        <!-- Parallelogram 4-bar linkage geometry -->
+        <rect x="20" y="14" width="280" height="90" rx="5" fill="#ffffff" stroke="#dbe2eb"/>
+        <!-- Horizontal blade -->
+        <rect x="38" y="34" width="118" height="14" rx="1" fill="#1f242d"/>
+        <rect x="38" y="64" width="118" height="14" rx="1" fill="#64748b" opacity="0.45" stroke="#475569" stroke-dasharray="3 2"/>
+        <!-- Upper & lower parallel arms -->
+        <line x1="146" y1="38" x2="230" y2="28" stroke="#0d5bd9" stroke-width="3.2" stroke-linecap="round"/>
+        <line x1="146" y1="45" x2="230" y2="35" stroke="#0284c7" stroke-width="2.4" stroke-linecap="round"/>
+        <!-- Lower position ghost arms -->
+        <line x1="146" y1="68" x2="230" y2="28" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <line x1="146" y1="75" x2="230" y2="35" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <!-- Stationary pivots -->
+        <circle cx="230" cy="28" r="3.6" fill="#d4a948" stroke="#1e293b"/>
+        <circle cx="230" cy="35" r="3.6" fill="#d4a948" stroke="#1e293b"/>
+        <circle cx="146" cy="38" r="2.6" fill="#facc15"/>
+        <circle cx="146" cy="45" r="2.6" fill="#facc15"/>
+        <text x="42" y="27" font-size="8.5" fill="#0f172a">常に「水平 0°」をキープ!</text>
+        <text x="192" y="62" font-size="8" fill="#0d5bd9">平行4節リンク</text>
+        <text x="192" y="74" font-size="8" fill="#475569">半径 r₁&gt;r₂&gt;r₃&gt;r₄</text>
+        <text x="192" y="86" font-size="8" fill="#475569">4枚同時に折り畳み</text>
+      `);
+
+    case 'shutter_midplate':
+      return wrap(`
+        <rect x="20" y="14" width="280" height="90" rx="5" fill="#ffffff" stroke="#dbe2eb"/>
+        <!-- Left: 1st curtain chamber -->
+        <rect x="44" y="24" width="70" height="68" rx="3" fill="#eff6ff" stroke="#93c5fd"/>
+        <rect x="72" y="34" width="12" height="48" fill="#1f242d"/>
+        <text x="53" y="102" font-size="8.5" fill="#1d4ed8">先幕の部屋</text>
+        <!-- Center: Ultra-thin mid-plate -->
+        <rect x="128" y="20" width="8" height="76" fill="#475569"/>
+        <text x="108" y="16" font-size="8.5" font-weight="bold" fill="#0f172a">極薄中板 0.15 mm</text>
+        <!-- Right: 2nd curtain chamber -->
+        <rect x="150" y="24" width="70" height="68" rx="3" fill="#fefce8" stroke="#fde047"/>
+        <rect x="178" y="34" width="12" height="48" fill="#56657c"/>
+        <text x="160" y="102" font-size="8.5" fill="#a16207">後幕の部屋</text>
+        <!-- Notes -->
+        <text x="228" y="42" font-size="8" fill="#334155">時速40 kmの</text>
+        <text x="228" y="54" font-size="8" fill="#334155">すれ違い衝突</text>
+        <text x="228" y="66" font-size="8" fill="#dc2626">＆空気渦を遮断</text>
+        <text x="228" y="82" font-size="8" fill="#0284c7">間隔 Δz≈0.5mm</text>
+      `);
+
+    case 'shutter_curtain2':
+      return wrap(`
+        <!-- 3-step visual of 1/8000s Slit Exposure! -->
+        <!-- Step 1 -->
+        <rect x="14" y="18" width="64" height="66" rx="3" fill="#fffbeb" stroke="#cbd5e1"/>
+        <rect x="16" y="34" width="60" height="48" fill="#1f242d"/>
+        <rect x="16" y="20" width="60" height="6" fill="#56657c"/>
+        <rect x="16" y="26" width="60" height="8" fill="#fbbf24" opacity="0.75"/>
+        <text x="24" y="13" font-size="8" fill="#334155">① 上端スキャン</text>
+        <!-- Step 2 -->
+        <rect x="92" y="18" width="64" height="66" rx="3" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.3"/>
+        <rect x="94" y="20" width="60" height="26" fill="#56657c"/>
+        <rect x="94" y="55" width="60" height="27" fill="#1f242d"/>
+        <rect x="94" y="46" width="60" height="9" fill="#fbbf24" opacity="0.9"/>
+        <text x="100" y="13" font-size="8" font-weight="bold" fill="#b45309">② 光のスリット</text>
+        <!-- Step 3 -->
+        <rect x="170" y="18" width="64" height="66" rx="3" fill="#fffbeb" stroke="#cbd5e1"/>
+        <rect x="172" y="20" width="60" height="48" fill="#56657c"/>
+        <rect x="172" y="76" width="60" height="6" fill="#1f242d"/>
+        <rect x="172" y="68" width="60" height="8" fill="#fbbf24" opacity="0.75"/>
+        <text x="179" y="13" font-size="8" fill="#334155">③ 下端で完了</text>
+        <!-- Right callout -->
+        <text x="242" y="34" font-size="8.5" font-weight="bold" fill="#b45309">1/8000秒時</text>
+        <text x="242" y="48" font-size="8.5" fill="#0f172a">すき間幅</text>
+        <text x="242" y="61" font-size="9.5" font-weight="bold" fill="#0d5bd9">約 1.3 mm!</text>
+        <text x="242" y="76" font-size="7.5" fill="#475569">後幕が0.125ms後</text>
+        <text x="242" y="86" font-size="7.5" fill="#475569">を全力追跡</text>
+        <text x="16" y="102" font-size="8" fill="#475569">全開フラッシュ同調は最速1/400秒まで・メカ前後幕ならF1.2丸ボケも欠けない!</text>
+      `);
+
+    case 'shutter_link2':
+      return wrap(`
+        <!-- Synchronized travel curve graph: Curtain 1 & Curtain 2 parallel trajectories -->
+        <line x1="34" y1="92" x2="296" y2="92" stroke="#94a3b8" stroke-width="1"/>
+        <line x1="34" y1="16" x2="34" y2="92" stroke="#94a3b8" stroke-width="1"/>
+        <!-- Curtain 1 curve -->
+        <path d="M52 22 C82 22, 118 84, 152 86" fill="none" stroke="#1f242d" stroke-width="2.4"/>
+        <!-- Curtain 2 parallel curve shifted by Δt -->
+        <path d="M108 22 C138 22, 174 84, 208 86" fill="none" stroke="#0d5bd9" stroke-width="2.4"/>
+        <!-- Constant Δt arrows -->
+        <line x1="88" y1="42" x2="144" y2="42" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="114" y1="68" x2="170" y2="68" stroke="#f59e0b" stroke-width="2"/>
+        <text x="150" y="45" font-size="8.5" font-weight="bold" fill="#b45309">Δt 一定（上端）</text>
+        <text x="176" y="71" font-size="8.5" font-weight="bold" fill="#b45309">Δt 一定（下端）</text>
+        <text x="42" y="106" font-size="8.5" fill="#334155">時間 t →（速度カーブ完全一致 ＝ 画面全域で明るさムラゼロ）</text>
+        <text x="8" y="30" font-size="8" fill="#475569">上</text>
+        <text x="8" y="84" font-size="8" fill="#475569">下</text>
+      `);
+
+    case 'shutter_dual_drive':
+      return wrap(`
+        <!-- Hybrid Spring + Electromagnetic Booster Diagram -->
+        <rect x="18" y="20" width="96" height="58" rx="6" fill="#f8fafc" stroke="#64748b"/>
+        <text x="32" y="41" font-size="9" font-weight="bold" fill="#0f172a">高張力バネ</text>
+        <text x="27" y="56" font-size="8" fill="#475569">軽快・50万回耐久</text>
+        <text x="34" y="69" font-size="8" fill="#475569">通常ベース動力</text>
+        <text x="122" y="55" font-size="16" font-weight="bold" fill="#0d5bd9">+</text>
+        <rect x="140" y="20" width="96" height="58" rx="6" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="150" y="41" font-size="9" font-weight="bold" fill="#1d4ed8">電磁ブースター</text>
+        <text x="148" y="56" font-size="8" fill="#1e40af">銅コイル＋磁石</text>
+        <text x="148" y="69" font-size="8" fill="#1e40af">ローレンツ力加速</text>
+        <path d="M240 49 L258 49" stroke="#d97706" stroke-width="2.4"/>
+        <polygon points="262,49 254,44 254,54" fill="#d97706"/>
+        <rect x="262" y="22" width="46" height="54" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="268" y="45" font-size="9" font-weight="bold" fill="#b45309">1/400</text>
+        <text x="272" y="60" font-size="8" fill="#b45309">秒同調</text>
+        <text x="58" y="102" font-size="8.5" fill="#334155">デュアル駆動：普段は優しく長寿命、必要時はターボ加速!</text>
+      `);
+
+    case 'shutter_magnets':
+      return wrap(`
+        <!-- Electronic Solenoid Pulse Timing Diagram -->
+        <text x="18" y="34" font-size="8.5" font-weight="bold" fill="#1f242d">先幕電磁石</text>
+        <path d="M84 22 L138 22 L138 42 L292 42" fill="none" stroke="#1f242d" stroke-width="2.2"/>
+        <text x="90" y="18" font-size="7.5" fill="#0284c7">通電ON（保持）</text>
+        <text x="144" y="36" font-size="7.5" fill="#dc2626">OFF → 発射!</text>
+
+        <text x="18" y="76" font-size="8.5" font-weight="bold" fill="#0d5bd9">後幕電磁石</text>
+        <path d="M84 62 L212 62 L212 82 L292 82" fill="none" stroke="#0d5bd9" stroke-width="2.2"/>
+        <text x="128" y="58" font-size="7.5" fill="#0284c7">通電ON（保持）</text>
+        <text x="218" y="76" font-size="7.5" fill="#dc2626">OFF → 追跡!</text>
+
+        <!-- Δt timing bracket -->
+        <line x1="138" y1="42" x2="138" y2="96" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <line x1="212" y1="82" x2="212" y2="96" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <line x1="140" y1="94" x2="210" y2="94" stroke="#f59e0b" stroke-width="2.2"/>
+        <text x="108" y="108" font-size="8.5" font-weight="bold" fill="#b45309">Δt = シャッター速度（1/8000s = 125 μs）</text>
+      `);
+
+    case 'shutter_charge_motor':
+      return wrap(`
+        <rect x="18" y="24" width="68" height="48" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+        <text x="26" y="44" font-size="8.5" font-weight="bold" fill="#0f172a">コアレスDC</text>
+        <text x="31" y="58" font-size="8" fill="#475569">超高速起動</text>
+        <path d="M88 48 L108 48" stroke="#0d5bd9" stroke-width="2"/>
+        <circle cx="132" cy="48" r="18" fill="#fef3c7" stroke="#d97706" stroke-width="2" stroke-dasharray="4 2"/>
+        <circle cx="164" cy="48" r="13" fill="#e2e8f0" stroke="#475569" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="118" y="84" font-size="8" fill="#92400e">減速ギア (30:1)</text>
+        <path d="M180 48 L202 48" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="204" y="24" width="98" height="48" rx="6" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="216" y="44" font-size="8.5" font-weight="bold" fill="#1d4ed8">偏心チャージカム</text>
+        <text x="213" y="58" font-size="8" fill="#1e40af">約0.03秒でバネ再装填</text>
+        <text x="48" y="104" font-size="8.5" fill="#334155">1枚撮るたびに自動巻き上げ → 秒間 10–15 コマ連写を実現!</text>
+      `);
+
+    case 'shutter_opt_sensor':
+      return wrap(`
+        <!-- IR Photo-Interrupter Closed-Loop Calibration -->
+        <rect x="22" y="22" width="44" height="52" rx="4" fill="#1e293b"/>
+        <text x="29" y="44" font-size="8" fill="#fda4af">940nm</text>
+        <text x="30" y="56" font-size="8" fill="#fff">IR LED</text>
+        <!-- IR beam -->
+        <line x1="66" y1="48" x2="132" y2="48" stroke="#e11d48" stroke-width="2.2" stroke-dasharray="4 2"/>
+        <!-- Curtain passing through beam -->
+        <rect x="94" y="20" width="10" height="58" fill="#334155" stroke="#eab308"/>
+        <rect x="132" y="22" width="44" height="52" rx="4" fill="#334155"/>
+        <text x="138" y="45" font-size="8" fill="#e2e8f0">受光素子</text>
+        <text x="142" y="58" font-size="8" fill="#38bdf8">時刻計測</text>
+        <!-- Feedback arrow to CPU -->
+        <path d="M176 48 L204 48" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="206" y="22" width="96" height="52" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="216" y="42" font-size="8.5" font-weight="bold" fill="#1d4ed8">自動補正 CPU</text>
+        <text x="214" y="56" font-size="7.5" fill="#1e40af">寒冷・摩耗ズレを</text>
+        <text x="214" y="67" font-size="7.5" fill="#1e40af">毎回 μs 単位修正!</text>
+        <text x="34" y="100" font-size="8.5" fill="#be123c">羽根が赤外線を遮る時刻を実測 → 50万回まで精度維持</text>
+      `);
+
+    case 'shutter_damper':
+      return wrap(`
+        <!-- Left: Rebound Brake Damper -->
+        <rect x="16" y="16" width="136" height="86" rx="5" fill="#fff5f5" stroke="#fecaca"/>
+        <rect x="30" y="34" width="52" height="12" fill="#1f242d"/>
+        <path d="M84 40 L106 40" stroke="#dc2626" stroke-width="2"/>
+        <polygon points="110,40 102,35 102,45" fill="#dc2626"/>
+        <rect x="112" y="24" width="24" height="44" rx="4" fill="#c44536"/>
+        <text x="28" y="64" font-size="8" fill="#7f1d1d">時速40kmを跳ね返り</text>
+        <text x="28" y="76" font-size="8" font-weight="bold" fill="#b91c1c">ゼロで吸収（e → 0）</text>
+        <text x="28" y="94" font-size="8.5" font-weight="bold" fill="#991b1b">バウンド防止ブレーキ</text>
+        <!-- Right: Floating Anti-Vib Silicone Mount -->
+        <rect x="168" y="16" width="136" height="86" rx="5" fill="#eff6ff" stroke="#bfdbfe"/>
+        <rect x="182" y="30" width="108" height="36" rx="4" fill="#334155"/>
+        <circle cx="192" cy="40" r="6" fill="#2563eb"/>
+        <circle cx="280" cy="40" r="6" fill="#2563eb"/>
+        <circle cx="192" cy="56" r="6" fill="#2563eb"/>
+        <circle cx="280" cy="56" r="6" fill="#2563eb"/>
+        <text x="206" y="51" font-size="8" fill="#ffffff">ゴム懸架で絶縁</text>
+        <text x="180" y="82" font-size="8" fill="#1e40af">IBIS・ボディへの微ブレ遮断</text>
+        <text x="178" y="94" font-size="8.5" font-weight="bold" fill="#1d4ed8">4点フローティング防振</text>
+      `);
   }
 }
 
@@ -433,6 +688,14 @@ export class ExplanationDrawer {
       .map((item) => `<li>${item}</li>`)
       .join('');
 
+    const analogyHtml = exp.plainAnalogy
+      ? `
+        <div class="exp-analogy">
+          <div class="exp-analogy-badge">やさしい解説</div>
+          <p class="exp-analogy-text">${exp.plainAnalogy}</p>
+        </div>`
+      : '';
+
     const formulaHtml = exp.formula
       ? `
         <div class="exp-formula">
@@ -447,6 +710,8 @@ export class ExplanationDrawer {
         <h2 class="exp-title">${exp.title}</h2>
         <div class="exp-subtitle">${exp.subtitle}</div>
       </div>
+
+      ${analogyHtml}
 
       <div class="exp-diagram-box">
         ${renderSchematicSvg(exp.diagramType)}

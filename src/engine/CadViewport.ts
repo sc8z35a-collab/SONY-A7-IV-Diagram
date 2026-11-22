@@ -10,7 +10,8 @@ import {
   SectionAxis,
 } from '../assemblies/types';
 import { createMaterialLibrary, MaterialLibrary } from './Materials';
-import { createSensorAssembly } from '../assemblies/sensor';
+import { createSensorAssemblies } from '../assemblies/sensor';
+import { createShutterAssembly } from '../assemblies/shutter';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -29,7 +30,10 @@ export class CadViewport {
   private camera: THREE.PerspectiveCamera;
   private controls: OrbitControls;
   private materials: MaterialLibrary;
-  private assembly: AssemblyController;
+  private shutterAssembly: AssemblyController;
+  private sensorAssembly: AssemblyController;
+  private microAssembly: AssemblyController;
+  private allParts: CadPart[];
   private callbacks: ViewportCallbacks;
 
   private clippingPlane: THREE.Plane;
@@ -37,8 +41,8 @@ export class CadViewport {
   private pointer = new THREE.Vector2();
   private pointerDownPos = new THREE.Vector2();
 
-  // State
-  private mode: ScaleMode = 'macro';
+  // State — opens directly onto the newly implemented Shutter Mechanism anatomy
+  private mode: ScaleMode = 'shutter';
   private renderMode: RenderMode = 'solid';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
@@ -120,16 +124,13 @@ export class CadViewport {
 
     // Camera & OrbitControls — balanced gallery framing with breathing room around dock & rail
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 1200);
-    this.camera.position.set(96, 52, 124);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 1600);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
     this.controls.minDistance = 16;
-    this.controls.maxDistance = 420;
-    this.controls.target.set(0, -1.5, -2.0);
-    this.controls.update();
+    this.controls.maxDistance = 640;
     this.controls.addEventListener('change', () => {
       this.dirtyFrames = Math.max(this.dirtyFrames, 2);
     });
@@ -158,12 +159,26 @@ export class CadViewport {
       clippingPlanes: [this.clippingPlane],
     });
 
-    // Build Sensor Assembly (Macro + Micro)
-    this.assembly = createSensorAssembly(this.materials);
-    this.scene.add(this.assembly.macroGroup, this.assembly.microGroup);
+    // Build all 3 CAD subsystems: Shutter (12), Full-Frame Sensor/IBIS (14), Micro Pixel (7)
+    this.shutterAssembly = createShutterAssembly(this.materials);
+    const { sensor, micro } = createSensorAssemblies(this.materials);
+    this.sensorAssembly = sensor;
+    this.microAssembly = micro;
+
+    this.scene.add(
+      this.shutterAssembly.rootGroup,
+      this.sensorAssembly.rootGroup,
+      this.microAssembly.rootGroup
+    );
+
+    this.allParts = [
+      ...this.shutterAssembly.parts,
+      ...this.sensorAssembly.parts,
+      ...this.microAssembly.parts,
+    ];
 
     // Cache original materials for render-mode switching
-    for (const part of this.assembly.parts) {
+    for (const part of this.allParts) {
       for (const mesh of part.interactiveMeshes) {
         this.originalMeshMaterials.set(mesh, {
           originalMaterial: mesh.material,
@@ -171,19 +186,51 @@ export class CadViewport {
       }
     }
 
+    this.syncAssemblyVisibility();
+    this.setCameraPreset('iso', true);
     this.bindEvents();
     this.animate();
   }
 
+  private isPartInCurrentMode(part: CadPart): boolean {
+    if (this.mode === 'integrated') {
+      return part.subsystem === 'shutter' || part.subsystem === 'sensor';
+    }
+    return part.subsystem === this.mode;
+  }
+
+  private syncAssemblyVisibility(): void {
+    const showShutter = this.mode === 'shutter' || this.mode === 'integrated';
+    const showSensor = this.mode === 'sensor' || this.mode === 'integrated';
+    const showMicro = this.mode === 'micro';
+
+    this.shutterAssembly.rootGroup.visible = showShutter;
+    this.sensorAssembly.rootGroup.visible = showSensor;
+    this.microAssembly.rootGroup.visible = showMicro;
+
+    this.shutterAssembly.setPhysicsVisible(this.physicsActive && showShutter);
+    this.sensorAssembly.setPhysicsVisible(this.physicsActive && showSensor);
+    this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
+
+    this.shutterAssembly.updateExplodeGuides(this.currentExplode, showShutter);
+    this.sensorAssembly.updateExplodeGuides(this.currentExplode, showSensor);
+    this.microAssembly.updateExplodeGuides(this.currentExplode, showMicro);
+  }
+
   public getPartsForCurrentMode(): CadPart[] {
-    return this.assembly.parts
-      .filter((p) => p.mode === this.mode)
-      .sort((a, b) => a.order - b.order);
+    const subOrder: Record<CadPart['subsystem'], number> = {
+      shutter: 0,
+      sensor: 1,
+      micro: 2,
+    };
+    return this.allParts
+      .filter((p) => this.isPartInCurrentMode(p))
+      .sort((a, b) => subOrder[a.subsystem] - subOrder[b.subsystem] || a.order - b.order);
   }
 
   public getSelectedPart(): CadPart | null {
     if (!this.selectedPartId) return null;
-    return this.assembly.parts.find((p) => p.id === this.selectedPartId) ?? null;
+    return this.allParts.find((p) => p.id === this.selectedPartId) ?? null;
   }
 
   public isPartHidden(partId: string): boolean {
@@ -203,21 +250,19 @@ export class CadViewport {
     return this.mode;
   }
 
-  public setMode(nextMode: ScaleMode): void {
+  public setMode(nextMode: ScaleMode, immediateCamera = false): void {
     if (this.mode === nextMode) return;
     this.mode = nextMode;
-    this.assembly.macroGroup.visible = nextMode === 'macro';
-    this.assembly.microGroup.visible = nextMode === 'micro';
 
     this.selectedPartId = null;
     this.hoveredPartId = null;
     this.isolatedPartId = null;
     this.hiddenPartIds.clear();
+
+    this.syncAssemblyVisibility();
     this.applyVisibilityAndStyles();
-    this.assembly.setPhysicsVisible(this.physicsActive, this.mode);
-    this.assembly.updateExplodeGuides(this.currentExplode, this.mode);
     this.updateClippingPlane();
-    this.setCameraPreset('iso');
+    this.setCameraPreset('iso', immediateCamera);
 
     this.callbacks.onSelectPart(null);
     this.callbacks.onHoverPart(null);
@@ -228,7 +273,8 @@ export class CadViewport {
     this.targetExplode = THREE.MathUtils.clamp(value, 0, 1);
     if (immediate) {
       this.currentExplode = this.targetExplode;
-      this.assembly.updateExplodeGuides(this.currentExplode, this.mode);
+      this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
+      this.syncAssemblyVisibility();
     }
     this.markDirty();
   }
@@ -252,7 +298,7 @@ export class CadViewport {
 
   public setPhysicsActive(active: boolean): void {
     this.physicsActive = active;
-    this.assembly.setPhysicsVisible(active, this.mode);
+    this.syncAssemblyVisibility();
     this.markDirty();
   }
 
@@ -285,7 +331,6 @@ export class CadViewport {
 
   public togglePartHidden(partId: string): void {
     if (this.isolatedPartId) {
-      // Exit isolate mode first
       const prevIso = this.isolatedPartId;
       this.isolatedPartId = null;
       if (partId === prevIso) {
@@ -334,28 +379,50 @@ export class CadViewport {
   }
 
   public setCameraPreset(preset: CameraPreset, immediate = false): void {
-    const isMacro = this.mode === 'macro';
-    const d = isMacro ? 142 + this.targetExplode * 72 : 76 + this.targetExplode * 46;
-    const target = new THREE.Vector3(0, -1.0, isMacro ? -2 - this.targetExplode * 14 : -1);
+    const e = this.targetExplode;
+    let d: number;
+    let target: THREE.Vector3;
 
-    let pos: THREE.Vector3;
+    if (this.mode === 'shutter') {
+      d = 166 + e * 82;
+      target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
+    } else if (this.mode === 'integrated') {
+      d = 178 + e * 228;
+      target = new THREE.Vector3(0.5 + e * 1.5, -2.5, 4.0 - e * 8.0);
+    } else if (this.mode === 'sensor') {
+      d = 142 + e * 72;
+      target = new THREE.Vector3(0, -1.0, -2 - e * 14);
+    } else {
+      d = 76 + e * 46;
+      target = new THREE.Vector3(0, -1.0, -1);
+    }
+
+    let offset: THREE.Vector3;
     switch (preset) {
       case 'front':
-        pos = new THREE.Vector3(0, 2, d);
+        offset = new THREE.Vector3(0, 2, d);
         break;
       case 'side':
-        pos = new THREE.Vector3(d * 1.05, 8, target.z);
+        offset = new THREE.Vector3(d * 1.04, 8, 0);
         break;
       case 'back':
-        pos = new THREE.Vector3(-d * 0.55, d * 0.34, -d * 0.78);
+        offset = new THREE.Vector3(-d * 0.55, d * 0.34, -d * 0.78);
         break;
       case 'iso':
       default:
-        pos = isMacro
-          ? new THREE.Vector3(d * 0.64, d * 0.38, d * 0.72)
-          : new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
+        if (this.mode === 'shutter') {
+          offset = new THREE.Vector3(d * 0.52, d * 0.28, d * 0.81);
+        } else if (this.mode === 'integrated') {
+          offset = new THREE.Vector3(d * 0.66, d * 0.30, d * 0.69);
+        } else if (this.mode === 'sensor') {
+          offset = new THREE.Vector3(d * 0.64, d * 0.38, d * 0.72);
+        } else {
+          offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
+        }
         break;
     }
+
+    const pos = target.clone().add(offset);
 
     if (immediate) {
       this.camAnimActive = false;
@@ -373,10 +440,12 @@ export class CadViewport {
     const center = new THREE.Vector3();
     box.getCenter(center);
 
-    // Keep current viewing direction, shift target smoothly toward selected part
     const currentOffset = new THREE.Vector3().subVectors(this.camera.position, this.controls.target);
-    const desiredDist = this.mode === 'macro' ? Math.min(currentOffset.length(), 138) : Math.min(currentOffset.length(), 66);
-    currentOffset.setLength(Math.max(desiredDist, this.mode === 'macro' ? 58 : 34));
+    const isMicro = this.mode === 'micro';
+    const maxDist = isMicro ? 66 : this.mode === 'integrated' ? 175 : 142;
+    const minDist = isMicro ? 34 : 58;
+    const desiredDist = Math.min(currentOffset.length(), maxDist);
+    currentOffset.setLength(Math.max(desiredDist, minDist));
 
     const nextPos = center.clone().add(currentOffset);
     this.animateCameraTo(nextPos, center);
@@ -403,8 +472,22 @@ export class CadViewport {
       return;
     }
 
-    const span = this.mode === 'macro' ? 44 : 13;
-    const coord = THREE.MathUtils.lerp(-span, span, this.sectionValue);
+    let minCoord = -44;
+    let maxCoord = 44;
+    if (this.mode === 'micro') {
+      minCoord = -13;
+      maxCoord = 13;
+    } else if (this.mode === 'shutter' || this.mode === 'integrated') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -34;
+        maxCoord = 48;
+      } else {
+        minCoord = -32;
+        maxCoord = 32;
+      }
+    }
+
+    const coord = THREE.MathUtils.lerp(minCoord, maxCoord, this.sectionValue);
 
     if (this.sectionAxis === 'x') {
       this.clippingPlane.normal.set(-1, 0, 0);
@@ -419,8 +502,8 @@ export class CadViewport {
   private applyVisibilityAndStyles(): void {
     this.hoverHighlightMeshes.clear();
 
-    for (const part of this.assembly.parts) {
-      if (part.mode !== this.mode) continue;
+    for (const part of this.allParts) {
+      if (!this.isPartInCurrentMode(part)) continue;
 
       const hidden = this.isPartHidden(part.id);
       part.group.visible = !hidden;
@@ -523,12 +606,21 @@ export class CadViewport {
 
   private pickPartAtPointer(): string | null {
     this.raycaster.setFromCamera(this.pointer, this.camera);
-    const activeGroup = this.mode === 'macro' ? this.assembly.macroGroup : this.assembly.microGroup;
-    const hits = this.raycaster.intersectObjects(activeGroup.children, true);
+    const activeObjects: THREE.Object3D[] = [];
+    if (this.shutterAssembly.rootGroup.visible) {
+      activeObjects.push(...this.shutterAssembly.rootGroup.children);
+    }
+    if (this.sensorAssembly.rootGroup.visible) {
+      activeObjects.push(...this.sensorAssembly.rootGroup.children);
+    }
+    if (this.microAssembly.rootGroup.visible) {
+      activeObjects.push(...this.microAssembly.rootGroup.children);
+    }
+
+    const hits = this.raycaster.intersectObjects(activeObjects, true);
 
     for (const hit of hits) {
       if (!hit.object.visible) continue;
-      // Check clipping plane
       if (this.sectionAxis !== 'off' && this.clippingPlane.distanceToPoint(hit.point) < 0) {
         continue;
       }
@@ -550,22 +642,54 @@ export class CadViewport {
     }
   }
 
+  private stepActiveAssemblies(elapsed: number, delta: number): void {
+    const integrated = this.mode === 'integrated';
+    if (this.shutterAssembly.rootGroup.visible) {
+      this.shutterAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        integrated
+      );
+    }
+    if (this.sensorAssembly.rootGroup.visible) {
+      this.sensorAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        integrated
+      );
+    }
+    if (this.microAssembly.rootGroup.visible) {
+      this.microAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        false
+      );
+    }
+  }
+
   private animate = (): void => {
     this.rafId = requestAnimationFrame(this.animate);
     const delta = Math.min(this.clock.getDelta(), 0.05);
     const elapsed = this.clock.getElapsedTime();
 
     let active = this.physicsActive || this.dirtyFrames > 0;
+    let explodeMoved = false;
 
     // Smooth critically-damped explode interpolation
     const diff = this.targetExplode - this.currentExplode;
     if (Math.abs(diff) > 0.0005) {
       this.currentExplode += diff * Math.min(1, delta * 10.0);
-      this.assembly.updateExplodeGuides(this.currentExplode, this.mode);
+      explodeMoved = true;
       active = true;
     } else if (this.currentExplode !== this.targetExplode) {
       this.currentExplode = this.targetExplode;
-      this.assembly.updateExplodeGuides(this.currentExplode, this.mode);
+      explodeMoved = true;
       active = true;
     }
 
@@ -587,13 +711,21 @@ export class CadViewport {
     }
 
     if (active) {
-      this.assembly.updateAnimation(
-        elapsed,
-        delta,
-        this.currentExplode,
-        this.physicsActive,
-        this.mode
-      );
+      this.stepActiveAssemblies(elapsed, delta);
+      if (explodeMoved || this.dirtyFrames > 0) {
+        this.shutterAssembly.updateExplodeGuides(
+          this.currentExplode,
+          this.shutterAssembly.rootGroup.visible
+        );
+        this.sensorAssembly.updateExplodeGuides(
+          this.currentExplode,
+          this.sensorAssembly.rootGroup.visible
+        );
+        this.microAssembly.updateExplodeGuides(
+          this.currentExplode,
+          this.microAssembly.rootGroup.visible
+        );
+      }
       this.renderer.render(this.scene, this.camera);
       if (this.dirtyFrames > 0) this.dirtyFrames--;
     }

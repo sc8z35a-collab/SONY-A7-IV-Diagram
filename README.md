@@ -1,10 +1,25 @@
 # Next-Gen Mirrorless Camera — 3D CAD Technical Anatomy
 
 Interactive PBR 3D CAD disassembly and optical/physics anatomy viewer built with Three.js, TypeScript, and Vite.
+Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; technical explanations and bespoke schematics appear exclusively inside the part inspection drawer.
 
-## Current Module: Phase 1 — Full-Frame Image Sensor Assembly
+## Implemented Subsystems (33 Dissectible CAD Sub-Assemblies)
 
-### Macro Sensor Module (14 Sub-Assemblies)
+### Phase 2 — Dual-Driven Carbon-Fiber Focal-Plane Shutter Assembly (12 Sub-Assemblies)
+1. Front Protective Cover Plate & Matte Stray-Light Aperture Baffle
+2. Dedicated Anti-Dust Protective Sensor Shield Curtain (Power-Off Auto-Close)
+3. 1st (Front) Curtain — 4-Blade Ultra-Thin CFRP Carbon-Fiber Blades (~0.05 mm)
+4. 1st Curtain Parallelogram 4-Bar Linkage Arms & Micro Rivets
+5. Intermediate Partition Plate (0.15 mm Ultra-Thin Curtain Chamber Separator)
+6. 2nd (Rear) Curtain — 4-Blade Slit-Forming Exposure Termination Blades (1/8000 s Slit Exposure)
+7. 2nd Curtain Parallelogram 4-Bar Linkage Arms & High-Strength Drive Pin
+8. Dual-Driven Actuator — High-Tension Torsion Springs × 2 + Electromagnetic Boost Motor (1/400 s Flash Sync)
+9. Microsecond-Precision Twin Holding Electromagnets (Permalloy Core Front & Rear Solenoids)
+10. 500k-Cycle Coreless DC Charge Motor, Multi-Stage Brass/POM Gear Train & Eccentric Cocking Cam
+11. Self-Diagnostic 940 nm IR Photo-Interrupter Curtain Speed Monitors & Control FPC
+12. High-Rigidity Base Chassis, Elastomer Rebound Brake Dampers & 4-Point Floating Anti-Vibration Mounts
+
+### Phase 1 — Full-Frame Image Sensor & 5-Axis IBIS Assembly (14 Sub-Assemblies)
 1. Optical Aperture Baffle & EPDM Dust-Seal Bezel
 2. Supersonic Wave Filter (SSWF) & PZT Piezoelectric Dust Reduction Actuator
 3. 16-Point Gaussian-Distribution Birefringent Quartz OLPF
@@ -28,6 +43,12 @@ Interactive PBR 3D CAD disassembly and optical/physics anatomy viewer built with
 - 2-Layer Transistor Pixel, SVG Vertical Transfer Gate, Shielded Global Shutter Memory Node & LOFIC
 - Fine-Pitch Cu-Cu Direct Hybrid Bonding Interconnect Interface
 - Column-Parallel CDS / Multi-Bit ADC Logic & Stacked High-Speed DRAM Frame Buffer
+
+## Viewing Modes
+- **Integrated Camera Core**: Shutter + Sensor aligned on the true optical axis (26 parts)
+- **Focal-Plane Shutter**: Standalone 12-part shutter mechanism with live slow-motion slit-exposure & motorized recocking simulation
+- **Full-Frame Sensor**: Standalone 14-part sensor + 5-axis IBIS module
+- **Micro Pixel Cross-Section**: 2×2 nano-scale semiconductor pixel architecture
 
 ## Development
 

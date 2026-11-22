@@ -34,6 +34,14 @@ function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButto
 
 // Crisp industrial CAD SVG pictograms — strictly zero letters or numbers
 const ICONS = {
+  // Integrated shutter + sensor camera core (two parallel optical planes)
+  integratedCore:
+    '<rect x="3" y="4" width="11" height="11" rx="1.6"/><line x1="3" y1="8.2" x2="14" y2="8.2"/><line x1="3" y1="11.2" x2="14" y2="11.2"/><path d="M16 9h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-1"/><rect x="13" y="13" width="5" height="4" rx="0.8"/>',
+
+  // Focal-plane shutter: upper & lower horizontal curtain blades with central exposure slit
+  shutterModule:
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="3" y1="14.5" x2="21" y2="14.5"/><line x1="3" y1="6.8" x2="21" y2="6.8" opacity="0.45"/><line x1="3" y1="17.2" x2="21" y2="17.2" opacity="0.45"/><line x1="17.5" y1="4" x2="17.5" y2="20" opacity="0.5"/>',
+
   // Macro sensor frame icon
   macroSensor:
     '<rect x="3" y="5" width="18" height="14" rx="2"/><rect x="7" y="8.5" width="10" height="7" rx="1"/><line x1="7" y1="3" x2="7" y2="5"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="17" y1="3" x2="17" y2="5"/><line x1="7" y1="19" x2="7" y2="21"/><line x1="12" y1="19" x2="12" y2="21"/><line x1="17" y1="19" x2="17" y2="21"/>',
@@ -74,7 +82,7 @@ const ICONS = {
   renderCad:
     '<polygon points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="4" y1="7.5" x2="20" y2="16.5" opacity="0.45"/><line x1="20" y1="7.5" x2="4" y2="16.5" opacity="0.45"/>',
 
-  // Optical rays + IBIS live physics toggle
+  // Optical rays / slit exposure & IBIS live physics toggle
   physicsRays:
     '<line x1="3" y1="6" x2="12" y2="12"/><line x1="3" y1="12" x2="12" y2="12"/><line x1="3" y1="18" x2="12" y2="12"/><line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="21" y2="17"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>',
 
@@ -105,7 +113,9 @@ export class ZeroTextControls {
   private root: HTMLElement;
   private handlers: ZeroTextUIHandlers;
 
-  private macroBtn: HTMLButtonElement;
+  private integratedBtn: HTMLButtonElement;
+  private shutterBtn: HTMLButtonElement;
+  private sensorBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
@@ -124,7 +134,7 @@ export class ZeroTextControls {
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
 
-  private currentMode: ScaleMode = 'macro';
+  private currentMode: ScaleMode = 'shutter';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -165,17 +175,21 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: Macro <-> Micro Pixel Scale Switch
+    // Group A: 4-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Micro Pixel)
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
-    this.macroBtn = createIconButton(ICONS.macroSensor);
-    this.macroBtn.classList.add('is-active');
+    this.integratedBtn = createIconButton(ICONS.integratedCore);
+    this.shutterBtn = createIconButton(ICONS.shutterModule);
+    this.shutterBtn.classList.add('is-active');
+    this.sensorBtn = createIconButton(ICONS.macroSensor);
     this.microBtn = createIconButton(ICONS.microPixel);
 
-    this.macroBtn.addEventListener('click', () => this.setMode('macro'));
+    this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
+    this.shutterBtn.addEventListener('click', () => this.setMode('shutter'));
+    this.sensorBtn.addEventListener('click', () => this.setMode('sensor'));
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
-    scaleGroup.append(this.macroBtn, this.microBtn);
+    scaleGroup.append(this.integratedBtn, this.shutterBtn, this.sensorBtn, this.microBtn);
 
     // Group B: Exploded View Dissection Slider
     const explodeGroup = document.createElement('div');
@@ -249,7 +263,7 @@ export class ZeroTextControls {
     this.cadBtn.addEventListener('click', () => this.setRenderMode('cad'));
     renderGroup.append(this.solidBtn, this.xrayBtn, this.cadBtn);
 
-    // Group E: Optical Ray / Physics Simulation & Visibility Reset
+    // Group E: Optical Ray / Slit Exposure Physics Simulation & Visibility Reset
     const actionGroup = document.createElement('div');
     actionGroup.className = 'cad-dock-group';
 
@@ -292,11 +306,17 @@ export class ZeroTextControls {
     this.root.appendChild(dock);
   }
 
+  private applyModeButtons(mode: ScaleMode): void {
+    this.integratedBtn.classList.toggle('is-active', mode === 'integrated');
+    this.shutterBtn.classList.toggle('is-active', mode === 'shutter');
+    this.sensorBtn.classList.toggle('is-active', mode === 'sensor');
+    this.microBtn.classList.toggle('is-active', mode === 'micro');
+  }
+
   private setMode(mode: ScaleMode): void {
     if (this.currentMode === mode) return;
     this.currentMode = mode;
-    this.macroBtn.classList.toggle('is-active', mode === 'macro');
-    this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.applyModeButtons(mode);
     this.handlers.onModeChange(mode);
   }
 
@@ -333,8 +353,7 @@ export class ZeroTextControls {
 
   public syncMode(mode: ScaleMode): void {
     this.currentMode = mode;
-    this.macroBtn.classList.toggle('is-active', mode === 'macro');
-    this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.applyModeButtons(mode);
   }
 
   public syncSectionAxis(axis: SectionAxis, value = 0.5): void {
@@ -365,10 +384,17 @@ export class ZeroTextControls {
     this.layerRowMap.clear();
     this.resetVisBtn.disabled = !hasAnyHidden;
 
-    // Bar width rhythmically reflects real physical breadth of optical vs silicon vs IBIS chassis layers
-    const total = Math.max(1, parts.length);
+    let prevSubsystem: CadPart['subsystem'] | null = null;
 
     parts.forEach((part, idx) => {
+      // Visual zero-text separator line between Shutter and Sensor subsystems in integrated mode
+      if (prevSubsystem && prevSubsystem !== part.subsystem) {
+        const sep = document.createElement('div');
+        sep.className = 'layer-sep';
+        this.layerRail.appendChild(sep);
+      }
+      prevSubsystem = part.subsystem;
+
       const row = document.createElement('div');
       row.className = 'layer-item';
       const hidden = isHidden(part.id);
@@ -382,12 +408,23 @@ export class ZeroTextControls {
 
       const bar = document.createElement('span');
       bar.className = 'layer-bar';
-      const ratio = idx / Math.max(1, total - 1);
-      // Subtle geometric profile mirroring optical filter stack -> die -> wider IBIS stage
-      const widthPx =
-        part.mode === 'macro'
-          ? Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (idx >= 9 ? 10 : 0))
-          : Math.round(18 + (idx === 3 || idx === 4 ? 10 : 4));
+      let widthPx = 20;
+      if (part.subsystem === 'shutter') {
+        // Reflects outer cover/base frames (wider) vs blade packs & right-hand drive bay components
+        widthPx =
+          part.order === 1 || part.order === 12
+            ? 30
+            : part.order === 3 || part.order === 5 || part.order === 6
+              ? 24
+              : part.order >= 8 && part.order <= 10
+                ? 26
+                : 17;
+      } else if (part.subsystem === 'sensor') {
+        const ratio = (part.order - 1) / 13;
+        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 10 ? 10 : 0));
+      } else {
+        widthPx = Math.round(18 + (idx === 3 || idx === 4 ? 10 : 4));
+      }
       bar.style.width = `${widthPx}px`;
 
       const eyeBtn = document.createElement('button');
