@@ -121,9 +121,58 @@ window.addEventListener('keydown', (e) => {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Shutter mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Mainboard mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
-if (preset === 'shutter_exploded') {
+if (preset === 'mainboard_exploded') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mainboard_section') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.54);
+  controls.syncSectionAxis('x', 0.54);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mainboard_drawer') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mb-isp-die', false);
+  syncRail();
+} else if (preset === 'mainboard_npu_drawer') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.82, true);
+  controls.setExplodeValue(0.82);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mb-ai-npu', false);
+  syncRail();
+} else if (preset === 'mainboard_back') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.65, true);
+  controls.setExplodeValue(0.65);
+  viewport.setCameraPreset('back', true);
+  syncRail();
+} else if (preset === 'shutter_assembled') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0, true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'shutter_exploded') {
   viewport.setMode('shutter', true);
   controls.syncMode('shutter');
   viewport.setExplode(0.95, true);

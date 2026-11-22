@@ -1,54 +1,40 @@
 # Next-Gen Mirrorless Camera — 3D CAD Technical Anatomy
 
-Interactive PBR 3D CAD disassembly and optical/physics anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; technical explanations and bespoke schematics appear exclusively inside the part inspection drawer.
+Interactive PBR 3D CAD disassembly and optical/physics/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
+Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations and bespoke schematics appear exclusively inside the part inspection drawer.
 
-## Implemented Subsystems (33 Dissectible CAD Sub-Assemblies)
+## Implemented Subsystems (49 Dissectible CAD Sub-Assemblies)
+
+### Phase 3 — Image Processing Engine (4nm ISP + AI NPU) & 12-Layer HDI Mainboard (16 Sub-Assemblies)
+1. Two-Phase Copper Vapor Chamber, Sintered Heat Pipe, Pyrolytic Graphite Sheet & Thermal Interface Pads (TIM)
+2. Multi-Compartment Nickel-Silver EMI/RF Shielding Frame & Grounding Clips
+3. ISP Main Engine Nickel-Plated Copper Integrated Heat Spreader (IHS) & Thermal Gel
+4. 4nm Flagship Main Image Processing Engine (ISP) Bare Silicon Die (Dual-Stream 16-bit RAW / 8K60p Codec)
+5. Flip-Chip BGA ABF Organic Interposer Substrate, Cu Pillar Micro-Bumps & SnAgCu Solder Ball Grid
+6. Dedicated AI / Deep-Learning Accelerator NPU (2D Systolic Array MAC Engine for Pose Estimation, Neural NR & 4× Upscaling)
+7. Quad-Channel Stacked LPDDR5X-8533 High-Speed Frame Buffer DRAM × 2 (68+ GB/s Pre-Capture Ring Buffer)
+8. Multi-Phase Synchronous Buck PMIC, 6 Molded Ferrite Power Inductors & Polymer Tantalum PDN Bank
+9. Dual CFexpress 4.0 Type B (PCIe Gen4 ×2 / 4,000 MB/s / NVMe 1.4c) & SDXC UHS-II Card Cage
+10. 6-Axis Quartz MEMS Gyroscope/Accelerometer IMU & Real-Time 2,000 Hz IBIS/Lens Servo MCU
+11. C2PA Hardware Security Element (Content Credentials ECDSA Signing) & ±0.5 ppm TCXO Master Clock
+12. Professional External I/O Port Cluster (Full-Size HDMI 2.1 48Gbps, USB-C 10Gbps PD, 2.5GBASE-T LAN, 24-bit Audio, ESD TVS)
+13. Shielded Tri-Band Wi-Fi 6E / Wi-Fi 7 (2×2 MIMO) & Bluetooth 5.3 RF SiP Module with 50 Ω Coax Feed
+14. 12-Layer Any-Layer HDI Main Motherboard PCB (UV Laser Microvias, 100 Ω / 85 Ω Differential Impedances, 12-Layer Edge Laminate)
+15. High-Density Board-to-Board 80-Pin Shielded SLVS-EC Mezzanine & ZIF FPC Connector Harness (12 Ports)
+16. Front Thermal-Isolation Magnesium Structural Mid-Frame & EMI Grounding Bracket
 
 ### Phase 2 — Dual-Driven Carbon-Fiber Focal-Plane Shutter Assembly (12 Sub-Assemblies)
-1. Front Protective Cover Plate & Matte Stray-Light Aperture Baffle
-2. Dedicated Anti-Dust Protective Sensor Shield Curtain (Power-Off Auto-Close)
-3. 1st (Front) Curtain — 4-Blade Ultra-Thin CFRP Carbon-Fiber Blades (~0.05 mm)
-4. 1st Curtain Parallelogram 4-Bar Linkage Arms & Micro Rivets
-5. Intermediate Partition Plate (0.15 mm Ultra-Thin Curtain Chamber Separator)
-6. 2nd (Rear) Curtain — 4-Blade Slit-Forming Exposure Termination Blades (1/8000 s Slit Exposure)
-7. 2nd Curtain Parallelogram 4-Bar Linkage Arms & High-Strength Drive Pin
-8. Dual-Driven Actuator — High-Tension Torsion Springs × 2 + Electromagnetic Boost Motor (1/400 s Flash Sync)
-9. Microsecond-Precision Twin Holding Electromagnets (Permalloy Core Front & Rear Solenoids)
-10. 500k-Cycle Coreless DC Charge Motor, Multi-Stage Brass/POM Gear Train & Eccentric Cocking Cam
-11. Self-Diagnostic 940 nm IR Photo-Interrupter Curtain Speed Monitors & Control FPC
-12. High-Rigidity Base Chassis, Elastomer Rebound Brake Dampers & 4-Point Floating Anti-Vibration Mounts
+- Front Cover & Drive-Bay Cutout, Anti-Dust Sensor Shield, 4-Blade CFRP 1st & 2nd Curtains, Dual Parallelogram 4-Bar Linkages, 0.15 mm Mid-Plate, Dual-Driven Torsion Springs + Electromagnetic Boost Actuator (1/400 s Sync), Twin Permalloy Holding Solenoids, Coreless DC Charge Motor & Gear Train, 940 nm IR Speed Monitors, Rebound Brake Dampers & Floating Anti-Vib Mounts.
 
-### Phase 1 — Full-Frame Image Sensor & 5-Axis IBIS Assembly (14 Sub-Assemblies)
-1. Optical Aperture Baffle & EPDM Dust-Seal Bezel
-2. Supersonic Wave Filter (SSWF) & PZT Piezoelectric Dust Reduction Actuator
-3. 16-Point Gaussian-Distribution Birefringent Quartz OLPF
-4. Hybrid Cu²⁺ Phosphate IR-Absorption + Dichroic Multilayer IR/UV Cut Filter
-5. Low-Alpha AR Borosilicate Cover Glass & Kovar Hermetic Seal Ring
-6. Full-Frame 3D-Stacked Global Shutter + 2-Layer Transistor Pixel BSI-CMOS Die (36.0 × 24.0 mm)
-7. 99.99% Au Ultra-Low-Loop Thermosonic Wire Bonding Array
-8. HTCC 12-Layer Alumina Ceramic LGA Package & CuW Thermal Slug
-9. Multi-Layer Sensor Main PCB & Isolated Low-Noise Power Stage
-10. SLVS-EC v3 (10 Gbps/lane) U-Loop Shielded Flex PCB Harness
-11. 5-Axis IBIS Movable Magnesium Carrier, Air-Core Flat Voice Coils & Hall Sensors
-12. Kinematic 3-Point Si₃N₄ Ceramic Ball Suspension & Magnetic Preload Guides
-13. Stationary IBIS Base Chassis, N52 Neodymium Closed-Circuit Magnet Yokes & 3-Point Flange-Back Calibrators
-14. Sigma-Shaped Pyro-Graphite Thermal Bridge & Copper Heat Spreader
+### Phase 1 — Full-Frame Image Sensor & 5-Axis IBIS Assembly (14 Sub-Assemblies + 7 Micro Pixel Layers)
+- Aperture Mask, SSWF Ultrasonic Dust Filter, 16-Point Quartz OLPF, Hybrid IR/UV Cut Filter, Hermetic Cover Glass, 3D-Stacked Global Shutter BSI-CMOS Die, 4N Au Wire Bonds, HTCC Alumina LGA Package, Sensor PCB, SLVS-EC U-Loop FPC, 5-Axis IBIS VCM Carrier, Si₃N₄ Ceramic Ball Suspension, N52 Magnet Yoke, Sigma Graphite Thermal Bridge + 7-Layer 2×2 Bayer Micro Pixel Semiconductor Cross-Section.
 
-### Micro Pixel Architecture (7 Nano-Scale Layers, 2×2 Bayer Array)
-- Gapless Aspheric On-Chip Microlens Array (OCL)
-- RGGB Bayer Color Filter Array & Tungsten Metal Light-Guide Grid
-- BSI Back-Side Anti-Reflection Moth-Eye Pyramid Nanostructure
-- Cross-Type Dual Pixel Split Pinned Photodiodes & Full Trench Isolation (FTI)
-- 2-Layer Transistor Pixel, SVG Vertical Transfer Gate, Shielded Global Shutter Memory Node & LOFIC
-- Fine-Pitch Cu-Cu Direct Hybrid Bonding Interconnect Interface
-- Column-Parallel CDS / Multi-Bit ADC Logic & Stacked High-Speed DRAM Frame Buffer
-
-## Viewing Modes
-- **Integrated Camera Core**: Shutter + Sensor aligned on the true optical axis (26 parts)
-- **Focal-Plane Shutter**: Standalone 12-part shutter mechanism with live slow-motion slit-exposure & motorized recocking simulation
-- **Full-Frame Sensor**: Standalone 14-part sensor + 5-axis IBIS module
-- **Micro Pixel Cross-Section**: 2×2 nano-scale semiconductor pixel architecture
+## Viewing Modes (5 Zero-Text Switcher Modes)
+- **Integrated Camera Core (42 Layers)**: Shutter + Sensor & IBIS + Mainboard & ISP Engine aligned on the true optical axis
+- **Focal-Plane Shutter (12 Layers)**
+- **Full-Frame Sensor & 5-Axis IBIS (14 Layers)**
+- **ISP Engine & Mainboard (16 Layers — Default)**
+- **Micro Pixel Cross-Section (7 Layers)**
 
 ## Development
 

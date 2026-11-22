@@ -613,6 +613,346 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="180" y="82" font-size="8" fill="#1e40af">IBIS・ボディへの微ブレ遮断</text>
         <text x="178" y="94" font-size="8.5" font-weight="bold" fill="#1d4ed8">4点フローティング防振</text>
       `);
+
+    case 'mb_vapor':
+      return wrap(`
+        <!-- Two-Phase Copper Vapor Chamber Cross-Section -->
+        <rect x="22" y="18" width="276" height="44" rx="5" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+        <!-- Capillary copper wick lining -->
+        <rect x="26" y="54" width="268" height="5" fill="#ea580c" opacity="0.45"/>
+        <rect x="26" y="21" width="268" height="4" fill="#ea580c" opacity="0.35"/>
+        <!-- Vapor arrows rising from hot ISP center to cool ends -->
+        <path d="M160 52 L160 32 L54 32 M160 32 L266 32" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="4 2"/>
+        <polygon points="50,32 58,28 58,36" fill="#dc2626"/>
+        <polygon points="270,32 262,28 262,36" fill="#dc2626"/>
+        <!-- Liquid return along wick -->
+        <path d="M44 56 L146 56 M276 56 L174 56" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <!-- TIM pad & 4nm ISP beneath -->
+        <rect x="116" y="62" width="88" height="10" fill="#f472b6"/>
+        <rect x="122" y="72" width="76" height="20" rx="2" fill="#0f766e"/>
+        <text x="130" y="85" font-size="8.5" font-weight="bold" fill="#fff">4nm ISP 発熱源</text>
+        <text x="68" y="29" font-size="8" font-weight="bold" fill="#b91c1c">蒸気（高速拡散）</text>
+        <text x="192" y="29" font-size="8" font-weight="bold" fill="#b91c1c">潜熱輸送 k≈10,000</text>
+        <text x="48" y="49" font-size="7.5" fill="#0369a1">凝縮液→毛細管還流</text>
+        <text x="210" y="71" font-size="7.5" fill="#be185d">ピンク TIM パッド</text>
+        <text x="58" y="108" font-size="8.5" fill="#334155">密閉二相蒸発サイクル：ファンレスで 8K60p 連続放熱!</text>
+      `);
+
+    case 'mb_emi':
+      return wrap(`
+        <!-- Multi-Compartment Faraday Cage -->
+        <rect x="24" y="22" width="272" height="62" rx="4" fill="#f8fafc" stroke="#475569" stroke-width="2.4"/>
+        <line x1="114" y1="22" x2="114" y2="84" stroke="#475569" stroke-width="2.4"/>
+        <line x1="206" y1="22" x2="206" y2="84" stroke="#475569" stroke-width="2.4"/>
+        <rect x="44" y="48" width="50" height="26" rx="2" fill="#0f766e"/>
+        <text x="54" y="64" font-size="8.5" fill="#fff">ISP SoC</text>
+        <rect x="136" y="48" width="50" height="26" rx="2" fill="#6d28d9"/>
+        <text x="147" y="64" font-size="8.5" fill="#fff">AI NPU</text>
+        <rect x="226" y="48" width="50" height="26" rx="2" fill="#0284c7"/>
+        <text x="234" y="64" font-size="8.5" fill="#fff">Wi-Fi 6E</text>
+        <!-- EMI waves bounced back by walls -->
+        <path d="M96 42 Q103 36 110 42" fill="none" stroke="#dc2626" stroke-width="1.6"/>
+        <path d="M222 42 Q215 36 209 42" fill="none" stroke="#dc2626" stroke-width="1.6"/>
+        <!-- Ground pins -->
+        <rect x="24" y="84" width="272" height="8" fill="#e2b648"/>
+        <text x="96" y="91" font-size="7.5" font-weight="bold" fill="#1e293b">低インピーダンス多点グラウンド接地 (GND)</text>
+        <text x="54" y="108" font-size="8.5" fill="#334155">洋白金属ファラデーケージ：高周波ノイズを 60 dB 以上遮断</text>
+      `);
+
+    case 'mb_ihs':
+      return wrap(`
+        <!-- Hotspot Heat Spreading through Copper IHS -->
+        <rect x="40" y="18" width="240" height="22" rx="3" fill="#d97d4e" stroke="#9a3412"/>
+        <text x="86" y="33" font-size="9" font-weight="bold" fill="#fff">ニッケルメッキ銅 IHS（広域熱拡散）</text>
+        <rect x="96" y="40" width="128" height="8" fill="#62a8d8"/>
+        <rect x="104" y="48" width="112" height="26" rx="2" fill="#0f766e"/>
+        <rect x="142" y="52" width="36" height="18" rx="2" fill="#ef4444" opacity="0.85"/>
+        <text x="146" y="64" font-size="8" font-weight="bold" fill="#fff">局所熱</text>
+        <!-- Spreading arrows -->
+        <path d="M160 50 L160 36 M160 36 L82 22 M160 36 L238 22" fill="none" stroke="#fef08a" stroke-width="2"/>
+        <rect x="64" y="74" width="192" height="12" fill="#164a41"/>
+        <text x="98" y="83" font-size="7.5" fill="#d1fae5">FC-BGA パッケージ基板</text>
+        <text x="48" y="104" font-size="8.5" fill="#334155">局所 50 W/cm² 超の熱を銅蓋で水平拡散＆ダイ割れ防止</text>
+      `);
+
+    case 'mb_isp_die':
+      return wrap(`
+        <!-- Dual-Stream 16-bit Linear RAW ISP Pipeline -->
+        <rect x="12" y="36" width="52" height="40" rx="4" fill="#cffafe" stroke="#0891b2"/>
+        <text x="17" y="53" font-size="8" font-weight="bold" fill="#155e75">SLVS-EC</text>
+        <text x="17" y="65" font-size="7.5" fill="#0e7490">160 Gbps</text>
+        <path d="M64 56 L82 56" stroke="#0891b2" stroke-width="2"/>
+        <rect x="82" y="28" width="76" height="56" rx="5" fill="#0f766e"/>
+        <text x="91" y="45" font-size="8.5" font-weight="bold" fill="#fff">16-bit RAW</text>
+        <text x="90" y="58" font-size="7.5" fill="#ccfbf1">デモザイク</text>
+        <text x="90" y="70" font-size="7.5" fill="#ccfbf1">3D-LUT 色変換</text>
+        <!-- Dual Stream Split -->
+        <path d="M158 44 L184 32 M158 68 L184 80" stroke="#0d5bd9" stroke-width="2.2"/>
+        <rect x="184" y="16" width="122" height="32" rx="4" fill="#1d4ed8"/>
+        <text x="192" y="30" font-size="8" font-weight="bold" fill="#fff">① 記録ストリーム</text>
+        <text x="192" y="42" font-size="7.5" fill="#dbeafe">8K60p / 120fps RAW</text>
+        <rect x="184" y="62" width="122" height="32" rx="4" fill="#0284c7"/>
+        <text x="192" y="76" font-size="8" font-weight="bold" fill="#fff">② EVF専用ストリーム</text>
+        <text x="192" y="88" font-size="7.5" fill="#e0f2fe">遅延ゼロ・暗転なし表示!</text>
+        <text x="48" y="109" font-size="8.5" fill="#334155">デュアルストリーム構造で連写中も完全ブラックアウトフリー</text>
+      `);
+
+    case 'mb_interposer':
+      return wrap(`
+        <!-- Flip-Chip BGA Cross Section -->
+        <rect x="76" y="14" width="168" height="20" rx="2" fill="#0f766e"/>
+        <text x="112" y="27" font-size="8.5" font-weight="bold" fill="#fff">4nm ISP シリコンダイ</text>
+        <!-- Underfill + Cu Pillar Micro-Bumps -->
+        <rect x="72" y="34" width="176" height="14" fill="#334155" opacity="0.35"/>
+        ${[88, 106, 124, 142, 160, 178, 196, 214, 232]
+          .map((x) => `<rect x="${x - 3}" y="34" width="6" height="14" fill="#d87342"/>`)
+          .join('')}
+        <text x="252" y="44" font-size="7.5" fill="#9a3412">Cuマイクロ</text>
+        <!-- ABF RDL Interposer Substrate -->
+        <rect x="44" y="48" width="232" height="22" rx="2" fill="#164a41"/>
+        <text x="80" y="62" font-size="8.5" fill="#d1fae5">多層 ABF ビルドアップ再配線基板 (RDL)</text>
+        <!-- SnAgCu Solder Balls -->
+        ${[64, 96, 128, 160, 192, 224, 256]
+          .map((x) => `<circle cx="${x}" cy="78" r="6.5" fill="#cbd5e1" stroke="#475569"/>`)
+          .join('')}
+        <!-- HDI Mainboard -->
+        <rect x="24" y="86" width="272" height="14" rx="2" fill="#0e5a44"/>
+        <text x="72" y="96" font-size="8" fill="#fef08a">12層 HDI メインマザーボード (0.4 mm ピッチ)</text>
+        <text x="68" y="112" font-size="8" fill="#334155">直下接続で寄生インダクタンス約 1/10・アンダーフィル保護</text>
+      `);
+
+    case 'mb_ai_npu':
+      return wrap(`
+        <!-- 2D Systolic Array MAC Grid -->
+        <rect x="18" y="16" width="124" height="78" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        ${[0, 1, 2, 3]
+          .flatMap((r) =>
+            [0, 1, 2, 3].map(
+              (c) =>
+                `<rect x="${30 + c * 26}" y="${24 + r * 16}" width="20" height="12" rx="2" fill="#6d28d9" opacity="${(0.55 + ((r + c) % 4) * 0.14).toFixed(2)}"/>`
+            )
+          )
+          .join('')}
+        <text x="24" y="106" font-size="8.5" font-weight="bold" fill="#5b21b6">2D シストリックアレイ (MAC)</text>
+        <!-- Flow arrows into AI outputs -->
+        <path d="M146 54 L168 54" stroke="#7c3aed" stroke-width="2.4"/>
+        <polygon points="172,54 164,49 164,59" fill="#7c3aed"/>
+        <rect x="174" y="16" width="130" height="24" rx="4" fill="#ede9fe" stroke="#8b5cf6"/>
+        <text x="184" y="31" font-size="8.5" font-weight="bold" fill="#4c1d95">骨格姿勢推定 AF (120Hz)</text>
+        <rect x="174" y="44" width="130" height="24" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="184" y="59" font-size="8.5" font-weight="bold" fill="#075985">カメラ内 AI ノイズ低減</text>
+        <rect x="174" y="72" width="130" height="24" rx="4" fill="#fef3c7" stroke="#d97706"/>
+        <text x="184" y="87" font-size="8.5" font-weight="bold" fill="#92400e">カメラ内 4× 超解像 (96MP)</text>
+        <text x="176" y="108" font-size="7.5" fill="#475569">INT8 量子化推論で高効率・超低遅延</text>
+      `);
+
+    case 'mb_lpddr5x':
+      return wrap(`
+        <!-- Pre-Capture Ring Buffer Diagram -->
+        <circle cx="88" cy="54" r="32" fill="none" stroke="#cbd5e1" stroke-width="10"/>
+        <path d="M88 22 A32 32 0 1 1 58 66" fill="none" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
+        <text x="64" y="51" font-size="8.5" font-weight="bold" fill="#1d4ed8">リング</text>
+        <text x="62" y="63" font-size="8" fill="#1e40af">バッファ</text>
+        <text x="34" y="104" font-size="8.5" fill="#1d4ed8">LPDDR5X (68 GB/s)</text>
+        <!-- Arrow to CFexpress on shutter press -->
+        <path d="M126 54 L172 54" stroke="#d97706" stroke-width="2.4"/>
+        <polygon points="176,54 168,49 168,59" fill="#d97706"/>
+        <text x="128" y="44" font-size="8" font-weight="bold" fill="#b45309">全押し!</text>
+        <rect x="178" y="20" width="126" height="68" rx="6" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="188" y="38" font-size="9" font-weight="bold" fill="#92400e">プリ撮影タイムマシン</text>
+        <text x="188" y="54" font-size="8" fill="#334155">半押し中に最新1秒分の</text>
+        <text x="188" y="66" font-size="8" fill="#334155">RAWを常時メモリ保持し</text>
+        <text x="188" y="78" font-size="8" font-weight="bold" fill="#b45309">最大1秒前まで遡及保存!</text>
+      `);
+
+    case 'mb_pmic':
+      return wrap(`
+        <!-- Multi-Phase Buck Ripple Cancellation -->
+        <rect x="16" y="20" width="60" height="58" rx="4" fill="#fef3c7" stroke="#d97706"/>
+        <text x="24" y="44" font-size="8.5" font-weight="bold" fill="#92400e">電池</text>
+        <text x="24" y="58" font-size="9" font-weight="bold" fill="#b45309">7.2 V</text>
+        <path d="M76 49 L98 49" stroke="#475569" stroke-width="2"/>
+        <!-- 4-phase shifted waves -->
+        <rect x="100" y="18" width="118" height="62" rx="4" fill="#ffffff" stroke="#cbd5e1"/>
+        <path d="M106 42 L120 26 L134 42 L148 26 L162 42 L176 26 L190 42 L204 26" fill="none" stroke="#93c5fd" stroke-width="1.4"/>
+        <path d="M106 26 L120 42 L134 26 L148 42 L162 26 L176 42 L190 26 L204 42" fill="none" stroke="#60a5fa" stroke-width="1.4"/>
+        <line x1="106" y1="62" x2="210" y2="62" stroke="#0d5bd9" stroke-width="2.6"/>
+        <text x="112" y="74" font-size="7.5" font-weight="bold" fill="#0d5bd9">合成出力：リップル &lt;10mV!</text>
+        <path d="M218 49 L238 49" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="240" y="20" width="66" height="58" rx="4" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="248" y="42" font-size="8.5" font-weight="bold" fill="#1d4ed8">4nm ISP</text>
+        <text x="248" y="57" font-size="9" font-weight="bold" fill="#0f172a">0.75 V</text>
+        <text x="250" y="69" font-size="7.5" fill="#1e40af">効率 95%</text>
+        <text x="36" y="102" font-size="8.5" fill="#334155">多相同期整流（90°位相差）で波を相殺し鏡のように安定した給電</text>
+      `);
+
+    case 'mb_cfexpress':
+      return wrap(`
+        <!-- Storage Bandwidth Bar Comparison -->
+        <text x="18" y="28" font-size="8.5" fill="#475569">SD UHS-II</text>
+        <rect x="108" y="18" width="22" height="14" rx="2" fill="#94a3b8"/>
+        <text x="136" y="29" font-size="8.5" fill="#475569">312 MB/s</text>
+
+        <text x="18" y="54" font-size="8.5" fill="#334155">CFexpress 2.0 B</text>
+        <rect x="108" y="44" width="96" height="14" rx="2" fill="#0284c7"/>
+        <text x="210" y="55" font-size="8.5" fill="#0369a1">2,000 MB/s</text>
+
+        <text x="18" y="80" font-size="8.5" font-weight="bold" fill="#b45309">CFexpress 4.0 B</text>
+        <rect x="108" y="70" width="192" height="16" rx="3" fill="#f59e0b"/>
+        <text x="172" y="81" font-size="8.5" font-weight="bold" fill="#fff">4,000 MB/s (12.8×!)</text>
+
+        <text x="26" y="104" font-size="8.5" fill="#334155">PCIe Gen4 ×2 / NVMe 1.4c 直結 → 8K60p RAW ＆ 120fps無限連写</text>
+      `);
+
+    case 'mb_imu_mcu':
+      return wrap(`
+        <!-- 6-Axis Quartz IMU + Coordinated 8.5-Stop IBIS/OIS -->
+        <rect x="16" y="24" width="84" height="58" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="24" y="42" font-size="8.5" font-weight="bold" fill="#854d0e">6軸水晶IMU</text>
+        <text x="24" y="56" font-size="7.5" fill="#713f12">コリオリ力検出</text>
+        <text x="24" y="69" font-size="8" font-weight="bold" fill="#a16207">2,000 Hz計測</text>
+        <path d="M100 53 L122 53" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="122" y="28" width="64" height="50" rx="5" fill="#1e293b"/>
+        <text x="131" y="48" font-size="8.5" font-weight="bold" fill="#38bdf8">制御MCU</text>
+        <text x="130" y="63" font-size="7.5" fill="#e2e8f0">PID最適配分</text>
+        <path d="M186 42 L208 32 M186 64 L208 74" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="210" y="16" width="96" height="30" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="218" y="34" font-size="8.5" font-weight="bold" fill="#1d4ed8">ボディ 5軸IBIS</text>
+        <rect x="210" y="58" width="96" height="30" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="218" y="76" font-size="8.5" font-weight="bold" fill="#15803d">レンズ側 OIS</text>
+        <text x="48" y="106" font-size="8.5" fill="#334155">ボディ＋レンズ協調制御で最大 8.5 段の手ブレ補正を実現!</text>
+      `);
+
+    case 'mb_security_clock':
+      return wrap(`
+        <!-- Left: C2PA Cryptographic Signing -->
+        <rect x="14" y="16" width="144" height="86" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="24" y="33" font-size="8.5" font-weight="bold" fill="#166534">C2PA 真正性署名チップ</text>
+        <rect x="24" y="42" width="44" height="24" rx="3" fill="#1e293b"/>
+        <text x="31" y="57" font-size="8" fill="#fff">RAW</text>
+        <path d="M68 54 L86 54" stroke="#16a34a" stroke-width="2"/>
+        <rect x="86" y="42" width="62" height="24" rx="3" fill="#16a34a"/>
+        <text x="92" y="57" font-size="8" font-weight="bold" fill="#fff">ECDSA署名</text>
+        <text x="22" y="82" font-size="7.5" fill="#15803d">撮影瞬間に秘密鍵で電子印</text>
+        <text x="22" y="94" font-size="7.5" fill="#15803d">AI偽造・改ざんを即検出!</text>
+        <!-- Right: TCXO ±0.5 ppm Clock -->
+        <rect x="166" y="16" width="140" height="86" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="176" y="33" font-size="8.5" font-weight="bold" fill="#92400e">TCXO ±0.5 ppm 水晶</text>
+        <path d="M178 72 Q218 42 292 78" fill="none" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 2"/>
+        <line x1="178" y1="58" x2="292" y2="58" stroke="#d97706" stroke-width="2.4"/>
+        <text x="180" y="51" font-size="7.5" font-weight="bold" fill="#b45309">温度補償で周波数フラット!</text>
+        <text x="176" y="93" font-size="7.5" fill="#78350f">8K長時間収録も音ズレゼロ</text>
+      `);
+
+    case 'mb_io_ports':
+      return wrap(`
+        <!-- External High-Speed I/O + ESD TVS Protection -->
+        <rect x="18" y="14" width="96" height="20" rx="3" fill="#334155"/>
+        <text x="26" y="27" font-size="8" fill="#fff">2.5GBASE-T LAN</text>
+        <rect x="18" y="38" width="96" height="20" rx="3" fill="#1d4ed8"/>
+        <text x="26" y="51" font-size="8" fill="#fff">HDMI 2.1 (48Gbps)</text>
+        <rect x="18" y="62" width="96" height="20" rx="3" fill="#0f766e"/>
+        <text x="26" y="75" font-size="8" fill="#fff">USB-C 10Gbps PD</text>
+        <rect x="18" y="86" width="96" height="20" rx="3" fill="#b45309"/>
+        <text x="26" y="99" font-size="8" fill="#fff">3.5mm 24bit 音声</text>
+        <!-- ESD Surge Shield Wall -->
+        <line x1="114" y1="48" x2="218" y2="48" stroke="#0d5bd9" stroke-width="2"/>
+        <rect x="136" y="18" width="56" height="84" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-dasharray="3 2"/>
+        <text x="142" y="42" font-size="8" font-weight="bold" fill="#b91c1c">TVS避雷</text>
+        <text x="144" y="55" font-size="7.5" fill="#dc2626">±15 kV</text>
+        <text x="142" y="67" font-size="7.5" fill="#dc2626">静電気を</text>
+        <text x="143" y="79" font-size="7.5" fill="#dc2626">GNDへ逃す</text>
+        <rect x="218" y="26" width="84" height="60" rx="5" fill="#0f766e"/>
+        <text x="234" y="52" font-size="9" font-weight="bold" fill="#fff">4nm ISP</text>
+        <text x="232" y="67" font-size="8" fill="#ccfbf1">安全に保護!</text>
+      `);
+
+    case 'mb_rf_wifi':
+      return wrap(`
+        <!-- 2x2 MIMO Tri-Band Wi-Fi 6E/7 Coax Antenna Architecture -->
+        <rect x="18" y="24" width="86" height="62" rx="5" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="28" y="44" font-size="8.5" font-weight="bold" fill="#0369a1">Wi-Fi 6E/7</text>
+        <text x="28" y="58" font-size="8" fill="#075985">2.4/5/6 GHz</text>
+        <text x="28" y="72" font-size="8" fill="#075985">+ BT 5.3 SiP</text>
+        <!-- Dual 50-ohm Coax Cables -->
+        <path d="M104 40 C138 40, 146 28, 182 28" fill="none" stroke="#d27a44" stroke-width="3"/>
+        <path d="M104 70 C138 70, 146 82, 182 82" fill="none" stroke="#d27a44" stroke-width="3"/>
+        <text x="116" y="58" font-size="7.5" font-weight="bold" fill="#9a3412">50Ω同軸×2</text>
+        <!-- Dual MIMO Antennas -->
+        <rect x="182" y="18" width="44" height="22" rx="3" fill="#1e293b"/>
+        <text x="189" y="32" font-size="8" fill="#38bdf8">ANT 1</text>
+        <rect x="182" y="70" width="44" height="22" rx="3" fill="#1e293b"/>
+        <text x="189" y="84" font-size="8" fill="#38bdf8">ANT 2</text>
+        <!-- 2x2 MIMO Waves -->
+        <path d="M236 22 Q246 29 236 36 M244 18 Q258 29 244 40" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <path d="M236 74 Q246 81 236 88 M244 70 Q258 81 244 92" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <text x="256" y="54" font-size="8.5" font-weight="bold" fill="#0369a1">2×2 MIMO</text>
+        <text x="256" y="67" font-size="7.5" fill="#475569">高速FTP送信</text>
+        <text x="28" y="106" font-size="8" fill="#334155">金属ボディ外側の樹脂窓アンテナへ同軸給電し電波を空間多重</text>
+      `);
+
+    case 'mb_hdi_pcb':
+      return wrap(`
+        <!-- 12-Layer Any-Layer HDI Microvia Cross Section -->
+        <rect x="24" y="16" width="272" height="72" rx="3" fill="#124939" stroke="#0e3b2e"/>
+        ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+          .map((i) => {
+            const y = 21 + i * 5.6;
+            const col = i === 1 || i === 4 || i === 7 || i === 10 ? '#eab308' : '#d97742';
+            return `<rect x="28" y="${y.toFixed(1)}" width="264" height="2.2" fill="${col}"/>`;
+          })
+          .join('')}
+        <!-- Stacked UV Laser Copper-Filled Microvias (Any-Layer!) -->
+        <rect x="86" y="21" width="7" height="24" fill="#facc15" stroke="#1e293b" stroke-width="0.6"/>
+        <rect x="136" y="38" width="7" height="28" fill="#facc15" stroke="#1e293b" stroke-width="0.6"/>
+        <rect x="212" y="21" width="7" height="62" fill="#facc15" stroke="#1e293b" stroke-width="0.6"/>
+        <text x="26" y="101" font-size="8.5" font-weight="bold" fill="#0e5a44">12層エニーレイヤーHDI：直径50μmレーザー銅充填ビアで任意層直結</text>
+        <text x="58" y="113" font-size="8" fill="#475569">SLVS-EC 100Ω ＆ PCIe Gen4 85Ω 等長差動インピーダンス整合</text>
+      `);
+
+    case 'mb_b2b':
+      return wrap(`
+        <!-- G-S-S-G Differential Shielded Pinout + ZIF Flip-Lock -->
+        <rect x="16" y="18" width="144" height="78" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+        <text x="26" y="34" font-size="8.5" font-weight="bold" fill="#0f172a">80ピン G-S-S-G 差動配列</text>
+        ${['G', 'S+', 'S−', 'G', 'S+', 'S−', 'G']
+          .map((lbl, idx) => {
+            const x = 24 + idx * 19;
+            const fill = lbl === 'G' ? '#475569' : '#0284c7';
+            return `<rect x="${x}" y="44" width="15" height="24" rx="2" fill="${fill}"/><text x="${x + 3}" y="59" font-size="7.5" fill="#fff">${lbl}</text>`;
+          })
+          .join('')}
+        <text x="24" y="85" font-size="7.5" fill="#475569">信号対をGNDで挟み160Gbps保護</text>
+        <!-- Right: ZIF Flip Lock -->
+        <rect x="170" y="18" width="136" height="78" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="180" y="34" font-size="8.5" font-weight="bold" fill="#92400e">ZIF フリップロック</text>
+        <rect x="184" y="62" width="108" height="10" fill="#c76414"/>
+        <rect x="206" y="46" width="64" height="16" rx="2" fill="#1e293b"/>
+        <text x="215" y="57" font-size="7.5" fill="#fde047">押え蓋ロック</text>
+        <text x="180" y="86" font-size="7.5" fill="#78350f">EVF/LCD/レンズ等 全12系統</text>
+        <text x="64" y="110" font-size="8" fill="#334155">0.3mm狭ピッチ金端子でカメラ全身の神経リボンを確実圧接</text>
+      `);
+
+    case 'mb_chassis':
+      return wrap(`
+        <!-- Thermal Isolation Wall between Sensor Bay and ISP Bay -->
+        <rect x="16" y="20" width="96" height="72" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="26" y="40" font-size="8.5" font-weight="bold" fill="#1d4ed8">前面：センサー室</text>
+        <text x="26" y="55" font-size="7.5" fill="#1e40af">低温維持が命!</text>
+        <text x="26" y="68" font-size="7.5" fill="#dc2626">+7℃で暗電流2倍</text>
+        <text x="26" y="82" font-size="7.5" fill="#1e40af">前面へ独立放熱</text>
+        <!-- Magnesium Mid-Frame Barrier -->
+        <rect x="126" y="14" width="24" height="84" rx="3" fill="#64748b" stroke="#1e293b"/>
+        <text x="133" y="44" font-size="8" font-weight="bold" fill="#fff" writing-mode="tb">マグネシウム遮熱壁</text>
+        <!-- Rear ISP Bay -->
+        <rect x="164" y="20" width="140" height="72" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="174" y="40" font-size="8.5" font-weight="bold" fill="#c2410c">背面：ISPメイン基板室</text>
+        <text x="174" y="55" font-size="7.5" fill="#9a3412">8K処理で高温 (60–85℃)</text>
+        <path d="M180 72 L288 72" stroke="#ea580c" stroke-width="2.2"/>
+        <polygon points="292,72 284,67 284,77" fill="#ea580c"/>
+        <text x="178" y="85" font-size="7.5" font-weight="bold" fill="#c2410c">背面ベイパーチャンバーへ逃がす!</text>
+        <text x="48" y="110" font-size="8" fill="#334155">高剛性マグネシウム骨格＋熱分離構造で高画質と8K連続収録を両立</text>
+      `);
   }
 }
 

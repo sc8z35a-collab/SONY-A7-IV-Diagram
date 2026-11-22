@@ -34,9 +34,9 @@ function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButto
 
 // Crisp industrial CAD SVG pictograms — strictly zero letters or numbers
 const ICONS = {
-  // Integrated shutter + sensor camera core (two parallel optical planes)
+  // Integrated 3-subsystem camera core (Shutter + Sensor + Mainboard stacked optical planes)
   integratedCore:
-    '<rect x="3" y="4" width="11" height="11" rx="1.6"/><line x1="3" y1="8.2" x2="14" y2="8.2"/><line x1="3" y1="11.2" x2="14" y2="11.2"/><path d="M16 9h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-1"/><rect x="13" y="13" width="5" height="4" rx="0.8"/>',
+    '<rect x="2.5" y="3.5" width="9.5" height="9.5" rx="1.4"/><line x1="2.5" y1="7.8" x2="12" y2="7.8"/><path d="M14 7.5h2.5a1.5 1.5 0 0 1 1.5 1.5v6.5a1.5 1.5 0 0 1-1.5 1.5H10a1.5 1.5 0 0 1-1.5-1.5V15"/><path d="M18 11.5h2a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V18"/>',
 
   // Focal-plane shutter: upper & lower horizontal curtain blades with central exposure slit
   shutterModule:
@@ -45,6 +45,10 @@ const ICONS = {
   // Macro sensor frame icon
   macroSensor:
     '<rect x="3" y="5" width="18" height="14" rx="2"/><rect x="7" y="8.5" width="10" height="7" rx="1"/><line x1="7" y1="3" x2="7" y2="5"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="17" y1="3" x2="17" y2="5"/><line x1="7" y1="19" x2="7" y2="21"/><line x1="12" y1="19" x2="12" y2="21"/><line x1="17" y1="19" x2="17" y2="21"/>',
+
+  // Mainboard & ISP Engine: SoC die + PCB bus traces + peripheral chip nodes (zero text!)
+  mainboardIsp:
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><rect x="8.5" y="8.5" width="7" height="7" rx="1"/><line x1="8.5" y1="12" x2="5.5" y2="12"/><line x1="15.5" y1="12" x2="18.5" y2="12"/><line x1="12" y1="8.5" x2="12" y2="5.5"/><line x1="12" y1="15.5" x2="12" y2="18.5"/><circle cx="5.5" cy="7.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="7.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="16.5" r="0.9" fill="currentColor" stroke="none"/>',
 
   // Micro 2x2 microlens & stacked wafer icon
   microPixel:
@@ -82,7 +86,7 @@ const ICONS = {
   renderCad:
     '<polygon points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="4" y1="7.5" x2="20" y2="16.5" opacity="0.45"/><line x1="20" y1="7.5" x2="4" y2="16.5" opacity="0.45"/>',
 
-  // Optical rays / slit exposure & IBIS live physics toggle
+  // Optical rays / slit exposure / ISP signal-flow physics toggle
   physicsRays:
     '<line x1="3" y1="6" x2="12" y2="12"/><line x1="3" y1="12" x2="12" y2="12"/><line x1="3" y1="18" x2="12" y2="12"/><line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="21" y2="17"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>',
 
@@ -116,6 +120,7 @@ export class ZeroTextControls {
   private integratedBtn: HTMLButtonElement;
   private shutterBtn: HTMLButtonElement;
   private sensorBtn: HTMLButtonElement;
+  private mainboardBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
@@ -134,7 +139,7 @@ export class ZeroTextControls {
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
 
-  private currentMode: ScaleMode = 'shutter';
+  private currentMode: ScaleMode = 'mainboard';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -175,21 +180,29 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 4-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Micro Pixel)
+    // Group A: 5-Mode Subsystem Switch (Integrated Core / Shutter / Sensor / Mainboard ISP / Micro Pixel)
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
     this.integratedBtn = createIconButton(ICONS.integratedCore);
     this.shutterBtn = createIconButton(ICONS.shutterModule);
-    this.shutterBtn.classList.add('is-active');
     this.sensorBtn = createIconButton(ICONS.macroSensor);
+    this.mainboardBtn = createIconButton(ICONS.mainboardIsp);
+    this.mainboardBtn.classList.add('is-active');
     this.microBtn = createIconButton(ICONS.microPixel);
 
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.shutterBtn.addEventListener('click', () => this.setMode('shutter'));
     this.sensorBtn.addEventListener('click', () => this.setMode('sensor'));
+    this.mainboardBtn.addEventListener('click', () => this.setMode('mainboard'));
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
-    scaleGroup.append(this.integratedBtn, this.shutterBtn, this.sensorBtn, this.microBtn);
+    scaleGroup.append(
+      this.integratedBtn,
+      this.shutterBtn,
+      this.sensorBtn,
+      this.mainboardBtn,
+      this.microBtn
+    );
 
     // Group B: Exploded View Dissection Slider
     const explodeGroup = document.createElement('div');
@@ -263,7 +276,7 @@ export class ZeroTextControls {
     this.cadBtn.addEventListener('click', () => this.setRenderMode('cad'));
     renderGroup.append(this.solidBtn, this.xrayBtn, this.cadBtn);
 
-    // Group E: Optical Ray / Slit Exposure Physics Simulation & Visibility Reset
+    // Group E: Optical / Signal / Thermal Physics Simulation & Visibility Reset
     const actionGroup = document.createElement('div');
     actionGroup.className = 'cad-dock-group';
 
@@ -310,6 +323,7 @@ export class ZeroTextControls {
     this.integratedBtn.classList.toggle('is-active', mode === 'integrated');
     this.shutterBtn.classList.toggle('is-active', mode === 'shutter');
     this.sensorBtn.classList.toggle('is-active', mode === 'sensor');
+    this.mainboardBtn.classList.toggle('is-active', mode === 'mainboard');
     this.microBtn.classList.toggle('is-active', mode === 'micro');
   }
 
@@ -387,7 +401,6 @@ export class ZeroTextControls {
     let prevSubsystem: CadPart['subsystem'] | null = null;
 
     parts.forEach((part, idx) => {
-      // Visual zero-text separator line between Shutter and Sensor subsystems in integrated mode
       if (prevSubsystem && prevSubsystem !== part.subsystem) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
@@ -409,8 +422,16 @@ export class ZeroTextControls {
       const bar = document.createElement('span');
       bar.className = 'layer-bar';
       let widthPx = 20;
-      if (part.subsystem === 'shutter') {
-        // Reflects outer cover/base frames (wider) vs blade packs & right-hand drive bay components
+      if (part.subsystem === 'mainboard') {
+        widthPx =
+          part.order === 14 || part.order === 16
+            ? 32
+            : part.order === 1 || part.order === 2
+              ? 28
+              : part.order === 4 || part.order === 6 || part.order === 9 || part.order === 12
+                ? 24
+                : 17;
+      } else if (part.subsystem === 'shutter') {
         widthPx =
           part.order === 1 || part.order === 12
             ? 30

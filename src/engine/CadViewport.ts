@@ -12,6 +12,7 @@ import {
 import { createMaterialLibrary, MaterialLibrary } from './Materials';
 import { createSensorAssemblies } from '../assemblies/sensor';
 import { createShutterAssembly } from '../assemblies/shutter';
+import { createMainboardAssembly } from '../assemblies/mainboard';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -32,6 +33,7 @@ export class CadViewport {
   private materials: MaterialLibrary;
   private shutterAssembly: AssemblyController;
   private sensorAssembly: AssemblyController;
+  private mainboardAssembly: AssemblyController;
   private microAssembly: AssemblyController;
   private allParts: CadPart[];
   private callbacks: ViewportCallbacks;
@@ -41,8 +43,8 @@ export class CadViewport {
   private pointer = new THREE.Vector2();
   private pointerDownPos = new THREE.Vector2();
 
-  // State — opens directly onto the newly implemented Shutter Mechanism anatomy
-  private mode: ScaleMode = 'shutter';
+  // State — opens directly onto the newly implemented Mainboard & ISP Engine anatomy
+  private mode: ScaleMode = 'mainboard';
   private renderMode: RenderMode = 'solid';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
@@ -97,7 +99,7 @@ export class CadViewport {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
 
-    // Clean neutral studio IBL reflections (balanced intensity avoids washing out glass & silicon)
+    // Clean neutral studio IBL reflections
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     const roomEnv = new RoomEnvironment();
     const envRT = pmrem.fromScene(roomEnv, 0.04);
@@ -106,31 +108,35 @@ export class CadViewport {
     roomEnv.dispose();
     pmrem.dispose();
 
-    // Three-point clean daylight studio rig with strong sculptural contrast
-    const hemi = new THREE.HemisphereLight(0xffffff, 0xcad3e0, 0.78);
+    // Balanced dual-sided daylight studio rig illuminating both +Z (front optical) and -Z (rear ISP mainboard)
+    const hemi = new THREE.HemisphereLight(0xffffff, 0xcad3e0, 0.8);
     this.scene.add(hemi);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.65);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.55);
     keyLight.position.set(78, 92, 108);
     this.scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.72);
-    fillLight.position.set(-95, 36, 54);
+    const rearKeyLight = new THREE.DirectionalLight(0xffffff, 1.38);
+    rearKeyLight.position.set(-82, 86, -118);
+    this.scene.add(rearKeyLight);
+
+    const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.68);
+    fillLight.position.set(-95, 34, 58);
     this.scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffffff, 0.95);
-    rimLight.position.set(-34, -68, -104);
-    this.scene.add(rimLight);
+    const rearFillLight = new THREE.DirectionalLight(0xf2f6ff, 0.62);
+    rearFillLight.position.set(92, -38, -74);
+    this.scene.add(rearFillLight);
 
-    // Camera & OrbitControls — balanced gallery framing with breathing room around dock & rail
+    // Camera & OrbitControls
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 1600);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 2400);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
     this.controls.minDistance = 16;
-    this.controls.maxDistance = 640;
+    this.controls.maxDistance = 880;
     this.controls.addEventListener('change', () => {
       this.dirtyFrames = Math.max(this.dirtyFrames, 2);
     });
@@ -159,21 +165,24 @@ export class CadViewport {
       clippingPlanes: [this.clippingPlane],
     });
 
-    // Build all 3 CAD subsystems: Shutter (12), Full-Frame Sensor/IBIS (14), Micro Pixel (7)
+    // Build all 4 CAD subsystems: Shutter (12), Sensor/IBIS (14), Mainboard/ISP (16), Micro Pixel (7) = 49 parts!
     this.shutterAssembly = createShutterAssembly(this.materials);
     const { sensor, micro } = createSensorAssemblies(this.materials);
     this.sensorAssembly = sensor;
     this.microAssembly = micro;
+    this.mainboardAssembly = createMainboardAssembly(this.materials);
 
     this.scene.add(
       this.shutterAssembly.rootGroup,
       this.sensorAssembly.rootGroup,
+      this.mainboardAssembly.rootGroup,
       this.microAssembly.rootGroup
     );
 
     this.allParts = [
       ...this.shutterAssembly.parts,
       ...this.sensorAssembly.parts,
+      ...this.mainboardAssembly.parts,
       ...this.microAssembly.parts,
     ];
 
@@ -194,7 +203,11 @@ export class CadViewport {
 
   private isPartInCurrentMode(part: CadPart): boolean {
     if (this.mode === 'integrated') {
-      return part.subsystem === 'shutter' || part.subsystem === 'sensor';
+      return (
+        part.subsystem === 'shutter' ||
+        part.subsystem === 'sensor' ||
+        part.subsystem === 'mainboard'
+      );
     }
     return part.subsystem === this.mode;
   }
@@ -202,18 +215,22 @@ export class CadViewport {
   private syncAssemblyVisibility(): void {
     const showShutter = this.mode === 'shutter' || this.mode === 'integrated';
     const showSensor = this.mode === 'sensor' || this.mode === 'integrated';
+    const showMainboard = this.mode === 'mainboard' || this.mode === 'integrated';
     const showMicro = this.mode === 'micro';
 
     this.shutterAssembly.rootGroup.visible = showShutter;
     this.sensorAssembly.rootGroup.visible = showSensor;
+    this.mainboardAssembly.rootGroup.visible = showMainboard;
     this.microAssembly.rootGroup.visible = showMicro;
 
     this.shutterAssembly.setPhysicsVisible(this.physicsActive && showShutter);
     this.sensorAssembly.setPhysicsVisible(this.physicsActive && showSensor);
+    this.mainboardAssembly.setPhysicsVisible(this.physicsActive && showMainboard);
     this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
 
     this.shutterAssembly.updateExplodeGuides(this.currentExplode, showShutter);
     this.sensorAssembly.updateExplodeGuides(this.currentExplode, showSensor);
+    this.mainboardAssembly.updateExplodeGuides(this.currentExplode, showMainboard);
     this.microAssembly.updateExplodeGuides(this.currentExplode, showMicro);
   }
 
@@ -221,11 +238,19 @@ export class CadViewport {
     const subOrder: Record<CadPart['subsystem'], number> = {
       shutter: 0,
       sensor: 1,
-      micro: 2,
+      mainboard: 2,
+      micro: 3,
     };
     return this.allParts
       .filter((p) => this.isPartInCurrentMode(p))
-      .sort((a, b) => subOrder[a.subsystem] - subOrder[b.subsystem] || a.order - b.order);
+      .sort((a, b) => {
+        if (a.subsystem !== b.subsystem) return subOrder[a.subsystem] - subOrder[b.subsystem];
+        // In integrated front-to-back order, show mainboard from front frame -> PCB -> ISP -> vapor chamber
+        if (this.mode === 'integrated' && a.subsystem === 'mainboard') {
+          return b.order - a.order;
+        }
+        return a.order - b.order;
+      });
   }
 
   public getSelectedPart(): CadPart | null {
@@ -306,7 +331,6 @@ export class CadViewport {
     if (partId === this.selectedPartId) return;
     this.selectedPartId = partId;
 
-    // Ensure selected part is visible if chosen from layer rail
     if (partId && this.hiddenPartIds.has(partId)) {
       this.hiddenPartIds.delete(partId);
     }
@@ -383,12 +407,15 @@ export class CadViewport {
     let d: number;
     let target: THREE.Vector3;
 
-    if (this.mode === 'shutter') {
+    if (this.mode === 'mainboard') {
+      d = 186 + e * 124;
+      target = new THREE.Vector3(0.0, -3.0, -21.5 - e * 14.5);
+    } else if (this.mode === 'shutter') {
       d = 166 + e * 82;
       target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
     } else if (this.mode === 'integrated') {
-      d = 178 + e * 228;
-      target = new THREE.Vector3(0.5 + e * 1.5, -2.5, 4.0 - e * 8.0);
+      d = 196 + e * 355;
+      target = new THREE.Vector3(2.0, -3.5, -5.0 - e * 46.0);
     } else if (this.mode === 'sensor') {
       d = 142 + e * 72;
       target = new THREE.Vector3(0, -1.0, -2 - e * 14);
@@ -398,28 +425,49 @@ export class CadViewport {
     }
 
     let offset: THREE.Vector3;
-    switch (preset) {
-      case 'front':
-        offset = new THREE.Vector3(0, 2, d);
-        break;
-      case 'side':
-        offset = new THREE.Vector3(d * 1.04, 8, 0);
-        break;
-      case 'back':
-        offset = new THREE.Vector3(-d * 0.55, d * 0.34, -d * 0.78);
-        break;
-      case 'iso':
-      default:
-        if (this.mode === 'shutter') {
-          offset = new THREE.Vector3(d * 0.52, d * 0.28, d * 0.81);
-        } else if (this.mode === 'integrated') {
-          offset = new THREE.Vector3(d * 0.66, d * 0.30, d * 0.69);
-        } else if (this.mode === 'sensor') {
-          offset = new THREE.Vector3(d * 0.64, d * 0.38, d * 0.72);
-        } else {
-          offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
-        }
-        break;
+    if (this.mode === 'mainboard') {
+      // Mainboard component side faces -Z (rear of camera); diagonal 3/4 showcases all 16 exploded layers cleanly!
+      const isoX = e > 0.25 ? -0.68 : -0.44;
+      const isoZ = e > 0.25 ? -0.66 : -0.84;
+      switch (preset) {
+        case 'front':
+          offset = new THREE.Vector3(0, 2, -d);
+          break;
+        case 'side':
+          offset = new THREE.Vector3(-d * 1.04, 8, 0);
+          break;
+        case 'back':
+          offset = new THREE.Vector3(d * 0.52, d * 0.30, d * 0.80);
+          break;
+        case 'iso':
+        default:
+          offset = new THREE.Vector3(d * isoX, d * 0.28, d * isoZ);
+          break;
+      }
+    } else {
+      switch (preset) {
+        case 'front':
+          offset = new THREE.Vector3(0, 2, d);
+          break;
+        case 'side':
+          offset = new THREE.Vector3(d * 1.04, 8, 0);
+          break;
+        case 'back':
+          offset = new THREE.Vector3(-d * 0.55, d * 0.34, -d * 0.78);
+          break;
+        case 'iso':
+        default:
+          if (this.mode === 'shutter') {
+            offset = new THREE.Vector3(d * 0.52, d * 0.28, d * 0.81);
+          } else if (this.mode === 'integrated') {
+            offset = new THREE.Vector3(d * 0.68, d * 0.28, d * 0.68);
+          } else if (this.mode === 'sensor') {
+            offset = new THREE.Vector3(d * 0.64, d * 0.38, d * 0.72);
+          } else {
+            offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
+          }
+          break;
+      }
     }
 
     const pos = target.clone().add(offset);
@@ -442,8 +490,8 @@ export class CadViewport {
 
     const currentOffset = new THREE.Vector3().subVectors(this.camera.position, this.controls.target);
     const isMicro = this.mode === 'micro';
-    const maxDist = isMicro ? 66 : this.mode === 'integrated' ? 175 : 142;
-    const minDist = isMicro ? 34 : 58;
+    const maxDist = isMicro ? 66 : this.mode === 'integrated' ? 210 : 148;
+    const minDist = isMicro ? 34 : 56;
     const desiredDist = Math.min(currentOffset.length(), maxDist);
     currentOffset.setLength(Math.max(desiredDist, minDist));
 
@@ -472,18 +520,26 @@ export class CadViewport {
       return;
     }
 
-    let minCoord = -44;
-    let maxCoord = 44;
+    let minCoord = -48;
+    let maxCoord = 48;
     if (this.mode === 'micro') {
       minCoord = -13;
       maxCoord = 13;
+    } else if (this.mode === 'mainboard') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -50;
+        maxCoord = 50;
+      } else {
+        minCoord = -36;
+        maxCoord = 36;
+      }
     } else if (this.mode === 'shutter' || this.mode === 'integrated') {
       if (this.sectionAxis === 'x') {
-        minCoord = -34;
-        maxCoord = 48;
+        minCoord = -48;
+        maxCoord = 50;
       } else {
-        minCoord = -32;
-        maxCoord = 32;
+        minCoord = -35;
+        maxCoord = 35;
       }
     }
 
@@ -580,7 +636,7 @@ export class CadViewport {
 
     dom.addEventListener('pointerup', (e) => {
       const dist = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
-      if (dist > 5) return; // Ignore orbit drag
+      if (dist > 5) return;
 
       const rect = dom.getBoundingClientRect();
       this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -612,6 +668,9 @@ export class CadViewport {
     }
     if (this.sensorAssembly.rootGroup.visible) {
       activeObjects.push(...this.sensorAssembly.rootGroup.children);
+    }
+    if (this.mainboardAssembly.rootGroup.visible) {
+      activeObjects.push(...this.mainboardAssembly.rootGroup.children);
     }
     if (this.microAssembly.rootGroup.visible) {
       activeObjects.push(...this.microAssembly.rootGroup.children);
@@ -662,6 +721,15 @@ export class CadViewport {
         integrated
       );
     }
+    if (this.mainboardAssembly.rootGroup.visible) {
+      this.mainboardAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        integrated
+      );
+    }
     if (this.microAssembly.rootGroup.visible) {
       this.microAssembly.updateAnimation(
         elapsed,
@@ -681,7 +749,6 @@ export class CadViewport {
     let active = this.physicsActive || this.dirtyFrames > 0;
     let explodeMoved = false;
 
-    // Smooth critically-damped explode interpolation
     const diff = this.targetExplode - this.currentExplode;
     if (Math.abs(diff) > 0.0005) {
       this.currentExplode += diff * Math.min(1, delta * 10.0);
@@ -693,7 +760,6 @@ export class CadViewport {
       active = true;
     }
 
-    // Smooth camera preset / focus interpolation
     if (this.camAnimActive) {
       this.camAnimT = Math.min(1, this.camAnimT + delta * 2.8);
       const ease = 1 - Math.pow(1 - this.camAnimT, 3);
@@ -720,6 +786,10 @@ export class CadViewport {
         this.sensorAssembly.updateExplodeGuides(
           this.currentExplode,
           this.sensorAssembly.rootGroup.visible
+        );
+        this.mainboardAssembly.updateExplodeGuides(
+          this.currentExplode,
+          this.mainboardAssembly.rootGroup.visible
         );
         this.microAssembly.updateExplodeGuides(
           this.currentExplode,

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'micro';
+export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'mainboard' | 'micro';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
@@ -60,13 +60,30 @@ export interface PartExplanation {
     | 'shutter_magnets'
     | 'shutter_charge_motor'
     | 'shutter_opt_sensor'
-    | 'shutter_damper';
+    | 'shutter_damper'
+    // Mainboard & Image Processing Engine (16)
+    | 'mb_vapor'
+    | 'mb_emi'
+    | 'mb_ihs'
+    | 'mb_isp_die'
+    | 'mb_interposer'
+    | 'mb_ai_npu'
+    | 'mb_lpddr5x'
+    | 'mb_pmic'
+    | 'mb_cfexpress'
+    | 'mb_imu_mcu'
+    | 'mb_security_clock'
+    | 'mb_io_ports'
+    | 'mb_rf_wifi'
+    | 'mb_hdi_pcb'
+    | 'mb_b2b'
+    | 'mb_chassis';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
-  subsystem: 'sensor' | 'micro' | 'shutter';
+  subsystem: 'sensor' | 'micro' | 'shutter' | 'mainboard';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
