@@ -9,10 +9,70 @@ const viewportEl = document.getElementById('viewport')!;
 
 let hoveredPartId: string | null = null;
 let currentSectionAxis: SectionAxis = 'off';
+let zenFullscreen = false;
 
 let drawer!: ExplanationDrawer;
 let controls!: ZeroTextControls;
 let viewport!: CadViewport;
+
+const isNativeFullscreen = (): boolean => {
+  const doc = document as Document & { webkitFullscreenElement?: Element | null };
+  return Boolean(document.fullscreenElement || doc.webkitFullscreenElement);
+};
+
+const syncFullscreenState = (): void => {
+  const active = isNativeFullscreen() || zenFullscreen;
+  appRoot.classList.toggle('is-zen-fullscreen', zenFullscreen);
+  controls.syncFullscreen(active);
+  viewport.handleResize();
+};
+
+const toggleFullscreen = async (): Promise<void> => {
+  const doc = document as Document & {
+    webkitExitFullscreen?: () => Promise<void> | void;
+    webkitFullscreenElement?: Element | null;
+  };
+  const rootEl = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+  };
+
+  if (isNativeFullscreen()) {
+    try {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (doc.webkitExitFullscreen) await doc.webkitExitFullscreen();
+    } catch {
+      // Ignore browser exit rejections
+    }
+    zenFullscreen = false;
+    syncFullscreenState();
+    return;
+  }
+
+  if (zenFullscreen) {
+    zenFullscreen = false;
+    syncFullscreenState();
+    return;
+  }
+
+  // Try native browser Fullscreen API first; seamlessly fall back to Zen Fullscreen if restricted (e.g. iframe)
+  let enteredNative = false;
+  try {
+    if (document.fullscreenEnabled !== false && rootEl.requestFullscreen) {
+      await rootEl.requestFullscreen();
+      enteredNative = isNativeFullscreen();
+    } else if (rootEl.webkitRequestFullscreen) {
+      await rootEl.webkitRequestFullscreen();
+      enteredNative = isNativeFullscreen();
+    }
+  } catch {
+    enteredNative = false;
+  }
+
+  if (!enteredNative) {
+    zenFullscreen = true;
+  }
+  syncFullscreenState();
+};
 
 const syncRail = () => {
   const parts = viewport.getPartsForCurrentMode();
@@ -71,6 +131,9 @@ controls = new ZeroTextControls(appRoot, {
   onResetVisibility: () => {
     viewport.resetAllVisibility();
   },
+  onFullscreenToggle: () => {
+    void toggleFullscreen();
+  },
   onCameraPreset: (preset) => {
     viewport.setCameraPreset(preset);
   },
@@ -103,9 +166,29 @@ drawer = new ExplanationDrawer(appRoot, {
   },
 });
 
+document.addEventListener('fullscreenchange', () => {
+  if (!isNativeFullscreen()) zenFullscreen = false;
+  syncFullscreenState();
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  if (!isNativeFullscreen()) zenFullscreen = false;
+  syncFullscreenState();
+});
+
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    if (zenFullscreen) {
+      zenFullscreen = false;
+      syncFullscreenState();
+    }
     viewport.selectPart(null, false);
+  } else if (
+    (e.key === 'f' || e.key === 'F') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    void toggleFullscreen();
   } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
     if (viewport.getSelectedPart()) viewport.stepSelectedPart(1);
   } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -117,11 +200,12 @@ window.addEventListener('keydown', (e) => {
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
+  toggleFullscreen,
 };
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 96-part Camera mode)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 138-part Camera mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
 if (preset === 'complete_assembled') {
   viewport.setMode('integrated', true);
@@ -153,6 +237,22 @@ if (preset === 'complete_assembled') {
   currentSectionAxis = 'x';
   viewport.setSection('x', 0.54);
   controls.syncSectionAxis('x', 0.54);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'camera_body_assembled') {
+  viewport.setMode('camera_body', true);
+  controls.syncMode('camera_body');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'camera_body_exploded') {
+  viewport.setMode('camera_body', true);
+  controls.syncMode('camera_body');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
   viewport.setPhysicsActive(true);
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
@@ -192,6 +292,16 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('lens-mcu-pcb', false);
+  syncRail();
+} else if (preset === 'lens_ultra_drawer') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-bayonet-shims', false);
   syncRail();
 } else if (preset === 'sensor_super_drawer') {
   viewport.setMode('sensor', true);

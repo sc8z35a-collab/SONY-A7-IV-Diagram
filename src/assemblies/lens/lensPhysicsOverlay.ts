@@ -87,7 +87,7 @@ export function createLensPhysicsOverlay(
   const rayPaths: THREE.Vector3[][] = [];
 
   for (const spec of raySpecs) {
-    const pts = Array.from({ length: 8 }, () => new THREE.Vector3());
+    const pts = Array.from({ length: 11 }, () => new THREE.Vector3());
     const line = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
       new THREE.LineBasicMaterial({
@@ -190,20 +190,28 @@ export function createLensPhysicsOverlay(
       if (!active || !overlayGroup.visible) return;
 
       const pFront = parts.find((p) => p.id === 'lens-front-xa');
+      const pMeniscus = parts.find((p) => p.id === 'lens-front-meniscus');
       const pEd = parts.find((p) => p.id === 'lens-ed-group');
+      const pG4 = parts.find((p) => p.id === 'lens-g4-negative');
       const pIris = parts.find((p) => p.id === 'lens-aperture-11');
       const pFocusA = parts.find((p) => p.id === 'lens-focus-group-a');
       const pXd = parts.find((p) => p.id === 'lens-xd-motors');
       const pFocusB = parts.find((p) => p.id === 'lens-focus-group-b');
+      const pRearConv = parts.find((p) => p.id === 'lens-rear-convex');
       const pRear = parts.find((p) => p.id === 'lens-rear-element');
+      const pBayonet = parts.find((p) => p.id === 'lens-rear-bayonet');
 
       const zFront = pFront ? pFront.group.position.z : 108.5;
-      const zEd = pEd ? pEd.group.position.z : 95.5;
+      const zMeniscus = pMeniscus ? pMeniscus.group.position.z : 102.0;
+      const zEd = pEd ? pEd.group.position.z : 96.2;
+      const zG4 = pG4 ? pG4.group.position.z : 88.0;
       const zIris = pIris ? pIris.group.position.z : 82.0;
-      const zFocusA = pFocusA ? pFocusA.group.position.z : 71.0;
-      const zFocusB = pFocusB ? pFocusB.group.position.z : 56.5;
+      const zFocusA = pFocusA ? pFocusA.group.position.z : 72.0;
+      const zFocusB = pFocusB ? pFocusB.group.position.z : 57.0;
+      const zRearConv = pRearConv ? pRearConv.group.position.z : 49.2;
       const zRear = pRear ? pRear.group.position.z : 42.0;
-      const zSensor = integrated ? 0.0 : zRear - 36.0;
+      const zBayonet = pBayonet ? pBayonet.group.position.z : 33.5;
+      const zSensor = integrated ? 0.0 : zBayonet - 28.0;
 
       focalPlaneGroup.visible = !integrated;
       focalPlaneGroup.position.set(0, 0, zSensor);
@@ -216,20 +224,26 @@ export function createLensPhysicsOverlay(
         const s = raySpecs[i];
         const pts = rayPaths[i];
         const rIn = s.rFront * apertureScale;
-        const rEd = rIn * 0.88;
-        const rIris = rIn * 0.74;
-        const rFA = rIn * 0.62;
+        const rMen = rIn * 0.94;
+        const rEd = rIn * 0.87;
+        const rG4 = rIn * 0.79;
+        const rIris = rIn * 0.72;
+        const rFA = rIn * 0.61;
         const rFB = rIn * 0.45;
-        const rRear = rIn * 0.30;
+        const rRConv = rIn * 0.36;
+        const rRear = rIn * 0.28;
 
         pts[0].set(s.ux * rIn, s.uy * rIn, zFront + 32.0);
         pts[1].set(s.ux * rIn, s.uy * rIn, zFront);
-        pts[2].set(s.ux * rEd, s.uy * rEd, zEd);
-        pts[3].set(s.ux * rIris, s.uy * rIris, zIris);
-        pts[4].set(s.ux * rFA + s.rSensorX * 0.22, s.uy * rFA + s.rSensorY * 0.22, zFocusA);
-        pts[5].set(s.ux * rFB + s.rSensorX * 0.48, s.uy * rFB + s.rSensorY * 0.48, zFocusB);
-        pts[6].set(s.ux * rRear + s.rSensorX * 0.72, s.uy * rRear + s.rSensorY * 0.72, zRear);
-        pts[7].set(s.rSensorX, s.rSensorY, zSensor);
+        pts[2].set(s.ux * rMen, s.uy * rMen, zMeniscus);
+        pts[3].set(s.ux * rEd, s.uy * rEd, zEd);
+        pts[4].set(s.ux * rG4 + s.rSensorX * 0.08, s.uy * rG4 + s.rSensorY * 0.08, zG4);
+        pts[5].set(s.ux * rIris + s.rSensorX * 0.14, s.uy * rIris + s.rSensorY * 0.14, zIris);
+        pts[6].set(s.ux * rFA + s.rSensorX * 0.28, s.uy * rFA + s.rSensorY * 0.28, zFocusA);
+        pts[7].set(s.ux * rFB + s.rSensorX * 0.50, s.uy * rFB + s.rSensorY * 0.50, zFocusB);
+        pts[8].set(s.ux * rRConv + s.rSensorX * 0.64, s.uy * rRConv + s.rSensorY * 0.64, zRearConv);
+        pts[9].set(s.ux * rRear + s.rSensorX * 0.78, s.uy * rRear + s.rSensorY * 0.78, zRear);
+        pts[10].set(s.rSensorX, s.rSensorY, zSensor);
 
         rayLines[i].geometry.setFromPoints(pts);
       }
