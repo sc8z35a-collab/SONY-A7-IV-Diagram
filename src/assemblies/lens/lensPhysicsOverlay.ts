@@ -1,11 +1,23 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import {
+  IRIS_Z,
+  LensOpticalSim,
+  OPTICAL_ELEMENTS,
+  SENSOR_Z,
+} from './lensOpticalSim';
 
 export interface LensPhysicsOverlayController {
   overlayGroup: THREE.Group;
   explodeGuides: THREE.Group;
   setVisible: (visible: boolean) => void;
-  update: (elapsed: number, active: boolean, parts: CadPart[], integrated: boolean) => void;
+  update: (
+    elapsed: number,
+    active: boolean,
+    parts: CadPart[],
+    integrated: boolean,
+    sim: LensOpticalSim
+  ) => void;
   updateGuides: (explodeFactor: number, visible: boolean, parts: CadPart[]) => void;
 }
 
@@ -16,14 +28,18 @@ interface PhotonBead {
   speed: number;
 }
 
+const MAX_3D_RAYS = 15;
+const RAY_SAMPLE_VERTS = 16; // entry -> 14 element centers (incl. iris) -> sensor
+
 /**
- * Real-time 3D Optical & Electromagnetic Physics Overlay for the 50mm F1.2 Prime Lens:
- * 1. Wide-aperture F1.2 multi-element refracting rays (XA Front -> ED Doublet -> live 11-blade Iris
- *    -> Floating Focus Group A & B -> Rear Hero Element -> Full-Frame Focal Plane).
- * 2. Animated photon packets streaming from subject infinity to focal plane.
- * 3. Quad XD Linear Motor electromagnetic Lorentz force vector pulses (amber/copper) gliding along
- *    all 4 symmetrical guide rails (45°, 135°, 225°, 315°).
- * 4. Dashed axial CAD exploded alignment guides.
+ * Real-time 3D Optical & Electromagnetic Physics Overlay for the 62-Part 50mm F1.2 Prime Lens:
+ * 1. Synchronized 3D Snell-calibrated multi-element refracting rays (supports standard F1.2 cone,
+ *    RGB Chromatic Dispersion split, XA Aspheric caustic comparison, and Nano AR II ghost rays).
+ * 2. Translucent 3D Aperture Light Cone & live Circle-of-Confusion ring on the 36x24mm sensor plane.
+ * 3. Luminous animated photon wavepackets streaming smoothly from subject to focal plane.
+ * 4. Quad XD Linear Motor electromagnetic Lorentz thrust vectors & flux rings synchronized with
+ *    real differential Focus Group A & B velocities.
+ * 5. Axial dashed CAD explode alignment guides spanning L01–L62.
  */
 export function createLensPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -35,9 +51,10 @@ export function createLensPhysicsOverlay(
   explodeGuides.visible = false;
 
   // -------------------------------------------------------------------------
-  // 1. Virtual 36x24 mm Full-Frame Sensor Plane (visible only in standalone lens mode)
+  // 1. Virtual 36x24 mm Full-Frame Sensor Plane & Live Focal / Bokeh Ring
   // -------------------------------------------------------------------------
   const focalPlaneGroup = new THREE.Group();
+  let focalRingMesh: THREE.Mesh;
   {
     const framePts = [
       new THREE.Vector3(-18, -12, 0),
@@ -51,7 +68,7 @@ export function createLensPhysicsOverlay(
       new THREE.LineBasicMaterial({
         color: 0x0284c7,
         transparent: true,
-        opacity: 0.72,
+        opacity: 0.74,
         clippingPlanes,
       })
     );
@@ -66,34 +83,51 @@ export function createLensPhysicsOverlay(
         clippingPlanes,
       })
     );
-    focalPlaneGroup.add(fill, outline);
+    focalRingMesh = new THREE.Mesh(
+      new THREE.RingGeometry(0.6, 1.4, 32),
+      new THREE.MeshBasicMaterial({
+        color: 0x0284c7,
+        transparent: true,
+        opacity: 0.65,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        clippingPlanes,
+      })
+    );
+    focalRingMesh.position.z = 0.2;
+    focalPlaneGroup.add(fill, outline, focalRingMesh);
   }
   overlayGroup.add(focalPlaneGroup);
 
-  // -------------------------------------------------------------------------
-  // 2. 7 Refracting F1.2 Wide-Aperture Optical Rays (7 vertices each)
-  // -------------------------------------------------------------------------
-  const raySpecs = [
-    { color: 0x0284c7, ux: 0, uy: 1, rFront: 24.5, rSensorY: 0, rSensorX: 0 },
-    { color: 0x0284c7, ux: 0, uy: -1, rFront: 24.5, rSensorY: 0, rSensorX: 0 },
-    { color: 0x0ea5e9, ux: 1, uy: 0, rFront: 24.5, rSensorY: 0, rSensorX: 0 },
-    { color: 0x0ea5e9, ux: -1, uy: 0, rFront: 24.5, rSensorY: 0, rSensorX: 0 },
-    { color: 0x10b981, ux: 0.707, uy: 0.707, rFront: 23.0, rSensorY: -9.5, rSensorX: -12.0 },
-    { color: 0x6366f1, ux: -0.707, uy: -0.707, rFront: 23.0, rSensorY: 9.5, rSensorX: 12.0 },
-    { color: 0xf59e0b, ux: 0, uy: 0, rFront: 0, rSensorY: 0, rSensorX: 0 }, // Chief optical axis
-  ];
+  // Translucent 3D Converging Aperture Light Cone (Rear XA at +Z -> Focal Spot on Sensor at -Z)
+  const lightConeGeo = new THREE.CylinderGeometry(1.0, 0.04, 1.0, 28, 1, true);
+  lightConeGeo.rotateX(Math.PI / 2);
+  const lightConeMat = new THREE.MeshBasicMaterial({
+    color: 0x38bdf8,
+    transparent: true,
+    opacity: 0.09,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    clippingPlanes,
+  });
+  const lightConeMesh = new THREE.Mesh(lightConeGeo, lightConeMat);
+  overlayGroup.add(lightConeMesh);
 
+  // -------------------------------------------------------------------------
+  // 2. Pool of 15 Dynamic 3D Optical Ray Lines + Animated Photon Packets
+  // -------------------------------------------------------------------------
   const rayLines: THREE.Line[] = [];
   const rayPaths: THREE.Vector3[][] = [];
+  const rayActiveFlags: boolean[] = Array(MAX_3D_RAYS).fill(false);
 
-  for (const spec of raySpecs) {
-    const pts = Array.from({ length: 11 }, () => new THREE.Vector3());
+  for (let i = 0; i < MAX_3D_RAYS; i++) {
+    const pts = Array.from({ length: RAY_SAMPLE_VERTS }, () => new THREE.Vector3());
     const line = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pts),
       new THREE.LineBasicMaterial({
-        color: spec.color,
+        color: 0x0284c7,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.82,
         clippingPlanes,
       })
     );
@@ -102,15 +136,14 @@ export function createLensPhysicsOverlay(
     rayPaths.push(pts);
   }
 
-  // Animated photon packets streaming through the lens elements
   const beads: PhotonBead[] = [];
-  const beadGeo = new THREE.SphereGeometry(0.95, 10, 10);
-  for (let r = 0; r < raySpecs.length; r++) {
+  const beadGeo = new THREE.SphereGeometry(0.88, 10, 10);
+  for (let r = 0; r < MAX_3D_RAYS; r++) {
     for (let k = 0; k < 2; k++) {
       const mesh = new THREE.Mesh(
         beadGeo,
         new THREE.MeshBasicMaterial({
-          color: raySpecs[r].color,
+          color: 0x0284c7,
           transparent: true,
           opacity: 0.92,
           clippingPlanes,
@@ -120,43 +153,56 @@ export function createLensPhysicsOverlay(
       beads.push({
         mesh,
         rayIndex: r,
-        phase: k * 0.5 + r * 0.13,
-        speed: 0.42,
+        phase: k * 0.5 + r * 0.09,
+        speed: 0.44,
       });
     }
   }
 
   // -------------------------------------------------------------------------
-  // 3. Quad XD Linear Motor Electromagnetic Thrust Pulses
+  // 3. Quad XD Linear Motor Electromagnetic Thrust Vectors & Flux Rings
   // -------------------------------------------------------------------------
   const thrustPulses: THREE.Mesh[] = [];
+  const fluxRings: THREE.Mesh[] = [];
   const motorAnglesDeg = [45, 135, 225, 315];
-  const thrustGeo = new THREE.ConeGeometry(1.6, 5.2, 12);
+  const thrustGeo = new THREE.ConeGeometry(1.65, 5.4, 12);
   thrustGeo.rotateX(Math.PI / 2);
+  const fluxRingGeo = new THREE.TorusGeometry(3.2, 0.34, 8, 20);
 
   for (let i = 0; i < 4; i++) {
+    const col = i % 2 === 0 ? 0xf59e0b : 0x10b981;
     const pulse = new THREE.Mesh(
       thrustGeo,
       new THREE.MeshBasicMaterial({
-        color: i % 2 === 0 ? 0xf59e0b : 0x10b981,
+        color: col,
         transparent: true,
         opacity: 0.88,
         clippingPlanes,
       })
     );
-    overlayGroup.add(pulse);
+    const ring = new THREE.Mesh(
+      fluxRingGeo,
+      new THREE.MeshBasicMaterial({
+        color: col,
+        transparent: true,
+        opacity: 0.45,
+        clippingPlanes,
+      })
+    );
+    overlayGroup.add(pulse, ring);
     thrustPulses.push(pulse);
+    fluxRings.push(ring);
   }
 
   // -------------------------------------------------------------------------
-  // 4. Axial Dashed CAD Explode Alignment Guides
+  // 4. Axial Dashed CAD Explode Alignment Guides (L01–L62)
   // -------------------------------------------------------------------------
   const guideLines: THREE.Line[] = [];
   const guideOffsets: Array<[number, number]> = [
-    [34, 0],
-    [-34, 0],
-    [0, 34],
-    [0, -34],
+    [35, 0],
+    [-35, 0],
+    [0, 35],
+    [0, -35],
   ];
   for (const [gx, gy] of guideOffsets) {
     const line = new THREE.Line(
@@ -166,10 +212,10 @@ export function createLensPhysicsOverlay(
       ]),
       new THREE.LineDashedMaterial({
         color: 0x64748b,
-        dashSize: 3.0,
+        dashSize: 3.2,
         gapSize: 2.2,
         transparent: true,
-        opacity: 0.48,
+        opacity: 0.46,
         clippingPlanes,
       })
     );
@@ -180,77 +226,183 @@ export function createLensPhysicsOverlay(
 
   const tmpPos = new THREE.Vector3();
 
+  // Helper: map a 2D Snell-traced ray point (z, y) cleanly into current exploded 3D Z coordinate!
+  const mapExplodedZ = (
+    zRest: number,
+    zStopsRest: number[],
+    zStopsLive: number[]
+  ): number => {
+    if (zRest >= zStopsRest[0]) {
+      return zStopsLive[0] + (zRest - zStopsRest[0]);
+    }
+    const last = zStopsRest.length - 1;
+    if (zRest <= zStopsRest[last]) {
+      return zStopsLive[last] + (zRest - zStopsRest[last]);
+    }
+    for (let k = 0; k < last; k++) {
+      if (zRest <= zStopsRest[k] && zRest >= zStopsRest[k + 1]) {
+        const span = zStopsRest[k] - zStopsRest[k + 1];
+        const frac = span > 1e-4 ? (zStopsRest[k] - zRest) / span : 0;
+        return THREE.MathUtils.lerp(zStopsLive[k], zStopsLive[k + 1], frac);
+      }
+    }
+    return zRest;
+  };
+
   return {
     overlayGroup,
     explodeGuides,
     setVisible: (visible: boolean) => {
       overlayGroup.visible = visible;
     },
-    update: (elapsed, active, parts, integrated) => {
+    update: (elapsed, active, parts, integrated, sim) => {
       if (!active || !overlayGroup.visible) return;
 
-      const pFront = parts.find((p) => p.id === 'lens-front-xa');
-      const pMeniscus = parts.find((p) => p.id === 'lens-front-meniscus');
-      const pEd = parts.find((p) => p.id === 'lens-ed-group');
-      const pG4 = parts.find((p) => p.id === 'lens-g4-negative');
-      const pIris = parts.find((p) => p.id === 'lens-aperture-11');
-      const pFocusA = parts.find((p) => p.id === 'lens-focus-group-a');
-      const pXd = parts.find((p) => p.id === 'lens-xd-motors');
-      const pFocusB = parts.find((p) => p.id === 'lens-focus-group-b');
-      const pRearConv = parts.find((p) => p.id === 'lens-rear-convex');
-      const pRear = parts.find((p) => p.id === 'lens-rear-element');
-      const pBayonet = parts.find((p) => p.id === 'lens-rear-bayonet');
+      const partById = new Map<string, CadPart>();
+      for (const p of parts) partById.set(p.id, p);
 
-      const zFront = pFront ? pFront.group.position.z : 108.5;
-      const zMeniscus = pMeniscus ? pMeniscus.group.position.z : 102.0;
-      const zEd = pEd ? pEd.group.position.z : 96.2;
-      const zG4 = pG4 ? pG4.group.position.z : 88.0;
-      const zIris = pIris ? pIris.group.position.z : 82.0;
-      const zFocusA = pFocusA ? pFocusA.group.position.z : 72.0;
-      const zFocusB = pFocusB ? pFocusB.group.position.z : 57.0;
-      const zRearConv = pRearConv ? pRearConv.group.position.z : 49.2;
-      const zRear = pRear ? pRear.group.position.z : 42.0;
+      const pBayonet = partById.get('lens-rear-bayonet');
       const zBayonet = pBayonet ? pBayonet.group.position.z : 33.5;
-      const zSensor = integrated ? 0.0 : zBayonet - 28.0;
+      const zSensor = integrated ? 0.0 : zBayonet - 33.5;
+
+      // Build live Z anchor stations along the 14 elements + iris + sensor (handles exploded mode cleanly!)
+      const zStopsRest: number[] = [];
+      const zStopsLive: number[] = [];
+      for (let i = 0; i < OPTICAL_ELEMENTS.length; i++) {
+        if (i === 5) {
+          zStopsRest.push(IRIS_Z);
+          const pIris = partById.get('lens-aperture-11');
+          zStopsLive.push(pIris ? pIris.group.position.z : IRIS_Z);
+        }
+        const el = OPTICAL_ELEMENTS[i];
+        zStopsRest.push(el.z);
+        const pEl = partById.get(el.partId);
+        zStopsLive.push(pEl ? pEl.group.position.z : el.z);
+      }
+      zStopsRest.push(SENSOR_Z);
+      zStopsLive.push(zSensor);
 
       focalPlaneGroup.visible = !integrated;
       focalPlaneGroup.position.set(0, 0, zSensor);
 
-      // Sync ray bundle aperture constriction with live 11-blade iris wave!
-      const irisWave = 0.5 - 0.5 * Math.cos(elapsed * 1.15);
-      const apertureScale = 1.0 - irisWave * 0.56; // shrinks rays as diaphragm stops down to F11
+      // Run real Snell-traced ray bundle from LensOpticalSim!
+      const traced2D = sim.traceActiveBundle(136);
+      const iris = sim.getIrisMetrics();
+      const strokes = sim.getFloatingStrokes();
 
-      for (let i = 0; i < raySpecs.length; i++) {
-        const s = raySpecs[i];
-        const pts = rayPaths[i];
-        const rIn = s.rFront * apertureScale;
-        const rMen = rIn * 0.94;
-        const rEd = rIn * 0.87;
-        const rG4 = rIn * 0.79;
-        const rIris = rIn * 0.72;
-        const rFA = rIn * 0.61;
-        const rFB = rIn * 0.45;
-        const rRConv = rIn * 0.36;
-        const rRear = rIn * 0.28;
+      // Update translucent 3D aperture cone from Rear XA (E14) to Sensor Focal Point
+      const pRear = partById.get('lens-rear-element');
+      const zRearLive = pRear ? pRear.group.position.z : 41.6;
+      const coneLen = Math.max(4, zRearLive - zSensor);
+      const coneFrontR = Math.max(2.2, iris.irisRadiusMm * 0.72);
+      const chiefRay = traced2D.find((r) => r.rayRole === 'chief') ?? traced2D[0];
+      const sensorSpotY = chiefRay ? chiefRay.ySensor : 0;
+      lightConeMesh.visible = true;
+      lightConeMesh.position.set(0, sensorSpotY * 0.5, (zRearLive + zSensor) * 0.5);
+      lightConeMesh.scale.set(coneFrontR, coneFrontR, coneLen);
+      lightConeMat.color.setHex(
+        sim.scenario === 'ed_chromatic'
+          ? 0x10b981
+          : sim.scenario === 'floating_xd'
+            ? 0xf59e0b
+            : 0x38bdf8
+      );
+      lightConeMat.opacity = 0.055 + (1 - iris.closure01) * 0.055;
 
-        pts[0].set(s.ux * rIn, s.uy * rIn, zFront + 32.0);
-        pts[1].set(s.ux * rIn, s.uy * rIn, zFront);
-        pts[2].set(s.ux * rMen, s.uy * rMen, zMeniscus);
-        pts[3].set(s.ux * rEd, s.uy * rEd, zEd);
-        pts[4].set(s.ux * rG4 + s.rSensorX * 0.08, s.uy * rG4 + s.rSensorY * 0.08, zG4);
-        pts[5].set(s.ux * rIris + s.rSensorX * 0.14, s.uy * rIris + s.rSensorY * 0.14, zIris);
-        pts[6].set(s.ux * rFA + s.rSensorX * 0.28, s.uy * rFA + s.rSensorY * 0.28, zFocusA);
-        pts[7].set(s.ux * rFB + s.rSensorX * 0.50, s.uy * rFB + s.rSensorY * 0.50, zFocusB);
-        pts[8].set(s.ux * rRConv + s.rSensorX * 0.64, s.uy * rRConv + s.rSensorY * 0.64, zRearConv);
-        pts[9].set(s.ux * rRear + s.rSensorX * 0.78, s.uy * rRear + s.rSensorY * 0.78, zRear);
-        pts[10].set(s.rSensorX, s.rSensorY, zSensor);
+      // Update focal spot / bokeh halo on sensor plane
+      const spotScale =
+        sim.scenario === 'xa_aspheric' && sim.xaStrength < 0.5
+          ? 2.8
+          : sim.scenario === 'ed_chromatic' && sim.edStrength < 0.5
+            ? 2.2
+            : 0.7 + (1 - iris.closure01) * 0.6;
+      focalRingMesh.position.set(0, sensorSpotY, 0.25);
+      focalRingMesh.scale.set(spotScale, spotScale, 1);
 
-        rayLines[i].geometry.setFromPoints(pts);
+      // Populate 3D rays:
+      // In standard aperture/floating mode, project 2D rays across 3D azimuthal planes (vertical + horizontal + diagonal)
+      // so the 3D cutaway lens shows a true volumetric converging light cone!
+      // In RGB chromatic / XA / Nano AR modes, project all meridional rays directly in the Y-Z cutaway plane so every
+      // chromatic/aspheric split is crystal clear right through the cutaway!
+      const isVolumetricMode =
+        sim.scenario === 'aperture_bokeh' || sim.scenario === 'floating_xd';
+
+      let rayIdx = 0;
+      const writePathFrom2D = (
+        pts2D: Array<{ z: number; y: number }>,
+        rotCos: number,
+        rotSin: number,
+        hexColor: number,
+        opacity: number
+      ) => {
+        if (rayIdx >= MAX_3D_RAYS) return;
+        const pts3D = rayPaths[rayIdx];
+        const line = rayLines[rayIdx];
+        const mat = line.material as THREE.LineBasicMaterial;
+        mat.color.setHex(hexColor);
+        mat.opacity = opacity;
+        line.visible = opacity > 0.04;
+        rayActiveFlags[rayIdx] = line.visible;
+
+        // Resample pts2D cleanly to RAY_SAMPLE_VERTS vertices in-place (zero GC per frame)
+        const nSrc = pts2D.length;
+        const posAttr = line.geometry.getAttribute('position') as THREE.BufferAttribute;
+        for (let v = 0; v < RAY_SAMPLE_VERTS; v++) {
+          const u = v / (RAY_SAMPLE_VERTS - 1);
+          const fIdx = u * (nSrc - 1);
+          const i0 = Math.min(nSrc - 2, Math.floor(fIdx));
+          const frac = fIdx - i0;
+          const zr = THREE.MathUtils.lerp(pts2D[i0].z, pts2D[i0 + 1].z, frac);
+          const yr = THREE.MathUtils.lerp(pts2D[i0].y, pts2D[i0 + 1].y, frac);
+          const zLive = mapExplodedZ(zr, zStopsRest, zStopsLive);
+          const x3 = yr * rotSin;
+          const y3 = yr * rotCos;
+          pts3D[v].set(x3, y3, zLive);
+          posAttr.setXYZ(v, x3, y3, zLive);
+        }
+        posAttr.needsUpdate = true;
+        rayIdx++;
+      };
+
+      if (isVolumetricMode) {
+        // Vertical Y-Z meridional rays (full bundle)
+        for (const r of traced2D) {
+          if (r.clippedAtIris) continue;
+          writePathFrom2D(r.points, 1, 0, r.hexColor, r.opacity);
+        }
+        // Add horizontal X-Z & diagonal symmetric rays from outer/mid meridional rays for true 3D cone depth!
+        const nonClipped = traced2D.filter((r) => !r.clippedAtIris && r.rayRole !== 'chief');
+        if (nonClipped.length >= 2) {
+          const outerTop = nonClipped[nonClipped.length - 1];
+          const outerBot = nonClipped[0];
+          writePathFrom2D(outerTop.points, 0, 1, 0x0ea5e9, 0.72);
+          writePathFrom2D(outerBot.points, 0, 1, 0x0ea5e9, 0.72);
+          writePathFrom2D(outerTop.points, 0.707, 0.707, 0x10b981, 0.56);
+          writePathFrom2D(outerBot.points, 0.707, 0.707, 0x6366f1, 0.56);
+        }
+      } else {
+        // High-precision meridional cutaway display (RGB chromatic split / XA caustic / Nano AR ghost rays)
+        for (const r of traced2D) {
+          if (r.clippedAtIris && r.rayRole !== 'stray') continue;
+          writePathFrom2D(r.points, 1, 0, r.hexColor, r.opacity);
+        }
       }
 
-      // Move photon beads along multi-segment refracted paths
+      // Hide unused pooled ray lines
+      for (let k = rayIdx; k < MAX_3D_RAYS; k++) {
+        rayLines[k].visible = false;
+        rayActiveFlags[k] = false;
+      }
+
+      // Stream luminous photon wavepackets along every active 3D ray
       for (const b of beads) {
+        const isActiveRay = rayActiveFlags[b.rayIndex];
+        b.mesh.visible = isActiveRay;
+        if (!isActiveRay) continue;
         const pts = rayPaths[b.rayIndex];
+        const lineMat = rayLines[b.rayIndex].material as THREE.LineBasicMaterial;
+        (b.mesh.material as THREE.MeshBasicMaterial).color.copy(lineMat.color);
+        (b.mesh.material as THREE.MeshBasicMaterial).opacity = Math.min(0.95, lineMat.opacity + 0.12);
         const t = (elapsed * b.speed + b.phase) % 1;
         const segFloat = t * (pts.length - 1);
         const segIdx = Math.min(pts.length - 2, Math.floor(segFloat));
@@ -259,20 +411,34 @@ export function createLensPhysicsOverlay(
         b.mesh.position.copy(tmpPos);
       }
 
-      // Animate 4 electromagnetic Lorentz thrust indicators along the 4 XD Linear Motor rails
-      const zXd = pXd ? pXd.group.position.z : 64.5;
-      const focusVel = Math.cos(elapsed * 1.85);
+      // Animate 4 electromagnetic Lorentz thrust indicators & flux rings along all 4 XD Linear rails
+      const pXd = partById.get('lens-xd-motors');
+      const zXd = pXd ? pXd.group.position.z : 65.0;
+      const pulseWave = 0.5 + 0.5 * Math.sin(elapsed * 6.0);
       for (let i = 0; i < 4; i++) {
+        const isGroupA = i % 2 === 0;
         const a = THREE.MathUtils.degToRad(motorAnglesDeg[i]);
-        const dirSign = (i % 2 === 0 ? 1 : -1) * (focusVel >= 0 ? 1 : -1);
-        const travel = Math.sin(elapsed * 1.85) * (i % 2 === 0 ? 5.2 : -4.2);
+        const stroke = (isGroupA ? strokes.dzA : strokes.dzB) * 0.72;
+        const vel = isGroupA ? sim.focusVelocityA : sim.focusVelocityB;
+        const dirSign = Math.abs(vel) > 0.05 ? Math.sign(vel) : isGroupA ? -1 : 1;
+
+        const zBaseRail = zXd + (isGroupA ? 5.5 : -6.5) + stroke;
         const pulse = thrustPulses[i];
         pulse.position.set(
           Math.cos(a) * 35.8,
           Math.sin(a) * 35.8,
-          zXd + (i % 2 === 0 ? 5.5 : -6.5) + travel + dirSign * 4.5
+          zBaseRail + dirSign * (4.6 + pulseWave * 1.4)
         );
         pulse.rotation.x = dirSign >= 0 ? 0 : Math.PI;
+        const magScale = 0.85 + Math.min(0.55, Math.abs(vel) * 0.08);
+        pulse.scale.set(magScale, magScale, magScale);
+
+        const ring = fluxRings[i];
+        ring.position.set(Math.cos(a) * 33.4, Math.sin(a) * 33.4, zBaseRail);
+        const rScale = 0.88 + 0.22 * Math.sin(elapsed * 5.2 + i * 1.4);
+        ring.scale.set(rScale, rScale, 1);
+        (ring.material as THREE.MeshBasicMaterial).opacity =
+          sim.scenario === 'floating_xd' ? 0.65 : 0.34;
       }
     },
     updateGuides: (explodeFactor, visible, parts) => {
@@ -281,7 +447,9 @@ export function createLensPhysicsOverlay(
       if (!show) return;
 
       const pFront = parts.find((p) => p.id === 'lens-front-hood');
-      const pRear = parts.find((p) => p.id === 'lens-rear-bayonet') ?? parts.find((p) => p.id === 'lens-rear-element');
+      const pRear =
+        parts.find((p) => p.id === 'lens-rear-bayonet') ??
+        parts.find((p) => p.id === 'lens-rear-element');
       const zMax = pFront ? pFront.group.position.z + 10 : 140;
       const zMin = pRear ? pRear.group.position.z - 5 : 32;
 

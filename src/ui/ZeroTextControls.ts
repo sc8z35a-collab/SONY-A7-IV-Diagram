@@ -7,6 +7,7 @@ export interface ZeroTextUIHandlers {
   onSectionValueChange: (value: number) => void;
   onRenderModeChange: (mode: RenderMode) => void;
   onPhysicsToggle: (active: boolean) => void;
+  onOpticsStudioToggle: () => void;
   onResetVisibility: () => void;
   onFullscreenToggle: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
@@ -115,6 +116,10 @@ const ICONS = {
   physicsRays:
     '<line x1="3" y1="6" x2="12" y2="12"/><line x1="3" y1="12" x2="12" y2="12"/><line x1="3" y1="18" x2="12" y2="12"/><line x1="12" y1="12" x2="21" y2="7"/><line x1="12" y1="12" x2="21" y2="12"/><line x1="12" y1="12" x2="21" y2="17"/><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>',
 
+  // Interactive Optical Mechanism Motion Lab: double-convex lens element refracting rays to a crisp focal point (zero text!)
+  opticsStudio:
+    '<path d="M9.8 4.2c2.8 4.6 2.8 11 0 15.6c-2.8-4.6-2.8-11 0-15.6z"/><path d="M2.5 8h6.4l11.6 4"/><path d="M2.5 16h6.4l11.6-4"/><line x1="2.5" y1="12" x2="20.5" y2="12" opacity="0.45"/><circle cx="20.5" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+
   // Reset all visibility (show all)
   eyeAll:
     '<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
@@ -172,6 +177,7 @@ export class ZeroTextControls {
   private cadBtn: HTMLButtonElement;
 
   private physicsBtn: HTMLButtonElement;
+  private opticsStudioBtn: HTMLButtonElement;
   private resetVisBtn: HTMLButtonElement;
   private fullscreenBtn: HTMLButtonElement;
 
@@ -340,7 +346,7 @@ export class ZeroTextControls {
     this.cadBtn.addEventListener('click', () => this.setRenderMode('cad'));
     renderGroup.append(this.solidBtn, this.xrayBtn, this.cadBtn);
 
-    // Group E: Physics Simulation, Visibility Reset & Fullscreen Toggle
+    // Group E: Physics Simulation, Optical Motion Lab, Visibility Reset & Fullscreen Toggle
     const actionGroup = document.createElement('div');
     actionGroup.className = 'cad-dock-group';
 
@@ -350,6 +356,12 @@ export class ZeroTextControls {
       this.physicsActive = !this.physicsActive;
       this.physicsBtn.classList.toggle('is-active', this.physicsActive);
       this.handlers.onPhysicsToggle(this.physicsActive);
+    });
+
+    this.opticsStudioBtn = createIconButton(ICONS.opticsStudio);
+    this.opticsStudioBtn.classList.add('is-accent');
+    this.opticsStudioBtn.addEventListener('click', () => {
+      this.handlers.onOpticsStudioToggle();
     });
 
     this.resetVisBtn = createIconButton(ICONS.eyeAll);
@@ -363,7 +375,7 @@ export class ZeroTextControls {
       this.handlers.onFullscreenToggle();
     });
 
-    actionGroup.append(this.physicsBtn, this.resetVisBtn, this.fullscreenBtn);
+    actionGroup.append(this.physicsBtn, this.opticsStudioBtn, this.resetVisBtn, this.fullscreenBtn);
 
     const div1 = document.createElement('div');
     div1.className = 'cad-divider';
@@ -462,6 +474,10 @@ export class ZeroTextControls {
     this.physicsBtn.classList.toggle('is-active', active);
   }
 
+  public syncOpticsStudio(active: boolean): void {
+    this.opticsStudioBtn.classList.toggle('is-active', active);
+  }
+
   public syncFullscreen(active: boolean): void {
     this.fullscreenBtn.classList.toggle('is-active', active);
     this.fullscreenBtn.replaceChildren(
@@ -510,11 +526,39 @@ export class ZeroTextControls {
       let widthPx = 20;
       if (part.subsystem === 'lens') {
         widthPx =
-          part.order === 1 || part.order === 21 || part.order === 37 || part.order === 38 || part.order === 40
+          part.order === 1 ||
+          part.order === 32 ||
+          part.order === 33 ||
+          part.order === 43 ||
+          part.order === 46 ||
+          part.order === 57 ||
+          part.order === 58 ||
+          part.order === 62
             ? 32
-            : part.order === 4 || part.order === 6 || part.order === 10 || part.order === 14 || part.order === 16 || part.order === 17 || part.order === 23 || part.order === 27 || part.order === 30
+            : part.order === 8 ||
+                part.order === 10 ||
+                part.order === 16 ||
+                part.order === 21 ||
+                part.order === 24 ||
+                part.order === 26 ||
+                part.order === 35 ||
+                part.order === 40 ||
+                part.order === 53
               ? 26
-              : part.order === 2 || part.order === 5 || part.order === 7 || part.order === 9 || part.order === 19 || part.order === 25 || part.order === 26 || part.order === 31 || part.order === 36
+              : part.order === 3 ||
+                  part.order === 7 ||
+                  part.order === 9 ||
+                  part.order === 11 ||
+                  part.order === 12 ||
+                  part.order === 15 ||
+                  part.order === 22 ||
+                  part.order === 28 ||
+                  part.order === 34 ||
+                  part.order === 38 ||
+                  part.order === 39 ||
+                  part.order === 41 ||
+                  part.order === 50 ||
+                  part.order === 54
                 ? 21
                 : 16;
       } else if (part.subsystem === 'lcd') {

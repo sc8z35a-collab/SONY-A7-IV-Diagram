@@ -11,6 +11,7 @@ import {
 } from '../assemblies/types';
 import { createMaterialLibrary, MaterialLibrary } from './Materials';
 import { createLensAssembly } from '../assemblies/lens';
+import { sharedLensOpticalSim } from '../assemblies/lens/lensOpticalSim';
 import { createMountAssembly } from '../assemblies/mount';
 import { createShutterAssembly } from '../assemblies/shutter';
 import { createSensorAssemblies } from '../assemblies/sensor';
@@ -259,7 +260,7 @@ export class CadViewport {
     this.bodyAssembly.rootGroup.visible = showBody;
     this.microAssembly.rootGroup.visible = showMicro;
 
-    this.lensAssembly.setPhysicsVisible(this.physicsActive && showLens);
+    this.lensAssembly.setPhysicsVisible((this.physicsActive || sharedLensOpticalSim.studioOpen) && showLens);
     this.mountAssembly.setPhysicsVisible(this.physicsActive && showMount);
     this.shutterAssembly.setPhysicsVisible(this.physicsActive && showShutter);
     this.sensorAssembly.setPhysicsVisible(this.physicsActive && showSensor);
@@ -461,8 +462,8 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      d = 258 + e * 540;
-      target = new THREE.Vector3(0, -2.0 * (1 - e), 82.0 + e * 12.0);
+      d = 258 + e * 680;
+      target = new THREE.Vector3(0, -2.0 * (1 - e), 82.0 + e * 14.0);
     } else if (this.mode === 'camera_body') {
       // Complete 98-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 98-layer body dissection!
       d = 328 + e * 430;
@@ -486,9 +487,9 @@ export class CadViewport {
       d = 166 + e * 82;
       target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
     } else if (this.mode === 'integrated') {
-      // Assembled complete 138-part flagship camera + 40-part 50mm F1.2 lens, vs panoramic 138-layer ultra-dissection!
-      d = 385 + e * 1020;
-      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 76.0);
+      // Assembled complete 160-macro-part flagship camera + 62-part 50mm F1.2 lens, vs panoramic ultra-dissection!
+      d = 385 + e * 1160;
+      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
       d = 142 + e * 255;
       target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 32.0);
@@ -635,6 +636,29 @@ export class CadViewport {
 
   private markDirty(frames = 3): void {
     this.dirtyFrames = Math.max(this.dirtyFrames, frames);
+  }
+
+  public requestRenderFrame(): void {
+    this.markDirty(2);
+  }
+
+  /**
+   * Smoothly frame the 62-part 50mm F1.2 cutaway lens cleanly in the upper half of the viewport
+   * so both the live-moving 3D CAD lens and the bottom 2D Optical Motion Studio shine together!
+   */
+  public frameLensForOpticsStudio(immediate = false): void {
+    const target = new THREE.Vector3(0, -36, 74);
+    const pos = new THREE.Vector3(-348, 56, 178);
+    this.syncAssemblyVisibility();
+    if (immediate) {
+      this.camAnimActive = false;
+      this.camera.position.copy(pos);
+      this.controls.target.copy(target);
+      this.controls.update();
+      this.markDirty();
+    } else {
+      this.animateCameraTo(pos, target);
+    }
   }
 
   public handleResize(): void {
@@ -889,7 +913,11 @@ export class CadViewport {
     ];
     for (const asm of macroAssemblies) {
       if (asm.rootGroup.visible) {
-        asm.updateAnimation(elapsed, delta, this.currentExplode, this.physicsActive, integrated);
+        const asmPhysics =
+          asm === this.lensAssembly
+            ? this.physicsActive || sharedLensOpticalSim.studioOpen
+            : this.physicsActive;
+        asm.updateAnimation(elapsed, delta, this.currentExplode, asmPhysics, integrated);
       }
     }
     if (this.microAssembly.rootGroup.visible) {
@@ -908,7 +936,7 @@ export class CadViewport {
     const delta = Math.min(this.clock.getDelta(), 0.05);
     const elapsed = this.clock.getElapsedTime();
 
-    let active = this.physicsActive || this.dirtyFrames > 0;
+    let active = this.physicsActive || sharedLensOpticalSim.studioOpen || this.dirtyFrames > 0;
     let explodeMoved = false;
 
     const diff = this.targetExplode - this.currentExplode;

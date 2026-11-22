@@ -1,6 +1,8 @@
 import { PartExplanation } from '../types';
+import { LENS_ULTRA_EXPLANATIONS } from './lensUltraExplanations';
 
 export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
+  ...LENS_ULTRA_EXPLANATIONS,
   // =========================================================================
   // L01 — Bayonet Lock Cylindrical Lens Hood
   // =========================================================================
@@ -37,9 +39,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L02 — φ72mm Filter Thread Bezel & Spanner Ring
   // =========================================================================
   'lens-filter-ring': {
-    title: 'L02. φ72mm フィルターねじ枠＆撥水フッ素コート保護ベゼル',
+    title: 'L03. φ72mm フィルターねじ枠＆撥水フッ素コート保護ベゼル',
     subtitle: 'CNC 72mm Filter Thread Bezel, Retaining Spanner Ring & Fluorine Barrier Lip',
-    category: 'L02 / 前玉保持・フィルター枠',
+    category: 'L03 / 前玉保持・フィルター枠',
     plainAnalogy:
       '保護フィルターやサングラス（NDフィルター）をクルクルねじ込む「精密な金属のネジ口」であり、同時に巨大な第1レンズが外れないよう正面から押さえ込むフタの役目も担います。',
     summary:
@@ -68,9 +70,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L03 — [NEW!] Front-Group 3-Point Eccentric Tilt & Centering Collar
   // =========================================================================
   'lens-front-eccentric': {
-    title: 'L03. 前群3点偏心コロ（エキセントリックカラー）光軸・チルト微調機構',
+    title: 'L06. 前群3点偏心コロ（エキセントリックカラー）光軸・チルト微調機構',
     subtitle: 'Front-Group 3-Point Eccentric Centering & Optical Tilt Calibration Collar',
-    category: 'L03 / 工場光軸アライメント機構',
+    category: 'L06 / 工場光軸アライメント機構',
     plainAnalogy:
       '巨大な前玉レンズの「中心ズレ」や「わずかな傾き」を工場の検査員が0.001 mm単位で追い込むための、穴の位置が少しだけ偏った3つの「魔法の微調整リング（偏心コロ）」です。これで画面四隅の片ボケをゼロに追い込みます。',
     summary:
@@ -99,9 +101,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L04 — Element 1 (G1): Large-Diameter 0.01μm XA Front Element
   // =========================================================================
   'lens-front-xa': {
-    title: 'L04. 第1枚（第1群）大口径XA 0.01μm超高度非球面フロントレンズ',
+    title: 'L08. 第1枚（第1群）大口径XA 0.01μm超高度非球面フロントレンズ',
     subtitle: 'Element 01 (G1): Large-Diameter 0.01 μm XA Front Element + Nano AR II & Fluorine',
-    category: 'L04 / 第1光学面・XA超高度非球面',
+    category: 'L08 / 第1光学面・XA超高度非球面',
     plainAnalogy:
       '光をたっぷり集める「巨大な虫めがねの入口（14枚のうちの1枚目）」です。表面を髪の毛の1万分の1（0.01マイクロメートル）精度のカーブに磨くことで、丸ボケの中にタマネギのような年輪が出るのを完全に消します。',
     summary:
@@ -131,9 +133,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L05 — Element 2 (G2): High-Index Positive Meniscus & Brass Spacer
   // =========================================================================
   'lens-front-meniscus': {
-    title: 'L05. 第2枚（第2群）高屈折ランタン正メニスカス＆真鍮空気間隔スペーサー',
+    title: 'L09. 第2枚（第2群）高屈折ランタン正メニスカス＆真鍮空気間隔スペーサー',
     subtitle: 'Element 02 (G2): High-Index Positive Meniscus Collector & Micron Brass Spacer',
-    category: 'L05 / 前群集光・空気レンズ間隔制御',
+    category: 'L09 / 前群集光・空気レンズ間隔制御',
     plainAnalogy:
       '1枚目のレンズから入ってきた広がる光を、優しく内側へ曲げて次のレンズへ渡す「2枚目の大きなお椀型ガラス」と、ガラス同士の空気のすき間をミクロン単位で正確に保つ「金色の真鍮リング」です。',
     summary:
@@ -162,9 +164,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L06 — Element 3 (G3a): Super-ED Positive Element (Front Half of Doublet)
   // =========================================================================
   'lens-ed-group': {
-    title: 'L06. 第3枚（第3群前側）スーパーED（特殊低分散）凸レンズ',
+    title: 'L10. 第3枚（第3群前側）スーパーED（特殊低分散）凸レンズ',
     subtitle: 'Element 03 (G3a): Super-ED Extra-Low Dispersion Positive Element (Doublet Front)',
-    category: 'L06 / 色収差補正・スーパーED光学',
+    category: 'L10 / 色収差補正・スーパーED光学',
     plainAnalogy:
       '光が虹色にバラけてしまうのを防ぐ「超高級な透明ガラス（3枚目）」です。次の4枚目の凹レンズ（L07）とぴったり貼り合わさって、白い輪郭に紫や緑の色にじみが出るのをピタリと消します。',
     summary:
@@ -193,9 +195,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L07 — [NEW!] Element 4 (G3b): High-Dispersion Flint Cemented Mate & UV Seam
   // =========================================================================
   'lens-flint-cemented': {
-    title: 'L07. 第4枚（第3群後側）高分散フリント凹レンズ＆UV光学バルサム接合層',
+    title: 'L11. 第4枚（第3群後側）高分散フリント凹レンズ＆UV光学バルサム接合層',
     subtitle: 'Element 04 (G3b): High-Dispersion Dense Flint Negative Mate & UV Optical Cement Layer',
-    category: 'L07 / 接合ダブレット・色消し相殺光学',
+    category: 'L11 / 接合ダブレット・色消し相殺光学',
     plainAnalogy:
       '3枚目のスーパーED凸レンズ（L06）の後ろに透明な専用ノリ（光学セメント）で隙間なくピタッと貼り合わされる「色のズレを逆向きに打ち消す相棒の凹レンズ（4枚目）」です。隙間ゼロで貼ることで光の反射ロスも防ぎます。',
     summary:
@@ -224,9 +226,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L08 — [NEW!] Element 5 (G4): Biconcave Petzval-Flattening Negative Element
   // =========================================================================
   'lens-g4-negative': {
-    title: 'L08. 第5枚（第4群）絞り直前・両凹ペッツバール像面平坦化レンズ',
+    title: 'L12. 第5枚（第4群）絞り直前・両凹ペッツバール像面平坦化レンズ',
     subtitle: 'Element 05 (G4): Biconcave High-Index Negative Meniscus (Pre-Stop Petzval Flattener)',
-    category: 'L08 / ダブルガウス系・像面平坦化',
+    category: 'L12 / ダブルガウス系・像面平坦化',
     plainAnalogy:
       '絞り羽根のすぐ手前に置かれた「真ん中がくびれた凹レンズ（5枚目）」です。凸レンズばかりだと写真のピント面がお椀のように丸く曲がってしまうのを、この凹レンズが逆向きに押し広げて真っ平らなピント面に直します。',
     summary:
@@ -255,9 +257,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L09 — 11-Blade Iris Slotted Cam Actuating Ring
   // =========================================================================
   'lens-iris-cam-ring': {
-    title: 'L09. 11枚絞り駆動カムリング＆外周真鍮セクターギア',
+    title: 'L15. 11枚絞り駆動カムリング＆外周真鍮セクターギア',
     subtitle: '11-Slot Precision Non-Linear Cam Actuating Ring & Brass Sector Gear',
-    category: 'L09 / 絞り連動カム機構',
+    category: 'L15 / 絞り連動カム機構',
     plainAnalogy:
       '11枚の絞り羽根の「小さな突起（ピン）」がはまり込む11本のカーブした溝が彫られた「からくり円盤」です。この円盤が数度回転するだけで、11枚の羽根が1ミクロンの狂いもなく一斉に開閉します。',
     summary:
@@ -286,9 +288,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L10 — 11-Blade Circular Carbon Iris Diaphragm Blades
   // =========================================================================
   'lens-aperture-11': {
-    title: 'L10. 11枚羽根 円形カーボン絞りブレードアレイ（F1.2–F16）',
+    title: 'L16. 11枚羽根 円形カーボン絞りブレードアレイ（F1.2–F16）',
     subtitle: '11-Blade Circular Low-Friction Carbon Iris Diaphragm Blades',
-    category: 'L10 / 光量・円形ボケ制御',
+    category: 'L16 / 光量・円形ボケ制御',
     plainAnalogy:
       '目の「瞳孔（黒目）」の羽根そのものです。11枚の極薄の三日月カーボン羽根が花びらのように重なり合って開閉し、背景の玉ボケがカクカクせず美しい丸ボケになるよう整えます。',
     summary:
@@ -317,9 +319,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L11 — [NEW!] Iris Stationary Pivot-Pin Base Plate & Light-Trap Shield
   // =========================================================================
   'lens-iris-base-plate': {
-    title: 'L11. 絞り固定ピボット基準ベースプレート＆遮光防塵シールド枠',
+    title: 'L17. 絞り固定ピボット基準ベースプレート＆遮光防塵シールド枠',
     subtitle: 'Stationary Iris Pivot-Pin Base Housing Plate & Stray-Light Dust Shield',
-    category: 'L11 / 絞り支点基盤・遮光分離',
+    category: 'L17 / 絞り支点基盤・遮光分離',
     plainAnalogy:
       '11枚の絞り羽根がクルクル回るための「11本の固定ピン」を支えつつ、羽根のすき間から光が漏れたりホコリが挟まったりするのを防ぐ「絞りユニットの裏蓋（土台リング）」です。',
     summary:
@@ -348,9 +350,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L12 — Silent Micro-Stepping Iris Actuator Motor & Gear Train
   // =========================================================================
   'lens-iris-stepper': {
-    title: 'L12. 絞り専用 静音1/64マイクロステッピングモーター＆減速ギア',
+    title: 'L18. 絞り専用 静音1/64マイクロステッピングモーター＆減速ギア',
     subtitle: 'Silent Micro-Stepping Iris Actuator Motor, POM Gear Train & Home Photo-Interrupter',
-    category: 'L12 / 電磁絞り駆動アクチュエータ',
+    category: 'L18 / 電磁絞り駆動アクチュエータ',
     plainAnalogy:
       '11枚の絞り羽根を動かす「ささやくほど静かな超小型モーター」です。動画撮影中にカメラのマイクがモーター音を拾わないよう、極小ステップでなめらかにカムリングを回します。',
     summary:
@@ -379,9 +381,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L13 — [NEW!] Element 6 (G5a): Floating Focus Group A Front Biconvex
   // =========================================================================
   'lens-focus-a-front': {
-    title: 'L13. 第6枚（第5群・前衛AF前玉）高屈折両凸フローティングレンズ',
+    title: 'L20. 第6枚（第5群・前衛AF前玉）高屈折両凸フローティングレンズ',
     subtitle: 'Element 06 (G5a): Floating Focus Group A Front High-Index Biconvex Element',
-    category: 'L13 / フローティングAF前衛・第1要素',
+    category: 'L20 / フローティングAF前衛・第1要素',
     plainAnalogy:
       'ピント合わせで動く前衛チーム（3枚組のガラス塊）の先頭を走る「両面が膨らんだ凸レンズ（6枚目）」です。絞りを通過してキュッと細くなった光束を受け止め、ピント位置に合わせて素早く前後します。',
     summary:
@@ -410,9 +412,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L14 — Element 7 (G5b): Floating Focus Group A Carrier + 2nd XA Aspheric
   // =========================================================================
   'lens-focus-group-a': {
-    title: 'L14. 第7枚（第5群中核）フローティングAF第1キャリア＆第2 XA非球面',
+    title: 'L21. 第7枚（第5群中核）フローティングAF第1キャリア＆第2 XA非球面',
     subtitle: 'Element 07 (G5b): Floating Focus Group A Carrier, 2nd XA Aspheric & Guide Bushings',
-    category: 'L14 / フローティングAF前衛キャリア',
+    category: 'L21 / フローティングAF前衛キャリア',
     plainAnalogy:
       'ピント合わせ前衛チーム3枚のガラス（L13・L14・L15）を乗せてレールの上を猛スピードで走る「超軽量の台車」と、その真ん中に積まれた「2枚目の0.01 μm XA非球面レンズ（7枚目）」です。',
     summary:
@@ -441,9 +443,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L15 — [NEW!] Element 8 (G5c): Floating Focus Group A Rear Negative Corrector
   // =========================================================================
   'lens-focus-a-rear': {
-    title: 'L15. 第8枚（第5群・前衛AF後玉）色・球面収差キャンセル凹メニスカス',
+    title: 'L22. 第8枚（第5群・前衛AF後玉）色・球面収差キャンセル凹メニスカス',
     subtitle: 'Element 08 (G5c): Floating Focus Group A Rear Negative Corrector Meniscus',
-    category: 'L15 / フローティングAF前衛・収差キャンセル',
+    category: 'L22 / フローティングAF前衛・収差キャンセル',
     plainAnalogy:
       '前衛AFチームの最後尾にくっついて一緒に動く「色ズレとピントズレを抑える凹ガラス（8枚目）」です。3枚組（L13＋L14＋L15）が1チームで動くからこそ、近い距離へピントを合わせても写真が甘くなりません。',
     summary:
@@ -472,9 +474,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L16 — Quad XD Linear Motor Stators: 8x N52 Magnets & Yokes
   // =========================================================================
   'lens-xd-stators': {
-    title: 'L16. 4基XDリニアモーター固定子：N52ネオジム磁石×8＆軟鉄ヨーク',
+    title: 'L24. 4基XDリニアモーター固定子：N52ネオジム磁石×8＆軟鉄ヨーク',
     subtitle: 'Quad XD Linear Motor Stator Array: 8× N52 Neodymium Bars & Soft-Iron Yokes',
-    category: 'L16 / リニアAF固定磁界',
+    category: 'L24 / リニアAF固定磁界',
     plainAnalogy:
       'リニアモーターカーの「線路に敷き詰められた超強力な磁石」です。鏡筒の周り4か所に対称に並んだネオジム磁石と鉄の背中板が、強力な磁力トンネルを作って重いガラス塊を一瞬で加速させます。',
     summary:
@@ -503,9 +505,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L17 — Quad XD Linear Motor Movers: 4x OFC Flat-Wire Copper Coils
   // =========================================================================
   'lens-xd-motors': {
-    title: 'L17. 4基XDリニアモーター可動子：無酸素銅平角コイル×4',
+    title: 'L26. 4基XDリニアモーター可動子：無酸素銅平角コイル×4',
     subtitle: 'Quad XD Linear Motor Moving Armatures: 4× OFC Flat-Wire Coils & Flex Tails',
-    category: 'L17 / リニアAF可動エンジン',
+    category: 'L26 / リニアAF可動エンジン',
     plainAnalogy:
       '磁石のトンネルの中を電気の力でスーッと滑る「銅線のそり（4台のエンジン本体）」です。前衛チーム担当が2台、後衛チーム担当が2台に分かれ、歯車ゼロ・無音でピントを合わせます。',
     summary:
@@ -534,9 +536,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L18 — [NEW!] Quad XD Anti-Backlash Preload Springs & End-Stop Dampers
   // =========================================================================
   'lens-xd-dampers': {
-    title: 'L18. リニアAF 予圧アンチバックラッシュばね＆終端シリコーンダンパー群',
+    title: 'L27. リニアAF 予圧アンチバックラッシュばね＆終端シリコーンダンパー群',
     subtitle: 'Quad XD Linear Preload Springs & High-Damping Silicone End-Stop Shock Buffers',
-    category: 'L18 / 振動吸収・無音ストッパー機構',
+    category: 'L27 / 振動吸収・無音ストッパー機構',
     plainAnalogy:
       '電源を切ったときやピントの端っこまで動いたときに、重いレンズが「コツン！」とぶつかって壊れたり音が鳴ったりしないよう優しく受け止める「極小クッションゴム」と、レールの微かなガタを消す「小さなバネ」のセットです。',
     summary:
@@ -565,9 +567,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L19 — 4x Centerless-Ground Titanium Guide Shafts & Cage
   // =========================================================================
   'lens-guide-shafts': {
-    title: 'L19. 超精密センターレス研磨チタンガイドシャフト4本＆エンドケージ',
+    title: 'L28. 超精密センターレス研磨チタンガイドシャフト4本＆エンドケージ',
     subtitle: '4× Centerless-Ground Titanium Linear Guide Shafts & Magnesium End-Ring Cage',
-    category: 'L19 / 直動ガイドレール骨格',
+    category: 'L28 / 直動ガイドレール骨格',
     plainAnalogy:
       'リニアモーターがまっすぐ走るための「4本の鏡のようにツルツルな金属レール」です。0.001 mmの曲がりも許されない精度でレンズを一直線に支え、ピント移動中の画面ブレを防ぎます。',
     summary:
@@ -596,9 +598,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L20 — 4x Sub-Micron MR Magnetic Position Encoders & Optical ABS Reference
   // =========================================================================
   'lens-mr-encoders': {
-    title: 'L20. サブミクロンMR磁気抵抗センサー＆ロボット級ABS絶対位置スケール',
+    title: 'L30. サブミクロンMR磁気抵抗センサー＆ロボット級ABS絶対位置スケール',
     subtitle: '4× Sub-Micron MR (Magneto-Resistive) Linear Encoders & Optical ABS Scale',
-    category: 'L20 / 0.1μm超精密位置検出',
+    category: 'L30 / 0.1μm超精密位置検出',
     plainAnalogy:
       'リニアモーターが「今あと何ミクロン動いたか」を1秒間に数千回も測る「磁石の超精密ものさし」です。目に見えないN極・S極の細かい目盛りを読み取り、F1.2の極薄ピントへ一発で止めます。',
     summary:
@@ -627,9 +629,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L21 — [NEW!] Internal Fixed Structural Skeleton Barrel (TSC / Mg Core)
   // =========================================================================
   'lens-inner-chassis': {
-    title: 'L21. 内部固定モノコック骨格鏡筒（熱安定複合材TSC／マグネシウム中胴）',
+    title: 'L33. 内部固定マグネシウム構造骨格バレル【後側分割ハーフ】＆マウント連結胴',
     subtitle: 'Internal Fixed Structural Skeleton Barrel (Thermally Stable Composite / Mg Core)',
-    category: 'L21 / 内部光学基準フレーム',
+    category: 'L33 / 内部光学基準フレーム',
     plainAnalogy:
       '外側のカバーの下に隠れている「レンズの本当の背骨（内部フレーム）」です。14枚のガラス・絞り・4基のリニアモーターすべてがこの頑丈な骨格にガッチリ固定され、暑さ寒さでもピントがズレないよう支えています。',
     summary:
@@ -658,9 +660,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L22 — [NEW!] Element 9 (G6a): Floating Focus Group B Front Negative ED
   // =========================================================================
   'lens-focus-b-front': {
-    title: 'L22. 第9枚（第6群・後衛AF前玉）負パワーED特殊低分散フローティング玉',
+    title: 'L34. 第9枚（第6群・後衛AF前玉）負パワーED特殊低分散フローティング玉',
     subtitle: 'Element 09 (G6a): Floating Focus Group B Front Negative ED Dispersion Element',
-    category: 'L22 / フローティングAF後衛・ED補正',
+    category: 'L34 / フローティングAF後衛・ED補正',
     plainAnalogy:
       'ピント合わせ後衛チームの先頭を走る「色のにじみを吸い取る凹型の高級EDガラス（9枚目）」です。前衛チーム（L13〜L15）と逆向きや違うスピードで動くことで、ズームのように画角が変わる現象（ブリージング）をピタリと抑えます。',
     summary:
@@ -689,9 +691,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L23 — Element 10 (G6b): Floating Focus Group B Carrier + Aspheric Corrector
   // =========================================================================
   'lens-focus-group-b': {
-    title: 'L23. 第10枚（第6群中核）フローティングAF第2キャリア＆後衛非球面玉',
+    title: 'L35. 第10枚（第6群中核）フローティングAF第2キャリア＆後衛非球面玉',
     subtitle: 'Element 10 (G6b): Floating Focus Group B Carrier & Rear Aspheric Corrector',
-    category: 'L23 / フローティングAF後衛キャリア',
+    category: 'L35 / フローティングAF後衛キャリア',
     plainAnalogy:
       'ピント合わせチームの「後衛の台車と非球面レンズ（10枚目）」です。前衛（L14）と絶妙なコンビネーションで前後し、画面の四隅まで像が流れないようにリアルタイムでピント面を平らに整えます。',
     summary:
@@ -720,9 +722,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L24 — [NEW!] Element 11 (G7): Stationary Astigmatism Field-Flattener
   // =========================================================================
   'lens-g7-flattener': {
-    title: 'L24. 第11枚（第7群）固定フィールドフラットナー・非点収差補正凹玉',
+    title: 'L37. 第11枚（第7群）固定フィールドフラットナー・非点収差補正凹玉',
     subtitle: 'Element 11 (G7): Stationary Negative Meniscus Astigmatism & Field-Flattener',
-    category: 'L24 / 後群固定・非点収差平坦化',
+    category: 'L37 / 後群固定・非点収差平坦化',
     plainAnalogy:
       '動き回るピント合わせグループ（L23）のすぐ後ろにドンと構えて、画面の縦線と横線のピントがズレる（非点収差）のをビシッと揃える「11枚目の固定補正レンズ」です。',
     summary:
@@ -751,9 +753,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L25 — Element 12 (G8): High-Index Lanthanum Sagittal Coma Corrector
   // =========================================================================
   'lens-rear-convex': {
-    title: 'L25. 第12枚（第8群）高屈折ランタン系 サジタルコマ収差補正凸レンズ',
+    title: 'L38. 第12枚（第8群）高屈折ランタン系 サジタルコマ収差補正凸レンズ',
     subtitle: 'Element 12 (G8): High-Index Lanthanum Sagittal Coma Corrector Element',
-    category: 'L25 / 後群コマ収差補正',
+    category: 'L38 / 後群コマ収差補正',
     plainAnalogy:
       '夜景の星や街灯が画面の四隅で「鳥が羽を広げたような形」に歪むのを防ぐ、後方の仕上げ凸レンズ（12枚目）です。点光源を画面の端までキュッと丸い点のまま写し出します。',
     summary:
@@ -782,9 +784,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L26 — [NEW!] Element 13 (G9a): Short-Flange Telecentric Collector Element
   // =========================================================================
   'lens-rear-telecentric': {
-    title: 'L26. 第13枚（第9群前側）ショートフランジ・テレセントリック集光凸レンズ',
+    title: 'L39. 第13枚（第9群前側）ショートフランジ・テレセントリック集光凸レンズ',
     subtitle: 'Element 13 (G9a): Short-Flange Telecentric High-Index Positive Collector Element',
-    category: 'L26 / 像側テレセントリック光学',
+    category: 'L39 / 像側テレセントリック光学',
     plainAnalogy:
       '斜めに飛び込んできた光を、センサーの画素バケツの底までまっすぐ届くように角度をグッと立て直す「13枚目の大型ガイドレンズ」です。これで写真の四隅が暗くなったり色カブリするのを防ぎます。',
     summary:
@@ -813,9 +815,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L27 — Element 14 (G9b): φ44mm Rear 3rd XA Hero Element
   // =========================================================================
   'lens-rear-element': {
-    title: 'L27. 第14枚（第10群・最終後玉）φ44mm 第3のXA超高度非球面ヒーローレンズ',
+    title: 'L40. 第14枚（第10群・最終後玉）φ44mm 第3のXA超高度非球面ヒーローレンズ',
     subtitle: 'Element 14 (G10): Ultra-Large φ44mm 3rd XA (0.01 μm) Rear Hero Element',
-    category: 'L27 / 最終光学面・第3 XAヒーロー玉',
+    category: 'L40 / 最終光学面・第3 XAヒーロー玉',
     plainAnalogy:
       '14枚のガラスの「アンカー（最終ランナー）」です。大口径マウントと短い距離のおかげで実現できた巨大な0.01 μm非球面ガラスが、光の波面を最後の仕上げで完璧に整えてセンサーへバトンを渡します。',
     summary:
@@ -844,9 +846,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L28 — [NEW!] Rear Rectangular 3:2 Stray-Light Flare Mask & Velvet Baffle
   // =========================================================================
   'lens-rear-baffle': {
-    title: 'L28. 後端3:2長方形フレアカットマスク＆植毛迷光トラップバッフル',
+    title: 'L42. 後端3:2長方形フレアカットマスク＆植毛迷光トラップバッフル',
     subtitle: 'Rear 3:2 Rectangular Stray-Light Flare Mask & Flocked Light-Trap Baffle',
-    category: 'L28 / 後端迷光遮断・コントラスト保護',
+    category: 'L42 / 後端迷光遮断・コントラスト保護',
     plainAnalogy:
       '丸いレンズの出口に取り付けられた「フルサイズセンサーと同じ3:2の四角い窓枠」です。丸い光のうち写真の四角い画面からはみ出すムダな光をここで先にカットして、カメラ内部の乱反射（フレア）を防ぎます。',
     summary:
@@ -875,9 +877,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L29 — [NEW!] Precision NTC Thermistor Focus-Shift Compensation Sensor
   // =========================================================================
   'lens-thermistor': {
-    title: 'L29. 鏡筒内蔵 NTCサーミスタ温度補償センサー（熱フォーカスシフト補正）',
+    title: 'L52. 鏡筒内蔵 NTCサーミスタ温度補償センサー（熱フォーカスシフト補正）',
     subtitle: 'Internal Precision NTC Thermistor Temperature-Compensation Focus Sensor',
-    category: 'L29 / 熱光学補償・環境センシング',
+    category: 'L52 / 熱光学補償・環境センシング',
     plainAnalogy:
       'レンズ内部に埋め込まれた「超精密な体温計」です。真夏の炎天下や真冬の雪山ではガラスや金属がほんのわずかに伸び縮みしてピントがズレるため、今の温度をリアルタイムで測ってマイコンが自動でピントを微修正します。',
     summary:
@@ -906,9 +908,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L30 — Circular Ring HDI 32-Bit AF MCU & 4ch H-Bridge PCB
   // =========================================================================
   'lens-mcu-pcb': {
-    title: 'L30. レンズ内蔵32bit AFマイコン＆4ch Hブリッジ駆動リング基板',
+    title: 'L53. レンズ内蔵32bit AFマイコン＆4ch Hブリッジ駆動リング基板',
     subtitle: '32-Bit Real-Time Lens AF MCU, Quad H-Bridge Motor Drivers & Ring HDI PCB',
-    category: 'L30 / レンズ頭脳・駆動回路基板',
+    category: 'L53 / レンズ頭脳・駆動回路基板',
     plainAnalogy:
       'レンズの中に住んでいる「専用の頭脳（コンピューター）と4台のパワーアンプ」です。カメラ本体からの指令を1秒間に240回受け取り、4基のリニアモーターと11枚絞りを瞬時に同時操縦します。',
     summary:
@@ -937,9 +939,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L31 — [NEW!] Multi-Branch High-Flex Polyimide Internal FPC Ribbon Harness
   // =========================================================================
   'lens-fpc-harness': {
-    title: 'L31. 多分岐・高屈曲ポリイミド内部フレキシブル配線ハーネス（FPCバス）',
+    title: 'L55. 多分岐・高屈曲ポリイミド内部フレキシブル配線ハーネス（FPCバス）',
     subtitle: 'Multi-Branch High-Flex Polyimide Internal FPC Signal & Power Harness',
-    category: 'L31 / 鏡筒内神経網・シールド配線',
+    category: 'L55 / 鏡筒内神経網・シールド配線',
     plainAnalogy:
       'レンズ内部の狭いすき間を縫うように張り巡らされた「オレンジ色の極薄ペラペラ電線（神経と血管）」です。頭脳基板（L30）から4台のモーター、絞り、各種センサー、側面ボタン、マウント接点まですべてを1本に束ねて繋ぎます。',
     summary:
@@ -968,9 +970,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L32 — Non-Contact Optical Slotted MF Rotary Encoder Wheel
   // =========================================================================
   'lens-mf-encoder': {
-    title: 'L32. リニアレスポンスMF 非接触スリット光学エンコーダー輪＆受光IC',
+    title: 'L45. リニアレスポンスMF 非接触スリット光学エンコーダー輪＆受光IC',
     subtitle: '2,048 PPR Non-Contact Optical Slotted MF Rotary Encoder Wheel & Photo-IC',
-    category: 'L32 / 精密MF回転角検出',
+    category: 'L45 / 精密MF回転角検出',
     plainAnalogy:
       'ピントリングの内側に隠れた「細かいスリット（すき間）が数百本刻まれた金色の円盤」と「光センサー」です。指でリングをほんの0.1ミリ回しただけでも光の明滅で正確に読み取ります。',
     summary:
@@ -999,9 +1001,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L33 — [NEW!] Aperture Ring Non-Contact Magnetic Hall Sensor & Rotor Ring
   // =========================================================================
   'lens-aperture-sensor': {
-    title: 'L33. 絞りリング専用 非接触磁気ホール位置センサー＆多極着磁ローター環',
+    title: 'L48. 絞りリング専用 非接触磁気ホール位置センサー＆多極着磁ローター環',
     subtitle: 'Aperture Ring Non-Contact Magnetic Hall-Effect Position Sensor & Multi-Pole Rotor',
-    category: 'L33 / 無段階アイリス絶対角検出',
+    category: 'L48 / 無段階アイリス絶対角検出',
     plainAnalogy:
       '金属の絞りリング（L37）が「今F1.2なのか、F2.8なのか、それとも動画用の途中の明るさなのか」を、触れずに磁力で読み取る「絞りリング専用の磁気センサー」です。クリックをOFFにした無段階操作でも超なめらかに反応します。',
     summary:
@@ -1030,9 +1032,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L34 — Switchable Steel-Ball Spring Click / De-Click Detent Cam
   // =========================================================================
   'lens-click-detent': {
-    title: 'L34. 絞りリング 鋼球スプリング・クリック／デクリック切替カム機構',
+    title: 'L49. 絞りリング 鋼球スプリング・クリック／デクリック切替カム機構',
     subtitle: 'Switchable Steel-Ball Spring Detent & De-Click Cam Mechanism (Still / Cinema)',
-    category: 'L34 / タクタイル切替機構',
+    category: 'L49 / タクタイル切替機構',
     plainAnalogy:
       '絞りリングを回したときの「カチッ、カチッ」という手応えを作る「小さな銀色の鉄球とバネ」の仕組みです。スイッチをOFFにすると鉄球が引っ込み、動画用にスルスル無音で回るようになります。',
     summary:
@@ -1061,9 +1063,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L35 — [NEW!] Side Control Pod Tactile Switch PCB
   // =========================================================================
   'lens-switch-pcb': {
-    title: 'L35. 側面操作ポッド防水スイッチ基板（フォーカスホールド×2＆AF/MF切替）',
+    title: 'L50. 側面操作ポッド防水スイッチ基板（フォーカスホールド×2＆AF/MF切替）',
     subtitle: 'Weather-Sealed Side Control Pod Tactile Switch PCB (Dual Focus Hold & AF/MF)',
-    category: 'L35 / 外部操作スイッチ回路',
+    category: 'L50 / 外部操作スイッチ回路',
     plainAnalogy:
       'レンズの横についている「押しボタン（フォーカスホールド）」や「AF/MFスイッチ」の真裏に隠れた専用のミニ電子基板です。横撮りでも縦撮りでも親指が自然に届く2か所にボタンを配置し、雨が入らないゴム膜で密封しています。',
     summary:
@@ -1092,9 +1094,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L36 — [NEW!] Multi-Stage Weather-Sealing EPDM O-Rings & Dust-Lip Gaskets
   // =========================================================================
   'lens-weather-seals': {
-    title: 'L36. 6重防塵防滴 EPDM耐候Oリング＆ラビリンスダストシール群',
+    title: 'L56. 6重防塵防滴 EPDM耐候Oリング＆ラビリンスダストシール群',
     subtitle: '6-Stage Weather-Sealing EPDM O-Rings, Wiper Lips & Dust-Exclusion Gasket Set',
-    category: 'L36 / 6重全天候シーリング構造',
+    category: 'L56 / 6重全天候シーリング構造',
     plainAnalogy:
       'レンズの「つなぎ目」というつなぎ目すべてに挟み込まれた、合計6本の「防水ゴムパッキン」のフルセットです。ピントリングや絞りリングがクルクル回るすき間にも柔らかいゴムのヒレを密着させ、土砂降りや砂嵐から14枚のガラスを守ります。',
     summary:
@@ -1123,9 +1125,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L37 — Knurled Rubber Focus Ring & Machined Aluminum Aperture Ring
   // =========================================================================
   'lens-control-rings': {
-    title: 'L37. リニアレスポンスMFゴムリング＆アルミ切削絞りリング外周',
-    subtitle: 'Knurled Rubber Linear-Response Focus Ring & Machined Aluminum Aperture Ring',
-    category: 'L37 / 精密外周操作リング',
+    title: 'L43. ローレット加工ラバー・リニアレスポンスMFフォーカスリング（単独分離）',
+    subtitle: 'Standalone Knurled Rubber Linear-Response Manual Focus Ring',
+    category: 'L43 / 精密外周操作リング',
     plainAnalogy:
       '撮影者が直接指で触れて回す「ゴム製のピントリング」と「金属製の絞りリング」です。2つの手触り・太さ・回転の重さを変えてあるため、真っ暗な現場でも触っただけで瞬時に見分けられます。',
     summary:
@@ -1154,9 +1156,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L38 — Weather-Sealed Anodized Outer Cutaway Barrel
   // =========================================================================
   'lens-cutaway-barrel': {
-    title: 'L38. 50mm F1.2 防塵防滴アルミ／マグネシウム外装鏡筒（カットモデル）',
+    title: 'L58. 50mm F1.2 防塵防滴アルミ／マグネシウム外装鏡筒（カットモデル）',
     subtitle: 'Weather-Sealed Magnesium/Anodized Outer Lens Barrel & Switch Escutcheon (Cutaway)',
-    category: 'L38 / 鏡筒外装モノコック',
+    category: 'L58 / 鏡筒外装モノコック',
     plainAnalogy:
       '精密な14枚のガラスと4基のリニアモーターを雨・ホコリ・衝撃から守る「軽くて強固な鎧（よろい）」です。本CADでは内部の超精密メカが常に見えるよう、上側面に建築的なカット窓を開けています。',
     summary:
@@ -1185,9 +1187,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L39 — [NEW!] Infinity-Focus Micron Brass/Stainless Mount Calibration Shims
   // =========================================================================
   'lens-bayonet-shims': {
-    title: 'L39. 無限遠フランジバック校正用 ミクロン精密シムリング群',
+    title: 'L60. 無限遠フランジバック校正用 ミクロン精密シムリング群',
     subtitle: 'Infinity-Focus Micron Brass & Stainless Mount Calibration Shim Rings (10–100 μm)',
-    category: 'L39 / 無限遠ミクロン校正スペーサー',
+    category: 'L60 / 無限遠ミクロン校正スペーサー',
     plainAnalogy:
       'レンズのお尻の金属マウント（L40）のすぐ下に挟み込む「アルミホイルより薄い0.01 mm単位の精密な金属ワッシャー（シム）」です。工場の最終検査で厚さを選んで挟むことで、遠くの山や星に完璧にピントが合う距離を1ミクロン単位で合わせ込みます。',
     summary:
@@ -1216,9 +1218,9 @@ export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   // L40 — Hardened Stainless 4-Lug Rear Bayonet & 12-Pin Gold Contacts
   // =========================================================================
   'lens-rear-bayonet': {
-    title: 'L40. レンズ側 焼入れステンレス4爪バヨネット＆12極金メッキ通信接点',
+    title: 'L62. レンズ側 焼入れステンレス4爪リアバヨネット・マウントゴム環＆締結ボルト',
     subtitle: 'Hardened Stainless 4-Lug Lens Bayonet Flange, 12-Pin Gold Contacts & Rear Seal',
-    category: 'L40 / レンズ側マウント締結・通信接点',
+    category: 'L62 / レンズ側マウント締結・通信接点',
     plainAnalogy:
       'カメラ本体側の金属リング（M01）と「ガチャン！」と噛み合って固定されるレンズ側のお尻の金属リングです。12個の金色の接点がカメラと会話しながら、4基のリニアモーターへ大電流を受け取ります。',
     summary:

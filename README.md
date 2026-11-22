@@ -5,17 +5,25 @@ Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; 
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (145 Dissectible CAD Sub-Assemblies)
+## Complete Camera Assembly (167 Dissectible CAD Sub-Assemblies)
 
-### Phase 8 — Ultra-40-Part 50mm F1.2 Lens Dissection, Body/Lens Split & Fullscreen Mode
+### Phase 9 — 62-Part Watchmaker-Grade 50mm F1.2 Lens Ultra-Dissection & 60fps Interactive Optical Mechanism Motion Studio
 
-#### 50mm F1.2 Prime Lens & Quad XD Linear AF Motors (40 Sub-Assemblies: L01–L40, All 14 Glass Elements Individually Dissectible!)
-- **Front Protection & Factory Alignment (L01–L03)**: Bayonet Lock Cylindrical Lens Hood (`L01`), φ72 mm Fine-Pitch Filter Thread & 4-Notch Spanner Retaining Bezel (`L02`), Front-Group 3-Point Eccentric Tilt & Centering Calibration Collar (`L03`).
-- **Front Optical Group — Elements E01–E05 (L04–L08)**: E01 0.01 μm 1st XA Front Element + Nano AR II/Fluorine (`L04`), E02 High-Index Lanthanum Positive Meniscus & Brass Spacer (`L05`), E03 Super-ED Positive Front Element (`L06`), E04 High-Dispersion Flint Cemented Mate & UV Optical Seam (`L07`), E05 Pre-Iris Biconcave Petzval Field Flattener (`L08`).
-- **4-Layer 11-Blade Circular Iris Module (L09–L12)**: 11-Slot Non-Linear Cam Actuating Ring & Brass Sector Gear (`L09`), 11-Blade Circular Carbon-Fiber Diaphragm (`L10`, live animated), Stationary Pivot-Pin Base Plate & Stray-Light Shield (`L11`), Silent 1/64 Micro-Stepping Iris Motor & POM Gear Train (`L12`).
-- **Floating Focus Group A & Quad XD Linear AF Engine (L13–L21)**: E06 Front Biconvex (`L13`), E07 2nd XA Main Carrier & Bushings (`L14`), E08 Rear Negative Self-Achromatizing Corrector (`L15`), Quad XD Stators 8× N52 Magnets & Soft-Iron Yokes (`L16`), Quad XD Movers 4× OFC Flat-Wire Coils (`L17`), Preload Springs/POM Sliders & Silicone End-Dampers (`L18`), 4× Centerless-Ground Titanium Guide Shafts & Cage (`L19`), 4× 0.1 μm MR Magnetic Position Encoders (`L20`), Internal Fixed TSC/Magnesium Structural Skeleton Barrel (`L21`).
-- **Floating Focus Group B & Rear Telecentric Optical Stack — Elements E09–E14 (L22–L28)**: E09 Focus Group B Front ED Mate (`L22`), E10 Focus Group B Rear Negative Aspheric Carrier (`L23`), E11 Group 7 Field-Curvature Flattener (`L24`), E12 Group 8 Lanthanum Sagittal Coma Corrector (`L25`), E13 φ45 mm Rear Telecentric Meniscus (`L26`), E14 φ44 mm 3rd XA Rear Hero Element (`L27`), Rear 3:2 Rectangular Stray-Light Flare Mask & Flocked Baffle (`L28`).
-- **Thermal/Magnetic/Optical Sensing, Electronics, 6-Stage Seals & Micron Mount (L29–L40)**: Internal NTC Thermistor Thermal-Focus Sensor (`L29`), Circular Ring HDI 32-Bit AF MCU & 4ch H-Bridge PCB (`L30`), Multi-Branch High-Flex Polyimide Internal FPC Harness (`L31`), Non-Contact 2,048 PPR Optical Slotted MF Encoder (`L32`), Aperture Ring Non-Contact Magnetic Hall Sensor & Multi-Pole Rotor (`L33`), Switchable Steel-Ball Spring Click/De-Click Detent Cam (`L34`), Weather-Sealed Side Switch Pod PCB (`L35`), 6-Stage Weather-Sealing EPDM O-Rings & Wiper Lips (`L36`), Knurled Rubber Focus Ring & Machined Aluminum Aperture Ring (`L37`), Weather-Sealed Magnesium Outer Cutaway Barrel (`L38`), Infinity-Focus Micron Brass/Stainless Mount Calibration Shims (`L39`), Hardened Stainless 4-Lug Rear Bayonet & 12-Pin Gold Contacts (`L40`).
+#### Interactive 60fps 50mm F1.2 Optical Mechanism Motion Studio
+- Real-time 14-element / 28-surface **vector Snell's-law ray-tracing & floating-focus simulation engine** (`EFL = 50.07 mm`, synchronized in lockstep with the live 3D cutaway lens above).
+- **5 Interactive Scenarios** with smooth choreography, manual sliders (`F1.2 ↔ F16`, `∞ ↔ 0.40 m`, `±18°`), draggable subject handle on the 2D optical bench, bidirectional 3D hover/click sync, 10× magnified scientific aberration/wave-interference loupe, and live 11-blade iris + realistic Bokeh PSF simulator:
+  1. `01 結像 & F1.2ボケ`: Large-aperture converging beam, 11-blade circular iris, bokeh diameter & cat's-eye vignetting.
+  2. `02 フローティングAF`: Quad XD Linear Motor differential floating Focus Group A & B (`1.86:1` stroke ratio) eliminating close-up breathing & aberration drift.
+  3. `03 ED色収差補正`: Live Super-ED ON vs OFF RGB spectral dispersion comparison (`0.00 mm` apochromat vs `3.46 mm` axial chromatic split).
+  4. `04 3×XA非球面`: Live 3× 0.01 μm XA aspheric ON vs OFF spherical caustic & onion-ring bokeh comparison.
+  5. `05 Nano AR II & 遮光`: Sub-wavelength λ/4 destructive wave-interference coating & knife-edge internal flare baffles ON vs OFF.
+
+#### 50mm F1.2 Prime Lens & Quad XD Linear AF Motors (62 Sub-Assemblies: L01–L62 — Real Teardown Grade!)
+- **Front Protection, Seal, Shims & Group 1 Optics E01–E05 (L01–L13)**: Bayonet Lock Cylindrical Hood (`L01`), Hood Elastomer Shock Bumper & Spring Release Latch (`L02`), φ72 mm 1/8-Turn Bayonet Filter Ring (`L03`), Under-Filter Closed-Cell Weather Foam Gasket (`L04`), Front-Group 3-Point Stepped Tilt Calibration Shims & Red Factory Mark (`L05`), Front 3-Point Eccentric Centering Collar (`L06`), CNC Aluminum Front Cell & 6× Elastomeric Stress-Relief Potting Pockets (`L07`), E01 0.01 μm 1st XA Front Element + Nano AR II/Fluorine (`L08`), E02 High-Index Lanthanum Meniscus & Brass Spacer (`L09`), E03 Super-ED Positive Front Element (`L10`), E04 Dense Flint Cemented Mate & UV Seam (`L11`), E05 Pre-Iris Biconcave Field Flattener (`L12`), Inter-Group Knife-Edge Stray-Light Shield (`L13`).
+- **6-Layer 11-Blade Circular Iris Module (L14–L19)**: Iris Front PTFE Anti-Lift Dust Cover (`L14`), 11-Slot Non-Linear Cam Ring & Brass Sector Gear (`L15`), 11-Blade Circular Carbon-Fiber Diaphragm (`L16`, live animated), Stationary Pivot-Pin Base Plate & Baffle (`L17`), Silent 1/64 Micro-Stepping Iris Motor & POM Gear Train (`L18`), 940 nm F1.2 Open-Home Photo-Interrupter (`L19`).
+- **Floating Focus Group A, Quad XD Linear Engine & Split Internal Chassis (L20–L33)**: E06 Front Biconvex (`L20`), E07 2nd XA Main Focus Element (`L21`), E08 Rear Negative Self-Achromatizer (`L22`), Focus Group A CoG-Aligned Carrier, Eccentric Collars & Balance Weights (`L23`), Quad XD Stators 8× N52 Magnets & Yokes (`L24`), Permalloy Magnetic Flux Containment Shields & Copper Heat Bridges (`L25`), Quad XD Movers 4× OFC Flat-Wire Coils (`L26`), Preload Springs, POM Sliders & Silicone End-Dampers (`L27`), 4× Centerless-Ground Titanium Main Guide Shafts (`L28`), 4× Anti-Rotation Sub-Guide Rails & Forked POM Sliders (`L29`), 4× 0.1 μm MR Magnetic Position Encoders (`L30`), Dual Focus A/B Startup Homing Photo-Interrupters (`L31`), Split Internal TSC/Magnesium Chassis — Front Structural Half (`L32`), Split Internal TSC/Magnesium Chassis — Rear Structural Half (`L33`).
+- **Floating Focus Group B & Rear Telecentric Stack E09–E14 (L34–L42)**: E09 Focus Group B Front ED Mate (`L34`), E10 Focus Group B Rear Negative Aspheric (`L35`), Focus Group B 3-Point Eccentric Tilt Collars & Nylon Support Posts (`L36`), E11 Group 7 Field Flattener (`L37`), E12 Group 8 Lanthanum Coma Corrector (`L38`), E13 φ45 mm Rear Telecentric Meniscus (`L39`), E14 φ44 mm 3rd XA Rear Hero Element (`L40`), Rear Optical Cell & Per-Unit Bokeh/Spherical-Aberration Brass Spacing Ring (`L41`), Rear 3:2 Rectangular Stray-Light Flare Mask & Flocked Baffle (`L42`).
+- **Dual Independent Control Rings, Sensors, Shielded Electronics, Split Outer Barrel & Micron Mount (L43–L62)**: Standalone Knurled Linear-Response MF Focus Ring (`L43`), 3× White POM MF Spring Friction Tensioners & Moisture Seal Tape (`L44`), Non-Contact 2,048 PPR Optical Slotted MF Encoder (`L45`), Standalone CNC Machined Aluminum Aperture Ring (`L46`), 24-Ball Stainless Aperture Ring Bearing Race (`L47`), Aperture Ring Non-Contact Magnetic Hall Sensor & Multi-Pole Rotor (`L48`), Switchable Click/De-Click Detent Cam (`L49`), Weather-Sealed Side Switch Pod PCB (`L50`), 12-o'Clock Vertical-Grip Top Focus Hold Button & Silicone Waterproof Boot (`L51`), Internal NTC Thermistor Thermal-Focus Sensor (`L52`), Circular Ring HDI 32-Bit AF MCU & 4ch H-Bridge PCB (`L53`), Conductive EMI Metal Shield Plate, Driver Cans & Copper-Foil ESD Ground Tape (`L54`), Multi-Branch High-Flex Polyimide FPC Harness (`L55`), 6-Stage Weather-Sealing EPDM O-Rings & Wiper Lips (`L56`), Split Front Outer Barrel & Metallic Accent Ring (`L57`), Weather-Sealed Magnesium Mid/Rear Cutaway Barrel (`L58`), Under-Mount 3-Location Tilt Shim Insertion Plate & Rear Dust Foam (`L59`), Infinity-Focus Micron Brass/Stainless Mount Calibration Shims (`L60`), Standalone 12-Pin Gold Contact Block, PPS Insulator & TVS ESD Sub-Flex (`L61`), Hardened Stainless 4-Lug Rear Bayonet Mount (`L62`).
 
 #### Full-Frame 3-Wafer Stacked Global Shutter Sensor & 8.5-Stop 5-Axis IBIS (26 Macro + 7 Micro Pixel Layers)
 - S01–S26: SSWF Dust Filter + PZT Ultrasonic Bar, Dual-Quartz OLPF + Zero-Order λ/4 Plate, Hybrid IR/UV Filter, 3-Wafer BSI-CMOS + 3 μm Cu-Cu Hybrid Bond + 4nm ADC/120fps DRAM, 4N Gold Wire Bonds, HTCC Alumina LGA + CuW Slug, 10-Layer PCB, SLVS-EC v3 U-Loop Harness, 5-Axis IBIS Stage + 3× Air-Core VCM Coils + 3-Axis Hall PCB + Si₃N₄ Ceramic Balls + Magnetic Preload + Park-Lock Solenoid + N52 Magnet Arrays + 3-Point Micron Tilt Springs + Compliant TIM + Σ-Folded PGS Thermal Bridge + 17-Fin Pure-Copper Heatsink.
@@ -29,11 +37,11 @@ Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 - **Image Processing Engine & 12-Layer HDI Mainboard (16 Sub-Assemblies)**: Two-Phase Vapor Chamber, EMI Shield, Copper IHS, 4nm Main ISP Die, ABF Interposer, 2D Systolic AI NPU, Dual LPDDR5X-8533, Multi-Phase Buck PMIC, Dual CFexpress 4.0 / SD Cage, 6-Axis Quartz IMU, C2PA Security + TCXO, HDMI 2.1 / USB-C / 2.5G LAN, Wi-Fi 6E/7 RF SiP, 12-Layer HDI PCB, 80-Pin SLVS-EC B2B Harness, Magnesium Mid-Frame.
 - **Dual-Driven Carbon-Fiber Focal-Plane Shutter (12 Sub-Assemblies)**: Front Cover, Anti-Dust Shield, 4-Blade CFRP 1st & 2nd Curtains, Dual Parallelogram Linkages, 0.15 mm Mid-Plate, Torsion Springs + Electromagnetic Boost Actuator (1/400 s Sync), Holding Solenoids, Coreless DC Charge Motor & Gear Train, 940 nm IR Speed Monitors, Rebound Dampers & Floating Mounts.
 
-## Viewing Modes (11 Zero-Text Switcher Modes + Fullscreen Mode)
+## Viewing Modes (11 Zero-Text Switcher Modes + Optical Motion Studio + Fullscreen)
 ### Primary Assembly Views
-1. **Complete Flagship Camera (138 Macro Layers — Default)**: Complete body + 40-part 50mm F1.2 lens with full 6-way radial + axial dissection.
+1. **Complete Flagship Camera (160 Macro Layers — Default)**: Complete body + 62-part 50mm F1.2 lens with full 6-way radial + axial dissection.
 2. **Complete Camera Body Only (98 Macro Layers)**: All 7 body subsystems together *without* lens (bare 55mm mount & exposed 3-wafer sensor!).
-3. **50mm F1.2 Prime Lens Standalone (40 Layers — Ultra-Dissection)**: All 14 individual glass elements, 4-layer iris, Quad XD motors, sensors, 6-stage seals, and micron mount shims.
+3. **50mm F1.2 Prime Lens Standalone (62 Layers — Ultra-Dissection)**: All 14 individual glass elements, 6-layer iris, Quad XD motors + Permalloy shields + anti-rotation rails, split chassis & barrels, standalone MF/aperture rings + 24-ball race + POM tensioners, EMI shielding, and micron tilt shims.
 
 ### Drill-Down Subsystems
 4. **55mm Large-Diameter Lens Mount (12 Layers)**
@@ -45,8 +53,9 @@ Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 10. **Battery, Magnesium Body & Dials (12 Layers)**
 11. **Micro Pixel Semiconductor Cross-Section (7 Layers)**
 
-### Fullscreen Mode
-- Click the zero-text **4-corner expand/compress SVG button** on the right edge of the bottom dock (or press `F`) to enter native browser fullscreen (with automatic immersive Zen-fullscreen fallback inside embedded frames).
+### Interactive Optical Motion Studio & Fullscreen Mode
+- Click the zero-text **convex-lens converging-ray SVG button** in the dock (or the CTA button inside any lens part's explanation drawer) to open the synchronized **60fps 50mm F1.2 Optical Mechanism Motion Studio**.
+- Click the zero-text **4-corner expand/compress SVG button** on the right edge of the dock (or press `F`) to enter native browser fullscreen (with automatic immersive Zen-fullscreen fallback inside embedded frames).
 
 
 ## Development

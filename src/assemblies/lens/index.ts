@@ -3,11 +3,12 @@ import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildLensParts } from './lensParts';
 import { createLensPhysicsOverlay } from './lensPhysicsOverlay';
+import { sharedLensOpticalSim } from './lensOpticalSim';
 
 /**
- * Assemble the complete 10-part Flagship 50mm F1.2 Prime Lens & Quad XD Linear AF Motors
+ * Assemble the complete 62-part Flagship 50mm F1.2 Prime Lens & Quad XD Linear AF Motors
  * subsystem with live 11-blade iris modulation, dual floating focus differential actuation,
- * wide-aperture F1.2 converging optical ray-tracing, and exploded CAD alignment guides.
+ * exact 14-element Snell optical ray-tracing, and exploded CAD alignment guides.
  */
 export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
@@ -35,10 +36,17 @@ export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
   return {
     rootGroup,
     parts,
-    updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
+    updateAnimation: (elapsed, delta, explodeFactor, physicsActive, integrated) => {
+      sharedLensOpticalSim.step(elapsed, delta, physicsActive);
       updatePositions(explodeFactor, integrated);
-      rig.applyDynamics(elapsed, physicsActive, explodeFactor, integrated);
-      overlay.update(elapsed, physicsActive, parts, integrated);
+      rig.applyDynamics(sharedLensOpticalSim, explodeFactor, integrated);
+      overlay.update(
+        elapsed,
+        physicsActive || sharedLensOpticalSim.studioOpen,
+        parts,
+        integrated,
+        sharedLensOpticalSim
+      );
     },
     setPhysicsVisible: (visible: boolean) => {
       overlay.setVisible(visible);
