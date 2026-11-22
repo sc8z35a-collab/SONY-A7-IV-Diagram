@@ -328,9 +328,11 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     macroExplodeGuides.visible = visible && opacity > 0.01;
 
     const frontPart = macroParts.find((p) => p.id === 'aperture-mask');
-    const backPart = macroParts.find((p) => p.id === 'sigma-graphite');
+    const backPart =
+      macroParts.find((p) => p.id === 'sensor-copper-sink') ??
+      macroParts.find((p) => p.id === 'sigma-graphite');
     const zFront = (frontPart ? frontPart.group.position.z : 7.8) + 2.0;
-    const zBack = (backPart ? backPart.group.position.z : -9.6) - 2.0;
+    const zBack = (backPart ? backPart.group.position.z : -10.85) - 2.0;
 
     let idx = 0;
     macroExplodeGuides.traverse((o) => {
@@ -399,12 +401,14 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
       const olpfPart = macroParts.find((p) => p.id === 'olpf-16pt');
       const irPart = macroParts.find((p) => p.id === 'ir-cut-filter');
       const diePart = macroParts.find((p) => p.id === 'cmos-die');
-      const ibisPart = macroParts.find((p) => p.id === 'ibis-carrier');
+      const ibisPart =
+        macroParts.find((p) => p.id === 'sensor-vcm-coils') ??
+        macroParts.find((p) => p.id === 'ibis-carrier');
 
       const zSswf = sswfPart ? sswfPart.group.position.z : 6.2;
-      const zOlpf = olpfPart ? olpfPart.group.position.z : 4.65;
+      const zOlpf = olpfPart ? olpfPart.group.position.z : 4.95;
       const zIr = irPart ? irPart.group.position.z : 3.25;
-      const zDie = diePart ? diePart.group.position.z + 0.56 : 1.1;
+      const zDie = diePart ? diePart.group.position.z + 0.15 : 1.1;
       const zStart = integrated ? zSswf + 7.5 : zSswf + 18.0;
 
         // Update ultrasonic wave rings on SSWF surface
@@ -481,7 +485,7 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
           }
         });
 
-        // Update IBIS Lorentz vector arrows on movable carrier
+        // Update IBIS Lorentz vector arrows on VCM voice coils
         if (ibisPart) {
           ibisVectors.position.set(dx, dy, ibisPart.group.position.z - 0.5);
           ibisVectors.rotation.z = dRoll;

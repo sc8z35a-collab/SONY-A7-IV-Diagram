@@ -267,9 +267,9 @@ export function createLensPhysicsOverlay(
       if (!show) return;
 
       const pFront = parts.find((p) => p.id === 'lens-front-hood');
-      const pRear = parts.find((p) => p.id === 'lens-rear-element');
+      const pRear = parts.find((p) => p.id === 'lens-rear-bayonet') ?? parts.find((p) => p.id === 'lens-rear-element');
       const zMax = pFront ? pFront.group.position.z + 10 : 140;
-      const zMin = pRear ? pRear.group.position.z - 6 : 36;
+      const zMin = pRear ? pRear.group.position.z - 5 : 32;
 
       for (let i = 0; i < guideLines.length; i++) {
         const [gx, gy] = guideOffsets[i];

@@ -183,6 +183,26 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('lens-xd-motors', false);
   syncRail();
+} else if (preset === 'lens_super_drawer') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-mcu-pcb', false);
+  syncRail();
+} else if (preset === 'sensor_super_drawer') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('sensor-hall-pcb', false);
+  syncRail();
 } else if (preset === 'lcd_assembled') {
   viewport.setMode('lcd', true);
   controls.syncMode('lcd');

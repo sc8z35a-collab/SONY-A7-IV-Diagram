@@ -83,7 +83,7 @@ export class CadViewport {
 
   private clock = new THREE.Clock();
   private rafId = 0;
-  private dirtyFrames = 4;
+  private dirtyFrames = 2;
 
   constructor(container: HTMLElement, callbacks: ViewportCallbacks) {
     this.container = container;
@@ -454,8 +454,8 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      d = 235 + e * 225;
-      target = new THREE.Vector3(0, 0, 82.0 + e * 28.0);
+      d = 235 + e * 380;
+      target = new THREE.Vector3(0, 0, 82.0 + e * 22.0);
     } else if (this.mode === 'lcd') {
       d = 155 + e * 102;
       target = new THREE.Vector3(8.0 + e * 4.0, -7.0, -32.0 - e * 12.0);
@@ -475,12 +475,12 @@ export class CadViewport {
       d = 166 + e * 82;
       target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
     } else if (this.mode === 'integrated') {
-      // Assembled complete 96-part flagship camera + 50mm F1.2 lens, vs panoramic 96-layer full explosion!
-      d = 385 + e * 760;
-      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 12.0, 34.0 + e * 26.0);
+      // Assembled complete 120-part flagship camera + 50mm F1.2 lens, vs panoramic 120-layer super-dissection!
+      d = 385 + e * 860;
+      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 44.0);
     } else if (this.mode === 'sensor') {
-      d = 142 + e * 72;
-      target = new THREE.Vector3(0, -1.0, -2 - e * 14);
+      d = 142 + e * 255;
+      target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 32.0);
     } else {
       d = 76 + e * 46;
       target = new THREE.Vector3(0, -1.0, -1);
@@ -561,7 +561,10 @@ export class CadViewport {
           } else if (this.mode === 'shutter') {
             offset = new THREE.Vector3(d * 0.52, d * 0.28, d * 0.81);
           } else if (this.mode === 'sensor') {
-            offset = new THREE.Vector3(d * 0.64, d * 0.38, d * 0.72);
+            const isoX = e > 0.25 ? 0.82 : 0.64;
+            const isoY = e > 0.25 ? 0.26 : 0.38;
+            const isoZ = e > 0.25 ? 0.51 : 0.72;
+            offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }
