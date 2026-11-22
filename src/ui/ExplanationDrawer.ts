@@ -2571,6 +2571,342 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="164" y="79" font-size="7.5" fill="#dc2626">・8K/4K120pの連続録画時間を延伸</text>
         <text x="34" y="111" font-size="8" fill="#334155">Σ熱橋から運ばれた熱を瞬時に広げて吸収しファンレス長時間収録を支える</text>
       `);
+
+    // =========================================================================
+    // Phase 8 Ultra-40-Part 50mm F1.2 Lens Dissection (+18 New Schematics)
+    // =========================================================================
+    case 'lens_front_eccentric':
+      return wrap(`
+        <!-- 3-Point Eccentric Centering & Optical Tilt Calibration Collar (120 deg) -->
+        <circle cx="80" cy="54" r="32" fill="none" stroke="#334155" stroke-width="5"/>
+        <circle cx="80" cy="54" r="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <!-- 3 Eccentric POM Cams with Offset Screw Holes -->
+        <circle cx="80" cy="22" r="7" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="82.5" cy="21" r="2.2" fill="#2563eb"/>
+        <circle cx="52" cy="70" r="7" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="50" cy="72" r="2.2" fill="#2563eb"/>
+        <circle cx="108" cy="70" r="7" fill="#f1f5f9" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="110" cy="68.5" r="2.2" fill="#2563eb"/>
+        <path d="M72 54 L88 54 M80 46 L80 62" stroke="#dc2626" stroke-width="1.5"/>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#eff6ff" stroke="#0284c7"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">3点偏心コロ 工場光軸調整</text>
+        <text x="144" y="51" font-size="7.5" fill="#0c4a6e">・穴を0.15mmズラした偏心カム×3</text>
+        <text x="144" y="65" font-size="7.5" fill="#0c4a6e">・1°回転で約2.6μmの超高分解能調芯</text>
+        <text x="144" y="79" font-size="7.5" fill="#1d4ed8">・MTF検査後に低収縮UV樹脂ロック</text>
+        <text x="32" y="111" font-size="8" fill="#334155">前玉のわずかな中心ズレ・片ボケを1ミクロン単位で追い込む魔法の微調環</text>
+      `);
+
+    case 'lens_flint_cemented':
+      return wrap(`
+        <!-- Apochromatic Cemented Doublet: Super-ED Convex + UV Optical Cement + Flint Concave -->
+        <path d="M40 22 Q68 54 40 86 L58 86 Q72 54 58 22 Z" fill="#a7f3d0" stroke="#059669" stroke-width="1.5"/>
+        <!-- Thin UV Optical Cement Seam -->
+        <path d="M58 22 Q72 54 58 86" fill="none" stroke="#f59e0b" stroke-width="3.2"/>
+        <path d="M60 22 Q74 54 60 86 L82 86 Q76 54 82 22 Z" fill="#c7d2fe" stroke="#4f46e5" stroke-width="1.5"/>
+        <!-- RGB Rays Converging to Single Focal Point -->
+        <line x1="16" y1="36" x2="54" y2="36" stroke="#dc2626" stroke-width="1.4"/>
+        <line x1="54" y1="36" x2="128" y2="54" stroke="#dc2626" stroke-width="1.4"/>
+        <line x1="16" y1="40" x2="54" y2="40" stroke="#2563eb" stroke-width="1.4"/>
+        <line x1="54" y1="40" x2="128" y2="54" stroke="#2563eb" stroke-width="1.4"/>
+        <circle cx="128" cy="54" r="4" fill="#10b981"/>
+        <text x="38" y="16" font-size="7" font-weight="bold" fill="#059669">ED凸</text>
+        <text x="66" y="16" font-size="7" font-weight="bold" fill="#4f46e5">フリント凹</text>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#ecfdf5" stroke="#059669"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#065f46">高分散フリント＋UV接合層</text>
+        <text x="150" y="51" font-size="7.5" fill="#047857">・ED凸の色分散を逆符号で完全相殺</text>
+        <text x="150" y="65" font-size="7.5" fill="#b45309">・屈折率整合UVセメントで反射0.01%</text>
+        <text x="150" y="79" font-size="7.5" fill="#3730a3">・レーザー調芯で2枚偏心 &lt; 1.0 μm</text>
+        <text x="30" y="111" font-size="8" fill="#334155">隙間ゼロで貼り合わせた2枚の異種ガラスがF1.2の紫フリンジを根絶</text>
+      `);
+
+    case 'lens_g4_negative':
+      return wrap(`
+        <!-- Pre-Iris Biconcave Petzval Field-Curvature Flattening Lens -->
+        <path d="M52 20 L80 20 Q66 54 80 88 L52 88 Q66 54 52 20 Z" fill="#99f6e4" stroke="#0d9488" stroke-width="1.6"/>
+        <!-- Curved vs Flattened Image Plane -->
+        <path d="M106 24 Q94 54 106 84" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <line x1="124" y1="22" x2="124" y2="86" stroke="#10b981" stroke-width="2.4"/>
+        <path d="M106 54 L120 54" stroke="#0d9488" stroke-width="1.8"/>
+        <polygon points="122,54 116,50 116,58" fill="#0d9488"/>
+        <text x="90" y="17" font-size="7" fill="#dc2626">湾曲</text>
+        <text x="115" y="17" font-size="7" font-weight="bold" fill="#059669">平坦</text>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#f0fdfa" stroke="#0d9488"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#115e59">絞り直前 両凹ペッツバール補正</text>
+        <text x="150" y="51" font-size="7.5" fill="#134e4a">・強い負パワーで像面湾曲を相殺</text>
+        <text x="150" y="65" font-size="7.5" fill="#134e4a">・Σ(φ/n) → 0 でセンサー全面結像</text>
+        <text x="150" y="79" font-size="7.5" fill="#134e4a">・絞り直前で全画角を均等に整える</text>
+        <text x="32" y="111" font-size="8" fill="#334155">お椀状に曲がりやすい大口径のピント面を真っ平らへ押し戻す中核の凹玉</text>
+      `);
+
+    case 'lens_iris_base':
+      return wrap(`
+        <!-- Stationary Iris Pivot-Pin Base Plate & Stray-Light Knife-Edge Shield -->
+        <circle cx="80" cy="54" r="34" fill="#475569" stroke="#1e293b" stroke-width="1.8"/>
+        <circle cx="80" cy="54" r="21" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+        ${Array.from({ length: 11 }, (_, i) => {
+          const a = (i / 11) * Math.PI * 2;
+          const x = 80 + Math.cos(a) * 27.5;
+          const y = 54 + Math.sin(a) * 27.5;
+          return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="#eab308" stroke="#713f12" stroke-width="0.6"/>`;
+        }).join('')}
+        <text x="64" y="57" font-size="7.5" font-weight="bold" fill="#0f172a">遮光エッジ</text>
+        <rect x="138" y="18" width="168" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="146" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">11等分ピボット固定ベース</text>
+        <text x="146" y="51" font-size="7.5" fill="#334155">・32.727°間隔 ±5μm 精密支点穴</text>
+        <text x="146" y="65" font-size="7.5" fill="#334155">・羽根室厚 0.45mm で絡み完全ゼロ</text>
+        <text x="146" y="79" font-size="7.5" fill="#b45309">・内周ナイフエッジで絞り外迷光遮断</text>
+        <text x="34" y="111" font-size="8" fill="#334155">11枚のカーボン羽根の支点を保持し密閉モジュール化する絞りユニット土台</text>
+      `);
+
+    case 'lens_focus_a_front':
+      return wrap(`
+        <!-- Floating Focus Group A Front Biconvex Element (E06) -->
+        <path d="M58 20 Q80 54 58 88 Q42 54 58 20 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="1.6"/>
+        <rect x="44" y="16" width="56" height="76" rx="4" fill="none" stroke="#0ea5e9" stroke-width="1.4" stroke-dasharray="4 2"/>
+        <path d="M22 54 L42 54 M102 54 L126 54" stroke="#0284c7" stroke-width="2"/>
+        <polygon points="128,54 120,50 120,58" fill="#0284c7"/>
+        <polygon points="20,54 28,50 28,58" fill="#0284c7"/>
+        <text x="50" y="13" font-size="7.5" font-weight="bold" fill="#0369a1">前衛AF3枚組の先頭</text>
+        <rect x="140" y="18" width="166" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="148" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">第6枚(G5a) 両凸AF前玉</text>
+        <text x="148" y="51" font-size="7.5" fill="#0c4a6e">・絞り直後の小径空間で軽量高速化</text>
+        <text x="148" y="65" font-size="7.5" fill="#0c4a6e">・全長不変インナーフォーカスを実現</text>
+        <text x="148" y="79" font-size="7.5" fill="#0c4a6e">・L14/L15と3枚一体でリニア駆動</text>
+        <text x="34" y="111" font-size="8" fill="#334155">高屈折・軽量な両凸ガラスが短い移動量で無限遠〜0.4mを瞬時に合焦</text>
+      `);
+
+    case 'lens_focus_a_rear':
+      return wrap(`
+        <!-- Floating Focus Group A Rear Negative Self-Achromatizing Meniscus (E08) -->
+        <path d="M32 24 Q44 54 32 84 Q24 54 32 24 Z" fill="#bae6fd" opacity="0.55" stroke="#94a3b8"/>
+        <path d="M56 22 Q68 54 56 86 Q46 54 56 22 Z" fill="#38bdf8" opacity="0.55" stroke="#94a3b8"/>
+        <path d="M84 22 L98 22 Q88 54 98 86 L84 86 Q78 54 84 22 Z" fill="#c7d2fe" stroke="#4f46e5" stroke-width="1.8"/>
+        <text x="77" y="16" font-size="7.5" font-weight="bold" fill="#3730a3">E08 自己色消し</text>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#eef2ff" stroke="#4f46e5"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#3730a3">第8枚(G5c) 移動群自己色消し</text>
+        <text x="144" y="51" font-size="7.5" fill="#312e81">・近接ピント移動時の色収差発生を零化</text>
+        <text x="144" y="65" font-size="7.5" fill="#312e81">・Group A 3枚内部で収差を完結補正</text>
+        <text x="144" y="79" font-size="7.5" fill="#312e81">・最短0.40mでも開放F1.2がシャープ</text>
+        <text x="32" y="111" font-size="8" fill="#334155">前衛フォーカス群の出口で色とコマ収差を整えて後衛群へクリーンに伝達</text>
+      `);
+
+    case 'lens_xd_dampers':
+      return wrap(`
+        <!-- XD Linear Rail Silicone End-Stop Dampers + Bronze Preload Spring + POM Shoe -->
+        <rect x="22" y="49" width="118" height="7" fill="#cbd5e1" stroke="#334155"/>
+        <!-- Dual Silicone End-Dampers -->
+        <rect x="22" y="42" width="10" height="21" rx="3" fill="#ec4899" stroke="#9d174d"/>
+        <rect x="130" y="42" width="10" height="21" rx="3" fill="#ec4899" stroke="#9d174d"/>
+        <!-- Helical Bronze Preload Spring -->
+        <path d="M36 45 L42 60 L48 45 L54 60 L60 45 L66 60" fill="none" stroke="#eab308" stroke-width="2.2"/>
+        <!-- POM Anti-Rotation Slider -->
+        <rect x="74" y="38" width="28" height="28" rx="3" fill="#f8fafc" stroke="#0f172a" stroke-width="1.4"/>
+        <text x="79" y="55" font-size="7.5" font-weight="bold" fill="#0f172a">POM</text>
+        <text x="20" y="34" font-size="7" font-weight="bold" fill="#be185d">シリコン緩衝</text>
+        <rect x="150" y="18" width="156" height="74" rx="5" fill="#fdf2f8" stroke="#ec4899"/>
+        <text x="158" y="35" font-size="8.5" font-weight="bold" fill="#9d174d">予圧バネ＆端面衝撃ダンパー</text>
+        <text x="158" y="51" font-size="7.5" fill="#831843">・電源OFF時のカチカチ衝突音を吸収</text>
+        <text x="158" y="65" font-size="7.5" fill="#b45309">・リン青銅ばねでミクロン予圧保持</text>
+        <text x="158" y="79" font-size="7.5" fill="#334155">・低摩擦POMシューで回り止め案内</text>
+        <text x="32" y="111" font-size="8" fill="#334155">高速AFの急制動と携帯時の振動衝撃からリニア移動群を静かに守る緩衝系</text>
+      `);
+
+    case 'lens_inner_chassis':
+      return wrap(`
+        <!-- Internal Fixed TSC/Magnesium Structural Skeleton Barrel -->
+        <rect x="24" y="20" width="114" height="70" rx="6" fill="none" stroke="#475569" stroke-width="4"/>
+        <rect x="36" y="20" width="10" height="70" fill="#94a3b8"/>
+        <rect x="116" y="20" width="10" height="70" fill="#94a3b8"/>
+        <line x1="24" y1="36" x2="138" y2="36" stroke="#334155" stroke-width="2.5"/>
+        <line x1="24" y1="74" x2="138" y2="74" stroke="#334155" stroke-width="2.5"/>
+        <text x="54" y="57" font-size="8" font-weight="bold" fill="#0f172a">二重鏡筒骨格</text>
+        <rect x="150" y="18" width="156" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="158" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">TSC/Mg 固定内部骨格バレル</text>
+        <text x="158" y="51" font-size="7.5" fill="#334155">・熱膨張係数がアルミ同等の安定材</text>
+        <text x="158" y="65" font-size="7.5" fill="#334155">・14枚レンズ＆4モーターの剛性基準</text>
+        <text x="158" y="79" font-size="7.5" fill="#334155">・外装(L38)と分離し衝撃伝達を緩和</text>
+        <text x="34" y="111" font-size="8" fill="#334155">外殻の内側に潜む精密な背骨がF1.2の重いガラス群の光軸を永遠に死守</text>
+      `);
+
+    case 'lens_focus_b_front':
+      return wrap(`
+        <!-- Floating Focus Group B Front ED Positive Element (E09) -->
+        <path d="M52 22 Q74 54 52 86 Q38 54 52 22 Z" fill="#99f6e4" stroke="#0d9488" stroke-width="1.6"/>
+        <path d="M84 22 Q72 54 84 86 L98 86 Q106 54 98 22 Z" fill="#5eead4" opacity="0.5" stroke="#14b8a6" stroke-dasharray="3 2"/>
+        <path d="M24 54 L44 54 M108 54 L128 54" stroke="#14b8a6" stroke-width="2"/>
+        <polygon points="22,54 30,50 30,58" fill="#14b8a6"/>
+        <polygon points="130,54 122,50 122,58" fill="#14b8a6"/>
+        <text x="38" y="16" font-size="7.5" font-weight="bold" fill="#0f766e">後衛AFペア前玉(E09)</text>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#0f766e">第9枚(G6a) 後衛EDフォーカス</text>
+        <text x="150" y="51" font-size="7.5" fill="#115e59">・L13-15前衛と差動移動(フローティング)</text>
+        <text x="150" y="65" font-size="7.5" fill="#115e59">・フォーカスブリージングを劇的抑制</text>
+        <text x="150" y="79" font-size="7.5" fill="#115e59">・動画のピント送りでも画角が安定</text>
+        <text x="32" y="111" font-size="8" fill="#334155">前衛群と呼吸を合わせて逆位相移動し、近距離の画角変化と収差を封じ込む</text>
+      `);
+
+    case 'lens_g7_flattener':
+      return wrap(`
+        <!-- Group 7 Rear Negative Field-Curvature Flattener (E11) -->
+        <path d="M56 22 L80 22 Q68 54 80 86 L56 86 Q68 54 56 22 Z" fill="#cffafe" stroke="#0891b2" stroke-width="1.6"/>
+        <line x1="20" y1="30" x2="64" y2="40" stroke="#0891b2" stroke-width="1.6"/>
+        <line x1="64" y1="40" x2="128" y2="34" stroke="#0891b2" stroke-width="1.6"/>
+        <line x1="20" y1="78" x2="64" y2="68" stroke="#0891b2" stroke-width="1.6"/>
+        <line x1="64" y1="68" x2="128" y2="74" stroke="#0891b2" stroke-width="1.6"/>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#155e75">第11枚(G7) 後群フィールドフラットナー</text>
+        <text x="150" y="51" font-size="7.5" fill="#0e7490">・センサー周辺部の非点隔差を平坦化</text>
+        <text x="150" y="65" font-size="7.5" fill="#0e7490">・後群の広い大口径光束を無理なく拡大</text>
+        <text x="150" y="79" font-size="7.5" fill="#0e7490">・高解像センサー四隅まで鋭利に結像</text>
+        <text x="34" y="111" font-size="8" fill="#334155">後衛AF群を通過した光を画面四隅まで均等なピント面へ整える固定凹玉</text>
+      `);
+
+    case 'lens_rear_telecentric':
+      return wrap(`
+        <!-- Group 9 Large-Diameter Rear Telecentric Meniscus (E13): Reducing CRA -->
+        <path d="M56 18 Q76 54 56 90 L74 90 Q86 54 74 18 Z" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1.6"/>
+        <!-- Rays Straightened Near-Perpendicular onto Sensor Microlenses -->
+        <line x1="20" y1="24" x2="64" y2="32" stroke="#7c3aed" stroke-width="1.8"/>
+        <line x1="64" y1="32" x2="122" y2="34" stroke="#16a34a" stroke-width="2"/>
+        <line x1="20" y1="84" x2="64" y2="76" stroke="#7c3aed" stroke-width="1.8"/>
+        <line x1="64" y1="76" x2="122" y2="74" stroke="#16a34a" stroke-width="2"/>
+        <rect x="122" y="20" width="8" height="68" fill="#0f172a"/>
+        <text x="84" y="26" font-size="7" font-weight="bold" fill="#15803d">垂直入射(CRA低減)</text>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#5b21b6">第13枚(G9) φ45mmテレセントリック</text>
+        <text x="150" y="51" font-size="7.5" fill="#4c1d95">・センサー四隅への斜め入射角を大幅低減</text>
+        <text x="150" y="65" font-size="7.5" fill="#4c1d95">・周辺減光と色シェーディングを防止</text>
+        <text x="150" y="79" font-size="7.5" fill="#15803d">・ショートフランジだからこそ置ける大玉</text>
+        <text x="34" y="111" font-size="8" fill="#334155">斜め光をほぼ垂直へ起こして画素の奥まで効率よく届ける大口径テレセントリック玉</text>
+      `);
+
+    case 'lens_rear_baffle':
+      return wrap(`
+        <!-- Rear 3:2 Rectangular Stray-Light Flare Mask Cutting 41% Unused Circle Light -->
+        <circle cx="80" cy="54" r="34" fill="#1e293b" stroke="#0f172a" stroke-width="1.8"/>
+        <circle cx="80" cy="54" r="30" fill="#fee2e2" opacity="0.25" stroke="#ef4444" stroke-dasharray="3 2"/>
+        <rect x="56" y="38" width="48" height="32" rx="2" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+        <text x="69" y="57" font-size="8" font-weight="bold" fill="#0369a1">3 : 2</text>
+        <rect x="138" y="18" width="168" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="146" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">3:2 矩形フレアカットマスク</text>
+        <text x="146" y="51" font-size="7.5" fill="#dc2626">・画面外の不要光 41% を入口で遮断</text>
+        <text x="146" y="65" font-size="7.5" fill="#334155">・マウント内壁の乱反射フレアを根絶</text>
+        <text x="146" y="79" font-size="7.5" fill="#334155">・最終後玉(L27)の接触保護も兼任</text>
+        <text x="34" y="111" font-size="8" fill="#334155">丸い光から3:2の長方形だけを鋭く切り抜き逆光の漆黒コントラストを守る</text>
+      `);
+
+    case 'lens_thermistor':
+      return wrap(`
+        <!-- Internal NTC Thermistor dn/dT Thermal Focus-Shift Compensation -->
+        <rect x="20" y="20" width="122" height="72" rx="5" fill="#fef2f2" stroke="#ef4444"/>
+        <!-- NTC R(T) Exponential Curve -->
+        <line x1="34" y1="78" x2="128" y2="78" stroke="#64748b" stroke-width="1.2"/>
+        <line x1="34" y1="28" x2="34" y2="78" stroke="#64748b" stroke-width="1.2"/>
+        <path d="M38 32 Q62 66, 126 74" fill="none" stroke="#dc2626" stroke-width="2.2"/>
+        <text x="42" y="38" font-size="7.5" font-weight="bold" fill="#b91c1c">R(T) 低下</text>
+        <text x="86" y="87" font-size="7" fill="#475569">温度 T (℃) →</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#fff7ed" stroke="#f97316"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#9a3412">NTC熱フォーカス補償</text>
+        <text x="162" y="51" font-size="7.5" fill="#7c2d12">・0.1℃分解能で鏡筒温度を常時監視</text>
+        <text x="162" y="65" font-size="7.5" fill="#7c2d12">・ED硝材のdn/dTピントズレを自動補正</text>
+        <text x="162" y="79" font-size="7.5" fill="#dc2626">・真冬の星空無限遠も完璧に合焦維持</text>
+        <text x="34" y="111" font-size="8" fill="#334155">温度変化によるガラス屈折率と鏡筒伸縮を電子AFでリアルタイム相殺</text>
+      `);
+
+    case 'lens_fpc_harness':
+      return wrap(`
+        <!-- Multi-Branch High-Flex Polyimide FPC Harness with EMI Ground Shielding -->
+        <rect x="20" y="44" width="124" height="16" rx="3" fill="#f97316" stroke="#9a3412"/>
+        <rect x="44" y="47" width="76" height="10" rx="2" fill="#94a3b8" stroke="#475569"/>
+        <path d="M40 44 L40 24 L62 24" fill="none" stroke="#f97316" stroke-width="4"/>
+        <path d="M84 44 L84 22 L112 22" fill="none" stroke="#f97316" stroke-width="4"/>
+        <path d="M58 60 L58 80 L94 80" fill="none" stroke="#f97316" stroke-width="4"/>
+        <rect x="60" y="20" width="8" height="8" fill="#eab308"/>
+        <rect x="110" y="18" width="8" height="8" fill="#eab308"/>
+        <rect x="92" y="76" width="8" height="8" fill="#eab308"/>
+        <text x="58" y="55" font-size="7" font-weight="bold" fill="#0f172a">EMIシールド</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#9a3412">多分岐ポリイミドFPC神経網</text>
+        <text x="162" y="51" font-size="7.5" fill="#7c2d12">・圧延焼鈍銅で1,000万回往復屈曲耐性</text>
+        <text x="162" y="65" font-size="7.5" fill="#7c2d12">・大電流PWM線と微小センサー線を分離</text>
+        <text x="162" y="79" font-size="7.5" fill="#b45309">・全端金メッキZIFコネクタ着脱式</text>
+        <text x="34" y="111" font-size="8" fill="#334155">鏡筒内周のわずかな隙間を縫って全アクチュエータとセンサーを結ぶ立体配線</text>
+      `);
+
+    case 'lens_aperture_sensor':
+      return wrap(`
+        <!-- Aperture Ring Non-Contact Multi-Pole Magnetic Rotor + Dual Hall-Effect Sensor -->
+        <circle cx="80" cy="54" r="30" fill="none" stroke="#475569" stroke-width="7"/>
+        <circle cx="80" cy="54" r="30" fill="none" stroke="#dc2626" stroke-width="5" stroke-dasharray="5 5"/>
+        <circle cx="80" cy="54" r="30" fill="none" stroke="#2563eb" stroke-width="5" stroke-dasharray="5 5" stroke-dashoffset="5"/>
+        <rect x="108" y="42" width="22" height="24" rx="3" fill="#15803d" stroke="#14532d"/>
+        <text x="111" y="57" font-size="6.5" font-weight="bold" fill="#fff">Hall</text>
+        <text x="64" y="57" font-size="7.5" font-weight="bold" fill="#5b21b6">多極着磁環</text>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#f5f3ff" stroke="#8b5cf6"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#5b21b6">絞りリング非接触磁気センサー</text>
+        <text x="150" y="51" font-size="7.5" fill="#4c1d95">・sin/cos 2軸ホールICで絶対角を検出</text>
+        <text x="150" y="65" font-size="7.5" fill="#4c1d95">・動画デクリック無段階操作に完全追従</text>
+        <text x="150" y="79" font-size="7.5" fill="#4c1d95">・ブラシレス非接触で摩耗・接触不良零</text>
+        <text x="32" y="111" font-size="8" fill="#334155">絞りリングの微小な傾きを磁力で読み取りF1.2〜F16を滑らかにシネマ制御</text>
+      `);
+
+    case 'lens_switch_pcb':
+      return wrap(`
+        <!-- Weather-Sealed Side Switch Pod PCB + Silicone Diaphragm -->
+        <rect x="24" y="22" width="112" height="66" rx="5" fill="#15803d" stroke="#14532d" stroke-width="1.6"/>
+        <circle cx="52" cy="42" r="10" fill="#facc15" stroke="#854d0e" stroke-width="1.5"/>
+        <circle cx="88" cy="42" r="10" fill="#facc15" stroke="#854d0e" stroke-width="1.5"/>
+        <rect x="44" y="62" width="52" height="16" rx="3" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="52" y="65" width="18" height="10" rx="2" fill="#0f172a"/>
+        <!-- Silicone Waterproof Membrane Overlay -->
+        <rect x="20" y="18" width="120" height="74" rx="7" fill="#38bdf8" opacity="0.22" stroke="#0284c7" stroke-dasharray="4 2"/>
+        <text x="42" y="15" font-size="7" font-weight="bold" fill="#0369a1">シリコン防水膜</text>
+        <rect x="150" y="18" width="156" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="158" y="35" font-size="8.5" font-weight="bold" fill="#065f46">側面防水スイッチサブ基板</text>
+        <text x="158" y="51" font-size="7.5" fill="#047857">・横/縦2か所のカスタムホールドボタン</text>
+        <text x="158" y="65" font-size="7.5" fill="#047857">・金めっきメタルドーム(作動2.2N)</text>
+        <text x="158" y="79" font-size="7.5" fill="#0369a1">・一体シリコン膜で雨天連打も完全防水</text>
+        <text x="34" y="111" font-size="8" fill="#334155">縦位置撮影でも親指が自然に届く2ボタン＆AF/MF切替を防水密閉実装</text>
+      `);
+
+    case 'lens_weather_seals':
+      return wrap(`
+        <!-- 6-Stage Weather-Sealing EPDM O-Rings & Wiper Lips Along Barrel -->
+        <rect x="20" y="32" width="122" height="44" rx="5" fill="#e2e8f0" stroke="#475569"/>
+        ${[28, 44, 68, 92, 110, 134].map((x, i) => `
+          <rect x="${x}" y="26" width="5" height="56" rx="2.5" fill="${i % 2 === 0 ? '#1e293b' : '#0284c7'}"/>
+        `).join('')}
+        <!-- Raindrops Bouncing Off -->
+        <path d="M52 16 L56 24 M84 14 L88 22 M112 16 L116 24" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round"/>
+        <text x="40" y="92" font-size="7.5" font-weight="bold" fill="#0369a1">6か所 全周EPDM防水リップ</text>
+        <rect x="152" y="18" width="154" height="74" rx="5" fill="#f0f9ff" stroke="#0ea5e9"/>
+        <text x="160" y="35" font-size="8.5" font-weight="bold" fill="#0369a1">6重防塵防滴シーリング群</text>
+        <text x="160" y="51" font-size="7.5" fill="#0c4a6e">・前枠/MF前後/絞り前後/マウント全封止</text>
+        <text x="160" y="65" font-size="7.5" fill="#0c4a6e">・低摩擦フッ素処理ワイパーリップ</text>
+        <text x="160" y="79" font-size="7.5" fill="#0c4a6e">・全長不変IF構造でホコリ吸込を遮断</text>
+        <text x="34" y="111" font-size="8" fill="#334155">回転リングの隙間まで6重ゴムパッキンで塞ぎ土砂降りや砂塵から光学系を死守</text>
+      `);
+
+    case 'lens_bayonet_shims':
+      return wrap(`
+        <!-- Infinity-Focus Micron Brass & Stainless Mount Calibration Shim Stack -->
+        <rect x="22" y="24" width="16" height="60" rx="2" fill="#475569"/>
+        <text x="24" y="57" font-size="6.5" fill="#fff">骨格</text>
+        <!-- Color-coded stacked micron shims -->
+        <rect x="46" y="26" width="8" height="56" rx="1" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="58" y="26" width="6" height="56" rx="1" fill="#eab308" stroke="#a16207"/>
+        <rect x="68" y="26" width="5" height="56" rx="1" fill="#38bdf8" stroke="#0284c7"/>
+        <rect x="77" y="26" width="4" height="28" rx="1" fill="#f97316"/>
+        <rect x="92" y="24" width="20" height="60" rx="2" fill="#94a3b8" stroke="#1e293b"/>
+        <text x="94" y="57" font-size="6.5" font-weight="bold" fill="#0f172a">爪環</text>
+        <text x="42" y="94" font-size="7" font-weight="bold" fill="#b45309">50 / 20 / 10μm 積層</text>
+        <rect x="128" y="18" width="178" height="74" rx="5" fill="#fefce8" stroke="#eab308"/>
+        <text x="136" y="35" font-size="8.5" font-weight="bold" fill="#854d0e">無限遠ミクロン校正シム群</text>
+        <text x="136" y="51" font-size="7.5" fill="#713f12">・10/20/50/100μm圧延真鍮＆SUSシム</text>
+        <text x="136" y="65" font-size="7.5" fill="#713f12">・14枚レンズの公差累積を±3μm以内へ</text>
+        <text x="136" y="79" font-size="7.5" fill="#c2410c">・部分弧シムで個体別チルト(片ボケ)零</text>
+        <text x="32" y="111" font-size="8" fill="#334155">マウント直下の極薄シム選定が全個体で当たり玉級の無限遠・四隅解像を保証</text>
+      `);
   }
 }
 

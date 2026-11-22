@@ -79,7 +79,8 @@ export class CadViewport {
   private originalMeshMaterials = new Map<THREE.Mesh, StoredMaterialState>();
   private xrayMaterial: THREE.MeshPhysicalMaterial;
   private cadWhiteMaterial: THREE.MeshStandardMaterial;
-  private hoverHighlightMeshes = new Set<THREE.Mesh>();
+  private resizeObserver: ResizeObserver | null = null;
+  private boundHandleResize = () => this.handleResize();
 
   private clock = new THREE.Clock();
   private rafId = 0;
@@ -140,13 +141,13 @@ export class CadViewport {
 
     // Camera & OrbitControls
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 3600);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 4500);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
     this.controls.minDistance = 16;
-    this.controls.maxDistance = 1850;
+    this.controls.maxDistance = 2400;
     this.controls.addEventListener('change', () => {
       this.dirtyFrames = Math.max(this.dirtyFrames, 2);
     });
@@ -230,18 +231,22 @@ export class CadViewport {
     if (this.mode === 'integrated') {
       return part.subsystem !== 'micro';
     }
+    if (this.mode === 'camera_body') {
+      return part.subsystem !== 'micro' && part.subsystem !== 'lens';
+    }
     return part.subsystem === this.mode;
   }
 
   private syncAssemblyVisibility(): void {
+    const isAllBody = this.mode === 'integrated' || this.mode === 'camera_body';
     const showLens = this.mode === 'lens' || this.mode === 'integrated';
-    const showMount = this.mode === 'mount' || this.mode === 'integrated';
-    const showShutter = this.mode === 'shutter' || this.mode === 'integrated';
-    const showSensor = this.mode === 'sensor' || this.mode === 'integrated';
-    const showMainboard = this.mode === 'mainboard' || this.mode === 'integrated';
-    const showEvf = this.mode === 'evf' || this.mode === 'integrated';
-    const showLcd = this.mode === 'lcd' || this.mode === 'integrated';
-    const showBody = this.mode === 'body' || this.mode === 'integrated';
+    const showMount = this.mode === 'mount' || isAllBody;
+    const showShutter = this.mode === 'shutter' || isAllBody;
+    const showSensor = this.mode === 'sensor' || isAllBody;
+    const showMainboard = this.mode === 'mainboard' || isAllBody;
+    const showEvf = this.mode === 'evf' || isAllBody;
+    const showLcd = this.mode === 'lcd' || isAllBody;
+    const showBody = this.mode === 'body' || isAllBody;
     const showMicro = this.mode === 'micro';
 
     this.lensAssembly.rootGroup.visible = showLens;
@@ -291,8 +296,8 @@ export class CadViewport {
       .filter((p) => this.isPartInCurrentMode(p))
       .sort((a, b) => {
         if (a.subsystem !== b.subsystem) return subOrder[a.subsystem] - subOrder[b.subsystem];
-        // In integrated front-to-back order, show mainboard from front frame -> PCB -> ISP -> vapor chamber
-        if (this.mode === 'integrated' && a.subsystem === 'mainboard') {
+        // In integrated / camera_body front-to-back order, show mainboard from front frame -> PCB -> ISP -> vapor chamber
+        if ((this.mode === 'integrated' || this.mode === 'camera_body') && a.subsystem === 'mainboard') {
           return b.order - a.order;
         }
         return a.order - b.order;
@@ -330,6 +335,8 @@ export class CadViewport {
     this.isolatedPartId = null;
     this.hiddenPartIds.clear();
 
+    this.syncAssemblyVisibility();
+    this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
     this.syncAssemblyVisibility();
     this.applyVisibilityAndStyles();
     this.updateClippingPlane();
@@ -454,8 +461,12 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      d = 235 + e * 380;
-      target = new THREE.Vector3(0, 0, 82.0 + e * 22.0);
+      d = 258 + e * 540;
+      target = new THREE.Vector3(0, -2.0 * (1 - e), 82.0 + e * 12.0);
+    } else if (this.mode === 'camera_body') {
+      // Complete 98-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 98-layer body dissection!
+      d = 328 + e * 430;
+      target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 14.0);
     } else if (this.mode === 'lcd') {
       d = 155 + e * 102;
       target = new THREE.Vector3(8.0 + e * 4.0, -7.0, -32.0 - e * 12.0);
@@ -475,9 +486,9 @@ export class CadViewport {
       d = 166 + e * 82;
       target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 1.5);
     } else if (this.mode === 'integrated') {
-      // Assembled complete 120-part flagship camera + 50mm F1.2 lens, vs panoramic 120-layer super-dissection!
-      d = 385 + e * 860;
-      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 44.0);
+      // Assembled complete 138-part flagship camera + 40-part 50mm F1.2 lens, vs panoramic 138-layer ultra-dissection!
+      d = 385 + e * 1020;
+      target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 76.0);
     } else if (this.mode === 'sensor') {
       d = 142 + e * 255;
       target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 32.0);
@@ -542,13 +553,19 @@ export class CadViewport {
         default:
           if (this.mode === 'integrated') {
             // Iconic flagship 3/4 Front-Grip Hero Angle: shows deep -X grip, shutter, top OLED, EVF hot shoe, AND 50mm F1.2 cutaway!
-            const isoX = e > 0.25 ? -0.80 : -0.62;
+            const isoX = e > 0.25 ? -0.82 : -0.62;
             const isoY = e > 0.25 ? 0.23 : 0.27;
-            const isoZ = e > 0.25 ? 0.55 : 0.74;
+            const isoZ = e > 0.25 ? 0.52 : 0.74;
+            offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+          } else if (this.mode === 'camera_body') {
+            // Complete Camera Body Only (no lens): showcases open 55mm bare stainless mount & exposed 3-wafer sensor clearly!
+            const isoX = e > 0.25 ? -0.78 : -0.62;
+            const isoY = e > 0.25 ? 0.24 : 0.27;
+            const isoZ = e > 0.25 ? 0.57 : 0.74;
             offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
           } else if (this.mode === 'lens') {
-            const isoX = e > 0.25 ? -0.82 : -0.68;
-            const isoZ = e > 0.25 ? 0.52 : 0.69;
+            const isoX = e > 0.25 ? -0.84 : -0.68;
+            const isoZ = e > 0.25 ? 0.48 : 0.69;
             offset = new THREE.Vector3(d * isoX, d * 0.25, d * isoZ);
           } else if (this.mode === 'body') {
             const isoX = e > 0.25 ? -0.74 : -0.64;
@@ -592,7 +609,13 @@ export class CadViewport {
 
     const currentOffset = new THREE.Vector3().subVectors(this.camera.position, this.controls.target);
     const isMicro = this.mode === 'micro';
-    const maxDist = isMicro ? 66 : this.mode === 'evf' ? 112 : this.mode === 'integrated' ? 280 : 168;
+    const maxDist = isMicro
+      ? 66
+      : this.mode === 'evf'
+        ? 112
+        : this.mode === 'integrated' || this.mode === 'camera_body'
+          ? 280
+          : 168;
     const minDist = isMicro ? 34 : this.mode === 'evf' ? 44 : 56;
     const desiredDist = Math.min(currentOffset.length(), maxDist);
     currentOffset.setLength(Math.max(desiredDist, minDist));
@@ -612,6 +635,15 @@ export class CadViewport {
 
   private markDirty(frames = 3): void {
     this.dirtyFrames = Math.max(this.dirtyFrames, frames);
+  }
+
+  public handleResize(): void {
+    const w = Math.max(1, this.container.clientWidth);
+    const h = Math.max(1, this.container.clientHeight);
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+    this.markDirty();
   }
 
   private updateClippingPlane(): void {
@@ -638,7 +670,7 @@ export class CadViewport {
         minCoord = -34;
         maxCoord = 22;
       }
-    } else if (this.mode === 'body' || this.mode === 'integrated') {
+    } else if (this.mode === 'body' || this.mode === 'camera_body' || this.mode === 'integrated') {
       if (this.sectionAxis === 'x') {
         minCoord = -74;
         maxCoord = 60;
@@ -693,8 +725,6 @@ export class CadViewport {
   }
 
   private applyVisibilityAndStyles(): void {
-    this.hoverHighlightMeshes.clear();
-
     for (const part of this.allParts) {
       if (!this.isPartInCurrentMode(part)) continue;
 
@@ -714,10 +744,6 @@ export class CadViewport {
           mesh.material = isSelected || isHovered ? stored.originalMaterial : this.xrayMaterial;
         } else {
           mesh.material = stored.originalMaterial;
-        }
-
-        if (isHovered || isSelected) {
-          this.hoverHighlightMeshes.add(mesh);
         }
       }
 
@@ -787,14 +813,21 @@ export class CadViewport {
       }
     });
 
-    window.addEventListener('resize', () => {
-      const w = Math.max(1, this.container.clientWidth);
-      const h = Math.max(1, this.container.clientHeight);
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(w, h);
-      this.markDirty();
-    });
+    window.addEventListener('resize', this.boundHandleResize);
+    document.addEventListener('fullscreenchange', this.boundHandleResize);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(this.boundHandleResize);
+      this.resizeObserver.observe(this.container);
+    }
+  }
+
+  private isObjectTreeVisible(obj: THREE.Object3D): boolean {
+    let cur: THREE.Object3D | null = obj;
+    while (cur) {
+      if (!cur.visible) return false;
+      cur = cur.parent;
+    }
+    return true;
   }
 
   private pickPartAtPointer(): string | null {
@@ -820,7 +853,7 @@ export class CadViewport {
     const hits = this.raycaster.intersectObjects(activeObjects, true);
 
     for (const hit of hits) {
-      if (!hit.object.visible) continue;
+      if (!this.isObjectTreeVisible(hit.object)) continue;
       if (this.sectionAxis !== 'off' && this.clippingPlane.distanceToPoint(hit.point) < 0) {
         continue;
       }
@@ -843,7 +876,7 @@ export class CadViewport {
   }
 
   private stepActiveAssemblies(elapsed: number, delta: number): void {
-    const integrated = this.mode === 'integrated';
+    const integrated = this.mode === 'integrated' || this.mode === 'camera_body';
     const macroAssemblies = [
       this.lensAssembly,
       this.mountAssembly,
@@ -930,6 +963,9 @@ export class CadViewport {
 
   public dispose(): void {
     cancelAnimationFrame(this.rafId);
+    window.removeEventListener('resize', this.boundHandleResize);
+    document.removeEventListener('fullscreenchange', this.boundHandleResize);
+    this.resizeObserver?.disconnect();
     this.controls.dispose();
     this.renderer.dispose();
   }
