@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type ScaleMode = 'macro' | 'micro';
+export type ScaleMode = 'integrated' | 'shutter' | 'sensor' | 'micro';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
@@ -14,6 +14,8 @@ export interface PartExplanation {
   title: string;
   subtitle: string;
   category: string;
+  /** Beginner-friendly everyday analogy ("ひとことで言うと") */
+  plainAnalogy?: string;
   summary: string;
   opticsAndPhysics: string[];
   formula?: {
@@ -23,6 +25,7 @@ export interface PartExplanation {
   nextGenInnovation: string;
   specs: ExplanationSpec[];
   diagramType:
+    // Sensor Macro (14)
     | 'baffle'
     | 'sswf'
     | 'olpf16'
@@ -37,47 +40,60 @@ export interface PartExplanation {
     | 'ceramic_balls'
     | 'magnet_yoke'
     | 'sigma_graphite'
+    // Sensor Micro (7)
     | 'microlens'
     | 'bayer_cfa'
     | 'bsi_ar'
     | 'cross_pd'
     | 'two_layer_gs'
     | 'cucu_bond'
-    | 'adc_dram';
+    | 'adc_dram'
+    // Shutter Macro (12)
+    | 'shutter_cover'
+    | 'shutter_shield'
+    | 'shutter_curtain1'
+    | 'shutter_link1'
+    | 'shutter_midplate'
+    | 'shutter_curtain2'
+    | 'shutter_link2'
+    | 'shutter_dual_drive'
+    | 'shutter_magnets'
+    | 'shutter_charge_motor'
+    | 'shutter_opt_sensor'
+    | 'shutter_damper';
 }
 
 export interface CadPart {
   id: string;
-  mode: ScaleMode;
+  /** Subsystem group this part belongs to */
+  subsystem: 'sensor' | 'micro' | 'shutter';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
   group: THREE.Group;
-  /** Assembled local position */
+  /** Assembled local position in camera optical coordinates (1 unit = 1 mm) */
   assembledPos: THREE.Vector3;
-  /** Offset added when explode = 1.0 */
+  /** Offset added when explode = 1.0 in single-subsystem mode */
   explodeOffset: THREE.Vector3;
-  /** Optional micro-scale rotation or extra animation hooks */
+  /** Optional extra offset when exploding in integrated multi-subsystem mode */
+  integratedExplodeOffset?: THREE.Vector3;
   interactiveMeshes: THREE.Mesh[];
   edgeLines: THREE.LineSegments[];
   explanation: PartExplanation;
-  /** Whether part moves with IBIS actuator during live simulation */
   ibisMovable?: boolean;
-  /** Whether part vibrates at ultrasonic frequency during simulation */
   ultrasonicElement?: boolean;
 }
 
 export interface AssemblyController {
-  macroGroup: THREE.Group;
-  microGroup: THREE.Group;
+  rootGroup: THREE.Group;
   parts: CadPart[];
   updateAnimation: (
     elapsed: number,
     delta: number,
     explodeFactor: number,
     physicsActive: boolean,
-    mode: ScaleMode
+    integrated: boolean
   ) => void;
-  setPhysicsVisible: (visible: boolean, mode: ScaleMode) => void;
-  updateExplodeGuides: (explodeFactor: number, mode: ScaleMode) => void;
+  setPhysicsVisible: (visible: boolean) => void;
+  updateExplodeGuides: (explodeFactor: number, visible: boolean) => void;
 }

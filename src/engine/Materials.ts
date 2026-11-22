@@ -50,6 +50,18 @@ export interface MaterialLibrary {
   copperHybridBond: THREE.MeshStandardMaterial;
   interlayerDielectric: THREE.MeshPhysicalMaterial;
   dramCellArray: THREE.MeshStandardMaterial;
+  // Shutter materials
+  carbonFiberBlade: THREE.MeshPhysicalMaterial;
+  carbonFiberBladeRear: THREE.MeshPhysicalMaterial;
+  shutterShieldBlade: THREE.MeshStandardMaterial;
+  shutterChassis: THREE.MeshStandardMaterial;
+  midPlateSteel: THREE.MeshStandardMaterial;
+  linkArmSteel: THREE.MeshStandardMaterial;
+  brassGear: THREE.MeshStandardMaterial;
+  pomGear: THREE.MeshStandardMaterial;
+  damperElastomer: THREE.MeshStandardMaterial;
+  antiVibRubber: THREE.MeshStandardMaterial;
+  irLedLens: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -356,11 +368,53 @@ function createGraphiteTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+function createCarbonFiberTexture(tintHex: string): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const size = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+
+  ctx.fillStyle = tintHex;
+  ctx.fillRect(0, 0, size, size);
+
+  const cell = 16;
+  for (let y = 0; y < size; y += cell) {
+    for (let x = 0; x < size; x += cell) {
+      const phase = ((x / cell + y / cell) % 2) === 0;
+      const g = phase
+        ? ctx.createLinearGradient(x, y, x + cell, y)
+        : ctx.createLinearGradient(x, y, x, y + cell);
+      g.addColorStop(0, 'rgba(255,255,255,0.03)');
+      g.addColorStop(0.5, 'rgba(255,255,255,0.16)');
+      g.addColorStop(1, 'rgba(0,0,0,0.22)');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, cell, cell);
+    }
+  }
+
+  const map = new THREE.CanvasTexture(canvas);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.wrapS = THREE.RepeatWrapping;
+  map.wrapT = THREE.RepeatWrapping;
+  map.repeat.set(5, 2);
+  map.anisotropy = 8;
+
+  const bumpMap = new THREE.CanvasTexture(canvas);
+  bumpMap.wrapS = THREE.RepeatWrapping;
+  bumpMap.wrapT = THREE.RepeatWrapping;
+  bumpMap.repeat.set(5, 2);
+
+  return { map, bumpMap };
+}
+
 export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLibrary {
   const dieTex = createSensorDieTexture();
   const pcbTex = createPcbTexture();
   const coilTex = createCopperCoilTexture();
   const graphiteTex = createGraphiteTexture();
+  const carbon1Tex = createCarbonFiberTexture('#1d2128');
+  const carbon2Tex = createCarbonFiberTexture('#262d38');
 
   const common = {
     clippingPlanes,
@@ -783,6 +837,96 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     roughness: 0.3,
   });
 
+  // --- Shutter Mechanism PBR Materials ---
+  const carbonFiberBlade = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: carbon1Tex.map,
+    bumpMap: carbon1Tex.bumpMap,
+    bumpScale: 0.035,
+    metalness: 0.28,
+    roughness: 0.34,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.32,
+  });
+
+  const carbonFiberBladeRear = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: carbon2Tex.map,
+    bumpMap: carbon2Tex.bumpMap,
+    bumpScale: 0.035,
+    color: 0xcbd5e4,
+    metalness: 0.42,
+    roughness: 0.32,
+    clearcoat: 0.28,
+    clearcoatRoughness: 0.3,
+  });
+
+  const shutterShieldBlade = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x454f5e,
+    metalness: 0.72,
+    roughness: 0.36,
+  });
+
+  const shutterChassis = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x2a2e37,
+    metalness: 0.22,
+    roughness: 0.56,
+  });
+
+  const midPlateSteel = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x3b424f,
+    metalness: 0.78,
+    roughness: 0.3,
+  });
+
+  const linkArmSteel = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xbac4d1,
+    metalness: 0.92,
+    roughness: 0.2,
+  });
+
+  const brassGear = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xd4a948,
+    metalness: 0.9,
+    roughness: 0.24,
+  });
+
+  const pomGear = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xebe6db,
+    metalness: 0.05,
+    roughness: 0.38,
+  });
+
+  const damperElastomer = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xc44536,
+    metalness: 0.04,
+    roughness: 0.78,
+  });
+
+  const antiVibRubber = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x246eb9,
+    metalness: 0.04,
+    roughness: 0.76,
+  });
+
+  const irLedLens = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xbe123c,
+    emissive: 0x9f1239,
+    emissiveIntensity: 0.45,
+    metalness: 0.05,
+    roughness: 0.12,
+    clearcoat: 0.9,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -830,6 +974,17 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     copperHybridBond,
     interlayerDielectric,
     dramCellArray,
+    carbonFiberBlade,
+    carbonFiberBladeRear,
+    shutterShieldBlade,
+    shutterChassis,
+    midPlateSteel,
+    linkArmSteel,
+    brassGear,
+    pomGear,
+    damperElastomer,
+    antiVibRubber,
+    irLedLens,
   ];
 
   return {
@@ -880,6 +1035,17 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     copperHybridBond,
     interlayerDielectric,
     dramCellArray,
+    carbonFiberBlade,
+    carbonFiberBladeRear,
+    shutterShieldBlade,
+    shutterChassis,
+    midPlateSteel,
+    linkArmSteel,
+    brassGear,
+    pomGear,
+    damperElastomer,
+    antiVibRubber,
+    irLedLens,
     allMaterials,
   };
 }

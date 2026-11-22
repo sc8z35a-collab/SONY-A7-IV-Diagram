@@ -121,31 +121,87 @@ window.addEventListener('keydown', (e) => {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text)
+// Optional URL preset for reproducible views (default startup has no params and zero text in Shutter mode)
 const preset = new URLSearchParams(window.location.search).get('preset');
-if (preset === 'exploded') {
+if (preset === 'shutter_exploded') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
   viewport.setExplode(0.95, true);
   controls.setExplodeValue(0.95);
   viewport.setPhysicsActive(true);
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'shutter_section') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.56);
+  controls.syncSectionAxis('x', 0.56);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'shutter_drawer') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.82, true);
+  controls.setExplodeValue(0.82);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-curtain-2', false);
+  syncRail();
+} else if (preset === 'integrated_exploded') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'integrated_assembled') {
+  viewport.setMode('integrated', true);
+  controls.syncMode('integrated');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_exploded' || preset === 'exploded') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
 } else if (preset === 'back') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
   viewport.setExplode(0.72, true);
   controls.setExplodeValue(0.72);
   viewport.setCameraPreset('back', true);
+  syncRail();
 } else if (preset === 'section') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
   viewport.setExplode(0, true);
   currentSectionAxis = 'x';
   viewport.setSection('x', 0.48);
   controls.syncSectionAxis('x', 0.48);
   viewport.setCameraPreset('iso', true);
+  syncRail();
 } else if (preset === 'drawer') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
   viewport.setExplode(0.82, true);
   controls.setExplodeValue(0.82);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cmos-die', false);
+  syncRail();
 } else if (preset === 'micro') {
-  viewport.setMode('micro');
+  viewport.setMode('micro', true);
   controls.syncMode('micro');
   viewport.setExplode(0.72, true);
   controls.setExplodeValue(0.72);
@@ -154,7 +210,7 @@ if (preset === 'exploded') {
   viewport.setCameraPreset('iso', true);
   syncRail();
 } else if (preset === 'micro_drawer') {
-  viewport.setMode('micro');
+  viewport.setMode('micro', true);
   controls.syncMode('micro');
   viewport.setExplode(0.65, true);
   controls.setExplodeValue(0.65);

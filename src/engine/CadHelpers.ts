@@ -23,7 +23,7 @@ export function createRoundedRectShape(width: number, height: number, radius: nu
 }
 
 /**
- * Create a 2D rectangular frame Shape with a centered inner rounded cutout.
+ * Create a 2D rectangular frame Shape with a rounded inner cutout at optional offset (cx, cy).
  */
 export function createFrameShape(
   outerW: number,
@@ -31,7 +31,9 @@ export function createFrameShape(
   outerR: number,
   innerW: number,
   innerH: number,
-  innerR: number
+  innerR: number,
+  holeOffsetX = 0,
+  holeOffsetY = 0
 ): THREE.Shape {
   const shape = createRoundedRectShape(outerW, outerH, outerR);
   const hole = new THREE.Path();
@@ -39,15 +41,15 @@ export function createFrameShape(
   const hh = innerH / 2;
   const r = Math.min(innerR, hw, hh);
 
-  hole.moveTo(-hw + r, -hh);
-  hole.lineTo(hw - r, -hh);
-  hole.absarc(hw - r, -hh + r, r, -Math.PI / 2, 0, false);
-  hole.lineTo(hw, hh - r);
-  hole.absarc(hw - r, hh - r, r, 0, Math.PI / 2, false);
-  hole.lineTo(-hw + r, hh);
-  hole.absarc(-hw + r, hh - r, r, Math.PI / 2, Math.PI, false);
-  hole.lineTo(-hw, -hh + r);
-  hole.absarc(-hw + r, -hh + r, r, Math.PI, Math.PI * 1.5, false);
+  hole.moveTo(holeOffsetX - hw + r, holeOffsetY - hh);
+  hole.lineTo(holeOffsetX + hw - r, holeOffsetY - hh);
+  hole.absarc(holeOffsetX + hw - r, holeOffsetY - hh + r, r, -Math.PI / 2, 0, false);
+  hole.lineTo(holeOffsetX + hw, holeOffsetY + hh - r);
+  hole.absarc(holeOffsetX + hw - r, holeOffsetY + hh - r, r, 0, Math.PI / 2, false);
+  hole.lineTo(holeOffsetX - hw + r, holeOffsetY + hh);
+  hole.absarc(holeOffsetX - hw + r, holeOffsetY + hh - r, r, Math.PI / 2, Math.PI, false);
+  hole.lineTo(holeOffsetX - hw, holeOffsetY - hh + r);
+  hole.absarc(holeOffsetX - hw + r, holeOffsetY - hh + r, r, Math.PI, Math.PI * 1.5, false);
 
   shape.holes.push(hole);
   return shape;
@@ -108,7 +110,51 @@ export function createVoiceCoilGeometry(
 }
 
 /**
- * Build a helical calibration spring along Z axis.
+ * Build a precision involute-style spur gear geometry aligned with Z axis.
+ */
+export function createSpurGearGeometry(
+  teeth: number,
+  pitchRadius: number,
+  thickness: number,
+  boreRadius = 1.0
+): THREE.ExtrudeGeometry {
+  const shape = new THREE.Shape();
+  const addendum = (pitchRadius * 2 * Math.PI) / (teeth * 3.6);
+  const dedendum = addendum * 1.18;
+  const rOuter = pitchRadius + addendum;
+  const rRoot = Math.max(boreRadius + 0.4, pitchRadius - dedendum);
+  const step = (Math.PI * 2) / teeth;
+
+  for (let i = 0; i < teeth; i++) {
+    const a0 = i * step;
+    const a1 = a0 + step * 0.16;
+    const a2 = a0 + step * 0.32;
+    const a3 = a0 + step * 0.56;
+    const a4 = a0 + step * 0.72;
+
+    const p0x = Math.cos(a0) * rRoot;
+    const p0y = Math.sin(a0) * rRoot;
+    if (i === 0) shape.moveTo(p0x, p0y);
+    else shape.lineTo(p0x, p0y);
+
+    shape.lineTo(Math.cos(a1) * rRoot, Math.sin(a1) * rRoot);
+    shape.lineTo(Math.cos(a2) * rOuter, Math.sin(a2) * rOuter);
+    shape.lineTo(Math.cos(a3) * rOuter, Math.sin(a3) * rOuter);
+    shape.lineTo(Math.cos(a4) * rRoot, Math.sin(a4) * rRoot);
+  }
+  shape.closePath();
+
+  if (boreRadius > 0.1) {
+    const bore = new THREE.Path();
+    bore.absarc(0, 0, boreRadius, 0, Math.PI * 2, true);
+    shape.holes.push(bore);
+  }
+
+  return extrudeCentered(shape, thickness, 0.04, 0.04, 8);
+}
+
+/**
+ * Build a helical compression spring along Z axis.
  */
 export function createHelicalSpringGeometry(
   coilRadius: number,
@@ -129,6 +175,32 @@ export function createHelicalSpringGeometry(
 }
 
 /**
+ * Build a precision torsion spring with straight tang legs (used to fire shutter curtains).
+ */
+export function createTorsionSpringGeometry(
+  coilRadius: number,
+  length: number,
+  turns: number,
+  wireRadius: number,
+  legLength: number
+): THREE.TubeGeometry {
+  const points: THREE.Vector3[] = [];
+  // Entry tang leg
+  points.push(new THREE.Vector3(coilRadius, -legLength, -length * 0.5));
+  const steps = turns * 20;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const angle = t * turns * Math.PI * 2;
+    const z = (t - 0.5) * length;
+    points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
+  }
+  // Exit tang leg
+  points.push(new THREE.Vector3(coilRadius + legLength * 0.85, legLength * 0.35, length * 0.5));
+  const curve = new THREE.CatmullRomCurve3(points);
+  return new THREE.TubeGeometry(curve, steps + 16, wireRadius, 8, false);
+}
+
+/**
  * Build a precision machine screw group aligned along Z (head at +Z, shaft toward -Z).
  */
 export function createPrecisionScrew(
@@ -145,7 +217,6 @@ export function createPrecisionScrew(
   head.position.z = headHeight * 0.5;
   group.add(head);
 
-  // Recessed socket slot detail
   const slotMat = new THREE.MeshStandardMaterial({
     color: 0x1a1d22,
     metalness: 0.6,
@@ -192,7 +263,6 @@ export function attachCadEdges(
       const mesh = obj as THREE.Mesh;
       meshes.push(mesh);
 
-      // Skip InstancedMesh for EdgesGeometry to avoid heavy duplication; handle thin outlines gently
       if ((mesh as THREE.InstancedMesh).isInstancedMesh) return;
       if (mesh.userData.noEdges) return;
 
