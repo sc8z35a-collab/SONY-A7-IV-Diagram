@@ -74,18 +74,18 @@ export function extrudeCentered(
   depth: number,
   bevelSize = 0.08,
   bevelThickness = 0.08,
-  curveSegments = 20
+  curveSegments = 18
 ): THREE.ExtrudeGeometry {
   const hasBevel = bevelSize > 0 && bevelThickness > 0;
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
   const geo = new THREE.ExtrudeGeometry(shape, {
     depth: bodyDepth,
     bevelEnabled: hasBevel,
-    bevelSegments: hasBevel ? 3 : 0,
+    bevelSegments: hasBevel ? 2 : 0,
     steps: 1,
     bevelSize,
     bevelThickness,
-    curveSegments,
+    curveSegments: Math.min(curveSegments, 32),
   });
   geo.translate(0, 0, -bodyDepth / 2);
   geo.computeVertexNormals();
@@ -106,7 +106,7 @@ export function createVoiceCoilGeometry(
   const innerH = Math.max(1.2, outerH - windingWidth * 2);
   const innerR = Math.max(0.4, outerR - windingWidth * 0.7);
   const shape = createFrameShape(outerW, outerH, outerR, innerW, innerH, innerR);
-  return extrudeCentered(shape, thickness, 0.08, 0.08, 24);
+  return extrudeCentered(shape, thickness, 0.08, 0.08, 20);
 }
 
 /**
@@ -150,7 +150,7 @@ export function createSpurGearGeometry(
     shape.holes.push(bore);
   }
 
-  return extrudeCentered(shape, thickness, 0.04, 0.04, 8);
+  return extrudeCentered(shape, thickness, 0.04, 0.04, 6);
 }
 
 /**
@@ -163,7 +163,7 @@ export function createHelicalSpringGeometry(
   wireRadius: number
 ): THREE.TubeGeometry {
   const points: THREE.Vector3[] = [];
-  const steps = turns * 24;
+  const steps = Math.round(turns * 16);
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -171,7 +171,7 @@ export function createHelicalSpringGeometry(
     points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
   }
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps, wireRadius, 8, false);
+  return new THREE.TubeGeometry(curve, steps, wireRadius, 6, false);
 }
 
 /**
@@ -187,7 +187,7 @@ export function createTorsionSpringGeometry(
   const points: THREE.Vector3[] = [];
   // Entry tang leg
   points.push(new THREE.Vector3(coilRadius, -legLength, -length * 0.5));
-  const steps = turns * 20;
+  const steps = Math.round(turns * 14);
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -197,8 +197,10 @@ export function createTorsionSpringGeometry(
   // Exit tang leg
   points.push(new THREE.Vector3(coilRadius + legLength * 0.85, legLength * 0.35, length * 0.5));
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps + 16, wireRadius, 8, false);
+  return new THREE.TubeGeometry(curve, steps + 12, wireRadius, 6, false);
 }
+
+const screwSlotMatCache = new WeakMap<THREE.Material, THREE.MeshStandardMaterial>();
 
 /**
  * Build a precision machine screw group aligned along Z (head at +Z, shaft toward -Z).
@@ -211,35 +213,42 @@ export function createPrecisionScrew(
 ): THREE.Group {
   const group = new THREE.Group();
 
-  const headGeo = new THREE.CylinderGeometry(headRadius, headRadius * 0.94, headHeight, 18);
+  const headGeo = new THREE.CylinderGeometry(headRadius, headRadius * 0.94, headHeight, 14);
   headGeo.rotateX(Math.PI / 2);
   const head = new THREE.Mesh(headGeo, material);
   head.position.z = headHeight * 0.5;
   group.add(head);
 
-  const slotMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1d22,
-    metalness: 0.6,
-    roughness: 0.5,
-    clippingPlanes: (material as THREE.MeshStandardMaterial).clippingPlanes ?? undefined,
-  });
+  let slotMat = screwSlotMatCache.get(material);
+  if (!slotMat) {
+    slotMat = new THREE.MeshStandardMaterial({
+      color: 0x1a1d22,
+      metalness: 0.6,
+      roughness: 0.5,
+      clippingPlanes: (material as THREE.MeshStandardMaterial).clippingPlanes ?? undefined,
+    });
+    screwSlotMatCache.set(material, slotMat);
+  }
   const slot1 = new THREE.Mesh(
     new THREE.BoxGeometry(headRadius * 1.15, headRadius * 0.24, 0.14),
     slotMat
   );
   slot1.position.z = headHeight + 0.01;
+  slot1.userData.noEdges = true;
   const slot2 = new THREE.Mesh(
     new THREE.BoxGeometry(headRadius * 0.24, headRadius * 1.15, 0.14),
     slotMat
   );
   slot2.position.z = headHeight + 0.01;
+  slot2.userData.noEdges = true;
   group.add(slot1, slot2);
 
   if (shaftLength > 0) {
-    const shaftGeo = new THREE.CylinderGeometry(headRadius * 0.52, headRadius * 0.52, shaftLength, 14);
+    const shaftGeo = new THREE.CylinderGeometry(headRadius * 0.52, headRadius * 0.52, shaftLength, 10);
     shaftGeo.rotateX(Math.PI / 2);
     const shaft = new THREE.Mesh(shaftGeo, material);
     shaft.position.z = -shaftLength * 0.5;
+    shaft.userData.noEdges = true;
     group.add(shaft);
   }
 

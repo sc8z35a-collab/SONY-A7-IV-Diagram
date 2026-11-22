@@ -2099,6 +2099,478 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="206" y="79" font-size="7.5" fill="#334155">・引抜耐荷重 &gt;1500N</text>
         <text x="42" y="111" font-size="8" fill="#334155">レンズ光軸直下の高荷重ステンレス三脚座が三脚・ジンバルでブレを根絶</text>
       `);
+
+    // =========================================================================
+    // Phase 7 Super-Dissection: 50mm F1.2 Prime Lens (+12 New Schematics)
+    // =========================================================================
+    case 'lens_filter_ring':
+      return wrap(`
+        <!-- φ72mm Fine Pitch Filter Thread & Spanner Retainer Ring Cross Section -->
+        <rect x="20" y="20" width="124" height="72" rx="6" fill="#f8fafc" stroke="#475569"/>
+        <circle cx="82" cy="56" r="28" fill="none" stroke="#1e293b" stroke-width="5"/>
+        <circle cx="82" cy="56" r="23" fill="none" stroke="#d97706" stroke-width="2.5"/>
+        <circle cx="82" cy="56" r="19" fill="#e0f2fe" stroke="#64748b" stroke-dasharray="3 2"/>
+        <!-- 4 Spanner Notches -->
+        <rect x="65" y="38" width="5" height="3" fill="#94a3b8" transform="rotate(45 67 40)"/>
+        <rect x="94" y="38" width="5" height="3" fill="#94a3b8" transform="rotate(-45 96 40)"/>
+        <rect x="65" y="71" width="5" height="3" fill="#94a3b8" transform="rotate(-45 67 72)"/>
+        <rect x="94" y="71" width="5" height="3" fill="#94a3b8" transform="rotate(45 96 72)"/>
+        <text x="64" y="59" font-size="8" font-weight="bold" fill="#0369a1">φ72mm</text>
+        <rect x="156" y="20" width="148" height="72" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="164" y="37" font-size="8.5" font-weight="bold" fill="#92400e">M72×0.75mm 精密ねじ枠</text>
+        <text x="164" y="52" font-size="7.5" fill="#78350f">・ND/PLフィルターを水平装着</text>
+        <text x="164" y="66" font-size="7.5" fill="#78350f">・4点スパナ溝で前玉を均等固定</text>
+        <text x="164" y="80" font-size="7.5" fill="#78350f">・衝撃から大口径XA前玉を保護</text>
+        <text x="36" y="111" font-size="8" fill="#334155">0.75mm細目ねじで保護フィルターや可変NDを着脱しつつ前玉の偏心を防止</text>
+      `);
+
+    case 'lens_front_meniscus':
+      return wrap(`
+        <!-- Group 2 High-Index Positive Meniscus & Micron Brass Air-Gap Spacer -->
+        <path d="M58 20 Q82 56 58 92 L74 92 Q96 56 74 20 Z" fill="#bae6fd" stroke="#0284c7" stroke-width="1.6"/>
+        <rect x="86" y="20" width="6" height="14" rx="1" fill="#eab308" stroke="#a16207"/>
+        <rect x="86" y="78" width="6" height="14" rx="1" fill="#eab308" stroke="#a16207"/>
+        <line x1="20" y1="36" x2="68" y2="36" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="68" y1="36" x2="128" y2="48" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="20" y1="76" x2="68" y2="76" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="68" y1="76" x2="128" y2="64" stroke="#0284c7" stroke-width="1.8"/>
+        <text x="74" y="16" font-size="7.5" font-weight="bold" fill="#b45309">真鍮スペーサー(±1μm)</text>
+        <rect x="142" y="20" width="164" height="72" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="150" y="37" font-size="8.5" font-weight="bold" fill="#0369a1">高屈折ランタン系正メニスカス</text>
+        <text x="150" y="52" font-size="7.5" fill="#0c4a6e">・屈折率 n &gt; 1.85 で緩やかに集光</text>
+        <text x="150" y="66" font-size="7.5" fill="#0c4a6e">・F1.2の球面収差を段階的に抑制</text>
+        <text x="150" y="80" font-size="7.5" fill="#b45309">・真鍮リングで空気間隔をミクロン管理</text>
+        <text x="34" y="111" font-size="8" fill="#334155">前玉からの大光束を優しく内側へ曲げ、後段EDレンズへ渡す第2集光群</text>
+      `);
+
+    case 'lens_iris_cam':
+      return wrap(`
+        <!-- 11-Slot Non-Linear Iris Cam Actuating Ring -->
+        <circle cx="84" cy="55" r="34" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="84" cy="55" r="20" fill="#ffffff" stroke="#475569" stroke-width="1.4"/>
+        ${Array.from({ length: 11 }, (_, i) => {
+          const a = (i / 11) * Math.PI * 2;
+          const x1 = 84 + Math.cos(a) * 23;
+          const y1 = 55 + Math.sin(a) * 23;
+          const x2 = 84 + Math.cos(a + 0.34) * 31;
+          const y2 = 55 + Math.sin(a + 0.34) * 31;
+          return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>`;
+        }).join('')}
+        <path d="M115 70 A34 34 0 0 1 98 88" fill="none" stroke="#eab308" stroke-width="4.5"/>
+        <rect x="142" y="18" width="164" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">11本非線形カム溝リング</text>
+        <text x="150" y="51" font-size="7.5" fill="#334155">・11枚の絞り羽根ピンを同時案内</text>
+        <text x="150" y="65" font-size="7.5" fill="#334155">・F1.2〜F16の1/3段面積を均等化</text>
+        <text x="150" y="79" font-size="7.5" fill="#b45309">・外周の真鍮セクターギアで駆動</text>
+        <text x="36" y="111" font-size="8" fill="#334155">リングが数度回るだけで11枚の羽根が同期開閉し美しい円形ボケを維持</text>
+      `);
+
+    case 'lens_iris_stepper':
+      return wrap(`
+        <!-- 1/64 Micro-Stepping Iris Motor + POM Gear + Home Photo-Interrupter -->
+        <rect x="20" y="34" width="44" height="40" rx="5" fill="#d97706" stroke="#78350f" stroke-width="1.5"/>
+        <text x="27" y="57" font-size="7.5" font-weight="bold" fill="#fff">Stepper</text>
+        <circle cx="82" cy="54" r="14" fill="#eab308" stroke="#a16207" stroke-width="1.5"/>
+        <circle cx="110" cy="44" r="18" fill="#e2e8f0" stroke="#475569" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <rect x="112" y="68" width="22" height="14" rx="2" fill="#1e293b"/>
+        <text x="115" y="78" font-size="6.5" fill="#38bdf8">原点</text>
+        <rect x="146" y="18" width="160" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="154" y="35" font-size="8.5" font-weight="bold" fill="#92400e">1/64 静音マイクロステップ駆動</text>
+        <text x="154" y="51" font-size="7.5" fill="#78350f">・正弦波電流で動画録音でも無音</text>
+        <text x="154" y="65" font-size="7.5" fill="#78350f">・POM樹脂静音減速ギアでガタ抑制</text>
+        <text x="154" y="79" font-size="7.5" fill="#0369a1">・光学フォトインタラプタ原点検出</text>
+        <text x="34" y="111" font-size="8" fill="#334155">動画撮影中の滑らかなシームレス露出変化と120fps高速絞り追従を両立</text>
+      `);
+
+    case 'lens_xd_stators':
+      return wrap(`
+        <!-- Quad XD Linear Motor Stator: N52 Magnet Bars + Soft-Iron Flux Return Yoke -->
+        <rect x="20" y="20" width="120" height="72" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <rect x="30" y="28" width="100" height="10" rx="2" fill="#64748b"/>
+        <rect x="34" y="38" width="44" height="12" rx="2" fill="#dc2626"/>
+        <rect x="82" y="38" width="44" height="12" rx="2" fill="#2563eb"/>
+        <text x="52" y="47" font-size="8" font-weight="bold" fill="#fff">N</text>
+        <text x="100" y="47" font-size="8" font-weight="bold" fill="#fff">S</text>
+        <!-- Magnetic Flux Loop -->
+        <path d="M56 50 C56 68, 104 68, 104 50" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="3 2"/>
+        <rect x="52" y="62" width="56" height="16" rx="3" fill="#d97706" opacity="0.85"/>
+        <text x="64" y="73" font-size="7.5" font-weight="bold" fill="#fff">可動コイル</text>
+        <rect x="152" y="20" width="154" height="72" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="160" y="37" font-size="8.5" font-weight="bold" fill="#1d4ed8">N52磁石×8＋軟鉄ヨーク</text>
+        <text x="160" y="52" font-size="7.5" fill="#1e40af">・鏡筒周囲4方向(45°対称)配置</text>
+        <text x="160" y="66" font-size="7.5" fill="#1e40af">・閉磁気回路で磁束を空隙へ集中</text>
+        <text x="160" y="80" font-size="7.5" fill="#1e40af">・漏洩磁束を防ぎF = I(L×B)最大化</text>
+        <text x="36" y="111" font-size="8" fill="#334155">強力な固定磁場が重いF1.2ガラス群をギア無しで爆速かつ無音に加速</text>
+      `);
+
+    case 'lens_guide_shafts':
+      return wrap(`
+        <!-- 4x Centerless-Ground Titanium Guide Shafts & End-Ring Cage -->
+        <rect x="24" y="22" width="12" height="68" rx="3" fill="#64748b"/>
+        <rect x="128" y="22" width="12" height="68" rx="3" fill="#64748b"/>
+        <rect x="36" y="30" width="92" height="6" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="36" y="76" width="92" height="6" fill="#cbd5e1" stroke="#334155"/>
+        <rect x="64" y="25" width="22" height="16" rx="2" fill="#eab308" stroke="#a16207"/>
+        <rect x="78" y="71" width="22" height="16" rx="2" fill="#eab308" stroke="#a16207"/>
+        <path d="M52 56 L112 56" stroke="#0284c7" stroke-width="2.2"/>
+        <polygon points="116,56 108,52 108,60" fill="#0284c7"/>
+        <polygon points="48,56 56,52 56,60" fill="#0284c7"/>
+        <rect x="152" y="20" width="154" height="72" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="160" y="37" font-size="8.5" font-weight="bold" fill="#0f172a">超真直チタン軸×4本ケージ</text>
+        <text x="160" y="52" font-size="7.5" fill="#334155">・真直度 &lt; 1.0 μm の無心研磨</text>
+        <text x="160" y="66" font-size="7.5" fill="#334155">・対角2軸支持でチルト・こじり零</text>
+        <text x="160" y="80" font-size="7.5" fill="#334155">・自己潤滑ブッシュで超低摩擦滑走</text>
+        <text x="36" y="111" font-size="8" fill="#334155">F1.2の極薄ピント面を1ミクロンも傾けず前後のAFレンズ群を直進案内</text>
+      `);
+
+    case 'lens_mr_encoders':
+      return wrap(`
+        <!-- Sub-Micron MR Magnetoresistive Linear Scale & Read Head -->
+        <rect x="20" y="58" width="124" height="14" rx="2" fill="#1e293b"/>
+        ${Array.from({ length: 12 }, (_, i) => `<rect x="${24 + i * 10}" y="60" width="5" height="10" fill="${i % 2 === 0 ? '#ef4444' : '#3b82f6'}"/>`).join('')}
+        <rect x="66" y="34" width="32" height="16" rx="3" fill="#eab308" stroke="#a16207"/>
+        <text x="72" y="45" font-size="7.5" font-weight="bold" fill="#1e293b">MR IC</text>
+        <path d="M24 26 Q40 16, 56 26 T88 26 T120 26" fill="none" stroke="#16a34a" stroke-width="1.8"/>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#166534">0.1 μm MR磁気スケール</text>
+        <text x="162" y="51" font-size="7.5" fill="#15803d">・N/S微細着磁のsin/cos波形読取</text>
+        <text x="162" y="65" font-size="7.5" fill="#15803d">・非接触・摩耗ゼロで絶対位置監視</text>
+        <text x="162" y="79" font-size="7.5" fill="#15803d">・毎秒数千回のPID帰還でピタ止め</text>
+        <text x="32" y="111" font-size="8" fill="#334155">目に見えない磁気ものさしがAFレンズの位置を0.0001mm単位で報告</text>
+      `);
+
+    case 'lens_rear_convex':
+      return wrap(`
+        <!-- Group 8 High-Index Sagittal Coma & Field Curvature Corrector -->
+        <path d="M56 22 Q74 56 56 90 L72 90 Q88 56 72 22 Z" fill="#c7d2fe" stroke="#4f46e5" stroke-width="1.6"/>
+        <line x1="20" y1="30" x2="66" y2="38" stroke="#6366f1" stroke-width="1.6"/>
+        <line x1="66" y1="38" x2="126" y2="48" stroke="#6366f1" stroke-width="1.6"/>
+        <line x1="20" y1="82" x2="66" y2="74" stroke="#6366f1" stroke-width="1.6"/>
+        <line x1="66" y1="74" x2="126" y2="64" stroke="#6366f1" stroke-width="1.6"/>
+        <circle cx="128" cy="56" r="4" fill="#4f46e5"/>
+        <rect x="148" y="20" width="158" height="72" rx="5" fill="#eef2ff" stroke="#6366f1"/>
+        <text x="156" y="37" font-size="8.5" font-weight="bold" fill="#3730a3">第8群 サジタルコマ補正凸玉</text>
+        <text x="156" y="52" font-size="7.5" fill="#312e81">・夜景の点光源が鳥状に崩れるのを防ぐ</text>
+        <text x="156" y="66" font-size="7.5" fill="#312e81">・周辺像面湾曲の最終フラット補正</text>
+        <text x="156" y="80" font-size="7.5" fill="#312e81">・高屈折ランタンガラスで薄型化</text>
+        <text x="36" y="111" font-size="8" fill="#334155">F1.2開放の星空・イルミネーションでも画面四隅まで点光源を丸く結像</text>
+      `);
+
+    case 'lens_mcu_pcb':
+      return wrap(`
+        <!-- Circular Donut HDI Ring PCB: 32-bit AF MCU + 4x H-Bridge MOSFET Drivers -->
+        <circle cx="80" cy="55" r="34" fill="#15803d" stroke="#14532d" stroke-width="1.8"/>
+        <circle cx="80" cy="55" r="19" fill="#ffffff" stroke="#166534" stroke-width="1.5"/>
+        <rect x="73" y="24" width="14" height="10" rx="2" fill="#1e293b"/>
+        <rect x="98" y="35" width="9" height="9" rx="1" fill="#facc15"/>
+        <rect x="98" y="66" width="9" height="9" rx="1" fill="#facc15"/>
+        <rect x="53" y="35" width="9" height="9" rx="1" fill="#facc15"/>
+        <rect x="53" y="66" width="9" height="9" rx="1" fill="#facc15"/>
+        <text x="66" y="58" font-size="7.5" font-weight="bold" fill="#166534">光路貫通</text>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#f0fdf4" stroke="#15803d"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#166534">ドーナツ型HDI制御基板</text>
+        <text x="144" y="51" font-size="7.5" fill="#15803d">・32bitリアルタイムAF専用マイコン</text>
+        <text x="144" y="65" font-size="7.5" fill="#15803d">・4ch大電流HブリッジMOSFETドライバ</text>
+        <text x="144" y="79" font-size="7.5" fill="#15803d">・ボディと120Hz超高速シリアル通信</text>
+        <text x="34" y="111" font-size="8" fill="#334155">光路を囲む環状基板が4基のXDモーターと絞り・MFリングを一括頭脳制御</text>
+      `);
+
+    case 'lens_mf_encoder':
+      return wrap(`
+        <!-- Non-Contact Optical Slotted Quadrature MF Ring Encoder Wheel -->
+        <circle cx="80" cy="55" r="32" fill="none" stroke="#eab308" stroke-width="6"/>
+        <circle cx="80" cy="55" r="32" fill="none" stroke="#1e293b" stroke-width="6" stroke-dasharray="3 3"/>
+        <rect x="68" y="80" width="24" height="12" rx="2" fill="#1e293b"/>
+        <text x="71" y="89" font-size="6.5" fill="#38bdf8">光検出</text>
+        <rect x="136" y="18" width="170" height="74" rx="5" fill="#fffbeb" stroke="#eab308"/>
+        <text x="144" y="35" font-size="8.5" font-weight="bold" fill="#92400e">リニア・レスポンスMF検出</text>
+        <path d="M148 54 L160 54 L160 44 L172 44 L172 54 L184 54 L184 44 L196 44" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <path d="M154 68 L166 68 L166 58 L178 58 L178 68 L190 68 L190 58 L202 58" fill="none" stroke="#16a34a" stroke-width="1.6"/>
+        <text x="210" y="54" font-size="7.5" fill="#0369a1">2,048 PPR</text>
+        <text x="210" y="68" font-size="7.5" fill="#15803d">回転角に比例</text>
+        <text x="144" y="84" font-size="7.5" fill="#78350f">再現性100%の映画向けMF操作感</text>
+        <text x="34" y="111" font-size="8" fill="#334155">光のスリット通過を2相読取し、回す速さによらず常に同じ角度で合焦</text>
+      `);
+
+    case 'lens_click_detent':
+      return wrap(`
+        <!-- Switchable Steel-Ball Spring Click / De-Click Aperture Detent Cam -->
+        <rect x="18" y="18" width="136" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="26" y="32" font-size="8" font-weight="bold" fill="#0f172a">CLICK ON (写真用 1/3段)</text>
+        <path d="M26 52 L44 52 L52 60 L60 52 L78 52 L86 60 L94 52 L112 52 L120 60 L128 52 L144 52" fill="none" stroke="#334155" stroke-width="2"/>
+        <circle cx="86" cy="54" r="5.5" fill="#94a3b8" stroke="#0f172a"/>
+        <path d="M86 36 L86 48" stroke="#d97706" stroke-width="2.5" stroke-dasharray="2 1.5"/>
+        <text x="34" y="79" font-size="7.5" fill="#475569">鋼球がV溝にはまりカチカチ感</text>
+        <rect x="164" y="18" width="142" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="172" y="32" font-size="8" font-weight="bold" fill="#92400e">CLICK OFF (動画用 無段階)</text>
+        <path d="M174 62 L294 62" stroke="#334155" stroke-width="2"/>
+        <circle cx="234" cy="46" r="5.5" fill="#94a3b8" stroke="#0f172a"/>
+        <rect x="218" y="36" width="32" height="6" rx="2" fill="#f59e0b"/>
+        <text x="174" y="80" font-size="7.5" fill="#78350f">カムが鋼球を持ち上げ完全無音!</text>
+        <text x="34" y="111" font-size="8" fill="#334155">スイッチ1つで静止画のカチカチ操作と動画の無音無段階操作を物理切替</text>
+      `);
+
+    case 'lens_rear_bayonet':
+      return wrap(`
+        <!-- Hardened Stainless 4-Lug Rear Lens Bayonet + 12-Pin Gold Contacts + Seal -->
+        <circle cx="82" cy="55" r="34" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
+        <circle cx="82" cy="55" r="22" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+        <circle cx="82" cy="55" r="36" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-dasharray="5 2"/>
+        ${Array.from({ length: 10 }, (_, i) => {
+          const a = Math.PI * 0.28 + (i / 9) * (Math.PI * 0.44);
+          const x = 82 + Math.cos(a) * 24;
+          const y = 55 + Math.sin(a) * 24;
+          return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2" fill="#eab308"/>`;
+        }).join('')}
+        <text x="64" y="58" font-size="8" font-weight="bold" fill="#0f172a">4爪バヨネット</text>
+        <rect x="138" y="18" width="168" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="146" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">レンズ側ステンレスマウント</text>
+        <text x="146" y="51" font-size="7.5" fill="#334155">・平面度 &lt; 3 μm 鏡面ラップ加工</text>
+        <text x="146" y="65" font-size="7.5" fill="#b45309">・12極金メッキ高速通信＆給電接点</text>
+        <text x="146" y="79" font-size="7.5" fill="#0284c7">・全周EPDM防水ゴムリップ密着</text>
+        <text x="34" y="111" font-size="8" fill="#334155">ボディ側マウント(M01)と強固に噛み合い光軸精度・防水・大電流伝送を完結</text>
+      `);
+
+    // =========================================================================
+    // Phase 7 Super-Dissection: Sensor & 8.5-Stop 5-Axis IBIS (+12 New Schematics)
+    // =========================================================================
+    case 'sensor_pzt_bar':
+      return wrap(`
+        <!-- Multi-Layer PZT Piezoelectric Ultrasonic Bar Flexural Standing Wave -->
+        <rect x="20" y="28" width="122" height="16" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="1.4"/>
+        <path d="M22 36 Q42 24, 62 36 T102 36 T140 36" fill="none" stroke="#0284c7" stroke-width="2"/>
+        <rect x="30" y="48" width="102" height="16" rx="2" fill="#eab308" stroke="#a16207" stroke-width="1.4"/>
+        <rect x="34" y="51" width="44" height="10" fill="#e2e8f0"/>
+        <rect x="84" y="51" width="44" height="10" fill="#e2e8f0"/>
+        <text x="50" y="59" font-size="7" font-weight="bold" fill="#1e293b">Ag＋</text>
+        <text x="100" y="59" font-size="7" font-weight="bold" fill="#1e293b">Ag−</text>
+        <path d="M52 24 L46 14 M82 24 L82 12 M112 24 L118 14" stroke="#dc2626" stroke-width="1.8"/>
+        <text x="34" y="82" font-size="7.5" font-weight="bold" fill="#b45309">30〜70kHz 交流電圧 → 逆圧電伸縮</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#fffbeb" stroke="#eab308"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#92400e">積層PZT超音波バー</text>
+        <text x="164" y="51" font-size="7.5" fill="#78350f">・左右2分割電極で複数モード励起</text>
+        <text x="164" y="65" font-size="7.5" fill="#78350f">・3〜5万Gの剥離加速度を発生</text>
+        <text x="164" y="79" font-size="7.5" fill="#78350f">・共振周波数を自動位相追尾</text>
+        <text x="34" y="111" font-size="8" fill="#334155">毎秒数万回の超高速伸縮が防塵ガラス上のミクロのホコリを瞬時に弾き飛ばす</text>
+      `);
+
+    case 'sensor_qwp_plate':
+      return wrap(`
+        <!-- Zero-Order λ/4 Quarter-Wave Depolarizer + Rear V-Split Quartz OLPF -->
+        <line x1="16" y1="54" x2="48" y2="54" stroke="#0284c7" stroke-width="2.2"/>
+        <line x1="30" y1="40" x2="30" y2="68" stroke="#dc2626" stroke-width="1.8"/>
+        <text x="16" y="34" font-size="7" fill="#dc2626">直線偏光</text>
+        <rect x="52" y="22" width="18" height="64" rx="3" fill="#e9d5ff" stroke="#9333ea" stroke-width="1.6"/>
+        <text x="54" y="57" font-size="7.5" font-weight="bold" fill="#6b21a8">λ/4</text>
+        <!-- Circular Polarization Helix -->
+        <ellipse cx="92" cy="54" rx="8" ry="14" fill="none" stroke="#9333ea" stroke-width="1.8"/>
+        <text x="76" y="34" font-size="7" fill="#7e22ce">円偏光化</text>
+        <!-- Rear V-Split Quartz -->
+        <rect x="112" y="22" width="18" height="64" rx="3" fill="#bae6fd" stroke="#0284c7" stroke-width="1.6"/>
+        <line x1="130" y1="46" x2="152" y2="38" stroke="#0284c7" stroke-width="1.8"/>
+        <line x1="130" y1="62" x2="152" y2="70" stroke="#0284c7" stroke-width="1.8"/>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#faf5ff" stroke="#9333ea"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#6b21a8">1/4波長板＋垂直水晶</text>
+        <text x="168" y="51" font-size="7.5" fill="#581c87">・位相差 π/2 で円偏光へ変換</text>
+        <text x="168" y="65" font-size="7.5" fill="#581c87">・CPLフィルター装着でも均等分離</text>
+        <text x="168" y="79" font-size="7.5" fill="#0369a1">・S04と合わせて16点ガウス完成</text>
+        <text x="34" y="111" font-size="8" fill="#334155">偏光状態を均等リセットすることで水面反射やPL撮影でも偽色を完全抑制</text>
+      `);
+
+    case 'sensor_cucu_layer':
+      return wrap(`
+        <!-- 3μm-Pitch Wafer-on-Wafer Cu-Cu Bumpless Direct Hybrid Bonding -->
+        <rect x="20" y="18" width="128" height="20" rx="2" fill="#0ea5e9" opacity="0.25" stroke="#0284c7"/>
+        <text x="36" y="31" font-size="7.5" font-weight="bold" fill="#0369a1">第1ウェハー (BSI画素層)</text>
+        <!-- Oxide + Direct Copper-to-Copper Pads -->
+        <rect x="20" y="38" width="128" height="24" fill="#f1f5f9" stroke="#64748b"/>
+        ${[0, 1, 2, 3, 4, 5].map((i) => `<rect x="${28 + i * 20}" y="38" width="10" height="24" fill="#d97706" stroke="#92400e"/>`).join('')}
+        <line x1="20" y1="50" x2="148" y2="50" stroke="#dc2626" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <rect x="20" y="62" width="128" height="20" rx="2" fill="#6366f1" opacity="0.25" stroke="#4f46e5"/>
+        <text x="34" y="75" font-size="7.5" font-weight="bold" fill="#3730a3">第2ウェハー (4nm ADC層)</text>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#92400e">バンプレスCu-Cu直接接合</text>
+        <text x="168" y="51" font-size="7.5" fill="#78350f">・ピッチ 2〜3 μm で数百万本直結</text>
+        <text x="168" y="65" font-size="7.5" fill="#78350f">・はんだ不要・遅延1/100以下</text>
+        <text x="168" y="79" font-size="7.5" fill="#dc2626">・垂直銅柱が熱抵抗も約20%低減</text>
+        <text x="30" y="111" font-size="8" fill="#334155">原子レベル研磨(CMP)と低温拡散で画素直下から爆速並列データ転送を実現</text>
+      `);
+
+    case 'sensor_logic_dram':
+      return wrap(`
+        <!-- Wafer 2 (Column-Parallel CDS/ADC) + Wafer 3 (120fps Stacked DRAM) -->
+        <rect x="20" y="18" width="128" height="32" rx="4" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.5"/>
+        <text x="30" y="31" font-size="8" font-weight="bold" fill="#3730a3">Wafer 2: 列並列 CDS / ADC</text>
+        ${Array.from({ length: 8 }, (_, i) => `<rect x="${28 + i * 14}" y="36" width="9" height="10" rx="1" fill="#eab308"/>`).join('')}
+        <rect x="20" y="56" width="128" height="32" rx="4" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+        <text x="30" y="70" font-size="8" font-weight="bold" fill="#155e75">Wafer 3: 超高速積層DRAM</text>
+        <text x="32" y="82" font-size="7.5" fill="#0e7490">120fps RAW 一時超広帯域保持</text>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#f8fafc" stroke="#4f46e5"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#3730a3">異種プロセス3D統合</text>
+        <text x="168" y="51" font-size="7.5" fill="#312e81">・CDS差分で熱雑音を相殺除去</text>
+        <text x="168" y="65" font-size="7.5" fill="#312e81">・数千列同時14〜16bit A/D変換</text>
+        <text x="168" y="79" font-size="7.5" fill="#0e7490">・DRAMがGS全画素同時出力を吸収</text>
+        <text x="32" y="111" font-size="8" fill="#334155">アナログ翻訳(ADC)と巨大メモリ(DRAM)を画素直下に貼り合わせた爆速構造</text>
+      `);
+
+    case 'sensor_vcm_coils':
+      return wrap(`
+        <!-- 3x Independent Air-Core Flat VCM Coils: Y1 + Y2 (Y & Roll) + X1 (X) -->
+        <rect x="20" y="18" width="128" height="74" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+        <!-- Y1 & Y2 Bottom Coils -->
+        <rect x="30" y="66" width="42" height="18" rx="4" fill="none" stroke="#c86432" stroke-width="4.5"/>
+        <rect x="82" y="66" width="42" height="18" rx="4" fill="none" stroke="#c86432" stroke-width="4.5"/>
+        <!-- X1 Right Coil -->
+        <rect x="122" y="24" width="18" height="38" rx="4" fill="none" stroke="#c86432" stroke-width="4.5"/>
+        <!-- Force Arrows -->
+        <path d="M51 62 L51 48" stroke="#0284c7" stroke-width="2"/>
+        <path d="M103 48 L103 62" stroke="#0284c7" stroke-width="2"/>
+        <path d="M116 43 L102 43" stroke="#dc2626" stroke-width="2"/>
+        <text x="38" y="45" font-size="7.5" font-weight="bold" fill="#0369a1">Y1/Y2 → Y＆Roll</text>
+        <rect x="160" y="18" width="146" height="74" rx="5" fill="#fff7ed" stroke="#c86432"/>
+        <text x="168" y="35" font-size="8.5" font-weight="bold" fill="#9a3412">空芯平面ボイスコイル×3</text>
+        <text x="168" y="51" font-size="7.5" fill="#7c2d12">・鉄芯無しでコギング・ガタ零</text>
+        <text x="168" y="65" font-size="7.5" fill="#7c2d12">・同相=上下 / 逆相=回転(Roll)</text>
+        <text x="168" y="79" font-size="7.5" fill="#0369a1">・最大8.5段 5軸手ぶれ補正</text>
+        <text x="34" y="111" font-size="8" fill="#334155">ローレンツ力 F = N·I·(L×B) が歯車なしでセンサーをミリ秒未満で制御</text>
+      `);
+
+    case 'sensor_hall_pcb':
+      return wrap(`
+        <!-- 3-Axis Sub-Micron Hall-Effect Position Sensor inside Air-Core Coils -->
+        <rect x="20" y="56" width="58" height="16" rx="2" fill="#dc2626"/>
+        <rect x="82" y="56" width="58" height="16" rx="2" fill="#2563eb"/>
+        <text x="44" y="67" font-size="8" font-weight="bold" fill="#fff">N極</text>
+        <text x="106" y="67" font-size="8" font-weight="bold" fill="#fff">S極</text>
+        <!-- Hall IC hovering over N/S zero-crossing -->
+        <rect x="66" y="26" width="28" height="16" rx="3" fill="#16a34a" stroke="#14532d" stroke-width="1.4"/>
+        <text x="70" y="37" font-size="7" font-weight="bold" fill="#fff">Hall IC</text>
+        <line x1="80" y1="42" x2="80" y2="56" stroke="#eab308" stroke-width="2" stroke-dasharray="2 2"/>
+        <path d="M56 34 L42 34 M104 34 L118 34" stroke="#0284c7" stroke-width="1.8"/>
+        <text x="34" y="86" font-size="7.5" font-weight="bold" fill="#166534">N/S境界の急勾配磁場を0.1μm読取</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#166534">3軸ホール効果位置センサー</text>
+        <text x="162" y="51" font-size="7.5" fill="#15803d">・分解能 &lt; 0.1 μm (0.006° 検出)</text>
+        <text x="162" y="65" font-size="7.5" fill="#15803d">・完全非接触で摩耗・遅延ゼロ</text>
+        <text x="162" y="79" font-size="7.5" fill="#15803d">・毎秒数千回のPID帰還サーボ</text>
+        <text x="30" y="111" font-size="8" fill="#334155">磁石の境界を横切る微小な磁束変化を電圧変換しセンサー位置を精密監視</text>
+      `);
+
+    case 'sensor_preload_plates':
+      return wrap(`
+        <!-- Magnetic Preload Ferromagnetic Plates + CuW Center-of-Gravity Counterweight -->
+        <rect x="22" y="24" width="118" height="14" rx="3" fill="#94a3b8" stroke="#334155"/>
+        <text x="48" y="34" font-size="7.5" font-weight="bold" fill="#0f172a">可動ステージ</text>
+        <rect x="34" y="38" width="38" height="7" fill="#475569"/>
+        <rect x="86" y="38" width="38" height="7" fill="#475569"/>
+        <circle cx="80" cy="54" r="7" fill="#1e293b"/>
+        <!-- Attraction arrows pulling downward cleanly onto ceramic sphere -->
+        <path d="M53 47 L53 66 M105 47 L105 66" stroke="#dc2626" stroke-width="2.2"/>
+        <polygon points="53,69 49,62 57,62" fill="#dc2626"/>
+        <polygon points="105,69 101,62 109,62" fill="#dc2626"/>
+        <rect x="22" y="70" width="118" height="14" rx="3" fill="#3b82f6" opacity="0.3" stroke="#1d4ed8"/>
+        <text x="44" y="80" font-size="7.5" font-weight="bold" fill="#1e3a8a">固定N52ネオジム磁石</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">磁気予圧＋重心ウェイト</text>
+        <text x="162" y="51" font-size="7.5" fill="#dc2626">・磁力でZ軸ガタ・片ボケをゼロ化</text>
+        <text x="162" y="65" font-size="7.5" fill="#334155">・バネ無しのため横移動抵抗極小</text>
+        <text x="162" y="79" font-size="7.5" fill="#334155">・CuWおもりで重心を光学中心へ</text>
+        <text x="34" y="111" font-size="8" fill="#334155">真下向き撮影でもセンサーが垂れ下がらずセラミック球にピタリと密着</text>
+      `);
+
+    case 'sensor_ibis_lock':
+      return wrap(`
+        <!-- Power-Off Mechanical IBIS Park-Lock Solenoid & Tapered Latch Pin -->
+        <rect x="20" y="34" width="38" height="36" rx="4" fill="#d97706" stroke="#78350f"/>
+        <text x="24" y="55" font-size="7" font-weight="bold" fill="#fff">ソレノイド</text>
+        <line x1="58" y1="52" x2="96" y2="52" stroke="#94a3b8" stroke-width="5"/>
+        <polygon points="96,46 114,50 114,54 96,58" fill="#eab308" stroke="#a16207"/>
+        <rect x="112" y="24" width="24" height="58" rx="3" fill="#cbd5e1" stroke="#334155"/>
+        <polygon points="112,45 124,49 124,55 112,59" fill="#ffffff" stroke="#0f172a"/>
+        <text x="26" y="84" font-size="7.5" font-weight="bold" fill="#b45309">電源OFF → テーパーピン自動挿入</text>
+        <rect x="150" y="18" width="156" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="158" y="35" font-size="8.5" font-weight="bold" fill="#92400e">メカニカルIBISロック</text>
+        <text x="158" y="51" font-size="7.5" fill="#78350f">・電源OFF時の消費電力 0 mW</text>
+        <text x="158" y="65" font-size="7.5" fill="#78350f">・移動中の落下・振動衝撃を遮断</text>
+        <text x="158" y="79" font-size="7.5" fill="#0369a1">・電源ON後 &lt;15ms で瞬時解放</text>
+        <text x="34" y="111" font-size="8" fill="#334155">宙に浮く繊細なIBISステージを電源OFFの瞬間に中央固定する駐車ブレーキ</text>
+      `);
+
+    case 'sensor_n52_magnets':
+      return wrap(`
+        <!-- Dual-Pole N52 NdFeB Magnet Array & High-Permeability Soft-Iron Back Yoke -->
+        <rect x="22" y="68" width="118" height="14" rx="2" fill="#475569" stroke="#1e293b"/>
+        <text x="42" y="78" font-size="7.5" font-weight="bold" fill="#fff">軟磁性軟鉄バックヨーク</text>
+        <rect x="26" y="48" width="52" height="20" rx="2" fill="#dc2626"/>
+        <rect x="84" y="48" width="52" height="20" rx="2" fill="#2563eb"/>
+        <text x="46" y="61" font-size="9" font-weight="bold" fill="#fff">N52</text>
+        <text x="104" y="61" font-size="9" font-weight="bold" fill="#fff">S52</text>
+        <path d="M52 48 C52 20, 110 20, 110 48" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-dasharray="4 2"/>
+        <rect x="46" y="26" width="70" height="12" rx="3" fill="#c86432" opacity="0.88"/>
+        <text x="64" y="35" font-size="7" font-weight="bold" fill="#fff">VCMコイル</text>
+        <rect x="154" y="18" width="152" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="162" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">N52 閉磁気回路アレイ</text>
+        <text x="162" y="51" font-size="7.5" fill="#1e40af">・残留磁束密度 ~1.43 T 希土類</text>
+        <text x="162" y="65" font-size="7.5" fill="#1e40af">・N/S往復導体で推力を2倍加算</text>
+        <text x="162" y="79" font-size="7.5" fill="#1e40af">・背面ヨークが漏洩磁束を遮蔽</text>
+        <text x="34" y="111" font-size="8" fill="#334155">世界最強クラスの2極磁石と鉄ヨークが薄型ボディで最大級の推力を生成</text>
+      `);
+
+    case 'sensor_tilt_springs':
+      return wrap(`
+        <!-- 3-Point Micron Flange-Back & Optical Plane Tilt Calibration Springs/Bolts -->
+        <rect x="20" y="20" width="124" height="72" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <!-- 3 Tripod Calibration Springs -->
+        <circle cx="44" cy="36" r="9" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8"/>
+        <circle cx="120" cy="36" r="9" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8"/>
+        <circle cx="82" cy="76" r="9" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8"/>
+        <polygon points="44,36 120,36 82,76" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="41" y="39" font-size="7" font-weight="bold" fill="#854d0e">1</text>
+        <text x="117" y="39" font-size="7" font-weight="bold" fill="#854d0e">2</text>
+        <text x="79" y="79" font-size="7" font-weight="bold" fill="#854d0e">3</text>
+        <text x="64" y="55" font-size="7.5" font-weight="bold" fill="#0369a1">Z + チルト</text>
+        <rect x="156" y="20" width="150" height="72" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="164" y="37" font-size="8.5" font-weight="bold" fill="#854d0e">3点像面ミクロン校正</text>
+        <text x="164" y="52" font-size="7.5" fill="#713f12">・圧縮ばねでねじ遊びを完全除去</text>
+        <text x="164" y="66" font-size="7.5" fill="#713f12">・1°回転で約1μmの超微細Z送り</text>
+        <text x="164" y="80" font-size="7.5" fill="#0369a1">・工場レーザー干渉計で片ボケ零</text>
+        <text x="34" y="111" font-size="8" fill="#334155">F1.2極薄ピントでも画面四隅まで均等に解像させる3点キネマティック調整</text>
+      `);
+
+    case 'sensor_tim_pad':
+      return wrap(`
+        <!-- Micro-Surface Air-Gap Filling by Compliant High-k Silicone TIM Pad -->
+        <rect x="20" y="20" width="124" height="18" rx="2" fill="#15803d"/>
+        <text x="36" y="32" font-size="7.5" font-weight="bold" fill="#fff">センサーPCB (発熱源)</text>
+        <path d="M20 38 L32 42 L44 37 L56 43 L68 38 L80 42 L92 37 L104 42 L116 38 L128 42 L144 38 L144 64 L20 64 Z" fill="#93c5fd" stroke="#2563eb"/>
+        <text x="34" y="56" font-size="8" font-weight="bold" fill="#1e3a8a">柔軟高熱伝導TIMパッド</text>
+        <rect x="20" y="64" width="124" height="18" rx="2" fill="#334155"/>
+        <text x="34" y="76" font-size="7.5" font-weight="bold" fill="#fff">Σ字グラファイト熱橋へ</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#1d4ed8">接触熱抵抗を1/10以下へ</text>
+        <text x="164" y="51" font-size="7.5" fill="#1e40af">・空気層(0.026)をTIM(10W/mK)置換</text>
+        <text x="164" y="65" font-size="7.5" fill="#1e40af">・低硬度で基板への反発力極小</text>
+        <text x="164" y="79" font-size="7.5" fill="#1e40af">・高電気絶縁＆低アウトガス配合</text>
+        <text x="34" y="111" font-size="8" fill="#334155">目に見えない表面凹凸を密着充填しセンサーの熱を逃がす伝熱の要</text>
+      `);
+
+    case 'sensor_copper_sink':
+      return wrap(`
+        <!-- Rear Pure-Copper Micro-Fin Heatsink & Graphite Spreading Plate -->
+        <rect x="20" y="26" width="124" height="8" rx="1" fill="#334155"/>
+        <text x="38" y="23" font-size="7" font-weight="bold" fill="#334155">前面グラファイト拡散箔</text>
+        <rect x="20" y="34" width="124" height="16" rx="2" fill="#c86b3c" stroke="#7c2d12"/>
+        <text x="42" y="45" font-size="7.5" font-weight="bold" fill="#fff">無酸素純銅プレート</text>
+        ${Array.from({ length: 11 }, (_, i) => `<rect x="${24 + i * 11}" y="50" width="5" height="16" fill="#c86b3c" stroke="#7c2d12"/>`).join('')}
+        <path d="M40 72 L40 84 M82 72 L82 84 M124 72 L124 84" stroke="#dc2626" stroke-width="1.8"/>
+        <text x="30" y="93" font-size="7.5" font-weight="bold" fill="#dc2626">17条マイクロフィン → 外装へ放熱</text>
+        <rect x="156" y="18" width="150" height="74" rx="5" fill="#fff7ed" stroke="#c86b3c"/>
+        <text x="164" y="35" font-size="8.5" font-weight="bold" fill="#9a3412">最終放熱ラジエーター</text>
+        <text x="164" y="51" font-size="7.5" fill="#7c2d12">・純銅 k ≈ 398 W/(m·K) 高熱容量</text>
+        <text x="164" y="65" font-size="7.5" fill="#7c2d12">・マイクロフィンで放熱面積 2.4倍</text>
+        <text x="164" y="79" font-size="7.5" fill="#dc2626">・8K/4K120pの連続録画時間を延伸</text>
+        <text x="34" y="111" font-size="8" fill="#334155">Σ熱橋から運ばれた熱を瞬時に広げて吸収しファンレス長時間収録を支える</text>
+      `);
   }
 }
 

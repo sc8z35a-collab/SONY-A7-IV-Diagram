@@ -3,9 +3,11 @@ import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import {
   attachCadEdges,
+  createHelicalSpringGeometry,
   createOpticalLensGeometry,
   createPrecisionScrew,
   createRoundedRectShape,
+  createSpurGearGeometry,
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
@@ -13,10 +15,12 @@ import { LENS_EXPLANATIONS } from './lensExplanations';
 
 export interface LensDynamicRig {
   irisBlades: THREE.Group[];
+  irisCamRing: THREE.Object3D;
   focusGroupAPart: CadPart;
   focusGroupBPart: CadPart;
   moverCarriages: THREE.Group[];
   focusRingMesh: THREE.Object3D;
+  mfEncoderWheel: THREE.Object3D;
   applyDynamics: (
     elapsed: number,
     physicsActive: boolean,
@@ -51,10 +55,11 @@ function createLensCellRing(
   innerR: number,
   outerR: number,
   depth: number,
-  mat: THREE.Material
+  mat: THREE.Material,
+  curveSegments = 44
 ): THREE.Mesh {
   const shape = createRingShape(outerR, innerR);
-  return new THREE.Mesh(extrudeCentered(shape, depth, 0.16, 0.16, 56), mat);
+  return new THREE.Mesh(extrudeCentered(shape, depth, 0.14, 0.14, curveSegments), mat);
 }
 
 function finalizeLensPart(
@@ -88,59 +93,70 @@ function finalizeLensPart(
 }
 
 /**
- * Build all 10 ultra-detailed CAD sub-assemblies of a 2024-2026 Flagship
- * 50mm F1.2 Prime Lens with 3x XA Aspherical Glass, Super-ED Doublet,
- * 11-Blade Circular Electromagnetic Iris, Dual Floating Focus Groups,
- * 4x XD Linear Motors + 4x MR Scale Encoders, Control Rings & Architectural Cutaway Barrel.
- *
- * Mounts flush onto the 55mm Mirrorless Lens Mount front flange datum (z = +32.0 mm),
- * extending cleanly from z = +32.5 mm to z = +138.0 mm along the optical axis (0, 0).
+ * Build ALL 22 ultra-detailed watchmaker-grade CAD sub-assemblies of a 2024-2026 Flagship
+ * 50mm F1.2 Prime Lens (14-element / 10-group inspired architecture):
+ *  - L01: Bayonet Cylindrical Hood & Lock Button
+ *  - L02: 72mm Filter Thread Ring & Retaining Spanner Bezel (NEW!)
+ *  - L03: Group 1 Large-Diameter 0.01um XA Front Element + Nano AR II
+ *  - L04: Group 2 Positive Meniscus Collector & Micron-Lapped Brass Spacer (NEW!)
+ *  - L05: Group 3 Super-ED + Flint Apochromatic Cemented Doublet
+ *  - L06: 11-Blade Iris Slotted Cam Actuating Ring & Guide Plate (NEW!)
+ *  - L07: 11-Blade Circular Carbon Iris Diaphragm Blades (Live F1.2 <-> F11)
+ *  - L08: Silent Micro-Stepping Iris Actuator Motor & Worm Gear Train (NEW!)
+ *  - L09: Floating Focus Group A (Front XA AF Carrier)
+ *  - L10: Quad XD Linear Motor Stators: 8x N52 Neodymium Bars & Flux Yokes (NEW!)
+ *  - L11: Quad XD Linear Motor Movers: 4x OFC Flat-Wire Copper Coils
+ *  - L12: 4x Centerless-Ground Titanium Guide Shafts & End-Ring Cage (NEW!)
+ *  - L13: 4x Sub-Micron MR Magnetic Position Sensors & Scale Strips (NEW!)
+ *  - L14: Floating Focus Group B (Rear ED + Aspheric Corrector)
+ *  - L15: Group 8 High-Index Lanthanum Sagittal Coma Corrector Lens (NEW!)
+ *  - L16: Group 9 φ44mm Rear XA Hero Element & 3:2 Stray-Light Mask
+ *  - L17: Circular Ring HDI 32-Bit AF MCU & 4ch H-Bridge Driver PCB (NEW!)
+ *  - L18: Non-Contact Optical Slotted Linear-Response MF Encoder Wheel (NEW!)
+ *  - L19: Switchable Steel-Ball Spring Click / De-Click Detent Cam Mechanism (NEW!)
+ *  - L20: Knurled Rubber Focus Ring & Machined Aluminum Aperture Ring
+ *  - L21: Weather-Sealed Magnesium/Composite Cutaway Outer Barrel & Switches
+ *  - L22: Hardened Stainless 4-Lug Rear Bayonet, 12-Pin Gold Contacts & Seal (NEW!)
  */
 export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: LensDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const irisBlades: THREE.Group[] = [];
   const moverCarriages: THREE.Group[] = [];
+  const dummy = new THREE.Object3D();
 
   // =========================================================================
   // L01: Large-Diameter Bayonet Lock Cylindrical Lens Hood (z = +127.0 mm)
   // =========================================================================
   const hoodGroup = new THREE.Group();
   {
-    // Main outer cylindrical hood body (cut away softly only on inner ribs; sleek full cylinder silhouette)
-    const hoodShellGeo = new THREE.CylinderGeometry(44.2, 43.2, 22.0, 64, 1, true);
+    const hoodShellGeo = new THREE.CylinderGeometry(44.2, 43.2, 22.0, 48, 1, true);
     hoodShellGeo.rotateX(Math.PI / 2);
-    const outerCyl = new THREE.Mesh(hoodShellGeo, mats.lensBarrelAnodized);
-    hoodGroup.add(outerCyl);
+    hoodGroup.add(new THREE.Mesh(hoodShellGeo, mats.lensBarrelAnodized));
 
-    // Thickened front elastomer shock bumper rim
-    const frontRim = createLensCellRing(40.8, 44.6, 3.2, mats.lensRubberGrip);
+    const frontRim = createLensCellRing(40.8, 44.6, 3.2, mats.lensRubberGrip, 48);
     frontRim.position.z = 10.6;
     hoodGroup.add(frontRim);
 
-    // Rear bayonet coupling ring
-    const rearBayonet = createLensCellRing(39.4, 43.4, 3.4, mats.matteBlackAnodized);
+    const rearBayonet = createLensCellRing(39.4, 43.4, 3.4, mats.matteBlackAnodized, 44);
     rearBayonet.position.z = -10.2;
     hoodGroup.add(rearBayonet);
 
-    // 4 interior concentric stray-light-trap baffles (matte velvet black)
     for (let i = 0; i < 4; i++) {
-      const baffle = createLensCellRing(40.5 + i * 0.15, 42.9, 1.1, mats.mountVelvetBaffle);
+      const baffle = createLensCellRing(40.5 + i * 0.15, 42.9, 1.0, mats.mountVelvetBaffle, 40);
       baffle.position.z = -6.5 + i * 4.4;
       baffle.userData.noEdges = true;
       hoodGroup.add(baffle);
     }
 
-    // Spring-loaded hood lock release button (on -X grip-accessible flank)
     const lockBtn = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(3.6, 7.6, 1.2), 5.6, 0.18, 0.18, 14),
+      extrudeCentered(createRoundedRectShape(3.6, 7.6, 1.2), 5.6, 0.18, 0.18, 12),
       mats.stainlessMachined
     );
     lockBtn.position.set(-43.6, 0, -6.2);
     hoodGroup.add(lockBtn);
 
-    // Subtle red alignment dot on hood rear rim
-    const hoodDot = new THREE.Mesh(new THREE.SphereGeometry(0.9, 14, 14), mats.mountRedIndexDot);
+    const hoodDot = new THREE.Mesh(new THREE.SphereGeometry(0.9, 12, 12), mats.mountRedIndexDot);
     hoodDot.position.set(0, 43.6, -9.8);
     hoodDot.userData.noEdges = true;
     hoodGroup.add(hoodDot);
@@ -152,55 +168,124 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       '#334155',
       hoodGroup,
       new THREE.Vector3(0, 0, 127.0),
-      new THREE.Vector3(0, 0, 118),
-      new THREE.Vector3(0, 0, 340),
+      new THREE.Vector3(0, 0, 178),
+      new THREE.Vector3(0, 0, 370),
       cp,
       0.22
     )
   );
 
   // =========================================================================
-  // L02: Large-Diameter XA Front Element + Nano AR II & Fluorine (z = +108.5 mm)
+  // L02: [NEW!] φ72mm Filter Thread Bezel & Spanner Retaining Ring (z = +114.2 mm)
   // =========================================================================
-  const frontXaGroup = new THREE.Group();
+  const filterRingGroup = new THREE.Group();
   {
-    // Thick curved convex-meniscus front XA glass (R = 33.2 mm, F1.2 entrance pupil!)
-    const xaFrontGeo = createOpticalLensGeometry(33.2, 4.4, 6.2, -2.4, 0.55, 0.2, 26, 60);
-    const xaFrontMesh = new THREE.Mesh(xaFrontGeo, mats.lensXaGlass);
-    xaFrontMesh.userData.noEdges = true;
-    frontXaGroup.add(xaFrontMesh);
+    // Main threaded 72mm filter barrel bezel (ID 72mm => R 36.0, OD R 41.2)
+    const threadBezel = createLensCellRing(36.0, 41.2, 5.2, mats.matteBlackAnodized, 44);
+    filterRingGroup.add(threadBezel);
 
-    // Polished cyan glass outer bevel edge rim so glass curvature reads razor-sharp on white!
-    const edgeRim = createLensCellRing(32.5, 33.5, 4.4, mats.evfGlassEdgeRim);
-    frontXaGroup.add(edgeRim);
+    // Subtle interior 72mm thread grooves (3 fine matte ribs)
+    for (let i = -1; i <= 1; i++) {
+      const groove = createLensCellRing(35.6, 36.2, 0.55, mats.stainlessMachined, 40);
+      groove.position.z = i * 1.3;
+      groove.userData.noEdges = true;
+      filterRingGroup.add(groove);
+    }
 
-    // Precision CNC aluminum retainer cell with 72mm filter thread lip
-    const retainer = createLensCellRing(33.3, 38.6, 7.2, mats.matteBlackAnodized);
-    retainer.position.z = 0.6;
-    frontXaGroup.add(retainer);
+    // Iconic metallic gold-amber flagship front accent ring
+    const accentTrim = createLensCellRing(36.2, 39.2, 1.3, mats.lensAccentRing, 44);
+    accentTrim.position.z = 2.8;
+    filterRingGroup.add(accentTrim);
 
-    // Signature metallic gold-amber flagship accent trim ring on front cell
-    const accentTrim = createLensCellRing(36.2, 38.9, 1.2, mats.lensAccentRing);
-    accentTrim.position.z = 4.3;
-    frontXaGroup.add(accentTrim);
+    // Front lens clamping retainer ring with 4 precision spanner notches
+    const clampRing = createLensCellRing(32.8, 36.4, 2.2, mats.lensBarrelAnodized, 44);
+    clampRing.position.z = -1.6;
+    filterRingGroup.add(clampRing);
 
-    // 4 micro retainer spanner notches around front retaining ring
     for (let i = 0; i < 4; i++) {
       const a = (i * Math.PI) / 2 + Math.PI / 4;
       const notch = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.0, 0.7), mats.stainlessMachined);
-      notch.position.set(Math.cos(a) * 35.0, Math.sin(a) * 35.0, 4.5);
+      notch.position.set(Math.cos(a) * 34.6, Math.sin(a) * 34.6, -0.3);
       notch.rotation.z = a;
-      frontXaGroup.add(notch);
+      filterRingGroup.add(notch);
     }
   }
   parts.push(
     finalizeLensPart(
-      'lens-front-xa',
+      'lens-filter-ring',
       2,
+      '#d97706',
+      filterRingGroup,
+      new THREE.Vector3(0, 0, 114.2),
+      new THREE.Vector3(0, 0, 148),
+      new THREE.Vector3(0, 0, 350),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L03: Group 1 Large-Diameter 0.01um XA Front Element + Nano AR II (z = +108.5 mm)
+  // =========================================================================
+  const frontXaGroup = new THREE.Group();
+  {
+    const xaFrontGeo = createOpticalLensGeometry(33.2, 4.4, 6.2, -2.4, 0.55, 0.2, 22, 48);
+    const xaFrontMesh = new THREE.Mesh(xaFrontGeo, mats.lensXaGlass);
+    xaFrontMesh.userData.noEdges = true;
+    frontXaGroup.add(xaFrontMesh);
+
+    const edgeRim = createLensCellRing(32.5, 33.5, 4.4, mats.evfGlassEdgeRim, 44);
+    frontXaGroup.add(edgeRim);
+
+    const retainer = createLensCellRing(33.4, 37.8, 6.0, mats.matteBlackAnodized, 44);
+    frontXaGroup.add(retainer);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-front-xa',
+      3,
       '#38bdf8',
       frontXaGroup,
       new THREE.Vector3(0, 0, 108.5),
-      new THREE.Vector3(0, 0, 92),
+      new THREE.Vector3(0, 0, 120),
+      new THREE.Vector3(0, 0, 332),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L04: [NEW!] Group 2 Positive Meniscus Collector & Micron Brass Spacer (z = +101.8 mm)
+  // =========================================================================
+  const meniscusGroup = new THREE.Group();
+  {
+    // High-index Lanthanum positive meniscus lens glass (R = 31.4 mm)
+    const menGeo = createOpticalLensGeometry(31.4, 3.6, 4.8, -1.6, 0.1, 0.0, 20, 46);
+    const menMesh = new THREE.Mesh(menGeo, mats.evfLensAspheric);
+    menMesh.userData.noEdges = true;
+    meniscusGroup.add(menMesh);
+
+    const menRim = createLensCellRing(30.8, 31.7, 3.8, mats.evfGlassEdgeRim, 44);
+    meniscusGroup.add(menRim);
+
+    // Micron-lapped precision brass optical air-gap spacer ring (front +Z face!)
+    const brassSpacer = createLensCellRing(31.2, 34.8, 1.4, mats.brassGear, 44);
+    brassSpacer.position.z = 2.6;
+    meniscusGroup.add(brassSpacer);
+
+    // Anodized retaining sleeve
+    const cell = createLensCellRing(31.6, 35.6, 4.6, mats.matteBlackAnodized, 44);
+    cell.position.z = -0.5;
+    meniscusGroup.add(cell);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-front-meniscus',
+      4,
+      '#60a5fa',
+      meniscusGroup,
+      new THREE.Vector3(0, 0, 101.8),
+      new THREE.Vector3(0, 0, 94),
       new THREE.Vector3(0, 0, 316),
       cp,
       0.24
@@ -208,72 +293,111 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   );
 
   // =========================================================================
-  // L03: Super-ED Chromatic Aberration Corrector Doublet Group (z = +95.5 mm)
+  // L05: Group 3 Super-ED + Flint Apochromatic Cemented Doublet (z = +95.0 mm)
   // =========================================================================
   const edGroup = new THREE.Group();
   {
-    // Positive Super-ED biconvex element (emerald fluorite glass)
-    const edFrontGeo = createOpticalLensGeometry(29.8, 3.6, 4.6, 2.2, 0.15, 0.0, 24, 56);
+    const edFrontGeo = createOpticalLensGeometry(29.8, 3.6, 4.6, 2.2, 0.15, 0.0, 20, 46);
     const edFrontMesh = new THREE.Mesh(edFrontGeo, mats.lensEdGlass);
     edFrontMesh.position.z = 2.4;
     edFrontMesh.userData.noEdges = true;
     edGroup.add(edFrontMesh);
 
-    // Cemented negative flint meniscus element
-    const flintGeo = createOpticalLensGeometry(29.6, 2.6, -2.1, -3.2, 0.0, 0.2, 24, 56);
+    const flintGeo = createOpticalLensGeometry(29.6, 2.6, -2.1, -3.2, 0.0, 0.2, 20, 46);
     const flintMesh = new THREE.Mesh(flintGeo, mats.evfLensField);
     flintMesh.position.z = -1.6;
     flintMesh.userData.noEdges = true;
     edGroup.add(flintMesh);
 
-    // Ground-glass edge ring
-    const edRim = createLensCellRing(29.2, 30.2, 6.2, mats.evfGlassEdgeRim);
+    const edRim = createLensCellRing(29.2, 30.2, 6.2, mats.evfGlassEdgeRim, 44);
     edRim.position.z = 0.6;
     edGroup.add(edRim);
 
-    // Stepped black anodized optical cell with radial thermal relief slots
-    const edCell = createLensCellRing(30.0, 34.4, 8.6, mats.matteBlackAnodized);
+    const edCell = createLensCellRing(30.0, 34.4, 8.2, mats.matteBlackAnodized, 44);
     edCell.position.z = 0.5;
     edGroup.add(edCell);
 
-    // Brass precision optical spacer ring between cemented pair & rear stop
-    const spacer = createLensCellRing(30.4, 33.4, 0.9, mats.brassGear);
-    spacer.position.z = -4.2;
+    const spacer = createLensCellRing(30.4, 33.4, 0.9, mats.brassGear, 40);
+    spacer.position.z = -4.0;
     edGroup.add(spacer);
   }
   parts.push(
     finalizeLensPart(
       'lens-ed-group',
-      3,
+      5,
       '#10b981',
       edGroup,
-      new THREE.Vector3(0, 0, 95.5),
+      new THREE.Vector3(0, 0, 95.0),
       new THREE.Vector3(0, 0, 68),
-      new THREE.Vector3(0, 0, 294),
+      new THREE.Vector3(0, 0, 302),
       cp,
       0.24
     )
   );
 
   // =========================================================================
-  // L04: 11-Blade Circular Electromagnetic Iris Diaphragm (z = +82.0 mm)
+  // L06: [NEW!] 11-Blade Iris Slotted Cam Actuating Ring & Guide Plate (z = +84.4 mm)
+  // =========================================================================
+  const irisCamGroup = new THREE.Group();
+  const irisCamRotor = new THREE.Group();
+  {
+    // Main precision slotted stainless cam actuating ring
+    const camRing = createLensCellRing(24.8, 32.6, 1.6, mats.stainlessMachined, 44);
+    irisCamRotor.add(camRing);
+
+    // 11 Radial non-linear cam slots etched visually around the ring face (InstancedMesh!)
+    const slotGeo = new THREE.BoxGeometry(5.6, 1.05, 0.35);
+    const slotInst = new THREE.InstancedMesh(slotGeo, mats.mountVelvetBaffle, 11);
+    for (let i = 0; i < 11; i++) {
+      const a = (i / 11) * Math.PI * 2;
+      dummy.position.set(Math.cos(a) * 28.4, Math.sin(a) * 28.4, 0.78);
+      dummy.rotation.set(0, 0, a + 0.55);
+      dummy.updateMatrix();
+      slotInst.setMatrixAt(i, dummy.matrix);
+    }
+    slotInst.instanceMatrix.needsUpdate = true;
+    irisCamRotor.add(slotInst);
+
+    // Outer brass driven sector gear arc on lower-left (+X, -Y) meshing with L08 stepper!
+    const sectorArc = new THREE.Mesh(
+      extrudeCentered(createCutawayArcRingShape(34.6, 32.0, -Math.PI * 0.34, -Math.PI * 0.08), 1.8, 0.08, 0.08, 22),
+      mats.brassGear
+    );
+    irisCamRotor.add(sectorArc);
+
+    irisCamGroup.add(irisCamRotor);
+
+    // Stationary housing front clamp ring
+    const frontHousing = createLensCellRing(24.5, 33.2, 1.4, mats.shutterChassis, 44);
+    frontHousing.position.z = 1.6;
+    irisCamGroup.add(frontHousing);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-iris-cam-ring',
+      6,
+      '#cbd5e1',
+      irisCamGroup,
+      new THREE.Vector3(0, 0, 84.4),
+      new THREE.Vector3(0, 0, 48),
+      new THREE.Vector3(0, 0, 290),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L07: 11-Blade Circular Carbon Iris Diaphragm Blades (z = +82.0 mm)
   // =========================================================================
   const irisGroup = new THREE.Group();
   {
-    // Main precision anodized iris housing ring
-    const irisCase = createLensCellRing(24.8, 33.2, 4.4, mats.shutterChassis);
-    irisGroup.add(irisCase);
+    const irisBasePlate = createLensCellRing(24.8, 33.2, 2.6, mats.shutterChassis, 44);
+    irisBasePlate.position.z = -1.2;
+    irisGroup.add(irisBasePlate);
 
-    // Front cam actuator plate (slotted brass/stainless drive plate)
-    const camRing = createLensCellRing(25.2, 31.4, 0.9, mats.stainlessMachined);
-    camRing.position.z = 2.4;
-    irisGroup.add(camRing);
-
-    // 11 real curved circular aperture blades (animated smoothly F1.2 <-> F11!)
     const bladeCount = 11;
     const pivotR = 27.6;
 
-    // Crescent iris blade shape pivoting at local (0, 0)
     const bladeShape = new THREE.Shape();
     bladeShape.moveTo(0, -1.6);
     bladeShape.quadraticCurveTo(11.5, -2.8, 22.8, 3.2);
@@ -282,7 +406,7 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     bladeShape.absarc(0, 0, 1.9, Math.PI * 0.5, -Math.PI * 0.5, false);
     bladeShape.closePath();
 
-    const bladeGeo = extrudeCentered(bladeShape, 0.24, 0.02, 0.02, 14);
+    const bladeGeo = extrudeCentered(bladeShape, 0.24, 0.02, 0.02, 12);
 
     for (let i = 0; i < bladeCount; i++) {
       const a = (i / bladeCount) * Math.PI * 2;
@@ -290,9 +414,8 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       bladePivot.position.set(
         Math.cos(a) * pivotR,
         Math.sin(a) * pivotR,
-        -0.55 + (i % 3) * 0.22 // tiny Z stagger prevents Z-fighting when blades overlap
+        -0.3 + (i % 3) * 0.22
       );
-      // Base orientation pointing tangentially around the open F1.2 perimeter
       const baseAngle = a + Math.PI * 0.62;
       bladePivot.userData.baseAngle = baseAngle;
       bladePivot.rotation.z = baseAngle;
@@ -301,9 +424,8 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       bladeMesh.userData.edgeOpacity = 0.34;
       bladePivot.add(bladeMesh);
 
-      // Brass pivot pin on each blade
       const pin = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.65, 0.65, 1.1, 10).rotateX(Math.PI / 2),
+        new THREE.CylinderGeometry(0.62, 0.62, 1.1, 10).rotateX(Math.PI / 2),
         mats.brassGear
       );
       bladePivot.add(pin);
@@ -311,73 +433,102 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       irisGroup.add(bladePivot);
       irisBlades.push(bladePivot);
     }
-
-    // Electromagnetic stepping motor pod mounted tangentially at lower-left (+X, -Y)
-    const stepMotor = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.0, 4.0, 7.6, 20).rotateX(Math.PI / 2),
-      mats.copperCoil
-    );
-    stepMotor.position.set(27.8, -17.5, -0.4);
-    irisGroup.add(stepMotor);
-
-    const motorBracket = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(11.0, 9.5, 2.0), 2.4, 0.12, 0.12, 12),
-      mats.stainlessMachined
-    );
-    motorBracket.position.set(26.0, -16.2, -3.2);
-    irisGroup.add(motorBracket);
-
-    // Orange FPC ribbon connecting iris stepper to lens main MCU
-    const irisFpc = new THREE.Mesh(new THREE.BoxGeometry(5.5, 14.0, 0.4), mats.polyimideFpc);
-    irisFpc.position.set(29.8, -8.5, -2.6);
-    irisGroup.add(irisFpc);
   }
   parts.push(
     finalizeLensPart(
       'lens-aperture-11',
-      4,
+      7,
       '#475569',
       irisGroup,
       new THREE.Vector3(0, 0, 82.0),
-      new THREE.Vector3(0, 0, 44),
-      new THREE.Vector3(0, 0, 274),
+      new THREE.Vector3(0, 0, 32),
+      new THREE.Vector3(0, 0, 278),
       cp,
       0.24
     )
   );
 
   // =========================================================================
-  // L05: Floating Focus Moving Group A (Front AF Group, z = +71.0 mm)
+  // L08: [NEW!] Silent Micro-Stepping Iris Actuator Motor & Worm Gear (z = +80.5 mm)
+  // =========================================================================
+  const irisStepperGroup = new THREE.Group();
+  {
+    // Cylindrical 2-phase silent micro-stepping motor body
+    const motorCan = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.2, 4.2, 8.6, 20).rotateX(Math.PI / 2),
+      mats.copperCoil
+    );
+    irisStepperGroup.add(motorCan);
+
+    // End shield cap & stainless bracket
+    const endCap = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.35, 4.35, 1.6, 20).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    endCap.position.z = -4.2;
+    irisStepperGroup.add(endCap);
+
+    // Helical brass pinion + POM silent reduction spur gear meshing with L06 cam sector
+    const pinion = new THREE.Mesh(
+      createSpurGearGeometry(12, 2.2, 2.2, 0.7),
+      mats.brassGear
+    );
+    pinion.position.set(0, 0, 5.2);
+    irisStepperGroup.add(pinion);
+
+    const spurGear = new THREE.Mesh(
+      createSpurGearGeometry(18, 3.6, 1.8, 0.9),
+      mats.pomGear
+    );
+    spurGear.position.set(-4.2, 3.4, 5.0);
+    irisStepperGroup.add(spurGear);
+
+    // Optical photo-interrupter home-position fork sensor
+    const homeSensor = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.8, 2.6), mats.icEpoxy);
+    homeSensor.position.set(-6.0, 6.2, 3.2);
+    irisStepperGroup.add(homeSensor);
+
+    // Orange FPC ribbon tail connecting stepper to L17 Lens MCU Ring PCB
+    const fpc = new THREE.Mesh(new THREE.BoxGeometry(4.6, 14.0, 0.4), mats.polyimideFpc);
+    fpc.position.set(2.2, 6.0, -3.5);
+    irisStepperGroup.add(fpc);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-iris-stepper',
+      8,
+      '#b45309',
+      irisStepperGroup,
+      new THREE.Vector3(28.5, -18.0, 80.5),
+      new THREE.Vector3(36, -24, 34),
+      new THREE.Vector3(44, -26, 282),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L09: Floating Focus Moving Group A (Front XA AF Carrier, z = +72.0 mm)
   // =========================================================================
   const focusAGroup = new THREE.Group();
   {
-    // High-index XA positive focus lens element
-    const fAGeo = createOpticalLensGeometry(24.6, 3.2, 4.2, 1.8, 0.45, 0.15, 22, 52);
+    const fAGeo = createOpticalLensGeometry(24.6, 3.2, 4.2, 1.8, 0.45, 0.15, 20, 44);
     const fAMesh = new THREE.Mesh(fAGeo, mats.lensXaGlass);
     fAMesh.userData.noEdges = true;
     focusAGroup.add(fAMesh);
 
-    const fARim = createLensCellRing(24.1, 25.0, 3.4, mats.evfGlassEdgeRim);
-    focusAGroup.add(fARim);
+    focusAGroup.add(createLensCellRing(24.1, 25.0, 3.4, mats.evfGlassEdgeRim, 40));
+    focusAGroup.add(createLensCellRing(24.9, 28.8, 6.2, mats.matteBlackAnodized, 40));
 
-    // Lightweight structural focus carrier frame
-    const carrier = createLensCellRing(24.9, 28.8, 6.2, mats.matteBlackAnodized);
-    focusAGroup.add(carrier);
-
-    // 2 symmetrical slide-bushing ears at 45° & 225° coupling directly onto XD Linear Motor A pair!
     for (const deg of [45, 225]) {
       const a = THREE.MathUtils.degToRad(deg);
-      const ear = new THREE.Mesh(
-        new THREE.BoxGeometry(6.8, 4.4, 7.6),
-        mats.stainlessMachined
-      );
+      const ear = new THREE.Mesh(new THREE.BoxGeometry(6.8, 4.4, 7.6), mats.stainlessMachined);
       ear.position.set(Math.cos(a) * 30.8, Math.sin(a) * 30.8, 0);
       ear.rotation.z = a;
       focusAGroup.add(ear);
 
-      // Low-friction bronze/PTFE linear slide bushing around guide rod
       const bushing = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.1, 2.1, 8.6, 16).rotateX(Math.PI / 2),
+        new THREE.CylinderGeometry(2.1, 2.1, 8.6, 14).rotateX(Math.PI / 2),
         mats.brassGear
       );
       bushing.position.set(Math.cos(a) * 32.8, Math.sin(a) * 32.8, 0);
@@ -386,32 +537,64 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   }
   const focusGroupAPart = finalizeLensPart(
     'lens-focus-group-a',
-    5,
+    9,
     '#0ea5e9',
     focusAGroup,
-    new THREE.Vector3(0, 0, 71.0),
-    new THREE.Vector3(0, 0, 22),
-    new THREE.Vector3(0, 0, 254),
+    new THREE.Vector3(0, 0, 72.0),
+    new THREE.Vector3(0, 0, 12),
+    new THREE.Vector3(0, 0, 266),
     cp,
     0.24
   );
   parts.push(focusGroupAPart);
 
   // =========================================================================
-  // L06: 4x XD (Extreme Dynamic) Linear Motors + 4x MR Scale Sensors (z = +64.5 mm)
+  // L10: [NEW!] Quad XD Linear Motor Stators: 8x N52 Magnets & Soft-Iron Yokes (z = +65.0 mm)
+  // =========================================================================
+  const xdStatorsGroup = new THREE.Group();
+  const motorAnglesDeg = [45, 135, 225, 315];
+  const motorR = 32.8;
+  {
+    for (const deg of motorAnglesDeg) {
+      const a = THREE.MathUtils.degToRad(deg);
+      const stator = new THREE.Group();
+      stator.position.set(Math.cos(a) * motorR, Math.sin(a) * motorR, 0);
+      stator.rotation.z = a;
+
+      // Dual N52 Neodymium permanent magnet bars flanking the mover coil air gap
+      for (const sy of [-3.1, 3.1]) {
+        const mag = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.2, 31.0), mats.neodymiumMagnet);
+        mag.position.set(1.6, sy, 0);
+        stator.add(mag);
+      }
+
+      // Outer high-permeability soft-iron flux-return yoke spine
+      const yoke = new THREE.Mesh(new THREE.BoxGeometry(1.5, 9.0, 32.6), mats.softIronYoke);
+      yoke.position.set(3.4, 0, 0);
+      stator.add(yoke);
+
+      xdStatorsGroup.add(stator);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-xd-stators',
+      10,
+      '#64748b',
+      xdStatorsGroup,
+      new THREE.Vector3(0, 0, 65.0),
+      new THREE.Vector3(-42, 0, -4),
+      new THREE.Vector3(-46, 0, 254),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L11: Quad XD Linear Motor Movers: 4x OFC Flat-Wire Copper Coils (z = +65.0 mm)
   // =========================================================================
   const xdMotorsGroup = new THREE.Group();
   {
-    const motorAnglesDeg = [45, 135, 225, 315];
-    const motorR = 32.8;
-
-    // Front & rear titanium stator end-rings linking all 4 linear motor tracks
-    for (const zEnd of [-17.5, 17.5]) {
-      const endRing = createLensCellRing(29.8, 36.2, 2.2, mats.magnesiumCast);
-      endRing.position.z = zEnd;
-      xdMotorsGroup.add(endRing);
-    }
-
     for (let i = 0; i < motorAnglesDeg.length; i++) {
       const deg = motorAnglesDeg[i];
       const a = THREE.MathUtils.degToRad(deg);
@@ -419,49 +602,20 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       track.position.set(Math.cos(a) * motorR, Math.sin(a) * motorR, 0);
       track.rotation.z = a;
 
-      // Precision centerless-ground stainless linear guide rod (length 36 mm)
-      const rod = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.15, 1.15, 36.0, 16).rotateX(Math.PI / 2),
-        mats.stainlessMachined
-      );
-      track.add(rod);
-
-      // Dual N52 Neodymium permanent magnet stator bars flanking the guide rod
-      for (const sy of [-3.0, 3.0]) {
-        const mag = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.2, 31.0), mats.neodymiumMagnet);
-        mag.position.set(1.6, sy, 0);
-        track.add(mag);
-      }
-
-      // Soft-iron flux-return magnetic yoke spine on outer perimeter
-      const yoke = new THREE.Mesh(new THREE.BoxGeometry(1.4, 8.8, 32.5), mats.softIronYoke);
-      yoke.position.set(3.4, 0, 0);
-      track.add(yoke);
-
-      // Sub-micron magnetic encoder scale strip + gold MR sensor read head
-      const mrStrip = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2.0, 29.0), mats.hdiMainboardPcb);
-      mrStrip.position.set(-1.9, 3.6, 0);
-      track.add(mrStrip);
-
-      // Wound copper XD Linear Motor mover coil carriage (animated along Z!)
       const mover = new THREE.Group();
-      const baseZ = i % 2 === 0 ? 5.5 : -6.5; // 45/225 drives Group A (+), 135/315 drives Group B (-)
+      const baseZ = i % 2 === 0 ? 5.5 : -6.5;
       mover.position.z = baseZ;
       mover.userData.baseZ = baseZ;
-      mover.userData.groupIndex = i % 2; // 0 = Group A, 1 = Group B
+      mover.userData.groupIndex = i % 2;
 
-      const coilCore = new THREE.Mesh(new THREE.BoxGeometry(3.8, 6.2, 10.6), mats.copperCoil);
+      // Oxygen-Free Copper flat-wire moving coil bobbin
+      const coilCore = new THREE.Mesh(new THREE.BoxGeometry(3.8, 6.2, 10.8), mats.copperCoil);
       coilCore.position.set(0.6, 0, 0);
       mover.add(coilCore);
 
-      // Gold MR magnetic sensor pick-up IC riding on the carriage
-      const mrHead = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 3.2), mats.goldPlating);
-      mrHead.position.set(-1.3, 3.6, 0);
-      mover.add(mrHead);
-
-      // Polyimide flexing power tail
-      const fpcTail = new THREE.Mesh(new THREE.BoxGeometry(0.4, 3.2, 9.0), mats.polyimideFpc);
-      fpcTail.position.set(2.5, -2.2, -5.0);
+      // U-loop polyimide flexible power tail
+      const fpcTail = new THREE.Mesh(new THREE.BoxGeometry(0.42, 3.2, 10.2), mats.polyimideFpc);
+      fpcTail.position.set(2.5, -2.2, -5.4);
       mover.add(fpcTail);
 
       track.add(mover);
@@ -472,35 +626,108 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   parts.push(
     finalizeLensPart(
       'lens-xd-motors',
-      6,
+      11,
       '#d97706',
       xdMotorsGroup,
-      new THREE.Vector3(0, 0, 64.5),
-      new THREE.Vector3(0, 0, 2),
-      new THREE.Vector3(0, 0, 240),
+      new THREE.Vector3(0, 0, 65.0),
+      new THREE.Vector3(0, 0, -6),
+      new THREE.Vector3(0, 0, 254),
       cp,
       0.24
     )
   );
 
   // =========================================================================
-  // L07: Floating Focus Moving Group B (Rear AF Corrector, z = +56.5 mm)
+  // L12: [NEW!] 4x Centerless-Ground Titanium Guide Shafts & End-Ring Cage (z = +65.0 mm)
+  // =========================================================================
+  const guideShaftsGroup = new THREE.Group();
+  {
+    for (const zEnd of [-17.6, 17.6]) {
+      const endRing = createLensCellRing(29.8, 36.0, 2.2, mats.magnesiumCast, 44);
+      endRing.position.z = zEnd;
+      guideShaftsGroup.add(endRing);
+    }
+
+    for (const deg of motorAnglesDeg) {
+      const a = THREE.MathUtils.degToRad(deg);
+      const rod = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.15, 1.15, 36.4, 14).rotateX(Math.PI / 2),
+        mats.stainlessMachined
+      );
+      rod.position.set(Math.cos(a) * motorR, Math.sin(a) * motorR, 0);
+      guideShaftsGroup.add(rod);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-guide-shafts',
+      12,
+      '#94a3b8',
+      guideShaftsGroup,
+      new THREE.Vector3(0, 0, 65.0),
+      new THREE.Vector3(0, 0, -24),
+      new THREE.Vector3(0, 0, 242),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L13: [NEW!] 4x Sub-Micron MR Magnetic Encoders & Magnetized Scale Strips (z = +65.0 mm)
+  // =========================================================================
+  const mrEncodersGroup = new THREE.Group();
+  {
+    for (let i = 0; i < motorAnglesDeg.length; i++) {
+      const a = THREE.MathUtils.degToRad(motorAnglesDeg[i]);
+      const enc = new THREE.Group();
+      enc.position.set(Math.cos(a) * motorR, Math.sin(a) * motorR, 0);
+      enc.rotation.z = a;
+
+      // Magnetized fine-pitch linear scale bar
+      const mrStrip = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.2, 29.4), mats.hdiMainboardPcb);
+      mrStrip.position.set(-1.9, 3.6, 0);
+      enc.add(mrStrip);
+
+      // Gold MR magnetic resistance sensor read-head IC
+      const mrHead = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.3, 3.4), mats.goldPlating);
+      mrHead.position.set(-1.2, 3.6, i % 2 === 0 ? 5.5 : -6.5);
+      enc.add(mrHead);
+
+      // Signal flex routing back toward L17 Ring MCU PCB
+      const sigFlex = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1.8, 12.0), mats.polyimideFpc);
+      sigFlex.position.set(-2.3, 3.6, -11.0);
+      enc.add(sigFlex);
+
+      mrEncodersGroup.add(enc);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-mr-encoders',
+      13,
+      '#16a34a',
+      mrEncodersGroup,
+      new THREE.Vector3(0, 0, 65.0),
+      new THREE.Vector3(44, 0, -14),
+      new THREE.Vector3(48, 0, 248),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L14: Floating Focus Moving Group B (Rear ED + Aspheric Corrector, z = +57.0 mm)
   // =========================================================================
   const focusBGroup = new THREE.Group();
   {
-    // Negative-meniscus ED + positive aspheric floating rear focus pair
-    const fBGeo = createOpticalLensGeometry(24.0, 3.0, -2.0, 3.8, 0.2, 0.4, 22, 52);
+    const fBGeo = createOpticalLensGeometry(24.0, 3.0, -2.0, 3.8, 0.2, 0.4, 20, 44);
     const fBMesh = new THREE.Mesh(fBGeo, mats.lensEdGlass);
     fBMesh.userData.noEdges = true;
     focusBGroup.add(fBMesh);
 
-    const fBRim = createLensCellRing(23.5, 24.4, 3.2, mats.evfGlassEdgeRim);
-    focusBGroup.add(fBRim);
+    focusBGroup.add(createLensCellRing(23.5, 24.4, 3.2, mats.evfGlassEdgeRim, 40));
+    focusBGroup.add(createLensCellRing(24.3, 28.4, 5.8, mats.matteBlackAnodized, 40));
 
-    const carrier = createLensCellRing(24.3, 28.4, 5.8, mats.matteBlackAnodized);
-    focusBGroup.add(carrier);
-
-    // 2 symmetrical slide-bushing ears at 135° & 315° coupling directly onto XD Linear Motor B pair!
     for (const deg of [135, 315]) {
       const a = THREE.MathUtils.degToRad(deg);
       const ear = new THREE.Mesh(new THREE.BoxGeometry(6.8, 4.4, 7.2), mats.stainlessMachined);
@@ -509,7 +736,7 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       focusBGroup.add(ear);
 
       const bushing = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.1, 2.1, 8.2, 16).rotateX(Math.PI / 2),
+        new THREE.CylinderGeometry(2.1, 2.1, 8.2, 14).rotateX(Math.PI / 2),
         mats.brassGear
       );
       bushing.position.set(Math.cos(a) * 32.8, Math.sin(a) * 32.8, 0);
@@ -518,81 +745,250 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   }
   const focusGroupBPart = finalizeLensPart(
     'lens-focus-group-b',
-    7,
+    14,
     '#14b8a6',
     focusBGroup,
-    new THREE.Vector3(0, 0, 56.5),
-    new THREE.Vector3(0, 0, -20),
-    new THREE.Vector3(0, 0, 224),
+    new THREE.Vector3(0, 0, 57.0),
+    new THREE.Vector3(0, 0, -44),
+    new THREE.Vector3(0, 0, 232),
     cp,
     0.24
   );
   parts.push(focusGroupBPart);
 
   // =========================================================================
-  // L08: Ultra-Large Rear Hero Element (Short Flange Telecentric Optics, z = +42.0 mm)
+  // L15: [NEW!] Group 8 High-Index Lanthanum Sagittal Coma Corrector Lens (z = +49.2 mm)
   // =========================================================================
-  const rearHeroGroup = new THREE.Group();
+  const rearConvexGroup = new THREE.Group();
   {
-    // Huge φ44mm rear XA hero glass sitting just millimeters ahead of the 55mm lens mount!
-    const rearGeo = createOpticalLensGeometry(22.6, 3.6, 2.2, 4.4, 0.3, 0.55, 24, 54);
-    const rearMesh = new THREE.Mesh(rearGeo, mats.lensXaGlass);
-    rearMesh.userData.noEdges = true;
-    rearHeroGroup.add(rearMesh);
+    const convGeo = createOpticalLensGeometry(23.4, 2.8, 3.4, 2.6, 0.15, 0.1, 20, 44);
+    const convMesh = new THREE.Mesh(convGeo, mats.evfLensField);
+    convMesh.userData.noEdges = true;
+    rearConvexGroup.add(convMesh);
 
-    const rearRim = createLensCellRing(22.1, 23.0, 3.8, mats.evfGlassEdgeRim);
-    rearHeroGroup.add(rearRim);
-
-    // Precision black velvet baffle & CNC holder sitting inside 55mm throat clearance
-    const holder = createLensCellRing(22.9, 26.8, 6.4, mats.mountVelvetBaffle);
-    rearHeroGroup.add(holder);
-
-    // Rear rectangular stray-light mask matching 3:2 full-frame aspect ratio
-    const rearMask = createLensCellRing(21.4, 24.2, 1.0, mats.matteBlackAnodized);
-    rearMask.position.z = -3.8;
-    rearHeroGroup.add(rearMask);
+    rearConvexGroup.add(createLensCellRing(22.9, 23.8, 3.0, mats.evfGlassEdgeRim, 40));
+    rearConvexGroup.add(createLensCellRing(23.7, 27.6, 5.2, mats.matteBlackAnodized, 40));
   }
   parts.push(
     finalizeLensPart(
-      'lens-rear-element',
-      8,
-      '#6366f1',
-      rearHeroGroup,
-      new THREE.Vector3(0, 0, 42.0),
-      new THREE.Vector3(0, 0, -44),
-      new THREE.Vector3(0, 0, 208),
+      'lens-rear-convex',
+      15,
+      '#818cf8',
+      rearConvexGroup,
+      new THREE.Vector3(0, 0, 49.2),
+      new THREE.Vector3(0, 0, -64),
+      new THREE.Vector3(0, 0, 222),
       cp,
       0.24
     )
   );
 
   // =========================================================================
-  // L09: Linear-Response MF Focus Ring & De-Clickable Aperture Ring (z = +80.0 mm)
+  // L16: Group 9 φ44mm Rear XA Hero Element & 3:2 Stray-Light Mask (z = +42.0 mm)
+  // =========================================================================
+  const rearHeroGroup = new THREE.Group();
+  {
+    const rearGeo = createOpticalLensGeometry(22.6, 3.6, 2.2, 4.4, 0.3, 0.55, 20, 44);
+    const rearMesh = new THREE.Mesh(rearGeo, mats.lensXaGlass);
+    rearMesh.userData.noEdges = true;
+    rearHeroGroup.add(rearMesh);
+
+    rearHeroGroup.add(createLensCellRing(22.1, 23.0, 3.8, mats.evfGlassEdgeRim, 40));
+    rearHeroGroup.add(createLensCellRing(22.9, 26.8, 6.4, mats.mountVelvetBaffle, 40));
+
+    const rearMask = createLensCellRing(21.4, 24.2, 1.0, mats.matteBlackAnodized, 36);
+    rearMask.position.z = -3.8;
+    rearHeroGroup.add(rearMask);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-rear-element',
+      16,
+      '#6366f1',
+      rearHeroGroup,
+      new THREE.Vector3(0, 0, 42.0),
+      new THREE.Vector3(0, 0, -84),
+      new THREE.Vector3(0, 0, 212),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L17: [NEW!] Circular Ring HDI 32-Bit AF MCU & 4ch H-Bridge Driver PCB (z = +45.5 mm)
+  // =========================================================================
+  const mcuPcbGroup = new THREE.Group();
+  {
+    // Annular multi-layer green HDI donut PCB wrapping cleanly around the rear optical barrel!
+    const pcbRing = createLensCellRing(28.2, 36.8, 1.4, mats.hdiMainboardPcb, 44);
+    mcuPcbGroup.add(pcbRing);
+
+    // 32-bit Real-Time AF Microcontroller (QFN IC) at top (-X, +Y shoulder)
+    const mcuIc = new THREE.Mesh(new THREE.BoxGeometry(6.2, 6.2, 1.1), mats.icEpoxy);
+    mcuIc.position.set(0, 32.5, 1.2);
+    mcuPcbGroup.add(mcuIc);
+
+    // 4x High-Current H-Bridge MOSFET Driver ICs symmetrically aligned with the 4 XD motors!
+    for (const deg of motorAnglesDeg) {
+      const a = THREE.MathUtils.degToRad(deg);
+      const drv = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 1.0), mats.icEpoxy);
+      drv.position.set(Math.cos(a) * 32.4, Math.sin(a) * 32.4, 1.15);
+      drv.rotation.z = a;
+      mcuPcbGroup.add(drv);
+
+      // Gold ZIF connector beside each H-Bridge
+      const zif = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.6, 0.8), mats.zifIvoryPlastic);
+      zif.position.set(Math.cos(a + 0.22) * 32.2, Math.sin(a + 0.22) * 32.2, 1.05);
+      zif.rotation.z = a + 0.22;
+      mcuPcbGroup.add(zif);
+    }
+
+    // Instanced yellow tantalum bulk capacitors around the 4ch H-Bridge power rail
+    const capGeo = new THREE.BoxGeometry(2.0, 1.2, 0.9);
+    const capInst = new THREE.InstancedMesh(capGeo, mats.tantalumCapYellow, 16);
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2 + 0.1;
+      dummy.position.set(Math.cos(a) * 32.6, Math.sin(a) * 32.6, -1.1);
+      dummy.rotation.set(0, 0, a);
+      dummy.updateMatrix();
+      capInst.setMatrixAt(i, dummy.matrix);
+    }
+    capInst.instanceMatrix.needsUpdate = true;
+    mcuPcbGroup.add(capInst);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-mcu-pcb',
+      17,
+      '#15803d',
+      mcuPcbGroup,
+      new THREE.Vector3(0, 0, 45.5),
+      new THREE.Vector3(0, -56, -72),
+      new THREE.Vector3(0, -58, 212),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L18: [NEW!] Non-Contact Optical Slotted MF Rotary Encoder Wheel (z = +92.0 mm)
+  // =========================================================================
+  const mfEncoderGroup = new THREE.Group();
+  const mfEncoderWheel = new THREE.Group();
+  {
+    const wheelRing = createLensCellRing(37.0, 39.4, 1.8, mats.goldPlating, 44);
+    mfEncoderWheel.add(wheelRing);
+
+    // 48 high-resolution optical encoder slits around circumference (InstancedMesh!)
+    const slitGeo = new THREE.BoxGeometry(0.45, 1.8, 2.0);
+    const slitInst = new THREE.InstancedMesh(slitGeo, mats.mountVelvetBaffle, 48);
+    for (let i = 0; i < 48; i++) {
+      const a = (i / 48) * Math.PI * 2;
+      dummy.position.set(Math.cos(a) * 38.2, Math.sin(a) * 38.2, 0);
+      dummy.rotation.set(0, 0, a);
+      dummy.updateMatrix();
+      slitInst.setMatrixAt(i, dummy.matrix);
+    }
+    slitInst.instanceMatrix.needsUpdate = true;
+    mfEncoderWheel.add(slitInst);
+    mfEncoderGroup.add(mfEncoderWheel);
+
+    // Dual-channel quadrature optical photo-interrupter IC pickup at bottom
+    const pickup = new THREE.Mesh(new THREE.BoxGeometry(5.6, 3.8, 3.6), mats.icEpoxy);
+    pickup.position.set(0, -39.4, 0);
+    mfEncoderGroup.add(pickup);
+
+    const pickupFpc = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.6, 12.0), mats.polyimideFpc);
+    pickupFpc.position.set(0, -39.2, -7.2);
+    mfEncoderGroup.add(pickupFpc);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-mf-encoder',
+      18,
+      '#eab308',
+      mfEncoderGroup,
+      new THREE.Vector3(0, 0, 92.0),
+      new THREE.Vector3(0, 46, 56),
+      new THREE.Vector3(0, 48, 304),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L19: [NEW!] Switchable Steel-Ball Spring Click / De-Click Detent Cam (z = +56.0 mm)
+  // =========================================================================
+  const clickDetentGroup = new THREE.Group();
+  {
+    // Inner notched stainless detent ring with 1/3-stop V-grooves around bottom arc
+    const detentArc = new THREE.Mesh(
+      extrudeCentered(createCutawayArcRingShape(38.2, 36.4, THREE.MathUtils.degToRad(175), THREE.MathUtils.degToRad(260)), 5.4, 0.12, 0.12, 28),
+      mats.stainlessMachined
+    );
+    clickDetentGroup.add(detentArc);
+
+    // Precision steel detent ball bearing + compression spring plunger at 212° (-X, -Y)
+    const detA = THREE.MathUtils.degToRad(212);
+    const detPod = new THREE.Group();
+    detPod.position.set(Math.cos(detA) * 37.8, Math.sin(detA) * 37.8, 0);
+    detPod.rotation.z = detA;
+
+    const steelBall = new THREE.Mesh(new THREE.SphereGeometry(1.15, 14, 12), mats.mountStainlessFlange);
+    steelBall.position.x = -0.9;
+    detPod.add(steelBall);
+
+    const detSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(0.95, 3.6, 4, 0.24).rotateY(Math.PI / 2),
+      mats.brassGear
+    );
+    detSpring.position.x = 1.2;
+    detSpring.userData.noEdges = true;
+    detPod.add(detSpring);
+
+    // Slide-cam click ON/OFF retract lever seated cleanly flush along outer aperture barrel
+    const camSlider = new THREE.Mesh(new THREE.BoxGeometry(2.0, 4.2, 6.8), mats.lensAccentRing);
+    camSlider.position.set(2.3, 0, 0);
+    detPod.add(camSlider);
+
+    clickDetentGroup.add(detPod);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-click-detent',
+      19,
+      '#f59e0b',
+      clickDetentGroup,
+      new THREE.Vector3(0, 0, 56.0),
+      new THREE.Vector3(-48, -32, -32),
+      new THREE.Vector3(-56, -34, 232),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L20: Knurled Rubber Focus Ring & Machined Aluminum Aperture Ring (z = +80.0 mm)
   // =========================================================================
   const ringsGroup = new THREE.Group();
   let focusRingMesh: THREE.Object3D = ringsGroup;
   {
-    // Architectural cutaway ring span: solid around 267° leaving clean upper-grip cutaway (75°..168°)
-    // so internal glass/iris/XD motors stay visible in the hero 3/4 camera view even when assembled!
     const cutStart = THREE.MathUtils.degToRad(168);
     const cutEnd = THREE.MathUtils.degToRad(435);
 
-    // 1. Wide ribbed rubber Linear-Response Focus Ring (z local = +7 .. +27)
     const focusRingSub = new THREE.Group();
     const focusRingShape = createCutawayArcRingShape(43.2, 40.4, cutStart, cutEnd);
     const focusRingBase = new THREE.Mesh(
-      extrudeCentered(focusRingShape, 20.0, 0.35, 0.35, 56),
+      extrudeCentered(focusRingShape, 20.0, 0.35, 0.35, 44),
       mats.lensRubberGrip
     );
     focusRingBase.position.z = 16.0;
     focusRingSub.add(focusRingBase);
 
-    // Fine tactile knurled grip ribs along the focus ring circumference (InstancedMesh = 1 draw call!)
     const focusRibGeo = new THREE.BoxGeometry(0.8, 0.9, 17.6);
     const focusDegs: number[] = [];
     for (let deg = 172; deg <= 430; deg += 6) focusDegs.push(deg);
     const focusRibInst = new THREE.InstancedMesh(focusRibGeo, mats.matteBlackAnodized, focusDegs.length);
-    const dummy = new THREE.Object3D();
     focusDegs.forEach((deg, idx) => {
       const a = THREE.MathUtils.degToRad(deg);
       dummy.position.set(Math.cos(a) * 43.3, Math.sin(a) * 43.3, 16.0);
@@ -605,7 +1001,6 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     ringsGroup.add(focusRingSub);
     focusRingMesh = focusRingSub;
 
-    // 2. Precision-machined De-Clickable Aperture Ring (z local = -30 .. -18)
     const apRingShape = createCutawayArcRingShape(41.2, 38.4, cutStart, cutEnd);
     const apRing = new THREE.Mesh(
       extrudeCentered(apRingShape, 11.4, 0.25, 0.25, 42),
@@ -614,7 +1009,6 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     apRing.position.z = -24.0;
     ringsGroup.add(apRing);
 
-    // Tactile aperture knurling ridges (InstancedMesh = 1 draw call!)
     const apRibGeo = new THREE.BoxGeometry(0.9, 0.7, 8.6);
     const apDegs: number[] = [];
     for (let deg = 176; deg <= 426; deg += 9) apDegs.push(deg);
@@ -628,79 +1022,44 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     });
     apRibInst.instanceMatrix.needsUpdate = true;
     ringsGroup.add(apRibInst);
-
-    // Internal non-contact optical rotary encoder ring & magnetic pickup PCB
-    const encRing = createLensCellRing(37.2, 39.2, 2.2, mats.goldPlating);
-    encRing.position.z = 5.0;
-    ringsGroup.add(encRing);
   }
   parts.push(
     finalizeLensPart(
       'lens-control-rings',
-      9,
+      20,
       '#1e293b',
       ringsGroup,
       new THREE.Vector3(0, 0, 80.0),
-      new THREE.Vector3(0, 66, 12),
-      new THREE.Vector3(0, 72, 266),
+      new THREE.Vector3(0, 86, 18),
+      new THREE.Vector3(0, 92, 276),
       cp,
       0.22
     )
   );
 
   // =========================================================================
-  // L10: Weather-Sealed Anodized Outer Lens Barrel & Rear Mount Flange (z = +74.0 mm)
+  // L21: Weather-Sealed Anodized Outer Lens Barrel & Switch Pod (z = +74.0 mm)
   // =========================================================================
   const barrelGroup = new THREE.Group();
   {
     const cutStart = THREE.MathUtils.degToRad(168);
     const cutEnd = THREE.MathUtils.degToRad(435);
 
-    // 1. Rear stainless lens-side bayonet flange mating directly against Body 55mm Mount (local z = -40.5 => world z = +33.5!)
-    const rearMountFlange = createLensCellRing(26.2, 34.0, 2.8, mats.mountStainlessFlange);
-    rearMountFlange.position.z = -40.5;
-    barrelGroup.add(rearMountFlange);
-
-    // Rear rubber weather-sealing lip gasket (seals against body stainless flange at z = +32.0!)
-    const rearSeal = createLensCellRing(33.4, 35.0, 1.4, mats.epdmGasket);
-    rearSeal.position.z = -41.6;
-    barrelGroup.add(rearSeal);
-
-    // 12-pin gold lens-side contact arc at bottom of rear bayonet
-    const contactBlock = new THREE.Mesh(
-      extrudeCentered(createCutawayArcRingShape(27.0, 24.4, -Math.PI * 0.68, -Math.PI * 0.32), 2.0, 0.08, 0.08, 24),
-      mats.mountPpsInsulator
-    );
-    contactBlock.position.z = -39.4;
-    barrelGroup.add(contactBlock);
-
-    for (let i = 0; i < 12; i++) {
-      const a = -Math.PI * 0.65 + (i / 11) * (Math.PI * 0.30);
-      const pad = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.6, 0.5), mats.goldPlating);
-      pad.position.set(Math.cos(a) * 25.7, Math.sin(a) * 25.7, -40.5);
-      pad.rotation.z = a;
-      pad.userData.noEdges = true;
-      barrelGroup.add(pad);
-    }
-
-    // 2. Rear tapered base shoulder connecting 68mm mount -> 82mm main barrel (full 360° structural collar!)
-    const rearCollarGeo = new THREE.CylinderGeometry(40.2, 34.8, 12.0, 48, 1, true);
+    const rearCollarGeo = new THREE.CylinderGeometry(40.2, 34.8, 12.0, 44, 1, true);
     rearCollarGeo.rotateX(Math.PI / 2);
     const rearCollar = new THREE.Mesh(rearCollarGeo, mats.lensBarrelAnodized);
     rearCollar.position.z = -33.2;
     barrelGroup.add(rearCollar);
 
-    const rearCollarSolid = createLensCellRing(32.0, 35.2, 4.0, mats.lensBarrelAnodized);
+    const rearCollarSolid = createLensCellRing(32.0, 35.2, 4.0, mats.lensBarrelAnodized, 44);
     rearCollarSolid.position.z = -38.0;
     barrelGroup.add(rearCollarSolid);
 
-    // Signature red mount index dot at top of rear collar
-    const mountDot = new THREE.Mesh(new THREE.SphereGeometry(1.1, 14, 14), mats.mountRedIndexDot);
+    const mountDot = new THREE.Mesh(new THREE.SphereGeometry(1.1, 12, 12), mats.mountRedIndexDot);
     mountDot.position.set(0, 37.6, -35.8);
     mountDot.userData.noEdges = true;
     barrelGroup.add(mountDot);
 
-    // 3. Main structural anodized barrel tube with clean architectural upper-grip cutaway (75°..168°)
     const mainTubeShape = createCutawayArcRingShape(40.2, 37.2, cutStart, cutEnd);
     const mainTube = new THREE.Mesh(
       extrudeCentered(mainTubeShape, 56.0, 0.3, 0.3, 44),
@@ -709,17 +1068,15 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     mainTube.position.z = 1.0;
     barrelGroup.add(mainTube);
 
-    // Front full 360° bayonet collar anchoring front XA element & lens hood
-    const frontCollar = createLensCellRing(37.4, 42.8, 12.5, mats.lensBarrelAnodized);
+    const frontCollar = createLensCellRing(37.4, 42.8, 12.5, mats.lensBarrelAnodized, 44);
     frontCollar.position.z = 35.5;
     barrelGroup.add(frontCollar);
 
-    // Iconic metallic flagship accent band wrapping the upper barrel
-    const accentBand = createLensCellRing(42.2, 43.3, 2.2, mats.lensAccentRing);
+    const accentBand = createLensCellRing(42.2, 43.3, 2.2, mats.lensAccentRing, 44);
     accentBand.position.z = 31.2;
     barrelGroup.add(accentBand);
 
-    // Left-flank (+X photographer's left) tactile AF/MF switch, Focus Hold Button & Click ON/OFF switch
+    // Left-flank (+X) tactile Focus Hold Button & AF/MF Switch Panel
     const switchPlate = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(4.2, 24.0, 1.5), 22.0, 0.2, 0.2, 12),
       mats.matteBlackAnodized
@@ -727,68 +1084,122 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     switchPlate.position.set(40.2, -4.0, -7.0);
     barrelGroup.add(switchPlate);
 
-    // Circular Focus Hold Button (tactile anodized button on +X flank)
     const holdBtn = new THREE.Mesh(
-      new THREE.CylinderGeometry(3.6, 3.8, 2.6, 20).rotateZ(Math.PI / 2),
+      new THREE.CylinderGeometry(3.6, 3.8, 2.6, 18).rotateZ(Math.PI / 2),
       mats.stainlessMachined
     );
     holdBtn.position.set(42.4, 1.5, -2.5);
     barrelGroup.add(holdBtn);
 
-    // AF/MF Slide Switch knob
     const afSwitch = new THREE.Mesh(new THREE.BoxGeometry(2.6, 5.2, 7.6), mats.lensRubberGrip);
     afSwitch.position.set(42.2, -9.2, -11.5);
     barrelGroup.add(afSwitch);
-
-    // Aperture Click ON/OFF Switch on lower -X flank
-    const clickSwitch = new THREE.Mesh(new THREE.BoxGeometry(2.4, 4.4, 6.4), mats.lensAccentRing);
-    clickSwitch.position.set(-40.8, -11.0, -18.5);
-    barrelGroup.add(clickSwitch);
-
-    // 4 precision rear mount flange screws
-    for (let i = 0; i < 4; i++) {
-      const a = (i * Math.PI) / 2 + Math.PI / 4;
-      const screw = createPrecisionScrew(1.25, 0.7, 2.4, mats.stainlessMachined);
-      screw.position.set(Math.cos(a) * 30.8, Math.sin(a) * 30.8, -41.6);
-      screw.rotation.y = Math.PI;
-      barrelGroup.add(screw);
-    }
   }
   parts.push(
     finalizeLensPart(
       'lens-cutaway-barrel',
-      10,
+      21,
       '#475569',
       barrelGroup,
       new THREE.Vector3(0, 0, 74.0),
-      new THREE.Vector3(0, -58, -14),
-      new THREE.Vector3(0, -64, 232),
+      new THREE.Vector3(0, -88, -8),
+      new THREE.Vector3(0, -96, 258),
       cp,
       0.22
     )
   );
 
   // =========================================================================
-  // Live Kinematic Rig: 11-Blade Circular Iris + Dual Floating XD Linear Focus
+  // L22: [NEW!] Hardened Stainless Rear Lens Bayonet, 12-Pin Contacts & Seal (z = +33.5 mm)
+  // =========================================================================
+  const rearBayonetGroup = new THREE.Group();
+  {
+    // CNC mirror-lapped stainless 4-lug lens bayonet ring mating flush against M01 Body Mount!
+    const flange = createLensCellRing(26.2, 34.0, 2.8, mats.mountStainlessFlange, 44);
+    rearBayonetGroup.add(flange);
+
+    // 4 Asymmetrical lens-side bayonet locking lugs extending rearward (-Z)
+    for (const deg of [42, 132, 225, 312]) {
+      const a0 = THREE.MathUtils.degToRad(deg - 15);
+      const a1 = THREE.MathUtils.degToRad(deg + 15);
+      const lug = new THREE.Mesh(
+        extrudeCentered(createCutawayArcRingShape(28.0, 24.4, a0, a1), 2.1, 0.1, 0.1, 14),
+        mats.mountStainlessFlange
+      );
+      lug.position.z = -2.2;
+      rearBayonetGroup.add(lug);
+    }
+
+    // Perimeter EPDM weather-sealing rubber lip gasket
+    const rearSeal = createLensCellRing(33.5, 35.2, 1.5, mats.epdmGasket, 44);
+    rearSeal.position.z = -1.1;
+    rearBayonetGroup.add(rearSeal);
+
+    // 12-Pin Gold-Plated Lens Contact Arc Block (mating Body M07 pogo pins!)
+    const contactBlock = new THREE.Mesh(
+      extrudeCentered(createCutawayArcRingShape(27.0, 24.4, -Math.PI * 0.68, -Math.PI * 0.32), 2.2, 0.08, 0.08, 22),
+      mats.mountPpsInsulator
+    );
+    contactBlock.position.z = 1.1;
+    rearBayonetGroup.add(contactBlock);
+
+    const padGeo = new THREE.BoxGeometry(1.1, 1.6, 0.55);
+    const padInst = new THREE.InstancedMesh(padGeo, mats.goldPlating, 12);
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI * 0.65 + (i / 11) * (Math.PI * 0.30);
+      dummy.position.set(Math.cos(a) * 25.7, Math.sin(a) * 25.7, 0.0);
+      dummy.rotation.set(0, 0, a);
+      dummy.updateMatrix();
+      padInst.setMatrixAt(i, dummy.matrix);
+    }
+    padInst.instanceMatrix.needsUpdate = true;
+    rearBayonetGroup.add(padInst);
+
+    // 4 high-tensile stainless mount flange screws
+    for (let i = 0; i < 4; i++) {
+      const a = (i * Math.PI) / 2 + Math.PI / 4;
+      const screw = createPrecisionScrew(1.25, 0.7, 2.4, mats.stainlessMachined);
+      screw.position.set(Math.cos(a) * 30.8, Math.sin(a) * 30.8, -1.2);
+      screw.rotation.y = Math.PI;
+      rearBayonetGroup.add(screw);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-rear-bayonet',
+      22,
+      '#cbd5e1',
+      rearBayonetGroup,
+      new THREE.Vector3(0, 0, 33.5),
+      new THREE.Vector3(0, 0, -108),
+      new THREE.Vector3(0, 0, 202),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // Live Kinematic Rig: 11-Blade Iris + Cam Ring + Dual Floating XD Linear Focus + MF Encoder
   // =========================================================================
   const rig: LensDynamicRig = {
     irisBlades,
+    irisCamRing: irisCamRotor,
     focusGroupAPart,
     focusGroupBPart,
     moverCarriages,
     focusRingMesh,
+    mfEncoderWheel,
     applyDynamics: (elapsed, physicsActive, explodeFactor, integrated) => {
-      // 1. 11-Blade Iris smooth breathing F1.2 (open) <-> F11 (stopped down)
       const irisWave = physicsActive ? 0.5 - 0.5 * Math.cos(elapsed * 1.15) : 0;
-      const bladeSwingRad = irisWave * 0.44; // swings inward smoothly forming crisp 11-blade circle
+      const bladeSwingRad = irisWave * 0.44;
       for (const pivot of irisBlades) {
         pivot.rotation.z = (pivot.userData.baseAngle as number) + bladeSwingRad;
       }
+      irisCamRotor.rotation.z = irisWave * 0.24;
 
-      // 2. Dual Floating Focus differential translation (XD Linear Motor stroke)
       const focusWave = physicsActive ? Math.sin(elapsed * 1.85) : 0;
-      const strokeA = focusWave * 4.2; // Group A moves ±4.2 mm
-      const strokeB = -focusWave * 3.1 + Math.sin(elapsed * 3.7) * (physicsActive ? 0.55 : 0); // Differential floating curve!
+      const strokeA = focusWave * 4.2;
+      const strokeB = -focusWave * 3.1 + Math.sin(elapsed * 3.7) * (physicsActive ? 0.55 : 0);
 
       const offsetA =
         integrated && focusGroupAPart.integratedExplodeOffset
@@ -804,15 +1215,14 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       focusGroupBPart.group.position.z =
         focusGroupBPart.assembledPos.z + offsetB.z * explodeFactor + strokeB;
 
-      // Move all 4 copper XD linear motor coil carriages in sync with their coupled focus group!
       for (const mover of moverCarriages) {
         const gIdx = mover.userData.groupIndex as number;
         const baseZ = mover.userData.baseZ as number;
         mover.position.z = baseZ + (gIdx === 0 ? strokeA : strokeB);
       }
 
-      // Subtle tactile focus ring micro-rotation feedback when physics active
       focusRingMesh.rotation.z = physicsActive ? focusWave * 0.18 : 0;
+      mfEncoderWheel.rotation.z = physicsActive ? focusWave * 0.28 : 0;
     },
   };
 

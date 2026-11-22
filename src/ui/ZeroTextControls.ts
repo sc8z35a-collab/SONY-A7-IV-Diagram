@@ -469,11 +469,13 @@ export class ZeroTextControls {
       let widthPx = 20;
       if (part.subsystem === 'lens') {
         widthPx =
-          part.order === 1 || part.order === 10
+          part.order === 1 || part.order === 20 || part.order === 21 || part.order === 22
             ? 32
-            : part.order === 2 || part.order === 6 || part.order === 9
-              ? 27
-              : 21;
+            : part.order === 3 || part.order === 5 || part.order === 7 || part.order === 10 || part.order === 11 || part.order === 16
+              ? 26
+              : part.order === 2 || part.order === 9 || part.order === 12 || part.order === 14 || part.order === 17
+                ? 22
+                : 17;
       } else if (part.subsystem === 'lcd') {
         widthPx = part.order === 1 || part.order === 4 || part.order === 6 ? 30 : 23;
       } else if (part.subsystem === 'body') {
@@ -518,8 +520,8 @@ export class ZeroTextControls {
                 ? 26
                 : 17;
       } else if (part.subsystem === 'sensor') {
-        const ratio = (part.order - 1) / 13;
-        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 10 ? 10 : 0));
+        const ratio = (part.order - 1) / 25;
+        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 15 ? 8 : 0));
       } else {
         widthPx = Math.round(18 + (idx === 3 || idx === 4 ? 10 : 4));
       }
