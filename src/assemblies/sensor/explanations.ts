@@ -1,4 +1,8 @@
 import { PartExplanation } from '../types';
+import {
+  SENSOR_MICRO_EXPLANATIONS,
+  MICRO_PIXEL_ULTRA_EXPLANATIONS,
+} from './sensorMicroExplanations';
 
 export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   // =========================================================================
@@ -1207,6 +1211,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'sensor_ibis_optical_ref',
   },
+  ...SENSOR_MICRO_EXPLANATIONS,
 };
 
 export const MICRO_EXPLANATIONS: Record<string, PartExplanation> = {
@@ -1635,5 +1640,6 @@ export const MICRO_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'micro_pixel_adc_rdl',
   },
+  ...MICRO_PIXEL_ULTRA_EXPLANATIONS,
 };
 

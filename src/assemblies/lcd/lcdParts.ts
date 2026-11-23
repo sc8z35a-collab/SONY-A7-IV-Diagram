@@ -12,6 +12,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { LCD_EXPLANATIONS } from './lcdExplanations';
+import { buildLcdMicroParts } from './lcdMicroParts';
 
 /** Shared Rear LCD Monitor center coordinates (fits cleanly below EVF eyecup & left of -X right-hand thumb controls) */
 export const LCD_CENTER_X = 6.0;
@@ -1331,6 +1332,10 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     )
   );
 
+  // Phase 15: Append 24 standalone-only OEM & optical LCD micro-parts (D28–D51; omitted in whole-camera views)
+  const lcdMicro = buildLcdMicroParts(mats);
+  parts.push(...lcdMicro.parts);
+
   // =========================================================================
   // Live 4-Axis Articulation Kinematic Demo (active when assembled & physics ON)
   // =========================================================================
@@ -1346,6 +1351,7 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     pStiffener,
     pAmbColor,
     pFlipMags,
+    ...lcdMicro.monitorParts,
   ];
 
   const rig: LcdDynamicRig = {

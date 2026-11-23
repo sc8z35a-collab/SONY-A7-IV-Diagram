@@ -13,6 +13,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { MACRO_EXPLANATIONS } from './explanations';
+import { buildSensorMicroParts } from './sensorMicroParts';
 
 function finalizePart(
   id: string,
@@ -2144,6 +2145,9 @@ export function buildMacroSensorParts(mats: MaterialLibrary): CadPart[] {
       )
     );
   }
+
+  // Phase 14: Append 24 standalone-only OEM micro-parts (S41–S64; omitted in whole-camera views)
+  parts.push(...buildSensorMicroParts(mats));
 
   return parts;
 }

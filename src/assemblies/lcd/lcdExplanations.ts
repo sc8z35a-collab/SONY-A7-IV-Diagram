@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { LCD_MICRO_EXPLANATIONS } from './lcdMicroExplanations';
 
 export const LCD_EXPLANATIONS: Record<string, PartExplanation> = {
   'lcd-rear-bezel-glass': {
@@ -772,5 +773,6 @@ export const LCD_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'lcd_dock_bumper_pads',
   },
+  ...LCD_MICRO_EXPLANATIONS,
 };
 

@@ -500,7 +500,7 @@ export class ZeroTextControls {
     let prevStandaloneOnly = false;
     let selectedRowEl: HTMLElement | null = null;
 
-    parts.forEach((part, idx) => {
+    parts.forEach((part) => {
       const isStandaloneOnly = Boolean(part.standaloneOnly);
       if (
         (prevSubsystem && prevSubsystem !== part.subsystem) ||
@@ -583,7 +583,14 @@ export class ZeroTextControls {
           part.order === 14 ||
           part.order === 16 ||
           part.order === 18 ||
-          part.order === 22
+          part.order === 22 ||
+          part.order === 29 ||
+          part.order === 33 ||
+          part.order === 36 ||
+          part.order === 38 ||
+          part.order === 42 ||
+          part.order === 43 ||
+          part.order === 47
             ? 30
             : part.order === 2 ||
                 part.order === 6 ||
@@ -592,7 +599,19 @@ export class ZeroTextControls {
                 part.order === 17 ||
                 part.order === 21 ||
                 part.order === 23 ||
-                part.order === 27
+                part.order === 27 ||
+                part.order === 28 ||
+                part.order === 31 ||
+                part.order === 32 ||
+                part.order === 34 ||
+                part.order === 37 ||
+                part.order === 39 ||
+                part.order === 40 ||
+                part.order === 41 ||
+                part.order === 44 ||
+                part.order === 48 ||
+                part.order === 50 ||
+                part.order === 51
               ? 24
               : 18;
       } else if (part.subsystem === 'body') {
@@ -774,11 +793,42 @@ export class ZeroTextControls {
                 ? 21
                 : 16;
       } else if (part.subsystem === 'sensor') {
-        const ratio = (part.order - 1) / 39;
-        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 18 ? 8 : 0));
+        if (part.order <= 40) {
+          const ratio = (part.order - 1) / 39;
+          widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 18 ? 8 : 0));
+        } else {
+          // Phase 14 standalone-only OEM sensor micro-parts (S41–S64)
+          widthPx =
+            part.order === 41 ||
+            part.order === 47 ||
+            part.order === 50 ||
+            part.order === 53 ||
+            part.order === 58 ||
+            part.order === 60 ||
+            part.order === 64
+              ? 30
+              : part.order === 43 ||
+                  part.order === 44 ||
+                  part.order === 48 ||
+                  part.order === 49 ||
+                  part.order === 51 ||
+                  part.order === 52 ||
+                  part.order === 54 ||
+                  part.order === 55 ||
+                  part.order === 56 ||
+                  part.order === 59
+                ? 24
+                : 18;
+        }
       } else {
-        const ratio = idx / 14;
-        widthPx = Math.round(17 + Math.sin(ratio * Math.PI) * 13);
+        // Micro pixel cross-section (15 core M01–M15 + 12 Phase 14 ultra-nano M16–M27)
+        if (part.order <= 15) {
+          const ratio = (part.order - 1) / 14;
+          widthPx = Math.round(17 + Math.sin(ratio * Math.PI) * 13);
+        } else {
+          const ratio = (part.order - 16) / 11;
+          widthPx = Math.round(18 + Math.sin(ratio * Math.PI) * 12);
+        }
       }
       bar.style.width = `${widthPx}px`;
 

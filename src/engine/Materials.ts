@@ -134,6 +134,15 @@ export interface MaterialLibrary {
   butylDamperRubber: THREE.MeshStandardMaterial;
   mylarInsulatorFilm: THREE.MeshPhysicalMaterial;
   pureIronArmature: THREE.MeshPhysicalMaterial;
+  // Phase 14 Sensor & Nano-Pixel Materials
+  opticalCementClear: THREE.MeshPhysicalMaterial;
+  dustCatcherGel: THREE.MeshPhysicalMaterial;
+  aluminaHighKFilm: THREE.MeshPhysicalMaterial;
+  taNBarrierLiner: THREE.MeshPhysicalMaterial;
+  // Phase 15 Rear LCD Monitor Optical Film Materials
+  lcdOcaFilm: THREE.MeshPhysicalMaterial;
+  lcdDiffuserMatte: THREE.MeshPhysicalMaterial;
+  lcdDbefIridescent: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2468,6 +2477,95 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.25,
   });
 
+  // Phase 14: Index-matched UV optical cement (n≈1.52) & dry-N2 hermetic glass seal
+  const opticalCementClear = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xa5f3fc,
+    metalness: 0.0,
+    roughness: 0.05,
+    transparent: true,
+    opacity: 0.42,
+    ior: 1.52,
+    clearcoat: 0.9,
+    clearcoatRoughness: 0.06,
+    depthWrite: false,
+  });
+
+  // Phase 14: Non-outgassing tacky silicone adhesive gel strip for SSWF ultrasonic dust catcher
+  const dustCatcherGel = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xf59e0b,
+    metalness: 0.02,
+    roughness: 0.22,
+    transparent: true,
+    opacity: 0.86,
+    clearcoat: 0.85,
+    clearcoatRoughness: 0.12,
+  });
+
+  // Phase 14: Atomic-layer-deposited High-k negative fixed-charge Al2O3/HfO2 & SiN passivation nanolayer
+  const aluminaHighKFilm = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x7c3aed,
+    metalness: 0.28,
+    roughness: 0.14,
+    transparent: true,
+    opacity: 0.78,
+    iridescence: 0.85,
+    iridescenceIOR: 1.76,
+    clearcoat: 0.8,
+  });
+
+  // Phase 14: TaN/SiCN copper diffusion barrier liner & SOI FinFET metallic alloy
+  const taNBarrierLiner = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xc8a46e,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.03,
+    metalness: 0.9,
+    roughness: 0.2,
+    clearcoat: 0.35,
+  });
+
+  // Phase 15: Rear LCD Optical Clear Adhesive (OCA 150um) crystal-clear index-matched film
+  const lcdOcaFilm = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0xe0f2fe,
+    metalness: 0.0,
+    roughness: 0.03,
+    opacity: 0.22,
+    iridescence: 0.45,
+    iridescenceIOR: 1.49,
+    iridescenceThicknessRange: [220, 380],
+    clearcoat: 0.85,
+  });
+
+  // Phase 15: Frosted pearl-white micro-bead PET optical diffuser sheet
+  const lcdDiffuserMatte = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xf8fafc,
+    emissive: 0xe2e8f0,
+    emissiveIntensity: 0.14,
+    metalness: 0.02,
+    roughness: 0.72,
+    transparent: true,
+    opacity: 0.86,
+  });
+
+  // Phase 15: Multi-layer pearlescent reflective polarizer DBEF light-recycling film
+  const lcdDbefIridescent = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xe2f1ff,
+    metalness: 0.25,
+    roughness: 0.12,
+    transparent: true,
+    opacity: 0.78,
+    iridescence: 1.0,
+    iridescenceIOR: 1.65,
+    iridescenceThicknessRange: [300, 680],
+    clearcoat: 0.9,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2591,6 +2689,13 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     butylDamperRubber,
     mylarInsulatorFilm,
     pureIronArmature,
+    opticalCementClear,
+    dustCatcherGel,
+    aluminaHighKFilm,
+    taNBarrierLiner,
+    lcdOcaFilm,
+    lcdDiffuserMatte,
+    lcdDbefIridescent,
   ];
 
   return {
@@ -2717,6 +2822,13 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     butylDamperRubber,
     mylarInsulatorFilm,
     pureIronArmature,
+    opticalCementClear,
+    dustCatcherGel,
+    aluminaHighKFilm,
+    taNBarrierLiner,
+    lcdOcaFilm,
+    lcdDiffuserMatte,
+    lcdDbefIridescent,
     allMaterials,
   };
 }

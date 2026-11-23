@@ -848,6 +848,36 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('body-gyro-sensor-unit', false);
   syncRail();
+} else if (preset === 'phase14_sensor') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('sensor-imager-fix-shafts', false);
+  syncRail();
+} else if (preset === 'phase14_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-fd-dcg-switch', false);
+  syncRail();
+} else if (preset === 'phase15_lcd') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-fine-coaxial-bundle', false);
+  syncRail();
 }
 
 

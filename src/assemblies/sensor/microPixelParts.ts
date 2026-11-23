@@ -3,6 +3,7 @@ import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { attachCadEdges, tagPartMeshes } from '../../engine/CadHelpers';
 import { MICRO_EXPLANATIONS } from './explanations';
+import { buildMicroPixelUltraParts } from './microPixelUltraParts';
 
 function finalizeMicroPart(
   id: string,
@@ -897,6 +898,9 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
       )
     );
   }
+
+  // Phase 14: Append 12 standalone-only ultra-nano semiconductor cross-section layers (M16–M27)
+  parts.push(...buildMicroPixelUltraParts(mats));
 
   return parts;
 }

@@ -485,8 +485,9 @@ export class CadViewport {
       d = 335 + e * 565;
       target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 18.0);
     } else if (this.mode === 'lcd') {
-      d = 160 + e * 204;
-      target = new THREE.Vector3(8.0 + e * 6.0, -7.0, -32.0 - e * 18.0);
+      // 51-part standalone 4-Axis Rear LCD Monitor ultra-anatomy (27 macro + 24 standalone-only OEM/optical micro)
+      d = 174 + e * 355;
+      target = new THREE.Vector3(8.0 - e * 18.0, -7.0, -32.0 - e * 32.0);
     } else if (this.mode === 'body') {
       d = 290 + e * 415;
       target = new THREE.Vector3(-8.0 - e * 10.0, 4.0 - e * 2.0, 0.0 - e * 10.0);
@@ -508,12 +509,13 @@ export class CadViewport {
       d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
-      d = 152 + e * 305;
-      target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 42.0);
+      // 64-part standalone Full-Frame Sensor & 5-Axis IBIS ultra-anatomy (40 macro + 24 standalone-only OEM micro)
+      d = 168 + e * 435;
+      target = new THREE.Vector3(14.0 * e, -2.0, -4.0 - e * 56.0);
     } else {
-      // 15-layer ISSCC 2025/2026 Nano-Pixel Cross-Section (with radial FDTI, D-VTG, LOFIC & GS MEM wings!)
-      d = 88 + e * 92;
-      target = new THREE.Vector3(0.0, -1.0, -3.0 - e * 4.0);
+      // 27-layer ISSCC/IEDM Nano-Pixel Semiconductor Cross-Section (15 core + 12 Phase 14 ultra-nano layers)
+      d = 96 + e * 165;
+      target = new THREE.Vector3(8.0 * e, -1.0, -3.0 - e * 10.0);
     }
 
     let offset: THREE.Vector3;
