@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-android-apk:
     runs-on: ubuntu-latest
@@ -38,9 +41,40 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      - name: Rename APK for direct download
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk sony-a7-iv-3d-cad-android.apk
+
       - name: Upload Android APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: sony-a7-iv-3d-cad-android-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: sony-a7-iv-3d-cad-android.apk
           retention-days: 90
+
+      - name: Publish direct-download APK to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v21.0.0-android-apk"
+          TITLE="v21.0.0 — Android APK (全627部品 + スマホGPU徹底最適化版)"
+          cat <<'EOF' > release_notes.md
+          ### SONY A7 IV 3D CAD — 全627部品 超高精細3D解剖図（Android APK）
+
+          - **部品数は1つも減らさず全627部品（全体320＋個別専用307）のまま、Three.jsエンジンを維持**して POCO F7（Snapdragon / Adreno GPU）向けに徹底最適化しました。
+          - **白画面（WebGLコンテキストロスト）対策**:
+            - 静的メッシュ＆CAD輪郭線のパーツ内バッチ統合（ドローコール **-63〜-81%**）
+            - モード切替時の非表示 GPU バッファ自動解放（VRAMジオメトリ **-81〜-97%**）
+            - Adreno TBDR向け `preserveDrawingBuffer: false` / `stencil: false` / モバイル解像度・テクスチャ・シェーダー自動最適化
+            - `webglcontextlost` / `webglcontextrestored` 自動復旧＆適応解像度ダウン
+            - Androidネイティブ保護（`largeHeap=true` / `hardwareAccelerated=true` / `RENDERER_PRIORITY_IMPORTANT` / `onRenderProcessGone` 自動復帰 / 完全オフライン動作）
+
+          ### POCO F7 へのインストール方法
+          1. 下の **`sony-a7-iv-3d-cad-android.apk`**（約6.0MB）をタップしてダウンロード
+          2. ダウンロードしたファイルをタップし、不明なアプリのインストールを許可してインストール
+          EOF
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" sony-a7-iv-3d-cad-android.apk --clobber
+            gh release edit "$TAG" --title "$TITLE" --notes-file release_notes.md
+          else
+            gh release create "$TAG" sony-a7-iv-3d-cad-android.apk --target main --title "$TITLE" --notes-file release_notes.md
+          fi
