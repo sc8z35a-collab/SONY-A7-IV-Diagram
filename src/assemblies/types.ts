@@ -704,7 +704,33 @@ export interface PartExplanation {
     | 'mount_rocker_pivot_shaft'
     | 'mount_631s_lightseal_tape'
     | 'mount_bayonet_anti_galvanic'
-    | 'mount_baffle_clip_tabs';
+    | 'mount_baffle_clip_tabs'
+    // Phase 23: Next-Gen Photodiode & Pixel Nanoscale Anatomy (+25: M51–M75 -> 75 total micro layers)
+    | 'micro_mpcr_color_router'
+    | 'micro_polarsens_wiregrid'
+    | 'micro_airgap_optical_grid'
+    | 'micro_inner_sublens_waveguide'
+    | 'micro_opf_organic_film'
+    | 'micro_inverted_pyramid_array'
+    | 'micro_delta_doped_monolayer'
+    | 'micro_thick_pepi_depletion'
+    | 'micro_graded_pd_doping'
+    | 'micro_dual_depth_pr_fdti'
+    | 'micro_plad_boron_liner'
+    | 'micro_split_pd_lfm_hdr'
+    | 'micro_twisted_af_pd'
+    | 'micro_backside_vsub_ring'
+    | 'micro_tg_gate_oxide'
+    | 'micro_pump_gate_qis'
+    | 'micro_gs_storage_diode'
+    | 'micro_tcg_multistage_cap'
+    | 'micro_sf_drain_buried'
+    | 'micro_spad_avalanche_guard'
+    | 'micro_pixel_dps_edram'
+    | 'micro_cms_multi_sampler'
+    | 'micro_evs_log_change'
+    | 'micro_dummy_guard_ring'
+    | 'micro_rts_anneal_bist';
 }
 
 export interface CadPart {

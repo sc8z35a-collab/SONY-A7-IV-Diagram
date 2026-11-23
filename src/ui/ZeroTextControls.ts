@@ -980,7 +980,7 @@ export class ZeroTextControls {
                 : 18;
         }
       } else {
-        // Micro pixel cross-section (15 core M01–M15 + 35 standalone-only ultra-nano M16–M50)
+        // Micro pixel cross-section (15 core M01–M15 + 60 standalone-only ultra-nano M16–M75)
         if (part.order <= 15) {
           const ratio = (part.order - 1) / 14;
           widthPx = Math.round(17 + Math.sin(ratio * Math.PI) * 13);
@@ -995,7 +995,15 @@ export class ZeroTextControls {
           part.order === 37 ||
           part.order === 39 ||
           part.order === 46 ||
-          part.order === 50
+          part.order === 50 ||
+          part.order === 51 ||
+          part.order === 56 ||
+          part.order === 59 ||
+          part.order === 62 ||
+          part.order === 66 ||
+          part.order === 70 ||
+          part.order === 71 ||
+          part.order === 73
         ) {
           widthPx = 30;
         } else {

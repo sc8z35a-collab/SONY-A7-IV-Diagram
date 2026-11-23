@@ -6,6 +6,7 @@ import { MICRO_EXPLANATIONS } from './explanations';
 import { buildMicroPixelUltraParts } from './microPixelUltraParts';
 import { buildMicroUltraAuditParts } from './sensorMicroUltraAuditParts';
 import { buildMicroPixelDeepAuditParts } from './microPixelDeepAuditParts';
+import { buildMicroPixelNextGenParts } from './microPixelNextGenParts';
 
 function finalizeMicroPart(
   id: string,
@@ -909,6 +910,9 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
 
   // Phase 20A: Append 15 standalone-only IEDM/EDTM/ISSCC nano-semiconductor layers (M36–M50)
   parts.push(...buildMicroPixelDeepAuditParts(mats));
+
+  // Phase 23: Append 25 standalone-only IISW 2025 / IEDM 2024–2025 next-gen photodiode & pixel layers (M51–M75)
+  parts.push(...buildMicroPixelNextGenParts(mats));
 
   return parts;
 }
