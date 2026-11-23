@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from './lcdParts';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface LcdPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -156,6 +157,8 @@ export function createLcdPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 20);
+  explodeGuides.add(radialGuides.group);
 
   return {
     overlayGroup,
@@ -167,10 +170,12 @@ export function createLcdPhysicsOverlay(
       if (!active || !overlayGroup.visible) return;
 
       const pGlass = parts.find((p) => p.id === 'lcd-rear-bezel-glass');
-      const pBl = parts.find((p) => p.id === 'lcd-backlight-stack');
+      const pBl =
+        parts.find((p) => p.id === 'lcd-lgp-led-bar') ??
+        parts.find((p) => p.id === 'lcd-backlight-stack');
       const pCradle = parts.find((p) => p.id === 'lcd-4axis-tilt-frame');
 
-      const zBl = pBl ? pBl.group.position.z : -32.9;
+      const zBl = pBl ? pBl.group.position.z : -32.45;
       const zGlass = pGlass ? pGlass.group.position.z : -35.8;
       const zEye = zGlass - 26.0;
       const zBase = pCradle ? pCradle.group.position.z : -28.8;
@@ -200,8 +205,10 @@ export function createLcdPhysicsOverlay(
       if (!show) return;
 
       const pGlass = parts.find((p) => p.id === 'lcd-rear-bezel-glass');
-      const pCradle = parts.find((p) => p.id === 'lcd-4axis-tilt-frame');
-      const zFront = pCradle ? pCradle.group.position.z + 2 : -28;
+      const pFront =
+        parts.find((p) => p.id === 'lcd-bulkhead-b2b-pcb') ??
+        parts.find((p) => p.id === 'lcd-4axis-tilt-frame');
+      const zFront = pFront ? pFront.group.position.z + 2 : -27;
       const zRear = pGlass ? pGlass.group.position.z - 2 : -36;
 
       for (let i = 0; i < guideLines.length; i++) {
@@ -212,6 +219,7 @@ export function createLcdPhysicsOverlay(
         ]);
         guideLines[i].computeLineDistances();
       }
+      radialGuides.update(explodeFactor, visible, parts);
     },
   };
 }

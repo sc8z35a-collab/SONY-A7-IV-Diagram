@@ -84,9 +84,9 @@ function finalizeMainboardPart(
 }
 
 /**
- * Build all 16 ultra-detailed CAD sub-assemblies of a 2024-2026 Flagship Mirrorless
+ * Build all 30 ultra-detailed CAD sub-assemblies of a 2024-2026 Flagship Mirrorless
  * Image Processing Engine & 12-Layer Any-Layer HDI Mainboard positioned directly behind
- * the 5-Axis IBIS Sensor Module (z = -15.6 .. -27.4 mm, rear component side faces -Z).
+ * the 5-Axis IBIS Sensor Module (z = -15.6 .. -28.8 mm, rear component side faces -Z).
  */
 export function buildMainboardParts(
   mats: MaterialLibrary
@@ -833,18 +833,12 @@ export function buildMainboardParts(
     tcxoCan.position.set(26.8, -6.5, -0.35);
     g.add(tcxoBase, tcxoCan);
 
-    // High-durability RTC backup coin supercapacitor
-    const capGeo = new THREE.CylinderGeometry(3.1, 3.1, 1.35, 22);
-    capGeo.rotateX(Math.PI / 2);
-    const superCap = new THREE.Mesh(capGeo, mats.neodymiumMagnet);
-    superCap.position.set(24.2, -13.5, -0.05);
-    const capRim = new THREE.Mesh(
-      new THREE.TorusGeometry(2.65, 0.22, 8, 22),
-      mats.goldPlating
-    );
-    capRim.position.set(24.2, -13.5, -0.72);
-    capRim.userData.noEdges = true;
-    g.add(superCap, capRim);
+    // Secondary 32.768 kHz ultra-low-drift tuning-fork quartz RTC crystal resonator
+    const xtalBase = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.5, 0.65), mats.ceramicAlumina);
+    xtalBase.position.set(26.8, -9.8, 0.28);
+    const xtalLid = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.25, 0.26), mats.silverElectrode);
+    xtalLid.position.set(26.8, -9.8, -0.14);
+    g.add(xtalBase, xtalLid);
 
     parts.push(
       finalizeMainboardPart(
@@ -862,7 +856,8 @@ export function buildMainboardParts(
   }
 
   // =========================================================================
-  // M12. Pro External I/O Port Cluster (HDMI 2.1 / USB-C / 2.5GbE / Audio) (z = -22.2 mm)
+  // M12. Pro External I/O Port Cluster (2.5GbE LAN / USB-C 10Gbps / ESD Array) (z = -22.2 mm)
+  // (HDMI 2.1 daughterboard decoupled into M19; 3.5mm Audio Jack board decoupled into M20)
   // =========================================================================
   {
     const g = new THREE.Group();
@@ -880,16 +875,16 @@ export function buildMainboardParts(
       g.add(rjPin);
     }
 
-    // 2. Full-Size HDMI 2.1 Type A (48 Gbps FRL) Reinforced Port
-    const hdmiShell = new THREE.Mesh(new THREE.BoxGeometry(11.4, 14.8, 4.8), mats.emiShieldCan);
-    hdmiShell.position.set(40.8, 1.5, -0.4);
-    const hdmiTongue = new THREE.Mesh(new THREE.BoxGeometry(2.6, 11.4, 1.2), mats.icEpoxy);
-    hdmiTongue.position.set(45.5, 1.5, -0.4);
-    const hdmiGold = new THREE.Mesh(new THREE.BoxGeometry(2.2, 10.6, 0.25), mats.goldPlating);
-    hdmiGold.position.set(45.5, 1.5, -1.05);
-    g.add(hdmiShell, hdmiTongue, hdmiGold);
+    // Dedicated 2.5GBASE-T Ethernet PHY + Magnetics Controller IC beside RJ45
+    const ethPhy = new THREE.Mesh(new THREE.BoxGeometry(4.8, 4.8, 0.85), mats.icEpoxy);
+    ethPhy.position.set(31.8, 15.8, 1.75);
+    const ethDot = new THREE.Mesh(new THREE.CircleGeometry(0.32, 10), mats.goldPlating);
+    ethDot.rotation.y = Math.PI;
+    ethDot.position.set(33.4, 17.4, 1.3);
+    ethDot.userData.noEdges = true;
+    g.add(ethPhy, ethDot);
 
-    // 3. USB Type-C 3.2 Gen 2 (10 Gbps + USB-PD) Shielded Receptacle
+    // 2. USB Type-C 3.2 Gen 2 (10 Gbps + USB-PD) Shielded Receptacle
     const usbcGeo = extrudeCentered(createRoundedRectShape(8.8, 3.2, 1.45), 10.2, 0.06, 0.06, 14);
     usbcGeo.rotateY(Math.PI / 2);
     usbcGeo.rotateX(Math.PI / 2);
@@ -899,26 +894,8 @@ export function buildMainboardParts(
     usbcTongue.position.set(45.2, -10.8, 0.3);
     g.add(usbc, usbcTongue);
 
-    // 4. Dual 3.5 mm Gold-Ringed Mic & Headphone Audio Jacks
-    for (const ay of [-18.4, -24.2]) {
-      const block = new THREE.Mesh(new THREE.BoxGeometry(9.6, 4.8, 4.4), mats.icEpoxy);
-      block.position.set(40.2, ay, -0.1);
-      const collarGeo = new THREE.CylinderGeometry(2.15, 2.15, 2.2, 18);
-      collarGeo.rotateZ(Math.PI / 2);
-      const collar = new THREE.Mesh(collarGeo, mats.goldPlating);
-      collar.position.set(45.8, ay, -0.1);
-      const boreGeo = new THREE.CylinderGeometry(1.45, 1.45, 2.3, 14);
-      boreGeo.rotateZ(Math.PI / 2);
-      const bore = new THREE.Mesh(boreGeo, mats.matteBlackAnodized);
-      bore.position.set(45.85, ay, -0.1);
-      g.add(block, collar, bore);
-    }
-
-    // 5. Dedicated 24-bit/96kHz Audio Codec IC + ESD TVS Surge Protection Diode Array
-    const codec = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 0.8), mats.icEpoxy);
-    codec.position.set(32.8, -21.2, 1.7);
-    g.add(codec);
-    for (let ey = -11; ey <= 16; ey += 4.5) {
+    // 3. ESD TVS Surge Protection Diode Array guarding RJ45 & USB-C ports
+    for (const ey of [11.5, 16.0, 20.5, -8.5, -13.0]) {
       const esd = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.4, 0.55), mats.icEpoxy);
       esd.position.set(33.4, ey, 1.85);
       esd.userData.noEdges = true;
@@ -1193,6 +1170,833 @@ export function buildMainboardParts(
         new THREE.Vector3(0, 0, -104.0),
         cp,
         0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // M17. Internal Sintered Porous Copper Capillary Wick & Micro-Support Pillar Matrix (z = -26.6 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // Porous sintered copper capillary wick core plate inside M01 vapor chamber
+    const wickPlate = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(31.2, 26.2, 2.6), 0.36, 0.04, 0.04, 14),
+      mats.vaporWickCopper
+    );
+    wickPlate.position.set(-4.5, -1.0, 0);
+    g.add(wickPlate);
+
+    // Secondary capillary branch core reaching NPU thermal bridge
+    const npuWick = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(14.2, 7.6, 1.4), 0.32, 0.03, 0.03, 10),
+      mats.vaporWickCopper
+    );
+    npuWick.position.set(17.5, 6.5, 0);
+    g.add(npuWick);
+
+    // Sintered copper vapor-return micro-support pillar matrix (prevents vacuum collapse)
+    const pillarGeo = new THREE.CylinderGeometry(0.42, 0.48, 0.56, 8);
+    pillarGeo.rotateX(Math.PI / 2);
+    for (let px = -17.5; px <= 8.5; px += 4.3) {
+      for (let py = -11.5; py <= 9.5; py += 4.2) {
+        const pillar = new THREE.Mesh(pillarGeo, mats.copperHeatSpreader);
+        pillar.position.set(px, py, -0.04);
+        pillar.userData.noEdges = true;
+        g.add(pillar);
+      }
+    }
+
+    // Etched arterial vapor-flow channel rails
+    for (const cy of [-7.5, -1.0, 5.5]) {
+      const channel = new THREE.Mesh(new THREE.BoxGeometry(27.0, 0.55, 0.44), mats.copperHeatSpreader);
+      channel.position.set(-4.5, cy, -0.08);
+      channel.userData.noEdges = true;
+      g.add(channel);
+    }
+
+    // Vacuum degassing & sealed pinch-off copper fill tube stub
+    const fillTubeGeo = new THREE.CylinderGeometry(0.48, 0.48, 4.6, 10);
+    fillTubeGeo.rotateZ(Math.PI / 2);
+    const fillTube = new THREE.Mesh(fillTubeGeo, mats.vaporChamberCopper);
+    fillTube.position.set(-22.0, -10.5, 0);
+    g.add(fillTube);
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-vapor-wick-core',
+        17,
+        '#b86332',
+        g,
+        new THREE.Vector3(0, 0, -26.6),
+        new THREE.Vector3(0, 0, -48.0),
+        new THREE.Vector3(0, 0, -185.0),
+        cp,
+        0.22
+      )
+    );
+  }
+
+  // =========================================================================
+  // M18. Rear RF Shield Structural Retaining Bracket & Threaded Heat-Transfer Tape (z = -28.8 mm)
+  // (Sony A1 II / A7R VI Kolari Vision teardown signature architecture)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // Full-width stamped stainless structural RF shield retaining frame with open relief bays
+    const brkShape = createFrameShape(84.0, 54.0, 3.0, 36.0, 29.0, 2.0, -4.0, -1.0);
+    // Secondary relief bay over CFexpress copper plate (-X)
+    const cfxWin = new THREE.Path();
+    cfxWin.moveTo(-39.0, -12.0);
+    cfxWin.lineTo(-26.0, -12.0);
+    cfxWin.lineTo(-26.0, 16.0);
+    cfxWin.lineTo(-39.0, 16.0);
+    cfxWin.closePath();
+    brkShape.holes.push(cfxWin);
+    // Secondary relief bay over right-side I/O & NPU (+X)
+    const ioWin = new THREE.Path();
+    ioWin.moveTo(19.0, -14.0);
+    ioWin.lineTo(36.0, -14.0);
+    ioWin.lineTo(36.0, 14.0);
+    ioWin.lineTo(19.0, 14.0);
+    ioWin.closePath();
+    brkShape.holes.push(ioWin);
+
+    const brkMesh = new THREE.Mesh(
+      extrudeCentered(brkShape, 0.42, 0.05, 0.05, 16),
+      mats.stainlessMachined
+    );
+    g.add(brkMesh);
+
+    // Embossed longitudinal stiffening bridge bars
+    for (const ry of [21.5, -21.5]) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(74.0, 2.2, 0.62), mats.emiShieldCan);
+      rib.position.set(0, ry, -0.25);
+      g.add(rib);
+    }
+
+    // Two pyrolytic graphite heat-transfer tape ribbons threaded through bracket slits (A1 II / A7R VI style)
+    const tape1Curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-18.0, 14.0, 0.35),
+      new THREE.Vector3(-4.0, 16.5, -0.38),
+      new THREE.Vector3(12.0, 16.5, -0.38),
+      new THREE.Vector3(24.0, 12.0, 0.32),
+    ]);
+    const tape2Curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-18.0, -14.5, 0.35),
+      new THREE.Vector3(-4.0, -17.5, -0.38),
+      new THREE.Vector3(12.0, -17.5, -0.38),
+      new THREE.Vector3(24.0, -14.5, 0.32),
+    ]);
+    for (const curve of [tape1Curve, tape2Curve]) {
+      const tGeo = new THREE.TubeGeometry(curve, 22, 1.35, 8, false);
+      tGeo.scale(1, 1, 0.16);
+      const tapeMesh = new THREE.Mesh(tGeo, mats.thermalTransferTape);
+      g.add(tapeMesh);
+    }
+
+    // 4 signature corner M1.4 stainless retaining screws
+    for (const [sx, sy] of [
+      [-39.2, 24.2],
+      [39.2, 24.2],
+      [-39.2, -24.2],
+      [39.2, -24.2],
+    ] as Array<[number, number]>) {
+      const screw = createPrecisionScrew(1.2, 0.38, 0.95, mats.stainlessMachined);
+      screw.rotation.x = Math.PI;
+      screw.position.set(sx, sy, -0.3);
+      g.add(screw);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-rf-shield-bracket',
+        18,
+        '#a5b0be',
+        g,
+        new THREE.Vector3(0, 0, -28.8),
+        new THREE.Vector3(0, 0, -64.0),
+        new THREE.Vector3(0, 0, -200.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M19. Modular Removable HDMI 2.1 (48 Gbps FRL) Daughterboard & Redriver IC (z = -22.2 mm)
+  // (Canon EOS R5 Mark II modular serviceability architecture — decoupled from M12)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // Independent removable 6-layer HDI HDMI daughterboard PCB
+    const pcb = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(16.2, 18.8, 1.0), 0.95, 0.04, 0.04, 10),
+      mats.hdiMainboardPcb
+    );
+    pcb.position.set(39.0, 1.5, 1.85);
+    g.add(pcb);
+
+    // Reinforced Full-Size HDMI 2.1 Type A (48 Gbps FRL) stainless port shell + gold contact tongue
+    const hdmiShell = new THREE.Mesh(new THREE.BoxGeometry(11.4, 14.8, 4.8), mats.emiShieldCan);
+    hdmiShell.position.set(40.8, 1.5, -0.4);
+    const hdmiTongue = new THREE.Mesh(new THREE.BoxGeometry(2.6, 11.4, 1.2), mats.icEpoxy);
+    hdmiTongue.position.set(45.5, 1.5, -0.4);
+    const hdmiGold = new THREE.Mesh(new THREE.BoxGeometry(2.2, 10.6, 0.25), mats.goldPlating);
+    hdmiGold.position.set(45.5, 1.5, -1.05);
+    g.add(hdmiShell, hdmiTongue, hdmiGold);
+
+    // Dedicated 4ch 12Gbps FRL Equalizer / Redriver QFN IC + ultra-low-C TVS diode pack
+    const redriver = new THREE.Mesh(new THREE.BoxGeometry(3.8, 4.8, 0.68), mats.icEpoxy);
+    redriver.position.set(33.2, 1.5, 1.05);
+    const tvs1 = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.8, 0.48), mats.icEpoxy);
+    tvs1.position.set(33.2, 6.2, 1.12);
+    const tvs2 = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.8, 0.48), mats.icEpoxy);
+    tvs2.position.set(33.2, -3.2, 1.12);
+    g.add(redriver, tvs1, tvs2);
+
+    // Shielded 100-ohm differential ZIF jumper FPC connecting daughterboard to mainboard
+    const flex = new THREE.Mesh(new THREE.BoxGeometry(6.2, 7.6, 0.2), mats.polyimideFpc);
+    flex.position.set(29.8, 1.5, 1.88);
+    const flexEmi = new THREE.Mesh(new THREE.BoxGeometry(4.8, 6.8, 0.24), mats.emiShieldCan);
+    flexEmi.position.set(29.8, 1.5, 1.88);
+    g.add(flex, flexEmi);
+
+    // 2 stainless modular service retention screws
+    for (const sy of [-6.4, 9.4]) {
+      const scr = createPrecisionScrew(1.05, 0.35, 0.85, mats.stainlessMachined);
+      scr.rotation.x = Math.PI;
+      scr.position.set(34.0, sy, 1.25);
+      g.add(scr);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-hdmi-daughterboard',
+        19,
+        '#2563eb',
+        g,
+        new THREE.Vector3(0, 0, -22.2),
+        new THREE.Vector3(28.0, 12.0, -24.0),
+        new THREE.Vector3(28.0, 10.0, -162.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M20. Shielded 3.5mm Mic/Headphone TRS Jack Sub-Board & 24-Bit Codec (z = -22.2 mm)
+  // (Sony A7R VI 2-screw shielded audio jack module — decoupled from M12)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // Isolated low-noise analog audio sub-PCB
+    const audioPcb = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(16.5, 13.8, 0.9), 0.9, 0.04, 0.04, 10),
+      mats.hdiMainboardPcb
+    );
+    audioPcb.position.set(38.5, -21.3, 1.95);
+    g.add(audioPcb);
+
+    // Dual 3.5 mm Gold-Collared Mic & Headphone TRS Audio Jacks
+    for (const ay of [-18.4, -24.2]) {
+      const block = new THREE.Mesh(new THREE.BoxGeometry(9.6, 4.8, 4.4), mats.icEpoxy);
+      block.position.set(40.2, ay, -0.1);
+      const collarGeo = new THREE.CylinderGeometry(2.15, 2.15, 2.2, 18);
+      collarGeo.rotateZ(Math.PI / 2);
+      const collar = new THREE.Mesh(collarGeo, mats.goldPlating);
+      collar.position.set(45.8, ay, -0.1);
+      const boreGeo = new THREE.CylinderGeometry(1.45, 1.45, 2.3, 14);
+      boreGeo.rotateZ(Math.PI / 2);
+      const bore = new THREE.Mesh(boreGeo, mats.matteBlackAnodized);
+      bore.position.set(45.85, ay, -0.1);
+      g.add(block, collar, bore);
+    }
+
+    // Dedicated 24-bit/96kHz Audio ADC/DAC Codec IC + analog coupling caps
+    const codec = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 0.8), mats.icEpoxy);
+    codec.position.set(32.8, -21.2, 1.25);
+    g.add(codec);
+    for (const cy of [-18.4, -24.0]) {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.0, 0.65), mats.tantalumCapYellow);
+      cap.position.set(32.8, cy, 1.32);
+      cap.userData.noEdges = true;
+      g.add(cap);
+    }
+
+    // 2-screw stainless steel RF shield cover bracket spanning audio jacks
+    const shieldCover = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(11.4, 12.6, 0.8), 0.36, 0.04, 0.04, 10),
+      mats.emiShieldCan
+    );
+    shieldCover.position.set(39.6, -21.3, -2.52);
+    g.add(shieldCover);
+    for (const sy of [-16.2, -26.4]) {
+      const scr = createPrecisionScrew(1.0, 0.34, 0.8, mats.stainlessMachined);
+      scr.rotation.x = Math.PI;
+      scr.position.set(35.4, sy, -2.72);
+      g.add(scr);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-audio-jack-board',
+        20,
+        '#d97706',
+        g,
+        new THREE.Vector3(0, 0, -22.2),
+        new THREE.Vector3(28.0, -18.0, -22.0),
+        new THREE.Vector3(28.0, -18.0, -160.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M21. Wi-Fi 6E/7 (2x2 MIMO) Ceramic Patch Antennas & Gold-Braided Coax (z = -21.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // Orthogonal Dual-Band 2.4/5/6 GHz MIMO Ceramic Patch Antenna Modules along top RF window
+    const antSpecs: Array<{ x: number; y: number; w: number; h: number; fx: number; fy: number }> = [
+      { x: 14.5, y: 34.4, w: 11.0, h: 4.2, fx: 13.5, fy: 30.2 },
+      { x: 34.0, y: 33.8, w: 4.6, h: 9.8, fx: 32.8, fy: 29.8 },
+    ];
+
+    for (const a of antSpecs) {
+      // LDS polymer non-metallic carrier block
+      const carrier = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(a.w, a.h, 0.6), 1.4, 0.06, 0.06, 10),
+        mats.ceramicAlumina
+      );
+      carrier.position.set(a.x, a.y, -0.2);
+      g.add(carrier);
+
+      // Gold serpentine radiating patch pattern on outer face
+      const patch = new THREE.Mesh(
+        new THREE.BoxGeometry(a.w - 1.6, a.h - 1.2, 0.16),
+        mats.goldPlating
+      );
+      patch.position.set(a.x, a.y, -0.96);
+      g.add(patch);
+
+      // Gold-braided 50-ohm 0.81mm micro-coaxial jumper feeding from M13 U.FL endpoint
+      const coaxCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(a.fx, a.fy, -0.2),
+        new THREE.Vector3((a.fx + a.x) * 0.5, (a.fy + a.y) * 0.5, -0.85),
+        new THREE.Vector3(a.x, a.y - (a.h > 6 ? 2.5 : 0.8), -0.35),
+      ]);
+      const coax = new THREE.Mesh(
+        new THREE.TubeGeometry(coaxCurve, 14, 0.42, 8, false),
+        mats.rfGoldCoax
+      );
+      g.add(coax);
+
+      // Micro IPEX gold snap connector at antenna feedpoint
+      const snap = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 0.7), mats.goldPlating);
+      snap.position.set(a.fx, a.fy, -0.22);
+      g.add(snap);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-wifi-mimo-antennas',
+        21,
+        '#d9a326',
+        g,
+        new THREE.Vector3(0, 0, -21.4),
+        new THREE.Vector3(22.0, 26.0, -24.0),
+        new THREE.Vector3(22.0, 26.0, -166.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // M22. 13.56 MHz NFC Planar Copper Coil Antenna & Ferrite Backing Sheet (z = -23.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const nfcGrp = new THREE.Group();
+    nfcGrp.position.set(-48.4, -3.5, 0);
+    nfcGrp.rotation.y = Math.PI / 2;
+
+    // High-permeability sintered ferrite magnetic shielding sheet (blocks Mg-body eddy currents)
+    const ferriteSheet = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(16.0, 22.0, 1.2), 0.35, 0.03, 0.03, 10),
+      mats.ferriteInductor
+    );
+    ferriteSheet.position.z = 0.25;
+    nfcGrp.add(ferriteSheet);
+
+    // Flexible polyimide coil substrate
+    const polySub = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(15.2, 21.2, 1.0), 0.16, 0.02, 0.02, 10),
+      mats.polyimideFpc
+    );
+    polySub.position.z = -0.05;
+    nfcGrp.add(polySub);
+
+    // 5 Concentric etched planar copper 13.56 MHz coil turns
+    for (let t = 0; t < 5; t++) {
+      const cw = 13.8 - t * 1.4;
+      const ch = 19.6 - t * 1.4;
+      const turnShape = createFrameShape(cw, ch, 0.6, cw - 0.85, ch - 0.85, 0.35);
+      const turn = new THREE.Mesh(
+        extrudeCentered(turnShape, 0.14, 0.01, 0.01, 8),
+        mats.copperHeatSpreader
+      );
+      turn.position.z = -0.18;
+      turn.userData.noEdges = true;
+      nfcGrp.add(turn);
+    }
+
+    // Dual gold spring contact tail routing inward toward mainboard
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(2.6, 5.2, 0.2), mats.polyimideFpc);
+    tail.position.set(0, -13.2, 0.1);
+    const pad1 = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 0.26), mats.goldPlating);
+    pad1.position.set(-0.6, -15.0, 0.1);
+    const pad2 = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 0.26), mats.goldPlating);
+    pad2.position.set(0.6, -15.0, 0.1);
+    nfcGrp.add(tail, pad1, pad2);
+
+    g.add(nfcGrp);
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-nfc-coil',
+        22,
+        '#b45309',
+        g,
+        new THREE.Vector3(0, 0, -23.8),
+        new THREE.Vector3(-30.0, -14.0, -30.0),
+        new THREE.Vector3(-30.0, -14.0, -172.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // M23. USB-PD 3.1 (45W EPR) Controller IC & Back-to-Back MOSFET Protection (z = -20.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // USB-PD 3.1 PPS Protocol Controller QFN-32 IC
+    const pdIc = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 0.78), mats.icEpoxy);
+    pdIc.position.set(30.4, -10.8, 0.22);
+    const pdDot = new THREE.Mesh(new THREE.CircleGeometry(0.32, 10), mats.goldPlating);
+    pdDot.rotation.y = Math.PI;
+    pdDot.position.set(32.0, -9.2, -0.19);
+    pdDot.userData.noEdges = true;
+    g.add(pdIc, pdDot);
+
+    // Dual Back-to-Back Low-Rds(on) N-Channel Power MOSFETs (reverse-current & OVP block)
+    for (const my of [-7.0, -14.6]) {
+      const fet = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.4, 0.72), mats.icEpoxy);
+      fet.position.set(30.6, my, 0.26);
+      const drain = new THREE.Mesh(new THREE.BoxGeometry(0.45, 2.2, 0.45), mats.silverElectrode);
+      drain.position.set(32.3, my, 0.35);
+      const source = new THREE.Mesh(new THREE.BoxGeometry(0.45, 2.2, 0.45), mats.silverElectrode);
+      source.position.set(28.9, my, 0.35);
+      g.add(fet, drain, source);
+    }
+
+    // Current-sense shunt + CC1/CC2 24V protection micro-IC
+    const shunt = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.2, 0.48), mats.copperHeatSpreader);
+    shunt.position.set(26.2, -10.8, 0.38);
+    const ccProt = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.0, 0.52), mats.icEpoxy);
+    ccProt.position.set(34.6, -10.8, 0.34);
+    g.add(shunt, ccProt);
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-usb-pd-ctrl',
+        23,
+        '#10b981',
+        g,
+        new THREE.Vector3(0, 0, -20.8),
+        new THREE.Vector3(20.0, -6.0, -16.0),
+        new THREE.Vector3(18.0, -6.0, -152.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M24. 512Mb Octal-SPI NOR Boot Firmware Flash & Factory Calibration EEPROM (z = -20.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // 512 Mb Octal-SPI DDR NOR Boot Flash (BGA-24 / WSON-8 high-reliability package)
+    const norPkg = new THREE.Mesh(new THREE.BoxGeometry(6.4, 5.2, 0.88), mats.icEpoxy);
+    norPkg.position.set(-18.2, 22.8, 0.18);
+    const norDot = new THREE.Mesh(new THREE.CircleGeometry(0.36, 12), mats.goldPlating);
+    norDot.rotation.y = Math.PI;
+    norDot.position.set(-15.8, 24.6, -0.28);
+    norDot.userData.noEdges = true;
+    g.add(norPkg, norDot);
+
+    // 1 Mb Serial Calibration EEPROM (stores per-unit sensor defect map & shutter speed table)
+    const eepPkg = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.4, 0.72), mats.icEpoxy);
+    eepPkg.position.set(-10.8, 22.8, 0.26);
+    const eepBar = new THREE.Mesh(new THREE.BoxGeometry(0.42, 3.0, 0.14), mats.silverElectrode);
+    eepBar.position.set(-9.1, 22.8, -0.12);
+    g.add(eepPkg, eepBar);
+
+    // Quad gull-wing silver leads on EEPROM + SPI damping resistor network
+    for (let lx = -1.3; lx <= 1.31; lx += 0.86) {
+      for (const ly of [-1.95, 1.95]) {
+        const lead = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.55, 0.18), mats.silverElectrode);
+        lead.position.set(-10.8 + lx, 22.8 + ly, 0.52);
+        lead.userData.noEdges = true;
+        g.add(lead);
+      }
+    }
+    for (let rx = -19.8; rx <= -16.6; rx += 1.05) {
+      const res = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.15, 0.35), mats.smdCeramic);
+      res.position.set(rx, 18.8, 0.42);
+      res.userData.noEdges = true;
+      g.add(res);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-nor-flash-eeprom',
+        24,
+        '#334155',
+        g,
+        new THREE.Vector3(0, 0, -20.8),
+        new THREE.Vector3(-16.0, 14.0, -18.0),
+        new THREE.Vector3(-14.0, 14.0, -154.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M25. Rechargeable ML414 Lithium-Manganese RTC Backup Coin Cell & Holder (z = -20.8 mm)
+  // (Decoupled cleanly from M11 for zero z-fighting)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // ML414 rechargeable lithium-manganese dioxide coin cell body
+    const cellGeo = new THREE.CylinderGeometry(3.1, 3.1, 1.35, 22);
+    cellGeo.rotateX(Math.PI / 2);
+    const cell = new THREE.Mesh(cellGeo, mats.neodymiumMagnet);
+    cell.position.set(24.2, -13.5, -0.05);
+    const cathodeRim = new THREE.Mesh(
+      new THREE.TorusGeometry(2.68, 0.22, 8, 22),
+      mats.goldPlating
+    );
+    cathodeRim.position.set(24.2, -13.5, -0.72);
+    cathodeRim.userData.noEdges = true;
+    g.add(cell, cathodeRim);
+
+    // Gold-plated phosphor-bronze spring retention cradle & top contact arm
+    const cradle = new THREE.Mesh(
+      new THREE.TorusGeometry(3.42, 0.26, 8, 20, Math.PI * 1.45),
+      mats.beCuSpring
+    );
+    cradle.rotation.z = -Math.PI * 0.22;
+    cradle.position.set(24.2, -13.5, 0.1);
+    const topArm = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.25, 0.24), mats.beCuSpring);
+    topArm.position.set(24.2, -13.5, -0.82);
+    // Trickle-charge current-limiting diode & resistor
+    const diode = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.85, 0.5), mats.icEpoxy);
+    diode.position.set(20.0, -13.5, 0.38);
+    g.add(cradle, topArm, diode);
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-rtc-coin-cell',
+        25,
+        '#f59e0b',
+        g,
+        new THREE.Vector3(0, 0, -20.8),
+        new THREE.Vector3(14.0, -18.0, -16.0),
+        new THREE.Vector3(14.0, -18.0, -152.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M26. 6ch Full-Bridge IBIS/Shutter/Lens Power Driver SoC & Shunts (z = -20.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // 6-Channel Ultrasonic PWM H-Bridge Power Driver QFN-48 SoC
+    const drv = new THREE.Mesh(new THREE.BoxGeometry(7.2, 7.2, 0.92), mats.icEpoxy);
+    drv.position.set(11.6, -12.6, 0.18);
+    const thermalSlug = new THREE.Mesh(new THREE.BoxGeometry(4.2, 4.2, 0.12), mats.copperHeatSpreader);
+    thermalSlug.position.set(11.6, -12.6, -0.32);
+    g.add(drv, thermalSlug);
+
+    // Fine gold QFN perimeter pad stubs
+    for (let k = -2.6; k <= 2.61; k += 0.86) {
+      for (const s of [-3.75, 3.75]) {
+        const pH = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.36, 0.25), mats.silverElectrode);
+        pH.position.set(11.6 + k, -12.6 + s, 0.54);
+        pH.userData.noEdges = true;
+        g.add(pH);
+      }
+    }
+
+    // 6 Precision 20 mOhm Manganin Metal-Foil Current-Sense Shunt Resistors (IBIS 3ch + Shutter 3ch)
+    for (let i = 0; i < 6; i++) {
+      const sy = -9.6 - i * 1.25;
+      const shuntBody = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.72, 0.42), mats.copperHeatSpreader);
+      shuntBody.position.set(17.4, sy, 0.42);
+      const tL = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.74, 0.46), mats.silverElectrode);
+      tL.position.set(16.25, sy, 0.42);
+      const tR = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.74, 0.46), mats.silverElectrode);
+      tR.position.set(18.55, sy, 0.42);
+      shuntBody.userData.noEdges = true;
+      tL.userData.noEdges = true;
+      tR.userData.noEdges = true;
+      g.add(shuntBody, tL, tR);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-motor-driver-soc',
+        26,
+        '#4f46e5',
+        g,
+        new THREE.Vector3(0, 0, -20.8),
+        new THREE.Vector3(8.0, -24.0, -14.0),
+        new THREE.Vector3(8.0, -24.0, -150.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M27. Dedicated CFexpress 4.0 NVMe Copper Thermal Spreader Plate & TIM Pad (z = -25.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // C1100 Oxygen-Free Copper Spreader Plate over M09 CFexpress 4.0 card cage
+    const plate = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(23.6, 31.4, 1.8), 0.52, 0.06, 0.06, 12),
+      mats.copperHeatSpreader
+    );
+    plate.position.set(-34.2, 2.5, -0.2);
+    g.add(plate);
+
+    // High-k 6.0 W/m·K sky-blue silicone TIM interface pad pressing onto stainless CFx cage
+    const timPad = new THREE.Mesh(new THREE.BoxGeometry(20.4, 27.6, 0.56), mats.thermalPadBlue);
+    timPad.position.set(-34.2, 2.5, 0.38);
+    g.add(timPad);
+
+    // Thermal ground extension ear bridging toward Mg grip frame + 2 retention tabs
+    const ear = new THREE.Mesh(new THREE.BoxGeometry(5.2, 10.5, 0.48), mats.copperHeatSpreader);
+    ear.position.set(-46.8, 2.5, -0.2);
+    g.add(ear);
+    for (const ty of [-11.5, 16.5]) {
+      const tab = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.0, 0.9), mats.beCuSpring);
+      tab.position.set(-23.2, ty, 0.15);
+      g.add(tab);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-cfx-heat-plate',
+        27,
+        '#cd6a3a',
+        g,
+        new THREE.Vector3(0, 0, -25.4),
+        new THREE.Vector3(-28.0, 6.0, -34.0),
+        new THREE.Vector3(-26.0, 6.0, -176.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // M28. Front-Side (+Z Face) 6-Phase Molded-Alloy Power Inductor & MLCC Bank (z = -18.0 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // 6-Phase Closed-Magnetic-Circuit Molded Alloy Power Inductors backing ISP/NPU on +Z PCB face
+    for (let i = 0; i < 6; i++) {
+      const ix = -8.5 + i * 4.6;
+      const ind = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(3.4, 3.4, 0.42), 1.32, 0.06, 0.06, 10),
+        mats.ferriteInductor
+      );
+      ind.position.set(ix, -13.5, 0.1);
+      g.add(ind);
+      for (const tx of [-1.65, 1.65]) {
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.0, 0.95), mats.silverElectrode);
+        cap.position.set(ix + tx, -13.5, -0.05);
+        cap.userData.noEdges = true;
+        g.add(cap);
+      }
+    }
+
+    // 4 Ultra-Low-ESR Conductive Polymer Tantalum Bulk Filter Capacitors
+    for (let i = 0; i < 4; i++) {
+      const tx = -6.0 + i * 5.8;
+      const tant = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.2, 1.12), mats.tantalumCapYellow);
+      tant.position.set(tx, -18.4, 0.08);
+      const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.55, 2.22, 0.14), mats.coaxShieldCopper);
+      stripe.position.set(tx + 1.3, -18.4, 0.68);
+      stripe.userData.noEdges = true;
+      g.add(tant, stripe);
+    }
+
+    // High-density 0402 MLCC bypass decoupling matrix directly behind 4nm ISP BGA core
+    for (let mx = -4.0; mx <= 11.0; mx += 2.5) {
+      for (let my = -6.5; my <= 4.5; my += 2.75) {
+        const mlcc = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.65, 0.48), mats.smdCeramic);
+        mlcc.position.set(mx, my, -0.18);
+        mlcc.userData.noEdges = true;
+        g.add(mlcc);
+      }
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-power-inductor-bank',
+        28,
+        '#475569',
+        g,
+        new THREE.Vector3(0, 0, -18.0),
+        new THREE.Vector3(-18.0, -18.0, 10.0),
+        new THREE.Vector3(-16.0, -16.0, -124.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // M29. 12-Branch Mainboard Perimeter & Under-Board Wrap-Around Shielded FPC Harness (z = -17.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    const addRibbonBranch = (pts: Array<[number, number, number]>, width: number, shielded = true) => {
+      const curve = new THREE.CatmullRomCurve3(pts.map(([x, y, z]) => new THREE.Vector3(x, y, z)));
+      const geo = new THREE.TubeGeometry(curve, 18, width * 0.5, 6, false);
+      geo.scale(1, 1, 0.12);
+      const ribbon = new THREE.Mesh(geo, mats.polyimideFpc);
+      g.add(ribbon);
+
+      if (shielded) {
+        const mid = curve.getPoint(0.5);
+        const emiPatch = new THREE.Mesh(new THREE.BoxGeometry(width * 0.88, width * 0.88, 0.24), mats.emiShieldCan);
+        emiPatch.position.copy(mid);
+        emiPatch.userData.noEdges = true;
+        g.add(emiPatch);
+      }
+
+      // Gold ZIF termination finger at distal end
+      const endPt = curve.getPoint(1);
+      const goldTip = new THREE.Mesh(new THREE.BoxGeometry(width * 0.85, 1.3, 0.28), mats.goldPlating);
+      goldTip.position.copy(endPt);
+      goldTip.userData.noEdges = true;
+      g.add(goldTip);
+    };
+
+    // Upper EVF + Top-Deck Dial & Hot-Shoe branches (4 ribbons)
+    addRibbonBranch([[-24.0, 26.5, 0.2], [-24.0, 32.5, 0.8], [-20.0, 36.2, 2.2]], 5.4, true);
+    addRibbonBranch([[16.0, 26.5, 0.2], [16.0, 32.5, 0.8], [13.0, 36.2, 2.2]], 5.0, true);
+    addRibbonBranch([[-34.5, 26.5, 0.2], [-37.0, 32.8, 1.0], [-40.0, 35.8, 2.0]], 4.4, false);
+    addRibbonBranch([[33.0, 26.5, 0.2], [36.5, 32.5, 1.0], [39.0, 35.4, 2.0]], 4.4, false);
+
+    // Right (+X) Mount 12-Pin, Shutter & Side-Port branches (3 ribbons)
+    addRibbonBranch([[22.5, 13.5, 0.3], [32.0, 14.5, 1.4], [43.5, 14.0, 3.6]], 5.2, true);
+    addRibbonBranch([[22.5, -14.5, 0.3], [33.0, -14.5, 1.4], [43.5, -13.0, 3.8]], 4.8, true);
+    addRibbonBranch([[28.0, 1.5, 0.2], [35.5, 1.5, -0.6], [42.0, 1.5, -2.0]], 4.4, true);
+
+    // Left (-X) Grip, Card-Door Switch & Vertical-Grip Contact branches (3 ribbons)
+    addRibbonBranch([[-32.0, -26.5, 0.3], [-42.5, -26.5, 0.8], [-48.2, -23.0, 1.6]], 6.0, false);
+    addRibbonBranch([[-40.0, 12.0, 0.2], [-47.5, 12.0, -0.8], [-49.5, 8.0, -2.2]], 3.8, false);
+    addRibbonBranch([[-40.0, -12.0, 0.2], [-47.5, -12.0, -0.8], [-49.5, -15.5, -2.2]], 3.8, false);
+
+    // Bottom Under-Board Wrap-Around Rear LCD & Rear Button Panel branches (2 ribbons — A1 II signature!)
+    addRibbonBranch([[0.0, -28.2, -2.4], [0.0, -34.2, -1.6], [0.0, -35.8, 1.2], [0.0, -30.5, 2.8]], 7.4, true);
+    addRibbonBranch([[-16.0, -28.0, -2.0], [-16.0, -34.0, -1.2], [-18.5, -35.2, 1.0]], 4.6, false);
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-perimeter-ribbons',
+        29,
+        '#ea580c',
+        g,
+        new THREE.Vector3(0, 0, -17.8),
+        new THREE.Vector3(0, 26.0, 14.0),
+        new THREE.Vector3(0, 24.0, -118.0),
+        cp,
+        0.22
+      )
+    );
+  }
+
+  // =========================================================================
+  // M30. EVF Cavity Internal Ribbon Retention Clamp & 2-Screw Structural Tie Bracket (z = -16.4 mm)
+  // (Sony A1 II / A7R VI EVF cavity breakdown architecture)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+
+    // High-rigidity SUS304 structural tie bridge spanning top EVF notch
+    const bridgeShape = createRoundedRectShape(34.0, 5.2, 1.1);
+    const bridge = new THREE.Mesh(
+      extrudeCentered(bridgeShape, 0.65, 0.06, 0.06, 12),
+      mats.stainlessMachined
+    );
+    bridge.position.set(0, 26.8, 0);
+    g.add(bridge);
+
+    // Recessed stepped clamping flange pressing gently onto EVF MIPI-DSI ZIF flex connectors
+    const flange = new THREE.Mesh(new THREE.BoxGeometry(22.0, 3.4, 0.72), mats.emiShieldCan);
+    flange.position.set(0, 25.0, -0.32);
+    const cushion = new THREE.Mesh(new THREE.BoxGeometry(20.6, 2.4, 0.48), mats.epdmGasket);
+    cushion.position.set(0, 25.0, -0.82);
+    g.add(flange, cushion);
+
+    // 2 signature M1.4 stainless retaining screws at left & right notch shoulders
+    for (const sx of [-14.2, 14.2]) {
+      const scr = createPrecisionScrew(1.1, 0.36, 1.05, mats.stainlessMachined);
+      scr.rotation.x = Math.PI;
+      scr.position.set(sx, 26.8, -0.45);
+      g.add(scr);
+    }
+
+    parts.push(
+      finalizeMainboardPart(
+        'mb-evf-cavity-bracket',
+        30,
+        '#64748b',
+        g,
+        new THREE.Vector3(0, 0, -16.4),
+        new THREE.Vector3(0, 32.0, 24.0),
+        new THREE.Vector3(0, 30.0, -108.0),
+        cp,
+        0.26
       )
     );
   }

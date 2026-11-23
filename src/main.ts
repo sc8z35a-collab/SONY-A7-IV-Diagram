@@ -718,5 +718,107 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('micro-2layer-gs', false);
   syncRail();
+} else if (preset === 'phase11_mount') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-esd-ground-clips', false);
+  syncRail();
+} else if (preset === 'phase11_sensor') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('sensor-dram-wafer', false);
+  syncRail();
+} else if (preset === 'phase11_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-fdti-doping', false);
+  syncRail();
+} else if (preset === 'phase11_shutter') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-x-sync-contact', false);
+  syncRail();
+} else if (preset === 'phase11_evf') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('evf-oled-mla-stack', false);
+  syncRail();
+} else if (preset === 'phase11_lcd') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-lgp-led-bar', false);
+  syncRail();
+} else if (preset === 'phase11_lens') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-mr-magnet-scales', false);
+  syncRail();
+} else if (preset === 'phase12_mainboard') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mb-hdmi-daughterboard', false);
+  syncRail();
+} else if (preset === 'phase12_body') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-evf-tie-bracket', false);
+  syncRail();
+} else if (preset === 'phase12_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.9, true);
+  controls.setExplodeValue(0.9);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-lofic-cap', false);
+  syncRail();
 }
+
+
 

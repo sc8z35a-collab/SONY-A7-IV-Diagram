@@ -114,6 +114,21 @@ export interface MaterialLibrary {
   bodyBatteryCell: THREE.MeshPhysicalMaterial;
   bodyTopSubOled: THREE.MeshStandardMaterial;
   bodyRecRed: THREE.MeshPhysicalMaterial;
+  // Phase 11 Ultra-HD Watchmaker Materials (Micro-Surface PBR & Optical/Semiconductor Stacks)
+  beCuSpring: THREE.MeshPhysicalMaterial;
+  titaniumRivet: THREE.MeshPhysicalMaterial;
+  invarScaleBar: THREE.MeshPhysicalMaterial;
+  lcdPolarizerFilm: THREE.MeshPhysicalMaterial;
+  evfMlaGlass: THREE.MeshPhysicalMaterial;
+  sinteredSilver: THREE.MeshPhysicalMaterial;
+  siliconTsvDram: THREE.MeshPhysicalMaterial;
+  thermalTransferTape: THREE.MeshPhysicalMaterial;
+  velvetFlockTrap: THREE.MeshStandardMaterial;
+  // Phase 12 Ultra-HD 320-Part Materials
+  vaporWickCopper: THREE.MeshPhysicalMaterial;
+  rfGoldCoax: THREE.MeshPhysicalMaterial;
+  loficDielectric: THREE.MeshPhysicalMaterial;
+  tungstenLightShield: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -1060,6 +1075,187 @@ function createTopStatusOledTexture(): THREE.CanvasTexture {
   return tex;
 }
 
+/** Procedural CNC lathe radial/linear brushed stainless steel micro-groove bump map */
+function createCncBrushedMetalTexture(): THREE.CanvasTexture {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#808080';
+  ctx.fillRect(0, 0, s, s);
+  for (let y = 0; y < s; y += 2) {
+    const shade = 112 + ((y * 53) % 32);
+    ctx.fillStyle = `rgb(${shade},${shade},${shade})`;
+    ctx.fillRect(0, y, s, 1);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 6);
+  return tex;
+}
+
+/** Procedural bead-blasted thixomolded AZ91D magnesium micro-grain bump texture */
+function createMagnesiumGrainTexture(): THREE.CanvasTexture {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  const img = ctx.createImageData(s, s);
+  let seed = 1337;
+  for (let i = 0; i < img.data.length; i += 4) {
+    seed = (seed * 16807) % 2147483647;
+    const v = 108 + (seed % 40);
+    img.data[i] = v;
+    img.data[i + 1] = v;
+    img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(5, 5);
+  return tex;
+}
+
+/** Procedural 200um-pitch SmFeN multi-pole Vernier magnetic scale bar texture (zero text) */
+function createMagneticScaleTexture(): THREE.CanvasTexture {
+  const w = 128;
+  const h = 512;
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#1e2430';
+  ctx.fillRect(0, 0, w, h);
+  for (let y = 0; y < h; y += 8) {
+    ctx.fillStyle = (y / 8) % 2 === 0 ? '#475569' : '#0f172a';
+    ctx.fillRect(10, y, w - 20, 4);
+    ctx.fillStyle = (y / 8) % 2 === 0 ? '#38bdf8' : '#f59e0b';
+    ctx.fillRect(10, y + 4, 18, 2);
+  }
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, w - 4, h - 4);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(1, 3);
+  return tex;
+}
+
+/** Procedural crossed polarizer + RGB wide-gamut color-filter optical micro-lattice */
+function createPolarizerLatticeTexture(): THREE.CanvasTexture {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#101828';
+  ctx.fillRect(0, 0, s, s);
+  const colors = ['rgba(239,68,68,0.42)', 'rgba(34,197,94,0.42)', 'rgba(59,130,246,0.42)'];
+  for (let x = 0; x < s; x += 6) {
+    ctx.fillStyle = colors[(x / 6) % 3];
+    ctx.fillRect(x, 0, 4, s);
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  for (let i = -s; i < s * 2; i += 12) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + s, s);
+    ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 3);
+  return tex;
+}
+
+/** Procedural hexagonal On-Chip Micro-Lens Array (MLA) light-extraction optical cap texture */
+function createHexMlaTexture(): THREE.CanvasTexture {
+  const s = 256;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#e0f2fe';
+  ctx.fillRect(0, 0, s, s);
+  const step = 16;
+  for (let r = 0; r < s / step + 2; r++) {
+    for (let col = 0; col < s / step + 2; col++) {
+      const cx = col * step + (r % 2 === 0 ? 0 : step * 0.5);
+      const cy = r * step * 0.866;
+      const g = ctx.createRadialGradient(cx - 2, cy - 2, 1, cx, cy, step * 0.48);
+      g.addColorStop(0, '#ffffff');
+      g.addColorStop(0.55, '#7dd3fc');
+      g.addColorStop(1, '#0284c7');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, step * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 3);
+  return tex;
+}
+
+/** Procedural 3rd-Wafer Stacked DRAM & TSV Micro-Bump Lithography Texture (zero text) */
+function createTsvDramTexture(): THREE.CanvasTexture {
+  const s = 512;
+  const c = document.createElement('canvas');
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#0c1629';
+  ctx.fillRect(0, 0, s, s);
+  // 8 high-speed DRAM memory banks separated by copper TSV power/data spines
+  for (let bx = 0; bx < 4; bx++) {
+    for (let by = 0; by < 2; by++) {
+      const x0 = 20 + bx * 120;
+      const y0 = 24 + by * 236;
+      const grad = ctx.createLinearGradient(x0, y0, x0 + 106, y0 + 218);
+      grad.addColorStop(0, '#1e3a5f');
+      grad.addColorStop(0.5, '#0f4c75');
+      grad.addColorStop(1, '#1b262c');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x0, y0, 106, 218);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 1;
+      for (let ly = y0 + 8; ly < y0 + 214; ly += 8) {
+        ctx.beginPath();
+        ctx.moveTo(x0 + 4, ly);
+        ctx.lineTo(x0 + 102, ly);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#d97736';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x0, y0, 106, 218);
+    }
+  }
+  // Central horizontal copper TSV via spine
+  ctx.fillStyle = '#e6b85c';
+  for (let vx = 24; vx < s - 24; vx += 14) {
+    ctx.beginPath();
+    ctx.arc(vx, s / 2, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 8;
+  return tex;
+}
+
 export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLibrary {
   const dieTex = createSensorDieTexture();
   const pcbTex = createPcbTexture();
@@ -1074,6 +1270,12 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const oledViewfinderTex = createOledViewfinderTexture();
   const leatherTex = createLeatheretteTexture();
   const topOledTex = createTopStatusOledTexture();
+  const cncBrushedTex = createCncBrushedMetalTexture();
+  const mgGrainTex = createMagnesiumGrainTexture();
+  const magScaleTex = createMagneticScaleTexture();
+  const polarizerTex = createPolarizerLatticeTexture();
+  const hexMlaTex = createHexMlaTexture();
+  const tsvDramTex = createTsvDramTexture();
 
   const common = {
     clippingPlanes,
@@ -1816,10 +2018,12 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.75,
   });
 
-  // Weather-sealed magnesium-aluminum EVF optical housing shell (distinct cool slate gunmetal)
+  // Weather-sealed magnesium-aluminum EVF optical housing shell (distinct cool slate gunmetal with bead-blast micro-grain)
   const evfHousingMg = new THREE.MeshPhysicalMaterial({
     ...common,
     color: 0x4b5563,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.035,
     metalness: 0.68,
     roughness: 0.36,
     clearcoat: 0.14,
@@ -1828,20 +2032,24 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   // -------------------------------------------------------------------------
   // Large-Diameter Mirrorless Lens Mount Materials
   // -------------------------------------------------------------------------
-  // CNC mirror-lapped hardened stainless steel (SUS420J2 / hard-chrome bayonet flange)
+  // CNC mirror-lapped hardened stainless steel (SUS420J2 / hard-chrome bayonet flange with fine CNC sheen)
   const mountStainlessFlange = new THREE.MeshPhysicalMaterial({
     ...common,
     color: 0xd8dee6,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.018,
     metalness: 0.94,
     roughness: 0.16,
-    clearcoat: 0.42,
-    clearcoatRoughness: 0.12,
+    clearcoat: 0.44,
+    clearcoatRoughness: 0.11,
   });
 
   // Tempered phosphor-bronze / beryllium-copper bayonet clamping leaf spring
   const mountSpringSteel = new THREE.MeshStandardMaterial({
     ...common,
     color: 0xc98a3c,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.016,
     metalness: 0.86,
     roughness: 0.28,
   });
@@ -1879,10 +2087,12 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     roughness: 0.62,
   });
 
-  // Thixomolded AZ91D magnesium-aluminum structural front bulkhead
+  // Thixomolded AZ91D magnesium-aluminum structural front bulkhead (bead-blasted cast texture)
   const mountMgBulkhead = new THREE.MeshPhysicalMaterial({
     ...common,
     color: 0x5c6675,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.045,
     metalness: 0.72,
     roughness: 0.42,
     clearcoat: 0.1,
@@ -2008,6 +2218,8 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const bodyMgShell = new THREE.MeshPhysicalMaterial({
     ...common,
     color: 0x2c323d,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.06,
     metalness: 0.66,
     roughness: 0.39,
     clearcoat: 0.15,
@@ -2059,6 +2271,152 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     metalness: 0.24,
     roughness: 0.22,
     clearcoat: 0.72,
+  });
+
+  // ── Phase 11 Ultra-HD Watchmaker Materials ──────────────────────────────────
+  // Beryllium-copper (CuBe2) high-elasticity ESD ground fingers & contact springs
+  const beCuSpring = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd89143,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.025,
+    metalness: 0.90,
+    roughness: 0.22,
+    clearcoat: 0.22,
+  });
+
+  // Machined Ti-6Al-4V micro-rivets, helicoil inserts & reinforcing steel/Ti pins
+  const titaniumRivet = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xaab4c0,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.03,
+    metalness: 0.93,
+    roughness: 0.19,
+    clearcoat: 0.18,
+  });
+
+  // SmFeN high-coercivity magnetic Vernier scale strip on Invar zero-CTE backing
+  const invarScaleBar = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: magScaleTex,
+    metalness: 0.44,
+    roughness: 0.26,
+    clearcoat: 0.45,
+  });
+
+  // Crossed-polarizer / TAC / quarter-wave retarder optical film stack
+  const lcdPolarizerFilm = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    map: polarizerTex,
+    color: 0x3b6796,
+    metalness: 0.06,
+    roughness: 0.10,
+    opacity: 0.34,
+    iridescence: 0.88,
+    iridescenceIOR: 1.54,
+    iridescenceThicknessRange: [260, 520],
+    clearcoat: 0.60,
+  });
+
+  // Hexagonal Micro-Lens Array (MLA) + Thin-Film Encapsulation cap for high-nit Micro-OLED
+  const evfMlaGlass = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    map: hexMlaTex,
+    color: 0x8ad6f5,
+    metalness: 0.02,
+    roughness: 0.06,
+    opacity: 0.30,
+    iridescence: 0.94,
+    iridescenceIOR: 1.52,
+    iridescenceThicknessRange: [280, 540],
+    clearcoat: 0.72,
+  });
+
+  // Pressure-sintered nano-silver die-attach & thermal interface alloy (220 W/m·K)
+  const sinteredSilver = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd8e0ea,
+    metalness: 0.96,
+    roughness: 0.20,
+    clearcoat: 0.24,
+  });
+
+  // 3rd-wafer stacked LPDDR/DRAM silicon die with copper TSV via spine
+  const siliconTsvDram = new THREE.MeshPhysicalMaterial({
+    ...common,
+    map: tsvDramTex,
+    metalness: 0.64,
+    roughness: 0.24,
+    clearcoat: 0.36,
+    iridescence: 0.35,
+    iridescenceIOR: 1.65,
+  });
+
+  // Copper-laminated graphite thermal-transfer bridge tape (chassis-to-sensor heatsink)
+  const thermalTransferTape = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x3a4350,
+    map: graphiteTex,
+    bumpMap: graphiteTex,
+    bumpScale: 0.06,
+    metalness: 0.58,
+    roughness: 0.32,
+    clearcoat: 0.28,
+  });
+
+  // Ultra-black flocked velvet / carbon-nanotube stray-light trap (reflectance < 0.1%)
+  const velvetFlockTrap = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x0b0d10,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.14,
+    metalness: 0.01,
+    roughness: 0.98,
+  });
+
+  // Phase 12: Sintered porous micro-copper capillary wick inside two-phase vapor chamber
+  const vaporWickCopper = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xc86432,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.16,
+    metalness: 0.86,
+    roughness: 0.44,
+    clearcoat: 0.15,
+  });
+
+  // Phase 12: Gold-braided micro-coaxial RF antenna cable & EMI shielding jacket
+  const rfGoldCoax = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd4a437,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.08,
+    metalness: 0.92,
+    roughness: 0.22,
+    clearcoat: 0.35,
+  });
+
+  // Phase 12: High-k MIM/MOM LOFIC lateral overflow capacitor dielectric (cyan-iridescent)
+  const loficDielectric = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x0891b2,
+    metalness: 0.38,
+    roughness: 0.16,
+    clearcoat: 0.65,
+    iridescence: 0.55,
+    iridescenceIOR: 1.8,
+  });
+
+  // Phase 12: Dense dark tungsten optical light-shield cap for global shutter MEM node
+  const tungstenLightShield = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x262c36,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.05,
+    metalness: 0.94,
+    roughness: 0.24,
+    clearcoat: 0.18,
   });
 
   const allMaterials: THREE.Material[] = [
@@ -2167,6 +2525,19 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     bodyBatteryCell,
     bodyTopSubOled,
     bodyRecRed,
+    beCuSpring,
+    titaniumRivet,
+    invarScaleBar,
+    lcdPolarizerFilm,
+    evfMlaGlass,
+    sinteredSilver,
+    siliconTsvDram,
+    thermalTransferTape,
+    velvetFlockTrap,
+    vaporWickCopper,
+    rfGoldCoax,
+    loficDielectric,
+    tungstenLightShield,
   ];
 
   return {
@@ -2276,6 +2647,19 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     bodyBatteryCell,
     bodyTopSubOled,
     bodyRecRed,
+    beCuSpring,
+    titaniumRivet,
+    invarScaleBar,
+    lcdPolarizerFilm,
+    evfMlaGlass,
+    sinteredSilver,
+    siliconTsvDram,
+    thermalTransferTape,
+    velvetFlockTrap,
+    vaporWickCopper,
+    rfGoldCoax,
+    loficDielectric,
+    tungstenLightShield,
     allMaterials,
   };
 }

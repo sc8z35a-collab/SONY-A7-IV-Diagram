@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { EVF_OPTICAL_Y } from './evfParts';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface EvfPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -290,6 +291,8 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
   );
   diopterGuide.computeLineDistances();
   explodeGuides.add(diopterGuide);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 20);
+  explodeGuides.add(radialGuides.group);
 
   // Utility to sample a piecewise-linear path at normalized t in [0, 1]
   const samplePolyline = (pts: THREE.Vector3[], t: number, out: THREE.Vector3) => {
@@ -445,6 +448,7 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
         new THREE.Vector3(pDio.group.position.x - 0.2, pDio.group.position.y, pDio.group.position.z),
       ]);
       diopterGuide.computeLineDistances();
+      radialGuides.update(explodeFactor, visible, parts);
     },
   };
 }

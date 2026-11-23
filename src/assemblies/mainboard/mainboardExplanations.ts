@@ -448,4 +448,392 @@ export const MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'mb_chassis',
   },
+
+  // =========================================================================
+  // Phase 12 Ultra-HD Mainboard Sub-Assemblies (M17–M30)
+  // =========================================================================
+  'mb-vapor-wick-core': {
+    title: 'M17. ベイパーチャンバー内蔵・焼結多孔質銅毛細管ウィック＆凝縮柱マトリクス',
+    subtitle: 'Internal Sintered Porous Copper Capillary Wick & Micro-Support Pillar Matrix',
+    category: 'M17 / 二相気液循環・毛細管還流コア',
+    plainAnalogy:
+      'ベイパーチャンバーの銅板の中に隠れている「スポンジ状の極細銅パウダー層」です。熱いISPの上で蒸発して端っこで冷えて水に戻った液体を、重力に逆らって毛細管現象で再びISPの真上へ自動で吸い戻します。',
+    summary:
+      '薄型二相ベイパーチャンバー（M01）の真空密閉内部に収まる焼結銅パウダー多孔質ウィック層と微細銅支柱ピラー群。カメラを縦位置・逆さ持ちで撮影しても途切れない毛細管圧力により、8K60p連続発熱を面内全域へ超高速輸送します。',
+    opticsAndPhysics: [
+      '毛細管限界 ΔP_cap = 2σ·cos(θ)/r_eff により、粒径40〜70 μmの焼結銅粒子間隙が強力な液還流ポンプとして機能し、あらゆる姿勢角でドライアウトを防止。',
+      '等間隔の銅マイクロ支柱ピラーが大気圧による真空容器の凹み（座屈）を防ぎつつ、蒸発面と凝縮面の熱伝導バイパスを形成します。',
+      '内部封入された極微量の純水作動流体は減圧下で45〜55℃付近から相変化蒸発を開始し、単体銅板の約8〜12倍の実効熱拡散率を発揮します。',
+    ],
+    formula: {
+      expression: 'ΔP_cap = 2σ·cosθ / r_pore ≥ ΔP_vapor + ΔP_liquid + ρgH  (k_eff ≈ 3,500–5,000 W/m·K)',
+      description: '焼結銅毛細管ウィックの吸引圧が蒸気・液体圧力損失と重力を上回り、全姿勢で二相熱循環を維持。',
+    },
+    nextGenInnovation:
+      '2024–2026年の超薄型0.45mm級マルチメッシュ＋焼結銅ハイブリッドウィック技術により、薄型ミラーレスボディでも8K RAW長回しを支える熱拡散容量を実現しています。',
+    specs: [
+      { label: 'ウィック構造', value: '焼結微細銅パウダー（粒径 40–70 μm）＋支持マイクロピラー' },
+      { label: '作動流体', value: '減圧封入・超高純度脱気純水（二相気液相変化循環）' },
+      { label: '実効熱伝導', value: '約 3,500〜5,000 W/m·K（無垢銅の約10倍）' },
+      { label: '姿勢依存性', value: '全360°チルト・縦位置撮影対応（アンチグラビティ還流）' },
+    ],
+    diagramType: 'mb_vapor_wick_core',
+  },
+
+  'mb-rf-shield-bracket': {
+    title: 'M18. 背面RFシールド構造ブラケット＆貫通型グラファイト熱転写テープ',
+    subtitle: 'Rear RF Shield Structural Retaining Bracket & Threaded Heat-Transfer Tape',
+    category: 'M18 / 電磁遮蔽・基板放熱＆背面構造保護',
+    plainAnalogy:
+      'Kolari VisionのSony A1 II・A7R VI分解でも最初にお目見えする「メイン基板を丸ごと押さえる大きな金属シールド枠」と、その枠のすき間を縫い通して熱を背面へ逃がす「黒い放熱テープ」です。',
+    summary:
+      'Sony A1 II／A7R VIの実際の分解調査で特徴的に確認された、メイン基板背面を4本の精密ねじで覆う高剛性ステンレスRFシールドブラケットと、ブラケット開口を通して熱を背面外装へ導く貫通型グラファイト熱転写テープ。',
+    opticsAndPhysics: [
+      '背面LCDモニター（M01背後）とメイン基板の間に金属ファラデーシールド壁を形成し、高速MIPI/LPDDR5Xのクロック放射ノイズがLCDタッチパネルやWi-Fiへ干渉するのを阻止します。',
+      'ブラケットのスリットに熱転写テープを縫い通す構造により、振動でテープが剥がれても放熱経路が断たれず、背面マグネシウム筐体へ確実に熱を逃がします。',
+      '4点締め付けにより、落下衝撃時のメイン基板たわみ（BGAクラック）を抑制する構造補強梁を兼ねています。',
+    ],
+    formula: {
+      expression: 'SE_shield(1GHz) > 42 dB   ＋   R_th(PCB→RearFrame) < 1.8 K/W',
+      description: '背面LCD〜メイン基板間の電磁隔離と機械補強・放熱橋渡しを1枚の精密プレス骨格で同時達成。',
+    },
+    nextGenInnovation:
+      '最新世代のSonyフラッグシップでは、複数枚の分割シールドブラケットと多層熱転写テープを組み合わせ、整備性（モジュラー分解）と高密度放熱を両立しています。',
+    specs: [
+      { label: '材質構造', value: 'SUS304精密プレス RF遮蔽ブラケット（4点ねじ締結）' },
+      { label: '放熱経路', value: 'ブラケット貫通型・高熱伝導グラファイト熱転写テープ' },
+      { label: '遮蔽効果', value: '> 42 dB（LCDタッチノイズ＆RF放射相互干渉防止）' },
+      { label: '実機出典', value: 'Sony A1 II / A7R VI 分解構造（Kolari Vision調査準拠）' },
+    ],
+    diagramType: 'mb_rf_shield_bracket',
+  },
+
+  'mb-hdmi-daughterboard': {
+    title: 'M19. モジュラー独立HDMI 2.1（48Gbps FRL）ドーターボード＆リドライバIC',
+    subtitle: 'Modular Removable HDMI 2.1 (48 Gbps FRL) Daughterboard, Redriver IC & ZIF Flex',
+    category: 'M19 / 独立交換型・超高帯域映像出力モジュール',
+    plainAnalogy:
+      '動画撮影で一番抜き差しが多くて壊れやすいフルサイズHDMI端子を、メイン基板から切り離して「2本のネジだけで交換できる小さな独立基板」にしたプロ仕様の整備設計です。',
+    summary:
+      'Canon EOS R5 Mark IIの実機分解（Kolari Vision調査）で高く評価された、メイン基板と別体化された独立型フルサイズHDMI 2.1（Type A）ドーターボード。48 Gbps FRL信号波形を整える専用リドライバIC・TVS保護アレイ・2点固定ねじ・高速シールドFPCで構成されます。',
+    opticsAndPhysics: [
+      '外部モニターやリグ配線で強いこじり荷重がかかりやすいHDMIポートを独立ドーターボード化することで、万一の端子破損時でも高価なメインマザーボード全交換を回避できます。',
+      '8K60p RAWや4K120p 12bit出力では1レーン12 Gbps×4の超高周波信号が走るため、端子直近にイコライザ内蔵リドライバICを配置し、長いHDMIケーブルでもアイ開口を確保します。',
+      '超低容量（<0.25 pF）TVSダイオードアレイがホットプラグ時の静電気サージから4nm ISPのHDMI PHYを保護します。',
+    ],
+    formula: {
+      expression: 'BW_FRL = 4 lanes × 12 Gbps = 48 Gbps   (C_TVS < 0.25 pF, 差動100Ω ±5%)',
+      description: '独立ドーターボード構造で機械的保守性を確保しつつ、リドライバICで48Gbps FRL波形品位を維持。',
+    },
+    nextGenInnovation:
+      '近年の動画ハイブリッド機では、故障リスクの高いフルサイズHDMI Type A端子をメイン基板から分離モジュラー化する設計がプロ現場のダウンタイム削減に大きく貢献しています。',
+    specs: [
+      { label: '規格帯域', value: 'フルサイズ HDMI 2.1 Type A（48 Gbps FRL / 8K RAW出力）' },
+      { label: '信号整形', value: '内蔵EQ 4ch 12Gbps HDMI 2.1 リドライバIC ＋ 低容量TVS' },
+      { label: '固定方式', value: '独立2点ステンレスねじ ＋ 差動インピーダンス制御FPC' },
+      { label: '保守性', value: 'メイン基板非交換でのポート単体リペア対応' },
+    ],
+    diagramType: 'mb_hdmi_daughterboard',
+  },
+
+  'mb-audio-jack-board': {
+    title: 'M20. 独立3.5mm音声ジャック＆24bit/96kHz オーディオADC/DACサブ基板',
+    subtitle: 'Shielded 3.5mm Mic/Headphone TRS Jack Sub-Board, 24-Bit Codec & Cover Bracket',
+    category: 'M20 / 低ノイズ分離アナログ音声インターフェース',
+    plainAnalogy:
+      'マイクとヘッドホンの丸い差し込み口を、ノイズの多いデジタル脳みそ（ISP）から離して金属カバーで囲った「静かな独立サウンド基板」です。サーッという雑音（ホワイトノイズ）を徹底的に減らします。',
+    summary:
+      'Sony A7R VI分解で確認された2点固定金属カバー付き独立音声ジャックユニット。金メッキ3.5mm TRSマイク入力（プラグインパワー対応）＆ヘッドホンモニター出力、専用24-bit/96kHz低ノイズオーディオADC/DACコーデック、およびアナログ専用グラウンド分離フィルタを実装します。',
+    opticsAndPhysics: [
+      'マイク入力は数ミリボルト（mV）の極微弱アナログ信号であるため、高速デジタル処理を行うメイン基板から物理分離＆金属シールドすることで電源リップルやクロック飛び込みを−100 dB以下へ抑えます。',
+      'プラグインパワー供給回路には超低ノイズLDOとインラッシュ制限回路を備え、コンデンサーマイク着脱時のポップノイズを防止。',
+      '高出力ヘッドホンアンプは収録現場の騒音下でも32Ωモニターヘッドホンを低歪み（THD+N < 0.003%）で駆動します。',
+    ],
+    formula: {
+      expression: 'DR_audio = 20·log₁₀(2²⁴) → 実測 SNR ≥ 104 dB (A-weighted),  THD+N < 0.003%',
+      description: 'デジタル基板からの物理分離と専用金属シールドにより、収録レベルの低フロアノイズ音声入力を実現。',
+    },
+    nextGenInnovation:
+      'マルチインターフェースシュー経由のデジタル4ch音声（24bit）と、独立サブ基板の低ノイズ3.5mmアナログ入力のハイブリッド運用により、外部レコーダー不要のシネマ収録を支えます。',
+    specs: [
+      { label: '入出力端子', value: '金メッキ 3.5mm ステレオマイク（PIP対応）＋ ヘッドホン出力' },
+      { label: '変換精度', value: '専用 24-bit / 96 kHz 低ノイズ オーディオADC/DAC コーデック' },
+      { label: 'ノイズ対策', value: '2点固定ステンレス遮蔽カバー ＋ 分離アナログGNDプレーン' },
+      { label: 'ダイナミックレンジ', value: 'SNR ≥ 104 dB（A特性・超低フロアノイズプリアンプ）' },
+    ],
+    diagramType: 'mb_audio_jack_board',
+  },
+
+  'mb-wifi-mimo-antennas': {
+    title: 'M21. Wi-Fi 6E/7（2×2 MIMO）セラミックパッチアンテナ＆金編組極細同軸群',
+    subtitle: 'Dual-Band 2.4/5/6 GHz Ceramic MIMO Patch Antennas & Gold-Braided U.FL Coax Cables',
+    category: 'M21 / 空間ダイバーシティ・超高速無線伝送アンテナ',
+    plainAnalogy:
+      'マグネシウムの金属ボディは電波を遮ってしまうため、電波が通り抜けやすいカメラ上部の樹脂窓まで「極細の金色ケーブル」で2本の高性能セラミックアンテナを伸ばして、写真を秒速でスマホやFTPへ飛ばします。',
+    summary:
+      'M13のWi-Fi 6E/7 RF SiPからU.FLコネクタ経由でボディ上部の非金属RF透過ウィンドウへ配線された2系統（2×2 MIMO）高誘電セラミックパッチアンテナと、特性インピーダンス50Ωの極細金編組マイクロ同軸ケーブル群。',
+    opticsAndPhysics: [
+      'マグネシウム合金外装は完全な電磁遮蔽体（ファラデーケージ）となるため、アンテナ素子をトップデッキ裏の電波透過樹脂窓へ分離配置し、極細50Ω同軸ケーブルでRF基板と低損失接続します。',
+      '2本のアンテナを直交偏波＆波長間隔（λ/2以上）で離して配置する2×2 MIMO空間ダイバーシティにより、スタジアムや報道現場のマルチパス環境でも安定したGbps級FTP伝送を維持。',
+      '金メッキ編組シールド同軸（外径0.81 mm）が6 GHz帯の伝送損失を最小化しつつ、メイン基板のデジタルノイズ拾い込みを完全に防ぎます。',
+    ],
+    formula: {
+      expression: 'Z₀ = 50 Ω ± 2 Ω,   C_MIMO = N_stream · B · log₂(1 + SNR)  (最大 2.4 Gbps 級)',
+      description: '直交配置2×2 MIMOアンテナと50Ω低損失マイクロ同軸により、報道現場での高速RAW即時送信を実現。',
+    },
+    nextGenInnovation:
+      'Sony A7R V/A1 II等の実機分解でもトップパネル着脱時に必ず現れる2本の極細同軸ケーブルを忠実に再現し、金属筐体カメラにおけるRFアンテナ設計の妙を可視化しています。',
+    specs: [
+      { label: '対応帯域', value: '2.4 GHz / 5 GHz / 6 GHz トライバンド（Wi-Fi 6E/7 ＋ BT 5.3）' },
+      { label: 'アンテナ素子', value: '高誘電セラミックチップ＋LDS樹脂一体パッチアンテナ × 2基' },
+      { label: '給電線', value: '外径0.81 mm 50Ω 金編組マイクロ同軸 ＋ U.FL/IPEX端子' },
+      { label: 'ダイバーシティ', value: '2×2 MIMO 直交偏波配置（マルチパス耐性強化）' },
+    ],
+    diagramType: 'mb_wifi_mimo_antennas',
+  },
+
+  'mb-nfc-coil': {
+    title: 'M22. 13.56 MHz NFC（Type-3）平面銅コイルアンテナ＆フェライト磁性シート',
+    subtitle: '13.56 MHz NFC Planar Copper Coil Antenna & High-Permeability Ferrite Backing Sheet',
+    category: 'M22 / ワンタッチ近距離無線ペアリング機構',
+    plainAnalogy:
+      'スマートフォンをカメラのグリップ横にポンとかざすだけでWi-Fi接続や画像転送が始まる「うず巻き状の銅コイル」と、後ろの金属ボディに磁力が吸い取られないよう跳ね返す「黒いフェライト磁石シート」です。',
+    summary:
+      'グリップ側面外皮直下に配置される13.56 MHz NFC（FeliCa／NFC-A/B対応）多層プリント銅コイルと、高透磁率アモルファス・フェライト磁性シールドシート。',
+    opticsAndPhysics: [
+      '金属（マグネシウム筐体）のすぐ近くに13.56 MHzループコイルを置くと渦電流損失で共振が崩れ通信不能になります。高透磁率フェライトシート（μ_r ≈ 120）を背面に貼ることで磁束を金属から迂回させ、確実な誘導結合を実現します。',
+      'LC並列共振回路のQ値と共振周波数（13.56 MHz ± 50 kHz）をトリミングし、スマホ側リーダーからの微弱磁界で無給電起動・ペアリング情報をやり取りします。',
+    ],
+    formula: {
+      expression: 'f_0 = 1 / (2π√(L·C)) = 13.56 MHz,   Φ_link = μ_eff · N · I · A / l',
+      description: 'フェライト背面シートでマグネシウム筐体の渦電流を遮断し、13.56 MHzの確実なワンタッチ結合を確保。',
+    },
+    nextGenInnovation:
+      'BLE常時低消費電力ペアリングと併用することで、現場でのスマートフォン連携・タイムコード同期・カメラ設定クローニングを一瞬で完了できます。',
+    specs: [
+      { label: '動作周波数', value: '13.56 MHz（ISO/IEC 14443 / 18092 / NFC Forum Type 3）' },
+      { label: 'コイル構造', value: 'フレキシブル基板エッチング 6ターン平面銅スパイラルコイル' },
+      { label: '磁性遮蔽', value: '高透磁率シンタード・フェライト背面シート（渦電流防止）' },
+      { label: '配置位置', value: '右手グリップ／カードドア側面（非金属エラストマー直下）' },
+    ],
+    diagramType: 'mb_nfc_coil',
+  },
+
+  'mb-usb-pd-ctrl': {
+    title: 'M23. USB-PD 3.1（45W EPR）電力制御IC＆双方向保護ロードスイッチ回路',
+    subtitle: 'USB Power Delivery 3.1 Controller IC, Dual Back-to-Back MOSFETs & CC Protection',
+    category: 'M23 / 高速充電・外部給電インテリジェント制御',
+    plainAnalogy:
+      'モバイルバッテリーやACアダプタをUSB-Cにつないだ瞬間、「何ボルト・何アンペアまで安全に受け取れるか」を相手と高速交渉し、電圧異常があれば0.001秒で電気を遮断する「電気の関所」です。',
+    summary:
+      'USB Type-Cポート直近に実装されるUSB-PD 3.1（Programmable Power Supply対応）プロトコルコントローラIC、逆流防止バック・トゥ・バックPower MOSFET対、および過電圧・過電流保護（OVP/OCP）ロードスイッチ群。',
+    opticsAndPhysics: [
+      'CC1/CC2通信ライン上でBMC（Bi-phase Mark Coding）パケットをやり取りし、5V〜15V/3A（最大45W級）の最適プロファイルを動的にネゴシエーション。撮影しながらのバッテリー急速充電と外部給電連続8K収録をシームレスに切り替えます。',
+      '2個の低オン抵抗（R_DS(on) < 12 mΩ）MOSFETを背中合わせに直列配置することで、バッテリー側からUSB-Cポートへの逆流放電と、粗悪充電器接続時の24V過電圧印加を確実にブロックします。',
+    ],
+    formula: {
+      expression: 'P_PD = V_bus × I_bus ≤ 15 V × 3 A = 45 W,   P_loss = I² · 2·R_DS(on) < 0.22 W',
+      description: '超低損失MOSFETとインテリジェントPDネゴシエーションにより、発熱を抑えつつ大電力外部給電を実現。',
+    },
+    nextGenInnovation:
+      '最新フラッグシップではUSB-PDによる外部給電＋10 Gbps UVC/UACストリーミング＋Ethernetテザリングを1本のUSB-Cケーブルで同時動作させる電源管理が標準化しています。',
+    specs: [
+      { label: '対応規格', value: 'USB Power Delivery 3.1 + PPS（5V/9V/12V/15V 動的交渉）' },
+      { label: '保護素子', value: '双方向逆流防止 Dual N-MOSFET（R_DS(on) < 12 mΩ）' },
+      { label: '安全機能', value: 'OVP（過電圧）/ OCP（過電流）/ OTP（過熱）マイクロ秒遮断' },
+      { label: '通信線保護', value: 'CC1/CC2 24V耐圧・VBUSショート保護IC' },
+    ],
+    diagramType: 'mb_usb_pd_ctrl',
+  },
+
+  'mb-nor-flash-eeprom': {
+    title: 'M24. 512Mb Octal-SPI NORファームウェアFlash＆個体別校正データEEPROM',
+    subtitle: '512 Mb Octal-SPI NOR Boot Firmware Flash & Factory Calibration Serial EEPROM',
+    category: 'M24 / 超高速ブートOS＆工場光学・画素欠陥校正ROM',
+    plainAnalogy:
+      '電源を入れた瞬間に0.4秒でカメラを目覚めさせる「OS記憶チップ（NORフラッシュ）」と、工場で1台ずつ測定した「センサーのクセ・シャッター速度微調整・手ブレ補正の基準値」を永久保存している専用カルテ（EEPROM）です。',
+    summary:
+      'メインISPの即時XIP（Execute-In-Place）起動を担う512 Mb Octal-SPI（200 MHz DDR）高速NORフラッシュメモリと、撮像素子の画素欠陥マップ・色温度基準・IBISゲイン・シャッター幕速補正テーブルを不揮発保持する高信頼シリアルEEPROMのデュアルROM構成。',
+    opticsAndPhysics: [
+      'NANDフラッシュと異なりランダム読出レイテンシが極めて小さいOctal-SPI NORフラッシュ（400 MB/s）を採用することで、電源ONから初回レリーズまで約0.4秒というプロ必須の超高速起動を達成します。',
+      '工場出荷時に全数測定された撮像センサー個別のダークシェーディング・位相AFピクセル位置・シャッター幕速バラツキ係数はEEPROMへ暗号化格納され、20年以上のデータ保持信頼性を持ちます。',
+    ],
+    formula: {
+      expression: 'BW_OctalSPI = 8 bit × 200 MHz × 2 (DDR) = 400 MB/s  →  起動時間 t_boot ≈ 0.4 s',
+      description: '400 MB/sのDDR Octal-SPIブートと個体別工場校正ROMにより、瞬時起動と出荷時精度の長期維持を保証。',
+    },
+    nextGenInnovation:
+      'デュアルバンクA/Bパーティション構造を備え、ファームウェア更新中に万一バッテリーが抜けても自動で旧バンクへフェイルセーフ復帰するプロ仕様の耐障害性を実装しています。',
+    specs: [
+      { label: '主記憶ROM', value: '512 Mb Octal-SPI DDR NOR Flash（400 MB/s・A/B冗長構成）' },
+      { label: '校正ROM', value: '高耐久 1 Mb シリアルEEPROM（書換100万回・データ保持40年）' },
+      { label: '格納データ', value: 'RTOSファーム・AI認識重み・画素欠陥＆シャッター個体校正値' },
+      { label: 'パッケージ', value: '耐振動・低背 WSON-8 / BGA-24 高信頼パッケージ' },
+    ],
+    diagramType: 'mb_nor_flash_eeprom',
+  },
+
+  'mb-rtc-coin-cell': {
+    title: 'M25. 内蔵ML414充電式RTCバックアップボタン電池＆金メッキ保持バネ',
+    subtitle: 'Rechargeable ML414 Lithium-Manganese RTC Backup Coin Cell & Gold Spring Holder',
+    category: 'M25 / 電源断時の時計・設定・タイムコード保持電源',
+    plainAnalogy:
+      'メインのバッテリーを抜いて何週間しまっておいても、日付や時刻・カスタム設定が消えないようにメイン基板の上で静かに電気を蓄え続けている「直径4mmの極小充電式ボタン電池」です。',
+    summary:
+      'M11の±0.5 ppm TCXO（水晶発振器）およびリアルタイムクロック（RTC）回路へ常時マイクロアンペアの待機電力を供給し続ける、耐熱リフロー対応ML414二次リチウムマンガンボタン電池・金メッキ弾性保持ホルダー・トリクル充電抵抗回路。',
+    opticsAndPhysics: [
+      'メインバッテリー装着時に約3.0 Vへ微弱電流（数10 μA）でトリクル充電され、メインバッテリーを取り外した後もRTC消費電流（< 0.5 μA）のみで約3〜6か月間にわたり正確な年月日・撮影時刻・カスタムメニュー設定を維持します。',
+      '複数台カメラのタイムコード同期収録やC2PA撮影時刻の真正性担保（改ざん防止メタデータ）において、時刻飛びを防ぐ不可欠のバックアップ電源です。',
+    ],
+    formula: {
+      expression: 't_hold = Q_ML414 / I_RTC ≈ 1.2 mAh / 0.5 μA ≈ 2,400 hours (約100日以上)',
+      description: 'わずか直径4.8mmの二次電池と0.5μA超低消費RTCの組合せで、バッテリー無装着でも長期間時刻を保持。',
+    },
+    nextGenInnovation:
+      '鉛フリー高温リフロー対応セルと高耐食金メッキ接点クリップにより、寒冷地から高温多湿環境まで10年超のカメラ寿命に寄り添う信頼性を実現しています。',
+    specs: [
+      { label: '電池規格', value: 'ML414 充電式リチウムマンガン二酸化物セル（3.0 V / 1.2 mAh）' },
+      { label: '消費電流', value: 'RTC待機時 < 0.5 μA（バッテリー抜去後 約3か月以上保持）' },
+      { label: '保持構造', value: '金メッキリン青銅スプリングホルダー ＋ 逆流防止ダイオード' },
+      { label: '役割', value: '日時・カスタム設定・C2PA電子署名タイムスタンプ基準維持' },
+    ],
+    diagramType: 'mb_rtc_coin_cell',
+  },
+
+  'mb-motor-driver-soc': {
+    title: 'M26. 6chフルブリッジ統合モータードライバーSoC＆電流検出シャント抵抗群',
+    subtitle: '6-Channel Full-Bridge IBIS/Shutter/Lens Power Driver SoC & Current-Sense Shunts',
+    category: 'M26 / 電磁アクチュエータ高効率PWM大電流駆動',
+    plainAnalogy:
+      '5軸手ブレ補正の磁石コイルやシャッター巻き上げモーターへ、毎秒数万回の超細かいパルス電気を送り込んで「0.001mm単位の力加減」を操る、カメラ内の筋肉コントローラICです。',
+    summary:
+      '5軸IBIS（X/Y/Roll 3ch VCMコイル）・シャッターチャージDCモーター・電磁ブースト＆パークロックソレノイドを1チップで高効率PWM駆動する6ch統合HブリッジドライバーSoCと、±0.5%精度の低抵抗マンガン銅電流検出シャント抵抗アレイ。',
+    opticsAndPhysics: [
+      '100 kHz超の超音波域PWMキャリア周波数でVCMコイルを電流帰還制御（クローズドループ）することで、動画収録時にマイクへ乗るコイル鳴き（可聴域スイッチング音）を完全に排除します。',
+      '20 mΩの精密金属箔シャント抵抗で各チャンネルの実電流をリアルタイム測定し、コイル発熱による抵抗増加（銅温度係数 +0.39%/K）を即座補償して8.5段IBISの推力直線性を維持します。',
+    ],
+    formula: {
+      expression: 'F_Lorentz = B · L · I_sense   (I_sense = V_shunt / 20 mΩ,  f_PWM > 100 kHz 無音域)',
+      description: 'シャント電流帰還と超音波PWMにより、無音かつ温度ドリフトゼロの電磁推力制御を達成。',
+    },
+    nextGenInnovation:
+      '低抵抗DMOSパワートランジスタを熱露出パッド（Exposed Thermal Pad）経由でメイン基板の内層銅ベタへ直結し、連写・長回し動画でも熱暴走しない大電流駆動を実現しています。',
+    specs: [
+      { label: '駆動出力', value: '6ch 独立フルHブリッジ（最大 3.5 A/ch ピークパルス対応）' },
+      { label: '制御方式', value: '100 kHz超 超音波無音PWM ＋ 電流帰還サーボ制御' },
+      { label: '電流検出', value: '20 mΩ ±0.5% 低TCR金属箔シャント抵抗アレイ' },
+      { label: '駆動対象', value: '5軸IBIS VCM × 3ch ＋ シャッターチャージ・ロック機構' },
+    ],
+    diagramType: 'mb_motor_driver_soc',
+  },
+
+  'mb-cfx-heat-plate': {
+    title: 'M27. CFexpress 4.0専用・銅製放熱スプレッダー板＆高熱伝導シリコーンパッド',
+    subtitle: 'Dedicated CFexpress 4.0 NVMe Copper Thermal Spreader Plate & High-k Silicone Pad',
+    category: 'M27 / 8K RAW連続書込・メディア過熱サーマルスロットリング防止',
+    plainAnalogy:
+      '8K動画をすごいスピードで書き込み続けるとメモリーカード自体がホカホカに熱くなるため、カードスロットの真上に「銅の冷えピタ板」を貼り付けて、カードの熱をボディへ逃がして書き込み速度低下を防ぐパーツです。',
+    summary:
+      'PCIe Gen4 ×2（最大4 GB/s）で8K RAW／120fps連写を連続記録するCFexpress 4.0 Type Bカードケージ（M09）背面へ密着する専用C1100銅製放熱プレートと、6.0 W/m·K柔軟シリコーン熱界面パッド。',
+    opticsAndPhysics: [
+      'CFexpress Type Bカード内蔵のNVMeコントローラは連続4 GB/s書込時に約3〜4 W発熱し、カード温度が70℃を超えるとサーマルスロットリングが発動して録画が途切れます。',
+      'ステンレス製カードケージ上面に高熱伝導パッド経由で銅スプレッダーを圧着し、熱をグリップ側のマグネシウムフレームへ分散させることでカード温度を約10〜14℃低減します。',
+    ],
+    formula: {
+      expression: 'ΔT_card = P_NVMe · (t_pad / (k_pad · A) + R_Cu)  →  カード表面温度 −12 ℃ 改善',
+      description: 'NVMeカードの発熱を専用銅スプレッダーでボディ側へ逃がし、8K RAWの連続記録耐性を飛躍的に向上。',
+    },
+    nextGenInnovation:
+      'CFexpress 4.0時代に入りカード自体が小型SSD並みの発熱源となったため、最新フラッグシップではISPだけでなくカードスロット専用の熱設計が必須パーツとなっています。',
+    specs: [
+      { label: '放熱板', value: 'C1100無酸素銅 プレス成形スプレッダープレート（t = 0.5 mm）' },
+      { label: '熱界面材', value: '柔軟高熱伝導シリコーンTIMパッド（6.0 W/m·K）' },
+      { label: '冷却効果', value: '8K RAW連続書込時のCFexpressカード温度を約10–14℃低減' },
+      { label: '配置位置', value: 'M09 CFexpress 4.0 Type B ケージ直上（背面側）' },
+    ],
+    diagramType: 'mb_cfx_heat_plate',
+  },
+
+  'mb-power-inductor-bank': {
+    title: 'M28. 基板前面（+Z面）大電流6相モールド合金パワーインダクタ＆MLCCバンク',
+    subtitle: 'Front-Side 6-Phase Molded-Alloy Power Inductor & Low-ESR Bulk Capacitor Bank',
+    category: 'M28 / 両面高密度実装・大電流瞬時応答電源フィルタ',
+    plainAnalogy:
+      '120コマ連写や4基のリニアモーターが一斉に動いた瞬間に電気が一瞬足りなくならないよう、基板の表側（センサー側）にずらっと並べられた「電気の貯水タンク（コンデンサ）と整流コイル（インダクタ）」の列です。',
+    summary:
+      '12層Any-Layer HDIメイン基板（M14）の前面側（+Z面）へ高密度実装される6相メタルコンポジットパワーインダクタ群と、超低ESR導電性高分子タンタル＋積層セラミックコンデンサ（MLCC）バルクデカップリングバンク。',
+    opticsAndPhysics: [
+      '4nm ISP＋AI NPUは120fps処理のフレーム境界で数マイクロ秒の間に消費電流が1 Aから12 A超へ急変（di/dt > 20 A/μs）します。メイン基板裏表の直下ビア経由で低ESLコンデンサバンクを配置することで電源電圧ドロップ（ΔV = L·di/dt）を±15 mV以内へ抑えます。',
+      '鉄系アモルファス合金粉でコイル巻線を完全モールド封止した磁気シールド型インダクタを採用し、すぐ前にあるイメージセンサーへの磁束漏洩を極限まで低減しています。',
+    ],
+    formula: {
+      expression: 'ΔV_droop = L_loop · (di/dt) + ESR · ΔI < 15 mV   (10 A/μs 過渡応答)',
+      description: 'ISP直下の裏面バルクフィルタ配置と閉磁路インダクタにより、電圧降下と磁気ノイズを同時封殺。',
+    },
+    nextGenInnovation:
+      '両面高密度実装（背面SoC＋前面直下電源フィルタ）により、極小カメラボディにノートPC級の多相電源インテグリティ（PI）を凝縮しています。',
+    specs: [
+      { label: 'インダクタ', value: '閉磁路メタルコンポジット パワーインダクタ（0.47 μH / 12 A）× 6相' },
+      { label: '平滑容量', value: '低ESR高分子タンタル（100 μF）＋ 高耐圧0402 MLCCアレイ' },
+      { label: '配置戦略', value: 'M14 HDI基板前面側（ISP・NPU直裏最短ビア直結）' },
+      { label: '磁気対策', value: '完全シールドモールド構造（撮像素子への漏洩磁界抑制）' },
+    ],
+    diagramType: 'mb_power_inductor_bank',
+  },
+
+  'mb-perimeter-ribbons': {
+    title: 'M29. メイン基板外周12系統＆基板裏面回り込みシールドFPCリボンハーネス群',
+    subtitle: '12-Branch Mainboard Perimeter & Under-Board Wrap-Around Shielded FPC Ribbon Harness',
+    category: 'M29 / 全サブシステム統合神経網（A1 II / R5 II実機構造）',
+    plainAnalogy:
+      'カメラを分解するとメイン基板の四方八方（さらに基板の裏側まで回り込んで！）にびっしり繋がっている「12本の極薄オレンジ色リボン神経網」。EVF・背面ボタン・ダイヤル・シャッター・マウントの全情報をメイン基板へ集約します。',
+    summary:
+      'Kolari VisionのSony A1 IIおよびCanon R5 Mark II実機分解で詳細に報告された、メイン基板周囲および背面下へ回り込んで接続される12系統の高密度ポリイミドFPCリボンケーブル集合体。EMI遮蔽フィルム付き高速差動リボンと屈曲耐性ポリイミド帯で構成されます。',
+    opticsAndPhysics: [
+      '基板外周の四辺（上：EVF・トップダイヤル、右：I/O・マウント、左：カードドア・グリップ、下：背面パネル・LCD）と裏面回り込みルートへ立体的かつ最短で配線することで、12層基板の面積を極小化します。',
+      '各リボン先端にはレーザー加工の位置決め耳タブと0.3 mmピッチ金メッキ接触指を備え、M15のZIFコネクタへ一発ロック挿入されます。',
+      '高速信号リボン（EVF/LCD/HDMI）表面には銀インク電磁遮蔽層（EMIシールドフィルム）がラミネートされ、近接配線間のクロストークを−30 dB以下に抑えます。',
+    ],
+    formula: {
+      expression: 'Z_diff(FPC) = 100 Ω ± 7%,   ピッチ p = 0.30 mm × 12系統 (総信号線 > 380本)',
+      description: '380本超の制御・映像・給電ラインを立体FPC配線網へ集約し、超コンパクトなボディ容積を実現。',
+    },
+    nextGenInnovation:
+      'Sony A1 II分解でも話題になった「メイン基板裏側へ回り込むセンサー／ボディ連携フレキ」まで含め、現代ミラーレスの超高密度立体実装をリアルに表現しています。',
+    specs: [
+      { label: '系統数', value: '12系統（EVF・トップ・リア・マウント・シャッター・グリップ・HDMI等）' },
+      { label: '構造仕様', value: '0.3 mmピッチ金端子 ポリイミドFPC ＋ 銀ペーストEMI遮蔽層' },
+      { label: '立体配線', value: '外周四辺接続 ＋ 基板裏面（+Z側）回り込みショートカット経路' },
+      { label: '実機出典', value: 'Sony A1 II / Canon R5 Mark II 分解調査（Kolari Vision）' },
+    ],
+    diagramType: 'mb_perimeter_ribbons',
+  },
+
+  'mb-evf-cavity-bracket': {
+    title: 'M30. EVFキャビティ内FPC押さえクランプ＆2点ねじ構造タイブラケット',
+    subtitle: 'EVF Cavity Internal Ribbon Retention Clamp & 2-Screw Structural Tie Bracket',
+    category: 'M30 / ファインダー〜メイン基板間・耐衝撃配線ロック＆剛性架橋',
+    plainAnalogy:
+      'ファインダーを外した奥のくぼみの中に隠れている「2本ネジの小さな金属押さえプレート」です。ファインダーへ繋がる繊細なフラットケーブルが衝撃で抜けないよう上からそっと押さえ、上部の骨格もつなぎ止めます。',
+    summary:
+      'Kolari VisionのSony A1 IIおよびA7R VI分解で必ず取り外しが必要と報告された、EVF収納キャビティ直下（メイン基板上部ノッチ内）を2本のM1.4精密ねじで締結するステンレス製リボン保持＆構造タイブラケット。',
+    opticsAndPhysics: [
+      'EVFユニット（240Hz MIPI-DSI）とメイン基板を結ぶ高密度ZIFコネクタ直上に弾性スポンジ付き金属クランプを被せることで、激しい落下衝撃や輸送振動でもコネクタ浮き（EVFブラックアウト障害）を100%防ぎます。',
+      'EVFノッチ（凹み）はメイン基板とミッドフレームの剛性が最も低下しやすい弱点部であるため、この金属タイブラケットが左右のフレーム肩部を橋渡ししてねじり剛性を補強します。',
+    ],
+    formula: {
+      expression: 'F_clamp_ZIF ≈ 4.5 N (弾性クッション均一圧着)   ＋   ノッチ部ねじり剛性 +28%',
+      description: 'EVF高速通信コネクタの耐衝撃抜け止めと、基板上部ノッチ部の構造補強を兼務する隠れた重要部品。',
+    },
+    nextGenInnovation:
+      'サービス分解時にも2本のねじを外すだけでEVFユニットを独立換装できるモジュラー整備設計と、プロ機必須の耐衝撃性を両立しています。',
+    specs: [
+      { label: '構造材質', value: 'SUS304精密プレス成形 橋渡しブラケット ＋ ウレタン押さえパッド' },
+      { label: '固定方式', value: 'EVFキャビティ内 2点精密M1.4ステンレスねじ締結' },
+      { label: '保護対象', value: '240Hz EVF MIPI-DSI ZIFコネクタ ＆ トップデッキ連絡リボン' },
+      { label: '実機出典', value: 'Sony A1 II / A7R VI EVFキャビティ分解構造（Kolari Vision）' },
+    ],
+    diagramType: 'mb_evf_cavity_bracket',
+  },
 };
+
