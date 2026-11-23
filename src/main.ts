@@ -1050,6 +1050,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mount-screw-orange-orings', false);
   syncRail();
+} else if (preset === 'phase23_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-mpcr-color-router', false);
+  syncRail();
 }
 
 

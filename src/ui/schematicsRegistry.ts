@@ -15,6 +15,7 @@ import { renderPhase17ShutterAuditSchematicSvg } from './phase17ShutterAuditSche
 import { renderPhase18LensMountSchematicSvg } from './phase18LensMountSchematics';
 import { renderPhase19UltraAnatomySchematicSvg } from './phase19UltraAnatomySchematics';
 import { renderPhase20MicroMountSchematicSvg } from './phase20MicroMountSchematics';
+import { renderPhase23MicroNextGenSchematicSvg } from './phase23MicroNextGenSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -70,6 +71,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase20MicroMountSvg = renderPhase20MicroMountSchematicSvg(type);
   if (phase20MicroMountSvg) return phase20MicroMountSvg;
+
+  const phase23MicroNextGenSvg = renderPhase23MicroNextGenSchematicSvg(type);
+  if (phase23MicroNextGenSvg) return phase23MicroNextGenSvg;
 
   switch (type) {
     case 'baffle':

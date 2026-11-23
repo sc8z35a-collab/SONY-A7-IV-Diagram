@@ -8,7 +8,7 @@ import { createPhysicsOverlay } from './physicsOverlay';
 /**
  * Assemble both the Macro 70-part Full-Frame Image Sensor / 5-Axis IBIS subsystem
  * (40 macro at startup + 30 lazy-hydrated standalone micro parts)
- * and the Micro 50-layer 2x2 Bayer Pixel semiconductor cross-section subsystem
+ * and the Micro 75-layer 2x2 Bayer Pixel semiconductor cross-section subsystem
  * (lazy-hydrated on first visit to Micro mode!).
  */
 export function createSensorAssemblies(mats: MaterialLibrary): {
@@ -61,7 +61,7 @@ export function createSensorAssemblies(mats: MaterialLibrary): {
   const micro: AssemblyController = {
     rootGroup: microGroup,
     parts: microParts,
-    deferredStandaloneCount: 50,
+    deferredStandaloneCount: 75,
     hydrateStandalone: () => {
       if (microHydrated) return [];
       microHydrated = true;
