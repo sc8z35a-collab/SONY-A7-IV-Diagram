@@ -2,16 +2,16 @@ import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildLcdParts } from './lcdParts';
+import { buildLcdMicroParts } from './lcdMicroParts';
 import { createLcdPhysicsOverlay } from './lcdPhysicsOverlay';
 
 /**
- * Assemble the complete 6-part Flagship 4-Axis Multi-Angle Rear LCD Monitor subsystem
- * with live optical-axis tilt & +X vari-angle articulation, BEF polarized backlight
- * collimation rays, and exploded CAD alignment guides.
+ * Assemble the complete 51-part Flagship 4-Axis Multi-Angle Rear LCD Monitor
+ * subsystem (27 macro at startup + 24 lazy-hydrated standalone micro parts).
  */
 export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildLcdParts(mats);
+  const { parts, rig } = buildLcdParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +32,23 @@ export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 24,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const lcdMicro = buildLcdMicroParts(mats);
+      for (const p of lcdMicro.parts) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      rig.monitorParts.push(...lcdMicro.monitorParts);
+      return lcdMicro.parts;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyDynamics(elapsed, physicsActive, explodeFactor, integrated);
@@ -47,4 +61,5 @@ export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

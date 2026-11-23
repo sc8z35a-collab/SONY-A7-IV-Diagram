@@ -91,7 +91,8 @@ function finalizeMainboardPart(
  * the 5-Axis IBIS Sensor Module (z = -15.6 .. -28.8 mm, rear component side faces -Z).
  */
 export function buildMainboardParts(
-  mats: MaterialLibrary
+  mats: MaterialLibrary,
+  includeStandalone = true
 ): { parts: CadPart[]; rig: MainboardDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2006,6 +2007,10 @@ export function buildMainboardParts(
   // =========================================================================
   // LIVE DYNAMICS (ISP Pipeline Pulse, NPU Systolic Heartbeat, CFexpress Activity)
   // =========================================================================
+  ispActiveGlow.userData.dynamicGlow = true;
+  npuSystolicGlow.userData.dynamicGlow = true;
+  cfexActivityLed.userData.dynamicGlow = true;
+
   const applyDynamics = (elapsed: number, physicsActive: boolean) => {
     const ispMat = ispActiveGlow.material as THREE.MeshBasicMaterial;
     const npuMat = npuSystolicGlow.material as THREE.MeshBasicMaterial;
@@ -2023,11 +2028,9 @@ export function buildMainboardParts(
     ledMat.opacity = 0.35 + 0.65 * Math.abs(Math.sin(elapsed * 11.0));
   };
 
-  // Append 24 Phase 16A standalone-only Vapor Chamber & Sony OEM Mainboard micro-parts (M31–M54; omitted in whole-camera views!)
-  parts.push(...buildMainboardMicroParts(mats));
-
-  // Append 6 Phase 19D standalone-only Mainboard deep-audit micro-parts (M55–M60; omitted in whole-camera views!)
-  parts.push(...buildMainboardUltraAuditParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildMainboardStandaloneParts(mats));
+  }
 
   return {
     parts,
@@ -2038,4 +2041,9 @@ export function buildMainboardParts(
       applyDynamics,
     },
   };
+}
+
+export function buildMainboardStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 16A (24) + Phase 19D (6) = 30 standalone-only vapor chamber & mainboard micro-parts (M31–M60)
+  return [...buildMainboardMicroParts(mats), ...buildMainboardUltraAuditParts(mats)];
 }

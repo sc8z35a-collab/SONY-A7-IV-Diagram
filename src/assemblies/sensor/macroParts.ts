@@ -83,7 +83,7 @@ function finalizePart(
  *  - S25: Σ-Folded Pyrolytic Graphite Sheet (PGS) Flexible Thermal Bridge
  *  - S26: Rear Pure-Copper Micro-Fin Heatsink & Graphite Spreading Plate (NEW!)
  */
-export function buildMacroSensorParts(mats: MaterialLibrary): CadPart[] {
+export function buildMacroSensorParts(mats: MaterialLibrary, includeStandalone = true): CadPart[] {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const dummy = new THREE.Object3D();
@@ -657,7 +657,7 @@ export function buildMacroSensorParts(mats: MaterialLibrary): CadPart[] {
       const mid2 = p0.clone().lerp(p1, 0.72);
       mid2.z = peakZ - 0.08;
       const curve = new THREE.CatmullRomCurve3([p0, mid1, mid2, p1]);
-      return new THREE.TubeGeometry(curve, 10, 0.048, 5, false);
+      return new THREE.TubeGeometry(curve, 5, 0.048, 3, false);
     };
 
     const xCount = 42;
@@ -2147,11 +2147,14 @@ export function buildMacroSensorParts(mats: MaterialLibrary): CadPart[] {
     );
   }
 
-  // Phase 14: Append 24 standalone-only OEM micro-parts (S41–S64; omitted in whole-camera views)
-  parts.push(...buildSensorMicroParts(mats));
-
-  // Phase 19C: Append 6 standalone-only Sensor/IBIS deep-audit parts (S65–S70; omitted in whole-camera views)
-  parts.push(...buildSensorUltraAuditParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildSensorStandaloneParts(mats));
+  }
 
   return parts;
+}
+
+export function buildSensorStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 14 (24 OEM) + Phase 19C (6 deep-audit) = 30 standalone-only sensor/IBIS micro-parts (S41–S70)
+  return [...buildSensorMicroParts(mats), ...buildSensorUltraAuditParts(mats)];
 }

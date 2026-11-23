@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildBodyParts } from './bodyParts';
+import { buildBodyParts, buildBodyStandaloneParts } from './bodyParts';
 import { createBodyPhysicsOverlay } from './bodyPhysicsOverlay';
 
 /**
- * Assemble the complete 12-part Flagship Camera Magnesium Monocoque Body,
- * 7.2V/6A Dual-Cell Battery, Deep Leatherette Grip, 21-Pin Digital Audio Hot Shoe,
- * Top/Rear Dials, 8-Way AF Joystick, Weather-Sealed Doors & Optical-Axis Tripod Baseplate.
+ * Assemble the complete 76-part Flagship Camera Magnesium Monocoque Body
+ * subsystem (38 macro at startup + 38 lazy-hydrated standalone micro parts).
  */
 export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildBodyParts(mats);
+  const { parts, rig } = buildBodyParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +31,22 @@ export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 38,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildBodyStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyDynamics(elapsed, physicsActive);
@@ -47,4 +59,5 @@ export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

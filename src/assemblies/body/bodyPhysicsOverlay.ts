@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
-import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
+import { createRadialTrajectoryGuides, updateLinePointsInPlace } from '../../engine/CadHelpers';
 
 export interface BodyPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -127,7 +127,7 @@ export function createBodyPhysicsOverlay(
       busPaths[3][2].copy(pmicHub);
 
       for (let i = 0; i < busLines.length; i++) {
-        busLines[i].geometry.setFromPoints(busPaths[i]);
+        updateLinePointsInPlace(busLines[i], busPaths[i]);
       }
 
       for (const p of pulses) {

@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildMountParts } from './mountParts';
+import { buildMountParts, buildMountStandaloneParts } from './mountParts';
 import { createMountPhysicsOverlay } from './mountPhysicsOverlay';
 
 /**
- * Assemble the complete 12-part Flagship 55mm Large-Diameter Mirrorless Lens Mount
- * CAD subsystem with real-time F0.95 converging optical ray-tracing, stray-light baffle
- * extinction, 12-pin high-speed communication pulses, and fail-safe lock-pin kinematics.
+ * Assemble the complete 60-part Flagship 55mm Large-Diameter Mirrorless Lens Mount
+ * subsystem (26 macro at startup + 34 lazy-hydrated standalone micro parts).
  */
 export function createMountAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildMountParts(mats);
+  const { parts, rig } = buildMountParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +31,22 @@ export function createMountAssembly(mats: MaterialLibrary): AssemblyController {
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 34,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildMountStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyDynamics(elapsed, physicsActive);
@@ -47,4 +59,5 @@ export function createMountAssembly(mats: MaterialLibrary): AssemblyController {
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

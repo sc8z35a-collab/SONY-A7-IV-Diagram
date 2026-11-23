@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
-import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
+import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';
 import {
   IRIS_Z,
   LensOpticalSim,
@@ -466,11 +466,7 @@ export function createLensPhysicsOverlay(
 
       for (let i = 0; i < guideLines.length; i++) {
         const [gx, gy] = guideOffsets[i];
-        guideLines[i].geometry.setFromPoints([
-          new THREE.Vector3(gx, gy, zMin),
-          new THREE.Vector3(gx, gy, zMax),
-        ]);
-        guideLines[i].computeLineDistances();
+        updateLine2PtsInPlace(guideLines[i], gx, gy, zMin, gx, gy, zMax, true);
       }
       radialGuides.update(explodeFactor, visible, parts);
     },

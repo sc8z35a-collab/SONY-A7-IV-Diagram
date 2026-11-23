@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
-import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
+import {
+  createRadialTrajectoryGuides,
+  updateLine2PtsInPlace,
+  updateLinePointsInPlace,
+} from '../../engine/CadHelpers';
 
 export interface MountPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -297,7 +301,7 @@ export function createMountPhysicsOverlay(
       twistArc.position.z = zFlange + 3.2;
       twistArc.rotation.z = Math.sin(elapsed * 1.6) * 0.22;
 
-      // Update F0.95 / F1.2 converging wide-diameter optical rays
+      // Update F0.95 / F1.2 converging wide-diameter optical rays (zero allocations!)
       const zLensIn = zFlange + 22.0;
       optSpecs.forEach((spec, idx) => {
         const pts = optPaths[idx];
@@ -305,18 +309,22 @@ export function createMountPhysicsOverlay(
         pts[1].set(spec.rx, spec.ry, zFlange);
         pts[2].set(spec.sx * 1.08, spec.sy * 1.08, zMask);
         pts[3].set(spec.sx, spec.sy, zSensor);
-        optLines[idx].geometry.setFromPoints(pts);
+        updateLinePointsInPlace(optLines[idx], pts);
       });
 
       // Update oblique stray-light flare rays extinguished at velvet baffle wall!
       straySpecs.forEach((s, idx) => {
-        const pts = [
-          new THREE.Vector3(s.startX, s.startY, zFlange + 18.0),
-          new THREE.Vector3(s.hitX, s.hitY, zBaffle),
-        ];
-        strayLines[idx].geometry.setFromPoints(pts);
-        strayLines[idx].computeLineDistances();
-        strayDots[idx].position.copy(pts[1]);
+        updateLine2PtsInPlace(
+          strayLines[idx],
+          s.startX,
+          s.startY,
+          zFlange + 18.0,
+          s.hitX,
+          s.hitY,
+          zBaffle,
+          true
+        );
+        strayDots[idx].position.set(s.hitX, s.hitY, zBaffle);
       });
 
       // Update 12-pin high-speed SPI/IBIS/Power signal paths
@@ -335,7 +343,7 @@ export function createMountPhysicsOverlay(
         pts[1].set(cPos.x + px, cPos.y + py, cPos.z - 2.2);
         pts[2].set(pcbPos.x + px, pcbPos.y + py, pcbPos.z - 1.0);
         pts[3].set(pcbPos.x + (idx - 1.5) * 2.2, pcbPos.y - 32.4, pcbPos.z - 13.5);
-        busLines[idx].geometry.setFromPoints(pts);
+        updateLinePointsInPlace(busLines[idx], pts);
       });
 
       // Animate photon beads along optical rays
@@ -366,18 +374,19 @@ export function createMountPhysicsOverlay(
       const zRear = pRear.group.position.z - 1.5;
 
       cornerCoords.forEach(([cx, cy], i) => {
-        guideLines[i].geometry.setFromPoints([
-          new THREE.Vector3(cx, cy, zFront),
-          new THREE.Vector3(cx, cy, zRear),
-        ]);
-        guideLines[i].computeLineDistances();
+        updateLine2PtsInPlace(guideLines[i], cx, cy, zFront, cx, cy, zRear, true);
       });
 
-      contactGuide.geometry.setFromPoints([
-        new THREE.Vector3(0, pContacts.group.position.y - 25.0, pContacts.group.position.z),
-        new THREE.Vector3(0, pPcb.group.position.y - 25.0, pPcb.group.position.z),
-      ]);
-      contactGuide.computeLineDistances();
+      updateLine2PtsInPlace(
+        contactGuide,
+        0,
+        pContacts.group.position.y - 25.0,
+        pContacts.group.position.z,
+        0,
+        pPcb.group.position.y - 25.0,
+        pPcb.group.position.z,
+        true
+      );
       radialGuides.update(explodeFactor, visible, parts);
     },
   };

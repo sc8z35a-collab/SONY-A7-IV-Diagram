@@ -165,14 +165,24 @@ export interface MaterialLibrary {
   allMaterials: THREE.Material[];
 }
 
-function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const w = 1024;
-  const h = 682;
+function createScaledCanvas(
+  baseW: number,
+  baseH: number,
+  desktopScale = 0.5
+): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; w: number; h: number } {
+  const s = GPU_PROFILE.isMobile ? desktopScale * 0.5 : desktopScale;
+  const cw = Math.max(64, Math.round(baseW * s));
+  const ch = Math.max(64, Math.round(baseH * s));
+  const canvas = document.createElement('canvas');
+  canvas.width = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+  ctx.scale(cw / baseW, ch / baseH);
+  return { canvas, ctx, w: baseW, h: baseH };
+}
 
-  const colorCanvas = document.createElement('canvas');
-  colorCanvas.width = w;
-  colorCanvas.height = h;
-  const ctx = colorCanvas.getContext('2d')!;
+function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
+  const { canvas: colorCanvas, ctx, w, h } = createScaledCanvas(1024, 682, 0.5);
 
   // Base silicon wafer deep jewel-like emerald-indigo-violet
   const grad = ctx.createLinearGradient(0, 0, w, h);
@@ -193,19 +203,17 @@ function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THR
   ctx.fillRect(0, 0, marginX, h);
   ctx.fillRect(w - marginX, 0, marginX, h);
 
-  // Subtle bus traces in periphery
+  // Batched subtle bus traces in periphery (1 stroke call!)
   ctx.strokeStyle = 'rgba(186, 212, 240, 0.34)';
-  ctx.lineWidth = 1.2;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
   for (let i = 6; i < marginY - 6; i += 4) {
-    ctx.beginPath();
     ctx.moveTo(marginX - 16, i);
     ctx.lineTo(w - marginX + 16, i);
-    ctx.stroke();
-    ctx.beginPath();
     ctx.moveTo(marginX - 16, h - i);
     ctx.lineTo(w - marginX + 16, h - i);
-    ctx.stroke();
   }
+  ctx.stroke();
 
   // Gold/Al bond pads around perimeter
   ctx.fillStyle = '#e6c05a';
@@ -218,18 +226,17 @@ function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THR
     ctx.fillRect(w - 16, y, 10, 7);
   }
 
-  // Active 36x24mm imaging area frame (Optical Black + Readout Ring)
+  // Active 36x24mm imaging area frame
   ctx.strokeStyle = '#7bb0d4';
   ctx.lineWidth = 2.5;
   ctx.strokeRect(marginX - 3, marginY - 3, w - marginX * 2 + 6, h - marginY * 2 + 6);
 
-  // Fine diffraction micro-grid inside active area
   const actX = marginX;
   const actY = marginY;
   const actW = w - marginX * 2;
   const actH = h - marginY * 2;
 
-  // Spectral diffraction sheen bands (signature CMOS sensor optical interference)
+  // Spectral diffraction sheen bands
   const spec = ctx.createLinearGradient(actX, actY, actX + actW, actY + actH);
   spec.addColorStop(0.0, 'rgba(16, 198, 174, 0.52)');
   spec.addColorStop(0.28, 'rgba(28, 134, 232, 0.48)');
@@ -239,116 +246,94 @@ function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THR
   ctx.fillStyle = spec;
   ctx.fillRect(actX, actY, actW, actH);
 
-  // Sub-block readout columns & fine pixel pitch texture
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.11)';
-  ctx.lineWidth = 1;
-  for (let x = actX; x <= actX + actW; x += 8) {
-    ctx.beginPath();
+  // Batched sub-block readout grid (1 stroke call instead of 200+!)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let x = actX; x <= actX + actW; x += 12) {
     ctx.moveTo(x, actY);
     ctx.lineTo(x, actY + actH);
-    ctx.stroke();
   }
-  for (let y = actY; y <= actY + actH; y += 8) {
-    ctx.beginPath();
+  for (let y = actY; y <= actY + actH; y += 12) {
     ctx.moveTo(actX, y);
     ctx.lineTo(actX + actW, y);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Subtle column ADC zone dividers (top/bottom bands of readout)
-  ctx.strokeStyle = 'rgba(160, 235, 255, 0.22)';
-  ctx.lineWidth = 1.5;
+  // Batched column ADC zone dividers (1 stroke call!)
+  ctx.strokeStyle = 'rgba(160, 235, 255, 0.24)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
   for (let i = 1; i < 8; i++) {
     const gx = actX + (actW / 8) * i;
-    ctx.beginPath();
     ctx.moveTo(gx, actY);
     ctx.lineTo(gx, actY + actH);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Roughness & bump canvas
-  const roughCanvas = document.createElement('canvas');
-  roughCanvas.width = w;
-  roughCanvas.height = h;
-  const rctx = roughCanvas.getContext('2d')!;
-  rctx.fillStyle = '#383838'; // Periphery slightly rougher
+  // Lightweight shared roughness canvas (256x170)
+  const { canvas: roughCanvas, ctx: rctx } = createScaledCanvas(1024, 682, 0.25);
+  rctx.fillStyle = '#383838';
   rctx.fillRect(0, 0, w, h);
-  rctx.fillStyle = '#141414'; // Active mirror-like wafer surface
+  rctx.fillStyle = '#141414';
   rctx.fillRect(actX, actY, actW, actH);
   rctx.strokeStyle = '#282828';
-  for (let x = actX; x <= actX + actW; x += 6) {
-    rctx.beginPath();
+  rctx.beginPath();
+  for (let x = actX; x <= actX + actW; x += 12) {
     rctx.moveTo(x, actY);
     rctx.lineTo(x, actY + actH);
-    rctx.stroke();
   }
+  rctx.stroke();
 
   const map = new THREE.CanvasTexture(colorCanvas);
   map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
 
   const roughnessMap = new THREE.CanvasTexture(roughCanvas);
-  roughnessMap.anisotropy = 4;
+  roughnessMap.anisotropy = 2;
 
-  const bumpMap = new THREE.CanvasTexture(roughCanvas);
-  bumpMap.anisotropy = 4;
-
-  return { map, roughnessMap, bumpMap };
+  return { map, roughnessMap, bumpMap: roughnessMap };
 }
 
 function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const w = 1024;
-  const h = 820;
-  const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext('2d')!;
+  const { canvas, ctx, w, h } = createScaledCanvas(1024, 820, 0.5);
 
-  // Modern flagship matte dark emerald-slate solder mask
   ctx.fillStyle = '#14332d';
   ctx.fillRect(0, 0, w, h);
 
-  // Subtle fiberglass weave grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
-  ctx.lineWidth = 1;
-  for (let x = 0; x < w; x += 8) {
-    ctx.beginPath();
+  // Batched fiberglass weave grid (1 stroke!)
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let x = 0; x < w; x += 16) {
     ctx.moveTo(x, 0);
     ctx.lineTo(x, h);
-    ctx.stroke();
   }
-  for (let y = 0; y < h; y += 8) {
-    ctx.beginPath();
+  for (let y = 0; y < h; y += 16) {
     ctx.moveTo(0, y);
     ctx.lineTo(w, y);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Copper ground plane inner relief
   ctx.fillStyle = '#194139';
   ctx.fillRect(28, 28, w - 56, h - 56);
 
-  // High-speed SLVS-EC impedance-matched differential trace bundles
+  // Batched SLVS-EC differential trace bundles (1 stroke!)
   ctx.strokeStyle = '#2d6e5e';
   ctx.lineWidth = 2.2;
+  ctx.beginPath();
   for (let lane = 0; lane < 16; lane++) {
     const y0 = 150 + lane * 32;
-    // Left differential pair
     for (const dy of [-3, 3]) {
-      ctx.beginPath();
       ctx.moveTo(44, y0 + dy);
       ctx.lineTo(130, y0 + dy);
-      // Length-matching serpentine meander
       for (let m = 0; m < 4; m++) {
         const mx = 138 + m * 16;
         ctx.lineTo(mx, y0 + dy - 5);
         ctx.lineTo(mx + 8, y0 + dy + 5);
       }
       ctx.lineTo(255, y0 + dy);
-      ctx.stroke();
 
-      // Right differential pair
-      ctx.beginPath();
       ctx.moveTo(w - 44, y0 + dy);
       ctx.lineTo(w - 130, y0 + dy);
       for (let m = 0; m < 4; m++) {
@@ -357,78 +342,78 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
         ctx.lineTo(mx - 8, y0 + dy + 5);
       }
       ctx.lineTo(w - 255, y0 + dy);
-      ctx.stroke();
     }
   }
+  ctx.stroke();
 
-  // Central LGA breakout via matrix
+  // Batched LGA breakout & thermal via rings (2 fill calls instead of 800!)
   ctx.fillStyle = '#c9a653';
+  ctx.beginPath();
   for (let gx = 280; gx <= w - 280; gx += 26) {
     for (let gy = 135; gy <= h - 135; gy += 26) {
       if (gx > 380 && gx < w - 380 && gy > 235 && gy < h - 235) continue;
-      ctx.beginPath();
+      ctx.moveTo(gx + 4.2, gy);
       ctx.arc(gx, gy, 4.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#0c1c19';
-      ctx.beginPath();
-      ctx.arc(gx, gy, 1.8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#c9a653';
     }
   }
-
-  // Thermal via array at center back of ceramic package
   for (let gx = 400; gx <= w - 400; gx += 22) {
     for (let gy = 255; gy <= h - 255; gy += 22) {
-      ctx.fillStyle = '#d4af59';
-      ctx.beginPath();
+      ctx.moveTo(gx + 5.2, gy);
       ctx.arc(gx, gy, 5.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#102420';
-      ctx.beginPath();
-      ctx.arc(gx, gy, 2.2, 0, Math.PI * 2);
-      ctx.fill();
     }
   }
+  ctx.fill();
 
-  // Gold fiducial & ground mounting rings at corners
-  const corners = [
+  ctx.fillStyle = '#0c1c19';
+  ctx.beginPath();
+  for (let gx = 280; gx <= w - 280; gx += 26) {
+    for (let gy = 135; gy <= h - 135; gy += 26) {
+      if (gx > 380 && gx < w - 380 && gy > 235 && gy < h - 235) continue;
+      ctx.moveTo(gx + 1.8, gy);
+      ctx.arc(gx, gy, 1.8, 0, Math.PI * 2);
+    }
+  }
+  for (let gx = 400; gx <= w - 400; gx += 22) {
+    for (let gy = 255; gy <= h - 255; gy += 22) {
+      ctx.moveTo(gx + 2.2, gy);
+      ctx.arc(gx, gy, 2.2, 0, Math.PI * 2);
+    }
+  }
+  ctx.fill();
+
+  // Gold fiducial rings
+  ctx.strokeStyle = '#dfb85c';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  for (const [cx, cy] of [
     [60, 60],
     [w - 60, 60],
     [60, h - 60],
     [w - 60, h - 60],
-  ];
-  for (const [cx, cy] of corners) {
-    ctx.strokeStyle = '#dfb85c';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
+  ]) {
+    ctx.moveTo(cx + 20, cy);
     ctx.arc(cx, cy, 20, 0, Math.PI * 2);
-    ctx.stroke();
   }
+  ctx.stroke();
 
   const map = new THREE.CanvasTexture(canvas);
   map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
-
-  const bumpMap = new THREE.CanvasTexture(canvas);
-  bumpMap.anisotropy = 4;
-
-  return { map, bumpMap };
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  return { map, bumpMap: map };
 }
 
 function createCopperCoilTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const size = 512;
+  const size = GPU_PROFILE.isMobile ? 128 : 256;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
   ctx.fillStyle = '#a84c20';
   ctx.fillRect(0, 0, size, size);
 
   for (let i = 0; i < size; i += 4) {
-    const shade = i % 8 === 0 ? '#d8763f' : '#8a3915';
-    ctx.fillStyle = shade;
+    ctx.fillStyle = i % 8 === 0 ? '#d8763f' : '#8a3915';
     ctx.fillRect(0, i, size, 2.5);
   }
 
@@ -437,21 +422,15 @@ function createCopperCoilTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.C
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(3, 6);
-
-  const bumpMap = new THREE.CanvasTexture(canvas);
-  bumpMap.wrapS = THREE.RepeatWrapping;
-  bumpMap.wrapT = THREE.RepeatWrapping;
-  bumpMap.repeat.set(3, 6);
-
-  return { map, bumpMap };
+  return { map, bumpMap: map };
 }
 
 function createGraphiteTexture(): THREE.CanvasTexture {
-  const size = 256;
+  const size = 128;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
   ctx.fillStyle = '#202228';
   ctx.fillRect(0, 0, size, size);
   for (let y = 0; y < size; y += 2) {
@@ -468,11 +447,11 @@ function createGraphiteTexture(): THREE.CanvasTexture {
 }
 
 function createCarbonFiberTexture(tintHex: string): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const size = 256;
+  const size = 128;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
   ctx.fillStyle = tintHex;
   ctx.fillRect(0, 0, size, size);
@@ -497,38 +476,23 @@ function createCarbonFiberTexture(tintHex: string): { map: THREE.CanvasTexture; 
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(5, 2);
-  map.anisotropy = 8;
-
-  const bumpMap = new THREE.CanvasTexture(canvas);
-  bumpMap.wrapS = THREE.RepeatWrapping;
-  bumpMap.wrapT = THREE.RepeatWrapping;
-  bumpMap.repeat.set(5, 2);
-
-  return { map, bumpMap };
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  return { map, bumpMap: map };
 }
 
 /**
  * Procedural 4nm Main Image Signal Processor (ISP) bare silicon die floorplan.
- * Strictly zero text: pure metallic lithography IP macro blocks (SLVS-EC SerDes,
- * Dual-Stream 16-bit RAW Pipeline, 3D-LUT Color Engine, 8K60p Codec, Multi-Core ARM, SRAM).
  */
 function createIspDieFloorplanTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const s = 512;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w: s } = createScaledCanvas(512, 512, 0.5);
 
-  // Deep metallic obsidian silicon substrate
   ctx.fillStyle = '#0f172a';
   ctx.fillRect(0, 0, s, s);
 
-  // Outer I/O guard ring & perimeter power distribution mesh
   ctx.strokeStyle = '#d4a948';
   ctx.lineWidth = 6;
   ctx.strokeRect(8, 8, s - 16, s - 16);
 
-  // Helper to draw dense metallic sub-block lithography cells
   const drawMacroBlock = (
     x: number,
     y: number,
@@ -546,73 +510,54 @@ function createIspDieFloorplanTexture(): { map: THREE.CanvasTexture; bumpMap: TH
     ctx.fillRect(x, y, w, h);
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
     for (let px = x + pitchX; px < x + w; px += pitchX) {
-      ctx.beginPath();
       ctx.moveTo(px, y);
       ctx.lineTo(px, y + h);
-      ctx.stroke();
     }
     for (let py = y + pitchY; py < y + h; py += pitchY) {
-      ctx.beginPath();
       ctx.moveTo(x, py);
       ctx.lineTo(x + w, py);
-      ctx.stroke();
     }
+    ctx.stroke();
     ctx.strokeStyle = 'rgba(226, 192, 92, 0.72)';
     ctx.lineWidth = 1.6;
     ctx.strokeRect(x, y, w, h);
   };
 
-  // Top band: High-Speed SLVS-EC v3 & LPDDR5X PHY SerDes Lanes
   drawMacroBlock(22, 22, 468, 66, '#0e7490', '#1d4ed8', 14, 16);
-  // Left-Mid: Dual-Stream 16-bit Linear RAW ISP Pipeline & Demosaic Engine
   drawMacroBlock(22, 102, 218, 178, '#0f766e', '#115e59', 10, 8);
-  // Right-Mid: 8K60p Hardware Video Codec (HEVC / RAW) & 3D-LUT Color Matrix
   drawMacroBlock(254, 102, 236, 178, '#1d4ed8', '#4338ca', 12, 10);
-  // Bottom-Left: Multi-Core ARM Cortex Real-Time Control Cluster (8 cores)
   drawMacroBlock(22, 294, 180, 124, '#3730a3', '#6d28d9', 22, 20);
-  // Bottom-Center: Ultra-Dense On-Chip L2/L3 SRAM Cache Array
-  drawMacroBlock(214, 294, 146, 124, '#b45309', '#d97706', 6, 6);
-  // Bottom-Right: PCIe Gen4 x2 NVMe & Dual-Stream EVF Display Controller
+  drawMacroBlock(214, 294, 146, 124, '#b45309', '#d97706', 8, 8);
   drawMacroBlock(372, 294, 118, 124, '#0369a1', '#0e7490', 10, 12);
-  // Bottom perimeter: Analog PLL / High-Speed I/O Ring
   drawMacroBlock(22, 430, 468, 60, '#1e293b', '#334155', 12, 14);
 
-  // Fine copper interconnect bus highways between macro blocks
   ctx.strokeStyle = 'rgba(250, 204, 21, 0.55)';
-  ctx.lineWidth = 1.3;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
   for (let i = 0; i < 6; i++) {
     const yy = 92 + i * 1.6;
-    ctx.beginPath();
     ctx.moveTo(22, yy);
     ctx.lineTo(490, yy);
-    ctx.stroke();
     const yy2 = 283 + i * 1.6;
-    ctx.beginPath();
     ctx.moveTo(22, yy2);
     ctx.lineTo(490, yy2);
-    ctx.stroke();
   }
+  ctx.stroke();
 
   const map = new THREE.CanvasTexture(c);
   map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
-
-  const bumpMap = new THREE.CanvasTexture(c);
-  return { map, bumpMap };
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  return { map, bumpMap: map };
 }
 
 /**
- * Procedural AI / NPU Deep-Learning Accelerator bare silicon die featuring a crisp
- * 2D Systolic Array MAC PE grid + flanking Weight SRAM banks (zero text).
+ * Procedural AI / NPU Deep-Learning Accelerator bare silicon die.
  */
 function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const s = 512;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w: s } = createScaledCanvas(512, 512, 0.5);
 
   ctx.fillStyle = '#140f2b';
   ctx.fillRect(0, 0, s, s);
@@ -621,7 +566,6 @@ function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.lineWidth = 6;
   ctx.strokeRect(8, 8, s - 16, s - 16);
 
-  // Center-Left 16x16 Systolic Array Processing Element (PE) Matrix Grid!
   const gx0 = 28;
   const gy0 = 28;
   const cell = 19;
@@ -630,7 +574,11 @@ function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THR
       const hue = 250 + ((r + col) % 8) * 9;
       ctx.fillStyle = `hsl(${hue}, 74%, ${34 + ((r * col) % 3) * 7}%)`;
       ctx.fillRect(gx0 + col * cell + 1.5, gy0 + r * cell + 1.5, cell - 3, cell - 3);
-      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    }
+  }
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  for (let r = 0; r < 16; r++) {
+    for (let col = 0; col < 16; col++) {
       ctx.fillRect(gx0 + col * cell + 4, gy0 + r * cell + 4, 4, 4);
     }
   }
@@ -638,25 +586,23 @@ function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.lineWidth = 2.2;
   ctx.strokeRect(gx0 - 2, gy0 - 2, 16 * cell + 4, 16 * cell + 4);
 
-  // Right flanking Weight SRAM & Activation FIFO Buffers
   const sramGrad = ctx.createLinearGradient(350, 28, 484, 332);
   sramGrad.addColorStop(0, '#0284c7');
   sramGrad.addColorStop(1, '#0d9488');
   ctx.fillStyle = sramGrad;
   ctx.fillRect(350, 28, 134, 304);
   ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-  ctx.lineWidth = 1;
-  for (let y = 34; y < 330; y += 6) {
-    ctx.beginPath();
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let y = 34; y < 330; y += 8) {
     ctx.moveTo(350, y);
     ctx.lineTo(484, y);
-    ctx.stroke();
   }
+  ctx.stroke();
   ctx.strokeStyle = '#e2b648';
   ctx.lineWidth = 1.6;
   ctx.strokeRect(350, 28, 134, 304);
 
-  // Bottom Transformer Attention / Vector DSP & High-Speed Die-to-Die Interconnect
   const botGrad = ctx.createLinearGradient(28, 352, 484, 484);
   botGrad.addColorStop(0, '#7c3aed');
   botGrad.addColorStop(0.5, '#2563eb');
@@ -664,65 +610,55 @@ function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.fillStyle = botGrad;
   ctx.fillRect(28, 352, 456, 132);
   ctx.strokeStyle = 'rgba(255,255,255,0.24)';
+  ctx.beginPath();
   for (let x = 44; x < 484; x += 16) {
-    ctx.beginPath();
     ctx.moveTo(x, 352);
     ctx.lineTo(x, 484);
-    ctx.stroke();
   }
+  ctx.stroke();
   ctx.strokeStyle = '#e2b648';
   ctx.lineWidth = 1.8;
   ctx.strokeRect(28, 352, 456, 132);
 
   const map = new THREE.CanvasTexture(c);
   map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
-  const bumpMap = new THREE.CanvasTexture(c);
-  return { map, bumpMap };
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  return { map, bumpMap: map };
 }
 
 /**
- * Procedural 12-Layer Any-Layer HDI Camera Motherboard PCB texture:
- * Deep emerald solder mask, serpentine 100-ohm SLVS-EC / 85-ohm PCIe differential traces,
- * gold ENIG BGA pads, copper-filled laser microvias, and ground stitching vias (zero text).
+ * Procedural 12-Layer Any-Layer HDI Camera Motherboard PCB texture (batched Canvas2D paths).
  */
 function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const w = 1024;
-  const h = 712;
-  const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w, h } = createScaledCanvas(1024, 712, 0.5);
 
-  // Rich flagship dark emerald-teal HDI solder mask
   ctx.fillStyle = '#0e3b2e';
   ctx.fillRect(0, 0, w, h);
 
-  // Subtle buried copper ground pour zones
   ctx.fillStyle = '#124939';
   ctx.fillRect(24, 24, w - 48, h - 48);
 
-  // High-speed 100-ohm differential bus highways (SLVS-EC, LPDDR5X, PCIe Gen4)
+  // Batched high-speed bus highways (1 stroke!)
   ctx.strokeStyle = '#1d7a5b';
   ctx.lineWidth = 2.2;
+  ctx.beginPath();
   for (let lane = 0; lane < 18; lane++) {
     const y = 76 + lane * 11;
-    ctx.beginPath();
     ctx.moveTo(64, y);
     ctx.lineTo(290, y);
     ctx.lineTo(324, y + 18);
     ctx.lineTo(660, y + 18);
     ctx.lineTo(695, y - 6);
     ctx.lineTo(940, y - 6);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Serpentine length-matched meander delay lines (signature high-speed LPDDR5X/SLVS-EC traces)
+  // Batched serpentine meander delay lines (1 stroke!)
   ctx.strokeStyle = '#289e74';
   ctx.lineWidth = 2.0;
+  ctx.beginPath();
   for (let m = 0; m < 8; m++) {
     const baseY = 340 + m * 24;
-    ctx.beginPath();
     ctx.moveTo(110, baseY);
     for (let sx = 140; sx < 440; sx += 24) {
       ctx.lineTo(sx, baseY);
@@ -732,55 +668,60 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
       ctx.lineTo(sx + 24, baseY);
     }
     ctx.lineTo(860, baseY);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Vertical power/data bus trunks
+  // Batched vertical trunks (1 stroke!)
   ctx.strokeStyle = '#1b6e53';
   ctx.lineWidth = 2;
+  ctx.beginPath();
   for (let vx = 80; vx < w - 80; vx += 26) {
-    ctx.beginPath();
     ctx.moveTo(vx, 42);
     ctx.lineTo(vx, h - 42);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Fine gold ENIG laser microvia stitching grids & BGA escape pads
+  // Batched ENIG gold laser microvia rings (2 fill calls instead of 500!)
+  ctx.fillStyle = '#e0b94f';
+  ctx.beginPath();
   for (let gy = 54; gy < h - 54; gy += 36) {
     for (let gx = 54; gx < w - 54; gx += 36) {
       if ((gx + gy) % 72 === 0) {
-        ctx.fillStyle = '#e0b94f';
-        ctx.beginPath();
+        ctx.moveTo(gx + 3.2, gy);
         ctx.arc(gx, gy, 3.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#09241c';
-        ctx.beginPath();
-        ctx.arc(gx, gy, 1.3, 0, Math.PI * 2);
-        ctx.fill();
       }
     }
   }
-
-  // Perimeter EMI ground stitching via ring + gold fiducial pads
-  ctx.fillStyle = '#e6c25a';
   for (let px = 32; px < w - 32; px += 18) {
-    ctx.beginPath();
+    ctx.moveTo(px + 2.4, 20);
     ctx.arc(px, 20, 2.4, 0, Math.PI * 2);
+    ctx.moveTo(px + 2.4, h - 20);
     ctx.arc(px, h - 20, 2.4, 0, Math.PI * 2);
-    ctx.fill();
   }
   for (let py = 32; py < h - 32; py += 18) {
-    ctx.beginPath();
+    ctx.moveTo(20 + 2.4, py);
     ctx.arc(20, py, 2.4, 0, Math.PI * 2);
+    ctx.moveTo(w - 20 + 2.4, py);
     ctx.arc(w - 20, py, 2.4, 0, Math.PI * 2);
-    ctx.fill();
   }
+  ctx.fill();
+
+  ctx.fillStyle = '#09241c';
+  ctx.beginPath();
+  for (let gy = 54; gy < h - 54; gy += 36) {
+    for (let gx = 54; gx < w - 54; gx += 36) {
+      if ((gx + gy) % 72 === 0) {
+        ctx.moveTo(gx + 1.3, gy);
+        ctx.arc(gx, gy, 1.3, 0, Math.PI * 2);
+      }
+    }
+  }
+  ctx.fill();
 
   const map = new THREE.CanvasTexture(c);
   map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
-  const bumpMap = new THREE.CanvasTexture(c);
-  return { map, bumpMap };
+  map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  return { map, bumpMap: map };
 }
 
 /**
@@ -791,7 +732,7 @@ function createPcbLaminateEdgeTexture(): THREE.CanvasTexture {
   const c = document.createElement('canvas');
   c.width = 64;
   c.height = 128;
-  const ctx = c.getContext('2d')!;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
   ctx.fillStyle = '#5c5838'; // Low-Df FR-4 prepreg resin
   ctx.fillRect(0, 0, 64, 128);
   // 12 crisp laminated copper foil layers
@@ -814,12 +755,7 @@ function createPcbLaminateEdgeTexture(): THREE.CanvasTexture {
  * glowing cyan Eye-Control AF reticle ring, and pure-graphical histogram curve (no letters/numbers).
  */
 function createOledViewfinderTexture(): THREE.CanvasTexture {
-  const w = 640;
-  const h = 480;
-  const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w, h } = createScaledCanvas(640, 480, 0.5);
 
   // True-black OLED border (0.000 cd/m² pixel-off state)
   ctx.fillStyle = '#03050a';
@@ -991,46 +927,49 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
 
   // Subtle RGB Micro-OLED subpixel stripe grid shimmer
   ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
-  for (let x = vx; x < vx + vw; x += 4) {
-    ctx.fillRect(x, vy, 1, vh);
+  for (let x = vx; x < vx + vw; x += 8) {
+    ctx.fillRect(x, vy, 1.5, vh);
   }
-  for (let y = vy; y < vy + vh; y += 4) {
-    ctx.fillRect(vx, y, vw, 1);
+  for (let y = vy; y < vy + vh; y += 8) {
+    ctx.fillRect(vx, y, vw, 1.5);
   }
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
+  tex.anisotropy = GPU_PROFILE.maxAnisotropy;
   return tex;
 }
 
 /**
- * Procedural fine pebble-grain elastomer camera grip leatherette texture (strictly zero text).
+ * Procedural fine pebble-grain elastomer camera grip leatherette texture (batched Canvas2D paths).
  */
 function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const s = 256;
+  const s = 128;
   const c = document.createElement('canvas');
   c.width = s;
   c.height = s;
-  const ctx = c.getContext('2d')!;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
 
   ctx.fillStyle = '#1b1d22';
   ctx.fillRect(0, 0, s, s);
 
-  // Deterministic pseudo-random leatherette pebble micro-relief
+  // Batch 3 shade buckets instead of 950 individual fill() calls!
   let seed = 4219;
   const rand = () => {
     seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   };
-  for (let i = 0; i < 950; i++) {
-    const x = rand() * s;
-    const y = rand() * s;
-    const r = 1.6 + rand() * 3.1;
-    const shade = Math.floor(32 + rand() * 24);
-    ctx.fillStyle = `rgb(${shade},${shade + 1},${shade + 4})`;
+  const shades = ['#22242a', '#2b2d34', '#35373f'];
+  for (let b = 0; b < 3; b++) {
+    ctx.fillStyle = shades[b];
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
+    for (let i = 0; i < 110; i++) {
+      const x = rand() * s;
+      const y = rand() * s;
+      const r = 1.0 + rand() * 1.9;
+      ctx.moveTo(x + r, y);
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+    }
     ctx.fill();
   }
 
@@ -1039,26 +978,14 @@ function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(3, 3);
-
-  const bumpMap = new THREE.CanvasTexture(c);
-  bumpMap.wrapS = THREE.RepeatWrapping;
-  bumpMap.wrapT = THREE.RepeatWrapping;
-  bumpMap.repeat.set(3, 3);
-  return { map, bumpMap };
+  return { map, bumpMap: map };
 }
 
 /**
- * Procedural monochrome top-deck sub-status OLED texture:
- * STRICTLY ZERO TEXT / ZERO NUMBERS — displays pure geometric battery bars,
- * aperture circle pictogram, exposure meter dots, and wireless signal arcs.
+ * Procedural monochrome top-deck sub-status OLED texture.
  */
 function createTopStatusOledTexture(): THREE.CanvasTexture {
-  const w = 256;
-  const h = 160;
-  const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w, h } = createScaledCanvas(256, 160, 0.75);
 
   ctx.fillStyle = '#070a10';
   ctx.fillRect(0, 0, w, h);
@@ -1067,7 +994,6 @@ function createTopStatusOledTexture(): THREE.CanvasTexture {
   ctx.lineWidth = 3;
   ctx.strokeRect(8, 8, w - 16, h - 16);
 
-  // Pure geometric battery icon (top-right, 4 charge bars)
   ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 3;
   ctx.strokeRect(178, 22, 54, 24);
@@ -1078,89 +1004,55 @@ function createTopStatusOledTexture(): THREE.CanvasTexture {
     ctx.fillRect(184 + i * 11, 27, 8, 14);
   }
 
-  // Pure geometric aperture blades icon (top-left)
   ctx.strokeStyle = '#f8fafc';
   ctx.lineWidth = 2.6;
   ctx.beginPath();
   ctx.arc(44, 46, 20, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
+  ctx.moveTo(52, 46);
   ctx.arc(44, 46, 8, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Pure geometric signal strength bars (center-top)
   ctx.fillStyle = '#38bdf8';
   for (let i = 0; i < 5; i++) {
     ctx.fillRect(92 + i * 13, 56 - i * 7, 8, 12 + i * 7);
   }
 
-  // Pure geometric exposure scale dot bar (bottom)
+  ctx.fillStyle = '#94a3b8';
+  ctx.beginPath();
   for (let i = -5; i <= 5; i++) {
-    ctx.fillStyle = i === 0 ? '#34d399' : '#94a3b8';
-    ctx.beginPath();
-    ctx.arc(w / 2 + i * 18, 118, i === 0 ? 5.5 : 3.0, 0, Math.PI * 2);
-    ctx.fill();
+    if (i === 0) continue;
+    const cx = w / 2 + i * 18;
+    ctx.moveTo(cx + 3.0, 118);
+    ctx.arc(cx, 118, 3.0, 0, Math.PI * 2);
   }
+  ctx.fill();
+  ctx.fillStyle = '#34d399';
+  ctx.beginPath();
+  ctx.arc(w / 2, 118, 5.5, 0, Math.PI * 2);
+  ctx.fill();
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
-/** Procedural CNC lathe radial/linear brushed stainless steel micro-groove bump map */
-function createCncBrushedMetalTexture(): THREE.CanvasTexture {
-  const s = 256;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d')!;
-  ctx.fillStyle = '#808080';
-  ctx.fillRect(0, 0, s, s);
-  for (let y = 0; y < s; y += 2) {
-    const shade = 112 + ((y * 53) % 32);
-    ctx.fillStyle = `rgb(${shade},${shade},${shade})`;
-    ctx.fillRect(0, y, s, 1);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(3, 6);
+/** Lightweight zero-canvas sentinel tag for CNC brushed steel micro-bump (rendered via GPU uDualBumpTex channel 1) */
+function createCncBrushedMetalTexture(): THREE.Texture {
+  const tex = new THREE.Texture();
+  tex.name = 'cnc-brushed-bump-sentinel';
   return tex;
 }
 
-/** Procedural bead-blasted thixomolded AZ91D magnesium micro-grain bump texture */
-function createMagnesiumGrainTexture(): THREE.CanvasTexture {
-  const s = 256;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d')!;
-  const img = ctx.createImageData(s, s);
-  let seed = 1337;
-  for (let i = 0; i < img.data.length; i += 4) {
-    seed = (seed * 16807) % 2147483647;
-    const v = 108 + (seed % 40);
-    img.data[i] = v;
-    img.data[i + 1] = v;
-    img.data[i + 2] = v;
-    img.data[i + 3] = 255;
-  }
-  ctx.putImageData(img, 0, 0);
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(5, 5);
+/** Lightweight zero-canvas sentinel tag for bead-blasted AZ91D magnesium grain bump (rendered via GPU uDualBumpTex channel 2) */
+function createMagnesiumGrainTexture(): THREE.Texture {
+  const tex = new THREE.Texture();
+  tex.name = 'mg-grain-bump-sentinel';
   return tex;
 }
 
-/** Procedural 200um-pitch SmFeN multi-pole Vernier magnetic scale bar texture (zero text) */
+/** Procedural 200um-pitch SmFeN multi-pole Vernier magnetic scale bar texture */
 function createMagneticScaleTexture(): THREE.CanvasTexture {
-  const w = 128;
-  const h = 512;
-  const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w, h } = createScaledCanvas(128, 512, 0.5);
   ctx.fillStyle = '#1e2430';
   ctx.fillRect(0, 0, w, h);
   for (let y = 0; y < h; y += 8) {
@@ -1182,11 +1074,11 @@ function createMagneticScaleTexture(): THREE.CanvasTexture {
 
 /** Procedural crossed polarizer + RGB wide-gamut color-filter optical micro-lattice */
 function createPolarizerLatticeTexture(): THREE.CanvasTexture {
-  const s = 256;
+  const s = 128;
   const c = document.createElement('canvas');
   c.width = s;
   c.height = s;
-  const ctx = c.getContext('2d')!;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
   ctx.fillStyle = '#101828';
   ctx.fillRect(0, 0, s, s);
   const colors = ['rgba(239,68,68,0.42)', 'rgba(34,197,94,0.42)', 'rgba(59,130,246,0.42)'];
@@ -1196,12 +1088,12 @@ function createPolarizerLatticeTexture(): THREE.CanvasTexture {
   }
   ctx.strokeStyle = 'rgba(255,255,255,0.12)';
   ctx.lineWidth = 1;
+  ctx.beginPath();
   for (let i = -s; i < s * 2; i += 12) {
-    ctx.beginPath();
     ctx.moveTo(i, 0);
     ctx.lineTo(i + s, s);
-    ctx.stroke();
   }
+  ctx.stroke();
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
@@ -1212,28 +1104,37 @@ function createPolarizerLatticeTexture(): THREE.CanvasTexture {
 
 /** Procedural hexagonal On-Chip Micro-Lens Array (MLA) light-extraction optical cap texture */
 function createHexMlaTexture(): THREE.CanvasTexture {
-  const s = 256;
+  const s = 128;
   const c = document.createElement('canvas');
   c.width = s;
   c.height = s;
-  const ctx = c.getContext('2d')!;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
   ctx.fillStyle = '#e0f2fe';
   ctx.fillRect(0, 0, s, s);
   const step = 16;
+  // Batched 2-pass concentric circles (replaces 324 radial gradients!)
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
   for (let r = 0; r < s / step + 2; r++) {
     for (let col = 0; col < s / step + 2; col++) {
       const cx = col * step + (r % 2 === 0 ? 0 : step * 0.5);
       const cy = r * step * 0.866;
-      const g = ctx.createRadialGradient(cx - 2, cy - 2, 1, cx, cy, step * 0.48);
-      g.addColorStop(0, '#ffffff');
-      g.addColorStop(0.55, '#7dd3fc');
-      g.addColorStop(1, '#0284c7');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, cy, step * 0.45, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(cx + step * 0.44, cy);
+      ctx.arc(cx, cy, step * 0.44, 0, Math.PI * 2);
     }
   }
+  ctx.fill();
+  ctx.fillStyle = '#e0f7ff';
+  ctx.beginPath();
+  for (let r = 0; r < s / step + 2; r++) {
+    for (let col = 0; col < s / step + 2; col++) {
+      const cx = col * step + (r % 2 === 0 ? 0 : step * 0.5) - 1.6;
+      const cy = r * step * 0.866 - 1.6;
+      ctx.moveTo(cx + step * 0.22, cy);
+      ctx.arc(cx, cy, step * 0.22, 0, Math.PI * 2);
+    }
+  }
+  ctx.fill();
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
@@ -1242,16 +1143,11 @@ function createHexMlaTexture(): THREE.CanvasTexture {
   return tex;
 }
 
-/** Procedural 3rd-Wafer Stacked DRAM & TSV Micro-Bump Lithography Texture (zero text) */
+/** Procedural 3rd-Wafer Stacked DRAM & TSV Micro-Bump Lithography Texture */
 function createTsvDramTexture(): THREE.CanvasTexture {
-  const s = 512;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d')!;
+  const { canvas: c, ctx, w: s } = createScaledCanvas(512, 512, 0.5);
   ctx.fillStyle = '#0c1629';
   ctx.fillRect(0, 0, s, s);
-  // 8 high-speed DRAM memory banks separated by copper TSV power/data spines
   for (let bx = 0; bx < 4; bx++) {
     for (let by = 0; by < 2; by++) {
       const x0 = 20 + bx * 120;
@@ -1263,28 +1159,28 @@ function createTsvDramTexture(): THREE.CanvasTexture {
       ctx.fillStyle = grad;
       ctx.fillRect(x0, y0, 106, 218);
       ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
-      ctx.lineWidth = 1;
-      for (let ly = y0 + 8; ly < y0 + 214; ly += 8) {
-        ctx.beginPath();
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let ly = y0 + 8; ly < y0 + 214; ly += 10) {
         ctx.moveTo(x0 + 4, ly);
         ctx.lineTo(x0 + 102, ly);
-        ctx.stroke();
       }
+      ctx.stroke();
       ctx.strokeStyle = '#d97736';
       ctx.lineWidth = 2;
       ctx.strokeRect(x0, y0, 106, 218);
     }
   }
-  // Central horizontal copper TSV via spine
   ctx.fillStyle = '#e6b85c';
+  ctx.beginPath();
   for (let vx = 24; vx < s - 24; vx += 14) {
-    ctx.beginPath();
+    ctx.moveTo(vx + 3.2, s / 2);
     ctx.arc(vx, s / 2, 3.2, 0, Math.PI * 2);
-    ctx.fill();
   }
+  ctx.fill();
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
+  tex.anisotropy = GPU_PROFILE.maxAnisotropy;
   return tex;
 }
 
@@ -2873,7 +2769,22 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     makeupSealViolet,
   ];
 
-  // Optimize procedural texture VRAM & mobile Adreno GLSL shader permutations automatically
+  // Tag procedural micro-bump channels so GpuMegaBatch folds all 287 bump-mapped meshes
+  // directly into ONE single Opaque LUT draw call with screen-space dual-channel bump!
+  // Also eliminate redundant duplicate bumpMap shader permutations on dynamic parts.
+  for (const mat of allMaterials) {
+    const std = mat as THREE.MeshStandardMaterial;
+    if (std.bumpMap === cncBrushedTex) {
+      mat.userData.bumpChannel = 1;
+    } else if (std.bumpMap === mgGrainTex) {
+      mat.userData.bumpChannel = 2;
+    } else if (std.bumpMap && (std.bumpMap === std.map || std.bumpMap === std.roughnessMap)) {
+      // Avoid compiling a separate USE_BUMPMAP shader permutation when map/roughnessMap already conveys surface detail
+      std.bumpMap = null;
+    }
+  }
+
+  // Optimize procedural texture VRAM & GLSL shader permutations automatically
   optimizeMaterialsForGpu(
     allMaterials,
     new Set<THREE.Material>([

@@ -1,18 +1,17 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildLensParts } from './lensParts';
+import { buildLensParts, buildLensStandaloneParts } from './lensParts';
 import { createLensPhysicsOverlay } from './lensPhysicsOverlay';
 import { sharedLensOpticalSim } from './lensOpticalSim';
 
 /**
- * Assemble the complete 62-part Flagship 50mm F1.2 Prime Lens & Quad XD Linear AF Motors
- * subsystem with live 11-blade iris modulation, dual floating focus differential actuation,
- * exact 14-element Snell optical ray-tracing, and exploded CAD alignment guides.
+ * Assemble the complete 128-part Flagship 50mm F1.2 Prime Lens & Quad XD Linear AF Motors
+ * subsystem (74 macro at startup + 54 lazy-hydrated standalone micro parts across 3 sections).
  */
 export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildLensParts(mats);
+  const { parts, rig } = buildLensParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -34,9 +33,22 @@ export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 54,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildLensStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, delta, explodeFactor, physicsActive, integrated) => {
       sharedLensOpticalSim.step(elapsed, delta, physicsActive);
       updatePositions(explodeFactor, integrated);
@@ -56,4 +68,6 @@ export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+
+  return controller;
 }

@@ -147,7 +147,10 @@ function finalizeLensPart(
  *  L63..L70 : Spanner Retaining Rings + Air-Gap Optical Spacers + U-Loop Iris/Hall FPC + 200um SmFeN Invar Scales +
  *             PTFE/Ball Focus Bearing Bands + Mechanical IRIS LOCK Switch + Rear Steel Reinforcing Plates + Rear Mount EPDM Seal & M2.5 Bolts
  */
-export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: LensDynamicRig } {
+export function buildLensParts(
+  mats: MaterialLibrary,
+  includeStandalone = true
+): { parts: CadPart[]; rig: LensDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const irisBlades: THREE.Group[] = [];
@@ -3530,6 +3533,18 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   const focusGroupAParts = [focusAFrontPart, focusGroupAPart, focusARearPart, focusAEccPart];
   const focusGroupBParts = [focusBFrontPart, focusGroupBPart, focusBEccPart];
 
+  // Tag all 26 rigid kinematic bone nodes for GPU SubPartRigidBoneMegaBatcher!
+  for (const b of irisBlades) b.userData.kinematicBone = true;
+  irisCamRotor.userData.kinematicBone = true;
+  irisSpurGear.userData.kinematicBone = true;
+  irisPinionGear.userData.kinematicBone = true;
+  apRingRotor.userData.kinematicBone = true;
+  apertureHallRotor.userData.kinematicBone = true;
+  focusRingRotor.userData.kinematicBone = true;
+  mfEncoderWheel.userData.kinematicBone = true;
+  for (const m of moverCarriages) m.userData.kinematicBone = true;
+  for (const sc of mrScaleCarriages) sc.userData.kinematicBone = true;
+
   const rig: LensDynamicRig = {
     irisBlades,
     irisCamRing: irisCamRotor,
@@ -3595,16 +3610,23 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     },
   };
 
-  // Append 24 Phase 18A standalone-only 50mm F1.2 GM optical/mechanical/electronic micro-parts (L75–L98; omitted in whole-camera views!)
-  parts.push(...buildLensMicroParts(mats));
-
-  // Append 30 Phase 19A standalone-only 3-section GM lens mega-audit micro-parts (L99–L128; omitted in whole-camera views!)
-  parts.push(...buildLensUltraSplitParts(mats));
-
-  // Assign canonical 3-section lightweight standalone partition (1 = Rear default, 2 = Middle, 3 = Front) across ALL 128 lens parts
-  for (const p of parts) {
-    p.lensSection = getLensSectionForPart(p.id);
+  if (includeStandalone) {
+    parts.push(...buildLensStandaloneParts(mats));
+  } else {
+    // Assign canonical 3-section lightweight standalone partition across macro lens parts
+    for (const p of parts) {
+      p.lensSection = getLensSectionForPart(p.id);
+    }
   }
 
   return { parts, rig };
+}
+
+export function buildLensStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 18A (24) + Phase 19A (30) = 54 standalone-only 50mm F1.2 GM micro-parts (L75–L128)
+  const extra = [...buildLensMicroParts(mats), ...buildLensUltraSplitParts(mats)];
+  for (const p of extra) {
+    p.lensSection = getLensSectionForPart(p.id);
+  }
+  return extra;
 }

@@ -92,7 +92,8 @@ function finalizeMountPart(
  * and structural chassis interface).
  */
 export function buildMountParts(
-  mats: MaterialLibrary
+  mats: MaterialLibrary,
+  includeStandalone = true
 ): { parts: CadPart[]; rig: MountDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -1102,15 +1103,9 @@ export function buildMountParts(
   // M20: Front AF-Assist Fresnel Illuminator & Video REC Tally LED Module
   // =========================================================================
   const afAssistGroup = new THREE.Group();
-  const tallyLedMat = new THREE.MeshPhysicalMaterial({
+  const tallyLedMat = new THREE.MeshBasicMaterial({
     clippingPlanes: cp,
-    clipShadows: true,
-    color: 0xf43f5e,
-    emissive: 0xe11d48,
-    emissiveIntensity: 0.45,
-    metalness: 0.08,
-    roughness: 0.14,
-    clearcoat: 0.85,
+    color: 0xe11d48,
   });
   {
     const ax = -32.8;
@@ -1131,11 +1126,12 @@ export function buildMountParts(
 
     // Concentric micro-Fresnel dome lens (illuminated amber/red tally glow!)
     const dome = new THREE.Mesh(
-      new THREE.SphereGeometry(2.35, 22, 14, 0, Math.PI * 2, 0, Math.PI * 0.55).rotateX(Math.PI / 2),
+      new THREE.SphereGeometry(2.35, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.55).rotateX(Math.PI / 2),
       tallyLedMat
     );
     dome.position.set(ax, ay, 1.45);
     dome.userData.noEdges = true;
+    dome.userData.dynamicGlow = true;
     afAssistGroup.add(dome);
 
     // Concentric Fresnel groove rings
@@ -1428,13 +1424,19 @@ export function buildMountParts(
   // =========================================================================
   // Live Mechanical Rig: Release Button -> Rocker -> Lock Pin -> Detect Switch + Tally LED
   // =========================================================================
+  // Tag rigid kinematic bone nodes for GPU SubPartRigidBoneMegaBatcher!
+  lockPinPlunger.userData.kinematicBone = true;
+  releaseButtonGroup.userData.kinematicBone = true;
+  rockerLever.userData.kinematicBone = true;
+  detectWiperBlade.userData.kinematicBone = true;
+
   const applyDynamics = (elapsed: number, physicsActive: boolean) => {
     if (!physicsActive) {
       lockPinPlunger.position.z = 0.8;
       releaseButtonGroup.position.z = 2.2;
       rockerLever.rotation.y = 0;
       detectWiperBlade.rotation.z = 0;
-      tallyLedMat.emissiveIntensity = 0.45;
+      tallyLedMat.color.setRGB(0.75, 0.12, 0.24);
       return;
     }
 
@@ -1448,18 +1450,13 @@ export function buildMountParts(
     lockPinPlunger.position.z = 0.8 - depress * 2.8;
     rockerLever.rotation.y = depress * 0.18;
     detectWiperBlade.rotation.z = depress * 0.16;
-    // Soft AF-assist / REC tally heartbeat glow
-    tallyLedMat.emissiveIntensity = 0.35 + 1.1 * (0.5 + 0.5 * Math.sin(elapsed * 3.4));
+    const glow = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(elapsed * 3.4));
+    tallyLedMat.color.setRGB(0.95 * glow, 0.18 * glow, 0.32 * glow);
   };
 
-  // Append 16 Phase 13 standalone-only OEM micro-parts (M27–M42; omitted in whole-camera views!)
-  parts.push(...buildMountMicroParts(mats));
-
-  // Append 6 Phase 18B standalone-only lens-mount deep-audit completion micro-parts (M43–M48; omitted in whole-camera views!)
-  parts.push(...buildMountUltraAuditParts(mats));
-
-  // Append 12 Phase 20B standalone-only Sony OEM/Encompass/Lensrentals lens-mount ultra-audit micro-parts (M49–M60; omitted in whole-camera views!)
-  parts.push(...buildMountDeepAuditParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildMountStandaloneParts(mats));
+  }
 
   return {
     parts,
@@ -1470,4 +1467,13 @@ export function buildMountParts(
       applyDynamics,
     },
   };
+}
+
+export function buildMountStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 13 (16) + Phase 18B (6) + Phase 20B (12) = 34 standalone-only lens-mount micro-parts (M27–M60)
+  return [
+    ...buildMountMicroParts(mats),
+    ...buildMountUltraAuditParts(mats),
+    ...buildMountDeepAuditParts(mats),
+  ];
 }
