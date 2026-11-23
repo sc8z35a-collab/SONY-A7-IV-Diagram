@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { MOUNT_MICRO_EXPLANATIONS } from './mountMicroExplanations';
 
 export const MOUNT_EXPLANATIONS: Record<string, PartExplanation> = {
   'mount-flange-ring': {
@@ -747,5 +748,7 @@ export const MOUNT_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'mount_contact_ferrite',
   },
+
+  ...MOUNT_MICRO_EXPLANATIONS,
 };
 

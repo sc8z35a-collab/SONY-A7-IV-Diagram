@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { BODY_MICRO_EXPLANATIONS } from './bodyMicroExplanations';
 
 export const BODY_EXPLANATIONS: Record<string, PartExplanation> = {
   'body-battery-pack': {
@@ -1081,6 +1082,8 @@ export const BODY_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'body_evf_tie_bracket',
   },
+
+  ...BODY_MICRO_EXPLANATIONS,
 };
 
 

@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { SHUTTER_MICRO_EXPLANATIONS } from './shutterMicroExplanations';
 
 export const SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = {
   'shutter-front-cover': {
@@ -1102,5 +1103,7 @@ export const SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'shutter_cycle_hall',
   },
+
+  ...SHUTTER_MICRO_EXPLANATIONS,
 };
 

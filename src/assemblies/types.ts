@@ -374,7 +374,67 @@ export interface PartExplanation {
     | 'lens_center_join_ring'
     | 'lens_xd_coil_clamps'
     | 'lens_clutch_ball_rollers'
-    | 'lens_rear_lighttrap_tube';
+    | 'lens_rear_lighttrap_tube'
+    // Phase 13 Standalone-Only Ultra-Micro Dissection (+56 OEM Service-Manual & Patent Parts!)
+    // Mount Standalone Micro (+16: M27–M42 -> 42 total in standalone, 26 in whole-camera)
+    | 'mount_cinnabar_ring'
+    | 'mount_index_inlay'
+    | 'mount_split_leaf_sp2'
+    | 'mount_locating_pin_h'
+    | 'mount_contact_holder_ab'
+    | 'mount_contact_screws'
+    | 'mount_ll_button_spring'
+    | 'mount_lock_eclip_retainer'
+    | 'mount_jack_shield_block'
+    | 'mount_mask_sheet_tape'
+    | 'mount_bl_fpc_adhesive'
+    | 'mount_bayonet_drain_channel'
+    | 'mount_im_adjust_washer'
+    | 'mount_optical_black_coating'
+    | 'mount_contact_dust_lip'
+    | 'mount_body_cap_interface'
+    // Shutter Standalone Micro (+18: SH40–SH57 -> 57 total in standalone, 39 in whole-camera)
+    | 'shutter_aux_baseplate'
+    | 'shutter_drive_pins_slots'
+    | 'shutter_slit_edge_blades'
+    | 'shutter_blade_spacers'
+    | 'shutter_armature_iron_pieces'
+    | 'shutter_armature_bias_springs'
+    | 'shutter_magnet_yokes_bobbins'
+    | 'shutter_set_levers'
+    | 'shutter_mb_floating_shaft'
+    | 'shutter_mb_charge_housing'
+    | 'shutter_mb_cushion_sheet'
+    | 'shutter_stopper_rubbers'
+    | 'shutter_worm_lock_pawls'
+    | 'shutter_esd_ground_brush'
+    | 'shutter_guide_posts_washers'
+    | 'shutter_worm_gear_stage'
+    | 'shutter_fpc_zif_stiffener'
+    | 'shutter_calibration_bolts'
+    // Body Standalone Micro (+22: B39–B60 -> 60 total in standalone, 38 in whole-camera)
+    | 'body_main_internal_frame'
+    | 'body_side_cabinet'
+    | 'body_bottom_inner_plate'
+    | 'body_grip_adhesive_sheets'
+    | 'body_shoe_cap_cover'
+    | 'body_gyro_sensor_unit'
+    | 'body_still_movie_sq_lever'
+    | 'body_strap_triangles'
+    | 'body_dc_coupler_flap'
+    | 'body_muffle_cushions'
+    | 'body_card_access_led_pipe'
+    | 'body_rear_button_retainers'
+    | 'body_top_rec_c2_subassy'
+    | 'body_focal_plane_badge'
+    | 'body_speaker_emi_insulator'
+    | 'body_mag_field_cut_plate'
+    | 'body_hdmi_light_shield'
+    | 'body_vg_fpc_retainer'
+    | 'body_top_antenna_coax'
+    | 'body_power_lever_mechanism'
+    | 'body_mic_rubber_mount'
+    | 'body_rear_lc_cover_seals';
 }
 
 export interface CadPart {
@@ -396,6 +456,8 @@ export interface CadPart {
   explanation: PartExplanation;
   ibisMovable?: boolean;
   ultrasonicElement?: boolean;
+  /** If true, omit this ultra-fine sub-part from whole-camera modes ('integrated', 'camera_body') and render ONLY in its individual subsystem view */
+  standaloneOnly?: boolean;
 }
 
 export interface AssemblyController {

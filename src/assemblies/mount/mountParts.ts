@@ -13,6 +13,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { MOUNT_EXPLANATIONS } from './mountExplanations';
+import { buildMountMicroParts } from './mountMicroParts';
 
 export interface MountDynamicRig {
   lockPinPlunger: THREE.Group;
@@ -1448,6 +1449,9 @@ export function buildMountParts(
     // Soft AF-assist / REC tally heartbeat glow
     tallyLedMat.emissiveIntensity = 0.35 + 1.1 * (0.5 + 0.5 * Math.sin(elapsed * 3.4));
   };
+
+  // Append 16 Phase 13 standalone-only OEM micro-parts (M27–M42; omitted in whole-camera views!)
+  parts.push(...buildMountMicroParts(mats));
 
   return {
     parts,

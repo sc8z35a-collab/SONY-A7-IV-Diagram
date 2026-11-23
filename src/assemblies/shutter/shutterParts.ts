@@ -14,6 +14,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { SHUTTER_EXPLANATIONS } from './shutterExplanations';
+import { buildShutterMicroParts } from './shutterMicroParts';
 
 export interface ShutterDynamicRig {
   curtain1Blades: THREE.Mesh[];
@@ -2000,6 +2001,9 @@ export function buildShutterParts(
   };
 
   applyKinematics(0, false);
+
+  // Append 18 Phase 13 standalone-only OEM & patent micro-parts (SH40–SH57; omitted in whole-camera views!)
+  parts.push(...buildShutterMicroParts(mats));
 
   return {
     parts,

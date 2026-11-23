@@ -13,6 +13,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { BODY_EXPLANATIONS } from './bodyExplanations';
+import { buildBodyMicroParts } from './bodyMicroParts';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from '../lcd/lcdParts';
 import { EVF_OPTICAL_Y } from '../evf/evfParts';
 
@@ -2771,6 +2772,9 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       afJoystickCap.rotation.y = Math.cos(elapsed * 1.6) * 0.18;
     },
   };
+
+  // Append 22 Phase 13 standalone-only Sony ILCE-7M4 OEM micro-parts (B39–B60; omitted in whole-camera views!)
+  parts.push(...buildBodyMicroParts(mats));
 
   return { parts, rig };
 }

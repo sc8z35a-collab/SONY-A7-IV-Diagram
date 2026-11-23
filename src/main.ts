@@ -818,6 +818,36 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('micro-lofic-cap', false);
   syncRail();
+} else if (preset === 'phase13_mount') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-im-adjust-washer', false);
+  syncRail();
+} else if (preset === 'phase13_shutter') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-mb-floating-shaft', false);
+  syncRail();
+} else if (preset === 'phase13_body') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-gyro-sensor-unit', false);
+  syncRail();
 }
 
 

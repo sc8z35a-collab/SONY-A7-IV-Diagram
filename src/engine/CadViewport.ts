@@ -47,6 +47,7 @@ export class CadViewport {
   private bodyAssembly: AssemblyController;
   private microAssembly: AssemblyController;
   private allParts: CadPart[];
+  private partById = new Map<string, CadPart>();
   private callbacks: ViewportCallbacks;
 
   private clippingPlane: THREE.Plane;
@@ -217,8 +218,9 @@ export class CadViewport {
       ...this.microAssembly.parts,
     ];
 
-    // Cache original materials for render-mode switching
+    // Cache original materials & fast lookup map for render-mode switching and mode filtering
     for (const part of this.allParts) {
+      this.partById.set(part.id, part);
       for (const mesh of part.interactiveMeshes) {
         this.originalMeshMaterials.set(mesh, {
           originalMaterial: mesh.material,
@@ -227,6 +229,7 @@ export class CadViewport {
     }
 
     this.syncAssemblyVisibility();
+    this.applyVisibilityAndStyles();
     this.setCameraPreset('iso', true);
     this.bindEvents();
     this.animate();
@@ -234,10 +237,10 @@ export class CadViewport {
 
   private isPartInCurrentMode(part: CadPart): boolean {
     if (this.mode === 'integrated') {
-      return part.subsystem !== 'micro';
+      return part.subsystem !== 'micro' && !part.standaloneOnly;
     }
     if (this.mode === 'camera_body') {
-      return part.subsystem !== 'micro' && part.subsystem !== 'lens';
+      return part.subsystem !== 'micro' && part.subsystem !== 'lens' && !part.standaloneOnly;
     }
     return part.subsystem === this.mode;
   }
@@ -263,6 +266,11 @@ export class CadViewport {
     this.lcdAssembly.rootGroup.visible = showLcd;
     this.bodyAssembly.rootGroup.visible = showBody;
     this.microAssembly.rootGroup.visible = showMicro;
+
+    // Ensure standaloneOnly micro-parts are strictly hidden in whole-camera modes ('integrated' / 'camera_body')
+    for (const part of this.allParts) {
+      part.group.visible = this.isPartInCurrentMode(part) && !this.isPartHidden(part.id);
+    }
 
     this.lensAssembly.setPhysicsVisible((this.physicsActive || sharedLensOpticalSim.studioOpen) && showLens);
     this.mountAssembly.setPhysicsVisible(this.physicsActive && showMount);
@@ -386,6 +394,10 @@ export class CadViewport {
   }
 
   public selectPart(partId: string | null, focusCamera = true): void {
+    if (partId) {
+      const candidate = this.partById.get(partId);
+      if (!candidate || !this.isPartInCurrentMode(candidate)) return;
+    }
     if (partId === this.selectedPartId) return;
     this.selectedPartId = partId;
 
@@ -476,11 +488,11 @@ export class CadViewport {
       d = 160 + e * 204;
       target = new THREE.Vector3(8.0 + e * 6.0, -7.0, -32.0 - e * 18.0);
     } else if (this.mode === 'body') {
-      d = 290 + e * 345;
-      target = new THREE.Vector3(-8.0 - e * 10.0, 4.0 - e * 2.0, 0.0 - e * 8.0);
+      d = 290 + e * 415;
+      target = new THREE.Vector3(-8.0 - e * 10.0, 4.0 - e * 2.0, 0.0 - e * 10.0);
     } else if (this.mode === 'mount') {
-      d = 182 + e * 198;
-      target = new THREE.Vector3(2.0 + e * 3.0, -2.0 - e * 3.5, 25.0 + e * 24.0);
+      d = 182 + e * 255;
+      target = new THREE.Vector3(2.0 + e * 3.0, -2.0 - e * 3.5, 25.0 + e * 26.0);
     } else if (this.mode === 'evf') {
       d = 140 + e * 255;
       target = new THREE.Vector3(1.5 * (1 - e), 38.6 + e * 0.5, -16.5 - e * 22.0);
@@ -489,8 +501,8 @@ export class CadViewport {
       d = 192 + e * 170;
       target = new THREE.Vector3(0.0, 0.0 + e * 2.0, -22.0 - e * 18.0);
     } else if (this.mode === 'shutter') {
-      d = 172 + e * 195;
-      target = new THREE.Vector3(4.0 + e * 4.0, -3.2, 14.0 - e * 4.0);
+      d = 186 + e * 308;
+      target = new THREE.Vector3(6.0 + e * 10.0, -3.2, 14.0 - e * 4.0);
     } else if (this.mode === 'integrated') {
       // Assembled complete 305-macro-part flagship camera (231 body + 74-part 50mm F1.2 lens), vs panoramic ultra-dissection!
       d = 390 + e * 1290;
@@ -756,7 +768,10 @@ export class CadViewport {
 
   private applyVisibilityAndStyles(): void {
     for (const part of this.allParts) {
-      if (!this.isPartInCurrentMode(part)) continue;
+      if (!this.isPartInCurrentMode(part)) {
+        part.group.visible = false;
+        continue;
+      }
 
       const hidden = this.isPartHidden(part.id);
       part.group.visible = !hidden;
@@ -889,7 +904,10 @@ export class CadViewport {
       }
       const partId = hit.object.userData.partId as string | undefined;
       if (partId && !this.isPartHidden(partId)) {
-        return partId;
+        const hitPart = this.partById.get(partId);
+        if (hitPart && this.isPartInCurrentMode(hitPart)) {
+          return partId;
+        }
       }
     }
     return null;

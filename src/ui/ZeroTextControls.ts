@@ -497,15 +497,21 @@ export class ZeroTextControls {
     this.resetVisBtn.disabled = !hasAnyHidden;
 
     let prevSubsystem: CadPart['subsystem'] | null = null;
+    let prevStandaloneOnly = false;
     let selectedRowEl: HTMLElement | null = null;
 
     parts.forEach((part, idx) => {
-      if (prevSubsystem && prevSubsystem !== part.subsystem) {
+      const isStandaloneOnly = Boolean(part.standaloneOnly);
+      if (
+        (prevSubsystem && prevSubsystem !== part.subsystem) ||
+        (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly)
+      ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
         this.layerRail.appendChild(sep);
       }
       prevSubsystem = part.subsystem;
+      prevStandaloneOnly = isStandaloneOnly;
 
       const row = document.createElement('div');
       row.className = 'layer-item';
@@ -600,7 +606,11 @@ export class ZeroTextControls {
           part.order === 29 ||
           part.order === 33 ||
           part.order === 35 ||
-          part.order === 38
+          part.order === 38 ||
+          part.order === 39 ||
+          part.order === 40 ||
+          part.order === 45 ||
+          part.order === 51
             ? 32
             : part.order === 1 ||
                 part.order === 5 ||
@@ -612,9 +622,19 @@ export class ZeroTextControls {
                 part.order === 20 ||
                 part.order === 27 ||
                 part.order === 34 ||
-                part.order === 37
+                part.order === 37 ||
+                part.order === 41 ||
+                part.order === 42 ||
+                part.order === 44 ||
+                part.order === 48 ||
+                part.order === 53 ||
+                part.order === 54 ||
+                part.order === 57 ||
+                part.order === 60
               ? 25
-              : 18;
+              : part.order >= 39
+                ? 19
+                : 18;
       } else if (part.subsystem === 'mount') {
         widthPx =
           part.order === 1 ||
@@ -623,7 +643,11 @@ export class ZeroTextControls {
           part.order === 13 ||
           part.order === 18 ||
           part.order === 22 ||
-          part.order === 24
+          part.order === 24 ||
+          part.order === 27 ||
+          part.order === 32 ||
+          part.order === 36 ||
+          part.order === 42
             ? 32
             : part.order === 3 ||
                 part.order === 4 ||
@@ -634,9 +658,16 @@ export class ZeroTextControls {
                 part.order === 17 ||
                 part.order === 20 ||
                 part.order === 23 ||
-                part.order === 26
+                part.order === 26 ||
+                part.order === 29 ||
+                part.order === 31 ||
+                part.order === 33 ||
+                part.order === 37 ||
+                part.order === 40
               ? 25
-              : 18;
+              : part.order >= 27
+                ? 19
+                : 18;
       } else if (part.subsystem === 'evf') {
         widthPx =
           part.order === 1 ||
@@ -698,7 +729,11 @@ export class ZeroTextControls {
           part.order === 26 ||
           part.order === 27 ||
           part.order === 33 ||
-          part.order === 38
+          part.order === 38 ||
+          part.order === 40 ||
+          part.order === 43 ||
+          part.order === 49 ||
+          part.order === 51
             ? 32
             : part.order === 4 ||
                 part.order === 8 ||
@@ -709,7 +744,13 @@ export class ZeroTextControls {
                 part.order === 29 ||
                 part.order === 32 ||
                 part.order === 34 ||
-                part.order === 36
+                part.order === 36 ||
+                part.order === 41 ||
+                part.order === 44 ||
+                part.order === 46 ||
+                part.order === 50 ||
+                part.order === 54 ||
+                part.order === 56
               ? 26
               : part.order === 2 ||
                   part.order === 5 ||
@@ -724,7 +765,12 @@ export class ZeroTextControls {
                   part.order === 31 ||
                   part.order === 35 ||
                   part.order === 37 ||
-                  part.order === 39
+                  part.order === 39 ||
+                  part.order === 42 ||
+                  part.order === 45 ||
+                  part.order === 47 ||
+                  part.order === 52 ||
+                  part.order === 55
                 ? 21
                 : 16;
       } else if (part.subsystem === 'sensor') {

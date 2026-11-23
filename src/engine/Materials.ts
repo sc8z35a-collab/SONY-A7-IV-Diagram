@@ -129,6 +129,11 @@ export interface MaterialLibrary {
   rfGoldCoax: THREE.MeshPhysicalMaterial;
   loficDielectric: THREE.MeshPhysicalMaterial;
   tungstenLightShield: THREE.MeshPhysicalMaterial;
+  // Phase 13 Standalone Ultra-Micro Materials
+  cinnabarAnodized: THREE.MeshPhysicalMaterial;
+  butylDamperRubber: THREE.MeshStandardMaterial;
+  mylarInsulatorFilm: THREE.MeshPhysicalMaterial;
+  pureIronArmature: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2419,6 +2424,50 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.18,
   });
 
+  // Phase 13: Iconic Alpha Cinnabar anodized aluminum mount accent collar
+  const cinnabarAnodized = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd95b26,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.04,
+    metalness: 0.8,
+    roughness: 0.26,
+    clearcoat: 0.45,
+    clearcoatRoughness: 0.18,
+  });
+
+  // Phase 13: High-hysteresis chlorobutyl shock-absorbing damper & acoustic muffle rubber
+  const butylDamperRubber = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x2b2624,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.1,
+    metalness: 0.02,
+    roughness: 0.9,
+  });
+
+  // Phase 13: Translucent dielectric Mylar / amber Kapton electrical & magnetic-gap insulator film
+  const mylarInsulatorFilm = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xc2852a,
+    metalness: 0.08,
+    roughness: 0.18,
+    transparent: true,
+    opacity: 0.72,
+    clearcoat: 0.55,
+  });
+
+  // Phase 13: Mirror-lapped low-coercivity pure-iron armature & magnetic field-cut shield alloy
+  const pureIronArmature = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xbcc6d4,
+    bumpMap: cncBrushedTex,
+    bumpScale: 0.03,
+    metalness: 0.95,
+    roughness: 0.14,
+    clearcoat: 0.25,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2538,6 +2587,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     rfGoldCoax,
     loficDielectric,
     tungstenLightShield,
+    cinnabarAnodized,
+    butylDamperRubber,
+    mylarInsulatorFilm,
+    pureIronArmature,
   ];
 
   return {
@@ -2660,6 +2713,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     rfGoldCoax,
     loficDielectric,
     tungstenLightShield,
+    cinnabarAnodized,
+    butylDamperRubber,
+    mylarInsulatorFilm,
+    pureIronArmature,
     allMaterials,
   };
 }
