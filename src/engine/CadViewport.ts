@@ -489,18 +489,20 @@ export class CadViewport {
       d = 174 + e * 355;
       target = new THREE.Vector3(8.0 - e * 18.0, -7.0, -32.0 - e * 32.0);
     } else if (this.mode === 'body') {
-      d = 290 + e * 415;
-      target = new THREE.Vector3(-8.0 - e * 10.0, 4.0 - e * 2.0, 0.0 - e * 10.0);
+      // 76-part standalone Magnesium Monocoque Body ultra-anatomy (38 macro + 38 standalone-only OEM micro)
+      d = 290 + e * 515;
+      target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
     } else if (this.mode === 'mount') {
       d = 182 + e * 255;
       target = new THREE.Vector3(2.0 + e * 3.0, -2.0 - e * 3.5, 25.0 + e * 26.0);
     } else if (this.mode === 'evf') {
-      d = 140 + e * 255;
-      target = new THREE.Vector3(1.5 * (1 - e), 38.6 + e * 0.5, -16.5 - e * 22.0);
+      // 55-part standalone EVF & Viewfinder Surroundings ultra-anatomy (31 macro + 24 standalone-only OEM/optical micro)
+      d = 140 + e * 380;
+      target = new THREE.Vector3(1.5 * (1 - e) - e * 14.0, 38.6 + e * 1.5, -16.5 + e * 12.0);
     } else if (this.mode === 'mainboard') {
-      // 30-part flagship motherboard with radial I/O daughterboards, MIMO antennas, NFC & rear RF bracket
-      d = 192 + e * 170;
-      target = new THREE.Vector3(0.0, 0.0 + e * 2.0, -22.0 - e * 18.0);
+      // 54-part standalone Vapor Chamber & Flagship Motherboard ultra-anatomy (30 macro + 24 standalone-only micro)
+      d = 192 + e * 340;
+      target = new THREE.Vector3(-18.0 * e, 0.0 + e * 2.0, -22.0 - e * 4.0);
     } else if (this.mode === 'shutter') {
       d = 186 + e * 308;
       target = new THREE.Vector3(6.0 + e * 10.0, -3.2, 14.0 - e * 4.0);

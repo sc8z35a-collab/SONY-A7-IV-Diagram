@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { MAINBOARD_MICRO_EXPLANATIONS } from './mainboardMicroExplanations';
 
 export const MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = {
   'mb-vapor-chamber': {
@@ -835,5 +836,7 @@ export const MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'mb_evf_cavity_bracket',
   },
+
+  ...MAINBOARD_MICRO_EXPLANATIONS,
 };
 

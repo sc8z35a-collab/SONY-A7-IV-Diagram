@@ -143,6 +143,11 @@ export interface MaterialLibrary {
   lcdOcaFilm: THREE.MeshPhysicalMaterial;
   lcdDiffuserMatte: THREE.MeshPhysicalMaterial;
   lcdDbefIridescent: THREE.MeshPhysicalMaterial;
+  // Phase 16 Vapor Chamber, EVF & Body Deep-Audit Materials
+  vcWorkingFluidCyan: THREE.MeshPhysicalMaterial;
+  vcCopperMeshWick: THREE.MeshPhysicalMaterial;
+  evfIrWindowBlack: THREE.MeshPhysicalMaterial;
+  conductiveNiCuFoam: THREE.MeshStandardMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2566,6 +2571,52 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoat: 0.9,
   });
 
+  // Phase 16: Vapor Chamber Sub-Atmospheric Degassed DI-Water & Two-Phase Meniscus Glow
+  const vcWorkingFluidCyan = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x38bdf8,
+    emissive: 0x0284c7,
+    emissiveIntensity: 0.22,
+    metalness: 0.05,
+    roughness: 0.08,
+    opacity: 0.56,
+    iridescence: 0.65,
+    iridescenceIOR: 1.33,
+    iridescenceThicknessRange: [180, 420],
+    clearcoat: 1.0,
+  });
+
+  // Phase 16: 200-Mesh Woven Fine Copper Wire Capillary Screen Wick
+  const vcCopperMeshWick = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd9804c,
+    metalness: 0.86,
+    roughness: 0.36,
+    clearcoat: 0.2,
+    clearcoatRoughness: 0.4,
+  });
+
+  // Phase 16: EVF Eye-Sensor 940nm IR-Pass Deep-Ruby Black Polycarbonate Window
+  const evfIrWindowBlack = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x1b0814,
+    emissive: 0x4c0519,
+    emissiveIntensity: 0.18,
+    metalness: 0.04,
+    roughness: 0.05,
+    opacity: 0.88,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.04,
+  });
+
+  // Phase 16: Conductive Ni/Cu Woven Fabric-over-Foam EMI Grounding Gasket
+  const conductiveNiCuFoam = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x8e99a8,
+    metalness: 0.64,
+    roughness: 0.52,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2696,6 +2747,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     lcdOcaFilm,
     lcdDiffuserMatte,
     lcdDbefIridescent,
+    vcWorkingFluidCyan,
+    vcCopperMeshWick,
+    evfIrWindowBlack,
+    conductiveNiCuFoam,
   ];
 
   return {
@@ -2829,6 +2884,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     lcdOcaFilm,
     lcdDiffuserMatte,
     lcdDbefIridescent,
+    vcWorkingFluidCyan,
+    vcCopperMeshWick,
+    evfIrWindowBlack,
+    conductiveNiCuFoam,
     allMaterials,
   };
 }

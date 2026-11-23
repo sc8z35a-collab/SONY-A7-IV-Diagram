@@ -1,5 +1,6 @@
 import { PartExplanation } from '../types';
 import { BODY_MICRO_EXPLANATIONS } from './bodyMicroExplanations';
+import { BODY_ULTRA_AUDIT_EXPLANATIONS } from './bodyUltraAuditExplanations';
 
 export const BODY_EXPLANATIONS: Record<string, PartExplanation> = {
   'body-battery-pack': {
@@ -1084,6 +1085,7 @@ export const BODY_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   ...BODY_MICRO_EXPLANATIONS,
+  ...BODY_ULTRA_AUDIT_EXPLANATIONS,
 };
 
 

@@ -878,6 +878,36 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('lcd-fine-coaxial-bundle', false);
   syncRail();
+} else if (preset === 'phase16_mainboard') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mb-vc-evaporator-plate', false);
+  syncRail();
+} else if (preset === 'phase16_evf') {
+  viewport.setMode('evf', true);
+  controls.syncMode('evf');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('evf-oem-finder-cover', false);
+  syncRail();
+} else if (preset === 'phase16_body') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-dl1008-rtc-flex', false);
+  syncRail();
 }
 
 

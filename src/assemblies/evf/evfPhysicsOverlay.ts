@@ -291,7 +291,7 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
   );
   diopterGuide.computeLineDistances();
   explodeGuides.add(diopterGuide);
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 20);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 64);
   explodeGuides.add(radialGuides.group);
 
   // Utility to sample a piecewise-linear path at normalized t in [0, 1]

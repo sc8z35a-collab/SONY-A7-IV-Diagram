@@ -201,10 +201,10 @@ export function buildBodyMicroParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     // Sheet 1: Front curved right-grip die-cut acrylic adhesive sheet tucked cleanly under elastomer grip skin
     const sheet1 = new THREE.Mesh(
-      new THREE.CylinderGeometry(18.1, 18.1, 52.0, 28, 1, true, -Math.PI * 0.48, Math.PI * 0.78),
+      new THREE.CylinderGeometry(15.6, 15.6, 48.0, 28, 1, true, -Math.PI * 0.45, Math.PI * 0.72),
       mats.thermalTransferTape
     );
-    sheet1.position.set(1.2, 0, 9.6);
+    sheet1.position.set(1.2, 0, 7.2);
     g.add(sheet1);
 
     // Sheet 2: Lateral palm-wrap secondary die-cut adhesive tape strip
