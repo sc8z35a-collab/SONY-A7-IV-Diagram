@@ -13,6 +13,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { EVF_EXPLANATIONS } from './evfExplanations';
+import { buildEvfMicroParts } from './evfMicroParts';
 
 /** Shared EVF optical axis vertical elevation (sits cleanly atop Shutter/Sensor/Mainboard) */
 export const EVF_OPTICAL_Y = 39.5;
@@ -2009,6 +2010,9 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       (led.material as THREE.MeshPhysicalMaterial).emissiveIntensity = pulse;
     });
   };
+
+  // Append 24 Phase 16B standalone-only EVF & Viewfinder Surroundings OEM/optical micro-parts (E32–E55; omitted in whole-camera views!)
+  parts.push(...buildEvfMicroParts(mats));
 
   return {
     parts,

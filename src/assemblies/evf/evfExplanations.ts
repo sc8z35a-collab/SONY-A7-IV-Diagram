@@ -1,4 +1,5 @@
 import { PartExplanation } from '../types';
+import { EVF_MICRO_EXPLANATIONS } from './evfMicroExplanations';
 
 export const EVF_EXPLANATIONS: Record<string, PartExplanation> = {
   'evf-eyecup': {
@@ -893,6 +894,8 @@ export const EVF_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'evf_diopter_detent',
   },
+
+  ...EVF_MICRO_EXPLANATIONS,
 };
 
 

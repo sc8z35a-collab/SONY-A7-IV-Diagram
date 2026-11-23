@@ -9,6 +9,9 @@ import { renderPhase13MountShutterSchematicSvg } from './phase13MountShutterSche
 import { renderPhase13BodySchematicSvg } from './phase13BodySchematics';
 import { renderPhase14SensorSchematicSvg } from './phase14SensorSchematics';
 import { renderPhase15LcdSchematicSvg } from './phase15LcdSchematics';
+import { renderPhase16MainboardSchematicSvg } from './phase16MainboardSchematics';
+import { renderPhase16EvfSchematicSvg } from './phase16EvfSchematics';
+import { renderPhase16BodyAuditSchematicSvg } from './phase16BodyAuditSchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -123,6 +126,15 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
 
   const phase15LcdSvg = renderPhase15LcdSchematicSvg(type, wrap);
   if (phase15LcdSvg) return phase15LcdSvg;
+
+  const phase16MainboardSvg = renderPhase16MainboardSchematicSvg(type, wrap);
+  if (phase16MainboardSvg) return phase16MainboardSvg;
+
+  const phase16EvfSvg = renderPhase16EvfSchematicSvg(type, wrap);
+  if (phase16EvfSvg) return phase16EvfSvg;
+
+  const phase16BodyAuditSvg = renderPhase16BodyAuditSchematicSvg(type, wrap);
+  if (phase16BodyAuditSvg) return phase16BodyAuditSvg;
 
   switch (type) {
     case 'baffle':

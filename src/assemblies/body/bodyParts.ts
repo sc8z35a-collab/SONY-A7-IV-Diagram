@@ -14,6 +14,7 @@ import {
 } from '../../engine/CadHelpers';
 import { BODY_EXPLANATIONS } from './bodyExplanations';
 import { buildBodyMicroParts } from './bodyMicroParts';
+import { buildBodyUltraAuditParts } from './bodyUltraAuditParts';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from '../lcd/lcdParts';
 import { EVF_OPTICAL_Y } from '../evf/evfParts';
 
@@ -2773,8 +2774,9 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     },
   };
 
-  // Append 22 Phase 13 standalone-only Sony ILCE-7M4 OEM micro-parts (B39–B60; omitted in whole-camera views!)
+  // Append 22 Phase 13 + 16 Phase 16C standalone-only Sony ILCE-7M4 OEM & deep-audit body micro-parts (B39–B76; omitted in whole-camera views!)
   parts.push(...buildBodyMicroParts(mats));
+  parts.push(...buildBodyUltraAuditParts(mats));
 
   return { parts, rig };
 }

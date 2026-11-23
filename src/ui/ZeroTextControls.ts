@@ -629,7 +629,11 @@ export class ZeroTextControls {
           part.order === 39 ||
           part.order === 40 ||
           part.order === 45 ||
-          part.order === 51
+          part.order === 51 ||
+          part.order === 64 ||
+          part.order === 68 ||
+          part.order === 71 ||
+          part.order === 74
             ? 32
             : part.order === 1 ||
                 part.order === 5 ||
@@ -649,7 +653,14 @@ export class ZeroTextControls {
                 part.order === 53 ||
                 part.order === 54 ||
                 part.order === 57 ||
-                part.order === 60
+                part.order === 60 ||
+                part.order === 61 ||
+                part.order === 62 ||
+                part.order === 65 ||
+                part.order === 67 ||
+                part.order === 69 ||
+                part.order === 72 ||
+                part.order === 75
               ? 25
               : part.order >= 39
                 ? 19
@@ -694,7 +705,12 @@ export class ZeroTextControls {
           part.order === 18 ||
           part.order === 19 ||
           part.order === 23 ||
-          part.order === 27
+          part.order === 27 ||
+          part.order === 32 ||
+          part.order === 39 ||
+          part.order === 40 ||
+          part.order === 48 ||
+          part.order === 52
             ? 32
             : part.order === 6 ||
                 part.order === 8 ||
@@ -705,7 +721,15 @@ export class ZeroTextControls {
                 part.order === 22 ||
                 part.order === 24 ||
                 part.order === 26 ||
-                part.order === 29
+                part.order === 29 ||
+                part.order === 33 ||
+                part.order === 35 ||
+                part.order === 38 ||
+                part.order === 42 ||
+                part.order === 44 ||
+                part.order === 47 ||
+                part.order === 50 ||
+                part.order === 54
               ? 26
               : part.order === 2 ||
                   part.order === 3 ||
@@ -717,19 +741,36 @@ export class ZeroTextControls {
                   part.order === 21 ||
                   part.order === 25 ||
                   part.order === 28 ||
-                  part.order === 31
+                  part.order === 31 ||
+                  part.order >= 32
                 ? 21
                 : 17;
       } else if (part.subsystem === 'mainboard') {
         widthPx =
-          part.order === 14 || part.order === 16 || part.order === 18 || part.order === 29
+          part.order === 14 ||
+          part.order === 16 ||
+          part.order === 18 ||
+          part.order === 29 ||
+          part.order === 31 ||
+          part.order === 32 ||
+          part.order === 39 ||
+          part.order === 45
             ? 32
             : part.order === 1 ||
                 part.order === 2 ||
                 part.order === 17 ||
                 part.order === 19 ||
                 part.order === 20 ||
-                part.order === 27
+                part.order === 27 ||
+                part.order === 33 ||
+                part.order === 34 ||
+                part.order === 36 ||
+                part.order === 38 ||
+                part.order === 40 ||
+                part.order === 42 ||
+                part.order === 47 ||
+                part.order === 49 ||
+                part.order === 52
               ? 27
               : part.order === 4 ||
                   part.order === 6 ||
@@ -738,8 +779,9 @@ export class ZeroTextControls {
                   part.order === 21 ||
                   part.order === 26 ||
                   part.order === 28 ||
-                  part.order === 30
-                ? 23
+                  part.order === 30 ||
+                  part.order >= 31
+                ? 22
                 : 17;
       } else if (part.subsystem === 'shutter') {
         widthPx =
