@@ -23,6 +23,7 @@ export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
 
   const updatePositions = (explodeFactor: number, integrated: boolean) => {
     for (const p of parts) {
+      if (!p.group.visible) continue;
       const offset =
         integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
       p.group.position.set(

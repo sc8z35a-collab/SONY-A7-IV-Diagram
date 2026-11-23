@@ -15,6 +15,8 @@ import {
 import { LENS_EXPLANATIONS } from './lensExplanations';
 import { LensOpticalSim } from './lensOpticalSim';
 import { buildLensMicroParts } from './lensMicroParts';
+import { buildLensUltraSplitParts } from './lensUltraSplitParts';
+import { getLensSectionForPart } from './lensSectionMap';
 
 export interface LensDynamicRig {
   irisBlades: THREE.Group[];
@@ -3595,6 +3597,14 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
 
   // Append 24 Phase 18A standalone-only 50mm F1.2 GM optical/mechanical/electronic micro-parts (L75–L98; omitted in whole-camera views!)
   parts.push(...buildLensMicroParts(mats));
+
+  // Append 30 Phase 19A standalone-only 3-section GM lens mega-audit micro-parts (L99–L128; omitted in whole-camera views!)
+  parts.push(...buildLensUltraSplitParts(mats));
+
+  // Assign canonical 3-section lightweight standalone partition (1 = Rear default, 2 = Middle, 3 = Front) across ALL 128 lens parts
+  for (const p of parts) {
+    p.lensSection = getLensSectionForPart(p.id);
+  }
 
   return { parts, rig };
 }

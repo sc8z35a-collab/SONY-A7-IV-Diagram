@@ -156,6 +156,10 @@ export interface MaterialLibrary {
   fluorineCoatCyan: THREE.MeshPhysicalMaterial;
   nanoArIridescent: THREE.MeshPhysicalMaterial;
   sinteredBronzeBushing: THREE.MeshPhysicalMaterial;
+  // Phase 19 3-Section GM Lens & Deep-Audit Micro Materials
+  thermalPuttyPink: THREE.MeshStandardMaterial;
+  gMasterRedBadge: THREE.MeshPhysicalMaterial;
+  makeupSealViolet: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2695,6 +2699,34 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoatRoughness: 0.42,
   });
 
+  // Phase 19: Compliant Silicone PCB Thermal Heatsink Putty (Lensrentals Sony FE PCB discovery)
+  const thermalPuttyPink = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xe89ca8,
+    metalness: 0.02,
+    roughness: 0.82,
+  });
+
+  // Phase 19: Sony G Master Signature Anodized Crimson-Orange Aluminum Emblem Badge
+  const gMasterRedBadge = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd9381e,
+    metalness: 0.62,
+    roughness: 0.24,
+    clearcoat: 0.9,
+    clearcoatRoughness: 0.14,
+  });
+
+  // Phase 19: Front-Element Thick Blue-Violet Weather-Sealing Silicone Ring (Lensrentals GM teardown)
+  const makeupSealViolet = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x6c63c9,
+    metalness: 0.04,
+    roughness: 0.56,
+    clearcoat: 0.22,
+    clearcoatRoughness: 0.4,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2835,6 +2867,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     fluorineCoatCyan,
     nanoArIridescent,
     sinteredBronzeBushing,
+    thermalPuttyPink,
+    gMasterRedBadge,
+    makeupSealViolet,
   ];
 
   return {
@@ -2978,6 +3013,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     fluorineCoatCyan,
     nanoArIridescent,
     sinteredBronzeBushing,
+    thermalPuttyPink,
+    gMasterRedBadge,
+    makeupSealViolet,
     allMaterials,
   };
 }

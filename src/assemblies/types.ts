@@ -15,6 +15,7 @@ export type ScaleMode =
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
+export type LensSection = 1 | 2 | 3;
 
 export interface ExplanationSpec {
   label: string;
@@ -617,7 +618,64 @@ export interface PartExplanation {
     | 'mount_flange_datum_pads'
     | 'mount_release_wp_boot'
     | 'mount_overtravel_bumper'
-    | 'mount_thermal_emi_fingers';
+    | 'mount_thermal_emi_fingers'
+    // Phase 19A: 50mm F1.2 GM Lens 3-Section Lightweight Standalone Mega-Audit (+30: L99–L128 -> 128 total lens layers)
+    // Section 1 (Rear 1/3: L99–L108)
+    | 'lens_cl1082_mount_flex'
+    | 'lens_pcb_thermal_putty'
+    | 'lens_bayonet_ground_leads'
+    | 'lens_rear_inner_foam_seal'
+    | 'lens_iris_click_wedge_lever'
+    | 'lens_aperture_wiper_brush'
+    | 'lens_rear_outer_gm_badge'
+    | 'lens_g5_rear_eccentric_boss'
+    | 'lens_rear_baffle_3screws'
+    | 'lens_pcb_jtag_test_pads'
+    // Section 2 (Middle 2/3: L109–L118)
+    | 'lens_mid_block_core_frame'
+    | 'lens_iris_partition_bumpers'
+    | 'lens_floating_cog_weights'
+    | 'lens_iris_pinion_hairspring'
+    | 'lens_barrel_sub_pcb_cover'
+    | 'lens_xd_rollflex_loop'
+    | 'lens_xd_antitwist_peg'
+    | 'lens_hold_btn_wp_boots'
+    | 'lens_afmf_switch_wiper'
+    | 'lens_split_barrel_dowels'
+    // Section 3 (Front 3/3: L119–L128)
+    | 'lens_front_makeup_violet_seal'
+    | 'lens_mf_pom_slider_pads'
+    | 'lens_mf_internal_ring_gear'
+    | 'lens_front_window_tilt_shims'
+    | 'lens_filter_assy_thick_gasket'
+    | 'lens_g2_xa_sealant_screws'
+    | 'lens_front_spanner_orings'
+    | 'lens_cold_rubber_grip_tape'
+    | 'lens_hood_release_lock_pin'
+    | 'lens_hood_tpe_bumper_dot'
+    // Phase 19B: Micro Pixel Semiconductor Ultra-Audit (+8: M28–M35 -> 35 total micro layers)
+    | 'micro_pwell_body_tie'
+    | 'micro_column_cds_sh'
+    | 'micro_ss_adc_ramp_comp'
+    | 'micro_stitch_slvsec_phy'
+    | 'micro_cra_chief_ray_shift'
+    | 'micro_tsv_oxide_liner'
+    | 'micro_quad_bayer_septum'
+    | 'micro_bandgap_pll_clock'
+    // Phase 19C: Full-Frame Sensor & 5-Axis IBIS Ultra-Audit (+6: S65–S70 -> 70 total sensor layers)
+    | 'sensor_birefringent_olpf'
+    | 'sensor_cm500_dichroic_ir'
+    | 'sensor_pzt_electrode_bond'
+    | 'sensor_sus440c_ball_races'
+    | 'sensor_rear_flux_shunt'
+    | 'sensor_cavity_breather_desiccant'
+    // Phase 19D: Vapor Chamber & Flagship Mainboard Ultra-Audit (+6: M55–M60 -> 60 total mainboard layers)
+    | 'mb_rf_shield_4screws'
+    | 'mb_card_detect_heartcam'
+    | 'mb_io_lowcap_esd_chokes'
+    | 'mb_bga_underfill_fiducials'
+    | 'mb_ina_fuel_gauge_ic'
+    | 'mb_5a_fuse_rev_mosfet';
 }
 
 export interface CadPart {
@@ -641,6 +699,8 @@ export interface CadPart {
   ultrasonicElement?: boolean;
   /** If true, omit this ultra-fine sub-part from whole-camera modes ('integrated', 'camera_body') and render ONLY in its individual subsystem view */
   standaloneOnly?: boolean;
+  /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
+  lensSection?: LensSection;
 }
 
 export interface AssemblyController {

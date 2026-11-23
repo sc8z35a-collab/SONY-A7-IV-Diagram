@@ -14,6 +14,7 @@ import {
 } from '../../engine/CadHelpers';
 import { MACRO_EXPLANATIONS } from './explanations';
 import { buildSensorMicroParts } from './sensorMicroParts';
+import { buildSensorUltraAuditParts } from './sensorMicroUltraAuditParts';
 
 function finalizePart(
   id: string,
@@ -2148,6 +2149,9 @@ export function buildMacroSensorParts(mats: MaterialLibrary): CadPart[] {
 
   // Phase 14: Append 24 standalone-only OEM micro-parts (S41–S64; omitted in whole-camera views)
   parts.push(...buildSensorMicroParts(mats));
+
+  // Phase 19C: Append 6 standalone-only Sensor/IBIS deep-audit parts (S65–S70; omitted in whole-camera views)
+  parts.push(...buildSensorUltraAuditParts(mats));
 
   return parts;
 }

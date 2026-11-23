@@ -5,6 +5,7 @@ import {
   AssemblyController,
   CadPart,
   CameraPreset,
+  LensSection,
   RenderMode,
   ScaleMode,
   SectionAxis,
@@ -55,8 +56,10 @@ export class CadViewport {
   private pointer = new THREE.Vector2();
   private pointerDownPos = new THREE.Vector2();
 
-  // State — opens directly onto the COMPLETE 96-layer assembled flagship mirrorless camera!
+  // State — opens directly onto the COMPLETE 305-macro-layer assembled flagship mirrorless camera!
   private mode: ScaleMode = 'integrated';
+  /** Active lightweight 1/3 standalone GM lens section: 1 = Rear (default), 2 = Middle, 3 = Front */
+  private lensSection: LensSection = 1;
   private renderMode: RenderMode = 'solid';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
@@ -242,6 +245,15 @@ export class CadViewport {
     if (this.mode === 'camera_body') {
       return part.subsystem !== 'micro' && part.subsystem !== 'lens' && !part.standaloneOnly;
     }
+    if (this.mode === 'lens') {
+      if (part.subsystem !== 'lens') return false;
+      // When interactive Optics Studio is open, display all 74 macro elements so Snell rays traverse all 14 lenses end-to-end
+      if (sharedLensOpticalSim.studioOpen) {
+        return !part.standaloneOnly;
+      }
+      // Lightweight 3-section standalone GM Lens view: render ONLY the active 1/3 section (~38–48 parts instead of 128!)
+      return (part.lensSection ?? 2) === this.lensSection;
+    }
     return part.subsystem === this.mode;
   }
 
@@ -339,9 +351,51 @@ export class CadViewport {
     return this.mode;
   }
 
+  public getLensSection(): LensSection {
+    return this.lensSection;
+  }
+
+  public refreshVisibility(): void {
+    this.syncAssemblyVisibility();
+    this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
+    this.syncAssemblyVisibility();
+    this.applyVisibilityAndStyles();
+    this.markDirty();
+  }
+
+  public setLensSection(section: LensSection, immediateCamera = false): void {
+    const changed = this.lensSection !== section;
+    this.lensSection = section;
+    if (this.mode !== 'lens') return;
+    if (!changed && !immediateCamera) {
+      this.setCameraPreset('iso', false);
+      return;
+    }
+
+    this.selectedPartId = null;
+    this.hoveredPartId = null;
+    this.isolatedPartId = null;
+    this.hiddenPartIds.clear();
+
+    this.syncAssemblyVisibility();
+    this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
+    this.syncAssemblyVisibility();
+    this.applyVisibilityAndStyles();
+    this.updateClippingPlane();
+    this.setCameraPreset('iso', immediateCamera);
+
+    this.callbacks.onSelectPart(null);
+    this.callbacks.onHoverPart(null);
+    this.callbacks.onVisibilityChanged();
+  }
+
   public setMode(nextMode: ScaleMode, immediateCamera = false): void {
     if (this.mode === nextMode) return;
     this.mode = nextMode;
+    // Whenever entering standalone GM lens mode, always start on Section 1 (Rear-most 1/3 block)!
+    if (nextMode === 'lens') {
+      this.lensSection = 1;
+    }
 
     this.selectedPartId = null;
     this.hoveredPartId = null;
@@ -478,9 +532,22 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      // 98-part standalone 50mm F1.2 GM Prime Lens ultra-anatomy (74 macro + 24 standalone-only micro)
-      d = 266 + e * 1080;
-      target = new THREE.Vector3(0 + e * 124.0, -2.0 * (1 - e), 80.0 + e * 160.0);
+      if (sharedLensOpticalSim.studioOpen) {
+        d = 266 + e * 1080;
+        target = new THREE.Vector3(0 + e * 124.0, -2.0 * (1 - e), 80.0 + e * 160.0);
+      } else if (this.lensSection === 1) {
+        // Section 1/3 (Rear — Default): Mount, Rear XA Group, Main PCB & Aperture Ring (42 parts)
+        d = 186 + e * 625;
+        target = new THREE.Vector3(0 + e * 54.0, -1.5 + e * 10.0, 47.0 - e * 102.0);
+      } else if (this.lensSection === 2) {
+        // Section 2/3 (Middle): 11-Blade Iris, Quad XD Linear Motors & Floating Core (48 parts)
+        d = 198 + e * 665;
+        target = new THREE.Vector3(0 + e * 64.0, -1.0 - e * 8.0, 76.5 + e * 76.0);
+      } else {
+        // Section 3/3 (Front): Front XA/ED Glass, Nano AR II, MF Ring & ALC-SH163 Hood (38 parts)
+        d = 212 + e * 795;
+        target = new THREE.Vector3(0 + e * 96.0, -1.0 + e * 4.0, 108.0 + e * 212.0);
+      }
     } else if (this.mode === 'camera_body') {
       // Complete 231-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 231-layer body dissection!
       d = 335 + e * 565;

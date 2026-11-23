@@ -116,7 +116,15 @@ controls = new ZeroTextControls(appRoot, {
       opticsStudio.close();
     }
     viewport.setMode(mode);
+    controls.syncLensSection(viewport.getLensSection());
     controls.setExplodeValue(viewport.getExplode());
+    syncRail();
+  },
+  onLensSectionChange: (section) => {
+    if (opticsStudio?.getIsOpen()) {
+      opticsStudio.close();
+    }
+    viewport.setLensSection(section);
     syncRail();
   },
   onExplodeChange: (val) => {
@@ -172,6 +180,7 @@ opticsStudio = new LensOpticsStudio(appRoot, {
     if (open) {
       viewport.setMode('lens', true);
       controls.syncMode('lens');
+      controls.syncOpticsStudio(true);
       viewport.setExplode(0);
       controls.setExplodeValue(0);
       viewport.setPhysicsActive(true);
@@ -180,7 +189,10 @@ opticsStudio = new LensOpticsStudio(appRoot, {
       syncRail();
     } else {
       if (viewport.getMode() === 'lens') {
+        viewport.refreshVisibility();
+        controls.syncLensSection(viewport.getLensSection());
         viewport.setCameraPreset('iso', false);
+        syncRail();
       }
       viewport.requestRenderFrame();
     }
@@ -233,6 +245,18 @@ window.addEventListener('keydown', (e) => {
     } else if (opticsStudio.getIsOpen()) {
       opticsStudio.close();
     }
+  } else if (
+    (e.key === '1' || e.key === '2' || e.key === '3') &&
+    viewport.getMode() === 'lens' &&
+    !opticsStudio.getIsOpen() &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    const sec = Number(e.key) as 1 | 2 | 3;
+    viewport.setLensSection(sec);
+    controls.syncLensSection(sec);
+    syncRail();
   } else if (
     (e.key === 'f' || e.key === 'F') &&
     !e.ctrlKey &&
@@ -920,7 +944,9 @@ if (preset === 'complete_assembled') {
   syncRail();
 } else if (preset === 'phase18_lens') {
   viewport.setMode('lens', true);
+  viewport.setLensSection(3, true);
   controls.syncMode('lens');
+  controls.syncLensSection(3);
   viewport.setExplode(0.95, true);
   controls.setExplodeValue(0.95);
   viewport.setPhysicsActive(true);
@@ -937,6 +963,72 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mount-bayonet-leadin-dlc', false);
+  syncRail();
+} else if (preset === 'phase19_lens_s1') {
+  viewport.setMode('lens', true);
+  viewport.setLensSection(1, true);
+  controls.syncMode('lens');
+  controls.syncLensSection(1);
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-iris-click-wedge-lever', false);
+  syncRail();
+} else if (preset === 'phase19_lens_s2') {
+  viewport.setMode('lens', true);
+  viewport.setLensSection(2, true);
+  controls.syncMode('lens');
+  controls.syncLensSection(2);
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-mid-block-core-frame', false);
+  syncRail();
+} else if (preset === 'phase19_lens_s3') {
+  viewport.setMode('lens', true);
+  viewport.setLensSection(3, true);
+  controls.syncMode('lens');
+  controls.syncLensSection(3);
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-hood-release-lock-pin', false);
+  syncRail();
+} else if (preset === 'phase19_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-column-cds-sh', false);
+  syncRail();
+} else if (preset === 'phase19_sensor') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('sensor-birefringent-olpf', false);
+  syncRail();
+} else if (preset === 'phase19_mainboard') {
+  viewport.setMode('mainboard', true);
+  controls.syncMode('mainboard');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mb-card-detect-heartcam', false);
   syncRail();
 }
 

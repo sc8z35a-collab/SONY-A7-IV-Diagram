@@ -1,7 +1,8 @@
-import { CadPart, CameraPreset, RenderMode, ScaleMode, SectionAxis } from '../assemblies/types';
+import { CadPart, CameraPreset, LensSection, RenderMode, ScaleMode, SectionAxis } from '../assemblies/types';
 
 export interface ZeroTextUIHandlers {
   onModeChange: (mode: ScaleMode) => void;
+  onLensSectionChange: (section: LensSection) => void;
   onExplodeChange: (value: number) => void;
   onSectionAxisChange: (axis: SectionAxis) => void;
   onSectionValueChange: (value: number) => void;
@@ -26,11 +27,11 @@ function svgIcon(inner: string, viewBox = '0 0 24 24'): SVGSVGElement {
   return svg;
 }
 
-function createIconButton(svgContent: string, className = 'icon-btn'): HTMLButtonElement {
+function createIconButton(svgContent: string, className = 'icon-btn', viewBox = '0 0 24 24'): HTMLButtonElement {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = className;
-  btn.appendChild(svgIcon(svgContent));
+  btn.appendChild(svgIcon(svgContent, viewBox));
   return btn;
 }
 
@@ -47,6 +48,17 @@ const ICONS = {
   // 50mm F1.2 Prime Lens & XD Linear Motors: side cross-section barrel with curved XA/ED lens elements
   lensModule:
     '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 6.5c1.8 3.2 1.8 7.8 0 11"/><path d="M12.5 6.5c-1.5 3.2-1.5 7.8 0 11"/><path d="M17 6.5c1.6 3.2 1.6 7.8 0 11"/><line x1="10.2" y1="6" x2="10.2" y2="18" stroke-dasharray="2 2"/>',
+
+  // 3-Section Lightweight GM Lens Switcher Icons (viewBox="0 0 46 24", strictly zero text!):
+  // Shows 3-block side silhouette [Rear Mount | Mid Iris/XD | Front XA+Hood] + 3 indicator dots below
+  lensSec1:
+    '<rect x="3" y="4" width="2.2" height="11" rx="0.6" fill="currentColor" stroke="none"/><rect x="6" y="3.5" width="10.5" height="12" rx="1.6" fill="currentColor"/><rect x="18.5" y="3" width="10.5" height="13" rx="1.4" opacity="0.32"/><path d="M31 3h8.5l3 1.8v9.4l-3 1.8H31z" opacity="0.32"/><circle cx="11.2" cy="20.2" r="2.0" fill="currentColor" stroke="none"/><circle cx="23.8" cy="20.2" r="1.4" opacity="0.34"/><circle cx="36.2" cy="20.2" r="1.4" opacity="0.34"/>',
+
+  lensSec2:
+    '<rect x="3" y="4" width="2.2" height="11" rx="0.6" opacity="0.32"/><rect x="6" y="3.5" width="10.5" height="12" rx="1.6" opacity="0.32"/><rect x="18.5" y="3" width="10.5" height="13" rx="1.4" fill="currentColor"/><path d="M31 3h8.5l3 1.8v9.4l-3 1.8H31z" opacity="0.32"/><circle cx="11.2" cy="20.2" r="1.4" opacity="0.34"/><circle cx="23.8" cy="20.2" r="2.0" fill="currentColor" stroke="none"/><circle cx="36.2" cy="20.2" r="1.4" opacity="0.34"/>',
+
+  lensSec3:
+    '<rect x="3" y="4" width="2.2" height="11" rx="0.6" opacity="0.32"/><rect x="6" y="3.5" width="10.5" height="12" rx="1.6" opacity="0.32"/><rect x="18.5" y="3" width="10.5" height="13" rx="1.4" opacity="0.32"/><path d="M31 3h8.5l3 1.8v9.4l-3 1.8H31z" fill="currentColor"/><circle cx="11.2" cy="20.2" r="1.4" opacity="0.34"/><circle cx="23.8" cy="20.2" r="1.4" opacity="0.34"/><circle cx="36.2" cy="20.2" r="2.0" fill="currentColor" stroke="none"/>',
 
   // Large-Diameter Bayonet Lens Mount: outer flange ring + inner throat + 4 bayonet lugs + top index dot + bottom contact dots
   mountModule:
@@ -165,6 +177,12 @@ export class ZeroTextControls {
   private lcdBtn: HTMLButtonElement;
   private bodyBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
+
+  private lensSectionBar: HTMLElement;
+  private lensSec1Btn: HTMLButtonElement;
+  private lensSec2Btn: HTMLButtonElement;
+  private lensSec3Btn: HTMLButtonElement;
+
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
   private explodeBtn: HTMLButtonElement;
@@ -185,6 +203,7 @@ export class ZeroTextControls {
   private layerRowMap = new Map<string, HTMLElement>();
 
   private currentMode: ScaleMode = 'integrated';
+  private currentLensSection: LensSection = 1;
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private physicsActive = false;
@@ -211,6 +230,32 @@ export class ZeroTextControls {
 
     viewCluster.append(vIso, vFront, vSide, vBack);
     this.root.appendChild(viewCluster);
+
+    // -----------------------------------------------------------------------
+    // 1B. Top-Center 3-Section Lightweight GM Lens Switcher Pill (1: Rear, 2: Mid, 3: Front)
+    //     Strictly Zero-Text SVG Icons; shown ONLY in standalone 'lens' mode!
+    // -----------------------------------------------------------------------
+    this.lensSectionBar = document.createElement('div');
+    this.lensSectionBar.className = 'lens-section-bar is-hidden';
+
+    this.lensSec1Btn = createIconButton(ICONS.lensSec1, 'lens-section-btn is-active', '0 0 46 24');
+    this.lensSec1Btn.dataset.lensSection = '1';
+    this.lensSec1Btn.setAttribute('aria-label', 'レンズ後部 1/3');
+
+    this.lensSec2Btn = createIconButton(ICONS.lensSec2, 'lens-section-btn', '0 0 46 24');
+    this.lensSec2Btn.dataset.lensSection = '2';
+    this.lensSec2Btn.setAttribute('aria-label', 'レンズ中央部 2/3');
+
+    this.lensSec3Btn = createIconButton(ICONS.lensSec3, 'lens-section-btn', '0 0 46 24');
+    this.lensSec3Btn.dataset.lensSection = '3';
+    this.lensSec3Btn.setAttribute('aria-label', 'レンズ前部 3/3');
+
+    this.lensSec1Btn.addEventListener('click', () => this.setLensSection(1));
+    this.lensSec2Btn.addEventListener('click', () => this.setLensSection(2));
+    this.lensSec3Btn.addEventListener('click', () => this.setLensSection(3));
+
+    this.lensSectionBar.append(this.lensSec1Btn, this.lensSec2Btn, this.lensSec3Btn);
+    this.root.appendChild(this.lensSectionBar);
 
     // -----------------------------------------------------------------------
     // 2. Left Vertical Layer Dissection Strip (Swatches + Geometric Bars)
@@ -412,11 +457,35 @@ export class ZeroTextControls {
     this.lcdBtn.classList.toggle('is-active', mode === 'lcd');
     this.bodyBtn.classList.toggle('is-active', mode === 'body');
     this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
+  }
+
+  private applyLensSectionButtons(section: LensSection): void {
+    this.lensSec1Btn.classList.toggle('is-active', section === 1);
+    this.lensSec2Btn.classList.toggle('is-active', section === 2);
+    this.lensSec3Btn.classList.toggle('is-active', section === 3);
+  }
+
+  private setLensSection(section: LensSection): void {
+    if (this.currentLensSection === section && this.currentMode === 'lens') return;
+    this.currentLensSection = section;
+    this.applyLensSectionButtons(section);
+    this.handlers.onLensSectionChange(section);
+  }
+
+  public syncLensSection(section: LensSection): void {
+    this.currentLensSection = section;
+    this.applyLensSectionButtons(section);
   }
 
   private setMode(mode: ScaleMode): void {
     if (this.currentMode === mode) return;
     this.currentMode = mode;
+    if (mode === 'lens') {
+      // Entering standalone lens always starts on Section 1 (Rear-most 1/3 block)
+      this.currentLensSection = 1;
+      this.applyLensSectionButtons(1);
+    }
     this.applyModeButtons(mode);
     this.handlers.onModeChange(mode);
   }
@@ -454,6 +523,9 @@ export class ZeroTextControls {
 
   public syncMode(mode: ScaleMode): void {
     this.currentMode = mode;
+    if (mode === 'lens') {
+      this.applyLensSectionButtons(this.currentLensSection);
+    }
     this.applyModeButtons(mode);
   }
 
@@ -476,6 +548,7 @@ export class ZeroTextControls {
 
   public syncOpticsStudio(active: boolean): void {
     this.opticsStudioBtn.classList.toggle('is-active', active);
+    this.lensSectionBar.classList.toggle('is-hidden', active || this.currentMode !== 'lens');
   }
 
   public syncFullscreen(active: boolean): void {

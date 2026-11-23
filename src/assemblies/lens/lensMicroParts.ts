@@ -895,28 +895,28 @@ export function buildLensMicroParts(mats: MaterialLibrary): CadPart[] {
       extrudeCentered(createRingShape(39.4, 36.2), 2.2, 0.14, 0.14, 42),
       mats.matteBlackAnodized
     );
-    frontCapRim.position.z = 44.6; // assembled z = 74 + 44.6 = 118.6 (neatly framing outer 72mm filter rim without blocking front glass!)
+    frontCapRim.position.z = 0; // assembled z = 118.6 (neatly framing outer 72mm filter rim without blocking front glass!)
     for (const sx of [-1, 1]) {
       const pinchTab = new THREE.Mesh(
         extrudeCentered(createRoundedRectShape(3.2, 8.6, 1.0), 2.2, 0.1, 0.1, 10),
         mats.lensRubberGrip
       );
-      pinchTab.position.set(sx * 37.8, 0, 45.2);
+      pinchTab.position.set(sx * 37.8, 0, 0.6);
       const spring = new THREE.Mesh(
         createHelicalSpringGeometry(0.55, 3.2, 4, 0.16),
         mats.mountSpringSteel
       );
-      spring.position.set(sx * 37.6, 0, 43.4);
+      spring.position.set(sx * 37.6, 0, -1.2);
       spring.userData.noEdges = true;
       g.add(pinchTab, spring);
     }
 
-    // Rear bayonet ALC-R1EM dust cap ring tucked cleanly at z = 30.8 mm (behind bayonet flange)
+    // Companion ALC-R1EM bayonet rear dust-cap ring neatly nested inside front-section envelope when stowed
     const rearCapRim = new THREE.Mesh(
-      extrudeCentered(createRingShape(32.8, 25.4), 3.2, 0.16, 0.16, 40),
+      extrudeCentered(createRingShape(32.8, 26.8), 2.8, 0.14, 0.14, 40),
       mats.matteBlackAnodized
     );
-    rearCapRim.position.z = -43.2; // assembled z = 74 - 43.2 = 30.8
+    rearCapRim.position.z = -24.0; // assembled z = 94.6 (cleanly inside Section 3 envelope)
     g.add(frontCapRim, rearCapRim);
 
     parts.push(
@@ -925,8 +925,8 @@ export function buildLensMicroParts(mats: MaterialLibrary): CadPart[] {
         98,
         '#475569',
         g,
-        new THREE.Vector3(0, 0, 74.0),
-        new THREE.Vector3(0, 0, 368),
+        new THREE.Vector3(0, 0, 118.6),
+        new THREE.Vector3(0, -34, 286),
         cp,
         0.26
       )
