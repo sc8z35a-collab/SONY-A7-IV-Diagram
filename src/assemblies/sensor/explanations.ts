@@ -4,6 +4,7 @@ import {
   MICRO_PIXEL_ULTRA_EXPLANATIONS,
 } from './sensorMicroExplanations';
 import { SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS } from './sensorMicroUltraAuditExplanations';
+import { MICRO_DEEP_AUDIT_EXPLANATIONS } from './microPixelDeepAuditExplanations';
 
 export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   // =========================================================================
@@ -1644,5 +1645,6 @@ export const MICRO_EXPLANATIONS: Record<string, PartExplanation> = {
   },
   ...MICRO_PIXEL_ULTRA_EXPLANATIONS,
   ...SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS,
+  ...MICRO_DEEP_AUDIT_EXPLANATIONS,
 };
 

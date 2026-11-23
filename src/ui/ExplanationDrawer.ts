@@ -15,6 +15,7 @@ import { renderPhase16BodyAuditSchematicSvg } from './phase16BodyAuditSchematics
 import { renderPhase17ShutterAuditSchematicSvg } from './phase17ShutterAuditSchematics';
 import { renderPhase18LensMountSchematicSvg } from './phase18LensMountSchematics';
 import { renderPhase19UltraAnatomySchematicSvg } from './phase19UltraAnatomySchematics';
+import { renderPhase20MicroMountSchematicSvg } from './phase20MicroMountSchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -153,6 +154,9 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
 
   const phase19UltraSvg = renderPhase19UltraAnatomySchematicSvg(type, wrap);
   if (phase19UltraSvg) return phase19UltraSvg;
+
+  const phase20MicroMountSvg = renderPhase20MicroMountSchematicSvg(type);
+  if (phase20MicroMountSvg) return phase20MicroMountSvg;
 
   switch (type) {
     case 'baffle':
@@ -1462,7 +1466,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <path d="M134 34 L118 34" stroke="#0284c7" stroke-width="2.4"/>
         <polygon points="114,34 122,29 122,39" fill="#0284c7"/>
         <text x="148" y="24" font-size="8" font-weight="bold" fill="#0369a1">上部ボルト引張応力を6点分散＋緩み止め</text>
-        <text x="52" y="111" font-size="8" fill="#334155">片持ち曲げモーメントによるフランジ浮き(片ボケ)を6点高剛性締結で防止</text>
+        <text x="160" y="111" text-anchor="middle" font-size="7.4" fill="#334155">片持ち曲げモーメントによるフランジ浮き(片ボケ)を6点高剛性締結で防止</text>
       `);
 
     case 'mount_gasket':
@@ -1567,8 +1571,8 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="26" y="16" font-size="7.5" font-weight="bold" fill="#b45309">大電力V_MOT (3A)</text>
         <text x="116" y="16" font-size="7.5" font-weight="bold" fill="#047857">高速双方向SPI/UART (40倍帯域)</text>
         <text x="244" y="16" font-size="7.5" font-weight="bold" fill="#0369a1">装着検知</text>
-        <text x="24" y="92" font-size="8" font-weight="bold" fill="#0f172a">独立スプリング内蔵・厚金めっき (接触抵抗 &lt; 20 mΩ) ＋ GND先行ホットスワップ安全設計</text>
-        <text x="40" y="109" font-size="8" fill="#334155">OIS×5軸IBIS毎秒1,000Hz協調・120fps AF・DLO光学補正データをリアルタイム伝送</text>
+        <text x="160" y="92" text-anchor="middle" font-size="6.9" font-weight="bold" fill="#0f172a">独立スプリング内蔵・厚金めっき (&lt;20mΩ) ＋ GND先行ホットスワップ安全設計</text>
+        <text x="160" y="109" text-anchor="middle" font-size="7.1" fill="#334155">OIS×5軸IBIS 1,000Hz協調・120fps AF・DLO光学補正をリアルタイム伝送</text>
       `);
 
     case 'mount_contact_pcb':
@@ -1629,7 +1633,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="152" y="52" font-size="7.5" fill="#475569">・イメージサークル面積：1,472 mm²</text>
         <text x="152" y="65" font-size="7.5" fill="#1d4ed8">・有効センサー面積：864 mm²</text>
         <text x="152" y="79" font-size="7.8" font-weight="bold" fill="#dc2626">⇒ 不要な41%の光を直前遮断!</text>
-        <text x="44" y="110" font-size="8" fill="#334155">シャッター室での二次乱反射を防ぎ16ストップHDRの漆黒コントラストを死守</text>
+        <text x="160" y="110" text-anchor="middle" font-size="7.4" fill="#334155">シャッター室での二次乱反射を防ぎ16ストップHDRの漆黒コントラストを死守</text>
       `);
 
     case 'mount_mg_throat':
@@ -1649,7 +1653,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="168" y="51" font-size="7.5" fill="#334155">・比重 1.81 (超軽量・高剛性)</text>
         <text x="168" y="64" font-size="7.5" fill="#334155">・6か所SUSヘリサート内蔵</text>
         <text x="168" y="77" font-size="7.5" fill="#334155">・高い内部振動減衰能</text>
-        <text x="48" y="110" font-size="8" fill="#334155">放射状ガセットリブで断面二次モーメントを高め重量級レンズのたわみを抑制</text>
+        <text x="160" y="110" text-anchor="middle" font-size="7.3" fill="#334155">放射状ガセットリブで断面二次モーメントを高め重量級レンズのたわみを抑制</text>
       `);
 
     case 'mount_chassis_if':

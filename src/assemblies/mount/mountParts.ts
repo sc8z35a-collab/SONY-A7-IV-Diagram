@@ -15,6 +15,7 @@ import {
 import { MOUNT_EXPLANATIONS } from './mountExplanations';
 import { buildMountMicroParts } from './mountMicroParts';
 import { buildMountUltraAuditParts } from './mountUltraAuditParts';
+import { buildMountDeepAuditParts } from './mountDeepAuditParts';
 
 export interface MountDynamicRig {
   lockPinPlunger: THREE.Group;
@@ -1456,6 +1457,9 @@ export function buildMountParts(
 
   // Append 6 Phase 18B standalone-only lens-mount deep-audit completion micro-parts (M43–M48; omitted in whole-camera views!)
   parts.push(...buildMountUltraAuditParts(mats));
+
+  // Append 12 Phase 20B standalone-only Sony OEM/Encompass/Lensrentals lens-mount ultra-audit micro-parts (M49–M60; omitted in whole-camera views!)
+  parts.push(...buildMountDeepAuditParts(mats));
 
   return {
     parts,

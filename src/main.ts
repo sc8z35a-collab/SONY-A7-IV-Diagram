@@ -1030,6 +1030,26 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mb-card-detect-heartcam', false);
   syncRail();
+} else if (preset === 'phase20_micro') {
+  viewport.setMode('micro', true);
+  controls.syncMode('micro');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('micro-inpixel-dram-gs', false);
+  syncRail();
+} else if (preset === 'phase20_mount') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-screw-orange-orings', false);
+  syncRail();
 }
 
 

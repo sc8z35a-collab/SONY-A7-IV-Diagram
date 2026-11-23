@@ -770,7 +770,11 @@ export class ZeroTextControls {
           part.order === 42 ||
           part.order === 43 ||
           part.order === 45 ||
-          part.order === 48
+          part.order === 48 ||
+          part.order === 50 ||
+          part.order === 52 ||
+          part.order === 53 ||
+          part.order === 56
             ? 32
             : part.order === 3 ||
                 part.order === 4 ||
@@ -788,7 +792,12 @@ export class ZeroTextControls {
                 part.order === 37 ||
                 part.order === 40 ||
                 part.order === 44 ||
-                part.order === 46
+                part.order === 46 ||
+                part.order === 49 ||
+                part.order === 51 ||
+                part.order === 55 ||
+                part.order === 58 ||
+                part.order === 59
               ? 25
               : part.order >= 27
                 ? 19
@@ -971,13 +980,27 @@ export class ZeroTextControls {
                 : 18;
         }
       } else {
-        // Micro pixel cross-section (15 core M01–M15 + 12 Phase 14 ultra-nano M16–M27)
+        // Micro pixel cross-section (15 core M01–M15 + 35 standalone-only ultra-nano M16–M50)
         if (part.order <= 15) {
           const ratio = (part.order - 1) / 14;
           widthPx = Math.round(17 + Math.sin(ratio * Math.PI) * 13);
+        } else if (
+          part.order === 16 ||
+          part.order === 21 ||
+          part.order === 23 ||
+          part.order === 26 ||
+          part.order === 29 ||
+          part.order === 31 ||
+          part.order === 36 ||
+          part.order === 37 ||
+          part.order === 39 ||
+          part.order === 46 ||
+          part.order === 50
+        ) {
+          widthPx = 30;
         } else {
-          const ratio = (part.order - 16) / 11;
-          widthPx = Math.round(18 + Math.sin(ratio * Math.PI) * 12);
+          const ratio = ((part.order - 16) % 12) / 11;
+          widthPx = Math.round(18 + Math.sin(ratio * Math.PI) * 8);
         }
       }
       bar.style.width = `${widthPx}px`;
