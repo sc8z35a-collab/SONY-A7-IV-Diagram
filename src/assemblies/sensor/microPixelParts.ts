@@ -91,7 +91,7 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
       return geo;
     };
 
-    const domeGeo = buildGaplessLensGeo(P - 0.14, 3.8, 30);
+    const domeGeo = buildGaplessLensGeo(P - 0.14, 3.8, 12);
 
     for (const pc of pixelCenters) {
       const lens = new THREE.Mesh(domeGeo, mats.microlensGlass);

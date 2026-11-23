@@ -83,6 +83,19 @@ export function createBodyPhysicsOverlay(
   explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
+  const defBatt = new THREE.Vector3(-54.5, -6, 1.5);
+  const defChamb = new THREE.Vector3(-54.5, -6, 1.5);
+  const defShut = new THREE.Vector3(-54.5, 31, 9);
+  const defShoe = new THREE.Vector3(0, 57.6, -7.5);
+  const defFront = new THREE.Vector3(-3, 0, 27.6);
+  const pmicHub = new THREE.Vector3(-18, -2, -20);
+
+  let cachedPartsLen = -1;
+  let cBatt: CadPart | undefined;
+  let cChamb: CadPart | undefined;
+  let cShut: CadPart | undefined;
+  let cShoe: CadPart | undefined;
+  let cFront: CadPart | undefined;
 
   return {
     overlayGroup,
@@ -93,18 +106,20 @@ export function createBodyPhysicsOverlay(
     update: (elapsed, active, parts, _integrated) => {
       if (!active || !overlayGroup.visible) return;
 
-      const pBatt = parts.find((p) => p.id === 'body-battery-pack');
-      const pChamb = parts.find((p) => p.id === 'body-battery-chamber');
-      const pShut = parts.find((p) => p.id === 'body-shutter-dials');
-      const pShoe = parts.find((p) => p.id === 'body-mi-hotshoe');
-      const pFront = parts.find((p) => p.id === 'body-mg-front-shell');
+      if (cachedPartsLen !== parts.length) {
+        cachedPartsLen = parts.length;
+        cBatt = parts.find((p) => p.id === 'body-battery-pack');
+        cChamb = parts.find((p) => p.id === 'body-battery-chamber');
+        cShut = parts.find((p) => p.id === 'body-shutter-dials');
+        cShoe = parts.find((p) => p.id === 'body-mi-hotshoe');
+        cFront = parts.find((p) => p.id === 'body-mg-front-shell');
+      }
 
-      const battPos = pBatt ? pBatt.group.position : new THREE.Vector3(-54.5, -6, 1.5);
-      const chambPos = pChamb ? pChamb.group.position : new THREE.Vector3(-54.5, -6, 1.5);
-      const shutPos = pShut ? pShut.group.position : new THREE.Vector3(-54.5, 31, 9);
-      const shoePos = pShoe ? pShoe.group.position : new THREE.Vector3(0, 57.6, -7.5);
-      const frontPos = pFront ? pFront.group.position : new THREE.Vector3(-3, 0, 27.6);
-      const pmicHub = new THREE.Vector3(-18, -2, -20);
+      const battPos = cBatt ? cBatt.group.position : defBatt;
+      const chambPos = cChamb ? cChamb.group.position : defChamb;
+      const shutPos = cShut ? cShut.group.position : defShut;
+      const shoePos = cShoe ? cShoe.group.position : defShoe;
+      const frontPos = cFront ? cFront.group.position : defFront;
 
       // Bus 0: Battery 7.2V -> Chamber Terminals -> Mainboard PMIC
       busPaths[0][0].set(battPos.x, battPos.y + 20, battPos.z);

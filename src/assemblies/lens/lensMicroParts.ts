@@ -546,7 +546,7 @@ export function buildLensMicroParts(mats: MaterialLibrary): CadPart[] {
     for (let k = 0; k < 10; k++) {
       const rz = -16.0 + k * 3.55;
       const groove = new THREE.Mesh(
-        new THREE.TorusGeometry(28.4, 0.34, 6, 36, cutEnd - cutStart),
+        new THREE.TorusGeometry(28.4, 0.34, 4, 20, cutEnd - cutStart),
         mats.matteBlackAnodized
       );
       groove.position.z = rz;

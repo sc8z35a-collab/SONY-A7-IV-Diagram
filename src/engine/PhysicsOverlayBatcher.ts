@@ -2,53 +2,90 @@ import * as THREE from 'three';
 import { retessellatePrimitiveSagitta } from './FastCadGeometry';
 
 /**
- * PhysicsOverlayBatcher v2 — Breakthrough #18B: Ultra-Slim 16-Byte Dynamic Overlay Super-Batcher.
- *
- * - Runs Sagitta primitive optimization on tiny 0.4mm photon/electron/anchor spheres & cones
- *   (cuts dynamic overlay vertices by ~85%: 101K -> ~15K with identical crisp visuals!).
- * - Packs per-vertex RGBA into 4-byte normalized Uint8 (vs 16-byte Float32 = -75%!).
- * - Omits unused `aDash` stream on the mesh batch (16 bytes/vertex vs 40 bytes/vertex = -60%!),
- *   while STILL sharing ONE single 24-line GLSL3 RawShaderMaterial program for both meshes & lines!
- * - Uses Three.js partial `addUpdateRange(0, activeBytes)` so WebGL2 `bufferSubData` uploads
- *   ONLY ~220 KB instead of 5.24 MB (24x less GPU IPC traffic — zero ring-buffer stalls!).
+ * PhysicsOverlayBatcher v4 (HYPERION-CAD v5):
+ * - Pre-multiplied `uViewProj` (0 per-vertex mat4*mat4 multiplies).
+ * - Dual-Path Zero-Discard Hardware Early-Z mesh overlay shader + lazy clipped variant.
+ * - CPU sRGB lookup table -> Mesh Overlay FS is literally 1 single mediump instruction (`fragColor = vColor;`)!
+ * - Replaces sub-1.25mm photon/electron/marker spheres with an 8-triangle Octahedron (~10x fewer overlay tris!).
+ * - Zero-CPU empty fast-path when no overlay source is visible!
  */
 
-const OVERLAY_GLSL3_VS = /* glsl */ `
+const OVERLAY_LINEAR_TO_SRGB_U8 = new Uint8Array(256);
+for (let i = 0; i < 256; i++) {
+  const c = i / 255;
+  const s = c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  OVERLAY_LINEAR_TO_SRGB_U8[i] = Math.max(0, Math.min(255, Math.round(s * 255)));
+}
+
+function linearColorToSrgbU8(v: number): number {
+  const idx = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * 255);
+  return OVERLAY_LINEAR_TO_SRGB_U8[idx];
+}
+
+function buildOverlayMeshVs(useClip: boolean): string {
+  return /* glsl */ `
 precision highp float;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
+uniform mat4 uViewProj;
+${useClip ? 'uniform vec4 uClipPlane;' : ''}
+in vec3 position;
+in vec4 aColor;
+out vec4 vColor;
+${useClip ? 'out float vClipDist;' : ''}
+void main() {
+  vColor = aColor;
+  ${useClip ? 'vClipDist = dot(position, uClipPlane.xyz) + uClipPlane.w;' : ''}
+  gl_Position = uViewProj * vec4(position, 1.0);
+}
+`;
+}
+
+function buildOverlayMeshFs(useClip: boolean): string {
+  return /* glsl */ `
+precision mediump float;
+in vec4 vColor;
+${useClip ? 'in float vClipDist;' : ''}
+out vec4 fragColor;
+void main() {
+  ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
+  fragColor = vColor;
+}
+`;
+}
+
+function buildOverlayLineVs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+uniform mat4 uViewProj;
+${useClip ? 'uniform vec4 uClipPlane;' : ''}
 in vec3 position;
 in vec4 aColor;
 in vec3 aDash;
-out vec3 vWorldPos;
 out vec4 vColor;
 out vec3 vDash;
+${useClip ? 'out float vClipDist;' : ''}
 void main() {
-  vWorldPos = position;
   vColor = aColor;
   vDash = aDash;
-  gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0);
+  ${useClip ? 'vClipDist = dot(position, uClipPlane.xyz) + uClipPlane.w;' : ''}
+  gl_Position = uViewProj * vec4(position, 1.0);
 }
 `;
+}
 
-const OVERLAY_GLSL3_FS = /* glsl */ `
-precision highp float;
-uniform vec4 uClipPlane;
-in vec3 vWorldPos;
+function buildOverlayLineFs(useClip: boolean): string {
+  return /* glsl */ `
+precision mediump float;
 in vec4 vColor;
 in vec3 vDash;
+${useClip ? 'in float vClipDist;' : ''}
 out vec4 fragColor;
-vec3 linearToSrgb(vec3 c) {
-  vec3 lo = c * 12.92;
-  vec3 hi = pow(max(c, vec3(0.0)), vec3(1.0 / 2.4)) * 1.055 - 0.055;
-  return mix(lo, hi, step(vec3(0.0031308), c));
-}
 void main() {
-  if (dot(vWorldPos, uClipPlane.xyz) + uClipPlane.w < 0.0) discard;
-  if (vDash.z > 0.0001 && mod(vDash.x, vDash.z) > vDash.y) discard;
-  fragColor = vec4(linearToSrgb(vColor.rgb), vColor.a);
+  ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
+  if (vDash.z > 0.0 && fract(vDash.x * vDash.z) > vDash.y) discard;
+  fragColor = vColor;
 }
 `;
+}
 
 export interface OverlaySource {
   isAssemblyVisible: () => boolean;
@@ -59,6 +96,16 @@ const _instMat = new THREE.Matrix4();
 const _worldMat = new THREE.Matrix4();
 const _vA = new THREE.Vector3();
 const _vB = new THREE.Vector3();
+
+// Pre-flattened unit 8-triangle octahedron for sub-1.2mm photon/electron/LED dots (10x leaner than UV spheres!)
+const _unitOctFlat = (() => {
+  const oct = new THREE.OctahedronGeometry(1.0, 0);
+  const pos = oct.getAttribute('position');
+  const out = new Float32Array(pos.count * 3);
+  out.set(pos.array as Float32Array);
+  oct.dispose();
+  return out;
+})();
 
 class SlimOverlayBuffer {
   public pos: Float32Array;
@@ -82,7 +129,6 @@ class SlimOverlayBuffer {
 
     this.geo = new THREE.BufferGeometry();
     this.posAttr = new THREE.BufferAttribute(this.pos, 3);
-    // Use BufferAttribute directly so this.col is bound by reference (Uint8BufferAttribute clones!)
     this.colAttr = new THREE.BufferAttribute(this.col, 4, true);
     this.posAttr.setUsage(THREE.DynamicDrawUsage);
     this.colAttr.setUsage(THREE.DynamicDrawUsage);
@@ -161,44 +207,36 @@ export class PhysicsOverlayBatcher {
   private readonly lineBuf: SlimOverlayBuffer;
   private readonly meshBatch: THREE.Mesh;
   private readonly lineBatch: THREE.LineSegments;
-  private readonly meshMat: THREE.RawShaderMaterial;
-  private readonly lineMat: THREE.RawShaderMaterial;
+  private readonly meshMatNoClip: THREE.RawShaderMaterial;
+  private readonly lineMatNoClip: THREE.RawShaderMaterial;
+  private meshMatClip: THREE.RawShaderMaterial | null = null;
+  private lineMatClip: THREE.RawShaderMaterial | null = null;
+  private readonly viewProjUniform: { value: THREE.Matrix4 };
+  private readonly clipPlaneUniform: { value: THREE.Vector4 };
   private readonly flatTriCache = new WeakMap<THREE.BufferGeometry, Float32Array>();
 
-  constructor(clipPlaneUniform: { value: THREE.Vector4 }) {
+  constructor(
+    viewProjUniform: { value: THREE.Matrix4 },
+    clipPlaneUniform: { value: THREE.Vector4 }
+  ) {
+    this.viewProjUniform = viewProjUniform;
+    this.clipPlaneUniform = clipPlaneUniform;
     this.group = new THREE.Group();
     this.group.matrixAutoUpdate = false;
 
-    // Mesh batch: 16 bytes/vertex (no aDash!) | Line batch: 28 bytes/vertex (~1,500 verts = 42 KB!)
-    this.meshBuf = new SlimOverlayBuffer(8192, false);
+    this.meshBuf = new SlimOverlayBuffer(4096, false);
     this.lineBuf = new SlimOverlayBuffer(4096, true);
 
-    const makeMat = () => {
-      const m = new THREE.RawShaderMaterial({
-        glslVersion: THREE.GLSL3,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-        vertexShader: OVERLAY_GLSL3_VS,
-        fragmentShader: OVERLAY_GLSL3_FS,
-        uniforms: {
-          uClipPlane: clipPlaneUniform,
-        },
-      });
-      m.customProgramCacheKey = () => 'studio-cad-overlay-v3';
-      return m;
-    };
+    this.meshMatNoClip = this.createMeshMat(false);
+    this.lineMatNoClip = this.createLineMat(false);
 
-    this.meshMat = makeMat();
-    this.lineMat = makeMat();
-
-    this.meshBatch = new THREE.Mesh(this.meshBuf.geo, this.meshMat);
+    this.meshBatch = new THREE.Mesh(this.meshBuf.geo, this.meshMatNoClip);
     this.meshBatch.frustumCulled = false;
     this.meshBatch.matrixAutoUpdate = false;
     this.meshBatch.renderOrder = 3;
     this.meshBatch.visible = false;
 
-    this.lineBatch = new THREE.LineSegments(this.lineBuf.geo, this.lineMat);
+    this.lineBatch = new THREE.LineSegments(this.lineBuf.geo, this.lineMatNoClip);
     this.lineBatch.frustumCulled = false;
     this.lineBatch.matrixAutoUpdate = false;
     this.lineBatch.renderOrder = 4;
@@ -207,18 +245,79 @@ export class PhysicsOverlayBatcher {
     this.group.add(this.meshBatch, this.lineBatch);
   }
 
+  private createMeshMat(useClip: boolean): THREE.RawShaderMaterial {
+    const uniforms: Record<string, { value: unknown }> = { uViewProj: this.viewProjUniform };
+    if (useClip) uniforms.uClipPlane = this.clipPlaneUniform;
+    const m = new THREE.RawShaderMaterial({
+      glslVersion: THREE.GLSL3,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      vertexShader: buildOverlayMeshVs(useClip),
+      fragmentShader: buildOverlayMeshFs(useClip),
+      uniforms,
+    });
+    m.customProgramCacheKey = () => `hyperion-overlay-mesh-v4-${useClip ? 'c' : 'nc'}`;
+    return m;
+  }
+
+  private createLineMat(useClip: boolean): THREE.RawShaderMaterial {
+    const uniforms: Record<string, { value: unknown }> = { uViewProj: this.viewProjUniform };
+    if (useClip) uniforms.uClipPlane = this.clipPlaneUniform;
+    const m = new THREE.RawShaderMaterial({
+      glslVersion: THREE.GLSL3,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      vertexShader: buildOverlayLineVs(useClip),
+      fragmentShader: buildOverlayLineFs(useClip),
+      uniforms,
+    });
+    m.customProgramCacheKey = () => `hyperion-overlay-line-v4-${useClip ? 'c' : 'nc'}`;
+    return m;
+  }
+
+  public setSectionCutActive(active: boolean): void {
+    if (active) {
+      this.meshMatClip ??= this.createMeshMat(true);
+      this.lineMatClip ??= this.createLineMat(true);
+      this.meshBatch.material = this.meshMatClip;
+      this.lineBatch.material = this.lineMatClip;
+    } else {
+      this.meshBatch.material = this.meshMatNoClip;
+      this.lineBatch.material = this.lineMatNoClip;
+    }
+  }
+
   private getFlatTriangles(sourceGeo: THREE.BufferGeometry): Float32Array | null {
     const cached = this.flatTriCache.get(sourceGeo);
     if (cached) return cached;
 
-    // Apply Sagitta primitive optimization to tiny 0.4mm photon/marker spheres & cones (~85% fewer verts!)
-    const geo = retessellatePrimitiveSagitta(sourceGeo, 0.16);
+    // Ultra-lean 8-triangle octahedron substitution for tiny <= 1.2mm photon/electron/anchor spheres!
+    if (sourceGeo.type === 'SphereGeometry') {
+      const p = (sourceGeo as THREE.SphereGeometry).parameters;
+      if (p && p.radius <= 1.25) {
+        const r = p.radius;
+        const out = new Float32Array(_unitOctFlat.length);
+        for (let i = 0; i < _unitOctFlat.length; i++) out[i] = _unitOctFlat[i] * r;
+        this.flatTriCache.set(sourceGeo, out);
+        return out;
+      }
+    }
+
+    const geo = retessellatePrimitiveSagitta(sourceGeo, 0.22);
     const posAttr = geo.getAttribute('position');
-    if (!posAttr || posAttr.count < 3) return null;
+    if (!posAttr || posAttr.count < 3) {
+      if (geo !== sourceGeo && !geo.userData.__pooled) geo.dispose();
+      return null;
+    }
     const idx = geo.getIndex();
     const total = idx ? idx.count : posAttr.count;
     const usable = total - (total % 3);
-    if (usable <= 0) return null;
+    if (usable <= 0) {
+      if (geo !== sourceGeo && !geo.userData.__pooled) geo.dispose();
+      return null;
+    }
 
     const out = new Float32Array(usable * 3);
     const posArr = posAttr.array as Float32Array;
@@ -233,6 +332,7 @@ export class PhysicsOverlayBatcher {
       out[o + 2] = posArr[vi + 2];
     }
 
+    if (geo !== sourceGeo && !geo.userData.__pooled) geo.dispose();
     this.flatTriCache.set(sourceGeo, out);
     return out;
   }
@@ -303,11 +403,13 @@ export class PhysicsOverlayBatcher {
     const dashSize = isDashed ? ((mat as THREE.LineDashedMaterial).dashSize ?? 1.5) : 0;
     const gapSize = isDashed ? ((mat as THREE.LineDashedMaterial).gapSize ?? 1.5) : 0;
     const dashTotal = isDashed ? dashSize + gapSize : 0;
+    const invDashTotal = dashTotal > 1e-4 ? 1.0 / dashTotal : 0;
+    const dashRatio = dashTotal > 1e-4 ? dashSize * invDashTotal : 1.0;
 
     const c = mat.color;
-    const r8 = Math.max(0, Math.min(255, Math.round(c.r * 255)));
-    const g8 = Math.max(0, Math.min(255, Math.round(c.g * 255)));
-    const b8 = Math.max(0, Math.min(255, Math.round(c.b * 255)));
+    const r8 = linearColorToSrgbU8(c.r);
+    const g8 = linearColorToSrgbU8(c.g);
+    const b8 = linearColorToSrgbU8(c.b);
     const a8 = Math.max(0, Math.min(255, Math.round(alpha * 255)));
     const m = lineObj.matrixWorld;
     const distAttr = isDashed ? geo.getAttribute('lineDistance') : null;
@@ -376,8 +478,8 @@ export class PhysicsOverlayBatcher {
       col[o0_4 + 2] = b8;
       col[o0_4 + 3] = a8;
       dash[o0_3] = d0;
-      dash[o0_3 + 1] = dashSize;
-      dash[o0_3 + 2] = dashTotal;
+      dash[o0_3 + 1] = dashRatio;
+      dash[o0_3 + 2] = invDashTotal;
       outV++;
 
       const o1_3 = outV * 3;
@@ -390,8 +492,8 @@ export class PhysicsOverlayBatcher {
       col[o1_4 + 2] = b8;
       col[o1_4 + 3] = a8;
       dash[o1_3] = d1;
-      dash[o1_3 + 1] = dashSize;
-      dash[o1_3 + 2] = dashTotal;
+      dash[o1_3 + 1] = dashRatio;
+      dash[o1_3 + 2] = invDashTotal;
       outV++;
     }
 
@@ -410,9 +512,9 @@ export class PhysicsOverlayBatcher {
           const flat = this.getFlatTriangles(inst.geometry);
           if (flat) {
             const c = mat.color;
-            const r8 = Math.max(0, Math.min(255, Math.round(c.r * 255)));
-            const g8 = Math.max(0, Math.min(255, Math.round(c.g * 255)));
-            const b8 = Math.max(0, Math.min(255, Math.round(c.b * 255)));
+            const r8 = linearColorToSrgbU8(c.r);
+            const g8 = linearColorToSrgbU8(c.g);
+            const b8 = linearColorToSrgbU8(c.b);
             const a8 = Math.max(0, Math.min(255, Math.round(alpha * 255)));
             for (let i = 0; i < inst.count; i++) {
               inst.getMatrixAt(i, _instMat);
@@ -431,9 +533,9 @@ export class PhysicsOverlayBatcher {
           const flat = this.getFlatTriangles(mesh.geometry);
           if (flat) {
             const c = mat.color;
-            const r8 = Math.max(0, Math.min(255, Math.round(c.r * 255)));
-            const g8 = Math.max(0, Math.min(255, Math.round(c.g * 255)));
-            const b8 = Math.max(0, Math.min(255, Math.round(c.b * 255)));
+            const r8 = linearColorToSrgbU8(c.r);
+            const g8 = linearColorToSrgbU8(c.g);
+            const b8 = linearColorToSrgbU8(c.b);
             const a8 = Math.max(0, Math.min(255, Math.round(alpha * 255)));
             this.appendMeshTransformed(flat, mesh.matrixWorld, r8, g8, b8, a8);
           }
@@ -450,6 +552,26 @@ export class PhysicsOverlayBatcher {
   }
 
   public sync(sources: ReadonlyArray<OverlaySource>): void {
+    let anyVisible = false;
+    for (let i = 0; i < sources.length; i++) {
+      const src = sources[i];
+      if (src.isAssemblyVisible() && src.root.visible) {
+        anyVisible = true;
+        break;
+      }
+    }
+    if (!anyVisible) {
+      if (this.meshBatch.visible || this.lineBatch.visible) {
+        this.meshBuf.reset();
+        this.lineBuf.reset();
+        this.meshBuf.commit();
+        this.lineBuf.commit();
+        this.meshBatch.visible = false;
+        this.lineBatch.visible = false;
+      }
+      return;
+    }
+
     this.meshBuf.reset();
     this.lineBuf.reset();
 
@@ -467,14 +589,18 @@ export class PhysicsOverlayBatcher {
   }
 
   public refreshAfterContextRestore(): void {
-    this.meshMat.needsUpdate = true;
-    this.lineMat.needsUpdate = true;
+    this.meshMatNoClip.needsUpdate = true;
+    this.lineMatNoClip.needsUpdate = true;
+    if (this.meshMatClip) this.meshMatClip.needsUpdate = true;
+    if (this.lineMatClip) this.lineMatClip.needsUpdate = true;
   }
 
   public dispose(): void {
     this.meshBuf.dispose();
     this.lineBuf.dispose();
-    this.meshMat.dispose();
-    this.lineMat.dispose();
+    this.meshMatNoClip.dispose();
+    this.lineMatNoClip.dispose();
+    this.meshMatClip?.dispose();
+    this.lineMatClip?.dispose();
   }
 }
