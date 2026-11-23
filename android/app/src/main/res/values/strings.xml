@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SONY A7 IV 3D CAD</string>
+    <string name="title_activity_main">SONY A7 IV 3D CAD</string>
+    <string name="package_name">io.github.sc8z35acollab.sonya7iv3dcad</string>
+    <string name="custom_url_scheme">io.github.sc8z35acollab.sonya7iv3dcad</string>
+</resources>

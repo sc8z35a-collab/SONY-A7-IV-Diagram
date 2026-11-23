@@ -1,0 +1,25 @@
+{
+  "name": "SONY A7 IV 3D CAD — 627 Parts Interactive Anatomy",
+  "short_name": "A7 IV 3D CAD",
+  "description": "Photorealistic 627-part Full-Frame Mirrorless Camera 3D CAD Anatomy & Semiconductor Viewer",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
