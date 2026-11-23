@@ -14,6 +14,7 @@ import {
 } from '../../engine/CadHelpers';
 import { LENS_EXPLANATIONS } from './lensExplanations';
 import { LensOpticalSim } from './lensOpticalSim';
+import { buildLensMicroParts } from './lensMicroParts';
 
 export interface LensDynamicRig {
   irisBlades: THREE.Group[];
@@ -3591,6 +3592,9 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       mfEncoderWheel.rotation.z = sim.focusT * 0.85;
     },
   };
+
+  // Append 24 Phase 18A standalone-only 50mm F1.2 GM optical/mechanical/electronic micro-parts (L75–L98; omitted in whole-camera views!)
+  parts.push(...buildLensMicroParts(mats));
 
   return { parts, rig };
 }

@@ -478,8 +478,9 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      d = 264 + e * 745;
-      target = new THREE.Vector3(0, -2.0 * (1 - e), 80.0 + e * 12.0);
+      // 98-part standalone 50mm F1.2 GM Prime Lens ultra-anatomy (74 macro + 24 standalone-only micro)
+      d = 266 + e * 1080;
+      target = new THREE.Vector3(0 + e * 124.0, -2.0 * (1 - e), 80.0 + e * 160.0);
     } else if (this.mode === 'camera_body') {
       // Complete 231-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 231-layer body dissection!
       d = 335 + e * 565;
@@ -493,8 +494,9 @@ export class CadViewport {
       d = 290 + e * 515;
       target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
     } else if (this.mode === 'mount') {
-      d = 182 + e * 255;
-      target = new THREE.Vector3(2.0 + e * 3.0, -2.0 - e * 3.5, 25.0 + e * 26.0);
+      // 48-part standalone 55mm Large-Diameter Lens Mount ultra-anatomy (26 macro + 22 standalone-only micro)
+      d = 184 + e * 315;
+      target = new THREE.Vector3(2.0 + e * 26.0, -2.0 - e * 2.0, 25.0 + e * 26.0);
     } else if (this.mode === 'evf') {
       // 55-part standalone EVF & Viewfinder Surroundings ultra-anatomy (31 macro + 24 standalone-only OEM/optical micro)
       d = 140 + e * 380;

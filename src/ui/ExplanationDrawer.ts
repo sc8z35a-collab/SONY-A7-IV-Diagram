@@ -13,6 +13,7 @@ import { renderPhase16MainboardSchematicSvg } from './phase16MainboardSchematics
 import { renderPhase16EvfSchematicSvg } from './phase16EvfSchematics';
 import { renderPhase16BodyAuditSchematicSvg } from './phase16BodyAuditSchematics';
 import { renderPhase17ShutterAuditSchematicSvg } from './phase17ShutterAuditSchematics';
+import { renderPhase18LensMountSchematicSvg } from './phase18LensMountSchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -52,7 +53,8 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
   if (
     partId.includes('ed') ||
     partId.includes('flint') ||
-    partId.includes('focus-b-front')
+    partId.includes('focus-b-front') ||
+    partId.includes('uv-cement')
   ) {
     return 'ed_chromatic';
   }
@@ -61,7 +63,9 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('rear-element') ||
     partId.includes('rear-cell-spacer') ||
     partId.includes('front-meniscus') ||
-    partId.includes('retaining-rings')
+    partId.includes('retaining-rings') ||
+    partId.includes('potting') ||
+    partId.includes('phase-align')
   ) {
     return 'xa_aspheric';
   }
@@ -70,8 +74,7 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('focus-') ||
     partId.includes('guide') ||
     partId.includes('antirot') ||
-    partId.includes('mr-encoders') ||
-    partId.includes('mr-magnet-scales') ||
+    partId.includes('mr-') ||
     partId.includes('af-origin') ||
     partId.includes('mf-') ||
     partId.includes('control-rings') ||
@@ -87,7 +90,11 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('baffle') ||
     partId.includes('filter') ||
     partId.includes('optical-spacers') ||
-    partId.includes('lighttrap-tube')
+    partId.includes('lighttrap-tube') ||
+    partId.includes('fluorine') ||
+    partId.includes('nano-ar') ||
+    partId.includes('sumi') ||
+    partId.includes('lightfoil')
   ) {
     return 'nano_ar_baffle';
   }
@@ -139,6 +146,9 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
 
   const phase17ShutterAuditSvg = renderPhase17ShutterAuditSchematicSvg(type, wrap);
   if (phase17ShutterAuditSvg) return phase17ShutterAuditSvg;
+
+  const phase18LensMountSvg = renderPhase18LensMountSchematicSvg(type, wrap);
+  if (phase18LensMountSvg) return phase18LensMountSvg;
 
   switch (type) {
     case 'baffle':

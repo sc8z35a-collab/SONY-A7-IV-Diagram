@@ -918,6 +918,26 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('shutter-rivet-reinforce-collars', false);
   syncRail();
+} else if (preset === 'phase18_lens') {
+  viewport.setMode('lens', true);
+  controls.syncMode('lens');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lens-nano-ar-ii-layer', false);
+  syncRail();
+} else if (preset === 'phase18_mount') {
+  viewport.setMode('mount', true);
+  controls.syncMode('mount');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mount-bayonet-leadin-dlc', false);
+  syncRail();
 }
 
 

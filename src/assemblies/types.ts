@@ -585,7 +585,39 @@ export interface PartExplanation {
     | 'shutter_mount_baffle_trough'
     | 'shutter_ibis_clearance_frame'
     | 'shutter_hbridge_driver_stage'
-    | 'shutter_eeprom_cal_tag';
+    | 'shutter_eeprom_cal_tag'
+    // Phase 18A: 50mm F1.2 GM Prime Lens Standalone Micro (+24: L75–L98 -> 98 total in standalone lens, 74 in whole-camera)
+    | 'lens_fluorine_topcoat'
+    | 'lens_nano_ar_ii_layer'
+    | 'lens_edge_sumi_blackening'
+    | 'lens_uv_cement_bond'
+    | 'lens_uv_potting_wells'
+    | 'lens_phase_align_marks'
+    | 'lens_filter_bayonet_slots'
+    | 'lens_mf_fluorogrease_film'
+    | 'lens_iris_blade_pins_ptfe'
+    | 'lens_xd_sintered_bushings'
+    | 'lens_xd_magnetic_park_brake'
+    | 'lens_focus_front_lightfoil'
+    | 'lens_mr_gap_calib_shims'
+    | 'lens_inner_thread_baffles'
+    | 'lens_aberration_lut_eeprom'
+    | 'lens_mcu_emi_absorber'
+    | 'lens_contact_esd_tvs'
+    | 'lens_xa_aspheric_profile'
+    | 'lens_barrel_breather_vent'
+    | 'lens_aperture_f12_lock_pin'
+    | 'lens_xd_lorentz_backiron'
+    | 'lens_rear_filter_holder_tabs'
+    | 'lens_hood_velvet_lining'
+    | 'lens_front_rear_caps'
+    // Phase 18B: 55mm Large-Diameter Lens Mount Deep-Audit Completion (+6: M43–M48 -> 48 total in standalone mount, 26 in whole-camera)
+    | 'mount_bayonet_leadin_dlc'
+    | 'mount_power_load_switch'
+    | 'mount_flange_datum_pads'
+    | 'mount_release_wp_boot'
+    | 'mount_overtravel_bumper'
+    | 'mount_thermal_emi_fingers';
 }
 
 export interface CadPart {

@@ -541,7 +541,13 @@ export class ZeroTextControls {
           part.order === 58 ||
           part.order === 62 ||
           part.order === 69 ||
-          part.order === 70
+          part.order === 70 ||
+          part.order === 76 ||
+          part.order === 77 ||
+          part.order === 88 ||
+          part.order === 92 ||
+          part.order === 97 ||
+          part.order === 98
             ? 32
             : part.order === 8 ||
                 part.order === 10 ||
@@ -553,7 +559,17 @@ export class ZeroTextControls {
                 part.order === 40 ||
                 part.order === 53 ||
                 part.order === 63 ||
-                part.order === 66
+                part.order === 66 ||
+                part.order === 75 ||
+                part.order === 78 ||
+                part.order === 81 ||
+                part.order === 83 ||
+                part.order === 84 ||
+                part.order === 86 ||
+                part.order === 89 ||
+                part.order === 90 ||
+                part.order === 95 ||
+                part.order === 96
               ? 26
               : part.order === 3 ||
                   part.order === 7 ||
@@ -572,7 +588,8 @@ export class ZeroTextControls {
                   part.order === 64 ||
                   part.order === 67 ||
                   part.order === 71 ||
-                  part.order === 74
+                  part.order === 74 ||
+                  part.order >= 75
                 ? 21
                 : 16;
       } else if (part.subsystem === 'lcd') {
@@ -677,7 +694,10 @@ export class ZeroTextControls {
           part.order === 27 ||
           part.order === 32 ||
           part.order === 36 ||
-          part.order === 42
+          part.order === 42 ||
+          part.order === 43 ||
+          part.order === 45 ||
+          part.order === 48
             ? 32
             : part.order === 3 ||
                 part.order === 4 ||
@@ -693,7 +713,9 @@ export class ZeroTextControls {
                 part.order === 31 ||
                 part.order === 33 ||
                 part.order === 37 ||
-                part.order === 40
+                part.order === 40 ||
+                part.order === 44 ||
+                part.order === 46
               ? 25
               : part.order >= 27
                 ? 19

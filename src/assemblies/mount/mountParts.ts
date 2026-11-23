@@ -14,6 +14,7 @@ import {
 } from '../../engine/CadHelpers';
 import { MOUNT_EXPLANATIONS } from './mountExplanations';
 import { buildMountMicroParts } from './mountMicroParts';
+import { buildMountUltraAuditParts } from './mountUltraAuditParts';
 
 export interface MountDynamicRig {
   lockPinPlunger: THREE.Group;
@@ -1452,6 +1453,9 @@ export function buildMountParts(
 
   // Append 16 Phase 13 standalone-only OEM micro-parts (M27–M42; omitted in whole-camera views!)
   parts.push(...buildMountMicroParts(mats));
+
+  // Append 6 Phase 18B standalone-only lens-mount deep-audit completion micro-parts (M43–M48; omitted in whole-camera views!)
+  parts.push(...buildMountUltraAuditParts(mats));
 
   return {
     parts,
