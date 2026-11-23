@@ -908,6 +908,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('body-dl1008-rtc-flex', false);
   syncRail();
+} else if (preset === 'phase17_shutter') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-rivet-reinforce-collars', false);
+  syncRail();
 }
 
 

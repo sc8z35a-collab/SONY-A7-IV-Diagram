@@ -1,11 +1,17 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 500 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 520 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (500 Dissectible CAD Sub-Assemblies: 305 Macro + 168 Standalone-Only Macro-Subsystem Micro + 27 Micro Pixel)
+## Complete Camera Assembly (520 Dissectible CAD Sub-Assemblies: 305 Macro + 188 Standalone-Only Macro-Subsystem Micro + 27 Micro Pixel)
+
+### Phase 17 — Standalone-Only Ultra-Audit: Mechanical Shutter & Surroundings Deep Dissection (+20 Parts → 520 Total!)
+Informed by the **Sony ILCE-7M4 / ILCE-7M4K Official Service Manual** (`MECHA DEVICE SECTION Ref.451–470`: `A5033415A SERVICE MECHA DEVICE 5510`, `AFE-3360 / 1-490-193-41`, `A2231470B MB CHARGE UNIT 5600`, `474837101 MB CH FLOATING SHAFT`, `472900201 MB CUSHION SHEET`, `418599001 M1.6×4.5 CHARGE SCREW`), **Sony α1 Dual-Driven Shutter (`1/400s` FF / `1/500s` APS-C)**, real-world **`AFE-3360` shutter-blade rivet-tear & adjustment-software calibration teardowns**, and **Nidec Copal / Seiko focal-plane shutter patents**:
+- **Whole-Camera Omission Architecture (`standaloneOnly: true`)**: All 20 new Phase 17 shutter & surroundings micro-parts (bringing total standalone-only parts to **200**) are **automatically omitted** in Complete Camera (`305` parts) and Complete Camera Body Only (`231` parts) views and appear **exclusively** in standalone `shutter` (`77` layers) view.
+- **3 New Specialized PBR Materials**: `aramidKevlarWeave`, `oilTrapPorousPad`, and `varistorRingBlue`.
+- **Mechanical Shutter & Surroundings Standalone (`57 → 77`, +20 Standalone-Only OEM & Patent Parts `SH58–SH77`)**: Curtain-Blade Z-Axis Hold-Down Cantilever Leaf Springs (`SH58`), Blade-Rivet Stress-Relief Reinforcement Collars & Crack-Arrest Rim (`AFE-3360` revised anti-tear upgrade) (`SH59`), Cross-Ply CFRP + Aramid (`Kevlar`) Tough Core Micro-Laminate & Matte Sputter Layer (`SH60`), Lubricant-Mist Capillary Trap Grooves & Porous Oil-Absorbing Barrier Strips (`SH61`), Blade-Chamber Piston-Air Relief Vent Channels & Microporous ePTFE Equalizer Membrane (`SH62`), Electromagnet Pole-Face Tilt/Gap Calibration Micro-Shims & Potted Adjustment Screws (`SH63`), Electromagnet `φ0.045 mm` Enamel-Wire Strain-Relief Terminal Posts & Kapton Bandage (`SH64`), Inter-Electromagnet Magnetic-Crosstalk Permalloy Shield Septum & Non-Magnetic Spacer (`SH65`), Dual-Driven Shutter Halbach N52 Neodymium Stator Array & Low-Inertia CCAW Boost Bobbin (`SH66`), EFCS Electronic-Front-Curtain Hold-Open Standby Latch & Silent RC Snubber Brake Circuit (`SH67`), Charge-Motor Ag-Pd Precious-Metal Brushes, 3-Pole Commutator & ZnO Spark-Suppressing Ring Varistor (`SH68`), Charge-Unit 3-Track Gold-Plated Gray-Code Rotary Encoder PCB & Twin Fork Wiper (`SH69`), Floating-Shaft (`Ref.457`) Mating Oldham Cross-Key Sockets & Axial Wave Spring (`SH70`), Sony OEM Charge-Unit Fixed Bolts (`Ref.461: 418599001 M1.6×4.5`) & Stainless Torque-Reaction Bracket (`SH71`), Charge-Motor Silicone Isolation Collar & High-Frequency Acoustic Foam Wrap (`SH72`), Sony OEM Precision Die-Cast Mg-Al Mecha-Device Cradle Frame (`Ref.451: A5033415A`) (`SH73`), Front Mount-to-Shutter 3-Step Serrated Stray-Light Baffle & Gravity Dust-Catcher Trough (`SH74`), Rear Shutter-to-IBIS Dynamic Clearance Guard Frame & 4-Corner PTFE Anti-Contact Bumpers (`SH75`), Dedicated Shutter Solenoid & Charge-Motor PWM H-Bridge Driver IC & `20 mΩ` Stall-Detect Shunt (`SH76`), and Individual Curtain-Speed Calibration 2D QR Tag & Factory Exposure-Timing EEPROM Trim Table (`SH77`).
 
 ### Phase 16 — Standalone-Only Ultra-Anatomy: Vapor Chamber, EVF Surroundings & Camera Body Deep Audit (+64 Parts → 500 Total!)
 Informed by the **Sony ILCE-7M4 / ILCE-7M4K Official Service Manual** (`MAIN BOARD SECTION Ref.351–362`, `VF BLOCK SECTION Ref.201–208 + LCD902 ECX337AA-1`, `CABINET REAR-1/2 Ref.51–124`, `CABINET TOP-1/2 Ref.251–331`, `BATTERY HOLDER SECTION Ref.401–415 + BH0001/BT0001`, `OVERALL Ref.1–17`), **Kolari Vision Sony A1 / A7R V / A1 II / A7R VI teardowns**, **Sony Semiconductor OLEDoS (`ECX337A`/`ECX339A`/`ECX344A`) engineering**, and **Ultra-Thin Vapor Chamber (UTVC) two-phase heat-pipe literature**:
@@ -56,13 +62,13 @@ Informed by Kolari Vision teardowns (Sony A1 II, Sony A7R VI, Canon EOS R5 Mark 
 
 ## Viewing Modes (11 Zero-Text Switcher Modes + Optical Motion Studio + Fullscreen)
 ### Primary Assembly Views
-1. **Complete Flagship Camera (305 Macro Layers — Default)**: Complete 231-part body + 74-part 50mm F1.2 lens with full 6-way radial + axial dissection and dynamic CAD trajectory guides. *(All 180 standalone-only ultra-micro parts are omitted here to preserve whole-camera clarity.)*
+1. **Complete Flagship Camera (305 Macro Layers — Default)**: Complete 231-part body + 74-part 50mm F1.2 lens with full 6-way radial + axial dissection and dynamic CAD trajectory guides. *(All 200 standalone-only ultra-micro parts are omitted here to preserve whole-camera clarity.)*
 2. **Complete Camera Body Only (231 Macro Layers)**: All 7 body subsystems together *without* lens (bare 55mm mount, exposed 3-wafer sensor & complete internal watchmaker mechanics). *(Standalone-only ultra-micro parts omitted.)*
 3. **50mm F1.2 Prime Lens Standalone (74 Layers — Ultra-Dissection)**: All 14 glass elements, spanner rings, air-gap spacers, 6-layer iris, Quad XD motors + mechanical C-clamps + Permalloy shields + 200 μm SmFeN Invar scales, 18-ball bearing focus ring, interlocking center join ring, rear rectangular light-trap cone, steel reinforcing plates, and decoupled bayonet/gasket.
 
 ### Drill-Down Subsystems
 4. **55mm Large-Diameter Lens Mount (42 Layers: 26 Macro + 16 Standalone-Only Micro)**
-5. **Focal-Plane Shutter (57 Layers: 39 Macro + 18 Standalone-Only Micro)**
+5. **Focal-Plane Shutter & Surroundings (77 Layers: 39 Macro + 38 Standalone-Only Micro)**
 6. **Full-Frame Sensor & 8.5-Stop 5-Axis IBIS (64 Layers: 40 Macro + 24 Standalone-Only Micro)**
 7. **ISP Engine, Vapor Chamber & Mainboard (54 Layers: 30 Macro + 24 Standalone-Only Micro)**
 8. **EVF & Viewfinder Surroundings (55 Layers: 31 Macro + 24 Standalone-Only Micro)**

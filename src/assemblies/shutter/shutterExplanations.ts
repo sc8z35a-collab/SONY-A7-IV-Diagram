@@ -1,5 +1,6 @@
 import { PartExplanation } from '../types';
 import { SHUTTER_MICRO_EXPLANATIONS } from './shutterMicroExplanations';
+import { SHUTTER_ULTRA_AUDIT_EXPLANATIONS } from './shutterUltraAuditExplanations';
 
 export const SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = {
   'shutter-front-cover': {
@@ -1105,5 +1106,6 @@ export const SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   ...SHUTTER_MICRO_EXPLANATIONS,
+  ...SHUTTER_ULTRA_AUDIT_EXPLANATIONS,
 };
 
