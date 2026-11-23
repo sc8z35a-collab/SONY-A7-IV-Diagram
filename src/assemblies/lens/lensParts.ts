@@ -7,6 +7,7 @@ import {
   createOpticalLensGeometry,
   createPrecisionScrew,
   createRoundedRectShape,
+  createSpannerRingGroup,
   createSpurGearGeometry,
   extrudeCentered,
   tagPartMeshes,
@@ -22,6 +23,7 @@ export interface LensDynamicRig {
   focusGroupAParts: CadPart[];
   focusGroupBParts: CadPart[];
   moverCarriages: THREE.Group[];
+  mrScaleCarriages: THREE.Group[];
   focusRingMesh: THREE.Object3D;
   apertureRingMesh: THREE.Object3D;
   mfEncoderWheel: THREE.Object3D;
@@ -122,12 +124,13 @@ function finalizeLensPart(
 }
 
 /**
- * Build ALL 62 watchmaker-grade ultra-dissectible CAD sub-assemblies of a 2024-2026 Flagship
+ * Build ALL 70 watchmaker-grade ultra-dissectible CAD sub-assemblies of a 2024-2026 Flagship
  * 50mm F1.2 Prime Lens (14-Element / 10-Group Optical Stack + 3x XA + Super-ED Doublet +
  * 6-Layer 11-Blade Iris + Quad XD Linear AF + Permalloy Shields + Anti-Rotation Sub-Shafts +
- * Dual Front/Rear Eccentrics & Stepped Tilt Shims + Split Mg Skeleton + Standalone Focus &
- * Aperture Rings + POM Tensioners + Ball-Bearing Race + Dual Focus Hold Pods + EMI Shield +
- * 12-Pin Gold Contact Block & Stainless Bayonet):
+ * 200um SmFeN Invar Magnetic Scales + Threaded Spanner Rings + Air-Gap Spacers + Dual Eccentrics +
+ * Split Mg Skeleton + Standalone Focus & Aperture Rings + PTFE Bearing Damping Bands +
+ * Mechanical IRIS LOCK Switch + Steel Load-Reinforcing Gussets + 12-Pin Gold Contact Block +
+ * Decoupled Stainless Bayonet & EPDM Skirt Seal/M2.5 Bolts):
  *  L01..L07 : Front Hood, Elastomer Bumper/Latch, Filter Bezel, Foam Gasket, Stepped Shims, Front Eccentric, Front Cell
  *  L08..L13 : Elements E01–E05 (1st XA, LaK Meniscus, Super-ED, Flint Cemented, G4 Petzval) + Inter-Group Baffle
  *  L14..L19 : 6-Layer 11-Blade Circular Iris (Cover, Cam Ring, 11 Blades, Base Plate, Stepper Motor, Home Photo-Interrupter)
@@ -138,12 +141,15 @@ function finalizeLensPart(
  *             Ball-Bearing Race + Hall Sensor + Click/De-Click Detent + Side Switch PCB + Top Vertical Focus-Hold Pod
  *  L52..L62 : NTC Thermistor + Ring AF MCU PCB + EMI Shield Can & ESD Tape + Multi-Branch FPC + 6-Stage EPDM Seals +
  *             Front Outer Barrel + Main Cutaway Barrel + Under-Mount Shim Plate + Micron Shims + 12-Pin Gold Contact Block + Rear Stainless Bayonet
+ *  L63..L70 : Spanner Retaining Rings + Air-Gap Optical Spacers + U-Loop Iris/Hall FPC + 200um SmFeN Invar Scales +
+ *             PTFE/Ball Focus Bearing Bands + Mechanical IRIS LOCK Switch + Rear Steel Reinforcing Plates + Rear Mount EPDM Seal & M2.5 Bolts
  */
 export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: LensDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const irisBlades: THREE.Group[] = [];
   const moverCarriages: THREE.Group[] = [];
+  const mrScaleCarriages: THREE.Group[] = [];
   const dummy = new THREE.Object3D();
   const motorAnglesDeg = [45, 135, 225, 315];
   const subRodAnglesDeg = [62, 152, 242, 332];
@@ -2829,11 +2835,11 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   );
 
   // =========================================================================
-  // L62: Hardened Stainless 4-Lug Rear Lens Bayonet, Gasket & Mount Bolts (z = +33.5 mm)
+  // L62: Hardened Stainless 4-Lug Rear Lens Bayonet Flange (z = +33.5 mm)
   // =========================================================================
   const rearBayonetGroup = new THREE.Group();
   {
-    const flange = createLensCellRing(26.2, 34.0, 2.8, mats.mountStainlessFlange, 40);
+    const flange = createLensCellRing(26.2, 34.0, 2.8, mats.mountStainlessFlange, 44);
     rearBayonetGroup.add(flange);
 
     for (const deg of [42, 132, 225, 312]) {
@@ -2847,16 +2853,17 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       rearBayonetGroup.add(lug);
     }
 
-    const rearSeal = createLensCellRing(33.5, 35.2, 1.5, mats.epdmGasket, 40);
-    rearSeal.position.z = -1.1;
-    rearBayonetGroup.add(rearSeal);
-
+    // 4 countersunk M2.5 bolt bore seats (bolts & EPDM skirt seal decoupled cleanly into L70!)
     for (let i = 0; i < 4; i++) {
       const a = (i * Math.PI) / 2 + Math.PI / 4;
-      const screw = createPrecisionScrew(1.25, 0.7, 3.2, mats.stainlessMachined);
-      screw.position.set(Math.cos(a) * 30.8, Math.sin(a) * 30.8, -1.2);
-      screw.rotation.y = Math.PI;
-      rearBayonetGroup.add(screw);
+      const bore = new THREE.Mesh(
+        new THREE.RingGeometry(0.95, 1.48, 14),
+        mats.matteBlackAnodized
+      );
+      bore.position.set(Math.cos(a) * 30.8, Math.sin(a) * 30.8, -1.43);
+      bore.rotation.y = Math.PI;
+      bore.userData.noEdges = true;
+      rearBayonetGroup.add(bore);
     }
   }
   parts.push(
@@ -2874,6 +2881,647 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   );
 
   // =========================================================================
+  // L63: [PHASE 11] Multi-Station Threaded Optical Spanner Retaining Rings & Cushion O-Rings
+  // =========================================================================
+  const retainingRingsGroup = new THREE.Group();
+  {
+    // Station 1: Front XA E01 threaded retaining ring (world z = 111.8 -> local +37.8)
+    const frontSpanner = createSpannerRingGroup(
+      32.8,
+      36.6,
+      1.2,
+      mats.matteBlackAnodized,
+      mats.stainlessMachined,
+      mats.thermalPadBlue,
+      4
+    );
+    frontSpanner.position.z = 37.8;
+    retainingRingsGroup.add(frontSpanner);
+
+    // Station 2: Mid G2/G3 doublet threaded clamp ring (world z = 99.2 -> local +25.2)
+    const midSpanner = createSpannerRingGroup(
+      30.4,
+      34.4,
+      1.1,
+      mats.matteBlackAnodized,
+      mats.stainlessMachined,
+      mats.thermalPadBlue,
+      4
+    );
+    midSpanner.position.z = 25.2;
+    retainingRingsGroup.add(midSpanner);
+
+    // Station 3: Rear E14 XA retaining spanner ring (world z = 39.8 -> local -34.2)
+    const rearSpanner = createSpannerRingGroup(
+      22.4,
+      26.8,
+      1.1,
+      mats.matteBlackAnodized,
+      mats.stainlessMachined,
+      mats.thermalPadBlue,
+      4
+    );
+    rearSpanner.position.z = -34.2;
+    retainingRingsGroup.add(rearSpanner);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-retaining-rings',
+      63,
+      '#334155',
+      retainingRingsGroup,
+      new THREE.Vector3(0, 0, 74.0),
+      new THREE.Vector3(82, 0, 152),
+      new THREE.Vector3(88, 0, 444),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L64: [PHASE 11] Laser-Cut Ultra-Matte Air-Gap Optical Spacers & Brass Centering Collars
+  // =========================================================================
+  const opticalSpacersGroup = new THREE.Group();
+  {
+    const gapSpecs: Array<{ z: number; innerR: number; outerR: number; thick: number }> = [
+      { z: 31.4, innerR: 29.8, outerR: 32.8, thick: 0.36 }, // G1-G2 air gap (world 105.4)
+      { z: 16.2, innerR: 27.2, outerR: 31.6, thick: 0.34 }, // G3b-G4 air gap (world 90.2)
+      { z: -19.4, innerR: 22.8, outerR: 26.8, thick: 0.34 }, // Focus B - G7 gap (world 54.6)
+      { z: -27.0, innerR: 22.2, outerR: 26.4, thick: 0.36 }, // E12 - E13 gap (world 47.0)
+    ];
+    for (const g of gapSpecs) {
+      const foil = createLensCellRing(g.innerR, g.outerR, g.thick, mats.velvetFlockTrap, 42);
+      foil.position.z = g.z;
+      opticalSpacersGroup.add(foil);
+
+      const bevel = createLensCellRing(g.innerR - 0.5, g.innerR + 0.15, 0.18, mats.matteBlackAnodized, 42);
+      bevel.position.z = g.z + 0.14;
+      bevel.userData.noEdges = true;
+      opticalSpacersGroup.add(bevel);
+    }
+
+    // 2 sets of 3 brass eccentric optical decentering calibration collars (front & rear fixed cells)
+    for (const [zLoc, rad] of [
+      [16.2, 32.4],
+      [-27.0, 27.6],
+    ] as Array<[number, number]>) {
+      for (let i = 0; i < 3; i++) {
+        const a = THREE.MathUtils.degToRad(40 + i * 120);
+        const collar = new THREE.Group();
+        collar.position.set(Math.cos(a) * rad, Math.sin(a) * rad, zLoc);
+        collar.rotation.z = a;
+
+        const bush = new THREE.Mesh(
+          new THREE.CylinderGeometry(1.75, 1.75, 2.2, 16).rotateZ(Math.PI / 2),
+          mats.brassGear
+        );
+        collar.add(bush);
+
+        const setScrew = createPrecisionScrew(0.75, 0.45, 1.6, mats.titaniumRivet);
+        setScrew.position.set(1.15, 0.3, 0);
+        setScrew.rotation.y = Math.PI / 2;
+        collar.add(setScrew);
+
+        opticalSpacersGroup.add(collar);
+      }
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-optical-spacers',
+      64,
+      '#0f172a',
+      opticalSpacersGroup,
+      new THREE.Vector3(0, 0, 74.0),
+      new THREE.Vector3(-82, 0, 148),
+      new THREE.Vector3(-88, 0, 440),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L65: [PHASE 11] Floating-Group U-Loop High-Flex Iris/Hall FPC & PTFE Abrasion Guard
+  // =========================================================================
+  const irisIsoFpcGroup = new THREE.Group();
+  {
+    const aLoop = THREE.MathUtils.degToRad(296);
+    const loopPod = new THREE.Group();
+    loopPod.position.set(Math.cos(aLoop) * 35.2, Math.sin(aLoop) * 35.2, 0);
+    loopPod.rotation.z = aLoop;
+
+    // Upper straight run from Iris stepper/home (z = +13) down toward rear MCU (z = -20)
+    const upperLeg = new THREE.Mesh(new THREE.BoxGeometry(0.32, 5.2, 24.0), mats.polyimideFpc);
+    upperLeg.position.set(-0.9, 0, 1.0);
+    loopPod.add(upperLeg);
+
+    // Lower return leg bonded to inner barrel wall
+    const lowerLeg = new THREE.Mesh(new THREE.BoxGeometry(0.32, 5.2, 28.0), mats.polyimideFpc);
+    lowerLeg.position.set(1.1, 0, -4.5);
+    loopPod.add(lowerLeg);
+
+    // Dynamic U-bend service loop relieving bending strain during 120fps AF sweeps
+    const uBendCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-0.9, 0, 13.0),
+      new THREE.Vector3(-0.6, 0, 15.8),
+      new THREE.Vector3(0.2, 0, 16.5),
+      new THREE.Vector3(1.1, 0, 14.8),
+      new THREE.Vector3(1.1, 0, 9.5),
+    ]);
+    const uBendGeo = new THREE.TubeGeometry(uBendCurve, 18, 0.55, 8, false);
+    uBendGeo.scale(0.38, 4.4, 1.0);
+    loopPod.add(new THREE.Mesh(uBendGeo, mats.polyimideFpc));
+
+    // White low-friction PTFE abrasion-guard slider film backing the U-loop against Mg chassis
+    const ptfeGuard = new THREE.Mesh(new THREE.BoxGeometry(0.26, 6.8, 30.0), mats.pomGear);
+    ptfeGuard.position.set(1.58, 0, -2.0);
+    ptfeGuard.userData.noEdges = true;
+    loopPod.add(ptfeGuard);
+
+    // Gold ZIF connector fingers & ivory ZIF latch at rear MCU end
+    const zifGold = new THREE.Mesh(new THREE.BoxGeometry(0.42, 5.0, 3.0), mats.goldPlating);
+    zifGold.position.set(1.1, 0, -19.2);
+    loopPod.add(zifGold);
+
+    const zifClamp = new THREE.Mesh(new THREE.BoxGeometry(1.1, 6.2, 2.2), mats.zifIvoryPlastic);
+    zifClamp.position.set(0.6, 0, -18.5);
+    loopPod.add(zifClamp);
+
+    irisIsoFpcGroup.add(loopPod);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-iris-iso-fpc',
+      65,
+      '#f59e0b',
+      irisIsoFpcGroup,
+      new THREE.Vector3(0, 0, 68.0),
+      new THREE.Vector3(86, -54, 48),
+      new THREE.Vector3(92, -58, 376),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L66: [PHASE 11] 4x 200um SmFeN Magnetic Vernier Scale Bars on Zero-CTE Invar Carriers
+  // =========================================================================
+  const mrScalesGroup = new THREE.Group();
+  {
+    for (let i = 0; i < motorAnglesDeg.length; i++) {
+      const a = THREE.MathUtils.degToRad(motorAnglesDeg[i]);
+      const railHolder = new THREE.Group();
+      railHolder.position.set(Math.cos(a) * motorR, Math.sin(a) * motorR, 0);
+      railHolder.rotation.z = a;
+
+      // Live moving scale carriage synced with Focus Group A (i=0,2) and Focus Group B (i=1,3)!
+      const scaleCarriage = new THREE.Group();
+      const baseZ = i % 2 === 0 ? 5.5 : -6.5;
+      scaleCarriage.position.z = baseZ;
+      scaleCarriage.userData.baseZ = baseZ;
+      scaleCarriage.userData.groupIndex = i % 2;
+
+      // Zero-CTE Invar alloy backing carrier bar
+      const invarBar = new THREE.Mesh(new THREE.BoxGeometry(0.62, 2.4, 15.8), mats.stainlessMachined);
+      invarBar.position.set(0.05, 3.6, 0);
+      scaleCarriage.add(invarBar);
+
+      // 200um multi-pole magnetized SmFeN Vernier magnetic scale track facing L30 MR head!
+      const magTrack = new THREE.Mesh(new THREE.BoxGeometry(0.32, 2.0, 14.8), mats.invarScaleBar);
+      magTrack.position.set(-0.36, 3.6, 0);
+      scaleCarriage.add(magTrack);
+
+      // Titanium alignment end-clips
+      for (const ez of [-7.6, 7.6]) {
+        const clip = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.7, 1.1), mats.titaniumRivet);
+        clip.position.set(0.05, 3.6, ez);
+        scaleCarriage.add(clip);
+      }
+
+      railHolder.add(scaleCarriage);
+      mrScaleCarriages.push(scaleCarriage);
+      mrScalesGroup.add(railHolder);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-mr-magnet-scales',
+      66,
+      '#0284c7',
+      mrScalesGroup,
+      new THREE.Vector3(0, 0, 65.0),
+      new THREE.Vector3(116, -24, -54),
+      new THREE.Vector3(122, -26, 308),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L67: [PHASE 11] Spring-Tensioned PTFE/POM Focus-Ring Damping Bands & Micro Ball Bearings
+  // =========================================================================
+  const focusBearingBandsGroup = new THREE.Group();
+  {
+    // White self-lubricating PTFE/POM damping glide band seated cleanly inside L44 (r = 38.7..39.5)
+    const ptfeBand = new THREE.Mesh(
+      extrudeCentered(createCutawayArcRingShape(39.5, 38.7, cutStart, cutEnd), 13.4, 0.08, 0.08, 42),
+      mats.pomGear
+    );
+    focusBearingBandsGroup.add(ptfeBand);
+
+    // 2 rows x 9 micro hardened stainless bearing balls riding along front & rear raceway grooves
+    const mfBallGeo = new THREE.SphereGeometry(0.58, 10, 8);
+    const mfBallInst = new THREE.InstancedMesh(mfBallGeo, mats.mountStainlessFlange, 18);
+    let bIdx = 0;
+    for (const bz of [-5.8, 5.8]) {
+      for (let i = 0; i < 9; i++) {
+        const a = cutStart + 0.14 + (i / 8) * (cutEnd - cutStart - 0.28);
+        dummy.position.set(Math.cos(a) * 39.1, Math.sin(a) * 39.1, bz);
+        dummy.rotation.set(0, 0, 0);
+        dummy.updateMatrix();
+        mfBallInst.setMatrixAt(bIdx++, dummy.matrix);
+      }
+    }
+    mfBallInst.instanceMatrix.needsUpdate = true;
+    focusBearingBandsGroup.add(mfBallInst);
+
+    // Beryllium-copper wave-spring preload band compensating temperature & wear clearances
+    const waveRing = new THREE.Mesh(
+      extrudeCentered(createCutawayArcRingShape(39.75, 38.65, cutStart, cutEnd), 0.75, 0.04, 0.04, 42),
+      mats.beCuSpring
+    );
+    waveRing.position.z = -7.2;
+    focusBearingBandsGroup.add(waveRing);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-focus-bearing-bands',
+      67,
+      '#cbd5e1',
+      focusBearingBandsGroup,
+      new THREE.Vector3(0, 0, 96.0),
+      new THREE.Vector3(68, 114, 108),
+      new THREE.Vector3(74, 120, 434),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L68: [PHASE 11] Mechanical IRIS LOCK / De-Click Slide Switch Pod & Weather Boot
+  // =========================================================================
+  const irisLockSwitchGroup = new THREE.Group();
+  {
+    // Sculpted black anodized switch bezel seated on -X side of aperture ring (z = +56.0)
+    const bezel = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(2.6, 8.6, 1.1), 13.8, 0.14, 0.14, 10),
+      mats.matteBlackAnodized
+    );
+    irisLockSwitchGroup.add(bezel);
+
+    // Knurled tactile slide toggle + crimson lock indicator dot
+    const sliderKnob = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(2.2, 5.2, 0.7), 6.0, 0.12, 0.12, 8),
+      mats.lensRubberGrip
+    );
+    sliderKnob.position.set(-1.7, 0, 1.6);
+    irisLockSwitchGroup.add(sliderKnob);
+
+    const lockDot = new THREE.Mesh(new THREE.SphereGeometry(0.55, 8, 8), mats.mountRedIndexDot);
+    lockDot.position.set(-2.85, 0, 1.6);
+    lockDot.userData.noEdges = true;
+    irisLockSwitchGroup.add(lockDot);
+
+    // Molded EPDM dust/moisture sliding weather-seal boot
+    const epdmBoot = new THREE.Mesh(new THREE.BoxGeometry(0.85, 7.2, 11.4), mats.epdmGasket);
+    epdmBoot.position.set(1.25, 0, 0);
+    epdmBoot.userData.noEdges = true;
+    irisLockSwitchGroup.add(epdmBoot);
+
+    // Beryllium-copper click detent leaf spring & hardened stainless locking pawl
+    const detentLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.42, 4.4, 9.6), mats.beCuSpring);
+    detentLeaf.position.set(2.0, 0, 0);
+    irisLockSwitchGroup.add(detentLeaf);
+
+    const lockPawl = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.2, 3.0), mats.mountStainlessFlange);
+    lockPawl.position.set(2.8, 0, 1.6);
+    irisLockSwitchGroup.add(lockPawl);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-iris-lock-switch',
+      68,
+      '#ef4444',
+      irisLockSwitchGroup,
+      new THREE.Vector3(-39.6, -6.5, 56.0),
+      new THREE.Vector3(-114, -22, -110),
+      new THREE.Vector3(-120, -24, 268),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L69: [PHASE 11] Internal Steel Load-Reinforcing Chassis Plates & M2x6 Bolts
+  // =========================================================================
+  const reinforcingPlatesGroup = new THREE.Group();
+  {
+    // 3 curved high-tensile stainless gusset plates tying rear bayonet seat to Mg barrel
+    for (const deg of [205, 285, 392]) {
+      const a0 = THREE.MathUtils.degToRad(deg - 16);
+      const a1 = THREE.MathUtils.degToRad(deg + 16);
+      const gusset = new THREE.Mesh(
+        extrudeCentered(createCutawayArcRingShape(35.1, 34.1, a0, a1), 16.5, 0.08, 0.08, 14),
+        mats.mountStainlessFlange
+      );
+      gusset.position.z = 0.8;
+      reinforcingPlatesGroup.add(gusset);
+    }
+
+    // Rear circular structural torque distribution ring
+    const torqueRing = createLensCellRing(31.4, 34.9, 1.35, mats.stainlessMachined, 42);
+    torqueRing.position.z = -7.6;
+    reinforcingPlatesGroup.add(torqueRing);
+
+    // 8x high-tensile M2x6 titanium-coated structural bolts
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+      const bolt = createPrecisionScrew(0.95, 0.55, 2.8, mats.titaniumRivet);
+      bolt.position.set(Math.cos(a) * 33.2, Math.sin(a) * 33.2, -8.3);
+      bolt.rotation.y = Math.PI;
+      reinforcingPlatesGroup.add(bolt);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-reinforcing-plates',
+      69,
+      '#64748b',
+      reinforcingPlatesGroup,
+      new THREE.Vector3(0, 0, 46.0),
+      new THREE.Vector3(-78, -94, -172),
+      new THREE.Vector3(-84, -100, 242),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L70: [PHASE 11] Rear Bayonet EPDM Skirt Gasket & 4x M2.5 Thread-Locked Mount Bolts
+  // =========================================================================
+  const mountSealBoltsGroup = new THREE.Group();
+  {
+    // Precision molded EPDM dust/moisture flange skirt gasket + outer wiper lip
+    const rearSeal = createLensCellRing(33.5, 35.4, 1.5, mats.epdmGasket, 44);
+    rearSeal.position.z = -1.1;
+    mountSealBoltsGroup.add(rearSeal);
+
+    const wiperLip = new THREE.Mesh(new THREE.TorusGeometry(35.3, 0.42, 10, 44), mats.epdmGasket);
+    wiperLip.position.z = -1.65;
+    wiperLip.userData.noEdges = true;
+    mountSealBoltsGroup.add(wiperLip);
+
+    // 4x high-tensile M2.5 stainless mount bolts with blue micro-capsule threadlock & BeCu lock washers
+    for (let i = 0; i < 4; i++) {
+      const a = (i * Math.PI) / 2 + Math.PI / 4;
+      const bx = Math.cos(a) * 30.8;
+      const by = Math.sin(a) * 30.8;
+
+      const screw = createPrecisionScrew(1.28, 0.72, 3.8, mats.mountStainlessFlange);
+      screw.position.set(bx, by, -1.3);
+      screw.rotation.y = Math.PI;
+      mountSealBoltsGroup.add(screw);
+
+      // Blue nylon anti-vibration thread-lock band around shaft
+      const lockBand = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.76, 0.76, 1.3, 10).rotateX(Math.PI / 2),
+        mats.mountThreadLockBlue
+      );
+      lockBand.position.set(bx, by, 1.2);
+      lockBand.userData.noEdges = true;
+      mountSealBoltsGroup.add(lockBand);
+
+      // BeCu spring lock washer under screw seat
+      const washer = new THREE.Mesh(
+        new THREE.TorusGeometry(1.12, 0.16, 8, 16),
+        mats.beCuSpring
+      );
+      washer.position.set(bx, by, -0.7);
+      washer.userData.noEdges = true;
+      mountSealBoltsGroup.add(washer);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-mount-seal-bolts',
+      70,
+      '#0ea5e9',
+      mountSealBoltsGroup,
+      new THREE.Vector3(0, 0, 33.5),
+      new THREE.Vector3(0, 0, -320),
+      new THREE.Vector3(0, 0, 150),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L71: [PHASE 12] Interlocking Center-Barrel Split-Tubing Stainless Joining Ring
+  // (Lensrentals Sony FE / Lumix S Pro / Canon RF teardown structural centerpiece!)
+  // =========================================================================
+  const centerJoinGroup = new THREE.Group();
+  {
+    const joinRing = createLensCellRing(34.8, 39.2, 5.2, mats.mountStainlessFlange, 48);
+    centerJoinGroup.add(joinRing);
+
+    // Stepped front & rear spigot lips locking front and rear barrels coaxially within +/- 4 um!
+    const frontSpigot = createLensCellRing(35.6, 37.8, 1.8, mats.stainlessMachined, 48);
+    frontSpigot.position.z = 3.2;
+    const rearSpigot = createLensCellRing(35.6, 37.8, 1.8, mats.stainlessMachined, 48);
+    rearSpigot.position.z = -3.2;
+    centerJoinGroup.add(frontSpigot, rearSpigot);
+
+    // 3 precision alignment dowel pins + 6 radial thread-locked M2.0 perimeter fasteners
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+      const bolt = createPrecisionScrew(0.95, 0.45, 2.6, mats.titaniumRivet);
+      bolt.position.set(Math.cos(a) * 39.4, Math.sin(a) * 39.4, 0);
+      bolt.rotation.z = a - Math.PI / 2;
+      bolt.rotation.x = Math.PI / 2;
+      centerJoinGroup.add(bolt);
+
+      if (i % 2 === 0) {
+        const dowel = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.85, 0.85, 7.6, 12).rotateX(Math.PI / 2),
+          mats.brassGear
+        );
+        dowel.position.set(Math.cos(a) * 36.8, Math.sin(a) * 36.8, 0);
+        centerJoinGroup.add(dowel);
+      }
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-center-join-ring',
+      71,
+      '#94a3b8',
+      centerJoinGroup,
+      new THREE.Vector3(0, 0, 79.0),
+      new THREE.Vector3(0, 96, 12),
+      new THREE.Vector3(0, 102, 368),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L72: [PHASE 12] XD Linear-Motor Coil-Over-Core Mechanical Stainless C-Clamp Retainers (x4)
+  // =========================================================================
+  const xdClampGroup = new THREE.Group();
+  {
+    const clampAngles = [45, 135, 225, 315];
+    clampAngles.forEach((deg, idx) => {
+      const a = THREE.MathUtils.degToRad(deg);
+      const cz = idx < 2 ? 12.0 : -11.5; // Front Group A XD pair & Rear Group B XD pair
+      const cGrp = new THREE.Group();
+      cGrp.position.set(Math.cos(a) * 31.8, Math.sin(a) * 31.8, cz);
+      cGrp.rotation.z = a;
+
+      // Non-magnetic SUS304 mechanical C-clamp straddling XD actuator copper coil bobbin
+      const topStrap = new THREE.Mesh(new THREE.BoxGeometry(4.8, 7.6, 10.4), mats.mountStainlessFlange);
+      const cheek1 = new THREE.Mesh(new THREE.BoxGeometry(6.8, 1.4, 10.4), mats.stainlessMachined);
+      cheek1.position.set(-1.4, 3.6, 0);
+      const cheek2 = new THREE.Mesh(new THREE.BoxGeometry(6.8, 1.4, 10.4), mats.stainlessMachined);
+      cheek2.position.set(-1.4, -3.6, 0);
+      cGrp.add(topStrap, cheek1, cheek2);
+
+      for (const sz of [-3.4, 3.4]) {
+        const scr = createPrecisionScrew(0.72, 0.32, 1.6, mats.titaniumRivet);
+        scr.rotation.y = Math.PI / 2;
+        scr.position.set(2.55, 0, sz);
+        cGrp.add(scr);
+      }
+      xdClampGroup.add(cGrp);
+    });
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-xd-coil-clamps',
+      72,
+      '#d97706',
+      xdClampGroup,
+      new THREE.Vector3(0, 0, 74.0),
+      new THREE.Vector3(88, 72, -16),
+      new THREE.Vector3(96, 76, 352),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L73: [PHASE 12] Focus-Ring Stainless Ball-Bearing Roller Cage & Spanner Preload Nut
+  // =========================================================================
+  const clutchBallsGroup = new THREE.Group();
+  {
+    // Low-friction POM ball retainer cage ring holding 18 precision stainless bearing balls
+    const cage = createLensCellRing(37.4, 39.8, 2.4, mats.pomGear, 48);
+    clutchBallsGroup.add(cage);
+
+    const ballGeo = new THREE.SphereGeometry(0.92, 12, 10);
+    const ballInst = new THREE.InstancedMesh(ballGeo, mats.stainlessMachined, 18);
+    for (let i = 0; i < 18; i++) {
+      const a = (i / 18) * Math.PI * 2;
+      dummy.position.set(Math.cos(a) * 38.6, Math.sin(a) * 38.6, 0);
+      dummy.rotation.set(0, 0, 0);
+      dummy.updateMatrix();
+      ballInst.setMatrixAt(i, dummy.matrix);
+    }
+    ballInst.instanceMatrix.needsUpdate = true;
+    clutchBallsGroup.add(ballInst);
+
+    // Brass 4-notch spanner-wrench preload tensioning nut adjusting silky MF ring torque!
+    const spannerNut = createSpannerRingGroup(
+      36.8,
+      40.2,
+      1.6,
+      mats.brassGear,
+      mats.matteBlackAnodized,
+      undefined,
+      4
+    );
+    spannerNut.position.z = -2.2;
+    clutchBallsGroup.add(spannerNut);
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-clutch-ball-rollers',
+      73,
+      '#eab308',
+      clutchBallsGroup,
+      new THREE.Vector3(0, 0, 96.5),
+      new THREE.Vector3(0, -104, 126),
+      new THREE.Vector3(0, -108, 434),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // L74: [PHASE 12] Rear Fixed 36×24mm Rectangular Stray-Light Trap Cone & Flocked Baffle Tube
+  // =========================================================================
+  const rearLightTrapGroup = new THREE.Group();
+  {
+    // Cylindrical outer flocked stray-light trap barrel immediately behind rear element E14
+    const outerCone = createLensCellRing(22.2, 25.6, 7.6, mats.velvetFlockTrap, 42);
+    rearLightTrapGroup.add(outerCone);
+
+    // 36×24mm full-frame rectangular flare-cutter knife-edge rear mask (blocks 41% stray circle light!)
+    const maskShape = new THREE.Shape();
+    maskShape.absarc(0, 0, 24.8, 0, Math.PI * 2, false);
+    const hw = 18.8;
+    const hh = 12.6;
+    const rectHole = new THREE.Path();
+    rectHole.moveTo(-hw, -hh);
+    rectHole.lineTo(hw, -hh);
+    rectHole.lineTo(hw, hh);
+    rectHole.lineTo(-hw, hh);
+    rectHole.closePath();
+    maskShape.holes.push(rectHole);
+
+    const rectMask = new THREE.Mesh(
+      extrudeCentered(maskShape, 0.95, 0.08, 0.16, 40),
+      mats.velvetFlockTrap
+    );
+    rectMask.position.z = -3.8;
+    rearLightTrapGroup.add(rectMask);
+
+    // 4 stepped internal sawtooth anti-reflection light-trap rings
+    for (let i = 0; i < 4; i++) {
+      const bz = -2.0 + i * 1.85;
+      const rib = new THREE.Mesh(
+        new THREE.TorusGeometry(22.0, 0.35, 8, 36),
+        mats.matteBlackAnodized
+      );
+      rib.position.z = bz;
+      rib.userData.noEdges = true;
+      rearLightTrapGroup.add(rib);
+    }
+  }
+  parts.push(
+    finalizeLensPart(
+      'lens-rear-lighttrap-tube',
+      74,
+      '#0f172a',
+      rearLightTrapGroup,
+      new THREE.Vector3(0, 0, 39.2),
+      new THREE.Vector3(0, 0, -214),
+      new THREE.Vector3(0, 0, 212),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
   // Synchronized Live Kinematic Rig driven directly by LensOpticalSim!
   // =========================================================================
   const focusGroupAParts = [focusAFrontPart, focusGroupAPart, focusARearPart, focusAEccPart];
@@ -2887,6 +3535,7 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     focusGroupAParts,
     focusGroupBParts,
     moverCarriages,
+    mrScaleCarriages,
     focusRingMesh: focusRingRotor,
     apertureRingMesh: apRingRotor,
     mfEncoderWheel,
@@ -2928,6 +3577,13 @@ export function buildLensParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
         const gIdx = mover.userData.groupIndex as number;
         const baseZ = mover.userData.baseZ as number;
         mover.position.z = baseZ + (gIdx === 0 ? strokeA : strokeB);
+      }
+
+      // Synchronize all 4 SmFeN magnetic Vernier scale bars (L66) live with Focus Group A & B!
+      for (const sc of mrScaleCarriages) {
+        const gIdx = sc.userData.groupIndex as number;
+        const baseZ = sc.userData.baseZ as number;
+        sc.position.z = baseZ + (gIdx === 0 ? strokeA : strokeB);
       }
 
       // Linear-Response MF Focus Ring & 2,048 PPR Optical Slotted Encoder rotation

@@ -140,8 +140,8 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     '#38bdf8',
     glassGroup,
     new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -35.8),
-    new THREE.Vector3(0, 0, -72),
-    new THREE.Vector3(0, 0, -346),
+    new THREE.Vector3(0, 0, -78),
+    new THREE.Vector3(0, 0, -352),
     cp,
     0.22
   );
@@ -192,57 +192,32 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     '#0ea5e9',
     ipsGroup,
     new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -34.4),
-    new THREE.Vector3(0, 0, -52),
-    new THREE.Vector3(0, 0, -326),
+    new THREE.Vector3(0, 0, -50),
+    new THREE.Vector3(0, 0, -324),
     cp,
     0.24
   );
   parts.push(pIps);
 
   // =========================================================================
-  // D03: Dual-BEF Micro-Prism Stack & Edge LED Backlight LGP (z = -32.9 mm)
+  // D03: Dual-BEF & DBEF Micro-Prism Optical Luminance Collimation Film Stack (z = -33.2 mm)
   // =========================================================================
   const blGroup = new THREE.Group();
   {
     const blW = LCD_WIDTH - 5.2;
     const blH = LCD_HEIGHT - 5.2;
 
+    // Crossed Dual-BEF + DBEF prismatic optical sheets (decoupled from D17 LGP/LED bar!)
     blGroup.add(
       new THREE.Mesh(
-        extrudeCentered(createRoundedRectShape(blW, blH, 1.2), 0.95, 0.05, 0.05, 14),
+        extrudeCentered(createRoundedRectShape(blW, blH, 1.2), 0.55, 0.04, 0.04, 14),
         mats.lcdBacklightPrism
       )
     );
 
-    const esrMirror = new THREE.Mesh(
-      new THREE.BoxGeometry(blW - 1.2, blH - 1.2, 0.16),
-      mats.stainlessMachined
-    );
-    esrMirror.position.z = 0.54;
-    blGroup.add(esrMirror);
-
-    const ledBar = new THREE.Mesh(new THREE.BoxGeometry(blW - 6.0, 2.2, 0.95), mats.polyimideFpc);
-    ledBar.position.set(0, -blH * 0.5 + 1.1, 0);
-    blGroup.add(ledBar);
-
-    const ledMat = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: 0xe0f2fe,
-      emissiveIntensity: 1.4,
-      roughness: 0.15,
-      clippingPlanes: cp,
-    });
-    for (let i = 0; i < 10; i++) {
-      const lx = -blW * 0.42 + (i / 9) * (blW * 0.84);
-      const led = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 0.8), ledMat);
-      led.position.set(lx, -blH * 0.5 + 1.4, -0.15);
-      led.userData.noEdges = true;
-      blGroup.add(led);
-    }
-
     blGroup.add(
       new THREE.Mesh(
-        extrudeCentered(createFrameShape(blW + 1.4, blH + 1.4, 1.6, blW - 0.6, blH - 0.6, 1.0), 1.25, 0.06, 0.06, 14),
+        extrudeCentered(createFrameShape(blW + 1.4, blH + 1.4, 1.6, blW - 0.6, blH - 0.6, 1.0), 0.78, 0.05, 0.05, 14),
         mats.ceramicAlumina
       )
     );
@@ -252,9 +227,9 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     3,
     '#7dd3fc',
     blGroup,
-    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -32.9),
-    new THREE.Vector3(0, 0, -34),
-    new THREE.Vector3(0, 0, -308),
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -33.2),
+    new THREE.Vector3(0, 0, -38),
+    new THREE.Vector3(0, 0, -312),
     cp,
     0.22
   );
@@ -285,12 +260,7 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     rim.position.z = -1.6;
     shellGroup.add(rim);
 
-    const graphitePad = new THREE.Mesh(
-      new THREE.BoxGeometry(LCD_WIDTH - 16.0, LCD_HEIGHT - 16.0, 0.25),
-      mats.pyroGraphite
-    );
-    graphitePad.position.set(-2.0, 0, -0.58);
-    shellGroup.add(graphitePad);
+    // Note: Graphite thermal spreading liner & stainless EMI backplate are decoupled into D18 (lcd-emi-thermal-shield)!
 
     const bossPlate = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(7.5, 22.0, 1.8), 2.4, 0.14, 0.14, 12),
@@ -309,8 +279,8 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     '#334155',
     shellGroup,
     new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -31.5),
-    new THREE.Vector3(0, 0, -16),
-    new THREE.Vector3(0, 0, -290),
+    new THREE.Vector3(0, 0, -14),
+    new THREE.Vector3(0, 0, -288),
     cp,
     0.24
   );
@@ -812,9 +782,571 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
   );
 
   // =========================================================================
+  // D15: [Phase 11] 240Hz PCAP Touch-Sensing Controller ASIC Sub-FPC & ESD Array
+  // =========================================================================
+  const touchCtrlGroup = new THREE.Group();
+  {
+    const subFpc = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(20.0, 7.6, 1.2), 0.32, 0.03, 0.03, 12),
+      mats.polyimideFpc
+    );
+    subFpc.position.set(16.0, -LCD_HEIGHT * 0.44, 0);
+    touchCtrlGroup.add(subFpc);
+
+    // 240Hz Mutual-Capacitance Touch Controller QFN ASIC + ESD TVS protection chips
+    const touchAsic = new THREE.Mesh(new THREE.BoxGeometry(5.6, 5.2, 0.85), mats.icEpoxy);
+    touchAsic.position.set(15.2, -LCD_HEIGHT * 0.44, 0.56);
+    const esdIc = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.2, 0.65), mats.icEpoxy);
+    esdIc.position.set(21.6, -LCD_HEIGHT * 0.44, 0.48);
+    // Silver EMI noise-rejection foil over touch flex tail
+    const emiFoil = new THREE.Mesh(new THREE.BoxGeometry(6.2, 4.4, 0.25), mats.emiShieldFilm);
+    emiFoil.position.set(9.4, -LCD_HEIGHT * 0.44, 0.28);
+    const goldB2b = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.8, 0.48), mats.goldPlating);
+    goldB2b.position.set(15.2, -LCD_HEIGHT * 0.5 + 0.5, 0.4);
+    touchCtrlGroup.add(touchAsic, esdIc, emiFoil, goldB2b);
+  }
+  const pTouchCtrl = finalizeLcdPart(
+    'lcd-touch-controller',
+    15,
+    '#0284c7',
+    touchCtrlGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -35.2),
+    new THREE.Vector3(24, -26, -64),
+    new THREE.Vector3(24, -26, -338),
+    cp,
+    0.24
+  );
+  parts.push(pTouchCtrl);
+
+  // =========================================================================
+  // D16: [Phase 11] Crossed 0°/90° Wide-View Polarizer Films & Retarder Stack
+  // =========================================================================
+  const polGroup = new THREE.Group();
+  {
+    const pW = LCD_WIDTH - 4.8;
+    const pH = LCD_HEIGHT - 4.8;
+    // Front 0° Analyzer Polarizer + TAC protective substrate
+    const frontPol = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(pW, pH, 1.2), 0.26, 0.02, 0.02, 14),
+      mats.lcdPolarizerFilm
+    );
+    frontPol.position.z = -0.22;
+    frontPol.userData.edgeOpacity = 0.34;
+    polGroup.add(frontPol);
+
+    // Biaxial wide-view optical compensation retarder sheet behind front polarizer
+    const retarder = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(pW - 0.6, pH - 0.6, 1.0), 0.18, 0.02, 0.02, 12),
+      mats.evfDichroicMirror
+    );
+    retarder.position.z = 0.18;
+    retarder.userData.edgeOpacity = 0.3;
+    polGroup.add(retarder);
+
+    // Subtle 0° / 90° polarization axis corner alignment notches (zero text)
+    const tab0 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.1, 0.3), mats.goldPlating);
+    tab0.position.set(-pW * 0.42, pH * 0.5 + 0.4, -0.22);
+    const tab90 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 4.2, 0.3), mats.beCuSpring);
+    tab90.position.set(pW * 0.5 + 0.4, pH * 0.4, 0.18);
+    polGroup.add(tab0, tab90);
+  }
+  const pPolarizer = finalizeLcdPart(
+    'lcd-polarizer-stack',
+    16,
+    '#6366f1',
+    polGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -35.05),
+    new THREE.Vector3(0, 0, -64),
+    new THREE.Vector3(0, 0, -338),
+    cp,
+    0.26
+  );
+  parts.push(pPolarizer);
+
+  // =========================================================================
+  // D17: [Phase 11] 10x High-CRI Edge W-LED Bar, Laser-Dot PMMA LGP & ESR Mirror
+  // =========================================================================
+  const lgpGroup = new THREE.Group();
+  {
+    const blW = LCD_WIDTH - 5.2;
+    const blH = LCD_HEIGHT - 5.2;
+
+    // Laser-etched micro-dot acrylic Light-Guide Plate (LGP) distributing edge light evenly
+    const lgpPlate = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(blW, blH, 1.2), 0.62, 0.04, 0.04, 14),
+      mats.sswfGlass
+    );
+    lgpPlate.userData.edgeOpacity = 0.38;
+    lgpGroup.add(lgpPlate);
+
+    // Mirror-bright 98.5% Enhanced Specular Reflector (ESR) polymer sheet on +Z back
+    const esrMirror = new THREE.Mesh(
+      new THREE.BoxGeometry(blW - 1.0, blH - 1.0, 0.16),
+      mats.sinteredSilver
+    );
+    esrMirror.position.z = 0.42;
+    lgpGroup.add(esrMirror);
+
+    // Lower edge copper-polyimide LED strip bar + 10 high-CRI glowing side-emitting W-LEDs
+    const ledBar = new THREE.Mesh(new THREE.BoxGeometry(blW - 5.0, 2.2, 0.85), mats.polyimideFpc);
+    ledBar.position.set(0, -blH * 0.5 + 1.1, 0);
+    lgpGroup.add(ledBar);
+
+    const ledMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xe0f2fe,
+      emissiveIntensity: 1.45,
+      roughness: 0.15,
+      clippingPlanes: cp,
+    });
+    for (let i = 0; i < 10; i++) {
+      const lx = -blW * 0.42 + (i / 9) * (blW * 0.84);
+      const led = new THREE.Mesh(new THREE.BoxGeometry(1.85, 1.25, 0.72), ledMat);
+      led.position.set(lx, -blH * 0.5 + 1.4, -0.14);
+      led.userData.noEdges = true;
+      lgpGroup.add(led);
+    }
+  }
+  const pLgpLed = finalizeLcdPart(
+    'lcd-lgp-led-bar',
+    17,
+    '#bae6fd',
+    lgpGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -32.45),
+    new THREE.Vector3(0, 0, -26),
+    new THREE.Vector3(0, 0, -300),
+    cp,
+    0.24
+  );
+  parts.push(pLgpLed);
+
+  // =========================================================================
+  // D18: [Phase 11] Ultra-Thin Stainless EMI Backplate & Graphite Thermal Liner
+  // =========================================================================
+  const emiThermalGroup = new THREE.Group();
+  {
+    // 0.25mm stamped SUS304 EMI shielding stiffener preventing touch pooling
+    const emiPlate = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(LCD_WIDTH - 4.0, LCD_HEIGHT - 4.0, 1.8), 0.26, 0.03, 0.03, 14),
+      mats.emiShieldCan
+    );
+    emiThermalGroup.add(emiPlate);
+
+    // High-conductivity artificial graphite thermal spreading sheet diffusing bottom LED heat upward
+    const graphitePad = new THREE.Mesh(
+      new THREE.BoxGeometry(LCD_WIDTH - 14.0, LCD_HEIGHT - 14.0, 0.22),
+      mats.thermalTransferTape
+    );
+    graphitePad.position.set(-2.0, 0, 0.24);
+    emiThermalGroup.add(graphitePad);
+
+    // Copper conductive grounding bridge tab linking shield to +X hinge GND
+    const gndTab = new THREE.Mesh(new THREE.BoxGeometry(7.2, 5.2, 0.28), mats.copperHeatSpreader);
+    gndTab.position.set(LCD_WIDTH * 0.46, 0, 0.14);
+    emiThermalGroup.add(gndTab);
+  }
+  const pEmiThermal = finalizeLcdPart(
+    'lcd-emi-thermal-shield',
+    18,
+    '#475569',
+    emiThermalGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -31.95),
+    new THREE.Vector3(-26, 20, -20),
+    new THREE.Vector3(-28, 20, -294),
+    cp,
+    0.24
+  );
+  parts.push(pEmiThermal);
+
+  // =========================================================================
+  // D19: [Phase 11] Self-Closing Pull-In Over-Center Cam Hinge & Preload Spring
+  // =========================================================================
+  const pullInGroup = new THREE.Group();
+  {
+    for (const sy of [-6.8, 6.8]) {
+      // Sculpted over-center heart cam profile (generates closing pull-in force in 0°..15°!)
+      const camShape = new THREE.Shape();
+      camShape.absarc(0, 0, 3.6, 0, Math.PI * 1.45, false);
+      camShape.lineTo(4.9, -1.6);
+      camShape.lineTo(3.6, 0);
+      const cam = new THREE.Mesh(
+        extrudeCentered(camShape, 2.2, 0.08, 0.08, 18).rotateX(Math.PI / 2),
+        mats.titaniumRivet
+      );
+      cam.position.set(0, sy, 0);
+      pullInGroup.add(cam);
+
+      // Brass cam follower roller & CuBe2 heavy pull-in preload coil spring
+      const follower = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.1, 1.1, 2.4, 14),
+        mats.brassGear
+      );
+      follower.position.set(-4.3, sy, 0.6);
+      const pullSpr = new THREE.Mesh(
+        createHelicalSpringGeometry(1.2, 4.6, 5, 0.24).rotateY(Math.PI / 2),
+        mats.beCuSpring
+      );
+      pullSpr.position.set(-7.2, sy, 0.6);
+      pullSpr.userData.noEdges = true;
+      pullInGroup.add(follower, pullSpr);
+    }
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-pullin-cam-spring',
+      19,
+      '#d97706',
+      pullInGroup,
+      new THREE.Vector3(hingeWorldX, LCD_CENTER_Y, -30.4),
+      new THREE.Vector3(44, 24, 4),
+      new THREE.Vector3(46, 24, -266),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // D20: [Phase 11] Molded Accordion EPDM Hinge Weather-Seal Boots & O-Rings
+  // =========================================================================
+  const bootsGroup = new THREE.Group();
+  {
+    // Bulkhead slot EPDM perimeter sealing gasket
+    const slotGasket = new THREE.Mesh(
+      extrudeCentered(createFrameShape(11.6, 25.0, 2.6, 6.4, 19.8, 1.6), 1.35, 0.12, 0.12, 16),
+      mats.epdmGasket
+    );
+    slotGasket.position.z = 1.2;
+    bootsGroup.add(slotGasket);
+
+    // Molded ribbed accordion waterproof rubber bellows wrapping hinge neck
+    for (let i = 0; i < 4; i++) {
+      const rRib = i % 2 === 0 ? 4.4 : 3.55;
+      const rib = new THREE.Mesh(
+        new THREE.TorusGeometry(rRib, 0.55, 10, 24).rotateX(Math.PI / 2),
+        mats.epdmGasket
+      );
+      rib.position.set(0, -9.2 + i * 6.1, -0.1);
+      rib.userData.noEdges = true;
+      bootsGroup.add(rib);
+    }
+
+    // Twin dynamic rotary shaft O-rings (fluorine low-friction coated!)
+    for (const oy of [-11.4, 11.4]) {
+      const oRing = new THREE.Mesh(
+        new THREE.TorusGeometry(3.2, 0.42, 10, 24).rotateX(Math.PI / 2),
+        mats.antiVibRubber
+      );
+      oRing.position.set(0, oy, -0.4);
+      oRing.userData.noEdges = true;
+      bootsGroup.add(oRing);
+    }
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-hinge-weather-boots',
+      20,
+      '#1f2937',
+      bootsGroup,
+      new THREE.Vector3(hingeWorldX - 1.2, LCD_CENTER_Y, -29.2),
+      new THREE.Vector3(46, -24, 14),
+      new THREE.Vector3(48, -24, -256),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // D21: [Phase 11] Body-Side Bulkhead MIPI-DSI B2B Relay PCB & Clamp Plate
+  // =========================================================================
+  const bulkheadB2bGroup = new THREE.Group();
+  {
+    const bx = LCD_WIDTH * 0.24;
+    const by = -6.0;
+    const relayPcb = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(24.0, 14.0, 1.6), 1.0, 0.08, 0.08, 14),
+      mats.hdiMainboardPcb
+    );
+    relayPcb.position.set(bx, by, 0);
+    bulkheadB2bGroup.add(relayPcb);
+
+    // 30-pin high-speed 100Ω differential MIPI-DSI B2B socket + ESD TVS protection ICs
+    const b2bSocket = new THREE.Mesh(new THREE.BoxGeometry(12.4, 3.2, 1.05), mats.zifIvoryPlastic);
+    b2bSocket.position.set(bx, by + 2.4, -0.8);
+    const goldPins = new THREE.Mesh(new THREE.BoxGeometry(11.6, 3.6, 0.22), mats.goldPlating);
+    goldPins.position.set(bx, by + 2.4, -0.52);
+    const esdChip = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.2, 0.72), mats.icEpoxy);
+    esdChip.position.set(bx - 5.2, by - 3.2, -0.78);
+    bulkheadB2bGroup.add(b2bSocket, goldPins, esdChip);
+
+    // Stainless B2B retention clamp bar + 2 M1.4 screws preventing drop-shock disconnect!
+    const clampBar = new THREE.Mesh(new THREE.BoxGeometry(16.6, 4.4, 0.52), mats.emiShieldCan);
+    clampBar.position.set(bx, by + 2.4, -1.55);
+    bulkheadB2bGroup.add(clampBar);
+    for (const dx of [-7.0, 7.0]) {
+      const sc = createPrecisionScrew(1.0, 0.42, 1.6, mats.stainlessMachined);
+      sc.position.set(bx + dx, by + 2.4, -1.85);
+      sc.rotation.y = Math.PI;
+      bulkheadB2bGroup.add(sc);
+    }
+
+    // Short internal jumper FPC routing forward (+Z) into Mainboard
+    const jumper = new THREE.Mesh(new THREE.BoxGeometry(9.2, 6.2, 0.28), mats.polyimideFpc);
+    jumper.position.set(bx - 4.0, by + 8.5, 0.8);
+    bulkheadB2bGroup.add(jumper);
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-bulkhead-b2b-pcb',
+      21,
+      '#10b981',
+      bulkheadB2bGroup,
+      new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -27.4),
+      new THREE.Vector3(0, 0, 48),
+      new THREE.Vector3(0, 0, -230),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // D22: [Phase 12] Rear Monitor Carbon-Steel Anti-Warp Stiffener Plate (Monitor-Attached!)
+  // =========================================================================
+  const stiffenerGroup = new THREE.Group();
+  {
+    const stiffPlate = new THREE.Mesh(
+      extrudeCentered(createFrameShape(LCD_WIDTH - 4.4, LCD_HEIGHT - 4.4, 2.6, LCD_WIDTH - 24.0, LCD_HEIGHT - 22.0, 1.8), 0.36, 0.03, 0.03, 16),
+      mats.mountStainlessFlange
+    );
+    stiffenerGroup.add(stiffPlate);
+
+    // Diagonal anti-torsion X-ribs stiffening cantilever vari-angle screen under touch force!
+    for (const ang of [0.54, -0.54]) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(56.0, 2.2, 0.48), mats.carbonFiberBlade);
+      rib.rotation.z = ang;
+      stiffenerGroup.add(rib);
+    }
+  }
+  const pStiffener = finalizeLcdPart(
+    'lcd-rear-stiffener',
+    22,
+    '#64748b',
+    stiffenerGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -32.2),
+    new THREE.Vector3(0, 0, -24),
+    new THREE.Vector3(0, 0, -276),
+    cp,
+    0.24
+  );
+  parts.push(pStiffener);
+
+  // =========================================================================
+  // D23: [Phase 12] 4-Axis Hinge Belleville Disc-Spring Friction Torque Washer Stack
+  // =========================================================================
+  const torqueWashersGroup = new THREE.Group();
+  {
+    // 6 alternating Belleville conical spring washers + PTFE slip discs along rotary hinge axle
+    for (let i = 0; i < 6; i++) {
+      const wy = -6.0 + i * 2.4;
+      const belleville = new THREE.Mesh(
+        new THREE.CylinderGeometry(3.8, 4.4, 0.52, 24),
+        i % 2 === 0 ? mats.mountSpringSteel : mats.brassGear
+      );
+      belleville.position.set(0, wy, 0);
+      torqueWashersGroup.add(belleville);
+
+      const ptfeSlip = new THREE.Mesh(
+        new THREE.CylinderGeometry(4.1, 4.1, 0.24, 24),
+        mats.zifIvoryPlastic
+      );
+      ptfeSlip.position.set(0, wy + 0.5, 0);
+      torqueWashersGroup.add(ptfeSlip);
+    }
+
+    // Precision self-locking serrated tension locknut crowning the stack
+    const lockNut = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.3, 4.3, 1.4, 6),
+      mats.stainlessMachined
+    );
+    lockNut.position.set(0, 8.6, 0);
+    torqueWashersGroup.add(lockNut);
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-torque-washers',
+      23,
+      '#d97706',
+      torqueWashersGroup,
+      new THREE.Vector3(hingeWorldX, LCD_CENTER_Y, -30.5),
+      new THREE.Vector3(56, 22, -16),
+      new THREE.Vector3(58, 22, -284),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // D24: [Phase 12] Rear-Bezel RGB Ambient Light & Color-Temperature Sensor (Monitor-Attached!)
+  // =========================================================================
+  const ambColorGroup = new THREE.Group();
+  {
+    const pcb = new THREE.Mesh(new THREE.BoxGeometry(9.6, 4.2, 0.65), mats.hdiMainboardPcb);
+    pcb.position.set(0, -LCD_HEIGHT * 0.44, 0);
+    const rgbIc = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.0, 0.6), mats.icEpoxy);
+    rgbIc.position.set(0, -LCD_HEIGHT * 0.44, -0.58);
+    const lens = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.95, 0.95, 0.3, 14).rotateX(Math.PI / 2),
+      mats.lcdCoverGlass
+    );
+    lens.position.set(0, -LCD_HEIGHT * 0.44, -0.95);
+    lens.userData.noEdges = true;
+    const fpc = new THREE.Mesh(new THREE.BoxGeometry(12.0, 2.2, 0.2), mats.polyimideFpc);
+    fpc.position.set(9.5, -LCD_HEIGHT * 0.44, 0.15);
+    ambColorGroup.add(pcb, rgbIc, lens, fpc);
+  }
+  const pAmbColor = finalizeLcdPart(
+    'lcd-ambient-color-sensor',
+    24,
+    '#0ea5e9',
+    ambColorGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -34.8),
+    new THREE.Vector3(0, -34, -64),
+    new THREE.Vector3(0, -34, -318),
+    cp,
+    0.24
+  );
+  parts.push(pAmbColor);
+
+  // =========================================================================
+  // D25: [Phase 12] Selfie 180° Flip & Closed-Dock Auto-Rotate Hall/Reed Magnet Pair (Monitor-Attached!)
+  // =========================================================================
+  const flipMagGroup = new THREE.Group();
+  {
+    // Twin N52 detection micro-magnets embedded along upper & right bezel edges
+    for (const [mx, my] of [
+      [-LCD_WIDTH * 0.42, LCD_HEIGHT * 0.34],
+      [LCD_WIDTH * 0.38, -LCD_HEIGHT * 0.38],
+    ] as Array<[number, number]>) {
+      const mag = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.2, 1.05), mats.neodymiumMagnet);
+      mag.position.set(mx, my, 0);
+      const keeper = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, 0.35), mats.softIronYoke);
+      keeper.position.set(mx, my, 0.65);
+      flipMagGroup.add(mag, keeper);
+    }
+
+    // Companion bipolar Hall IC sensor pad indicator on lower-right dock axis
+    const hallPod = new THREE.Mesh(new THREE.BoxGeometry(5.6, 3.8, 0.72), mats.hdiMainboardPcb);
+    hallPod.position.set(LCD_WIDTH * 0.38, LCD_HEIGHT * 0.34, 0.5);
+    const hallIc = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.0, 0.55), mats.icEpoxy);
+    hallIc.position.set(LCD_WIDTH * 0.38, LCD_HEIGHT * 0.34, 0.1);
+    flipMagGroup.add(hallPod, hallIc);
+  }
+  const pFlipMags = finalizeLcdPart(
+    'lcd-flip-reed-magnets',
+    25,
+    '#6366f1',
+    flipMagGroup,
+    new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -33.2),
+    new THREE.Vector3(-42, 26, -34),
+    new THREE.Vector3(-44, 26, -290),
+    cp,
+    0.24
+  );
+  parts.push(pFlipMags);
+
+  // =========================================================================
+  // D26: [Phase 12] Spiral FPC Hinge-Axle Anti-Chafe PTFE Sleeve & Strain-Relief Grommet
+  // =========================================================================
+  const hingeGrommetGroup = new THREE.Group();
+  {
+    // Low-friction white PTFE hollow axle sleeve lining the 270° hinge barrel
+    const ptfeTube = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.55, 2.55, 22.0, 20, 1, true),
+      mats.zifIvoryPlastic
+    );
+    hingeGrommetGroup.add(ptfeTube);
+
+    // Dual flared silicone curvature-limiting strain-relief grommets at tube ends
+    for (const gy of [-11.2, 11.2]) {
+      const flare = new THREE.Mesh(
+        new THREE.TorusGeometry(2.85, 0.68, 10, 22).rotateX(Math.PI / 2),
+        mats.epdmGasket
+      );
+      flare.position.y = gy;
+      flare.userData.noEdges = true;
+      hingeGrommetGroup.add(flare);
+    }
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-hinge-grommet',
+      26,
+      '#f8fafc',
+      hingeGrommetGroup,
+      new THREE.Vector3(hingeWorldX, LCD_CENTER_Y, -30.4),
+      new THREE.Vector3(62, -6, -4),
+      new THREE.Vector3(64, -6, -270),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // D27: [Phase 12] 4-Corner Micro-Cellular Urethane Monitor Dock Cushion Pads & Catch
+  // =========================================================================
+  const dockBumpersGroup = new THREE.Group();
+  {
+    // 4 high-damping PORON micro-cellular urethane bumpers seated in cradle corners
+    for (const [cx, cy] of [
+      [-LCD_WIDTH * 0.43, LCD_HEIGHT * 0.4],
+      [LCD_WIDTH * 0.43, LCD_HEIGHT * 0.4],
+      [-LCD_WIDTH * 0.43, -LCD_HEIGHT * 0.4],
+      [LCD_WIDTH * 0.43, -LCD_HEIGHT * 0.4],
+    ] as Array<[number, number]>) {
+      const pad = new THREE.Mesh(
+        extrudeCentered(createRoundedRectShape(6.2, 4.4, 1.1), 1.05, 0.1, 0.1, 10),
+        mats.damperElastomer
+      );
+      pad.position.set(cx, cy, 0);
+      dockBumpersGroup.add(pad);
+    }
+
+    // Bottom center POM tactile seating catch clip eliminating closed-monitor rattle
+    const seatCatch = new THREE.Mesh(new THREE.BoxGeometry(10.8, 2.8, 1.6), mats.pomGear);
+    seatCatch.position.set(0, -LCD_HEIGHT * 0.47, -0.3);
+    const catchSpring = new THREE.Mesh(new THREE.BoxGeometry(8.4, 1.4, 0.3), mats.beCuSpring);
+    catchSpring.position.set(0, -LCD_HEIGHT * 0.47, 0.65);
+    dockBumpersGroup.add(seatCatch, catchSpring);
+  }
+  parts.push(
+    finalizeLcdPart(
+      'lcd-dock-bumper-pads',
+      27,
+      '#334155',
+      dockBumpersGroup,
+      new THREE.Vector3(LCD_CENTER_X, LCD_CENTER_Y, -29.2),
+      new THREE.Vector3(0, -30, 32),
+      new THREE.Vector3(0, -30, -244),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
   // Live 4-Axis Articulation Kinematic Demo (active when assembled & physics ON)
   // =========================================================================
-  const monitorParts = [pGlass, pIps, pBacklight, pShell];
+  const monitorParts = [
+    pGlass,
+    pTouchCtrl,
+    pPolarizer,
+    pIps,
+    pBacklight,
+    pLgpLed,
+    pEmiThermal,
+    pShell,
+    pStiffener,
+    pAmbColor,
+    pFlipMags,
+  ];
 
   const rig: LcdDynamicRig = {
     monitorParts,

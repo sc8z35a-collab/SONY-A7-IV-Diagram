@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface MainboardPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -18,13 +19,7 @@ interface DataBusFlow {
 
 /**
  * Real-time 3D high-speed signal-flow & two-phase thermal dissipation overlay
- * for the Image Processing Engine & 12-Layer HDI Mainboard:
- * - Cyan: SLVS-EC v3 160Gbps RAW feed (Sensor B2B -> 4nm ISP Die)
- * - Violet: ISP <-> Dedicated AI NPU Systolic Array tensor bus
- * - Cobalt Blue: ISP <-> Dual LPDDR5X-8533 ring buffer bus (68 GB/s)
- * - Gold-Amber: ISP -> CFexpress 4.0 PCIe Gen4 x2 NVMe write bus (4 GB/s)
- * - Sky Blue: ISP -> HDMI 2.1 / 2.5GbE I/O stream
- * - Crimson-Orange: Thermal heat flux rising from ISP & NPU -> Copper Vapor Chamber
+ * for the 30-Part Image Processing Engine & 12-Layer HDI Mainboard.
  */
 export function createMainboardPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -33,7 +28,7 @@ export function createMainboardPhysicsOverlay(
   const explodeGuides = new THREE.Group();
 
   // =========================================================================
-  // 1. CAD EXPLODED-VIEW AXIS ALIGNMENT GUIDES (4 outer board mount holes)
+  // 1. CAD EXPLODED-VIEW AXIS + RADIAL ALIGNMENT GUIDES
   // =========================================================================
   const guideCorners: Array<[number, number]> = [
     [-41.5, 27.5],
@@ -53,13 +48,15 @@ export function createMainboardPhysicsOverlay(
   for (const [gx, gy] of guideCorners) {
     const geo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(gx, gy, -15),
-      new THREE.Vector3(gx, gy, -28),
+      new THREE.Vector3(gx, gy, -29),
     ]);
     const line = new THREE.Line(geo, guideMat);
     line.computeLineDistances();
     explodeGuides.add(line);
     guideLines.push(line);
   }
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 32);
+  explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
   // =========================================================================
@@ -108,7 +105,6 @@ export function createMainboardPhysicsOverlay(
     flows.push({ line, packets, speed, getEndpoints });
   };
 
-  // Helper to get part world position safely
   const pt = (
     pos: Record<string, THREE.Vector3>,
     id: string,
@@ -148,10 +144,10 @@ export function createMainboardPhysicsOverlay(
     pt(p, 'mb-cfexpress', -25.0, 2.5, -0.6),
   ]);
 
-  // E. HDMI 2.1 (48 Gbps FRL) Video Output: ISP Die -> Full-Size HDMI Type A Port
+  // E. HDMI 2.1 (48 Gbps FRL) Video Output: ISP Die -> Modular HDMI 2.1 Daughterboard
   registerFlow(0x0284c7, 0.9, 2, false, (p) => [
     pt(p, 'mb-isp-die', 9.0, -1.5, -0.4),
-    pt(p, 'mb-io-ports', 38.0, 1.5, -0.5),
+    pt(p, 'mb-hdmi-daughterboard', 38.0, 1.5, -0.5),
   ]);
 
   // F. Two-Phase Thermal Dissipation Vectors: ISP & NPU Silicon -> Copper Vapor Chamber
@@ -183,9 +179,11 @@ export function createMainboardPhysicsOverlay(
 
     if (!explodeGuides.visible) return;
     const front = parts.find((p) => p.id === 'mb-chassis-frame');
-    const rear = parts.find((p) => p.id === 'mb-vapor-chamber');
+    const rear =
+      parts.find((p) => p.id === 'mb-rf-shield-bracket') ??
+      parts.find((p) => p.id === 'mb-vapor-chamber');
     const zFront = (front ? front.group.position.z : -15.6) + 2.0;
-    const zRear = (rear ? rear.group.position.z : -27.4) - 2.0;
+    const zRear = (rear ? rear.group.position.z : -28.8) - 2.0;
 
     guideLines.forEach((line, i) => {
       const [gx, gy] = guideCorners[i];
@@ -195,6 +193,7 @@ export function createMainboardPhysicsOverlay(
       attr.needsUpdate = true;
       line.computeLineDistances();
     });
+    radialGuides.update(explodeFactor, visible, parts);
   };
 
   const update = (elapsed: number, physicsActive: boolean, parts: CadPart[]) => {

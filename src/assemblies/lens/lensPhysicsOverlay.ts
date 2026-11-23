@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 import {
   IRIS_Z,
   LensOpticalSim,
@@ -195,7 +196,7 @@ export function createLensPhysicsOverlay(
   }
 
   // -------------------------------------------------------------------------
-  // 4. Axial Dashed CAD Explode Alignment Guides (L01–L62)
+  // 4. Axial + Radial Dashed CAD Explode Alignment Guides (L01–L70)
   // -------------------------------------------------------------------------
   const guideLines: THREE.Line[] = [];
   const guideOffsets: Array<[number, number]> = [
@@ -223,6 +224,8 @@ export function createLensPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 48);
+  explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
 
@@ -448,6 +451,7 @@ export function createLensPhysicsOverlay(
 
       const pFront = parts.find((p) => p.id === 'lens-front-hood');
       const pRear =
+        parts.find((p) => p.id === 'lens-mount-seal-bolts') ??
         parts.find((p) => p.id === 'lens-rear-bayonet') ??
         parts.find((p) => p.id === 'lens-rear-element');
       const zMax = pFront ? pFront.group.position.z + 10 : 140;
@@ -461,6 +465,7 @@ export function createLensPhysicsOverlay(
         ]);
         guideLines[i].computeLineDistances();
       }
+      radialGuides.update(explodeFactor, visible, parts);
     },
   };
 }

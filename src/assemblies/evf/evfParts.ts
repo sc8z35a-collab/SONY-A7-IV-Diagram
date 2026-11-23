@@ -527,37 +527,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     padRing.position.y = -0.62;
     gazeCamGroup.add(padRing);
 
-    // Matte-black precision stepped IR imaging lens barrel extending upward (+Y)
-    const barrelOuter = new THREE.Mesh(
-      new THREE.CylinderGeometry(5.2, 5.6, 3.8, 32),
-      mats.matteBlackAnodized
-    );
-    barrelOuter.position.y = 1.1;
-    gazeCamGroup.add(barrelOuter);
-
-    // Cutaway-top anodized lens bezel ring
-    const bezel = new THREE.Mesh(
-      new THREE.TorusGeometry(4.4, 0.55, 12, 32).rotateX(Math.PI / 2),
-      mats.stainlessMachined
-    );
-    bezel.position.y = 3.05;
-    gazeCamGroup.add(bezel);
-
-    // 850nm Ruby Narrow-Bandpass Filter disc inside barrel
-    const bpf = new THREE.Mesh(
-      new THREE.CylinderGeometry(4.1, 4.1, 0.45, 28),
-      mats.evfDichroicMirror
-    );
-    bpf.position.y = 1.65;
-    gazeCamGroup.add(bpf);
-
-    // Top Aspheric IR Relay Lens dome capturing the 90°-reflected eyeball image!
-    const relayLens = new THREE.Mesh(
-      createOpticalLensGeometry(4.2, 0.9, 1.15, 0.45, -0.2, 0, 14, 32).rotateX(-Math.PI / 2),
-      mats.evfLensAspheric
-    );
-    relayLens.position.y = 2.95;
-    gazeCamGroup.add(relayLens);
+    // Note: Matte-black IR imaging barrel, 850nm BPF, and Aspheric IR Relay Lens are decoupled into E20 (evf-gaze-ir-optics)!
 
     // Micro B2B gold connector & shielded orange FPC tail feeding AI Accelerator on Mainboard
     const b2b = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.9, 2.2), mats.zifIvoryPlastic);
@@ -1052,11 +1022,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     oledScreenMesh.userData.noEdges = true;
     oledGroup.add(oledScreenMesh);
 
-    // Ultra-thin protective encapsulation glass + On-Chip MLA optical surface directly over OLED
-    const mlaGlass = new THREE.Mesh(new THREE.BoxGeometry(15.2, 11.6, 0.36), mats.coverGlass);
-    mlaGlass.position.z = -1.04;
-    mlaGlass.userData.edgeOpacity = 0.32;
-    oledGroup.add(mlaGlass);
+    // Note: Hexagonal On-Chip MLA, TFE & RGB CF optical cap is decoupled into E23 (evf-oled-mla-stack)!
 
     // Rear thermal contact copper pad on +Z back of silicon package (mates with E17 TIM)
     const rearPad = new THREE.Mesh(new THREE.BoxGeometry(15.6, 11.8, 0.25), mats.goldPlating);
@@ -1080,8 +1046,8 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       '#2563eb',
       oledGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 3.6),
-      new THREE.Vector3(0, 0, 40),
-      new THREE.Vector3(0, 34, 34),
+      new THREE.Vector3(0, 0, 44),
+      new THREE.Vector3(0, 34, 36),
       cp,
       0.24
     )
@@ -1092,21 +1058,18 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   // =========================================================================
   const oledAlignGroup = new THREE.Group();
   {
-    // Low-CTE Kovar kinematic registration frame directly behind the Micro-OLED package
     const kovarFrame = new THREE.Mesh(
       extrudeCentered(createFrameShape(25.2, 20.2, 2.2, 17.8, 13.8, 1.2), 1.2, 0.08, 0.08, 18),
       mats.kovarSeal
     );
     oledAlignGroup.add(kovarFrame);
 
-    // 3 Kinematic triangular leveling points: fine-pitch brass calibration screws + ceramic pivot balls + leaf clips
     const triPts: Array<[number, number]> = [
       [0, 8.6],
       [-10.4, -7.8],
       [10.4, -7.8],
     ];
     for (const [tx, ty] of triPts) {
-      // Brass threaded calibration collar + ultra-fine pitch M1.4×P0.20 leveling screw
       const collar = new THREE.Mesh(
         new THREE.CylinderGeometry(1.75, 1.75, 1.8, 18).rotateX(Math.PI / 2),
         mats.brassGear
@@ -1118,13 +1081,11 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       calScrew.position.set(tx, ty, 0.9);
       oledAlignGroup.add(calScrew);
 
-      // Ceramic spherical kinematic datum ball on -Z face touching OLED carrier
       const ball = new THREE.Mesh(new THREE.SphereGeometry(0.65, 12, 10), mats.ceramicAlumina);
       ball.position.set(tx, ty, -0.85);
       ball.userData.noEdges = true;
       oledAlignGroup.add(ball);
 
-      // Stainless preload leaf-spring tension clip keeping OLED seated zero-stress
       const clip = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.4, 0.35), mats.mountSpringSteel);
       clip.position.set(tx * 0.85, ty * 0.85, -0.75);
       oledAlignGroup.add(clip);
@@ -1137,8 +1098,8 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       '#b45309',
       oledAlignGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 5.2),
-      new THREE.Vector3(28, 0, 46),
-      new THREE.Vector3(26, 34, 39),
+      new THREE.Vector3(28, 0, 50),
+      new THREE.Vector3(26, 34, 41),
       cp,
       0.24
     )
@@ -1149,19 +1110,16 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   // =========================================================================
   const tconGroup = new THREE.Group();
   {
-    // High-density emerald rigid TCON driver PCB behind OLED
     const pcb = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(24.6, 19.2, 1.8), 1.1, 0.08, 0.08, 16),
       mats.hdiMainboardPcb
     );
     tconGroup.add(pcb);
 
-    // Central 240Hz MIPI-DSI / VESA DSC Timing Controller (TCON) QFN ASIC on +Z rear face
     const tconIc = new THREE.Mesh(new THREE.BoxGeometry(7.6, 7.6, 0.95), mats.icEpoxy);
     tconIc.position.set(-2.2, 1.2, 0.95);
     tconGroup.add(tconIc);
 
-    // OLED Dual-Rail ELVDD/ELVSS Boost PMIC + Ferrite Inductors + Yellow Tantalum Caps
     const pmic = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 0.85), mats.icEpoxy);
     pmic.position.set(6.2, 3.0, 0.9);
     tconGroup.add(pmic);
@@ -1185,17 +1143,14 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       tconGroup.add(cap);
     }
 
-    // 240Hz Precision Crystal Oscillator (metallic silver can)
     const xtal = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.0, 0.7), mats.stainlessMachined);
     xtal.position.set(-2.4, -5.8, 0.86);
     tconGroup.add(xtal);
 
-    // Bottom Ivory Flip-Lock ZIF Connector + Shielded High-Speed Dual-Stream FPC Cable!
     const zif = new THREE.Mesh(new THREE.BoxGeometry(11.6, 2.4, 1.05), mats.zifIvoryPlastic);
     zif.position.set(0, -7.8, 0.98);
     tconGroup.add(zif);
 
-    // Sculpted EMI-shielded polyimide FPC sweeping gracefully downward (-Y) toward Mainboard ZIF!
     const fpcDrop = new THREE.Mesh(new THREE.BoxGeometry(9.8, 12.6, 0.28), mats.polyimideFpc);
     fpcDrop.position.set(0, -14.2, 0.55);
     tconGroup.add(fpcDrop);
@@ -1215,8 +1170,8 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       '#059669',
       tconGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 6.8),
-      new THREE.Vector3(0, 0, 52),
-      new THREE.Vector3(0, 34, 44),
+      new THREE.Vector3(0, 0, 58),
+      new THREE.Vector3(0, 34, 46),
       cp,
       0.24
     )
@@ -1227,12 +1182,10 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   // =========================================================================
   const heatsinkGroup = new THREE.Group();
   {
-    // High-k Sky-Blue Silicone Thermal Pad (TIM) bridging TCON/OLED to copper plate
     const tim = new THREE.Mesh(new THREE.BoxGeometry(17.8, 13.4, 0.8), mats.thermalPadBlue);
     tim.position.z = -1.1;
     heatsinkGroup.add(tim);
 
-    // Oxygen-free pure copper heat spreader baseplate
     const cuBase = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(25.2, 19.6, 2.0), 1.1, 0.1, 0.1, 18),
       mats.copperHeatSpreader
@@ -1240,7 +1193,6 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     cuBase.position.z = -0.15;
     heatsinkGroup.add(cuBase);
 
-    // CNC dark-anodized aluminum micro-fin cooling array (9 crisp vertical fins on +Z front face)
     const finBack = new THREE.Mesh(
       extrudeCentered(createRoundedRectShape(23.8, 18.2, 1.6), 0.7, 0.08, 0.08, 16),
       mats.matteBlackAnodized
@@ -1254,7 +1206,6 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       heatsinkGroup.add(fin);
     }
 
-    // Left & right stainless chassis thermal-bridge mounting ears with M1.4 precision screws
     for (const sx of [-1, 1]) {
       const ear = new THREE.Mesh(
         extrudeCentered(createRoundedRectShape(4.4, 7.6, 1.4), 1.1, 0.08, 0.08, 12),
@@ -1275,8 +1226,8 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       '#c25e28',
       heatsinkGroup,
       new THREE.Vector3(0, EVF_OPTICAL_Y, 10.2),
-      new THREE.Vector3(0, 0, 64),
-      new THREE.Vector3(0, 34, 54),
+      new THREE.Vector3(0, 0, 72),
+      new THREE.Vector3(0, 34, 58),
       cp,
       0.24
     )
@@ -1418,7 +1369,604 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   );
 
   // =========================================================================
-  // Live Kinematic Rig: Smooth Diopter Focus Drive + Helicoid + 850nm IR Ring Pulse
+  // E19: [Phase 11] Built-In Mechanical Long-Exposure Eyepiece Blind Curtain
+  // =========================================================================
+  const eyeShutterGroup = new THREE.Group();
+  {
+    const frame = new THREE.Mesh(
+      extrudeCentered(createFrameShape(26.6, 20.6, 3.2, 21.8, 16.4, 2.4), 0.9, 0.08, 0.08, 22),
+      mats.matteBlackAnodized
+    );
+    eyeShutterGroup.add(frame);
+
+    // Partially open twin overlapping ultra-thin anodized shutter blades flanking aperture
+    for (const sx of [-1, 1]) {
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(5.2, 16.2, 0.24), mats.carbonFiberBlade);
+      blade.position.set(sx * 9.2, 0, sx * 0.14);
+      eyeShutterGroup.add(blade);
+    }
+
+    // Left-flank knurled mechanical slide lever & stainless pivot shaft
+    const leverBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.8, 1.8, 1.6, 18).rotateZ(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    leverBase.position.set(-14.2, 2.8, 0);
+    const leverKnob = new THREE.Mesh(new THREE.BoxGeometry(2.2, 5.4, 1.4), mats.evfHousingMg);
+    leverKnob.position.set(-15.5, 4.4, 0);
+    eyeShutterGroup.add(leverBase, leverKnob);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-eyepiece-shutter',
+      19,
+      '#1e293b',
+      eyeShutterGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -30.0),
+      new THREE.Vector3(-26, 8, -38),
+      new THREE.Vector3(-26, 42, -22),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E20: [Phase 11] Eye-Control AF 850nm Narrow-Bandpass Filter & Aspheric IR Relay Barrel
+  // =========================================================================
+  const irOpticsGroup = new THREE.Group();
+  {
+    const barrelOuter = new THREE.Mesh(
+      new THREE.CylinderGeometry(5.2, 5.6, 3.8, 32),
+      mats.matteBlackAnodized
+    );
+    barrelOuter.position.y = 0;
+    irOpticsGroup.add(barrelOuter);
+
+    const bezel = new THREE.Mesh(
+      new THREE.TorusGeometry(4.4, 0.55, 12, 32).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    bezel.position.y = 1.95;
+    irOpticsGroup.add(bezel);
+
+    // 850nm Ruby Narrow-Bandpass Dielectric Filter (OD4+ visible cut!)
+    const bpf = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.1, 4.1, 0.48, 28),
+      mats.evfDichroicMirror
+    );
+    bpf.position.y = 0.55;
+    irOpticsGroup.add(bpf);
+
+    // Top Molded Aspheric IR Relay Lens dome capturing 90°-reflected eyeball image
+    const relayLens = new THREE.Mesh(
+      createOpticalLensGeometry(4.2, 0.9, 1.15, 0.45, -0.2, 0, 18, 36).rotateX(-Math.PI / 2),
+      mats.evfLensAspheric
+    );
+    relayLens.position.y = 1.85;
+    irOpticsGroup.add(relayLens);
+
+    // Internal knife-edge velvet aperture stop ring
+    const irStop = new THREE.Mesh(
+      new THREE.TorusGeometry(3.5, 0.36, 8, 24).rotateX(Math.PI / 2),
+      mats.velvetFlockTrap
+    );
+    irStop.position.y = -0.8;
+    irStop.userData.noEdges = true;
+    irOpticsGroup.add(irStop);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-gaze-ir-optics',
+      20,
+      '#ec4899',
+      irOpticsGroup,
+      new THREE.Vector3(0, 26.5, -22.2),
+      new THREE.Vector3(18, -16, -16),
+      new THREE.Vector3(18, 16, -6),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E21: [Phase 11] Push-Pull Anti-Accidental Diopter Dial Lock Clutch & Ball Detents
+  // =========================================================================
+  const diopterLockGroup = new THREE.Group();
+  const diopterLockClutchGroup = new THREE.Group();
+  {
+    // 24-tooth stainless star ratchet lock wheel (rotates in sync with diopter dial!)
+    const ratchet = new THREE.Mesh(
+      createSpurGearGeometry(24, 3.2, 1.2, 1.1).rotateY(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    diopterLockClutchGroup.add(ratchet);
+
+    // Axial CuBe2 push-pull pop-out return spring
+    const popSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(1.75, 3.4, 5, 0.22).rotateY(Math.PI / 2),
+      mats.beCuSpring
+    );
+    popSpring.position.x = -1.6;
+    popSpring.userData.noEdges = true;
+    diopterLockClutchGroup.add(popSpring);
+    diopterLockGroup.add(diopterLockClutchGroup);
+
+    // Stationary brass ball-detent pocket ring + 2 precision click steel balls
+    const detentCollar = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.8, 3.8, 1.2, 24).rotateZ(Math.PI / 2),
+      mats.brassGear
+    );
+    detentCollar.position.x = 1.0;
+    diopterLockGroup.add(detentCollar);
+
+    for (const sy of [-3.1, 3.1]) {
+      const clickBall = new THREE.Mesh(
+        new THREE.SphereGeometry(0.55, 12, 10),
+        mats.titaniumRivet
+      );
+      clickBall.position.set(0.5, sy, 0);
+      clickBall.userData.noEdges = true;
+      diopterLockGroup.add(clickBall);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-diopter-lock-clutch',
+      21,
+      '#f59e0b',
+      diopterLockGroup,
+      new THREE.Vector3(19.6, EVF_OPTICAL_Y, -15.6),
+      new THREE.Vector3(34, -24, 12),
+      new THREE.Vector3(42, 24, 14),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E22: [Phase 11] Linear Polarizer + λ/4 Quarter-Wave Anti-Glare Stack
+  // =========================================================================
+  const polQwpGroup = new THREE.Group();
+  {
+    const polRing = createLensRetainerCell(8.8, 10.6, 1.25, mats.matteBlackAnodized);
+    polQwpGroup.add(polRing);
+
+    // Linear Polarizer film facing -Z (eyepiece side)
+    const linPol = new THREE.Mesh(
+      new THREE.CylinderGeometry(8.9, 8.9, 0.28, 36).rotateX(Math.PI / 2),
+      mats.lcdPolarizerFilm
+    );
+    linPol.position.z = -0.28;
+    linPol.userData.edgeOpacity = 0.34;
+    polQwpGroup.add(linPol);
+
+    // Wideband Achromatic λ/4 Quarter-Wave Retarder Plate facing +Z (OLED side)
+    const qwp = new THREE.Mesh(
+      new THREE.CylinderGeometry(8.9, 8.9, 0.28, 36).rotateX(Math.PI / 2),
+      mats.evfDichroicMirror
+    );
+    qwp.position.z = 0.28;
+    qwp.userData.edgeOpacity = 0.34;
+    polQwpGroup.add(qwp);
+
+    // 45° fast-axis gold alignment marker tab on rim
+    const tab = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.1), mats.goldPlating);
+    tab.position.set(7.6, 7.6, 0);
+    tab.rotation.z = Math.PI / 4;
+    polQwpGroup.add(tab);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-polarizer-qwp',
+      22,
+      '#8b5cf6',
+      polQwpGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, 0.65),
+      new THREE.Vector3(0, 0, 35),
+      new THREE.Vector3(0, 34, 30),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E23: [Phase 11] Micro-OLED Hexagonal MLA, TFE Encapsulation & RGB CF Cap
+  // =========================================================================
+  const mlaCapGroup = new THREE.Group();
+  {
+    // Thin-Film Encapsulation (TFE) hermetic rim seal bezel
+    const tfeBezel = new THREE.Mesh(
+      extrudeCentered(createFrameShape(16.6, 12.8, 0.6, 14.2, 10.6, 0.3), 0.42, 0.03, 0.03, 12),
+      mats.sinteredSilver
+    );
+    mlaCapGroup.add(tfeBezel);
+
+    // Procedural Hexagonal On-Chip Micro-Lens Array (MLA) optical extraction cap!
+    const mlaPlate = new THREE.Mesh(new THREE.BoxGeometry(14.8, 11.2, 0.36), mats.evfMlaGlass);
+    mlaPlate.position.z = -0.14;
+    mlaPlate.userData.edgeOpacity = 0.38;
+    mlaCapGroup.add(mlaPlate);
+
+    // Subtle RGB sub-pixel color filter accent perimeter edge strip
+    const rgbEdge = new THREE.Mesh(
+      extrudeCentered(createFrameShape(15.2, 11.6, 0.4, 14.5, 10.9, 0.3), 0.14, 0, 0, 10),
+      mats.evfDichroicMirror
+    );
+    rgbEdge.position.z = 0.22;
+    mlaCapGroup.add(rgbEdge);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-oled-mla-stack',
+      23,
+      '#06b6d4',
+      mlaCapGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, 2.55),
+      new THREE.Vector3(-24, 0, 41),
+      new THREE.Vector3(-24, 34, 33),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // E24: [Phase 11] 240Hz MIPI-DSI TCON RF EMI Shield Can & CuBe2 Ground Clips
+  // =========================================================================
+  const tconShieldGroup = new THREE.Group();
+  {
+    // Stamped nickel-silver RF Faraday shield lid with central TIM thermal cutout window!
+    const canShape = createFrameShape(23.8, 18.2, 1.6, 10.4, 8.6, 0.8);
+    const canTop = new THREE.Mesh(
+      extrudeCentered(canShape, 0.42, 0.04, 0.04, 16),
+      mats.emiShieldCan
+    );
+    canTop.position.z = 0.72;
+    tconShieldGroup.add(canTop);
+
+    // Perimeter shield walls dropping onto TCON PCB GND frame
+    const wallShape = createFrameShape(23.8, 18.2, 1.6, 22.4, 16.8, 1.2);
+    const walls = new THREE.Mesh(
+      extrudeCentered(wallShape, 1.35, 0.04, 0.04, 16),
+      mats.emiShieldCan
+    );
+    tconShieldGroup.add(walls);
+
+    // 8 CuBe2 snap-in EMI grounding spring fingers around outer flange
+    for (const [cx, cy, rz] of [
+      [-6.5, 9.2, 0],
+      [6.5, 9.2, 0],
+      [-6.5, -9.2, 0],
+      [6.5, -9.2, 0],
+      [-12.0, 4.5, Math.PI / 2],
+      [-12.0, -4.5, Math.PI / 2],
+      [12.0, 4.5, Math.PI / 2],
+      [12.0, -4.5, Math.PI / 2],
+    ] as Array<[number, number, number]>) {
+      const clip = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.45, 1.25), mats.beCuSpring);
+      clip.position.set(cx, cy, -0.05);
+      clip.rotation.z = rz;
+      tconShieldGroup.add(clip);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-tcon-emi-shield',
+      24,
+      '#94a3b8',
+      tconShieldGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, 8.2),
+      new THREE.Vector3(26, 16, 62),
+      new THREE.Vector3(26, 48, 50),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E25: [Phase 11] Sealed Anti-Fog Chamber O-Ring Kit, Velvet Baffles & 5x Anchor Screws
+  // =========================================================================
+  const baffleSealGroup = new THREE.Group();
+  {
+    // 3 concentric internal inter-lens velvet stray-light baffle rings
+    for (const [bz, rIn] of [
+      [-6.5, 10.6],
+      [0.8, 9.8],
+      [7.4, 9.2],
+    ] as Array<[number, number]>) {
+      const ring = createLensRetainerCell(rIn, rIn + 1.55, 0.95, mats.velvetFlockTrap);
+      ring.position.z = bz;
+      baffleSealGroup.add(ring);
+    }
+
+    // Dual front & rear dry-nitrogen optical-chamber EPDM sealing O-rings
+    for (const oz of [-18.2, 16.5]) {
+      const oRing = new THREE.Mesh(new THREE.TorusGeometry(13.6, 0.55, 10, 44), mats.epdmGasket);
+      oRing.position.z = oz;
+      oRing.userData.noEdges = true;
+      baffleSealGroup.add(oRing);
+    }
+
+    // 5 high-tensile stainless EVF chassis anchor screws with blue thread-lock (a1 II / a7R VI!)
+    for (const [mx, mz] of [
+      [-13.6, -15.5],
+      [16.4, -15.5],
+      [-13.6, 14.5],
+      [16.4, 14.5],
+      [1.4, 16.2],
+    ] as Array<[number, number]>) {
+      const bolt = createPrecisionScrew(1.15, 0.55, 3.2, mats.stainlessMachined);
+      bolt.rotation.x = -Math.PI / 2;
+      bolt.position.set(mx, -12.4, mz);
+      const blueLock = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.68, 0.68, 1.2, 12),
+        mats.mountThreadLockBlue
+      );
+      blueLock.position.set(mx, -14.1, mz);
+      blueLock.userData.noEdges = true;
+      baffleSealGroup.add(bolt, blueLock);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-baffle-seal-kit',
+      25,
+      '#0f172a',
+      baffleSealGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -12.5),
+      new THREE.Vector3(-28, 22, -6),
+      new THREE.Vector3(-28, 56, 2),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // E26: [Phase 12] EVF Cavity Under-Barrel FPC Retention Stainless Clamp & Ground Bridge
+  // =========================================================================
+  const cavityClampGroup = new THREE.Group();
+  {
+    const plate = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(24.0, 7.6, 1.4), 0.55, 0.05, 0.05, 12).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    const cushion = new THREE.Mesh(new THREE.BoxGeometry(17.5, 0.65, 5.2), mats.damperElastomer);
+    cushion.position.y = 0.55;
+    const gndFinger1 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.35, 2.2), mats.beCuSpring);
+    gndFinger1.position.set(-12.5, 0.25, 0);
+    const gndFinger2 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.35, 2.2), mats.beCuSpring);
+    gndFinger2.position.set(12.5, 0.25, 0);
+    cavityClampGroup.add(plate, cushion, gndFinger1, gndFinger2);
+
+    for (const sx of [-9.8, 9.8]) {
+      const scr = createPrecisionScrew(0.95, 0.38, 1.6, mats.stainlessMachined);
+      scr.rotation.x = Math.PI / 2;
+      scr.position.set(sx, -0.45, 0);
+      cavityClampGroup.add(scr);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-cavity-clamp',
+      26,
+      '#94a3b8',
+      cavityClampGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y - 13.6, 5.5),
+      new THREE.Vector3(0, -28, 36),
+      new THREE.Vector3(0, 12, 34),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E27: [Phase 12] Deep-Eyecup 4-Screw Stainless Slide-Rail Subframe & Positive Lock Catch
+  // =========================================================================
+  const eyecupSubGroup = new THREE.Group();
+  {
+    const subFrame = new THREE.Mesh(
+      extrudeCentered(createFrameShape(31.8, 25.8, 4.6, 25.6, 19.6, 3.4), 1.4, 0.12, 0.12, 20),
+      mats.mountStainlessFlange
+    );
+    eyecupSubGroup.add(subFrame);
+
+    // Left & right dovetail deep-eyecup slide rails (FDA-EP21 / ER-kE style)
+    for (const sx of [-15.2, 15.2]) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(1.6, 19.2, 2.4), mats.stainlessMachined);
+      rail.position.set(sx, 0, -0.9);
+      eyecupSubGroup.add(rail);
+    }
+
+    // Bottom positive-lock spring release catch preventing accidental bag pull-off
+    const catchTab = new THREE.Mesh(new THREE.BoxGeometry(8.2, 2.4, 2.2), mats.matteBlackAnodized);
+    catchTab.position.set(0, -12.6, -1.0);
+    const catchSpr = new THREE.Mesh(
+      createHelicalSpringGeometry(0.65, 2.6, 4, 0.14).rotateX(Math.PI / 2),
+      mats.beCuSpring
+    );
+    catchSpr.position.set(0, -10.8, -0.6);
+    catchSpr.userData.noEdges = true;
+    eyecupSubGroup.add(catchTab, catchSpr);
+
+    // 4 perimeter M1.4 stainless mounting screws
+    for (const [sx, sy] of [
+      [-13.4, 10.6],
+      [13.4, 10.6],
+      [-13.4, -10.6],
+      [13.4, -10.6],
+    ] as Array<[number, number]>) {
+      const scr = createPrecisionScrew(0.95, 0.36, 1.5, mats.stainlessMachined);
+      scr.rotation.x = Math.PI;
+      scr.position.set(sx, sy, -0.95);
+      eyecupSubGroup.add(scr);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-eyecup-subframe',
+      27,
+      '#cbd5e1',
+      eyecupSubGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y, -35.8),
+      new THREE.Vector3(0, 0, -68),
+      new THREE.Vector3(0, 34, -84),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // E28: [Phase 12] Eye-Control IR Gaze-Sensor Micro-Calibration Shims & 3-Point Studs
+  // =========================================================================
+  const eyeAfShimGroup = new THREE.Group();
+  {
+    const shimPlate = new THREE.Mesh(
+      extrudeCentered(createFrameShape(16.4, 14.4, 2.0, 10.2, 8.2, 1.2), 0.35, 0.03, 0.03, 14).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    const steelShim = new THREE.Mesh(
+      extrudeCentered(createFrameShape(16.2, 14.2, 2.0, 10.4, 8.4, 1.2), 0.25, 0.02, 0.02, 14).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    steelShim.position.y = -0.35;
+    eyeAfShimGroup.add(shimPlate, steelShim);
+
+    // 3 precision CNC tapered alignment studs (+/- 5 micron IR camera alignment)
+    for (const [sx, sz] of [
+      [-6.2, -5.2],
+      [6.2, -5.2],
+      [0.0, 5.4],
+    ] as Array<[number, number]>) {
+      const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.25, 3.2, 14), mats.titaniumRivet);
+      stud.position.set(sx, -1.4, sz);
+      eyeAfShimGroup.add(stud);
+    }
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-eyeaf-shims',
+      28,
+      '#eab308',
+      eyeAfShimGroup,
+      new THREE.Vector3(0, EVF_OPTICAL_Y - 12.6, -22.2),
+      new THREE.Vector3(24, -30, -24),
+      new THREE.Vector3(26, 8, -32),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // E29: [Phase 12] Optical-Chamber Molecular-Sieve Desiccant Cartridge & Breather Port
+  // =========================================================================
+  const desiccantGroup = new THREE.Group();
+  {
+    // SUS micro-mesh cartridge packed with 3A Zeolite molecular-sieve desiccant beads
+    const housing = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(6.2, 11.4, 1.2), 3.4, 0.1, 0.1, 12),
+      mats.stainlessMachined
+    );
+    const meshWin = new THREE.Mesh(new THREE.BoxGeometry(4.4, 8.8, 0.35), mats.emiShieldCan);
+    meshWin.position.z = -1.78;
+    const zeoCore = new THREE.Mesh(new THREE.BoxGeometry(4.0, 8.2, 2.2), mats.ceramicAlumina);
+    zeoCore.position.z = -0.2;
+    // Microporous ePTFE barometric pressure-equalizing breather port
+    const ventRing = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.1, 2.1, 1.2, 18).rotateZ(Math.PI / 2),
+      mats.matteBlackAnodized
+    );
+    ventRing.position.set(3.6, 2.4, 0);
+    const ventPtfe = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.45, 1.45, 1.35, 16).rotateZ(Math.PI / 2),
+      mats.ceramicAlumina
+    );
+    ventPtfe.position.set(3.6, 2.4, 0);
+    desiccantGroup.add(housing, meshWin, zeoCore, ventRing, ventPtfe);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-desiccant-breather',
+      29,
+      '#06b6d4',
+      desiccantGroup,
+      new THREE.Vector3(14.8, EVF_OPTICAL_Y + 6.2, -5.5),
+      new THREE.Vector3(38, 22, 8),
+      new THREE.Vector3(42, 54, 10),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E30: [Phase 12] EVF Auto-Brightness & Color-Temperature Ambient RGB Photodiode
+  // =========================================================================
+  const ambientPdGroup = new THREE.Group();
+  {
+    const subPcb = new THREE.Mesh(new THREE.BoxGeometry(7.2, 5.4, 0.75), mats.hdiMainboardPcb);
+    const alsIc = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.2, 0.65), mats.icEpoxy);
+    alsIc.position.set(0, 0, -0.68);
+    const microLens = new THREE.Mesh(
+      new THREE.SphereGeometry(1.05, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.5).rotateX(-Math.PI / 2),
+      mats.evfLensAspheric
+    );
+    microLens.position.set(0, 0, -1.0);
+    microLens.userData.noEdges = true;
+    const fpc = new THREE.Mesh(new THREE.BoxGeometry(3.0, 9.2, 0.22), mats.polyimideFpc);
+    fpc.position.set(0, -6.2, 0.2);
+    ambientPdGroup.add(subPcb, alsIc, microLens, fpc);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-ambient-photodiode',
+      30,
+      '#10b981',
+      ambientPdGroup,
+      new THREE.Vector3(-12.5, EVF_OPTICAL_Y + 11.4, -26.5),
+      new THREE.Vector3(-34, 34, -36),
+      new THREE.Vector3(-36, 68, -46),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // E31: [Phase 12] Diopter-Wheel Tactile Click Detent Leaf Spring & Zero-Stop Index Cam
+  // =========================================================================
+  const diopterDetentGroup = new THREE.Group();
+  {
+    // 42-step brass diopter click ratchet wheel around diopter shaft (+X flank)
+    const ratchetWheel = new THREE.Mesh(
+      createSpurGearGeometry(28, 4.4, 1.35, 0.45).rotateY(Math.PI / 2),
+      mats.brassGear
+    );
+    // BeCu curved click detent leaf spring pressing into ratchet teeth
+    const leafSpring = new THREE.Mesh(new THREE.BoxGeometry(1.4, 8.6, 0.35), mats.beCuSpring);
+    leafSpring.position.set(0, -1.2, 4.7);
+    const detentTip = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.4, 1.1), mats.titaniumRivet);
+    detentTip.position.set(0, 0, 4.3);
+    // Zero-diopter reference deep index cam collar
+    const zeroCam = new THREE.Mesh(
+      new THREE.TorusGeometry(3.2, 0.36, 8, 24).rotateY(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    zeroCam.position.x = 1.05;
+    diopterDetentGroup.add(ratchetWheel, leafSpring, detentTip, zeroCam);
+  }
+  parts.push(
+    finalizeEvfPart(
+      'evf-diopter-detent',
+      31,
+      '#d97706',
+      diopterDetentGroup,
+      new THREE.Vector3(16.2, EVF_OPTICAL_Y - 1.5, -18.5),
+      new THREE.Vector3(44, -8, -16),
+      new THREE.Vector3(46, 26, -24),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // Live Kinematic Rig: Smooth Diopter Focus Drive + Helicoid + Lock Clutch + 850nm IR Pulse
   // =========================================================================
   const applyDynamics = (
     elapsed: number,
@@ -1433,6 +1981,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
 
     if (!physicsActive) {
       diopterDialGroup.rotation.x = 0;
+      diopterLockClutchGroup.rotation.x = 0;
       leadScrewGroup.rotation.z = 0;
       helicoidSleeveGroup.rotation.z = 0;
       for (const led of irLedMeshes) {
@@ -1441,7 +1990,6 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       return;
     }
 
-    // Smooth -4.0 to +3.0 m⁻¹ diopter focus oscillation (±2.0 mm optical Z stroke!)
     const diopterWave = Math.sin(elapsed * 1.45);
     const zShift = diopterWave * 2.0;
 
@@ -1451,12 +1999,11 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       edLensPart.assembledPos.z + offset.z * explodeFactor + zShift
     );
 
-    // Synchronized rotation of the knurled diopter dial, brass helical lead screw & helicoid cam sleeve!
     diopterDialGroup.rotation.x = diopterWave * 2.6;
+    diopterLockClutchGroup.rotation.x = diopterWave * 2.6;
     leadScrewGroup.rotation.z = diopterWave * 5.2;
     helicoidSleeveGroup.rotation.z = diopterWave * 0.42;
 
-    // Sequential 8-LED Eye-Control AF IR corneal-reflection illumination shimmer
     irLedMeshes.forEach((led, idx) => {
       const pulse = 0.45 + 0.95 * (0.5 + 0.5 * Math.sin(elapsed * 6.5 - idx * (Math.PI / 4)));
       (led.material as THREE.MeshPhysicalMaterial).emissiveIntensity = pulse;

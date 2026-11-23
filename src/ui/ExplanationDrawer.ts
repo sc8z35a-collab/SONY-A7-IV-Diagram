@@ -1,6 +1,10 @@
 import { CadPart, PartExplanation } from '../assemblies/types';
 import { OpticalScenarioId } from '../assemblies/lens/lensOpticalSim';
 import { renderUltraLensSchematicSvg } from './lensUltraSchematics';
+import { renderPhase11BodySchematicSvg } from './phase11BodySchematics';
+import { renderPhase11OpticsSchematicSvg } from './phase11OpticsSchematics';
+import { renderPhase12MainBodySchematicSvg } from './phase12MainBodySchematics';
+import { renderPhase12SubsystemsSchematicSvg } from './phase12SubsystemsSchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -48,7 +52,8 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('xa') ||
     partId.includes('rear-element') ||
     partId.includes('rear-cell-spacer') ||
-    partId.includes('front-meniscus')
+    partId.includes('front-meniscus') ||
+    partId.includes('retaining-rings')
   ) {
     return 'xa_aspheric';
   }
@@ -58,16 +63,23 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('guide') ||
     partId.includes('antirot') ||
     partId.includes('mr-encoders') ||
+    partId.includes('mr-magnet-scales') ||
     partId.includes('af-origin') ||
     partId.includes('mf-') ||
-    partId.includes('control-rings')
+    partId.includes('control-rings') ||
+    partId.includes('iris-iso-fpc') ||
+    partId.includes('reinforcing-plates') ||
+    partId.includes('center-join-ring') ||
+    partId.includes('clutch-ball-rollers')
   ) {
     return 'floating_xd';
   }
   if (
     partId.includes('hood') ||
     partId.includes('baffle') ||
-    partId.includes('filter')
+    partId.includes('filter') ||
+    partId.includes('optical-spacers') ||
+    partId.includes('lighttrap-tube')
   ) {
     return 'nano_ar_baffle';
   }
@@ -83,6 +95,18 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
 
   const ultraLensSvg = renderUltraLensSchematicSvg(type, wrap);
   if (ultraLensSvg) return ultraLensSvg;
+
+  const phase11BodySvg = renderPhase11BodySchematicSvg(type, wrap);
+  if (phase11BodySvg) return phase11BodySvg;
+
+  const phase11OpticsSvg = renderPhase11OpticsSchematicSvg(type, wrap);
+  if (phase11OpticsSvg) return phase11OpticsSvg;
+
+  const phase12MainBodySvg = renderPhase12MainBodySchematicSvg(type, wrap);
+  if (phase12MainBodySvg) return phase12MainBodySvg;
+
+  const phase12SubsystemsSvg = renderPhase12SubsystemsSchematicSvg(type, wrap);
+  if (phase12SubsystemsSvg) return phase12SubsystemsSvg;
 
   switch (type) {
     case 'baffle':

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface BodyPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -10,11 +11,11 @@ export interface BodyPhysicsOverlayController {
 }
 
 /**
- * Real-time 3D Power Distribution & Trigger Telemetry Overlay for the Flagship Camera Body:
+ * Real-time 3D Power Distribution & Trigger Telemetry Overlay for the 38-Part Flagship Camera Body:
  * 1. 7.2V / 6.0A High-Current Power Bus streaming from Dual-Cell Li-Ion Battery (B01)
  *    -> Gold Chamber Terminals (B02) -> Mainboard PMIC -> 55mm Lens Mount (4x XD Motors) & 21-Pin Hot Shoe (B06).
  * 2. Half-Press / Full-Press Shutter Release signal pulse racing from B04 -> Mainboard MCU.
- * 3. Radial 6-Way Exploded CAD Alignment Guides linking all 12 outer shell & control parts back to camera core.
+ * 3. Radial 6-Way Exploded CAD Alignment Guides linking ALL 38 outer shell & internal watchmaker parts back to camera core.
  */
 export function createBodyPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -76,38 +77,10 @@ export function createBodyPhysicsOverlay(
   }
 
   // -------------------------------------------------------------------------
-  // 2. Radial 6-Way Dashed Explode Alignment Guides (1 per major body shell part)
+  // 2. Radial 6-Way Dashed Explode Alignment Guides (all 38 body assemblies!)
   // -------------------------------------------------------------------------
-  const guideIds = [
-    'body-battery-pack',
-    'body-ergo-grip',
-    'body-shutter-dials',
-    'body-top-dials',
-    'body-mi-hotshoe',
-    'body-mg-front-shell',
-    'body-top-deck',
-    'body-rear-controls',
-    'body-card-door',
-    'body-io-doors',
-    'body-baseplate-tripod',
-  ];
-  const guideLines: THREE.Line[] = [];
-  for (let i = 0; i < guideIds.length; i++) {
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
-      new THREE.LineDashedMaterial({
-        color: 0x64748b,
-        dashSize: 3.0,
-        gapSize: 2.2,
-        transparent: true,
-        opacity: 0.45,
-        clippingPlanes,
-      })
-    );
-    line.computeLineDistances();
-    explodeGuides.add(line);
-    guideLines.push(line);
-  }
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 40);
+  explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
 
@@ -172,16 +145,8 @@ export function createBodyPhysicsOverlay(
       const show = visible && explodeFactor > 0.04;
       explodeGuides.visible = show;
       if (!show) return;
-
-      for (let i = 0; i < guideIds.length; i++) {
-        const part = parts.find((p) => p.id === guideIds[i]);
-        if (!part) continue;
-        guideLines[i].geometry.setFromPoints([
-          part.assembledPos.clone(),
-          part.group.position.clone(),
-        ]);
-        guideLines[i].computeLineDistances();
-      }
+      radialGuides.update(explodeFactor, visible, parts);
     },
   };
 }
+

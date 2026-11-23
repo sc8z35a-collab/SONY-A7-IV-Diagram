@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { ShutterDynamicRig } from './shutterParts';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface ShutterPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -68,6 +69,8 @@ export function createShutterPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 28);
+  explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
   // =========================================================================
@@ -229,9 +232,11 @@ export function createShutterPhysicsOverlay(
 
     if (!explodeGuides.visible) return;
     const front = parts.find((p) => p.id === 'shutter-front-cover');
-    const back = parts.find((p) => p.id === 'shutter-base-damper');
+    const back =
+      parts.find((p) => p.id === 'shutter-rear-mask-gasket') ??
+      parts.find((p) => p.id === 'shutter-base-damper');
     const zFront = (front ? front.group.position.z : 17.6) + 2.5;
-    const zBack = (back ? back.group.position.z : 10.8) - 2.5;
+    const zBack = (back ? back.group.position.z : 9.85) - 2.5;
 
     guideLines.forEach((line, i) => {
       const [gx, gy] = guideCorners[i];
@@ -241,6 +246,7 @@ export function createShutterPhysicsOverlay(
       attr.needsUpdate = true;
       line.computeLineDistances();
     });
+    radialGuides.update(explodeFactor, visible, parts);
   };
 
   const update = (

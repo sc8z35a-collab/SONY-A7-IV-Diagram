@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface MountPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -254,6 +255,8 @@ export function createMountPhysicsOverlay(
     accentGuideMat
   );
   explodeGuides.add(contactGuide);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 20);
+  explodeGuides.add(radialGuides.group);
 
   const samplePolyline = (pts: THREE.Vector3[], t: number, out: THREE.Vector3) => {
     const segs = pts.length - 1;
@@ -375,6 +378,7 @@ export function createMountPhysicsOverlay(
         new THREE.Vector3(0, pPcb.group.position.y - 25.0, pPcb.group.position.z),
       ]);
       contactGuide.computeLineDistances();
+      radialGuides.update(explodeFactor, visible, parts);
     },
   };
 }

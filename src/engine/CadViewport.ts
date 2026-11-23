@@ -98,12 +98,12 @@ export class CadViewport {
       powerPreference: 'high-performance',
       preserveDrawingBuffer: true,
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
     this.renderer.setClearColor(0xffffff, 1);
     this.renderer.localClippingEnabled = true;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.08;
+    this.renderer.toneMappingExposure = 1.09;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(this.renderer.domElement);
 
@@ -116,15 +116,15 @@ export class CadViewport {
     const roomEnv = new RoomEnvironment();
     const envRT = pmrem.fromScene(roomEnv, 0.04);
     this.scene.environment = envRT.texture;
-    this.scene.environmentIntensity = 0.62;
+    this.scene.environmentIntensity = 0.66;
     roomEnv.dispose();
     pmrem.dispose();
 
-    // Balanced dual-sided daylight studio rig illuminating front lens/grip (+Z/-X), rear LCD (-Z), and top dials (+Y)
+    // Balanced studio CAD lighting rig illuminating front lens/grip (+Z/-X), rear LCD (-Z), top dials (+Y), and crisp edge rim highlights
     const hemi = new THREE.HemisphereLight(0xffffff, 0xcad3e0, 0.84);
     this.scene.add(hemi);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.55);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.56);
     keyLight.position.set(-96, 118, 134);
     this.scene.add(keyLight);
 
@@ -132,23 +132,27 @@ export class CadViewport {
     rearKeyLight.position.set(-92, 92, -138);
     this.scene.add(rearKeyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.72);
+    const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.74);
     fillLight.position.set(112, 42, 76);
     this.scene.add(fillLight);
 
-    const rearFillLight = new THREE.DirectionalLight(0xf2f6ff, 0.64);
+    const rearFillLight = new THREE.DirectionalLight(0xf2f6ff, 0.66);
     rearFillLight.position.set(96, -42, -88);
     this.scene.add(rearFillLight);
 
-    // Camera & OrbitControls
+    const topRimLight = new THREE.DirectionalLight(0xf8fbff, 0.42);
+    topRimLight.position.set(18, 165, 22);
+    this.scene.add(topRimLight);
+
+    // Camera & OrbitControls (supports ultra-close watchmaker micro-zoom down to 7 mm!)
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.2, 4500);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.12, 4800);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
-    this.controls.minDistance = 16;
-    this.controls.maxDistance = 2400;
+    this.controls.minDistance = 7;
+    this.controls.maxDistance = 2600;
     this.controls.addEventListener('change', () => {
       this.dirtyFrames = Math.max(this.dirtyFrames, 2);
     });
@@ -177,7 +181,7 @@ export class CadViewport {
       clippingPlanes: [this.clippingPlane],
     });
 
-    // Build ALL 9 CAD subsystems (96 Macro Complete Camera parts + 7 Micro Pixel parts = 103 total parts!)
+    // Build ALL 9 CAD subsystems (246 Macro Complete Camera parts + 11 Micro Pixel parts = 257 total parts!)
     this.lensAssembly = createLensAssembly(this.materials);
     this.mountAssembly = createMountAssembly(this.materials);
     this.shutterAssembly = createShutterAssembly(this.materials);
@@ -462,40 +466,42 @@ export class CadViewport {
     let target: THREE.Vector3;
 
     if (this.mode === 'lens') {
-      d = 258 + e * 680;
-      target = new THREE.Vector3(0, -2.0 * (1 - e), 82.0 + e * 14.0);
+      d = 264 + e * 745;
+      target = new THREE.Vector3(0, -2.0 * (1 - e), 80.0 + e * 12.0);
     } else if (this.mode === 'camera_body') {
-      // Complete 138-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 138-layer body dissection!
-      d = 328 + e * 490;
-      target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 14.0);
+      // Complete 231-part camera body WITHOUT lens: bare 55mm mount & sensor front-3/4 assembled vs full 231-layer body dissection!
+      d = 335 + e * 565;
+      target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 18.0);
     } else if (this.mode === 'lcd') {
-      d = 155 + e * 155;
-      target = new THREE.Vector3(8.0 + e * 4.0, -7.0, -32.0 - e * 16.0);
+      d = 160 + e * 204;
+      target = new THREE.Vector3(8.0 + e * 6.0, -7.0, -32.0 - e * 18.0);
     } else if (this.mode === 'body') {
-      d = 285 + e * 315;
-      target = new THREE.Vector3(-8.0 - e * 10.0, 5.0 - e * 2.0, 2.0);
+      d = 290 + e * 345;
+      target = new THREE.Vector3(-8.0 - e * 10.0, 4.0 - e * 2.0, 0.0 - e * 8.0);
     } else if (this.mode === 'mount') {
-      d = 178 + e * 158;
-      target = new THREE.Vector3(2.0 + e * 3.0, -2.5 - e * 4.5, 25.0 + e * 22.0);
+      d = 182 + e * 198;
+      target = new THREE.Vector3(2.0 + e * 3.0, -2.0 - e * 3.5, 25.0 + e * 24.0);
     } else if (this.mode === 'evf') {
-      d = 136 + e * 208;
-      target = new THREE.Vector3(1.5 * (1 - e), 38.6 + e * 0.5, -16.5 - e * 18.0);
+      d = 140 + e * 255;
+      target = new THREE.Vector3(1.5 * (1 - e), 38.6 + e * 0.5, -16.5 - e * 22.0);
     } else if (this.mode === 'mainboard') {
-      d = 186 + e * 124;
-      target = new THREE.Vector3(0.0, -3.0, -21.5 - e * 14.5);
+      // 30-part flagship motherboard with radial I/O daughterboards, MIMO antennas, NFC & rear RF bracket
+      d = 192 + e * 170;
+      target = new THREE.Vector3(0.0, 0.0 + e * 2.0, -22.0 - e * 18.0);
     } else if (this.mode === 'shutter') {
-      d = 166 + e * 145;
-      target = new THREE.Vector3(6.0 + e * 5.0, -3.2, 14.0 - e * 2.5);
+      d = 172 + e * 195;
+      target = new THREE.Vector3(4.0 + e * 4.0, -3.2, 14.0 - e * 4.0);
     } else if (this.mode === 'integrated') {
-      // Assembled complete 200-macro-part flagship camera (138 body + 62-part 50mm F1.2 lens), vs panoramic ultra-dissection!
-      d = 385 + e * 1180;
+      // Assembled complete 305-macro-part flagship camera (231 body + 74-part 50mm F1.2 lens), vs panoramic ultra-dissection!
+      d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
-      d = 142 + e * 255;
-      target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 32.0);
+      d = 152 + e * 305;
+      target = new THREE.Vector3(-4.0 * e, -2.0, -4.0 - e * 42.0);
     } else {
-      d = 76 + e * 46;
-      target = new THREE.Vector3(0, -1.0, -1);
+      // 15-layer ISSCC 2025/2026 Nano-Pixel Cross-Section (with radial FDTI, D-VTG, LOFIC & GS MEM wings!)
+      d = 88 + e * 92;
+      target = new THREE.Vector3(0.0, -1.0, -3.0 - e * 4.0);
     }
 
     let offset: THREE.Vector3;

@@ -85,11 +85,9 @@ function createKnurledDial(
 }
 
 /**
- * Build all 26 ultra-detailed CAD sub-assemblies of the 2024-2026 Flagship Mirrorless
- * Camera Body — 12 external monocoque/battery/control assemblies + 14 deep internal
- * watchmaker electromechanical assemblies (snap-dome switches, optical dial encoders,
- * lock-pin ratchets, heart-cam card ejectors, gimbal joystick, hollow rear wheel encoder,
- * hot-shoe leaf springs, forged strap anchors, ePTFE acoustic breather & 3D weather gaskets).
+ * Build all 38 ultra-detailed CAD sub-assemblies of the 2024-2026 Flagship Mirrorless
+ * Camera Body — 12 external monocoque/battery/control assemblies + 26 deep internal
+ * watchmaker electromechanical & structural assemblies.
  *
  * TRUE CAMERA HANDEDNESS (1 unit = 1 mm, optical axis = (0, 0)):
  *  - +Z = Front (Lens Mount at z = +30.6..+32.0, 50mm F1.2 Lens at z = +32.5..+138)
@@ -404,22 +402,7 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
 
     topDialsGroup.add(modeDialGroup);
 
-    // 2. Top-Shoulder Reflective/Emissive Graphical Status Sub-OLED (x = -35.0, z = +7.5) — STRICTLY ZERO TEXT!
-    const subOledBezel = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(23.6, 16.4, 2.4), 2.2, 0.2, 0.2, 16).rotateX(Math.PI / 2),
-      mats.matteBlackAnodized
-    );
-    subOledBezel.position.set(-35.0, -1.0, 8.0);
-    topDialsGroup.add(subOledBezel);
-
-    const subOledScreen = new THREE.Mesh(
-      new THREE.PlaneGeometry(20.6, 13.4),
-      mats.bodyTopSubOled
-    );
-    subOledScreen.rotation.x = -Math.PI / 2;
-    subOledScreen.position.set(-35.0, 0.25, 8.0);
-    subOledScreen.userData.noEdges = true;
-    topDialsGroup.add(subOledScreen);
+    // 2. Top-Shoulder Status Sub-OLED decoupled cleanly into B27 (body-top-sub-lcd)
 
     // 3. Left-Shoulder (+X) Dual-Deck Lockable Drive-Mode & AF-Mode Dial Stack (x = +38.5, z = -4.0)
     const leftDialGroup = new THREE.Group();
@@ -590,21 +573,7 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     leftSideWall.position.set(55.5, 0, -29.0);
     frontShellGroup.add(leftSideWall);
 
-    // Right-hand (-X) front-custom Fn button nestled cleanly beside mount throat
-    const frontFnBtn = new THREE.Mesh(
-      new THREE.CylinderGeometry(3.2, 3.5, 2.8, 20).rotateX(Math.PI / 2),
-      mats.matteBlackAnodized
-    );
-    frontFnBtn.position.set(-36.5, -13.0, 2.6);
-    frontShellGroup.add(frontFnBtn);
-
-    // Upper AF-Assist Illuminator / Video Tally Red-Amber LED lens window (top-right front face)
-    const tallyLens = new THREE.Mesh(
-      new THREE.CylinderGeometry(2.6, 2.8, 1.8, 20).rotateX(Math.PI / 2),
-      mats.bodyRecRed
-    );
-    tallyLens.position.set(-35.5, 24.5, 2.4);
-    frontShellGroup.add(tallyLens);
+    // Front C5 custom switch & AF-assist/tally optical light-pipe decoupled into B30 (body-front-custom-pod)
 
     // Left & Right High-Load Stainless Neck-Strap Lugs anchored directly into magnesium body flanks!
     for (const sx of [-1, 1]) {
@@ -972,8 +941,9 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   const baseplateGroup = new THREE.Group();
   {
     // Main baseplate floor spanning x ∈ [-68, +56], z ∈ [-33, +29]
-    // Circular optical-axis tripod mount bore at world x = 0 => local x = +6.0!
+    // Circular optical-axis tripod mount clearance bore at world x = 0 => local x = +6.0!
     const baseShape = createRoundedRectShape(124.0, 62.0, 7.2);
+    addCircleHoles(baseShape, [[6.0, 1.0, 9.8]]);
     const baseGeo = extrudeCentered(baseShape, 3.4, 0.45, 0.45, 22);
     baseGeo.rotateX(Math.PI / 2);
     const basePlate = new THREE.Mesh(baseGeo, mats.bodyMgShell);
@@ -987,29 +957,7 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     gripTongue.position.set(-50.0, 0, 31.0);
     baseplateGroup.add(gripTongue);
 
-    // Gleaming High-Load Stainless Steel 1/4-20 UNC Tripod Load Socket centered EXACTLY on Optical Axis (world x=0, z=0)!
-    const tripodBoss = new THREE.Mesh(
-      new THREE.CylinderGeometry(9.2, 9.6, 4.4, 32),
-      mats.mountStainlessFlange
-    );
-    tripodBoss.position.set(6.0, 0.2, 1.0);
-    baseplateGroup.add(tripodBoss);
-
-    // Threaded inner bore recess
-    const threadHole = new THREE.Mesh(
-      new THREE.CylinderGeometry(3.4, 3.4, 4.8, 22),
-      mats.mountVelvetBaffle
-    );
-    threadHole.position.set(6.0, 0.1, 1.0);
-    baseplateGroup.add(threadHole);
-
-    // Anti-twist video alignment pin hole (+Z ahead of tripod socket)
-    const videoPinHole = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.8, 1.8, 4.0, 16),
-      mats.mountVelvetBaffle
-    );
-    videoPinHole.position.set(6.0, -0.1, 13.5);
-    baseplateGroup.add(videoPinHole);
+    // Internal stainless 1/4-20 UNC tripod load-spreader subframe decoupled into B35 (body-tripod-block)
 
     // Anti-slip rubber tripod contact pad ring framing the tripod socket
     const tripodPad = new THREE.Mesh(
@@ -2110,6 +2058,675 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
       new THREE.Vector3(0, -56, -30),
       cp,
       0.16
+    )
+  );
+
+  // =========================================================================
+  // B27: Top-Shoulder High-Contrast Status Sub-OLED Module & EPDM Gasket Frame
+  // (Decoupled cleanly from B05 for watchmaker-level layered dissection!)
+  // =========================================================================
+  const subLcdGroup = new THREE.Group();
+  {
+    // Stepped EPDM waterproof compression gasket frame sealing top-deck aperture
+    const gasket = new THREE.Mesh(
+      extrudeCentered(createFrameShape(25.0, 17.8, 2.8, 21.8, 14.6, 2.0), 1.4, 0.08, 0.08, 14).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    gasket.position.y = -0.6;
+    subLcdGroup.add(gasket);
+
+    // Anodized bezel housing + AR-coated cover glass
+    const bezel = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(23.6, 16.4, 2.4), 2.1, 0.18, 0.18, 16).rotateX(Math.PI / 2),
+      mats.matteBlackAnodized
+    );
+    bezel.position.y = -0.8;
+    subLcdGroup.add(bezel);
+
+    // Graphical status sub-OLED active emitter face (strictly zero text!)
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(20.6, 13.4), mats.bodyTopSubOled);
+    screen.rotation.x = -Math.PI / 2;
+    screen.position.y = 0.35;
+    screen.userData.noEdges = true;
+    subLcdGroup.add(screen);
+
+    // Reflective diffuser backing + COF driver IC polyimide FPC dropping toward top switch PCB
+    const backPlate = new THREE.Mesh(new THREE.BoxGeometry(20.4, 0.45, 13.4), mats.stainlessMachined);
+    backPlate.position.y = -2.05;
+    const cofFlex = new THREE.Mesh(new THREE.BoxGeometry(9.2, 0.25, 6.8), mats.polyimideFpc);
+    cofFlex.position.set(0, -2.35, -7.8);
+    const cofIc = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.45, 1.4), mats.icEpoxy);
+    cofIc.position.set(0, -2.1, -9.2);
+    subLcdGroup.add(backPlate, cofFlex, cofIc);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-top-sub-lcd',
+      27,
+      '#06b6d4',
+      subLcdGroup,
+      new THREE.Vector3(-35.0, 38.6, 6.0),
+      new THREE.Vector3(-36, 56, 22),
+      new THREE.Vector3(-64, 128, 28),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B28: Vertical Battery Grip 12-Pin Gold Pogo-Pin Interface Block & Cap
+  // =========================================================================
+  const vgripGroup = new THREE.Group();
+  {
+    // High-rigidity PPS insulated docking receptacle
+    const block = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(18.0, 7.6, 1.4), 3.4, 0.12, 0.12, 12).rotateX(Math.PI / 2),
+      mats.mountPpsInsulator
+    );
+    vgripGroup.add(block);
+
+    // 12 Gold-Plated High-Current & Control-Bus Pogo Contact Pins (2 rows x 6)
+    for (let i = 0; i < 6; i++) {
+      const px = -6.25 + i * 2.5;
+      for (const pz of [-1.5, 1.5]) {
+        const pin = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.45, 0.52, 2.6, 10),
+          mats.goldPlating
+        );
+        pin.position.set(px, -1.6, pz);
+        pin.userData.noEdges = true;
+        vgripGroup.add(pin);
+      }
+    }
+
+    // Removable dual-lip waterproof EPDM silicone sealing cap tucked directly below
+    const cap = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(19.6, 9.2, 1.8), 1.4, 0.12, 0.12, 12).rotateX(Math.PI / 2),
+      mats.epdmGasket
+    );
+    cap.position.y = -3.4;
+    vgripGroup.add(cap);
+
+    // Heavy-copper polyimide power & I2C ribbon climbing into mainboard
+    const fpc = new THREE.Mesh(new THREE.BoxGeometry(10.5, 6.2, 0.3), mats.polyimideFpc);
+    fpc.position.set(0, 4.4, -2.0);
+    vgripGroup.add(fpc);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-vgrip-contacts',
+      28,
+      '#eab308',
+      vgripGroup,
+      new THREE.Vector3(-28.0, -34.2, -14.0),
+      new THREE.Vector3(-28, -62, -16),
+      new THREE.Vector3(-56, -104, -18),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B29: Full-Coverage Rear Panel Metal-Dome Switch FPC Sheet & Silicone Keymat
+  // =========================================================================
+  const rearPcbGroup = new THREE.Group();
+  {
+    // Asymmetrical polyimide rear switch FPC sheet wrapping around the LCD cutout
+    const rightColFpc = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(27.0, 62.0, 3.0), 0.35, 0.03, 0.03, 14),
+      mats.polyimideFpc
+    );
+    rightColFpc.position.set(-44.0, -2.0, 0);
+    rearPcbGroup.add(rightColFpc);
+
+    const topStripFpc = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(96.0, 12.0, 2.2), 0.35, 0.03, 0.03, 12),
+      mats.polyimideFpc
+    );
+    topStripFpc.position.set(4.0, 26.5, 0);
+    rearPcbGroup.add(topStripFpc);
+
+    // Semi-translucent protective waterproof silicone keymat membrane
+    const keymat = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(25.2, 60.0, 2.6), 0.55, 0.04, 0.04, 14),
+      mats.epdmGasket
+    );
+    keymat.position.set(-44.0, -2.0, -0.58);
+    keymat.userData.noEdges = true;
+    rearPcbGroup.add(keymat);
+
+    // 7 Gold 4-Legged Tactile Snap-Domes aligned behind AF-ON, AEL, Play, Del, Menu, C3
+    for (const [dx, dy] of [
+      [-34.5, 21.0],
+      [-51.0, 7.5],
+      [-49.5, -28.5],
+      [-36.5, -28.5],
+      [34.0, 26.5],
+      [46.5, 26.5],
+      [-51.0, 21.0],
+    ] as Array<[number, number]>) {
+      const dome = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.1, 2.4, 0.65, 16).rotateX(Math.PI / 2),
+        mats.goldPlating
+      );
+      dome.position.set(dx, dy, -0.35);
+      rearPcbGroup.add(dome);
+    }
+
+    // Stainless stiffener backplate & mainboard ZIF flex tongue
+    const stiff = new THREE.Mesh(new THREE.BoxGeometry(16.0, 14.0, 0.25), mats.stainlessMachined);
+    stiff.position.set(-43.0, -28.0, 0.35);
+    const zifTail = new THREE.Mesh(new THREE.BoxGeometry(8.5, 11.0, 0.25), mats.polyimideFpc);
+    zifTail.position.set(-28.0, -22.0, 0.45);
+    rearPcbGroup.add(stiff, zifTail);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-rear-button-pcb',
+      29,
+      '#ea580c',
+      rearPcbGroup,
+      new THREE.Vector3(-6.0, 0, -30.6),
+      new THREE.Vector3(0, 0, -38),
+      new THREE.Vector3(-36, 0, -172),
+      cp,
+      0.22
+    )
+  );
+
+  // =========================================================================
+  // B30: Front Custom C5 Switch Pod & Dual-Color Tally/AF-Assist Light-Pipe
+  // (Decoupled cleanly from B07 for zero z-fighting!)
+  // =========================================================================
+  const frontCustomGroup = new THREE.Group();
+  {
+    // Lower C5 / Depth-of-Field Preview Tactile Switch Pod (world x=-39.5, y=-13.0, z=27.6)
+    const c5Cap = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.2, 3.5, 2.8, 20).rotateX(Math.PI / 2),
+      mats.matteBlackAnodized
+    );
+    c5Cap.position.set(-36.5, -13.0, 2.6);
+    const c5Oring = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.42, 8, 20), mats.epdmGasket);
+    c5Oring.position.set(-36.5, -13.0, 0.9);
+    c5Oring.userData.noEdges = true;
+    const c5Pcb = new THREE.Mesh(new THREE.BoxGeometry(8.2, 8.2, 0.9), mats.hdiMainboardPcb);
+    c5Pcb.position.set(-36.5, -13.0, -1.6);
+    const c5Dome = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.0, 2.2, 0.6, 16).rotateX(Math.PI / 2),
+      mats.goldPlating
+    );
+    c5Dome.position.set(-36.5, -13.0, -0.9);
+    frontCustomGroup.add(c5Cap, c5Oring, c5Pcb, c5Dome);
+
+    // Upper Dual-Color Video Tally Recessed Horizontal Bar & Optical Light-Pipe Pod (world x=-40.2, y=+26.6)
+    const tallyLens = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(4.8, 1.8, 0.85), 1.4, 0.08, 0.08, 12),
+      mats.bodyRecRed
+    );
+    tallyLens.position.set(-37.2, 26.6, 0.9);
+    const lightPipe = new THREE.Mesh(
+      new THREE.BoxGeometry(3.8, 1.4, 4.2),
+      mats.coverGlass
+    );
+    lightPipe.position.set(-37.2, 26.6, -1.6);
+    const ledBoard = new THREE.Mesh(new THREE.BoxGeometry(6.8, 5.2, 0.85), mats.hdiMainboardPcb);
+    ledBoard.position.set(-37.2, 26.6, -3.8);
+    frontCustomGroup.add(tallyLens, lightPipe, ledBoard);
+
+    // Connecting slim polyimide vertical harness tying C5 switch & Tally LED
+    const vertFpc = new THREE.Mesh(new THREE.BoxGeometry(3.6, 38.0, 0.25), mats.polyimideFpc);
+    vertFpc.position.set(-36.8, 6.8, -3.6);
+    frontCustomGroup.add(vertFpc);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-front-custom-pod',
+      30,
+      '#ef4444',
+      frontCustomGroup,
+      new THREE.Vector3(-3.0, 0, 27.6),
+      new THREE.Vector3(-28, 12, 74),
+      new THREE.Vector3(-34, 14, 96),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B31: Sealed Neodymium Playback Micro-Speaker Acoustic Box & Mesh
+  // =========================================================================
+  const speakerGroup = new THREE.Group();
+  {
+    // Sealed 0.8 cm³ ABS Acoustic Back-Cavity Chamber
+    const box = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(16.4, 11.2, 2.0), 4.2, 0.18, 0.18, 14),
+      mats.shutterChassis
+    );
+    speakerGroup.add(box);
+
+    // Neodymium micro-driver diaphragm & copper voice-coil ring facing rear (-Z)
+    const driverRing = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.4, 4.4, 0.8, 22).rotateX(Math.PI / 2),
+      mats.neodymiumMagnet
+    );
+    driverRing.position.set(-2.2, 0, -2.25);
+    const meshGrill = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.8, 4.8, 0.35, 22).rotateX(Math.PI / 2),
+      mats.emiShieldCan
+    );
+    meshGrill.position.set(-2.2, 0, -2.7);
+    const foamSeal = new THREE.Mesh(new THREE.TorusGeometry(4.8, 0.45, 8, 22), mats.epdmGasket);
+    foamSeal.position.set(-2.2, 0, -2.6);
+    foamSeal.userData.noEdges = true;
+    speakerGroup.add(driverRing, meshGrill, foamSeal);
+
+    // Dual gold spring contact pads mating directly onto mainboard
+    for (const cy of [-2.4, 2.4]) {
+      const springPad = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.4, 1.4), mats.goldPlating);
+      springPad.position.set(5.4, cy, 2.4);
+      speakerGroup.add(springPad);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-speaker-chamber',
+      31,
+      '#475569',
+      speakerGroup,
+      new THREE.Vector3(38.5, -26.0, -26.5),
+      new THREE.Vector3(44, -36, -34),
+      new THREE.Vector3(74, -42, -148),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B32: Threaded PC Flash Sync Coaxial Terminal & 400V Opto-Isolated Trigger Board
+  // =========================================================================
+  const pcSyncGroup = new THREE.Group();
+  {
+    // ISO 519 Threaded Stainless Coaxial PC Sync Socket Barrel protruding +X
+    const outerBarrel = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.4, 3.4, 5.2, 22).rotateZ(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    pcSyncGroup.add(outerBarrel);
+
+    const threadRing = new THREE.Mesh(
+      new THREE.TorusGeometry(3.5, 0.32, 8, 22).rotateY(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    threadRing.position.x = 1.6;
+    const centerPin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.65, 0.65, 4.4, 12).rotateZ(Math.PI / 2),
+      mats.goldPlating
+    );
+    centerPin.position.x = 0.8;
+    const insulator = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.2, 2.2, 4.8, 16).rotateZ(Math.PI / 2),
+      mats.mountPpsInsulator
+    );
+    pcSyncGroup.add(threadRing, centerPin, insulator);
+
+    // Weather-sealing tethered EPDM dust cap beside barrel
+    const cap = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.9, 3.9, 1.8, 20).rotateZ(Math.PI / 2),
+      mats.epdmGasket
+    );
+    cap.position.x = 3.6;
+    pcSyncGroup.add(cap);
+
+    // 400V High-Voltage Opto-Isolated Phototriac Trigger Protection Sub-PCB
+    const trigPcb = new THREE.Mesh(new THREE.BoxGeometry(1.1, 10.4, 9.6), mats.hdiMainboardPcb);
+    trigPcb.position.set(-3.4, 0, -1.2);
+    const optoIc = new THREE.Mesh(new THREE.BoxGeometry(1.4, 4.8, 4.2), mats.icEpoxy);
+    optoIc.position.set(-4.2, 1.2, -1.2);
+    const hvCap = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 3.0), mats.smdCeramic);
+    hvCap.position.set(-4.2, -3.2, -1.2);
+    pcSyncGroup.add(trigPcb, optoIc, hvCap);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-pc-sync-terminal',
+      32,
+      '#cbd5e1',
+      pcSyncGroup,
+      new THREE.Vector3(54.2, 18.0, 14.5),
+      new THREE.Vector3(68, 20, 24),
+      new THREE.Vector3(108, 24, 34),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // B33: Internal Passive Thermal Chimney Baffle Duct & Pyrolytic Graphite Liner
+  // =========================================================================
+  const coolingDuctGroup = new THREE.Group();
+  {
+    // High-emissivity black anodized aluminum chimney duct shell behind mainboard vapor chamber
+    const ductBack = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(64.0, 44.0, 3.2), 0.75, 0.06, 0.06, 16),
+      mats.matteBlackAnodized
+    );
+    coolingDuctGroup.add(ductBack);
+
+    // High-inplane-conductivity Pyrolytic Graphite Sheet (PGS 1,500 W/m·K) thermal spreading liner
+    const pgsLiner = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(58.0, 38.0, 2.4), 0.25, 0.02, 0.02, 14),
+      mats.pyroGraphite
+    );
+    pgsLiner.position.z = 0.55;
+    coolingDuctGroup.add(pgsLiner);
+
+    // 9 Precision vertical passive micro-convection radiator fins on rear face (-Z)
+    for (let fx = -24.0; fx <= 24.01; fx += 6.0) {
+      const fin = new THREE.Mesh(new THREE.BoxGeometry(0.65, 36.0, 1.35), mats.matteBlackAnodized);
+      fin.position.set(fx, 0, -0.95);
+      coolingDuctGroup.add(fin);
+    }
+
+    // Top & bottom EPDM thermal-isolation air-baffle strips
+    for (const by of [-21.5, 21.5]) {
+      const baffle = new THREE.Mesh(new THREE.BoxGeometry(58.0, 1.6, 1.4), mats.epdmGasket);
+      baffle.position.set(0, by, -0.5);
+      baffle.userData.noEdges = true;
+      coolingDuctGroup.add(baffle);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-cooling-duct',
+      33,
+      '#1e293b',
+      coolingDuctGroup,
+      new THREE.Vector3(-4.0, -2.0, -29.8),
+      new THREE.Vector3(0, -14, -46),
+      new THREE.Vector3(-18, -16, -184),
+      cp,
+      0.22
+    )
+  );
+
+  // =========================================================================
+  // B34: Left-Flank Stainless I/O Port Strain-Relief Reinforcement Frame
+  // =========================================================================
+  const portReinfGroup = new THREE.Group();
+  {
+    // CNC SUS304 left-flank I/O surround reinforcement frame (protects RJ45/HDMI/USB-C/Audio)
+    const frameShape = createFrameShape(28.0, 52.0, 3.0, 18.0, 42.0, 2.0);
+    const frame = new THREE.Mesh(
+      extrudeCentered(frameShape, 1.6, 0.1, 0.1, 14).rotateY(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    portReinfGroup.add(frame);
+
+    // Internal horizontal port separator bridge bars (between Audio / HDMI-USB / LAN bays)
+    for (const sy of [8.2, -10.8]) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.2, 22.0), mats.stainlessMachined);
+      bar.position.set(0, sy, 0);
+      portReinfGroup.add(bar);
+    }
+
+    // Dual threaded M2.5 stainless bosses for studio cable-lock protector attachment
+    for (const by of [-22.0, 22.0]) {
+      const boss = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.1, 2.1, 3.2, 16).rotateZ(Math.PI / 2),
+        mats.brassGear
+      );
+      boss.position.set(0.5, by, 10.6);
+      portReinfGroup.add(boss);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-port-reinforce',
+      34,
+      '#94a3b8',
+      portReinfGroup,
+      new THREE.Vector3(52.4, -2.0, -7.0),
+      new THREE.Vector3(42, 0, -6),
+      new THREE.Vector3(78, 0, -12),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // B35: Internal High-Load Stainless 1/4-20 UNC Tripod Load-Spreading Subframe
+  // (Decoupled cleanly from B12 baseplate — bolts directly into internal chassis!)
+  // =========================================================================
+  const tripodBlockGroup = new THREE.Group();
+  {
+    // Thick SUS304 load-spreading flange plate inside chassis floor
+    const flange = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(34.0, 26.0, 3.4), 2.8, 0.16, 0.16, 16).rotateX(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    flange.position.y = 2.4;
+    tripodBlockGroup.add(flange);
+
+    // Optical-axis 1/4-20 UNC stainless socket boss extending flush through B12 cutout!
+    const socketBoss = new THREE.Mesh(
+      new THREE.CylinderGeometry(9.2, 9.5, 5.4, 32),
+      mats.mountStainlessFlange
+    );
+    socketBoss.position.set(0, 0.4, 0);
+    tripodBlockGroup.add(socketBoss);
+
+    // Threaded inner 1/4-20 UNC bore + anti-twist video alignment socket
+    const threadBore = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.4, 3.4, 5.8, 22),
+      mats.mountVelvetBaffle
+    );
+    threadBore.position.set(0, 0.3, 0);
+    const videoPinBore = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.8, 1.8, 4.4, 16),
+      mats.mountVelvetBaffle
+    );
+    videoPinBore.position.set(0, 0.5, 11.2);
+    tripodBlockGroup.add(threadBore, videoPinBore);
+
+    // 4 High-Tensile M2.5 Chassis Anchor Bolts locking block to front/mid magnesium skeleton
+    for (const [bx, bz] of [
+      [-12.5, -8.8],
+      [12.5, -8.8],
+      [-12.5, 8.8],
+      [12.5, 8.8],
+    ] as Array<[number, number]>) {
+      const bolt = createPrecisionScrew(1.5, 0.65, 3.6, mats.stainlessMachined);
+      bolt.rotation.x = -Math.PI / 2;
+      bolt.position.set(bx, 4.2, bz);
+      tripodBlockGroup.add(bolt);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-tripod-block',
+      35,
+      '#64748b',
+      tripodBlockGroup,
+      new THREE.Vector3(0, -37.2, 0),
+      new THREE.Vector3(0, -32, 10),
+      new THREE.Vector3(0, -68, 12),
+      cp,
+      0.26
+    )
+  );
+
+  // =========================================================================
+  // B36: Quick-Detach Waterproof Battery Door Double-Jointed Stainless Hinge
+  // =========================================================================
+  const battHingeGroup = new THREE.Group();
+  {
+    // SUS304 double-jointed hinge mounting yoke
+    const yoke = new THREE.Mesh(new THREE.BoxGeometry(20.0, 2.2, 4.6), mats.stainlessMachined);
+    battHingeGroup.add(yoke);
+
+    // Spring-loaded quick-release stainless pivot shaft (45° tool-free vertical-grip detach!)
+    const pinShaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.05, 1.05, 24.5, 14).rotateZ(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    pinShaft.position.set(0, 0, -2.4);
+    battHingeGroup.add(pinShaft);
+
+    // Low-friction POM quick-detach thumb release slider tab
+    const pomSlider = new THREE.Mesh(new THREE.BoxGeometry(6.2, 1.8, 3.6), mats.pomGear);
+    pomSlider.position.set(4.5, -1.2, -1.8);
+    battHingeGroup.add(pomSlider);
+
+    // Helical shaft return coil + pop-open torsion spring
+    const pinSpring = new THREE.Mesh(
+      createHelicalSpringGeometry(1.35, 5.2, 5, 0.2).rotateY(Math.PI / 2),
+      mats.brassGear
+    );
+    pinSpring.position.set(-4.5, 0, -2.4);
+    pinSpring.userData.noEdges = true;
+    const popTorsion = new THREE.Mesh(
+      createHelicalSpringGeometry(1.65, 4.2, 4, 0.22).rotateY(Math.PI / 2),
+      mats.mountSpringSteel
+    );
+    popTorsion.position.set(8.2, 0, -2.4);
+    popTorsion.userData.noEdges = true;
+    battHingeGroup.add(pinSpring, popTorsion);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-batt-door-hinge',
+      36,
+      '#d97706',
+      battHingeGroup,
+      new THREE.Vector3(-54.5, -35.6, -18.5),
+      new THREE.Vector3(-52, -52, -32),
+      new THREE.Vector3(-96, -86, -34),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B37: 24-Piece Color-Coded Chassis Precision Machine Screws & Thread-Lock Kit
+  // (Kolari Vision Sony A1 II / A7R VI / Canon R5 II teardown signature fastener array!)
+  // =========================================================================
+  const screwsGroup = new THREE.Group();
+  {
+    const screwSpecs: Array<{
+      x: number;
+      y: number;
+      z: number;
+      rx: number;
+      ry: number;
+      mat: THREE.Material;
+      threadLock: boolean;
+    }> = [
+      // Rear perimeter M1.6 black-oxide & stainless screws (8)
+      { x: -58, y: 31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: -24, y: 31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: 24, y: 31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: 52, y: 31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: -58, y: -31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      { x: -22, y: -31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.stainlessMachined, threadLock: false },
+      { x: 22, y: -31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.stainlessMachined, threadLock: false },
+      { x: 52, y: -31, z: -34.5, rx: Math.PI, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      // Front monocoque & EMI grounding copper shoulder screws (8)
+      { x: -52, y: 32, z: 29.5, rx: 0, ry: 0, mat: mats.copperHeatSpreader, threadLock: true },
+      { x: 46, y: 32, z: 29.5, rx: 0, ry: 0, mat: mats.copperHeatSpreader, threadLock: true },
+      { x: -52, y: -32, z: 29.5, rx: 0, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      { x: 46, y: -32, z: 29.5, rx: 0, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      { x: -46, y: 6, z: 29.5, rx: 0, ry: 0, mat: mats.copperHeatSpreader, threadLock: false },
+      { x: 48, y: 6, z: 29.5, rx: 0, ry: 0, mat: mats.copperHeatSpreader, threadLock: false },
+      { x: -24, y: -32, z: 29.5, rx: 0, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: 24, y: -32, z: 29.5, rx: 0, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      // Top deck & lateral seam bolts (8)
+      { x: -58, y: 38.2, z: -18, rx: -Math.PI / 2, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      { x: 48, y: 38.2, z: -18, rx: -Math.PI / 2, ry: 0, mat: mats.stainlessMachined, threadLock: true },
+      { x: -58, y: 38.2, z: 16, rx: -Math.PI / 2, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: 48, y: 38.2, z: 16, rx: -Math.PI / 2, ry: 0, mat: mats.matteBlackAnodized, threadLock: true },
+      { x: 57.5, y: 24, z: -22, rx: 0, ry: Math.PI / 2, mat: mats.stainlessMachined, threadLock: true },
+      { x: 57.5, y: -24, z: -22, rx: 0, ry: Math.PI / 2, mat: mats.stainlessMachined, threadLock: true },
+      { x: -69.5, y: 24, z: -22, rx: 0, ry: -Math.PI / 2, mat: mats.stainlessMachined, threadLock: true },
+      { x: -69.5, y: -24, z: -22, rx: 0, ry: -Math.PI / 2, mat: mats.stainlessMachined, threadLock: true },
+    ];
+
+    for (const s of screwSpecs) {
+      const scr = createPrecisionScrew(1.25, 0.52, 3.2, s.mat);
+      scr.rotation.set(s.rx, s.ry, 0);
+      scr.position.set(s.x, s.y, s.z);
+      if (s.threadLock) {
+        const patch = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.68, 0.68, 1.35, 10).rotateX(Math.PI / 2),
+          mats.mountThreadLockBlue
+        );
+        patch.position.z = -1.6;
+        patch.userData.noEdges = true;
+        scr.add(patch);
+      }
+      screwsGroup.add(scr);
+    }
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-perimeter-screws',
+      37,
+      '#3b82f6',
+      screwsGroup,
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, -68),
+      new THREE.Vector3(0, 0, -214),
+      cp,
+      0.24
+    )
+  );
+
+  // =========================================================================
+  // B38: EVF Pentaprism Internal Forged Roll-Cage Subframe & Hot-Shoe Arch
+  // =========================================================================
+  const evfArchGroup = new THREE.Group();
+  {
+    // U-shaped forged SUS304 roll-cage bridge arch straddling EVF barrel cleanly without contact!
+    const topDeckBar = new THREE.Mesh(
+      extrudeCentered(createRoundedRectShape(38.0, 26.0, 2.4), 2.2, 0.14, 0.14, 14).rotateX(Math.PI / 2),
+      mats.mountStainlessFlange
+    );
+    topDeckBar.position.set(0, 7.8, 0);
+    evfArchGroup.add(topDeckBar);
+
+    // Left & Right structural vertical roll-cage columns anchoring into front monocoque shoulders
+    for (const sx of [-18.2, 18.2]) {
+      const col = new THREE.Mesh(new THREE.BoxGeometry(2.6, 17.5, 20.0), mats.mountStainlessFlange);
+      col.position.set(sx, -1.2, 1.5);
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(7.2, 2.4, 16.0), mats.stainlessMachined);
+      foot.position.set(sx + Math.sign(sx) * 2.4, -9.8, 1.5);
+      evfArchGroup.add(col, foot);
+
+      // 2 shoulder tie bolts per foot
+      for (const bz of [-4.2, 7.2]) {
+        const bolt = createPrecisionScrew(1.2, 0.45, 2.2, mats.stainlessMachined);
+        bolt.rotation.x = -Math.PI / 2;
+        bolt.position.set(sx + Math.sign(sx) * 3.0, -8.4, bz);
+        evfArchGroup.add(bolt);
+      }
+    }
+
+    // Front chamfered diagonal anti-racking gusset brace
+    const frontBrace = new THREE.Mesh(new THREE.BoxGeometry(36.0, 2.0, 4.2), mats.stainlessMachined);
+    frontBrace.position.set(0, 4.2, 12.6);
+    frontBrace.rotation.x = -0.55;
+    evfArchGroup.add(frontBrace);
+  }
+  parts.push(
+    finalizeBodyPart(
+      'body-evf-tie-bracket',
+      38,
+      '#94a3b8',
+      evfArchGroup,
+      new THREE.Vector3(0, 47.6, -7.5),
+      new THREE.Vector3(0, 46, -24),
+      new THREE.Vector3(0, 118, -26),
+      cp,
+      0.26
     )
   );
 

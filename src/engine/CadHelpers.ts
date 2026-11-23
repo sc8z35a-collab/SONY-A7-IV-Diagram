@@ -315,8 +315,8 @@ export function createOpticalLensGeometry(
   sagRear: number,
   asphericFront = 0,
   asphericRear = 0,
-  profileSteps = 22,
-  radialSegments = 48
+  profileSteps = 26,
+  radialSegments = 56
 ): THREE.BufferGeometry {
   const halfEdge = edgeThickness * 0.5;
   const pts: THREE.Vector2[] = [];
@@ -345,4 +345,198 @@ export function createOpticalLensGeometry(
   geo.computeVertexNormals();
   return geo;
 }
+
+/**
+ * Create a precision threaded optical element retaining ring with spanner-wrench notches
+ * and an elastomeric thermal-expansion cushion O-ring.
+ */
+export function createSpannerRingGroup(
+  innerR: number,
+  outerR: number,
+  depth: number,
+  ringMat: THREE.Material,
+  notchMat: THREE.Material,
+  oRingMat?: THREE.Material,
+  notchCount = 4
+): THREE.Group {
+  const grp = new THREE.Group();
+  const s = new THREE.Shape();
+  s.absarc(0, 0, outerR, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
+  s.holes.push(hole);
+  grp.add(new THREE.Mesh(extrudeCentered(s, depth, 0.08, 0.08, 48), ringMat));
+
+  // Fine outer machined thread groove highlights
+  for (const tz of [-depth * 0.25, depth * 0.25]) {
+    const groove = new THREE.Mesh(new THREE.TorusGeometry(outerR + 0.05, 0.09, 6, 48), notchMat);
+    groove.position.z = tz;
+    groove.userData.noEdges = true;
+    grp.add(groove);
+  }
+
+  // Spanner-wrench assembly notches along front face
+  const rMid = (innerR + outerR) * 0.5;
+  for (let i = 0; i < notchCount; i++) {
+    const a = (i / notchCount) * Math.PI * 2;
+    const notch = new THREE.Mesh(
+      new THREE.BoxGeometry(Math.max(0.9, (outerR - innerR) * 0.72), 0.72, 0.36),
+      notchMat
+    );
+    notch.position.set(Math.cos(a) * rMid, Math.sin(a) * rMid, depth * 0.52);
+    notch.rotation.z = a;
+    notch.userData.noEdges = true;
+    grp.add(notch);
+  }
+
+  if (oRingMat) {
+    const oRing = new THREE.Mesh(
+      new THREE.TorusGeometry(innerR + 0.35, 0.32, 10, 48),
+      oRingMat
+    );
+    oRing.position.z = -depth * 0.52;
+    oRing.userData.noEdges = true;
+    grp.add(oRing);
+  }
+
+  return grp;
+}
+
+/**
+ * Create a 360-degree Beryllium-Copper EMI/ESD multi-finger grounding spring contact ring.
+ */
+export function createEmiFingerRingGroup(
+  innerR: number,
+  outerR: number,
+  fingerCount: number,
+  mat: THREE.Material
+): THREE.Group {
+  const grp = new THREE.Group();
+  const s = new THREE.Shape();
+  s.absarc(0, 0, outerR, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
+  s.holes.push(hole);
+  grp.add(new THREE.Mesh(extrudeCentered(s, 0.28, 0.02, 0.02, 52), mat));
+
+  const rMid = (innerR + outerR) * 0.5;
+  for (let i = 0; i < fingerCount; i++) {
+    const a = (i / fingerCount) * Math.PI * 2;
+    const finger = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.8, 0.22), mat);
+    finger.position.set(Math.cos(a) * rMid, Math.sin(a) * rMid, 0.42);
+    finger.rotation.z = a;
+    finger.rotation.y = 0.28; // Angled leaf spring cantilever
+    grp.add(finger);
+
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), mat);
+    tip.position.set(Math.cos(a) * rMid, Math.sin(a) * rMid, 0.68);
+    tip.userData.noEdges = true;
+    grp.add(tip);
+  }
+  return grp;
+}
+
+/**
+ * Reusable dynamic CAD exploded-view dashed trajectory guide manager.
+ * Draws razor-sharp technical assembly vector lines from each radially exploded part's
+ * axial anchor to its live exploded world position — transforming exploded mode into a true
+ * museum-grade technical cutaway diagram (超高精細分解解剖図)!
+ */
+export interface RadialTrajectoryGuides {
+  group: THREE.Group;
+  update: (
+    explodeFactor: number,
+    visible: boolean,
+    parts: ReadonlyArray<{
+      assembledPos: THREE.Vector3;
+      explodeOffset: THREE.Vector3;
+      integratedExplodeOffset?: THREE.Vector3;
+      group: THREE.Group;
+    }>
+  ) => void;
+}
+
+export function createRadialTrajectoryGuides(
+  clippingPlanes: THREE.Plane[],
+  color = 0x64748b,
+  maxLines = 48
+): RadialTrajectoryGuides {
+  const group = new THREE.Group();
+  const mat = new THREE.LineDashedMaterial({
+    color,
+    dashSize: 1.6,
+    gapSize: 1.4,
+    transparent: true,
+    opacity: 0,
+    clippingPlanes,
+  });
+
+  const lines: THREE.Line[] = [];
+  const dots: THREE.Mesh[] = [];
+  const dotGeo = new THREE.SphereGeometry(0.42, 8, 6);
+  const dotMat = new THREE.MeshBasicMaterial({
+    color: 0x0d5bd9,
+    transparent: true,
+    opacity: 0,
+    clippingPlanes,
+  });
+
+  for (let i = 0; i < maxLines; i++) {
+    const geo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+    ]);
+    const line = new THREE.Line(geo, mat);
+    line.visible = false;
+    group.add(line);
+    lines.push(line);
+
+    const dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.visible = false;
+    group.add(dot);
+    dots.push(dot);
+  }
+
+  return {
+    group,
+    update: (explodeFactor, visible, parts) => {
+      const show = visible && explodeFactor > 0.05;
+      group.visible = show;
+      if (!show) return;
+
+      const alpha = THREE.MathUtils.smoothstep(explodeFactor, 0.05, 0.35);
+      mat.opacity = 0.42 * alpha;
+      dotMat.opacity = 0.58 * alpha;
+
+      let li = 0;
+      for (const p of parts) {
+        if (li >= maxLines) break;
+        if (!p.group.visible) continue;
+        // Connect radially offset parts cleanly back to their coaxial Z-plane origin!
+        const dx = p.group.position.x - p.assembledPos.x;
+        const dy = p.group.position.y - p.assembledPos.y;
+        const radialDist = Math.hypot(dx, dy);
+        if (radialDist < 6.0) continue;
+
+        const line = lines[li];
+        const dot = dots[li];
+        const posAttr = line.geometry.getAttribute('position') as THREE.BufferAttribute;
+        posAttr.setXYZ(0, p.assembledPos.x, p.assembledPos.y, p.group.position.z);
+        posAttr.setXYZ(1, p.group.position.x, p.group.position.y, p.group.position.z);
+        posAttr.needsUpdate = true;
+        line.computeLineDistances();
+        line.visible = true;
+
+        dot.position.set(p.assembledPos.x, p.assembledPos.y, p.group.position.z);
+        dot.visible = true;
+        li++;
+      }
+      for (let i = li; i < maxLines; i++) {
+        lines[i].visible = false;
+        dots[i].visible = false;
+      }
+    },
+  };
+}
+
 

@@ -1328,6 +1328,554 @@ export function buildShutterParts(
   }
 
   // =========================================================================
+  // SH27. [Phase 11] Drive-Bay Acoustic Stainless Lid & Permalloy EMI Shield (z = +18.35 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const bayCx = frameCenterX + 23.2; // Aligned over right-side drive-bay window
+    const lidShape = createRoundedRectShape(22.2, 43.8, 2.8);
+    const lidPlate = new THREE.Mesh(
+      extrudeCentered(lidShape, 0.58, 0.06, 0.06, 18),
+      mats.matteBlackAnodized
+    );
+    lidPlate.position.set(bayCx, 0, 0);
+    g.add(lidPlate);
+
+    // Inner permalloy magnetic shield foil + open-cell acoustic damping foam pad
+    const permalloy = new THREE.Mesh(
+      new THREE.BoxGeometry(19.6, 39.6, 0.24),
+      mats.lensPermalloyShield
+    );
+    permalloy.position.set(bayCx, 0, -0.36);
+    const foam = new THREE.Mesh(new THREE.BoxGeometry(17.8, 36.2, 0.42), mats.lensFoamSeal);
+    foam.position.set(bayCx, 0, -0.66);
+    g.add(permalloy, foam);
+
+    // 4 micro M1.2 stainless cover screws sealing drive bay
+    for (const [sx, sy] of [
+      [bayCx - 9.2, 19.6],
+      [bayCx + 9.2, 19.6],
+      [bayCx - 9.2, -19.6],
+      [bayCx + 9.2, -19.6],
+    ] as Array<[number, number]>) {
+      const sc = createPrecisionScrew(1.05, 0.36, 1.0, mats.stainlessMachined);
+      sc.position.set(sx, sy, 0.3);
+      g.add(sc);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-drive-bay-cover',
+        27,
+        '#334155',
+        g,
+        new THREE.Vector3(0, 0, 18.35),
+        new THREE.Vector3(28.0, 0, 66.0),
+        new THREE.Vector3(28.0, 0, 102.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH28. [Phase 11] 16x Ultralight Ti-6Al-4V Hollow Micro-Rivets & PTFE Washers (z = +14.2 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const rivetRowsY = [9.5, 3.2, -3.1, -9.4];
+    for (let curtainIdx = 0; curtainIdx < 2; curtainIdx++) {
+      const rz = curtainIdx === 0 ? 1.1 : -1.1;
+      for (const ry of rivetRowsY) {
+        for (const rx of [18.5, 20.6]) {
+          // Hollow machined Ti-6Al-4V micro shoulder rivet
+          const rivet = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.62, 0.62, 1.15, 14).rotateX(Math.PI / 2),
+            mats.titaniumRivet
+          );
+          rivet.position.set(rx, ry, rz);
+          // Hollow bore cap ring highlight
+          const head = new THREE.Mesh(
+            new THREE.TorusGeometry(0.45, 0.14, 8, 14),
+            mats.titaniumRivet
+          );
+          head.position.set(rx, ry, rz + 0.56);
+          head.userData.noEdges = true;
+          // White self-lubricating PTFE thrust micro-washer
+          const ptfe = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.95, 0.95, 0.22, 14).rotateX(Math.PI / 2),
+            mats.zifIvoryPlastic
+          );
+          ptfe.position.set(rx, ry, rz - 0.12);
+          g.add(rivet, head, ptfe);
+        }
+      }
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-blade-rivets',
+        28,
+        '#cbd5e1',
+        g,
+        new THREE.Vector3(0, 0, 14.2),
+        new THREE.Vector3(-26.0, 14.0, 26.0),
+        new THREE.Vector3(-28.0, 14.0, 74.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH29. [Phase 11] Upper & Lower Blade-Storage Pocket Velvet Light-Trap Hoods (z = +14.1 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    for (const sy of [1, -1]) {
+      const hood = new THREE.Mesh(new THREE.BoxGeometry(40.8, 5.2, 2.9), mats.velvetFlockTrap);
+      hood.position.set(0, sy * 17.6, 0);
+      g.add(hood);
+
+      // Knife-edge overhang baffle lip facing the 36x24mm optical window
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(39.2, 1.3, 3.2), mats.matteBlackAnodized);
+      lip.position.set(0, sy * 14.5, 0.15);
+      g.add(lip);
+
+      // Stepped sawtooth stray-light ribs inside pocket mouth
+      for (const tz of [-0.85, 0, 0.85]) {
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(38.4, 0.45, 0.35), mats.velvetFlockTrap);
+        rib.position.set(0, sy * 15.2, tz);
+        g.add(rib);
+      }
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-pocket-lighttrap',
+        29,
+        '#0f172a',
+        g,
+        new THREE.Vector3(0, 0, 14.1),
+        new THREE.Vector3(0, 28.0, 20.0),
+        new THREE.Vector3(0, 28.0, 68.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH30. [Phase 11] 1st/2nd Curtain Stainless Charging Catch Hooks & Pawls (z = +12.7 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    for (const [idx, oy] of [
+      [0, -10.8],
+      [1, -15.4],
+    ] as Array<[number, number]>) {
+      const hookArm = new THREE.Mesh(new THREE.BoxGeometry(8.8, 1.85, 0.72), mats.linkArmSteel);
+      hookArm.position.set(24.6, oy, idx === 0 ? 0.5 : -0.5);
+      hookArm.rotation.z = idx === 0 ? 0.22 : -0.18;
+
+      const catchTip = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.8, 0.78), mats.titaniumRivet);
+      catchTip.position.set(20.6, oy + (idx === 0 ? -0.9 : 0.8), idx === 0 ? 0.5 : -0.5);
+
+      const roller = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.15, 1.15, 1.1, 14).rotateX(Math.PI / 2),
+        mats.brassGear
+      );
+      roller.position.set(28.4, oy + (idx === 0 ? 0.7 : -0.6), idx === 0 ? 0.5 : -0.5);
+
+      const biasSpr = new THREE.Mesh(
+        createTorsionSpringGeometry(1.3, 1.4, 3, 0.22, 2.2),
+        mats.beCuSpring
+      );
+      biasSpr.position.set(24.8, oy, idx === 0 ? 1.15 : -1.15);
+      biasSpr.userData.noEdges = true;
+
+      g.add(hookArm, catchTip, roller, biasSpr);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-curtain-hooks',
+        30,
+        '#64748b',
+        g,
+        new THREE.Vector3(0, 0, 12.7),
+        new THREE.Vector3(30.0, -34.0, -10.0),
+        new THREE.Vector3(30.0, -32.0, 44.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH31. [Phase 11] 1/400s Boost-Coil Copper Thermal Bridge & Shroud (z = +12.6 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const cuStrap = new THREE.Mesh(
+      new THREE.BoxGeometry(9.6, 16.5, 0.65),
+      mats.copperHeatSpreader
+    );
+    cuStrap.position.set(31.8, 12.6, 0.6);
+    const cuWing = new THREE.Mesh(
+      new THREE.BoxGeometry(8.2, 6.4, 0.65),
+      mats.copperHeatSpreader
+    );
+    cuWing.position.set(39.4, 15.2, -0.4);
+    cuWing.rotation.y = 0.26;
+    // Pink silicone TIM interface block contacting holding solenoids & boost coil
+    const timBlock = new THREE.Mesh(new THREE.BoxGeometry(8.2, 13.8, 0.85), mats.thermalPadPink);
+    timBlock.position.set(31.8, 12.6, -0.1);
+    // Thermal-transfer graphite tape tail wrapping toward body frame
+    const tapeTail = new THREE.Mesh(
+      new THREE.BoxGeometry(6.4, 11.2, 0.28),
+      mats.thermalTransferTape
+    );
+    tapeTail.position.set(42.2, 15.2, -1.6);
+    tapeTail.rotation.y = 0.45;
+    g.add(cuStrap, cuWing, timBlock, tapeTail);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-coil-heat-bridge',
+        31,
+        '#ea580c',
+        g,
+        new THREE.Vector3(0, 0, 12.6),
+        new THREE.Vector3(46.0, 28.0, -6.0),
+        new THREE.Vector3(44.0, 26.0, 48.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH32. [Phase 11] 1/400s Flash X-Sync Curtain-1 Trigger Contact & Gate (z = +12.0 mm)
+  // =========================================================================
+  let xSyncGlow!: THREE.Mesh;
+  {
+    const g = new THREE.Group();
+    const sx = -20.2;
+    const sy = -14.8;
+    const swBody = new THREE.Mesh(new THREE.BoxGeometry(5.6, 4.4, 2.2), mats.mountPpsInsulator);
+    swBody.position.set(sx, sy, 0);
+    g.add(swBody);
+
+    // Dual gold X-sync micro-wiper fork contacts triggered on Curtain-1 full open
+    for (const dy of [-0.7, 0.7]) {
+      const fork = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.36, 0.65), mats.goldPlating);
+      fork.position.set(sx + 3.2, sy + dy, 0.35);
+      g.add(fork);
+    }
+
+    // Live animated Flash X-Sync trigger flash pulse gem (lights up when Curtain 1 reaches bottom!)
+    xSyncGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(1.15, 14, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0,
+        clippingPlanes: cp,
+      })
+    );
+    xSyncGlow.position.set(sx, sy, 1.35);
+    xSyncGlow.userData.noEdges = true;
+    g.add(xSyncGlow);
+
+    // Bottom FPC sync lead running to right-side shutter main harness
+    const fpcRun = new THREE.Mesh(new THREE.BoxGeometry(42.0, 2.2, 0.24), mats.polyimideFpc);
+    fpcRun.position.set(1.2, -19.8, -0.5);
+    const fpcDrop = new THREE.Mesh(new THREE.BoxGeometry(2.4, 5.8, 0.24), mats.polyimideFpc);
+    fpcDrop.position.set(sx, -17.4, -0.5);
+    g.add(fpcRun, fpcDrop);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-x-sync-contact',
+        32,
+        '#0ea5e9',
+        g,
+        new THREE.Vector3(0, 0, 12.0),
+        new THREE.Vector3(-28.0, -24.0, -18.0),
+        new THREE.Vector3(-28.0, -22.0, 38.0),
+        cp,
+        0.24
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH33. [Phase 11] Rear 36×24mm Knife-Edge Mask & Sensor-Chamber EPDM Seal (z = +9.85 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const maskShape = createFrameShape(50.2, 38.2, 2.6, 37.8, 25.8, 0.8);
+    const maskMesh = new THREE.Mesh(
+      extrudeCentered(maskShape, 0.65, 0.06, 0.14, 18),
+      mats.velvetFlockTrap
+    );
+    g.add(maskMesh);
+
+    // Full-perimeter closed-cell EPDM acoustic & sensor-chamber dust-blocking gasket
+    const epdmShape = createFrameShape(49.2, 37.2, 2.2, 43.2, 31.2, 1.4);
+    const epdmMesh = new THREE.Mesh(
+      extrudeCentered(epdmShape, 0.62, 0.06, 0.06, 18),
+      mats.epdmGasket
+    );
+    epdmMesh.position.z = -0.58;
+    g.add(epdmMesh);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-rear-mask-gasket',
+        33,
+        '#1e293b',
+        g,
+        new THREE.Vector3(0, 0, 9.85),
+        new THREE.Vector3(0, 0, -58.0),
+        new THREE.Vector3(0, 0, 8.5),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH34. [Phase 12] Normally-Open / Normally-Closed Electromagnet Switching Lock Lever (z = +13.0 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const lever = new THREE.Mesh(new THREE.BoxGeometry(10.5, 2.2, 0.85), mats.linkArmSteel);
+    lever.position.set(27.8, 18.8, 0);
+    lever.rotation.z = -0.28;
+    const pivot = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.1, 1.1, 2.2, 14).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    pivot.position.set(31.8, 17.6, 0);
+    const toggleCam = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.2, 2.2, 1.1, 18).rotateX(Math.PI / 2),
+      mats.pomGear
+    );
+    toggleCam.position.set(23.5, 19.6, 0.25);
+    const lockSpring = new THREE.Mesh(
+      createTorsionSpringGeometry(1.25, 1.3, 3, 0.2, 2.2),
+      mats.beCuSpring
+    );
+    lockSpring.position.set(31.8, 17.6, 1.0);
+    lockSpring.userData.noEdges = true;
+    g.add(lever, pivot, toggleCam, lockSpring);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-no-nc-switch',
+        34,
+        '#0ea5e9',
+        g,
+        new THREE.Vector3(0, 0, 13.0),
+        new THREE.Vector3(44.0, 38.0, 4.0),
+        new THREE.Vector3(44.0, 36.0, 56.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH35. [Phase 12] Power-Off Sensor Protection Dust-Shield Interlock Latch & Cam (z = +11.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const latchBar = new THREE.Mesh(new THREE.BoxGeometry(11.6, 2.4, 0.9), mats.stainlessMachined);
+    latchBar.position.set(-25.8, 14.5, 0);
+    latchBar.rotation.z = 0.22;
+    const deadlockHook = new THREE.Mesh(new THREE.BoxGeometry(2.8, 3.8, 1.1), mats.titaniumRivet);
+    deadlockHook.position.set(-20.4, 15.8, 0.15);
+    const driveCam = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.8, 2.8, 1.2, 20).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    driveCam.position.set(-30.5, 13.2, -0.2);
+    const overloadSpr = new THREE.Mesh(
+      createHelicalSpringGeometry(0.85, 4.4, 6, 0.16).rotateZ(Math.PI / 2),
+      mats.beCuSpring
+    );
+    overloadSpr.position.set(-28.0, 16.8, 0);
+    overloadSpr.userData.noEdges = true;
+    g.add(latchBar, deadlockHook, driveCam, overloadSpr);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-sensor-shield',
+        35,
+        '#6366f1',
+        g,
+        new THREE.Vector3(0, 0, 11.4),
+        new THREE.Vector3(-42.0, 26.0, -24.0),
+        new THREE.Vector3(-42.0, 26.0, 34.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH36. [Phase 12] Leading/Trailing Differential Cocking Cam & Offset Eccentric Pin (z = +12.4 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    // Dual-stage 60-degree phase-offset differential cocking cam disks
+    const cam1 = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.4, 4.4, 1.15, 24).rotateX(Math.PI / 2),
+      mats.brassGear
+    );
+    cam1.scale.set(1.18, 0.88, 1);
+    cam1.position.set(29.2, -3.5, 0.65);
+
+    const cam2 = new THREE.Mesh(
+      new THREE.CylinderGeometry(4.4, 4.4, 1.15, 24).rotateX(Math.PI / 2),
+      mats.linkArmSteel
+    );
+    cam2.scale.set(1.18, 0.88, 1);
+    cam2.rotation.z = Math.PI / 3; // True 60-degree phase stagger!
+    cam2.position.set(29.2, -3.5, -0.65);
+
+    const shaft = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.1, 1.1, 4.4, 14).rotateX(Math.PI / 2),
+      mats.stainlessMachined
+    );
+    shaft.position.set(29.2, -3.5, 0);
+    const eccPin = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.75, 0.75, 1.8, 12).rotateX(Math.PI / 2),
+      mats.titaniumRivet
+    );
+    eccPin.position.set(32.0, -1.8, 0.9);
+    g.add(cam1, cam2, shaft, eccPin);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-diff-cock-cam',
+        36,
+        '#d97706',
+        g,
+        new THREE.Vector3(0, 0, 12.4),
+        new THREE.Vector3(46.0, -8.0, -16.0),
+        new THREE.Vector3(46.0, -8.0, 42.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH37. [Phase 12] High-Speed Curtain-Bounce Brake Lever & Friction Clutch Governor (z = +13.6 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const brakeArm = new THREE.Mesh(new THREE.BoxGeometry(9.2, 2.0, 0.78), mats.linkArmSteel);
+    brakeArm.position.set(-26.4, -8.2, 0);
+    brakeArm.rotation.z = -0.35;
+    const clutchDrum = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.6, 2.6, 1.5, 20).rotateX(Math.PI / 2),
+      mats.copperHeatSpreader
+    );
+    clutchDrum.position.set(-30.2, -6.4, 0);
+    const frictionRing = new THREE.Mesh(new THREE.TorusGeometry(2.65, 0.34, 8, 20), mats.damperElastomer);
+    frictionRing.position.set(-30.2, -6.4, 0.3);
+    frictionRing.userData.noEdges = true;
+    const catchPawl = new THREE.Mesh(new THREE.BoxGeometry(2.2, 3.2, 0.85), mats.titaniumRivet);
+    catchPawl.position.set(-22.4, -10.2, 0.15);
+    g.add(brakeArm, clutchDrum, frictionRing, catchPawl);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-rebound-governor',
+        37,
+        '#dc2626',
+        g,
+        new THREE.Vector3(0, 0, 13.6),
+        new THREE.Vector3(-42.0, -12.0, 14.0),
+        new THREE.Vector3(-42.0, -12.0, 62.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH38. [Phase 12] Inclined 18° Matte-Black Aperture Stray-Light Baffle Wall (z = +15.05 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    // 4-sided 18-degree inclined knife-edge stray-light absorber wall framing 36x24mm aperture
+    for (const sx of [-1, 1]) {
+      const sideWall = new THREE.Mesh(new THREE.BoxGeometry(2.6, 26.2, 1.45), mats.velvetFlockTrap);
+      sideWall.position.set(sx * 19.6, 0, 0);
+      sideWall.rotation.y = sx * THREE.MathUtils.degToRad(18);
+      g.add(sideWall);
+    }
+    for (const sy of [-1, 1]) {
+      const hWall = new THREE.Mesh(new THREE.BoxGeometry(39.4, 2.2, 1.45), mats.velvetFlockTrap);
+      hWall.position.set(0, sy * 13.4, 0);
+      hWall.rotation.x = -sy * THREE.MathUtils.degToRad(18);
+      g.add(hWall);
+    }
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-slit-baffle-wall',
+        38,
+        '#0f172a',
+        g,
+        new THREE.Vector3(0, 0, 15.05),
+        new THREE.Vector3(0, -28.0, 32.0),
+        new THREE.Vector3(0, -28.0, 82.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
+  // SH39. [Phase 12] Sub-Millisecond Curtain-Velocity Diagnostic Hall Sensor & Magnet (z = +11.8 mm)
+  // =========================================================================
+  {
+    const g = new THREE.Group();
+    const hallPcb = new THREE.Mesh(new THREE.BoxGeometry(8.4, 6.2, 0.7), mats.hdiMainboardPcb);
+    hallPcb.position.set(22.4, -20.8, 0);
+    const hallIc = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.8, 0.75), mats.icEpoxy);
+    hallIc.position.set(22.4, -20.8, 0.65);
+    const refMag = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.4, 1.4, 1.1, 16).rotateX(Math.PI / 2),
+      mats.neodymiumMagnet
+    );
+    refMag.position.set(22.4, -16.8, 0.8);
+    const fpcLink = new THREE.Mesh(new THREE.BoxGeometry(3.2, 7.6, 0.22), mats.polyimideFpc);
+    fpcLink.position.set(26.8, -18.5, -0.35);
+    g.add(hallPcb, hallIc, refMag, fpcLink);
+
+    parts.push(
+      finalizeShutterPart(
+        'shutter-cycle-hall',
+        39,
+        '#10b981',
+        g,
+        new THREE.Vector3(0, 0, 11.8),
+        new THREE.Vector3(36.0, -40.0, -26.0),
+        new THREE.Vector3(36.0, -38.0, 30.0),
+        cp,
+        0.26
+      )
+    );
+  }
+
+  // =========================================================================
   // PARALLELOGRAM KINEMATICS ENGINE + COUNTERWEIGHT & ARMATURE DYNAMICS
   // =========================================================================
   const slitState: ShutterDynamicRig['slitState'] = {
@@ -1382,6 +1930,7 @@ export function buildShutterParts(
       (dualBoostCoilGlow.material as THREE.MeshBasicMaterial).opacity = 0;
       (magnet1Glow.material as THREE.MeshBasicMaterial).opacity = 0;
       (magnet2Glow.material as THREE.MeshBasicMaterial).opacity = 0;
+      (xSyncGlow.material as THREE.MeshBasicMaterial).opacity = 0;
       return;
     }
 
@@ -1430,9 +1979,7 @@ export function buildShutterParts(
 
     const c1Edge = positionCurtain1(p1);
     const c2Edge = positionCurtain2(p2);
-    // Counterweight lever swings in exact opposite phase to cancel vertical shutter recoil!
     counterweightLever.rotation.z = THREE.MathUtils.lerp(-0.55, 0.55, (p1 + p2) * 0.5);
-    // Armature latches snap open instantaneously when their holding magnet de-energizes!
     armatureLever1.rotation.z = mag1 > 0.2 ? 0 : -0.18;
     armatureLever2.rotation.z = mag2 > 0.2 ? 0 : -0.18;
 
@@ -1447,6 +1994,9 @@ export function buildShutterParts(
       : 0;
     (magnet1Glow.material as THREE.MeshBasicMaterial).opacity = mag1;
     (magnet2Glow.material as THREE.MeshBasicMaterial).opacity = mag2;
+    // Flash X-Sync pulse illuminates at the exact instant Curtain 1 reaches full-open bottom!
+    const xSyncFire = slitState.phaseLabel === 'slit' && p1 >= 0.88 && p2 < 0.82;
+    (xSyncGlow.material as THREE.MeshBasicMaterial).opacity = xSyncFire ? 0.96 : 0;
   };
 
   applyKinematics(0, false);

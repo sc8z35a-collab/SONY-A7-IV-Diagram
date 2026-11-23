@@ -533,7 +533,9 @@ export class ZeroTextControls {
           part.order === 46 ||
           part.order === 57 ||
           part.order === 58 ||
-          part.order === 62
+          part.order === 62 ||
+          part.order === 69 ||
+          part.order === 70
             ? 32
             : part.order === 8 ||
                 part.order === 10 ||
@@ -543,7 +545,9 @@ export class ZeroTextControls {
                 part.order === 26 ||
                 part.order === 35 ||
                 part.order === 40 ||
-                part.order === 53
+                part.order === 53 ||
+                part.order === 63 ||
+                part.order === 66
               ? 26
               : part.order === 3 ||
                   part.order === 7 ||
@@ -558,62 +562,177 @@ export class ZeroTextControls {
                   part.order === 39 ||
                   part.order === 41 ||
                   part.order === 50 ||
-                  part.order === 54
+                  part.order === 54 ||
+                  part.order === 64 ||
+                  part.order === 67 ||
+                  part.order === 71 ||
+                  part.order === 74
                 ? 21
                 : 16;
       } else if (part.subsystem === 'lcd') {
         widthPx =
-          part.order === 1 || part.order === 4 || part.order === 9 || part.order === 14
+          part.order === 1 ||
+          part.order === 4 ||
+          part.order === 9 ||
+          part.order === 14 ||
+          part.order === 16 ||
+          part.order === 18 ||
+          part.order === 22
             ? 30
-            : part.order === 2 || part.order === 6 || part.order === 10 || part.order === 11
+            : part.order === 2 ||
+                part.order === 6 ||
+                part.order === 10 ||
+                part.order === 11 ||
+                part.order === 17 ||
+                part.order === 21 ||
+                part.order === 23 ||
+                part.order === 27
               ? 24
               : 18;
       } else if (part.subsystem === 'body') {
         widthPx =
-          part.order === 3 || part.order === 7 || part.order === 8 || part.order === 9 || part.order === 12 || part.order === 26
+          part.order === 3 ||
+          part.order === 7 ||
+          part.order === 8 ||
+          part.order === 9 ||
+          part.order === 12 ||
+          part.order === 26 ||
+          part.order === 29 ||
+          part.order === 33 ||
+          part.order === 35 ||
+          part.order === 38
             ? 32
-            : part.order === 1 || part.order === 5 || part.order === 6 || part.order === 14 || part.order === 16 || part.order === 17 || part.order === 18 || part.order === 20
+            : part.order === 1 ||
+                part.order === 5 ||
+                part.order === 6 ||
+                part.order === 14 ||
+                part.order === 16 ||
+                part.order === 17 ||
+                part.order === 18 ||
+                part.order === 20 ||
+                part.order === 27 ||
+                part.order === 34 ||
+                part.order === 37
               ? 25
               : 18;
       } else if (part.subsystem === 'mount') {
         widthPx =
-          part.order === 1 || part.order === 11 || part.order === 12
+          part.order === 1 ||
+          part.order === 11 ||
+          part.order === 12 ||
+          part.order === 13 ||
+          part.order === 18 ||
+          part.order === 22 ||
+          part.order === 24
             ? 32
-            : part.order === 3 || part.order === 4 || part.order === 5 || part.order === 9 || part.order === 10
+            : part.order === 3 ||
+                part.order === 4 ||
+                part.order === 5 ||
+                part.order === 9 ||
+                part.order === 10 ||
+                part.order === 15 ||
+                part.order === 17 ||
+                part.order === 20 ||
+                part.order === 23 ||
+                part.order === 26
               ? 25
               : 18;
       } else if (part.subsystem === 'evf') {
         widthPx =
-          part.order === 1 || part.order === 14 || part.order === 18
+          part.order === 1 ||
+          part.order === 14 ||
+          part.order === 18 ||
+          part.order === 19 ||
+          part.order === 23 ||
+          part.order === 27
             ? 32
-            : part.order === 6 || part.order === 8 || part.order === 9 || part.order === 11 || part.order === 12 || part.order === 16
+            : part.order === 6 ||
+                part.order === 8 ||
+                part.order === 9 ||
+                part.order === 11 ||
+                part.order === 12 ||
+                part.order === 16 ||
+                part.order === 22 ||
+                part.order === 24 ||
+                part.order === 26 ||
+                part.order === 29
               ? 26
-              : part.order === 2 || part.order === 3 || part.order === 10 || part.order === 13 || part.order === 15 || part.order === 17
+              : part.order === 2 ||
+                  part.order === 3 ||
+                  part.order === 10 ||
+                  part.order === 13 ||
+                  part.order === 15 ||
+                  part.order === 17 ||
+                  part.order === 20 ||
+                  part.order === 21 ||
+                  part.order === 25 ||
+                  part.order === 28 ||
+                  part.order === 31
                 ? 21
                 : 17;
       } else if (part.subsystem === 'mainboard') {
         widthPx =
-          part.order === 14 || part.order === 16
+          part.order === 14 || part.order === 16 || part.order === 18 || part.order === 29
             ? 32
-            : part.order === 1 || part.order === 2
-              ? 28
-              : part.order === 4 || part.order === 6 || part.order === 9 || part.order === 12
-                ? 24
+            : part.order === 1 ||
+                part.order === 2 ||
+                part.order === 17 ||
+                part.order === 19 ||
+                part.order === 20 ||
+                part.order === 27
+              ? 27
+              : part.order === 4 ||
+                  part.order === 6 ||
+                  part.order === 9 ||
+                  part.order === 12 ||
+                  part.order === 21 ||
+                  part.order === 26 ||
+                  part.order === 28 ||
+                  part.order === 30
+                ? 23
                 : 17;
       } else if (part.subsystem === 'shutter') {
         widthPx =
-          part.order === 1 || part.order === 25 || part.order === 26
+          part.order === 1 ||
+          part.order === 25 ||
+          part.order === 26 ||
+          part.order === 27 ||
+          part.order === 33 ||
+          part.order === 38
             ? 32
-            : part.order === 4 || part.order === 8 || part.order === 12 || part.order === 14 || part.order === 16 || part.order === 20
+            : part.order === 4 ||
+                part.order === 8 ||
+                part.order === 12 ||
+                part.order === 14 ||
+                part.order === 16 ||
+                part.order === 20 ||
+                part.order === 29 ||
+                part.order === 32 ||
+                part.order === 34 ||
+                part.order === 36
               ? 26
-              : part.order === 2 || part.order === 5 || part.order === 9 || part.order === 13 || part.order === 15 || part.order === 17 || part.order === 22 || part.order === 24
+              : part.order === 2 ||
+                  part.order === 5 ||
+                  part.order === 9 ||
+                  part.order === 13 ||
+                  part.order === 15 ||
+                  part.order === 17 ||
+                  part.order === 22 ||
+                  part.order === 24 ||
+                  part.order === 28 ||
+                  part.order === 30 ||
+                  part.order === 31 ||
+                  part.order === 35 ||
+                  part.order === 37 ||
+                  part.order === 39
                 ? 21
                 : 16;
       } else if (part.subsystem === 'sensor') {
-        const ratio = (part.order - 1) / 25;
-        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 15 ? 8 : 0));
+        const ratio = (part.order - 1) / 39;
+        widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 18 ? 8 : 0));
       } else {
-        widthPx = Math.round(18 + (idx === 3 || idx === 4 ? 10 : 4));
+        const ratio = idx / 14;
+        widthPx = Math.round(17 + Math.sin(ratio * Math.PI) * 13);
       }
       bar.style.width = `${widthPx}px`;
 

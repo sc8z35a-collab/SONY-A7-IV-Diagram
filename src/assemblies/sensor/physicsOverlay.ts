@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
+import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
 
 export interface PhysicsOverlayController {
   macroOverlay: THREE.Group;
@@ -56,8 +57,9 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     coords: Array<[number, number]>,
     zFront: number,
     zBack: number
-  ): THREE.Group => {
+  ): { grp: THREE.Group; lines: THREE.Line[] } => {
     const grp = new THREE.Group();
+    const lines: THREE.Line[] = [];
     const mat = new THREE.LineDashedMaterial({
       color: 0x9aa3b2,
       dashSize: 1.8,
@@ -75,35 +77,38 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
       const line = new THREE.Line(geo, mat);
       line.computeLineDistances();
       grp.add(line);
+      lines.push(line);
     }
-    return grp;
+    return { grp, lines };
   };
 
-  macroExplodeGuides.add(
-    buildGuideLines(
-      [
-        [-21.5, 16.5],
-        [21.5, 16.5],
-        [-21.5, -16.5],
-        [21.5, -16.5],
-      ],
-      56,
-      -74
-    )
+  const macroAxial = buildGuideLines(
+    [
+      [-21.5, 16.5],
+      [21.5, 16.5],
+      [-21.5, -16.5],
+      [21.5, -16.5],
+    ],
+    92,
+    -170
   );
+  macroExplodeGuides.add(macroAxial.grp);
+  const macroRadialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 20);
+  macroExplodeGuides.add(macroRadialGuides.group);
 
-  microExplodeGuides.add(
-    buildGuideLines(
-      [
-        [-11.0, 11.0],
-        [11.0, 11.0],
-        [-11.0, -11.0],
-        [11.0, -11.0],
-      ],
-      38,
-      -36
-    )
+  const microAxial = buildGuideLines(
+    [
+      [-11.0, 11.0],
+      [11.0, 11.0],
+      [-11.0, -11.0],
+      [11.0, -11.0],
+    ],
+    50,
+    -58
   );
+  microExplodeGuides.add(microAxial.grp);
+  const microRadialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 12);
+  microExplodeGuides.add(microRadialGuides.group);
 
   // =========================================================================
   // 2. MACRO OPTICAL RAY PATH & PHOTON PACKETS
@@ -334,32 +339,32 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     const zFront = (frontPart ? frontPart.group.position.z : 7.8) + 2.0;
     const zBack = (backPart ? backPart.group.position.z : -10.85) - 2.0;
 
-    let idx = 0;
-    macroExplodeGuides.traverse((o) => {
-      if ((o as THREE.Line).isLine) {
-        const line = o as THREE.Line;
-        (line.material as THREE.LineDashedMaterial).opacity = opacity;
-        const coords = macroGuideCoords[idx++];
-        if (coords) {
-          const attr = line.geometry.attributes.position as THREE.BufferAttribute;
-          attr.setXYZ(0, coords[0], coords[1], zFront);
-          attr.setXYZ(1, coords[0], coords[1], zBack);
-          attr.needsUpdate = true;
-          line.computeLineDistances();
-        }
+    macroAxial.lines.forEach((line, idx) => {
+      (line.material as THREE.LineDashedMaterial).opacity = opacity;
+      const coords = macroGuideCoords[idx];
+      if (coords) {
+        const attr = line.geometry.attributes.position as THREE.BufferAttribute;
+        attr.setXYZ(0, coords[0], coords[1], zFront);
+        attr.setXYZ(1, coords[0], coords[1], zBack);
+        attr.needsUpdate = true;
+        line.computeLineDistances();
       }
     });
+    macroRadialGuides.update(explodeFactor, visible, macroParts);
   };
+
+  let latestMicroParts: CadPart[] = [];
 
   const updateMicroGuides = (explodeFactor: number, visible: boolean) => {
     const opacity = THREE.MathUtils.clamp((explodeFactor - 0.04) * 0.55, 0, 0.42);
     microExplodeGuides.visible = visible && opacity > 0.01;
 
-    microExplodeGuides.traverse((o) => {
-      if ((o as THREE.Line).isLine) {
-        ((o as THREE.Line).material as THREE.LineDashedMaterial).opacity = opacity;
-      }
+    microAxial.lines.forEach((line) => {
+      (line.material as THREE.LineDashedMaterial).opacity = opacity;
     });
+    if (latestMicroParts.length > 0) {
+      microRadialGuides.update(explodeFactor, visible, latestMicroParts);
+    }
   };
 
   const updateMacro = (
@@ -507,6 +512,7 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     physicsActive: boolean,
     microParts: CadPart[]
   ) => {
+    latestMicroParts = microParts;
     // 2. MICRO PIXEL MODE POSITIONING & PHOTON -> ELECTRON TRANSFER FLOW
     for (const p of microParts) {
       p.group.position.set(
@@ -520,13 +526,15 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
       const ocl = microParts.find((p) => p.id === 'micro-ocl');
       const pd = microParts.find((p) => p.id === 'micro-pd-cross');
       const gs = microParts.find((p) => p.id === 'micro-2layer-gs');
-      const dram = microParts.find((p) => p.id === 'micro-adc-dram');
+      const dram =
+        microParts.find((p) => p.id === 'micro-stacked-dram') ??
+        microParts.find((p) => p.id === 'micro-adc-dram');
 
-      const zTop = (ocl ? ocl.group.position.z : 11.6) + 12.0;
-      const zOcl = (ocl ? ocl.group.position.z : 11.6) + 2.4;
+      const zTop = (ocl ? ocl.group.position.z : 12.8) + 12.0;
+      const zOcl = (ocl ? ocl.group.position.z : 12.8) + 2.4;
       const zPd = pd ? pd.group.position.z : 2.4;
       const zGs = gs ? gs.group.position.z : -3.4;
-      const zDram = dram ? dram.group.position.z : -11.4;
+      const zDram = dram ? dram.group.position.z : -15.0;
 
       microRaySpecs.forEach((spec, sIdx) => {
         const { center, subOffsets, lines, electronDots } = spec;
