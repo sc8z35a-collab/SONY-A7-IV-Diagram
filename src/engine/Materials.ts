@@ -148,6 +148,10 @@ export interface MaterialLibrary {
   vcCopperMeshWick: THREE.MeshPhysicalMaterial;
   evfIrWindowBlack: THREE.MeshPhysicalMaterial;
   conductiveNiCuFoam: THREE.MeshStandardMaterial;
+  // Phase 17 Mechanical Shutter & Surroundings Deep-Audit Materials
+  aramidKevlarWeave: THREE.MeshPhysicalMaterial;
+  oilTrapPorousPad: THREE.MeshStandardMaterial;
+  varistorRingBlue: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2617,6 +2621,38 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     roughness: 0.52,
   });
 
+  // Phase 17: Golden-Amber Cross-Ply Aramid (Kevlar) Tough Shutter Blade Core Weave
+  const aramidTex = createCarbonFiberTexture('#c59b2d');
+  const aramidKevlarWeave = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd9b040,
+    map: aramidTex.map,
+    bumpMap: aramidTex.bumpMap,
+    bumpScale: 0.08,
+    metalness: 0.08,
+    roughness: 0.44,
+    clearcoat: 0.18,
+    clearcoatRoughness: 0.38,
+  });
+
+  // Phase 17: Sintered Microporous Oil-Wicking Lubricant Trap Barrier Felt
+  const oilTrapPorousPad = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0x2c3440,
+    metalness: 0.04,
+    roughness: 0.94,
+  });
+
+  // Phase 17: Zinc-Oxide (ZnO) Cobalt-Blue Ceramic Spark-Suppressing Ring Varistor
+  const varistorRingBlue = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x1d63b8,
+    metalness: 0.06,
+    roughness: 0.3,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.22,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2751,6 +2787,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     vcCopperMeshWick,
     evfIrWindowBlack,
     conductiveNiCuFoam,
+    aramidKevlarWeave,
+    oilTrapPorousPad,
+    varistorRingBlue,
   ];
 
   return {
@@ -2888,6 +2927,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     vcCopperMeshWick,
     evfIrWindowBlack,
     conductiveNiCuFoam,
+    aramidKevlarWeave,
+    oilTrapPorousPad,
+    varistorRingBlue,
     allMaterials,
   };
 }

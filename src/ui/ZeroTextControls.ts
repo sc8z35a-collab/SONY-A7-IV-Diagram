@@ -794,7 +794,12 @@ export class ZeroTextControls {
           part.order === 40 ||
           part.order === 43 ||
           part.order === 49 ||
-          part.order === 51
+          part.order === 51 ||
+          part.order === 60 ||
+          part.order === 66 ||
+          part.order === 73 ||
+          part.order === 74 ||
+          part.order === 75
             ? 32
             : part.order === 4 ||
                 part.order === 8 ||
@@ -811,7 +816,14 @@ export class ZeroTextControls {
                 part.order === 46 ||
                 part.order === 50 ||
                 part.order === 54 ||
-                part.order === 56
+                part.order === 56 ||
+                part.order === 59 ||
+                part.order === 61 ||
+                part.order === 65 ||
+                part.order === 68 ||
+                part.order === 69 ||
+                part.order === 71 ||
+                part.order === 76
               ? 26
               : part.order === 2 ||
                   part.order === 5 ||
@@ -831,7 +843,8 @@ export class ZeroTextControls {
                   part.order === 45 ||
                   part.order === 47 ||
                   part.order === 52 ||
-                  part.order === 55
+                  part.order === 55 ||
+                  part.order >= 58
                 ? 21
                 : 16;
       } else if (part.subsystem === 'sensor') {

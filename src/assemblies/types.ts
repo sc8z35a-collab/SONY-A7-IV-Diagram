@@ -564,7 +564,28 @@ export interface PartExplanation {
     | 'body_sv_dial_fpc_cover'
     | 'body_rear_ftb_wp_cushions'
     | 'body_battery_cell_safety'
-    | 'body_anti_twist_tripod_pin';
+    | 'body_anti_twist_tripod_pin'
+    // Phase 17: Mechanical Shutter & Surroundings Deep-Audit Standalone Micro (+20: SH58–SH77 -> 77 total in standalone shutter, 39 in whole-camera)
+    | 'shutter_blade_press_springs'
+    | 'shutter_rivet_reinforce_collars'
+    | 'shutter_blade_aramid_ply'
+    | 'shutter_oil_trap_barriers'
+    | 'shutter_air_vent_equalizer'
+    | 'shutter_em_tilt_shims'
+    | 'shutter_em_coil_terminals'
+    | 'shutter_em_flux_separator'
+    | 'shutter_dual_boost_stator'
+    | 'shutter_efcs_brake_solenoid'
+    | 'shutter_motor_commutator_varistor'
+    | 'shutter_charge_rotary_encoder'
+    | 'shutter_charge_oldham_sockets'
+    | 'shutter_charge_oem_bolts'
+    | 'shutter_charge_motor_isolator'
+    | 'shutter_mecha_cradle_frame'
+    | 'shutter_mount_baffle_trough'
+    | 'shutter_ibis_clearance_frame'
+    | 'shutter_hbridge_driver_stage'
+    | 'shutter_eeprom_cal_tag';
 }
 
 export interface CadPart {

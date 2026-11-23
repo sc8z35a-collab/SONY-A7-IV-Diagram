@@ -15,6 +15,7 @@ import {
 } from '../../engine/CadHelpers';
 import { SHUTTER_EXPLANATIONS } from './shutterExplanations';
 import { buildShutterMicroParts } from './shutterMicroParts';
+import { buildShutterUltraAuditParts } from './shutterUltraAuditParts';
 
 export interface ShutterDynamicRig {
   curtain1Blades: THREE.Mesh[];
@@ -2004,6 +2005,9 @@ export function buildShutterParts(
 
   // Append 18 Phase 13 standalone-only OEM & patent micro-parts (SH40–SH57; omitted in whole-camera views!)
   parts.push(...buildShutterMicroParts(mats));
+
+  // Append 20 Phase 17 standalone-only shutter & surroundings deep-audit micro-parts (SH58–SH77; omitted in whole-camera views!)
+  parts.push(...buildShutterUltraAuditParts(mats));
 
   return {
     parts,

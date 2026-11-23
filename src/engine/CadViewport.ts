@@ -504,8 +504,9 @@ export class CadViewport {
       d = 192 + e * 340;
       target = new THREE.Vector3(-18.0 * e, 0.0 + e * 2.0, -22.0 - e * 4.0);
     } else if (this.mode === 'shutter') {
-      d = 186 + e * 308;
-      target = new THREE.Vector3(6.0 + e * 10.0, -3.2, 14.0 - e * 4.0);
+      // 77-part standalone Mechanical Shutter & Surroundings ultra-anatomy (39 macro + 38 standalone-only OEM/patent micro)
+      d = 194 + e * 430;
+      target = new THREE.Vector3(6.0 + e * 44.0, -2.5 + e * 2.0, 14.0 - e * 6.0);
     } else if (this.mode === 'integrated') {
       // Assembled complete 305-macro-part flagship camera (231 body + 74-part 50mm F1.2 lens), vs panoramic ultra-dissection!
       d = 390 + e * 1290;
