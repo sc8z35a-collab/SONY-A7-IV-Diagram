@@ -675,7 +675,36 @@ export interface PartExplanation {
     | 'mb_io_lowcap_esd_chokes'
     | 'mb_bga_underfill_fiducials'
     | 'mb_ina_fuel_gauge_ic'
-    | 'mb_5a_fuse_rev_mosfet';
+    | 'mb_5a_fuse_rev_mosfet'
+    // Phase 20A: Micro Pixel Semiconductor Deep-Audit (+15: M36–M50 -> 50 total micro layers)
+    | 'micro_dsa_phrf_film'
+    | 'micro_ob_dark_clamp'
+    | 'micro_inter_polysi_wiring'
+    | 'micro_soi_box_finfet'
+    | 'micro_h2_fga_passivation'
+    | 'micro_sab_salicide_block'
+    | 'micro_sti_ldd_spacer'
+    | 'micro_cu_tan_barrier'
+    | 'micro_row_vdriver_levelshift'
+    | 'micro_col_bias_cascode'
+    | 'micro_inpixel_dram_gs'
+    | 'micro_pga_dual_gain_bus'
+    | 'micro_onchip_temp_diode'
+    | 'micro_emram_otp_fuse'
+    | 'micro_rear_bump_sealring'
+    // Phase 20B: 55mm Large-Diameter Lens Mount Deep-Audit (+12: M49–M60 -> 60 total mount layers)
+    | 'mount_screw_orange_orings'
+    | 'mount_sh1035_shield_board'
+    | 'mount_sw1041_front_subboard'
+    | 'mount_sandwich_inner_collar'
+    | 'mount_3point_sensor_pillars'
+    | 'mount_self_tap_bosses'
+    | 'mount_pin1_pin10_short_loop'
+    | 'mount_snap_ground_wire'
+    | 'mount_rocker_pivot_shaft'
+    | 'mount_631s_lightseal_tape'
+    | 'mount_bayonet_anti_galvanic'
+    | 'mount_baffle_clip_tabs';
 }
 
 export interface CadPart {

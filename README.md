@@ -1,11 +1,17 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 600 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 627 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (600 Dissectible CAD Sub-Assemblies: 305 Macro + 260 Standalone-Only Macro-Subsystem Micro + 35 Micro Pixel)
+## Complete Camera Assembly (627 Dissectible CAD Sub-Assemblies: 320 Macro + 307 Standalone-Only Micro/Nano)
+
+### Phase 20 — Micro Pixel Semiconductor Cross-Section & 55mm Lens Mount Deep-Audit Ultra-Anatomy (+27 Parts → 627 Total!)
+Informed by **Sony Semiconductor IEDM 2021–2025 / IEEE EDTM Best Paper / TechInsights α9 III (`IMX810AQL`) / ISSCC 2025** papers (DSA pseudo high-refractive-index film `pHRF`, 2-layer pixel intermediate heat-resistant poly-Si wiring, 2nd-layer SOI buried oxide `BOX` + 3D pixel FinFET, voltage-domain global shutter dual in-pixel MIM/DRAM storage cells, on-die STT-eMRAM / OTP eFuse) and **Sony Encompass OEM ILCE-7M4 / ILCE-7RM5 / ILCE-1 teardowns & Lensrentals / Cameracraft / CML E-mount studies** (`A-5033-450-A` `SH-1035`, `A-5033-451-A` `SW-1041`, `5-036-060-01`, `5-036-042-01`, `7-500-004-93` Tape `631S #25`, front 6-screw orange silicone waterproof O-rings, `M1.6 × P0.65mm` magnesium self-tapping bosses, 3-layer GF40-PPS inner sandwich collar, Pin 1–Pin 10 hot-swap presence short-loop, detachable blue ETFE snap-ground lead):
+- **Whole-Camera Omission Architecture (`standaloneOnly: true`)**: All 27 new Phase 20 micro/nano parts (bringing total standalone-only parts to **307**) are **strictly omitted** in Complete Camera (`305` macro parts) and Complete Camera Body Only (`231` macro parts) views and appear **exclusively** in standalone `micro` (`50` layers) and standalone `mount` (`60` layers) views.
+- **Micro Pixel Semiconductor Cross-Section (`35 → 50`, +15 Standalone-Only Nano Layers `M36–M50`)**: DSA Self-Assembled Pseudo High-Refractive-Index Nano-Pore Film `pHRF` (`M36`), Optical Black (`OB`) Tungsten Light-Shield Band & Auto Dark-Current Clamp (`M37`), 2-Layer Pixel Intermediate Poly-Si Heat-Resistant Wiring (`M38`), 2nd-Layer SOI Buried Oxide `BOX` Floor & 3D Pixel FinFET (`M39`), Forming-Gas Anneal (`H₂`) `Si–H` Dangling-Bond Passivation Layer (`M40`), Photodiode Salicide-Block (`SAB`) Mask & Selective `NiSi` Ohmic Contacts (`M41`), Shallow Trench Isolation (`STI`), `Si₃N₄` Sidewall Spacers & `LDD` Field Ramp (`M42`), `Ta/TaN` Copper-Diffusion Barrier Liner & `Ti/TiN`-Lined CVD Tungsten Contact Plugs (`M43`), Vertical Row-Scanner Driver & `-1.2 V` Negative-Bias `TG` Dark-Current Suppression Bus (`M44`), Column Constant-Current Bias Sink & Anti-Black-Sun Cascode Clamp (`M45`), Voltage-Domain Global Shutter Dual In-Pixel MIM/DRAM Storage Cell (`C_S1`/`C_S2`) (`M46`), Dual-Native ISO Column Switched-Cap `PGA` & `HCG/LCG` Gain-Control Bus (`M47`), On-Die PN-Junction `ΔV_BE` Thermal Sensing Diode Array (`±0.2 °C`) (`M48`), On-Die OTP eFuse & Embedded Non-Volatile `STT-eMRAM` Calibration Memory (`M49`), and Die-Perimeter Hermetic Dual `Cu/W` Crack-Stop / Moisture Seal Ring & `Al/Cu` Bond Pad Frame (`M50`).
+- **55mm Large-Diameter Lens Mount (`48 → 60`, +12 Standalone-Only Sony OEM Parts `M49–M60`)**: Front 6-Screw Orange Silicone Waterproof Micro O-Rings (`M49`), Sony OEM `SH-1035` (`A-5033-450-A`) Mount Board, Silver EMI Shield & `5-036-060-01` Protect Sheet (`M50`), Sony OEM `SW-1041` (`A-5033-451-A`) Mount-Side Switch Flex Board & `5-036-042-01` Protect Sheet (`M51`), E-Mount 3-Layer Sandwich `GF40-PPS` Inner Light-Baffle & Insulating Spacer Collar (`M52`), Back-to-Back Chassis-Shared 3-Point Sensor Datum Pillars & Brass Tilt Seats (`M53`), Magnesium-Specific `M1.6 × P0.65 mm` Coarse-Pitch Self-Tapping Bosses & 6 Radial Gussets (`M54`), E-Mount Pin 1–Pin 10 Hardware Short-Loop Hot-Swap Presence Detect & `33 Ω` SPI Damping Resistors (`M55`), Detachable Snap-Connector Blue ETFE Mount-to-PCB Grounding Wire & Crimp Lug (`M56`), Release-Button Centerless-Ground `SUS303` Fulcrum Pivot Shaft & `MoS₂-POM` Cam-Ramp Slide Block (`M57`), Sony OEM `7-500-004-93` Tape `631S #25` `0.08 mm` Matte-Black Light-Leak & Dust-Seal Masking Strip (`M58`), `SUS304`-to-`AZ91D` Anti-Galvanic `0.05 mm` PET Dielectric Barrier Washer & Passivation Seat (`M59`), and Screwless 4-Point Internal Baffle Snap-Hook Retaining Tabs & `0.4 mm` Anti-Rattle Micro-PORON Pads (`M60`).
 
 ### Phase 19 — Lightweight 3-Section 50mm F1.2 GM Architecture & Mega Deep-Audit (+50 Parts → 600 Total!)
 - **3-Section Lightweight Standalone GM Lens Architecture (`1/3 Rear` → `2/3 Middle` → `3/3 Front`)**: To keep the massive 128-part 50mm F1.2 GM lens silky smooth, entering standalone `lens` mode automatically opens on **Section 1/3 (Rear-most mount, rear XA group, main PCB & aperture ring — 42 parts)**, with a dedicated top-center zero-text SVG 3-button pill switcher (and keyboard keys `1`/`2`/`3`) to toggle cleanly between **1/3 Rear (42)**, **2/3 Middle (48)**, and **3/3 Front (38)**. Off-section parts are completely skipped from rendering, raycasting, animations, and explode guides (~3× lighter per section!), while Complete Camera (`integrated`, 305 macro parts) and Optics Studio seamlessly display the unified 74-macro lens!
@@ -81,19 +87,19 @@ Informed by Kolari Vision teardowns (Sony A1 II, Sony A7R VI, Canon EOS R5 Mark 
 
 ## Viewing Modes (11 Zero-Text Switcher Modes + Optical Motion Studio + Fullscreen)
 ### Primary Assembly Views
-1. **Complete Flagship Camera (305 Macro Layers — Default)**: Complete 231-part body + 74-part 50mm F1.2 lens with full 6-way radial + axial dissection and dynamic CAD trajectory guides. *(All 280 standalone-only ultra-micro parts across all 9 subsystems are omitted here to preserve whole-camera clarity.)*
+1. **Complete Flagship Camera (305 Macro Layers — Default)**: Complete 231-part body + 74-part 50mm F1.2 lens with full 6-way radial + axial dissection and dynamic CAD trajectory guides. *(All 307 standalone-only ultra-micro/nano parts across all 9 subsystems are omitted here to preserve whole-camera clarity.)*
 2. **Complete Camera Body Only (231 Macro Layers)**: All 7 body subsystems together *without* lens (bare 55mm mount, exposed 3-wafer sensor & complete internal watchmaker mechanics). *(Standalone-only ultra-micro parts omitted.)*
 3. **50mm F1.2 Prime Lens Standalone — Lightweight 3-Section Switcher (128 Total Layers: 74 Macro + 54 Standalone-Only Micro)**: Automatically opens on **Section 1/3 Rear (42 layers: mount, CL-1082 flex, rear XA, main PCB & aperture ring)** with zero-text top-center `1 / 2 / 3` SVG buttons (and keys `1`/`2`/`3`) to switch seamlessly to **Section 2/3 Middle (48 layers: 11-blade iris, Quad XD motors, MR scales & floating core)** and **Section 3/3 Front (38 layers: front XA/ED glass, Nano AR II, MF ring & ALC-SH163 hood)**.
 
 ### Drill-Down Subsystems
-4. **55mm Large-Diameter Lens Mount (48 Layers: 26 Macro + 22 Standalone-Only Micro)**
+4. **55mm Large-Diameter Lens Mount (60 Layers: 26 Macro + 34 Standalone-Only Micro)**
 5. **Focal-Plane Shutter & Surroundings (77 Layers: 39 Macro + 38 Standalone-Only Micro)**
 6. **Full-Frame Sensor & 8.5-Stop 5-Axis IBIS (70 Layers: 40 Macro + 30 Standalone-Only Micro)**
 7. **ISP Engine, Vapor Chamber & Mainboard (60 Layers: 30 Macro + 30 Standalone-Only Micro)**
 8. **EVF & Viewfinder Surroundings (55 Layers: 31 Macro + 24 Standalone-Only Micro)**
 9. **4-Axis Multi-Angle Rear LCD (51 Layers: 27 Macro + 24 Standalone-Only Micro)**
 10. **Battery, Magnesium Body & Internal Mechanics (76 Layers: 38 Macro + 38 Standalone-Only Micro)**
-11. **Micro Pixel Semiconductor Cross-Section (35 Layers: 15 Core + 20 Standalone-Only Ultra-Nano)**
+11. **Micro Pixel Semiconductor Cross-Section (50 Layers: 15 Core + 35 Standalone-Only Ultra-Nano)**
 
 ## Development
 

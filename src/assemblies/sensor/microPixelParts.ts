@@ -5,6 +5,7 @@ import { attachCadEdges, tagPartMeshes } from '../../engine/CadHelpers';
 import { MICRO_EXPLANATIONS } from './explanations';
 import { buildMicroPixelUltraParts } from './microPixelUltraParts';
 import { buildMicroUltraAuditParts } from './sensorMicroUltraAuditParts';
+import { buildMicroPixelDeepAuditParts } from './microPixelDeepAuditParts';
 
 function finalizeMicroPart(
   id: string,
@@ -905,6 +906,9 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
 
   // Phase 19B: Append 8 standalone-only ISSCC/IEDM nano-pixel deep-audit layers (M28–M35)
   parts.push(...buildMicroUltraAuditParts(mats));
+
+  // Phase 20A: Append 15 standalone-only IEDM/EDTM/ISSCC nano-semiconductor layers (M36–M50)
+  parts.push(...buildMicroPixelDeepAuditParts(mats));
 
   return parts;
 }

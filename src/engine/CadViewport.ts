@@ -561,15 +561,15 @@ export class CadViewport {
       d = 290 + e * 515;
       target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
     } else if (this.mode === 'mount') {
-      // 48-part standalone 55mm Large-Diameter Lens Mount ultra-anatomy (26 macro + 22 standalone-only micro)
-      d = 184 + e * 315;
-      target = new THREE.Vector3(2.0 + e * 26.0, -2.0 - e * 2.0, 25.0 + e * 26.0);
+      // 60-part standalone 55mm Large-Diameter Lens Mount ultra-anatomy (26 macro + 34 standalone-only OEM micro)
+      d = 188 + e * 375;
+      target = new THREE.Vector3(2.0 + e * 44.0, -2.0 - e * 2.0, 25.0 + e * 22.0);
     } else if (this.mode === 'evf') {
       // 55-part standalone EVF & Viewfinder Surroundings ultra-anatomy (31 macro + 24 standalone-only OEM/optical micro)
       d = 140 + e * 380;
       target = new THREE.Vector3(1.5 * (1 - e) - e * 14.0, 38.6 + e * 1.5, -16.5 + e * 12.0);
     } else if (this.mode === 'mainboard') {
-      // 54-part standalone Vapor Chamber & Flagship Motherboard ultra-anatomy (30 macro + 24 standalone-only micro)
+      // 60-part standalone Vapor Chamber & Flagship Motherboard ultra-anatomy (30 macro + 30 standalone-only micro)
       d = 192 + e * 340;
       target = new THREE.Vector3(-18.0 * e, 0.0 + e * 2.0, -22.0 - e * 4.0);
     } else if (this.mode === 'shutter') {
@@ -581,13 +581,13 @@ export class CadViewport {
       d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
-      // 64-part standalone Full-Frame Sensor & 5-Axis IBIS ultra-anatomy (40 macro + 24 standalone-only OEM micro)
+      // 70-part standalone Full-Frame Sensor & 5-Axis IBIS ultra-anatomy (40 macro + 30 standalone-only OEM micro)
       d = 168 + e * 435;
       target = new THREE.Vector3(14.0 * e, -2.0, -4.0 - e * 56.0);
     } else {
-      // 27-layer ISSCC/IEDM Nano-Pixel Semiconductor Cross-Section (15 core + 12 Phase 14 ultra-nano layers)
-      d = 96 + e * 165;
-      target = new THREE.Vector3(8.0 * e, -1.0, -3.0 - e * 10.0);
+      // 50-layer IEDM/EDTM/ISSCC Nano-Pixel Semiconductor Cross-Section (15 core + 35 standalone-only ultra-nano layers)
+      d = 96 + e * 235;
+      target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
     }
 
     let offset: THREE.Vector3;
