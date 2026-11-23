@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GPU_PROFILE, optimizeMaterialsForGpu } from './GpuOptimizer';
 
 export interface MaterialLibrary {
   clippingPlanes: THREE.Plane[];
@@ -2871,6 +2872,22 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     gMasterRedBadge,
     makeupSealViolet,
   ];
+
+  // Optimize procedural texture VRAM & mobile Adreno GLSL shader permutations automatically
+  optimizeMaterialsForGpu(
+    allMaterials,
+    new Set<THREE.Material>([
+      siliconSensorDie,
+      irCutGlass,
+      nanoArIridescent,
+      lcdDbefIridescent,
+      lensXaGlass,
+      lensEdGlass,
+      evfDichroicMirror,
+      fluorineCoatCyan,
+    ]),
+    GPU_PROFILE
+  );
 
   return {
     clippingPlanes,

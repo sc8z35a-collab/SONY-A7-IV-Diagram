@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GPU_PROFILE, scaleSegments } from './GpuOptimizer';
 
 /**
  * Create a 2D rounded rectangle Shape centered at (0, 0).
@@ -78,14 +79,15 @@ export function extrudeCentered(
 ): THREE.ExtrudeGeometry {
   const hasBevel = bevelSize > 0 && bevelThickness > 0;
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
+  const segs = scaleSegments(Math.min(curveSegments, 32), 6);
   const geo = new THREE.ExtrudeGeometry(shape, {
     depth: bodyDepth,
     bevelEnabled: hasBevel,
-    bevelSegments: hasBevel ? 2 : 0,
+    bevelSegments: hasBevel ? (GPU_PROFILE.isMobile ? 1 : 2) : 0,
     steps: 1,
     bevelSize,
     bevelThickness,
-    curveSegments: Math.min(curveSegments, 32),
+    curveSegments: segs,
   });
   geo.translate(0, 0, -bodyDepth / 2);
   geo.computeVertexNormals();
@@ -163,7 +165,7 @@ export function createHelicalSpringGeometry(
   wireRadius: number
 ): THREE.TubeGeometry {
   const points: THREE.Vector3[] = [];
-  const steps = Math.round(turns * 16);
+  const steps = scaleSegments(Math.round(turns * 16), 12);
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -171,7 +173,7 @@ export function createHelicalSpringGeometry(
     points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
   }
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps, wireRadius, 6, false);
+  return new THREE.TubeGeometry(curve, steps, wireRadius, GPU_PROFILE.isMobile ? 5 : 6, false);
 }
 
 /**
@@ -187,7 +189,7 @@ export function createTorsionSpringGeometry(
   const points: THREE.Vector3[] = [];
   // Entry tang leg
   points.push(new THREE.Vector3(coilRadius, -legLength, -length * 0.5));
-  const steps = Math.round(turns * 14);
+  const steps = scaleSegments(Math.round(turns * 14), 10);
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -197,7 +199,7 @@ export function createTorsionSpringGeometry(
   // Exit tang leg
   points.push(new THREE.Vector3(coilRadius + legLength * 0.85, legLength * 0.35, length * 0.5));
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps + 12, wireRadius, 6, false);
+  return new THREE.TubeGeometry(curve, steps + 10, wireRadius, GPU_PROFILE.isMobile ? 5 : 6, false);
 }
 
 const screwSlotMatCache = new WeakMap<THREE.Material, THREE.MeshStandardMaterial>();
@@ -213,7 +215,12 @@ export function createPrecisionScrew(
 ): THREE.Group {
   const group = new THREE.Group();
 
-  const headGeo = new THREE.CylinderGeometry(headRadius, headRadius * 0.94, headHeight, 14);
+  const headGeo = new THREE.CylinderGeometry(
+    headRadius,
+    headRadius * 0.94,
+    headHeight,
+    GPU_PROFILE.isMobile ? 10 : 14
+  );
   headGeo.rotateX(Math.PI / 2);
   const head = new THREE.Mesh(headGeo, material);
   head.position.z = headHeight * 0.5;
@@ -244,7 +251,12 @@ export function createPrecisionScrew(
   group.add(slot1, slot2);
 
   if (shaftLength > 0) {
-    const shaftGeo = new THREE.CylinderGeometry(headRadius * 0.52, headRadius * 0.52, shaftLength, 10);
+    const shaftGeo = new THREE.CylinderGeometry(
+      headRadius * 0.52,
+      headRadius * 0.52,
+      shaftLength,
+      GPU_PROFILE.isMobile ? 8 : 10
+    );
     shaftGeo.rotateX(Math.PI / 2);
     const shaft = new THREE.Mesh(shaftGeo, material);
     shaft.position.z = -shaftLength * 0.5;
@@ -257,6 +269,7 @@ export function createPrecisionScrew(
 
 /**
  * Attach crisp CAD technical edge lines to every Mesh inside a group.
+ * Pools one LineBasicMaterial per opacity bucket within the part to eliminate thousands of duplicate materials.
  */
 export function attachCadEdges(
   root: THREE.Object3D,
@@ -266,6 +279,8 @@ export function attachCadEdges(
 ): { meshes: THREE.Mesh[]; edges: THREE.LineSegments[] } {
   const meshes: THREE.Mesh[] = [];
   const edges: THREE.LineSegments[] = [];
+  const matPool = new Map<number, THREE.LineBasicMaterial>();
+  const effectiveAngle = thresholdAngle + GPU_PROFILE.edgeThresholdBoost;
 
   root.traverse((obj) => {
     if ((obj as THREE.Mesh).isMesh) {
@@ -275,15 +290,22 @@ export function attachCadEdges(
       if ((mesh as THREE.InstancedMesh).isInstancedMesh) return;
       if (mesh.userData.noEdges) return;
 
-      const edgeGeo = new THREE.EdgesGeometry(mesh.geometry, thresholdAngle);
-      const edgeMat = new THREE.LineBasicMaterial({
-        color: 0x181c24,
-        transparent: true,
-        opacity: mesh.userData.edgeOpacity ?? baseOpacity,
-        clippingPlanes,
-      });
+      const op = (mesh.userData.edgeOpacity as number | undefined) ?? baseOpacity;
+      const key = Math.round(op * 100);
+      let edgeMat = matPool.get(key);
+      if (!edgeMat) {
+        edgeMat = new THREE.LineBasicMaterial({
+          color: 0x181c24,
+          transparent: true,
+          opacity: op,
+          clippingPlanes,
+        });
+        matPool.set(key, edgeMat);
+      }
+
+      const edgeGeo = new THREE.EdgesGeometry(mesh.geometry, effectiveAngle);
       const line = new THREE.LineSegments(edgeGeo, edgeMat);
-      line.userData.baseOpacity = mesh.userData.edgeOpacity ?? baseOpacity;
+      line.userData.baseOpacity = op;
       line.renderOrder = 2;
       mesh.add(line);
       edges.push(line);
@@ -318,12 +340,14 @@ export function createOpticalLensGeometry(
   profileSteps = 26,
   radialSegments = 56
 ): THREE.BufferGeometry {
+  const effSteps = scaleSegments(profileSteps, 14);
+  const effRadial = scaleSegments(radialSegments, 28);
   const halfEdge = edgeThickness * 0.5;
   const pts: THREE.Vector2[] = [];
 
   // Front optical surface (+Z side in final orientation; +Y in lathe coordinates) from axis -> rim
-  for (let i = 0; i <= profileSteps; i++) {
-    const u = i / profileSteps; // 0 at optical axis, 1 at rim
+  for (let i = 0; i <= effSteps; i++) {
+    const u = i / effSteps; // 0 at optical axis, 1 at rim
     const r = Math.max(0.0001, u * radius);
     const r2 = u * u;
     const zF = halfEdge + sagFront * (1 - r2) + asphericFront * r2 * (1 - r2);
@@ -331,15 +355,15 @@ export function createOpticalLensGeometry(
   }
 
   // Rear optical surface (-Z side; -Y in lathe coordinates) from rim -> axis
-  for (let i = profileSteps; i >= 0; i--) {
-    const u = i / profileSteps;
+  for (let i = effSteps; i >= 0; i--) {
+    const u = i / effSteps;
     const r = Math.max(0.0001, u * radius);
     const r2 = u * u;
     const zR = -halfEdge - sagRear * (1 - r2) - asphericRear * r2 * (1 - r2);
     pts.push(new THREE.Vector2(r, zR));
   }
 
-  const geo = new THREE.LatheGeometry(pts, radialSegments);
+  const geo = new THREE.LatheGeometry(pts, effRadial);
   // Rotate so Lathe +Y axis aligns with optical +Z axis
   geo.rotateX(Math.PI / 2);
   geo.computeVertexNormals();
