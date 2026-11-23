@@ -201,6 +201,9 @@ export class ZeroTextControls {
 
   private layerRail: HTMLElement;
   private layerRowMap = new Map<string, HTMLElement>();
+  private layerEyeMap = new Map<string, { btn: HTMLButtonElement; hidden: boolean }>();
+  private renderedPartIds: string[] = [];
+  private lastDelegatedHoverId: string | null = null;
 
   private currentMode: ScaleMode = 'integrated';
   private currentLensSection: LensSection = 1;
@@ -258,10 +261,38 @@ export class ZeroTextControls {
     this.root.appendChild(this.lensSectionBar);
 
     // -----------------------------------------------------------------------
-    // 2. Left Vertical Layer Dissection Strip (Swatches + Geometric Bars)
+    // 2. Left Vertical Layer Dissection Strip (Single Event Delegation — 0 per-row closures!)
     // -----------------------------------------------------------------------
     this.layerRail = document.createElement('div');
     this.layerRail.className = 'layer-rail';
+    this.layerRail.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const row = target.closest<HTMLElement>('.layer-item');
+      const partId = row?.dataset.partId;
+      if (!partId) return;
+      if (target.closest('.layer-eye-btn')) {
+        e.stopPropagation();
+        this.handlers.onToggleHidePart(partId);
+      } else {
+        this.handlers.onSelectPart(partId);
+      }
+    });
+    this.layerRail.addEventListener('pointerover', (e) => {
+      const target = e.target as HTMLElement | null;
+      const row = target?.closest<HTMLElement>('.layer-item');
+      const partId = row?.dataset.partId ?? null;
+      if (partId !== this.lastDelegatedHoverId) {
+        this.lastDelegatedHoverId = partId;
+        this.handlers.onHoverPart(partId);
+      }
+    });
+    this.layerRail.addEventListener('pointerleave', () => {
+      if (this.lastDelegatedHoverId !== null) {
+        this.lastDelegatedHoverId = null;
+        this.handlers.onHoverPart(null);
+      }
+    });
     this.root.appendChild(this.layerRail);
 
     // -----------------------------------------------------------------------
@@ -565,9 +596,48 @@ export class ZeroTextControls {
     isHidden: (id: string) => boolean,
     hasAnyHidden: boolean
   ): void {
-    this.layerRail.replaceChildren();
-    this.layerRowMap.clear();
     this.resetVisBtn.disabled = !hasAnyHidden;
+
+    // Fast incremental DOM diff: if the exact part list is already mounted, patch classes & eye icon in-place!
+    let sameList = parts.length === this.renderedPartIds.length;
+    if (sameList) {
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i].id !== this.renderedPartIds[i]) {
+          sameList = false;
+          break;
+        }
+      }
+    }
+
+    if (sameList) {
+      let selectedRowEl: HTMLElement | null = null;
+      for (let i = 0; i < parts.length; i++) {
+        const id = parts[i].id;
+        const row = this.layerRowMap.get(id);
+        if (!row) continue;
+        const hidden = isHidden(id);
+        const isSel = id === selectedId;
+        row.classList.toggle('is-selected', isSel);
+        row.classList.toggle('is-hovered', id === hoveredId);
+        row.classList.toggle('is-hidden', hidden);
+        if (isSel) selectedRowEl = row;
+
+        const eye = this.layerEyeMap.get(id);
+        if (eye && eye.hidden !== hidden) {
+          eye.hidden = hidden;
+          eye.btn.replaceChildren(svgIcon(hidden ? ICONS.eyeClosed : ICONS.eyeAll));
+        }
+      }
+      if (selectedRowEl) {
+        selectedRowEl.scrollIntoView({ block: 'nearest' });
+      }
+      return;
+    }
+
+    this.layerRowMap.clear();
+    this.layerEyeMap.clear();
+    this.renderedPartIds = parts.map((p) => p.id);
+    const frag = document.createDocumentFragment();
 
     let prevSubsystem: CadPart['subsystem'] | null = null;
     let prevStandaloneOnly = false;
@@ -581,13 +651,14 @@ export class ZeroTextControls {
       ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
-        this.layerRail.appendChild(sep);
+        frag.appendChild(sep);
       }
       prevSubsystem = part.subsystem;
       prevStandaloneOnly = isStandaloneOnly;
 
       const row = document.createElement('div');
       row.className = 'layer-item';
+      row.dataset.partId = part.id;
       const hidden = isHidden(part.id);
       if (part.id === selectedId) {
         row.classList.add('is-selected');
@@ -1018,27 +1089,13 @@ export class ZeroTextControls {
       eyeBtn.className = 'layer-eye-btn';
       eyeBtn.appendChild(svgIcon(hidden ? ICONS.eyeClosed : ICONS.eyeAll));
 
-      eyeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.handlers.onToggleHidePart(part.id);
-      });
-
-      row.addEventListener('click', () => {
-        this.handlers.onSelectPart(part.id);
-      });
-
-      row.addEventListener('pointerenter', () => {
-        this.handlers.onHoverPart(part.id);
-      });
-
-      row.addEventListener('pointerleave', () => {
-        this.handlers.onHoverPart(null);
-      });
-
       row.append(swatch, bar, eyeBtn);
-      this.layerRail.appendChild(row);
+      frag.appendChild(row);
       this.layerRowMap.set(part.id, row);
+      this.layerEyeMap.set(part.id, { btn: eyeBtn, hidden });
     });
+
+    this.layerRail.replaceChildren(frag);
 
     if (selectedRowEl) {
       (selectedRowEl as HTMLElement).scrollIntoView({ block: 'nearest' });

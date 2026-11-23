@@ -49,6 +49,11 @@ export class LensOpticsStudio {
   // Dynamic DOM references (present only while open)
   private benchCanvas: HTMLCanvasElement | null = null;
   private bokehCanvas: HTMLCanvasElement | null = null;
+  private benchCssW = 520;
+  private benchCssH = 260;
+  private bokehCssW = 220;
+  private bokehCssH = 96;
+  private canvasResizeObserver: ResizeObserver | null = null;
   private scenarioBtns = new Map<OpticalScenarioId, HTMLButtonElement>();
   private playBtn: HTMLButtonElement | null = null;
   private expandBtn: HTMLButtonElement | null = null;
@@ -121,6 +126,8 @@ export class LensOpticsStudio {
     this.sim.setStudioOpen(false);
     this.sim.setHoveredElement(null);
     cancelAnimationFrame(this.rafId);
+    this.canvasResizeObserver?.disconnect();
+    this.canvasResizeObserver = null;
 
     this.panelEl.classList.remove('is-open', 'is-expanded');
     this.panelEl.setAttribute('aria-hidden', 'true');
@@ -329,6 +336,23 @@ export class LensOpticsStudio {
     body.append(benchWrap, side);
 
     this.panelEl.append(header, body);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.canvasResizeObserver?.disconnect();
+      this.canvasResizeObserver = new ResizeObserver(() => {
+        if (this.benchCanvas) {
+          const r = this.benchCanvas.getBoundingClientRect();
+          if (r.width > 0) this.benchCssW = Math.max(240, Math.round(r.width));
+          if (r.height > 0) this.benchCssH = Math.max(180, Math.round(r.height));
+        }
+        if (this.bokehCanvas) {
+          const r = this.bokehCanvas.getBoundingClientRect();
+          if (r.width > 0) this.bokehCssW = Math.max(180, Math.round(r.width));
+          if (r.height > 0) this.bokehCssH = Math.max(84, Math.round(r.height));
+        }
+      });
+      if (this.benchCanvas) this.canvasResizeObserver.observe(this.benchCanvas);
+      if (this.bokehCanvas) this.canvasResizeObserver.observe(this.bokehCanvas);
+    }
     this.syncControlsUi();
   }
 
@@ -551,9 +575,8 @@ export class LensOpticsStudio {
   private renderOpticalBench(): void {
     const canvas = this.benchCanvas;
     if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const w = Math.max(240, Math.round(rect.width));
-    const h = Math.max(180, Math.round(rect.height));
+    const w = this.benchCssW;
+    const h = this.benchCssH;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
@@ -1190,9 +1213,8 @@ export class LensOpticsStudio {
   private renderBokehAndIrisSimulator(): void {
     const canvas = this.bokehCanvas;
     if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const w = Math.max(180, Math.round(rect.width));
-    const h = Math.max(84, Math.round(rect.height));
+    const w = this.bokehCssW;
+    const h = this.bokehCssH;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {

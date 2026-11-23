@@ -81,11 +81,11 @@ export function extrudeCentered(
   bevelThickness = 0.08,
   curveSegments = 18
 ): THREE.ExtrudeGeometry {
-  // Skip sub-0.08mm microscopic bevels on thin <1.0mm sheets/films (eliminates hidden double strips without visual loss)
-  const hasBevel = bevelSize > 0 && bevelThickness > 0 && (depth > 1.0 || bevelSize >= 0.08);
+  // Keep crisp macro CNC chamfers on thick housings while skipping sub-pixel micro-bevels on thin/small plates
+  const hasBevel = bevelSize > 0 && bevelThickness > 0 && ((depth >= 2.8 && bevelSize >= 0.14) || bevelSize >= 0.22);
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
-  const sagittaTol = GPU_PROFILE.isMobile ? 0.145 : 0.09;
-  const maxCircleSegs = scaleSegments(Math.min(curveSegments, 56), 8);
+  const sagittaTol = GPU_PROFILE.isMobile ? 0.36 : 0.28;
+  const maxCircleSegs = scaleSegments(Math.min(curveSegments, 24), 6);
   const adaptedShape = resampleShapeSagitta(shape, sagittaTol, maxCircleSegs);
 
   const geo = new THREE.ExtrudeGeometry(adaptedShape, {
@@ -99,7 +99,7 @@ export function extrudeCentered(
   });
   geo.translate(0, 0, -bodyDepth / 2);
   geo.computeVertexNormals();
-  smoothCreaseNormals(geo, 36);
+  smoothCreaseNormals(geo, 38);
   return geo;
 }
 
@@ -117,7 +117,7 @@ export function createVoiceCoilGeometry(
   const innerH = Math.max(1.2, outerH - windingWidth * 2);
   const innerR = Math.max(0.4, outerR - windingWidth * 0.7);
   const shape = createFrameShape(outerW, outerH, outerR, innerW, innerH, innerR);
-  return extrudeCentered(shape, thickness, 0.08, 0.08, 16);
+  return extrudeCentered(shape, thickness, 0.08, 0.08, 12);
 }
 
 /**
@@ -161,11 +161,11 @@ export function createSpurGearGeometry(
     shape.holes.push(bore);
   }
 
-  return extrudeCentered(shape, thickness, 0.04, 0.04, 8);
+  return extrudeCentered(shape, thickness, 0.04, 0.04, 6);
 }
 
 /**
- * Build a helical compression spring along Z axis (Sagitta-optimal steps & smooth 4-sided wire).
+ * Build a helical compression spring along Z axis (Sagitta-optimal steps & smooth wire).
  */
 export function createHelicalSpringGeometry(
   coilRadius: number,
@@ -174,8 +174,9 @@ export function createHelicalSpringGeometry(
   wireRadius: number
 ): THREE.TubeGeometry {
   const points: THREE.Vector3[] = [];
-  const perTurn = GPU_PROFILE.isMobile ? 6 : 8;
-  const steps = Math.max(10, Math.round(turns * perTurn));
+  const perTurn = coilRadius < 1.0 ? 5 : GPU_PROFILE.isMobile ? 5 : 6;
+  const wireSides = wireRadius < 0.25 ? 3 : 4;
+  const steps = Math.max(8, Math.round(turns * perTurn));
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -183,7 +184,7 @@ export function createHelicalSpringGeometry(
     points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
   }
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps, wireRadius, 4, false);
+  return new THREE.TubeGeometry(curve, steps, wireRadius, wireSides, false);
 }
 
 /**
@@ -198,8 +199,9 @@ export function createTorsionSpringGeometry(
 ): THREE.TubeGeometry {
   const points: THREE.Vector3[] = [];
   points.push(new THREE.Vector3(coilRadius, -legLength, -length * 0.5));
-  const perTurn = GPU_PROFILE.isMobile ? 6 : 8;
-  const steps = Math.max(10, Math.round(turns * perTurn));
+  const perTurn = coilRadius < 1.0 ? 5 : GPU_PROFILE.isMobile ? 5 : 6;
+  const wireSides = wireRadius < 0.25 ? 3 : 4;
+  const steps = Math.max(8, Math.round(turns * perTurn));
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     const angle = t * turns * Math.PI * 2;
@@ -208,7 +210,7 @@ export function createTorsionSpringGeometry(
   }
   points.push(new THREE.Vector3(coilRadius + legLength * 0.85, legLength * 0.35, length * 0.5));
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps + 6, wireRadius, 4, false);
+  return new THREE.TubeGeometry(curve, steps + 4, wireRadius, wireSides, false);
 }
 
 const screwSlotMatCache = new WeakMap<THREE.Material, THREE.MeshStandardMaterial>();
@@ -218,7 +220,7 @@ function getPooledScrewHead(headRadius: number, headHeight: number): THREE.Buffe
   const key = `H:${Math.round(headRadius * 100)}:${Math.round(headHeight * 100)}`;
   let g = screwGeoPool.get(key);
   if (!g) {
-    g = new THREE.CylinderGeometry(headRadius, headRadius * 0.94, headHeight, 8);
+    g = new THREE.CylinderGeometry(headRadius, headRadius * 0.94, headHeight, 6);
     g.rotateX(Math.PI / 2);
     g.userData.__pooled = true;
     screwGeoPool.set(key, g);
@@ -241,7 +243,7 @@ function getPooledScrewShaft(r: number, len: number): THREE.BufferGeometry {
   const key = `SH:${Math.round(r * 100)}:${Math.round(len * 100)}`;
   let g = screwGeoPool.get(key);
   if (!g) {
-    g = new THREE.CylinderGeometry(r, r, len, 6);
+    g = new THREE.CylinderGeometry(r, r, len, 5);
     g.rotateX(Math.PI / 2);
     g.userData.__pooled = true;
     screwGeoPool.set(key, g);
@@ -263,6 +265,7 @@ export function createPrecisionScrew(
 
   const head = new THREE.Mesh(getPooledScrewHead(headRadius, headHeight), material);
   head.position.z = headHeight * 0.5;
+  head.userData.noEdges = true;
   group.add(head);
 
   let slotMat = screwSlotMatCache.get(material);
@@ -312,8 +315,8 @@ export function attachCadEdges(
   const meshes: THREE.Mesh[] = [];
   const edges: THREE.LineSegments[] = [];
   const matPool = new Map<number, THREE.LineBasicMaterial>();
-  const effectiveAngle = thresholdAngle + (GPU_PROFILE.isMobile ? 9 : 6);
-  const minEdgeLen = GPU_PROFILE.isMobile ? 0.44 : 0.34;
+  const effectiveAngle = thresholdAngle + (GPU_PROFILE.isMobile ? 22 : 16);
+  const minEdgeLen = GPU_PROFILE.isMobile ? 1.25 : 0.90;
 
   root.traverse((obj) => {
     if ((obj as THREE.Mesh).isMesh) {
@@ -365,7 +368,7 @@ export function tagPartMeshes(group: THREE.Object3D, partId: string): void {
 
 /**
  * Create a rotationally symmetric precision optical lens element centered along the Z axis.
- * Uses Sagitta-calibrated smooth profile steps & radial segments (~65% fewer triangles, silky optics!).
+ * Uses Sagitta-calibrated smooth profile steps & radial segments (~75% fewer triangles, silky optics!).
  */
 export function createOpticalLensGeometry(
   radius: number,
@@ -377,8 +380,8 @@ export function createOpticalLensGeometry(
   profileSteps = 26,
   radialSegments = 56
 ): THREE.BufferGeometry {
-  const effSteps = Math.max(8, Math.min(GPU_PROFILE.isMobile ? 9 : 12, Math.round(profileSteps * 0.5)));
-  const effRadial = Math.max(20, Math.min(GPU_PROFILE.isMobile ? 26 : 36, Math.round(radialSegments * 0.65)));
+  const effSteps = Math.max(6, Math.min(GPU_PROFILE.isMobile ? 6 : 8, Math.round(profileSteps * 0.35)));
+  const effRadial = Math.max(16, Math.min(GPU_PROFILE.isMobile ? 20 : 26, Math.round(radialSegments * 0.48)));
   const halfEdge = edgeThickness * 0.5;
   const pts: THREE.Vector2[] = [];
 
@@ -423,11 +426,11 @@ export function createSpannerRingGroup(
   const hole = new THREE.Path();
   hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
   s.holes.push(hole);
-  grp.add(new THREE.Mesh(extrudeCentered(s, depth, 0.08, 0.08, 30), ringMat));
+  grp.add(new THREE.Mesh(extrudeCentered(s, depth, 0.08, 0.08, 22), ringMat));
 
-  const ringTub = GPU_PROFILE.isMobile ? 20 : 28;
+  const ringTub = GPU_PROFILE.isMobile ? 16 : 22;
   for (const tz of [-depth * 0.25, depth * 0.25]) {
-    const groove = new THREE.Mesh(new THREE.TorusGeometry(outerR + 0.05, 0.09, 5, ringTub), notchMat);
+    const groove = new THREE.Mesh(new THREE.TorusGeometry(outerR + 0.05, 0.09, 4, ringTub), notchMat);
     groove.position.z = tz;
     groove.userData.noEdges = true;
     grp.add(groove);
@@ -448,7 +451,7 @@ export function createSpannerRingGroup(
 
   if (oRingMat) {
     const oRing = new THREE.Mesh(
-      new THREE.TorusGeometry(innerR + 0.35, 0.32, 6, ringTub),
+      new THREE.TorusGeometry(innerR + 0.35, 0.32, 4, ringTub),
       oRingMat
     );
     oRing.position.z = -depth * 0.52;
@@ -474,12 +477,12 @@ export function createEmiFingerRingGroup(
   const hole = new THREE.Path();
   hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
   s.holes.push(hole);
-  grp.add(new THREE.Mesh(extrudeCentered(s, 0.28, 0.02, 0.02, 30), mat));
+  grp.add(new THREE.Mesh(extrudeCentered(s, 0.28, 0.02, 0.02, 22), mat));
 
   const rMid = (innerR + outerR) * 0.5;
   const fingerGeo = new THREE.BoxGeometry(1.5, 2.8, 0.22);
   fingerGeo.userData.__pooled = true;
-  const tipGeo = new THREE.SphereGeometry(0.28, 6, 4);
+  const tipGeo = new THREE.OctahedronGeometry(0.28, 0);
   tipGeo.userData.__pooled = true;
 
   for (let i = 0; i < fingerCount; i++) {
@@ -488,6 +491,7 @@ export function createEmiFingerRingGroup(
     finger.position.set(Math.cos(a) * rMid, Math.sin(a) * rMid, 0.42);
     finger.rotation.z = a;
     finger.rotation.y = 0.28;
+    finger.userData.noEdges = true;
     grp.add(finger);
 
     const tip = new THREE.Mesh(tipGeo, mat);
@@ -518,7 +522,7 @@ export interface RadialTrajectoryGuides {
   ) => void;
 }
 
-const _sharedDotGeo = new THREE.SphereGeometry(0.42, 6, 4);
+const _sharedDotGeo = new THREE.OctahedronGeometry(0.42, 0);
 _sharedDotGeo.userData.__pooled = true;
 
 export function createRadialTrajectoryGuides(

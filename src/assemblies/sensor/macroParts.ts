@@ -657,7 +657,7 @@ export function buildMacroSensorParts(mats: MaterialLibrary, includeStandalone =
       const mid2 = p0.clone().lerp(p1, 0.72);
       mid2.z = peakZ - 0.08;
       const curve = new THREE.CatmullRomCurve3([p0, mid1, mid2, p1]);
-      return new THREE.TubeGeometry(curve, 5, 0.048, 3, false);
+      return new THREE.TubeGeometry(curve, 3, 0.048, 3, false);
     };
 
     const xCount = 42;

@@ -105,66 +105,82 @@ export function createMainboardPhysicsOverlay(
     flows.push({ line, packets, speed, getEndpoints });
   };
 
-  const pt = (
+  const _defPos = new THREE.Vector3(0, 0, -20);
+  const _epA = new THREE.Vector3();
+  const _epB = new THREE.Vector3();
+  const _epPair: [THREE.Vector3, THREE.Vector3] = [_epA, _epB];
+  const _posMap: Record<string, THREE.Vector3> = {};
+
+  const setPt = (
+    out: THREE.Vector3,
     pos: Record<string, THREE.Vector3>,
     id: string,
     dx: number,
     dy: number,
     dz: number
   ) => {
-    const base = pos[id] ?? new THREE.Vector3(0, 0, -20);
-    return new THREE.Vector3(base.x + dx, base.y + dy, base.z + dz);
+    const base = pos[id] ?? _defPos;
+    return out.set(base.x + dx, base.y + dy, base.z + dz);
   };
 
   // A. SLVS-EC v3 160 Gbps RAW stream: B2B Mezzanine -> 4nm ISP Silicon Die
-  registerFlow(0x06b6d4, 0.95, 3, false, (p) => [
-    pt(p, 'mb-b2b-connectors', 2.0, -2.0, 0.5),
-    pt(p, 'mb-isp-die', 3.5, -1.5, 0.0),
-  ]);
+  registerFlow(0x06b6d4, 0.95, 3, false, (p) => {
+    setPt(_epA, p, 'mb-b2b-connectors', 2.0, -2.0, 0.5);
+    setPt(_epB, p, 'mb-isp-die', 3.5, -1.5, 0.0);
+    return _epPair;
+  });
 
   // B. AI Tensor & Pose-Estimation link: ISP Die <-> AI NPU Systolic Array
-  registerFlow(0x7c3aed, 1.25, 2, false, (p) => [
-    pt(p, 'mb-isp-die', 8.5, 2.5, -0.4),
-    pt(p, 'mb-ai-npu', 22.5, 6.5, -0.6),
-  ]);
+  registerFlow(0x7c3aed, 1.25, 2, false, (p) => {
+    setPt(_epA, p, 'mb-isp-die', 8.5, 2.5, -0.4);
+    setPt(_epB, p, 'mb-ai-npu', 22.5, 6.5, -0.6);
+    return _epPair;
+  });
 
   // C. Quad-Channel LPDDR5X-8533 Ring Buffer (Upper & Lower Channels)
-  registerFlow(0x2563eb, 1.35, 2, false, (p) => [
-    pt(p, 'mb-isp-die', -1.5, 3.0, -0.4),
-    pt(p, 'mb-lpddr5x', -14.2, 8.5, -0.5),
-  ]);
-  registerFlow(0x2563eb, 1.35, 2, false, (p) => [
-    pt(p, 'mb-isp-die', -1.5, -5.5, -0.4),
-    pt(p, 'mb-lpddr5x', -14.2, -9.5, -0.5),
-  ]);
+  registerFlow(0x2563eb, 1.35, 2, false, (p) => {
+    setPt(_epA, p, 'mb-isp-die', -1.5, 3.0, -0.4);
+    setPt(_epB, p, 'mb-lpddr5x', -14.2, 8.5, -0.5);
+    return _epPair;
+  });
+  registerFlow(0x2563eb, 1.35, 2, false, (p) => {
+    setPt(_epA, p, 'mb-isp-die', -1.5, -5.5, -0.4);
+    setPt(_epB, p, 'mb-lpddr5x', -14.2, -9.5, -0.5);
+    return _epPair;
+  });
 
   // D. PCIe Gen4 x2 NVMe (4 GB/s): ISP Die -> CFexpress 4.0 Type B Card Cage
-  registerFlow(0xd97706, 1.05, 3, false, (p) => [
-    pt(p, 'mb-isp-die', -2.5, -1.5, -0.4),
-    pt(p, 'mb-cfexpress', -25.0, 2.5, -0.6),
-  ]);
+  registerFlow(0xd97706, 1.05, 3, false, (p) => {
+    setPt(_epA, p, 'mb-isp-die', -2.5, -1.5, -0.4);
+    setPt(_epB, p, 'mb-cfexpress', -25.0, 2.5, -0.6);
+    return _epPair;
+  });
 
   // E. HDMI 2.1 (48 Gbps FRL) Video Output: ISP Die -> Modular HDMI 2.1 Daughterboard
-  registerFlow(0x0284c7, 0.9, 2, false, (p) => [
-    pt(p, 'mb-isp-die', 9.0, -1.5, -0.4),
-    pt(p, 'mb-hdmi-daughterboard', 38.0, 1.5, -0.5),
-  ]);
+  registerFlow(0x0284c7, 0.9, 2, false, (p) => {
+    setPt(_epA, p, 'mb-isp-die', 9.0, -1.5, -0.4);
+    setPt(_epB, p, 'mb-hdmi-daughterboard', 38.0, 1.5, -0.5);
+    return _epPair;
+  });
 
   // F. Two-Phase Thermal Dissipation Vectors: ISP & NPU Silicon -> Copper Vapor Chamber
-  registerFlow(0xea580c, 0.72, 2, true, (p) => [
-    pt(p, 'mb-isp-die', 3.5, -1.5, -0.5),
-    pt(p, 'mb-vapor-chamber', 3.5, -1.5, 0.6),
-  ]);
-  registerFlow(0xea580c, 0.72, 2, true, (p) => [
-    pt(p, 'mb-ai-npu', 22.5, 6.5, -0.6),
-    pt(p, 'mb-vapor-chamber', 22.5, 6.5, 0.6),
-  ]);
+  registerFlow(0xea580c, 0.72, 2, true, (p) => {
+    setPt(_epA, p, 'mb-isp-die', 3.5, -1.5, -0.5);
+    setPt(_epB, p, 'mb-vapor-chamber', 3.5, -1.5, 0.6);
+    return _epPair;
+  });
+  registerFlow(0xea580c, 0.72, 2, true, (p) => {
+    setPt(_epA, p, 'mb-ai-npu', 22.5, 6.5, -0.6);
+    setPt(_epB, p, 'mb-vapor-chamber', 22.5, 6.5, 0.6);
+    return _epPair;
+  });
 
   // G. Radial Two-Phase Vapor Heat Spreading inside Vapor Chamber
-  registerFlow(0xf97316, 0.65, 2, true, (p) => [
-    pt(p, 'mb-vapor-chamber', 3.5, -1.5, -0.7),
-    pt(p, 'mb-vapor-chamber', -22.0, -25.5, -0.7),
-  ]);
+  registerFlow(0xf97316, 0.65, 2, true, (p) => {
+    setPt(_epA, p, 'mb-vapor-chamber', 3.5, -1.5, -0.7);
+    setPt(_epB, p, 'mb-vapor-chamber', -22.0, -25.5, -0.7);
+    return _epPair;
+  });
 
   overlayGroup.visible = false;
 
@@ -172,40 +188,52 @@ export function createMainboardPhysicsOverlay(
     overlayGroup.visible = visible;
   };
 
+  let cachedGuidePartsLen = -1;
+  let cFrontGuide: CadPart | undefined;
+  let cRearGuide: CadPart | undefined;
+
   const updateGuides = (explodeFactor: number, visible: boolean, parts: CadPart[]) => {
     const opacity = THREE.MathUtils.clamp((explodeFactor - 0.04) * 0.55, 0, 0.42);
     explodeGuides.visible = visible && opacity > 0.01;
     guideMat.opacity = opacity;
 
     if (!explodeGuides.visible) return;
-    const front = parts.find((p) => p.id === 'mb-chassis-frame');
-    const rear =
-      parts.find((p) => p.id === 'mb-rf-shield-bracket') ??
-      parts.find((p) => p.id === 'mb-vapor-chamber');
-    const zFront = (front ? front.group.position.z : -15.6) + 2.0;
-    const zRear = (rear ? rear.group.position.z : -28.8) - 2.0;
+    if (cachedGuidePartsLen !== parts.length) {
+      cachedGuidePartsLen = parts.length;
+      cFrontGuide = parts.find((p) => p.id === 'mb-chassis-frame');
+      cRearGuide =
+        parts.find((p) => p.id === 'mb-rf-shield-bracket') ??
+        parts.find((p) => p.id === 'mb-vapor-chamber');
+    }
+    const zFront = (cFrontGuide ? cFrontGuide.group.position.z : -15.6) + 2.0;
+    const zRear = (cRearGuide ? cRearGuide.group.position.z : -28.8) - 2.0;
 
-    guideLines.forEach((line, i) => {
+    for (let i = 0; i < guideLines.length; i++) {
+      const line = guideLines[i];
       const [gx, gy] = guideCorners[i];
       const attr = line.geometry.attributes.position as THREE.BufferAttribute;
       attr.setXYZ(0, gx, gy, zFront);
       attr.setXYZ(1, gx, gy, zRear);
       attr.needsUpdate = true;
       line.computeLineDistances();
-    });
+    }
     radialGuides.update(explodeFactor, visible, parts);
   };
 
+  let cachedPosMapLen = -1;
   const update = (elapsed: number, physicsActive: boolean, parts: CadPart[]) => {
     if (!physicsActive) return;
 
-    const posMap: Record<string, THREE.Vector3> = {};
-    for (const p of parts) {
-      posMap[p.id] = p.group.position;
+    if (cachedPosMapLen !== parts.length) {
+      cachedPosMapLen = parts.length;
+      for (let i = 0; i < parts.length; i++) {
+        _posMap[parts[i].id] = parts[i].group.position;
+      }
     }
 
-    flows.forEach((flow, fIdx) => {
-      const [a, b] = flow.getEndpoints(posMap);
+    for (let fIdx = 0; fIdx < flows.length; fIdx++) {
+      const flow = flows[fIdx];
+      const [a, b] = flow.getEndpoints(_posMap);
       const attr = flow.line.geometry.attributes.position as THREE.BufferAttribute;
       attr.setXYZ(0, a.x, a.y, a.z);
       attr.setXYZ(1, b.x, b.y, b.z);
@@ -215,11 +243,11 @@ export function createMainboardPhysicsOverlay(
       }
 
       const n = flow.packets.length;
-      flow.packets.forEach((pkt, pi) => {
+      for (let pi = 0; pi < n; pi++) {
         const u = (elapsed * flow.speed + pi / n + fIdx * 0.13) % 1;
-        pkt.position.lerpVectors(a, b, u);
-      });
-    });
+        flow.packets[pi].position.lerpVectors(a, b, u);
+      }
+    }
   };
 
   return {
