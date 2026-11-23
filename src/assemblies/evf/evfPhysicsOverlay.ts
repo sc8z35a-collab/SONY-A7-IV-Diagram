@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { EVF_OPTICAL_Y } from './evfParts';
-import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
+import {
+  createRadialTrajectoryGuides,
+  updateLine2PtsInPlace,
+  updateLinePointsInPlace,
+} from '../../engine/CadHelpers';
 
 export interface EvfPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -45,12 +49,10 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
       opacity: 0.72,
       clippingPlanes,
     });
-    const corneaMat = new THREE.MeshPhysicalMaterial({
+    const corneaMat = new THREE.MeshBasicMaterial({
       color: 0x38bdf8,
       transparent: true,
-      opacity: 0.22,
-      roughness: 0.08,
-      metalness: 0.0,
+      opacity: 0.24,
       side: THREE.DoubleSide,
       depthWrite: false,
       clippingPlanes,
@@ -366,7 +368,7 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
         // 7: Projects inverted sharp virtual image onto the Golden Retina!
         pts[7].set(-sx * 0.72, axisY - sy * 0.72, eyeRetinaZ);
 
-        visLines[idx].geometry.setFromPoints(pts);
+        updateLinePointsInPlace(visLines[idx], pts);
       });
 
       // Update 850nm IR Outgoing Beams (4 key LEDs on ring -> Anti-Fog -> Cornea/Pupil)
@@ -375,7 +377,7 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
         pts[0].set(lx, axisY + ly, zIr);
         pts[1].set(lx * 0.85, axisY + ly * 0.85, zAf);
         pts[2].set(lx * 0.14, axisY + ly * 0.14, eyeCorneaZ);
-        irEmitLines[idx].geometry.setFromPoints(pts);
+        updateLinePointsInPlace(irEmitLines[idx], pts);
       });
 
       // Update 850nm IR Return Gaze Rays (Cornea/Pupil -> Anti-Fog -> 45° Dichroic Mirror -> 90° DOWNWARD -> Gaze Camera!)
@@ -383,20 +385,15 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
       const gazeSensorY = pGaze.group.position.y - 0.55;
       irReturnOffsets.forEach(([ox, oy], idx) => {
         const pts = irReturnPaths[idx];
-        // 0: Cornea/Pupil reflection point
         pts[0].set(ox, axisY + oy, eyeCorneaZ);
-        // 1: Passes straight back through Anti-Fog Window
         pts[1].set(ox * 1.1, axisY + oy * 1.15, zAf);
-        // 2: Strikes exact plane of 45° Dichroic Hot Mirror (z = zDic + oy on a 45° plane!)
         const hitY = axisY + oy * 1.25;
         const hitZ = zDic + oy * 1.25;
         pts[2].set(ox * 1.15, hitY, hitZ);
-        // 3: Bounces EXACTLY 90° DOWNWARD (-Y) into Aspheric IR Relay Lens!
         pts[3].set(ox * 0.65, gazeLensY, zDic + oy * 0.85);
-        // 4: Focuses onto 307K-pixel NIR CMOS Gaze Sensor Die!
         pts[4].set(-ox * 0.35, gazeSensorY, zDic - oy * 0.32);
 
-        irReturnLines[idx].geometry.setFromPoints(pts);
+        updateLinePointsInPlace(irReturnLines[idx], pts);
       });
 
       // Animate glowing Visible OLED photon packets
@@ -429,25 +426,30 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
       const zEnd = pRear.group.position.z - 4.0;
 
       cornerOffsets.forEach(([cx, cy], i) => {
-        const line = guideLines[i];
-        line.geometry.setFromPoints([
-          new THREE.Vector3(cx, axisY + cy, zStart),
-          new THREE.Vector3(cx, axisY + cy, zEnd),
-        ]);
-        line.computeLineDistances();
+        updateLine2PtsInPlace(guideLines[i], cx, axisY + cy, zStart, cx, axisY + cy, zEnd, true);
       });
 
-      verticalIrGuide.geometry.setFromPoints([
-        new THREE.Vector3(0, pDic.group.position.y, pDic.group.position.z),
-        new THREE.Vector3(0, pGaze.group.position.y, pGaze.group.position.z),
-      ]);
-      verticalIrGuide.computeLineDistances();
+      updateLine2PtsInPlace(
+        verticalIrGuide,
+        0,
+        pDic.group.position.y,
+        pDic.group.position.z,
+        0,
+        pGaze.group.position.y,
+        pGaze.group.position.z,
+        true
+      );
 
-      diopterGuide.geometry.setFromPoints([
-        new THREE.Vector3(pEd.group.position.x + 14.8, pEd.group.position.y, pEd.group.position.z),
-        new THREE.Vector3(pDio.group.position.x - 0.2, pDio.group.position.y, pDio.group.position.z),
-      ]);
-      diopterGuide.computeLineDistances();
+      updateLine2PtsInPlace(
+        diopterGuide,
+        pEd.group.position.x + 14.8,
+        pEd.group.position.y,
+        pEd.group.position.z,
+        pDio.group.position.x - 0.2,
+        pDio.group.position.y,
+        pDio.group.position.z,
+        true
+      );
       radialGuides.update(explodeFactor, visible, parts);
     },
   };

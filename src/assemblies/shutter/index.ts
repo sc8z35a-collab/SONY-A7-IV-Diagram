@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildShutterParts } from './shutterParts';
+import { buildShutterParts, buildShutterStandaloneParts } from './shutterParts';
 import { createShutterPhysicsOverlay } from './shutterPhysicsOverlay';
 
 /**
- * Assemble the complete next-generation 12-part Dual-Driven Carbon-Fiber Focal-Plane Shutter
- * with real 4-bar parallelogram linkage kinematics, slow-motion slit exposure simulation,
- * and IR photo-interrupter speed diagnostics.
+ * Assemble the complete 77-part Dual-Driven Carbon-Fiber Focal-Plane Shutter
+ * subsystem (39 macro at startup + 38 lazy-hydrated standalone micro parts).
  */
 export function createShutterAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildShutterParts(mats);
+  const { parts, rig } = buildShutterParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +31,22 @@ export function createShutterAssembly(mats: MaterialLibrary): AssemblyController
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 38,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildShutterStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyKinematics(elapsed, physicsActive);
@@ -44,8 +56,8 @@ export function createShutterAssembly(mats: MaterialLibrary): AssemblyController
       overlay.setVisible(visible);
     },
     updateExplodeGuides: (explodeFactor: number, visible: boolean) => {
-      // Ensure positions are up-to-date before measuring front/back Z span for dashed guides
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

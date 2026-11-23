@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildEvfParts } from './evfParts';
+import { buildEvfParts, buildEvfStandaloneParts } from './evfParts';
 import { createEvfPhysicsOverlay } from './evfPhysicsOverlay';
 
 /**
- * Assemble the complete 14-part Next-Generation Electronic Viewfinder (EVF) & Eye-Control AF
- * CAD subsystem with real-time visible OLED ray-tracing, 850nm infrared corneal-reflection
- * 90° dichroic gaze tracking, and live helical diopter focus kinematics.
+ * Assemble the complete 55-part Electronic Viewfinder (EVF) & Eye-Control AF
+ * subsystem (31 macro at startup + 24 lazy-hydrated standalone micro parts).
  */
 export function createEvfAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildEvfParts(mats);
+  const { parts, rig } = buildEvfParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +31,22 @@ export function createEvfAssembly(mats: MaterialLibrary): AssemblyController {
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 24,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildEvfStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyDynamics(elapsed, physicsActive, explodeFactor, integrated);
@@ -47,4 +59,5 @@ export function createEvfAssembly(mats: MaterialLibrary): AssemblyController {
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

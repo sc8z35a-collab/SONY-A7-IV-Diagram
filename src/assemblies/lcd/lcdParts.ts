@@ -79,7 +79,10 @@ function finalizeLcdPart(
  *  - D13: Magnetic Flush-Stow Retention Catch & Silicone Anti-Rattle Bumpers (NEW!)
  *  - D14: Recessed Magnesium/Stainless 4-Axis Stationary Base Mounting Frame
  */
-export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: LcdDynamicRig } {
+export function buildLcdParts(
+  mats: MaterialLibrary,
+  includeStandalone = true
+): { parts: CadPart[]; rig: LcdDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const tiltCradleLinks: THREE.Group[] = [];
@@ -1332,14 +1335,7 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     )
   );
 
-  // Phase 15: Append 24 standalone-only OEM & optical LCD micro-parts (D28–D51; omitted in whole-camera views)
-  const lcdMicro = buildLcdMicroParts(mats);
-  parts.push(...lcdMicro.parts);
-
-  // =========================================================================
-  // Live 4-Axis Articulation Kinematic Demo (active when assembled & physics ON)
-  // =========================================================================
-  const monitorParts = [
+  const monitorParts: CadPart[] = [
     pGlass,
     pTouchCtrl,
     pPolarizer,
@@ -1351,8 +1347,13 @@ export function buildLcdParts(mats: MaterialLibrary): { parts: CadPart[]; rig: L
     pStiffener,
     pAmbColor,
     pFlipMags,
-    ...lcdMicro.monitorParts,
   ];
+
+  if (includeStandalone) {
+    const lcdMicro = buildLcdMicroParts(mats);
+    parts.push(...lcdMicro.parts);
+    monitorParts.push(...lcdMicro.monitorParts);
+  }
 
   const rig: LcdDynamicRig = {
     monitorParts,

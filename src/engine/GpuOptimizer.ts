@@ -92,7 +92,7 @@ export function scaleSegments(segments: number, minSegments = 6): number {
  * CadParts have their static same-material sub-meshes and CAD edge lines safely batched
  * inside their own part.group (preserving all 627 parts, selection, explode & isolation!).
  */
-const DYNAMIC_PART_IDS = new Set<string>([
+export const DYNAMIC_PART_IDS = new Set<string>([
   // Body interactive controls
   'body-command-encoders',
   'body-rear-controls',
@@ -450,38 +450,30 @@ export function optimizeMaterialsForGpu(
       const tex = std[slot];
       if (!tex || seenTextures.has(tex)) continue;
       seenTextures.add(tex);
-
       tex.anisotropy = Math.min(tex.anisotropy || 1, profile.maxAnisotropy);
-
-      if (profile.textureScale < 0.999 && tex instanceof THREE.CanvasTexture) {
-        const img = tex.image as HTMLCanvasElement | undefined;
-        if (img && typeof img.width === 'number' && Math.max(img.width, img.height) >= 256) {
-          const nw = Math.max(128, Math.round(img.width * profile.textureScale));
-          const nh = Math.max(128, Math.round(img.height * profile.textureScale));
-          const small = document.createElement('canvas');
-          small.width = nw;
-          small.height = nh;
-          const ctx = small.getContext('2d');
-          if (ctx) {
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            ctx.drawImage(img, 0, 0, nw, nh);
-            tex.image = small;
-            tex.needsUpdate = true;
-            texturesOptimized++;
-          }
-        }
-      }
     }
 
-    if (profile.simplifyPhysicalShaders && mat instanceof THREE.MeshPhysicalMaterial) {
+    // Preserve bumpScale for MegaBatch LUT dual-bump shader, then clear raw bumpMap on tagged
+    // procedural bump materials so dynamic rig parts never compile extra USE_BUMPMAP shaders!
+    if (mat.userData.bumpChannel && std.bumpMap) {
+      mat.userData.lutBumpScale = std.bumpScale;
+      std.bumpMap = null;
+      mat.needsUpdate = true;
+      shadersSimplified++;
+    }
+
+    if (mat instanceof THREE.MeshPhysicalMaterial) {
       const isHero = heroOpticalMaterials.has(mat);
       let touched = false;
       if (!isHero && mat.iridescence > 0) {
+        mat.userData.lutIridescence = mat.iridescence;
+        mat.userData.lutIridescenceIOR = mat.iridescenceIOR;
         mat.iridescence = 0;
         touched = true;
       }
       if (!isHero && !mat.transparent && mat.clearcoat > 0) {
+        mat.userData.lutClearcoat = mat.clearcoat;
+        mat.userData.lutClearcoatRoughness = mat.clearcoatRoughness;
         mat.clearcoat = 0;
         touched = true;
       }

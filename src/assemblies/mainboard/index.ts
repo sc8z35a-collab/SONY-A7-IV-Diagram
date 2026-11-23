@@ -1,17 +1,16 @@
 import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildMainboardParts } from './mainboardParts';
+import { buildMainboardParts, buildMainboardStandaloneParts } from './mainboardParts';
 import { createMainboardPhysicsOverlay } from './mainboardPhysicsOverlay';
 
 /**
- * Assemble the complete 16-part Next-Generation Image Processing Engine (4nm ISP + AI NPU)
- * & 12-Layer Any-Layer HDI Mainboard CAD subsystem with real-time high-speed data bus
- * and two-phase vapor chamber thermal dissipation simulation.
+ * Assemble the complete 60-part Image Processing Engine & 12-Layer HDI Mainboard
+ * subsystem (30 macro at startup + 30 lazy-hydrated standalone micro parts).
  */
 export function createMainboardAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
-  const { parts, rig } = buildMainboardParts(mats);
+  const { parts, rig } = buildMainboardParts(mats, false);
 
   for (const part of parts) {
     rootGroup.add(part.group);
@@ -32,9 +31,22 @@ export function createMainboardAssembly(mats: MaterialLibrary): AssemblyControll
     }
   };
 
-  return {
+  let standaloneHydrated = false;
+  const controller: AssemblyController = {
     rootGroup,
     parts,
+    deferredStandaloneCount: 30,
+    hydrateStandalone: () => {
+      if (standaloneHydrated) return [];
+      standaloneHydrated = true;
+      controller.deferredStandaloneCount = 0;
+      const extra = buildMainboardStandaloneParts(mats);
+      for (const p of extra) {
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+      return extra;
+    },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
       rig.applyDynamics(elapsed, physicsActive);
@@ -47,4 +59,5 @@ export function createMainboardAssembly(mats: MaterialLibrary): AssemblyControll
       overlay.updateGuides(explodeFactor, visible, parts);
     },
   };
+  return controller;
 }

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from './lcdParts';
-import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';
+import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';
 
 export interface LcdPhysicsOverlayController {
   overlayGroup: THREE.Group;
@@ -185,17 +185,23 @@ export function createLcdPhysicsOverlay(
 
       for (let i = 0; i < rayOffsets.length; i++) {
         const [ox, oy] = rayOffsets[i];
-        const p0 = new THREE.Vector3(LCD_CENTER_X + ox, LCD_CENTER_Y - LCD_HEIGHT * 0.44, zBl);
-        const p1 = new THREE.Vector3(LCD_CENTER_X + ox, LCD_CENTER_Y + oy, zBl);
-        const p2 = new THREE.Vector3(LCD_CENTER_X + ox, LCD_CENTER_Y + oy, zEye);
-        rayLines[i].geometry.setFromPoints([p0, p1, p2]);
+        const x0 = LCD_CENTER_X + ox;
+        const y0 = LCD_CENTER_Y - LCD_HEIGHT * 0.44;
+        const y1 = LCD_CENTER_Y + oy;
+        const posAttr = rayLines[i].geometry.getAttribute('position') as THREE.BufferAttribute;
+        posAttr.setXYZ(0, x0, y0, zBl);
+        posAttr.setXYZ(1, x0, y1, zBl);
+        posAttr.setXYZ(2, x0, y1, zEye);
+        posAttr.needsUpdate = true;
 
         const b = photonBeads[i];
         const t = (elapsed * 0.55 + b.phase) % 1;
         if (t < 0.38) {
-          b.mesh.position.lerpVectors(p0, p1, t / 0.38);
+          const u = t / 0.38;
+          b.mesh.position.set(x0, y0 + (y1 - y0) * u, zBl);
         } else {
-          b.mesh.position.lerpVectors(p1, p2, (t - 0.38) / 0.62);
+          const u = (t - 0.38) / 0.62;
+          b.mesh.position.set(x0, y1, zBl + (zEye - zBl) * u);
         }
       }
     },
@@ -213,11 +219,7 @@ export function createLcdPhysicsOverlay(
 
       for (let i = 0; i < guideLines.length; i++) {
         const [gx, gy] = corners[i];
-        guideLines[i].geometry.setFromPoints([
-          new THREE.Vector3(gx, gy, zFront),
-          new THREE.Vector3(gx, gy, zRear),
-        ]);
-        guideLines[i].computeLineDistances();
+        updateLine2PtsInPlace(guideLines[i], gx, gy, zFront, gx, gy, zRear, true);
       }
       radialGuides.update(explodeFactor, visible, parts);
     },

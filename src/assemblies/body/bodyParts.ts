@@ -97,7 +97,10 @@ function createKnurledDial(
  *  - -X = Photographer's RIGHT-HAND SIDE (Deep Grip, 7.2V Battery, Shutter, Command Dials, Card Door, Thumb Controls)
  *  - +X = Photographer's LEFT-HAND SIDE (Split I/O Doors, Left Drive/AF Dial, LCD Swivel Hinge)
  */
-export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: BodyDynamicRig } {
+export function buildBodyParts(
+  mats: MaterialLibrary,
+  includeStandalone = true
+): { parts: CadPart[]; rig: BodyDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
 
@@ -2735,6 +2738,16 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
   // =========================================================================
   // Live Ergonomic & Internal Mechanical Dynamics (Shutter Switch, Encoders, Joystick)
   // =========================================================================
+  // Tag rigid kinematic bone nodes for GPU SubPartRigidBoneMegaBatcher!
+  shutterButtonCap.userData.kinematicBone = true;
+  shutterPlunger.userData.kinematicBone = true;
+  frontDialMesh.userData.kinematicBone = true;
+  rearDialMesh.userData.kinematicBone = true;
+  frontEncoderWheel.userData.kinematicBone = true;
+  rearEncoderWheel.userData.kinematicBone = true;
+  rearWheelRotor.userData.kinematicBone = true;
+  afJoystickCap.userData.kinematicBone = true;
+
   const rig: BodyDynamicRig = {
     shutterButtonCap,
     frontDialMesh,
@@ -2774,9 +2787,14 @@ export function buildBodyParts(mats: MaterialLibrary): { parts: CadPart[]; rig: 
     },
   };
 
-  // Append 22 Phase 13 + 16 Phase 16C standalone-only Sony ILCE-7M4 OEM & deep-audit body micro-parts (B39–B76; omitted in whole-camera views!)
-  parts.push(...buildBodyMicroParts(mats));
-  parts.push(...buildBodyUltraAuditParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildBodyStandaloneParts(mats));
+  }
 
   return { parts, rig };
+}
+
+export function buildBodyStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 13 (22) + Phase 16C (16) = 38 standalone-only magnesium body micro-parts (B39–B76)
+  return [...buildBodyMicroParts(mats), ...buildBodyUltraAuditParts(mats)];
 }

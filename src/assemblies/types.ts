@@ -735,6 +735,10 @@ export interface CadPart {
 export interface AssemblyController {
   rootGroup: THREE.Group;
   parts: CadPart[];
+  /** Number of standalone-only parts deferred until this subsystem's standalone view is entered */
+  deferredStandaloneCount?: number;
+  /** Lazily build & attach standalone-only micro-parts on first standalone visit (returns newly built parts) */
+  hydrateStandalone?: () => CadPart[];
   updateAnimation: (
     elapsed: number,
     delta: number,

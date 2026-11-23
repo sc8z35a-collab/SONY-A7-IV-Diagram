@@ -106,7 +106,8 @@ function finalizeShutterPart(
  *  - SH26: Glass-Fiber Reinforced PPS/Magnesium High-Rigidity Base Chassis
  */
 export function buildShutterParts(
-  mats: MaterialLibrary
+  mats: MaterialLibrary,
+  includeStandalone = true
 ): { parts: CadPart[]; rig: ShutterDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2003,11 +2004,26 @@ export function buildShutterParts(
 
   applyKinematics(0, false);
 
-  // Append 18 Phase 13 standalone-only OEM & patent micro-parts (SH40–SH57; omitted in whole-camera views!)
-  parts.push(...buildShutterMicroParts(mats));
+  // Tag all 20 rigid kinematic bones + 4 pulsing glow indicators for GPU SubPartRigidBoneMegaBatcher!
+  for (const b of curtain1Blades) b.userData.kinematicBone = true;
+  for (const b of curtain2Blades) b.userData.kinematicBone = true;
+  link1Main.userData.kinematicBone = true;
+  link1Sub.userData.kinematicBone = true;
+  link2Main.userData.kinematicBone = true;
+  link2Sub.userData.kinematicBone = true;
+  for (const g of chargeGears) g.userData.kinematicBone = true;
+  chargeCam.userData.kinematicBone = true;
+  counterweightLever.userData.kinematicBone = true;
+  armatureLever1.userData.kinematicBone = true;
+  armatureLever2.userData.kinematicBone = true;
+  dualBoostCoilGlow.userData.dynamicGlow = true;
+  magnet1Glow.userData.dynamicGlow = true;
+  magnet2Glow.userData.dynamicGlow = true;
+  xSyncGlow.userData.dynamicGlow = true;
 
-  // Append 20 Phase 17 standalone-only shutter & surroundings deep-audit micro-parts (SH58–SH77; omitted in whole-camera views!)
-  parts.push(...buildShutterUltraAuditParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildShutterStandaloneParts(mats));
+  }
 
   return {
     parts,
@@ -2031,4 +2047,9 @@ export function buildShutterParts(
       applyKinematics,
     },
   };
+}
+
+export function buildShutterStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 13 (18) + Phase 17 (20) = 38 standalone-only mechanical shutter micro-parts (SH40–SH77)
+  return [...buildShutterMicroParts(mats), ...buildShutterUltraAuditParts(mats)];
 }

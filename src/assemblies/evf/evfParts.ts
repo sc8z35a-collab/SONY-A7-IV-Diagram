@@ -83,7 +83,10 @@ function createLensRetainerCell(
  *
  * +Z = camera front (OLED thermal sink & TCON), -Z = camera rear (photographer's eye).
  */
-export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: EvfDynamicRig } {
+export function buildEvfParts(
+  mats: MaterialLibrary,
+  includeStandalone = true
+): { parts: CadPart[]; rig: EvfDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const irLedMeshes: THREE.Mesh[] = [];
@@ -395,14 +398,18 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       cup.position.set(lx, ly, -1.16);
       irLedsGroup.add(cup);
 
-      // Ruby optical dome emitter (pulsed during physics simulation!)
+      // Ruby optical dome emitter (pulsed during physics simulation via lightweight basic material!)
       const dome = new THREE.Mesh(
-        new THREE.SphereGeometry(0.76, 16, 12),
-        mats.evfIrEmitter.clone()
+        new THREE.SphereGeometry(0.76, 8, 6),
+        new THREE.MeshBasicMaterial({
+          color: 0xc81440,
+          clippingPlanes: cp,
+        })
       );
       dome.scale.set(1, 1, 0.72);
       dome.position.set(lx, ly, -1.32);
       dome.userData.noEdges = true;
+      dome.userData.dynamicGlow = true;
       irLedsGroup.add(dome);
       irLedMeshes.push(dome);
     }
@@ -1969,6 +1976,12 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
   // =========================================================================
   // Live Kinematic Rig: Smooth Diopter Focus Drive + Helicoid + Lock Clutch + 850nm IR Pulse
   // =========================================================================
+  // Tag rigid kinematic bone nodes for GPU SubPartRigidBoneMegaBatcher!
+  diopterDialGroup.userData.kinematicBone = true;
+  diopterLockClutchGroup.userData.kinematicBone = true;
+  leadScrewGroup.userData.kinematicBone = true;
+  helicoidSleeveGroup.userData.kinematicBone = true;
+
   const applyDynamics = (
     elapsed: number,
     physicsActive: boolean,
@@ -1986,7 +1999,7 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       leadScrewGroup.rotation.z = 0;
       helicoidSleeveGroup.rotation.z = 0;
       for (const led of irLedMeshes) {
-        (led.material as THREE.MeshPhysicalMaterial).emissiveIntensity = 0.55;
+        (led.material as THREE.MeshBasicMaterial).color.setRGB(0.62, 0.08, 0.22);
       }
       return;
     }
@@ -2006,13 +2019,14 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
     helicoidSleeveGroup.rotation.z = diopterWave * 0.42;
 
     irLedMeshes.forEach((led, idx) => {
-      const pulse = 0.45 + 0.95 * (0.5 + 0.5 * Math.sin(elapsed * 6.5 - idx * (Math.PI / 4)));
-      (led.material as THREE.MeshPhysicalMaterial).emissiveIntensity = pulse;
+      const pulse = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(elapsed * 6.5 - idx * (Math.PI / 4)));
+      (led.material as THREE.MeshBasicMaterial).color.setRGB(pulse, 0.1 * pulse, 0.26 * pulse);
     });
   };
 
-  // Append 24 Phase 16B standalone-only EVF & Viewfinder Surroundings OEM/optical micro-parts (E32–E55; omitted in whole-camera views!)
-  parts.push(...buildEvfMicroParts(mats));
+  if (includeStandalone) {
+    parts.push(...buildEvfStandaloneParts(mats));
+  }
 
   return {
     parts,
@@ -2025,4 +2039,9 @@ export function buildEvfParts(mats: MaterialLibrary): { parts: CadPart[]; rig: E
       applyDynamics,
     },
   };
+}
+
+export function buildEvfStandaloneParts(mats: MaterialLibrary): CadPart[] {
+  // Phase 16B: 24 standalone-only EVF & viewfinder surroundings micro-parts (E32–E55)
+  return buildEvfMicroParts(mats);
 }
