@@ -13,6 +13,8 @@ import { renderPhase16MainboardSchematicSvg } from './phase16MainboardSchematics
 import { renderPhase16EvfSchematicSvg } from './phase16EvfSchematics';
 import { renderPhase16BodyAuditSchematicSvg } from './phase16BodyAuditSchematics';
 import { renderPhase17ShutterAuditSchematicSvg } from './phase17ShutterAuditSchematics';
+import { renderPhase18LensMountSchematicSvg } from './phase18LensMountSchematics';
+import { renderPhase19UltraAnatomySchematicSvg } from './phase19UltraAnatomySchematics';
 
 export interface ExplanationDrawerHandlers {
   onClose: () => void;
@@ -52,7 +54,8 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
   if (
     partId.includes('ed') ||
     partId.includes('flint') ||
-    partId.includes('focus-b-front')
+    partId.includes('focus-b-front') ||
+    partId.includes('uv-cement')
   ) {
     return 'ed_chromatic';
   }
@@ -61,7 +64,9 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('rear-element') ||
     partId.includes('rear-cell-spacer') ||
     partId.includes('front-meniscus') ||
-    partId.includes('retaining-rings')
+    partId.includes('retaining-rings') ||
+    partId.includes('potting') ||
+    partId.includes('phase-align')
   ) {
     return 'xa_aspheric';
   }
@@ -70,8 +75,7 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('focus-') ||
     partId.includes('guide') ||
     partId.includes('antirot') ||
-    partId.includes('mr-encoders') ||
-    partId.includes('mr-magnet-scales') ||
+    partId.includes('mr-') ||
     partId.includes('af-origin') ||
     partId.includes('mf-') ||
     partId.includes('control-rings') ||
@@ -87,7 +91,11 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
     partId.includes('baffle') ||
     partId.includes('filter') ||
     partId.includes('optical-spacers') ||
-    partId.includes('lighttrap-tube')
+    partId.includes('lighttrap-tube') ||
+    partId.includes('fluorine') ||
+    partId.includes('nano-ar') ||
+    partId.includes('sumi') ||
+    partId.includes('lightfoil')
   ) {
     return 'nano_ar_baffle';
   }
@@ -139,6 +147,12 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
 
   const phase17ShutterAuditSvg = renderPhase17ShutterAuditSchematicSvg(type, wrap);
   if (phase17ShutterAuditSvg) return phase17ShutterAuditSvg;
+
+  const phase18LensMountSvg = renderPhase18LensMountSchematicSvg(type, wrap);
+  if (phase18LensMountSvg) return phase18LensMountSvg;
+
+  const phase19UltraSvg = renderPhase19UltraAnatomySchematicSvg(type, wrap);
+  if (phase19UltraSvg) return phase19UltraSvg;
 
   switch (type) {
     case 'baffle':
@@ -1709,7 +1723,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <rect x="232" y="34" width="72" height="40" rx="5" fill="#ecfdf5" stroke="#10b981"/>
         <text x="238" y="50" font-size="8" font-weight="bold" fill="#047857">RGB一致!</text>
         <text x="238" y="64" font-size="7.5" fill="#065f46">紫にじみ 0</text>
-        <text x="40" y="110" font-size="8" fill="#334155">φ₁/ν₁ + φ₂/ν₂ = 0 の色消し接合でF1.2開放の軸上色収差を徹底除去</text>
+        <text x="160" y="110" text-anchor="middle" font-size="7.4" fill="#334155">φ₁/ν₁ + φ₂/ν₂ = 0 の色消し接合でF1.2開放の軸上色収差を徹底除去</text>
       `);
 
     case 'lens_iris_11':
@@ -2877,7 +2891,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="150" y="51" font-size="7.5" fill="#4c1d95">・センサー四隅への斜め入射角を大幅低減</text>
         <text x="150" y="65" font-size="7.5" fill="#4c1d95">・周辺減光と色シェーディングを防止</text>
         <text x="150" y="79" font-size="7.5" fill="#15803d">・ショートフランジだからこそ置ける大玉</text>
-        <text x="34" y="111" font-size="8" fill="#334155">斜め光をほぼ垂直へ起こして画素の奥まで効率よく届ける大口径テレセントリック玉</text>
+        <text x="160" y="111" text-anchor="middle" font-size="7.2" fill="#334155">斜め光をほぼ垂直へ起こして画素の奥まで効率よく届ける大口径テレセントリック玉</text>
       `);
 
     case 'lens_rear_baffle':
@@ -2984,7 +2998,7 @@ function renderSchematicSvg(type: PartExplanation['diagramType']): string {
         <text x="160" y="51" font-size="7.5" fill="#0c4a6e">・前枠/MF前後/絞り前後/マウント全封止</text>
         <text x="160" y="65" font-size="7.5" fill="#0c4a6e">・低摩擦フッ素処理ワイパーリップ</text>
         <text x="160" y="79" font-size="7.5" fill="#0c4a6e">・全長不変IF構造でホコリ吸込を遮断</text>
-        <text x="34" y="111" font-size="8" fill="#334155">回転リングの隙間まで6重ゴムパッキンで塞ぎ土砂降りや砂塵から光学系を死守</text>
+        <text x="160" y="111" text-anchor="middle" font-size="7.3" fill="#334155">回転リングの隙間まで6重ゴムパッキンで塞ぎ土砂降りや砂塵から光学系を死守</text>
       `);
 
     case 'lens_bayonet_shims':

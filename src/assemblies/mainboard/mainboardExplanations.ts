@@ -1,5 +1,6 @@
 import { PartExplanation } from '../types';
 import { MAINBOARD_MICRO_EXPLANATIONS } from './mainboardMicroExplanations';
+import { MAINBOARD_ULTRA_AUDIT_EXPLANATIONS } from './mainboardUltraAuditExplanations';
 
 export const MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = {
   'mb-vapor-chamber': {
@@ -838,5 +839,6 @@ export const MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   ...MAINBOARD_MICRO_EXPLANATIONS,
+  ...MAINBOARD_ULTRA_AUDIT_EXPLANATIONS,
 };
 

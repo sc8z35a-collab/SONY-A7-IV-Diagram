@@ -12,6 +12,7 @@ import {
 } from '../../engine/CadHelpers';
 import { MAINBOARD_EXPLANATIONS } from './mainboardExplanations';
 import { buildMainboardMicroParts } from './mainboardMicroParts';
+import { buildMainboardUltraAuditParts } from './mainboardUltraAuditParts';
 
 export interface MainboardDynamicRig {
   npuSystolicGlow: THREE.Mesh;
@@ -2024,6 +2025,9 @@ export function buildMainboardParts(
 
   // Append 24 Phase 16A standalone-only Vapor Chamber & Sony OEM Mainboard micro-parts (M31–M54; omitted in whole-camera views!)
   parts.push(...buildMainboardMicroParts(mats));
+
+  // Append 6 Phase 19D standalone-only Mainboard deep-audit micro-parts (M55–M60; omitted in whole-camera views!)
+  parts.push(...buildMainboardUltraAuditParts(mats));
 
   return {
     parts,

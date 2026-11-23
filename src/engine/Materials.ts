@@ -152,6 +152,14 @@ export interface MaterialLibrary {
   aramidKevlarWeave: THREE.MeshPhysicalMaterial;
   oilTrapPorousPad: THREE.MeshStandardMaterial;
   varistorRingBlue: THREE.MeshPhysicalMaterial;
+  // Phase 18 50mm F1.2 GM Lens & Mount Ultra-Anatomy Materials
+  fluorineCoatCyan: THREE.MeshPhysicalMaterial;
+  nanoArIridescent: THREE.MeshPhysicalMaterial;
+  sinteredBronzeBushing: THREE.MeshPhysicalMaterial;
+  // Phase 19 3-Section GM Lens & Deep-Audit Micro Materials
+  thermalPuttyPink: THREE.MeshStandardMaterial;
+  gMasterRedBadge: THREE.MeshPhysicalMaterial;
+  makeupSealViolet: THREE.MeshPhysicalMaterial;
   // Utility
   allMaterials: THREE.Material[];
 }
@@ -2653,6 +2661,72 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     clearcoatRoughness: 0.22,
   });
 
+  // Phase 18: 15 nm Front-Element Hydrophobic/Oleophobic Fluorine Coating Glint
+  const fluorineCoatCyan = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x38bdf8,
+    metalness: 0.04,
+    roughness: 0.04,
+    opacity: 0.34,
+    iridescence: 0.72,
+    iridescenceIOR: 1.32,
+    iridescenceThicknessRange: [120, 320],
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.03,
+  });
+
+  // Phase 18: Sony Nano AR Coating II Sub-Wavelength Porous Silica Iridescent Layer
+  const nanoArIridescent = new THREE.MeshPhysicalMaterial({
+    ...glassCommon,
+    color: 0x6366f1,
+    metalness: 0.08,
+    roughness: 0.05,
+    opacity: 0.36,
+    iridescence: 1.0,
+    iridescenceIOR: 1.24,
+    iridescenceThicknessRange: [140, 480],
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.04,
+  });
+
+  // Phase 18: Sintered Oil-Impregnated Bronze Linear Slide Sleeve Bushing
+  const sinteredBronzeBushing = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xb67b3d,
+    metalness: 0.76,
+    roughness: 0.36,
+    clearcoat: 0.18,
+    clearcoatRoughness: 0.42,
+  });
+
+  // Phase 19: Compliant Silicone PCB Thermal Heatsink Putty (Lensrentals Sony FE PCB discovery)
+  const thermalPuttyPink = new THREE.MeshStandardMaterial({
+    ...common,
+    color: 0xe89ca8,
+    metalness: 0.02,
+    roughness: 0.82,
+  });
+
+  // Phase 19: Sony G Master Signature Anodized Crimson-Orange Aluminum Emblem Badge
+  const gMasterRedBadge = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0xd9381e,
+    metalness: 0.62,
+    roughness: 0.24,
+    clearcoat: 0.9,
+    clearcoatRoughness: 0.14,
+  });
+
+  // Phase 19: Front-Element Thick Blue-Violet Weather-Sealing Silicone Ring (Lensrentals GM teardown)
+  const makeupSealViolet = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x6c63c9,
+    metalness: 0.04,
+    roughness: 0.56,
+    clearcoat: 0.22,
+    clearcoatRoughness: 0.4,
+  });
+
   const allMaterials: THREE.Material[] = [
     matteBlackAnodized,
     epdmGasket,
@@ -2790,6 +2864,12 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     aramidKevlarWeave,
     oilTrapPorousPad,
     varistorRingBlue,
+    fluorineCoatCyan,
+    nanoArIridescent,
+    sinteredBronzeBushing,
+    thermalPuttyPink,
+    gMasterRedBadge,
+    makeupSealViolet,
   ];
 
   return {
@@ -2930,6 +3010,12 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     aramidKevlarWeave,
     oilTrapPorousPad,
     varistorRingBlue,
+    fluorineCoatCyan,
+    nanoArIridescent,
+    sinteredBronzeBushing,
+    thermalPuttyPink,
+    gMasterRedBadge,
+    makeupSealViolet,
     allMaterials,
   };
 }

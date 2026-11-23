@@ -256,11 +256,89 @@ body,
   transition: opacity 0.26s ease, transform 0.26s ease;
 }
 
+/* Top-center 3-Section Lightweight GM Lens Switcher Pill (Strictly Zero-Text SVG Icons; visible only in standalone 'lens' mode) */
+.lens-section-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 21;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(18, 20, 26, 0.11);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(15, 20, 30, 0.08), 0 1px 2px rgba(15, 20, 30, 0.04);
+  transition: left 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease, transform 0.24s ease;
+}
+
+.lens-section-bar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -14px);
+}
+
+#app.has-drawer .lens-section-bar {
+  left: calc(50% - 215px);
+}
+
+.lens-section-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  width: 54px;
+  height: 32px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.lens-section-btn:hover {
+  background: rgba(18, 20, 26, 0.06);
+  color: #0e1014;
+}
+
+.lens-section-btn:active {
+  transform: scale(0.94);
+}
+
+.lens-section-btn.is-active {
+  background: #14161a;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(14, 16, 20, 0.22);
+}
+
+.lens-section-btn svg {
+  width: 40px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
 /* Zen Fullscreen fallback (when Fullscreen API is restricted in embedded preview iframes) */
-#app.is-zen-fullscreen .view-cluster {
+#app.is-zen-fullscreen .view-cluster,
+#app.is-zen-fullscreen .lens-section-bar {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-14px);
+}
+
+#app.is-zen-fullscreen .lens-section-bar {
+  transform: translate(-50%, -14px);
 }
 
 #app.is-zen-fullscreen .layer-rail {

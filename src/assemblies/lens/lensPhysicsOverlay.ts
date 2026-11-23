@@ -224,7 +224,7 @@ export function createLensPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 48);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 136);
   explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
@@ -449,13 +449,20 @@ export function createLensPhysicsOverlay(
       explodeGuides.visible = show;
       if (!show) return;
 
-      const pFront = parts.find((p) => p.id === 'lens-front-hood');
-      const pRear =
-        parts.find((p) => p.id === 'lens-mount-seal-bolts') ??
-        parts.find((p) => p.id === 'lens-rear-bayonet') ??
-        parts.find((p) => p.id === 'lens-rear-element');
-      const zMax = pFront ? pFront.group.position.z + 10 : 140;
-      const zMin = pRear ? pRear.group.position.z - 5 : 32;
+      let zMin = Infinity;
+      let zMax = -Infinity;
+      for (const p of parts) {
+        if (!p.group.visible) continue;
+        if (p.group.position.z < zMin) zMin = p.group.position.z;
+        if (p.group.position.z > zMax) zMax = p.group.position.z;
+      }
+      if (!Number.isFinite(zMin) || !Number.isFinite(zMax)) {
+        zMin = 32;
+        zMax = 140;
+      } else {
+        zMin -= 6;
+        zMax += 8;
+      }
 
       for (let i = 0; i < guideLines.length; i++) {
         const [gx, gy] = guideOffsets[i];

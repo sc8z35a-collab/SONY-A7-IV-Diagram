@@ -1,8 +1,12 @@
 import { PartExplanation } from '../types';
 import { LENS_ULTRA_EXPLANATIONS } from './lensUltraExplanations';
+import { LENS_MICRO_EXPLANATIONS } from './lensMicroExplanations';
+import { LENS_ULTRA_SPLIT_EXPLANATIONS } from './lensUltraSplitExplanations';
 
 export const LENS_EXPLANATIONS: Record<string, PartExplanation> = {
   ...LENS_ULTRA_EXPLANATIONS,
+  ...LENS_MICRO_EXPLANATIONS,
+  ...LENS_ULTRA_SPLIT_EXPLANATIONS,
   // =========================================================================
   // L01 — Bayonet Lock Cylindrical Lens Hood
   // =========================================================================

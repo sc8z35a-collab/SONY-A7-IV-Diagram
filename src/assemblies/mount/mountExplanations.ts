@@ -1,5 +1,6 @@
 import { PartExplanation } from '../types';
 import { MOUNT_MICRO_EXPLANATIONS } from './mountMicroExplanations';
+import { MOUNT_ULTRA_AUDIT_EXPLANATIONS } from './mountUltraAuditExplanations';
 
 export const MOUNT_EXPLANATIONS: Record<string, PartExplanation> = {
   'mount-flange-ring': {
@@ -750,5 +751,6 @@ export const MOUNT_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   ...MOUNT_MICRO_EXPLANATIONS,
+  ...MOUNT_ULTRA_AUDIT_EXPLANATIONS,
 };
 
