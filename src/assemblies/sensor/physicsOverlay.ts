@@ -367,6 +367,30 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     }
   };
 
+  const _dirPosY = new THREE.Vector3(0, 1, 0);
+  const _dirNegY = new THREE.Vector3(0, -1, 0);
+  const _dirPosX = new THREE.Vector3(1, 0, 0);
+  const _dirNegX = new THREE.Vector3(-1, 0, 0);
+  const _splitOffsets: ReadonlyArray<readonly [number, number]> = [
+    [0.9, 0.45],
+    [-0.9, -0.45],
+    [0.45, -0.9],
+    [-0.45, 0.9],
+  ];
+
+  let cachedMacroLen = -1;
+  let cSswfPart: CadPart | undefined;
+  let cOlpfPart: CadPart | undefined;
+  let cIrPart: CadPart | undefined;
+  let cDiePart: CadPart | undefined;
+  let cIbisPart: CadPart | undefined;
+
+  let cachedMicroLen = -1;
+  let cOclPart: CadPart | undefined;
+  let cPdPart: CadPart | undefined;
+  let cGsPart: CadPart | undefined;
+  let cDramPart: CadPart | undefined;
+
   const updateMacro = (
     elapsed: number,
     explodeFactor: number,
@@ -380,7 +404,8 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     const dy = Math.cos(elapsed * 1.9) * 1.2 * ibisAmp;
     const dRoll = Math.sin(elapsed * 1.35) * 0.032 * ibisAmp;
 
-    for (const p of macroParts) {
+    for (let i = 0; i < macroParts.length; i++) {
+      const p = macroParts[i];
       const offset =
         integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
       const baseX = p.assembledPos.x + offset.x * explodeFactor;
@@ -402,107 +427,107 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     }
 
     if (physicsActive) {
-      const sswfPart = macroParts.find((p) => p.id === 'sswf-piezo');
-      const olpfPart = macroParts.find((p) => p.id === 'olpf-16pt');
-      const irPart = macroParts.find((p) => p.id === 'ir-cut-filter');
-      const diePart = macroParts.find((p) => p.id === 'cmos-die');
-      const ibisPart =
-        macroParts.find((p) => p.id === 'sensor-vcm-coils') ??
-        macroParts.find((p) => p.id === 'ibis-carrier');
+      if (cachedMacroLen !== macroParts.length) {
+        cachedMacroLen = macroParts.length;
+        cSswfPart = macroParts.find((p) => p.id === 'sswf-piezo');
+        cOlpfPart = macroParts.find((p) => p.id === 'olpf-16pt');
+        cIrPart = macroParts.find((p) => p.id === 'ir-cut-filter');
+        cDiePart = macroParts.find((p) => p.id === 'cmos-die');
+        cIbisPart =
+          macroParts.find((p) => p.id === 'sensor-vcm-coils') ??
+          macroParts.find((p) => p.id === 'ibis-carrier');
+      }
 
-      const zSswf = sswfPart ? sswfPart.group.position.z : 6.2;
-      const zOlpf = olpfPart ? olpfPart.group.position.z : 4.95;
-      const zIr = irPart ? irPart.group.position.z : 3.25;
-      const zDie = diePart ? diePart.group.position.z + 0.15 : 1.1;
+      const zSswf = cSswfPart ? cSswfPart.group.position.z : 6.2;
+      const zOlpf = cOlpfPart ? cOlpfPart.group.position.z : 4.95;
+      const zIr = cIrPart ? cIrPart.group.position.z : 3.25;
+      const zDie = cDiePart ? cDiePart.group.position.z + 0.15 : 1.1;
       const zStart = integrated ? zSswf + 7.5 : zSswf + 18.0;
 
-        // Update ultrasonic wave rings on SSWF surface
-        sswfWaveRings.forEach((ring, idx) => {
-          const cycle = (elapsed * 1.6 + idx * 0.33) % 1;
-          ring.position.set(dx, dy, zSswf + 0.45);
-          const sc = 0.35 + cycle * 1.2;
-          ring.scale.set(sc * 1.42, sc * 0.96, 1);
-          (ring.material as THREE.MeshBasicMaterial).opacity = (1 - cycle) * 0.48;
-        });
+      // Update ultrasonic wave rings on SSWF surface
+      for (let idx = 0; idx < sswfWaveRings.length; idx++) {
+        const ring = sswfWaveRings[idx];
+        const cycle = (elapsed * 1.6 + idx * 0.33) % 1;
+        ring.position.set(dx, dy, zSswf + 0.45);
+        const sc = 0.35 + cycle * 1.2;
+        ring.scale.set(sc * 1.42, sc * 0.96, 1);
+        (ring.material as THREE.MeshBasicMaterial).opacity = (1 - cycle) * 0.48;
+      }
 
-        // Update optical ray beams dynamically to track exploded layer Z positions
-        macroRayLines.forEach((item, idx) => {
-          const { def, mainLine, splitLines, reflectLine } = item;
-          const xStart = def.x * 1.18;
-          const yStart = def.y * 1.18;
-          const posAttr = mainLine.geometry.attributes.position as THREE.BufferAttribute;
+      // Update optical ray beams dynamically to track exploded layer Z positions
+      for (let idx = 0; idx < macroRayLines.length; idx++) {
+        const { def, mainLine, splitLines, reflectLine } = macroRayLines[idx];
+        const xStart = def.x * 1.18;
+        const yStart = def.y * 1.18;
+        const posAttr = mainLine.geometry.attributes.position as THREE.BufferAttribute;
 
-          if (def.isNIR && reflectLine) {
-            posAttr.setXYZ(0, xStart, yStart, zStart);
-            posAttr.setXYZ(1, def.x, def.y, zIr + 0.38);
-            posAttr.needsUpdate = true;
+        if (def.isNIR && reflectLine) {
+          posAttr.setXYZ(0, xStart, yStart, zStart);
+          posAttr.setXYZ(1, def.x, def.y, zIr + 0.38);
+          posAttr.needsUpdate = true;
 
-            const rPos = reflectLine.geometry.attributes.position as THREE.BufferAttribute;
-            rPos.setXYZ(0, def.x, def.y, zIr + 0.38);
-            rPos.setXYZ(1, def.x * 1.55, def.y * 1.45 + 3.5, zStart - 2);
-            rPos.needsUpdate = true;
-            reflectLine.computeLineDistances();
-          } else {
-            posAttr.setXYZ(0, xStart, yStart, zStart);
-            posAttr.setXYZ(1, def.x, def.y, zOlpf);
-            posAttr.needsUpdate = true;
+          const rPos = reflectLine.geometry.attributes.position as THREE.BufferAttribute;
+          rPos.setXYZ(0, def.x, def.y, zIr + 0.38);
+          rPos.setXYZ(1, def.x * 1.55, def.y * 1.45 + 3.5, zStart - 2);
+          rPos.needsUpdate = true;
+          reflectLine.computeLineDistances();
+        } else {
+          posAttr.setXYZ(0, xStart, yStart, zStart);
+          posAttr.setXYZ(1, def.x, def.y, zOlpf);
+          posAttr.needsUpdate = true;
 
-            const splitOffsets: Array<[number, number]> = [
-              [0.9, 0.45],
-              [-0.9, -0.45],
-              [0.45, -0.9],
-              [-0.45, 0.9],
-            ];
-            splitLines.forEach((sl, si) => {
-              const [ox, oy] = splitOffsets[si];
-              const sAttr = sl.geometry.attributes.position as THREE.BufferAttribute;
-              sAttr.setXYZ(0, def.x, def.y, zOlpf);
-              sAttr.setXYZ(1, def.x + ox + dx, def.y + oy + dy, zDie);
-              sAttr.needsUpdate = true;
-            });
+          for (let si = 0; si < splitLines.length; si++) {
+            const [ox, oy] = _splitOffsets[si];
+            const sAttr = splitLines[si].geometry.attributes.position as THREE.BufferAttribute;
+            sAttr.setXYZ(0, def.x, def.y, zOlpf);
+            sAttr.setXYZ(1, def.x + ox + dx, def.y + oy + dy, zDie);
+            sAttr.needsUpdate = true;
           }
+        }
 
-          // Animate photon pulse along ray
-          const pkt = macroPackets[idx];
-          const u = (elapsed * pkt.speed + pkt.phase) % 1;
-          if (def.isNIR) {
-            if (u < 0.55) {
-              const t = u / 0.55;
-              pkt.mesh.position.set(
-                THREE.MathUtils.lerp(xStart, def.x, t),
-                THREE.MathUtils.lerp(yStart, def.y, t),
-                THREE.MathUtils.lerp(zStart, zIr + 0.38, t)
-              );
-            } else {
-              const t = (u - 0.55) / 0.45;
-              pkt.mesh.position.set(
-                THREE.MathUtils.lerp(def.x, def.x * 1.55, t),
-                THREE.MathUtils.lerp(def.y, def.y * 1.45 + 3.5, t),
-                THREE.MathUtils.lerp(zIr + 0.38, zStart - 2, t)
-              );
-            }
-          } else {
+        // Animate photon pulse along ray
+        const pkt = macroPackets[idx];
+        const u = (elapsed * pkt.speed + pkt.phase) % 1;
+        if (def.isNIR) {
+          if (u < 0.55) {
+            const t = u / 0.55;
             pkt.mesh.position.set(
-              THREE.MathUtils.lerp(xStart, def.x + dx, u),
-              THREE.MathUtils.lerp(yStart, def.y + dy, u),
-              THREE.MathUtils.lerp(zStart, zDie, u)
+              THREE.MathUtils.lerp(xStart, def.x, t),
+              THREE.MathUtils.lerp(yStart, def.y, t),
+              THREE.MathUtils.lerp(zStart, zIr + 0.38, t)
+            );
+          } else {
+            const t = (u - 0.55) / 0.45;
+            pkt.mesh.position.set(
+              THREE.MathUtils.lerp(def.x, def.x * 1.55, t),
+              THREE.MathUtils.lerp(def.y, def.y * 1.45 + 3.5, t),
+              THREE.MathUtils.lerp(zIr + 0.38, zStart - 2, t)
             );
           }
-        });
-
-        // Update IBIS Lorentz vector arrows on VCM voice coils
-        if (ibisPart) {
-          ibisVectors.position.set(dx, dy, ibisPart.group.position.z - 0.5);
-          ibisVectors.rotation.z = dRoll;
-          const fy = Math.cos(elapsed * 1.9);
-          const fx = Math.sin(elapsed * 2.4);
-          arrowY1.setDirection(new THREE.Vector3(0, fy >= 0 ? 1 : -1, 0));
-          arrowY1.setLength(3.2 + Math.abs(fy) * 5.0, 2.0, 1.2);
-          arrowY2.setDirection(new THREE.Vector3(0, fy >= 0 ? 1 : -1, 0));
-          arrowY2.setLength(3.2 + Math.abs(fy) * 5.0, 2.0, 1.2);
-          arrowX1.setDirection(new THREE.Vector3(fx >= 0 ? 1 : -1, 0, 0));
-          arrowX1.setLength(3.2 + Math.abs(fx) * 5.0, 2.0, 1.2);
+        } else {
+          pkt.mesh.position.set(
+            THREE.MathUtils.lerp(xStart, def.x + dx, u),
+            THREE.MathUtils.lerp(yStart, def.y + dy, u),
+            THREE.MathUtils.lerp(zStart, zDie, u)
+          );
         }
+      }
+
+      // Update IBIS Lorentz vector arrows on VCM voice coils (zero Vector3 allocations!)
+      if (cIbisPart) {
+        ibisVectors.position.set(dx, dy, cIbisPart.group.position.z - 0.5);
+        ibisVectors.rotation.z = dRoll;
+        const fy = Math.cos(elapsed * 1.9);
+        const fx = Math.sin(elapsed * 2.4);
+        const yDir = fy >= 0 ? _dirPosY : _dirNegY;
+        const xDir = fx >= 0 ? _dirPosX : _dirNegX;
+        arrowY1.setDirection(yDir);
+        arrowY1.setLength(3.2 + Math.abs(fy) * 5.0, 2.0, 1.2);
+        arrowY2.setDirection(yDir);
+        arrowY2.setLength(3.2 + Math.abs(fy) * 5.0, 2.0, 1.2);
+        arrowX1.setDirection(xDir);
+        arrowX1.setLength(3.2 + Math.abs(fx) * 5.0, 2.0, 1.2);
+      }
     }
   };
 
@@ -514,7 +539,8 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
   ) => {
     latestMicroParts = microParts;
     // 2. MICRO PIXEL MODE POSITIONING & PHOTON -> ELECTRON TRANSFER FLOW
-    for (const p of microParts) {
+    for (let i = 0; i < microParts.length; i++) {
+      const p = microParts[i];
       p.group.position.set(
         p.assembledPos.x + p.explodeOffset.x * explodeFactor,
         p.assembledPos.y + p.explodeOffset.y * explodeFactor,
@@ -523,34 +549,35 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     }
 
     if (physicsActive) {
-      const ocl = microParts.find((p) => p.id === 'micro-ocl');
-      const pd = microParts.find((p) => p.id === 'micro-pd-cross');
-      const gs = microParts.find((p) => p.id === 'micro-2layer-gs');
-      const dram =
-        microParts.find((p) => p.id === 'micro-stacked-dram') ??
-        microParts.find((p) => p.id === 'micro-adc-dram');
+      if (cachedMicroLen !== microParts.length) {
+        cachedMicroLen = microParts.length;
+        cOclPart = microParts.find((p) => p.id === 'micro-ocl');
+        cPdPart = microParts.find((p) => p.id === 'micro-pd-cross');
+        cGsPart = microParts.find((p) => p.id === 'micro-2layer-gs');
+        cDramPart =
+          microParts.find((p) => p.id === 'micro-stacked-dram') ??
+          microParts.find((p) => p.id === 'micro-adc-dram');
+      }
 
-      const zTop = (ocl ? ocl.group.position.z : 12.8) + 12.0;
-      const zOcl = (ocl ? ocl.group.position.z : 12.8) + 2.4;
-      const zPd = pd ? pd.group.position.z : 2.4;
-      const zGs = gs ? gs.group.position.z : -3.4;
-      const zDram = dram ? dram.group.position.z : -15.0;
+      const zTop = (cOclPart ? cOclPart.group.position.z : 12.8) + 12.0;
+      const zOcl = (cOclPart ? cOclPart.group.position.z : 12.8) + 2.4;
+      const zPd = cPdPart ? cPdPart.group.position.z : 2.4;
+      const zGs = cGsPart ? cGsPart.group.position.z : -3.4;
+      const zDram = cDramPart ? cDramPart.group.position.z : -15.0;
 
-      microRaySpecs.forEach((spec, sIdx) => {
-        const { center, subOffsets, lines, electronDots } = spec;
-        subOffsets.forEach(([ox, oy], subIdx) => {
+      for (let sIdx = 0; sIdx < microRaySpecs.length; sIdx++) {
+        const { center, subOffsets, lines, electronDots } = microRaySpecs[sIdx];
+        for (let subIdx = 0; subIdx < subOffsets.length; subIdx++) {
+          const [ox, oy] = subOffsets[subIdx];
           const posAttr = lines[subIdx].geometry.attributes.position as THREE.BufferAttribute;
-          // Refracted light beam converging via Gapless Aspheric OCL onto Split Dual Pixel Photodiode
           posAttr.setXYZ(0, center.x + ox * 1.65, center.y + oy * 1.65, zTop);
           posAttr.setXYZ(1, center.x + ox * 1.45, center.y + oy * 1.45, zOcl);
           posAttr.setXYZ(2, center.x + ox * 0.72, center.y + oy * 0.72, zPd);
           posAttr.needsUpdate = true;
 
-          // Photoelectron transfer cascade: PD -> Vertical Gate -> GS Memory -> Cu-Cu -> ADC/DRAM
           const phase = (elapsed * 0.65 + sIdx * 0.21 + subIdx * 0.47) % 1;
           const dot = electronDots[subIdx];
           if (phase < 0.35) {
-            // Photodiode -> 2-Layer Global Shutter Memory Node
             const t = phase / 0.35;
             dot.position.set(
               THREE.MathUtils.lerp(center.x + ox * 0.7, center.x + 2.2, t),
@@ -558,7 +585,6 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
               THREE.MathUtils.lerp(zPd, zGs + 0.4, t)
             );
           } else {
-            // GS Memory Node -> Cu-Cu Direct Hybrid Bond -> Column ADC & Stacked DRAM
             const t = (phase - 0.35) / 0.65;
             dot.position.set(
               THREE.MathUtils.lerp(center.x + 2.2, center.x + 2.7, t),
@@ -566,8 +592,8 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
               THREE.MathUtils.lerp(zGs + 0.4, zDram + 1.2, t)
             );
           }
-        });
-      });
+        }
+      }
     }
   };
 
