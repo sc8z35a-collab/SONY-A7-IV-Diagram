@@ -38,6 +38,9 @@ import { createLcdAssembly } from '../assemblies/lcd';
 import { createBodyAssembly } from '../assemblies/body';
 import { createBatteryAssembly } from '../assemblies/battery';
 import { createCfexpressAssembly } from '../assemblies/cfexpress';
+import { createBionzAssembly } from '../assemblies/bionz';
+import { createMiShoeAssembly } from '../assemblies/mishoe';
+import { createMicAssembly } from '../assemblies/mic';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -94,6 +97,9 @@ export class CadViewport {
   private microAssembly: AssemblyController;
   private batteryAssembly: AssemblyController;
   private cfexpressAssembly: AssemblyController;
+  private bionzAssembly: AssemblyController;
+  private mishoeAssembly: AssemblyController;
+  private micAssembly: AssemblyController;
   private assemblyBySubsystem: Record<SubsystemKey, AssemblyController>;
   private allParts: CadPart[] = [];
   private partById = new Map<string, CadPart>();
@@ -258,8 +264,8 @@ export class CadViewport {
       this.prepareFrameForRender(camera);
     };
 
-    // Build ALL 11 subsystem controllers (305 macro parts built upfront; 527 standalone-only, micro,
-    // battery & cfexpress parts lazily hydrated on first visit — ALL 832 parts 100% preserved!)
+    // Build ALL 14 subsystem controllers (305 macro parts built upfront; 627 standalone-only, micro,
+    // battery, cfexpress, bionz, mishoe & mic parts lazily hydrated on first visit — ALL 932 parts 100% preserved!)
     this.lensAssembly = createLensAssembly(this.materials);
     this.mountAssembly = createMountAssembly(this.materials);
     this.shutterAssembly = createShutterAssembly(this.materials);
@@ -272,6 +278,9 @@ export class CadViewport {
     this.bodyAssembly = createBodyAssembly(this.materials);
     this.batteryAssembly = createBatteryAssembly(this.materials);
     this.cfexpressAssembly = createCfexpressAssembly(this.materials);
+    this.bionzAssembly = createBionzAssembly(this.materials);
+    this.mishoeAssembly = createMiShoeAssembly(this.materials);
+    this.micAssembly = createMicAssembly(this.materials);
 
     this.assemblyBySubsystem = {
       lens: this.lensAssembly,
@@ -285,6 +294,9 @@ export class CadViewport {
       micro: this.microAssembly,
       battery: this.batteryAssembly,
       cfexpress: this.cfexpressAssembly,
+      bionz: this.bionzAssembly,
+      mishoe: this.mishoeAssembly,
+      mic: this.micAssembly,
     };
 
     const emptyChunks = (): SubsystemChunks => ({
@@ -303,6 +315,9 @@ export class CadViewport {
       micro: emptyChunks(),
       battery: emptyChunks(),
       cfexpress: emptyChunks(),
+      bionz: emptyChunks(),
+      mishoe: emptyChunks(),
+      mic: emptyChunks(),
     };
 
     this.scene.add(
@@ -316,7 +331,10 @@ export class CadViewport {
       this.bodyAssembly.rootGroup,
       this.microAssembly.rootGroup,
       this.batteryAssembly.rootGroup,
-      this.cfexpressAssembly.rootGroup
+      this.cfexpressAssembly.rootGroup,
+      this.bionzAssembly.rootGroup,
+      this.mishoeAssembly.rootGroup,
+      this.micAssembly.rootGroup
     );
 
     // Breakthrough #17/27: Compile ALL 305 startup macro parts into ONE Unified Compactable VBO/IBO!
@@ -481,23 +499,30 @@ export class CadViewport {
     }, 160);
   }
 
+  private isStandaloneMicroMode(mode: ScaleMode = this.mode): boolean {
+    return (
+      mode === 'micro' ||
+      mode === 'battery' ||
+      mode === 'cfexpress' ||
+      mode === 'bionz' ||
+      mode === 'mishoe' ||
+      mode === 'mic'
+    );
+  }
+
   private isPartInCurrentMode(part: CadPart): boolean {
+    const isUltraStandalone =
+      part.subsystem === 'micro' ||
+      part.subsystem === 'battery' ||
+      part.subsystem === 'cfexpress' ||
+      part.subsystem === 'bionz' ||
+      part.subsystem === 'mishoe' ||
+      part.subsystem === 'mic';
     if (this.mode === 'integrated') {
-      return (
-        part.subsystem !== 'micro' &&
-        part.subsystem !== 'battery' &&
-        part.subsystem !== 'cfexpress' &&
-        !part.standaloneOnly
-      );
+      return !isUltraStandalone && !part.standaloneOnly;
     }
     if (this.mode === 'camera_body') {
-      return (
-        part.subsystem !== 'micro' &&
-        part.subsystem !== 'battery' &&
-        part.subsystem !== 'cfexpress' &&
-        part.subsystem !== 'lens' &&
-        !part.standaloneOnly
-      );
+      return !isUltraStandalone && part.subsystem !== 'lens' && !part.standaloneOnly;
     }
     if (this.mode === 'lens') {
       if (part.subsystem !== 'lens') return false;
@@ -513,14 +538,14 @@ export class CadViewport {
     const isAllBody = this.mode === 'integrated' || this.mode === 'camera_body';
     this.activeChunks.length = 0;
 
-    if (this.mode === 'micro' || this.mode === 'battery' || this.mode === 'cfexpress') {
+    if (this.isStandaloneMicroMode()) {
       this.macroBatch.setHidden();
     } else {
       this.macroBatch.group.visible = true;
       this.activeChunks.push(this.macroBatch);
     }
 
-    // Standalone / Micro / Battery / CFexpress lazily hydrated chunks
+    // Standalone / Micro / Battery / CFexpress / BIONZ / MI Shoe / Mic lazily hydrated chunks
     for (const sub of Object.keys(this.subsystemChunks) as SubsystemKey[]) {
       const chunks = this.subsystemChunks[sub];
       const asmVisible = this.assemblyBySubsystem[sub].rootGroup.visible;
@@ -571,6 +596,9 @@ export class CadViewport {
       this.currentExplode,
       this.cfexpressAssembly.rootGroup.visible
     );
+    this.bionzAssembly.updateExplodeGuides(this.currentExplode, this.bionzAssembly.rootGroup.visible);
+    this.mishoeAssembly.updateExplodeGuides(this.currentExplode, this.mishoeAssembly.rootGroup.visible);
+    this.micAssembly.updateExplodeGuides(this.currentExplode, this.micAssembly.rootGroup.visible);
     this.overlaysDirty = true;
   }
 
@@ -587,6 +615,9 @@ export class CadViewport {
     const showMicro = this.mode === 'micro';
     const showBattery = this.mode === 'battery';
     const showCfexpress = this.mode === 'cfexpress';
+    const showBionz = this.mode === 'bionz';
+    const showMiShoe = this.mode === 'mishoe';
+    const showMic = this.mode === 'mic';
 
     this.lensAssembly.rootGroup.visible = showLens;
     this.mountAssembly.rootGroup.visible = showMount;
@@ -599,6 +630,9 @@ export class CadViewport {
     this.microAssembly.rootGroup.visible = showMicro;
     this.batteryAssembly.rootGroup.visible = showBattery;
     this.cfexpressAssembly.rootGroup.visible = showCfexpress;
+    this.bionzAssembly.rootGroup.visible = showBionz;
+    this.mishoeAssembly.rootGroup.visible = showMiShoe;
+    this.micAssembly.rootGroup.visible = showMic;
 
     for (const part of this.allParts) {
       part.group.visible = this.isPartInCurrentMode(part) && !this.isPartHidden(part.id);
@@ -617,6 +651,9 @@ export class CadViewport {
     this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
     this.batteryAssembly.setPhysicsVisible(this.physicsActive && showBattery);
     this.cfexpressAssembly.setPhysicsVisible(this.physicsActive && showCfexpress);
+    this.bionzAssembly.setPhysicsVisible(this.physicsActive && showBionz);
+    this.mishoeAssembly.setPhysicsVisible(this.physicsActive && showMiShoe);
+    this.micAssembly.setPhysicsVisible(this.physicsActive && showMic);
 
     this.updateActiveExplodeGuides();
   }
@@ -634,6 +671,9 @@ export class CadViewport {
       micro: 8,
       battery: 9,
       cfexpress: 10,
+      bionz: 11,
+      mishoe: 12,
+      mic: 13,
     };
     return this.allParts
       .filter((p) => this.isPartInCurrentMode(p))
@@ -919,6 +959,15 @@ export class CadViewport {
     } else if (this.mode === 'cfexpress') {
       d = 116 + e * 316;
       target = new THREE.Vector3(0.0, e * 2.0, e * 4.0);
+    } else if (this.mode === 'bionz') {
+      d = 94 + e * 195;
+      target = new THREE.Vector3(0, 1.8 + e * 1.5, 0);
+    } else if (this.mode === 'mishoe') {
+      d = 114 + e * 165;
+      target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
+    } else if (this.mode === 'mic') {
+      d = 116 + e * 172;
+      target = new THREE.Vector3(0, 1.0 - e * 1.5, -1.0);
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -1010,6 +1059,12 @@ export class CadViewport {
             offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
           } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
             offset = new THREE.Vector3(d * 0.62, d * 0.32, d * 0.72);
+          } else if (this.mode === 'bionz') {
+            offset = new THREE.Vector3(d * 0.62, d * 0.46, d * 0.64);
+          } else if (this.mode === 'mishoe') {
+            offset = new THREE.Vector3(d * 0.58, d * 0.42, d * 0.70);
+          } else if (this.mode === 'mic') {
+            offset = new THREE.Vector3(d * 0.46, d * 0.38, d * 0.80);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }
@@ -1040,10 +1095,14 @@ export class CadViewport {
     _focusBox.getCenter(_focusCenter);
 
     _focusOffset.subVectors(this.camera.position, this.controls.target);
-    const isMicro = this.mode === 'micro';
+    const isMicro =
+      this.mode === 'micro' ||
+      this.mode === 'bionz' ||
+      this.mode === 'mishoe' ||
+      this.mode === 'mic';
     const isCompactStandalone = this.mode === 'battery' || this.mode === 'cfexpress';
     const maxDist = isMicro
-      ? 66
+      ? 72
       : isCompactStandalone
         ? 98
         : this.mode === 'evf'
@@ -1141,6 +1200,30 @@ export class CadViewport {
     } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
       minCoord = -30;
       maxCoord = 30;
+    } else if (this.mode === 'bionz') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -20;
+        maxCoord = 20;
+      } else {
+        minCoord = -16;
+        maxCoord = 18;
+      }
+    } else if (this.mode === 'mishoe') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -32;
+        maxCoord = 32;
+      } else {
+        minCoord = -15;
+        maxCoord = 12;
+      }
+    } else if (this.mode === 'mic') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -30;
+        maxCoord = 30;
+      } else {
+        minCoord = -16;
+        maxCoord = 20;
+      }
     } else if (this.mode === 'lens') {
       minCoord = -46;
       maxCoord = 46;
@@ -1853,14 +1936,16 @@ export class CadViewport {
         asm.updateAnimation(elapsed, delta, this.currentExplode, asmPhysics, integrated);
       }
     }
-    if (this.microAssembly.rootGroup.visible) {
-      this.microAssembly.updateAnimation(
-        elapsed,
-        delta,
-        this.currentExplode,
-        this.physicsActive,
-        false
-      );
+    const standaloneUltraAssemblies = [
+      this.microAssembly,
+      this.bionzAssembly,
+      this.mishoeAssembly,
+      this.micAssembly,
+    ];
+    for (const asm of standaloneUltraAssemblies) {
+      if (asm.rootGroup.visible) {
+        asm.updateAnimation(elapsed, delta, this.currentExplode, this.physicsActive, false);
+      }
     }
     if (this.batteryAssembly.rootGroup.visible) {
       this.batteryAssembly.updateAnimation(
