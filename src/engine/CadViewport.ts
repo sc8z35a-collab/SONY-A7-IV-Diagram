@@ -264,8 +264,8 @@ export class CadViewport {
       this.prepareFrameForRender(camera);
     };
 
-    // Build ALL 14 subsystem controllers (305 macro parts built upfront; 567 standalone-only, micro,
-    // battery, cfexpress, bionz, mishoe & mic parts lazily hydrated on first visit — ALL 872 parts 100% preserved!)
+    // Build ALL 14 subsystem controllers (305 macro parts built upfront; 627 standalone-only, micro,
+    // battery, cfexpress, bionz, mishoe & mic parts lazily hydrated on first visit — ALL 932 parts 100% preserved!)
     this.lensAssembly = createLensAssembly(this.materials);
     this.mountAssembly = createMountAssembly(this.materials);
     this.shutterAssembly = createShutterAssembly(this.materials);
@@ -469,7 +469,7 @@ export class CadViewport {
     return this.allParts.length + deferred;
   }
 
-  /** Force-hydrate every deferred standalone/micro/battery/cfexpress subsystem immediately (returns 772). */
+  /** Force-hydrate every deferred standalone/micro/battery/cfexpress subsystem immediately (returns 832). */
   public ensureAllHydrated(): number {
     for (const sub of Object.keys(this.assemblyBySubsystem) as SubsystemKey[]) {
       this.hydrateSubsystemIfNeeded(sub);
@@ -954,11 +954,11 @@ export class CadViewport {
       d = 168 + e * 475;
       target = new THREE.Vector3(10.0 * e, -2.0, -4.0 - e * 46.0);
     } else if (this.mode === 'battery') {
-      d = 112 + e * 245;
-      target = new THREE.Vector3(e * 12.0, e * 6.0, e * 4.0);
+      d = 112 + e * 320;
+      target = new THREE.Vector3(e * 10.0, e * 4.0, e * 4.0);
     } else if (this.mode === 'cfexpress') {
-      d = 116 + e * 238;
-      target = new THREE.Vector3(0.0, e * 4.0, e * 4.0);
+      d = 116 + e * 316;
+      target = new THREE.Vector3(0.0, e * 2.0, e * 4.0);
     } else if (this.mode === 'bionz') {
       d = 94 + e * 195;
       target = new THREE.Vector3(0, 1.8 + e * 1.5, 0);

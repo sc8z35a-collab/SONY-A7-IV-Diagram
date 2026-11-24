@@ -9,6 +9,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { BATTERY_EXPLANATIONS } from './batteryExplanations';
+import { buildBatteryUltra27Parts } from './batteryUltra27Parts';
 
 function finalizeBatteryPart(
   id: string,
@@ -966,5 +967,6 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
     );
   }
 
+  parts.push(...buildBatteryUltra27Parts(mats));
   return parts;
 }

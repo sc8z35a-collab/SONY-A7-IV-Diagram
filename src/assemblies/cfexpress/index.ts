@@ -5,8 +5,8 @@ import { buildCfexpressParts } from './cfexpressParts';
 import { createCfexpressPhysicsOverlay } from './cfexpressPhysicsOverlay';
 
 /**
- * Assemble the Standalone 30-part CFexpress 4.0 Card Ultra-Dissection
- * (Sony CEA-G Type A TOUGH / PCIe Gen4 NVMe 2.0 / 232–300+ Layer 3D NAND, C01–C30).
+ * Assemble the Standalone 60-part CFexpress 4.0 Card Ultra-Dissection
+ * (Sony CEA-G Type A TOUGH / PCIe Gen4 NVMe 2.0 / 16DP / BiCS8 CBA 3D NAND, C01–C60).
  * 100% lazy-hydrated on first visit to 'cfexpress' mode (0 startup overhead!).
  */
 export function createCfexpressAssembly(mats: MaterialLibrary): AssemblyController {
@@ -21,7 +21,7 @@ export function createCfexpressAssembly(mats: MaterialLibrary): AssemblyControll
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 30,
+    deferredStandaloneCount: 60,
     hydrateStandalone: () => {
       if (hydrated) return [];
       hydrated = true;

@@ -12,7 +12,7 @@ export interface BatteryPhysicsOverlayController {
 
 /**
  * Animated Li+ Ion / Electron Power-Flow Overlay + 6-Way Dashed Explode Guides
- * for the Standalone Flagship Camera Battery Pack Ultra-Dissection (P01–P30).
+ * for the Standalone Flagship Camera Battery Pack Ultra-Dissection (P01–P60).
  */
 export function createBatteryPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,7 +23,7 @@ export function createBatteryPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 40);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 72);
   explodeGuides.add(radialGuides.group);
 
   // Power & Ion flow paths: Left Cell -> Bottom 2S Bridge -> Right Cell -> BMS MOSFET -> 4-Pin Terminal

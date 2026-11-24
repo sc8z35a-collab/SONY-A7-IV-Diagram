@@ -12,7 +12,7 @@ export interface CfexpressPhysicsOverlayController {
 
 /**
  * Animated PCIe Gen4 NVMe High-Speed Data Flow + Thermal Diffusion Waves + 6-Way Dashed Explode Guides
- * for the Standalone CFexpress 4.0 Card Ultra-Dissection (C01–C30).
+ * for the Standalone CFexpress 4.0 Card Ultra-Dissection (C01–C60).
  */
 export function createCfexpressPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,7 +23,7 @@ export function createCfexpressPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 40);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 72);
   explodeGuides.add(radialGuides.group);
 
   // High-speed data & thermal paths:
