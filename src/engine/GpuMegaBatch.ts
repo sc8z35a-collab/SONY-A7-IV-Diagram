@@ -31,7 +31,7 @@ import { GPU_PROFILE } from './GpuOptimizer';
  * ZERO part reduction (627/627 intact), ZERO visual quality degradation!
  */
 
-export const MAX_PARTS_CAPACITY = 1024;
+export const MAX_PARTS_CAPACITY = 2048;
 export const MAX_MATERIALS_CAPACITY = 256;
 
 const EMPTY_GEOMETRY = new THREE.BufferGeometry();
@@ -63,7 +63,7 @@ export const MACRO_GROUP_ORDER: readonly MacroGroupKey[] = [
 ];
 
 // =============================================================================
-// 1. SHARED GPU KINEMATIC STATE TEXTURE (4 x 1024 RGBA32F = 64 KB)
+// 1. SHARED GPU KINEMATIC STATE TEXTURE (4 x 2048 RGBA32F = 128 KB)
 // =============================================================================
 // Col 0: (posOrAssemX, Y, Z, packedFlags)
 //   packedFlags bits:

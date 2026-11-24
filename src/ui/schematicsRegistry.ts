@@ -17,6 +17,9 @@ import { renderPhase19UltraAnatomySchematicSvg } from './phase19UltraAnatomySche
 import { renderPhase20MicroMountSchematicSvg } from './phase20MicroMountSchematics';
 import { renderPhase23MicroNextGenSchematicSvg } from './phase23MicroNextGenSchematics';
 import { renderPhase24BodyNextGenSchematicSvg } from './phase24BodyNextGenSchematics';
+import { renderPhase25BionzSchematicSvg } from './phase25BionzSchematics';
+import { renderPhase25MiShoeSchematicSvg } from './phase25MiShoeSchematics';
+import { renderPhase25MicSchematicSvg } from './phase25MicSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -78,6 +81,15 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase24BodyNextGenSvg = renderPhase24BodyNextGenSchematicSvg(type);
   if (phase24BodyNextGenSvg) return phase24BodyNextGenSvg;
+
+  const phase25BionzSvg = renderPhase25BionzSchematicSvg(type);
+  if (phase25BionzSvg) return phase25BionzSvg;
+
+  const phase25MiShoeSvg = renderPhase25MiShoeSchematicSvg(type);
+  if (phase25MiShoeSvg) return phase25MiShoeSvg;
+
+  const phase25MicSvg = renderPhase25MicSchematicSvg(type);
+  if (phase25MicSvg) return phase25MicSvg;
 
   switch (type) {
     case 'baffle':

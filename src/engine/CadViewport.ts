@@ -36,6 +36,9 @@ import { createMainboardAssembly } from '../assemblies/mainboard';
 import { createEvfAssembly } from '../assemblies/evf';
 import { createLcdAssembly } from '../assemblies/lcd';
 import { createBodyAssembly } from '../assemblies/body';
+import { createBionzAssembly } from '../assemblies/bionz';
+import { createMiShoeAssembly } from '../assemblies/mishoe';
+import { createMicAssembly } from '../assemblies/mic';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -90,6 +93,9 @@ export class CadViewport {
   private lcdAssembly: AssemblyController;
   private bodyAssembly: AssemblyController;
   private microAssembly: AssemblyController;
+  private bionzAssembly: AssemblyController;
+  private mishoeAssembly: AssemblyController;
+  private micAssembly: AssemblyController;
   private assemblyBySubsystem: Record<SubsystemKey, AssemblyController>;
   private allParts: CadPart[] = [];
   private partById = new Map<string, CadPart>();
@@ -254,8 +260,8 @@ export class CadViewport {
       this.prepareFrameForRender(camera);
     };
 
-    // Build ALL 9 subsystem controllers (305 macro parts built upfront; 322 standalone-only & micro parts
-    // lazily hydrated on first visit to each standalone mode — ALL 627 parts 100% preserved!)
+    // Build ALL 12 subsystem controllers (305 macro parts built upfront; 472 standalone-only & micro parts
+    // lazily hydrated on first visit to each standalone mode — ALL 777 parts 100% preserved!)
     this.lensAssembly = createLensAssembly(this.materials);
     this.mountAssembly = createMountAssembly(this.materials);
     this.shutterAssembly = createShutterAssembly(this.materials);
@@ -266,6 +272,9 @@ export class CadViewport {
     this.evfAssembly = createEvfAssembly(this.materials);
     this.lcdAssembly = createLcdAssembly(this.materials);
     this.bodyAssembly = createBodyAssembly(this.materials);
+    this.bionzAssembly = createBionzAssembly(this.materials);
+    this.mishoeAssembly = createMiShoeAssembly(this.materials);
+    this.micAssembly = createMicAssembly(this.materials);
 
     this.assemblyBySubsystem = {
       lens: this.lensAssembly,
@@ -277,6 +286,9 @@ export class CadViewport {
       lcd: this.lcdAssembly,
       body: this.bodyAssembly,
       micro: this.microAssembly,
+      bionz: this.bionzAssembly,
+      mishoe: this.mishoeAssembly,
+      mic: this.micAssembly,
     };
 
     const emptyChunks = (): SubsystemChunks => ({
@@ -293,6 +305,9 @@ export class CadViewport {
       lcd: emptyChunks(),
       body: emptyChunks(),
       micro: emptyChunks(),
+      bionz: emptyChunks(),
+      mishoe: emptyChunks(),
+      mic: emptyChunks(),
     };
 
     this.scene.add(
@@ -304,7 +319,10 @@ export class CadViewport {
       this.evfAssembly.rootGroup,
       this.lcdAssembly.rootGroup,
       this.bodyAssembly.rootGroup,
-      this.microAssembly.rootGroup
+      this.microAssembly.rootGroup,
+      this.bionzAssembly.rootGroup,
+      this.mishoeAssembly.rootGroup,
+      this.micAssembly.rootGroup
     );
 
     // Breakthrough #17/27: Compile ALL 305 startup macro parts into ONE Unified Compactable VBO/IBO!
@@ -469,12 +487,21 @@ export class CadViewport {
     }, 160);
   }
 
+  private isStandaloneMicroMode(mode: ScaleMode = this.mode): boolean {
+    return mode === 'micro' || mode === 'bionz' || mode === 'mishoe' || mode === 'mic';
+  }
+
   private isPartInCurrentMode(part: CadPart): boolean {
+    const isUltraStandalone =
+      part.subsystem === 'micro' ||
+      part.subsystem === 'bionz' ||
+      part.subsystem === 'mishoe' ||
+      part.subsystem === 'mic';
     if (this.mode === 'integrated') {
-      return part.subsystem !== 'micro' && !part.standaloneOnly;
+      return !isUltraStandalone && !part.standaloneOnly;
     }
     if (this.mode === 'camera_body') {
-      return part.subsystem !== 'micro' && part.subsystem !== 'lens' && !part.standaloneOnly;
+      return !isUltraStandalone && part.subsystem !== 'lens' && !part.standaloneOnly;
     }
     if (this.mode === 'lens') {
       if (part.subsystem !== 'lens') return false;
@@ -490,7 +517,7 @@ export class CadViewport {
     const isAllBody = this.mode === 'integrated' || this.mode === 'camera_body';
     this.activeChunks.length = 0;
 
-    if (this.mode === 'micro') {
+    if (this.isStandaloneMicroMode()) {
       this.macroBatch.setHidden();
     } else {
       this.macroBatch.group.visible = true;
@@ -543,6 +570,9 @@ export class CadViewport {
     this.lcdAssembly.updateExplodeGuides(this.currentExplode, this.lcdAssembly.rootGroup.visible);
     this.bodyAssembly.updateExplodeGuides(this.currentExplode, this.bodyAssembly.rootGroup.visible);
     this.microAssembly.updateExplodeGuides(this.currentExplode, this.microAssembly.rootGroup.visible);
+    this.bionzAssembly.updateExplodeGuides(this.currentExplode, this.bionzAssembly.rootGroup.visible);
+    this.mishoeAssembly.updateExplodeGuides(this.currentExplode, this.mishoeAssembly.rootGroup.visible);
+    this.micAssembly.updateExplodeGuides(this.currentExplode, this.micAssembly.rootGroup.visible);
     this.overlaysDirty = true;
   }
 
@@ -557,6 +587,9 @@ export class CadViewport {
     const showLcd = this.mode === 'lcd' || isAllBody;
     const showBody = this.mode === 'body' || isAllBody;
     const showMicro = this.mode === 'micro';
+    const showBionz = this.mode === 'bionz';
+    const showMiShoe = this.mode === 'mishoe';
+    const showMic = this.mode === 'mic';
 
     this.lensAssembly.rootGroup.visible = showLens;
     this.mountAssembly.rootGroup.visible = showMount;
@@ -567,6 +600,9 @@ export class CadViewport {
     this.lcdAssembly.rootGroup.visible = showLcd;
     this.bodyAssembly.rootGroup.visible = showBody;
     this.microAssembly.rootGroup.visible = showMicro;
+    this.bionzAssembly.rootGroup.visible = showBionz;
+    this.mishoeAssembly.rootGroup.visible = showMiShoe;
+    this.micAssembly.rootGroup.visible = showMic;
 
     for (const part of this.allParts) {
       part.group.visible = this.isPartInCurrentMode(part) && !this.isPartHidden(part.id);
@@ -583,6 +619,9 @@ export class CadViewport {
     this.lcdAssembly.setPhysicsVisible(this.physicsActive && showLcd);
     this.bodyAssembly.setPhysicsVisible(this.physicsActive && showBody);
     this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
+    this.bionzAssembly.setPhysicsVisible(this.physicsActive && showBionz);
+    this.mishoeAssembly.setPhysicsVisible(this.physicsActive && showMiShoe);
+    this.micAssembly.setPhysicsVisible(this.physicsActive && showMic);
 
     this.updateActiveExplodeGuides();
   }
@@ -598,6 +637,9 @@ export class CadViewport {
       mainboard: 6,
       lcd: 7,
       micro: 8,
+      bionz: 9,
+      mishoe: 10,
+      mic: 11,
     };
     return this.allParts
       .filter((p) => this.isPartInCurrentMode(p))
@@ -877,6 +919,15 @@ export class CadViewport {
     } else if (this.mode === 'sensor') {
       d = 168 + e * 435;
       target = new THREE.Vector3(14.0 * e, -2.0, -4.0 - e * 56.0);
+    } else if (this.mode === 'bionz') {
+      d = 94 + e * 195;
+      target = new THREE.Vector3(0, 1.8 + e * 1.5, 0);
+    } else if (this.mode === 'mishoe') {
+      d = 114 + e * 165;
+      target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
+    } else if (this.mode === 'mic') {
+      d = 116 + e * 172;
+      target = new THREE.Vector3(0, 1.0 - e * 1.5, -1.0);
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -966,6 +1017,12 @@ export class CadViewport {
             const isoY = e > 0.25 ? 0.26 : 0.38;
             const isoZ = e > 0.25 ? 0.51 : 0.72;
             offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+          } else if (this.mode === 'bionz') {
+            offset = new THREE.Vector3(d * 0.62, d * 0.46, d * 0.64);
+          } else if (this.mode === 'mishoe') {
+            offset = new THREE.Vector3(d * 0.58, d * 0.42, d * 0.70);
+          } else if (this.mode === 'mic') {
+            offset = new THREE.Vector3(d * 0.46, d * 0.38, d * 0.80);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }
@@ -996,9 +1053,9 @@ export class CadViewport {
     _focusBox.getCenter(_focusCenter);
 
     _focusOffset.subVectors(this.camera.position, this.controls.target);
-    const isMicro = this.mode === 'micro';
+    const isMicro = this.isStandaloneMicroMode();
     const maxDist = isMicro
-      ? 66
+      ? 72
       : this.mode === 'evf'
         ? 112
         : this.mode === 'integrated' || this.mode === 'camera_body'
@@ -1091,6 +1148,30 @@ export class CadViewport {
     if (this.mode === 'micro') {
       minCoord = -13;
       maxCoord = 13;
+    } else if (this.mode === 'bionz') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -20;
+        maxCoord = 20;
+      } else {
+        minCoord = -16;
+        maxCoord = 18;
+      }
+    } else if (this.mode === 'mishoe') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -32;
+        maxCoord = 32;
+      } else {
+        minCoord = -15;
+        maxCoord = 12;
+      }
+    } else if (this.mode === 'mic') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -30;
+        maxCoord = 30;
+      } else {
+        minCoord = -16;
+        maxCoord = 20;
+      }
     } else if (this.mode === 'lens') {
       minCoord = -46;
       maxCoord = 46;
@@ -1803,14 +1884,16 @@ export class CadViewport {
         asm.updateAnimation(elapsed, delta, this.currentExplode, asmPhysics, integrated);
       }
     }
-    if (this.microAssembly.rootGroup.visible) {
-      this.microAssembly.updateAnimation(
-        elapsed,
-        delta,
-        this.currentExplode,
-        this.physicsActive,
-        false
-      );
+    const standaloneUltraAssemblies = [
+      this.microAssembly,
+      this.bionzAssembly,
+      this.mishoeAssembly,
+      this.micAssembly,
+    ];
+    for (const asm of standaloneUltraAssemblies) {
+      if (asm.rootGroup.visible) {
+        asm.updateAnimation(elapsed, delta, this.currentExplode, this.physicsActive, false);
+      }
     }
 
     this.syncGpuPartTransforms(false);
