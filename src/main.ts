@@ -1060,6 +1060,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('micro-mpcr-color-router', false);
   syncRail();
+} else if (preset === 'phase24_body') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.85, true);
+  controls.setExplodeValue(0.85);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-active-cooling-fan-duct', false);
+  syncRail();
 }
 
 

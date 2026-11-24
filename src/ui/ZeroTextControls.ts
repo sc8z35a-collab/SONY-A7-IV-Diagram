@@ -794,7 +794,15 @@ export class ZeroTextControls {
           part.order === 64 ||
           part.order === 68 ||
           part.order === 71 ||
-          part.order === 74
+          part.order === 74 ||
+          part.order === 79 ||
+          part.order === 80 ||
+          part.order === 82 ||
+          part.order === 88 ||
+          part.order === 93 ||
+          part.order === 97 ||
+          part.order === 100 ||
+          part.order === 101
             ? 32
             : part.order === 1 ||
                 part.order === 5 ||
@@ -821,7 +829,19 @@ export class ZeroTextControls {
                 part.order === 67 ||
                 part.order === 69 ||
                 part.order === 72 ||
-                part.order === 75
+                part.order === 75 ||
+                part.order === 77 ||
+                part.order === 81 ||
+                part.order === 84 ||
+                part.order === 85 ||
+                part.order === 86 ||
+                part.order === 89 ||
+                part.order === 90 ||
+                part.order === 92 ||
+                part.order === 94 ||
+                part.order === 95 ||
+                part.order === 96 ||
+                part.order === 98
               ? 25
               : part.order >= 39
                 ? 19

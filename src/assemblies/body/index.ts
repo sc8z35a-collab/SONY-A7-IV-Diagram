@@ -5,8 +5,8 @@ import { buildBodyParts, buildBodyStandaloneParts } from './bodyParts';
 import { createBodyPhysicsOverlay } from './bodyPhysicsOverlay';
 
 /**
- * Assemble the complete 76-part Flagship Camera Magnesium Monocoque Body
- * subsystem (38 macro at startup + 38 lazy-hydrated standalone micro parts).
+ * Assemble the complete 101-part Flagship Camera Magnesium Monocoque Body
+ * subsystem (38 macro at startup + 63 lazy-hydrated standalone micro parts).
  */
 export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
@@ -35,7 +35,7 @@ export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 38,
+    deferredStandaloneCount: 63,
     hydrateStandalone: () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;

@@ -730,7 +730,33 @@ export interface PartExplanation {
     | 'micro_cms_multi_sampler'
     | 'micro_evs_log_change'
     | 'micro_dummy_guard_ring'
-    | 'micro_rts_anneal_bist';
+    | 'micro_rts_anneal_bist'
+    // Phase 24: Next-Gen Flagship Camera Body & Sony OEM Deep-Audit (+25: B77–B101 -> 101 total body parts)
+    | 'body_vl_ir_awb_sensor'
+    | 'body_front_ir_remote_window'
+    | 'body_bodycap_alc_b1em'
+    | 'body_sorplas_sereebo_liner'
+    | 'body_front_grip_thumb_insert'
+    | 'body_deep_eyecup_ep21'
+    | 'body_diopter_dial_wp'
+    | 'body_evf_eye_sensor_bezel'
+    | 'body_voice_memo_mic'
+    | 'body_joy_retainer_stack'
+    | 'body_media_lid_hinge_spring'
+    | 'body_active_cooling_fan_duct'
+    | 'body_sigma_graphite_heatplate'
+    | 'body_cfexpress_thermal_bridge'
+    | 'body_external_cooling_vent_port'
+    | 'body_cable_protector_clamp'
+    | 'body_dual_usbc_25g_lan_bay'
+    | 'body_audio_jack_jk1028'
+    | 'body_mimo_wifi6e_nfc_coil'
+    | 'body_bottom_wp_potting'
+    | 'body_cinema_cage_threads'
+    | 'body_mi_shoe_fix_wp_stack'
+    | 'body_top_wp_cushions_sv'
+    | 'body_np_sa100_dc_c2_pd'
+    | 'body_c2pa_security_kensington';
 }
 
 export interface CadPart {
