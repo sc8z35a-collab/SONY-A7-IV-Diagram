@@ -1,13 +1,13 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 777 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a strictly zero-text SVG icon HUD; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 872 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (777 Dissectible CAD Sub-Assemblies across 12 Subsystems: 305 Macro + 472 Standalone-Only Micro/Ultra)
+## Complete Camera Assembly (872 Dissectible CAD Sub-Assemblies across 14 Subsystems: 305 Macro + 567 Standalone-Only Micro/Ultra)
 
-### Phase 25 — 3 New Standalone Ultra-Dissection Subsystems: BIONZ XR / XR2 Package, Sony MI Shoe & Internal Microphone (+100 Parts → 777 Total across 12 Subsystems!)
+### Phase 27 — 3 New Standalone Ultra-Dissection Subsystems: BIONZ XR / XR2 Package, Sony MI Shoe & Internal Microphone (+100 Parts → 872 Total across 14 Subsystems!)
 Informed by **OpenMemories Hardware Docs (`CXD90057 "Mira"` + `CXD90058 "Cetus"`, 4× ARM Cortex-A35, custom `SA DSP "sabin"`)**, **2025–2026 Sony `BIONZ XR2™` (`α7 V` / `α7R VI` / `FX5` single-package integrated AI Processing Unit, C2PA enclave, AI audio noise cut)**, **Sony ILCE-7M4 Official Service Manual (`CABINET TOP SECTION-2` & `OVERALL`: `443873412`, `500294302`, `500294602`, `428743511`, `500294502`, `500294701`, `A5001908A/A5054227A MIS-2006`, `501695501`, `500395901`, `418654511`, `502687801 RUBBER 885`, `502790401 MIC HOLDER`, `430010611 BTITE`, `750000493 TAPE 631S`, `A5033450A SH-1035`)**, **ISO 518:2006 & 21+3 MI Shoe pinout (`libRsrcHotshoe.so` 6-level ID ADC, 2026 `XLR-A4` 96 kHz / 32-bit float 4ch digital audio)**, **waterproof `ePTFE` acoustic vent & offset labyrinth patents (`IL239134A`)**, and **IEEE Sensors J. Sealed-Dual-Membrane (`SDM`) `72 dB(A)` SNR MEMS physics**:
 - **Zero-Startup-Cost Lazy Standalone Architecture**: All 3 new ultra-dissection subsystems (`bionz`, `mishoe`, `mic` — `100` parts total) are strictly omitted from whole-camera (`integrated` / `camera_body`) views, lazily hydrated on first visit via `deferredStandaloneCount` + `hydrateStandalone`, and accessible via dedicated strictly zero-text SVG icon buttons in the bottom CAD dock (`GpuMegaBatch` capacity expanded safely from `1024` → `2048` slots).
 - **Ultra-Beginner-Friendly Japanese Explanations & 100 Bespoke 320×118 SVGs**: Every single part includes an approachable everyday analogy ("やさしい解説"), clear physics/engineering breakdowns, intuitive formulas, 2025–2026 cutting-edge notes, and a 1-to-1 bespoke Japanese technical schematic SVG.

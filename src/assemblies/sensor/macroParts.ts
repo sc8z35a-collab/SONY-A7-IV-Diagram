@@ -15,6 +15,7 @@ import {
 import { MACRO_EXPLANATIONS } from './explanations';
 import { buildSensorMicroParts } from './sensorMicroParts';
 import { buildSensorUltraAuditParts } from './sensorMicroUltraAuditParts';
+import { buildSensorNextGenParts } from './sensorNextGenParts';
 
 function finalizePart(
   id: string,
@@ -2155,6 +2156,10 @@ export function buildMacroSensorParts(mats: MaterialLibrary, includeStandalone =
 }
 
 export function buildSensorStandaloneParts(mats: MaterialLibrary): CadPart[] {
-  // Phase 14 (24 OEM) + Phase 19C (6 deep-audit) = 30 standalone-only sensor/IBIS micro-parts (S41–S70)
-  return [...buildSensorMicroParts(mats), ...buildSensorUltraAuditParts(mats)];
+  // Phase 14 (24 OEM) + Phase 19C (6 deep-audit) + Phase 25A (20 next-gen) = 50 standalone-only sensor/IBIS parts (S41–S90 -> 90 total)
+  return [
+    ...buildSensorMicroParts(mats),
+    ...buildSensorUltraAuditParts(mats),
+    ...buildSensorNextGenParts(mats),
+  ];
 }

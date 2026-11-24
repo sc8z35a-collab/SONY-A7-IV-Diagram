@@ -17,6 +17,9 @@ import { renderPhase19UltraAnatomySchematicSvg } from './phase19UltraAnatomySche
 import { renderPhase20MicroMountSchematicSvg } from './phase20MicroMountSchematics';
 import { renderPhase23MicroNextGenSchematicSvg } from './phase23MicroNextGenSchematics';
 import { renderPhase24BodyNextGenSchematicSvg } from './phase24BodyNextGenSchematics';
+import { renderPhase25SensorBodySchematicSvg } from './phase25SensorBodySchematics';
+import { renderPhase26BatterySchematicSvg } from './phase26BatterySchematics';
+import { renderPhase26CfexpressSchematicSvg } from './phase26CfexpressSchematics';
 import { renderPhase25BionzSchematicSvg } from './phase25BionzSchematics';
 import { renderPhase25MiShoeSchematicSvg } from './phase25MiShoeSchematics';
 import { renderPhase25MicSchematicSvg } from './phase25MicSchematics';
@@ -81,6 +84,15 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase24BodyNextGenSvg = renderPhase24BodyNextGenSchematicSvg(type);
   if (phase24BodyNextGenSvg) return phase24BodyNextGenSvg;
+
+  const phase25SensorBodySvg = renderPhase25SensorBodySchematicSvg(type);
+  if (phase25SensorBodySvg) return phase25SensorBodySvg;
+
+  const phase26BatterySvg = renderPhase26BatterySchematicSvg(type);
+  if (phase26BatterySvg) return phase26BatterySvg;
+
+  const phase26CfexpressSvg = renderPhase26CfexpressSchematicSvg(type);
+  if (phase26CfexpressSvg) return phase26CfexpressSvg;
 
   const phase25BionzSvg = renderPhase25BionzSchematicSvg(type);
   if (phase25BionzSvg) return phase25BionzSvg;

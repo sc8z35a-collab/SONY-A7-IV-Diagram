@@ -77,9 +77,9 @@ export function createBodyPhysicsOverlay(
   }
 
   // -------------------------------------------------------------------------
-  // 2. Radial 6-Way Dashed Explode Alignment Guides (all 101 body assemblies!)
+  // 2. Radial 6-Way Dashed Explode Alignment Guides (all 116 body assemblies!)
   // -------------------------------------------------------------------------
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 120);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 140);
   explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
