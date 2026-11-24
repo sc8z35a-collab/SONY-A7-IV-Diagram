@@ -36,6 +36,8 @@ import { createMainboardAssembly } from '../assemblies/mainboard';
 import { createEvfAssembly } from '../assemblies/evf';
 import { createLcdAssembly } from '../assemblies/lcd';
 import { createBodyAssembly } from '../assemblies/body';
+import { createBatteryAssembly } from '../assemblies/battery';
+import { createCfexpressAssembly } from '../assemblies/cfexpress';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -90,6 +92,8 @@ export class CadViewport {
   private lcdAssembly: AssemblyController;
   private bodyAssembly: AssemblyController;
   private microAssembly: AssemblyController;
+  private batteryAssembly: AssemblyController;
+  private cfexpressAssembly: AssemblyController;
   private assemblyBySubsystem: Record<SubsystemKey, AssemblyController>;
   private allParts: CadPart[] = [];
   private partById = new Map<string, CadPart>();
@@ -254,8 +258,8 @@ export class CadViewport {
       this.prepareFrameForRender(camera);
     };
 
-    // Build ALL 9 subsystem controllers (305 macro parts built upfront; 322 standalone-only & micro parts
-    // lazily hydrated on first visit to each standalone mode — ALL 627 parts 100% preserved!)
+    // Build ALL 11 subsystem controllers (305 macro parts built upfront; 467 standalone-only, micro,
+    // battery & cfexpress parts lazily hydrated on first visit — ALL 772 parts 100% preserved!)
     this.lensAssembly = createLensAssembly(this.materials);
     this.mountAssembly = createMountAssembly(this.materials);
     this.shutterAssembly = createShutterAssembly(this.materials);
@@ -266,6 +270,8 @@ export class CadViewport {
     this.evfAssembly = createEvfAssembly(this.materials);
     this.lcdAssembly = createLcdAssembly(this.materials);
     this.bodyAssembly = createBodyAssembly(this.materials);
+    this.batteryAssembly = createBatteryAssembly(this.materials);
+    this.cfexpressAssembly = createCfexpressAssembly(this.materials);
 
     this.assemblyBySubsystem = {
       lens: this.lensAssembly,
@@ -277,6 +283,8 @@ export class CadViewport {
       lcd: this.lcdAssembly,
       body: this.bodyAssembly,
       micro: this.microAssembly,
+      battery: this.batteryAssembly,
+      cfexpress: this.cfexpressAssembly,
     };
 
     const emptyChunks = (): SubsystemChunks => ({
@@ -293,6 +301,8 @@ export class CadViewport {
       lcd: emptyChunks(),
       body: emptyChunks(),
       micro: emptyChunks(),
+      battery: emptyChunks(),
+      cfexpress: emptyChunks(),
     };
 
     this.scene.add(
@@ -304,7 +314,9 @@ export class CadViewport {
       this.evfAssembly.rootGroup,
       this.lcdAssembly.rootGroup,
       this.bodyAssembly.rootGroup,
-      this.microAssembly.rootGroup
+      this.microAssembly.rootGroup,
+      this.batteryAssembly.rootGroup,
+      this.cfexpressAssembly.rootGroup
     );
 
     // Breakthrough #17/27: Compile ALL 305 startup macro parts into ONE Unified Compactable VBO/IBO!
@@ -430,7 +442,7 @@ export class CadViewport {
     }
   }
 
-  /** Total canonical dissectible part count across all 9 subsystems (always 627 — zero parts removed!). */
+  /** Total canonical dissectible part count across all 11 subsystems (772 parts — zero parts removed!). */
   public getTotalPartCount(): number {
     let deferred = 0;
     for (const asm of Object.values(this.assemblyBySubsystem)) {
@@ -439,7 +451,7 @@ export class CadViewport {
     return this.allParts.length + deferred;
   }
 
-  /** Force-hydrate every deferred standalone/micro subsystem immediately (returns 677). */
+  /** Force-hydrate every deferred standalone/micro/battery/cfexpress subsystem immediately (returns 772). */
   public ensureAllHydrated(): number {
     for (const sub of Object.keys(this.assemblyBySubsystem) as SubsystemKey[]) {
       this.hydrateSubsystemIfNeeded(sub);
@@ -471,10 +483,21 @@ export class CadViewport {
 
   private isPartInCurrentMode(part: CadPart): boolean {
     if (this.mode === 'integrated') {
-      return part.subsystem !== 'micro' && !part.standaloneOnly;
+      return (
+        part.subsystem !== 'micro' &&
+        part.subsystem !== 'battery' &&
+        part.subsystem !== 'cfexpress' &&
+        !part.standaloneOnly
+      );
     }
     if (this.mode === 'camera_body') {
-      return part.subsystem !== 'micro' && part.subsystem !== 'lens' && !part.standaloneOnly;
+      return (
+        part.subsystem !== 'micro' &&
+        part.subsystem !== 'battery' &&
+        part.subsystem !== 'cfexpress' &&
+        part.subsystem !== 'lens' &&
+        !part.standaloneOnly
+      );
     }
     if (this.mode === 'lens') {
       if (part.subsystem !== 'lens') return false;
@@ -490,14 +513,14 @@ export class CadViewport {
     const isAllBody = this.mode === 'integrated' || this.mode === 'camera_body';
     this.activeChunks.length = 0;
 
-    if (this.mode === 'micro') {
+    if (this.mode === 'micro' || this.mode === 'battery' || this.mode === 'cfexpress') {
       this.macroBatch.setHidden();
     } else {
       this.macroBatch.group.visible = true;
       this.activeChunks.push(this.macroBatch);
     }
 
-    // Standalone / Micro lazily hydrated chunks
+    // Standalone / Micro / Battery / CFexpress lazily hydrated chunks
     for (const sub of Object.keys(this.subsystemChunks) as SubsystemKey[]) {
       const chunks = this.subsystemChunks[sub];
       const asmVisible = this.assemblyBySubsystem[sub].rootGroup.visible;
@@ -543,6 +566,11 @@ export class CadViewport {
     this.lcdAssembly.updateExplodeGuides(this.currentExplode, this.lcdAssembly.rootGroup.visible);
     this.bodyAssembly.updateExplodeGuides(this.currentExplode, this.bodyAssembly.rootGroup.visible);
     this.microAssembly.updateExplodeGuides(this.currentExplode, this.microAssembly.rootGroup.visible);
+    this.batteryAssembly.updateExplodeGuides(this.currentExplode, this.batteryAssembly.rootGroup.visible);
+    this.cfexpressAssembly.updateExplodeGuides(
+      this.currentExplode,
+      this.cfexpressAssembly.rootGroup.visible
+    );
     this.overlaysDirty = true;
   }
 
@@ -557,6 +585,8 @@ export class CadViewport {
     const showLcd = this.mode === 'lcd' || isAllBody;
     const showBody = this.mode === 'body' || isAllBody;
     const showMicro = this.mode === 'micro';
+    const showBattery = this.mode === 'battery';
+    const showCfexpress = this.mode === 'cfexpress';
 
     this.lensAssembly.rootGroup.visible = showLens;
     this.mountAssembly.rootGroup.visible = showMount;
@@ -567,6 +597,8 @@ export class CadViewport {
     this.lcdAssembly.rootGroup.visible = showLcd;
     this.bodyAssembly.rootGroup.visible = showBody;
     this.microAssembly.rootGroup.visible = showMicro;
+    this.batteryAssembly.rootGroup.visible = showBattery;
+    this.cfexpressAssembly.rootGroup.visible = showCfexpress;
 
     for (const part of this.allParts) {
       part.group.visible = this.isPartInCurrentMode(part) && !this.isPartHidden(part.id);
@@ -583,6 +615,8 @@ export class CadViewport {
     this.lcdAssembly.setPhysicsVisible(this.physicsActive && showLcd);
     this.bodyAssembly.setPhysicsVisible(this.physicsActive && showBody);
     this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
+    this.batteryAssembly.setPhysicsVisible(this.physicsActive && showBattery);
+    this.cfexpressAssembly.setPhysicsVisible(this.physicsActive && showCfexpress);
 
     this.updateActiveExplodeGuides();
   }
@@ -598,6 +632,8 @@ export class CadViewport {
       mainboard: 6,
       lcd: 7,
       micro: 8,
+      battery: 9,
+      cfexpress: 10,
     };
     return this.allParts
       .filter((p) => this.isPartInCurrentMode(p))
@@ -875,8 +911,14 @@ export class CadViewport {
       d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
     } else if (this.mode === 'sensor') {
-      d = 168 + e * 435;
-      target = new THREE.Vector3(14.0 * e, -2.0, -4.0 - e * 56.0);
+      d = 168 + e * 475;
+      target = new THREE.Vector3(10.0 * e, -2.0, -4.0 - e * 46.0);
+    } else if (this.mode === 'battery') {
+      d = 112 + e * 245;
+      target = new THREE.Vector3(e * 12.0, e * 6.0, e * 4.0);
+    } else if (this.mode === 'cfexpress') {
+      d = 116 + e * 238;
+      target = new THREE.Vector3(0.0, e * 4.0, e * 4.0);
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -966,6 +1008,8 @@ export class CadViewport {
             const isoY = e > 0.25 ? 0.26 : 0.38;
             const isoZ = e > 0.25 ? 0.51 : 0.72;
             offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+          } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
+            offset = new THREE.Vector3(d * 0.62, d * 0.32, d * 0.72);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }
@@ -997,14 +1041,17 @@ export class CadViewport {
 
     _focusOffset.subVectors(this.camera.position, this.controls.target);
     const isMicro = this.mode === 'micro';
+    const isCompactStandalone = this.mode === 'battery' || this.mode === 'cfexpress';
     const maxDist = isMicro
       ? 66
-      : this.mode === 'evf'
-        ? 112
-        : this.mode === 'integrated' || this.mode === 'camera_body'
-          ? 280
-          : 168;
-    const minDist = isMicro ? 34 : this.mode === 'evf' ? 44 : 56;
+      : isCompactStandalone
+        ? 98
+        : this.mode === 'evf'
+          ? 112
+          : this.mode === 'integrated' || this.mode === 'camera_body'
+            ? 280
+            : 168;
+    const minDist = isMicro ? 34 : isCompactStandalone ? 38 : this.mode === 'evf' ? 44 : 56;
     const desiredDist = Math.min(_focusOffset.length(), maxDist);
     _focusOffset.setLength(Math.max(desiredDist, minDist));
 
@@ -1091,6 +1138,9 @@ export class CadViewport {
     if (this.mode === 'micro') {
       minCoord = -13;
       maxCoord = 13;
+    } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
+      minCoord = -30;
+      maxCoord = 30;
     } else if (this.mode === 'lens') {
       minCoord = -46;
       maxCoord = 46;
@@ -1805,6 +1855,24 @@ export class CadViewport {
     }
     if (this.microAssembly.rootGroup.visible) {
       this.microAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        false
+      );
+    }
+    if (this.batteryAssembly.rootGroup.visible) {
+      this.batteryAssembly.updateAnimation(
+        elapsed,
+        delta,
+        this.currentExplode,
+        this.physicsActive,
+        false
+      );
+    }
+    if (this.cfexpressAssembly.rootGroup.visible) {
+      this.cfexpressAssembly.updateAnimation(
         elapsed,
         delta,
         this.currentExplode,
