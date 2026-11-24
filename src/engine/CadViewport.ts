@@ -439,7 +439,7 @@ export class CadViewport {
     return this.allParts.length + deferred;
   }
 
-  /** Force-hydrate every deferred standalone/micro subsystem immediately (returns 652). */
+  /** Force-hydrate every deferred standalone/micro subsystem immediately (returns 677). */
   public ensureAllHydrated(): number {
     for (const sub of Object.keys(this.assemblyBySubsystem) as SubsystemKey[]) {
       this.hydrateSubsystemIfNeeded(sub);
