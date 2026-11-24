@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS } from './sensorMicroUltraAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeSensorAuditPart(
   id: string,
@@ -34,7 +34,7 @@ function finalizeSensorAuditPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     ibisMovable: options?.ibisMovable ?? false,
     ultrasonicElement: options?.ultrasonicElement ?? false,
     standaloneOnly: true,
@@ -65,7 +65,7 @@ function finalizeMicroAuditPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

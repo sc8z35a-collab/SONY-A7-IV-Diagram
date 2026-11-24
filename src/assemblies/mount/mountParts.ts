@@ -12,10 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MOUNT_EXPLANATIONS } from './mountExplanations';
-import { buildMountMicroParts } from './mountMicroParts';
-import { buildMountUltraAuditParts } from './mountUltraAuditParts';
-import { buildMountDeepAuditParts } from './mountDeepAuditParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 export interface MountDynamicRig {
   lockPinPlunger: THREE.Group;
@@ -78,7 +75,7 @@ function finalizeMountPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MOUNT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -93,7 +90,7 @@ function finalizeMountPart(
  */
 export function buildMountParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: MountDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -1454,10 +1451,6 @@ export function buildMountParts(
     tallyLedMat.color.setRGB(0.95 * glow, 0.18 * glow, 0.32 * glow);
   };
 
-  if (includeStandalone) {
-    parts.push(...buildMountStandaloneParts(mats));
-  }
-
   return {
     parts,
     rig: {
@@ -1469,11 +1462,16 @@ export function buildMountParts(
   };
 }
 
-export function buildMountStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildMountStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 13 (16) + Phase 18B (6) + Phase 20B (12) = 34 standalone-only lens-mount micro-parts (M27–M60)
+  const [mMicro, mUltra, mDeep] = await Promise.all([
+    import('./mountMicroParts'),
+    import('./mountUltraAuditParts'),
+    import('./mountDeepAuditParts'),
+  ]);
   return [
-    ...buildMountMicroParts(mats),
-    ...buildMountUltraAuditParts(mats),
-    ...buildMountDeepAuditParts(mats),
+    ...mMicro.buildMountMicroParts(mats),
+    ...mUltra.buildMountUltraAuditParts(mats),
+    ...mDeep.buildMountDeepAuditParts(mats),
   ];
 }

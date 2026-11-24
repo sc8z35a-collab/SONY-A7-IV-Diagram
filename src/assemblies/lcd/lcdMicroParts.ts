@@ -9,7 +9,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { LCD_EXPLANATIONS } from './lcdExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from './lcdParts';
 
 function finalizeStandaloneLcdMicroPart(
@@ -36,7 +36,7 @@ function finalizeStandaloneLcdMicroPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: LCD_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

@@ -12,9 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_EXPLANATIONS } from './bodyExplanations';
-import { buildBodyMicroParts } from './bodyMicroParts';
-import { buildBodyUltraAuditParts } from './bodyUltraAuditParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from '../lcd/lcdParts';
 import { EVF_OPTICAL_Y } from '../evf/evfParts';
 
@@ -52,7 +50,7 @@ function finalizeBodyPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -99,7 +97,7 @@ function createKnurledDial(
  */
 export function buildBodyParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: BodyDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2787,14 +2785,14 @@ export function buildBodyParts(
     },
   };
 
-  if (includeStandalone) {
-    parts.push(...buildBodyStandaloneParts(mats));
-  }
-
   return { parts, rig };
 }
 
-export function buildBodyStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildBodyStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 13 (22) + Phase 16C (16) = 38 standalone-only magnesium body micro-parts (B39–B76)
-  return [...buildBodyMicroParts(mats), ...buildBodyUltraAuditParts(mats)];
+  const [mMicro, mUltra] = await Promise.all([
+    import('./bodyMicroParts'),
+    import('./bodyUltraAuditParts'),
+  ]);
+  return [...mMicro.buildBodyMicroParts(mats), ...mUltra.buildBodyUltraAuditParts(mats)];
 }

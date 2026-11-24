@@ -10,7 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { LENS_MICRO_EXPLANATIONS } from './lensMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function createRingShape(outerR: number, innerR: number): THREE.Shape {
   const s = new THREE.Shape();
@@ -59,7 +59,7 @@ function finalizeStandaloneLensMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: LENS_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

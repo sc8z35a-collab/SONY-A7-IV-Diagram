@@ -4,7 +4,8 @@ import { sharedLensOpticalSim } from './assemblies/lens/lensOpticalSim';
 import { CadViewport } from './engine/CadViewport';
 import { ZeroTextControls } from './ui/ZeroTextControls';
 import { ExplanationDrawer } from './ui/ExplanationDrawer';
-import { LensOpticsStudio } from './ui/LensOpticsStudio';
+import type { LensOpticsStudio } from './ui/LensOpticsStudio';
+import type { OpticalScenarioId } from './assemblies/lens/lensOpticalSim';
 
 const appRoot = document.getElementById('app')!;
 const viewportEl = document.getElementById('viewport')!;
@@ -16,7 +17,94 @@ let zenFullscreen = false;
 let drawer!: ExplanationDrawer;
 let controls!: ZeroTextControls;
 let viewport!: CadViewport;
-let opticsStudio!: LensOpticsStudio;
+let realOpticsStudio: LensOpticsStudio | null = null;
+let opticsStudioLoadPromise: Promise<LensOpticsStudio> | null = null;
+let pendingOpticsOpen = false;
+
+const handleOpticsOpenChange = (open: boolean) => {
+  controls.syncOpticsStudio(open);
+  if (open) {
+    viewport.setMode('lens', true);
+    controls.syncMode('lens');
+    controls.syncOpticsStudio(true);
+    viewport.setExplode(0);
+    controls.setExplodeValue(0);
+    viewport.setPhysicsActive(true);
+    controls.syncPhysics(true);
+    viewport.frameLensForOpticsStudio(false);
+    syncRail();
+  } else {
+    if (viewport.getMode() === 'lens') {
+      viewport.refreshVisibility();
+      controls.syncLensSection(viewport.getLensSection());
+      viewport.setCameraPreset('iso', false);
+      syncRail();
+    }
+    viewport.requestRenderFrame();
+  }
+};
+
+const ensureRealOpticsStudio = (): Promise<LensOpticsStudio> => {
+  if (realOpticsStudio) return Promise.resolve(realOpticsStudio);
+  if (!opticsStudioLoadPromise) {
+    opticsStudioLoadPromise = import('./ui/LensOpticsStudio').then((mod) => {
+      realOpticsStudio = new mod.LensOpticsStudio(appRoot, {
+        onOpenChange: handleOpticsOpenChange,
+        onHoverPart: (partId) => {
+          hoveredPartId = partId;
+          viewport.setHoveredPartFromUI(partId);
+          controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
+        },
+        onSelectPart: (partId) => {
+          viewport.selectPart(partId, false);
+        },
+        onRequestRenderFrame: () => {
+          viewport.requestRenderFrame();
+        },
+      });
+      return realOpticsStudio;
+    });
+  }
+  return opticsStudioLoadPromise;
+};
+
+// Synchronous facade so keyboard shortcuts, URL presets, and `window.__cad.opticsStudio` work immediately!
+const opticsStudio = {
+  getIsOpen: (): boolean => realOpticsStudio ? realOpticsStudio.getIsOpen() : pendingOpticsOpen || sharedLensOpticalSim.studioOpen,
+  open: (scenario?: OpticalScenarioId, highlightPartId?: string | null): void => {
+    const resolvedPartId = highlightPartId ?? undefined;
+    if (realOpticsStudio) {
+      realOpticsStudio.open(scenario, resolvedPartId);
+      return;
+    }
+    pendingOpticsOpen = true;
+    if (scenario) sharedLensOpticalSim.setScenario(scenario);
+    if (highlightPartId !== undefined) sharedLensOpticalSim.setHoveredElement(highlightPartId);
+    sharedLensOpticalSim.setStudioOpen(true);
+    handleOpticsOpenChange(true);
+    void ensureRealOpticsStudio().then((inst) => {
+      if (pendingOpticsOpen) {
+        inst.open(scenario, resolvedPartId);
+      }
+    });
+  },
+  close: (): void => {
+    pendingOpticsOpen = false;
+    if (realOpticsStudio) {
+      realOpticsStudio.close();
+    } else if (sharedLensOpticalSim.studioOpen) {
+      sharedLensOpticalSim.setStudioOpen(false);
+      handleOpticsOpenChange(false);
+    }
+  },
+  toggle: (): void => {
+    if (opticsStudio.getIsOpen()) {
+      opticsStudio.close();
+    } else {
+      opticsStudio.open();
+    }
+  },
+};
 
 const isNativeFullscreen = (): boolean => {
   const doc = document as Document & { webkitFullscreenElement?: Element | null };
@@ -57,7 +145,6 @@ const toggleFullscreen = async (): Promise<void> => {
     return;
   }
 
-  // Try native browser Fullscreen API first; seamlessly fall back to Zen Fullscreen if restricted (e.g. iframe)
   let enteredNative = false;
   try {
     if (document.fullscreenEnabled !== false && rootEl.requestFullscreen) {
@@ -112,7 +199,7 @@ viewport = new CadViewport(viewportEl, {
 
 controls = new ZeroTextControls(appRoot, {
   onModeChange: (mode) => {
-    if (mode !== 'lens' && mode !== 'integrated' && opticsStudio?.getIsOpen()) {
+    if (mode !== 'lens' && mode !== 'integrated' && opticsStudio.getIsOpen()) {
       opticsStudio.close();
     }
     viewport.setMode(mode);
@@ -121,7 +208,7 @@ controls = new ZeroTextControls(appRoot, {
     syncRail();
   },
   onLensSectionChange: (section) => {
-    if (opticsStudio?.getIsOpen()) {
+    if (opticsStudio.getIsOpen()) {
       opticsStudio.close();
     }
     viewport.setLensSection(section);
@@ -160,7 +247,7 @@ controls = new ZeroTextControls(appRoot, {
     if (currentId === partId) {
       viewport.selectPart(null, false);
     } else {
-      viewport.selectPart(partId, !opticsStudio?.getIsOpen());
+      viewport.selectPart(partId, !opticsStudio.getIsOpen());
     }
   },
   onHoverPart: (partId) => {
@@ -171,42 +258,6 @@ controls = new ZeroTextControls(appRoot, {
   },
   onToggleHidePart: (partId) => {
     viewport.togglePartHidden(partId);
-  },
-});
-
-opticsStudio = new LensOpticsStudio(appRoot, {
-  onOpenChange: (open) => {
-    controls.syncOpticsStudio(open);
-    if (open) {
-      viewport.setMode('lens', true);
-      controls.syncMode('lens');
-      controls.syncOpticsStudio(true);
-      viewport.setExplode(0);
-      controls.setExplodeValue(0);
-      viewport.setPhysicsActive(true);
-      controls.syncPhysics(true);
-      viewport.frameLensForOpticsStudio(false);
-      syncRail();
-    } else {
-      if (viewport.getMode() === 'lens') {
-        viewport.refreshVisibility();
-        controls.syncLensSection(viewport.getLensSection());
-        viewport.setCameraPreset('iso', false);
-        syncRail();
-      }
-      viewport.requestRenderFrame();
-    }
-  },
-  onHoverPart: (partId) => {
-    hoveredPartId = partId;
-    viewport.setHoveredPartFromUI(partId);
-    controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
-  },
-  onSelectPart: (partId) => {
-    viewport.selectPart(partId, false);
-  },
-  onRequestRenderFrame: () => {
-    viewport.requestRenderFrame();
   },
 });
 

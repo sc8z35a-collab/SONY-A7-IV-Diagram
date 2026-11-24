@@ -7,7 +7,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MOUNT_ULTRA_AUDIT_EXPLANATIONS } from './mountUltraAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function createArcSectorShape(
   rInner: number,
@@ -47,7 +47,7 @@ function finalizeStandaloneMountAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MOUNT_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

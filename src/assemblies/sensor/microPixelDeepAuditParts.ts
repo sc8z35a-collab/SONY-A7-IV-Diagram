@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MICRO_DEEP_AUDIT_EXPLANATIONS } from './microPixelDeepAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeMicroDeepAuditPart(
   id: string,
@@ -35,7 +35,7 @@ function finalizeMicroDeepAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MICRO_DEEP_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

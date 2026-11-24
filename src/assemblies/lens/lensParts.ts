@@ -12,10 +12,8 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { LENS_EXPLANATIONS } from './lensExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { LensOpticalSim } from './lensOpticalSim';
-import { buildLensMicroParts } from './lensMicroParts';
-import { buildLensUltraSplitParts } from './lensUltraSplitParts';
 import { getLensSectionForPart } from './lensSectionMap';
 
 export interface LensDynamicRig {
@@ -122,7 +120,7 @@ function finalizeLensPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: LENS_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -149,7 +147,7 @@ function finalizeLensPart(
  */
 export function buildLensParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: LensDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -3610,21 +3608,21 @@ export function buildLensParts(
     },
   };
 
-  if (includeStandalone) {
-    parts.push(...buildLensStandaloneParts(mats));
-  } else {
-    // Assign canonical 3-section lightweight standalone partition across macro lens parts
-    for (const p of parts) {
-      p.lensSection = getLensSectionForPart(p.id);
-    }
+  // Assign canonical 3-section lightweight standalone partition across macro lens parts
+  for (const p of parts) {
+    p.lensSection = getLensSectionForPart(p.id);
   }
 
   return { parts, rig };
 }
 
-export function buildLensStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildLensStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 18A (24) + Phase 19A (30) = 54 standalone-only 50mm F1.2 GM micro-parts (L75–L128)
-  const extra = [...buildLensMicroParts(mats), ...buildLensUltraSplitParts(mats)];
+  const [mMicro, mSplit] = await Promise.all([
+    import('./lensMicroParts'),
+    import('./lensUltraSplitParts'),
+  ]);
+  const extra = [...mMicro.buildLensMicroParts(mats), ...mSplit.buildLensUltraSplitParts(mats)];
   for (const p of extra) {
     p.lensSection = getLensSectionForPart(p.id);
   }

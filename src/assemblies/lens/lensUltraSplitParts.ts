@@ -9,7 +9,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { LENS_ULTRA_SPLIT_EXPLANATIONS } from './lensUltraSplitExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { getLensSectionForPart } from './lensSectionMap';
 
 function createRingShape(outerR: number, innerR: number): THREE.Shape {
@@ -59,7 +59,7 @@ function finalizePhase19LensPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: LENS_ULTRA_SPLIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
     lensSection: getLensSectionForPart(id),
   };

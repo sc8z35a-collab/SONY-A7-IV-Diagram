@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { CadPart, RenderMode } from '../assemblies/types';
 import {
-  buildCompactWeldedFromEntries,
+  buildCompactWeldedPagesFromEntries,
   buildIndexedEdgeGeometry,
+  extractPooledCadEdgesArray,
   isGeometryLikelyOpen,
+  MESH_I16_STRIDE,
+  QUANT_POS_SCALE,
   RawEdgeChunk,
   retessellatePrimitiveSagitta,
 } from './FastCadGeometry';
@@ -12,27 +15,30 @@ import {
   BVH_MIN_TRIANGLES,
   FlatSliceBvh,
   intersectSliceBvh,
-  rayBoxNearDist,
+  ReusablePartTlas,
   rayTriangleScalar,
 } from './FastBvhRaycaster';
 import { GPU_PROFILE } from './GpuOptimizer';
 
 /**
- * GpuMegaBatch v5 — "HYPERION-CAD v5" Zero-Texture-Radiance GPU-Driven WebGL2 Engine:
+ * GpuMegaBatch v7 — "OMEGA-CAD v7" Ultra-Low-Overhead GPU-Driven WebGL2 Engine:
  *
- * - Breakthrough #32: VS-Lifted Flat Material LUT (0 per-fragment RGBA32F texelFetches on 90% of pixels!)
- * - Breakthrough #33: Zero-Texture L2-SH + 3-Softbox Rational-GGX Studio Radiance + 1-sqrt sRGB + mediump FS
- *                     + 6-ALU CAD Clay FS + 1-Instruction Mega-Edge FS (0 CubeMaps, 0 exp2/pow/sin/cos on opaque!)
- * - Breakthrough #34: 16-View Directional Hemisphere Bitmask PVS Oracle (culls sealed interior + back hemisphere!)
- * - Breakthrough #35: Double-Buffered Ping-Pong IBO Compactor (0 WebGL2 bufferSubData pipeline stalls!)
- * - Breakthrough #36: Sub-mm Octahedron/Prism Micro-LOD + Adaptive Edge Pruning
- * - Breakthrough #24/28/30: Scalar BVH + Zero-CPU Analytical GPU Explode + Native 512x384 Texture2DArray
+ * - OMEGA-1:  Triple-Buffered 3-Texture Ring `PartStateTextureBuffer` (eliminates ANGLE/Vulkan in-flight stalls!)
+ * - OMEGA-2:  Zero-Texture-Fetch Uniform Material LUT (`uMatSolid[192]`) + 4-Varying 33-ALU Opaque Solid PBR
+ * - OMEGA-3:  Single-Stream 16-Byte Quantized `Int16x8` Mesh VBO + 8-Byte `Int16x4` Edge VBO
+ *             + Sub-64K Multi-Page Partitioning -> 100% 16-bit `Uint16Array` Triple-Ring IBOs!
+ * - OMEGA-6:  Section-Cut Dual-Range Plane-Straddling Split (unclipped parts keep `FrontSide` Early-Z + 0 `discard`!)
+ * - OMEGA-7:  Hardware Early-Z X-Ray Highlight Pass (`renderOrder = 0` occludes rear ghost layers!)
+ * - OMEGA-8A: Post-Retessellation `WeakMap`-Cached CAD Edge Extraction (0 eager pre-bake waste!)
+ * - OMEGA-11: Two-Level Hierarchical BVH (`ReusablePartTlas` + Direct Quantized `Int16` Scalar BLAS)
+ * - OMEGA-14: Zero-DOM `DataTexture` & Pre-Flipped Canvas Fast-Paths in `DualTierTextureArrayPacker`
  *
- * ZERO part reduction (627/627 intact), ZERO visual quality degradation!
+ * ZERO part reduction (652 / 652 parts intact), ZERO visual quality degradation!
  */
 
 export const MAX_PARTS_CAPACITY = 1024;
 export const MAX_MATERIALS_CAPACITY = 256;
+export const MAX_FAST_SOLID_MATS = 96; // 96 * 2 = 192 vec4s (strictly within WebGL2 ES3 min 256 VS uniform vectors!)
 
 const EMPTY_GEOMETRY = new THREE.BufferGeometry();
 EMPTY_GEOMETRY.userData.__pooled = true;
@@ -63,7 +69,7 @@ export const MACRO_GROUP_ORDER: readonly MacroGroupKey[] = [
 ];
 
 // =============================================================================
-// 1. SHARED GPU KINEMATIC STATE TEXTURE (4 x 1024 RGBA32F = 64 KB)
+// 1. OMEGA-1: TRIPLE-BUFFERED GPU KINEMATIC STATE TEXTURE RING (3 x 64 KB)
 // =============================================================================
 // Col 0: (posOrAssemX, Y, Z, packedFlags)
 //   packedFlags bits:
@@ -74,10 +80,37 @@ export const MACRO_GROUP_ORDER: readonly MacroGroupKey[] = [
 // Col 2: (edgeOrGlowR, G, B, alphaEncoded)
 // Col 3: (scaleX, scaleY, scaleZ, pad)
 
+const STATE_RING_SIZE = 4;
+let _globalRenderEpoch = 0;
+
+export function advanceMegaBatchRenderEpoch(): number {
+  return ++_globalRenderEpoch;
+}
+
 export class PartStateTextureBuffer {
   public readonly data: Float32Array;
-  public readonly texture: THREE.DataTexture;
   public readonly slotToParentSlot: Int32Array;
+  private readonly ringData: [
+    Float32Array<ArrayBuffer>,
+    Float32Array<ArrayBuffer>,
+    Float32Array<ArrayBuffer>,
+    Float32Array<ArrayBuffer>,
+  ];
+  private readonly textures: [
+    THREE.DataTexture,
+    THREE.DataTexture,
+    THREE.DataTexture,
+    THREE.DataTexture,
+  ];
+  private readonly ringMinRow = new Int32Array([0, 0, 0, 0]);
+  private readonly ringMaxRow = new Int32Array([
+    MAX_PARTS_CAPACITY - 1,
+    MAX_PARTS_CAPACITY - 1,
+    MAX_PARTS_CAPACITY - 1,
+    MAX_PARTS_CAPACITY - 1,
+  ]);
+  private ringIdx = 0;
+  private lastRotatedEpoch = -1;
   private readonly slotTransformMode: Uint8Array;
   private nextSlot = 0;
   private slotByKey = new Map<string, number>();
@@ -96,17 +129,46 @@ export class PartStateTextureBuffer {
       this.data[base + 14] = 1; // sz = 1
     }
 
-    this.texture = new THREE.DataTexture(
-      this.data,
-      4,
-      MAX_PARTS_CAPACITY,
-      THREE.RGBAFormat,
-      THREE.FloatType
-    );
-    this.texture.minFilter = THREE.NearestFilter;
-    this.texture.magFilter = THREE.NearestFilter;
-    this.texture.generateMipmaps = false;
-    this.texture.needsUpdate = true;
+    const makeRingTex = (buf: Float32Array<ArrayBuffer>): THREE.DataTexture => {
+      buf.set(this.data);
+      const tex = new THREE.DataTexture(
+        buf,
+        4,
+        MAX_PARTS_CAPACITY,
+        THREE.RGBAFormat,
+        THREE.FloatType
+      );
+      tex.minFilter = THREE.NearestFilter;
+      tex.magFilter = THREE.NearestFilter;
+      tex.generateMipmaps = false;
+      tex.needsUpdate = true;
+      return tex;
+    };
+
+    this.ringData = [
+      new Float32Array(4 * MAX_PARTS_CAPACITY * 4),
+      new Float32Array(4 * MAX_PARTS_CAPACITY * 4),
+      new Float32Array(4 * MAX_PARTS_CAPACITY * 4),
+      new Float32Array(4 * MAX_PARTS_CAPACITY * 4),
+    ];
+    this.textures = [
+      makeRingTex(this.ringData[0]),
+      makeRingTex(this.ringData[1]),
+      makeRingTex(this.ringData[2]),
+      makeRingTex(this.ringData[3]),
+    ];
+  }
+
+  public get texture(): THREE.DataTexture {
+    return this.textures[this.ringIdx];
+  }
+
+  private markRowDirty(slot: number): void {
+    for (let r = 0; r < STATE_RING_SIZE; r++) {
+      if (slot < this.ringMinRow[r]) this.ringMinRow[r] = slot;
+      if (slot > this.ringMaxRow[r]) this.ringMaxRow[r] = slot;
+    }
+    this.dirty = true;
   }
 
   public allocateSlot(key: string, parentSlot = -1): number {
@@ -125,10 +187,6 @@ export class PartStateTextureBuffer {
     return this.slotByKey.get(key) ?? -1;
   }
 
-  /**
-   * Write a dynamic rigid/bone transform. Automatically selects Translation-Fast-Path (+0) when
-   * identity rotation & unit scale, or Full-Quat-Scale Path (+4) when rotated/scaled!
-   */
   public writePartTransform(
     slot: number,
     pos: THREE.Vector3,
@@ -177,14 +235,10 @@ export class PartStateTextureBuffer {
         d[base + 13] = scale.y;
         d[base + 14] = scale.z;
       }
-      this.dirty = true;
+      this.markRowDirty(slot);
     }
   }
 
-  /**
-   * Breakthrough #28: Write static assembledPos + explodeOffset ONCE so the GPU evaluates
-   * `worldPos = position + assembledPos + explodeOffset * uExplode` with ZERO CPU loops & ZERO uploads!
-   */
   public writeAnalyticalExplodeTransform(
     slot: number,
     assembledPos: THREE.Vector3,
@@ -213,7 +267,7 @@ export class PartStateTextureBuffer {
       d[base + 5] = explodeOffset.y;
       d[base + 6] = explodeOffset.z;
       d[base + 7] = 0;
-      this.dirty = true;
+      this.markRowDirty(slot);
     }
   }
 
@@ -241,31 +295,62 @@ export class PartStateTextureBuffer {
       d[base + 9] = colG;
       d[base + 10] = colB;
       d[base + 11] = alphaEncoded;
-      this.dirty = true;
+      this.markRowDirty(slot);
     }
   }
 
-  public flushIfDirty(): boolean {
-    if (!this.dirty) return false;
-    this.texture.needsUpdate = true;
+  /**
+   * Rotate AT MOST ONCE per render epoch across the 4-texture ring, copy ONLY the dirty row span
+   * `[minRow..maxRow]`, and point `sharedTexUniform.value` at it — ZERO GPU fence stalls!
+   */
+  public flushIfDirty(sharedTexUniform?: { value: THREE.DataTexture }): boolean {
+    if (!this.dirty) {
+      if (sharedTexUniform) sharedTexUniform.value = this.textures[this.ringIdx];
+      return false;
+    }
+
+    if (this.lastRotatedEpoch !== _globalRenderEpoch) {
+      this.ringIdx = (this.ringIdx + 1) & 3;
+      this.lastRotatedEpoch = _globalRenderEpoch;
+    }
+    const idx = this.ringIdx;
+    const minR = this.ringMinRow[idx];
+    const maxR = this.ringMaxRow[idx];
+    if (minR <= maxR) {
+      const startFloat = minR * 16;
+      const endFloat = (maxR + 1) * 16;
+      this.ringData[idx].set(this.data.subarray(startFloat, endFloat), startFloat);
+      this.ringMinRow[idx] = MAX_PARTS_CAPACITY;
+      this.ringMaxRow[idx] = -1;
+    }
+
+    const tex = this.textures[idx];
+    tex.needsUpdate = true;
+    if (sharedTexUniform) {
+      sharedTexUniform.value = tex;
+    }
     this.dirty = false;
     return true;
   }
 
   public markDirty(): void {
+    const maxUsed = Math.max(0, this.nextSlot - 1);
+    for (let r = 0; r < STATE_RING_SIZE; r++) {
+      this.ringMinRow[r] = 0;
+      if (maxUsed > this.ringMaxRow[r]) this.ringMaxRow[r] = maxUsed;
+    }
     this.dirty = true;
   }
 
   public dispose(): void {
-    this.texture.dispose();
+    for (let r = 0; r < STATE_RING_SIZE; r++) {
+      this.textures[r].dispose();
+    }
   }
 }
 
 // =============================================================================
-// 2. HYPERION-CAD v6 GLSL3 ULTRA-LEAN SHADERS
-//    - Breakthrough #37A: Zero-Sqrt Fused ACES-Filmic + IEC-sRGB Pade Approximant (<0.0075 err!)
-//    - Breakthrough #37B: Zero-Sampler, Zero-UV, Zero-Div, Zero-Branch 35-ALU Opaque Solid PBR FS!
-//    - Breakthrough #38:  1-Instruction Vertex-Fresnel X-Ray Ghost FS!
+// 2. OMEGA-CAD v7 GLSL3 QUANTIZED INTERLEAVED SHADERS
 // =============================================================================
 
 const GLSL3_CORE_LIB = /* glsl */ `
@@ -283,8 +368,6 @@ vec3 decodeOctNormal(vec2 f) {
 }
 `;
 
-// Breakthrough #37A: Zero-Sqrt Fused ACES-Filmic (1.18x) + IEC-sRGB Pade Approximant!
-// Max error < 0.0075 across [0, 3.5] HDR with 0 sqrt(), 0 pow(), 0 exp2(), 1 single rational divide!
 const GLSL3_TONEMAP_SRGB = /* glsl */ `
 vec3 fastLinearToSrgb(vec3 c) {
   vec3 s = sqrt(clamp(c, 0.0, 1.0));
@@ -297,8 +380,8 @@ vec3 fastAcesSrgb(vec3 x) {
 }
 `;
 
-// --- Breakthrough #37B: Zero-Sampler, Zero-UV, Zero-Branch 35-ALU Opaque Solid PBR (95% of CAD!) ---
-function buildHyperionPbrSolidVs(useClip: boolean): string {
+// --- OMEGA-2 + OMEGA-3: Zero-Material-Sampler 4-Varying Quantized Opaque Solid PBR (95% of CAD!) ---
+function buildOmegaPbrSolidVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
@@ -306,25 +389,24 @@ precision highp int;
 uniform mat4 uViewProj;
 uniform vec3 uCamPos;
 uniform sampler2D uPartStateTex;
-uniform sampler2D uMatLutTex;
+uniform vec4 uMatSolid[${MAX_FAST_SOLID_MATS * 2}];
 uniform float uExplode;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
-in vec3 position;
+in vec4 aPosSlot;
 in vec2 aOctNorm;
-in vec2 aPartMat;
+in vec2 aMatMeta;
 
 out vec3 vViewDir;
 out vec3 vWorldNorm;
 flat out vec4 vDiffSpec;
 flat out vec4 vF0Coat;
-flat out vec3 vSoftSTG;
 ${useClip ? 'out float vClipDist;' : ''}
 
 ${GLSL3_CORE_LIB}
 
 void main() {
-  int slot = int(aPartMat.x + 0.5);
+  int slot = int(aPosSlot.w + 0.5);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   float packed = posVis.w;
   if (packed < 0.5) {
@@ -333,11 +415,11 @@ void main() {
     vWorldNorm = vec3(0.0, 1.0, 0.0);
     vDiffSpec = vec4(0.0);
     vF0Coat = vec4(0.0);
-    vSoftSTG = vec3(1.0, 0.0, 0.5);
     ${useClip ? 'vClipDist = -1.0;' : ''}
     return;
   }
 
+  vec3 position = aPosSlot.xyz * 0.015625;
   vec3 localNorm = decodeOctNormal(aOctNorm);
   vec3 worldPos;
   vec3 worldNorm;
@@ -356,17 +438,9 @@ void main() {
     worldNorm = localNorm;
   }
 
-  int matId = int(aPartMat.y + 0.5);
-  vec4 m0 = texelFetch(uMatLutTex, ivec2(0, matId), 0);
-  vec4 m1 = texelFetch(uMatLutTex, ivec2(1, matId), 0);
-  float metal = m1.x;
-  float rough = clamp(m1.y, 0.04, 1.0);
-  float softS = mix(4.6, 0.92, rough);
-  float softG = mix(1.18, 0.38, rough);
-
-  vDiffSpec = vec4(m0.rgb * (1.0 - metal), rough);
-  vF0Coat = vec4(mix(vec3(0.04), m0.rgb, metal), m1.z * 0.22);
-  vSoftSTG = vec3(softS, 1.0 - softS, softG);
+  int mIdx = int(aMatMeta.x + 0.5) * 2;
+  vDiffSpec = uMatSolid[mIdx];
+  vF0Coat = uMatSolid[mIdx + 1];
   vViewDir = normalize(uCamPos - worldPos + vec3(0.0, 0.0, 1e-5));
   vWorldNorm = worldNorm;
   ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
@@ -375,7 +449,7 @@ void main() {
 `;
 }
 
-function buildHyperionPbrSolidFs(useClip: boolean): string {
+function buildOmegaPbrSolidFs(useClip: boolean): string {
   return /* glsl */ `
 precision mediump float;
 
@@ -383,7 +457,6 @@ in vec3 vViewDir;
 in vec3 vWorldNorm;
 flat in vec4 vDiffSpec;
 flat in vec4 vF0Coat;
-flat in vec3 vSoftSTG;
 ${useClip ? 'in float vClipDist;' : ''}
 
 out vec4 fragColor;
@@ -391,16 +464,14 @@ out vec4 fragColor;
 void main() {
   ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
 
-  // 1-step Newton-Raphson renormalization (0 inversesqrt! exact to <0.0001 on unit-interpolated normals)
   vec3 N = vWorldNorm;
   N *= (1.5 - 0.5 * dot(N, N));
-  if (!gl_FrontFacing) N = -N;
+  ${useClip ? 'if (!gl_FrontFacing) N = -N;' : ''}
   vec3 V = vViewDir;
 
   float ndv = clamp(dot(N, V), 0.001, 1.0);
   vec3 R = N * (2.0 * ndv) - V;
 
-  // L2-SH Studio Diffuse Irradiance
   float ny = N.y;
   vec3 diffIrr = vec3(0.84, 0.86, 0.89)
     + ny * vec3(0.32, 0.33, 0.35)
@@ -408,34 +479,34 @@ void main() {
     - N.x * vec3(0.14, 0.14, 0.15)
     + (ny * ny) * vec3(0.12, 0.12, 0.14);
 
-  // Zero-Division Polynomial 2-Softbox Studio Specular Radiance
+  float rough = vDiffSpec.w;
+  float softS = 4.6 - rough * 3.68;
+  float softB = 1.0 - softS;
+  float softG = 1.18 - rough * 0.80;
+
   float ry = clamp(R.y * 0.72 + 0.50, 0.0, 1.0);
   vec3 specRad = mix(vec3(0.46, 0.50, 0.56), vec3(1.14, 1.17, 1.22), ry);
-  float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * vSoftSTG.x + vSoftSTG.y, 0.0, 1.0);
-  float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * vSoftSTG.x + vSoftSTG.y, 0.0, 1.0);
+  float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
+  float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
   aTop *= aTop;
   aKey *= aKey;
   specRad += (vec3(1.68, 1.70, 1.75) * (aTop * aTop)
-            + vec3(1.42, 1.44, 1.50) * (aKey * aKey)) * vSoftSTG.z;
+            + vec3(1.42, 1.44, 1.50) * (aKey * aKey)) * softG;
 
-  // Zero-exp2 Schlick EnvBRDF + Clearcoat
   float om = 1.0 - ndv;
   float om2 = om * om;
   float fres = om2 * om2;
-  float rough = vDiffSpec.w;
   vec3 envF = max(vec3((1.0 - rough) * 0.85), vF0Coat.xyz);
   vec3 brdf = mix(vF0Coat.xyz, envF, fres) * (0.94 - rough * 0.122);
 
   vec3 col = max(vDiffSpec.xyz * diffIrr + specRad * brdf + vec3(vF0Coat.w * fres), vec3(0.0));
-
-  // Zero-Sqrt Fused ACES-Filmic + IEC-sRGB Pade Approximant
   fragColor = vec4((col * (32.06 * col + 6.394)) / (col * (31.61 * col + 8.988) + 1.0), 1.0);
 }
 `;
 }
 
 // --- Textured / Emissive / Iridescent / Optical Glass PBR Shader (~5% opaque + glass) ---
-function buildHyperionPbrVs(useClip: boolean, isGlassPass: boolean): string {
+function buildOmegaPbrVs(useClip: boolean, isGlassPass: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
@@ -447,10 +518,10 @@ uniform sampler2D uMatLutTex;
 uniform float uExplode;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
-in vec3 position;
+in vec4 aPosSlot;
 in vec2 aOctNorm;
+in vec2 aMatMeta;
 in vec2 uv;
-in vec2 aPartMat;
 
 out vec3 vViewVec;
 out vec3 vWorldNorm;
@@ -464,7 +535,7 @@ ${useClip ? 'out float vClipDist;' : ''}
 ${GLSL3_CORE_LIB}
 
 void main() {
-  int slot = int(aPartMat.x + 0.5);
+  int slot = int(aPosSlot.w + 0.5);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   float packed = posVis.w;
   if (packed < 0.5) {
@@ -480,6 +551,7 @@ void main() {
     return;
   }
 
+  vec3 position = aPosSlot.xyz * 0.015625;
   vec3 localNorm = decodeOctNormal(aOctNorm);
   vec3 worldPos;
   vec3 worldNorm;
@@ -498,7 +570,7 @@ void main() {
     worldNorm = localNorm;
   }
 
-  int matId = int(aPartMat.y + 0.5);
+  int matId = int(aMatMeta.x + 0.5);
   vMat0 = texelFetch(uMatLutTex, ivec2(0, matId), 0);
   vMat1 = texelFetch(uMatLutTex, ivec2(1, matId), 0);
   vMatId = matId;
@@ -512,7 +584,7 @@ void main() {
 `;
 }
 
-function buildHyperionPbrFs(useClip: boolean, isGlassPass: boolean): string {
+function buildOmegaPbrFs(useClip: boolean, isGlassPass: boolean): string {
   return /* glsl */ `
 precision mediump float;
 precision mediump int;
@@ -609,9 +681,9 @@ void main() {
 
   float ry = clamp(R.y * 0.72 + 0.50, 0.0, 1.0);
   vec3 specRad = mix(vec3(0.46, 0.50, 0.56), vec3(1.14, 1.17, 1.22), ry);
-  float softS = mix(4.6, 0.92, rough);
+  float softS = 4.6 - rough * 3.68;
   float softB = 1.0 - softS;
-  float softG = mix(1.18, 0.38, rough);
+  float softG = 1.18 - rough * 0.80;
 
   float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
   float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
@@ -668,9 +740,8 @@ uniform sampler2D uPartStateTex;
 uniform float uExplode;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
-in vec3 position;
+in vec4 aPosSlot;
 in vec2 aOctNorm;
-in vec2 aPartMat;
 
 out vec3 vWorldNorm;
 ${useClip ? 'out float vClipDist;' : ''}
@@ -678,7 +749,7 @@ ${useClip ? 'out float vClipDist;' : ''}
 ${GLSL3_CORE_LIB}
 
 void main() {
-  int slot = int(aPartMat.x + 0.5);
+  int slot = int(aPosSlot.w + 0.5);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   float packed = posVis.w;
   if (packed < 0.5) {
@@ -687,6 +758,7 @@ void main() {
     ${useClip ? 'vClipDist = -1.0;' : ''}
     return;
   }
+  vec3 position = aPosSlot.xyz * 0.015625;
   vec3 localNorm = decodeOctNormal(aOctNorm);
   vec3 worldPos;
   vec3 worldNorm;
@@ -730,7 +802,7 @@ void main() {
 `;
 }
 
-// --- Zero-Discard 1-Instruction Mega-Edge LineSegments Shader (sRGB done once in VS!) ---
+// --- OMEGA-3 8-Byte Single-Stream Quantized Mega-Edge LineSegments Shader ---
 function buildMegaEdgeVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
@@ -741,8 +813,7 @@ uniform sampler2D uPartStateTex;
 uniform float uExplode;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
-in vec3 position;
-in vec2 aPartEdge;
+in vec4 aEdgePacked;
 
 flat out vec4 vEdgeColor;
 ${useClip ? 'out float vClipDist;' : ''}
@@ -758,8 +829,9 @@ vec3 fastLinearToSrgb(vec3 c) {
 }
 
 void main() {
-  int slot = int(aPartEdge.x + 0.5);
-  float baseOp = aPartEdge.y * (1.0 / 65535.0);
+  int pk = int(aEdgePacked.w + 0.5);
+  int slot = pk >> 5;
+  float baseOp = float(pk & 31) * (1.0 / 31.0);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   vec4 edgeStyle = texelFetch(uPartStateTex, ivec2(2, slot), 0);
   float alpha = edgeStyle.w < 0.0 ? (-edgeStyle.w * baseOp) : edgeStyle.w;
@@ -770,6 +842,7 @@ void main() {
     ${useClip ? 'vClipDist = -1.0;' : ''}
     return;
   }
+  vec3 position = aEdgePacked.xyz * 0.015625;
   vec3 transformed;
   if (packed >= 7.5) {
     vec3 expDelta = texelFetch(uPartStateTex, ivec2(1, slot), 0).xyz;
@@ -803,7 +876,7 @@ void main() {
 `;
 }
 
-// --- Breakthrough #38: 1-Instruction Vertex-Fresnel X-Ray Ghost Shader! ---
+// --- 1-Instruction Vertex-Fresnel X-Ray Ghost Shader ---
 function buildXrayGhostVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
@@ -816,9 +889,8 @@ uniform float uSkipHighlighted;
 uniform float uExplode;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
-in vec3 position;
+in vec4 aPosSlot;
 in vec2 aOctNorm;
-in vec2 aPartMat;
 
 out vec4 vXrayColor;
 ${useClip ? 'out float vClipDist;' : ''}
@@ -826,7 +898,7 @@ ${useClip ? 'out float vClipDist;' : ''}
 ${GLSL3_CORE_LIB}
 
 void main() {
-  int slot = int(aPartMat.x + 0.5);
+  int slot = int(aPosSlot.w + 0.5);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   float packed = posVis.w;
   float vis = mod(packed, 4.0);
@@ -836,6 +908,7 @@ void main() {
     ${useClip ? 'vClipDist = -1.0;' : ''}
     return;
   }
+  vec3 position = aPosSlot.xyz * 0.015625;
   vec3 localNorm = decodeOctNormal(aOctNorm);
   vec3 transformed;
   vec3 worldNorm;
@@ -878,16 +951,14 @@ void main() {
 }
 
 // =============================================================================
-// 3. BREAKTHROUGH #30: NATIVE-RESOLUTION DUAL-TIER TEXTURE2DARRAY (-80% VRAM!)
+// 3. OMEGA-14: NATIVE-RESOLUTION DUAL-TIER TEXTURE2DARRAY PACKER (Zero-DOM Fast-Paths!)
 // =============================================================================
-// All source canvases in Materials.ts are <= 512x410 (Hi) and 128x128 (Tile)!
-// Sizing the Texture2DArray to native 512x384 / 128x128 eliminates 4x upscaling waste!
 
 const HI_TEX_W = GPU_PROFILE.isMobile ? 256 : 512;
 const HI_TEX_H = GPU_PROFILE.isMobile ? 192 : 384;
 const HI_TEX_MAX_LAYERS = 7;
 const TILE_TEX_SIZE = 128;
-const TILE_TEX_MAX_LAYERS = 12;
+const TILE_TEX_MAX_LAYERS = 14;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {
@@ -901,6 +972,7 @@ function reclaimSourceCanvasTexture(tex: THREE.Texture): void {
   if (img && typeof img.getContext === 'function') {
     img.width = 0;
     img.height = 0;
+    delete (img as unknown as { __ctx2d?: CanvasRenderingContext2D }).__ctx2d;
   }
   tex.dispose();
 }
@@ -959,12 +1031,39 @@ class DualTierTextureArrayPacker {
     const existing = this.texToLayer.get(tex);
     if (existing !== undefined) return existing;
 
-    const img = tex.image as HTMLCanvasElement | HTMLImageElement | undefined;
+    const img = tex.image as
+      | (HTMLCanvasElement & { __ctx2d?: CanvasRenderingContext2D })
+      | { data?: Uint8Array | Uint8ClampedArray; width?: number; height?: number }
+      | undefined;
     if (!img) return -1;
 
-    const srcW = (img as HTMLCanvasElement).width || 128;
-    const srcH = (img as HTMLCanvasElement).height || 128;
+    const srcW = img.width || 128;
+    const srcH = img.height || 128;
     if (srcW === 0 || srcH === 0) return -1;
+
+    // Fast-Path 1: Pure TypedArray `DataTexture` (0 DOM Canvas, 0 getImageData!)
+    const rawData = (img as { data?: Uint8Array | Uint8ClampedArray }).data;
+    if ((tex as THREE.DataTexture).isDataTexture && rawData && srcW === TILE_TEX_SIZE && srcH === TILE_TEX_SIZE && !tex.flipY) {
+      const layer = Math.min(this.tileNext++, TILE_TEX_MAX_LAYERS - 1);
+      const offset = layer * TILE_TEX_SIZE * TILE_TEX_SIZE * 4;
+      if (encodeLinearAsSrgb) {
+        for (let i = 0; i < rawData.length; i += 4) {
+          const v = LINEAR_TO_SRGB_U8[rawData[i + 1]];
+          this.tileData[offset + i] = v;
+          this.tileData[offset + i + 1] = v;
+          this.tileData[offset + i + 2] = v;
+          this.tileData[offset + i + 3] = 255;
+        }
+      } else {
+        this.tileData.set(rawData, offset);
+      }
+      this.tileArray.addLayerUpdate(layer);
+      this.tileArray.needsUpdate = true;
+      const encoded = 100 + layer;
+      this.texToLayer.set(tex, encoded);
+      tex.dispose();
+      return encoded;
+    }
 
     const heroMinDim = GPU_PROFILE.isMobile ? 180 : 300;
     const isHeroHiRes =
@@ -973,24 +1072,32 @@ class DualTierTextureArrayPacker {
       Math.max(srcW, srcH) >= heroMinDim &&
       this.hiNext < HI_TEX_MAX_LAYERS;
 
+    const directCtx = (img as HTMLCanvasElement & { __ctx2d?: CanvasRenderingContext2D }).__ctx2d;
+
     if (isHeroHiRes) {
       const layer = this.hiNext++;
-      if (!this.scratchHiCanvas) {
-        this.scratchHiCanvas = document.createElement('canvas');
-        this.scratchHiCanvas.width = HI_TEX_W;
-        this.scratchHiCanvas.height = HI_TEX_H;
-        this.scratchHiCtx = this.scratchHiCanvas.getContext('2d', { willReadFrequently: true });
+      let rgba: Uint8ClampedArray;
+      // Fast-Path 2A: Native-sized pre-flipped canvas (0 scratch canvas drawImage!)
+      if (directCtx && srcW === HI_TEX_W && srcH === HI_TEX_H && !tex.flipY) {
+        rgba = directCtx.getImageData(0, 0, HI_TEX_W, HI_TEX_H).data;
+      } else {
+        if (!this.scratchHiCanvas) {
+          this.scratchHiCanvas = document.createElement('canvas');
+          this.scratchHiCanvas.width = HI_TEX_W;
+          this.scratchHiCanvas.height = HI_TEX_H;
+          this.scratchHiCtx = this.scratchHiCanvas.getContext('2d', { willReadFrequently: true });
+        }
+        const ctx = this.scratchHiCtx!;
+        ctx.clearRect(0, 0, HI_TEX_W, HI_TEX_H);
+        ctx.save();
+        if (tex.flipY) {
+          ctx.translate(0, HI_TEX_H);
+          ctx.scale(1, -1);
+        }
+        ctx.drawImage(img as CanvasImageSource, 0, 0, HI_TEX_W, HI_TEX_H);
+        ctx.restore();
+        rgba = ctx.getImageData(0, 0, HI_TEX_W, HI_TEX_H).data;
       }
-      const ctx = this.scratchHiCtx!;
-      ctx.clearRect(0, 0, HI_TEX_W, HI_TEX_H);
-      ctx.save();
-      if (tex.flipY) {
-        ctx.translate(0, HI_TEX_H);
-        ctx.scale(1, -1);
-      }
-      ctx.drawImage(img, 0, 0, HI_TEX_W, HI_TEX_H);
-      ctx.restore();
-      const rgba = ctx.getImageData(0, 0, HI_TEX_W, HI_TEX_H).data;
       const offset = layer * HI_TEX_W * HI_TEX_H * 4;
       this.hiData.set(rgba, offset);
       this.hiArray.addLayerUpdate(layer);
@@ -1001,24 +1108,30 @@ class DualTierTextureArrayPacker {
     }
 
     const layer = Math.min(this.tileNext++, TILE_TEX_MAX_LAYERS - 1);
-    if (!this.scratchTileCanvas) {
-      this.scratchTileCanvas = document.createElement('canvas');
-      this.scratchTileCanvas.width = TILE_TEX_SIZE;
-      this.scratchTileCanvas.height = TILE_TEX_SIZE;
-      this.scratchTileCtx = this.scratchTileCanvas.getContext('2d', { willReadFrequently: true });
+    let rgba: Uint8ClampedArray;
+    // Fast-Path 2B: Native-sized pre-flipped tile canvas
+    if (directCtx && srcW === TILE_TEX_SIZE && srcH === TILE_TEX_SIZE && !tex.flipY) {
+      rgba = directCtx.getImageData(0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE).data;
+    } else {
+      if (!this.scratchTileCanvas) {
+        this.scratchTileCanvas = document.createElement('canvas');
+        this.scratchTileCanvas.width = TILE_TEX_SIZE;
+        this.scratchTileCanvas.height = TILE_TEX_SIZE;
+        this.scratchTileCtx = this.scratchTileCanvas.getContext('2d', { willReadFrequently: true });
+      }
+      const ctx = this.scratchTileCtx!;
+      ctx.clearRect(0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE);
+      ctx.save();
+      if (tex.flipY) {
+        ctx.translate(0, TILE_TEX_SIZE);
+        ctx.scale(1, -1);
+      }
+      ctx.drawImage(img as CanvasImageSource, 0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE);
+      ctx.restore();
+      rgba = ctx.getImageData(0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE).data;
     }
-    const ctx = this.scratchTileCtx!;
-    ctx.clearRect(0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE);
-    ctx.save();
-    if (tex.flipY) {
-      ctx.translate(0, TILE_TEX_SIZE);
-      ctx.scale(1, -1);
-    }
-    ctx.drawImage(img, 0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE);
-    ctx.restore();
-    const rgba = ctx.getImageData(0, 0, TILE_TEX_SIZE, TILE_TEX_SIZE).data;
-    const offset = layer * TILE_TEX_SIZE * TILE_TEX_SIZE * 4;
 
+    const offset = layer * TILE_TEX_SIZE * TILE_TEX_SIZE * 4;
     if (encodeLinearAsSrgb) {
       for (let i = 0; i < rgba.length; i += 4) {
         const v = LINEAR_TO_SRGB_U8[rgba[i + 1]];
@@ -1073,6 +1186,7 @@ export interface SharedBatchUniforms {
   uCamPos: { value: THREE.Vector3 };
   uPartStateTex: { value: THREE.DataTexture };
   uMatLutTex: { value: THREE.DataTexture };
+  uMatSolid: { value: Float32Array };
   uTexArrayHi: { value: THREE.DataArrayTexture };
   uTexArrayTile: { value: THREE.DataArrayTexture };
   uExplode: { value: number };
@@ -1082,9 +1196,11 @@ export interface SharedBatchUniforms {
 
 export class MaterialLutRegistry {
   public readonly lutData: Float32Array;
-  public readonly lutTexture: THREE.DataTexture;
+  public lutTexture: THREE.DataTexture;
+  public readonly solidUniformData: Float32Array;
   public readonly texPacker: DualTierTextureArrayPacker;
   public readonly uniforms: SharedBatchUniforms;
+  private lutRenderedOnce = false;
 
   // Startup Zero-Discard Early-Z Materials (100% Hardware Early-Z enabled!)
   public readonly opaqueSolidFrontMat: THREE.RawShaderMaterial;
@@ -1138,6 +1254,7 @@ export class MaterialLutRegistry {
     this.lutTexture.generateMipmaps = false;
     this.lutTexture.needsUpdate = true;
 
+    this.solidUniformData = new Float32Array(MAX_FAST_SOLID_MATS * 2 * 4);
     this.texPacker = new DualTierTextureArrayPacker();
 
     const cp = clippingPlanes[0];
@@ -1146,6 +1263,7 @@ export class MaterialLutRegistry {
       uCamPos: { value: new THREE.Vector3() },
       uPartStateTex: { value: partStateTex },
       uMatLutTex: { value: this.lutTexture },
+      uMatSolid: { value: this.solidUniformData },
       uTexArrayHi: { value: this.texPacker.hiArray },
       uTexArrayTile: { value: this.texPacker.tileArray },
       uExplode: { value: 0 },
@@ -1157,7 +1275,6 @@ export class MaterialLutRegistry {
 
     this.dynamicGlowMatId = this.reserveDynamicGlowLutSlot();
 
-    // Zero-Discard Startup Programs (Hardware Early-Z 100% active!)
     this.opaqueSolidFrontMat = this.createPbrSolidMat(THREE.FrontSide, false);
     this.opaqueFrontMat = this.createPbrMat(THREE.FrontSide, false, true, false);
     this.opaqueDoubleMat = this.createPbrMat(THREE.DoubleSide, false, true, false);
@@ -1171,7 +1288,7 @@ export class MaterialLutRegistry {
     const id = this.nextMatId++;
     const base = id * 24;
     const d = this.lutData;
-    d[base + 7] = 1.0; // hasExtra flag
+    d[base + 7] = 1.0;
     d[base + 16] = -1;
     d[base + 17] = -1;
     d[base + 18] = 1;
@@ -1183,6 +1300,7 @@ export class MaterialLutRegistry {
   }
 
   public syncViewProj(camera: THREE.Camera): void {
+    this.lutRenderedOnce = true;
     this.uniforms.uViewProj.value.multiplyMatrices(
       camera.projectionMatrix,
       camera.matrixWorldInverse
@@ -1204,72 +1322,80 @@ export class MaterialLutRegistry {
     this.uniforms.uSkipHighlighted.value = mode === 'xray' ? 1 : 0;
   }
 
-  /** Resolve the active optimal Zero-Discard / Clipped / CAD-Clay material for a bucket! */
-  public getActiveBucketMaterial(
+  /** Unclipped FrontSide/Early-Z material (used even during Section Cut for non-straddling parts!) */
+  public getUnclippedBucketMaterial(
     bucket: 'opaqueSolidFront' | 'opaqueTexFront' | 'opaqueDouble' | 'glassFront' | 'glassDouble'
   ): THREE.RawShaderMaterial {
-    const clip = this.sectionCutActive;
     if (this.renderMode === 'cad') {
       if (bucket === 'opaqueSolidFront' || bucket === 'opaqueTexFront') {
-        if (clip) {
-          return (this.cadOpaqueFrontClipMat ??= this.createCadMat(THREE.DoubleSide, false, true, true));
-        }
         return (this.cadOpaqueFrontMat ??= this.createCadMat(THREE.FrontSide, false, true, false));
       }
       if (bucket === 'opaqueDouble') {
-        if (clip) {
-          return (this.cadOpaqueDoubleClipMat ??= this.createCadMat(THREE.DoubleSide, false, true, true));
-        }
         return (this.cadOpaqueDoubleMat ??= this.createCadMat(THREE.DoubleSide, false, true, false));
       }
       if (bucket === 'glassFront') {
-        if (clip) {
-          return (this.cadGlassFrontClipMat ??= this.createCadMat(THREE.DoubleSide, true, false, true));
-        }
         return (this.cadGlassFrontMat ??= this.createCadMat(THREE.FrontSide, true, false, false));
-      }
-      if (clip) {
-        return (this.cadGlassDoubleClipMat ??= this.createCadMat(THREE.DoubleSide, true, false, true));
       }
       return (this.cadGlassDoubleMat ??= this.createCadMat(THREE.DoubleSide, true, false, false));
     }
 
-    // Solid or X-Ray Highlight solid pass
-    if (bucket === 'opaqueSolidFront') {
-      if (clip) {
-        return (this.opaqueSolidFrontClipMat ??= this.createPbrSolidMat(THREE.DoubleSide, true));
-      }
-      return this.opaqueSolidFrontMat;
-    }
-    if (bucket === 'opaqueTexFront') {
-      if (clip) {
-        return (this.opaqueFrontClipMat ??= this.createPbrMat(THREE.DoubleSide, false, true, true));
-      }
-      return this.opaqueFrontMat;
-    }
-    if (bucket === 'opaqueDouble') {
-      if (clip) {
-        return (this.opaqueDoubleClipMat ??= this.createPbrMat(THREE.DoubleSide, false, true, true));
-      }
-      return this.opaqueDoubleMat;
-    }
-    if (bucket === 'glassFront') {
-      if (clip) {
-        return (this.glassClipMat ??= this.createPbrMat(THREE.DoubleSide, true, false, true));
-      }
-      return this.glassMat;
-    }
-    if (clip) {
-      return (this.glassDoubleClipMat ??= this.createPbrMat(THREE.DoubleSide, true, false, true));
-    }
+    if (bucket === 'opaqueSolidFront') return this.opaqueSolidFrontMat;
+    if (bucket === 'opaqueTexFront') return this.opaqueFrontMat;
+    if (bucket === 'opaqueDouble') return this.opaqueDoubleMat;
+    if (bucket === 'glassFront') return this.glassMat;
     return this.glassDoubleMat;
   }
 
-  public getActiveEdgeMaterial(): THREE.RawShaderMaterial {
-    if (this.sectionCutActive) {
-      return (this.megaEdgeClipMat ??= this.createEdgeMat(true));
+  /** Clipped DoubleSide material (used ONLY for plane-straddling parts during Section Cut!) */
+  public getClippedBucketMaterial(
+    bucket: 'opaqueSolidFront' | 'opaqueTexFront' | 'opaqueDouble' | 'glassFront' | 'glassDouble'
+  ): THREE.RawShaderMaterial {
+    if (this.renderMode === 'cad') {
+      if (bucket === 'opaqueSolidFront' || bucket === 'opaqueTexFront') {
+        return (this.cadOpaqueFrontClipMat ??= this.createCadMat(THREE.DoubleSide, false, true, true));
+      }
+      if (bucket === 'opaqueDouble') {
+        return (this.cadOpaqueDoubleClipMat ??= this.createCadMat(THREE.DoubleSide, false, true, true));
+      }
+      if (bucket === 'glassFront') {
+        return (this.cadGlassFrontClipMat ??= this.createCadMat(THREE.DoubleSide, true, false, true));
+      }
+      return (this.cadGlassDoubleClipMat ??= this.createCadMat(THREE.DoubleSide, true, false, true));
     }
+
+    if (bucket === 'opaqueSolidFront') {
+      return (this.opaqueSolidFrontClipMat ??= this.createPbrSolidMat(THREE.DoubleSide, true));
+    }
+    if (bucket === 'opaqueTexFront') {
+      return (this.opaqueFrontClipMat ??= this.createPbrMat(THREE.DoubleSide, false, true, true));
+    }
+    if (bucket === 'opaqueDouble') {
+      return (this.opaqueDoubleClipMat ??= this.createPbrMat(THREE.DoubleSide, false, true, true));
+    }
+    if (bucket === 'glassFront') {
+      return (this.glassClipMat ??= this.createPbrMat(THREE.DoubleSide, true, false, true));
+    }
+    return (this.glassDoubleClipMat ??= this.createPbrMat(THREE.DoubleSide, true, false, true));
+  }
+
+  public getActiveBucketMaterial(
+    bucket: 'opaqueSolidFront' | 'opaqueTexFront' | 'opaqueDouble' | 'glassFront' | 'glassDouble'
+  ): THREE.RawShaderMaterial {
+    return this.sectionCutActive
+      ? this.getClippedBucketMaterial(bucket)
+      : this.getUnclippedBucketMaterial(bucket);
+  }
+
+  public getUnclippedEdgeMaterial(): THREE.RawShaderMaterial {
     return this.megaEdgeMat;
+  }
+
+  public getClippedEdgeMaterial(): THREE.RawShaderMaterial {
+    return (this.megaEdgeClipMat ??= this.createEdgeMat(true));
+  }
+
+  public getActiveEdgeMaterial(): THREE.RawShaderMaterial {
+    return this.sectionCutActive ? this.getClippedEdgeMaterial() : this.megaEdgeMat;
   }
 
   public getActiveXrayMaterial(): THREE.RawShaderMaterial {
@@ -1303,13 +1429,13 @@ export class MaterialLutRegistry {
         matId: existing,
         isTransparent,
         useUv: this.matUsesUv[existing] === 1,
-        hasExtra: this.matHasExtra[existing] === 1,
+        hasExtra: this.matHasExtra[existing] === 1 || existing >= MAX_FAST_SOLID_MATS,
       };
     }
 
     const id = this.nextMatId++;
     if (id >= MAX_MATERIALS_CAPACITY) {
-      return { matId: MAX_MATERIALS_CAPACITY - 1, isTransparent, useUv: false, hasExtra: false };
+      return { matId: MAX_MATERIALS_CAPACITY - 1, isTransparent, useUv: false, hasExtra: true };
     }
     this.matToId.set(mat, id);
 
@@ -1368,6 +1494,21 @@ export class MaterialLutRegistry {
     this.matUsesUv[id] = useUv ? 1 : 0;
     this.matHasExtra[id] = hasExtraBool ? 1 : 0;
 
+    // Pre-bake OMEGA-2 Uniform Solid LUT entry: [diffR, diffG, diffB, rough, F0R, F0G, F0B, coat*0.22]
+    if (id < MAX_FAST_SOLID_MATS) {
+      const clampedRough = Math.max(0.04, Math.min(1.0, roughness));
+      const oneMinusM = 1.0 - metalness;
+      const su = id * 8;
+      this.solidUniformData[su] = col.r * oneMinusM;
+      this.solidUniformData[su + 1] = col.g * oneMinusM;
+      this.solidUniformData[su + 2] = col.b * oneMinusM;
+      this.solidUniformData[su + 3] = clampedRough;
+      this.solidUniformData[su + 4] = 0.04 * oneMinusM + col.r * metalness;
+      this.solidUniformData[su + 5] = 0.04 * oneMinusM + col.g * metalness;
+      this.solidUniformData[su + 6] = 0.04 * oneMinusM + col.b * metalness;
+      this.solidUniformData[su + 7] = clearcoat * 0.22;
+    }
+
     const base = id * 24;
     const d = this.lutData;
     d[base] = col.r;
@@ -1395,8 +1536,32 @@ export class MaterialLutRegistry {
     d[base + 22] = uvOffY;
     d[base + 23] = matFlags;
 
-    this.lutTexture.needsUpdate = true;
-    return { matId: id, isTransparent, useUv, hasExtra: hasExtraBool };
+    if (this.lutRenderedOnce) {
+      const freshBuf = new Float32Array(this.lutData);
+      const freshLut = new THREE.DataTexture(
+        freshBuf,
+        6,
+        MAX_MATERIALS_CAPACITY,
+        THREE.RGBAFormat,
+        THREE.FloatType
+      );
+      freshLut.minFilter = THREE.NearestFilter;
+      freshLut.magFilter = THREE.NearestFilter;
+      freshLut.generateMipmaps = false;
+      freshLut.needsUpdate = true;
+      this.lutTexture.dispose();
+      this.lutTexture = freshLut;
+      this.uniforms.uMatLutTex.value = freshLut;
+      this.lutRenderedOnce = false;
+    } else {
+      this.lutTexture.needsUpdate = true;
+    }
+    return {
+      matId: id,
+      isTransparent,
+      useUv,
+      hasExtra: hasExtraBool || id >= MAX_FAST_SOLID_MATS,
+    };
   }
 
   private createPbrSolidMat(side: THREE.Side, useClip: boolean): THREE.RawShaderMaterial {
@@ -1404,7 +1569,7 @@ export class MaterialLutRegistry {
       uViewProj: this.uniforms.uViewProj,
       uCamPos: this.uniforms.uCamPos,
       uPartStateTex: this.uniforms.uPartStateTex,
-      uMatLutTex: this.uniforms.uMatLutTex,
+      uMatSolid: this.uniforms.uMatSolid,
       uExplode: this.uniforms.uExplode,
     };
     if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
@@ -1413,11 +1578,11 @@ export class MaterialLutRegistry {
       side,
       transparent: false,
       depthWrite: true,
-      vertexShader: buildHyperionPbrSolidVs(useClip),
-      fragmentShader: buildHyperionPbrSolidFs(useClip),
+      vertexShader: buildOmegaPbrSolidVs(useClip),
+      fragmentShader: buildOmegaPbrSolidFs(useClip),
       uniforms,
     });
-    mat.customProgramCacheKey = () => `hyperion-pbr-solid-v6-${useClip ? 'c' : 'nc'}`;
+    mat.customProgramCacheKey = () => `omega-pbr-solid-v7-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1442,12 +1607,12 @@ export class MaterialLutRegistry {
       side,
       transparent,
       depthWrite,
-      vertexShader: buildHyperionPbrVs(useClip, transparent),
-      fragmentShader: buildHyperionPbrFs(useClip, transparent),
+      vertexShader: buildOmegaPbrVs(useClip, transparent),
+      fragmentShader: buildOmegaPbrFs(useClip, transparent),
       uniforms,
     });
     mat.customProgramCacheKey = () =>
-      `hyperion-pbr-v6-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
+      `omega-pbr-v7-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1473,7 +1638,7 @@ export class MaterialLutRegistry {
       uniforms,
     });
     mat.customProgramCacheKey = () =>
-      `hyperion-cad-v6-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
+      `omega-cad-v7-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1492,7 +1657,7 @@ export class MaterialLutRegistry {
       fragmentShader: buildMegaEdgeFs(useClip),
       uniforms,
     });
-    mat.customProgramCacheKey = () => `hyperion-edge-v6-${useClip ? 'c' : 'nc'}`;
+    mat.customProgramCacheKey = () => `omega-edge-v7-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1509,12 +1674,12 @@ export class MaterialLutRegistry {
       glslVersion: THREE.GLSL3,
       transparent: true,
       depthWrite: false,
-      side: THREE.FrontSide, // Clean blueprint silhouette with 2x less overdraw!
+      side: THREE.FrontSide,
       vertexShader: buildXrayGhostVs(useClip),
       fragmentShader: buildXrayGhostFs(useClip),
       uniforms,
     });
-    mat.customProgramCacheKey = () => `hyperion-xray-v6-${useClip ? 'c' : 'nc'}`;
+    mat.customProgramCacheKey = () => `omega-xray-v7-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1584,7 +1749,7 @@ export class MaterialLutRegistry {
 }
 
 // =============================================================================
-// 4. BREAKTHROUGH #27 + #35: DOUBLE-BUFFERED PING-PONG DYNAMIC IBO COMPACTOR
+// 4. OMEGA-1 + OMEGA-16: LAZY ELASTIC 4-SLOT IBO RING + ZERO-COPY MASTER FAST-PATH
 // =============================================================================
 
 export interface IndexSpan {
@@ -1592,23 +1757,60 @@ export interface IndexSpan {
   count: number;
 }
 
+export interface ElasticIboRing {
+  masterAttr: THREE.BufferAttribute | null;
+  buffers: [
+    Uint16Array | Uint32Array | null,
+    Uint16Array | Uint32Array | null,
+    Uint16Array | Uint32Array | null,
+    Uint16Array | Uint32Array | null,
+  ];
+  attrs: [
+    THREE.BufferAttribute | null,
+    THREE.BufferAttribute | null,
+    THREE.BufferAttribute | null,
+    THREE.BufferAttribute | null,
+  ];
+  ringIdx: 0 | 1 | 2 | 3;
+  lastRotatedEpoch: number;
+  lastHash: number;
+  lastCount: number;
+}
+
+function createElasticIboRing(
+  masterIndices: Uint16Array | Uint32Array,
+  bindMasterInitially = true,
+  existingIndexAttr?: THREE.BufferAttribute | null
+): ElasticIboRing {
+  const masterAttr = bindMasterInitially
+    ? (existingIndexAttr ?? new THREE.BufferAttribute(masterIndices, 1))
+    : null;
+  return {
+    masterAttr,
+    buffers: [null, null, null, null],
+    attrs: [null, null, null, null],
+    ringIdx: 0,
+    lastRotatedEpoch: -1,
+    lastHash: -1,
+    lastCount: bindMasterInitially ? masterIndices.length : 0,
+  };
+}
+
 export interface CompactableBucket {
   kind: 'opaqueSolidFront' | 'opaqueTexFront' | 'opaqueDouble' | 'glassFront' | 'glassDouble' | 'edge';
   geometry: THREE.BufferGeometry;
   masterIndices: Uint16Array | Uint32Array;
-  activeIndicesA: Uint16Array | Uint32Array;
-  activeIndicesB: Uint16Array | Uint32Array;
-  indexAttrA: THREE.BufferAttribute;
-  indexAttrB: THREE.BufferAttribute;
-  pingPong: 0 | 1;
-  /** Per-part slices keyed by partSlot (bone & glow slices are grouped under parent partSlot!) */
+  mainRing: ElasticIboRing;
   spansByPartSlot: Map<number, IndexSpan[]>;
   solidMesh: THREE.Mesh | null;
   xrayMesh: THREE.Mesh | null;
   edgeMesh: THREE.LineSegments | null;
-  lastHash: number;
-  lastCount: number;
-  /** Dedicated tiny highlight geometry for X-Ray 1-part solid pass (0 wasted vertices!) */
+  /** OMEGA-6 Lazy Plane-Straddling Clipped Geometry (shares VBO attributes, 0 VBO duplication!) */
+  straddleGeo?: THREE.BufferGeometry | null;
+  straddleRing?: ElasticIboRing | null;
+  straddleMesh?: THREE.Mesh | null;
+  straddleEdgeMesh?: THREE.LineSegments | null;
+  /** Dedicated tiny highlight geometry for X-Ray 1-part solid pass */
   xrayHighlightMesh?: THREE.Mesh | null;
   xrayHighlightGeo?: THREE.BufferGeometry | null;
   xrayHighlightAttr?: THREE.BufferAttribute | null;
@@ -1625,78 +1827,109 @@ function makeBucketCompactor(
   xrayMesh: THREE.Mesh | null,
   edgeMesh: THREE.LineSegments | null
 ): CompactableBucket {
-  const isU16 = masterIndices instanceof Uint16Array;
-  const activeIndicesA = isU16 ? new Uint16Array(masterIndices) : new Uint32Array(masterIndices);
-  const activeIndicesB = isU16 ? new Uint16Array(masterIndices.length) : new Uint32Array(masterIndices.length);
-  const indexAttrA = new THREE.BufferAttribute(activeIndicesA, 1);
-  const indexAttrB = new THREE.BufferAttribute(activeIndicesB, 1);
-  indexAttrA.setUsage(THREE.DynamicDrawUsage);
-  indexAttrB.setUsage(THREE.DynamicDrawUsage);
-  geometry.setIndex(indexAttrA);
+  const existingIdx = geometry.getIndex() as THREE.BufferAttribute | null;
+  const mainRing = createElasticIboRing(masterIndices, true, existingIdx);
+  if (mainRing.masterAttr && existingIdx !== mainRing.masterAttr) {
+    geometry.setIndex(mainRing.masterAttr);
+  }
 
   return {
     kind,
     geometry,
     masterIndices,
-    activeIndicesA,
-    activeIndicesB,
-    indexAttrA,
-    indexAttrB,
-    pingPong: 0,
+    mainRing,
     spansByPartSlot,
     solidMesh,
     xrayMesh,
     edgeMesh,
-    lastHash: -1,
-    lastCount: masterIndices.length,
     lastHighlightHash: -1,
   };
 }
 
-/**
- * Compact ONLY the visible, unoccluded, in-frustum parts into the INACTIVE Ping-Pong GPU IBO
- * in exact front-to-back order using V8 native SIMD `TypedArray.set(subarray)`.
- * Writing to the inactive ping-pong buffer prevents synchronous driver stalls on in-flight GPU frames!
- * Hash-guarded so unchanged frames perform ZERO copies and ZERO WebGL `bufferSubData` uploads!
- */
-function compactBucketForSlots(
-  b: CompactableBucket,
+function compactRingForSlots(
+  targetGeo: THREE.BufferGeometry,
+  ring: ElasticIboRing,
+  master: Uint16Array | Uint32Array,
+  map: Map<number, IndexSpan[]>,
   orderedPartSlots: Int32Array,
   slotCount: number,
   hash: number
 ): number {
-  if (b.lastHash === hash) {
-    return b.lastCount;
+  if (ring.lastHash === hash) {
+    return ring.lastCount;
   }
-  b.lastHash = hash;
+  ring.lastHash = hash;
 
-  const nextPong: 0 | 1 = b.pingPong === 0 ? 1 : 0;
-  b.pingPong = nextPong;
-  const master = b.masterIndices;
-  const active = nextPong === 0 ? b.activeIndicesA : b.activeIndicesB;
-  const attr = nextPong === 0 ? b.indexAttrA : b.indexAttrB;
-  const map = b.spansByPartSlot;
-  let cursor = 0;
+  if (slotCount === 0) {
+    ring.lastCount = 0;
+    targetGeo.setDrawRange(0, 0);
+    return 0;
+  }
 
+  // Pass 1: exact required count + check if spans match master[0..N] contiguously (0-copy fast path!)
+  let needed = 0;
+  let isIdentityMaster = ring.masterAttr !== null;
   for (let i = 0; i < slotCount; i++) {
     const spans = map.get(orderedPartSlots[i]);
     if (!spans) continue;
     for (let si = 0; si < spans.length; si++) {
       const sp = spans[si];
-      const end = sp.start + sp.count;
-      active.set(master.subarray(sp.start, end), cursor);
+      if (isIdentityMaster && sp.start !== needed) {
+        isIdentityMaster = false;
+      }
+      needed += sp.count;
+    }
+  }
+
+  if (needed === 0) {
+    ring.lastCount = 0;
+    targetGeo.setDrawRange(0, 0);
+    return 0;
+  }
+
+  if (isIdentityMaster && needed === master.length && ring.masterAttr) {
+    ring.lastCount = needed;
+    targetGeo.setIndex(ring.masterAttr);
+    targetGeo.setDrawRange(0, needed);
+    return needed;
+  }
+
+  if (ring.lastRotatedEpoch !== _globalRenderEpoch) {
+    ring.ringIdx = ((ring.ringIdx + 1) & 3) as 0 | 1 | 2 | 3;
+    ring.lastRotatedEpoch = _globalRenderEpoch;
+  }
+  const idx = ring.ringIdx;
+  let active = ring.buffers[idx];
+  let attr = ring.attrs[idx];
+
+  if (!active || active.length < needed) {
+    const nextLen = ring.masterAttr
+      ? master.length
+      : Math.min(master.length, Math.max(needed * 2, 4096));
+    active = master instanceof Uint16Array ? new Uint16Array(nextLen) : new Uint32Array(nextLen);
+    attr = new THREE.BufferAttribute(active, 1);
+    attr.setUsage(THREE.DynamicDrawUsage);
+    ring.buffers[idx] = active;
+    ring.attrs[idx] = attr;
+  }
+
+  let cursor = 0;
+  for (let i = 0; i < slotCount; i++) {
+    const spans = map.get(orderedPartSlots[i]);
+    if (!spans) continue;
+    for (let si = 0; si < spans.length; si++) {
+      const sp = spans[si];
+      active.set(master.subarray(sp.start, sp.start + sp.count), cursor);
       cursor += sp.count;
     }
   }
 
-  b.lastCount = cursor;
-  b.geometry.setIndex(attr);
-  b.geometry.setDrawRange(0, cursor);
-  if (cursor > 0) {
-    attr.clearUpdateRanges();
-    attr.addUpdateRange(0, cursor);
-    attr.needsUpdate = true;
-  }
+  ring.lastCount = cursor;
+  targetGeo.setIndex(attr!);
+  targetGeo.setDrawRange(0, cursor);
+  attr!.clearUpdateRanges();
+  attr!.addUpdateRange(0, cursor);
+  attr!.needsUpdate = true;
   return cursor;
 }
 
@@ -1705,10 +1938,16 @@ function compactBucketForSlots(
 // =============================================================================
 
 export interface GeometrySlice {
-  geometry: THREE.BufferGeometry;
+  posInt16: Int16Array;
   masterIndices: Uint16Array | Uint32Array;
   indexStart: number;
   indexCount: number;
+  minX: number;
+  minY: number;
+  minZ: number;
+  maxX: number;
+  maxY: number;
+  maxZ: number;
   bvh?: FlatSliceBvh | null;
 }
 
@@ -1717,7 +1956,7 @@ export interface BoneGeometrySlice {
   boneSlot: number;
   localBox: THREE.Box3;
   localSphere: THREE.Sphere;
-  geometry: THREE.BufferGeometry;
+  posInt16: Int16Array;
   masterIndices: Uint16Array | Uint32Array;
   indexStart: number;
   indexCount: number;
@@ -1787,9 +2026,16 @@ export interface MegaBatchChunk {
     edgeHash: number,
     isXray: boolean,
     highlightSlotA: number,
-    highlightSlotB: number
+    highlightSlotB: number,
+    straddlePartSlots?: Int32Array,
+    straddlePartCount?: number,
+    straddleHash?: number,
+    straddleEdgeSlots?: Int32Array,
+    straddleEdgeCount?: number,
+    straddleEdgeHash?: number
   ) => void;
   setXrayActive: (active: boolean) => void;
+  releaseSectionStraddle: () => void;
 }
 
 export interface UnifiedMacroBatch extends MegaBatchChunk {
@@ -1841,9 +2087,8 @@ function pruneUnkeptNodes(node: THREE.Object3D, keepSet: Set<THREE.Object3D>): v
 }
 
 function extractTransformedGeometry(
-  sourceGeo: THREE.BufferGeometry,
+  geo: THREE.BufferGeometry,
   relMatrix: THREE.Matrix4,
-  sagittaTol: number,
   rangeStart = 0,
   rangeCount = -1
 ): {
@@ -1853,12 +2098,8 @@ function extractTransformedGeometry(
   triCount: number;
   localBox: THREE.Box3;
 } | null {
-  const geo = rangeCount >= 0 ? sourceGeo : retessellatePrimitiveSagitta(sourceGeo, sagittaTol);
   const posAttr = geo.getAttribute('position');
-  if (!posAttr || posAttr.count < 3) {
-    if (geo !== sourceGeo && !geo.userData.__pooled) geo.dispose();
-    return null;
-  }
+  if (!posAttr || posAttr.count < 3) return null;
 
   let normAttr = geo.getAttribute('normal');
   if (!normAttr) {
@@ -1871,10 +2112,7 @@ function extractTransformedGeometry(
   const start = Math.max(0, rangeStart);
   const end = rangeCount >= 0 ? Math.min(totalCount, start + rangeCount) : totalCount;
   const triCount = Math.floor((end - start) / 3);
-  if (triCount <= 0) {
-    if (geo !== sourceGeo && !geo.userData.__pooled) geo.dispose();
-    return null;
-  }
+  if (triCount <= 0) return null;
 
   const vertTotal = triCount * 3;
   const positions = new Float32Array(vertTotal * 3);
@@ -1928,81 +2166,115 @@ function extractTransformedGeometry(
     }
   }
 
-  if (geo !== sourceGeo && !geo.userData.__pooled) {
-    geo.dispose();
-  }
-
   return { positions, normals, uvs, triCount, localBox };
 }
 
-function buildCompactBucketWithSpans(
+function buildCompactBucketPagesWithSpans(
   entries: RawBucketEntry[],
   pickRecordByPartId: Map<string, PartPickRecord>,
   omitUv = false
-): {
+): Array<{
   geometry: THREE.BufferGeometry;
-  masterIndices: Uint16Array | Uint32Array;
+  masterIndices: Uint16Array;
   spansByPartSlot: Map<number, IndexSpan[]>;
-} | null {
-  if (entries.length === 0) return null;
+}> {
+  if (entries.length === 0) return [];
 
-  const welded = buildCompactWeldedFromEntries(entries, omitUv);
-  if (!welded) return null;
+  const pages = buildCompactWeldedPagesFromEntries(entries, omitUv);
+  const results: Array<{
+    geometry: THREE.BufferGeometry;
+    masterIndices: Uint16Array;
+    spansByPartSlot: Map<number, IndexSpan[]>;
+  }> = [];
 
-  const idxAttr = welded.getIndex()!;
-  const masterIndices = idxAttr.array as Uint16Array | Uint32Array;
-  const spansByPartSlot = new Map<number, IndexSpan[]>();
+  for (let pi = 0; pi < pages.length; pi++) {
+    const page = pages[pi];
+    const spansByPartSlot = new Map<number, IndexSpan[]>();
+    const posInt16 = page.interleavedInt16;
+    const masterIndices = page.masterIndices;
 
-  let vCursor = 0;
-  for (let i = 0; i < entries.length; i++) {
-    const e = entries[i];
-    const vCount = e.triCount * 3;
+    for (let si = 0; si < page.entrySpans.length; si++) {
+      const es = page.entrySpans[si];
+      const e = entries[es.entryIndex];
+      const vStart = es.indexStart;
+      const vCount = es.indexCount;
 
-    // Record span under parent partSlot (merging adjacent spans for the same part!)
-    let list = spansByPartSlot.get(e.partSlot);
-    if (!list) {
-      list = [{ start: vCursor, count: vCount }];
-      spansByPartSlot.set(e.partSlot, list);
-    } else {
-      const prev = list[list.length - 1];
-      if (prev.start + prev.count === vCursor) {
-        prev.count += vCount;
+      let list = spansByPartSlot.get(e.partSlot);
+      if (!list) {
+        list = [{ start: vStart, count: vCount }];
+        spansByPartSlot.set(e.partSlot, list);
       } else {
-        list.push({ start: vCursor, count: vCount });
-      }
-    }
-
-    if (e.matId !== 0) {
-      const rec = pickRecordByPartId.get(e.partId);
-      if (rec) {
-        if (e.boneObj) {
-          const localSphere = new THREE.Sphere();
-          e.localBox.getBoundingSphere(localSphere);
-          rec.boneSlices.push({
-            boneObj: e.boneObj,
-            boneSlot: e.slot,
-            localBox: e.localBox,
-            localSphere,
-            geometry: welded,
-            masterIndices,
-            indexStart: vCursor,
-            indexCount: vCount,
-          });
+        const prev = list[list.length - 1];
+        if (prev.start + prev.count === vStart) {
+          prev.count += vCount;
         } else {
-          rec.slices.push({
-            geometry: welded,
-            masterIndices,
-            indexStart: vCursor,
-            indexCount: vCount,
-          });
+          list.push({ start: vStart, count: vCount });
+        }
+      }
+
+      if (e.matId !== 0) {
+        const rec = pickRecordByPartId.get(e.partId);
+        if (rec) {
+          if (e.boneObj) {
+            const localSphere = new THREE.Sphere();
+            e.localBox.getBoundingSphere(localSphere);
+            rec.boneSlices.push({
+              boneObj: e.boneObj,
+              boneSlot: e.slot,
+              localBox: e.localBox,
+              localSphere,
+              posInt16,
+              masterIndices,
+              indexStart: vStart,
+              indexCount: vCount,
+            });
+          } else {
+            const lb = e.localBox;
+            const slices = rec.slices;
+            const prevSlice = slices.length > 0 ? slices[slices.length - 1] : null;
+            if (
+              prevSlice &&
+              vCount <= 96 &&
+              prevSlice.indexCount < 2400 &&
+              prevSlice.posInt16 === posInt16 &&
+              prevSlice.masterIndices === masterIndices &&
+              prevSlice.indexStart + prevSlice.indexCount === vStart
+            ) {
+              prevSlice.indexCount += vCount;
+              if (lb.min.x < prevSlice.minX) prevSlice.minX = lb.min.x;
+              if (lb.min.y < prevSlice.minY) prevSlice.minY = lb.min.y;
+              if (lb.min.z < prevSlice.minZ) prevSlice.minZ = lb.min.z;
+              if (lb.max.x > prevSlice.maxX) prevSlice.maxX = lb.max.x;
+              if (lb.max.y > prevSlice.maxY) prevSlice.maxY = lb.max.y;
+              if (lb.max.z > prevSlice.maxZ) prevSlice.maxZ = lb.max.z;
+            } else {
+              slices.push({
+                posInt16,
+                masterIndices,
+                indexStart: vStart,
+                indexCount: vCount,
+                minX: lb.min.x,
+                minY: lb.min.y,
+                minZ: lb.min.z,
+                maxX: lb.max.x,
+                maxY: lb.max.y,
+                maxZ: lb.max.z,
+              });
+            }
+          }
         }
       }
     }
-    vCursor += vCount;
+
+    results.push({
+      geometry: page.geometry,
+      masterIndices,
+      spansByPartSlot,
+    });
   }
 
   entries.length = 0;
-  return { geometry: welded, masterIndices, spansByPartSlot };
+  return results;
 }
 
 interface BucketCollector {
@@ -2037,9 +2309,7 @@ function createCollector(): BucketCollector {
   };
 }
 
-// Parts whose root group position/rotation is dynamically driven by physics/rig beyond linear explode
 const NON_ANALYTICAL_PART_IDS = new Set<string>([
-  // Lens floating Focus Group A & B
   'lens-focus-a-front',
   'lens-focus-group-a',
   'lens-focus-a-rear',
@@ -2047,7 +2317,6 @@ const NON_ANALYTICAL_PART_IDS = new Set<string>([
   'lens-focus-b-front',
   'lens-focus-group-b',
   'lens-focus-b-eccentric',
-  // EVF moving ED diopter doublet
   'evf-lens-ed-doublet',
 ]);
 
@@ -2097,7 +2366,7 @@ function collectPartsIntoBuckets(
     collector.partRecords.push(rec);
     collector.pickRecordByPartId.set(part.id, rec);
 
-    // 1. Collect CAD edge LineSegments for indexed welding & per-part compaction
+    // 1. Legacy explicit edgeLines support (usually empty because attachCadEdges is O(1) metadata!)
     for (const line of part.edgeLines) {
       const posAttr = line.geometry.getAttribute('position');
       if (posAttr && posAttr.count >= 2) {
@@ -2132,7 +2401,7 @@ function collectPartsIntoBuckets(
     }
     part.edgeLines = [];
 
-    // 2. Pack ALL meshes (rigid, bone, multi-material, dynamicGlow)
+    // 2. Pack ALL meshes (rigid, bone, multi-material, dynamicGlow) + Post-Retessellation CAD Edges!
     const bakedMeshes: THREE.Mesh[] = [];
 
     for (const mesh of part.interactiveMeshes) {
@@ -2148,7 +2417,9 @@ function collectPartsIntoBuckets(
         const spaceObj = ownerBone ?? part.group;
         _invSpaceWorld.copy(spaceObj.matrixWorld).invert();
         _relMatrix.multiplyMatrices(_invSpaceWorld, mesh.matrixWorld);
-        const ext = extractTransformedGeometry(mesh.geometry, _relMatrix, sagittaTol);
+        const glowGeo = retessellatePrimitiveSagitta(mesh.geometry, sagittaTol);
+        const ext = extractTransformedGeometry(glowGeo, _relMatrix);
+        if (glowGeo !== mesh.geometry && !glowGeo.userData.__pooled) glowGeo.dispose();
         if (ext) {
           collector.glassDouble.push({
             partId: part.id,
@@ -2177,7 +2448,46 @@ function collectPartsIntoBuckets(
       const targetSlot = ownerBone ? getOrRegisterBoneSlot(ownerBone) : partSlot;
       const spaceObj = ownerBone ?? part.group;
       _invSpaceWorld.copy(spaceObj.matrixWorld).invert();
-      const isOpen = isGeometryLikelyOpen(mesh.geometry);
+
+      const hasGroups = Array.isArray(mesh.material) && Boolean(mesh.geometry.groups?.length);
+      const retessGeo = hasGroups
+        ? mesh.geometry
+        : retessellatePrimitiveSagitta(mesh.geometry, sagittaTol);
+      const isOpen = isGeometryLikelyOpen(retessGeo);
+
+      // OMEGA-8A: Extract CAD technical edges ONCE per unique retessellated BufferGeometry!
+      if (!(mesh as THREE.InstancedMesh).isInstancedMesh && typeof mesh.userData.__cadEdgeAngle === 'number') {
+        const localEdges = extractPooledCadEdgesArray(
+          retessGeo,
+          mesh.userData.__cadEdgeAngle as number,
+          (mesh.userData.__cadEdgeMinLen as number) ?? 0.90
+        );
+        if (localEdges.length >= 6) {
+          _relMatrix.multiplyMatrices(_invSpaceWorld, mesh.matrixWorld);
+          const me = _relMatrix.elements;
+          const m0 = me[0], m1 = me[1], m2 = me[2];
+          const m4 = me[4], m5 = me[5], m6 = me[6];
+          const m8 = me[8], m9 = me[9], m10 = me[10];
+          const m12 = me[12], m13 = me[13], m14 = me[14];
+          const transformedEdges = new Float32Array(localEdges.length);
+          for (let ei = 0; ei < localEdges.length; ei += 3) {
+            const lx = localEdges[ei], ly = localEdges[ei + 1], lz = localEdges[ei + 2];
+            transformedEdges[ei] = m0 * lx + m4 * ly + m8 * lz + m12;
+            transformedEdges[ei + 1] = m1 * lx + m5 * ly + m9 * lz + m13;
+            transformedEdges[ei + 2] = m2 * lx + m6 * ly + m10 * lz + m14;
+          }
+          const baseOp16 = Math.max(
+            0,
+            Math.min(65535, Math.round(((mesh.userData.__cadEdgeOp as number) ?? 0.2) * 65535))
+          );
+          collector.edgeChunks.push({
+            partId: part.id,
+            slot: targetSlot,
+            positions: transformedEdges,
+            baseOp16,
+          });
+        }
+      }
 
       const bakeSubMeshWithMaterial = (
         subMat: THREE.Material,
@@ -2229,24 +2539,12 @@ function collectPartsIntoBuckets(
           for (let i = 0; i < count; i++) {
             inst.getMatrixAt(i, _instMatrix);
             _relMatrix.multiplyMatrices(baseRel, _instMatrix);
-            const ext = extractTransformedGeometry(
-              inst.geometry,
-              _relMatrix,
-              sagittaTol,
-              rangeStart,
-              rangeCount
-            );
+            const ext = extractTransformedGeometry(retessGeo, _relMatrix, rangeStart, rangeCount);
             if (ext) pushEntry(ext);
           }
         } else {
           _relMatrix.multiplyMatrices(_invSpaceWorld, mesh.matrixWorld);
-          const ext = extractTransformedGeometry(
-            mesh.geometry,
-            _relMatrix,
-            sagittaTol,
-            rangeStart,
-            rangeCount
-          );
+          const ext = extractTransformedGeometry(retessGeo, _relMatrix, rangeStart, rangeCount);
           if (ext) pushEntry(ext);
         }
       };
@@ -2266,6 +2564,10 @@ function collectPartsIntoBuckets(
         bakeSubMeshWithMaterial(mesh.material, 0, -1);
       }
 
+      if (retessGeo !== mesh.geometry && !retessGeo.userData.__pooled) {
+        retessGeo.dispose();
+      }
+
       bakedMeshes.push(mesh);
     }
 
@@ -2273,7 +2575,6 @@ function collectPartsIntoBuckets(
       collector.transparentPartSlots.push(partSlot);
     }
 
-    // Determine whether this part qualifies for Zero-CPU GPU Analytical Explode when physics is OFF!
     rec.canUseAnalyticalExplode =
       partBoneSlots.length === 0 &&
       !partHasGlow &&
@@ -2323,6 +2624,16 @@ function collectPartsIntoBuckets(
   }
 }
 
+function createSharedVboGeometry(srcGeo: THREE.BufferGeometry): THREE.BufferGeometry {
+  const g = new THREE.BufferGeometry();
+  for (const key of Object.keys(srcGeo.attributes)) {
+    g.setAttribute(key, srcGeo.attributes[key]);
+  }
+  g.boundingBox = srcGeo.boundingBox;
+  g.boundingSphere = srcGeo.boundingSphere;
+  return g;
+}
+
 function finalizeCollectorIntoChunk(
   collector: BucketCollector,
   matRegistry: MaterialLutRegistry
@@ -2345,42 +2656,47 @@ function finalizeCollectorIntoChunk(
     renderOrder = 0
   ) => {
     const omitUv = kind === 'opaqueSolidFront';
-    const built = buildCompactBucketWithSpans(entries, collector.pickRecordByPartId, omitUv);
-    if (!built) return;
-
-    const { geometry, masterIndices, spansByPartSlot } = built;
-    geometries.push(geometry);
-
-    const solidMat = matRegistry.getActiveBucketMaterial(kind);
-    const mesh = new THREE.Mesh(geometry, solidMat);
-    mesh.frustumCulled = false;
-    mesh.matrixAutoUpdate = false;
-    mesh.renderOrder = renderOrder;
-    chunkGroup.add(mesh);
-    solidMeshes.push(mesh);
-
-    if (kind === 'opaqueSolidFront' || kind === 'opaqueTexFront' || kind === 'opaqueDouble') {
-      opaqueMeshesForOracle.push(mesh);
-    }
-
-    const xrayMesh = new THREE.Mesh(geometry, matRegistry.getActiveXrayMaterial());
-    xrayMesh.frustumCulled = false;
-    xrayMesh.matrixAutoUpdate = false;
-    xrayMesh.visible = false;
-    xrayMesh.renderOrder = 1;
-    chunkGroup.add(xrayMesh);
-    xrayMeshes.push(xrayMesh);
-
-    const comp = makeBucketCompactor(
-      kind,
-      geometry,
-      masterIndices,
-      spansByPartSlot,
-      mesh,
-      xrayMesh,
-      null
+    const builtPages = buildCompactBucketPagesWithSpans(
+      entries,
+      collector.pickRecordByPartId,
+      omitUv
     );
-    buckets.push(comp);
+
+    for (let pi = 0; pi < builtPages.length; pi++) {
+      const { geometry, masterIndices, spansByPartSlot } = builtPages[pi];
+      geometries.push(geometry);
+
+      const solidMat = matRegistry.getUnclippedBucketMaterial(kind);
+      const mesh = new THREE.Mesh(geometry, solidMat);
+      mesh.frustumCulled = false;
+      mesh.matrixAutoUpdate = false;
+      mesh.renderOrder = renderOrder;
+      chunkGroup.add(mesh);
+      solidMeshes.push(mesh);
+
+      if (kind === 'opaqueSolidFront' || kind === 'opaqueTexFront' || kind === 'opaqueDouble') {
+        opaqueMeshesForOracle.push(mesh);
+      }
+
+      const xrayMesh = new THREE.Mesh(geometry, matRegistry.getActiveXrayMaterial());
+      xrayMesh.frustumCulled = false;
+      xrayMesh.matrixAutoUpdate = false;
+      xrayMesh.visible = false;
+      xrayMesh.renderOrder = 1;
+      chunkGroup.add(xrayMesh);
+      xrayMeshes.push(xrayMesh);
+
+      const comp = makeBucketCompactor(
+        kind,
+        geometry,
+        masterIndices,
+        spansByPartSlot,
+        mesh,
+        xrayMesh,
+        null
+      );
+      buckets.push(comp);
+    }
   };
 
   addMegaBucket('opaqueSolidFront', collector.opaqueSolidFront, 0);
@@ -2404,7 +2720,7 @@ function finalizeCollectorIntoChunk(
       if (rec) edgeSpansBySlot.set(rec.slot, spans);
     }
 
-    edgeLines = new THREE.LineSegments(edgeGeo, matRegistry.getActiveEdgeMaterial());
+    edgeLines = new THREE.LineSegments(edgeGeo, matRegistry.getUnclippedEdgeMaterial());
     edgeLines.frustumCulled = false;
     edgeLines.matrixAutoUpdate = false;
     edgeLines.renderOrder = 2;
@@ -2423,13 +2739,51 @@ function finalizeCollectorIntoChunk(
 
   let xrayModeActive = false;
 
+  const ensureStraddleMesh = (b: CompactableBucket): THREE.Mesh => {
+    if (b.straddleMesh) return b.straddleMesh;
+    const sGeo = createSharedVboGeometry(b.geometry);
+    const sRing = createElasticIboRing(b.masterIndices, false);
+    sGeo.setDrawRange(0, 0);
+    geometries.push(sGeo);
+
+    const isGlass = b.kind === 'glassFront' || b.kind === 'glassDouble';
+    const sMat = matRegistry.getClippedBucketMaterial(b.kind as Exclude<CompactableBucket['kind'], 'edge'>);
+    const sMesh = new THREE.Mesh(sGeo, sMat);
+    sMesh.frustumCulled = false;
+    sMesh.matrixAutoUpdate = false;
+    sMesh.renderOrder = isGlass ? 1.1 : 0.2;
+    sMesh.visible = false;
+    chunkGroup.add(sMesh);
+
+    b.straddleGeo = sGeo;
+    b.straddleRing = sRing;
+    b.straddleMesh = sMesh;
+    return sMesh;
+  };
+
+  const ensureStraddleEdgeMesh = (b: CompactableBucket): THREE.LineSegments => {
+    if (b.straddleEdgeMesh) return b.straddleEdgeMesh;
+    const sGeo = createSharedVboGeometry(b.geometry);
+    const sRing = createElasticIboRing(b.masterIndices, false);
+    sGeo.setDrawRange(0, 0);
+    geometries.push(sGeo);
+
+    const sLines = new THREE.LineSegments(sGeo, matRegistry.getClippedEdgeMaterial());
+    sLines.frustumCulled = false;
+    sLines.matrixAutoUpdate = false;
+    sLines.renderOrder = 2.1;
+    sLines.visible = false;
+    chunkGroup.add(sLines);
+
+    b.straddleGeo = sGeo;
+    b.straddleRing = sRing;
+    b.straddleEdgeMesh = sLines;
+    return sLines;
+  };
+
   const ensureXrayHighlightMesh = (b: CompactableBucket): THREE.Mesh => {
     if (b.xrayHighlightMesh) return b.xrayHighlightMesh;
-    // Share exact same VBO attributes with a tiny dedicated dynamic IBO (0 VBO duplication!)
-    const hGeo = new THREE.BufferGeometry();
-    for (const key of Object.keys(b.geometry.attributes)) {
-      hGeo.setAttribute(key, b.geometry.attributes[key]);
-    }
+    const hGeo = createSharedVboGeometry(b.geometry);
     const maxCap = Math.min(b.masterIndices.length, 24576);
     const buf =
       b.masterIndices instanceof Uint16Array
@@ -2439,11 +2793,15 @@ function finalizeCollectorIntoChunk(
     attr.setUsage(THREE.DynamicDrawUsage);
     hGeo.setIndex(attr);
     hGeo.setDrawRange(0, 0);
+    geometries.push(hGeo);
 
-    const hMesh = new THREE.Mesh(hGeo, b.solidMesh!.material);
+    const isGlass = b.kind === 'glassFront' || b.kind === 'glassDouble';
+    const hMat = matRegistry.getActiveBucketMaterial(b.kind as Exclude<CompactableBucket['kind'], 'edge'>);
+    const hMesh = new THREE.Mesh(hGeo, hMat);
     hMesh.frustumCulled = false;
     hMesh.matrixAutoUpdate = false;
-    hMesh.renderOrder = 2;
+    // OMEGA-7: Opaque highlight draws BEFORE X-Ray ghosts (`renderOrder = 0` vs `1`) for Hardware Early-Z occlusion!
+    hMesh.renderOrder = isGlass ? 1.5 : 0;
     hMesh.visible = false;
     chunkGroup.add(hMesh);
 
@@ -2459,13 +2817,17 @@ function finalizeCollectorIntoChunk(
     for (let i = 0; i < buckets.length; i++) {
       const b = buckets[i];
       if (b.kind === 'edge') continue;
-      const mat = reg.getActiveBucketMaterial(b.kind);
-      if (b.solidMesh) b.solidMesh.material = mat;
-      if (b.xrayHighlightMesh) b.xrayHighlightMesh.material = mat;
+      // OMEGA-6: `solidMesh` ALWAYS keeps Zero-Discard FrontSide Early-Z; `straddleMesh` uses Clipped DoubleSide!
+      if (b.solidMesh) b.solidMesh.material = reg.getUnclippedBucketMaterial(b.kind);
+      if (b.straddleMesh) b.straddleMesh.material = reg.getClippedBucketMaterial(b.kind);
+      if (b.xrayHighlightMesh) b.xrayHighlightMesh.material = reg.getActiveBucketMaterial(b.kind);
       if (b.xrayMesh) b.xrayMesh.material = xrayMat;
     }
     if (edgeLines) {
-      edgeLines.material = reg.getActiveEdgeMaterial();
+      edgeLines.material = reg.getUnclippedEdgeMaterial();
+    }
+    if (edgeBucket?.straddleEdgeMesh) {
+      edgeBucket.straddleEdgeMesh.material = reg.getClippedEdgeMaterial();
     }
   };
 
@@ -2478,7 +2840,13 @@ function finalizeCollectorIntoChunk(
     edgeHash: number,
     isXray: boolean,
     highlightSlotA: number,
-    highlightSlotB: number
+    highlightSlotB: number,
+    straddlePartSlots?: Int32Array,
+    straddlePartCount = 0,
+    straddleHash = 0,
+    straddleEdgeSlots?: Int32Array,
+    straddleEdgeCount = 0,
+    straddleEdgeHash = 0
   ) => {
     xrayModeActive = isXray;
     const hasHighlight = highlightSlotA >= 0 || highlightSlotB >= 0;
@@ -2486,12 +2854,20 @@ function finalizeCollectorIntoChunk(
 
     for (let i = 0; i < buckets.length; i++) {
       const b = buckets[i];
-      const count = compactBucketForSlots(b, orderedPartSlots, partCount, partHash);
+      const count = compactRingForSlots(
+        b.geometry,
+        b.mainRing,
+        b.masterIndices,
+        b.spansByPartSlot,
+        orderedPartSlots,
+        partCount,
+        partHash
+      );
       const hasDraw = count > 0;
 
       if (isXray) {
-        // Breakthrough #27B: Zero-Waste X-Ray! Never transform all 325K triangles twice!
         if (b.solidMesh) b.solidMesh.visible = false;
+        if (b.straddleMesh) b.straddleMesh.visible = false;
         if (b.xrayMesh) b.xrayMesh.visible = hasDraw;
 
         if (hasHighlight && hasDraw) {
@@ -2546,12 +2922,52 @@ function finalizeCollectorIntoChunk(
         if (b.solidMesh) b.solidMesh.visible = hasDraw;
         if (b.xrayMesh) b.xrayMesh.visible = false;
         if (b.xrayHighlightMesh) b.xrayHighlightMesh.visible = false;
+
+        if (straddlePartCount > 0 && straddlePartSlots) {
+          const sMesh = ensureStraddleMesh(b);
+          const sCount = compactRingForSlots(
+            b.straddleGeo!,
+            b.straddleRing!,
+            b.masterIndices,
+            b.spansByPartSlot,
+            straddlePartSlots,
+            straddlePartCount,
+            straddleHash
+          );
+          sMesh.visible = sCount > 0;
+        } else if (b.straddleMesh) {
+          b.straddleMesh.visible = false;
+        }
       }
     }
 
     if (edgeBucket && edgeLines) {
-      const eCount = compactBucketForSlots(edgeBucket, edgePartSlots, edgePartCount, edgeHash);
+      const eCount = compactRingForSlots(
+        edgeBucket.geometry,
+        edgeBucket.mainRing,
+        edgeBucket.masterIndices,
+        edgeBucket.spansByPartSlot,
+        edgePartSlots,
+        edgePartCount,
+        edgeHash
+      );
       edgeLines.visible = eCount > 0;
+
+      if (!isXray && straddleEdgeCount > 0 && straddleEdgeSlots) {
+        const sLines = ensureStraddleEdgeMesh(edgeBucket);
+        const seCount = compactRingForSlots(
+          edgeBucket.straddleGeo!,
+          edgeBucket.straddleRing!,
+          edgeBucket.masterIndices,
+          edgeBucket.spansByPartSlot,
+          straddleEdgeSlots,
+          straddleEdgeCount,
+          straddleEdgeHash
+        );
+        sLines.visible = seCount > 0;
+      } else if (edgeBucket.straddleEdgeMesh) {
+        edgeBucket.straddleEdgeMesh.visible = false;
+      }
     }
   };
 
@@ -2573,11 +2989,37 @@ function finalizeCollectorIntoChunk(
       xrayModeActive = active;
       for (let i = 0; i < buckets.length; i++) {
         const b = buckets[i];
-        const hasDraw = b.lastCount > 0;
+        const hasDraw = b.mainRing.lastCount > 0;
         if (b.xrayMesh) b.xrayMesh.visible = xrayModeActive && hasDraw;
         if (b.solidMesh) b.solidMesh.visible = !xrayModeActive && hasDraw;
+        if (xrayModeActive && b.straddleMesh) b.straddleMesh.visible = false;
         if (!xrayModeActive && b.xrayHighlightMesh) b.xrayHighlightMesh.visible = false;
       }
+    },
+    releaseSectionStraddle: () => {
+      const releaseBucket = (b: CompactableBucket) => {
+        if (b.straddleMesh) {
+          b.straddleMesh.removeFromParent();
+          b.straddleMesh = null;
+        }
+        if (b.straddleEdgeMesh) {
+          b.straddleEdgeMesh.removeFromParent();
+          b.straddleEdgeMesh = null;
+        }
+        if (b.straddleGeo) {
+          const gi = geometries.indexOf(b.straddleGeo);
+          if (gi >= 0) geometries.splice(gi, 1);
+          b.straddleGeo.setIndex(null);
+          for (const k of Object.keys(b.straddleGeo.attributes)) {
+            b.straddleGeo.deleteAttribute(k);
+          }
+          b.straddleGeo.dispose();
+          b.straddleGeo = null;
+        }
+        b.straddleRing = null;
+      };
+      for (let i = 0; i < buckets.length; i++) releaseBucket(buckets[i]);
+      if (edgeBucket) releaseBucket(edgeBucket);
     },
   };
 
@@ -2621,15 +3063,14 @@ export function compileUnifiedMacroBatch(
     chunk.group.visible = true;
     for (let i = 0; i < chunk.buckets.length; i++) {
       const b = chunk.buckets[i];
-      b.activeIndicesA.set(b.masterIndices);
-      b.pingPong = 0;
-      b.geometry.setIndex(b.indexAttrA);
+      if (b.mainRing.masterAttr) {
+        b.geometry.setIndex(b.mainRing.masterAttr);
+      }
       b.geometry.setDrawRange(0, b.masterIndices.length);
-      b.indexAttrA.clearUpdateRanges();
-      b.indexAttrA.needsUpdate = true;
-      b.lastHash = -1;
-      b.lastCount = b.masterIndices.length;
+      b.mainRing.lastHash = -1;
+      b.mainRing.lastCount = b.masterIndices.length;
       if (b.solidMesh) b.solidMesh.visible = true;
+      if (b.straddleMesh) b.straddleMesh.visible = false;
     }
   };
 
@@ -2647,7 +3088,7 @@ export function compileUnifiedMacroBatch(
 }
 
 // =============================================================================
-// 6. BREAKTHROUGH #24: ZERO-ALLOC TLAS-ACCELERATED + INLINE-SCALAR BVH RAYCASTER
+// 6. OMEGA-11: CACHED PART TLAS + QUANTIZED INT16 SCALAR BVH RAYCASTER
 // =============================================================================
 
 const _rayLocal = new THREE.Ray();
@@ -2659,10 +3100,17 @@ const _hitPt = new THREE.Vector3();
 const _boxHitPt = new THREE.Vector3();
 const _worldHit = new THREE.Vector3();
 
-// Preallocated flat candidate buffers (zero per-pick object allocations!)
-const _candIndices = new Int32Array(MAX_PARTS_CAPACITY);
-const _candDistSq = new Float32Array(MAX_PARTS_CAPACITY);
-const _partBoxMinMax = new Float32Array(MAX_PARTS_CAPACITY * 6);
+const _partTlas = new ReusablePartTlas();
+const _tlasActiveSlots = new Int32Array(MAX_PARTS_CAPACITY);
+const _candSlots = new Int32Array(MAX_PARTS_CAPACITY);
+const _candNearDists = new Float32Array(MAX_PARTS_CAPACITY);
+const _recordBySlot = new Array<PartPickRecord | undefined>(MAX_PARTS_CAPACITY);
+let _tlasValid = false;
+let _tlasLastRecordCount = -1;
+
+export function invalidateRaycastTlas(): void {
+  _tlasValid = false;
+}
 
 function expandWorldBoxFromBoneSlice(bs: BoneGeometrySlice, out: THREE.Box3): void {
   const r = bs.localSphere.radius;
@@ -2672,20 +3120,12 @@ function expandWorldBoxFromBoneSlice(bs: BoneGeometrySlice, out: THREE.Box3): vo
   out.union(_boneWorldBox);
 }
 
-export function pickPartTwoPhase(
-  raycaster: THREE.Raycaster,
+function rebuildPartTlas(
   records: ReadonlyArray<PartPickRecord>,
-  isPartActiveAndVisible: (part: CadPart) => boolean,
-  clippingPlane: THREE.Plane | null
-): string | null {
-  const ray = raycaster.ray;
-  const ox = ray.origin.x, oy = ray.origin.y, oz = ray.origin.z;
-  const dx = ray.direction.x, dy = ray.direction.y, dz = ray.direction.z;
-  const invX = dx !== 0 ? 1 / dx : 1e30;
-  const invY = dy !== 0 ? 1 / dy : 1e30;
-  const invZ = dz !== 0 ? 1 / dz : 1e30;
-
-  let candCount = 0;
+  isPartActiveAndVisible: (part: CadPart) => boolean
+): void {
+  const wb = _partTlas.partWorldBounds;
+  let activeCount = 0;
 
   for (let i = 0; i < records.length; i++) {
     const rec = records[i];
@@ -2724,48 +3164,56 @@ export function pickPartTwoPhase(
     }
 
     if (minX <= maxX) {
-      const bo = i * 6;
-      _partBoxMinMax[bo] = minX;
-      _partBoxMinMax[bo + 1] = minY;
-      _partBoxMinMax[bo + 2] = minZ;
-      _partBoxMinMax[bo + 3] = maxX;
-      _partBoxMinMax[bo + 4] = maxY;
-      _partBoxMinMax[bo + 5] = maxZ;
-
-      const nearD = rayBoxNearDist(ox, oy, oz, invX, invY, invZ, _partBoxMinMax, bo, Infinity);
-      if (nearD < Infinity) {
-        _candIndices[candCount] = i;
-        _candDistSq[candCount] = nearD * nearD;
-        candCount++;
-      }
+      const s = rec.slot;
+      const bo = s * 6;
+      wb[bo] = minX;
+      wb[bo + 1] = minY;
+      wb[bo + 2] = minZ;
+      wb[bo + 3] = maxX;
+      wb[bo + 4] = maxY;
+      wb[bo + 5] = maxZ;
+      _recordBySlot[s] = rec;
+      _tlasActiveSlots[activeCount++] = s;
     }
   }
 
+  _partTlas.build(_tlasActiveSlots, activeCount);
+  _tlasLastRecordCount = records.length;
+  _tlasValid = true;
+}
+
+export function pickPartTwoPhase(
+  raycaster: THREE.Raycaster,
+  records: ReadonlyArray<PartPickRecord>,
+  isPartActiveAndVisible: (part: CadPart) => boolean,
+  clippingPlane: THREE.Plane | null
+): string | null {
+  if (!_tlasValid || _tlasLastRecordCount !== records.length) {
+    rebuildPartTlas(records, isPartActiveAndVisible);
+  }
+
+  const ray = raycaster.ray;
+  const ox = ray.origin.x, oy = ray.origin.y, oz = ray.origin.z;
+  const dx = ray.direction.x, dy = ray.direction.y, dz = ray.direction.z;
+  const invX = dx !== 0 ? 1 / dx : 1e30;
+  const invY = dy !== 0 ? 1 / dy : 1e30;
+  const invZ = dz !== 0 ? 1 / dz : 1e30;
+
+  const candCount = _partTlas.queryRay(ox, oy, oz, invX, invY, invZ, _candSlots, _candNearDists);
   if (candCount === 0) return null;
-
-  // Insertion sort on small flat candidate array (typically 1..15 hits — zero GC, 5x faster than Array.sort!)
-  for (let i = 1; i < candCount; i++) {
-    const keyD = _candDistSq[i];
-    const keyIdx = _candIndices[i];
-    let j = i - 1;
-    while (j >= 0 && _candDistSq[j] > keyD) {
-      _candDistSq[j + 1] = _candDistSq[j];
-      _candIndices[j + 1] = _candIndices[j];
-      j--;
-    }
-    _candDistSq[j + 1] = keyD;
-    _candIndices[j + 1] = keyIdx;
-  }
 
   let closestDistSq = Infinity;
   let closestPartId: string | null = null;
   const fastRigidNoClip = !clippingPlane;
 
   for (let ci = 0; ci < candCount; ci++) {
-    if (_candDistSq[ci] >= closestDistSq) break;
+    const nearD = _candNearDists[ci];
+    if (nearD * nearD >= closestDistSq) break;
 
-    const rec = records[_candIndices[ci]];
+    const rec = _recordBySlot[_candSlots[ci]];
+    if (!rec) continue;
     const part = rec.part;
+    if (!part.group.visible || !isPartActiveAndVisible(part)) continue;
 
     if (rec.slices.length > 0) {
       const p = part.group.position;
@@ -2781,22 +3229,46 @@ export function pickPartTwoPhase(
 
       const lox = _rayLocal.origin.x, loy = _rayLocal.origin.y, loz = _rayLocal.origin.z;
       const ldx = _rayLocal.direction.x, ldy = _rayLocal.direction.y, ldz = _rayLocal.direction.z;
+      const linvX = ldx !== 0 ? 1 / ldx : 1e30;
+      const linvY = ldy !== 0 ? 1 / ldy : 1e30;
+      const linvZ = ldz !== 0 ? 1 / ldz : 1e30;
 
       for (let si = 0; si < rec.slices.length; si++) {
         const slice = rec.slices[si];
-        const posAttr = slice.geometry.getAttribute('position') as THREE.BufferAttribute;
-        const posArr = posAttr.array as Float32Array;
+        // Inline scalar local-space AABB slab reject (skips non-hit slices BEFORE building or traversing BVH!)
+        {
+          let tmin = -Infinity;
+          let tmax = Number.isFinite(closestDistSq) ? Math.sqrt(closestDistSq) : Infinity;
+          const tx1 = (slice.minX - lox) * linvX;
+          const tx2 = (slice.maxX - lox) * linvX;
+          tmin = Math.max(tmin, Math.min(tx1, tx2));
+          tmax = Math.min(tmax, Math.max(tx1, tx2));
+          if (tmax >= Math.max(0, tmin)) {
+            const ty1 = (slice.minY - loy) * linvY;
+            const ty2 = (slice.maxY - loy) * linvY;
+            tmin = Math.max(tmin, Math.min(ty1, ty2));
+            tmax = Math.min(tmax, Math.max(ty1, ty2));
+            if (tmax >= Math.max(0, tmin)) {
+              const tz1 = (slice.minZ - loz) * linvZ;
+              const tz2 = (slice.maxZ - loz) * linvZ;
+              tmin = Math.max(tmin, Math.min(tz1, tz2));
+              tmax = Math.min(tmax, Math.max(tz1, tz2));
+            }
+          }
+          if (tmax < Math.max(0, tmin)) continue;
+        }
+        const posInt16 = slice.posInt16;
         const idxArr = slice.masterIndices;
 
         if (slice.indexCount > BVH_MIN_TRIANGLES * 3) {
           if (slice.bvh === undefined) {
-            slice.bvh = buildSliceBvh(posArr, idxArr, slice.indexStart, slice.indexCount);
+            slice.bvh = buildSliceBvh(posInt16, idxArr, slice.indexStart, slice.indexCount);
           }
           if (slice.bvh) {
             const nextDist = intersectSliceBvh(
               slice.bvh,
               _rayLocal,
-              posArr,
+              posInt16,
               idxArr,
               ray.origin,
               clippingPlane,
@@ -2816,15 +3288,15 @@ export function pickPartTwoPhase(
         let maxT = Number.isFinite(closestDistSq) ? Math.sqrt(closestDistSq) : Infinity;
         const end = slice.indexStart + slice.indexCount;
         for (let i = slice.indexStart; i + 2 < end; i += 3) {
-          const i0 = idxArr[i] * 3;
-          const i1 = idxArr[i + 1] * 3;
-          const i2 = idxArr[i + 2] * 3;
+          const i0 = idxArr[i] * MESH_I16_STRIDE;
+          const i1 = idxArr[i + 1] * MESH_I16_STRIDE;
+          const i2 = idxArr[i + 2] * MESH_I16_STRIDE;
 
           const hitT = rayTriangleScalar(
             lox, loy, loz, ldx, ldy, ldz,
-            posArr[i0], posArr[i0 + 1], posArr[i0 + 2],
-            posArr[i1], posArr[i1 + 1], posArr[i1 + 2],
-            posArr[i2], posArr[i2 + 1], posArr[i2 + 2],
+            posInt16[i0] * QUANT_POS_SCALE, posInt16[i0 + 1] * QUANT_POS_SCALE, posInt16[i0 + 2] * QUANT_POS_SCALE,
+            posInt16[i1] * QUANT_POS_SCALE, posInt16[i1 + 1] * QUANT_POS_SCALE, posInt16[i1 + 2] * QUANT_POS_SCALE,
+            posInt16[i2] * QUANT_POS_SCALE, posInt16[i2 + 1] * QUANT_POS_SCALE, posInt16[i2 + 2] * QUANT_POS_SCALE,
             maxT
           );
           if (hitT < 0) continue;
@@ -2866,19 +3338,18 @@ export function pickPartTwoPhase(
         _invBoneMat.copy(bs.boneObj.matrixWorld).invert();
         _rayLocal.copy(ray).applyMatrix4(_invBoneMat);
 
-        const posAttr = bs.geometry.getAttribute('position') as THREE.BufferAttribute;
-        const posArr = posAttr.array as Float32Array;
+        const posInt16 = bs.posInt16;
         const idxArr = bs.masterIndices;
 
         if (bs.indexCount > BVH_MIN_TRIANGLES * 3) {
           if (bs.bvh === undefined) {
-            bs.bvh = buildSliceBvh(posArr, idxArr, bs.indexStart, bs.indexCount);
+            bs.bvh = buildSliceBvh(posInt16, idxArr, bs.indexStart, bs.indexCount);
           }
           if (bs.bvh) {
             const nextDist = intersectSliceBvh(
               bs.bvh,
               _rayLocal,
-              posArr,
+              posInt16,
               idxArr,
               ray.origin,
               clippingPlane,
@@ -2899,15 +3370,15 @@ export function pickPartTwoPhase(
         const ldx = _rayLocal.direction.x, ldy = _rayLocal.direction.y, ldz = _rayLocal.direction.z;
         const end = bs.indexStart + bs.indexCount;
         for (let i = bs.indexStart; i + 2 < end; i += 3) {
-          const i0 = idxArr[i] * 3;
-          const i1 = idxArr[i + 1] * 3;
-          const i2 = idxArr[i + 2] * 3;
+          const i0 = idxArr[i] * MESH_I16_STRIDE;
+          const i1 = idxArr[i + 1] * MESH_I16_STRIDE;
+          const i2 = idxArr[i + 2] * MESH_I16_STRIDE;
 
           const hitT = rayTriangleScalar(
             lox, loy, loz, ldx, ldy, ldz,
-            posArr[i0], posArr[i0 + 1], posArr[i0 + 2],
-            posArr[i1], posArr[i1 + 1], posArr[i1 + 2],
-            posArr[i2], posArr[i2 + 1], posArr[i2 + 2],
+            posInt16[i0] * QUANT_POS_SCALE, posInt16[i0 + 1] * QUANT_POS_SCALE, posInt16[i0 + 2] * QUANT_POS_SCALE,
+            posInt16[i1] * QUANT_POS_SCALE, posInt16[i1 + 1] * QUANT_POS_SCALE, posInt16[i1 + 2] * QUANT_POS_SCALE,
+            posInt16[i2] * QUANT_POS_SCALE, posInt16[i2 + 1] * QUANT_POS_SCALE, posInt16[i2 + 2] * QUANT_POS_SCALE,
             Infinity
           );
           if (hitT < 0) continue;

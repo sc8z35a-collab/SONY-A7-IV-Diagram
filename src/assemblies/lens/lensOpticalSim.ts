@@ -562,7 +562,12 @@ function refractiveIndexForLambda(
   return el.nd + lambdaShift * 0.5 * dn;
 }
 
-function refractAtSurface(
+let _refY = 0;
+let _refZ = 0;
+let _refDy = 0;
+let _refDz = 0;
+
+function refractAtSurfaceScalar(
   y: number,
   z: number,
   dy: number,
@@ -573,7 +578,7 @@ function refractAtSurface(
   a6: number,
   n1: number,
   n2: number
-): { y: number; z: number; dy: number; dz: number } {
+): void {
   let t = (zV - z) / dz;
   for (let iter = 0; iter < 5; iter++) {
     const yi = y + t * dy;
@@ -588,9 +593,9 @@ function refractAtSurface(
   const dzdy = evalSurfaceSlopeDzDy(yi, R, a4, a6);
   let ny = -dzdy;
   let nz = 1;
-  const nLen = Math.hypot(ny, nz);
-  ny /= nLen;
-  nz /= nLen;
+  const invNLen = 1 / Math.sqrt(ny * ny + 1);
+  ny *= invNLen;
+  nz *= invNLen;
 
   let cosI = -(dy * ny + dz * nz);
   if (cosI < 0) {
@@ -601,11 +606,14 @@ function refractAtSurface(
 
   const eta = n1 / n2;
   const kTerm = 1 - eta * eta * (1 - cosI * cosI);
-  const cosT = Math.sqrt(Math.max(0.04, kTerm));
-  let ody = eta * dy + (eta * cosI - cosT) * ny;
-  let odz = eta * dz + (eta * cosI - cosT) * nz;
-  const oLen = Math.hypot(ody, odz);
-  return { y: yi, z: zi, dy: ody / oLen, dz: odz / oLen };
+  const cosT = Math.sqrt(kTerm > 0.04 ? kTerm : 0.04);
+  const ody = eta * dy + (eta * cosI - cosT) * ny;
+  const odz = eta * dz + (eta * cosI - cosT) * nz;
+  const invOLen = 1 / Math.sqrt(ody * ody + odz * odz);
+  _refY = yi;
+  _refZ = zi;
+  _refDy = ody * invOLen;
+  _refDz = odz * invOLen;
 }
 
 /**
@@ -712,22 +720,22 @@ export function traceSingleOpticalRay(opts: {
     const a6 = el.isXa ? el.a6F * opts.xaStrength : 0;
 
     // Front surface refraction
-    const r1 = refractAtSurface(y, z, dy, dz, zF, el.rF, a4, a6, curN, nGlass);
-    y = r1.y;
-    z = r1.z;
-    dy = r1.dy;
-    dz = r1.dz;
+    refractAtSurfaceScalar(y, z, dy, dz, zF, el.rF, a4, a6, curN, nGlass);
+    y = _refY;
+    z = _refZ;
+    dy = _refDy;
+    dz = _refDz;
     points.push({ z, y });
 
     // Rear surface refraction (or cemented interface E03 -> E04!)
     const nextN = el.cementedToNext
       ? refractiveIndexForLambda(OPTICAL_ELEMENTS[i + 1], opts.lambdaShift, opts.edStrength)
       : 1.0;
-    const r2 = refractAtSurface(y, z, dy, dz, zR, el.rR, 0, 0, nGlass, nextN);
-    y = r2.y;
-    z = r2.z;
-    dy = r2.dy;
-    dz = r2.dz;
+    refractAtSurfaceScalar(y, z, dy, dz, zR, el.rR, 0, 0, nGlass, nextN);
+    y = _refY;
+    z = _refZ;
+    dy = _refDy;
+    dz = _refDz;
     points.push({ z, y });
     curN = nextN;
   }
@@ -1062,13 +1070,24 @@ export class LensOpticalSim {
     return OPTICAL_SCENARIOS.find((s) => s.id === this.scenario) ?? OPTICAL_SCENARIOS[0];
   }
 
+  private cachedBundleKey = '';
+  private cachedBundleRays: TracedRay[] = [];
+
   /**
    * Trace the complete active bundle of physical rays for the current scenario & parameters.
+   * Memoized across consumers so 3D viewport + 2D Optics Studio share 1 single Snell trace per frame!
    */
   public traceActiveBundle(zStart = 136): TracedRay[] {
+    const key = `${zStart}|${this.scenario}|${this.aperture.toFixed(5)}|${this.focusT.toFixed(5)}|${this.fieldAngleDeg.toFixed(4)}|${this.xaStrength.toFixed(4)}|${this.edStrength.toFixed(4)}|${this.nanoArStrength.toFixed(4)}`;
+    if (key === this.cachedBundleKey) {
+      return this.cachedBundleRays;
+    }
+
     const strokes = this.getFloatingStrokes();
     const iris = this.getIrisMetrics();
     const rays: TracedRay[] = [];
+    this.cachedBundleKey = key;
+    this.cachedBundleRays = rays;
     const invDist = this.focusT * 2.5; // 0 (Infinity) .. 2.5 m^-1 (0.40m MFD)
 
     // Helper: compute starting direction from object at distance 1/invDist and field angle

@@ -72,19 +72,19 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
     });
 
     // Translucent Cornea Dome facing +Z (toward the EVF eyepiece)
-    const corneaGeo = new THREE.SphereGeometry(5.6, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.42);
+    const corneaGeo = new THREE.SphereGeometry(5.6, 12, 7, 0, Math.PI * 2, 0, Math.PI * 0.42);
     corneaGeo.rotateX(Math.PI / 2);
     const cornea = new THREE.Mesh(corneaGeo, corneaMat);
     cornea.position.z = 5.2;
     eyeGroup.add(cornea);
 
     // Iris Annular Aperture Ring + Dark Pupil Center
-    const iris = new THREE.Mesh(new THREE.RingGeometry(2.1, 4.9, 32), irisMat);
+    const iris = new THREE.Mesh(new THREE.RingGeometry(2.1, 4.9, 18), irisMat);
     iris.position.z = 6.2;
     eyeGroup.add(iris);
 
     const pupil = new THREE.Mesh(
-      new THREE.CircleGeometry(2.05, 28),
+      new THREE.CircleGeometry(2.05, 16),
       new THREE.MeshBasicMaterial({
         color: 0x0f172a,
         transparent: true,
@@ -307,6 +307,17 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
 
   const findPart = (parts: CadPart[], id: string) => parts.find((p) => p.id === id);
 
+  let cachedPartsLen = -1;
+  let pOled: CadPart | undefined;
+  let pG1: CadPart | undefined;
+  let pEd: CadPart | undefined;
+  let pG4: CadPart | undefined;
+  let pDic: CadPart | undefined;
+  let pIrLed: CadPart | undefined;
+  let pAf: CadPart | undefined;
+  let pCup: CadPart | undefined;
+  let pGaze: CadPart | undefined;
+
   return {
     overlayGroup,
     explodeGuides,
@@ -316,15 +327,18 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
     update: (elapsed: number, active: boolean, parts: CadPart[]) => {
       if (!active || !overlayGroup.visible) return;
 
-      const pOled = findPart(parts, 'evf-oled-panel');
-      const pG1 = findPart(parts, 'evf-lens-field');
-      const pEd = findPart(parts, 'evf-lens-ed-doublet');
-      const pG4 = findPart(parts, 'evf-lens-rear');
-      const pDic = findPart(parts, 'evf-dichroic-mirror');
-      const pIrLed = findPart(parts, 'evf-ir-leds');
-      const pAf = findPart(parts, 'evf-antifog-window');
-      const pCup = findPart(parts, 'evf-eyecup');
-      const pGaze = findPart(parts, 'evf-gaze-camera');
+      if (cachedPartsLen !== parts.length) {
+        cachedPartsLen = parts.length;
+        pOled = findPart(parts, 'evf-oled-panel');
+        pG1 = findPart(parts, 'evf-lens-field');
+        pEd = findPart(parts, 'evf-lens-ed-doublet');
+        pG4 = findPart(parts, 'evf-lens-rear');
+        pDic = findPart(parts, 'evf-dichroic-mirror');
+        pIrLed = findPart(parts, 'evf-ir-leds');
+        pAf = findPart(parts, 'evf-antifog-window');
+        pCup = findPart(parts, 'evf-eyecup');
+        pGaze = findPart(parts, 'evf-gaze-camera');
+      }
 
       if (!pOled || !pG1 || !pEd || !pG4 || !pDic || !pIrLed || !pAf || !pCup || !pGaze) return;
 

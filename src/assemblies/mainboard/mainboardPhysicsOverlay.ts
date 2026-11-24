@@ -221,6 +221,7 @@ export function createMainboardPhysicsOverlay(
   };
 
   let cachedPosMapLen = -1;
+  let lastMainboardZHash = 1e9;
   const update = (elapsed: number, physicsActive: boolean, parts: CadPart[]) => {
     if (!physicsActive) return;
 
@@ -229,17 +230,24 @@ export function createMainboardPhysicsOverlay(
       for (let i = 0; i < parts.length; i++) {
         _posMap[parts[i].id] = parts[i].group.position;
       }
+      lastMainboardZHash = 1e9;
     }
+
+    const zCheck = (_posMap['mb-isp-die']?.z ?? 0) * 17 + (_posMap['mb-vapor-chamber']?.z ?? 0);
+    const endpointsChanged = zCheck !== lastMainboardZHash;
+    if (endpointsChanged) lastMainboardZHash = zCheck;
 
     for (let fIdx = 0; fIdx < flows.length; fIdx++) {
       const flow = flows[fIdx];
       const [a, b] = flow.getEndpoints(_posMap);
-      const attr = flow.line.geometry.attributes.position as THREE.BufferAttribute;
-      attr.setXYZ(0, a.x, a.y, a.z);
-      attr.setXYZ(1, b.x, b.y, b.z);
-      attr.needsUpdate = true;
-      if ((flow.line.material as THREE.LineDashedMaterial).isLineDashedMaterial) {
-        flow.line.computeLineDistances();
+      if (endpointsChanged) {
+        const attr = flow.line.geometry.attributes.position as THREE.BufferAttribute;
+        attr.setXYZ(0, a.x, a.y, a.z);
+        attr.setXYZ(1, b.x, b.y, b.z);
+        attr.needsUpdate = true;
+        if ((flow.line.material as THREE.LineDashedMaterial).isLineDashedMaterial) {
+          flow.line.computeLineDistances();
+        }
       }
 
       const n = flow.packets.length;

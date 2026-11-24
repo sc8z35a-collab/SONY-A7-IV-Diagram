@@ -19,7 +19,14 @@ export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
   const overlay = createBodyPhysicsOverlay(mats.clippingPlanes);
   rootGroup.add(overlay.overlayGroup, overlay.explodeGuides);
 
+  let lastExp = -1;
+  let lastInt = false;
+  let lastLen = -1;
   const updatePositions = (explodeFactor: number, integrated: boolean) => {
+    if (lastExp === explodeFactor && lastInt === integrated && lastLen === parts.length) return;
+    lastExp = explodeFactor;
+    lastInt = integrated;
+    lastLen = parts.length;
     for (const p of parts) {
       const offset =
         integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
@@ -36,11 +43,11 @@ export function createBodyAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 38,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
+      const extra = await buildBodyStandaloneParts(mats);
       controller.deferredStandaloneCount = 0;
-      const extra = buildBodyStandaloneParts(mats);
       for (const p of extra) {
         parts.push(p);
         rootGroup.add(p.group);

@@ -12,7 +12,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { EVF_OPTICAL_Y } from './evfParts';
-import { EVF_MICRO_EXPLANATIONS } from './evfMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneEvfMicroPart(
   id: string,
@@ -39,7 +39,7 @@ function finalizeStandaloneEvfMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: EVF_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

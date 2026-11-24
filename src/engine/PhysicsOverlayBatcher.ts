@@ -2,12 +2,11 @@ import * as THREE from 'three';
 import { retessellatePrimitiveSagitta } from './FastCadGeometry';
 
 /**
- * PhysicsOverlayBatcher v4 (HYPERION-CAD v5):
- * - Pre-multiplied `uViewProj` (0 per-vertex mat4*mat4 multiplies).
- * - Dual-Path Zero-Discard Hardware Early-Z mesh overlay shader + lazy clipped variant.
- * - CPU sRGB lookup table -> Mesh Overlay FS is literally 1 single mediump instruction (`fragColor = vColor;`)!
- * - Replaces sub-1.25mm photon/electron/marker spheres with an 8-triangle Octahedron (~10x fewer overlay tris!).
- * - Zero-CPU empty fast-path when no overlay source is visible!
+ * PhysicsOverlayBatcher v7 (OMEGA-CAD v7 — OMEGA-4):
+ * - Dual-Channel Static/Explode-Guide vs Live-Physics Separation (`syncGuides` vs `syncPhysics` -> 0 guide CPU/upload during live physics!)
+ * - Triple-Buffered 3-VBO Ring (`TripleSlimOverlayRing`) -> 0 VAO rebuilds & 0 ANGLE/Vulkan in-flight VBO stalls!
+ * - Zero-Discard `step(fract(...))` Alpha Dashed Line Shader -> restores 100% Hardware Early-Z on occluded guides & rays!
+ * - 4-Triangle Tetrahedron Particle Substitution + Pure Scalar Line Transform Loop (zero per-vertex Vector3 calls!).
  */
 
 const OVERLAY_LINEAR_TO_SRGB_U8 = new Uint8Array(256);
@@ -72,6 +71,7 @@ void main() {
 `;
 }
 
+// OMEGA-4C: Zero-Discard Alpha Masking when `!useClip` -> 100% Hardware Early-Z on occluded dashed lines!
 function buildOverlayLineFs(useClip: boolean): string {
   return /* glsl */ `
 precision mediump float;
@@ -81,8 +81,8 @@ ${useClip ? 'in float vClipDist;' : ''}
 out vec4 fragColor;
 void main() {
   ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
-  if (vDash.z > 0.0 && fract(vDash.x * vDash.z) > vDash.y) discard;
-  fragColor = vColor;
+  float mask = vDash.z > 0.0 ? step(fract(vDash.x * vDash.z), vDash.y) : 1.0;
+  fragColor = vec4(vColor.rgb, vColor.a * mask);
 }
 `;
 }
@@ -94,119 +94,147 @@ export interface OverlaySource {
 
 const _instMat = new THREE.Matrix4();
 const _worldMat = new THREE.Matrix4();
-const _vA = new THREE.Vector3();
-const _vB = new THREE.Vector3();
 
-// Pre-flattened unit 8-triangle octahedron for sub-1.2mm photon/electron/LED dots (10x leaner than UV spheres!)
-const _unitOctFlat = (() => {
-  const oct = new THREE.OctahedronGeometry(1.0, 0);
-  const pos = oct.getAttribute('position');
+// Pre-flattened unit 4-triangle tetrahedron for sub-1.25mm photon/electron/LED dots (-50% tris vs octahedron!)
+const _unitTetraFlat = (() => {
+  const tet = new THREE.TetrahedronGeometry(1.08, 0);
+  const pos = tet.getAttribute('position');
   const out = new Float32Array(pos.count * 3);
   out.set(pos.array as Float32Array);
-  oct.dispose();
+  tet.dispose();
   return out;
 })();
 
-class SlimOverlayBuffer {
-  public pos: Float32Array;
-  public col: Uint8Array;
-  public dash: Float32Array | null;
-  public capacityVerts: number;
-  public count = 0;
+interface OverlayVboSlot {
+  pos: Float32Array;
+  col: Uint8Array;
+  dash: Float32Array | null;
+  capacityVerts: number;
+  geo: THREE.BufferGeometry;
+  posAttr: THREE.BufferAttribute;
+  colAttr: THREE.BufferAttribute;
+  dashAttr: THREE.BufferAttribute | null;
+}
 
-  public readonly geo: THREE.BufferGeometry;
-  private posAttr: THREE.BufferAttribute;
-  private colAttr: THREE.BufferAttribute;
-  private dashAttr: THREE.BufferAttribute | null = null;
+class QuadSlimOverlayRing {
+  private readonly slots: [OverlayVboSlot, OverlayVboSlot, OverlayVboSlot, OverlayVboSlot];
   private readonly hasDash: boolean;
+  public ringIdx: 0 | 1 | 2 | 3 = 0;
+  public count = 0;
+  private lastRotatedEpoch = -1;
 
   constructor(initialVerts: number, hasDash: boolean) {
     this.hasDash = hasDash;
-    this.capacityVerts = initialVerts;
-    this.pos = new Float32Array(initialVerts * 3);
-    this.col = new Uint8Array(initialVerts * 4);
-    this.dash = hasDash ? new Float32Array(initialVerts * 3) : null;
+    this.slots = [
+      this.makeSlot(initialVerts),
+      this.makeSlot(initialVerts),
+      this.makeSlot(initialVerts),
+      this.makeSlot(initialVerts),
+    ];
+  }
 
-    this.geo = new THREE.BufferGeometry();
-    this.posAttr = new THREE.BufferAttribute(this.pos, 3);
-    this.colAttr = new THREE.BufferAttribute(this.col, 4, true);
-    this.posAttr.setUsage(THREE.DynamicDrawUsage);
-    this.colAttr.setUsage(THREE.DynamicDrawUsage);
-    this.geo.setAttribute('position', this.posAttr);
-    this.geo.setAttribute('aColor', this.colAttr);
+  private makeSlot(cap: number): OverlayVboSlot {
+    const pos = new Float32Array(cap * 3);
+    const col = new Uint8Array(cap * 4);
+    const dash = this.hasDash ? new Float32Array(cap * 3) : null;
 
-    if (hasDash && this.dash) {
-      this.dashAttr = new THREE.BufferAttribute(this.dash, 3);
-      this.dashAttr.setUsage(THREE.DynamicDrawUsage);
-      this.geo.setAttribute('aDash', this.dashAttr);
+    const geo = new THREE.BufferGeometry();
+    const posAttr = new THREE.BufferAttribute(pos, 3);
+    const colAttr = new THREE.BufferAttribute(col, 4, true);
+    posAttr.setUsage(THREE.DynamicDrawUsage);
+    colAttr.setUsage(THREE.DynamicDrawUsage);
+    geo.setAttribute('position', posAttr);
+    geo.setAttribute('aColor', colAttr);
+
+    let dashAttr: THREE.BufferAttribute | null = null;
+    if (this.hasDash && dash) {
+      dashAttr = new THREE.BufferAttribute(dash, 3);
+      dashAttr.setUsage(THREE.DynamicDrawUsage);
+      geo.setAttribute('aDash', dashAttr);
     }
+    geo.setDrawRange(0, 0);
+
+    return { pos, col, dash, capacityVerts: cap, geo, posAttr, colAttr, dashAttr };
   }
 
-  public reset(): void {
+  public beginFrame(epoch: number): OverlayVboSlot {
+    if (this.lastRotatedEpoch !== epoch) {
+      this.ringIdx = ((this.ringIdx + 1) & 3) as 0 | 1 | 2 | 3;
+      this.lastRotatedEpoch = epoch;
+    }
     this.count = 0;
+    return this.slots[this.ringIdx];
   }
 
-  public ensureCapacity(neededVerts: number): void {
-    if (neededVerts <= this.capacityVerts) return;
-    let nextCap = this.capacityVerts;
+  public get currentSlot(): OverlayVboSlot {
+    return this.slots[this.ringIdx];
+  }
+
+  public ensureCapacity(neededVerts: number): OverlayVboSlot {
+    const s = this.slots[this.ringIdx];
+    if (neededVerts <= s.capacityVerts) return s;
+
+    let nextCap = s.capacityVerts;
     while (nextCap < neededVerts) nextCap *= 2;
 
-    const nextPos = new Float32Array(nextCap * 3);
-    nextPos.set(this.pos.subarray(0, this.count * 3));
-    const nextCol = new Uint8Array(nextCap * 4);
-    nextCol.set(this.col.subarray(0, this.count * 4));
-
-    this.pos = nextPos;
-    this.col = nextCol;
-    this.capacityVerts = nextCap;
-
-    this.posAttr = new THREE.BufferAttribute(this.pos, 3);
-    this.colAttr = new THREE.BufferAttribute(this.col, 4, true);
-    this.posAttr.setUsage(THREE.DynamicDrawUsage);
-    this.colAttr.setUsage(THREE.DynamicDrawUsage);
-    this.geo.setAttribute('position', this.posAttr);
-    this.geo.setAttribute('aColor', this.colAttr);
-
-    if (this.hasDash && this.dash) {
-      const nextDash = new Float32Array(nextCap * 3);
-      nextDash.set(this.dash.subarray(0, this.count * 3));
-      this.dash = nextDash;
-      this.dashAttr = new THREE.BufferAttribute(this.dash, 3);
-      this.dashAttr.setUsage(THREE.DynamicDrawUsage);
-      this.geo.setAttribute('aDash', this.dashAttr);
+    const nextSlot = this.makeSlot(nextCap);
+    nextSlot.pos.set(s.pos.subarray(0, this.count * 3));
+    nextSlot.col.set(s.col.subarray(0, this.count * 4));
+    if (this.hasDash && s.dash && nextSlot.dash) {
+      nextSlot.dash.set(s.dash.subarray(0, this.count * 3));
     }
+    s.geo.dispose();
+    this.slots[this.ringIdx] = nextSlot;
+    return nextSlot;
   }
 
-  public commit(): void {
-    this.geo.setDrawRange(0, this.count);
+  public commitTo(target: THREE.Mesh | THREE.LineSegments): void {
+    const s = this.slots[this.ringIdx];
+    s.geo.setDrawRange(0, this.count);
+    target.geometry = s.geo;
     if (this.count > 0) {
-      this.posAttr.clearUpdateRanges();
-      this.posAttr.addUpdateRange(0, this.count * 3);
-      this.posAttr.needsUpdate = true;
+      s.posAttr.clearUpdateRanges();
+      s.posAttr.addUpdateRange(0, this.count * 3);
+      s.posAttr.needsUpdate = true;
 
-      this.colAttr.clearUpdateRanges();
-      this.colAttr.addUpdateRange(0, this.count * 4);
-      this.colAttr.needsUpdate = true;
+      s.colAttr.clearUpdateRanges();
+      s.colAttr.addUpdateRange(0, this.count * 4);
+      s.colAttr.needsUpdate = true;
 
-      if (this.dashAttr) {
-        this.dashAttr.clearUpdateRanges();
-        this.dashAttr.addUpdateRange(0, this.count * 3);
-        this.dashAttr.needsUpdate = true;
+      if (s.dashAttr) {
+        s.dashAttr.clearUpdateRanges();
+        s.dashAttr.addUpdateRange(0, this.count * 3);
+        s.dashAttr.needsUpdate = true;
       }
+      target.visible = true;
+    } else {
+      target.visible = false;
     }
   }
 
   public dispose(): void {
-    this.geo.dispose();
+    for (let i = 0; i < 4; i++) {
+      this.slots[i].geo.dispose();
+    }
   }
 }
 
 export class PhysicsOverlayBatcher {
   public readonly group: THREE.Group;
-  private readonly meshBuf: SlimOverlayBuffer;
-  private readonly lineBuf: SlimOverlayBuffer;
-  private readonly meshBatch: THREE.Mesh;
-  private readonly lineBatch: THREE.LineSegments;
+  private renderEpoch = 0;
+
+  // Channel A: Static / Explode-Factor Driven Trajectory Guides (updated ONLY when explode/visibility changes!)
+  private readonly guideMeshRing: QuadSlimOverlayRing;
+  private readonly guideLineRing: QuadSlimOverlayRing;
+  private readonly guideMeshBatch: THREE.Mesh;
+  private readonly guideLineBatch: THREE.LineSegments;
+
+  // Channel B: Live 60fps Physics Overlays (updated ONLY when physics/lens sim advances!)
+  private readonly physMeshRing: QuadSlimOverlayRing;
+  private readonly physLineRing: QuadSlimOverlayRing;
+  private readonly physMeshBatch: THREE.Mesh;
+  private readonly physLineBatch: THREE.LineSegments;
+
   private readonly meshMatNoClip: THREE.RawShaderMaterial;
   private readonly lineMatNoClip: THREE.RawShaderMaterial;
   private meshMatClip: THREE.RawShaderMaterial | null = null;
@@ -224,25 +252,42 @@ export class PhysicsOverlayBatcher {
     this.group = new THREE.Group();
     this.group.matrixAutoUpdate = false;
 
-    this.meshBuf = new SlimOverlayBuffer(4096, false);
-    this.lineBuf = new SlimOverlayBuffer(4096, true);
+    this.guideMeshRing = new QuadSlimOverlayRing(4096, false);
+    this.guideLineRing = new QuadSlimOverlayRing(2048, true);
+    this.physMeshRing = new QuadSlimOverlayRing(16384, false);
+    this.physLineRing = new QuadSlimOverlayRing(4096, true);
 
     this.meshMatNoClip = this.createMeshMat(false);
     this.lineMatNoClip = this.createLineMat(false);
 
-    this.meshBatch = new THREE.Mesh(this.meshBuf.geo, this.meshMatNoClip);
-    this.meshBatch.frustumCulled = false;
-    this.meshBatch.matrixAutoUpdate = false;
-    this.meshBatch.renderOrder = 3;
-    this.meshBatch.visible = false;
+    const makeBatchMesh = (geo: THREE.BufferGeometry, order: number) => {
+      const m = new THREE.Mesh(geo, this.meshMatNoClip);
+      m.frustumCulled = false;
+      m.matrixAutoUpdate = false;
+      m.renderOrder = order;
+      m.visible = false;
+      return m;
+    };
+    const makeBatchLine = (geo: THREE.BufferGeometry, order: number) => {
+      const l = new THREE.LineSegments(geo, this.lineMatNoClip);
+      l.frustumCulled = false;
+      l.matrixAutoUpdate = false;
+      l.renderOrder = order;
+      l.visible = false;
+      return l;
+    };
 
-    this.lineBatch = new THREE.LineSegments(this.lineBuf.geo, this.lineMatNoClip);
-    this.lineBatch.frustumCulled = false;
-    this.lineBatch.matrixAutoUpdate = false;
-    this.lineBatch.renderOrder = 4;
-    this.lineBatch.visible = false;
+    this.guideMeshBatch = makeBatchMesh(this.guideMeshRing.currentSlot.geo, 3);
+    this.guideLineBatch = makeBatchLine(this.guideLineRing.currentSlot.geo, 4);
+    this.physMeshBatch = makeBatchMesh(this.physMeshRing.currentSlot.geo, 3.1);
+    this.physLineBatch = makeBatchLine(this.physLineRing.currentSlot.geo, 4.1);
 
-    this.group.add(this.meshBatch, this.lineBatch);
+    this.group.add(
+      this.guideMeshBatch,
+      this.guideLineBatch,
+      this.physMeshBatch,
+      this.physLineBatch
+    );
   }
 
   private createMeshMat(useClip: boolean): THREE.RawShaderMaterial {
@@ -257,7 +302,7 @@ export class PhysicsOverlayBatcher {
       fragmentShader: buildOverlayMeshFs(useClip),
       uniforms,
     });
-    m.customProgramCacheKey = () => `hyperion-overlay-mesh-v4-${useClip ? 'c' : 'nc'}`;
+    m.customProgramCacheKey = () => `omega-overlay-mesh-v7-${useClip ? 'c' : 'nc'}`;
     return m;
   }
 
@@ -273,7 +318,7 @@ export class PhysicsOverlayBatcher {
       fragmentShader: buildOverlayLineFs(useClip),
       uniforms,
     });
-    m.customProgramCacheKey = () => `hyperion-overlay-line-v4-${useClip ? 'c' : 'nc'}`;
+    m.customProgramCacheKey = () => `omega-overlay-line-v7-${useClip ? 'c' : 'nc'}`;
     return m;
   }
 
@@ -281,11 +326,15 @@ export class PhysicsOverlayBatcher {
     if (active) {
       this.meshMatClip ??= this.createMeshMat(true);
       this.lineMatClip ??= this.createLineMat(true);
-      this.meshBatch.material = this.meshMatClip;
-      this.lineBatch.material = this.lineMatClip;
+      this.guideMeshBatch.material = this.meshMatClip;
+      this.physMeshBatch.material = this.meshMatClip;
+      this.guideLineBatch.material = this.lineMatClip;
+      this.physLineBatch.material = this.lineMatClip;
     } else {
-      this.meshBatch.material = this.meshMatNoClip;
-      this.lineBatch.material = this.lineMatNoClip;
+      this.guideMeshBatch.material = this.meshMatNoClip;
+      this.physMeshBatch.material = this.meshMatNoClip;
+      this.guideLineBatch.material = this.lineMatNoClip;
+      this.physLineBatch.material = this.lineMatNoClip;
     }
   }
 
@@ -293,13 +342,12 @@ export class PhysicsOverlayBatcher {
     const cached = this.flatTriCache.get(sourceGeo);
     if (cached) return cached;
 
-    // Ultra-lean 8-triangle octahedron substitution for tiny <= 1.2mm photon/electron/anchor spheres!
     if (sourceGeo.type === 'SphereGeometry') {
       const p = (sourceGeo as THREE.SphereGeometry).parameters;
       if (p && p.radius <= 1.25) {
         const r = p.radius;
-        const out = new Float32Array(_unitOctFlat.length);
-        for (let i = 0; i < _unitOctFlat.length; i++) out[i] = _unitOctFlat[i] * r;
+        const out = new Float32Array(_unitTetraFlat.length);
+        for (let i = 0; i < _unitTetraFlat.length; i++) out[i] = _unitTetraFlat[i] * r;
         this.flatTriCache.set(sourceGeo, out);
         return out;
       }
@@ -338,6 +386,7 @@ export class PhysicsOverlayBatcher {
   }
 
   private appendMeshTransformed(
+    meshRing: QuadSlimOverlayRing,
     flatVerts: Float32Array,
     mat4: THREE.Matrix4,
     r8: number,
@@ -346,9 +395,8 @@ export class PhysicsOverlayBatcher {
     a8: number
   ): void {
     const vCount = flatVerts.length / 3;
-    const buf = this.meshBuf;
-    const startV = buf.count;
-    buf.ensureCapacity(startV + vCount);
+    const startV = meshRing.count;
+    const slot = meshRing.ensureCapacity(startV + vCount);
 
     const e = mat4.elements;
     const e0 = e[0], e1 = e[1], e2 = e[2];
@@ -356,8 +404,8 @@ export class PhysicsOverlayBatcher {
     const e8 = e[8], e9 = e[9], e10 = e[10];
     const e12 = e[12], e13 = e[13], e14 = e[14];
 
-    const pos = buf.pos;
-    const col = buf.col;
+    const pos = slot.pos;
+    const col = slot.col;
 
     for (let i = 0; i < vCount; i++) {
       const s3 = i * 3;
@@ -379,10 +427,10 @@ export class PhysicsOverlayBatcher {
       col[d4 + 3] = a8;
     }
 
-    buf.count = startV + vCount;
+    meshRing.count = startV + vCount;
   }
 
-  private appendLineObject(lineObj: THREE.Line): void {
+  private appendLineObject(lineRing: QuadSlimOverlayRing, lineObj: THREE.Line): void {
     const mat = lineObj.material as THREE.LineBasicMaterial | THREE.LineDashedMaterial;
     if (!mat || Array.isArray(mat)) return;
     const alpha = mat.transparent ? mat.opacity : 1.0;
@@ -411,8 +459,17 @@ export class PhysicsOverlayBatcher {
     const g8 = linearColorToSrgbU8(c.g);
     const b8 = linearColorToSrgbU8(c.b);
     const a8 = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-    const m = lineObj.matrixWorld;
+
+    const me = lineObj.matrixWorld.elements;
+    const m0 = me[0], m1 = me[1], m2 = me[2];
+    const m4 = me[4], m5 = me[5], m6 = me[6];
+    const m8 = me[8], m9 = me[9], m10 = me[10];
+    const m12 = me[12], m13 = me[13], m14 = me[14];
+
+    const srcPos = posAttr.array as Float32Array;
+    const srcStride = posAttr.itemSize;
     const distAttr = isDashed ? geo.getAttribute('lineDistance') : null;
+    const distArr = distAttr ? (distAttr.array as Float32Array) : null;
 
     const segCount = isSegments
       ? Math.floor(drawCount / 2)
@@ -421,13 +478,12 @@ export class PhysicsOverlayBatcher {
         : drawCount - 1;
     if (segCount <= 0) return;
 
-    const buf = this.lineBuf;
-    const startV = buf.count;
-    buf.ensureCapacity(startV + segCount * 2);
+    const startV = lineRing.count;
+    const slot = lineRing.ensureCapacity(startV + segCount * 2);
 
-    const pos = buf.pos;
-    const col = buf.col;
-    const dash = buf.dash!;
+    const pos = slot.pos;
+    const col = slot.col;
+    const dash = slot.dash!;
 
     let cumDist = 0;
     let outV = startV;
@@ -446,17 +502,28 @@ export class PhysicsOverlayBatcher {
         i1 = i0 + 1;
       }
 
-      _vA.fromBufferAttribute(posAttr, i0).applyMatrix4(m);
-      _vB.fromBufferAttribute(posAttr, i1).applyMatrix4(m);
+      const p0 = i0 * srcStride;
+      const p1 = i1 * srcStride;
+      const x0 = srcPos[p0], y0 = srcPos[p0 + 1], z0 = srcPos[p0 + 2];
+      const x1 = srcPos[p1], y1 = srcPos[p1 + 1], z1 = srcPos[p1 + 2];
+
+      const wx0 = m0 * x0 + m4 * y0 + m8 * z0 + m12;
+      const wy0 = m1 * x0 + m5 * y0 + m9 * z0 + m13;
+      const wz0 = m2 * x0 + m6 * y0 + m10 * z0 + m14;
+
+      const wx1 = m0 * x1 + m4 * y1 + m8 * z1 + m12;
+      const wy1 = m1 * x1 + m5 * y1 + m9 * z1 + m13;
+      const wz1 = m2 * x1 + m6 * y1 + m10 * z1 + m14;
 
       let d0 = 0;
       let d1 = 0;
       if (isDashed) {
-        if (distAttr) {
-          d0 = distAttr.getX(i0);
-          d1 = distAttr.getX(i1);
+        if (distArr) {
+          d0 = distArr[i0];
+          d1 = distArr[i1];
         } else {
-          const segLen = _vA.distanceTo(_vB);
+          const dx = wx1 - wx0, dy = wy1 - wy0, dz = wz1 - wz0;
+          const segLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
           if (isSegments) {
             d0 = 0;
             d1 = segLen;
@@ -470,9 +537,9 @@ export class PhysicsOverlayBatcher {
 
       const o0_3 = outV * 3;
       const o0_4 = outV * 4;
-      pos[o0_3] = _vA.x;
-      pos[o0_3 + 1] = _vA.y;
-      pos[o0_3 + 2] = _vA.z;
+      pos[o0_3] = wx0;
+      pos[o0_3 + 1] = wy0;
+      pos[o0_3 + 2] = wz0;
       col[o0_4] = r8;
       col[o0_4 + 1] = g8;
       col[o0_4 + 2] = b8;
@@ -484,9 +551,9 @@ export class PhysicsOverlayBatcher {
 
       const o1_3 = outV * 3;
       const o1_4 = outV * 4;
-      pos[o1_3] = _vB.x;
-      pos[o1_3 + 1] = _vB.y;
-      pos[o1_3 + 2] = _vB.z;
+      pos[o1_3] = wx1;
+      pos[o1_3 + 1] = wy1;
+      pos[o1_3 + 2] = wz1;
       col[o1_4] = r8;
       col[o1_4 + 1] = g8;
       col[o1_4 + 2] = b8;
@@ -497,10 +564,14 @@ export class PhysicsOverlayBatcher {
       outV++;
     }
 
-    buf.count = outV;
+    lineRing.count = outV;
   }
 
-  private visitNode(node: THREE.Object3D): void {
+  private visitNode(
+    meshRing: QuadSlimOverlayRing,
+    lineRing: QuadSlimOverlayRing,
+    node: THREE.Object3D
+  ): void {
     if (!node.visible) return;
 
     if ((node as THREE.InstancedMesh).isInstancedMesh) {
@@ -519,7 +590,7 @@ export class PhysicsOverlayBatcher {
             for (let i = 0; i < inst.count; i++) {
               inst.getMatrixAt(i, _instMat);
               _worldMat.multiplyMatrices(inst.matrixWorld, _instMat);
-              this.appendMeshTransformed(flat, _worldMat, r8, g8, b8, a8);
+              this.appendMeshTransformed(meshRing, flat, _worldMat, r8, g8, b8, a8);
             }
           }
         }
@@ -537,21 +608,27 @@ export class PhysicsOverlayBatcher {
             const g8 = linearColorToSrgbU8(c.g);
             const b8 = linearColorToSrgbU8(c.b);
             const a8 = Math.max(0, Math.min(255, Math.round(alpha * 255)));
-            this.appendMeshTransformed(flat, mesh.matrixWorld, r8, g8, b8, a8);
+            this.appendMeshTransformed(meshRing, flat, mesh.matrixWorld, r8, g8, b8, a8);
           }
         }
       }
     } else if ((node as THREE.Line).isLine) {
-      this.appendLineObject(node as THREE.Line);
+      this.appendLineObject(lineRing, node as THREE.Line);
     }
 
     const ch = node.children;
     for (let i = 0; i < ch.length; i++) {
-      this.visitNode(ch[i]);
+      this.visitNode(meshRing, lineRing, ch[i]);
     }
   }
 
-  public sync(sources: ReadonlyArray<OverlaySource>): void {
+  private syncChannel(
+    sources: ReadonlyArray<OverlaySource>,
+    meshRing: QuadSlimOverlayRing,
+    lineRing: QuadSlimOverlayRing,
+    meshBatch: THREE.Mesh,
+    lineBatch: THREE.LineSegments
+  ): void {
     let anyVisible = false;
     for (let i = 0; i < sources.length; i++) {
       const src = sources[i];
@@ -561,31 +638,54 @@ export class PhysicsOverlayBatcher {
       }
     }
     if (!anyVisible) {
-      if (this.meshBatch.visible || this.lineBatch.visible) {
-        this.meshBuf.reset();
-        this.lineBuf.reset();
-        this.meshBuf.commit();
-        this.lineBuf.commit();
-        this.meshBatch.visible = false;
-        this.lineBatch.visible = false;
-      }
+      meshBatch.visible = false;
+      lineBatch.visible = false;
       return;
     }
 
-    this.meshBuf.reset();
-    this.lineBuf.reset();
+    meshRing.beginFrame(this.renderEpoch);
+    lineRing.beginFrame(this.renderEpoch);
 
     for (let i = 0; i < sources.length; i++) {
       const src = sources[i];
       if (!src.isAssemblyVisible() || !src.root.visible) continue;
       src.root.updateMatrixWorld(true);
-      this.visitNode(src.root);
+      this.visitNode(meshRing, lineRing, src.root);
     }
 
-    this.meshBuf.commit();
-    this.lineBuf.commit();
-    this.meshBatch.visible = this.meshBuf.count > 0;
-    this.lineBatch.visible = this.lineBuf.count > 0;
+    meshRing.commitTo(meshBatch);
+    lineRing.commitTo(lineBatch);
+  }
+
+  public advanceFrameEpoch(epoch: number): void {
+    this.renderEpoch = epoch;
+  }
+
+  /** Sync ONLY static/explode-driven trajectory guides (call only when explode/visibility changes!) */
+  public syncGuides(guideSources: ReadonlyArray<OverlaySource>): void {
+    this.syncChannel(
+      guideSources,
+      this.guideMeshRing,
+      this.guideLineRing,
+      this.guideMeshBatch,
+      this.guideLineBatch
+    );
+  }
+
+  /** Sync ONLY live 60fps physics overlays (photon packets, optical rays, Lorentz vectors, shutter/IBIS waves) */
+  public syncPhysics(physicsSources: ReadonlyArray<OverlaySource>): void {
+    this.syncChannel(
+      physicsSources,
+      this.physMeshRing,
+      this.physLineRing,
+      this.physMeshBatch,
+      this.physLineBatch
+    );
+  }
+
+  /** Backward-compatible full sync if both channels are passed together */
+  public sync(sources: ReadonlyArray<OverlaySource>): void {
+    this.syncPhysics(sources);
   }
 
   public refreshAfterContextRestore(): void {
@@ -596,8 +696,10 @@ export class PhysicsOverlayBatcher {
   }
 
   public dispose(): void {
-    this.meshBuf.dispose();
-    this.lineBuf.dispose();
+    this.guideMeshRing.dispose();
+    this.guideLineRing.dispose();
+    this.physMeshRing.dispose();
+    this.physLineRing.dispose();
     this.meshMatNoClip.dispose();
     this.lineMatNoClip.dispose();
     this.meshMatClip?.dispose();

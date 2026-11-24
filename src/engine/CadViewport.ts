@@ -12,9 +12,11 @@ import {
 import { createMaterialLibrary, MaterialLibrary } from './Materials';
 import { GPU_PROFILE } from './GpuOptimizer';
 import {
+  advanceMegaBatchRenderEpoch,
   compileMegaBatchChunk,
   compileUnifiedMacroBatch,
   computePartWorldBox,
+  invalidateRaycastTlas,
   MacroGroupKey,
   MaterialLutRegistry,
   MAX_PARTS_CAPACITY,
@@ -58,14 +60,71 @@ const _bonePos = new THREE.Vector3();
 const _boneQuat = new THREE.Quaternion();
 const _boneScale = new THREE.Vector3();
 
-// Zero-alloc scratch buffers for Breakthrough #27 Dynamic Front-to-Back Visibility Compactor
+// Zero-alloc scratch buffers for OMEGA-6 & OMEGA-10 Dynamic Front-to-Back Visibility Compactor
 const _visSlots = new Int32Array(MAX_PARTS_CAPACITY);
 const _visDistSq = new Float32Array(MAX_PARTS_CAPACITY);
+const _straddleSlots = new Int32Array(MAX_PARTS_CAPACITY);
+const _straddleDistSq = new Float32Array(MAX_PARTS_CAPACITY);
 const _edgeSlots = new Int32Array(MAX_PARTS_CAPACITY);
+const _straddleEdgeSlots = new Int32Array(MAX_PARTS_CAPACITY);
 const _frustum = new THREE.Frustum();
+const _frustumPlanesFlat = new Float32Array(24);
 const _projScreen = new THREE.Matrix4();
-const _partSphere = new THREE.Sphere();
 const _camDir = new THREE.Vector3();
+
+// OMEGA-10 O(N) 32-Bin Linear Distance Histogram Counting Sort Scratch
+const SORT_BINS = 32;
+const _binCounts = new Int32Array(SORT_BINS);
+const _binOffsets = new Int32Array(SORT_BINS);
+const _binIdxScratch = new Uint8Array(MAX_PARTS_CAPACITY);
+const _sortOutSlots = new Int32Array(MAX_PARTS_CAPACITY);
+
+function sortSlotsFrontToBackFast(slots: Int32Array, distSq: Float32Array, count: number): void {
+  if (count <= 1) return;
+  if (count <= 28) {
+    for (let i = 1; i < count; i++) {
+      const keyD = distSq[i];
+      const keyS = slots[i];
+      let j = i - 1;
+      while (j >= 0 && distSq[j] > keyD) {
+        distSq[j + 1] = distSq[j];
+        slots[j + 1] = slots[j];
+        j--;
+      }
+      distSq[j + 1] = keyD;
+      slots[j + 1] = keyS;
+    }
+    return;
+  }
+
+  let minD = distSq[0];
+  let maxD = distSq[0];
+  for (let i = 1; i < count; i++) {
+    const d = distSq[i];
+    if (d < minD) minD = d;
+    else if (d > maxD) maxD = d;
+  }
+  const span = maxD - minD;
+  if (span < 1e-4) return;
+
+  _binCounts.fill(0);
+  const scale = (SORT_BINS - 1) / span;
+  for (let i = 0; i < count; i++) {
+    const b = ((distSq[i] - minD) * scale) | 0;
+    _binIdxScratch[i] = b;
+    _binCounts[b]++;
+  }
+  let sum = 0;
+  for (let b = 0; b < SORT_BINS; b++) {
+    _binOffsets[b] = sum;
+    sum += _binCounts[b];
+  }
+  for (let i = 0; i < count; i++) {
+    const b = _binIdxScratch[i];
+    _sortOutSlots[_binOffsets[b]++] = slots[i];
+  }
+  slots.set(_sortOutSlots.subarray(0, count), 0);
+}
 
 // Precomputed linear RGB edge highlight colors for Mega-Edge GPU state texture
 const EDGE_COL_SELECTED = new THREE.Color(0x0d5bd9);
@@ -95,12 +154,13 @@ export class CadViewport {
   private partById = new Map<string, CadPart>();
   private callbacks: ViewportCallbacks;
 
-  // HYPERION-CAD v5 Engine (Zero-Texture L2-SH PBR + Directional PVS Oracle + Ping-Pong IBO Compactor!)
+  // OMEGA-CAD v7 Engine
   private partStateBuf: PartStateTextureBuffer;
   private matRegistry: MaterialLutRegistry;
   private macroBatch!: UnifiedMacroBatch;
   private overlayBatcher: PhysicsOverlayBatcher;
-  private overlaySources: OverlaySource[] = [];
+  private guideOverlaySources: OverlaySource[] = [];
+  private physicsOverlaySources: OverlaySource[] = [];
   private subsystemChunks: Record<SubsystemKey, SubsystemChunks>;
   private allChunks: MegaBatchChunk[] = [];
   private activeChunks: MegaBatchChunk[] = [];
@@ -108,14 +168,15 @@ export class CadViewport {
   private pickRecordByPartId = new Map<string, PartPickRecord>();
   private activePickRecords: PartPickRecord[] = [];
 
-  // Breakthrough #25 + #34: Exact 16-View Directional Hemisphere Bitmask PVS Oracle masks
+  // 16-View Directional Hemisphere Bitmask PVS Oracle masks
   private assembledIntegratedMask: Uint16Array | null = null;
   private assembledBodyMask: Uint16Array | null = null;
   private inOracleBake = false;
 
-  // Breakthrough #27/28/35: Visibility Compactor & Analytical Explode state
+  // OMEGA-4 & OMEGA-10: Dual-Channel Overlay + Temporal Visibility Memoization state
   private visibilityDirty = true;
-  private overlaysDirty = true;
+  private guidesDirty = true;
+  private physicsOverlaysDirty = true;
   private lastAnalyticalIntegrated: boolean | null = null;
   private lastSortCamPos = new THREE.Vector3(1e9, 1e9, 1e9);
   private lastSortCamDir = new THREE.Vector3(0, 0, 1);
@@ -123,6 +184,13 @@ export class CadViewport {
   private lastSortMode: ScaleMode | null = null;
   private lastSortWasAssembled = true;
   private lastOracleViewBits = 0xffff;
+  private lastVisCamPos = new THREE.Vector3(1e9, 1e9, 1e9);
+  private lastVisCamQuat = new THREE.Quaternion();
+  private lastVisExplode = -1;
+  private lastVisSectionAxis: SectionAxis = 'off';
+  private lastVisSectionVal = -1;
+  private lastVisSelSlot = -2;
+  private lastVisHovSlot = -2;
 
   private clippingPlane: THREE.Plane;
   private raycaster = new THREE.Raycaster();
@@ -332,16 +400,23 @@ export class CadViewport {
     this.registerChunkRecords(this.macroBatch);
     this.matRegistry.texPacker.releaseScratchCanvases();
 
-    // Breakthrough #18: Intercept ALL detached physics overlays & explode guides from all 9 subsystems
-    // into our 2-draw-call GLSL3 PhysicsOverlayBatcher (298 overlay/guide draw calls -> 2 draw calls!)
+    // OMEGA-4A: Intercept & split detached physics overlays vs static/explode trajectory guides
     for (const asm of Object.values(this.assemblyBySubsystem)) {
       const remaining = [...asm.rootGroup.children];
       for (const child of remaining) {
         child.removeFromParent();
-        this.overlaySources.push({
+        const isGuide =
+          child.userData.__isExplodeGuides === true ||
+          child.children.some((c) => c.userData.__isExplodeGuides === true);
+        const entry: OverlaySource = {
           isAssemblyVisible: () => asm.rootGroup.visible,
           root: child,
-        });
+        };
+        if (isGuide) {
+          this.guideOverlaySources.push(entry);
+        } else {
+          this.physicsOverlaySources.push(entry);
+        }
       }
     }
     this.scene.add(this.overlayBatcher.group);
@@ -350,7 +425,7 @@ export class CadViewport {
     this.stepActiveAssemblies(0, 0);
     this.applyVisibilityAndStyles();
     this.syncGpuPartTransforms(true);
-    // Breakthrough #40: Zero-millisecond Pre-Baked 16-View Directional Hemisphere PVS Oracle (0 GPU readbacks!)
+    // Zero-millisecond Pre-Baked 16-View Directional Hemisphere PVS Oracle (0 GPU readbacks!)
     this.assembledIntegratedMask = buildPrebakedOcclusionMask(
       'integrated',
       this.macroBatch.partRecords,
@@ -365,8 +440,11 @@ export class CadViewport {
     );
     this.setCameraPreset('iso', true);
     this.bindEvents();
-    this.animate();
+    this.wakeLoop();
   }
+
+  private readonly subsystemHydrateInflight = new Map<SubsystemKey, Promise<void>>();
+  private pendingSelectAfterHydrate: { partId: string; focusCamera: boolean } | null = null;
 
   private registerStandaloneParts(subsystem: SubsystemKey, parts: CadPart[]): void {
     if (parts.length === 0) return;
@@ -418,19 +496,59 @@ export class CadViewport {
     chunk.syncMaterials(this.matRegistry);
     chunk.setXrayActive(this.renderMode === 'xray');
     this.visibilityDirty = true;
+    invalidateRaycastTlas();
   }
 
-  private hydrateSubsystemIfNeeded(subsystem: SubsystemKey): void {
-    const asm = this.assemblyBySubsystem[subsystem];
-    if (!asm.hydrateStandalone) return;
-    const newlyBuilt = asm.hydrateStandalone();
-    if (newlyBuilt.length > 0) {
-      this.registerStandaloneParts(subsystem, newlyBuilt);
-      this.kinematicsDirty = true;
+  private finalizeSubsystemHydration(
+    subsystem: SubsystemKey,
+    newlyBuilt: CadPart[],
+    quiet = false
+  ): void {
+    if (newlyBuilt.length === 0) return;
+    this.registerStandaloneParts(subsystem, newlyBuilt);
+    this.kinematicsDirty = true;
+    if (quiet) return;
+    this.syncAssemblyVisibility();
+    this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
+    this.updateActiveExplodeGuides();
+    this.applyVisibilityAndStyles();
+    this.syncGpuPartTransforms(true);
+    this.callbacks.onVisibilityChanged();
+    if (this.pendingSelectAfterHydrate && this.partById.has(this.pendingSelectAfterHydrate.partId)) {
+      const pending = this.pendingSelectAfterHydrate;
+      this.pendingSelectAfterHydrate = null;
+      this.selectPart(pending.partId, pending.focusCamera);
     }
   }
 
-  /** Total canonical dissectible part count across all 9 subsystems (always 627 — zero parts removed!). */
+  private hydrateSubsystemIfNeeded(subsystem: SubsystemKey, quiet = false): Promise<void> {
+    const existing = this.subsystemHydrateInflight.get(subsystem);
+    if (existing) return existing;
+
+    const asm = this.assemblyBySubsystem[subsystem];
+    if (!asm.hydrateStandalone || (asm.deferredStandaloneCount ?? 0) === 0) {
+      return Promise.resolve();
+    }
+
+    const res = asm.hydrateStandalone();
+    if (Array.isArray(res)) {
+      this.finalizeSubsystemHydration(subsystem, res, quiet);
+      return Promise.resolve();
+    }
+
+    const promise = res
+      .then((newlyBuilt) => {
+        this.subsystemHydrateInflight.delete(subsystem);
+        this.finalizeSubsystemHydration(subsystem, newlyBuilt, quiet);
+      })
+      .catch(() => {
+        this.subsystemHydrateInflight.delete(subsystem);
+      });
+    this.subsystemHydrateInflight.set(subsystem, promise);
+    return promise;
+  }
+
+  /** Total canonical dissectible part count across all 9 subsystems (always 652 — zero parts removed!). */
   public getTotalPartCount(): number {
     let deferred = 0;
     for (const asm of Object.values(this.assemblyBySubsystem)) {
@@ -439,11 +557,10 @@ export class CadViewport {
     return this.allParts.length + deferred;
   }
 
-  /** Force-hydrate every deferred standalone/micro subsystem immediately (returns 652). */
-  public ensureAllHydrated(): number {
-    for (const sub of Object.keys(this.assemblyBySubsystem) as SubsystemKey[]) {
-      this.hydrateSubsystemIfNeeded(sub);
-    }
+  /** Force-hydrate every deferred standalone/micro subsystem immediately (resolves to 652). */
+  public async ensureAllHydrated(): Promise<number> {
+    const subs = Object.keys(this.assemblyBySubsystem) as SubsystemKey[];
+    await Promise.all(subs.map((sub) => this.hydrateSubsystemIfNeeded(sub, true)));
     this.syncAssemblyVisibility();
     this.applyVisibilityAndStyles();
     this.syncGpuPartTransforms(true);
@@ -531,6 +648,7 @@ export class CadViewport {
       }
     }
     this.visibilityDirty = true;
+    invalidateRaycastTlas();
   }
 
   private updateActiveExplodeGuides(): void {
@@ -543,7 +661,7 @@ export class CadViewport {
     this.lcdAssembly.updateExplodeGuides(this.currentExplode, this.lcdAssembly.rootGroup.visible);
     this.bodyAssembly.updateExplodeGuides(this.currentExplode, this.bodyAssembly.rootGroup.visible);
     this.microAssembly.updateExplodeGuides(this.currentExplode, this.microAssembly.rootGroup.visible);
-    this.overlaysDirty = true;
+    this.guidesDirty = true;
   }
 
   private syncAssemblyVisibility(): void {
@@ -583,6 +701,7 @@ export class CadViewport {
     this.lcdAssembly.setPhysicsVisible(this.physicsActive && showLcd);
     this.bodyAssembly.setPhysicsVisible(this.physicsActive && showBody);
     this.microAssembly.setPhysicsVisible(this.physicsActive && showMicro);
+    this.physicsOverlaysDirty = true;
 
     this.updateActiveExplodeGuides();
   }
@@ -709,6 +828,7 @@ export class CadViewport {
   public setExplode(value: number, immediate = false): void {
     this.targetExplode = THREE.MathUtils.clamp(value, 0, 1);
     this.kinematicsDirty = true;
+    invalidateRaycastTlas();
     if (immediate) {
       this.currentExplode = this.targetExplode;
       this.matRegistry.uniforms.uExplode.value = this.currentExplode;
@@ -753,21 +873,38 @@ export class CadViewport {
   }
 
   public selectPart(partId: string | null, focusCamera = true): void {
-    if (partId) {
+    if (partId === null) {
+      this.pendingSelectAfterHydrate = null;
+    } else {
       const candidate = this.partById.get(partId);
-      if (!candidate || !this.isPartInCurrentMode(candidate)) return;
+      if (!candidate) {
+        if (this.subsystemHydrateInflight.size > 0) {
+          this.pendingSelectAfterHydrate = { partId, focusCamera };
+        }
+        return;
+      }
+      if (!this.isPartInCurrentMode(candidate)) return;
+      this.pendingSelectAfterHydrate = null;
     }
     if (partId === this.selectedPartId) return;
+    const prevSelected = this.selectedPartId;
     this.selectedPartId = partId;
 
+    let fullVisibilityChanged = false;
     if (partId && this.hiddenPartIds.has(partId)) {
       this.hiddenPartIds.delete(partId);
+      fullVisibilityChanged = true;
     }
     if (partId && this.isolatedPartId && this.isolatedPartId !== partId) {
       this.isolatedPartId = partId;
+      fullVisibilityChanged = true;
     }
 
-    this.applyVisibilityAndStyles();
+    if (fullVisibilityChanged) {
+      this.applyVisibilityAndStyles();
+    } else {
+      this.applyHoverOrSelectDelta(prevSelected, partId);
+    }
     const part = this.getSelectedPart();
     if (part && focusCamera) {
       this.focusOnPart(part);
@@ -778,8 +915,9 @@ export class CadViewport {
 
   public setHoveredPartFromUI(partId: string | null): void {
     if (this.hoveredPartId === partId) return;
+    const prev = this.hoveredPartId;
     this.hoveredPartId = partId;
-    this.applyVisibilityAndStyles();
+    this.applyHoverOrSelectDelta(prev, partId);
   }
 
   public togglePartHidden(partId: string): void {
@@ -1079,7 +1217,10 @@ export class CadViewport {
       this.matRegistry.setSectionCutActive(false);
       if (prevActive) {
         this.overlayBatcher.setSectionCutActive(false);
-        for (const chunk of this.allChunks) chunk.syncMaterials(this.matRegistry);
+        for (const chunk of this.allChunks) {
+          chunk.releaseSectionStraddle();
+          chunk.syncMaterials(this.matRegistry);
+        }
       }
       this.visibilityDirty = true;
       this.markDirty();
@@ -1192,17 +1333,16 @@ export class CadViewport {
     this.visibilityDirty = true;
   }
 
-  /**
-   * Runs automatically inside `scene.onBeforeRender` on EVERY `renderer.render(scene, camera)` call!
-   * Keeps `uViewProj`, `uExplode`, overlays, and Front-to-Back Dynamic IBO Compaction 100% synchronized.
-   */
   private prepareFrameForRender(camera: THREE.Camera): void {
     if (this.inOracleBake) return;
 
+    const epoch = advanceMegaBatchRenderEpoch();
+    this.overlayBatcher.advanceFrameEpoch(epoch);
+
+    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
     this.matRegistry.syncViewProj(camera);
     this.matRegistry.uniforms.uExplode.value = this.currentExplode;
 
-    // Lazily bake camera_body occlusion mask on first assembled visit
     if (
       this.mode === 'camera_body' &&
       !this.assembledBodyMask &&
@@ -1214,26 +1354,72 @@ export class CadViewport {
       this.bakeOcclusionMask('camera_body');
     }
 
-    // Flush detached physics overlays & explode guides at most ONCE per rendered frame!
-    if (this.overlaysDirty) {
-      this.overlayBatcher.sync(this.overlaySources);
-      this.overlaysDirty = false;
+    // OMEGA-4A: Independent Guide vs Live-Physics Overlay Channels!
+    if (this.guidesDirty) {
+      this.overlayBatcher.syncGuides(this.guideOverlaySources);
+      this.guidesDirty = false;
+    }
+    if (this.physicsOverlaysDirty) {
+      this.overlayBatcher.syncPhysics(this.physicsOverlaySources);
+      this.physicsOverlaysDirty = false;
     }
 
     this.updateCompactedFrameVisibility(camera);
   }
 
   /**
-   * Breakthrough #27 + #34 + #35:
-   * Zero-Alloc Front-to-Back Frustum + 16-View Directional Hemisphere PVS + Section-Plane + Sub-Pixel Edge Compactor.
-   * Builds exact minimal visible IBOs sorted near-to-far for 95%+ Hardware Early-Z rejection,
-   * and skips IBO uploads entirely when the visible set & angular sort bucket are unchanged!
+   * OMEGA-6 + OMEGA-7 + OMEGA-10:
+   * - Temporal Camera-Coherence Memoization (0.000 ms fast-exit when camera & state unchanged!)
+   * - Inline Scalar 6-Plane Frustum Test
+   * - Section-Cut Dual-Range Plane-Straddling Split (`_visSlots` Zero-Discard FrontSide Early-Z vs `_straddleSlots` DoubleSide Clipped!)
+   * - Whole-Camera X-Ray Sub-Pixel Internal Clutter Filter
+   * - O(N) 32-Bin Linear Distance Histogram Counting Sort
    */
   private updateCompactedFrameVisibility(camera: THREE.Camera): void {
+    const camPos = camera.position;
+    const camQuat = camera.quaternion;
+    const selSlot = this.selectedPartId
+      ? (this.pickRecordByPartId.get(this.selectedPartId)?.slot ?? -1)
+      : -1;
+    const hovSlot = this.hoveredPartId
+      ? (this.pickRecordByPartId.get(this.hoveredPartId)?.slot ?? -1)
+      : -1;
+
+    // OMEGA-10A: Zero-work temporal memoization when camera, explode, section & highlight haven't changed!
+    if (
+      !this.visibilityDirty &&
+      this.lastSortMode === this.mode &&
+      this.lastVisExplode === this.currentExplode &&
+      this.lastVisSectionAxis === this.sectionAxis &&
+      this.lastVisSectionVal === this.sectionValue &&
+      this.lastVisSelSlot === selSlot &&
+      this.lastVisHovSlot === hovSlot &&
+      camPos.distanceToSquared(this.lastVisCamPos) < 0.04 &&
+      Math.abs(camQuat.dot(this.lastVisCamQuat)) > 0.99995
+    ) {
+      return;
+    }
+
+    this.lastVisCamPos.copy(camPos);
+    this.lastVisCamQuat.copy(camQuat);
+    this.lastVisExplode = this.currentExplode;
+    this.lastVisSectionAxis = this.sectionAxis;
+    this.lastVisSectionVal = this.sectionValue;
+    this.lastVisSelSlot = selSlot;
+    this.lastVisHovSlot = hovSlot;
+
     _projScreen.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     _frustum.setFromProjectionMatrix(_projScreen);
+    const fPlanes = _frustum.planes;
+    for (let pi = 0; pi < 6; pi++) {
+      const pl = fPlanes[pi];
+      const po = pi * 4;
+      _frustumPlanesFlat[po] = pl.normal.x;
+      _frustumPlanesFlat[po + 1] = pl.normal.y;
+      _frustumPlanesFlat[po + 2] = pl.normal.z;
+      _frustumPlanesFlat[po + 3] = pl.constant;
+    }
 
-    const camPos = camera.position;
     camera.getWorldDirection(_camDir);
     const camDist = camPos.distanceTo(this.controls.target);
 
@@ -1242,6 +1428,7 @@ export class CadViewport {
     const isWholeCameraMode = this.mode === 'integrated' || this.mode === 'camera_body';
     const isAssembled = this.currentExplode < 0.005;
     const useSectionCull = this.sectionAxis !== 'off';
+    const useStraddleSplit = useSectionCull && !isXray;
     const useAssembledOcclusion =
       isWholeCameraMode && isAssembled && !useSectionCull && !isXray && !this.hasAnyHidden();
     const activeMask = useAssembledOcclusion
@@ -1286,31 +1473,31 @@ export class CadViewport {
     const camY = camPos.y;
     const camZ = camPos.z;
 
+    const cpNx = this.clippingPlane.normal.x;
+    const cpNy = this.clippingPlane.normal.y;
+    const cpNz = this.clippingPlane.normal.z;
+    const cpConst = this.clippingPlane.constant;
+
     const hideMobileSolidEdges = GPU_PROFILE.isMobile && isWholeCameraMode && isSolid;
     const persp = camera as THREE.PerspectiveCamera;
     const fovRad = ((persp.fov || 32) * Math.PI) / 180;
     const projScale = Math.max(240, this.container.clientHeight) / (2 * Math.tan(fovRad * 0.5));
-    // Smooth distance-adaptive edge budget: crisp close-up (2.4px), clean zoomed-out exploded (5.0px)
     const distT = THREE.MathUtils.clamp((camDist - 500) / 600, 0, 1);
     const solidMinPx = isWholeCameraMode ? 2.4 + distT * 2.6 : 1.8;
     const edgeMinPxSq = solidMinPx * solidMinPx;
 
-    const selSlot = this.selectedPartId
-      ? (this.pickRecordByPartId.get(this.selectedPartId)?.slot ?? -1)
-      : -1;
-    const hovSlot = this.hoveredPartId
-      ? (this.pickRecordByPartId.get(this.hoveredPartId)?.slot ?? -1)
-      : -1;
-
     const e = this.currentExplode;
     const eSort = isAssembled ? 0 : 0.5;
     const integrated = isWholeCameraMode;
+    const livePhysics = this.physicsActive;
 
     for (let ci = 0; ci < this.activeChunks.length; ci++) {
       const chunk = this.activeChunks[ci];
       const recs = chunk.partRecords;
       let visCount = 0;
+      let straddleCount = 0;
       let edgeCount = 0;
+      let straddleEdgeCount = 0;
 
       for (let i = 0; i < recs.length; i++) {
         const rec = recs[i];
@@ -1320,8 +1507,12 @@ export class CadViewport {
         const slot = rec.slot;
         const isHighlighted = slot === selSlot || slot === hovSlot;
 
-        // Breakthrough #34: 1-instruction Directional Hemisphere Bitmask PVS culling!
-        if (activeMask && (activeMask[slot] & activeViewBits) === 0 && !isHighlighted) {
+        if (
+          activeMask &&
+          !isHighlighted &&
+          !(livePhysics && part.subsystem === 'lcd') &&
+          (activeMask[slot] & activeViewBits) === 0
+        ) {
           continue;
         }
 
@@ -1355,63 +1546,85 @@ export class CadViewport {
           scz = cz;
         }
 
-        const r =
-          rec.boneSlices.length > 0
-            ? Math.max(rec.localSphere.radius, 34)
-            : Math.max(rec.localSphere.radius, 1.5);
+        const hasBones = rec.boneSlices.length > 0;
+        const rawR = rec.localSphere.radius;
+        const r = hasBones ? Math.max(rawR, 34) : Math.max(rawR, 1.5);
 
-        _partSphere.center.set(cx, cy, cz);
-        _partSphere.radius = r;
+        // Inline scalar 6-plane frustum test (0 Vector3/Sphere allocations or method calls!)
+        if (
+          _frustumPlanesFlat[0] * cx + _frustumPlanesFlat[1] * cy + _frustumPlanesFlat[2] * cz + _frustumPlanesFlat[3] < -r ||
+          _frustumPlanesFlat[4] * cx + _frustumPlanesFlat[5] * cy + _frustumPlanesFlat[6] * cz + _frustumPlanesFlat[7] < -r ||
+          _frustumPlanesFlat[8] * cx + _frustumPlanesFlat[9] * cy + _frustumPlanesFlat[10] * cz + _frustumPlanesFlat[11] < -r ||
+          _frustumPlanesFlat[12] * cx + _frustumPlanesFlat[13] * cy + _frustumPlanesFlat[14] * cz + _frustumPlanesFlat[15] < -r ||
+          _frustumPlanesFlat[16] * cx + _frustumPlanesFlat[17] * cy + _frustumPlanesFlat[18] * cz + _frustumPlanesFlat[19] < -r ||
+          _frustumPlanesFlat[20] * cx + _frustumPlanesFlat[21] * cy + _frustumPlanesFlat[22] * cz + _frustumPlanesFlat[23] < -r
+        ) {
+          continue;
+        }
 
-        if (!_frustum.intersectsSphere(_partSphere)) continue;
+        let isStraddling = false;
+        if (useSectionCull) {
+          const planeDist = cpNx * cx + cpNy * cy + cpNz * cz + cpConst;
+          if (planeDist < -r - 0.5) continue;
+          if (useStraddleSplit && (hasBones || planeDist <= r + 0.5)) {
+            isStraddling = true;
+          }
+        }
 
-        // Exact section-plane part culling: skip parts 100% on clipped side (saves ~45% tris & fragments!)
-        if (useSectionCull && this.clippingPlane.distanceToPoint(_partSphere.center) < -r - 0.5) {
+        const cdx = cx - camX;
+        const cdy = cy - camY;
+        const cdz = cz - camZ;
+        const camDistSq = cdx * cdx + cdy * cdy + cdz * cdz;
+        const rProjActual = Math.max(rawR, 0.35) * projScale;
+
+        // OMEGA-7: Skip sub-pixel (<6.4px dia) internal micro-fasteners in 305-part whole-camera X-Ray ghost pass
+        if (isXray && isWholeCameraMode && !isHighlighted && !hasBones && rProjActual * rProjActual < camDistSq * 10.24) {
           continue;
         }
 
         const sdx = scx - sortX;
         const sdy = scy - sortY;
         const sdz = scz - sortZ;
-        _visSlots[visCount] = slot;
-        _visDistSq[visCount] = sdx * sdx + sdy * sdy + sdz * sdz;
-        visCount++;
+        const sortDistSq = sdx * sdx + sdy * sdy + sdz * sdz;
 
-        // Edge stream filtering: drop unselected mobile solid edges & sub-pixel micro-edges in solid/whole-camera X-Ray
+        if (isStraddling) {
+          _straddleSlots[straddleCount] = slot;
+          _straddleDistSq[straddleCount] = sortDistSq;
+          straddleCount++;
+        } else {
+          _visSlots[visCount] = slot;
+          _visDistSq[visCount] = sortDistSq;
+          visCount++;
+        }
+
+        let wantEdge = false;
         if (isHighlighted) {
-          _edgeSlots[edgeCount++] = slot;
+          wantEdge = true;
         } else if (!hideMobileSolidEdges) {
           if (isSolid || (isXray && isWholeCameraMode)) {
-            const cdx = cx - camX;
-            const cdy = cy - camY;
-            const cdz = cz - camZ;
-            const distSq = cdx * cdx + cdy * cdy + cdz * cdz;
             const rProj = r * projScale;
-            const minPxSq = isXray ? 81.0 : edgeMinPxSq;
-            if (rProj * rProj >= distSq * minPxSq) {
-              _edgeSlots[edgeCount++] = slot;
-            }
+            const minPxSq = isXray ? 144.0 : edgeMinPxSq;
+            wantEdge = rProj * rProj >= camDistSq * minPxSq;
+          } else {
+            wantEdge = true;
+          }
+        }
+
+        if (wantEdge) {
+          if (isStraddling) {
+            _straddleEdgeSlots[straddleEdgeCount++] = slot;
           } else {
             _edgeSlots[edgeCount++] = slot;
           }
         }
       }
 
-      // Fast insertion sort FRONT-TO-BACK (near -> far) for maximum Hardware Early-Z rejection!
-      for (let i = 1; i < visCount; i++) {
-        const keyD = _visDistSq[i];
-        const keyS = _visSlots[i];
-        let j = i - 1;
-        while (j >= 0 && _visDistSq[j] > keyD) {
-          _visDistSq[j + 1] = _visDistSq[j];
-          _visSlots[j + 1] = _visSlots[j];
-          j--;
-        }
-        _visDistSq[j + 1] = keyD;
-        _visSlots[j + 1] = keyS;
+      // OMEGA-10B: O(N) 32-Bin Linear Histogram Front-to-Back Sort!
+      sortSlotsFrontToBackFast(_visSlots, _visDistSq, visCount);
+      if (straddleCount > 1) {
+        sortSlotsFrontToBackFast(_straddleSlots, _straddleDistSq, straddleCount);
       }
 
-      // Deterministic 32-bit FNV-1a hashes so unchanged frames do ZERO copies & ZERO GPU uploads!
       let partHash = (2166136261 ^ visCount) | 0;
       for (let i = 0; i < visCount; i++) {
         partHash = Math.imul(partHash ^ _visSlots[i], 16777619);
@@ -1419,6 +1632,20 @@ export class CadViewport {
       let edgeHash = (2166136261 ^ edgeCount) | 0;
       for (let i = 0; i < edgeCount; i++) {
         edgeHash = Math.imul(edgeHash ^ _edgeSlots[i], 16777619);
+      }
+      let straddleHash = 0;
+      if (straddleCount > 0) {
+        straddleHash = (2166136261 ^ straddleCount) | 0;
+        for (let i = 0; i < straddleCount; i++) {
+          straddleHash = Math.imul(straddleHash ^ _straddleSlots[i], 16777619);
+        }
+      }
+      let straddleEdgeHash = 0;
+      if (straddleEdgeCount > 0) {
+        straddleEdgeHash = (2166136261 ^ straddleEdgeCount) | 0;
+        for (let i = 0; i < straddleEdgeCount; i++) {
+          straddleEdgeHash = Math.imul(straddleEdgeHash ^ _straddleEdgeSlots[i], 16777619);
+        }
       }
 
       chunk.applyCompactedVisibility(
@@ -1430,15 +1657,17 @@ export class CadViewport {
         edgeHash,
         isXray,
         selSlot,
-        hovSlot
+        hovSlot,
+        _straddleSlots,
+        straddleCount,
+        straddleHash,
+        _straddleEdgeSlots,
+        straddleEdgeCount,
+        straddleEdgeHash
       );
     }
   }
 
-  /**
-   * Breakthrough #28: Upload static `(assembledPos, explodeOffset)` ONCE per mode switch for ~90% of parts.
-   * Subsequent explode changes only update 1 scalar float uniform (`uExplode`) with ZERO CPU loops & ZERO uploads!
-   */
   private syncAnalyticalPartOffsets(forceAll = false): void {
     const integrated = this.mode === 'integrated' || this.mode === 'camera_body';
     if (!forceAll && this.lastAnalyticalIntegrated === integrated) return;
@@ -1454,10 +1683,6 @@ export class CadViewport {
     }
   }
 
-  /**
-   * Stream ONLY dynamic non-analytical parts (~25), 62 kinematic bones, and 16 dynamicGlow LEDs
-   * to the 64 KB GPU State Texture (0 uploads for the ~585 analytical rigid parts!).
-   */
   private syncGpuPartTransforms(forceAll = false): void {
     this.syncAnalyticalPartOffsets(forceAll);
 
@@ -1485,7 +1710,7 @@ export class CadViewport {
       this.syncChunkGlows(chunk);
     }
 
-    this.partStateBuf.flushIfDirty();
+    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
   }
 
   private syncChunkGlows(chunk: MegaBatchChunk): void {
@@ -1517,82 +1742,104 @@ export class CadViewport {
     }
   }
 
+  private writeSinglePartStyle(part: CadPart, isWholeCameraMode: boolean): void {
+    const slot = part.group.userData.partSlot as number | undefined;
+    const boneSlots = part.group.userData.boneSlots as number[] | undefined;
+
+    if (!this.isPartInCurrentMode(part)) {
+      part.group.visible = false;
+      if (slot !== undefined) {
+        this.partStateBuf.writePartStyle(slot, 0, 0, 0, 0, 0);
+      }
+      if (boneSlots && boneSlots.length > 0) {
+        for (let bi = 0; bi < boneSlots.length; bi++) {
+          this.partStateBuf.writePartStyle(boneSlots[bi], 0, 0, 0, 0, 0);
+        }
+      }
+      return;
+    }
+
+    const hidden = this.isPartHidden(part.id);
+    part.group.visible = !hidden;
+
+    const isSelected = part.id === this.selectedPartId;
+    const isHovered = part.id === this.hoveredPartId;
+
+    const hideUnselectedMobileEdges =
+      GPU_PROFILE.isMobile &&
+      isWholeCameraMode &&
+      this.renderMode === 'solid' &&
+      !isSelected &&
+      !isHovered;
+
+    if (slot !== undefined) {
+      const visFlag = hidden ? 0 : isSelected ? 3 : isHovered ? 2 : 1;
+      let ec = EDGE_COL_SOLID;
+      let edgeAlphaEncoded = -1.0;
+      if (hidden || hideUnselectedMobileEdges) {
+        edgeAlphaEncoded = 0.0;
+      } else if (isSelected) {
+        ec = EDGE_COL_SELECTED;
+        edgeAlphaEncoded = 0.92;
+      } else if (isHovered) {
+        ec = EDGE_COL_HOVERED;
+        edgeAlphaEncoded = 0.72;
+      } else if (this.renderMode === 'cad') {
+        ec = EDGE_COL_CAD;
+        edgeAlphaEncoded = 0.72;
+      } else if (this.renderMode === 'xray') {
+        ec = EDGE_COL_XRAY;
+        edgeAlphaEncoded = 0.34;
+      }
+      this.partStateBuf.writePartStyle(slot, visFlag, ec.r, ec.g, ec.b, edgeAlphaEncoded);
+      if (boneSlots && boneSlots.length > 0) {
+        for (let bi = 0; bi < boneSlots.length; bi++) {
+          this.partStateBuf.writePartStyle(
+            boneSlots[bi],
+            visFlag,
+            ec.r,
+            ec.g,
+            ec.b,
+            edgeAlphaEncoded
+          );
+        }
+      }
+    }
+  }
+
+  /** OMEGA-12: O(1) Hover / Select Style Delta — updates ONLY 1..2 parts instead of looping over 652! */
+  private applyHoverOrSelectDelta(prevId: string | null, nextId: string | null): void {
+    const isWholeCameraMode = this.mode === 'integrated' || this.mode === 'camera_body';
+    if (prevId) {
+      const p = this.partById.get(prevId);
+      if (p) this.writeSinglePartStyle(p, isWholeCameraMode);
+    }
+    if (nextId && nextId !== prevId) {
+      const n = this.partById.get(nextId);
+      if (n) this.writeSinglePartStyle(n, isWholeCameraMode);
+    }
+    for (let ci = 0; ci < this.activeChunks.length; ci++) {
+      this.syncChunkGlows(this.activeChunks[ci]);
+    }
+    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
+    this.visibilityDirty = true;
+    this.markDirty(2);
+  }
+
   private applyVisibilityAndStyles(): void {
     const isWholeCameraMode = this.mode === 'integrated' || this.mode === 'camera_body';
 
     for (let i = 0; i < this.allParts.length; i++) {
-      const part = this.allParts[i];
-      const slot = part.group.userData.partSlot as number | undefined;
-      const boneSlots = part.group.userData.boneSlots as number[] | undefined;
-
-      if (!this.isPartInCurrentMode(part)) {
-        part.group.visible = false;
-        if (slot !== undefined) {
-          this.partStateBuf.writePartStyle(slot, 0, 0, 0, 0, 0);
-        }
-        if (boneSlots && boneSlots.length > 0) {
-          for (let bi = 0; bi < boneSlots.length; bi++) {
-            this.partStateBuf.writePartStyle(boneSlots[bi], 0, 0, 0, 0, 0);
-          }
-        }
-        continue;
-      }
-
-      const hidden = this.isPartHidden(part.id);
-      part.group.visible = !hidden;
-
-      const isSelected = part.id === this.selectedPartId;
-      const isHovered = part.id === this.hoveredPartId;
-
-      const hideUnselectedMobileEdges =
-        GPU_PROFILE.isMobile &&
-        isWholeCameraMode &&
-        this.renderMode === 'solid' &&
-        !isSelected &&
-        !isHovered;
-
-      // Update Mega-Batch GPU Kinematic State Texture (0 CPU material swaps across ALL 627 parts + 62 bones!)
-      if (slot !== undefined) {
-        const visFlag = hidden ? 0 : isSelected ? 3 : isHovered ? 2 : 1;
-        let ec = EDGE_COL_SOLID;
-        let edgeAlphaEncoded = -1.0; // Negative => multiply vertex baseOpacity by |val|
-        if (hidden || hideUnselectedMobileEdges) {
-          edgeAlphaEncoded = 0.0;
-        } else if (isSelected) {
-          ec = EDGE_COL_SELECTED;
-          edgeAlphaEncoded = 0.92;
-        } else if (isHovered) {
-          ec = EDGE_COL_HOVERED;
-          edgeAlphaEncoded = 0.72;
-        } else if (this.renderMode === 'cad') {
-          ec = EDGE_COL_CAD;
-          edgeAlphaEncoded = 0.72;
-        } else if (this.renderMode === 'xray') {
-          ec = EDGE_COL_XRAY;
-          edgeAlphaEncoded = 0.34;
-        }
-        this.partStateBuf.writePartStyle(slot, visFlag, ec.r, ec.g, ec.b, edgeAlphaEncoded);
-        if (boneSlots && boneSlots.length > 0) {
-          for (let bi = 0; bi < boneSlots.length; bi++) {
-            this.partStateBuf.writePartStyle(
-              boneSlots[bi],
-              visFlag,
-              ec.r,
-              ec.g,
-              ec.b,
-              edgeAlphaEncoded
-            );
-          }
-        }
-      }
+      this.writeSinglePartStyle(this.allParts[i], isWholeCameraMode);
     }
 
     for (let ci = 0; ci < this.allChunks.length; ci++) {
       this.syncChunkGlows(this.allChunks[ci]);
     }
 
-    this.partStateBuf.flushIfDirty();
+    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
     this.visibilityDirty = true;
+    invalidateRaycastTlas();
     this.markDirty();
   }
 
@@ -1616,7 +1863,6 @@ export class CadViewport {
       if (rect.width <= 0 || rect.height <= 0) return;
       this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      // Coalesce high-frequency pointermove events to at most 1 raycast per animation frame!
       this.hoverRaycastPending = true;
       this.wakeLoop();
     });
@@ -1624,9 +1870,10 @@ export class CadViewport {
     dom.addEventListener('pointerleave', () => {
       this.hoverRaycastPending = false;
       if (this.hoveredPartId !== null) {
+        const prev = this.hoveredPartId;
         this.hoveredPartId = null;
         this.container.classList.remove('is-hovering');
-        this.applyVisibilityAndStyles();
+        this.applyHoverOrSelectDelta(prev, null);
         this.callbacks.onHoverPart(null);
       }
     });
@@ -1679,23 +1926,28 @@ export class CadViewport {
     );
     this.cachedDomRect = this.renderer.domElement.getBoundingClientRect();
     this.partStateBuf.markDirty();
-    this.partStateBuf.flushIfDirty();
+    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
     this.matRegistry.refreshAfterContextRestore();
     this.overlayBatcher.refreshAfterContextRestore();
     for (const chunk of this.allChunks) {
       chunk.syncMaterials(this.matRegistry);
       for (const b of chunk.buckets) {
-        b.lastHash = -1;
+        b.mainRing.lastHash = -1;
+        if (b.straddleRing) b.straddleRing.lastHash = -1;
         b.lastHighlightHash = -1;
       }
-      if (chunk.edgeBucket) chunk.edgeBucket.lastHash = -1;
+      if (chunk.edgeBucket) {
+        chunk.edgeBucket.mainRing.lastHash = -1;
+        if (chunk.edgeBucket.straddleRing) chunk.edgeBucket.straddleRing.lastHash = -1;
+      }
     }
     this.contextLost = false;
     this.recoveryOverlay.classList.remove('is-visible');
     this.applyVisibilityAndStyles();
     this.syncGpuPartTransforms(true);
     this.visibilityDirty = true;
-    this.overlaysDirty = true;
+    this.guidesDirty = true;
+    this.physicsOverlaysDirty = true;
     this.markDirty(4);
     this.renderer.render(this.scene, this.camera);
   }
@@ -1760,9 +2012,10 @@ export class CadViewport {
   private updateHoverFromRaycast(): void {
     const hitId = this.pickPartAtPointer();
     if (hitId !== this.hoveredPartId) {
+      const prev = this.hoveredPartId;
       this.hoveredPartId = hitId;
       this.container.classList.toggle('is-hovering', hitId !== null);
-      this.applyVisibilityAndStyles();
+      this.applyHoverOrSelectDelta(prev, hitId);
       this.callbacks.onHoverPart(hitId);
     }
   }
@@ -1771,7 +2024,6 @@ export class CadViewport {
     const integrated = this.mode === 'integrated' || this.mode === 'camera_body';
     const liveDynamic = this.physicsActive || sharedLensOpticalSim.studioOpen;
 
-    // Dirty-Delta Kinematic Scheduler: skip redundant math & GPU uploads during static orbit!
     if (
       !this.kinematicsDirty &&
       !liveDynamic &&
@@ -1814,8 +2066,12 @@ export class CadViewport {
     }
 
     this.syncGpuPartTransforms(false);
-    if (liveDynamic || this.currentExplode !== this.lastSyncedExplode) {
-      this.overlaysDirty = true;
+    invalidateRaycastTlas();
+    if (liveDynamic) {
+      this.physicsOverlaysDirty = true;
+    }
+    if (this.currentExplode !== this.lastSyncedExplode) {
+      this.guidesDirty = true;
     }
     this.lastSyncedExplode = this.currentExplode;
     this.lastSyncedIntegrated = integrated;
@@ -1875,7 +2131,7 @@ export class CadViewport {
 
     if (active) {
       this.idleFrameStreak = 0;
-      const needsGuideUpdate = explodeMoved || this.kinematicsDirty;
+      const needsGuideUpdate = explodeMoved;
       this.stepActiveAssemblies(elapsed, delta);
       if (needsGuideUpdate) {
         this.updateActiveExplodeGuides();
@@ -1886,7 +2142,6 @@ export class CadViewport {
       this.idleFrameStreak++;
     }
 
-    // Breakthrough #21: Zero-Wakeup On-Demand rAF Hibernation (0% idle CPU/battery after 12 quiet frames!)
     if (
       active ||
       this.hoverRaycastPending ||
@@ -1921,7 +2176,6 @@ export class CadViewport {
     this.overlayBatcher.dispose();
     for (const chunk of this.allChunks) {
       for (const g of chunk.geometries) g.dispose();
-      for (const b of chunk.buckets) b.xrayHighlightGeo?.dispose();
     }
     this.recoveryOverlay.remove();
     this.controls.dispose();

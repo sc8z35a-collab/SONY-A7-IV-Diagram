@@ -12,7 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { SHUTTER_MICRO_EXPLANATIONS } from './shutterMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneShutterMicroPart(
   id: string,
@@ -39,7 +39,7 @@ function finalizeStandaloneShutterMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SHUTTER_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

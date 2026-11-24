@@ -249,6 +249,13 @@ export function createShutterPhysicsOverlay(
     radialGuides.update(explodeFactor, visible, parts);
   };
 
+  let cachedPartsLen = -1;
+  let frontPart: CadPart | undefined;
+  let c1Part: CadPart | undefined;
+  let c2Part: CadPart | undefined;
+  let optPart: CadPart | undefined;
+  let basePart: CadPart | undefined;
+
   const update = (
     elapsed: number,
     physicsActive: boolean,
@@ -258,11 +265,14 @@ export function createShutterPhysicsOverlay(
   ) => {
     if (!physicsActive) return;
 
-    const frontPart = parts.find((p) => p.id === 'shutter-front-cover');
-    const c1Part = parts.find((p) => p.id === 'shutter-curtain-1');
-    const c2Part = parts.find((p) => p.id === 'shutter-curtain-2');
-    const optPart = parts.find((p) => p.id === 'shutter-optical-sensor');
-    const basePart = parts.find((p) => p.id === 'shutter-base-damper');
+    if (cachedPartsLen !== parts.length) {
+      cachedPartsLen = parts.length;
+      frontPart = parts.find((p) => p.id === 'shutter-front-cover');
+      c1Part = parts.find((p) => p.id === 'shutter-curtain-1');
+      c2Part = parts.find((p) => p.id === 'shutter-curtain-2');
+      optPart = parts.find((p) => p.id === 'shutter-optical-sensor');
+      basePart = parts.find((p) => p.id === 'shutter-base-damper');
+    }
 
     const zFront = frontPart ? frontPart.group.position.z : 17.6;
     const zC1 = c1Part ? c1Part.group.position.z : 15.3;

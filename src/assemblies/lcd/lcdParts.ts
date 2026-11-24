@@ -11,8 +11,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { LCD_EXPLANATIONS } from './lcdExplanations';
-import { buildLcdMicroParts } from './lcdMicroParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 /** Shared Rear LCD Monitor center coordinates (fits cleanly below EVF eyecup & left of -X right-hand thumb controls) */
 export const LCD_CENTER_X = 6.0;
@@ -57,7 +56,7 @@ function finalizeLcdPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: LCD_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -81,7 +80,7 @@ function finalizeLcdPart(
  */
 export function buildLcdParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: LcdDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -1348,12 +1347,6 @@ export function buildLcdParts(
     pAmbColor,
     pFlipMags,
   ];
-
-  if (includeStandalone) {
-    const lcdMicro = buildLcdMicroParts(mats);
-    parts.push(...lcdMicro.parts);
-    monitorParts.push(...lcdMicro.monitorParts);
-  }
 
   const rig: LcdDynamicRig = {
     monitorParts,

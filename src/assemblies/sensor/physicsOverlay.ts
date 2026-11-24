@@ -531,6 +531,9 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     }
   };
 
+  let lastMicroExplode = -1;
+  let lastMicroPosLen = -1;
+
   const updateMicro = (
     elapsed: number,
     explodeFactor: number,
@@ -538,14 +541,17 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     microParts: CadPart[]
   ) => {
     latestMicroParts = microParts;
-    // 2. MICRO PIXEL MODE POSITIONING & PHOTON -> ELECTRON TRANSFER FLOW
-    for (let i = 0; i < microParts.length; i++) {
-      const p = microParts[i];
-      p.group.position.set(
-        p.assembledPos.x + p.explodeOffset.x * explodeFactor,
-        p.assembledPos.y + p.explodeOffset.y * explodeFactor,
-        p.assembledPos.z + p.explodeOffset.z * explodeFactor
-      );
+    if (lastMicroExplode !== explodeFactor || lastMicroPosLen !== microParts.length) {
+      lastMicroExplode = explodeFactor;
+      lastMicroPosLen = microParts.length;
+      for (let i = 0; i < microParts.length; i++) {
+        const p = microParts[i];
+        p.group.position.set(
+          p.assembledPos.x + p.explodeOffset.x * explodeFactor,
+          p.assembledPos.y + p.explodeOffset.y * explodeFactor,
+          p.assembledPos.z + p.explodeOffset.z * explodeFactor
+        );
+      }
     }
 
     if (physicsActive) {

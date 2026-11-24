@@ -11,7 +11,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_MICRO_EXPLANATIONS } from './bodyMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneBodyMicroPart(
   id: string,
@@ -38,7 +38,7 @@ function finalizeStandaloneBodyMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

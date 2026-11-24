@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MOUNT_DEEP_AUDIT_EXPLANATIONS } from './mountDeepAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function createRingShape(outerR: number, innerR: number): THREE.Shape {
   const s = new THREE.Shape();
@@ -57,7 +57,7 @@ function finalizeMountDeepAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MOUNT_DEEP_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

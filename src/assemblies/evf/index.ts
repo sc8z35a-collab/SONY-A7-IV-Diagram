@@ -19,7 +19,14 @@ export function createEvfAssembly(mats: MaterialLibrary): AssemblyController {
   const overlay = createEvfPhysicsOverlay(mats.clippingPlanes);
   rootGroup.add(overlay.overlayGroup, overlay.explodeGuides);
 
+  let lastExp = -1;
+  let lastInt = false;
+  let lastLen = -1;
   const updatePositions = (explodeFactor: number, integrated: boolean) => {
+    if (lastExp === explodeFactor && lastInt === integrated && lastLen === parts.length) return;
+    lastExp = explodeFactor;
+    lastInt = integrated;
+    lastLen = parts.length;
     for (const p of parts) {
       const offset =
         integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
@@ -36,11 +43,11 @@ export function createEvfAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 24,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
+      const extra = await buildEvfStandaloneParts(mats);
       controller.deferredStandaloneCount = 0;
-      const extra = buildEvfStandaloneParts(mats);
       for (const p of extra) {
         parts.push(p);
         rootGroup.add(p.group);

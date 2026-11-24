@@ -10,7 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_ULTRA_AUDIT_EXPLANATIONS } from './bodyUltraAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneBodyAuditPart(
   id: string,
@@ -37,7 +37,7 @@ function finalizeStandaloneBodyAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

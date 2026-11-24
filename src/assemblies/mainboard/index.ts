@@ -19,7 +19,14 @@ export function createMainboardAssembly(mats: MaterialLibrary): AssemblyControll
   const overlay = createMainboardPhysicsOverlay(mats.clippingPlanes);
   rootGroup.add(overlay.overlayGroup, overlay.explodeGuides);
 
+  let lastExp = -1;
+  let lastInt = false;
+  let lastLen = -1;
   const updatePositions = (explodeFactor: number, integrated: boolean) => {
+    if (lastExp === explodeFactor && lastInt === integrated && lastLen === parts.length) return;
+    lastExp = explodeFactor;
+    lastInt = integrated;
+    lastLen = parts.length;
     for (const p of parts) {
       const offset =
         integrated && p.integratedExplodeOffset ? p.integratedExplodeOffset : p.explodeOffset;
@@ -36,11 +43,11 @@ export function createMainboardAssembly(mats: MaterialLibrary): AssemblyControll
     rootGroup,
     parts,
     deferredStandaloneCount: 30,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
+      const extra = await buildMainboardStandaloneParts(mats);
       controller.deferredStandaloneCount = 0;
-      const extra = buildMainboardStandaloneParts(mats);
       for (const p of extra) {
         parts.push(p);
         rootGroup.add(p.group);

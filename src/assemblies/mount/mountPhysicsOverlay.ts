@@ -271,6 +271,14 @@ export function createMountPhysicsOverlay(
 
   const findPart = (parts: CadPart[], id: string) => parts.find((p) => p.id === id);
 
+  let cachedPartsLen = -1;
+  let pFlange: CadPart | undefined;
+  let pBaffle: CadPart | undefined;
+  let pMask: CadPart | undefined;
+  let pContacts: CadPart | undefined;
+  let pPcb: CadPart | undefined;
+  let pRear: CadPart | undefined;
+
   return {
     overlayGroup,
     explodeGuides,
@@ -280,12 +288,15 @@ export function createMountPhysicsOverlay(
     update: (elapsed: number, active: boolean, parts: CadPart[], integrated: boolean) => {
       if (!active || !overlayGroup.visible) return;
 
-      const pFlange = findPart(parts, 'mount-flange-ring');
-      const pBaffle = findPart(parts, 'mount-anti-refl-baffle');
-      const pMask = findPart(parts, 'mount-rect-flare-mask');
-      const pContacts = findPart(parts, 'mount-contact-pins');
-      const pPcb = findPart(parts, 'mount-contact-pcb');
-      const pRear = findPart(parts, 'mount-chassis-interface');
+      if (cachedPartsLen !== parts.length) {
+        cachedPartsLen = parts.length;
+        pFlange = findPart(parts, 'mount-flange-ring');
+        pBaffle = findPart(parts, 'mount-anti-refl-baffle');
+        pMask = findPart(parts, 'mount-rect-flare-mask');
+        pContacts = findPart(parts, 'mount-contact-pins');
+        pPcb = findPart(parts, 'mount-contact-pcb');
+        pRear = findPart(parts, 'mount-chassis-interface');
+      }
       if (!pFlange || !pBaffle || !pMask || !pContacts || !pPcb || !pRear) return;
 
       const zFlange = pFlange.group.position.z;

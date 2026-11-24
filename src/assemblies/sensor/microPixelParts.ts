@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { attachCadEdges, tagPartMeshes } from '../../engine/CadHelpers';
-import { MICRO_EXPLANATIONS } from './explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { buildMicroPixelUltraParts } from './microPixelUltraParts';
 import { buildMicroUltraAuditParts } from './sensorMicroUltraAuditParts';
 import { buildMicroPixelDeepAuditParts } from './microPixelDeepAuditParts';
@@ -32,7 +32,7 @@ function finalizeMicroPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 

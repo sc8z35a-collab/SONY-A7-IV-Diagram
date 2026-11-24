@@ -38,11 +38,11 @@ export function createLensAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 54,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
+      const extra = await buildLensStandaloneParts(mats);
       controller.deferredStandaloneCount = 0;
-      const extra = buildLensStandaloneParts(mats);
       for (const p of extra) {
         parts.push(p);
         rootGroup.add(p.group);

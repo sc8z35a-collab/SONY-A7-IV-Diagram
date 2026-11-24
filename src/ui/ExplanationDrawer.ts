@@ -1,4 +1,5 @@
 import { CadPart, PartExplanation } from '../assemblies/types';
+import { isLazyExplanationStub, resolvePartExplanation } from '../assemblies/lazyExplanations';
 import { OpticalScenarioId } from '../assemblies/lens/lensOpticalSim';
 
 export interface ExplanationDrawerHandlers {
@@ -106,9 +107,8 @@ function recommendedScenarioForLensPart(partId: string): OpticalScenarioId {
 /**
  * Pure-white scientific explanation drawer.
  * Hidden when no part is selected (leaving 100% zero text on screen).
- * All toolbar controls inside the drawer remain strictly zero-text SVG icons.
- * Breakthrough #31: All 17 scientific SVG schematic libraries (~1.1 MB) are code-split
- * and dynamically imported on first drawer open, slashing startup JS parse & bundle cost!
+ * OMEGA-13: Both the 17 SVG schematic libraries (~1.1 MB) AND all 9 subsystem Japanese explanation
+ * modules (~2.0 MB) are code-split and fetched on demand, slashing initial JS bundle & V8 parse time!
  */
 export class ExplanationDrawer {
   private drawerEl: HTMLElement;
@@ -161,12 +161,7 @@ export class ExplanationDrawer {
     root.appendChild(this.drawerEl);
   }
 
-  public show(part: CadPart, isIsolated: boolean): void {
-    const seq = ++this.renderSeq;
-    const exp = part.explanation;
-    this.swatchEl.style.backgroundColor = part.swatchColor;
-    this.isolateBtn.classList.toggle('is-active', isIsolated);
-
+  private renderPopulatedPart(part: CadPart, exp: PartExplanation, seq: number): void {
     const specsHtml = exp.specs
       .map(
         (s) => `
@@ -263,8 +258,25 @@ export class ExplanationDrawer {
     }
 
     this.bodyEl.scrollTop = 0;
+  }
+
+  public show(part: CadPart, isIsolated: boolean): void {
+    const seq = ++this.renderSeq;
+    this.swatchEl.style.backgroundColor = part.swatchColor;
+    this.isolateBtn.classList.toggle('is-active', isIsolated);
     this.drawerEl.classList.add('is-open');
     this.drawerEl.setAttribute('aria-hidden', 'false');
+
+    if (!isLazyExplanationStub(part.explanation)) {
+      this.renderPopulatedPart(part, part.explanation, seq);
+      return;
+    }
+
+    // Fetch subsystem explanations + SVG schematic renderer concurrently in one single round-trip!
+    void Promise.all([resolvePartExplanation(part), loadSchematicRenderer()]).then(([exp]) => {
+      if (seq !== this.renderSeq || !this.drawerEl.classList.contains('is-open')) return;
+      this.renderPopulatedPart(part, exp, seq);
+    });
   }
 
   public setIsolatedState(isIsolated: boolean): void {
@@ -275,7 +287,6 @@ export class ExplanationDrawer {
     this.renderSeq++;
     this.drawerEl.classList.remove('is-open');
     this.drawerEl.setAttribute('aria-hidden', 'true');
-    // Clear explanation text when closed so zero text exists in DOM during pure CAD inspection
     window.setTimeout(() => {
       if (!this.drawerEl.classList.contains('is-open')) {
         this.bodyEl.replaceChildren();

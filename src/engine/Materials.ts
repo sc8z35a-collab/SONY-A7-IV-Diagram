@@ -165,20 +165,36 @@ export interface MaterialLibrary {
   allMaterials: THREE.Material[];
 }
 
+export const NATIVE_HI_TEX_W = GPU_PROFILE.isMobile ? 256 : 512;
+export const NATIVE_HI_TEX_H = GPU_PROFILE.isMobile ? 192 : 384;
+export const NATIVE_TILE_TEX_SIZE = 128;
+
 function createScaledCanvas(
   baseW: number,
   baseH: number,
-  desktopScale = 0.5
+  desktopScale = 0.5,
+  forceTile = false
 ): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; w: number; h: number } {
   const s = GPU_PROFILE.isMobile ? desktopScale * 0.5 : desktopScale;
-  const cw = Math.max(64, Math.round(baseW * s));
-  const ch = Math.max(64, Math.round(baseH * s));
+  const rawMax = Math.max(baseW * s, baseH * s);
+  const heroMin = GPU_PROFILE.isMobile ? 180 : 300;
+  const isHero = !forceTile && rawMax >= heroMin;
+  const cw = isHero ? NATIVE_HI_TEX_W : NATIVE_TILE_TEX_SIZE;
+  const ch = isHero ? NATIVE_HI_TEX_H : NATIVE_TILE_TEX_SIZE;
   const canvas = document.createElement('canvas');
   canvas.width = cw;
   canvas.height = ch;
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-  ctx.scale(cw / baseW, ch / baseH);
+  // Pre-flip vertically into OpenGL UV orientation so DualTierTextureArrayPacker reads getImageData directly with 0 scratch canvases!
+  ctx.translate(0, ch);
+  ctx.scale(cw / baseW, -ch / baseH);
+  (canvas as unknown as { __ctx2d?: CanvasRenderingContext2D }).__ctx2d = ctx;
   return { canvas, ctx, w: baseW, h: baseH };
+}
+
+function parseHexRgb(hex: string): [number, number, number] {
+  const v = parseInt(hex.slice(1), 16);
+  return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
 }
 
 function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
@@ -271,8 +287,8 @@ function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THR
   }
   ctx.stroke();
 
-  // Lightweight shared roughness canvas (256x170)
-  const { canvas: roughCanvas, ctx: rctx } = createScaledCanvas(1024, 682, 0.25);
+  // Lightweight shared roughness canvas directly at NATIVE_TILE_TEX_SIZE (128x128)
+  const { canvas: roughCanvas, ctx: rctx } = createScaledCanvas(1024, 682, 0.25, true);
   rctx.fillStyle = '#383838';
   rctx.fillRect(0, 0, w, h);
   rctx.fillStyle = '#141414';
@@ -286,10 +302,12 @@ function createSensorDieTexture(): { map: THREE.CanvasTexture; roughnessMap: THR
   rctx.stroke();
 
   const map = new THREE.CanvasTexture(colorCanvas);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
 
   const roughnessMap = new THREE.CanvasTexture(roughCanvas);
+  roughnessMap.flipY = false;
   roughnessMap.anisotropy = 2;
 
   return { map, roughnessMap, bumpMap: roughnessMap };
@@ -301,7 +319,6 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
   ctx.fillStyle = '#14332d';
   ctx.fillRect(0, 0, w, h);
 
-  // Batched fiberglass weave grid (1 stroke!)
   ctx.strokeStyle = 'rgba(255,255,255,0.03)';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
@@ -318,7 +335,6 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
   ctx.fillStyle = '#194139';
   ctx.fillRect(28, 28, w - 56, h - 56);
 
-  // Batched SLVS-EC differential trace bundles (1 stroke!)
   ctx.strokeStyle = '#2d6e5e';
   ctx.lineWidth = 2.2;
   ctx.beginPath();
@@ -346,7 +362,6 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
   }
   ctx.stroke();
 
-  // Batched LGA breakout & thermal via rings (2 fill calls instead of 800!)
   ctx.fillStyle = '#c9a653';
   ctx.beginPath();
   for (let gx = 280; gx <= w - 280; gx += 26) {
@@ -381,7 +396,6 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
   }
   ctx.fill();
 
-  // Gold fiducial rings
   ctx.strokeStyle = '#dfb85c';
   ctx.lineWidth = 6;
   ctx.beginPath();
@@ -397,86 +411,114 @@ function createPcbTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTe
   ctx.stroke();
 
   const map = new THREE.CanvasTexture(canvas);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
   return { map, bumpMap: map };
 }
 
-function createCopperCoilTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const size = GPU_PROFILE.isMobile ? 128 : 256;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-
-  ctx.fillStyle = '#a84c20';
-  ctx.fillRect(0, 0, size, size);
-
-  for (let i = 0; i < size; i += 4) {
-    ctx.fillStyle = i % 8 === 0 ? '#d8763f' : '#8a3915';
-    ctx.fillRect(0, i, size, 2.5);
+/** OMEGA-14: Zero-DOM pure TypedArray 128x128 copper winding synthesizer (0ms Canvas2D overhead!) */
+function createCopperCoilTexture(): { map: THREE.DataTexture; bumpMap: THREE.DataTexture } {
+  const size = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    const mod4 = y & 3;
+    let r = 168, g = 76, b = 32;
+    if (mod4 <= 2) {
+      if ((y & 7) < 3) {
+        r = 216; g = 118; b = 63;
+      } else {
+        r = 138; g = 57; b = 21;
+      }
+    }
+    const row = y * size * 4;
+    for (let x = 0; x < size; x++) {
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
+    }
   }
-
-  const map = new THREE.CanvasTexture(canvas);
+  const map = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   map.colorSpace = THREE.SRGBColorSpace;
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(3, 6);
+  map.needsUpdate = true;
   return { map, bumpMap: map };
 }
 
-function createGraphiteTexture(): THREE.CanvasTexture {
-  const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-  ctx.fillStyle = '#202228';
-  ctx.fillRect(0, 0, size, size);
-  for (let y = 0; y < size; y += 2) {
-    const v = 28 + Math.floor(Math.sin(y * 0.7) * 6 + ((y * 37) % 9));
-    ctx.fillStyle = `rgb(${v},${v + 2},${v + 6})`;
-    ctx.fillRect(0, y, size, 1.5);
+/** OMEGA-14: Zero-DOM pure TypedArray 128x128 pyrolytic graphite synthesizer */
+function createGraphiteTexture(): THREE.DataTexture {
+  const size = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    const yEven = y & ~1;
+    const v = 28 + Math.floor(Math.sin(yEven * 0.7) * 6 + ((yEven * 37) % 9));
+    const r = (y & 1) === 0 ? v : 32;
+    const g = (y & 1) === 0 ? v + 2 : 34;
+    const b = (y & 1) === 0 ? v + 6 : 40;
+    const row = y * size * 4;
+    for (let x = 0; x < size; x++) {
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
+    }
   }
-  const tex = new THREE.CanvasTexture(canvas);
+  const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(4, 4);
+  tex.needsUpdate = true;
   return tex;
 }
 
-function createCarbonFiberTexture(tintHex: string): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const size = 128;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-
-  ctx.fillStyle = tintHex;
-  ctx.fillRect(0, 0, size, size);
-
+/** OMEGA-14: Zero-DOM pure TypedArray 128x128 carbon/aramid twill weave synthesizer */
+function createCarbonFiberTexture(tintHex: string): { map: THREE.DataTexture; bumpMap: THREE.DataTexture } {
+  const size = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(size * size * 4);
+  const [br, bg, bb] = parseHexRgb(tintHex);
   const cell = 16;
-  for (let y = 0; y < size; y += cell) {
-    for (let x = 0; x < size; x += cell) {
-      const phase = ((x / cell + y / cell) % 2) === 0;
-      const g = phase
-        ? ctx.createLinearGradient(x, y, x + cell, y)
-        : ctx.createLinearGradient(x, y, x, y + cell);
-      g.addColorStop(0, 'rgba(255,255,255,0.03)');
-      g.addColorStop(0.5, 'rgba(255,255,255,0.16)');
-      g.addColorStop(1, 'rgba(0,0,0,0.22)');
-      ctx.fillStyle = g;
-      ctx.fillRect(x, y, cell, cell);
+  for (let y = 0; y < size; y++) {
+    const cy = Math.floor(y / cell);
+    const ty = (y % cell) / (cell - 1);
+    const row = y * size * 4;
+    for (let x = 0; x < size; x++) {
+      const cx = Math.floor(x / cell);
+      const tx = (x % cell) / (cell - 1);
+      const t = ((cx + cy) & 1) === 0 ? tx : ty;
+      let r = br, g = bg, b = bb;
+      if (t <= 0.5) {
+        const a = 0.03 + (t * 2) * 0.13;
+        r = Math.round(br * (1 - a) + 255 * a);
+        g = Math.round(bg * (1 - a) + 255 * a);
+        b = Math.round(bb * (1 - a) + 255 * a);
+      } else {
+        const u = (t - 0.5) * 2;
+        const wht = 0.16 * (1 - u);
+        const blk = 0.22 * u;
+        r = Math.round((br * (1 - wht) + 255 * wht) * (1 - blk));
+        g = Math.round((bg * (1 - wht) + 255 * wht) * (1 - blk));
+        b = Math.round((bb * (1 - wht) + 255 * wht) * (1 - blk));
+      }
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
     }
   }
-
-  const map = new THREE.CanvasTexture(canvas);
+  const map = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   map.colorSpace = THREE.SRGBColorSpace;
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(5, 2);
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
+  map.needsUpdate = true;
   return { map, bumpMap: map };
 }
 
@@ -548,6 +590,7 @@ function createIspDieFloorplanTexture(): { map: THREE.CanvasTexture; bumpMap: TH
   ctx.stroke();
 
   const map = new THREE.CanvasTexture(c);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
   return { map, bumpMap: map };
@@ -621,6 +664,7 @@ function createNpuSystolicDieTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.strokeRect(28, 352, 456, 132);
 
   const map = new THREE.CanvasTexture(c);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
   return { map, bumpMap: map };
@@ -638,7 +682,6 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.fillStyle = '#124939';
   ctx.fillRect(24, 24, w - 48, h - 48);
 
-  // Batched high-speed bus highways (1 stroke!)
   ctx.strokeStyle = '#1d7a5b';
   ctx.lineWidth = 2.2;
   ctx.beginPath();
@@ -653,7 +696,6 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   }
   ctx.stroke();
 
-  // Batched serpentine meander delay lines (1 stroke!)
   ctx.strokeStyle = '#289e74';
   ctx.lineWidth = 2.0;
   ctx.beginPath();
@@ -671,7 +713,6 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   }
   ctx.stroke();
 
-  // Batched vertical trunks (1 stroke!)
   ctx.strokeStyle = '#1b6e53';
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -681,7 +722,6 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   }
   ctx.stroke();
 
-  // Batched ENIG gold laser microvia rings (2 fill calls instead of 500!)
   ctx.fillStyle = '#e0b94f';
   ctx.beginPath();
   for (let gy = 54; gy < h - 54; gy += 36) {
@@ -719,55 +759,57 @@ function createHdiMotherboardTexture(): { map: THREE.CanvasTexture; bumpMap: THR
   ctx.fill();
 
   const map = new THREE.CanvasTexture(c);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.anisotropy = GPU_PROFILE.maxAnisotropy;
   return { map, bumpMap: map };
 }
 
-/**
- * Procedural 12-layer copper + FR-4 dielectric cross-section striation texture
- * visible along the exposed edge of the HDI motherboard PCB!
- */
-function createPcbLaminateEdgeTexture(): THREE.CanvasTexture {
-  const c = document.createElement('canvas');
-  c.width = 64;
-  c.height = 128;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  ctx.fillStyle = '#5c5838'; // Low-Df FR-4 prepreg resin
-  ctx.fillRect(0, 0, 64, 128);
-  // 12 crisp laminated copper foil layers
-  ctx.fillStyle = '#d4864b';
+/** OMEGA-14: Zero-DOM 128x128 12-layer copper + FR-4 laminate cross-section DataTexture */
+function createPcbLaminateEdgeTexture(): THREE.DataTexture {
+  const size = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(size * size * 4);
+  const copperRows = new Uint8Array(size);
   for (let i = 0; i < 12; i++) {
-    const y = Math.round(6 + (i / 11) * 112);
-    ctx.fillRect(0, y, 64, 3);
+    const y0 = Math.round(6 + (i / 11) * 112);
+    for (let dy = 0; dy < 3 && y0 + dy < size; dy++) copperRows[size - 1 - (y0 + dy)] = 1;
   }
-  const tex = new THREE.CanvasTexture(c);
+  for (let y = 0; y < size; y++) {
+    const isCu = copperRows[y] === 1;
+    const r = isCu ? 212 : 92;
+    const g = isCu ? 134 : 88;
+    const b = isCu ? 75 : 56;
+    const row = y * size * 4;
+    for (let x = 0; x < size; x++) {
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
+    }
+  }
+  const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.needsUpdate = true;
   return tex;
 }
 
 /**
  * Procedural 0.64-inch 9.44M-dot Quad-XGA Tandem Micro-OLED (OLEDoS) viewfinder display texture.
- * STRICTLY ZERO TEXT / ZERO DIGITS: displays a vivid DCI-P3 4,000-nit HDR alpine twilight scene,
- * subtle 3,300+ PPI RGB micro-subpixel structure, geometric framing brackets, rule-of-thirds lines,
- * glowing cyan Eye-Control AF reticle ring, and pure-graphical histogram curve (no letters/numbers).
  */
 function createOledViewfinderTexture(): THREE.CanvasTexture {
   const { canvas: c, ctx, w, h } = createScaledCanvas(640, 480, 0.5);
 
-  // True-black OLED border (0.000 cd/m² pixel-off state)
   ctx.fillStyle = '#03050a';
   ctx.fillRect(0, 0, w, h);
 
-  // Active 3:2 full-frame live-view viewport inside 4:3 Quad-XGA OLED
   const vx = 24;
   const vy = 42;
   const vw = w - 48;
   const vh = 394;
 
-  // Vivid DCI-P3 HDR golden-hour alpine twilight sky
   const sky = ctx.createLinearGradient(vx, vy, vx, vy + vh * 0.68);
   sky.addColorStop(0.0, '#0a1d4e');
   sky.addColorStop(0.32, '#1d4ed8');
@@ -777,7 +819,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.fillStyle = sky;
   ctx.fillRect(vx, vy, vw, vh * 0.68);
 
-  // 4,000-nit specular HDR sun bloom
   const sunX = vx + vw * 0.62;
   const sunY = vy + vh * 0.44;
   const sunGlow = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 130);
@@ -788,7 +829,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.fillStyle = sunGlow;
   ctx.fillRect(vx, vy, vw, vh * 0.72);
 
-  // Mirror lake reflection (bottom 32%)
   const lakeY = vy + vh * 0.68;
   const lakeH = vh * 0.32;
   const lake = ctx.createLinearGradient(vx, lakeY, vx, lakeY + lakeH);
@@ -798,7 +838,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.fillStyle = lake;
   ctx.fillRect(vx, lakeY, vw, lakeH);
 
-  // Crisp layered alpine mountain silhouettes
   ctx.fillStyle = '#1e1b4b';
   ctx.beginPath();
   ctx.moveTo(vx, lakeY);
@@ -813,7 +852,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.closePath();
   ctx.fill();
 
-  // Foreground dark ridge silhouette
   ctx.fillStyle = '#0b1020';
   ctx.beginPath();
   ctx.moveTo(vx, lakeY);
@@ -826,7 +864,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.closePath();
   ctx.fill();
 
-  // Horizontal golden specular water shimmer streaks
   ctx.fillStyle = 'rgba(254, 240, 138, 0.42)';
   for (let i = 0; i < 9; i++) {
     const wy = lakeY + 8 + i * 11;
@@ -834,24 +871,19 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
     ctx.fillRect(sunX - ww * 0.5 + Math.sin(i * 1.9) * 8, wy, ww, 2.5);
   }
 
-  // Subtle rule-of-thirds composition hairlines (pure geometry, zero text)
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
   ctx.lineWidth = 1;
+  ctx.beginPath();
   for (let i = 1; i <= 2; i++) {
     const gx = vx + (vw / 3) * i;
-    ctx.beginPath();
     ctx.moveTo(gx, vy);
     ctx.lineTo(gx, vy + vh);
-    ctx.stroke();
-
     const gy = vy + (vh / 3) * i;
-    ctx.beginPath();
     ctx.moveTo(vx, gy);
     ctx.lineTo(vx + vw, gy);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Crisp white 4-corner frame crop brackets
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
   ctx.lineWidth = 2.4;
   const br = 20;
@@ -861,15 +893,14 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
     [vx + 10, vy + vh - 10, 1, -1],
     [vx + vw - 10, vy + vh - 10, -1, -1],
   ];
+  ctx.beginPath();
   for (const [cx, cy, dx, dy] of corners) {
-    ctx.beginPath();
     ctx.moveTo(cx, cy + dy * br);
     ctx.lineTo(cx, cy);
     ctx.lineTo(cx + dx * br, cy);
-    ctx.stroke();
   }
+  ctx.stroke();
 
-  // Electronic Horizon Level Indicator (center pitch bar — zero numbers)
   const midX = vx + vw * 0.5;
   const midY = vy + vh * 0.5;
   ctx.strokeStyle = '#34d399';
@@ -881,7 +912,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.lineTo(midX + 52, midY);
   ctx.stroke();
 
-  // Glowing Cyan-Emerald Eye-Control AF Gaze Reticle locked onto main peak
   const afX = vx + vw * 0.46;
   const afY = vy + vh * 0.36;
   ctx.strokeStyle = '#38bdf8';
@@ -897,7 +927,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.arc(afX, afY, 3.5, 0, Math.PI * 2);
   ctx.fill();
 
-  // Pure-graphical live-view luminance histogram curve in bottom-right black bar (ZERO text/digits)
   const hx = vx + vw - 110;
   const hy = h - 34;
   ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
@@ -916,7 +945,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.closePath();
   ctx.fill();
 
-  // Pure-graphical exposure meter tick dots in bottom-center black bar (ZERO numbers)
   for (let i = -4; i <= 4; i++) {
     ctx.fillStyle = i === 0 ? '#34d399' : 'rgba(226, 232, 240, 0.55)';
     const r = i === 0 ? 3.5 : 2.0;
@@ -925,7 +953,6 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
     ctx.fill();
   }
 
-  // Subtle RGB Micro-OLED subpixel stripe grid shimmer
   ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
   for (let x = vx; x < vx + vw; x += 8) {
     ctx.fillRect(x, vy, 1.5, vh);
@@ -935,25 +962,21 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   }
 
   const tex = new THREE.CanvasTexture(c);
+  tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = GPU_PROFILE.maxAnisotropy;
   return tex;
 }
 
 /**
- * Procedural fine pebble-grain elastomer camera grip leatherette texture (batched Canvas2D paths).
+ * Procedural fine pebble-grain elastomer camera grip leatherette texture (direct 128x128 tile).
  */
 function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.CanvasTexture } {
-  const s = 128;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  const { canvas: c, ctx, w: s } = createScaledCanvas(128, 128, 1.0, true);
 
   ctx.fillStyle = '#1b1d22';
   ctx.fillRect(0, 0, s, s);
 
-  // Batch 3 shade buckets instead of 950 individual fill() calls!
   let seed = 4219;
   const rand = () => {
     seed = (seed * 16807) % 2147483647;
@@ -974,6 +997,7 @@ function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.
   }
 
   const map = new THREE.CanvasTexture(c);
+  map.flipY = false;
   map.colorSpace = THREE.SRGBColorSpace;
   map.wrapS = THREE.RepeatWrapping;
   map.wrapT = THREE.RepeatWrapping;
@@ -985,7 +1009,7 @@ function createLeatheretteTexture(): { map: THREE.CanvasTexture; bumpMap: THREE.
  * Procedural monochrome top-deck sub-status OLED texture.
  */
 function createTopStatusOledTexture(): THREE.CanvasTexture {
-  const { canvas: c, ctx, w, h } = createScaledCanvas(256, 160, 0.75);
+  const { canvas: c, ctx, w, h } = createScaledCanvas(256, 160, 0.75, true);
 
   ctx.fillStyle = '#070a10';
   ctx.fillRect(0, 0, w, h);
@@ -1032,87 +1056,108 @@ function createTopStatusOledTexture(): THREE.CanvasTexture {
   ctx.fill();
 
   const tex = new THREE.CanvasTexture(c);
+  tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
-/** Lightweight zero-canvas sentinel tag for CNC brushed steel micro-bump (rendered via GPU uDualBumpTex channel 1) */
+/** Lightweight zero-canvas sentinel tag for CNC brushed steel micro-bump */
 function createCncBrushedMetalTexture(): THREE.Texture {
   const tex = new THREE.Texture();
   tex.name = 'cnc-brushed-bump-sentinel';
   return tex;
 }
 
-/** Lightweight zero-canvas sentinel tag for bead-blasted AZ91D magnesium grain bump (rendered via GPU uDualBumpTex channel 2) */
+/** Lightweight zero-canvas sentinel tag for bead-blasted AZ91D magnesium grain bump */
 function createMagnesiumGrainTexture(): THREE.Texture {
   const tex = new THREE.Texture();
   tex.name = 'mg-grain-bump-sentinel';
   return tex;
 }
 
-/** Procedural 200um-pitch SmFeN multi-pole Vernier magnetic scale bar texture */
-function createMagneticScaleTexture(): THREE.CanvasTexture {
-  const { canvas: c, ctx, w, h } = createScaledCanvas(128, 512, 0.5);
-  ctx.fillStyle = '#1e2430';
-  ctx.fillRect(0, 0, w, h);
-  for (let y = 0; y < h; y += 8) {
-    ctx.fillStyle = (y / 8) % 2 === 0 ? '#475569' : '#0f172a';
-    ctx.fillRect(10, y, w - 20, 4);
-    ctx.fillStyle = (y / 8) % 2 === 0 ? '#38bdf8' : '#f59e0b';
-    ctx.fillRect(10, y + 4, 18, 2);
+/** OMEGA-14: Zero-DOM 128x128 200um-pitch SmFeN multi-pole Vernier magnetic scale DataTexture */
+function createMagneticScaleTexture(): THREE.DataTexture {
+  const s = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(s * s * 4);
+  for (let y = 0; y < s; y++) {
+    const row = y * s * 4;
+    const band = Math.floor(y / 4);
+    const even = (band & 1) === 0;
+    const subY = y & 3;
+    for (let x = 0; x < s; x++) {
+      let r = 30, g = 36, b = 48;
+      if (x <= 2 || x >= s - 3 || y <= 1 || y >= s - 2) {
+        r = 148; g = 163; b = 184;
+      } else if (x >= 10 && x < s - 10) {
+        if (subY < 2) {
+          if (even) { r = 71; g = 85; b = 105; }
+          else { r = 15; g = 23; b = 42; }
+        } else if (subY === 2 && x < 28) {
+          if (even) { r = 56; g = 189; b = 248; }
+          else { r = 245; g = 158; b = 11; }
+        }
+      }
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
+    }
   }
-  ctx.strokeStyle = '#94a3b8';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(2, 2, w - 4, h - 4);
-  const tex = new THREE.CanvasTexture(c);
+  const tex = new THREE.DataTexture(data, s, s, THREE.RGBAFormat);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(1, 3);
+  tex.needsUpdate = true;
   return tex;
 }
 
-/** Procedural crossed polarizer + RGB wide-gamut color-filter optical micro-lattice */
-function createPolarizerLatticeTexture(): THREE.CanvasTexture {
-  const s = 128;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  ctx.fillStyle = '#101828';
-  ctx.fillRect(0, 0, s, s);
-  const colors = ['rgba(239,68,68,0.42)', 'rgba(34,197,94,0.42)', 'rgba(59,130,246,0.42)'];
-  for (let x = 0; x < s; x += 6) {
-    ctx.fillStyle = colors[(x / 6) % 3];
-    ctx.fillRect(x, 0, 4, s);
+/** OMEGA-14: Zero-DOM 128x128 crossed polarizer + RGB wide-gamut optical micro-lattice DataTexture */
+function createPolarizerLatticeTexture(): THREE.DataTexture {
+  const s = NATIVE_TILE_TEX_SIZE;
+  const data = new Uint8Array(s * s * 4);
+  const rgbCols = [
+    [106, 43, 52],
+    [24, 97, 63],
+    [34, 68, 127],
+  ];
+  for (let y = 0; y < s; y++) {
+    const row = y * s * 4;
+    for (let x = 0; x < s; x++) {
+      let r = 16, g = 24, b = 40;
+      const m6 = x % 6;
+      if (m6 < 4) {
+        const c = rgbCols[Math.floor(x / 6) % 3];
+        r = c[0]; g = c[1]; b = c[2];
+      }
+      if (((x - y + 256) % 12) === 0) {
+        r = Math.min(255, r + 28);
+        g = Math.min(255, g + 28);
+        b = Math.min(255, b + 28);
+      }
+      const o = row + x * 4;
+      data[o] = r;
+      data[o + 1] = g;
+      data[o + 2] = b;
+      data[o + 3] = 255;
+    }
   }
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (let i = -s; i < s * 2; i += 12) {
-    ctx.moveTo(i, 0);
-    ctx.lineTo(i + s, s);
-  }
-  ctx.stroke();
-  const tex = new THREE.CanvasTexture(c);
+  const tex = new THREE.DataTexture(data, s, s, THREE.RGBAFormat);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(4, 3);
+  tex.needsUpdate = true;
   return tex;
 }
 
 /** Procedural hexagonal On-Chip Micro-Lens Array (MLA) light-extraction optical cap texture */
 function createHexMlaTexture(): THREE.CanvasTexture {
-  const s = 128;
-  const c = document.createElement('canvas');
-  c.width = s;
-  c.height = s;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  const { canvas: c, ctx, w: s } = createScaledCanvas(128, 128, 1.0, true);
   ctx.fillStyle = '#e0f2fe';
   ctx.fillRect(0, 0, s, s);
   const step = 16;
-  // Batched 2-pass concentric circles (replaces 324 radial gradients!)
   ctx.fillStyle = '#38bdf8';
   ctx.beginPath();
   for (let r = 0; r < s / step + 2; r++) {
@@ -1136,6 +1181,7 @@ function createHexMlaTexture(): THREE.CanvasTexture {
   }
   ctx.fill();
   const tex = new THREE.CanvasTexture(c);
+  tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
@@ -1179,6 +1225,7 @@ function createTsvDramTexture(): THREE.CanvasTexture {
   }
   ctx.fill();
   const tex = new THREE.CanvasTexture(c);
+  tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = GPU_PROFILE.maxAnisotropy;
   return tex;

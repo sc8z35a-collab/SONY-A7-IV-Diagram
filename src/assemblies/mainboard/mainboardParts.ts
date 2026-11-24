@@ -10,9 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MAINBOARD_EXPLANATIONS } from './mainboardExplanations';
-import { buildMainboardMicroParts } from './mainboardMicroParts';
-import { buildMainboardUltraAuditParts } from './mainboardUltraAuditParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 export interface MainboardDynamicRig {
   npuSystolicGlow: THREE.Mesh;
@@ -81,7 +79,7 @@ function finalizeMainboardPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MAINBOARD_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -92,7 +90,7 @@ function finalizeMainboardPart(
  */
 export function buildMainboardParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: MainboardDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2028,10 +2026,6 @@ export function buildMainboardParts(
     ledMat.opacity = 0.35 + 0.65 * Math.abs(Math.sin(elapsed * 11.0));
   };
 
-  if (includeStandalone) {
-    parts.push(...buildMainboardStandaloneParts(mats));
-  }
-
   return {
     parts,
     rig: {
@@ -2043,7 +2037,11 @@ export function buildMainboardParts(
   };
 }
 
-export function buildMainboardStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildMainboardStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 16A (24) + Phase 19D (6) = 30 standalone-only vapor chamber & mainboard micro-parts (M31–M60)
-  return [...buildMainboardMicroParts(mats), ...buildMainboardUltraAuditParts(mats)];
+  const [mMicro, mUltra] = await Promise.all([
+    import('./mainboardMicroParts'),
+    import('./mainboardUltraAuditParts'),
+  ]);
+  return [...mMicro.buildMainboardMicroParts(mats), ...mUltra.buildMainboardUltraAuditParts(mats)];
 }

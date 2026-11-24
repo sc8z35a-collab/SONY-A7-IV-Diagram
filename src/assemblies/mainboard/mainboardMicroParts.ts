@@ -10,7 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MAINBOARD_MICRO_EXPLANATIONS } from './mainboardMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneMainboardMicroPart(
   id: string,
@@ -37,7 +37,7 @@ function finalizeStandaloneMainboardMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MAINBOARD_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }
