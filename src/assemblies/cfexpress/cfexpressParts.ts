@@ -9,6 +9,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import { CFEXPRESS_EXPLANATIONS } from './cfexpressExplanations';
+import { buildCfexpressUltra27Parts } from './cfexpressUltra27Parts';
 
 function finalizeCfexpressPart(
   id: string,
@@ -892,5 +893,6 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
     );
   }
 
+  parts.push(...buildCfexpressUltra27Parts(mats));
   return parts;
 }
