@@ -10,7 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MAINBOARD_ULTRA_AUDIT_EXPLANATIONS } from './mainboardUltraAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function createRingShape(outerR: number, innerR: number): THREE.Shape {
   const s = new THREE.Shape();
@@ -46,7 +46,7 @@ function finalizeMainboardAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MAINBOARD_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

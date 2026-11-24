@@ -24,8 +24,7 @@ precision highp int;
 uniform mat4 uViewProj;
 uniform sampler2D uPartStateTex;
 
-in vec3 position;
-in vec2 aPartMat;
+in vec4 aPosSlot;
 
 flat out float vSlot;
 
@@ -35,7 +34,8 @@ vec3 rotQ(vec3 v, vec4 q) {
 }
 
 void main() {
-  int slot = int(aPartMat.x + 0.5);
+  vec3 position = aPosSlot.xyz * 0.015625;
+  int slot = int(aPosSlot.w + 0.5);
   vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
   if (posVis.w < 0.5) {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);

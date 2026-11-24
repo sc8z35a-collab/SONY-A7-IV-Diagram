@@ -160,6 +160,11 @@ export function createLcdPhysicsOverlay(
   const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 60);
   explodeGuides.add(radialGuides.group);
 
+  let cachedPartsLen = -1;
+  let pGlass: CadPart | undefined;
+  let pBl: CadPart | undefined;
+  let pCradle: CadPart | undefined;
+
   return {
     overlayGroup,
     explodeGuides,
@@ -169,11 +174,14 @@ export function createLcdPhysicsOverlay(
     update: (elapsed, active, parts, _integrated) => {
       if (!active || !overlayGroup.visible) return;
 
-      const pGlass = parts.find((p) => p.id === 'lcd-rear-bezel-glass');
-      const pBl =
-        parts.find((p) => p.id === 'lcd-lgp-led-bar') ??
-        parts.find((p) => p.id === 'lcd-backlight-stack');
-      const pCradle = parts.find((p) => p.id === 'lcd-4axis-tilt-frame');
+      if (cachedPartsLen !== parts.length) {
+        cachedPartsLen = parts.length;
+        pGlass = parts.find((p) => p.id === 'lcd-rear-bezel-glass');
+        pBl =
+          parts.find((p) => p.id === 'lcd-lgp-led-bar') ??
+          parts.find((p) => p.id === 'lcd-backlight-stack');
+        pCradle = parts.find((p) => p.id === 'lcd-4axis-tilt-frame');
+      }
 
       const zBl = pBl ? pBl.group.position.z : -32.45;
       const zGlass = pGlass ? pGlass.group.position.z : -35.8;

@@ -12,11 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_EXPLANATIONS } from './bodyExplanations';
-import { buildBodyMicroParts } from './bodyMicroParts';
-import { buildBodyUltraAuditParts } from './bodyUltraAuditParts';
-import { buildBodyNextGenParts } from './bodyNextGenParts';
-import { buildBodyUltra25Parts } from './bodyUltra25Parts';
+import { lazyExplanationStub } from '../lazyExplanations';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from '../lcd/lcdParts';
 import { EVF_OPTICAL_Y } from '../evf/evfParts';
 
@@ -54,7 +50,7 @@ function finalizeBodyPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -101,7 +97,7 @@ function createKnurledDial(
  */
 export function buildBodyParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: BodyDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2789,19 +2785,21 @@ export function buildBodyParts(
     },
   };
 
-  if (includeStandalone) {
-    parts.push(...buildBodyStandaloneParts(mats));
-  }
-
   return { parts, rig };
 }
 
-export function buildBodyStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildBodyStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 13 (22) + Phase 16C (16) + Phase 24 (25) + Phase 25B (15) = 78 standalone-only camera body parts (B39–B116 -> 116 total)
+  const [mMicro, mUltra, mNextGen, mUltra25] = await Promise.all([
+    import('./bodyMicroParts'),
+    import('./bodyUltraAuditParts'),
+    import('./bodyNextGenParts'),
+    import('./bodyUltra25Parts'),
+  ]);
   return [
-    ...buildBodyMicroParts(mats),
-    ...buildBodyUltraAuditParts(mats),
-    ...buildBodyNextGenParts(mats),
-    ...buildBodyUltra25Parts(mats),
+    ...mMicro.buildBodyMicroParts(mats),
+    ...mUltra.buildBodyUltraAuditParts(mats),
+    ...mNextGen.buildBodyNextGenParts(mats),
+    ...mUltra25.buildBodyUltra25Parts(mats),
   ];
 }

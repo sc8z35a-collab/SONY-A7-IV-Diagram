@@ -12,8 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { EVF_EXPLANATIONS } from './evfExplanations';
-import { buildEvfMicroParts } from './evfMicroParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 /** Shared EVF optical axis vertical elevation (sits cleanly atop Shutter/Sensor/Mainboard) */
 export const EVF_OPTICAL_Y = 39.5;
@@ -53,7 +52,7 @@ function finalizeEvfPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: EVF_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -85,7 +84,7 @@ function createLensRetainerCell(
  */
 export function buildEvfParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: EvfDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2024,10 +2023,6 @@ export function buildEvfParts(
     });
   };
 
-  if (includeStandalone) {
-    parts.push(...buildEvfStandaloneParts(mats));
-  }
-
   return {
     parts,
     rig: {
@@ -2041,7 +2036,8 @@ export function buildEvfParts(
   };
 }
 
-export function buildEvfStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 16B: 24 standalone-only EVF & viewfinder surroundings micro-parts (E32–E55)
-  return buildEvfMicroParts(mats);
+  const mMicro = await import('./evfMicroParts');
+  return mMicro.buildEvfMicroParts(mats);
 }

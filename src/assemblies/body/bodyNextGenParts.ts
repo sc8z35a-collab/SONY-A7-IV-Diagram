@@ -10,7 +10,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_NEXTGEN_EXPLANATIONS } from './bodyNextGenExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeBodyNextGenPart(
   id: string,
@@ -37,7 +37,7 @@ function finalizeBodyNextGenPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_NEXTGEN_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

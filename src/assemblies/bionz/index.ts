@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildBionzParts } from './bionzParts';
 import { createBionzPhysicsOverlay } from './bionzPhysicsOverlay';
 
 /**
@@ -22,9 +21,10 @@ export function createBionzAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 36,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
+      const { buildBionzParts } = await import('./bionzParts');
       controller.deferredStandaloneCount = 0;
       const built = buildBionzParts(mats);
       for (const p of built) {

@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildBatteryParts } from './batteryParts';
 import { createBatteryPhysicsOverlay } from './batteryPhysicsOverlay';
 
 /**
@@ -22,11 +21,12 @@ export function createBatteryAssembly(mats: MaterialLibrary): AssemblyController
     rootGroup,
     parts,
     deferredStandaloneCount: 60,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
+      const { buildBatteryParts } = await import('./batteryParts');
       controller.deferredStandaloneCount = 0;
-      const built = buildBatteryParts(mats);
+      const built = await buildBatteryParts(mats);
       for (const p of built) {
         parts.push(p);
         rootGroup.add(p.group);

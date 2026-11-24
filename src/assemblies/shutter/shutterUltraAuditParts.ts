@@ -9,7 +9,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { SHUTTER_ULTRA_AUDIT_EXPLANATIONS } from './shutterUltraAuditExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneShutterAuditPart(
   id: string,
@@ -36,7 +36,7 @@ function finalizeStandaloneShutterAuditPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SHUTTER_ULTRA_AUDIT_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

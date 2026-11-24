@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BIONZ_EXPLANATIONS } from './bionzExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeBionzPart(
   id: string,
@@ -34,7 +34,7 @@ function finalizeBionzPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BIONZ_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BATTERY_ULTRA27_EXPLANATIONS } from './batteryUltra27Explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeBatteryUltra27Part(
   id: string,
@@ -35,7 +35,7 @@ function finalizeBatteryUltra27Part(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BATTERY_ULTRA27_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { SENSOR_NEXTGEN_EXPLANATIONS } from './sensorNextGenExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeSensorNextGenPart(
   id: string,
@@ -34,7 +34,7 @@ function finalizeSensorNextGenPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SENSOR_NEXTGEN_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     ibisMovable: options?.ibisMovable ?? false,
     ultrasonicElement: options?.ultrasonicElement ?? false,
     standaloneOnly: true,

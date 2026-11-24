@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MISHOE_EXPLANATIONS } from './miShoeExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeMiPart(
   id: string,
@@ -34,7 +34,7 @@ function finalizeMiPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MISHOE_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

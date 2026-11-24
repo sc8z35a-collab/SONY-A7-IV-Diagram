@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MIC_EXPLANATIONS } from './micExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeMicPart(
   id: string,
@@ -34,7 +34,7 @@ function finalizeMicPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MIC_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

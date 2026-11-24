@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildMiShoeParts } from './miShoeParts';
 import { createMiShoePhysicsOverlay } from './miShoePhysicsOverlay';
 
 /**
@@ -22,9 +21,10 @@ export function createMiShoeAssembly(mats: MaterialLibrary): AssemblyController 
     rootGroup,
     parts,
     deferredStandaloneCount: 32,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
+      const { buildMiShoeParts } = await import('./miShoeParts');
       controller.deferredStandaloneCount = 0;
       const built = buildMiShoeParts(mats);
       for (const p of built) {

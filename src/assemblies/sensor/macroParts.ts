@@ -12,10 +12,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MACRO_EXPLANATIONS } from './explanations';
-import { buildSensorMicroParts } from './sensorMicroParts';
-import { buildSensorUltraAuditParts } from './sensorMicroUltraAuditParts';
-import { buildSensorNextGenParts } from './sensorNextGenParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizePart(
   id: string,
@@ -48,7 +45,7 @@ function finalizePart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MACRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     ibisMovable: options?.ibisMovable,
     ultrasonicElement: options?.ultrasonicElement,
   };
@@ -84,7 +81,7 @@ function finalizePart(
  *  - S25: Σ-Folded Pyrolytic Graphite Sheet (PGS) Flexible Thermal Bridge
  *  - S26: Rear Pure-Copper Micro-Fin Heatsink & Graphite Spreading Plate (NEW!)
  */
-export function buildMacroSensorParts(mats: MaterialLibrary, includeStandalone = true): CadPart[] {
+export function buildMacroSensorParts(mats: MaterialLibrary, _includeStandalone = true): CadPart[] {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
   const dummy = new THREE.Object3D();
@@ -2148,18 +2145,19 @@ export function buildMacroSensorParts(mats: MaterialLibrary, includeStandalone =
     );
   }
 
-  if (includeStandalone) {
-    parts.push(...buildSensorStandaloneParts(mats));
-  }
-
   return parts;
 }
 
-export function buildSensorStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildSensorStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 14 (24 OEM) + Phase 19C (6 deep-audit) + Phase 25A (20 next-gen) = 50 standalone-only sensor/IBIS parts (S41–S90 -> 90 total)
+  const [mMicro, mUltra, mNextGen] = await Promise.all([
+    import('./sensorMicroParts'),
+    import('./sensorMicroUltraAuditParts'),
+    import('./sensorNextGenParts'),
+  ]);
   return [
-    ...buildSensorMicroParts(mats),
-    ...buildSensorUltraAuditParts(mats),
-    ...buildSensorNextGenParts(mats),
+    ...mMicro.buildSensorMicroParts(mats),
+    ...mUltra.buildSensorUltraAuditParts(mats),
+    ...mNextGen.buildSensorNextGenParts(mats),
   ];
 }

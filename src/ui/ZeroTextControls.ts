@@ -229,6 +229,8 @@ export class ZeroTextControls {
   private layerEyeMap = new Map<string, { btn: HTMLButtonElement; hidden: boolean }>();
   private renderedPartIds: string[] = [];
   private lastDelegatedHoverId: string | null = null;
+  private prevSelectedRow: HTMLElement | null = null;
+  private prevHoveredRow: HTMLElement | null = null;
 
   private currentMode: ScaleMode = 'integrated';
   private currentLensSection: LensSection = 1;
@@ -677,16 +679,19 @@ export class ZeroTextControls {
 
     if (sameList) {
       let selectedRowEl: HTMLElement | null = null;
+      let hoveredRowEl: HTMLElement | null = null;
       for (let i = 0; i < parts.length; i++) {
         const id = parts[i].id;
         const row = this.layerRowMap.get(id);
         if (!row) continue;
         const hidden = isHidden(id);
         const isSel = id === selectedId;
+        const isHov = id === hoveredId;
         row.classList.toggle('is-selected', isSel);
-        row.classList.toggle('is-hovered', id === hoveredId);
+        row.classList.toggle('is-hovered', isHov);
         row.classList.toggle('is-hidden', hidden);
         if (isSel) selectedRowEl = row;
+        if (isHov) hoveredRowEl = row;
 
         const eye = this.layerEyeMap.get(id);
         if (eye && eye.hidden !== hidden) {
@@ -694,6 +699,8 @@ export class ZeroTextControls {
           eye.btn.replaceChildren(svgIcon(hidden ? ICONS.eyeClosed : ICONS.eyeAll));
         }
       }
+      this.prevSelectedRow = selectedRowEl;
+      this.prevHoveredRow = hoveredRowEl;
       if (selectedRowEl) {
         selectedRowEl.scrollIntoView({ block: 'nearest' });
       }
@@ -702,12 +709,15 @@ export class ZeroTextControls {
 
     this.layerRowMap.clear();
     this.layerEyeMap.clear();
+    this.prevSelectedRow = null;
+    this.prevHoveredRow = null;
     this.renderedPartIds = parts.map((p) => p.id);
     const frag = document.createDocumentFragment();
 
     let prevSubsystem: CadPart['subsystem'] | null = null;
     let prevStandaloneOnly = false;
     let selectedRowEl: HTMLElement | null = null;
+    let hoveredRowEl: HTMLElement | null = null;
 
     parts.forEach((part) => {
       const isStandaloneOnly = Boolean(part.standaloneOnly);
@@ -730,7 +740,10 @@ export class ZeroTextControls {
         row.classList.add('is-selected');
         selectedRowEl = row;
       }
-      if (part.id === hoveredId) row.classList.add('is-hovered');
+      if (part.id === hoveredId) {
+        row.classList.add('is-hovered');
+        hoveredRowEl = row;
+      }
       if (hidden) row.classList.add('is-hidden');
 
       const swatch = document.createElement('span');
@@ -1386,6 +1399,8 @@ export class ZeroTextControls {
     });
 
     this.layerRail.replaceChildren(frag);
+    this.prevSelectedRow = selectedRowEl;
+    this.prevHoveredRow = hoveredRowEl;
 
     if (selectedRowEl) {
       (selectedRowEl as HTMLElement).scrollIntoView({ block: 'nearest' });
@@ -1393,9 +1408,18 @@ export class ZeroTextControls {
   }
 
   public syncHighlight(selectedId: string | null, hoveredId: string | null): void {
-    this.layerRowMap.forEach((row, id) => {
-      row.classList.toggle('is-selected', id === selectedId);
-      row.classList.toggle('is-hovered', id === hoveredId);
-    });
+    const nextSel = selectedId ? (this.layerRowMap.get(selectedId) ?? null) : null;
+    if (this.prevSelectedRow !== nextSel) {
+      if (this.prevSelectedRow) this.prevSelectedRow.classList.remove('is-selected');
+      if (nextSel) nextSel.classList.add('is-selected');
+      this.prevSelectedRow = nextSel;
+    }
+
+    const nextHov = hoveredId ? (this.layerRowMap.get(hoveredId) ?? null) : null;
+    if (this.prevHoveredRow !== nextHov) {
+      if (this.prevHoveredRow) this.prevHoveredRow.classList.remove('is-hovered');
+      if (nextHov) nextHov.classList.add('is-hovered');
+      this.prevHoveredRow = nextHov;
+    }
   }
 }

@@ -101,7 +101,7 @@ export function createLensPhysicsOverlay(
   overlayGroup.add(focalPlaneGroup);
 
   // Translucent 3D Converging Aperture Light Cone (Rear XA at +Z -> Focal Spot on Sensor at -Z)
-  const lightConeGeo = new THREE.CylinderGeometry(1.0, 0.04, 1.0, 28, 1, true);
+  const lightConeGeo = new THREE.CylinderGeometry(1.0, 0.04, 1.0, 16, 1, true);
   lightConeGeo.rotateX(Math.PI / 2);
   const lightConeMat = new THREE.MeshBasicMaterial({
     color: 0x38bdf8,
@@ -138,7 +138,7 @@ export function createLensPhysicsOverlay(
   }
 
   const beads: PhotonBead[] = [];
-  const beadGeo = new THREE.SphereGeometry(0.88, 10, 10);
+  const beadGeo = new THREE.SphereGeometry(0.88, 8, 6);
   for (let r = 0; r < MAX_3D_RAYS; r++) {
     for (let k = 0; k < 2; k++) {
       const mesh = new THREE.Mesh(
@@ -166,9 +166,9 @@ export function createLensPhysicsOverlay(
   const thrustPulses: THREE.Mesh[] = [];
   const fluxRings: THREE.Mesh[] = [];
   const motorAnglesDeg = [45, 135, 225, 315];
-  const thrustGeo = new THREE.ConeGeometry(1.65, 5.4, 12);
+  const thrustGeo = new THREE.ConeGeometry(1.65, 5.4, 6);
   thrustGeo.rotateX(Math.PI / 2);
-  const fluxRingGeo = new THREE.TorusGeometry(3.2, 0.34, 8, 20);
+  const fluxRingGeo = new THREE.TorusGeometry(3.2, 0.34, 4, 12);
 
   for (let i = 0; i < 4; i++) {
     const col = i % 2 === 0 ? 0xf59e0b : 0x10b981;
@@ -228,25 +228,29 @@ export function createLensPhysicsOverlay(
   explodeGuides.add(radialGuides.group);
 
   const tmpPos = new THREE.Vector3();
+  const zStopsCount = OPTICAL_ELEMENTS.length + 2;
+  const zStopsRest = new Float64Array(zStopsCount);
+  const zStopsLive = new Float64Array(zStopsCount);
+  const partById = new Map<string, CadPart>();
+  let cachedPartsLen = -1;
 
-  // Helper: map a 2D Snell-traced ray point (z, y) cleanly into current exploded 3D Z coordinate!
   const mapExplodedZ = (
     zRest: number,
-    zStopsRest: number[],
-    zStopsLive: number[]
+    stopsRest: Float64Array,
+    stopsLive: Float64Array
   ): number => {
-    if (zRest >= zStopsRest[0]) {
-      return zStopsLive[0] + (zRest - zStopsRest[0]);
+    if (zRest >= stopsRest[0]) {
+      return stopsLive[0] + (zRest - stopsRest[0]);
     }
-    const last = zStopsRest.length - 1;
-    if (zRest <= zStopsRest[last]) {
-      return zStopsLive[last] + (zRest - zStopsRest[last]);
+    const last = zStopsCount - 1;
+    if (zRest <= stopsRest[last]) {
+      return stopsLive[last] + (zRest - stopsRest[last]);
     }
     for (let k = 0; k < last; k++) {
-      if (zRest <= zStopsRest[k] && zRest >= zStopsRest[k + 1]) {
-        const span = zStopsRest[k] - zStopsRest[k + 1];
-        const frac = span > 1e-4 ? (zStopsRest[k] - zRest) / span : 0;
-        return THREE.MathUtils.lerp(zStopsLive[k], zStopsLive[k + 1], frac);
+      if (zRest <= stopsRest[k] && zRest >= stopsRest[k + 1]) {
+        const span = stopsRest[k] - stopsRest[k + 1];
+        const frac = span > 1e-4 ? (stopsRest[k] - zRest) / span : 0;
+        return stopsLive[k] + (stopsLive[k + 1] - stopsLive[k]) * frac;
       }
     }
     return zRest;
@@ -261,44 +265,51 @@ export function createLensPhysicsOverlay(
     update: (elapsed, active, parts, integrated, sim) => {
       if (!active || !overlayGroup.visible) return;
 
-      const partById = new Map<string, CadPart>();
-      for (const p of parts) partById.set(p.id, p);
+      if (cachedPartsLen !== parts.length) {
+        cachedPartsLen = parts.length;
+        partById.clear();
+        for (let i = 0; i < parts.length; i++) partById.set(parts[i].id, parts[i]);
+      }
 
       const pBayonet = partById.get('lens-rear-bayonet');
       const zBayonet = pBayonet ? pBayonet.group.position.z : 33.5;
       const zSensor = integrated ? 0.0 : zBayonet - 33.5;
 
-      // Build live Z anchor stations along the 14 elements + iris + sensor (handles exploded mode cleanly!)
-      const zStopsRest: number[] = [];
-      const zStopsLive: number[] = [];
+      let sCursor = 0;
       for (let i = 0; i < OPTICAL_ELEMENTS.length; i++) {
         if (i === 5) {
-          zStopsRest.push(IRIS_Z);
+          zStopsRest[sCursor] = IRIS_Z;
           const pIris = partById.get('lens-aperture-11');
-          zStopsLive.push(pIris ? pIris.group.position.z : IRIS_Z);
+          zStopsLive[sCursor] = pIris ? pIris.group.position.z : IRIS_Z;
+          sCursor++;
         }
         const el = OPTICAL_ELEMENTS[i];
-        zStopsRest.push(el.z);
+        zStopsRest[sCursor] = el.z;
         const pEl = partById.get(el.partId);
-        zStopsLive.push(pEl ? pEl.group.position.z : el.z);
+        zStopsLive[sCursor] = pEl ? pEl.group.position.z : el.z;
+        sCursor++;
       }
-      zStopsRest.push(SENSOR_Z);
-      zStopsLive.push(zSensor);
+      zStopsRest[sCursor] = SENSOR_Z;
+      zStopsLive[sCursor] = zSensor;
 
       focalPlaneGroup.visible = !integrated;
       focalPlaneGroup.position.set(0, 0, zSensor);
 
-      // Run real Snell-traced ray bundle from LensOpticalSim!
       const traced2D = sim.traceActiveBundle(136);
       const iris = sim.getIrisMetrics();
       const strokes = sim.getFloatingStrokes();
 
-      // Update translucent 3D aperture cone from Rear XA (E14) to Sensor Focal Point
       const pRear = partById.get('lens-rear-element');
       const zRearLive = pRear ? pRear.group.position.z : 41.6;
       const coneLen = Math.max(4, zRearLive - zSensor);
       const coneFrontR = Math.max(2.2, iris.irisRadiusMm * 0.72);
-      const chiefRay = traced2D.find((r) => r.rayRole === 'chief') ?? traced2D[0];
+      let chiefRay = traced2D[0];
+      for (let i = 0; i < traced2D.length; i++) {
+        if (traced2D[i].rayRole === 'chief') {
+          chiefRay = traced2D[i];
+          break;
+        }
+      }
       const sensorSpotY = chiefRay ? chiefRay.ySensor : 0;
       lightConeMesh.visible = true;
       lightConeMesh.position.set(0, sensorSpotY * 0.5, (zRearLive + zSensor) * 0.5);
@@ -312,7 +323,6 @@ export function createLensPhysicsOverlay(
       );
       lightConeMat.opacity = 0.055 + (1 - iris.closure01) * 0.055;
 
-      // Update focal spot / bokeh halo on sensor plane
       const spotScale =
         sim.scenario === 'xa_aspheric' && sim.xaStrength < 0.5
           ? 2.8
@@ -322,11 +332,6 @@ export function createLensPhysicsOverlay(
       focalRingMesh.position.set(0, sensorSpotY, 0.25);
       focalRingMesh.scale.set(spotScale, spotScale, 1);
 
-      // Populate 3D rays:
-      // In standard aperture/floating mode, project 2D rays across 3D azimuthal planes (vertical + horizontal + diagonal)
-      // so the 3D cutaway lens shows a true volumetric converging light cone!
-      // In RGB chromatic / XA / Nano AR modes, project all meridional rays directly in the Y-Z cutaway plane so every
-      // chromatic/aspheric split is crystal clear right through the cutaway!
       const isVolumetricMode =
         sim.scenario === 'aperture_bokeh' || sim.scenario === 'floating_xd';
 
@@ -347,45 +352,54 @@ export function createLensPhysicsOverlay(
         line.visible = opacity > 0.04;
         rayActiveFlags[rayIdx] = line.visible;
 
-        // Resample pts2D cleanly to RAY_SAMPLE_VERTS vertices in-place (zero GC per frame)
         const nSrc = pts2D.length;
         const posAttr = line.geometry.getAttribute('position') as THREE.BufferAttribute;
+        const posArr = posAttr.array as Float32Array;
         for (let v = 0; v < RAY_SAMPLE_VERTS; v++) {
           const u = v / (RAY_SAMPLE_VERTS - 1);
           const fIdx = u * (nSrc - 1);
-          const i0 = Math.min(nSrc - 2, Math.floor(fIdx));
+          const i0 = Math.min(nSrc - 2, fIdx | 0);
           const frac = fIdx - i0;
-          const zr = THREE.MathUtils.lerp(pts2D[i0].z, pts2D[i0 + 1].z, frac);
-          const yr = THREE.MathUtils.lerp(pts2D[i0].y, pts2D[i0 + 1].y, frac);
+          const pA = pts2D[i0];
+          const pB = pts2D[i0 + 1];
+          const zr = pA.z + (pB.z - pA.z) * frac;
+          const yr = pA.y + (pB.y - pA.y) * frac;
           const zLive = mapExplodedZ(zr, zStopsRest, zStopsLive);
           const x3 = yr * rotSin;
           const y3 = yr * rotCos;
           pts3D[v].set(x3, y3, zLive);
-          posAttr.setXYZ(v, x3, y3, zLive);
+          const vo = v * 3;
+          posArr[vo] = x3;
+          posArr[vo + 1] = y3;
+          posArr[vo + 2] = zLive;
         }
         posAttr.needsUpdate = true;
         rayIdx++;
       };
 
       if (isVolumetricMode) {
-        // Vertical Y-Z meridional rays (full bundle)
-        for (const r of traced2D) {
+        let outerBot: (typeof traced2D)[number] | null = null;
+        let outerTop: (typeof traced2D)[number] | null = null;
+        let nonClipCount = 0;
+        for (let i = 0; i < traced2D.length; i++) {
+          const r = traced2D[i];
           if (r.clippedAtIris) continue;
           writePathFrom2D(r.points, 1, 0, r.hexColor, r.opacity);
+          if (r.rayRole !== 'chief') {
+            if (!outerBot) outerBot = r;
+            outerTop = r;
+            nonClipCount++;
+          }
         }
-        // Add horizontal X-Z & diagonal symmetric rays from outer/mid meridional rays for true 3D cone depth!
-        const nonClipped = traced2D.filter((r) => !r.clippedAtIris && r.rayRole !== 'chief');
-        if (nonClipped.length >= 2) {
-          const outerTop = nonClipped[nonClipped.length - 1];
-          const outerBot = nonClipped[0];
+        if (nonClipCount >= 2 && outerTop && outerBot) {
           writePathFrom2D(outerTop.points, 0, 1, 0x0ea5e9, 0.72);
           writePathFrom2D(outerBot.points, 0, 1, 0x0ea5e9, 0.72);
           writePathFrom2D(outerTop.points, 0.707, 0.707, 0x10b981, 0.56);
           writePathFrom2D(outerBot.points, 0.707, 0.707, 0x6366f1, 0.56);
         }
       } else {
-        // High-precision meridional cutaway display (RGB chromatic split / XA caustic / Nano AR ghost rays)
-        for (const r of traced2D) {
+        for (let i = 0; i < traced2D.length; i++) {
+          const r = traced2D[i];
           if (r.clippedAtIris && r.rayRole !== 'stray') continue;
           writePathFrom2D(r.points, 1, 0, r.hexColor, r.opacity);
         }

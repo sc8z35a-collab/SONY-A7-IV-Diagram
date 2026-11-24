@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildMicParts } from './micParts';
 import { createMicPhysicsOverlay } from './micPhysicsOverlay';
 
 /**
@@ -22,9 +21,10 @@ export function createMicAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 32,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
+      const { buildMicParts } = await import('./micParts');
       controller.deferredStandaloneCount = 0;
       const built = buildMicParts(mats);
       for (const p of built) {

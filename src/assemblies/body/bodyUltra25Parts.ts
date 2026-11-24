@@ -11,7 +11,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { BODY_ULTRA25_EXPLANATIONS } from './bodyUltra25Explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeBodyUltra25Part(
   id: string,
@@ -38,7 +38,7 @@ function finalizeBodyUltra25Part(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: BODY_ULTRA25_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

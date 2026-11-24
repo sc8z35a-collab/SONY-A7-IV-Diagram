@@ -9,7 +9,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MOUNT_MICRO_EXPLANATIONS } from './mountMicroExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function createRingShape(outerR: number, innerR: number): THREE.Shape {
   const s = new THREE.Shape();
@@ -58,7 +58,7 @@ function finalizeStandaloneMountMicroPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MOUNT_MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

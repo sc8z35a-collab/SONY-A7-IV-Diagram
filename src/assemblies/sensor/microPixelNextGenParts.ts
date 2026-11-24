@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MICRO_NEXTGEN_EXPLANATIONS } from './microPixelNextGenExplanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeMicroNextGenPart(
   id: string,
@@ -35,7 +35,7 @@ function finalizeMicroNextGenPart(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MICRO_NEXTGEN_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

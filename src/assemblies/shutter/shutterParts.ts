@@ -13,9 +13,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { SHUTTER_EXPLANATIONS } from './shutterExplanations';
-import { buildShutterMicroParts } from './shutterMicroParts';
-import { buildShutterUltraAuditParts } from './shutterUltraAuditParts';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 export interface ShutterDynamicRig {
   curtain1Blades: THREE.Mesh[];
@@ -71,7 +69,7 @@ function finalizeShutterPart(
     integratedExplodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: SHUTTER_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
   };
 }
 
@@ -107,7 +105,7 @@ function finalizeShutterPart(
  */
 export function buildShutterParts(
   mats: MaterialLibrary,
-  includeStandalone = true
+  _includeStandalone = true
 ): { parts: CadPart[]; rig: ShutterDynamicRig } {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
@@ -2021,10 +2019,6 @@ export function buildShutterParts(
   magnet2Glow.userData.dynamicGlow = true;
   xSyncGlow.userData.dynamicGlow = true;
 
-  if (includeStandalone) {
-    parts.push(...buildShutterStandaloneParts(mats));
-  }
-
   return {
     parts,
     rig: {
@@ -2049,7 +2043,11 @@ export function buildShutterParts(
   };
 }
 
-export function buildShutterStandaloneParts(mats: MaterialLibrary): CadPart[] {
+export async function buildShutterStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
   // Phase 13 (18) + Phase 17 (20) = 38 standalone-only mechanical shutter micro-parts (SH40–SH77)
-  return [...buildShutterMicroParts(mats), ...buildShutterUltraAuditParts(mats)];
+  const [mMicro, mUltra] = await Promise.all([
+    import('./shutterMicroParts'),
+    import('./shutterUltraAuditParts'),
+  ]);
+  return [...mMicro.buildShutterMicroParts(mats), ...mUltra.buildShutterUltraAuditParts(mats)];
 }

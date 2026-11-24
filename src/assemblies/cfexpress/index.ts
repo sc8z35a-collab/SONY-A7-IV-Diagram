@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
-import { buildCfexpressParts } from './cfexpressParts';
 import { createCfexpressPhysicsOverlay } from './cfexpressPhysicsOverlay';
 
 /**
@@ -22,11 +21,12 @@ export function createCfexpressAssembly(mats: MaterialLibrary): AssemblyControll
     rootGroup,
     parts,
     deferredStandaloneCount: 60,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
+      const { buildCfexpressParts } = await import('./cfexpressParts');
       controller.deferredStandaloneCount = 0;
-      const built = buildCfexpressParts(mats);
+      const built = await buildCfexpressParts(mats);
       for (const p of built) {
         parts.push(p);
         rootGroup.add(p.group);

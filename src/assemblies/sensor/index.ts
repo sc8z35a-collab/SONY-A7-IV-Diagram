@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { AssemblyController, CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildMacroSensorParts, buildSensorStandaloneParts } from './macroParts';
-import { buildMicroPixelParts } from './microPixelParts';
 import { createPhysicsOverlay } from './physicsOverlay';
 
 /**
@@ -36,11 +35,11 @@ export function createSensorAssemblies(mats: MaterialLibrary): {
     rootGroup: macroGroup,
     parts: macroParts,
     deferredStandaloneCount: 50,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (sensorStandaloneHydrated) return [];
       sensorStandaloneHydrated = true;
+      const extra = await buildSensorStandaloneParts(mats);
       sensor.deferredStandaloneCount = 0;
-      const extra = buildSensorStandaloneParts(mats);
       for (const p of extra) {
         macroParts.push(p);
         macroGroup.add(p.group);
@@ -53,7 +52,7 @@ export function createSensorAssemblies(mats: MaterialLibrary): {
     setPhysicsVisible: (visible: boolean) => {
       overlay.setMacroVisible(visible);
     },
-    updateExplodeGuides: (explodeFactor: number, visible: boolean) => {
+    updateExplodeGuides: (explodeFactor, visible) => {
       overlay.updateMacroGuides(explodeFactor, visible, macroParts);
     },
   };
@@ -62,11 +61,12 @@ export function createSensorAssemblies(mats: MaterialLibrary): {
     rootGroup: microGroup,
     parts: microParts,
     deferredStandaloneCount: 75,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (microHydrated) return [];
       microHydrated = true;
+      const mPix = await import('./microPixelParts');
+      const built = mPix.buildMicroPixelParts(mats);
       micro.deferredStandaloneCount = 0;
-      const built = buildMicroPixelParts(mats);
       for (const p of built) {
         microParts.push(p);
         microGroup.add(p.group);

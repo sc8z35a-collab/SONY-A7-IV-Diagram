@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { attachCadEdges, createFrameShape, extrudeCentered, tagPartMeshes } from '../../engine/CadHelpers';
-import { MICRO_EXPLANATIONS } from './explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeUltraMicroPixelPart(
   id: string,
@@ -28,7 +28,7 @@ function finalizeUltraMicroPixelPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MICRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

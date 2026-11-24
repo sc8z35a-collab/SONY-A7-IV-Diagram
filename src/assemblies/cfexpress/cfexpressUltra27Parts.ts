@@ -8,7 +8,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { CFEXPRESS_ULTRA27_EXPLANATIONS } from './cfexpressUltra27Explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeCfexpressUltra27Part(
   id: string,
@@ -35,7 +35,7 @@ function finalizeCfexpressUltra27Part(
     integratedExplodeOffset: explodeOffset.clone(),
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: CFEXPRESS_ULTRA27_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     standaloneOnly: true,
   };
 }

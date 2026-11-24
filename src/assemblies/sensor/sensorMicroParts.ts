@@ -9,7 +9,7 @@ import {
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
-import { MACRO_EXPLANATIONS } from './explanations';
+import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneSensorMicroPart(
   id: string,
@@ -40,7 +40,7 @@ function finalizeStandaloneSensorMicroPart(
     explodeOffset,
     interactiveMeshes: meshes,
     edgeLines: edges,
-    explanation: MACRO_EXPLANATIONS[id],
+    explanation: lazyExplanationStub(id),
     ibisMovable: options?.ibisMovable ?? false,
     ultrasonicElement: options?.ultrasonicElement ?? false,
     standaloneOnly: true,

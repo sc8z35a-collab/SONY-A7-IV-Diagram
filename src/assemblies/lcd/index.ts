@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { AssemblyController } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildLcdParts } from './lcdParts';
-import { buildLcdMicroParts } from './lcdMicroParts';
 import { createLcdPhysicsOverlay } from './lcdPhysicsOverlay';
 
 /**
@@ -37,11 +36,12 @@ export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
     rootGroup,
     parts,
     deferredStandaloneCount: 24,
-    hydrateStandalone: () => {
+    hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
+      const mLcd = await import('./lcdMicroParts');
+      const lcdMicro = mLcd.buildLcdMicroParts(mats);
       controller.deferredStandaloneCount = 0;
-      const lcdMicro = buildLcdMicroParts(mats);
       for (const p of lcdMicro.parts) {
         parts.push(p);
         rootGroup.add(p.group);
