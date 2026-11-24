@@ -92,6 +92,14 @@ const ICONS = {
   microPixel:
     '<path d="M4 10c0-2.5 2-4 4-4s4 1.5 4 4"/><path d="M12 10c0-2.5 2-4 4-4s4 1.5 4 4"/><rect x="4" y="10" width="16" height="3.5" rx="0.5"/><rect x="4" y="15.5" width="16" height="3.5" rx="0.5"/>',
 
+  // Standalone Battery Pack Ultra-Dissection (NP-FZ100 twin-cell pack + lightning bolt, zero text!)
+  batteryPack:
+    '<rect x="5" y="5.5" width="14" height="15.5" rx="2"/><rect x="8.5" y="2.8" width="7" height="2.7" rx="0.7"/><path d="M13.2 8.8l-3.4 4.7h2.7l-1.5 4.7 3.7-5.4h-2.7z" fill="currentColor" stroke="none"/>',
+
+  // Standalone CFexpress 4.0 Card Ultra-Dissection (Type A card silhouette + pull-tab ridges + PCIe edge pins, zero text!)
+  cfexpressCard:
+    '<path d="M5.5 5.2a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v12.3L16.5 20h-9a2 2 0 0 1-2-2V5.2z"/><line x1="8.2" y1="6.4" x2="15.8" y2="6.4"/><line x1="8.2" y1="8.8" x2="15.8" y2="8.8" opacity="0.55"/><line x1="8.5" y1="15.4" x2="8.5" y2="18.2"/><line x1="11.0" y1="15.4" x2="11.0" y2="18.2"/><line x1="13.5" y1="15.4" x2="13.5" y2="18.2"/><line x1="15.8" y1="15.4" x2="15.8" y2="18.2"/>',
+
   // Assembled compact stack
   assembled:
     '<polygon points="12 5 20 9.5 12 14 4 9.5 12 5"/><polyline points="4 13 12 17.5 20 13"/>',
@@ -177,6 +185,8 @@ export class ZeroTextControls {
   private lcdBtn: HTMLButtonElement;
   private bodyBtn: HTMLButtonElement;
   private microBtn: HTMLButtonElement;
+  private batteryBtn: HTMLButtonElement;
+  private cfexpressBtn: HTMLButtonElement;
 
   private lensSectionBar: HTMLElement;
   private lensSec1Btn: HTMLButtonElement;
@@ -301,9 +311,10 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 11-Mode Architecture Switch
-    // Primary 3 Views: [Complete Camera (138) | Body All Only (98) | Lens Standalone (40)]
-    // Sub-divider -> 8 Drill-down Subsystems: [Mount | Shutter | Sensor | Mainboard | EVF | LCD | Body Shell | Micro]
+    // Group A: 13-Mode Architecture Switch
+    // Primary 3 Views: [Complete Camera | Body All Only | Lens Standalone]
+    // Sub-divider -> 8 Camera Subsystems: [Mount | Shutter | Sensor | Mainboard | EVF | LCD | Body Shell | Micro]
+    // Sub-divider -> 2 Standalone Media/Power Ultra-Dissections: [Battery Pack | CFexpress 4.0 Card]
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
@@ -324,6 +335,17 @@ export class ZeroTextControls {
     this.bodyBtn = createIconButton(ICONS.bodyModule);
     this.microBtn = createIconButton(ICONS.microPixel);
 
+    const mediaPowerSep = document.createElement('div');
+    mediaPowerSep.className = 'cad-sub-divider';
+
+    this.batteryBtn = createIconButton(ICONS.batteryPack);
+    this.batteryBtn.dataset.mode = 'battery';
+    this.batteryBtn.setAttribute('aria-label', 'バッテリーパック超解剖');
+
+    this.cfexpressBtn = createIconButton(ICONS.cfexpressCard);
+    this.cfexpressBtn.dataset.mode = 'cfexpress';
+    this.cfexpressBtn.setAttribute('aria-label', 'CFexpressカード超解剖');
+
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.cameraBodyBtn.addEventListener('click', () => this.setMode('camera_body'));
     this.lensBtn.addEventListener('click', () => this.setMode('lens'));
@@ -335,6 +357,8 @@ export class ZeroTextControls {
     this.lcdBtn.addEventListener('click', () => this.setMode('lcd'));
     this.bodyBtn.addEventListener('click', () => this.setMode('body'));
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
+    this.batteryBtn.addEventListener('click', () => this.setMode('battery'));
+    this.cfexpressBtn.addEventListener('click', () => this.setMode('cfexpress'));
     scaleGroup.append(
       this.integratedBtn,
       this.cameraBodyBtn,
@@ -347,7 +371,10 @@ export class ZeroTextControls {
       this.evfBtn,
       this.lcdBtn,
       this.bodyBtn,
-      this.microBtn
+      this.microBtn,
+      mediaPowerSep,
+      this.batteryBtn,
+      this.cfexpressBtn
     );
 
     // Group B: Exploded View Dissection Slider
@@ -488,6 +515,8 @@ export class ZeroTextControls {
     this.lcdBtn.classList.toggle('is-active', mode === 'lcd');
     this.bodyBtn.classList.toggle('is-active', mode === 'body');
     this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.batteryBtn.classList.toggle('is-active', mode === 'battery');
+    this.cfexpressBtn.classList.toggle('is-active', mode === 'cfexpress');
     this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
   }
 
@@ -802,7 +831,14 @@ export class ZeroTextControls {
           part.order === 93 ||
           part.order === 97 ||
           part.order === 100 ||
-          part.order === 101
+          part.order === 101 ||
+          part.order === 104 ||
+          part.order === 106 ||
+          part.order === 107 ||
+          part.order === 108 ||
+          part.order === 109 ||
+          part.order === 111 ||
+          part.order === 112
             ? 32
             : part.order === 1 ||
                 part.order === 5 ||
@@ -841,7 +877,14 @@ export class ZeroTextControls {
                 part.order === 94 ||
                 part.order === 95 ||
                 part.order === 96 ||
-                part.order === 98
+                part.order === 98 ||
+                part.order === 102 ||
+                part.order === 103 ||
+                part.order === 105 ||
+                part.order === 110 ||
+                part.order === 113 ||
+                part.order === 115 ||
+                part.order === 116
               ? 25
               : part.order >= 39
                 ? 19
@@ -1047,7 +1090,7 @@ export class ZeroTextControls {
           const ratio = (part.order - 1) / 39;
           widthPx = Math.round(14 + Math.sin(ratio * Math.PI * 0.85) * 10 + (part.order >= 18 ? 8 : 0));
         } else {
-          // Phase 14 standalone-only OEM sensor micro-parts (S41–S64)
+          // Phase 14 (S41–S64) + Phase 19C (S65–S70) + Phase 25A (S71–S90) standalone sensor/IBIS parts
           widthPx =
             part.order === 41 ||
             part.order === 47 ||
@@ -1055,7 +1098,15 @@ export class ZeroTextControls {
             part.order === 53 ||
             part.order === 58 ||
             part.order === 60 ||
-            part.order === 64
+            part.order === 64 ||
+            part.order === 71 ||
+            part.order === 72 ||
+            part.order === 73 ||
+            part.order === 75 ||
+            part.order === 76 ||
+            part.order === 83 ||
+            part.order === 86 ||
+            part.order === 88
               ? 30
               : part.order === 43 ||
                   part.order === 44 ||
@@ -1066,10 +1117,73 @@ export class ZeroTextControls {
                   part.order === 54 ||
                   part.order === 55 ||
                   part.order === 56 ||
-                  part.order === 59
+                  part.order === 59 ||
+                  part.order === 74 ||
+                  part.order === 77 ||
+                  part.order === 79 ||
+                  part.order === 81 ||
+                  part.order === 82 ||
+                  part.order === 85 ||
+                  part.order === 87 ||
+                  part.order === 90
                 ? 24
                 : 18;
         }
+      } else if (part.subsystem === 'battery') {
+        widthPx =
+          part.order === 1 ||
+          part.order === 4 ||
+          part.order === 6 ||
+          part.order === 7 ||
+          part.order === 9 ||
+          part.order === 17 ||
+          part.order === 19 ||
+          part.order === 22 ||
+          part.order === 23 ||
+          part.order === 24 ||
+          part.order === 28
+            ? 32
+            : part.order === 2 ||
+                part.order === 8 ||
+                part.order === 11 ||
+                part.order === 12 ||
+                part.order === 13 ||
+                part.order === 14 ||
+                part.order === 20 ||
+                part.order === 21 ||
+                part.order === 25 ||
+                part.order === 29 ||
+                part.order === 30
+              ? 25
+              : 19;
+      } else if (part.subsystem === 'cfexpress') {
+        widthPx =
+          part.order === 1 ||
+          part.order === 3 ||
+          part.order === 5 ||
+          part.order === 7 ||
+          part.order === 8 ||
+          part.order === 10 ||
+          part.order === 12 ||
+          part.order === 14 ||
+          part.order === 15 ||
+          part.order === 16 ||
+          part.order === 25
+            ? 32
+            : part.order === 2 ||
+                part.order === 4 ||
+                part.order === 9 ||
+                part.order === 13 ||
+                part.order === 17 ||
+                part.order === 19 ||
+                part.order === 20 ||
+                part.order === 21 ||
+                part.order === 24 ||
+                part.order === 26 ||
+                part.order === 28 ||
+                part.order === 29
+              ? 25
+              : 19;
       } else {
         // Micro pixel cross-section (15 core M01–M15 + 60 standalone-only ultra-nano M16–M75)
         if (part.order <= 15) {

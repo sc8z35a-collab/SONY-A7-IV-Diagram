@@ -1070,6 +1070,46 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('body-active-cooling-fan-duct', false);
   syncRail();
+} else if (preset === 'phase25_sensor') {
+  viewport.setMode('sensor', true);
+  controls.syncMode('sensor');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('sensor-electronic-vnd', false);
+  syncRail();
+} else if (preset === 'phase25_body') {
+  viewport.setMode('body', true);
+  controls.syncMode('body');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('body-gnss-ceramic-antenna', false);
+  syncRail();
+} else if (preset === 'battery') {
+  viewport.setMode('battery', true);
+  controls.syncMode('battery');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('bat-infolithium-fuelgauge', false);
+  syncRail();
+} else if (preset === 'cfexpress') {
+  viewport.setMode('cfexpress', true);
+  controls.syncMode('cfexpress');
+  viewport.setExplode(0.88, true);
+  controls.setExplodeValue(0.88);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('cfe-pcie4-controller-soc', false);
+  syncRail();
 }
 
 

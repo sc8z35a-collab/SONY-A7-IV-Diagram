@@ -93,7 +93,7 @@ export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOver
     -170
   );
   macroExplodeGuides.add(macroAxial.grp);
-  const macroRadialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 80);
+  const macroRadialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 112);
   macroExplodeGuides.add(macroRadialGuides.group);
 
   const microAxial = buildGuideLines(
