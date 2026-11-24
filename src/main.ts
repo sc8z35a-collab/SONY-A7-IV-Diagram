@@ -1110,7 +1110,86 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cfe-pcie4-controller-soc', false);
   syncRail();
+} else if (preset === 'bionz_assembled') {
+  viewport.setMode('bionz', true);
+  controls.syncMode('bionz');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'bionz_exploded') {
+  viewport.setMode('bionz', true);
+  controls.syncMode('bionz');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'bionz_drawer') {
+  viewport.setMode('bionz', true);
+  controls.syncMode('bionz');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('xr-ai-npu-systolic', false);
+  syncRail();
+} else if (preset === 'mishoe_assembled') {
+  viewport.setMode('mishoe', true);
+  controls.syncMode('mishoe');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mishoe_exploded') {
+  viewport.setMode('mishoe', true);
+  controls.syncMode('mishoe');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mishoe_drawer') {
+  viewport.setMode('mishoe', true);
+  controls.syncMode('mishoe');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mi-pins-8to12-digital-audio', false);
+  syncRail();
+} else if (preset === 'mic_assembled') {
+  viewport.setMode('mic', true);
+  controls.syncMode('mic');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mic_exploded') {
+  viewport.setMode('mic', true);
+  controls.syncMode('mic');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mic_drawer') {
+  viewport.setMode('mic', true);
+  controls.syncMode('mic');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mc-mems-sdm-vacuum-cell', false);
+  syncRail();
 }
+
 
 
 

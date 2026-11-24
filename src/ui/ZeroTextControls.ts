@@ -100,6 +100,18 @@ const ICONS = {
   cfexpressCard:
     '<path d="M5.5 5.2a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v12.3L16.5 20h-9a2 2 0 0 1-2-2V5.2z"/><line x1="8.2" y1="6.4" x2="15.8" y2="6.4"/><line x1="8.2" y1="8.8" x2="15.8" y2="8.8" opacity="0.55"/><line x1="8.5" y1="15.4" x2="8.5" y2="18.2"/><line x1="11.0" y1="15.4" x2="11.0" y2="18.2"/><line x1="13.5" y1="15.4" x2="13.5" y2="18.2"/><line x1="15.8" y1="15.4" x2="15.8" y2="18.2"/>',
 
+  // BIONZ XR / XR2 Package Internal Ultra-Dissection: stacked PoP chip die + BGA ball array (strictly zero text!)
+  bionzModule:
+    '<rect x="5" y="4.5" width="14" height="4" rx="1"/><rect x="3.5" y="10.5" width="17" height="5.5" rx="1.2"/><rect x="8" y="11.8" width="8" height="2.9" rx="0.5"/><line x1="8" y1="8.5" x2="8" y2="10.5"/><line x1="16" y1="8.5" x2="16" y2="10.5"/><circle cx="6.5" cy="18.8" r="1.05" fill="currentColor" stroke="none"/><circle cx="10.2" cy="18.8" r="1.05" fill="currentColor" stroke="none"/><circle cx="13.8" cy="18.8" r="1.05" fill="currentColor" stroke="none"/><circle cx="17.5" cy="18.8" r="1.05" fill="currentColor" stroke="none"/>',
+
+  // Sony Multi Interface (MI) Shoe: ISO-518 U-rail frame + central X-sync pad + hidden 21-pin front row (strictly zero text!)
+  miShoeModule:
+    '<path d="M4 19V7.5h4.5v2.2H6.4v6.8h11.2V9.7h-2.1V7.5H20V19H4z"/><circle cx="12" cy="13.4" r="2.1"/><circle cx="8" cy="5.2" r="0.85" fill="currentColor" stroke="none"/><circle cx="10.6" cy="5.2" r="0.85" fill="currentColor" stroke="none"/><circle cx="13.4" cy="5.2" r="0.85" fill="currentColor" stroke="none"/><circle cx="16" cy="5.2" r="0.85" fill="currentColor" stroke="none"/>',
+
+  // Internal Stereo / 3-Capsule MEMS & ECM Microphone: capsule silhouette + twin acoustic wave arcs (strictly zero text!)
+  micModule:
+    '<rect x="9" y="5" width="6" height="9.5" rx="3"/><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0"/><line x1="12" y1="17" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/><path d="M4.2 7.5a5.2 5.2 0 0 0 0 6.2" opacity="0.72"/><path d="M19.8 7.5a5.2 5.2 0 0 1 0 6.2" opacity="0.72"/>',
+
   // Assembled compact stack
   assembled:
     '<polygon points="12 5 20 9.5 12 14 4 9.5 12 5"/><polyline points="4 13 12 17.5 20 13"/>',
@@ -187,6 +199,9 @@ export class ZeroTextControls {
   private microBtn: HTMLButtonElement;
   private batteryBtn: HTMLButtonElement;
   private cfexpressBtn: HTMLButtonElement;
+  private bionzBtn: HTMLButtonElement;
+  private mishoeBtn: HTMLButtonElement;
+  private micBtn: HTMLButtonElement;
 
   private lensSectionBar: HTMLElement;
   private lensSec1Btn: HTMLButtonElement;
@@ -311,10 +326,10 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 13-Mode Architecture Switch
+    // Group A: 16-Mode Architecture Switch
     // Primary 3 Views: [Complete Camera | Body All Only | Lens Standalone]
-    // Sub-divider -> 8 Camera Subsystems: [Mount | Shutter | Sensor | Mainboard | EVF | LCD | Body Shell | Micro]
-    // Sub-divider -> 2 Standalone Media/Power Ultra-Dissections: [Battery Pack | CFexpress 4.0 Card]
+    // 7 Camera Subsystems: [Mount | Shutter | Sensor | Mainboard | EVF | LCD | Body Shell]
+    // 6 Ultra-Dissection Standalone Views: [Micro Pixel | Battery Pack | CFexpress 4.0 | BIONZ XR Package | MI Shoe | Internal Mic]
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
@@ -333,10 +348,11 @@ export class ZeroTextControls {
     this.evfBtn = createIconButton(ICONS.evfModule);
     this.lcdBtn = createIconButton(ICONS.lcdModule);
     this.bodyBtn = createIconButton(ICONS.bodyModule);
-    this.microBtn = createIconButton(ICONS.microPixel);
 
-    const mediaPowerSep = document.createElement('div');
-    mediaPowerSep.className = 'cad-sub-divider';
+    const ultraSep = document.createElement('div');
+    ultraSep.className = 'cad-sub-divider';
+
+    this.microBtn = createIconButton(ICONS.microPixel);
 
     this.batteryBtn = createIconButton(ICONS.batteryPack);
     this.batteryBtn.dataset.mode = 'battery';
@@ -345,6 +361,18 @@ export class ZeroTextControls {
     this.cfexpressBtn = createIconButton(ICONS.cfexpressCard);
     this.cfexpressBtn.dataset.mode = 'cfexpress';
     this.cfexpressBtn.setAttribute('aria-label', 'CFexpressカード超解剖');
+
+    this.bionzBtn = createIconButton(ICONS.bionzModule);
+    this.bionzBtn.dataset.mode = 'bionz';
+    this.bionzBtn.setAttribute('aria-label', 'BIONZ XRパッケージ内部超解剖');
+
+    this.mishoeBtn = createIconButton(ICONS.miShoeModule);
+    this.mishoeBtn.dataset.mode = 'mishoe';
+    this.mishoeBtn.setAttribute('aria-label', 'MIシュー超解剖');
+
+    this.micBtn = createIconButton(ICONS.micModule);
+    this.micBtn.dataset.mode = 'mic';
+    this.micBtn.setAttribute('aria-label', '内蔵マイク超解剖');
 
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.cameraBodyBtn.addEventListener('click', () => this.setMode('camera_body'));
@@ -359,6 +387,9 @@ export class ZeroTextControls {
     this.microBtn.addEventListener('click', () => this.setMode('micro'));
     this.batteryBtn.addEventListener('click', () => this.setMode('battery'));
     this.cfexpressBtn.addEventListener('click', () => this.setMode('cfexpress'));
+    this.bionzBtn.addEventListener('click', () => this.setMode('bionz'));
+    this.mishoeBtn.addEventListener('click', () => this.setMode('mishoe'));
+    this.micBtn.addEventListener('click', () => this.setMode('mic'));
     scaleGroup.append(
       this.integratedBtn,
       this.cameraBodyBtn,
@@ -371,10 +402,13 @@ export class ZeroTextControls {
       this.evfBtn,
       this.lcdBtn,
       this.bodyBtn,
+      ultraSep,
       this.microBtn,
-      mediaPowerSep,
       this.batteryBtn,
-      this.cfexpressBtn
+      this.cfexpressBtn,
+      this.bionzBtn,
+      this.mishoeBtn,
+      this.micBtn
     );
 
     // Group B: Exploded View Dissection Slider
@@ -517,6 +551,9 @@ export class ZeroTextControls {
     this.microBtn.classList.toggle('is-active', mode === 'micro');
     this.batteryBtn.classList.toggle('is-active', mode === 'battery');
     this.cfexpressBtn.classList.toggle('is-active', mode === 'cfexpress');
+    this.bionzBtn.classList.toggle('is-active', mode === 'bionz');
+    this.mishoeBtn.classList.toggle('is-active', mode === 'mishoe');
+    this.micBtn.classList.toggle('is-active', mode === 'mic');
     this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
   }
 
@@ -1184,6 +1221,88 @@ export class ZeroTextControls {
                 part.order === 29
               ? 25
               : 19;
+      } else if (part.subsystem === 'bionz') {
+        // BIONZ XR / XR2 Package Internal Ultra-Dissection (XR01–XR36)
+        widthPx =
+          part.order === 1 ||
+          part.order === 2 ||
+          part.order === 4 ||
+          part.order === 9 ||
+          part.order === 14 ||
+          part.order === 28 ||
+          part.order === 33 ||
+          part.order === 36
+            ? 32
+            : part.order === 5 ||
+                part.order === 7 ||
+                part.order === 10 ||
+                part.order === 11 ||
+                part.order === 15 ||
+                part.order === 16 ||
+                part.order === 17 ||
+                part.order === 20 ||
+                part.order === 26 ||
+                part.order === 27 ||
+                part.order === 30 ||
+                part.order === 34
+              ? 25
+              : 18;
+      } else if (part.subsystem === 'mishoe') {
+        // Sony Multi Interface (MI) Shoe Ultra-Dissection (MI01–MI32)
+        widthPx =
+          part.order === 1 ||
+          part.order === 3 ||
+          part.order === 10 ||
+          part.order === 11 ||
+          part.order === 15 ||
+          part.order === 18 ||
+          part.order === 22 ||
+          part.order === 24 ||
+          part.order === 25 ||
+          part.order === 32
+            ? 32
+            : part.order === 2 ||
+                part.order === 7 ||
+                part.order === 12 ||
+                part.order === 13 ||
+                part.order === 19 ||
+                part.order === 21 ||
+                part.order === 23 ||
+                part.order === 27 ||
+                part.order === 28 ||
+                part.order === 30
+              ? 25
+              : 18;
+      } else if (part.subsystem === 'mic') {
+        // Internal Stereo / 3-Capsule MEMS & ECM Microphone Ultra-Dissection (MC01–MC32)
+        widthPx =
+          part.order === 1 ||
+          part.order === 2 ||
+          part.order === 4 ||
+          part.order === 8 ||
+          part.order === 13 ||
+          part.order === 14 ||
+          part.order === 17 ||
+          part.order === 21 ||
+          part.order === 22 ||
+          part.order === 26 ||
+          part.order === 27 ||
+          part.order === 29 ||
+          part.order === 32
+            ? 32
+            : part.order === 3 ||
+                part.order === 5 ||
+                part.order === 6 ||
+                part.order === 9 ||
+                part.order === 16 ||
+                part.order === 18 ||
+                part.order === 19 ||
+                part.order === 23 ||
+                part.order === 25 ||
+                part.order === 30 ||
+                part.order === 31
+              ? 25
+              : 18;
       } else {
         // Micro pixel cross-section (15 core M01–M15 + 60 standalone-only ultra-nano M16–M75)
         if (part.order <= 15) {

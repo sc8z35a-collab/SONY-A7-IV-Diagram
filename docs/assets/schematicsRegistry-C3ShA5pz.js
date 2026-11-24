@@ -1,4 +1,4 @@
-function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
+function v(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <rect x="18" y="22" width="114" height="68" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
         <rect x="24" y="28" width="14" height="56" rx="4" fill="#1e293b"/>
         <rect x="38" y="32" width="54" height="48" fill="#475569"/>
@@ -216,7 +216,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
       `);case"lens_aperture_bearings":return t(`
         <circle cx="76" cy="56" r="31" fill="none" stroke="#cbd5e1" stroke-width="8"/>
         <circle cx="76" cy="56" r="31" fill="none" stroke="#64748b" stroke-width="1.2"/>
-        ${Array.from({length:12},(i,x)=>{const w=x/12*Math.PI*2,k=(76+Math.cos(w)*31).toFixed(1),b=(56+Math.sin(w)*31).toFixed(1);return`<circle cx="${k}" cy="${b}" r="3.2" fill="#475569" stroke="#ffffff" stroke-width="0.7"/>`}).join("")}
+        ${Array.from({length:12},(i,x)=>{const g=x/12*Math.PI*2,m=(76+Math.cos(g)*31).toFixed(1),_=(56+Math.sin(g)*31).toFixed(1);return`<circle cx="${m}" cy="${_}" r="3.2" fill="#475569" stroke="#ffffff" stroke-width="0.7"/>`}).join("")}
         <text x="53" y="59" font-size="7.5" font-weight="bold" fill="#334155">24鋼球支持</text>
         <text x="20" y="104" font-size="7.5" fill="#334155">μ=0.002 精密研磨マイクロ鋼球レース</text>
         <rect x="140" y="18" width="166" height="76" rx="5" fill="#f1f5f9" stroke="#64748b"/>
@@ -289,7 +289,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="150" y="51" font-size="7.5" fill="#78350f">・4基XDモーターへ2A超を低抵抗給電</text>
         <text x="150" y="65" font-size="7.5" fill="#78350f">・通信周期≤2msでAI瞳AF＆補正同期</text>
         <text x="150" y="79" font-size="7.5" fill="#dc2626">・±15kV静電気をTVSダイオードで保護</text>
-      `);default:return null}}function O(e,t){switch(e){case"mount_esd_clips":return t(`
+      `);default:return null}}function Q(e,t){switch(e){case"mount_esd_clips":return t(`
         <circle cx="72" cy="54" r="34" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
         <circle cx="72" cy="54" r="24" fill="#ffffff" stroke="#d97706" stroke-width="2" stroke-dasharray="6 3"/>
         <path d="M22 30 L34 38 L28 42 L42 50" fill="none" stroke="#eab308" stroke-width="2.2"/>
@@ -665,7 +665,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="48" font-size="6.6" fill="#0c4a6e">・フルサイズ像面直前で有害斜光を最終整形</text>
         <text x="144" y="62" font-size="6.6" fill="#0c4a6e">・独立気泡フォームがシャッター室とIBISを隔離</text>
         <text x="144" y="76" font-size="6.6" fill="#0284c7">・高速走行時の空気脈動によるゴミ舞上げ防止</text>
-      `);default:return null}}function V(e,t){switch(e){case"evf_eyepiece_shutter":return t(`
+      `);default:return null}}function $(e,t){switch(e){case"evf_eyepiece_shutter":return t(`
         <rect x="20" y="22" width="110" height="68" rx="4" fill="#1e293b"/>
         <rect x="30" y="30" width="90" height="24" rx="2" fill="#475569" stroke="#cbd5e1"/>
         <rect x="30" y="58" width="90" height="24" rx="2" fill="#475569" stroke="#cbd5e1"/>
@@ -947,7 +947,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="48" font-size="6.6" fill="#0c4a6e">・装着時に22%弾性圧縮しボディと全周気密化</text>
         <text x="144" y="62" font-size="6.6" fill="#0c4a6e">・4本M2.5ボルトが合計1.5kN超で均等締結</text>
         <text x="144" y="76" font-size="6.6" fill="#0284c7">・青スレッドロック＋単独交換モジュラー設計</text>
-      `);default:return null}}function N(e,t){switch(e){case"mb_vapor_wick_core":return t(`
+      `);default:return null}}function U(e,t){switch(e){case"mb_vapor_wick_core":return t(`
         <rect x="16" y="24" width="114" height="58" rx="4" fill="#fff7ed" stroke="#c2410c" stroke-width="1.8"/>
         <rect x="20" y="68" width="106" height="10" fill="#b45309" opacity="0.85"/>
         <rect x="20" y="28" width="106" height="8" fill="#d97706" opacity="0.7"/>
@@ -1340,7 +1340,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="62" font-size="6.6" fill="#334155">・直下のEVF鏡筒を非接触で完全保護</text>
         <text x="144" y="76" font-size="6.6" fill="#0369a1">・横衝撃18N·mでもEVFたわみ&lt;5μm</text>
         <text x="144" y="89" font-size="6.6" fill="#475569">・SUS304門型骨格で前面柱へ強固結合</text>
-      `);default:return null}}function H(e,t){switch(e){case"micro_dual_vtg":return t(`
+      `);default:return null}}function W(e,t){switch(e){case"micro_dual_vtg":return t(`
         <rect x="20" y="20" width="102" height="44" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <rect x="44" y="26" width="12" height="48" rx="2" fill="#eab308" stroke="#854d0e"/>
         <rect x="86" y="26" width="12" height="48" rx="2" fill="#eab308" stroke="#854d0e"/>
@@ -1841,7 +1841,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="62" font-size="6.6" fill="#334155">・6段鋸歯バッフル＋0.12%超黒植毛内壁</text>
         <text x="144" y="76" font-size="6.6" fill="#0369a1">・F1.2開放・逆光時のベールグレア根絶</text>
         <text x="144" y="89" font-size="6.6" fill="#475569">・ナノAR IIと両輪で漆黒コントラスト実現</text>
-      `);default:return null}}function v(e,t){switch(e){case"mount_cinnabar_ring":return t(`
+      `);default:return null}}function Z(e,t){switch(e){case"mount_cinnabar_ring":return t(`
         <circle cx="70" cy="54" r="34" fill="none" stroke="#d95b26" stroke-width="6"/>
         <circle cx="70" cy="54" r="27" fill="none" stroke="#94a3b8" stroke-width="4"/>
         <circle cx="70" cy="54" r="20" fill="#f8fafc" stroke="#334155" stroke-width="1.2"/>
@@ -2270,7 +2270,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="62" font-size="6.6" fill="#1e40af">・段付きカラーで防振ゴム潰し過ぎを阻止</text>
         <text x="144" y="76" font-size="6.6" fill="#0369a1">・共振f₀≈48Hz＆Z平面±0.02mmを再現</text>
         <text x="144" y="89" font-size="6.6" fill="#2563eb">・P2セムスばね座金＋青色緩み止め付</text>
-      `);default:return null}}function G(e,t){switch(e){case"body_main_internal_frame":return t(`
+      `);default:return null}}function X(e,t){switch(e){case"body_main_internal_frame":return t(`
         <rect x="20" y="22" width="98" height="60" rx="5" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
         <rect x="44" y="34" width="48" height="36" rx="3" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
         <line x1="20" y1="22" x2="44" y2="34" stroke="#64748b" stroke-width="1.4"/>
@@ -2544,7 +2544,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="62" font-size="6.6" fill="#1e40af">・Ref.78 SV WPグロメットが同軸線を360°封止</text>
         <text x="144" y="76" font-size="6.6" fill="#0369a1">・バリアングル展開時の雨塵侵入を完全阻止</text>
         <text x="144" y="89" font-size="6.6" fill="#2563eb">・背面3本隠しねじ保護＆LCD単体整備性両立</text>
-      `);default:return null}}function Q(e,t){switch(e){case"sensor_glass_retainer_plate":return t(`
+      `);default:return null}}function K(e,t){switch(e){case"sensor_glass_retainer_plate":return t(`
         <rect x="20" y="54" width="96" height="16" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.4"/>
         <path d="M16 40 L34 40 L40 53 M120 40 L102 40 L96 53" fill="none" stroke="#334155" stroke-width="3.2" stroke-linecap="round"/>
         <path d="M40 30 L40 48 M96 30 L96 48" stroke="#0d5bd9" stroke-width="1.8" stroke-dasharray="2 2"/>
@@ -3071,7 +3071,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="61" font-size="6.5" fill="#155e75">・数千個の並列ADC同時動作でも電源がブレない</text>
         <text x="144" y="75" font-size="6.5" fill="#dc2626">・外周ESD避雷針が2000V静電気を1nsで逃がす</text>
         <text x="144" y="89" font-size="6.5" fill="#334155">・数nmの極薄FinFET酸化膜を静電破壊から保護</text>
-      `);default:return null}}function U(e,t){switch(e){case"lcd_ar_af_hardcoat":return t(`
+      `);default:return null}}function j(e,t){switch(e){case"lcd_ar_af_hardcoat":return t(`
         <rect x="20" y="64" width="96" height="22" rx="2" fill="#dbeafe" stroke="#0284c7"/>
         <rect x="20" y="54" width="96" height="10" fill="#cbd5e1" stroke="#64748b"/>
         <rect x="20" y="42" width="96" height="12" fill="#a855f7" opacity="0.65" stroke="#7e22ce"/>
@@ -3148,7 +3148,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="89" font-size="6.5" fill="#312e81">・99.98%の高偏光度で引き締まった黒を実現</text>
       `);case"lcd_cf_black_matrix":return t(`
         <rect x="18" y="22" width="100" height="64" rx="3" fill="#0f172a"/>
-        ${[0,1,2].flatMap(i=>[0,1,2,3,4,5].map(x=>{const w=["#ef4444","#22c55e","#3b82f6"];return`<rect x="${23+x*15}" y="${27+i*19}" width="12" height="15" rx="1" fill="${w[x%3]}"/>`})).join("")}
+        ${[0,1,2].flatMap(i=>[0,1,2,3,4,5].map(x=>{const g=["#ef4444","#22c55e","#3b82f6"];return`<rect x="${23+x*15}" y="${27+i*19}" width="12" height="15" rx="1" fill="${g[x%3]}"/>`})).join("")}
         <text x="12" y="112" font-size="7.1" fill="#be185d">DCI-P3 RGBステンドグラス(210万粒)＋黒BM格子</text>
         <rect x="138" y="14" width="174" height="84" rx="5" fill="#fdf2f8" stroke="#db2777"/>
         <text x="144" y="31" font-size="7.3" font-weight="bold" fill="#831843">RGBカラーフィルター＆BM格子</text>
@@ -3406,7 +3406,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="61" font-size="6.5" fill="#0369a1">・左右アームが歯車で噛み合い0.1°以内で完全同期</text>
         <text x="144" y="75" font-size="6.5" fill="#854d0e">・上98°/下40°の終端ストッパーが過負荷を保護</text>
         <text x="144" y="89" font-size="6.5" fill="#713f12">・片手でヌルッと引き出せる高級4軸タッチの秘密</text>
-      `);default:return null}}function $(e,t){switch(e){case"mb_vc_evaporator_plate":return t(`
+      `);default:return null}}function Y(e,t){switch(e){case"mb_vc_evaporator_plate":return t(`
         <rect x="18" y="68" width="100" height="16" rx="2" fill="#d97706" stroke="#92400e"/>
         <path d="M24 68 L24 58 L32 58 L32 68 L40 68 L40 58 L48 58 L48 68 L56 68 L56 58 L64 58 L64 68 L72 68 L72 58 L80 58 L80 68 L88 68 L88 58 L96 58 L96 68 L104 68 L104 58 L112 58 L112 68" fill="#b45309" stroke="#78350f"/>
         <path d="M24 56 Q68 50 112 56" fill="none" stroke="#0ea5e9" stroke-width="2.2"/>
@@ -3764,7 +3764,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.4" fill="#a16207">・外周8点配置で接触抵抗&lt;10mΩ維持</text>
         <text x="144" y="74" font-size="6.4" fill="#334155">・へたりにくいベリリウム銅＋金めっき</text>
         <text x="144" y="88" font-size="6.4" fill="#475569">・4nm超微細半導体の静電破壊を防止</text>
-      `);default:return null}}function W(e,t){switch(e){case"evf_oem_finder_cover":return t(`
+      `);default:return null}}function J(e,t){switch(e){case"evf_oem_finder_cover":return t(`
         <rect x="22" y="18" width="92" height="58" rx="8" fill="#334155" stroke="#0f172a" stroke-width="1.6"/>
         <rect x="36" y="28" width="64" height="38" rx="4" fill="#bae6fd" stroke="#0284c7"/>
         <rect x="44" y="74" width="48" height="16" rx="3" fill="#1e293b" stroke="#64748b"/>
@@ -4118,7 +4118,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.4" fill="#4338ca">・フェライトビーズが高周波ノイズを吸収</text>
         <text x="144" y="74" font-size="6.4" fill="#334155">・銅箔接地で直下センサーへの干渉ゼロ</text>
         <text x="144" y="88" font-size="6.4" fill="#475569">・超高ISO暗所撮影の横縞ノイズを防止</text>
-      `);default:return null}}function Z(e,t){switch(e){case"body_dl1008_rtc_flex":return t(`
+      `);default:return null}}function q(e,t){switch(e){case"body_dl1008_rtc_flex":return t(`
         <rect x="28" y="18" width="76" height="68" rx="5" fill="#f97316" stroke="#c2410c"/>
         <circle cx="66" cy="48" r="20" fill="#cbd5e1" stroke="#475569" stroke-width="2.2"/>
         <circle cx="66" cy="48" r="14" fill="#94a3b8"/>
@@ -4348,7 +4348,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.4" fill="#475569">・微細シボ防滑座が三脚装着傷を軽減</text>
         <text x="144" y="74" font-size="6.4" fill="#334155">・0.4mm凹ポケットでシリアル・技適を保護</text>
         <text x="144" y="88" font-size="6.4" fill="#64748b">・アルカスイス装着時も電池開閉を考慮</text>
-      `);default:return null}}function K(e,t){switch(e){case"shutter_blade_press_springs":return t(`
+      `);default:return null}}function tt(e,t){switch(e){case"shutter_blade_press_springs":return t(`
         <rect x="16" y="20" width="112" height="72" rx="4" fill="#f8fafc" stroke="#cbd5e1"/>
         <rect x="24" y="54" width="96" height="5" fill="#1e293b"/>
         <rect x="24" y="61" width="96" height="5" fill="#334155"/>
@@ -4669,7 +4669,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.3" fill="#0284c7">・工場レーザー測定値をQRへ符号化</text>
         <text x="144" y="74" font-size="6.3" fill="#334155">・修理交換時は専用調整ソフト登録必須</text>
         <text x="144" y="88" font-size="6.3" fill="#475569">・1/8000s・EFCSの露出ムラを完全解消</text>
-      `);default:return null}}function X(e,t){switch(e){case"lens_fluorine_topcoat":return t(`
+      `);default:return null}}function et(e,t){switch(e){case"lens_fluorine_topcoat":return t(`
         <rect x="18" y="62" width="108" height="28" rx="3" fill="#bae6fd" stroke="#0284c7"/>
         <rect x="18" y="55" width="108" height="7" rx="1" fill="#06b6d4"/>
         <circle cx="48" cy="43" r="11" fill="#38bdf8" stroke="#0369a1" stroke-width="1.5"/>
@@ -5125,7 +5125,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.3" fill="#a16207">・マウント隙間RFノイズを−35dB遮蔽</text>
         <text x="144" y="74" font-size="6.3" fill="#334155">・並列接触抵抗&lt;5mΩの超低インピーダンス</text>
         <text x="144" y="88" font-size="6.3" fill="#475569">・ボディ熱を鏡筒側へ逃がす補助経路</text>
-      `);default:return null}}function j(e,t){switch(e){case"lens_cl1082_mount_flex":return t(`
+      `);default:return null}}function it(e,t){switch(e){case"lens_cl1082_mount_flex":return t(`
         <path d="M22,74 A56,56 0 0,1 122,74" fill="none" stroke="#1e293b" stroke-width="10" stroke-linecap="round"/>
         <path d="M28,74 A50,50 0 0,1 116,74" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="4 3"/>
         <rect x="38" y="24" width="68" height="16" rx="3" fill="#ffedd5" stroke="#ea580c"/>
@@ -5911,7 +5911,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="60" font-size="6.1" fill="#b91c1c">・逆極性・過電圧を50μs未満で電子遮断</text>
         <text x="144" y="74" font-size="6.1" fill="#334155">・通常効率99.7%(R_DS=8mΩ極低ロス)</text>
         <text x="144" y="88" font-size="6.1" fill="#475569">・USB-PDと電池の無瞬断切替も制御</text>
-      `);default:return null}}function h(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function Y(e){switch(e){case"micro_dsa_phrf_film":return h(`
+      `);default:return null}}function c(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function ft(e){switch(e){case"micro_dsa_phrf_film":return c(`
         <rect x="12" y="16" width="122" height="18" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="73" y="28" text-anchor="middle" font-size="7.2" fill="#0369a1">カラーフィルター (n≈1.6)</text>
         <rect x="12" y="36" width="122" height="22" rx="3" fill="#cffafe" stroke="#0891b2" stroke-width="1.4"/>
@@ -5927,7 +5927,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="152" y="57" font-size="7.2" fill="#155e75">・有効屈折率 n_eff ≈ 2.65 整合</text>
         <text x="152" y="70" font-size="7.2" fill="#155e75">・400〜550nm青緑光の反射ロス激減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0e7490">ナノ多孔スポンジ層が青色光の跳ね返りを吸い込み量子効率を向上</text>
-      `);case"micro_ob_dark_clamp":return h(`
+      `);case"micro_ob_dark_clamp":return c(`
         <rect x="12" y="18" width="56" height="10" rx="2" fill="#1e293b" stroke="#0f172a"/>
         <text x="40" y="26" text-anchor="middle" font-size="6.8" fill="#f8fafc">厚肉W遮光膜</text>
         <rect x="16" y="30" width="48" height="44" rx="3" fill="#334155" stroke="#0f172a"/>
@@ -5944,7 +5944,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="150" y="57" font-size="7.2" fill="#334155">・毎コマ/毎行の暗電流を実測減算</text>
         <text x="150" y="70" font-size="7.2" fill="#334155">・長時間8K収録でも黒浮き&lt;0.2LSB</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">暗室OB画素で温度由来の暗電流を毎コマ引き算し漆黒基準を維持</text>
-      `);case"micro_inter_polysi_wiring":return h(`
+      `);case"micro_inter_polysi_wiring":return c(`
         <rect x="14" y="14" width="116" height="22" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="72" y="28" text-anchor="middle" font-size="7.3" font-weight="bold" fill="#1d4ed8">第1層：フォトダイオード</text>
         <rect x="14" y="40" width="116" height="16" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
@@ -5957,7 +5957,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#78350f">・2層デュアル画素の配線混雑を解消</text>
         <text x="148" y="70" font-size="7.2" fill="#78350f">・0.8μmでRN 1.3e⁻＆8.5ke⁻両立</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">1,000℃の2層目焼成にも溶けない耐熱ポリSi電線で極小2層画素を実現</text>
-      `);case"micro_soi_box_finfet":return h(`
+      `);case"micro_soi_box_finfet":return c(`
         <rect x="16" y="56" width="112" height="14" rx="2" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
         <text x="72" y="66" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#0369a1">SOI埋込酸化膜 (BOX)</text>
         <rect x="16" y="72" width="112" height="12" rx="2" fill="#cbd5e1" stroke="#64748b"/>
@@ -5973,7 +5973,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#0c4a6e">・変換効率CG↑＆暗所RTS雑音激減</text>
         <text x="148" y="70" font-size="7.2" fill="#0c4a6e">・2層画素の超高感度画質を新次元へ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">超薄ガラス絶縁マット(BOX)上の3D FinFETで暗部チラつきノイズを遮断</text>
-      `);case"micro_h2_fga_passivation":return h(`
+      `);case"micro_h2_fga_passivation":return c(`
         <rect x="14" y="16" width="114" height="26" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="71" y="32" text-anchor="middle" font-size="7.2" fill="#0369a1">SiO₂ 酸化膜 (H₂拡散)</text>
         <line x1="14" y1="46" x2="128" y2="46" stroke="#0d9488" stroke-width="2.2"/>
@@ -5989,7 +5989,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#115e59">・未結合手Si•をSi−H結合で不活性化</text>
         <text x="148" y="70" font-size="7.2" fill="#115e59">・界面準位D_it 1/100＆白点ノイズ激減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0f766e">シリコン界面の原子のささくれを水素の絆創膏で塞ぎ暗電流を1/10以下へ</text>
-      `);case"micro_sab_salicide_block":return h(`
+      `);case"micro_sab_salicide_block":return c(`
         <rect x="14" y="42" width="66" height="38" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="47" y="64" text-anchor="middle" font-size="7.3" font-weight="bold" fill="#1d4ed8">フォトダイオード</text>
         <rect x="14" y="30" width="66" height="10" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.4"/>
@@ -6004,7 +6004,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#334155">・重金属白点(Blemish)を根絶</text>
         <text x="148" y="70" font-size="7.2" fill="#334155">・Tr端子のみNiSi形成で抵抗1/50</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">受光面をマスキングで守りつつ配線端子だけ低抵抗シリサイド化する塗り分け</text>
-      `);case"micro_sti_ldd_spacer":return h(`
+      `);case"micro_sti_ldd_spacer":return c(`
         <rect x="12" y="48" width="118" height="36" rx="3" fill="#e2e8f0" stroke="#64748b"/>
         <polygon points="16,48 30,48 26,76 20,76" fill="#bae6fd" stroke="#0284c7"/>
         <text x="23" y="66" text-anchor="middle" font-size="6.4" fill="#0369a1">STI</text>
@@ -6019,7 +6019,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#312e81">・Si₃N₄側壁スペーサーでLDD形成</text>
         <text x="148" y="70" font-size="7.2" fill="#312e81">・最大電界40%減→GIDL暗電流激減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#3730a3">ゲート両端のLDD減速スロープが電界集中を和らげFDリーク雑音を抑制</text>
-      `);case"micro_cu_tan_barrier":return h(`
+      `);case"micro_cu_tan_barrier":return c(`
         <rect x="18" y="18" width="106" height="24" rx="3" fill="#475569" stroke="#0f172a"/>
         <rect x="23" y="22" width="96" height="16" rx="2" fill="#ea580c" stroke="#9a3412"/>
         <text x="71" y="33" text-anchor="middle" font-size="7.4" font-weight="bold" fill="#fff">Cu 配線 (TaN 5nm包囲)</text>
@@ -6034,7 +6034,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#7c2d12">・CVDタングステン杭でTrとM1接続</text>
         <text x="148" y="70" font-size="7.2" fill="#7c2d12">・白点欠陥防止＆断線耐性を確保</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">銅の毒がシリコンへ染み出さないよう全配線を極薄TaNラップで完全被覆</text>
-      `);case"micro_row_vdriver_levelshift":return h(`
+      `);case"micro_row_vdriver_levelshift":return c(`
         <rect x="14" y="18" width="44" height="62" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="36" y="38" text-anchor="middle" font-size="7.4" font-weight="bold" fill="#0369a1">行ドライバ</text>
         <text x="36" y="52" text-anchor="middle" font-size="6.8" fill="#0369a1">負電源CP</text>
@@ -6049,7 +6049,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="150" y="57" font-size="7.2" fill="#0c4a6e">・ゲート下に正孔蓄積ピニング形成</text>
         <text x="150" y="70" font-size="7.2" fill="#0c4a6e">・長秒露光のTG暗電流を−20dB抑制</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">待機中にマイナスの電気鍵をかける負電圧駆動で転送ゲートの暗電流を封印</text>
-      `);case"micro_col_bias_cascode":return h(`
+      `);case"micro_col_bias_cascode":return c(`
         <circle cx="36" cy="30" r="12" fill="#fef08a" stroke="#f59e0b" stroke-width="1.5"/>
         <text x="36" y="33" text-anchor="middle" font-size="7" font-weight="bold" fill="#b45309">直射太陽</text>
         <path d="M50 30 H72" stroke="#ef4444" stroke-width="1.8"/>
@@ -6064,7 +6064,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="150" y="57" font-size="7.2" fill="#881337">・太陽光中心が黒く反転する現象阻止</text>
         <text x="150" y="70" font-size="7.2" fill="#881337">・高PSRR定電流源で縦スジ雑音排除</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9f1239">強逆光時のリセット電圧崩壊を安全弁で止め自然な白飛び描写を守る</text>
-      `);case"micro_inpixel_dram_gs":return h(`
+      `);case"micro_inpixel_dram_gs":return c(`
         <rect x="16" y="14" width="110" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="71" y="27" text-anchor="middle" font-size="7.3" font-weight="bold" fill="#1d4ed8">第1層：全画素同時露光 PD</text>
         <line x1="71" y1="34" x2="71" y2="46" stroke="#ea580c" stroke-width="2"/>
@@ -6081,7 +6081,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#4c1d95">・歪み0.00ms＆最高1/80,000秒露光</text>
         <text x="148" y="70" font-size="7.2" fill="#4c1d95">・α9 III (IMX810) 級GSの中核技術</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#5b21b6">全画素直下の瞬間冷凍キャパシタ対が基準と光を同時保存し歪みゼロを実現</text>
-      `);case"micro_pga_dual_gain_bus":return h(`
+      `);case"micro_pga_dual_gain_bus":return c(`
         <rect x="12" y="18" width="46" height="24" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="35" y="33" text-anchor="middle" font-size="7" font-weight="bold" fill="#1d4ed8">LCG 低ISO</text>
         <rect x="12" y="52" width="46" height="24" rx="3" fill="#dcfce7" stroke="#16a34a"/>
@@ -6097,7 +6097,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#0c4a6e">・ADC前段で増幅し量子化雑音を圧縮</text>
         <text x="148" y="70" font-size="7.2" fill="#0c4a6e">・高ベースISOでノイズが劇的に低下</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">画素変換効率切替とアナログ可変アンプの二段構えで高感度ノイズを極小化</text>
-      `);case"micro_onchip_temp_diode":return h(`
+      `);case"micro_onchip_temp_diode":return c(`
         <rect x="16" y="18" width="110" height="64" rx="5" fill="#1e293b" stroke="#475569"/>
         <circle cx="40" cy="36" r="8" fill="#ef4444" stroke="#fca5a5"/>
         <circle cx="71" cy="50" r="8" fill="#ef4444" stroke="#fca5a5"/>
@@ -6110,7 +6110,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#7f1d1d">・8K収録時の温度勾配マップを算出</text>
         <text x="148" y="70" font-size="7.2" fill="#7f1d1d">・熱カブリ＆暗電流を毎コマ自動補正</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#991b1b">チップ内部に焼き込んだ超ミクロ体温計がリアルタイム熱雑音補正を駆動</text>
-      `);case"micro_emram_otp_fuse":return h(`
+      `);case"micro_emram_otp_fuse":return c(`
         <rect x="14" y="16" width="114" height="36" rx="4" fill="#f3e8ff" stroke="#9333ea" stroke-width="1.4"/>
         <text x="71" y="31" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#6b21a8">組込 STT-eMRAM (不揮発)</text>
         <text x="71" y="44" text-anchor="middle" font-size="6.8" fill="#7e22ce">6T-SRAM比 1/3未満の極小面積</text>
@@ -6122,7 +6122,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#581c87">・電源OFFでも10年超データ保持</text>
         <text x="148" y="70" font-size="7.2" fill="#581c87">・電源ON即座に均一画質＆AI推論起動</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#6b21a8">センサー1枚ごとの個性カルテを電源OFFでも記憶する超小型内蔵メモ帳</text>
-      `);case"micro_rear_bump_sealring":return h(`
+      `);case"micro_rear_bump_sealring":return c(`
         <rect x="14" y="14" width="114" height="70" rx="5" fill="#fed7aa" stroke="#ea580c" stroke-width="2.5"/>
         <rect x="22" y="22" width="98" height="54" rx="3" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
         <rect x="32" y="30" width="78" height="38" rx="2" fill="#dbeafe" stroke="#2563eb"/>
@@ -6134,7 +6134,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#7c2d12">・ダイシング微細亀裂の進展を阻止</text>
         <text x="148" y="70" font-size="7.2" fill="#7c2d12">・Al-Cu外周パッドから3系統電源供給</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">お城の石垣のような2重金属壁が切り出し時の亀裂と湿気侵入を完全阻止</text>
-      `);case"mount_screw_orange_orings":return h(`
+      `);case"mount_screw_orange_orings":return c(`
         <rect x="16" y="44" width="110" height="28" rx="3" fill="#cbd5e1" stroke="#475569"/>
         <text x="71" y="62" text-anchor="middle" font-size="7" fill="#334155">ステンレスマウント座面</text>
         <polygon points="50,24 92,24 80,44 62,44" fill="#94a3b8" stroke="#1e293b"/>
@@ -6148,7 +6148,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#7c2d12">・皿頭下の約22%圧縮で毛細管浸水遮断</text>
         <text x="148" y="70" font-size="7.2" fill="#7c2d12">・整備時の紛失を防ぐ高視認オレンジ色</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">6本のマウント締結ねじそれぞれの首元に仕込まれた極小オレンジ防水パッキン</text>
-      `);case"mount_sh1035_shield_board":return h(`
+      `);case"mount_sh1035_shield_board":return c(`
         <path d="M22 70 A52 52 0 0 1 118 70" fill="none" stroke="#d97706" stroke-width="14" stroke-linecap="round"/>
         <path d="M36 62 A40 40 0 0 1 104 62" fill="none" stroke="#94a3b8" stroke-width="8" stroke-linecap="round"/>
         <text x="70" y="46" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#92400e">SH-1035 フレキ基板</text>
@@ -6160,7 +6160,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#78350f">・銀色金属板がEMI遮蔽＆局所放熱</text>
         <text x="148" y="70" font-size="7.2" fill="#78350f">・専用保護シートで筐体エッジ擦れ防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">マウント裏の信号交差点でノイズ遮蔽と放熱を両立するソニー純正中継基板</text>
-      `);case"mount_sw1041_front_subboard":return h(`
+      `);case"mount_sw1041_front_subboard":return c(`
         <path d="M28 24 A44 44 0 0 1 110 74" fill="none" stroke="#f59e0b" stroke-width="11" stroke-linecap="round"/>
         <rect x="64" y="34" width="22" height="22" rx="4" fill="#1e293b" stroke="#0f172a"/>
         <circle cx="75" cy="45" r="5" fill="#cbd5e1"/>
@@ -6171,7 +6171,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#78350f">・保護シート 5-036-042-01 で1kV絶縁</text>
         <text x="148" y="70" font-size="7.2" fill="#78350f">・1.2mmの極狭外周隙間へ立体収納</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">マウント外周の極狭隙間に沿って着脱・前面スイッチ信号を伝える極薄フレキ</text>
-      `);case"mount_sandwich_inner_collar":return h(`
+      `);case"mount_sandwich_inner_collar":return c(`
         <rect x="16" y="18" width="110" height="16" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <text x="71" y="29" text-anchor="middle" font-size="7" font-weight="bold" fill="#1e293b">1. 前面ステンレスフランジ</text>
         <rect x="16" y="38" width="110" height="20" rx="2" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
@@ -6184,7 +6184,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#334155">・板バネの適正たわみ空間を精密確保</text>
         <text x="148" y="70" font-size="7.2" fill="#334155">・内周艶消し黒で金属端面の迷光遮断</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">金属環と板バネの間に挟まり芯出し・遮光・バネ空間を一括形成する中間環</text>
-      `);case"mount_3point_sensor_pillars":return h(`
+      `);case"mount_3point_sensor_pillars":return c(`
         <rect x="18" y="18" width="18" height="64" rx="2" fill="#94a3b8" stroke="#334155"/>
         <text x="27" y="53" text-anchor="middle" font-size="6.6" fill="#fff">マウント</text>
         <rect x="36" y="24" width="52" height="12" rx="2" fill="#64748b" stroke="#1e293b"/>
@@ -6200,7 +6200,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#713f12">・シャッター枠を介さず公差累積ゼロ</text>
         <text x="148" y="70" font-size="7.2" fill="#713f12">・真鍮シム座で対角平行度&lt;5μm実現</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#854d0e">1枚の金属骨格の表と裏にレンズとセンサーを背中合わせ直結し片ボケを根絶</text>
-      `);case"mount_self_tap_bosses":return h(`
+      `);case"mount_self_tap_bosses":return c(`
         <rect x="20" y="22" width="38" height="58" rx="3" fill="#e2e8f0" stroke="#64748b"/>
         <path d="M32 28 L46 32 L32 36 L46 40 L32 44 L46 48 L32 52 L46 56" fill="none" stroke="#64748b" stroke-width="1.2"/>
         <text x="39" y="74" text-anchor="middle" font-size="6.6" fill="#475569">並目 0.35mm</text>
@@ -6213,7 +6213,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#334155">・肉厚円筒ボス＋6方向放射ガセット</text>
         <text x="148" y="70" font-size="7.2" fill="#334155">・600mm F4片持ち引抜でもストリップ0</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">軽量マグネシウムでもネジ山がナメないソニー専用ワイドピッチ締結ボス</text>
-      `);case"mount_pin1_pin10_short_loop":return h(`
+      `);case"mount_pin1_pin10_short_loop":return c(`
         <rect x="14" y="22" width="114" height="22" rx="3" fill="#fef3c7" stroke="#d97706"/>
         <circle cx="24" cy="33" r="4.5" fill="#dc2626"/><text x="24" y="35.5" text-anchor="middle" font-size="6" fill="#fff">1</text>
         <circle cx="44" cy="33" r="3" fill="#eab308"/><circle cx="58" cy="33" r="3" fill="#eab308"/>
@@ -6229,7 +6229,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#713f12">・解除押下50μs以内でVBUS緊急遮断</text>
         <text x="148" y="70" font-size="7.2" fill="#713f12">・33Ω抵抗が高速SPI波形反射を整形</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#854d0e">両端ピンの短絡合言葉と機械スイッチの二重確認で安全な活線レンズ交換</text>
-      `);case"mount_snap_ground_wire":return h(`
+      `);case"mount_snap_ground_wire":return c(`
         <circle cx="30" cy="34" r="11" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
         <circle cx="30" cy="34" r="4.5" fill="#fff"/>
         <text x="30" y="55" text-anchor="middle" font-size="6.8" fill="#854d0e">圧着ラグ</text>
@@ -6243,7 +6243,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#0c4a6e">・直流抵抗&lt;8mΩ / インダクタンス&lt;12nH</text>
         <text x="148" y="70" font-size="7.2" fill="#0c4a6e">・ハンダ不要スナップ端子で整備性抜群</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">金属望遠レンズからの静電気ショックを安全に基板GNDへ逃がす専用アース</text>
-      `);case"mount_rocker_pivot_shaft":return h(`
+      `);case"mount_rocker_pivot_shaft":return c(`
         <rect x="16" y="20" width="28" height="22" rx="3" fill="#475569" stroke="#0f172a"/>
         <text x="30" y="34" text-anchor="middle" font-size="6.8" fill="#fff">ボタン</text>
         <path d="M30 44 V56" stroke="#0284c7" stroke-width="2"/>
@@ -6259,7 +6259,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#0c4a6e">・MoS₂配合POMカムで摩擦係数0.08</text>
         <text x="148" y="70" font-size="7.2" fill="#0c4a6e">・約3.0Nの軽快な力でピン2.2mm後退</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">精密シーソー軸と低摩擦カムが何万回押しても滑らかなレンズ解除感を実現</text>
-      `);case"mount_631s_lightseal_tape":return h(`
+      `);case"mount_631s_lightseal_tape":return c(`
         <rect x="16" y="20" width="48" height="26" rx="2" fill="#94a3b8" stroke="#334155"/>
         <rect x="76" y="20" width="48" height="26" rx="2" fill="#94a3b8" stroke="#334155"/>
         <text x="70" y="36" text-anchor="middle" font-size="6.5" fill="#dc2626">0.05mm</text>
@@ -6273,7 +6273,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#334155">・FPC通過スリット＆合わせ目を暗室化</text>
         <text x="148" y="70" font-size="7.2" fill="#334155">・ND1000・60秒露光でも光カブリゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">極薄マットブラック純正遮光テープが長時間露光の微細な光漏れを完全封鎖</text>
-      `);case"mount_bayonet_anti_galvanic":return h(`
+      `);case"mount_bayonet_anti_galvanic":return c(`
         <rect x="16" y="18" width="110" height="20" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <text x="71" y="31" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#1e293b">SUS304 ステンレス (−0.1V)</text>
         <rect x="16" y="40" width="110" height="12" rx="2" fill="#99f6e4" stroke="#0d9488" stroke-width="1.5"/>
@@ -6286,7 +6286,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#115e59">・絶縁抵抗&gt;10¹¹Ωで腐食電流ゼロ化</text>
         <text x="148" y="70" font-size="7.2" fill="#115e59">・微動摩耗(フレッティング)も同時防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0f766e">海辺の潮風でステンレスとマグネシウムが電池のように錆び合うのを防ぐ絶縁膜</text>
-      `);case"mount_baffle_clip_tabs":return h(`
+      `);case"mount_baffle_clip_tabs":return c(`
         <rect x="16" y="18" width="110" height="62" rx="5" fill="#1e293b" stroke="#0f172a"/>
         <rect x="34" y="30" width="74" height="38" rx="2" fill="#ffffff" stroke="#475569"/>
         <rect x="61" y="21" width="20" height="7" rx="1.5" fill="#38bdf8"/>
@@ -6301,7 +6301,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="148" y="57" font-size="7.2" fill="#334155">・0.4mm極薄PORONが30%圧縮予圧</text>
         <text x="148" y="70" font-size="7.2" fill="#334155">・高速連写の共振ビビリ＆発塵ゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">隠しスナップ爪と極薄PORON緩衝帯で逆光ゴーストとビビリ音を同時解消</text>
-      `);default:return null}}function d(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function J(e){switch(e){case"micro_mpcr_color_router":return d(`
+      `);default:return null}}function a(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function lt(e){switch(e){case"micro_mpcr_color_router":return a(`
         <line x1="68" y1="6" x2="68" y2="26" stroke="#f59e0b" stroke-width="2.4"/>
         <text x="68" y="13" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#b45309">白い光(RGB混合)</text>
         <rect x="24" y="28" width="12" height="26" rx="1.5" fill="#bae6fd" stroke="#0284c7"/>
@@ -6323,7 +6323,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#0c4a6e">・色フィルターの67%吸収ロスを解消</text>
         <text x="144" y="69" font-size="7.1" fill="#0c4a6e">・暗所の光利用効率が約1.5〜2倍に</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">光を捨てずに「赤は左・緑は中・青は右」へ振り分ける魔法の透明ナノ柱</text>
-      `);case"micro_polarsens_wiregrid":return d(`
+      `);case"micro_polarsens_wiregrid":return a(`
         <rect x="14" y="16" width="52" height="34" rx="3" fill="#f1f5f9" stroke="#334155"/>
         <path d="M20 24 H60 M20 33 H60 M20 42 H60" stroke="#0f172a" stroke-width="1.6"/>
         <text x="40" y="22" text-anchor="middle" font-size="6.4" fill="#2563eb">0°</text>
@@ -6342,7 +6342,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・150nmピッチで光の揺れ向きを選別</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・ガラス反射除去や歪み検査を1発で</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">4角度のミクロなブラインドで水面やガラスのギラギラ反射を魔法のように消去</text>
-      `);case"micro_airgap_optical_grid":return d(`
+      `);case"micro_airgap_optical_grid":return a(`
         <rect x="14" y="20" width="44" height="58" rx="3" fill="#dcfce7" stroke="#16a34a"/>
         <text x="36" y="46" text-anchor="middle" font-size="7" fill="#15803d">緑CFA</text>
         <text x="36" y="58" text-anchor="middle" font-size="6.5" fill="#15803d">n≈1.60</text>
@@ -6360,7 +6360,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#155e75">・屈折率差で斜め光を無損失で跳ね返す</text>
         <text x="142" y="69" font-size="7.1" fill="#155e75">・色混じり防止と明るさ向上を両立</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0e7490">空気の壁が鏡のように光を100%全反射し、隣へ漏らさず自分のPDへ導く</text>
-      `);case"micro_inner_sublens_waveguide":return d(`
+      `);case"micro_inner_sublens_waveguide":return a(`
         <path d="M22 20 Q68 6 114 20 Z" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="68" y="18" text-anchor="middle" font-size="6.4" fill="#0369a1">1段目 マイクロレンズ</text>
         <path d="M36 40 Q68 28 100 40 Z" fill="#a5f3fc" stroke="#0891b2" stroke-width="1.4"/>
@@ -6376,7 +6376,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#0c4a6e">・光ファイバー漏斗でPD中央へ直通</text>
         <text x="142" y="69" font-size="7.1" fill="#0c4a6e">・F1.2の急な斜め光でも周辺減光ゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">2枚目のミニレンズと透明な光のじょうごで斜め光も確実に中央へゴール</text>
-      `);case"micro_opf_organic_film":return d(`
+      `);case"micro_opf_organic_film":return a(`
         <rect x="16" y="18" width="108" height="10" rx="2" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="70" y="25.5" text-anchor="middle" font-size="6.5" fill="#0369a1">透明ITO上部電極</text>
         <rect x="16" y="30" width="108" height="20" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
@@ -6393,7 +6393,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#4c1d95">・通り抜けた赤外線で下のSiが3D測距</text>
         <text x="142" y="69" font-size="7.1" fill="#4c1d95">・色と距離のズレ0! Sony IEDM 2024</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#5b21b6">シリコンの屋根に有機フィルムセンサーを重ね、カラー写真と3D距離を同時記録</text>
-      `);case"micro_inverted_pyramid_array":return d(`
+      `);case"micro_inverted_pyramid_array":return a(`
         <rect x="14" y="34" width="112" height="52" rx="3" fill="#1e293b" stroke="#0f172a"/>
         <polygon points="18,34 38,52 58,34" fill="#f8fafc" stroke="#38bdf8" stroke-width="1.2"/>
         <polygon points="58,34 78,52 98,34" fill="#f8fafc" stroke="#38bdf8" stroke-width="1.2"/>
@@ -6407,7 +6407,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#7f1d1d">・逃げやすい赤/赤外線を中でジグザグ反射</text>
         <text x="144" y="69" font-size="7.1" fill="#7f1d1d">・STARVIS 2の驚異的暗視感度の秘密</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#b91c1c">逆さピラミッドの斜面で赤い光をピンボールのように閉じ込めて吸収率アップ</text>
-      `);case"micro_delta_doped_monolayer":return d(`
+      `);case"micro_delta_doped_monolayer":return a(`
         <rect x="14" y="18" width="112" height="14" rx="2" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="70" y="28" text-anchor="middle" font-size="6.6" fill="#0369a1">裏面Si表面(青・UVが浅く吸収)</text>
         <line x1="14" y1="36" x2="126" y2="36" stroke="#a855f7" stroke-width="3.2"/>
@@ -6428,7 +6428,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#581c87">・表面の電子消失(デッドゾーン)を消去</text>
         <text x="144" y="69" font-size="7.1" fill="#581c87">・NASA宇宙望遠鏡級 IQE≈100%</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#7e22ce">原子1個分の極薄ホウ素バリアが、浅い所で生まれた青い光の電子を100%救出</text>
-      `);case"micro_thick_pepi_depletion":return d(`
+      `);case"micro_thick_pepi_depletion":return a(`
         <rect x="14" y="16" width="112" height="70" rx="4" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
         <text x="70" y="28" text-anchor="middle" font-size="7" font-weight="bold" fill="#1d4ed8">厚膜P型エピ層 (3〜6.6μm)</text>
         <path d="M36 34 V78 M70 34 V78 M104 34 V78" stroke="#3b82f6" stroke-width="1.6" stroke-dasharray="3 2"/>
@@ -6444,7 +6444,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#1e3a8a">・奥まで潜った赤い光の電子も真っすぐ回収</text>
         <text x="144" y="69" font-size="7.1" fill="#1e3a8a">・横の迷子を防ぎ高感度と解像感を両立</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#1d4ed8">分厚い超純度シリコン全体が電子エレベーターになり赤い光もシャープに吸収</text>
-      `);case"micro_graded_pd_doping":return d(`
+      `);case"micro_graded_pd_doping":return a(`
         <rect x="14" y="18" width="36" height="64" rx="2" fill="#dbeafe" stroke="#60a5fa"/>
         <text x="32" y="34" text-anchor="middle" font-size="7" font-weight="bold" fill="#1e40af">N1(薄)</text>
         <rect x="50" y="18" width="36" height="64" rx="2" fill="#93c5fd" stroke="#3b82f6"/>
@@ -6462,7 +6462,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#713f12">・電子が10ナノ秒未満で出口へ滑り落ちる</text>
         <text x="142" y="69" font-size="7.1" fill="#713f12">・取り残しゼロ＝残像(Lag)完全消去</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#a16207">フォトダイオード内部の3段グラデーションが電子の滑り台になり残像をゼロへ</text>
-      `);case"micro_dual_depth_pr_fdti":return d(`
+      `);case"micro_dual_depth_pr_fdti":return a(`
         <rect x="14" y="18" width="112" height="68" rx="3" fill="#f1f5f9" stroke="#64748b"/>
         <rect x="16" y="18" width="8" height="68" fill="#1e293b"/>
         <rect x="116" y="18" width="8" height="68" fill="#1e293b"/>
@@ -6479,7 +6479,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#334155">・同色ペア間＝下部を開けた浅い壁</text>
         <text x="144" y="69" font-size="7.1" fill="#334155">・白点ノイズ削減＆高飽和(IISW 2025)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">外周は完全防音壁、同色の相棒間は通り道を開ける賢いハイブリッド隔壁</text>
-      `);case"micro_plad_boron_liner":return d(`
+      `);case"micro_plad_boron_liner":return a(`
         <rect x="14" y="24" width="38" height="60" fill="#cbd5e1" stroke="#475569"/>
         <rect x="88" y="24" width="38" height="60" fill="#cbd5e1" stroke="#475569"/>
         <rect x="52" y="24" width="36" height="58" fill="#faf5ff"/>
@@ -6494,7 +6494,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#581c87">・垂直壁の底までP⁺バリアを均一コート</text>
         <text x="144" y="69" font-size="7.1" fill="#581c87">・暗闇の白い点ノイズ(白点)を完全封鎖</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#7e22ce">細い井戸の底までプラズマの霧でホウ素を塗り、壁から湧く白点ノイズを封印</text>
-      `);case"micro_split_pd_lfm_hdr":return d(`
+      `);case"micro_split_pd_lfm_hdr":return a(`
         <rect x="14" y="18" width="70" height="68" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.6"/>
         <text x="49" y="44" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1d4ed8">大PD (SP1)</text>
         <text x="49" y="58" text-anchor="middle" font-size="6.6" fill="#1e40af">暗所・夜景担当</text>
@@ -6509,7 +6509,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#78350f">・1回シャッターで130dB超広階調</text>
         <text x="142" y="69" font-size="7.1" fill="#78350f">・LED信号点滅の消え(フリッカー)防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">暗い場所は大きな受光部、太陽やLEDは小さな受光部が同時に受け持つ1発HDR</text>
-      `);case"micro_twisted_af_pd":return d(`
+      `);case"micro_twisted_af_pd":return a(`
         <rect x="16" y="16" width="46" height="24" rx="2" fill="#bfdbfe" stroke="#2563eb"/>
         <text x="39" y="31" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#1d4ed8">上分割A</text>
         <rect x="16" y="42" width="46" height="24" rx="2" fill="#fbcfe8" stroke="#db2777"/>
@@ -6526,7 +6526,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#831843">・縦線も水平線も360°クロスAFで即合焦</text>
         <text x="142" y="69" font-size="7.1" fill="#831843">・画質ロスゼロ(Canon IISW 2025)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9d174d">電子の通り道を立体的に90°ねじり、横縞や水平線でも迷わない全方向AFを実現</text>
-      `);case"micro_backside_vsub_ring":return d(`
+      `);case"micro_backside_vsub_ring":return a(`
         <rect x="14" y="16" width="112" height="12" rx="2" fill="#dc2626"/>
         <text x="70" y="24.5" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#fff">裏面電極リング (V_sub = −5V)</text>
         <rect x="14" y="30" width="112" height="44" rx="2" fill="#f1f5f9" stroke="#64748b"/>
@@ -6543,7 +6543,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#7f1d1d">・反発力で電子の横ブレ(ボケ)を阻止</text>
         <text x="144" y="69" font-size="7.1" fill="#7f1d1d">・厚膜Siでもカミソリ解像度(MTF↑)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#b91c1c">裏面のマイナス電圧で電子を真下へ一直線に落とし、隣への滲みを防ぐ電極枠</text>
-      `);case"micro_tg_gate_oxide":return d(`
+      `);case"micro_tg_gate_oxide":return a(`
         <rect x="34" y="14" width="72" height="16" rx="2" fill="#f59e0b" stroke="#b45309"/>
         <text x="70" y="24.5" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">転送ゲート電極 (TG)</text>
         <rect x="34" y="32" width="72" height="8" rx="1" fill="#bae6fd" stroke="#0284c7" stroke-width="1.4"/>
@@ -6559,7 +6559,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#0c4a6e">・−1.2V⇔+3.0Vで水門を超高速開閉</text>
         <text x="144" y="69" font-size="7.1" fill="#0c4a6e">・地中トンネル通過でノイズ・残像ゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">極薄ガラス膜と地中トンネルにより、電子を表面のキズに触れさせず無傷で転送</text>
-      `);case"micro_pump_gate_qis":return d(`
+      `);case"micro_pump_gate_qis":return a(`
         <rect x="14" y="34" width="40" height="48" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="34" y="60" text-anchor="middle" font-size="7" font-weight="bold" fill="#1d4ed8">PD</text>
         <polygon points="56,50 84,36 84,82 56,82" fill="#e0e7ff" stroke="#4f46e5"/>
@@ -6577,7 +6577,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="138" y="56" font-size="7.1" fill="#713f12">・変換効率423μV/e⁻(従来の約6倍!)</text>
         <text x="138" y="69" font-size="7.1" fill="#713f12">・常温ノイズ0.19e⁻で光子1粒ずつ計数</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#854d0e">極細試験管のような超小容量FDで、光たった1粒の到着をハッキリ数える量子構造</text>
-      `);case"micro_gs_storage_diode":return d(`
+      `);case"micro_gs_storage_diode":return a(`
         <rect x="14" y="36" width="38" height="46" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="33" y="62" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#1d4ed8">PD</text>
         <rect x="64" y="18" width="44" height="10" rx="2" fill="#0f172a"/>
@@ -6595,7 +6595,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="140" y="56" font-size="7.1" fill="#334155">・遮光比1万〜10万倍(PLS&lt;−85dB)</text>
         <text x="140" y="69" font-size="7.1" fill="#334155">・プロペラや打球も歪み完全ゼロ!</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">全画素同時に真っ暗な一時保管金庫へ電子を預け、高速移動体の歪みを根絶</text>
-      `);case"micro_tcg_multistage_cap":return d(`
+      `);case"micro_tcg_multistage_cap":return a(`
         <rect x="14" y="50" width="24" height="34" rx="2" fill="#dbeafe" stroke="#2563eb"/>
         <text x="26" y="70" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#1d4ed8">HCG</text>
         <text x="26" y="44" text-anchor="middle" font-size="6" fill="#1d4ed8">お猪口</text>
@@ -6614,7 +6614,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#78350f">・中間のFC段がSNRノイズ段差を13dB改善</text>
         <text x="142" y="69" font-size="7.1" fill="#78350f">・暗部低ノイズ＆直射日光10万電子超</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">お猪口・コップ・特大ジョッキを瞬時に切替え、明暗の境目も滑らかなHDR画質</text>
-      `);case"micro_sf_drain_buried":return d(`
+      `);case"micro_sf_drain_buried":return a(`
         <rect x="34" y="16" width="68" height="14" rx="2" fill="#f59e0b" stroke="#b45309"/>
         <text x="68" y="25.5" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#fff">大型SFゲート(広W×L)</text>
         <rect x="14" y="34" width="108" height="50" rx="3" fill="#f1f5f9" stroke="#475569"/>
@@ -6630,7 +6630,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="140" y="56" font-size="7.1" fill="#14532d">・電流を表面キズから離し1/f・RTS低減</text>
         <text x="140" y="69" font-size="7.1" fill="#14532d">・ドレイン最適化で変換効率＆直線性↑</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#166534">増幅電流を地中ルートへ逃がすことで夜景の砂嵐やチラつきノイズを大幅削減</text>
-      `);case"micro_spad_avalanche_guard":return d(`
+      `);case"micro_spad_avalanche_guard":return a(`
         <rect x="14" y="24" width="112" height="58" rx="4" fill="#1e293b" stroke="#0f172a"/>
         <rect x="20" y="34" width="16" height="36" rx="4" fill="#38bdf8" opacity="0.5" stroke="#38bdf8"/>
         <rect x="104" y="34" width="16" height="36" rx="4" fill="#38bdf8" opacity="0.5" stroke="#38bdf8"/>
@@ -6647,7 +6647,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#7f1d1d">・丸いガードリングが角の誤爆を防止</text>
         <text x="144" y="69" font-size="7.1" fill="#7f1d1d">・クエンチ回路が数nsで鎮火＆即復帰</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#991b1b">光1粒を雪崩増倍でノイズ0のデジタル信号に変え、暗視カラー＆距離測定を実現</text>
-      `);case"micro_pixel_dps_edram":return d(`
+      `);case"micro_pixel_dps_edram":return a(`
         <rect x="16" y="14" width="108" height="20" rx="3" fill="#dbeafe" stroke="#2563eb"/>
         <text x="70" y="27" text-anchor="middle" font-size="7.1" font-weight="bold" fill="#1d4ed8">上層: 1画素フォトダイオード</text>
         <line x1="70" y1="34" x2="70" y2="44" stroke="#f59e0b" stroke-width="3"/>
@@ -6664,7 +6664,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#4c1d95">・全画素いっせいに真下で0/1デジタル化</text>
         <text x="142" y="69" font-size="7.1" fill="#4c1d95">・配線ノイズ激減＆120dB超並列HDR</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#5b21b6">順番待ちなし! 全画素の真下で同時にデジタル数値化＆記憶する3D積層頭脳</text>
-      `);case"micro_cms_multi_sampler":return d(`
+      `);case"micro_cms_multi_sampler":return a(`
         <rect x="14" y="18" width="112" height="66" rx="4" fill="#f8fafc" stroke="#64748b"/>
         <path d="M22 66 L30 56 L38 68 L46 58 L54 64 L62 59" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
         <line x1="22" y1="62" x2="62" y2="62" stroke="#dc2626" stroke-width="1.6"/>
@@ -6679,7 +6679,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#1e3a8a">・ランダム熱雑音だけが打ち消し合う</text>
         <text x="144" y="69" font-size="7.1" fill="#1e3a8a">・16回平均でノイズ1/4! 16bit暗部階調</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#1d4ed8">超高速で何回も測って平均を取ることで、本物の光を残しランダム雑音だけ消去</text>
-      `);case"micro_evs_log_change":return d(`
+      `);case"micro_evs_log_change":return a(`
         <rect x="14" y="18" width="112" height="66" rx="4" fill="#0f172a" stroke="#334155"/>
         <path d="M22 60 H46 L52 34 H82 L88 66 H118" fill="none" stroke="#38bdf8" stroke-width="1.8"/>
         <line x1="52" y1="78" x2="52" y2="40" stroke="#22c55e" stroke-width="2.4"/>
@@ -6693,7 +6693,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#14532d">・1μs(1万fps相当)の超高速反応＆120dB</text>
         <text x="144" y="69" font-size="7.1" fill="#14532d">・動体AFや手ブレ逆算消去の未来技術</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#166534">変わらない風景は黙り、動いた画素だけが100万分の1秒で叫ぶ省電力AI網膜</text>
-      `);case"micro_dummy_guard_ring":return d(`
+      `);case"micro_dummy_guard_ring":return a(`
         <rect x="14" y="16" width="112" height="70" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
         <rect x="24" y="25" width="92" height="52" rx="3" fill="#fef3c7" stroke="#d97706" stroke-dasharray="3 2"/>
         <rect x="36" y="35" width="68" height="32" rx="2" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
@@ -6706,7 +6706,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#78350f">・周辺回路からの迷子電子を排水溝で回収</text>
         <text x="144" y="69" font-size="7.1" fill="#78350f">・長時間露光の端カブリ(アンプグロー)遮断</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">外周のクッション画素と迷子電子の排水溝が、画面四隅まで均一な美しさを死守</text>
-      `);case"micro_rts_anneal_bist":return d(`
+      `);case"micro_rts_anneal_bist":return a(`
         <rect x="14" y="18" width="112" height="32" rx="3" fill="#fef2f2" stroke="#dc2626"/>
         <path d="M22 40 H36 V26 H52 V40 H64 V26 H80 V40 H116" fill="none" stroke="#dc2626" stroke-width="1.5"/>
         <text x="70" y="24" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#b91c1c">劣化: RTSチラつきノイズ</text>
@@ -6722,7 +6722,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#7c2d12">・制御熱アニールで界面欠陥を自己修復</text>
         <text x="144" y="69" font-size="7.1" fill="#7c2d12">・TSMC IISW 2025実証の長期信頼性機構</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">長年使って生じたチラつき欠陥を自動診断＆熱リカバリーで新品の静けさへ回復</text>
-      `);default:return null}}function c(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function q(e){switch(e){case"body_vl_ir_awb_sensor":return c(`
+      `);default:return null}}function w(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function xt(e){switch(e){case"body_vl_ir_awb_sensor":return w(`
         <path d="M18 24 L52 34" stroke="#f59e0b" stroke-width="2"/>
         <path d="M18 54 L52 54" stroke="#dc2626" stroke-width="2" stroke-dasharray="3 2"/>
         <text x="26" y="18" text-anchor="middle" font-size="6.2" fill="#b45309">可視光RGB</text>
@@ -6740,7 +6740,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#0c4a6e">・太陽光か室内LEDかを瞬時に判別</text>
         <text x="142" y="69" font-size="7.1" fill="#0c4a6e">・日陰や逆光でも自然な肌色(α7R VI)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">カメラ正面の「光の色のソムリエ」がAIと協力し、どんな照明でも白い物を白く写す</text>
-      `);case"body_front_ir_remote_window":return c(`
+      `);case"body_front_ir_remote_window":return w(`
         <rect x="14" y="34" width="24" height="32" rx="3" fill="#334155" stroke="#0f172a"/>
         <text x="26" y="53" text-anchor="middle" font-size="6.4" fill="#f8fafc">リモコン</text>
         <path d="M40 46 Q54 38 64 46 M40 54 Q54 62 64 54" fill="none" stroke="#e11d48" stroke-width="1.8"/>
@@ -6756,7 +6756,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#881337">・40kHzの合言葉で太陽光の誤動作防止</text>
         <text x="142" y="69" font-size="7.1" fill="#881337">・三脚撮影でカメラに触れずブレゼロ!</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9f1239">グリップ前面の赤外線専用窓がリモコンの合図を受け取り、手ブレなしでシャッターを切る</text>
-      `);case"body_bodycap_alc_b1em":return c(`
+      `);case"body_bodycap_alc_b1em":return w(`
         <circle cx="52" cy="50" r="28" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
         <circle cx="52" cy="50" r="19" fill="#334155" stroke="#64748b"/>
         <rect x="46" y="18" width="12" height="5" rx="1" fill="#f8fafc"/>
@@ -6772,7 +6772,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・60°回転でカチッと固定し脱落防止</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・帯電防止樹脂でホコリ付着をブロック</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">レンズを外したカメラの心臓部(センサーとシャッター幕)をホコリと衝撃から守る専用のフタ</text>
-      `);case"body_sorplas_sereebo_liner":return c(`
+      `);case"body_sorplas_sereebo_liner":return w(`
         <rect x="16" y="18" width="106" height="18" rx="3" fill="#475569" stroke="#1e293b"/>
         <text x="69" y="30" text-anchor="middle" font-size="6.7" font-weight="bold" fill="#f8fafc">前面: Mg合金(高剛性)</text>
         <rect x="16" y="40" width="106" height="22" rx="3" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
@@ -6785,7 +6785,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#14532d">・新品同等の強度＆燃えにくい難燃性</text>
         <text x="142" y="69" font-size="7.1" fill="#14532d">・軽量化＋手の熱遮断＋電波透過性↑</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#166534">強度の要はマグネシウム、内部と外周はエコ再生材＆カーボン複合で軽さと環境性能を両立</text>
-      `);case"body_front_grip_thumb_insert":return c(`
+      `);case"body_front_grip_thumb_insert":return w(`
         <path d="M26 20 Q16 50 28 82 H94 Q112 66 106 44 Q98 22 76 20 Z" fill="#e2e8f0" stroke="#475569" stroke-width="1.6"/>
         <line x1="30" y1="36" x2="96" y2="36" stroke="#0284c7" stroke-width="2"/>
         <line x1="26" y1="52" x2="102" y2="52" stroke="#0284c7" stroke-width="2"/>
@@ -6799,7 +6799,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・内部の格子リブが望遠レンズ荷重を支持</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・衝撃から内部バッテリーを守る緩衝壁</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">ゴムの下に詰まった格子状の骨組みが、重い望遠レンズでも疲れない握り心地を生む</text>
-      `);case"body_deep_eyecup_ep21":return c(`
+      `);case"body_deep_eyecup_ep21":return w(`
         <rect x="20" y="22" width="18" height="56" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <text x="29" y="53" text-anchor="middle" font-size="6.2" fill="#0f172a">EVF</text>
         <path d="M38 22 L84 14 L84 86 L38 78 Z" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
@@ -6814,7 +6814,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・柔らかい遮光ゴムが横の太陽光を遮断</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・スライド＆ダブル爪で着脱・交換簡単</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">目元に密着する深型ひさしで直射日光をカットし、映画館のようにクリアなファインダーへ</text>
-      `);case"body_diopter_dial_wp":return c(`
+      `);case"body_diopter_dial_wp":return w(`
         <rect x="16" y="34" width="22" height="32" rx="3" fill="#334155" stroke="#0f172a"/>
         <text x="27" y="53" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#f8fafc">ツマミ</text>
         <rect x="40" y="24" width="10" height="52" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
@@ -6830,7 +6830,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#78350f">・裸眼の近視/老眼に合わせピント調整</text>
         <text x="142" y="69" font-size="7.1" fill="#78350f">・貫通軸Oリング＋専用シートで雨遮断</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">ファインダー横のツマミを回すだけで、自分の視力にピッタリ合わせて文字をくっきり表示</text>
-      `);case"body_evf_eye_sensor_bezel":return c(`
+      `);case"body_evf_eye_sensor_bezel":return w(`
         <rect x="18" y="24" width="24" height="52" rx="3" fill="#1e293b" stroke="#0f172a"/>
         <text x="30" y="48" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#c084fc">IR窓</text>
         <text x="30" y="60" text-anchor="middle" font-size="5.6" fill="#cbd5e1">ES1008</text>
@@ -6846,7 +6846,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#4c1d95">・自動で背面LCD消灯→EVF点灯(節電)</text>
         <text x="142" y="69" font-size="7.1" fill="#4c1d95">・二重防水クッション＋ESD接地シート</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#5b21b6">ファインダー下の赤外線の見張り番が顔を察知し、瞬時に液晶とファインダーを自動切替</text>
-      `);case"body_voice_memo_mic":return c(`
+      `);case"body_voice_memo_mic":return w(`
         <circle cx="34" cy="50" r="15" fill="#fed7aa" stroke="#ea580c"/>
         <text x="34" y="53" text-anchor="middle" font-size="7" font-weight="bold" fill="#9a3412">口元</text>
         <path d="M54 42 Q64 50 54 58 M62 36 Q76 50 62 64" fill="none" stroke="#0284c7" stroke-width="1.8"/>
@@ -6860,7 +6860,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#0c4a6e">・大歓声の競技場でも声だけを鮮明録音</text>
         <text x="142" y="69" font-size="7.1" fill="#0c4a6e">・自動文字起こし＆写真と同時FTP送信</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">背面パネルに新設された口元専用マイクで、撮った直後の写真へ音声メモをくっきり添付</text>
-      `);case"body_joy_retainer_stack":return c(`
+      `);case"body_joy_retainer_stack":return w(`
         <rect x="18" y="16" width="104" height="14" rx="3" fill="#334155"/>
         <text x="70" y="25.5" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#f8fafc">① JOY KNOB (ギザギザ親指)</text>
         <rect x="18" y="34" width="104" height="14" rx="3" fill="#fed7aa" stroke="#ea580c"/>
@@ -6875,7 +6875,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・伸び縮みする蛇腹ゴムが水と砂を遮断</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・上下金属板で挟み何十万回もズレ無し</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">360度グリグリ動かせるのに雨や砂を一切入れない、蛇腹ゴム＋金属板の4重サンドイッチ</text>
-      `);case"body_media_lid_hinge_spring":return c(`
+      `);case"body_media_lid_hinge_spring":return w(`
         <rect x="34" y="16" width="10" height="68" rx="3" fill="#94a3b8" stroke="#334155"/>
         <text x="39" y="92" text-anchor="middle" font-size="6" fill="#334155">SUS心棒</text>
         <path d="M28 32 H50 M28 40 H50 M28 48 H50 M28 56 H50" stroke="#d97706" stroke-width="2.2"/>
@@ -6889,7 +6889,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#78350f">・ロックを外した瞬間にスッと自動オープン</text>
         <text x="142" y="69" font-size="7.1" fill="#78350f">・金属軸が防水パッキンを均等に圧着</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">極細ステンレス心棒とねじりバネの力で、片手でも素早くガタつきゼロのカード交換を実現</text>
-      `);case"body_active_cooling_fan_duct":return c(`
+      `);case"body_active_cooling_fan_duct":return w(`
         <rect x="14" y="18" width="112" height="28" rx="3" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
         <circle cx="38" cy="32" r="10" fill="#38bdf8" stroke="#0369a1"/>
         <text x="38" y="34.5" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">FAN</text>
@@ -6906,7 +6906,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="144" y="56" font-size="7.1" fill="#155e75">・18〜22dB超静音マイクロブロワー</text>
         <text x="144" y="69" font-size="7.1" fill="#155e75">・8K/4K 120pを熱停止なしで無制限収録</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0e7490">雨もホコリも電子回路へ一滴も入れず、熱だけを風のトンネルへ移して追い出す独立エアコン</text>
-      `);case"body_sigma_graphite_heatplate":return c(`
+      `);case"body_sigma_graphite_heatplate":return w(`
         <rect x="16" y="16" width="108" height="14" rx="2" fill="#1e293b"/>
         <text x="70" y="25.5" text-anchor="middle" font-size="6.4" fill="#f8fafc">BIONZ XR 発熱チップ</text>
         <rect x="16" y="32" width="108" height="10" rx="2" fill="#fbcfe8" stroke="#db2777"/>
@@ -6923,7 +6923,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#7c2d12">・Ref.356/361絶縁膜で電気ショート遮断</text>
         <text x="142" y="69" font-size="7.1" fill="#7c2d12">・ファン無しで長時間4K/8K収録を実現</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">空気の隙間を熱伝導シートで埋め、ショートを防ぎつつ頭脳の熱をボディ全体へ素早く逃がす</text>
-      `);case"body_cfexpress_thermal_bridge":return c(`
+      `);case"body_cfexpress_thermal_bridge":return w(`
         <rect x="16" y="20" width="38" height="62" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
         <text x="35" y="46" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#92400e">CFexpress</text>
         <text x="35" y="58" text-anchor="middle" font-size="6" fill="#b45309">75°C発熱!</text>
@@ -6940,7 +6940,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#1e3a8a">・柔らかいギャップパッドでMg骨格へ橋渡し</text>
         <text x="142" y="69" font-size="7.1" fill="#1e3a8a">・カードの高温速度低下(停止)を防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#1d4ed8">超高速メモリーカードの熱を柔らかい冷却クッションで金属ボディへ逃がし連写を守る</text>
-      `);case"body_external_cooling_vent_port":return c(`
+      `);case"body_external_cooling_vent_port":return w(`
         <rect x="20" y="16" width="96" height="44" rx="4" fill="#e2e8f0" stroke="#334155"/>
         <text x="68" y="34" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#0f172a">ボディ内部独立ダクト</text>
         <path d="M52 84 V44 H110" fill="none" stroke="#0284c7" stroke-width="2.4"/>
@@ -6954,7 +6954,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#0c4a6e">・底面へ冷却グリップ装着でターボ送風</text>
         <text x="142" y="69" font-size="7.1" fill="#0c4a6e">・EOS R5 Mark II世代の二刀流冷却</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">普段は薄型軽量のまま、本気の8K撮影時だけ底の通気口からファンで強力冷却できる構造</text>
-      `);case"body_cable_protector_clamp":return c(`
+      `);case"body_cable_protector_clamp":return w(`
         <rect x="16" y="18" width="32" height="66" rx="3" fill="#475569" stroke="#1e293b"/>
         <text x="32" y="53" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#f8fafc">ボディ枠</text>
         <rect x="48" y="26" width="24" height="50" rx="3" fill="#1e293b" stroke="#0f172a"/>
@@ -6971,7 +6971,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・足を引っかけても力をボディ側で吸収</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・高価な基板端子の根元破損をゼロに!</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">ケーブルが抜けて配信が止まったり、端子がバキッと折れる事故を防ぐ命綱クランプ</text>
-      `);case"body_dual_usbc_25g_lan_bay":return c(`
+      `);case"body_dual_usbc_25g_lan_bay":return w(`
         <rect x="16" y="16" width="106" height="19" rx="4" fill="#dbeafe" stroke="#2563eb"/>
         <text x="69" y="28" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#1d4ed8">USB-C① 10Gbps転送/TC</text>
         <rect x="16" y="40" width="106" height="19" rx="4" fill="#fef3c7" stroke="#d97706"/>
@@ -6984,7 +6984,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#1e3a8a">・2.5G有線LANで67MP RAWも1秒即納</text>
         <text x="142" y="69" font-size="7.1" fill="#1e3a8a">・Sony α7R VI / FX5 / α1 II 最新規格</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#1d4ed8">「充電しながらデータ送信」できるUSB-C 2口と光回線級の2.5G有線LANを一挙集約</text>
-      `);case"body_audio_jack_jk1028":return c(`
+      `);case"body_audio_jack_jk1028":return w(`
         <circle cx="32" cy="34" r="10" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/>
         <text x="32" y="36.5" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#b91c1c">MIC</text>
         <circle cx="32" cy="66" r="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
@@ -7002,7 +7002,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#7f1d1d">・メイン基板から分離しデジタル雑音遮断</text>
         <text x="142" y="69" font-size="7.1" fill="#7f1d1d">・端子破損時もメイン基板を守り単体交換</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#991b1b">マイクとイヤホンの差し込み口を独立ブロックで守り、クリアな音質と修理性を両立</text>
-      `);case"body_mimo_wifi6e_nfc_coil":return c(`
+      `);case"body_mimo_wifi6e_nfc_coil":return w(`
         <rect x="16" y="16" width="44" height="24" rx="3" fill="#fef3c7" stroke="#d97706"/>
         <text x="38" y="31" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#92400e">主アンテナ①</text>
         <rect x="76" y="16" width="46" height="24" rx="3" fill="#dbeafe" stroke="#2563eb"/>
@@ -7017,7 +7017,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#713f12">・5/6GHz高速転送(α1 II / α7 V対応)</text>
         <text x="142" y="69" font-size="7.1" fill="#713f12">・磁性フェライトで金属殻でもNFC反応</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#854d0e">2本目のWi-Fiアンテナで転送速度を倍増し、フェライト裏打ちNFCコイルでスマホと瞬時連携</text>
-      `);case"body_bottom_wp_potting":return c(`
+      `);case"body_bottom_wp_potting":return w(`
         <rect x="16" y="20" width="106" height="30" rx="3" fill="#475569" stroke="#1e293b"/>
         <text x="69" y="38" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#f8fafc">カメラ底面・縦グリ通線部</text>
         <rect x="16" y="50" width="106" height="14" rx="2" fill="#c4b5fd" stroke="#7c3aed" stroke-width="1.6"/>
@@ -7030,7 +7030,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#4c1d95">・パッキンで塞げない極小角部を樹脂充填</text>
         <text x="142" y="69" font-size="7.1" fill="#4c1d95">・雪上や雨上がりの路面直置きも安心</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#5b21b6">底面の複雑なすき間を工場で防水シリコーン樹脂で完全に埋め、下からの浸水をシャットアウト</text>
-      `);case"body_cinema_cage_threads":return c(`
+      `);case"body_cinema_cage_threads":return w(`
         <rect x="18" y="34" width="102" height="46" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
         <rect x="28" y="24" width="16" height="18" rx="2" fill="#475569"/>
         <rect x="61" y="24" width="16" height="18" rx="2" fill="#475569"/>
@@ -7044,7 +7044,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#334155">・重い金属ケージなしでモニター等直付け</text>
         <text x="142" y="69" font-size="7.1" fill="#334155">・Sony FX3 / FX5(2026)シネマ標準</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#334155">ボディ自体に5つの頑丈な金属ネジ穴を直結し、ケージ不要で軽快にプロ機材を装着可能</text>
-      `);case"body_mi_shoe_fix_wp_stack":return c(`
+      `);case"body_mi_shoe_fix_wp_stack":return w(`
         <rect x="26" y="16" width="84" height="13" rx="2" fill="#cbd5e1" stroke="#334155"/>
         <text x="68" y="25" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#0f172a">① SHELL PLATE (上部台座)</text>
         <rect x="18" y="33" width="100" height="12" rx="2" fill="#475569"/>
@@ -7061,7 +7061,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#78350f">・天井を金属板で挟み重いストロボを支持</text>
         <text x="142" y="69" font-size="7.1" fill="#78350f">・21ピン端子を専用ゴムブーツで完全防水</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#92400e">天井の上下から金属板で挟んで強度を高め、デジタル音声端子の隙間をゴムブーツで防水</text>
-      `);case"body_top_wp_cushions_sv":return c(`
+      `);case"body_top_wp_cushions_sv":return w(`
         <rect x="16" y="18" width="106" height="66" rx="4" fill="#f1f5f9" stroke="#64748b"/>
         <rect x="24" y="24" width="42" height="10" rx="2" fill="#0284c7"/>
         <text x="45" y="31.5" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#fff">TOP F3</text>
@@ -7077,7 +7077,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#0c4a6e">・水を吸わない独立気泡ウレタンで止水</text>
         <text x="142" y="69" font-size="7.1" fill="#0c4a6e">・外装合わせ目の浸水とビビり音を防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#0369a1">外からは見えない段差やLCD凹部の裏に防水スポンジの堤防を巡らせ雨の侵入を食い止める</text>
-      `);case"body_np_sa100_dc_c2_pd":return c(`
+      `);case"body_np_sa100_dc_c2_pd":return w(`
         <rect x="16" y="20" width="46" height="62" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
         <text x="39" y="39" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#166534">NP-SA100</text>
         <text x="39" y="52" text-anchor="middle" font-size="6.3" fill="#15803d">2670 mAh</text>
@@ -7094,7 +7094,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#7c2d12">・カメラ画面で電池の健康度(劣化)を確認</text>
         <text x="142" y="69" font-size="7.1" fill="#7c2d12">・100W USB-PDカプラーで電池交換ゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#9a3412">2026年登場の1.3倍大容量バッテリーと100W直結カプラーで、長丁場の8K収録も安心</text>
-      `);case"body_c2pa_security_kensington":return c(`
+      `);case"body_c2pa_security_kensington":return w(`
         <rect x="16" y="20" width="44" height="62" rx="4" fill="#e2e8f0" stroke="#334155"/>
         <rect x="28" y="38" width="20" height="10" rx="2" fill="#0f172a"/>
         <text x="38" y="32" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0f172a">盗難防止</text>
@@ -7110,7 +7110,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="142" y="56" font-size="7.1" fill="#1e3a8a">・撮影瞬間にデジタル実印(C2PA)を刻印</text>
         <text x="142" y="69" font-size="7.1" fill="#1e3a8a">・AI偽造でない本物の写真・動画と証明</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.1" fill="#1d4ed8">物理的な盗難防止スロットと改ざん不可のデジタル実印チップで、機材と真実の両方を守る</text>
-      `);default:return null}}function o(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function tt(e){switch(e){case"sensor_electronic_vnd":return o(`
+      `);default:return null}}function r(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function ot(e){switch(e){case"sensor_electronic_vnd":return r(`
         <line x1="12" y1="36" x2="48" y2="36" stroke="#f59e0b" stroke-width="3"/>
         <line x1="12" y1="54" x2="48" y2="54" stroke="#f59e0b" stroke-width="3"/>
         <text x="30" y="24" text-anchor="middle" font-size="6.4" fill="#b45309">強い太陽光</text>
@@ -7127,7 +7127,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#312e81">・1/4〜1/128までボケを変えず無段階減光</text>
         <text x="136" y="69" font-size="7.0" fill="#312e81">・Sony FX6/BURANO系の魔法サングラス</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#3730a3">真夏の日中でもF1.2の開放ボケを崩さず一瞬で適正露出に合わせる液晶自動サングラス</text>
-      `);case"sensor_partially_stacked_strips":return o(`
+      `);case"sensor_partially_stacked_strips":return r(`
         <rect x="18" y="16" width="100" height="15" rx="2" fill="#d1fae5" stroke="#059669" stroke-width="1.5"/>
         <text x="68" y="26" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#065f46">上:高速ADC+DGO積層帯</text>
         <rect x="18" y="33" width="100" height="32" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.4"/>
@@ -7140,7 +7140,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#064e3b">・読出約4倍高速化＋16段DGO同時合成</text>
         <text x="136" y="69" font-size="7.0" fill="#064e3b">・中央は発熱レスで低ノイズ(α7 V世代)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#065f46">混雑する上下の出入口だけを2階建て高速レーンにしてコスパと超高速読出を両立</text>
-      `);case"sensor_curved_substrate":return o(`
+      `);case"sensor_curved_substrate":return r(`
         <line x1="16" y1="22" x2="72" y2="32" stroke="#0284c7" stroke-width="1.6"/>
         <line x1="16" y1="50" x2="82" y2="50" stroke="#0284c7" stroke-width="1.8"/>
         <line x1="16" y1="78" x2="72" y2="68" stroke="#0284c7" stroke-width="1.6"/>
@@ -7153,7 +7153,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・画面隅の光も垂直に入り周辺感度2倍</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・レンズの像面湾曲補正を劇的に小型化</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">人間の目の「網膜」のようにセンサー自体を丸く曲げて四隅までくっきり明るく写す</text>
-      `);case"sensor_im_adjust_washers":return o(`
+      `);case"sensor_im_adjust_washers":return r(`
         <rect x="18" y="22" width="16" height="58" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <text x="26" y="54" text-anchor="middle" font-size="5.8" fill="#1e293b">マウント</text>
         <line x1="34" y1="50" x2="80" y2="50" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="3 2"/>
@@ -7170,7 +7170,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#1e3a8a">・3点ボス下で片ボケ傾きをミクロン校正</text>
         <text x="136" y="69" font-size="7.0" fill="#1e3a8a">・Eマウント18.000mm厳密フランジ維持</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">髪の毛の1/3の極薄ワッシャーを3箇所へ挟み、ピント面の傾きをゼロに追い込む職人技</text>
-      `);case"sensor_mechanical_dust_shield":return o(`
+      `);case"sensor_mechanical_dust_shield":return r(`
         <rect x="20" y="18" width="70" height="66" rx="4" fill="#f1f5f9" stroke="#334155" stroke-width="1.6"/>
         <rect x="25" y="23" width="60" height="27" rx="2" fill="#334155"/>
         <rect x="25" y="52" width="60" height="27" rx="2" fill="#475569"/>
@@ -7185,7 +7185,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・撮影シャッターと別の高剛性専用ブレード</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・屋外レンズ交換時のゴミ付着を95%削減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">電源を切ると頑丈な専用シャッター扉が自動で閉まり、砂埃や指接触からセンサーを守る</text>
-      `);case"sensor_double_roll_halbach":return o(`
+      `);case"sensor_double_roll_halbach":return r(`
         <rect x="16" y="22" width="28" height="24" rx="2" fill="#fed7aa" stroke="#ea580c"/>
         <rect x="46" y="22" width="28" height="24" rx="2" fill="#fecaca" stroke="#dc2626"/>
         <rect x="76" y="22" width="28" height="24" rx="2" fill="#fed7aa" stroke="#ea580c"/>
@@ -7201,7 +7201,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・中央8.5段/周辺7.0段の広ストローク</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・推力+40%で省電力・低発熱を両立</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">磁石の向きを賢く並べて磁力をコイル側へ1.4倍集中させ、2倍の回転手ブレをピタ止め</text>
-      `);case"sensor_pixelshift_submicron_scale":return o(`
+      `);case"sensor_pixelshift_submicron_scale":return r(`
         <rect x="18" y="20" width="96" height="22" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.4"/>
         <line x1="28" y1="20" x2="28" y2="42" stroke="#0284c7" stroke-width="1.4"/>
         <line x1="40" y1="20" x2="40" y2="42" stroke="#0284c7" stroke-width="1.4"/>
@@ -7219,7 +7219,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・1.9µm(0.5画素)刻みを±0.1µmで制御</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・16枚合成で偽色ゼロの2.4億画素を実現</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">センサーを髪の毛の1/30幅だけ正確に16回ずらすための、超ミクロ専用の精密ものさし</text>
-      `);case"sensor_filter_edge_sumi":return o(`
+      `);case"sensor_filter_edge_sumi":return r(`
         <rect x="26" y="22" width="76" height="54" rx="3" fill="#e0f2fe" stroke="#0f172a" stroke-width="5"/>
         <line x1="12" y1="30" x2="28" y2="38" stroke="#dc2626" stroke-width="2"/>
         <circle cx="28" cy="38" r="4" fill="#111827"/>
@@ -7232,7 +7232,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#374151">・45°斜め面取りで内部全反射を断ち切る</text>
         <text x="136" y="69" font-size="7.0" fill="#374151">・夜景や星空の端に出る謎の光輪を消去</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1f2937">ガラスのフチを真っ黒な特殊インクで塗りつぶし、強い街灯や星の迷光ゴーストを吸い取る</text>
-      `);case"sensor_sswf_fluorine_ar":return o(`
+      `);case"sensor_sswf_fluorine_ar":return r(`
         <rect x="18" y="62" width="98" height="20" rx="2" fill="#e0f2fe" stroke="#0284c7"/>
         <text x="67" y="75" text-anchor="middle" font-size="6.4" fill="#0369a1">SSWF振動ガラス</text>
         <rect x="18" y="48" width="98" height="12" rx="1" fill="#ddd6fe" stroke="#7c3aed"/>
@@ -7248,7 +7248,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・水接触角110°超で油汚れもスルッと脱落</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・可視光反射率0.2%以下の超高透過AR</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">静電気を逃がす透明膜とツルツルのフッ素膜を重ね、ホコリや油滴を寄せ付けない最表面</text>
-      `);case"sensor_wirebond_dam_baffle":return o(`
+      `);case"sensor_wirebond_dam_baffle":return r(`
         <rect x="16" y="64" width="102" height="16" rx="2" fill="#e2e8f0" stroke="#475569"/>
         <rect x="46" y="48" width="42" height="16" rx="1" fill="#0ea5e9"/>
         <text x="67" y="59" text-anchor="middle" font-size="6.0" fill="#ffffff">CMOSダイ</text>
@@ -7263,7 +7263,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・ワイヤー乱反射フレアを-20dB以上遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・振動・落下時の極細金線断線をゼロ化</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">チップ周囲の極細金ワイヤーを真っ黒な樹脂の堤防で固め、断線防止と迷光消去を両立</text>
-      `);case"sensor_tcxo_clock_tree":return o(`
+      `);case"sensor_tcxo_clock_tree":return r(`
         <rect x="16" y="24" width="40" height="36" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.6"/>
         <text x="36" y="40" text-anchor="middle" font-size="7.0" font-weight="bold" fill="#854d0e">TCXO</text>
         <text x="36" y="52" text-anchor="middle" font-size="5.8" fill="#854d0e">±0.5ppm</text>
@@ -7278,7 +7278,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・揺らぎ0.5ps未満で14bit ADC精度死守</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・映画マルチカメラのゲンロック同期基準</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">温度に動じない超精密な心臓の鼓動をセンサー真横に置き、ノイズと映像ズレを封じる</text>
-      `);case"sensor_cross_roller_guide":return o(`
+      `);case"sensor_cross_roller_guide":return r(`
         <rect x="18" y="22" width="96" height="14" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <rect x="18" y="62" width="96" height="14" rx="2" fill="#cbd5e1" stroke="#475569"/>
         <circle cx="34" cy="49" r="7" fill="#334155"/>
@@ -7292,7 +7292,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・すべり摩擦ゼロで微小手ブレに即追従</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・下向き撮影でもF1.2ピント面を傾けない</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">横には無摩擦でスルスル動くのにピント方向には1ミクロンも傾かない精密工作機械式足回り</text>
-      `);case"sensor_peltier_tec_cooler":return o(`
+      `);case"sensor_peltier_tec_cooler":return r(`
         <rect x="20" y="20" width="94" height="12" rx="2" fill="#bae6fd" stroke="#0284c7"/>
         <text x="67" y="29" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0369a1">冷却面 (-25℃ センサー側)</text>
         <rect x="28" y="34" width="14" height="28" fill="#0ea5e9"/>
@@ -7312,7 +7312,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・外気温より-20〜-35℃下げて暗電流消滅</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・ガラス周縁ヒーターで結露クモリを防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">電気を流すだけでセンサーを冷やす超小型半導体冷蔵庫で、星空や8Kの熱ノイズを根絶</text>
-      `);case"sensor_die_fiducial_targets":return o(`
+      `);case"sensor_die_fiducial_targets":return r(`
         <rect x="22" y="18" width="88" height="62" rx="3" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
         <rect x="34" y="28" width="64" height="42" rx="1" fill="#0c4a6e"/>
         <text x="66" y="52" text-anchor="middle" font-size="6.5" fill="#38bdf8">36×24mm 画素</text>
@@ -7324,7 +7324,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・6軸レーザーロボットが位置と回転を調芯</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・ロール誤差±0.01°以下の完璧な水平</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">印刷のトンボのようにチップ四隅に刻んだ十字照準を頼りに、髪の毛の1/50精度で組立</text>
-      `);case"sensor_carrier_piezo_accel":return o(`
+      `);case"sensor_carrier_piezo_accel":return r(`
         <path d="M16 42 Q26 22 36 42 T56 42" fill="none" stroke="#e11d48" stroke-width="2"/>
         <text x="36" y="22" text-anchor="middle" font-size="6.2" fill="#be123c">シャッター衝撃波</text>
         <path d="M16 66 Q26 86 36 66 T56 66" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
@@ -7338,7 +7338,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・ノイキャンと同じ逆位相波で微ブレ打消し</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・マクロ撮影の平行シフトブレも高精度検出</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">センサー台座に直接乗せた小型振動計が、シャッター衝撃を逆向きの力で一瞬キャンセル</text>
-      `);case"sensor_dual_edge_slvs16":return o(`
+      `);case"sensor_dual_edge_slvs16":return r(`
         <rect x="44" y="24" width="44" height="50" rx="3" fill="#0f766e"/>
         <text x="66" y="52" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#f0fdfa">CMOS</text>
         <path d="M44 32 H16 M44 44 H16 M44 56 H16 M44 68 H16" stroke="#14b8a6" stroke-width="2"/>
@@ -7352,7 +7352,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#134e4a">・フェライトチョークが同相ノイズだけ遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#134e4a">・Wi-Fi/GNSSへの電波干渉を徹底抑制</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">左右計16車線の超高速道路で8K RAWを運びつつ、小さな関所で電波ノイズだけを通行止め</text>
-      `);case"sensor_thermal_via_dieattach":return o(`
+      `);case"sensor_thermal_via_dieattach":return r(`
         <rect x="20" y="18" width="94" height="14" rx="2" fill="#0ea5e9"/>
         <text x="67" y="28" text-anchor="middle" font-size="6.2" fill="#ffffff">CMOSシリコンダイ (発熱)</text>
         <rect x="20" y="33" width="94" height="8" fill="#cbd5e1" stroke="#64748b"/>
@@ -7370,7 +7370,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・多孔質ナノ銀が熱膨張差を吸収し無反り</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・8K連続収録でセンサー温度を約10℃低減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">チップ真下に何百本もの銅の煙突を貫通させ、8Kの熱を逃がしながら反り歪みもゼロ化</text>
-      `);case"sensor_freefall_ibis_brake":return o(`
+      `);case"sensor_freefall_ibis_brake":return r(`
         <rect x="44" y="26" width="44" height="44" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
         <text x="66" y="46" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#0369a1">IBIS</text>
         <text x="66" y="58" text-anchor="middle" font-size="6.0" fill="#0369a1">可動枠</text>
@@ -7384,7 +7384,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・VCM回生ブレーキ＋ゴム歯で中央ロック</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・電源OFF時は無通電の磁気ディテント保持</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">うっかりカメラを落とした0.05秒後に浮いているセンサーを緊急ブレーキでガッチリ救出</text>
-      `);case"sensor_low_alpha_mold":return o(`
+      `);case"sensor_low_alpha_mold":return r(`
         <rect x="18" y="20" width="96" height="18" rx="3" fill="#f3e8ff" stroke="#9333ea" stroke-width="1.5"/>
         <text x="66" y="32" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#6b21a8">低α線ULA合成石英ガラス</text>
         <circle cx="40" cy="48" r="5" fill="#ef4444" opacity="0.35"/>
@@ -7398,7 +7398,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#581c87">・α線放出率 0.002 cph/cm² 未満を達成</text>
         <text x="136" y="69" font-size="7.0" fill="#581c87">・星空の偽白点やDRAMソフトエラーを防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#6b21a8">ガラスや陶器に微量に含まれる天然放射線を徹底除去し、写真に謎の白い点が出るのを防ぐ</text>
-      `);case"sensor_chamber_labyrinth_felt":return o(`
+      `);case"sensor_chamber_labyrinth_felt":return r(`
         <path d="M18 22 H52 V38 H36 V54 H58 V74 H18 Z" fill="#1e293b"/>
         <path d="M112 22 H78 V38 H94 V54 H72 V74 H112 Z" fill="#1e293b"/>
         <path d="M65 18 V78" stroke="#0284c7" stroke-width="2.2"/>
@@ -7412,7 +7412,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・シャッター隙間からの迷光・摩耗粉を遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・4隅シリコーン環がシャッター衝撃を減衰</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">映画館の暗い迷路入口のように真っ黒な植毛溝とゴム環で迷光・ゴミ・振動を最終封鎖</text>
-      `);case"body_dial_detent_ball_spring":return o(`
+      `);case"body_dial_detent_ball_spring":return r(`
         <path d="M18 32 Q32 42 46 32 Q60 42 74 32 Q88 42 102 32 L102 22 H18 Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.4"/>
         <circle cx="60" cy="43" r="6.5" fill="#f8fafc" stroke="#1e293b" stroke-width="1.8"/>
         <rect x="52" y="50" width="16" height="28" rx="2" fill="#fde68a" stroke="#b45309"/>
@@ -7424,7 +7424,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・波型カム溝へ押付け「カチッ」と節度感</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・10万回回してもヘタらない金属球耐久</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">直径1.5mmの鋼球を小さなバネが溝へ押し付け、高級時計のような極上クリック感を生む</text>
-      `);case"body_oem_keycap_dome_set":return o(`
+      `);case"body_oem_keycap_dome_set":return r(`
         <rect x="18" y="20" width="96" height="62" rx="5" fill="#f1f5f9" stroke="#475569"/>
         <circle cx="38" cy="36" r="8" fill="#1e293b"/>
         <text x="38" y="38.5" text-anchor="middle" font-size="5.5" fill="#fff">AF-ON</text>
@@ -7445,7 +7445,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・一体シリコーン雨合羽が浸水を完全遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・Ref.65–69/106–112 30万回耐久ドーム</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">親指の感触だけで押し分けられる背面主役ボタン群と、雨粒を入れない防水シリコーン膜</text>
-      `);case"body_forged_strap_eyelets":return o(`
+      `);case"body_forged_strap_eyelets":return r(`
         <rect x="52" y="18" width="16" height="66" rx="2" fill="#475569"/>
         <text x="60" y="53" text-anchor="middle" font-size="5.8" fill="#f8fafc">Mg</text>
         <rect x="28" y="44" width="44" height="14" rx="3" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
@@ -7460,7 +7460,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・外装でなく内部Mg骨格へボルト直接締結</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・軸部EPDM Oリングで雨水伝い侵入を封止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">3kg超の超望遠レンズを下げて走っても抜けない、骨格直結のクライミング級安全アンカー</text>
-      `);case"body_bth_assy_fp2438":return o(`
+      `);case"body_bth_assy_fp2438":return r(`
         <rect x="18" y="18" width="46" height="64" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
         <text x="41" y="48" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#92400e">BTH ASSY</text>
         <text x="41" y="60" text-anchor="middle" font-size="5.6" fill="#92400e">電池骨格</text>
@@ -7475,7 +7475,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・Ref.359専用フレキが3.5Aと残量通信を伝達</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・UL94 V-0難燃隔壁で万一の熱拡散を遮断</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">電池をしっかり支える案内ボックスと、大電流・残量情報を運ぶオレンジ色の専用血管</text>
-      `);case"body_optical_smart_controller":return o(`
+      `);case"body_optical_smart_controller":return r(`
         <circle cx="58" cy="48" r="26" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
         <circle cx="58" cy="48" r="11" fill="#1e1b4b"/>
         <path d="M58 26 V34 M58 62 V70 M36 48 H44 M72 48 H80" stroke="#7c3aed" stroke-width="2"/>
@@ -7487,7 +7487,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#4c1d95">・押す＆なぞるを親指1本・持ち替えゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#4c1d95">・光学式のため雨濡れや薄手手袋でも動作</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">ボタン表面を指でスッとなぞるだけでピント枠が瞬間移動するプロスポーツ機の名デバイス</text>
-      `);case"body_gnss_ceramic_antenna":return o(`
+      `);case"body_gnss_ceramic_antenna":return r(`
         <path d="M36 18 Q62 12 88 18 M42 26 Q62 21 82 26" fill="none" stroke="#10b981" stroke-width="1.8"/>
         <text x="62" y="13" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#047857">GPS / みちびき衛星電波</text>
         <rect x="34" y="34" width="56" height="28" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
@@ -7502,7 +7502,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#064e3b">・高誘電セラミックで波長を縮め14mm化</text>
         <text x="136" y="69" font-size="7.0" fill="#064e3b">・撮影位置とUTC原子時計時刻を自動刻印</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#065f46">スマホ不要で宇宙の衛星電波をキャッチし、旅先の場所と正確な時刻を全写真へ自動記録</text>
-      `);case"body_timecode_sync_port":return o(`
+      `);case"body_timecode_sync_port":return r(`
         <circle cx="38" cy="48" r="18" fill="#e2e8f0" stroke="#dc2626" stroke-width="2.4"/>
         <circle cx="38" cy="48" r="5" fill="#eab308"/>
         <text x="38" y="77" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#991b1b">TC IN/OUT</text>
@@ -7516,7 +7516,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7f1d1d">・内蔵TCXOで24時間後もズレ1コマ未満</text>
         <text x="136" y="69" font-size="7.0" fill="#7f1d1d">・SMPTE LTC準拠ロック付堅牢シェル</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">映画やライブ収録で何台ものカメラと録音機のタイミングを一発で合わせる共通デジタル時計</text>
-      `);case"body_haptic_piezo_buttons":return o(`
+      `);case"body_haptic_piezo_buttons":return r(`
         <rect x="18" y="24" width="96" height="16" rx="3" fill="#475569"/>
         <text x="66" y="35" text-anchor="middle" font-size="6.2" fill="#f8fafc">継ぎ目ゼロ一体アルミ表面</text>
         <rect x="18" y="42" width="96" height="10" fill="#fef3c7" stroke="#d97706"/>
@@ -7531,7 +7531,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・指圧を検知し2ms未満で鋭い振動を返す</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・Sigma BF(2025–2026)発の次世代操作</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">動くすき間が一切ないのに押すと「カチッ！」と震えて答える、水もホコリも入れない未来ボタン</text>
-      `);case"body_focus_mode_lever":return o(`
+      `);case"body_focus_mode_lever":return r(`
         <circle cx="58" cy="52" r="24" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
         <line x1="58" y1="52" x2="72" y2="30" stroke="#1e293b" stroke-width="4" stroke-linecap="round"/>
         <circle cx="58" cy="52" r="7" fill="#cbd5e1" stroke="#334155"/>
@@ -7546,7 +7546,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#1e3a8a">・電源OFFでも角度を見るだけで設定判別</text>
         <text x="136" y="69" font-size="7.0" fill="#1e3a8a">・二重EPDM軸シール＋密閉金メッキ接点</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">レンズを支える左手の指先ひとつでAFと手動ピントを一瞬切替できるプロの伝統レバー</text>
-      `);case"body_drive_mode_lock_subdial":return o(`
+      `);case"body_drive_mode_lock_subdial":return r(`
         <rect x="26" y="54" width="76" height="18" rx="4" fill="#334155"/>
         <text x="64" y="66" text-anchor="middle" font-size="6.0" fill="#f8fafc">下段: AFモードリング</text>
         <rect x="34" y="32" width="60" height="20" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="1.5"/>
@@ -7560,7 +7560,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・中央プッシュロックでバッグ内誤回転ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・Sony α1 II / α9 IIIプロ即応同軸2段式</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">右手はシャッターに置いたまま、左手で連写速度をロック解除して一発切替するプロ装備</text>
-      `);case"body_drop_freefall_imu":return o(`
+      `);case"body_drop_freefall_imu":return r(`
         <rect x="18" y="20" width="38" height="34" rx="4" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.5"/>
         <text x="37" y="35" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#9f1239">落下!</text>
         <text x="37" y="47" text-anchor="middle" font-size="6.0" fill="#be123c">0.0 G</text>
@@ -7577,7 +7577,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・床に着く0.4秒前にIBIS緊急ロック指令</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・非常コンデンサで電池瞬断時も動作完遂</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">カメラが落ちた瞬間の無重力を見抜き、着地する前に内部の精密部品を自動で防御態勢へ</text>
-      `);case"body_vgrip_locking_pin_bay":return o(`
+      `);case"body_vgrip_locking_pin_bay":return r(`
         <rect x="18" y="26" width="96" height="22" rx="3" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
         <text x="66" y="39" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#1e293b">底面強化プレート(ボディ側)</text>
         <rect x="34" y="48" width="10" height="18" rx="2" fill="#f59e0b"/>
@@ -7592,7 +7592,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・重い望遠レンズ装着時の回転緩みをゼロ化</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・±0.03mm公差ステンレスブッシュ＆補強板</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">三脚穴の隣にある秘密のピン穴でガッチリ噛み合わせ、縦位置グリップを1つの塊へ剛結</text>
-      `);case"body_cnt_dial_switch_blocks":return o(`
+      `);case"body_cnt_dial_switch_blocks":return r(`
         <rect x="18" y="18" width="44" height="28" rx="3" fill="#ccfbf1" stroke="#0d9488"/>
         <text x="40" y="34" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#115e59">CNT DIAL F</text>
         <rect x="18" y="54" width="44" height="28" rx="3" fill="#d1fae5" stroke="#059669"/>
@@ -7607,7 +7607,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#134e4a">・消耗しやすい操作部だけ素早く部分交換</text>
         <text x="136" y="69" font-size="7.0" fill="#134e4a">・ESD±15kV保護＆防振ZIFコネクタ接続</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">よく使うダイヤルやボタン基板を独立ブロックに分け、故障時も安く早く新品へ蘇る設計</text>
-      `);case"body_peo_anti_corrosion_coat":return o(`
+      `);case"body_peo_anti_corrosion_coat":return r(`
         <rect x="18" y="66" width="96" height="16" rx="2" fill="#94a3b8" stroke="#475569"/>
         <text x="66" y="77" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#0f172a">① AZ91D Mg合金母材</text>
         <rect x="18" y="50" width="96" height="14" fill="#f8fafc" stroke="#64748b"/>
@@ -7622,7 +7622,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・海辺の塩風・汗による腐食と塗膜剥離ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・撥油フッ素が皮脂汚れやベタつきを弾く</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">錆びやすいマグネシウムの表面をセラミックの鎧とフッ素の4重バリアで10年美しく守る</text>
-      `);case"body_starlight_red_tally_filter":return o(`
+      `);case"body_starlight_red_tally_filter":return r(`
         <rect x="44" y="46" width="38" height="26" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.6"/>
         <text x="63" y="62" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#991b1b">TIR導光</text>
         <path d="M63 46 V22 M44 59 H18 M82 59 H108" stroke="#dc2626" stroke-width="2.4"/>
@@ -7636,7 +7636,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7f1d1d">・動画REC時は前/上/背の3方向から一目で視認</text>
         <text x="136" y="69" font-size="7.0" fill="#7f1d1d">・PMMA全反射導光＋遮光防水ハウジング</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">星空の下では目に優しい深紅の光に、動画収録中は前から分かる赤ランプになる賢いプリズム</text>
-      `);default:return null}}function r(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function et(e){switch(e){case"bat_outer_shell_front":return r(`
+      `);default:return null}}function n(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function rt(e){switch(e){case"bat_outer_shell_front":return n(`
         <rect x="20" y="18" width="90" height="64" rx="8" fill="#334155" stroke="#0f172a" stroke-width="2"/>
         <rect x="26" y="24" width="78" height="52" rx="5" fill="#475569" stroke="#94a3b8" stroke-dasharray="3 2"/>
         <text x="65" y="47" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#f8fafc">UL94 V-0難燃殻</text>
@@ -7648,7 +7648,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・ネジ不要の超音波溶着で高剛性＆防滴</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・1.5m落下衝撃から2本のセルを保護</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">防弾ガラス系の丈夫な樹脂を超音波でピタッと溶着した、電池を守る頑丈な防火スーツ</text>
-      `);case"bat_outer_shell_rear":return r(`
+      `);case"bat_outer_shell_rear":return n(`
         <rect x="22" y="18" width="84" height="64" rx="6" fill="#1e293b" stroke="#0f172a" stroke-width="1.6"/>
         <rect x="22" y="26" width="8" height="46" fill="#0284c7"/>
         <rect x="78" y="68" width="18" height="8" rx="1" fill="#f59e0b"/>
@@ -7661,7 +7661,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・ラッチ凹部が電池フタ開閉時の落下防止</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・内壁アールリブが円筒セルをガタなく保持</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">家のカギと同じ非対称の溝で、真っ暗な現場でも絶対にプラスマイナスを間違えない</text>
-      `);case"bat_hologram_label":return r(`
+      `);case"bat_hologram_label":return n(`
         <rect x="18" y="18" width="96" height="64" rx="4" fill="#1e293b" stroke="#7c3aed" stroke-width="1.5"/>
         <rect x="76" y="24" width="30" height="26" rx="3" fill="#ddd6fe" stroke="#a855f7"/>
         <text x="91" y="40" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#6b21a8">3Dホロ</text>
@@ -7675,7 +7675,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#581c87">・16.4Wh明記で世界中の飛行機へ安心搭乗</text>
         <text x="136" y="69" font-size="7.0" fill="#581c87">・PSE/UL/CE/UN38.3の安全証明パスポート</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#6b21a8">お札と同じキラキラホログラムと国際空輸の安全証明を刻んだバッテリーのパスポート</text>
-      `);case"bat_terminal_block_4pin":return r(`
+      `);case"bat_terminal_block_4pin":return n(`
         <rect x="16" y="24" width="100" height="46" rx="4" fill="#fefce8" stroke="#ca8a04" stroke-width="1.6"/>
         <rect x="24" y="34" width="14" height="24" rx="2" fill="#eab308"/>
         <rect x="46" y="34" width="14" height="24" rx="2" fill="#eab308"/>
@@ -7692,7 +7692,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・硬質金メッキでサビと電圧降下を完全防止</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・電気だけでなく残量%と温度も同時会話</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">カメラへ大電流・温度・残り%データを一気に手渡す、酸化知らずの4本の黄金の口</text>
-      `);case"bat_terminal_guide_ribs":return r(`
+      `);case"bat_terminal_guide_ribs":return n(`
         <rect x="20" y="40" width="92" height="34" rx="3" fill="#e2e8f0" stroke="#475569"/>
         <rect x="24" y="28" width="8" height="44" fill="#334155"/>
         <rect x="46" y="28" width="8" height="44" fill="#334155"/>
@@ -7707,7 +7707,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・ポケット内の硬貨や鍵による短絡発火ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・カメラ側ブレード接点の精密挿入ガイド</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">端子の間に背の高い絶縁の壁を立て、カバンの中の鍵や小銭が触れて火花が出るのを防ぐ</text>
-      `);case"bat_bms_pcb":return r(`
+      `);case"bat_bms_pcb":return n(`
         <rect x="18" y="22" width="96" height="54" rx="4" fill="#166534" stroke="#14532d" stroke-width="1.6"/>
         <rect x="26" y="30" width="22" height="16" rx="2" fill="#0f172a"/>
         <rect x="54" y="30" width="22" height="16" rx="2" fill="#0f172a"/>
@@ -7721,7 +7721,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#14532d">・防湿コーティングで結露や湿気から保護</text>
         <text x="136" y="69" font-size="7.0" fill="#14532d">・待機消費&lt;20µAで数ヶ月放置でも長持ち</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">電池の安全保護・残量計算・純正通信のすべてを親指サイズに凝縮した小さな司令塔ボード</text>
-      `);case"bat_infolithium_fuelgauge":return r(`
+      `);case"bat_infolithium_fuelgauge":return n(`
         <rect x="18" y="22" width="44" height="44" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
         <text x="40" y="42" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0369a1">∫ I(t) dt</text>
         <text x="40" y="55" text-anchor="middle" font-size="5.6" fill="#0369a1">電流積算</text>
@@ -7736,7 +7736,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・電圧降下や寒さに騙されず1%単位正確表示</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・充放電回数と劣化度(SOH)を内部学習</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">出入りした電気のツブを家計簿のように数え、寒い冬でも突然0%落ちさせない賢いチップ</text>
-      `);case"bat_auth_crypto_ic":return r(`
+      `);case"bat_auth_crypto_ic":return n(`
         <rect x="16" y="28" width="36" height="34" rx="4" fill="#e2e8f0" stroke="#475569"/>
         <text x="34" y="48" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#1e293b">カメラ</text>
         <path d="M52 38 H74 M74 52 H52" stroke="#7c3aed" stroke-width="1.8"/>
@@ -7752,7 +7752,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#4c1d95">・安全な最大放電電流と急速充電を通知</text>
         <text x="136" y="69" font-size="7.0" fill="#4c1d95">・粗悪コピー電池の発熱事故から本体保護</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">カメラと秘密の合言葉を交わして安全仕様を証明し、8Kや急速充電を安心して解禁する番人</text>
-      `);case"bat_protection_mosfet":return r(`
+      `);case"bat_protection_mosfet":return n(`
         <rect x="16" y="30" width="42" height="34" rx="4" fill="#fee2e2" stroke="#dc2626" stroke-width="1.6"/>
         <text x="37" y="45" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#991b1b">C-FET</text>
         <text x="37" y="57" text-anchor="middle" font-size="5.6" fill="#991b1b">充電門番</text>
@@ -7767,7 +7767,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7f1d1d">・過充電/過放電/短絡を0.001秒未満で遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#7f1d1d">・通常時は合計約10mΩの超低抵抗で低発熱</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">危ない電気が流れた瞬間に0.001秒以下で電気の門をバタンと閉じる最強の電子ブレーカー</text>
-      `);case"bat_shunt_resistor":return r(`
+      `);case"bat_shunt_resistor":return n(`
         <line x1="16" y1="44" x2="36" y2="44" stroke="#d97706" stroke-width="3"/>
         <rect x="36" y="32" width="58" height="24" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
         <text x="65" y="47" text-anchor="middle" font-size="7.0" font-weight="bold" fill="#92400e">5 mΩ 金属板</text>
@@ -7780,7 +7780,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・温度変化に強いマンガニン合金(±1%)</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・1%残量計測と短絡過電流監視の目</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">電気をほとんど邪魔せずに流れる勢いを1ミリ秒ごとに正確に測る電気の水道メーター</text>
-      `);case"bat_cell_balancer_ic":return r(`
+      `);case"bat_cell_balancer_ic":return n(`
         <rect x="20" y="22" width="34" height="50" rx="4" fill="#ccfbf1" stroke="#0d9488" stroke-width="1.5"/>
         <rect x="24" y="30" width="26" height="38" fill="#14b8a6"/>
         <text x="37" y="52" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">4.18V</text>
@@ -7795,7 +7795,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#134e4a">・充電終盤に高電圧側を逃がし高さ揃え</text>
         <text x="136" y="69" font-size="7.0" fill="#134e4a">・片セル過充電・早期劣化を徹底ブロック</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">2本の電池の元気さの差を自動でピッタリ揃え、バッテリー寿命を何年も長持ちさせる</text>
-      `);case"bat_ntc_thermistor":return r(`
+      `);case"bat_ntc_thermistor":return n(`
         <circle cx="34" cy="48" r="18" fill="#cbd5e1" stroke="#475569"/>
         <circle cx="94" cy="48" r="18" fill="#cbd5e1" stroke="#475569"/>
         <text x="34" y="50" text-anchor="middle" font-size="6.0" fill="#1e293b">Cell 1</text>
@@ -7809,7 +7809,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・氷点下充電の劣化＆真夏過熱を自動停止</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・BMSとT端子経由カメラ双方へ温度伝達</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">2本の電池の真ん中にペタッと貼り付いた極小体温計が、熱が出たら即セーブして安全確保</text>
-      `);case"bat_thermal_fuse_ptc":return r(`
+      `);case"bat_thermal_fuse_ptc":return n(`
         <rect x="16" y="24" width="44" height="44" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
         <text x="38" y="43" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#92400e">PTC</text>
         <text x="38" y="56" text-anchor="middle" font-size="5.6" fill="#92400e">自動復帰</text>
@@ -7824,7 +7824,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7f1d1d">・85℃超でPTC制限→異常時は永久溶断</text>
         <text x="136" y="69" font-size="7.0" fill="#7f1d1d">・純正品と粗悪コピーを分ける最後の砦</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">万一電子回路が壊れても物理現象だけで確実に電気を絶つ、2段構えの最終命綱ヒューズ</text>
-      `);case"bat_nickel_busbar_weld":return r(`
+      `);case"bat_nickel_busbar_weld":return n(`
         <rect x="20" y="26" width="32" height="44" rx="4" fill="#cbd5e1" stroke="#475569"/>
         <rect x="74" y="26" width="32" height="44" rx="4" fill="#cbd5e1" stroke="#475569"/>
         <text x="36" y="51" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#1e293b">3.6V</text>
@@ -7839,7 +7839,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・純度99.6%ニッケルで低抵抗＆赤錆ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・U字応力逃がしで落下衝撃を吸収</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">電池を熱で傷めず一瞬のスポット溶接で2本を直列7.2Vへ結ぶ、錆びない純ニッケルの橋</text>
-      `);case"bat_cell_holder_frame":return r(`
+      `);case"bat_cell_holder_frame":return n(`
         <rect x="18" y="22" width="94" height="54" rx="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
         <circle cx="42" cy="49" r="17" fill="#94a3b8" stroke="#334155"/>
         <circle cx="88" cy="49" r="17" fill="#94a3b8" stroke="#334155"/>
@@ -7851,7 +7851,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・難燃シリコーン充填が落下衝撃Gを吸収</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・片側異常発熱時の隣セルへの熱伝播遅延</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">2本の重い円筒セル同士が擦れ合わないよう専用仕切り枠と弾性ゴムで抱え込む耐震構造</text>
-      `);case"bat_kapton_barley_paper":return r(`
+      `);case"bat_kapton_barley_paper":return n(`
         <circle cx="58" cy="46" r="24" fill="#94a3b8" stroke="#334155"/>
         <circle cx="58" cy="46" r="21" fill="none" stroke="#2563eb" stroke-width="6"/>
         <circle cx="58" cy="46" r="9" fill="#f8fafc" stroke="#1e293b"/>
@@ -7865,7 +7865,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#1e3a8a">・引き裂きに強い青紙でタブの食い込み防止</text>
         <text x="136" y="69" font-size="7.0" fill="#1e3a8a">・260℃耐熱カプトンで基板裏面を徹底絶縁</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">プラスとマイナスが1ミリしか離れていない危険地帯を青い絶縁環と琥珀テープで鉄壁防御</text>
-      `);case"bat_18500_steel_can":return r(`
+      `);case"bat_18500_steel_can":return n(`
         <rect x="26" y="22" width="32" height="54" rx="5" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
         <rect x="35" y="17" width="14" height="5" rx="1" fill="#64748b"/>
         <rect x="70" y="22" width="32" height="54" rx="5" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
@@ -7881,7 +7881,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・スマホ袋電池と違い劣化しても膨らまない</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・金属缶全体がマイナス極と放熱フィン兼任</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">カメラの中でパンパンに膨らんで抜けなくなる事故を防ぐ、強靭な鋼鉄の円筒圧力容器</text>
-      `);case"bat_cell_pvc_sleeve":return r(`
+      `);case"bat_cell_pvc_sleeve":return n(`
         <rect x="34" y="20" width="58" height="58" rx="6" fill="#16a34a" stroke="#14532d" stroke-width="1.8"/>
         <rect x="44" y="26" width="38" height="46" rx="3" fill="#cbd5e1" stroke="#475569"/>
         <text x="63" y="46" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0f172a">スチール缶</text>
@@ -7893,7 +7893,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#14532d">・絶縁破壊電圧4kV超の難燃フィルム被覆</text>
         <text x="136" y="69" font-size="7.0" fill="#14532d">・製造ロットと性能選別コードを個体印字</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">全面マイナス極の金属缶に熱でピッタリ縮む絶縁ジャケットを着せ、接触ショートを防ぐ</text>
-      `);case"bat_cid_pressure_disc":return r(`
+      `);case"bat_cid_pressure_disc":return n(`
         <path d="M22 44 Q64 30 106 44" fill="none" stroke="#e11d48" stroke-width="3"/>
         <line x1="22" y1="62" x2="106" y2="62" stroke="#475569" stroke-width="2.5"/>
         <path d="M64 78 V66 M50 78 V66 M78 78 V66" stroke="#dc2626" stroke-width="1.8"/>
@@ -7906,7 +7906,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・電極溶接点を物理的に引きちぎり永久停止</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・電子回路不要で働く円筒セル最強の安全弁</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">ジャム瓶のフタのように内圧でパチンと反り返り、発火前に電気を物理切断する内蔵安全盤</text>
-      `);case"bat_cell_ptc_ring":return r(`
+      `);case"bat_cell_ptc_ring":return n(`
         <circle cx="62" cy="48" r="24" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>
         <circle cx="62" cy="48" r="11" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
         <text x="62" y="34" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#9a3412">PTC環</text>
@@ -7918,7 +7918,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・大電流短絡時に自動で電流にブレーキ</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・CID永久停止の手前で穏やかに過熱鎮静</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">セルが熱くなりすぎると電気の通り道をギュッと狭めて冷ます、頭部に内蔵の魔法ドーナツ</text>
-      `);case"bat_safety_vent_gasket":return r(`
+      `);case"bat_safety_vent_gasket":return n(`
         <rect x="34" y="24" width="58" height="16" rx="4" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
         <path d="M34 32 L16 24 M92 32 L110 24" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 2"/>
         <text x="63" y="35" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0f172a">正極排気キャップ</text>
@@ -7933,7 +7933,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・PPガスケットが正極と缶を10年気密絶縁</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・水分大敵のリチウム内部を完全ガード</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">圧力鍋の蒸気弁のように安全にガスだけ逃がす防爆溝と、液漏れを許さない気密パッキン</text>
-      `);case"bat_cathode_nmc_al":return r(`
+      `);case"bat_cathode_nmc_al":return n(`
         <rect x="20" y="24" width="90" height="18" rx="2" fill="#334155"/>
         <text x="65" y="36" text-anchor="middle" font-size="6.1" fill="#f8fafc">高Ni NMC/NCA 活物質</text>
         <rect x="20" y="42" width="90" height="12" fill="#e2e8f0" stroke="#64748b"/>
@@ -7947,7 +7947,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・4.2Vの高電圧でも溶けないアルミ集電体</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・ハイニッケル組成で小型大容量600枚超</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">キッチン箔より薄いアルミホイルの両面にリチウムの部屋を敷き詰めたプラス極シート</text>
-      `);case"bat_anode_siox_cu":return r(`
+      `);case"bat_anode_siox_cu":return n(`
         <rect x="20" y="24" width="90" height="18" rx="2" fill="#451a03"/>
         <text x="65" y="36" text-anchor="middle" font-size="6.1" fill="#fde68a">黒鉛＋Si-C(シリコン)負極</text>
         <rect x="20" y="42" width="90" height="12" fill="#f59e0b" stroke="#b45309"/>
@@ -7961,7 +7961,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・シリコンは黒鉛の理論10倍のリチウム保持</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・低電位で安定＆超低抵抗な8µm銅箔使用</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">極薄の銅箔に黒鉛と最新シリコン粒を塗り、同じサイズでスタミナを伸ばすマイナス極</text>
-      `);case"bat_ceramic_separator":return r(`
+      `);case"bat_ceramic_separator":return n(`
         <rect x="18" y="24" width="24" height="50" rx="2" fill="#334155"/>
         <text x="30" y="52" text-anchor="middle" font-size="6.0" fill="#fff">正極</text>
         <rect x="46" y="20" width="34" height="58" rx="2" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 2"/>
@@ -7977,7 +7977,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・130℃で穴が自ら溶けて閉鎖し反応停止</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・アルミナ耐熱層が180℃超でも破膜を防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">プラスとマイナスを隔ててイオンだけ通し、異常過熱したら自分で穴を閉じる賢い白い膜</text>
-      `);case"bat_electrolyte_sei":return r(`
+      `);case"bat_electrolyte_sei":return n(`
         <rect x="18" y="22" width="96" height="54" rx="5" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
         <rect x="18" y="22" width="18" height="54" fill="#78350f"/>
         <rect x="36" y="22" width="10" height="54" fill="#a855f7" opacity="0.5"/>
@@ -7993,7 +7993,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・初回充電で負極表面に20nmのSEI層が形成</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・劣化防止と-10℃極寒撮影の電圧維持の鍵</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">リチウムイオンが泳ぐ魔法のプールと、負極を守り続けて長寿命を生む極薄ナノ皮膜</text>
-      `);case"bat_center_mandrel_pin":return r(`
+      `);case"bat_center_mandrel_pin":return n(`
         <rect x="24" y="22" width="76" height="54" rx="6" fill="#e2e8f0" stroke="#475569"/>
         <rect x="52" y="18" width="20" height="60" rx="2" fill="#f8fafc" stroke="#1e293b" stroke-width="1.8"/>
         <path d="M62 72 V24" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="3 2"/>
@@ -8005,7 +8005,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・異常時の下部ガスを中空管で安全弁へ直通</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・CIDと防爆弁を確実に作動させる命の煙突</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">トイレットペーパーの芯のように巻物を支え、万一時はガスを上の安全弁へ導くストロー</text>
-      `);case"bat_electrode_tabs_weld":return r(`
+      `);case"bat_electrode_tabs_weld":return n(`
         <rect x="26" y="30" width="72" height="40" rx="4" fill="#e2e8f0" stroke="#475569"/>
         <rect x="44" y="16" width="12" height="18" fill="#cbd5e1" stroke="#334155"/>
         <text x="78" y="27" font-size="6.0" font-weight="bold" fill="#334155">Al正極タブ</text>
@@ -8019,7 +8019,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・正極はAlタブで頭へ、負極はNiタブで底へ</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・低抵抗設計が8K大電流時の発熱を抑える</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">グルグル巻いたシートの電気を集めて蓋と底へ運ぶ、極薄箔を超音波で繋いだ電気ロープ</text>
-      `);case"bat_usbc_pd_charger_ic":return r(`
+      `);case"bat_usbc_pd_charger_ic":return n(`
         <rect x="16" y="34" width="32" height="24" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
         <text x="32" y="49" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1e40af">USB-C</text>
         <path d="M48 46 H64" stroke="#2563eb" stroke-width="2"/>
@@ -8033,7 +8033,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#1e3a8a">・効率94%昇圧ICで2S満充電8.4Vへ制御</text>
         <text x="136" y="69" font-size="7.0" fill="#1e3a8a">・2025–2026最新ロケ携行の革命機能</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">旅先で専用充電器がなくても、モバイルバッテリーから電池へ直結充電できる次世代装備</text>
-      `);case"bat_touch_4led_gauge":return r(`
+      `);case"bat_touch_4led_gauge":return n(`
         <rect x="16" y="28" width="98" height="38" rx="6" fill="#0f172a" stroke="#06b6d4" stroke-width="1.6"/>
         <circle cx="32" cy="47" r="7" fill="#eab308"/>
         <text x="32" y="49.5" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#422006">触る</text>
@@ -8048,7 +8048,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・4つの光で25/50/75/100%を3秒間表示</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・予備電池の選別を一瞬にする現場神機能</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">カバンの中の予備電池をポンと触るだけで残量がパッと光ってわかるスマートチェッカー</text>
-      `);case"bat_thermal_graphite_wrap":return r(`
+      `);case"bat_thermal_graphite_wrap":return n(`
         <rect x="18" y="20" width="96" height="58" rx="5" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.6"/>
         <rect x="26" y="28" width="34" height="42" rx="4" fill="#fca5a5" stroke="#dc2626"/>
         <rect x="72" y="28" width="34" height="42" rx="4" fill="#93c5fd" stroke="#2563eb"/>
@@ -8062,7 +8062,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#312e81">・片側だけの劣化を防ぎパック寿命+30%</text>
         <text x="136" y="69" font-size="7.0" fill="#312e81">・断熱緩衝層が雪山ロケの急冷電圧落ち緩和</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#3730a3">2本の電池の温度差を消して均等に長生きさせ、夏の8K発熱も冬の極寒も和らげる毛布</text>
-      `);default:return null}}function s(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function it(e){switch(e){case"cfe_top_metal_armor":return s(`
+      `);default:return null}}function d(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function ht(e){switch(e){case"cfe_top_metal_armor":return d(`
         <rect x="20" y="18" width="90" height="62" rx="5" fill="#334155" stroke="#0f172a" stroke-width="2"/>
         <rect x="26" y="24" width="78" height="12" rx="2" fill="#ea580c"/>
         <text x="65" y="33" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">TOUGH 金属アーマー</text>
@@ -8075,7 +8075,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・カメラ側放熱ブリッジへ熱を効率よく逃がす</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・-12〜+72℃の過酷なプロ現場保証</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">切手サイズに最強の金属装甲と放熱プレートを合体させ、思い出の写真と8K映像を守り抜く</text>
-      `);case"cfe_bottom_metal_shell":return s(`
+      `);case"cfe_bottom_metal_shell":return d(`
         <rect x="20" y="18" width="90" height="62" rx="5" fill="#cbd5e1" stroke="#475569" stroke-width="1.8"/>
         <rect x="28" y="26" width="38" height="22" rx="3" fill="#0f172a"/>
         <text x="47" y="40" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fbbf24">VPG800</text>
@@ -8089,7 +8089,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・消えないレーザーでVPG規格とシリアル刻印</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・上面シェルと箱型モノコック剛性を形成</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">裏側からも熱を逃がし、プロ動画の最低保証スピード(VPG)をレーザーで刻んだ底面装甲</text>
-      `);case"cfe_monolithic_resin":return s(`
+      `);case"cfe_monolithic_resin":return d(`
         <rect x="18" y="20" width="96" height="58" rx="6" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
         <rect x="30" y="30" width="72" height="38" rx="3" fill="#166534" stroke="#22c55e"/>
         <text x="66" y="47" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#f0fdf4">基板ごと一体成型!</text>
@@ -8101,7 +8101,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・落としても継ぎ目からパカッと割れない!</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・曲げ剛性10倍＋内部結露ゼロの無敵構造</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">上下のフタを貼るのではなく基板ごと高強度樹脂で固め、絶対に割れない塊にした革命構造</text>
-      `);case"cfe_ip57_seal_perimeter":return s(`
+      `);case"cfe_ip57_seal_perimeter":return d(`
         <rect x="20" y="20" width="92" height="58" rx="6" fill="#ecfeff" stroke="#06b6d4" stroke-width="3"/>
         <circle cx="38" cy="36" r="5" fill="#38bdf8"/>
         <circle cx="94" cy="36" r="5" fill="#38bdf8"/>
@@ -8114,7 +8114,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#164e63">・砂嵐の細かい粉塵も外周密着シールで遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#164e63">・内部基板の撥水コートで塩害・結露も防御</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">川や水たまりに落としても拭き取れば思い出の写真が全部無事で残る鉄壁の防水バリア</text>
-      `);case"cfe_21pin_gold_fingers":return s(`
+      `);case"cfe_21pin_gold_fingers":return d(`
         <rect x="16" y="26" width="100" height="46" rx="4" fill="#166534" stroke="#14532d" stroke-width="1.5"/>
         <rect x="22" y="40" width="6" height="28" fill="#eab308"/>
         <rect x="31" y="44" width="5" height="24" fill="#facc15"/>
@@ -8134,7 +8134,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・電源/GND先行接触で活線挿抜も安全</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・PC最新SSDと同じPCIe Gen4(16GT/s)</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">パソコンの高速SSDと同じPCI Express規格を通し、1万回抜き差しできる21本の黄金接点</text>
-      `);case"cfe_connector_shroud":return s(`
+      `);case"cfe_connector_shroud":return d(`
         <rect x="18" y="22" width="94" height="52" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="1.6"/>
         <rect x="26" y="48" width="70" height="20" rx="2" fill="#1e293b"/>
         <rect x="96" y="46" width="14" height="24" fill="#ea580c"/>
@@ -8147,7 +8147,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・段差シュラウドが指脂や静電気接触を防止</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・折れやすい細プラスチックリブを完全廃止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">ソニー独自のSD兼用スロットへ真っ直ぐ導き、指脂やピン折れを防ぐ専用ガード構造</text>
-      `);case"cfe_hdi_8layer_pcb":return s(`
+      `);case"cfe_hdi_8layer_pcb":return d(`
         <rect x="20" y="20" width="92" height="10" fill="#166534"/>
         <rect x="20" y="32" width="92" height="6" fill="#ca8a04"/>
         <rect x="20" y="40" width="92" height="10" fill="#15803d"/>
@@ -8162,7 +8162,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#14532d">・等長蛇行配線で16GT/s信号のズレをゼロ化</text>
         <text x="136" y="69" font-size="7.0" fill="#14532d">・低損失高周波材＋貫通銅放熱ビア内蔵</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">厚さ0.5ミリの中に8層もの高速道路を積み上げ、毎秒160億回の信号を乱さず運ぶ土台</text>
-      `);case"cfe_pcie4_controller_soc":return s(`
+      `);case"cfe_pcie4_controller_soc":return d(`
         <rect x="26" y="20" width="76" height="58" rx="6" fill="#1e3a8a" stroke="#2563eb" stroke-width="2"/>
         <rect x="38" y="30" width="52" height="38" rx="3" fill="#3b82f6"/>
         <text x="64" y="46" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#ffffff">7nm SoC</text>
@@ -8174,7 +8174,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#1e3a8a">・CFexpress 4.0でPC取込時間を半分以下へ</text>
         <text x="136" y="69" font-size="7.0" fill="#1e3a8a">・SmartIdle待機休止でカメラ発熱も抑制</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">映画1本分の8Kデータを数秒で書き捌く、省エネ・低発熱な超小型SSDの天才指揮官</text>
-      `);case"cfe_arm_dualcore_engine":return s(`
+      `);case"cfe_arm_dualcore_engine":return d(`
         <rect x="18" y="20" width="94" height="24" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
         <text x="65" y="35" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#5b21b6">ARM Cortex-R ＋ FTL</text>
         <path d="M40 44 V58 M65 44 V58 M90 44 V58" stroke="#7c3aed" stroke-width="1.8"/>
@@ -8191,7 +8191,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#4c1d95">・空きブロックを裏で先読み整理しコマ落ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#4c1d95">・動画ストリーム優先QoSリアルタイム制御</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">同じ場所ばかり疲れて壊れないよう全部のページを均等に使い分ける賢い図書館司書</text>
-      `);case"cfe_ldpc_ecc_engine":return s(`
+      `);case"cfe_ldpc_ecc_engine":return d(`
         <rect x="16" y="26" width="38" height="40" rx="4" fill="#fee2e2" stroke="#dc2626"/>
         <text x="35" y="44" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#991b1b">101✕0</text>
         <text x="35" y="57" text-anchor="middle" font-size="5.6" fill="#dc2626">ビット化け</text>
@@ -8206,7 +8206,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#064e3b">・軟判定復号＋ダイ間パリティで何重も救出</text>
         <text x="136" y="69" font-size="7.0" fill="#064e3b">・全経路CRCチェックでサイレント破損ゼロ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#065f46">熱や経年で0と1が化けたエラーを数学パズルのように見つけ出し元通り直す自動ドクター</text>
-      `);case"cfe_aes256_crypto_core":return s(`
+      `);case"cfe_aes256_crypto_core":return d(`
         <rect x="26" y="40" width="76" height="38" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
         <path d="M44 40 V28 A20 20 0 0 1 84 28 V40" fill="none" stroke="#b45309" stroke-width="4"/>
         <text x="64" y="58" text-anchor="middle" font-size="7.0" font-weight="bold" fill="#92400e">AES-256 XTS</text>
@@ -8218,7 +8218,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・起動ごとに電子署名検証し改ざんを防御</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・鍵破棄(Crypto Erase)で1ms完全安全消去</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">転送スピードを1%も落とさず最強の金庫ロックをかけ、不正改造ファームも弾く安全コア</text>
-      `);case"cfe_3d_nand_pkg_primary":return s(`
+      `);case"cfe_3d_nand_pkg_primary":return d(`
         <rect x="22" y="62" width="88" height="12" rx="2" fill="#0369a1"/>
         <rect x="25" y="50" width="82" height="11" rx="2" fill="#0284c7"/>
         <rect x="28" y="38" width="76" height="11" rx="2" fill="#0ea5e9"/>
@@ -8232,7 +8232,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・1セル3bit(8段階電圧)で超大容量化</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・最大3,600MT/s高速I/O＆CBA接合世代</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">小指の爪サイズに300階建て極小マンションを16枚積み重ねた、テラバイト級の写真倉庫</text>
-      `);case"cfe_3d_nand_pkg_secondary":return s(`
+      `);case"cfe_3d_nand_pkg_secondary":return d(`
         <rect x="18" y="20" width="94" height="16" rx="3" fill="#1e3a8a"/>
         <text x="65" y="31" text-anchor="middle" font-size="6.2" fill="#fff">マルチチャネル制御SoC</text>
         <path d="M40 36 V50 M90 36 V50" stroke="#0284c7" stroke-width="2.2"/>
@@ -8247,7 +8247,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・大容量カードほど並列度が高く超高速!</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・書き込み発熱を複数チップへ分散冷却</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">スーパーのレジを複数台同時に開けるようにデータを並列投入し、書き込み速度を倍増</text>
-      `);case"cfe_pslc_write_cache":return s(`
+      `);case"cfe_pslc_write_cache":return d(`
         <rect x="16" y="22" width="44" height="50" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="1.8"/>
         <text x="38" y="40" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#9a3412">pSLC</text>
         <text x="38" y="52" text-anchor="middle" font-size="5.8" fill="#c2410c">1bit爆速</text>
@@ -8263,7 +8263,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・8K RAW・120fps連写を息切れゼロで受止</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・書き換え耐久10倍＆発熱大幅低減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">3個入るロッカーに急いで1個だけポンと入れる贅沢ターボ運用で、8K動画を絶対止めない</text>
-      `);case"cfe_3d_nand_vertical_pillar":return s(`
+      `);case"cfe_3d_nand_vertical_pillar":return d(`
         <rect x="20" y="22" width="90" height="7" fill="#64748b"/>
         <rect x="20" y="34" width="90" height="7" fill="#64748b"/>
         <rect x="20" y="46" width="90" height="7" fill="#64748b"/>
@@ -8278,7 +8278,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#581c87">・量子トンネル効果で電子を窒化膜へ保存</text>
         <text x="136" y="69" font-size="7.0" fill="#581c87">・絶縁ポケット捕獲で10年消えない記憶</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#6b21a8">髪の毛の1/1000の極細柱に300階もの電子の部屋が並ぶ、現代半導体最高峰のナノ建築</text>
-      `);case"cfe_lpddr4_dram_cache":return s(`
+      `);case"cfe_lpddr4_dram_cache":return d(`
         <rect x="20" y="24" width="92" height="48" rx="4" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.6"/>
         <text x="66" y="43" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#3730a3">LPDDR4 DRAM</text>
         <text x="66" y="58" text-anchor="middle" font-size="6.0" fill="#4338ca">FTL住所録 常駐(15ns!)</text>
@@ -8289,7 +8289,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#312e81">・15ナノ秒で空き場所を引当て連写解放</text>
         <text x="136" y="69" font-size="7.0" fill="#312e81">・1.1V低電圧駆動で発熱と電池消費を抑制</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#3730a3">2TBの大倉庫の「どこに何があるか」を0.000001秒で引き出す受付の超高速目次ノート</text>
-      `);case"cfe_pmic_buck_regulator":return s(`
+      `);case"cfe_pmic_buck_regulator":return d(`
         <rect x="16" y="34" width="28" height="28" rx="3" fill="#fee2e2" stroke="#dc2626"/>
         <text x="30" y="51" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#991b1b">3.3V</text>
         <path d="M44 48 H56" stroke="#dc2626" stroke-width="2"/>
@@ -8307,7 +8307,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7f1d1d">・無駄な変換発熱を徹底削減し熱だれ防止</text>
         <text x="136" y="69" font-size="7.0" fill="#7f1d1d">・撮影待ち時は50mW未満へ瞬時スリープ</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">カメラの3.3Vを各チップ好みの電圧へ無駄なく配り分ける、高効率なカード内変電所</text>
-      `);case"cfe_power_inductors_mlcc":return s(`
+      `);case"cfe_power_inductors_mlcc":return d(`
         <rect x="18" y="24" width="42" height="28" rx="3" fill="#475569" stroke="#1e293b" stroke-width="1.5"/>
         <text x="39" y="41" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#f8fafc">0.7mmコイル</text>
         <rect x="68" y="26" width="12" height="8" fill="#d97706"/>
@@ -8325,7 +8325,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#78350f">・0.6×0.3mm極小MLCCで瞬間電流を補給</text>
         <text x="136" y="69" font-size="7.0" fill="#78350f">・PCIe高速線への磁気ノイズ干渉を完全封鎖</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">厚さ2.8mmのカード内へ収まる超ペラペラコイルと砂粒コンデンサ群が電気の波を静める</text>
-      `);case"cfe_plp_hold_caps":return s(`
+      `);case"cfe_plp_hold_caps":return d(`
         <rect x="16" y="26" width="42" height="40" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8"/>
         <text x="37" y="44" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#854d0e">PLPタンク</text>
         <text x="37" y="57" text-anchor="middle" font-size="5.6" fill="#a16207">E=½CV²</text>
@@ -8340,7 +8340,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・書きかけのFTL住所録を急いでNAND保存</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・「カード認識不能」の悲劇を未然に防止</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">録画中に電池が切れても最後の0.01秒だけ粘り、書きかけの目次を閉じる極小予備タンク</text>
-      `);case"cfe_pcie_ac_coupling":return s(`
+      `);case"cfe_pcie_ac_coupling":return d(`
         <line x1="16" y1="40" x2="46" y2="40" stroke="#0d9488" stroke-width="2.2"/>
         <line x1="46" y1="28" x2="46" y2="52" stroke="#0f766e" stroke-width="3"/>
         <line x1="56" y1="28" x2="56" y2="52" stroke="#0f766e" stroke-width="3"/>
@@ -8355,7 +8355,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#134e4a">・8GHz高周波のため直下内層をアンチパッド</text>
         <text x="136" y="69" font-size="7.0" fill="#134e4a">・反射損失を抑えクリアな16GT/s波形維持</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">直流の電圧ズレだけをカットし、毎秒160億回の高速データ波だけをピシッと通す関門</text>
-      `);case"cfe_esd_tvs_diode_array":return s(`
+      `);case"cfe_esd_tvs_diode_array":return d(`
         <path d="M22 20 L34 38 L28 38 L42 56" fill="none" stroke="#e11d48" stroke-width="2.4"/>
         <text x="36" y="16" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#be123c">±15kV静電気!</text>
         <rect x="46" y="40" width="38" height="32" rx="4" fill="#ffe4e6" stroke="#e11d48" stroke-width="1.6"/>
@@ -8370,7 +8370,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・寄生容量0.2pFでPCIe Gen4波形を劣化ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・21ピン直後に並ぶ最前線のフロースルー防衛</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">冬のパチッ！という1万5千ボルトの静電気だけを10億分の1秒で地面へ逃がす極小避雷針</text>
-      `);case"cfe_xtal_clock_gen":return s(`
+      `);case"cfe_xtal_clock_gen":return d(`
         <rect x="20" y="24" width="38" height="32" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.6"/>
         <text x="39" y="43" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#854d0e">1612水晶</text>
         <path d="M58 40 H74" stroke="#ca8a04" stroke-width="2"/>
@@ -8385,7 +8385,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#713f12">・位相揺らぎ0.5ps未満で16GT/s誤読ゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#713f12">・SSC拡散クロックで無線ノイズ干渉を低減</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">1兆分の62.5秒という超高速キャッチボールのリズムをピタッと揃える米粒サイズの時計</text>
-      `);case"cfe_spi_nor_firmware":return s(`
+      `);case"cfe_spi_nor_firmware":return d(`
         <rect x="20" y="24" width="90" height="48" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6"/>
         <text x="65" y="43" text-anchor="middle" font-size="7.0" font-weight="bold" fill="#5b21b6">SPI NOR ROM</text>
         <text x="65" y="57" text-anchor="middle" font-size="5.8" fill="#6d28d9">FW A/B二重バンク</text>
@@ -8396,7 +8396,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#4c1d95">・電源投入から数ミリ秒で撮影レディ起動</text>
         <text x="136" y="69" font-size="7.0" fill="#4c1d95">・二重バンクで安全なファーム更新に対応</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">電源が入った瞬間に真っ先に読み込む、カードの取扱説明書と工場地図が入った堅牢チップ</text>
-      `);case"cfe_thermal_sensor_diode":return s(`
+      `);case"cfe_thermal_sensor_diode":return d(`
         <path d="M18 72 L52 38 L82 42 L110 50" fill="none" stroke="#e11d48" stroke-width="2.2"/>
         <line x1="18" y1="54" x2="112" y2="54" stroke="#10b981" stroke-width="1.4" stroke-dasharray="3 2"/>
         <text x="64" y="26" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#be123c">滑らか適応サーマル制御</text>
@@ -8408,7 +8408,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#881337">・急停止させずVPG速度を保ち滑らか熱調整</text>
         <text x="136" y="69" font-size="7.0" fill="#881337">・カメラ本体へ温度ログを常時リアルタイム報告</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">熱くなりすぎても録画をプツッと止めず、安全なペースへ滑らかに調整して守り抜く番人</text>
-      `);case"cfe_copper_heat_spreader":return s(`
+      `);case"cfe_copper_heat_spreader":return d(`
         <rect x="20" y="42" width="90" height="16" rx="2" fill="#fb923c" stroke="#c2410c" stroke-width="1.6"/>
         <text x="65" y="53" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#7c2d12">純銅スプレッダー(k=398)</text>
         <rect x="48" y="60" width="34" height="16" rx="2" fill="#ef4444"/>
@@ -8421,7 +8421,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#7c2d12">・極薄0.2mm無酸素銅板でピーク温度-15℃</text>
         <text x="136" y="69" font-size="7.0" fill="#7c2d12">・8K/4K120p長回し収録を支える冷却の要</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">頭脳チップ1箇所のアツアツ熱を純銅板で全面へ一気に広げて冷やすTOUGHの隠し玉</text>
-      `);case"cfe_graphene_tim_pad":return s(`
+      `);case"cfe_graphene_tim_pad":return d(`
         <rect x="20" y="20" width="90" height="12" rx="2" fill="#475569"/>
         <text x="65" y="29" text-anchor="middle" font-size="5.8" fill="#f8fafc">金属外装シェル</text>
         <rect x="20" y="34" width="90" height="10" fill="#1e293b"/>
@@ -8437,7 +8437,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#831843">・SoCとNANDの高さ段差をぴったり密着吸収</text>
         <text x="136" y="69" font-size="7.0" fill="#831843">・銅の3.5倍の面内グラファイトで均一放熱</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9d174d">チップと金属蓋の間の空気を完全に追い出し、段差吸収と落下クッションも兼ねる熱の橋</text>
-      `);case"cfe_emi_shield_frame":return s(`
+      `);case"cfe_emi_shield_frame":return d(`
         <rect x="22" y="22" width="88" height="54" rx="5" fill="#f1f5f9" stroke="#64748b" stroke-width="3" stroke-dasharray="5 2"/>
         <rect x="38" y="34" width="56" height="30" rx="3" fill="#2563eb"/>
         <text x="66" y="52" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">8GHz PCIe</text>
@@ -8450,7 +8450,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#334155">・すぐ隣のWi-Fi 6Eやマイクへの雑音を遮断</text>
         <text x="136" y="69" font-size="7.0" fill="#334155">・外部からの強い電磁波やX線ノイズも防御</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">爆速通信が出す電磁ノイズを金属の檻に閉じ込め、カメラの無線や録音音声を守る遮音壁</text>
-      `);case"cfe_bga_underfill_epoxy":return s(`
+      `);case"cfe_bga_underfill_epoxy":return d(`
         <rect x="22" y="26" width="88" height="20" rx="2" fill="#1e293b"/>
         <text x="66" y="39" text-anchor="middle" font-size="6.2" fill="#f8fafc">NAND / SoCチップ</text>
         <rect x="20" y="46" width="92" height="14" rx="2" fill="#d8b4fe" stroke="#9333ea"/>
@@ -8467,7 +8467,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#581c87">・7.5m落下・150N曲げでもハンダ割れゼロ</text>
         <text x="136" y="69" font-size="7.0" fill="#581c87">・-12〜+72℃熱伸縮による断線寿命を5倍化</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#6b21a8">チップ裏に並ぶ何百粒もの極小ハンダを強い樹脂で固め、落下や曲げでも絶対断線させない</text>
-      `);case"cfe_smart_health_monitor":return s(`
+      `);case"cfe_smart_health_monitor":return d(`
         <rect x="18" y="20" width="96" height="58" rx="5" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
         <text x="66" y="34" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#166534">Media Scan診断</text>
         <rect x="26" y="42" width="80" height="12" rx="3" fill="#dcfce7" stroke="#22c55e"/>
@@ -8481,7 +8481,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#14532d">・Media Scan Utility等で壊れる前に交換警告</text>
         <text x="136" y="69" font-size="7.0" fill="#14532d">・本番撮影中の突然死リスクをゼロへ近づける</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">書き換え寿命が近づくと壊れる前に知らせてくれる、大切な思い出を守るカードの健康診断</text>
-      `);case"cfe_grip_pull_tab_rib":return s(`
+      `);case"cfe_grip_pull_tab_rib":return d(`
         <rect x="24" y="20" width="82" height="58" rx="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
         <line x1="34" y1="28" x2="96" y2="28" stroke="#1e293b" stroke-width="3"/>
         <line x1="34" y1="35" x2="96" y2="35" stroke="#1e293b" stroke-width="3"/>
@@ -8495,7 +8495,1309 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="136" y="56" font-size="7.0" fill="#0c4a6e">・空港X線(ISO7816-1)・紫外線・静電気保護</text>
         <text x="136" y="69" font-size="7.0" fill="#0c4a6e">・ロケ管理番号をメモできる高視認ラベル</text>
         <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">寒い手や濡れた指でもポロッと落とさず引き出せ、空港X線や紫外線からも守る仕上げ層</text>
-      `);default:return null}}function ft(e){const t=f=>`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${f}</svg>`,i=T(e,t);if(i)return i;const x=O(e,t);if(x)return x;const w=V(e,t);if(w)return w;const k=N(e,t);if(k)return k;const b=H(e,t);if(b)return b;const m=v(e,t);if(m)return m;const _=G(e,t);if(_)return _;const p=Q(e,t);if(p)return p;const u=U(e,t);if(u)return u;const M=$(e,t);if(M)return M;const L=W(e,t);if(L)return L;const S=Z(e,t);if(S)return S;const C=K(e,t);if(C)return C;const F=X(e,t);if(F)return F;const P=j(e,t);if(P)return P;const A=Y(e);if(A)return A;const R=J(e);if(R)return R;const I=q(e);if(I)return I;const D=tt(e);if(D)return D;const E=et(e);if(E)return E;const B=it(e);if(B)return B;switch(e){case"baffle":return t(`
+      `);default:return null}}function o(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function st(e){switch(e){case"xr_emi_conformal_shield":return o(`
+        <rect x="20" y="24" width="96" height="56" rx="5" fill="#1e293b" stroke="#64748b" stroke-width="3"/>
+        <rect x="28" y="34" width="80" height="36" rx="3" fill="#0f766e" stroke="#2dd4bf"/>
+        <text x="68" y="55" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">BIONZ XR/XR2</text>
+        <path d="M52 34 Q58 26 64 34" fill="none" stroke="#f43f5e" stroke-width="1.6"/>
+        <path d="M74 34 Q80 26 86 34" fill="none" stroke="#f43f5e" stroke-width="1.6"/>
+        <text x="68" y="18" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#334155">極薄4μm金属膜で電波封鎖</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">XR01 全面スパッタEMIシールド</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・Cu＋Ni-Cr極薄金属膜で360°接地</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・GHz帯ノイズを1/180以下へ遮断</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・センサー縞やWi-Fi 6E混信を防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">チップ全体を極薄の金属ヘルメットで包み、高速動作の電波ノイズを外へ漏らさない</text>
+      `);case"xr_nickel_cu_ihs":return o(`
+        <rect x="16" y="20" width="104" height="16" rx="3" fill="#d97706" stroke="#92400e" stroke-width="1.5"/>
+        <text x="68" y="31" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">Niめっき無酸素銅 IHS</text>
+        <rect x="44" y="50" width="48" height="24" rx="2" fill="#0f766e"/>
+        <text x="68" y="65" text-anchor="middle" font-size="6.6" fill="#fff">高温ダイ</text>
+        <path d="M68 50 L68 36 M54 50 L28 36 M82 50 L108 36" stroke="#dc2626" stroke-width="1.8"/>
+        <text x="68" y="86" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#b45309">放熱面積2.5倍へ拡散!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">XR02 銅ヒートスプレッダ(IHS)</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・無酸素銅(k≈398)で熱を全面拡散</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・Niめっきで酸化防止＆密着性維持</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・外圧から繊細なシリコンを守る蓋</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">1点に集中したチップの熱を厚い銅の蓋で広い面へ広げ、4K/8K長回し録画を支える</text>
+      `);case"xr_tim1_indium_bond":return o(`
+        <rect x="20" y="20" width="96" height="16" rx="2" fill="#d97706"/>
+        <text x="68" y="31" text-anchor="middle" font-size="6.4" fill="#fff">銅IHS (ミクロの凹凸)</text>
+        <path d="M20 36 L34 40 L48 35 L64 41 L82 35 L98 40 L116 36 L116 54 L20 54 Z" fill="#38bdf8" stroke="#0284c7"/>
+        <text x="68" y="49" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#0c4a6e">TIM1 インジウム接合層</text>
+        <rect x="20" y="54" width="96" height="20" rx="2" fill="#0f766e"/>
+        <text x="68" y="67" text-anchor="middle" font-size="6.6" fill="#fff">シリコンダイ表面</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">XR03 チップ直結 TIM1 界面層</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・断熱材になる空気の隙間を完全充填</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・金属インジウム系なら熱伝導30倍!</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・熱膨張差を吸収しダイ割れを防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">目に見えないミクロの空気の隙間を熱伝導のりで埋め、熱の渋滞をゼロにする</text>
+      `);case"xr_pop_lpddr5x_package":return o(`
+        <rect x="22" y="18" width="92" height="22" rx="3" fill="#1d4ed8" stroke="#1e3a8a" stroke-width="1.5"/>
+        <text x="68" y="32" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">2階: PoP LPDDR5X</text>
+        <line x1="36" y1="40" x2="36" y2="54" stroke="#f59e0b" stroke-width="3"/>
+        <line x1="68" y1="40" x2="68" y2="54" stroke="#f59e0b" stroke-width="3"/>
+        <line x1="100" y1="40" x2="100" y2="54" stroke="#f59e0b" stroke-width="3"/>
+        <rect x="22" y="54" width="92" height="24" rx="3" fill="#0f766e" stroke="#115e59" stroke-width="1.5"/>
+        <text x="68" y="69" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">1階: BIONZ XR SoC</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e40af">XR04 PoP 2階建てメモリ封止</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・SoC真上にDRAM+NANDを立体積層</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・配線距離＜1mmで超高速＆省電力</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・基板面積半減でボディ小型化に貢献</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">頭脳のすぐ真上に作業机(メモリ)を2階建てで重ね、最短距離で超高速データ往復</text>
+      `);case"xr_pop_dram_dies":return o(`
+        <rect x="24" y="16" width="88" height="12" rx="2" fill="#3b82f6"/>
+        <rect x="28" y="30" width="88" height="12" rx="2" fill="#2563eb"/>
+        <rect x="32" y="44" width="88" height="12" rx="2" fill="#1d4ed8"/>
+        <rect x="36" y="58" width="88" height="12" rx="2" fill="#1e40af"/>
+        <text x="76" y="25" text-anchor="middle" font-size="6.2" fill="#fff">DRAM Die 4 (階段積層)</text>
+        <text x="80" y="67" text-anchor="middle" font-size="6.2" fill="#fff">DRAM Die 1 (40μm極薄)</text>
+        <text x="68" y="84" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#1d4ed8">4段スタック 大容量バッファ</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#1d4ed8"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e3a8a">XR05 4段積層 LPDDR5X ダイ</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・厚さ40μmに削ったダイを4階建て</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・30コマ/秒RAW＆プリ撮影を一時保存</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・最大64〜100 GB/sの超広帯域を実現</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e3a8a">紙より薄いメモリ板を4段重ねて巨大な作業机を作り、連写や8Kデータを一瞬で受け止める</text>
+      `);case"xr_pop_wirebond_interposer":return o(`
+        <rect x="28" y="24" width="56" height="14" rx="2" fill="#2563eb"/>
+        <rect x="28" y="42" width="64" height="14" rx="2" fill="#1d4ed8"/>
+        <path d="M84 30 Q104 20 108 66" fill="none" stroke="#eab308" stroke-width="2"/>
+        <path d="M92 48 Q108 40 112 66" fill="none" stroke="#eab308" stroke-width="2"/>
+        <rect x="18" y="66" width="102" height="14" rx="2" fill="#14532d"/>
+        <text x="69" y="76" text-anchor="middle" font-size="6.4" fill="#fff">PoP 多層インターポーザ</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">XR06 PoP純金ワイヤー＆中継板</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・φ18μmの純金線で各段ダイを接続</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・階段状にズラし高密度ワイヤー配線</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・信号長を揃えデータ到着ズレを防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">髪の毛の4分の1の純金アーチ橋が4段のメモリと土台を最短距離でつなぐ</text>
+      `);case"xr_tmv_pop_balls":return o(`
+        <rect x="20" y="18" width="96" height="16" rx="2" fill="#1d4ed8"/>
+        <text x="68" y="29" text-anchor="middle" font-size="6.4" fill="#fff">上段 LPDDR5X メモリ</text>
+        ${[30,44,92,106].map(t=>`<rect x="${t-3}" y="34" width="6" height="30" rx="2" fill="#d97706"/>`).join("")}
+        <rect x="52" y="42" width="32" height="16" rx="2" fill="#0f766e"/>
+        <text x="68" y="53" text-anchor="middle" font-size="6" fill="#fff">SoC</text>
+        <rect x="20" y="64" width="96" height="14" rx="2" fill="#14532d"/>
+        <text x="68" y="74" text-anchor="middle" font-size="6.2" fill="#fff">下段 ABF基板</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">XR07 TMV / InFO-PoP 垂直柱</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・封止樹脂を貫く200本超の垂直銅柱</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・1階SoCと2階メモリを直通エレベータ</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・わずか0.3mmの距離で遅延を最小化</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">1階と2階を200本以上の極小エレベーターで直結し、写真データを秒速100GB級で運ぶ</text>
+      `);case"xr_emc_mold_frame":return o(`
+        <rect x="18" y="20" width="100" height="58" rx="5" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+        <rect x="38" y="34" width="60" height="30" rx="2" fill="#0f766e"/>
+        <text x="68" y="52" text-anchor="middle" font-size="6.8" fill="#fff">Siダイ保護</text>
+        ${[24,30,104,110].map(t=>`<circle cx="${t}" cy="30" r="2" fill="#94a3b8"/>`).join("")}
+        ${[24,30,104,110].map(t=>`<circle cx="${t}" cy="68" r="2" fill="#94a3b8"/>`).join("")}
+        <text x="68" y="88" text-anchor="middle" font-size="6.2" fill="#334155">シリカ85%配合 黒色EMC</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">XR08 エポキシ封止樹脂(EMC)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・85%のシリカ粒を混ぜ熱膨張を抑制</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・湿気・酸化・落下衝撃から完全密閉</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・パッケージの反りを防ぐ黒色装甲</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">ガラスの粉を85%練り込んだ頑丈な黒樹脂が、極寒から猛暑までチップの歪みを防ぐ</text>
+      `);case"xr_die_bulk_silicon":return o(`
+        <rect x="20" y="22" width="96" height="16" rx="2" fill="#0ea5e9"/>
+        <text x="68" y="33" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">数十億トランジスタ層</text>
+        <rect x="20" y="38" width="96" height="40" rx="2" fill="#334155" stroke="#0f172a"/>
+        <text x="68" y="56" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#e2e8f0">11N 単結晶シリコン</text>
+        <text x="68" y="69" text-anchor="middle" font-size="6.0" fill="#94a3b8">99.999999999%純度</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0369a1"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0c4a6e">XR09 BIONZ XR単結晶Siダイ</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・純度11ナインの究極シリコン結晶板</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・約10×10mmに数十億の電子回路集積</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・BIONZ XR2ではAI NPUも1ダイ統合!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0c4a6e">爪先サイズの純粋なシリコン結晶の上に、カメラの全知能が都市のように刻まれている</text>
+      `);case"xr_slvsec_rx_phy":return o(`
+        <rect x="14" y="24" width="32" height="48" rx="3" fill="#0f766e"/>
+        <text x="30" y="51" text-anchor="middle" font-size="6.2" fill="#fff">CMOS</text>
+        ${[32,42,52,62].map(t=>`<line x1="46" y1="${t}" x2="80" y2="${t}" stroke="#06b6d4" stroke-width="2"/>`).join("")}
+        <text x="63" y="26" text-anchor="middle" font-size="6" font-weight="bold" fill="#0e7490">8〜16レーン</text>
+        <rect x="80" y="20" width="44" height="56" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="102" y="44" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0369a1">SLVS-EC</text>
+        <text x="102" y="56" text-anchor="middle" font-size="6.0" fill="#0369a1">超高速受信</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">XR10 SLVS-EC超高速受信口</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・ソニー独自規格で最大10Gbps×多車線</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・66MP 30fpsの膨大な生データを直受</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・低振幅差動でノイズ＆消費電力を削減</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">イメージセンサーから押し寄せる膨大な画素データを1秒の遅れもなく受け取る高速料金所</text>
+      `);case"xr_raw_isp_frontend":return o(`
+        <rect x="14" y="28" width="28" height="36" rx="2" fill="#ef4444" opacity="0.8"/>
+        <text x="28" y="49" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">RGGB</text>
+        <path d="M44 46 H58" stroke="#0284c7" stroke-width="2"/>
+        <rect x="58" y="22" width="66" height="48" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="91" y="38" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#1d4ed8">RAWフロントISP</text>
+        <text x="91" y="50" text-anchor="middle" font-size="5.9" fill="#1e40af">16bitデモザイク</text>
+        <text x="91" y="61" text-anchor="middle" font-size="5.9" fill="#1e40af">黒レベル＆レンズ補正</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e40af">XR11 RAWデモザイク前段ISP</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・赤緑青の点画(ベイヤー)をフルカラー化</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・内部16bit精度で白飛び＆黒潰れ抑制</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・レンズの歪み・色収差もリアルタイム補正</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">センサーの生の点々データを瞬時に鮮やかなフルカラー写真へ現像する最初の厨房</text>
+      `);case"xr_nr_detail_engine":return o(`
+        <rect x="16" y="22" width="44" height="48" rx="3" fill="#334155"/>
+        ${[22,30,38,46,52].map((t,i)=>`<circle cx="${t}" cy="${30+i*9%34}" r="1.5" fill="#fbbf24"/>`).join("")}
+        <text x="38" y="80" text-anchor="middle" font-size="6.2" fill="#475569">高ISOノイズ</text>
+        <path d="M62 46 H76" stroke="#14b8a6" stroke-width="2.2"/>
+        <rect x="76" y="22" width="46" height="48" rx="3" fill="#0d9488"/>
+        <text x="99" y="43" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#fff">質感を残し</text>
+        <text x="99" y="55" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#fff">ノイズ消去</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#115e59">XR12 領域分割NR＆ディテール</text>
+        <text x="142" y="43" font-size="7.0" fill="#134e4a">・空は滑らかに、まつ毛はクッキリ分離</text>
+        <text x="142" y="56" font-size="7.0" fill="#134e4a">・3D時間軸NRで暗所動画のザラつき削減</text>
+        <text x="142" y="69" font-size="7.0" fill="#134e4a">・F16回折ボケも光学データで復元</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">「ザラザラ雑音」と「髪の毛の細かい線」を見分けて夜景でもクリアな立体感を描く</text>
+      `);case"xr_color_3dlut_engine":return o(`
+        <rect x="20" y="22" width="38" height="48" rx="4" fill="#fef3c7" stroke="#d97706"/>
+        <text x="39" y="44" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#92400e">3D LUT</text>
+        <text x="39" y="56" text-anchor="middle" font-size="5.8" fill="#92400e">色変換表</text>
+        <path d="M60 46 H74" stroke="#ec4899" stroke-width="2"/>
+        <rect x="74" y="22" width="48" height="15" rx="2" fill="#f43f5e"/>
+        <rect x="74" y="39" width="48" height="15" rx="2" fill="#10b981"/>
+        <rect x="74" y="56" width="48" height="15" rx="2" fill="#3b82f6"/>
+        <text x="98" y="32" text-anchor="middle" font-size="6.0" fill="#fff">S-Cinetone</text>
+        <text x="98" y="49" text-anchor="middle" font-size="6.0" fill="#fff">クリエイティブ</text>
+        <text x="98" y="66" text-anchor="middle" font-size="6.0" fill="#fff">10bit S-Log3</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fdf2f8" stroke="#ec4899"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9d174d">XR13 カラー＆3D-LUT色彩処理</text>
+        <text x="142" y="43" font-size="7.0" fill="#831843">・S-Cinetone映画肌色をリアルタイム再現</text>
+        <text x="142" y="56" font-size="7.0" fill="#831843">・ディープラーニングAWBで自然な白再現</text>
+        <text x="142" y="69" font-size="7.0" fill="#831843">・10bit 10億色＆カスタムLUT撮影対応</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9d174d">写真の「色味と空気感」を仕上げるプロの色彩職人。撮って出しで映画の肌色を作る</text>
+      `);case"xr_ai_npu_systolic":return o(`
+        ${[0,1,2].flatMap(t=>[0,1,2].map(i=>`<rect x="${20+i*22}" y="${20+t*18}" width="18" height="14" rx="2" fill="#7c3aed" stroke="#c4b5fd"/>`)).join("")}
+        <text x="51" y="84" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#5b21b6">シストリックMAC行列</text>
+        <path d="M86 46 H98" stroke="#8b5cf6" stroke-width="2"/>
+        <rect x="98" y="26" width="28" height="40" rx="3" fill="#ede9fe" stroke="#7c3aed"/>
+        <text x="112" y="43" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#5b21b6">骨格</text>
+        <text x="112" y="55" text-anchor="middle" font-size="6.0" fill="#5b21b6">瞳AF</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#5b21b6">XR14 統合AI NPU (XR2核!)</text>
+        <text x="142" y="43" font-size="7.0" fill="#4c1d95">・BIONZ XR2でAI頭脳を同一チップ統合</text>
+        <text x="142" y="56" font-size="7.0" fill="#4c1d95">・人骨格/鳥/昆虫/乗り物を60回/秒推論</text>
+        <text x="142" y="69" font-size="7.0" fill="#4c1d95">・別チップ通信不要で消費電力大幅削減</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">2025–2026年BIONZ XR2最大の革新！AI専門の掛け算工場を心臓部へ一体化</text>
+      `);case"xr_arm_cpu_cluster":return o(`
+        <rect x="18" y="20" width="46" height="26" rx="3" fill="#0284c7"/>
+        <text x="41" y="36" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">Core 0–1 Linux</text>
+        <rect x="68" y="20" width="52" height="26" rx="3" fill="#0d9488"/>
+        <text x="94" y="36" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">Core 2–3 RTOS</text>
+        <rect x="18" y="52" width="102" height="22" rx="3" fill="#e2e8f0" stroke="#475569"/>
+        <text x="69" y="66" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0f172a">4× ARM Cortex-A35 司令塔</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">XR15 4コアARM CPUクラスタ</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・CXD90057 "Mira" の4×Cortex-A35</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・Linux(UI/通信)＋μITRON(撮影制御)</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・電源ONから約0.5秒で即撮影スタンバイ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">メニュー表示とシャッター瞬時制御を2つのOSで分担する、カメラの総合オーケストラ指揮者</text>
+      `);case"xr_sa_dsp_af_core":return o(`
+        <rect x="16" y="20" width="50" height="54" rx="4" fill="#f59e0b" stroke="#b45309"/>
+        <text x="41" y="41" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#fff">SA DSP</text>
+        <text x="41" y="53" text-anchor="middle" font-size="6.0" fill="#fef3c7">"sabin"</text>
+        <text x="41" y="64" text-anchor="middle" font-size="5.6" fill="#fff">32bit独自核</text>
+        <path d="M68 34 H82 M68 58 H82" stroke="#d97706" stroke-width="2"/>
+        <rect x="82" y="22" width="42" height="22" rx="3" fill="#fef3c7" stroke="#d97706"/>
+        <text x="103" y="36" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">759点AF</text>
+        <rect x="82" y="50" width="42" height="22" rx="3" fill="#fef3c7" stroke="#d97706"/>
+        <text x="103" y="64" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">5軸IBIS</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">XR16 ソニー独自SA DSP演算核</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・専用32bit DSPが像面位相差AFを瞬算</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・1秒間60〜120回の超高速ピント追尾</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・ジャイロ連動8.0段IBISも同時制御</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">飛ぶ野鳥のピント計算と手ブレ補正の連立方程式を一瞬で解くソニー秘伝の算術エンジン</text>
+      `);case"xr_video_codec_hevc":return o(`
+        <rect x="16" y="24" width="40" height="44" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="36" y="44" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#0369a1">7K/8K</text>
+        <text x="36" y="56" text-anchor="middle" font-size="5.8" fill="#0369a1">非圧縮</text>
+        <path d="M58 46 H74" stroke="#e11d48" stroke-width="2.2"/>
+        <rect x="74" y="20" width="50" height="52" rx="4" fill="#be123c"/>
+        <text x="99" y="39" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">HEVC/H.265</text>
+        <text x="99" y="51" text-anchor="middle" font-size="5.9" fill="#ffe4e6">10bit 4:2:2</text>
+        <text x="99" y="63" text-anchor="middle" font-size="5.9" fill="#ffe4e6">XAVC HS/S-I</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff1f2" stroke="#e11d48"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9f1239">XR17 動画HEVC圧縮コーデック</text>
+        <text x="142" y="43" font-size="7.0" fill="#881337">・7Kオーバーサンプル4K60p/8K30p対応</text>
+        <text x="142" y="56" font-size="7.0" fill="#881337">・10bit 4:2:2色情報を専用回路で高速圧縮</text>
+        <text x="142" y="69" font-size="7.0" fill="#881337">・CPUを使わず低発熱で長時間録画!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">巨大な生動画を画質を落とさず数十分の1へぎゅっと圧縮してカードへ収める専用工場</text>
+      `);case"xr_audio_dsp_noisecut":return o(`
+        <path d="M16 46 Q24 22 32 46 T48 46 T64 46" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+        <path d="M16 46 Q28 32 40 46 T64 46" fill="none" stroke="#06b6d4" stroke-width="2.2"/>
+        <path d="M68 46 H80" stroke="#0284c7" stroke-width="2"/>
+        <rect x="80" y="24" width="44" height="44" rx="4" fill="#cffafe" stroke="#0891b2"/>
+        <text x="102" y="43" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#155e75">音声DSP</text>
+        <text x="102" y="55" text-anchor="middle" font-size="5.8" fill="#155e75">AI雑音除去</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#0891b2"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">XR18 統合オーディオ＆AI静音DSP</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・4ch 24bit / 32bit Float音声を直接処理</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・風音・空調・ズーム駆動音をAIで分離</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・映像フレームとリップシンク完全同期</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">映像処理と同時に4チャンネル音声のノイズ除去まで1チップでこなす内蔵音響ミキサー</text>
+      `);case"xr_sram_linebuffer":return o(`
+        ${[0,1,2,3].map(t=>`<rect x="20" y="${20+t*14}" width="96" height="10" rx="2" fill="#0d9488" opacity="${.55+t*.14}"/>`).join("")}
+        <text x="68" y="48" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">超高速オンダイ SRAM</text>
+        <text x="68" y="84" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#115e59">待ち時間 1ns 未満!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdfa" stroke="#0d9488"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#115e59">XR19 オンダイSRAMラインバッファ</text>
+        <text x="142" y="43" font-size="7.0" fill="#134e4a">・チップ内部の数十MB超高速キャッシュ</text>
+        <text x="142" y="56" font-size="7.0" fill="#134e4a">・6トランジスタセルで1ナノ秒級応答</text>
+        <text x="142" y="69" font-size="7.0" fill="#134e4a">・外部DRAM往復を減らし大幅省電力化</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">計算中の画素をすぐ手元のポケット(SRAM)に置いて処理し、バッテリー消費を抑えつつ超高速化</text>
+      `);case"xr_ddr_mem_controller":return o(`
+        <rect x="20" y="20" width="96" height="18" rx="3" fill="#1d4ed8"/>
+        <text x="68" y="32" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#fff">PoP LPDDR5X メモリ</text>
+        <path d="M40 38 V54 M68 38 V54 M96 38 V54" stroke="#3b82f6" stroke-width="2.4"/>
+        <rect x="20" y="54" width="96" height="24" rx="3" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="68" y="69" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#1e40af">QoS 交通整理メモリ制御</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e40af">XR20 LPDDR5Xメモリコントローラ</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・ISP/AI/動画/EVFの同時アクセスを捌く</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・優先度QoS制御で連写中もEVFカクつきゼロ</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・超高速6400〜8533 MT/s PHY駆動</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">連写・AI・8K動画が同時にメモリを使っても渋滞させない、超優秀なデータ交通整理員</text>
+      `);case"xr_c2pa_crypto_enclave":return o(`
+        <rect x="26" y="22" width="84" height="54" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+        <circle cx="68" cy="43" r="10" fill="none" stroke="#fbbf24" stroke-width="2.4"/>
+        <rect x="61" y="48" width="14" height="14" rx="2" fill="#fbbf24"/>
+        <text x="68" y="88" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#b45309">改ざん不能 暗号金庫</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">XR21 C2PA真正性・暗号金庫</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・撮影瞬間にハードウェア電子署名を刻印</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・AIフェイク画像でない本物の写真を証明</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・秘密鍵はチップ内の金庫から絶対に不出</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">生成AI時代に「カメラで撮った本物の写真」だと証明する、チップ内蔵の頑丈な署名金庫</text>
+      `);case"xr_pcie_cfx_dma":return o(`
+        <rect x="16" y="26" width="44" height="40" rx="3" fill="#0f766e"/>
+        <text x="38" y="49" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">DMA直結</text>
+        <path d="M60 46 H80" stroke="#ea580c" stroke-width="2.8"/>
+        <rect x="80" y="20" width="44" height="24" rx="3" fill="#ffedd5" stroke="#ea580c"/>
+        <text x="102" y="35" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#9a3412">CFexpress</text>
+        <rect x="80" y="48" width="44" height="24" rx="3" fill="#e0f2fe" stroke="#0284c7"/>
+        <text x="102" y="63" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#0369a1">SD UHS-II</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">XR22 PCIe CFexpress DMA</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・CPU手を煩わせずカードへ爆速直送</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・CFexpress Type A 4.0で1.6GB/s級書込</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・ダブルスロット同時バックアップ対応</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">連写した大量の写真をCPUを介さずベルトコンベア(DMA)で超高速にメモリーカードへ書き出す</text>
+      `);case"xr_display_evf_hdmi_tx":return o(`
+        <rect x="16" y="28" width="38" height="36" rx="3" fill="#0284c7"/>
+        <text x="35" y="49" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">映像出力</text>
+        <path d="M54 34 L76 26 M54 46 L76 46 M54 58 L76 66" stroke="#2563eb" stroke-width="1.8"/>
+        <rect x="76" y="18" width="48" height="16" rx="2" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="100" y="29" text-anchor="middle" font-size="6.0" fill="#1e40af">EVF 240fps</text>
+        <rect x="76" y="38" width="48" height="16" rx="2" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="100" y="49" text-anchor="middle" font-size="6.0" fill="#1e40af">4軸背面LCD</text>
+        <rect x="76" y="58" width="48" height="16" rx="2" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="100" y="69" text-anchor="middle" font-size="6.0" fill="#1e40af">HDMI 16bit</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1d4ed8">XR23 EVF・LCD・HDMI映像出力</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・944万ドットOLED EVFへブラックアウトなし</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・フルサイズHDMIから16bit RAW外部出力</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・フォーカス枠やゼブラを遅延ゼロ重畳</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1d4ed8">ファインダー・背面液晶・外部モニターの3画面へリアルタイムで滑らかに映像を同時送信</text>
+      `);case"xr_usb_network_hub":return o(`
+        <rect x="18" y="22" width="44" height="50" rx="4" fill="#0f766e"/>
+        <text x="40" y="45" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">USB 10G</text>
+        <text x="40" y="57" text-anchor="middle" font-size="5.8" fill="#ccfbf1">UVC/UAC</text>
+        <path d="M62 36 H82 M62 56 H82" stroke="#10b981" stroke-width="2"/>
+        <rect x="82" y="24" width="42" height="20" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="103" y="37" text-anchor="middle" font-size="6.1" fill="#166534">4K配信PC</text>
+        <rect x="82" y="50" width="42" height="20" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="103" y="63" text-anchor="middle" font-size="6.1" fill="#166534">Wi-Fi 6E</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#166534">XR24 USB 10Gbps＆通信ハブ</text>
+        <text x="142" y="43" font-size="7.0" fill="#14532d">・USB-C 1本で4K60p高画質Webカメラ配信</text>
+        <text x="142" y="56" font-size="7.0" fill="#14532d">・Wi-Fi 6E/5Gテザリング高速FTP転送</text>
+        <text x="142" y="69" font-size="7.0" fill="#14532d">・α7 V世代はデュアルUSB-C連携にも対応</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">PCやスマホと繋がって4Kライブ配信や撮影写真の即時クラウド転送をこなす外交通信窓口</text>
+      `);case"xr_pll_clock_dvfs_ring":return o(`
+        <rect x="18" y="22" width="100" height="54" rx="6" fill="none" stroke="#eab308" stroke-width="3" stroke-dasharray="6 3"/>
+        <path d="M30 49 L40 49 L40 36 L52 36 L52 60 L64 60 L64 36 L76 36 L76 60 L88 60 L88 49 L106 49" fill="none" stroke="#d97706" stroke-width="2"/>
+        <text x="68" y="88" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">PLL脈拍＋DVFS省電力制御</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">XR25 PLLクロック＆DVFS制御</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・数GHzの正確な脈拍をチップ全域へ同期</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・使わない回路はミリ秒単位で自動休止</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・α7 Vで電池持ち約25%延長の原動力!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">全力疾走と省エネ休憩をミリ秒単位で切り替え、電池を長持ちさせるチップの心臓ペースメーカー</text>
+      `);case"xr_feol_finfet_gaa":return o(`
+        <rect x="20" y="64" width="96" height="14" fill="#475569"/>
+        ${[36,68,100].map(t=>`<rect x="${t-8}" y="28" width="16" height="36" rx="2" fill="#0ea5e9"/><rect x="${t-12}" y="38" width="24" height="12" rx="2" fill="#eab308" opacity="0.88"/>`).join("")}
+        <text x="68" y="22" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#0369a1">4nm FinFET / GAA立体ゲート</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">XR26 FEOL極微トランジスタ層</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・数十億個の超極小ON/OFF立体スイッチ</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・FinFET/GAAが電流漏れを徹底ブロック</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・微細化で演算力UP＆発熱を劇的削減</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">シリコン表面の1ミクロン下にびっしり並ぶ、1秒間に何十億回も点滅する超ミクロの電気スイッチ</text>
+      `);case"xr_beol_cu_metals":return o(`
+        <rect x="20" y="20" width="96" height="8" rx="1" fill="#b45309"/>
+        <rect x="20" y="34" width="44" height="6" rx="1" fill="#d97706"/>
+        <rect x="72" y="34" width="44" height="6" rx="1" fill="#d97706"/>
+        <rect x="20" y="46" width="96" height="5" rx="1" fill="#f59e0b"/>
+        <rect x="20" y="57" width="96" height="4" rx="1" fill="#fbbf24"/>
+        <line x1="42" y1="28" x2="42" y2="61" stroke="#92400e" stroke-width="2.5"/>
+        <line x1="94" y1="28" x2="94" y2="61" stroke="#92400e" stroke-width="2.5"/>
+        <text x="68" y="76" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#92400e">12〜15層 銅立体高速道路</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">XR27 BEOL多層銅配線スタック</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・12〜15階建ての超微細な銅の立体道路</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・下層は数十nm細線、上層は太い電源幹線</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・Low-k絶縁膜で信号遅延と発熱を低減</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">数十億のスイッチ同士を15階建ての立体銅道路で結ぶ、地球上で最も緻密なマイクロ都市網</text>
+      `);case"xr_secondary_cetus_chiplet":return o(`
+        <rect x="16" y="26" width="44" height="40" rx="3" fill="#0f766e"/>
+        <text x="38" y="44" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">CXD90057</text>
+        <text x="38" y="56" text-anchor="middle" font-size="5.8" fill="#ccfbf1">Mira主脳</text>
+        <path d="M60 46 H78" stroke="#7c3aed" stroke-width="2.5"/>
+        <rect x="78" y="26" width="46" height="40" rx="3" fill="#6d28d9"/>
+        <text x="101" y="44" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">CXD90058</text>
+        <text x="101" y="56" text-anchor="middle" font-size="5.8" fill="#ede9fe">Cetus副脳</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f5f3ff" stroke="#6d28d9"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#5b21b6">XR28 副プロセッサ CXD90058</text>
+        <text x="142" y="43" font-size="7.0" fill="#4c1d95">・通称"Cetus" 4×Cortex-A35副頭脳</text>
+        <text x="142" y="56" font-size="7.0" fill="#4c1d95">・リアルタイム処理・I/O・補助ISPを分担</text>
+        <text x="142" y="69" font-size="7.0" fill="#4c1d95">・2チップ協調で撮影レスポンスを爆速化</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">主頭脳"Mira"のすぐ隣でリアルタイム制御を分担する頼れる相棒チップ"Cetus"</text>
+      `);case"xr_silicon_bridge_lsi":return o(`
+        <rect x="18" y="20" width="42" height="24" rx="2" fill="#0f766e"/>
+        <text x="39" y="35" text-anchor="middle" font-size="6.2" fill="#fff">Main Die</text>
+        <rect x="76" y="20" width="42" height="24" rx="2" fill="#6d28d9"/>
+        <text x="97" y="35" text-anchor="middle" font-size="6.2" fill="#fff">Chiplet</text>
+        <rect x="44" y="48" width="48" height="16" rx="2" fill="#06b6d4" stroke="#0e7490" stroke-width="1.5"/>
+        <text x="68" y="59" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">2.5D Si橋</text>
+        <rect x="16" y="68" width="104" height="12" rx="2" fill="#14532d"/>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#0891b2"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">XR29 2.5D高密度シリコン橋</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・基板埋め込み極細2μmシリコン配線橋</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・チップレット間を数千本の超並列直結</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・歩留まり向上と超低消費電力通信を両立</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">2つのチップの足元に埋め込んだ極細シリコンの橋が、あたかも1つの頭脳のように高速連結する</text>
+      `);case"xr_c4_copper_bumps":return o(`
+        <rect x="20" y="20" width="96" height="16" rx="2" fill="#0f766e"/>
+        <text x="68" y="31" text-anchor="middle" font-size="6.4" fill="#fff">シリコンダイ裏面</text>
+        ${[30,44,58,72,86,100].map(t=>`<rect x="${t-3}" y="36" width="6" height="12" fill="#d97706"/><circle cx="${t}" cy="52" r="4" fill="#94a3b8"/>`).join("")}
+        <rect x="20" y="58" width="96" height="18" rx="2" fill="#14532d"/>
+        <text x="68" y="70" text-anchor="middle" font-size="6.4" fill="#fff">ABF基板トップ電極</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">XR30 C4銅ピラー・マイクロバンプ</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・数千〜数万本の50μm極小銅柱で直結</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・フリップチップ実装で配線を極限短縮</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・大電流供給＆熱の逃げ道も兼ねる足</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">シリコンチップの裏側全面に並ぶ何千本もの極小の銅の足が、電気と信号を最短距離で繋ぐ</text>
+      `);case"xr_capillary_underfill":return o(`
+        <rect x="20" y="20" width="96" height="16" rx="2" fill="#0f766e"/>
+        <rect x="18" y="36" width="100" height="22" rx="2" fill="#e11d48" opacity="0.28" stroke="#e11d48"/>
+        ${[32,50,68,86,104].map(t=>`<circle cx="${t}" cy="47" r="4.5" fill="#d97706"/>`).join("")}
+        <rect x="20" y="58" width="96" height="16" rx="2" fill="#14532d"/>
+        <text x="68" y="86" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#be123c">毛細管現象で隙間を完全補強</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff1f2" stroke="#e11d48"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9f1239">XR31 キャピラリー・アンダーフィル</text>
+        <text x="142" y="43" font-size="7.0" fill="#881337">・C4バンプの隙間へ液状樹脂を浸透硬化</text>
+        <text x="142" y="56" font-size="7.0" fill="#881337">・熱伸縮ストレスを吸収し接続寿命10倍!</text>
+        <text x="142" y="69" font-size="7.0" fill="#881337">・落下衝撃によるバンプ破断を徹底防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">何千本もの極小ハンダの足の隙間を接着樹脂でギュッと固め、何年使っても断線させない</text>
+      `);case"xr_esicap_mlcc_decaps":return o(`
+        <rect x="20" y="20" width="96" height="22" rx="2" fill="#0f766e"/>
+        <text x="68" y="34" text-anchor="middle" font-size="6.5" fill="#fff">急激な電流消費!</text>
+        <path d="M44 58 V42 M68 58 V42 M92 58 V42" stroke="#f59e0b" stroke-width="2.4"/>
+        ${[36,60,84].map(t=>`<rect x="${t}" y="58" width="16" height="16" rx="2" fill="#ca8a04" stroke="#854d0e"/>`).join("")}
+        <text x="68" y="86" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">直下ミニ給水タンク(MLCC)</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">XR32 ランドサイドMLCC / eSiCap</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・チップ真下に配置した超低ESL電源タンク</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・ナノ秒の急激な電力要求へ瞬時に給電</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・0.8V電源の瞬時電圧落ち(ノイズ)防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">チップの真下に電気のミニ給水タンクを並べることで、AI処理が急発進しても電圧が揺れない</text>
+      `);case"xr_abf_top_buildup":return o(`
+        <rect x="20" y="20" width="96" height="54" rx="3" fill="#166534" stroke="#14532d"/>
+        ${[28,38,48,58,66].map(t=>`<line x1="26" y1="${t}" x2="110" y2="${t}" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="10 4"/>`).join("")}
+        <text x="68" y="86" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#166534">味の素ABF L/S 9μm 微細層</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#166534">XR33 上側ABFビルドアップ層</text>
+        <text x="142" y="43" font-size="7.0" fill="#14532d">・日本発の絶縁膜ABFに9〜12μm銅配線</text>
+        <text x="142" y="56" font-size="7.0" fill="#14532d">・レーザー微細ビアで多層ファンアウト</text>
+        <text x="142" y="69" font-size="7.0" fill="#14532d">・50μmバンプを0.4mm BGAへ広げる変換層</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">日本企業が世界シェアほぼ独占するABF絶縁膜が、極細チップ端子を基板幅へ美しく広げる</text>
+      `);case"xr_bt_glass_core_pth":return o(`
+        <rect x="18" y="26" width="100" height="40" rx="3" fill="#15803d" stroke="#14532d" stroke-width="1.5"/>
+        ${[34,56,78,100].map(t=>`<rect x="${t-4}" y="22" width="8" height="48" rx="1" fill="#d97706"/><rect x="${t-2}" y="24" width="4" height="44" fill="#fef3c7"/>`).join("")}
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#166534">BTガラスコア＋樹脂充填PTH</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdf4" stroke="#15803d"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#166534">XR34 BTガラスコア＆PTHビア</text>
+        <text x="142" y="43" font-size="7.0" fill="#14532d">・高剛性ガラスクロス骨格で反りを防止</text>
+        <text x="142" y="56" font-size="7.0" fill="#14532d">・上下ABF層を貫く銅めっきスルーホール</text>
+        <text x="142" y="69" font-size="7.0" fill="#14532d">・穴を樹脂充填し平坦な高密度積層を実現</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">パッケージの背骨となる頑丈なガラス繊維芯材。上下の配線を銅のトンネルでつなぐ</text>
+      `);case"xr_abf_bottom_solder_mask":return o(`
+        <rect x="18" y="22" width="100" height="32" rx="3" fill="#14532d"/>
+        <text x="68" y="41" text-anchor="middle" font-size="6.5" fill="#dcfce7">緑ソルダーレジストマスク</text>
+        ${[30,48,68,88,106].map(t=>`<rect x="${t-6}" y="54" width="12" height="8" rx="1" fill="#eab308"/>`).join("")}
+        <text x="68" y="78" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#854d0e">ENEPIG 金めっきパッド</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#166534">XR35 下側ABF＆ENEPIGパッド</text>
+        <text x="142" y="43" font-size="7.0" fill="#14532d">・緑レジストがハンダ同士のショート防止</text>
+        <text x="142" y="56" font-size="7.0" fill="#14532d">・Ni/Pd/Au 3層めっきで高信頼ハンダ接合</text>
+        <text x="142" y="69" font-size="7.0" fill="#14532d">・上下対称ABF構成で熱による反りを相殺</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">緑色の保護膜と金めっきの丸い受け皿が、数百個のハンダボールを正確に受け止める</text>
+      `);case"xr_sac305_bga_balls":return o(`
+        <rect x="18" y="18" width="100" height="16" rx="2" fill="#14532d"/>
+        <text x="68" y="29" text-anchor="middle" font-size="6.3" fill="#fff">BIONZ パッケージ底面</text>
+        ${[28,44,60,76,92,108].map(t=>`<circle cx="${t}" cy="46" r="6" fill="#cbd5e1" stroke="#475569" stroke-width="1.2"/>`).join("")}
+        <rect x="18" y="58" width="100" height="18" rx="2" fill="#0f766e"/>
+        <text x="68" y="70" text-anchor="middle" font-size="6.3" fill="#fff">カメラ12層メイン基板</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">XR36 SAC305 BGAハンダボール</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・0.4mm間隔で並ぶ数百〜1000超の球端子</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・鉛フリーSn-3Ag-0.5Cu高強度合金採用</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・245℃リフローで自己整列し完璧接合!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">底面いっぱいに並んだ銀色の極小ハンダ球が、BIONZの頭脳とカメラ全身の神経を結びつける</text>
+      `);default:return null}}function h(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function nt(e){switch(e){case"mi_shoe_cap_875":return h(`
+        <rect x="22" y="28" width="66" height="24" rx="4" fill="#1e293b" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="55" y="43" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#f8fafc">SHOE CAP 875</text>
+        <path d="M90 40 H112" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
+        <rect x="96" y="54" width="24" height="18" rx="2" fill="#eab308"/>
+        <text x="108" y="66" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#1e293b">21極</text>
+        <text x="55" y="70" text-anchor="middle" font-size="6.2" fill="#475569">雨・砂・静電気ブロック</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI01 純正シューキャップ(Ref.9)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正443873412 非導電保護樹脂</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・未使用時の奥21極を雨やゴミから保護</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・弾性突起でバッグ内の不意な脱落防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">使わない時にスッと挿しておくだけで21本の精密端子をホコリや静電気から守る専用帽子</text>
+      `);case"mi_accessory_wp_skirt":return h(`
+        <rect x="34" y="20" width="68" height="22" rx="3" fill="#475569"/>
+        <text x="68" y="34" text-anchor="middle" font-size="6.4" fill="#fff">ストロボ / マイク</text>
+        <path d="M24 42 L34 42 L34 58 L20 64 Z M112 42 L102 42 L102 58 L116 64 Z" fill="#1e293b" stroke="#0f172a"/>
+        <rect x="38" y="48" width="60" height="16" rx="2" fill="#94a3b8"/>
+        <text x="68" y="59" text-anchor="middle" font-size="6.0" fill="#0f172a">MIシュー内部</text>
+        <path d="M18 26 L26 42 M118 26 L110 42" stroke="#0284c7" stroke-width="1.8" stroke-dasharray="2 2"/>
+        <text x="68" y="80" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0369a1">360°シリコーン防水傘!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MI02 アクセサリー防水スカート</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・HVL-F60RM2 / ECM-M1等の柔軟リップ</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・装着時にカメラ天面へ全周360°圧着</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・雨天でもケーブルレス防滴収録を実現</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">アクセサリー側の柔らかいゴム傘がシューの縁をぐるりと覆い、雨粒の侵入を止める</text>
+      `);case"mi_shoe_shell_plate":return h(`
+        <path d="M22 66 V26 H50 V34 H32 V58 H104 V34 H86 V26 H114 V66 Z" fill="#cbd5e1" stroke="#334155" stroke-width="1.6"/>
+        <line x1="32" y1="74" x2="104" y2="74" stroke="#0284c7" stroke-width="1.4"/>
+        <text x="68" y="84" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0369a1">ISO 518 内幅 18.6 mm</text>
+        <line x1="50" y1="20" x2="86" y2="20" stroke="#dc2626" stroke-width="1.4"/>
+        <text x="68" y="16" text-anchor="middle" font-size="6.0" fill="#b91c1c">開口 12.5 mm</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI03 シェルプレート(Ref.327)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正500294302 高剛性SUS U字レール</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・世界規格ISO 518完全準拠で汎用互換</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・前方ひさしが奥の21極端子を徹底保護</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">世界標準ホットシューの形を守りつつ重いストロボやXLRを支える頑丈なステンレスレール</text>
+      `);case"mi_lock_pin_recesses":return h(`
+        <rect x="22" y="48" width="92" height="22" rx="3" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="60" y="48" width="16" height="14" rx="2" fill="#1e293b"/>
+        <rect x="63" y="20" width="10" height="36" rx="2" fill="#eab308" stroke="#92400e"/>
+        <path d="M68 12 V20" stroke="#dc2626" stroke-width="2"/>
+        <text x="68" y="83" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#92400e">ロックピンがカチッと嵌合!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MI04 3点ロックピン嵌合穴</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・ロック締付で飛び出すカンヌキを受け止め</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・前後ズレ±0.15mm以内に抑え通信安定</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・走っても逆さでも高価な機材が脱落ゼロ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">アクセサリーの鍵(ピン)がハマる凹みと前方ストッパーが、21極のズレと落下を完全防止</text>
+      `);case"mi_shoe_screw_cover":return h(`
+        <rect x="22" y="24" width="92" height="18" rx="3" fill="#1e293b" stroke="#64748b"/>
+        <text x="68" y="36" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#f8fafc">スクリューカバー(蓋)</text>
+        <path d="M22 33 H10" stroke="#0284c7" stroke-width="2"/>
+        <rect x="24" y="52" width="88" height="22" rx="3" fill="#e2e8f0" stroke="#475569"/>
+        ${[36,56,80,100].map(t=>`<circle cx="${t}" cy="63" r="4" fill="#94a3b8" stroke="#334155"/>`).join("")}
+        <text x="68" y="86" text-anchor="middle" font-size="6.0" fill="#334155">下の4本固定ネジを保護</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI05 スクリューカバー(Ref.329)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正500294602 化粧兼ゴミ防止蓋</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・平らな床面でストロボ挿入が引っ掛からず</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・後端M1.4ネジ1本で外せ修理も超簡単</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">4本の主固定ネジを上から隠すフラットな床板。防塵・外観・修理のしやすさを一挙実現</text>
+      `);case"mi_m14_europe_screw":return h(`
+        <rect x="44" y="26" width="48" height="10" rx="3" fill="#334155" stroke="#0f172a"/>
+        <rect x="59" y="36" width="18" height="30" rx="2" fill="#94a3b8" stroke="#475569"/>
+        ${[42,49,56,62].map(t=>`<line x1="59" y1="${t}" x2="77" y2="${t-2}" stroke="#334155" stroke-width="1.4"/>`).join("")}
+        <text x="68" y="80" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0f172a">M1.4 × L = 1.4 mm!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI06 M1.4極小ネジ(Ref.330)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正428743511 EUROPE TYPE</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・ゴマ粒大の超低頭で挿入時に干渉ゼロ</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・スクリューカバー後端を1点で確実ロック</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">腕時計並みの極小ネジ1本がシューの床蓋を止め、普段の滑らかさと整備性を両立</text>
+      `);case"mi_shoe_spring_plate":return h(`
+        <rect x="20" y="22" width="96" height="14" rx="2" fill="#475569"/>
+        <text x="68" y="32" text-anchor="middle" font-size="6.3" fill="#fff">アクセサリー金属足</text>
+        <path d="M24 64 L48 64 Q68 38 88 64 L112 64" fill="none" stroke="#d97706" stroke-width="3"/>
+        <path d="M68 54 V38" stroke="#dc2626" stroke-width="2.2"/>
+        <polygon points="68,36 63,43 73,43" fill="#dc2626"/>
+        <text x="68" y="80" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#b45309">上へ押し上げガタゼロ!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MI07 スプリング板(Ref.331)</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・純正500294502 SUS301 2翼板バネ</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・足を天井レールへ押し当てガタつき消去</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・同時にGND電気接触抵抗を安定低抵抗化</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">床に隠れた2枚羽根バネが下からグッと押し上げ、グラつき防止とアース接続を一石二鳥解決</text>
+      `);case"mi_special_head_screws":return h(`
+        <rect x="22" y="24" width="92" height="10" rx="2" fill="#94a3b8"/>
+        <rect x="22" y="38" width="92" height="10" rx="2" fill="#334155"/>
+        <rect x="22" y="52" width="92" height="10" rx="2" fill="#475569"/>
+        <rect x="22" y="66" width="92" height="10" rx="2" fill="#cbd5e1"/>
+        ${[36,100].map(t=>`<rect x="${t-3}" y="18" width="6" height="62" rx="1" fill="#eab308" stroke="#854d0e"/>`).join("")}
+        <text x="68" y="88" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#854d0e">4本で全層サンドイッチ締結</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI08 特殊頭M1.7ネジ×4(Ref.328)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正500294701 L=3.3mm 4隅締結</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・上シェル〜防水ゴム〜裏補強板を串刺し</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・均等トルクで防水ラバーを全周圧縮</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">4本の頑丈な特殊頭ボルトがシューの全層を串刺し固定し、重い機材と雨滴に耐える</text>
+      `);case"mi_frame_ground_rails":return h(`
+        <rect x="20" y="22" width="14" height="44" rx="2" fill="#64748b" stroke="#0f172a"/>
+        <rect x="102" y="22" width="14" height="44" rx="2" fill="#64748b" stroke="#0f172a"/>
+        <circle cx="68" cy="44" r="11" fill="#eab308" stroke="#92400e"/>
+        <text x="68" y="47" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1e293b">X(+)</text>
+        <text x="27" y="78" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#334155">Pin23</text>
+        <text x="109" y="78" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#334155">Pin24</text>
+        <text x="68" y="88" text-anchor="middle" font-size="6.0" fill="#0369a1">左右レール ＝ GND(−)</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI09 左右フレームGND(Pin23/24)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・ISO_SHOE_FG 汎用フラッシュ帰路</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・Pin7/15および金属ボディ骨格へ直結</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・アクセサリー筐体の静電気＆EMI逃がし</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">左右のステンレスレール自体が電気のマイナス側(アース)になり汎用ストロボ発光と遮蔽を担う</text>
+      `);case"mi_center_xsync_contact":return h(`
+        <circle cx="68" cy="46" r="22" fill="#e2e8f0" stroke="#475569" stroke-width="1.5"/>
+        <circle cx="68" cy="46" r="14" fill="#eab308" stroke="#92400e" stroke-width="1.8"/>
+        <text x="68" y="49" text-anchor="middle" font-size="7.0" font-weight="bold" fill="#1e293b">Pin 22</text>
+        <path d="M92 26 L108 18 L102 32 L116 26" fill="none" stroke="#f59e0b" stroke-width="2"/>
+        <text x="68" y="82" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#b45309">シャッター全開でGND短絡!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MI10 中央X-Sync接点(Pin 22)</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・ISO 518世界共通のど真ん中金色丸接点</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・シャッター全開の瞬間にIGBTで発光指令</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・他社製マニュアルストロボ＆電波発信対応</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">「今だ光れ！」とシャッター全開の瞬間にスイッチを閉じる、世界中のカメラ共通の発光ボタン</text>
+      `);case"mi_front_21pin_shroud":return h(`
+        <rect x="16" y="28" width="104" height="36" rx="4" fill="#1e293b" stroke="#0f172a"/>
+        ${Array.from({length:14},(t,i)=>`<rect x="${22+i*6.8}" y="38" width="3.5" height="16" rx="1" fill="#eab308"/>`).join("")}
+        <text x="68" y="22" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#334155">ひさし裏に隠れた21極!</text>
+        <text x="68" y="78" text-anchor="middle" font-size="6.2" fill="#475569">0.8mmピッチ LCP櫛歯絶縁壁</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI11 前方21極シュラウド</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・0.8mm間隔21本をLCP樹脂の櫛歯で分離</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・屋根の奥へ引っ込め汎用足の衝突を回避</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・両端ガイドで斜め差しも正確芯出し</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">屋根の裏に21本の端子を隠すことで、標準ホットシュー互換と超多機能拡張を両立した</text>
+      `);case"mi_pins_1to3_id":return h(`
+        ${[1,2,3].map((t,i)=>`<rect x="${22+i*32}" y="22" width="24" height="24" rx="3" fill="#10b981" stroke="#047857"/><text x="${34+i*32}" y="37" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#fff">ID${4-t}</text>`).join("")}
+        <path d="M34 46 V60 H100 V46 M66 46 V68" fill="none" stroke="#059669" stroke-width="1.8"/>
+        <text x="68" y="82" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#047857">6段階×3本 ＝ 216通り自動識別</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#065f46">MI12 Pin 1–3 ID自動識別端子</text>
+        <text x="142" y="43" font-size="7.0" fill="#064e3b">・0/22k/56k/150k/470k/Open 6値判定</text>
+        <text x="142" y="56" font-size="7.0" fill="#064e3b">・マイク・ストロボ・XLRを挿すだけで判別</text>
+        <text x="142" y="69" font-size="7.0" fill="#064e3b">・確認後に安全給電し誤動作ショート防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#065f46">アクセサリーの名札(抵抗値)を3本のピンで読み取り、最適な電源と通信を自動起動する</text>
+      `);case"mi_pins_4to6_analog_mic":return h(`
+        <rect x="18" y="22" width="30" height="26" rx="3" fill="#64748b"/>
+        <text x="33" y="38" text-anchor="middle" font-size="6.1" fill="#fff">P4 GND</text>
+        <rect x="52" y="22" width="30" height="26" rx="3" fill="#f59e0b"/>
+        <text x="67" y="38" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#fff">P5 L音</text>
+        <rect x="86" y="22" width="30" height="26" rx="3" fill="#d97706"/>
+        <text x="101" y="38" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#fff">P6 R音</text>
+        <path d="M26 66 Q46 52 68 66 T110 66" fill="none" stroke="#d97706" stroke-width="2.2"/>
+        <text x="68" y="84" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">ケーブル不要アナログステレオ!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MI13 Pin 4–6 アナログマイク</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・MIC_GND/L/R ケーブルレスステレオ入力</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・音声専用GND分離でモーター雑音抑止</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・外付けEVF用GVIF高速差動データ兼用</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">3.5mmケーブルを繋ぐ手間なく、シュー底から左右ステレオ音声を本体へ直接届ける</text>
+      `);case"mi_pins_7_15_reg_gnd":return h(`
+        <rect x="18" y="24" width="22" height="44" rx="3" fill="#475569"/>
+        <text x="29" y="49" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">P7</text>
+        <rect x="44" y="30" width="48" height="32" rx="3" fill="#cffafe" stroke="#06b6d4"/>
+        <text x="68" y="49" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#155e75">高速デジタル</text>
+        <rect x="96" y="24" width="22" height="44" rx="3" fill="#475569"/>
+        <text x="107" y="49" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">P15</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">両脇を0V基準GNDで挟み守護!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI14 Pin 7＆15 ロジックGND</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・デジタル音声レーンを左右から挟み込み</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・大電流PGND(Pin21)とは別レーン分離</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・クロストーク＆電波ノイズ放射を最小化</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">デリケートなデジタル音声線の両側を静かな基準アースでガードし、クリアな通信を守る</text>
+      `);case"mi_pins_8to12_digital_audio":return h(`
+        <rect x="16" y="22" width="38" height="46" rx="3" fill="#0891b2"/>
+        <text x="35" y="41" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#fff">ECM-M1</text>
+        <text x="35" y="53" text-anchor="middle" font-size="5.6" fill="#cffafe">XLR-A4</text>
+        <path d="M54 34 H80 M54 45 H80 M54 56 H80" stroke="#06b6d4" stroke-width="2.2"/>
+        <text x="67" y="28" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#0e7490">0101直送</text>
+        <rect x="80" y="22" width="44" height="46" rx="3" fill="#0f766e"/>
+        <text x="102" y="40" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#fff">BIONZ</text>
+        <text x="102" y="52" text-anchor="middle" font-size="5.6" fill="#ccfbf1">劣化ゼロ!</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0e7490">4ch 24bit / 2026年 32bit Float!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">MI15 Pin 8–12 デジタル音声4ch</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・マイク内でデジタル化しI2S/TDM直送</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・2026年XLR-A4は96kHz/32bit Float!</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・ケーブル不要で音割れ・ノイズ完全ゼロ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">ソニーMIシュー最大の武器！マイクの中で0と1に変えてカメラへ直接流し込む無劣化音響レーン</text>
+      `);case"mi_pin_13_logic_vdd":return h(`
+        <rect x="18" y="26" width="38" height="38" rx="3" fill="#2563eb"/>
+        <text x="37" y="43" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">LDO</text>
+        <text x="37" y="55" text-anchor="middle" font-size="6.0" fill="#dbeafe">3.15V</text>
+        <path d="M56 45 H80" stroke="#3b82f6" stroke-width="2.6"/>
+        <rect x="80" y="26" width="44" height="38" rx="3" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="102" y="43" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1e40af">マイクDSP</text>
+        <text x="102" y="55" text-anchor="middle" font-size="5.8" fill="#1e40af">電池不要!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1d4ed8">MI16 Pin 13 3.15Vロジック電源</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・ノイズ除去された安定DC 3.15Vを供給</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・ID確認時のみON(未装着時は0V安全)</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・ECM-M1の電池ゼロ動作を支える電源</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1d4ed8">アクセサリー内の繊細なデジタル変換チップへ、揺れの少ないきれいな3.15V電気を届ける</text>
+      `);case"mi_pins_14_16_aux_audio":return h(`
+        <rect x="18" y="24" width="44" height="44" rx="3" fill="#0d9488"/>
+        <text x="40" y="43" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">Pin 14</text>
+        <text x="40" y="56" text-anchor="middle" font-size="5.6" fill="#ccfbf1">Center / L</text>
+        <rect x="74" y="24" width="46" height="44" rx="3" fill="#14b8a6"/>
+        <text x="97" y="43" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#fff">Pin 16</text>
+        <text x="97" y="56" text-anchor="middle" font-size="5.6" fill="#ccfbf1">R / RESET</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.1" fill="#115e59">5.1ch音声 ＆ 再起動リセット</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdfa" stroke="#14b8a6"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#115e59">MI17 Pin 14＆16 補助音声/制御</text>
+        <text x="142" y="43" font-size="7.0" fill="#134e4a">・5.1chサラウンドマイク中央系統に対応</text>
+        <text x="142" y="56" font-size="7.0" fill="#134e4a">・電源ON時のハードウェアRESET同期</text>
+        <text x="142" y="69" font-size="7.0" fill="#134e4a">・α/Cinema/VLOGCAM全体で規格統一</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">サラウンド音声や機器の再起動合図までこなす、ソニー全映像機器共通の多才なサポート端子</text>
+      `);case"mi_pin_17_unreg_power":return h(`
+        <rect x="14" y="24" width="38" height="44" rx="3" fill="#ea580c"/>
+        <text x="33" y="42" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#fff">NP-FZ100</text>
+        <text x="33" y="55" text-anchor="middle" font-size="5.8" fill="#ffedd5">6.1–8.4V</text>
+        <path d="M52 46 H78" stroke="#ea580c" stroke-width="3.2"/>
+        <text x="65" y="38" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#c2410c">1.6A</text>
+        <rect x="78" y="24" width="46" height="44" rx="3" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+        <text x="101" y="42" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#9a3412">+48V昇圧</text>
+        <text x="101" y="55" text-anchor="middle" font-size="5.8" fill="#9a3412">XLR給電!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">MI18 Pin 17 大電力UNREG(1.6A)</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・カメラ電池直結 最大約13Wの大電力</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・XLRの48Vファンタムも電池なしで駆動</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・1.6A保護ヒューズ付きでショート時も安心</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">カメラの大容量バッテリーから直通給電し、プロ用48Vマイクやライトを電池ゼロで動かす</text>
+      `);case"mi_pins_18to20_ttl_flash":return h(`
+        <rect x="14" y="24" width="38" height="44" rx="3" fill="#1e293b"/>
+        <text x="33" y="43" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#fff">カメラAI</text>
+        <text x="33" y="55" text-anchor="middle" font-size="5.6" fill="#cbd5e1">顔＆距離</text>
+        <path d="M52 36 H80 M80 54 H52" stroke="#ef4444" stroke-width="2"/>
+        <text x="66" y="48" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#dc2626">F1/F2/F3</text>
+        <rect x="80" y="24" width="44" height="44" rx="3" fill="#fee2e2" stroke="#dc2626"/>
+        <text x="102" y="42" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#991b1b">TTL/HSS</text>
+        <text x="102" y="55" text-anchor="middle" font-size="5.8" fill="#991b1b">1/8000s</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fef2f2" stroke="#ef4444"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#991b1b">MI19 Pin 18–20 双方向フラッシュ</text>
+        <text x="142" y="43" font-size="7.0" fill="#7f1d1d">・P-TTL / ADI距離連動 / 顔優先AWB調光</text>
+        <text x="142" y="56" font-size="7.0" fill="#7f1d1d">・1/8000秒ハイスピードシンクロ精密同期</text>
+        <text x="142" y="69" font-size="7.0" fill="#7f1d1d">・カメラ画面から電波多灯ストロボを操作</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">カメラとストロボが被写体の顔や距離を1/1000秒で打ち合わせ、白飛びゼロの最適発光へ</text>
+      `);case"mi_pin_21_pgnd_detect":return h(`
+        <rect x="18" y="22" width="40" height="20" rx="2" fill="#ea580c"/>
+        <text x="38" y="35" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">P17 往路</text>
+        <path d="M58 32 H98 V56 H58" fill="none" stroke="#334155" stroke-width="2.2"/>
+        <rect x="18" y="46" width="40" height="20" rx="2" fill="#334155"/>
+        <text x="38" y="59" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">P21 帰路</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">音声GNDと分離でハム雑音ゼロ!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI20 Pin 21 大電流PGND/検知</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・1.6A UNREG専用の太いパワー帰り道</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・繊細な音声GNDから独立し電源ハム抑止</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・直付けストロボ装着(ADI)確認にも使用</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">力仕事の大電流をマイク音声とは別の専用レーンで電池へ戻し、静かな録音を維持する</text>
+      `);case"mi_cantilever_gold_beams":return h(`
+        <rect x="20" y="24" width="60" height="12" rx="2" fill="#475569"/>
+        <text x="50" y="33" text-anchor="middle" font-size="6.0" fill="#fff">相手側端子</text>
+        <path d="M104 60 L66 60 Q48 60 44 40 Q42 36 52 38" fill="none" stroke="#eab308" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M44 46 H74" stroke="#0284c7" stroke-width="1.6" stroke-dasharray="2 2"/>
+        <text x="68" y="78" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#92400e">毎回キュッと擦って自動清掃!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MI21 21連金めっきバネ接点</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・りん青銅バネ＋Ni下地＋厚膜ハード金</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・挿抜の度に酸化膜を拭うワイピング効果</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・0.5N/極の適正荷重で数万回着脱耐久</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">21本の金のバネ指が差し込むたびに表面を軽くこすってピカピカに保ち、接触不良を防ぐ</text>
+      `);case"mi_mis2006_flex_board":return h(`
+        <path d="M20 26 H86 Q104 26 104 44 V60 Q104 72 86 72 H52" fill="none" stroke="#d97706" stroke-width="8" stroke-linecap="round"/>
+        <path d="M20 26 H86 Q104 26 104 44 V60 Q104 72 86 72 H52" fill="none" stroke="#fef08a" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="58" y="48" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#92400e">MIS-2006</text>
+        <text x="58" y="59" text-anchor="middle" font-size="5.8" fill="#78350f">A5001908A</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MI22 純正MIS-2006フレキ</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・Ref.325 A5001908A / A5054227A</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・α7 IV/V/α1/α7R V/ZV-E1共通の名作FPC</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・21極＋X接点をS字屈曲でメイン基板へ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">全21極とX接点の神経を1枚のしなやかなオレンジリボンに束ね、狭いペンタ部を抜けて運ぶ</text>
+      `);case"mi_fpc_wp_rubber":return h(`
+        <rect x="20" y="22" width="96" height="14" rx="2" fill="#94a3b8"/>
+        <rect x="20" y="38" width="96" height="18" rx="4" fill="#1e293b" stroke="#f43f5e" stroke-width="1.6"/>
+        <text x="68" y="50" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#f8fafc">圧縮防水ラバー(850)</text>
+        <rect x="20" y="58" width="96" height="14" rx="2" fill="#475569"/>
+        <text x="68" y="84" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#be123c">FPC貫通穴＆4ネジ穴を全周封止</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff1f2" stroke="#f43f5e"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9f1239">MI23 FPC防水ラバー(Ref.324)</text>
+        <text x="142" y="43" font-size="7.0" fill="#881337">・純正501695501 シリコーン圧縮パッキン</text>
+        <text x="142" y="56" font-size="7.0" fill="#881337">・4本ネジ締付で20〜30%均一圧縮密閉</text>
+        <text x="142" y="69" font-size="7.0" fill="#881337">・ケーブル通し穴からの雨水滴下を封印</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">ケーブルを通す天井の穴を柔らかいゴムパッキンでギュッと潰し、雨粒の侵入を完全に止める</text>
+      `);case"mi_top_deck_boss_seat":return h(`
+        <path d="M16 54 H34 V64 H44 V42 H54 V54 H82 V42 H92 V64 H102 V54 H120 V74 H16 Z" fill="#475569" stroke="#0f172a" stroke-width="1.4"/>
+        <circle cx="39" cy="58" r="3" fill="#0284c7"/>
+        <circle cx="97" cy="58" r="3" fill="#0284c7"/>
+        <text x="68" y="34" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#0f172a">立ち上げ堰(ダム)＋外周排水溝</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI24 Mg天面台座＆排水溝</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・AZ91Dマグネシウム合金CNC平坦基準面</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・FPC穴周囲を盛り上げ雨水の落ち込み防止</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・外周ドレインモートで雨水を外へ重力排水</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">穴の縁をダムのように高くし周りに排水溝を掘る建築の防水の知恵をマグネシウム天面へ応用</text>
+      `);case"mi_shoe_fix_plate":return h(`
+        <rect x="26" y="20" width="84" height="12" rx="2" fill="#94a3b8"/>
+        <text x="68" y="29" text-anchor="middle" font-size="5.9" fill="#0f172a">上: SUSシェル</text>
+        <rect x="18" y="35" width="100" height="16" rx="2" fill="#475569"/>
+        <text x="68" y="46" text-anchor="middle" font-size="6.0" fill="#fff">中: Mg天面カバー</text>
+        <rect x="24" y="54" width="88" height="14" rx="2" fill="#cbd5e1" stroke="#0f172a" stroke-width="1.6"/>
+        <text x="68" y="64" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#0f172a">下: SUS裏当て補強板</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MI25 裏側フィックス板(Ref.311)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正500395901 高強度ステンレス裏板</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・上下ステンレスで天板を挟む3層剛性構造</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・バーリングメネジで引抜強度を飛躍的向上</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">天井の裏側から頑丈なステンレス当て板で挟み込むため、重いストロボをぶつけてもモゲない</text>
+      `);case"mi_underdeck_tie_screws":return h(`
+        <rect x="20" y="24" width="96" height="16" rx="2" fill="#cbd5e1" stroke="#475569"/>
+        <text x="68" y="35" text-anchor="middle" font-size="6.2" fill="#0f172a">裏側フィックス板</text>
+        ${[42,94].map(t=>`<rect x="${t-4}" y="40" width="8" height="24" rx="1" fill="#ca8a04"/><rect x="${t-8}" y="62" width="16" height="7" rx="2" fill="#eab308"/>`).join("")}
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#854d0e">骨格結合＋低抵抗アース接続</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MI26 裏側結合ネジ(Ref.312/326)</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・418654511 (5.5mm) ＆ 259947521 (3.0mm)</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・裏補強板を内部骨格＆アースへ強固締結</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・緩み防止スピン座面＆EVF非干渉長管理</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">見えない天井裏で補強板とカメラ骨格を力学的にも電気的にも1つに繋ぎ止める精密ネジ</text>
+      `);case"mi_esd_tvs_protection":return h(`
+        <path d="M18 32 L30 22 L26 36 L40 28" fill="none" stroke="#eab308" stroke-width="2.2"/>
+        <text x="30" y="50" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#b45309">±15kV静電</text>
+        <path d="M44 42 H70 V68" fill="none" stroke="#f43f5e" stroke-width="2"/>
+        <polygon points="70,68 62,56 78,56" fill="#f43f5e"/>
+        <line x1="60" y1="68" x2="80" y2="68" stroke="#1e293b" stroke-width="2"/>
+        <rect x="86" y="30" width="34" height="24" rx="3" fill="#0f766e"/>
+        <text x="103" y="45" text-anchor="middle" font-size="6.0" fill="#fff">頭脳保護</text>
+        <text x="70" y="82" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#be123c">1nsでGNDへ逃がす</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff1f2" stroke="#f43f5e"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9f1239">MI27 21極TVS避雷針＆1.6A保護</text>
+        <text x="142" y="43" font-size="7.0" fill="#881337">・全21極に＜0.5pF超低容量ESD保護配置</text>
+        <text x="142" y="56" font-size="7.0" fill="#881337">・±15kV静電気を10億分の1秒で地面へ逃がす</text>
+        <text x="142" y="69" font-size="7.0" fill="#881337">・1.6Aヒューズ＆eFuseで端子ショート遮断</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">冬のパチッという静電気や雨のショートからカメラの頭脳を守る21本の避雷針とブレーカー</text>
+      `);case"mi_xsync_igbt_isolator":return h(`
+        <rect x="16" y="26" width="38" height="40" rx="3" fill="#0f766e"/>
+        <text x="35" y="44" text-anchor="middle" font-size="6.1" fill="#fff">カメラ</text>
+        <text x="35" y="56" text-anchor="middle" font-size="6.0" fill="#ccfbf1">3.3V側</text>
+        <rect x="58" y="22" width="18" height="48" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="67" y="49" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#92400e">絶縁</text>
+        <rect x="80" y="26" width="42" height="40" rx="3" fill="#fee2e2" stroke="#dc2626"/>
+        <text x="101" y="44" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#991b1b">IGBT</text>
+        <text x="101" y="56" text-anchor="middle" font-size="5.8" fill="#991b1b">高耐圧SW</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fef2f2" stroke="#dc2626"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#991b1b">MI28 X-Sync高耐圧IGBT絶縁回路</text>
+        <text x="142" y="43" font-size="7.0" fill="#7f1d1d">・無接点半導体スイッチで火花・摩耗ゼロ</text>
+        <text x="142" y="56" font-size="7.0" fill="#7f1d1d">・外部高電圧を絶縁しカメラ内部3Vを防護</text>
+        <text x="142" y="69" font-size="7.0" fill="#7f1d1d">・遅延ジッター＜5μsで精密シンクロ発光</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#991b1b">他社ストロボの高い電圧から本体を守りつつ1万分の1秒の正確さで光らせる防弾スイッチ</text>
+      `);case"mi_id_resistor_adc_net":return h(`
+        <text x="38" y="20" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#065f46">3.15V</text>
+        <line x1="38" y1="23" x2="38" y2="32" stroke="#059669" stroke-width="2"/>
+        <rect x="28" y="32" width="20" height="14" rx="2" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="38" y="41" text-anchor="middle" font-size="5.6" fill="#166534">100kΩ</text>
+        <line x1="38" y1="46" x2="38" y2="56" stroke="#059669" stroke-width="2"/>
+        <rect x="28" y="56" width="20" height="14" rx="2" fill="#fef3c7" stroke="#d97706"/>
+        <text x="38" y="65" text-anchor="middle" font-size="5.6" fill="#92400e">R_acc</text>
+        <path d="M38 51 H72" stroke="#0284c7" stroke-width="2"/>
+        <rect x="72" y="34" width="48" height="34" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="96" y="49" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1d4ed8">6値 ADC</text>
+        <text x="96" y="60" text-anchor="middle" font-size="5.6" fill="#1e40af">NVRAM校正</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#065f46">MI29 ID 100kΩ分圧＆6値ADC</text>
+        <text x="142" y="43" font-size="7.0" fill="#064e3b">・3.15V×100kΩ±1%高精度抵抗で分圧計測</text>
+        <text x="142" y="56" font-size="7.0" fill="#064e3b">・工場NVRAM校正で極寒〜猛暑も誤判定なし</text>
+        <text x="142" y="69" font-size="7.0" fill="#064e3b">・挿込安定後に給電ONする安全タイマー付</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#065f46">3本のIDピンのわずかな電圧差を精密に測り、何が付いたかを瞬時に見抜く電子鑑定士</text>
+      `);case"mi_audio_mux_emi_choke":return h(`
+        <rect x="14" y="18" width="38" height="16" rx="2" fill="#06b6d4"/>
+        <text x="33" y="29" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#fff">MI音声</text>
+        <rect x="14" y="40" width="38" height="16" rx="2" fill="#64748b"/>
+        <text x="33" y="51" text-anchor="middle" font-size="5.8" fill="#fff">内蔵MIC</text>
+        <rect x="14" y="62" width="38" height="16" rx="2" fill="#475569"/>
+        <text x="33" y="73" text-anchor="middle" font-size="5.8" fill="#fff">3.5mm</text>
+        <path d="M52 26 L74 44 M52 48 L74 48 M52 70 L74 52" stroke="#0891b2" stroke-width="1.8"/>
+        <rect x="74" y="28" width="48" height="40" rx="4" fill="#cffafe" stroke="#0891b2"/>
+        <text x="98" y="45" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#155e75">切替MUX</text>
+        <text x="98" y="58" text-anchor="middle" font-size="5.7" fill="#155e75">＋EMIコイル</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">MI30 音声切替MUX＆EMIチョーク</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・EXT_LINE_SELで3つのマイクを自動切替</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・デジタルMI装着時は無劣化ルートへ直結</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・コモンモードコイルがWi-Fi電波雑音を遮断</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">マイクを載せた瞬間に自動で最高音質ルートへ切り替え、電波ノイズも漉し取る音響ミキサー</text>
+      `);case"mi_emi_copper_shield":return h(`
+        <rect x="20" y="18" width="96" height="18" rx="3" fill="#fee2e2" stroke="#dc2626"/>
+        <text x="68" y="30" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#991b1b">上: ストロボ強烈EMP</text>
+        <rect x="16" y="42" width="104" height="12" rx="2" fill="#d97706" stroke="#92400e" stroke-width="1.5"/>
+        <text x="68" y="51" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">35μm銅箔＋導電ガスケット</text>
+        <rect x="20" y="60" width="96" height="18" rx="3" fill="#dbeafe" stroke="#2563eb"/>
+        <text x="68" y="72" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1e40af">下: EVF＆BIONZ頭脳</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">MI31 直下銅箔EMIシールド層</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・ストロボ閃光ノイズのEVF侵入を遮断</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・逆にBIONZノイズのマイク混入も防止</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・Ni-Cu導電スポンジで金属骨格へ多点接地</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">すぐ下に住むEVFやBIONZと電波がケンカしないよう間に挟む「双方向の銅の防音カーテン」</text>
+      `);case"mi_mainboard_zif_connector":return h(`
+        <rect x="34" y="16" width="68" height="18" rx="2" fill="#d97706"/>
+        <text x="68" y="28" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">MIS-2006 終端</text>
+        <path d="M68 34 V46" stroke="#0f766e" stroke-width="2.4"/>
+        <rect x="20" y="46" width="96" height="24" rx="3" fill="#fef3c7" stroke="#0f766e" stroke-width="1.8"/>
+        <text x="68" y="61" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0f766e">24極 0.4mm ZIF終着駅</text>
+        <text x="68" y="83" text-anchor="middle" font-size="6.0" fill="#334155">音声・制御・給電の3大幹線へ</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdfa" stroke="#0f766e"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#115e59">MI32 24極メイン基板ZIF終端</text>
+        <text x="142" y="43" font-size="7.0" fill="#134e4a">・0.4mmピッチ24極フリップロック固定</text>
+        <text x="142" y="56" font-size="7.0" fill="#134e4a">・BIONZ音声/SYSCON/PMICの3幹線へ分岐</text>
+        <text x="142" y="69" font-size="7.0" fill="#134e4a">・コネクタ1本脱着でシュー単独交換OK</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#115e59">頭上から届いた全24本の神経をパチンと1発でメイン基板へ繋ぐ、整備性抜群の終着駅</text>
+      `);default:return null}}function s(e){return`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${e}</svg>`}function dt(e){switch(e){case"mc_deadcat_windscreen":return s(`
+        <path d="M14 34 Q28 24 40 34 M14 48 Q28 38 40 48" fill="none" stroke="#dc2626" stroke-width="2"/>
+        <text x="27" y="22" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#b91c1c">強風乱流</text>
+        <path d="M44 68 Q74 16 106 68 Z" fill="#cbd5e1" stroke="#475569" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <text x="75" y="54" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0f172a">モフモフ毛</text>
+        <path d="M75 68 V82" stroke="#0284c7" stroke-width="2.2"/>
+        <text x="75" y="90" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#0369a1">声だけ透過!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC01 防風ウインドスクリーン</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・数万本の人工ファーが強風渦を細かく砕く</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・風切り音−15〜25dB低減(音割れ前防止)</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・人の声の音波は損失1dB未満でクリア透過</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">強風のボボボ音だけをモフモフの毛でそよ風へ分解し、人間の声だけ優しく通す防風コート</text>
+      `);case"mc_top_grille_holes":return s(`
+        <rect x="18" y="24" width="100" height="44" rx="5" fill="#334155" stroke="#0f172a"/>
+        ${[-26,26].flatMap(t=>[-7,0,7].flatMap(i=>[-7,0,7].map(x=>`<circle cx="${68+t+i}" cy="${46+x}" r="2.2" fill="#0f172a"/>`))).join("")}
+        <text x="42" y="80" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0284c7">左 L ポート</text>
+        <text x="94" y="80" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#d97706">右 R ポート</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC02 天面左右ステレオグリル孔</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・左右に離れたL/R微細孔で立体音場を収録</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・φ0.6〜0.8mm穴で表面張力による小雨防御</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・穴縁の面取りで横風の笛鳴り共鳴を抑制</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">カメラの屋根に空いた「左右の耳の穴」。小さな穴の集合で音は通しゴミと水しぶきを防ぐ</text>
+      `);case"mc_stainless_micro_mesh":return s(`
+        <rect x="24" y="20" width="88" height="54" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1.6"/>
+        ${[36,48,60,72,84,96].map(t=>`<line x1="${t}" y1="22" x2="${t}" y2="72" stroke="#64748b" stroke-width="1.2"/>`).join("")}
+        ${[30,42,54,66].map(t=>`<line x1="26" y1="${t}" x2="110" y2="${t}" stroke="#64748b" stroke-width="1.2"/>`).join("")}
+        <circle cx="48" cy="20" r="3" fill="#b45309"/>
+        <text x="68" y="86" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">50μm砂塵阻止＋音響ダンピング</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC03 極細ステンレス音響メッシュ</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・SUS316超極細金網が砂粒・虫をブロック</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・適度な音響抵抗でキンキン響く共鳴を平坦化</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・下のePTFE薄膜の破れ＆静電気侵入を防御</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">グリル裏の超極細茶こし網がゴミを止めつつ、音の通り道を素直で聞きやすい響きへ整える</text>
+      `);case"mc_eptfe_waterproof_membrane":return s(`
+        <circle cx="42" cy="24" r="9" fill="#38bdf8" stroke="#0284c7"/>
+        <text x="42" y="27" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#fff">水滴</text>
+        <path d="M42 33 L42 42 L30 36" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <rect x="18" y="44" width="100" height="12" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="1.6"/>
+        <text x="68" y="53" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#0f172a">撥水 ePTFE 膜 (0.5μm孔)</text>
+        <path d="M88 20 Q96 32 88 44 Q80 58 88 76" fill="none" stroke="#10b981" stroke-width="2.4"/>
+        <text x="98" y="72" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#047857">音は透過!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC04 撥水多孔質ePTFE防水膜</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・ゴアテックスと同じ撥水角＞120°フッ素膜</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・0.2〜1μm極微孔で雨粒を表面張力で完全遮断</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・30μm超薄膜が軽やかに振動し音損失＜1.5dB</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">水は1滴も通さず音の振動だけスッと通す、高級レインウェアと同じ原理の白い魔法の膜</text>
+      `);case"mc_acoustic_drain_labyrinth":return s(`
+        <path d="M24 20 V68 H44 V42 H98 V74" fill="none" stroke="#475569" stroke-width="12" stroke-linejoin="round"/>
+        <path d="M24 18 V44 H94 V72" fill="none" stroke="#10b981" stroke-width="2.2"/>
+        <circle cx="24" cy="64" r="5" fill="#0284c7"/>
+        <text x="36" y="84" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#0369a1">水は溝へ落下</text>
+        <text x="96" y="86" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#047857">音は90°曲がる!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC05 オフセット音響迷路＆排水溝</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・音の波長は長いため90°クランクを回折透過</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・直進する水滴・ゴミだけ深さ＞1mm溝へ回収</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・防水特許IL239134A準拠の刺突＆突風対策</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">「音は角を曲がれるが水滴は曲がれない」物理の違いで雨やゴミだけを溝へ落とす賢い迷路</text>
+      `);case"mc_helmholtz_front_chamber":return s(`
+        <path d="M54 20 V38 H28 V68 H108 V38 H82 V20" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <path d="M68 14 V54" stroke="#0284c7" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="68" y="58" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#1d4ed8">前室 V 最小化</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1e40af">1〜8 kHz 人の声クッキリ!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e40af">MC06 ヘルムホルツ前室共鳴室</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・前室体積を極限最小化し共鳴を16kHz超へ</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・缶詰のような不自然なこもり音を完全解消</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・左右対称容積でステレオ音色と位相を一致</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">空き瓶の共鳴と同じ物理を計算して小部屋の大きさを調整し、人の声を明瞭に録る</text>
+      `);case"mc_silicone_acoustic_gasket":return s(`
+        <rect x="24" y="18" width="88" height="14" rx="2" fill="#475569"/>
+        <rect x="44" y="32" width="12" height="24" rx="3" fill="#f43f5e"/>
+        <rect x="80" y="32" width="12" height="24" rx="3" fill="#f43f5e"/>
+        <path d="M68 24 V66" stroke="#10b981" stroke-width="2.4"/>
+        <path d="M24 44 H42 M112 44 H94" stroke="#dc2626" stroke-width="1.8" stroke-dasharray="2 2"/>
+        <rect x="34" y="56" width="68" height="16" rx="2" fill="#0ea5e9"/>
+        <text x="68" y="67" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">マイク音孔</text>
+        <text x="68" y="85" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#be123c">内部モーター音の横漏れ遮断!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff1f2" stroke="#f43f5e"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9f1239">MC07 音響カップリングゴム筒</text>
+        <text x="142" y="43" font-size="7.0" fill="#881337">・天面ポートとマイク音孔を100%気密連結</text>
+        <text x="142" y="56" font-size="7.0" fill="#881337">・カメラ内IBIS・AF駆動音の侵入を20dB遮断</text>
+        <text x="142" y="69" font-size="7.0" fill="#881337">・低音逃げ(音響ショート)＆タッチ音防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9f1239">外の声だけをマイクへ案内し、カメラ内部の機械音が横から漏れるのを防ぐゴムの気密トンネル</text>
+      `);case"mc_oem_rubber_boot":return s(`
+        <rect x="24" y="20" width="88" height="52" rx="10" fill="#334155" stroke="#0f172a" stroke-width="2"/>
+        <rect x="42" y="32" width="52" height="28" rx="4" fill="#0ea5e9"/>
+        <text x="68" y="49" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#fff">マイク宙吊り</text>
+        <path d="M12 46 H22 M114 46 H124" stroke="#dc2626" stroke-width="2" stroke-dasharray="2 2"/>
+        <text x="68" y="84" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">純正502687801 防振ブーツ</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC08 純正防振ブーツ(Ref.304)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正502687801 RUBBER (885) 防振靴下</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・金属ボディと非接触のミニショックマウント</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・レンズAF・ダイヤル操作の固体伝搬音吸収</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">マイクをふかふかの純正ゴム靴下で包み、ボディのコツン音やモーター振動から宙に浮かせる</text>
+      `);case"mc_oem_mic_holder":return s(`
+        <path d="M20 56 V26 H34 V46 H102 V26 H116 V56 H76 V68 H60 V56 Z" fill="#1e293b" stroke="#0f172a"/>
+        <rect x="38" y="28" width="24" height="16" rx="3" fill="#0ea5e9"/>
+        <rect x="74" y="28" width="24" height="16" rx="3" fill="#eab308"/>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0f172a">左右カプセルを規定圧で保持</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC09 純正ホルダー(Ref.308)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正502790401 MIC HOLDER (89100)</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・防振ブーツを背後から適正圧縮量で支持</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・左右位置決め精度UP＋ケーブル断線防止</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">ゴムに包んだマイクを後ろから優しく抱え、音の入り口へピタッと押し当て続けるゆりかご枠</text>
+      `);case"mc_oem_btite_screw":return s(`
+        <rect x="46" y="56" width="44" height="10" rx="3" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="60" y="20" width="16" height="36" rx="2" fill="#94a3b8" stroke="#334155"/>
+        ${[25,32,39,46,52].map(t=>`<line x1="58" y1="${t}" x2="78" y2="${t-2}" stroke="#1e293b" stroke-width="1.5"/>`).join("")}
+        <text x="68" y="82" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#334155">BTITE 1.4 × 5.0 mm</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC10 純正Bタイトネジ(Ref.309)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正430010611 樹脂ボス専用タッピン</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・樹脂を割らず振動で緩まない鋭角ネジ山</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・マイクホルダーの圧縮圧を何年も維持</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">何十万回のシャッター振動でも緩まずマイクの気密圧を守り続ける直径1.4mmの純正精密ネジ</text>
+      `);case"mc_oem_631s_sealing_tape":return s(`
+        <rect x="18" y="34" width="100" height="24" rx="2" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+        <text x="68" y="49" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#f8fafc">631S #25 黒遮音テープ</text>
+        <text x="68" y="74" text-anchor="middle" font-size="6.2" fill="#334155">厚さわずか 25 μm (幅 7 mm)</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC11 純正631S黒テープ(Ref.306)</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・純正750000493 極薄25μm高耐熱テープ</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・フレキのカタカタ振動ノイズを密着固定</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・背面の音漏れ・EVF光漏れ・絶縁を一括対策</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">サービスマニュアルでミリ単位指定されるプロ用黒テープが、配線のビビり音と音漏れを封じる</text>
+      `);case"mc_chassis_vib_absorber":return s(`
+        <rect x="18" y="26" width="100" height="38" rx="4" fill="#64748b" stroke="#334155"/>
+        ${[28,44,60,76,92,106].map(t=>`<circle cx="${t}" cy="40" r="3" fill="#94a3b8"/><circle cx="${t-4}" cy="52" r="2.5" fill="#cbd5e1"/>`).join("")}
+        <text x="68" y="80" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">微細気泡で衝撃80%を熱へ吸収</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC12 Poron系防振吸音フォーム</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・マイクロセル・ウレタン高減衰クッション</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・ボディ内で跳ね返る中高音ノイズを吸音</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・長期間へたらない低圧縮永久歪み素材</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">防音スタジオの壁のようにカメラ内の不要な反響音と衝撃を吸い込む高機能ミニスポンジ</text>
+      `);case"mc_mems_faraday_lid":return s(`
+        <path d="M22 68 V24 H56 M80 24 H114 V68 Z" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
+        <path d="M68 12 V32" stroke="#0284c7" stroke-width="2.2"/>
+        <text x="68" y="50" text-anchor="middle" font-size="6.5" font-weight="bold" fill="#0f172a">3.5×2.6mm</text>
+        <text x="68" y="61" text-anchor="middle" font-size="5.8" fill="#334155">金属シールド蓋</text>
+        <path d="M16 36 Q10 42 16 48" fill="none" stroke="#dc2626" stroke-width="1.6"/>
+        <text x="68" y="82" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#dc2626">Wi-Fi/5G電波を60dB遮断!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC13 MEMS金属ファラデー蓋</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・左ch: 輪切りシリコンMEMSの最外殻</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・360°GND接地で電波ノイズを完全遮蔽</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・260℃リフロー実装耐性＆高精度均一品質</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">米粒大の金属ドームが外部の電波を弾き返し、中央の小さな音孔から声だけを招き入れる</text>
+      `);case"mc_mems_si_diaphragm":return s(`
+        <path d="M18 46 Q28 38 38 46 Q68 28 98 46 Q108 38 118 46" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+        <path d="M18 46 Q28 54 38 46 Q68 64 98 46 Q108 54 118 46" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <text x="68" y="24" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0369a1">厚さ 0.8 μm シリコン鼓膜!</text>
+        <text x="68" y="78" text-anchor="middle" font-size="6.2" fill="#0c4a6e">1nmの揺れを静電容量で検出</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0ea5e9"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC14 0.8μmポリシリコン振動膜</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・ラップの1/10以下の超軽量半導体鼓膜</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・波型コルゲート溝で130dB爆音でも無歪み</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・超軽量ゆえカメラ操作振動ノイズに激強</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">半導体工場で作る極薄シリコンの人工鼓膜が、ささやき声のそよ風でナノメートル単位で震える</text>
+      `);case"mc_mems_antistiction_gap":return s(`
+        <rect x="20" y="24" width="96" height="8" rx="2" fill="#0ea5e9"/>
+        <text x="68" y="20" text-anchor="middle" font-size="6.0" fill="#0369a1">振動膜</text>
+        ${[32,50,68,86,104].map(t=>`<circle cx="${t}" cy="50" r="3" fill="#1e293b"/>`).join("")}
+        <rect x="20" y="52" width="96" height="12" rx="2" fill="#eab308"/>
+        <text x="68" y="61" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#1e293b">固定バックプレート</text>
+        <text x="68" y="80" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0f172a">2μm隙間＋Si₃N₄張り付き防止突起</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#38bdf8"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC15 2μm隙間＆固着防止突起</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・髪の毛1/40の極狭隙間で超高感度コンデンサ</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・絶縁マイクロ点々突起で張り付き故障ゼロ</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・ライブ爆音130dBでも瞬時に跳ね返り復帰</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">濡れガラス同士の張り付きを防ぐ小さな点々突起が、2μmの極狭ギャップを高感度と安全へ導く</text>
+      `);case"mc_mems_perforated_backplate":return s(`
+        <rect x="20" y="34" width="96" height="22" rx="3" fill="#eab308" stroke="#92400e" stroke-width="1.5"/>
+        ${[32,46,60,74,88,102].map(t=>`<rect x="${t-3}" y="32" width="6" height="26" fill="#ffffff"/><path d="M${t} 24 V66" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="2 2"/>`).join("")}
+        <text x="68" y="80" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">無数の貫通孔で空気摩擦ノイズ減!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MC16 多孔シリコン固定電極板</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・振動膜と対になる高剛性パーフォレート電極</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・ハチの巣状の貫通孔で空気のつっかえ解消</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・サーッという熱音響自己雑音を大幅削減</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">固定板に無数の穴を開けて空気をスッと逃がすことで、静かな部屋でも雑音少ない録音になる</text>
+      `);case"mc_mems_sdm_vacuum_cell":return s(`
+        <rect x="22" y="22" width="92" height="8" rx="2" fill="#0ea5e9"/>
+        <rect x="26" y="30" width="84" height="28" fill="#cffafe" stroke="#06b6d4" stroke-dasharray="3 2"/>
+        <rect x="30" y="41" width="76" height="6" rx="1" fill="#eab308"/>
+        <rect x="22" y="58" width="92" height="8" rx="2" fill="#0ea5e9"/>
+        <text x="68" y="39" text-anchor="middle" font-size="5.9" font-weight="bold" fill="#0e7490">低圧ほぼ真空セル</text>
+        <text x="68" y="80" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0891b2">72 dB(A) 超高SNR 革新!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">MC17 次世代SDM密閉二重振動膜</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・2枚鼓膜の中を減圧密閉し空気雑音を消去</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・差動プッシュプル出力2倍＆歪み相殺</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・米粒サイズでプロ級72dB SNR/130dB AOP</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">2枚の鼓膜の間をほぼ真空に密閉し、空気摩擦ノイズを消し去る最先端MEMSの到達点</text>
+      `);case"mc_mems_drie_back_volume":return s(`
+        <rect x="20" y="20" width="96" height="8" rx="2" fill="#0ea5e9"/>
+        <path d="M20 28 H38 V72 H98 V28 H116 V76 H20 Z" fill="#334155" stroke="#0f172a"/>
+        <text x="68" y="52" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0369a1">DRIE深掘り</text>
+        <text x="68" y="63" text-anchor="middle" font-size="6.0" fill="#475569">背面音響室</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#334155"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC18 DRIE深掘りシリコン裏室</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・プラズマ垂直エッチングで最大の裏部屋確保</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・裏の空気バネを柔らかくし低音＆感度UP</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・微小気圧逃がしで飛行機・高山でも破損なし</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">太鼓の裏側の胴と同じく、シリコンを垂直に深くくり抜いた裏部屋が豊かな低音と感度を生む</text>
+      `);case"mc_mems_readout_asic":return s(`
+        <rect x="14" y="22" width="32" height="46" rx="3" fill="#0ea5e9"/>
+        <text x="30" y="48" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#fff">ΔC(fF)</text>
+        <path d="M46 45 H58" stroke="#eab308" stroke-width="2"/>
+        <rect x="58" y="18" width="66" height="54" rx="4" fill="#6d28d9"/>
+        <text x="91" y="34" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fde047">12V昇圧ポンプ</text>
+        <text x="91" y="47" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">超低雑音アンプ</text>
+        <text x="91" y="60" text-anchor="middle" font-size="6.0" fill="#c4b5fd">4次ΔΣ PDM出力</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#5b21b6">MC19 12V昇圧＆4次ΔΣ ASIC</text>
+        <text x="142" y="43" font-size="7.0" fill="#4c1d95">・0.3mm隣のゼロ距離で極微信号を即増幅</text>
+        <text x="142" y="56" font-size="7.0" fill="#4c1d95">・1.8Vから無騒音12V分極バイアスを内部生成</text>
+        <text x="142" y="69" font-size="7.0" fill="#4c1d95">・3MHz PDMデジタル出力で配線ノイズ完全ゼロ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">鼓膜のすぐ隣に住む専用頭脳チップが、1000兆分の1ファラドの揺れをその場でデジタル化</text>
+      `);case"mc_mems_gold_wirebonds":return s(`
+        <rect x="20" y="36" width="38" height="24" rx="2" fill="#0ea5e9"/>
+        <text x="39" y="51" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">MEMS</text>
+        <rect x="76" y="36" width="38" height="24" rx="2" fill="#6d28d9"/>
+        <text x="95" y="51" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">ASIC</text>
+        <path d="M52 36 Q67 14 82 36" fill="none" stroke="#eab308" stroke-width="2.4"/>
+        <path d="M56 36 Q67 20 78 36" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+        <rect x="16" y="62" width="104" height="14" rx="2" fill="#14532d"/>
+        <text x="68" y="72" text-anchor="middle" font-size="6.1" fill="#fff">多層LGAセラミック基板</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MC20 φ20μm金線＆LGA基板</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・4N純金ワイヤー最短アーチで寄生容量極小</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・内層GND＆ビアフェンスで360°電磁遮蔽</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・底面金LGAパッドでSH-1035フレキへ実装</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">髪の毛の1/4の純金アーチが鼓膜チップと頭脳チップを最短接続し、音の電気を外へ届ける</text>
+      `);case"mc_ecm_aluminum_case":return s(`
+        <path d="M28 68 V24 H54 M82 24 H108 V68 H96 M28 68 H40" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="38" y="32" width="60" height="8" rx="1" fill="#eab308"/>
+        <rect x="38" y="44" width="60" height="8" rx="1" fill="#d97706"/>
+        <rect x="38" y="56" width="60" height="10" rx="1" fill="#15803d"/>
+        <text x="68" y="83" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#334155">右ch: 円筒アルミ缶ECM解剖!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#64748b"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC21 ECM円筒アルミシールド缶</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・右chは伝統的コンデンサECMを輪切り比較</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・φ4〜6mm深絞りアルミ缶で後端かしめ固定</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・大口径膜でウォーム＆高感度な自然音色</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">左の最新MEMSと並べて見比べられる、王道エレクトレットマイクの丈夫なアルミ外装缶</text>
+      `);case"mc_ecm_electret_diaphragm":return s(`
+        <rect x="20" y="34" width="96" height="14" rx="3" fill="#eab308" stroke="#92400e" stroke-width="1.5"/>
+        <text x="36" y="44" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#dc2626">+</text>
+        <text x="58" y="44" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#dc2626">+</text>
+        <text x="80" y="44" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#dc2626">+</text>
+        <text x="102" y="44" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#dc2626">+</text>
+        <text x="68" y="25" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#92400e">永久電荷(電気の磁石!)</text>
+        <text x="68" y="68" text-anchor="middle" font-size="6.2" fill="#78350f">48V電源不要でコンデンサ動作</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fefce8" stroke="#ca8a04"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#854d0e">MC22 金蒸着エレクトレット振動膜</text>
+        <text x="142" y="43" font-size="7.0" fill="#713f12">・FEPフッ素膜へ150〜300V相当電荷を永久封入</text>
+        <text x="142" y="56" font-size="7.0" fill="#713f12">・極薄金蒸着膜が太鼓のように震え電圧発生</text>
+        <text x="142" y="69" font-size="7.0" fill="#713f12">・重い48V電源なしで数十年高感度を維持</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#854d0e">「電気の永久磁石」を仕込んだ金色の薄いフィルムだから、カメラの電池だけで高音質録音できる</text>
+      `);case"mc_ecm_ptfe_spacer_backplate":return s(`
+        <rect x="22" y="22" width="92" height="8" rx="1" fill="#eab308"/>
+        <rect x="22" y="30" width="16" height="8" fill="#ffffff" stroke="#64748b"/>
+        <rect x="98" y="30" width="16" height="8" fill="#ffffff" stroke="#64748b"/>
+        <text x="68" y="37" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#334155">25μm PTFE隙間</text>
+        <rect x="22" y="39" width="92" height="18" rx="2" fill="#d97706" stroke="#92400e"/>
+        ${[42,68,94].map(t=>`<rect x="${t-4}" y="39" width="8" height="18" fill="#fff"/>`).join("")}
+        <text x="68" y="72" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#92400e">穿孔真鍮バックプレート電極</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MC23 25μmスペーサー＆真鍮板</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・白いテフロンリングが0.025mm隙間を精密維持</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・穴あき真鍮電極が振動膜の揺れを電気受容</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・バックエレクトレット方式で高音のキレ向上</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">紙より薄い白いテフロンリングが正確な隙間を作り、穴あき真鍮板が声の電気を受け止める</text>
+      `);case"mc_ecm_insulator_cu_ring":return s(`
+        <rect x="18" y="22" width="100" height="48" rx="4" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="26" y="28" width="84" height="36" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+        <rect x="44" y="38" width="48" height="16" rx="3" fill="#ea580c"/>
+        <text x="68" y="49" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">銅圧接リング</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#9a3412">絶縁カップでアルミ缶と完全隔離</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#9a3412">MC24 絶縁カップ＆銅連絡リング</text>
+        <text x="142" y="43" font-size="7.0" fill="#7c2d12">・体積抵抗＞10¹⁴Ω超高絶縁カップで漏電防止</text>
+        <text x="142" y="56" font-size="7.0" fill="#7c2d12">・銅リング圧接でGΩ微弱信号をJFETへ直送</text>
+        <text x="142" y="69" font-size="7.0" fill="#7c2d12">・カップ内側がECM背面音響室も兼任</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#9a3412">外側の金属缶とショートしないよう白い樹脂カップで守り、銅リングだけで下へ音を繋ぐ</text>
+      `);case"mc_ecm_jfet_pcb":return s(`
+        <rect x="14" y="28" width="32" height="34" rx="3" fill="#fef3c7" stroke="#d97706"/>
+        <text x="30" y="43" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#92400e">数GΩ</text>
+        <text x="30" y="54" text-anchor="middle" font-size="5.6" fill="#92400e">か細い音</text>
+        <path d="M46 45 H58" stroke="#16a34a" stroke-width="2"/>
+        <rect x="58" y="22" width="32" height="46" rx="4" fill="#15803d"/>
+        <text x="74" y="48" text-anchor="middle" font-size="6.6" font-weight="bold" fill="#fff">JFET</text>
+        <path d="M90 45 H100" stroke="#16a34a" stroke-width="2.6"/>
+        <rect x="100" y="28" width="26" height="34" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="113" y="43" text-anchor="middle" font-size="5.9" font-weight="bold" fill="#166534">2kΩ</text>
+        <text x="113" y="54" text-anchor="middle" font-size="5.4" fill="#166534">タフ!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0fdf4" stroke="#16a34a"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#166534">MC25 内蔵JFETインピーダンス変換</text>
+        <text x="142" y="43" font-size="7.0" fill="#14532d">・数GΩ→2kΩへ100万倍ノイズに強い信号へ</text>
+        <text x="142" y="56" font-size="7.0" fill="#14532d">・2線式プラグインパワー2〜3Vで省電力動作</text>
+        <text x="142" y="69" font-size="7.0" fill="#14532d">・内蔵10pF/33pFコンデンサで携帯電波防御</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#166534">アルミ缶の底に隠れた極小JFETアンプが、か細い音の電気を長距離伝送できる元気な信号へ変える</text>
+      `);case"mc_rear_3rd_voicememo_capsule":return s(`
+        <circle cx="38" cy="30" r="10" fill="#0ea5e9"/>
+        <text x="38" y="33" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">L</text>
+        <circle cx="98" cy="30" r="10" fill="#eab308"/>
+        <text x="98" y="33" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#1e293b">R</text>
+        <circle cx="68" cy="64" r="13" fill="#06b6d4" stroke="#0e7490" stroke-width="2"/>
+        <text x="68" y="67" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#fff">第3耳</text>
+        <polygon points="38,30 98,30 68,64" fill="none" stroke="#0284c7" stroke-width="1.4" stroke-dasharray="3 2"/>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC26 第3カプセル＆背面ボイスメモ</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・ZV-E1: 3角アレイで前/後/全方位/オート</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・α1 II/α9 III: 背面専用ボイスメモ録音</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・報道写真へ音声タグ付与＆即文字起こし!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">後ろ向きの「3つ目の耳」があるから、カメラマンの声も前方の狙い撃ちも自在にクリア収録</text>
+      `);case"mc_sh1035_diff_flex":return s(`
+        <path d="M20 26 H116 M68 26 V72" fill="none" stroke="#d97706" stroke-width="8" stroke-linecap="round"/>
+        <path d="M26 26 H110 M68 26 V68" fill="none" stroke="#cbd5e1" stroke-width="2.4" stroke-dasharray="4 2"/>
+        <text x="68" y="18" text-anchor="middle" font-size="6.3" font-weight="bold" fill="#92400e">純正 SH-1035 (A5033450A)</text>
+        <text x="68" y="84" text-anchor="middle" font-size="6.0" fill="#475569">差動ペア＋EMIシールド膜</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#fffbeb" stroke="#d97706"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#92400e">MC27 純正SH-1035差動フレキ</text>
+        <text x="142" y="43" font-size="7.0" fill="#78350f">・Ref.307 A5033450A トップデッキ配線</text>
+        <text x="142" y="56" font-size="7.0" fill="#78350f">・GNDガード差動＋表面導電EMIシールド</text>
+        <text x="142" y="69" font-size="7.0" fill="#78350f">・根元の細身柔軟ネックが振動伝搬を遮断</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#92400e">L/Rと第3マイクの繊細な音を、ノイズ防止シールド付きの純正オレンジリボンで基板へ運ぶ</text>
+      `);case"mc_rf_ferrite_esd_filter":return s(`
+        <rect x="16" y="26" width="38" height="40" rx="3" fill="#475569"/>
+        <text x="35" y="44" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#fff">フェライト</text>
+        <text x="35" y="56" text-anchor="middle" font-size="5.6" fill="#cbd5e1">1kΩ@GHz</text>
+        <path d="M54 36 H76" stroke="#10b981" stroke-width="2.4"/>
+        <path d="M54 56 H68" stroke="#dc2626" stroke-width="2" stroke-dasharray="2 2"/>
+        <text x="68" y="59" font-size="7.5" font-weight="bold" fill="#dc2626">×</text>
+        <rect x="78" y="24" width="44" height="44" rx="3" fill="#dcfce7" stroke="#16a34a"/>
+        <text x="100" y="43" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#166534">音だけ</text>
+        <text x="100" y="55" text-anchor="middle" font-size="6.0" fill="#166534">素通し!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0f172a">MC28 RFフェライト＆C0G保護網</text>
+        <text x="142" y="43" font-size="7.0" fill="#334155">・可聴音は0.5Ω素通し、Wi-Fi/5Gは1kΩ遮断</text>
+        <text x="142" y="56" font-size="7.0" fill="#334155">・圧電鳴きゼロC0Gセラミックで歪み根絶</text>
+        <text x="142" y="69" font-size="7.0" fill="#334155">・グリルからの静電気スパークを入口で防御</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#334155">Wi-Fi 6Eやスマホ電波のジジジ雑音だけを熱に変えて消し、純粋な声だけを通す電波関所</text>
+      `);case"mc_audio_codec_adc_pga":return s(`
+        <path d="M16 46 Q26 24 36 46 T56 46" fill="none" stroke="#d97706" stroke-width="2"/>
+        <text x="36" y="70" text-anchor="middle" font-size="6.0" fill="#92400e">アナログ音</text>
+        <path d="M58 46 H70" stroke="#0284c7" stroke-width="2"/>
+        <rect x="70" y="20" width="54" height="52" rx="4" fill="#0284c7"/>
+        <text x="97" y="38" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fff">24-bit</text>
+        <text x="97" y="50" text-anchor="middle" font-size="6.2" fill="#e0f2fe">48 kHz</text>
+        <text x="97" y="62" text-anchor="middle" font-size="5.6" fill="#bae6fd">1677万段階</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC29 24bit/48kHzコーデック</text>
+        <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・低雑音PGAがメニュー0–31で精密レベル調整</text>
+        <text x="142" y="56" font-size="7.0" fill="#0c4a6e">・16bitの256倍細かい24bit LPCM高音質記録</text>
+        <text x="142" y="69" font-size="7.0" fill="#0c4a6e">・専用低ノイズMICBIAS電源で電源揺れ遮断</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#0369a1">1秒間に4万8000回、1677万段階ものきめ細かさで音の波をデジタル化するカメラ内蔵スタジオ</text>
+      `);case"mc_windcut_hpf_circuit":return s(`
+        <line x1="20" y1="68" x2="118" y2="68" stroke="#64748b" stroke-width="1.2"/>
+        <line x1="20" y1="20" x2="20" y2="68" stroke="#64748b" stroke-width="1.2"/>
+        <rect x="21" y="22" width="32" height="45" fill="#fee2e2" opacity="0.7"/>
+        <text x="37" y="42" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#b91c1c">風低音</text>
+        <text x="37" y="53" text-anchor="middle" font-size="5.8" fill="#b91c1c">カット!</text>
+        <path d="M22 66 Q44 64 54 32 L114 32" fill="none" stroke="#2563eb" stroke-width="2.6"/>
+        <text x="86" y="27" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#1d4ed8">声の帯域は透過</text>
+        <text x="68" y="82" text-anchor="middle" font-size="6.0" fill="#334155">100–150 Hz 自動HPF遮断</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#eff6ff" stroke="#2563eb"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#1e40af">MC30 自動「風音低減」HPF回路</text>
+        <text x="142" y="43" font-size="7.0" fill="#1e3a8a">・左右マイクの相関から「風」だけを自動検知</text>
+        <text x="142" y="56" font-size="7.0" fill="#1e3a8a">・風の低音(150Hz以下)だけを急峻にカット</text>
+        <text x="142" y="69" font-size="7.0" fill="#1e3a8a">・無風時は自動解除し豊かな低音をキープ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#1e40af">音楽の低音は残し、左右バラバラに暴れる風のゴロゴロ音だけを見抜いて切り落とす賢いハサミ</text>
+      `);case"mc_beamforming_phase_dsp":return s(`
+        <ellipse cx="68" cy="36" rx="18" ry="22" fill="#cffafe" stroke="#06b6d4" stroke-width="2"/>
+        <circle cx="68" cy="58" r="7" fill="#0f766e"/>
+        <text x="68" y="34" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#0e7490">前方狙い</text>
+        <text x="68" y="45" text-anchor="middle" font-size="5.8" fill="#155e75">音のスポット</text>
+        <path d="M22 52 L38 52 M114 52 L98 52" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="2 2"/>
+        <text x="68" y="82" text-anchor="middle" font-size="6.2" font-weight="bold" fill="#0e7490">AI顔認識連動ビーム追尾!</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#ecfeff" stroke="#06b6d4"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#155e75">MC31 位相差ビームフォーミング</text>
+        <text x="142" y="43" font-size="7.0" fill="#164e63">・各カプセル1万分の1秒の時間ズレを合成</text>
+        <text x="142" y="56" font-size="7.0" fill="#164e63">・前方/後方/全方位を物理交換なしで切替</text>
+        <text x="142" y="69" font-size="7.0" fill="#164e63">・AI顔認識に連動し喋る人へ音を自動追尾!</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">瞳AFのように「音のスポットライト」もAI顔認識で自動追尾し、狙った人の声だけ浮かび上がらせる</text>
+      `);case"mc_ai_noise_cut_agc":return s(`
+        <rect x="14" y="22" width="38" height="46" rx="3" fill="#e2e8f0" stroke="#64748b"/>
+        <text x="33" y="40" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#334155">声＋空調</text>
+        <text x="33" y="52" text-anchor="middle" font-size="5.6" fill="#dc2626">＋ズーム音</text>
+        <path d="M52 45 H64" stroke="#7c3aed" stroke-width="2.2"/>
+        <rect x="64" y="20" width="60" height="50" rx="4" fill="#7c3aed"/>
+        <text x="94" y="38" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#fde047">BIONZ XR2</text>
+        <text x="94" y="50" text-anchor="middle" font-size="6.0" fill="#fff">AI音声分離</text>
+        <text x="94" y="62" text-anchor="middle" font-size="5.6" fill="#ddd6fe">＋AGC音割れ0</text>
+        <rect x="134" y="14" width="176" height="74" rx="5" fill="#f5f3ff" stroke="#7c3aed"/>
+        <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#5b21b6">MC32 XR2 AIノイズ低減＆AGC</text>
+        <text x="142" y="43" font-size="7.0" fill="#4c1d95">・α7 V/α7R VIのAIが声と環境騒音を分離</text>
+        <text x="142" y="56" font-size="7.0" fill="#4c1d95">・ズーム駆動指令連動でモーター音も狙い消し</text>
+        <text x="142" y="69" font-size="7.0" fill="#4c1d95">・スマートAGC＆ソフトリミッターで音割れゼロ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">2025–2026年最新AI頭脳が雑音とズーム音だけをリアルタイムに消し、撮った瞬間から聞きやすい音声へ</text>
+      `);default:return null}}function ct(e){const t=f=>`<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${f}</svg>`,i=v(e,t);if(i)return i;const x=Q(e,t);if(x)return x;const g=$(e,t);if(g)return g;const m=U(e,t);if(m)return m;const _=W(e,t);if(_)return _;const u=Z(e,t);if(u)return u;const M=X(e,t);if(M)return M;const L=K(e,t);if(L)return L;const S=j(e,t);if(S)return S;const C=Y(e,t);if(C)return C;const P=J(e,t);if(P)return P;const F=q(e,t);if(F)return F;const A=tt(e,t);if(A)return A;const I=et(e,t);if(I)return I;const R=it(e,t);if(R)return R;const D=ft(e);if(D)return D;const E=lt(e);if(E)return E;const B=xt(e);if(B)return B;const T=ot(e);if(T)return T;const V=rt(e);if(V)return V;const H=ht(e);if(H)return H;const O=st(e);if(O)return O;const N=nt(e);if(N)return N;const G=dt(e);if(G)return G;switch(e){case"baffle":return t(`
         <rect x="24" y="18" width="272" height="82" rx="4" fill="#ffffff" stroke="#d8dde6"/>
         <polygon points="90,26 115,26 106,44 90,44" fill="#232730"/>
         <polygon points="90,92 115,92 106,74 90,74" fill="#232730"/>
@@ -8521,7 +9823,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
       `);case"olpf16":return t(`
         <!-- 16-point Gaussian PSF cluster -->
         <rect x="16" y="14" width="90" height="90" rx="6" fill="#ffffff" stroke="#dbe2eb"/>
-        ${[-22,-8,8,22].flatMap((f,l)=>[-22,-8,8,22].map((n,y)=>{const a=Math.hypot(l-1.5,y-1.5),z=Math.max(2.1,4.3-a*.9),g=Math.max(.32,.95-a*.25).toFixed(2);return`<circle cx="${61+f}" cy="${59+n}" r="${z.toFixed(1)}" fill="#0d5bd9" opacity="${g}"/>`})).join("")}
+        ${[-22,-8,8,22].flatMap((f,l)=>[-22,-8,8,22].map((y,z)=>{const b=Math.hypot(l-1.5,z-1.5),k=Math.max(2.1,4.3-b*.9),p=Math.max(.32,.95-b*.25).toFixed(2);return`<circle cx="${61+f}" cy="${59+y}" r="${k.toFixed(1)}" fill="#0d5bd9" opacity="${p}"/>`})).join("")}
         <text x="27" y="114" font-size="8.5" fill="#475569">16点ガウス分離 PSF</text>
         <!-- MTF Comparison curve -->
         <line x1="132" y1="96" x2="304" y2="96" stroke="#94a3b8" stroke-width="1"/>
@@ -9185,7 +10487,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
       `);case"mb_hdi_pcb":return t(`
         <!-- 12-Layer Any-Layer HDI Microvia Cross Section -->
         <rect x="24" y="16" width="272" height="72" rx="3" fill="#124939" stroke="#0e3b2e"/>
-        ${[0,1,2,3,4,5,6,7,8,9,10,11].map(f=>{const l=21+f*5.6,n=f===1||f===4||f===7||f===10?"#eab308":"#d97742";return`<rect x="28" y="${l.toFixed(1)}" width="264" height="2.2" fill="${n}"/>`}).join("")}
+        ${[0,1,2,3,4,5,6,7,8,9,10,11].map(f=>{const l=21+f*5.6,y=f===1||f===4||f===7||f===10?"#eab308":"#d97742";return`<rect x="28" y="${l.toFixed(1)}" width="264" height="2.2" fill="${y}"/>`}).join("")}
         <!-- Stacked UV Laser Copper-Filled Microvias (Any-Layer!) -->
         <rect x="86" y="21" width="7" height="24" fill="#facc15" stroke="#1e293b" stroke-width="0.6"/>
         <rect x="136" y="38" width="7" height="28" fill="#facc15" stroke="#1e293b" stroke-width="0.6"/>
@@ -9196,7 +10498,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- G-S-S-G Differential Shielded Pinout + ZIF Flip-Lock -->
         <rect x="16" y="18" width="144" height="78" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
         <text x="26" y="34" font-size="8.5" font-weight="bold" fill="#0f172a">80ピン G-S-S-G 差動配列</text>
-        ${["G","S+","S−","G","S+","S−","G"].map((f,l)=>{const n=24+l*19;return`<rect x="${n}" y="44" width="15" height="24" rx="2" fill="${f==="G"?"#475569":"#0284c7"}"/><text x="${n+3}" y="59" font-size="7.5" fill="#fff">${f}</text>`}).join("")}
+        ${["G","S+","S−","G","S+","S−","G"].map((f,l)=>{const y=24+l*19;return`<rect x="${y}" y="44" width="15" height="24" rx="2" fill="${f==="G"?"#475569":"#0284c7"}"/><text x="${y+3}" y="59" font-size="7.5" fill="#fff">${f}</text>`}).join("")}
         <text x="24" y="85" font-size="7.5" fill="#475569">信号対をGNDで挟み160Gbps保護</text>
         <!-- Right: ZIF Flip Lock -->
         <rect x="170" y="18" width="136" height="78" rx="5" fill="#fffbeb" stroke="#f59e0b"/>
@@ -9297,7 +10599,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- 8-LED Ring Left + Corneal Purkinje Reflection Geometry Right -->
         <ellipse cx="78" cy="56" rx="50" ry="38" fill="#0f172a" stroke="#334155" stroke-width="2"/>
         <ellipse cx="78" cy="56" rx="34" ry="24" fill="#eff6ff" stroke="#94a3b8"/>
-        ${[0,1,2,3,4,5,6,7].map(f=>{const l=f/8*Math.PI*2+Math.PI/8,n=(78+Math.cos(l)*42).toFixed(1),y=(56+Math.sin(l)*31).toFixed(1);return`<circle cx="${n}" cy="${y}" r="4.2" fill="#e11d48" stroke="#fde047" stroke-width="1"/>`}).join("")}
+        ${[0,1,2,3,4,5,6,7].map(f=>{const l=f/8*Math.PI*2+Math.PI/8,y=(78+Math.cos(l)*42).toFixed(1),z=(56+Math.sin(l)*31).toFixed(1);return`<circle cx="${y}" cy="${z}" r="4.2" fill="#e11d48" stroke="#fde047" stroke-width="1"/>`}).join("")}
         <text x="53" y="59" font-size="8" font-weight="bold" fill="#0369a1">850nm × 8灯</text>
         <!-- Right: Pupil Center vs Purkinje Glint Vector -->
         <rect x="148" y="14" width="156" height="82" rx="6" fill="#fff1f2" stroke="#fda4af"/>
@@ -9532,7 +10834,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- Camera Mount Ring with 6 Bolts -->
         <circle cx="74" cy="54" r="34" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
         <circle cx="74" cy="54" r="24" fill="#fff" stroke="#64748b" stroke-width="1.4"/>
-        ${[0,60,120,180,240,300].map(f=>{const l=f*Math.PI/180,n=(74+Math.cos(l)*29).toFixed(1),y=(54+Math.sin(l)*29).toFixed(1);return`<circle cx="${n}" cy="${y}" r="3.6" fill="#0284c7" stroke="#0f172a" stroke-width="0.9"/>`}).join("")}
+        ${[0,60,120,180,240,300].map(f=>{const l=f*Math.PI/180,y=(74+Math.cos(l)*29).toFixed(1),z=(54+Math.sin(l)*29).toFixed(1);return`<circle cx="${y}" cy="${z}" r="3.6" fill="#0284c7" stroke="#0f172a" stroke-width="0.9"/>`}).join("")}
         <text x="53" y="57" font-size="8" font-weight="bold" fill="#0f172a">6点均等</text>
         <!-- Right: Cantilever Moment Force Diagram -->
         <rect x="134" y="28" width="18" height="52" rx="2" fill="#64748b"/>
@@ -9622,7 +10924,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
       `);case"mount_contacts":return t(`
         <!-- 12-Pin Arc Contact Layout: Power / Ground / Ultra-High-Speed Bidirectional Bus -->
         <rect x="16" y="20" width="288" height="58" rx="6" fill="#1e293b"/>
-        ${Array.from({length:12}).map((f,l)=>{const n=30+l*22.8,y=l<=2?"#f59e0b":l>=10?"#38bdf8":"#10b981",a=l===0?28:l===11?20:24;return`<rect x="${n.toFixed(1)}" y="${(48-a/2).toFixed(1)}" width="12" height="${a}" rx="5" fill="#facc15" stroke="${y}" stroke-width="1.6"/>`}).join("")}
+        ${Array.from({length:12}).map((f,l)=>{const y=30+l*22.8,z=l<=2?"#f59e0b":l>=10?"#38bdf8":"#10b981",b=l===0?28:l===11?20:24;return`<rect x="${y.toFixed(1)}" y="${(48-b/2).toFixed(1)}" width="12" height="${b}" rx="5" fill="#facc15" stroke="${z}" stroke-width="1.6"/>`}).join("")}
         <text x="26" y="16" font-size="7.5" font-weight="bold" fill="#b45309">大電力V_MOT (3A)</text>
         <text x="116" y="16" font-size="7.5" font-weight="bold" fill="#047857">高速双方向SPI/UART (40倍帯域)</text>
         <text x="244" y="16" font-size="7.5" font-weight="bold" fill="#0369a1">装着検知</text>
@@ -9764,7 +11066,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- Stopped down circular 11-blade iris -->
         <circle cx="226" cy="54" r="34" fill="#1e293b" stroke="#0f172a" stroke-width="1.8"/>
         <circle cx="226" cy="54" r="11" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.4"/>
-        ${[0,1,2,3,4,5,6,7,8,9,10].map(f=>{const l=f/11*Math.PI*2,n=(226+Math.cos(l)*11).toFixed(1),y=(54+Math.sin(l)*11).toFixed(1),a=(226+Math.cos(l+.52)*33).toFixed(1),z=(54+Math.sin(l+.52)*33).toFixed(1);return`<line x1="${n}" y1="${y}" x2="${a}" y2="${z}" stroke="#64748b" stroke-width="1.1"/>`}).join("")}
+        ${[0,1,2,3,4,5,6,7,8,9,10].map(f=>{const l=f/11*Math.PI*2,y=(226+Math.cos(l)*11).toFixed(1),z=(54+Math.sin(l)*11).toFixed(1),b=(226+Math.cos(l+.52)*33).toFixed(1),k=(54+Math.sin(l+.52)*33).toFixed(1);return`<line x1="${y}" y1="${z}" x2="${b}" y2="${k}" stroke="#64748b" stroke-width="1.1"/>`}).join("")}
         <text x="190" y="98" font-size="7.5" fill="#334155">真円維持＋22本光芒</text>
         <text x="42" y="112" font-size="8" fill="#334155">11枚羽根の電磁ステッピング制御で美しい丸ボケと静音動画絞りを両立</text>
       `);case"lens_focus_a":return t(`
@@ -10187,7 +11489,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- 11-Slot Non-Linear Iris Cam Actuating Ring -->
         <circle cx="84" cy="55" r="34" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
         <circle cx="84" cy="55" r="20" fill="#ffffff" stroke="#475569" stroke-width="1.4"/>
-        ${Array.from({length:11},(f,l)=>{const n=l/11*Math.PI*2,y=84+Math.cos(n)*23,a=55+Math.sin(n)*23,z=84+Math.cos(n+.34)*31,g=55+Math.sin(n+.34)*31;return`<line x1="${y.toFixed(1)}" y1="${a.toFixed(1)}" x2="${z.toFixed(1)}" y2="${g.toFixed(1)}" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>`}).join("")}
+        ${Array.from({length:11},(f,l)=>{const y=l/11*Math.PI*2,z=84+Math.cos(y)*23,b=55+Math.sin(y)*23,k=84+Math.cos(y+.34)*31,p=55+Math.sin(y+.34)*31;return`<line x1="${z.toFixed(1)}" y1="${b.toFixed(1)}" x2="${k.toFixed(1)}" y2="${p.toFixed(1)}" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>`}).join("")}
         <path d="M115 70 A34 34 0 0 1 98 88" fill="none" stroke="#eab308" stroke-width="4.5"/>
         <rect x="142" y="18" width="164" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
         <text x="150" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">11本非線形カム溝リング</text>
@@ -10321,7 +11623,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <circle cx="82" cy="55" r="34" fill="#cbd5e1" stroke="#334155" stroke-width="1.8"/>
         <circle cx="82" cy="55" r="22" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
         <circle cx="82" cy="55" r="36" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-dasharray="5 2"/>
-        ${Array.from({length:10},(f,l)=>{const n=Math.PI*.28+l/9*(Math.PI*.44),y=82+Math.cos(n)*24,a=55+Math.sin(n)*24;return`<circle cx="${y.toFixed(1)}" cy="${a.toFixed(1)}" r="2" fill="#eab308"/>`}).join("")}
+        ${Array.from({length:10},(f,l)=>{const y=Math.PI*.28+l/9*(Math.PI*.44),z=82+Math.cos(y)*24,b=55+Math.sin(y)*24;return`<circle cx="${z.toFixed(1)}" cy="${b.toFixed(1)}" r="2" fill="#eab308"/>`}).join("")}
         <text x="64" y="58" font-size="8" font-weight="bold" fill="#0f172a">4爪バヨネット</text>
         <rect x="138" y="18" width="168" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
         <text x="146" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">レンズ側ステンレスマウント</text>
@@ -10589,7 +11891,7 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <!-- Stationary Iris Pivot-Pin Base Plate & Stray-Light Knife-Edge Shield -->
         <circle cx="80" cy="54" r="34" fill="#475569" stroke="#1e293b" stroke-width="1.8"/>
         <circle cx="80" cy="54" r="21" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
-        ${Array.from({length:11},(f,l)=>{const n=l/11*Math.PI*2,y=80+Math.cos(n)*27.5,a=54+Math.sin(n)*27.5;return`<circle cx="${y.toFixed(1)}" cy="${a.toFixed(1)}" r="2.2" fill="#eab308" stroke="#713f12" stroke-width="0.6"/>`}).join("")}
+        ${Array.from({length:11},(f,l)=>{const y=l/11*Math.PI*2,z=80+Math.cos(y)*27.5,b=54+Math.sin(y)*27.5;return`<circle cx="${z.toFixed(1)}" cy="${b.toFixed(1)}" r="2.2" fill="#eab308" stroke="#713f12" stroke-width="0.6"/>`}).join("")}
         <text x="64" y="57" font-size="7.5" font-weight="bold" fill="#0f172a">遮光エッジ</text>
         <rect x="138" y="18" width="168" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
         <text x="146" y="35" font-size="8.5" font-weight="bold" fill="#0f172a">11等分ピボット固定ベース</text>
@@ -11409,4 +12711,4 @@ function T(e,t){switch(e){case"lens_hood_lock_bumper":return t(`
         <text x="156" y="65" font-size="7.5" fill="#115e59">・ラビリンス段差＋25%圧縮の二重防壁</text>
         <text x="156" y="79" font-size="7.5" fill="#0d9488">・−20℃の極寒でも硬化しない高弾性ゴム</text>
         <text x="34" y="111" font-size="8" fill="#334155">ボディのすべての継ぎ目を立体ゴムパッキン網で囲み豪雨や砂嵐から内部を守る</text>
-      `);default:return t("")}}export{ft as renderSchematicSvg};
+      `);default:return t("")}}export{ct as renderSchematicSvg};
