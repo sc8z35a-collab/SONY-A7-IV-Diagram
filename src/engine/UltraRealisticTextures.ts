@@ -58,6 +58,11 @@ export interface UltraRealisticMaterials {
   v2BionzSramArray: THREE.MeshPhysicalMaterial;
   v2BionzBacksidePdn: THREE.MeshPhysicalMaterial;
   v2BionzGlassCoreTgv: THREE.MeshPhysicalMaterial;
+  // Phase 29: Sub-Nanometer Perovskite, Deuterium Si-D, 2D TMD Honeycomb & Microfluidic Cooler Materials
+  v2PixelPerovskiteStack: THREE.MeshPhysicalMaterial;
+  v2PixelDeuteriumInterface: THREE.MeshPhysicalMaterial;
+  v2Bionz2dTmdLattice: THREE.MeshPhysicalMaterial;
+  v2BionzMicrofluidicGrid: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -2619,8 +2624,175 @@ function createV2BionzGlassCoreTgvTexture(): THREE.CanvasTexture {
   return toHiTex(canvas);
 }
 
+function createV2PixelPerovskiteStackTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // Vertically stacked Halide Perovskite R/G/B filterless color bands (ETH Zurich / Empa 2025)
+  const bands = [
+    { y0: 0, bh: h / 3, c0: '#1d4ed8', c1: '#38bdf8', dot: 'rgba(224,242,254,0.75)' },
+    { y0: h / 3, bh: h / 3, c0: '#047857', c1: '#34d399', dot: 'rgba(209,250,229,0.75)' },
+    { y0: (2 * h) / 3, bh: h / 3, c0: '#b91c1c', c1: '#fb7185', dot: 'rgba(255,228,230,0.75)' },
+  ];
+  for (const b of bands) {
+    const g = ctx.createLinearGradient(0, b.y0, w, b.y0 + b.bh);
+    g.addColorStop(0, b.c0);
+    g.addColorStop(0.5, b.c1);
+    g.addColorStop(1, b.c0);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, b.y0, w, b.bh);
+
+    // Corner-sharing ABX3 octahedral perovskite crystal diamond lattice
+    const step = 42;
+    ctx.strokeStyle = 'rgba(255,255,255,0.34)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (let y = b.y0 + 21; y < b.y0 + b.bh - 8; y += step) {
+      for (let x = 21; x < w - 8; x += step) {
+        ctx.moveTo(x, y - 16);
+        ctx.lineTo(x + 16, y);
+        ctx.lineTo(x, y + 16);
+        ctx.lineTo(x - 16, y);
+        ctx.closePath();
+      }
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = b.dot;
+    for (let y = b.y0 + 21; y < b.y0 + b.bh - 8; y += step) {
+      for (let x = 21; x < w - 8; x += step) {
+        ctx.beginPath();
+        ctx.arc(x, y, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  // Transparent ITO micro-electrode dividers between R/G/B perovskite layers
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.85)';
+  ctx.fillRect(0, h / 3 - 5, w, 10);
+  ctx.fillRect(0, (2 * h) / 3 - 5, w, 10);
+  return toHiTex(canvas);
+}
+
+function createV2PixelDeuteriumInterfaceTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#0f172a');
+  grad.addColorStop(0.42, '#134e4a');
+  grad.addColorStop(0.58, '#0f766e');
+  grad.addColorStop(1, '#1e3a5f');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Horizontal Si/SiO2 atomic bond plane with heavy Deuterium (2H / D) passivation caps
+  const step = 48;
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+  ctx.lineWidth = 2.0;
+  for (let y = 36; y < h - 20; y += step) {
+    ctx.beginPath();
+    ctx.moveTo(16, y);
+    ctx.lineTo(w - 16, y);
+    ctx.stroke();
+    for (let x = 36; x < w - 20; x += step) {
+      // Si lattice atom
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(x, y, 6.2, 0, Math.PI * 2);
+      ctx.fill();
+      // Si-D heavy deuterium bond upward
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(x, y - 6);
+      ctx.lineTo(x, y - 20);
+      ctx.stroke();
+      ctx.fillStyle = '#fde047';
+      ctx.beginPath();
+      ctx.arc(x, y - 22, 4.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  return toHiTex(canvas);
+}
+
+function createV2Bionz2dTmdLatticeTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#1e1b4b');
+  grad.addColorStop(0.5, '#312e81');
+  grad.addColorStop(1, '#0f172a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Authentic hexagonal 2H-MoS2 / WSe2 atomic monolayer honeycomb lattice (0.7nm thick!)
+  const r = 24;
+  const dx = r * 1.5;
+  const dy = r * Math.sqrt(3);
+  ctx.strokeStyle = 'rgba(165, 180, 252, 0.45)';
+  ctx.lineWidth = 2.0;
+  for (let row = -1; row < h / dy + 2; row++) {
+    for (let col = -1; col < w / dx + 2; col++) {
+      const cx = col * dx;
+      const cy = row * dy + (col % 2 === 0 ? 0 : dy * 0.5);
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const ang = (Math.PI / 3) * k;
+        const vx = cx + Math.cos(ang) * r;
+        const vy = cy + Math.sin(ang) * r;
+        if (k === 0) ctx.moveTo(vx, vy);
+        else ctx.lineTo(vx, vy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // Alternating Mo/W (gold) and S/Se (cyan) vertices
+      for (let k = 0; k < 6; k++) {
+        const ang = (Math.PI / 3) * k;
+        const vx = cx + Math.cos(ang) * r;
+        const vy = cy + Math.sin(ang) * r;
+        ctx.fillStyle = k % 2 === 0 ? '#f59e0b' : '#22d3ee';
+        ctx.beginPath();
+        ctx.arc(vx, vy, k % 2 === 0 ? 4.2 : 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  return toHiTex(canvas);
+}
+
+function createV2BionzMicrofluidicGridTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Direct-to-silicon parallel micro-channel liquid cooling manifold (imec IEDM 2025 17-3)
+  for (let y = 18; y < h - 18; y += 44) {
+    // Coolant channel glow (cold cyan -> warm amber gradient across chip)
+    const cg = ctx.createLinearGradient(24, y, w - 24, y);
+    cg.addColorStop(0, '#0284c7');
+    cg.addColorStop(0.45, '#06b6d4');
+    cg.addColorStop(0.82, '#38bdf8');
+    cg.addColorStop(1, '#f97316');
+    ctx.fillStyle = cg;
+    ctx.fillRect(24, y, w - 48, 26);
+
+    // Etched silicon micro-pin-fin turbulators inside each coolant channel
+    ctx.fillStyle = '#334155';
+    for (let x = 44; x < w - 44; x += 36) {
+      ctx.fillRect(x, y + 5, 14, 16);
+      ctx.strokeStyle = 'rgba(224,242,254,0.45)';
+      ctx.lineWidth = 1.0;
+      ctx.strokeRect(x, y + 5, 14, 16);
+    }
+  }
+  // Inlet/outlet distribution plenums on left & right edges
+  ctx.fillStyle = '#0ea5e9';
+  ctx.fillRect(4, 16, 18, h - 32);
+  ctx.fillStyle = '#ea580c';
+  ctx.fillRect(w - 22, 16, 18, h - 32);
+  return toHiTex(canvas);
+}
+
 // =============================================================================
-// FACTORY: CREATE ALL 41 BESPOKE ULTRA-REALISTIC MATERIALS
+// FACTORY: CREATE ALL 45 BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
 export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): UltraRealisticMaterials {
@@ -3198,6 +3370,63 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.10
   );
 
+  // --- Phase 29: Sub-Nanometer Perovskite, Deuterium Si-D, 2D TMD Honeycomb & Microfluidic Cooler ---
+  const v2PixelPerovskiteStack = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createV2PixelPerovskiteStackTexture(),
+      metalness: 0.24,
+      roughness: 0.18,
+      clearcoat: 0.88,
+      iridescence: 0.92,
+      iridescenceIOR: 1.92,
+    }),
+    0.12
+  );
+
+  const v2PixelDeuteriumInterface = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createV2PixelDeuteriumInterfaceTexture(),
+      metalness: 0.58,
+      roughness: 0.22,
+      clearcoat: 0.56,
+      iridescence: 0.62,
+      iridescenceIOR: 1.72,
+    }),
+    0.12
+  );
+
+  const v2Bionz2dTmdLattice = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createV2Bionz2dTmdLatticeTexture(),
+      metalness: 0.66,
+      roughness: 0.20,
+      clearcoat: 0.64,
+      iridescence: 0.84,
+      iridescenceIOR: 1.88,
+    }),
+    0.12
+  );
+
+  const v2BionzMicrofluidicGrid = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createV2BionzMicrofluidicGridTexture(),
+      metalness: 0.48,
+      roughness: 0.20,
+      clearcoat: 0.72,
+      iridescence: 0.38,
+      iridescenceIOR: 1.48,
+    }),
+    0.13
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -3244,6 +3473,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     v2BionzSramArray,
     v2BionzBacksidePdn,
     v2BionzGlassCoreTgv,
+    v2PixelPerovskiteStack,
+    v2PixelDeuteriumInterface,
+    v2Bionz2dTmdLattice,
+    v2BionzMicrofluidicGrid,
   ];
 
   return {
@@ -3292,6 +3525,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     v2BionzSramArray,
     v2BionzBacksidePdn,
     v2BionzGlassCoreTgv,
+    v2PixelPerovskiteStack,
+    v2PixelDeuteriumInterface,
+    v2Bionz2dTmdLattice,
+    v2BionzMicrofluidicGrid,
     list,
   };
 }

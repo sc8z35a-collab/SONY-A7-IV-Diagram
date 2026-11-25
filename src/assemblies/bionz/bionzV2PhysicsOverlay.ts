@@ -55,7 +55,7 @@ export function createBionzV2PhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 48);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 64);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -157,6 +157,22 @@ export function createBionzV2PhysicsOverlay(
     pt(_b, m, 'xv2-selfheating-phonon-via', 0, 0.8, 0);
     return _pair;
   });
+  // 6. Phase 29 Deep Physics: 0.7nm 2D MoS2 Transport, 3.5D COUPE >200G Optical Link & Microfluidic Liquid Cooling!
+  registerFlow(0xa855f7, 1.7, 2, false, (m) => {
+    pt(_a, m, 'xv2-2d-tmd-mos2-channel', -1.8, 0.4, 0);
+    pt(_b, m, 'xv2-2d-tmd-mos2-channel', 1.8, 0.4, 0);
+    return _pair;
+  });
+  registerFlow(0x06b6d4, 1.15, 3, false, (m) => {
+    pt(_a, m, 'xv2-microfluidic-si-cooler', -15.5, 0.8, 0);
+    pt(_b, m, 'xv2-microfluidic-si-cooler', 15.5, 0.8, 0);
+    return _pair;
+  });
+  registerFlow(0xf43f5e, 1.85, 2, false, (m) => {
+    pt(_a, m, 'xv2-gesi-110ghz-eam-cpo', 0, 0.3, 0);
+    pt(_b, m, 'xv2-coupe-35d-interposer', -14.5, 0.6, -14.5);
+    return _pair;
+  });
 
   overlayGroup.visible = false;
 
@@ -171,8 +187,8 @@ export function createBionzV2PhysicsOverlay(
       explodeGuides.visible = show;
       if (!show) return;
       guideMat.opacity = 0.34 * THREE.MathUtils.smoothstep(explodeFactor, 0.04, 0.35);
-      const yMin = -14.0 - explodeFactor * 56.0;
-      const yMax = 16.0 + explodeFactor * 56.0;
+      const yMin = -15.5 - explodeFactor * 68.0;
+      const yMax = 17.0 + explodeFactor * 68.0;
       for (let i = 0; i < cornerLines.length; i++) {
         const [cx, cz] = corners[i];
         updateLine2PtsInPlace(cornerLines[i], cx, yMin, cz, cx, yMax, cz, true);

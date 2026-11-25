@@ -55,7 +55,7 @@ export function createMicroPixelV2PhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 44);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 64);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -162,6 +162,22 @@ export function createMicroPixelV2PhysicsOverlay(
     pt(_b, m, 'pv2-hf-hdr-fusion-engine', 0, 0.7, 0);
     return _pair;
   });
+  // 6. Phase 29 Deep Physics: Filterless Perovskite RGB -> QIS Single-Photon Jot -> 200nm W2W Bond -> 16:1 CML Output
+  registerFlow(0x10b981, 1.15, 2, false, (m) => {
+    pt(_a, m, 'pv2-perovskite-3rgb-stack', 0, 2.5, 0);
+    pt(_b, m, 'pv2-perovskite-3rgb-stack', 0, -1.6, 0);
+    return _pair;
+  });
+  registerFlow(0x22d3ee, 1.45, 2, false, (m) => {
+    pt(_a, m, 'pv2-dual-vtg-twin-pillar', 0, -0.4, 0);
+    pt(_b, m, 'pv2-qis-pump-gate-jot', 1.4, 0.5, 0);
+    return _pair;
+  });
+  registerFlow(0xf59e0b, 1.5, 2, false, (m) => {
+    pt(_a, m, 'pv2-thermometer-ramp-dac', 0, -0.2, 0);
+    pt(_b, m, 'pv2-16to1-cml-serializer', 2.2, 0.2, 0);
+    return _pair;
+  });
 
   overlayGroup.visible = false;
 
@@ -176,8 +192,8 @@ export function createMicroPixelV2PhysicsOverlay(
       explodeGuides.visible = show;
       if (!show) return;
       guideMat.opacity = 0.34 * THREE.MathUtils.smoothstep(explodeFactor, 0.04, 0.35);
-      const yMin = -15.5 - explodeFactor * 56.0;
-      const yMax = 15.5 + explodeFactor * 52.0;
+      const yMin = -16.5 - explodeFactor * 64.0;
+      const yMax = 15.5 + explodeFactor * 54.0;
       for (let i = 0; i < cornerLines.length; i++) {
         const [cx, cz] = corners[i];
         updateLine2PtsInPlace(cornerLines[i], cx, yMin, cz, cx, yMax, cz, true);

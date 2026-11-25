@@ -20,13 +20,16 @@ export function createBionzV2Assembly(mats: MaterialLibrary): AssemblyController
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 30,
+    deferredStandaloneCount: 55,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
-      const { buildBionzV2Parts } = await import('./bionzV2Parts');
+      const [{ buildBionzV2Parts }, { buildBionzV2DeepParts }] = await Promise.all([
+        import('./bionzV2Parts'),
+        import('./bionzV2DeepParts'),
+      ]);
       controller.deferredStandaloneCount = 0;
-      const built = buildBionzV2Parts(mats);
+      const built = [...buildBionzV2Parts(mats), ...buildBionzV2DeepParts(mats)];
       for (const p of built) {
         parts.push(p);
         rootGroup.add(p.group);

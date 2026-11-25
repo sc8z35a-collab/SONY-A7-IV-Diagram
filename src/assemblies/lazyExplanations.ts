@@ -79,8 +79,14 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       );
       break;
     case 'micro_v2':
-      inflight = import('./sensor/microPixelV2Explanations').then((m) =>
-        finish(m.MICRO_V2_EXPLANATIONS)
+      inflight = Promise.all([
+        import('./sensor/microPixelV2Explanations'),
+        import('./sensor/microPixelV2DeepExplanations'),
+      ]).then(([mBase, mDeep]) =>
+        finish({
+          ...mBase.MICRO_V2_EXPLANATIONS,
+          ...mDeep.MICRO_V2_DEEP_EXPLANATIONS,
+        })
       );
       break;
     case 'mainboard':
@@ -135,8 +141,14 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./bionz/bionzExplanations').then((m) => finish(m.BIONZ_EXPLANATIONS));
       break;
     case 'bionz_v2':
-      inflight = import('./bionz/bionzV2Explanations').then((m) =>
-        finish(m.BIONZ_V2_EXPLANATIONS)
+      inflight = Promise.all([
+        import('./bionz/bionzV2Explanations'),
+        import('./bionz/bionzV2DeepExplanations'),
+      ]).then(([mBase, mDeep]) =>
+        finish({
+          ...mBase.BIONZ_V2_EXPLANATIONS,
+          ...mDeep.BIONZ_V2_DEEP_EXPLANATIONS,
+        })
       );
       break;
     case 'mishoe':

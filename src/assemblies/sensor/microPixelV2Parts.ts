@@ -1530,22 +1530,34 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     const die = new THREE.Mesh(baseGeo, u.v2PixelAiCircuit);
     g.add(die);
 
-    // 4x4 CNN Remosaic Processing Elements + weight SRAM bank + horizontal data-waveguide busbars
+    // 4x4 CNN Remosaic Processing Elements (QBC 16-pixel -> Bayer RGB) + quantized INT8 weight SRAM bank + data busbars!
     for (let ix = -1.5; ix <= 1.5; ix += 1) {
       for (let iz = -1.5; iz <= 1.5; iz += 1) {
         const pe = new THREE.Mesh(createChamferedBoxGeo(1.75, 0.68, 1.75, 0.08, 0.05, 'y'), mats.npuSiliconDie);
-        pe.position.set(ix * 2.5, 0.80, iz * 2.5);
+        pe.position.set(ix * 2.45, 0.80, iz * 2.25 - 0.55);
         pe.userData.noEdges = true;
         const cap = new THREE.Mesh(createChamferedBoxGeo(1.1, 0.18, 1.1, 0.03, 0.02, 'y'), mats.goldPlating);
-        cap.position.set(ix * 2.5, 1.20, iz * 2.5);
+        cap.position.set(ix * 2.45, 1.20, iz * 2.25 - 0.55);
         cap.userData.noEdges = true;
-        g.add(pe, cap);
+        // 2x2 Quad-Bayer R/G/G/B kernel micro-taps on top of each PE!
+        const tapMat = (Math.round(ix + 1.5) + Math.round(iz + 1.5)) % 2 === 0 ? mats.cfaGreen : ix < 0 ? mats.cfaRed : mats.cfaBlue;
+        const kTap = new THREE.Mesh(hiResCyl(0.22, 0.22, 0.18, 8), tapMat);
+        kTap.position.set(ix * 2.45, 1.36, iz * 2.25 - 0.55);
+        kTap.userData.noEdges = true;
+        g.add(pe, cap, kTap);
       }
       const bus = new THREE.Mesh(createChamferedBoxGeo(10.6, 0.16, 0.24, 0.02, 0.02, 'y'), mats.copperHybridBond);
-      bus.position.set(0, 0.68, ix * 2.5);
+      bus.position.set(0, 0.68, ix * 2.25 - 0.55);
       bus.userData.noEdges = true;
       g.add(bus);
     }
+    // Front INT8 CNN Remosaic Weight SRAM Cache Strip & DMA Bridge
+    const weightSram = new THREE.Mesh(createChamferedBoxGeo(10.4, 0.56, 1.65, 0.08, 0.04, 'y'), mats.siliconLogicLayer);
+    weightSram.position.set(0, 0.78, 4.45);
+    const sramGold = new THREE.Mesh(createChamferedBoxGeo(9.6, 0.14, 0.42, 0.03, 0.01, 'y'), mats.goldPlating);
+    sramGold.position.set(0, 1.1, 4.45);
+    sramGold.userData.noEdges = true;
+    g.add(weightSram, sramGold);
 
     parts.push(
       finalizePixelV2Part(
@@ -1567,20 +1579,28 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     const sub = makeHiResHorizPlate(createRoundedRectShape(12.2, 12.2, 1.0), 0.95, mats.ispSiliconDie, 0.1, 2, 18);
     g.add(sub);
 
-    // 5x5 analog crossbar word/bit lines + discrete synaptic weight-capacitor cylinders at every intersection!
+    // 5x5 analog crossbar word/bit lines + discrete synaptic weight-capacitor cylinders + West DAC drivers + South TIA summing sense-amps!
     const synGeo = hiResCyl(0.32, 0.32, 0.56, 10);
     for (let i = -2; i <= 2; i++) {
-      const row = new THREE.Mesh(createChamferedBoxGeo(10.2, 0.22, 0.44, 0.04, 0.03, 'y'), mats.goldPlating);
-      row.position.set(0, 0.58, i * 2.0);
+      const row = new THREE.Mesh(createChamferedBoxGeo(9.2, 0.22, 0.4, 0.04, 0.03, 'y'), mats.goldPlating);
+      row.position.set(0.35, 0.58, i * 1.78 - 0.35);
       row.userData.noEdges = true;
-      const col = new THREE.Mesh(createChamferedBoxGeo(0.44, 0.22, 10.2, 0.04, 0.03, 'y'), mats.copperHybridBond);
-      col.position.set(i * 2.0, 1.08, 0);
+      const col = new THREE.Mesh(createChamferedBoxGeo(0.4, 0.22, 9.2, 0.04, 0.03, 'y'), mats.copperHybridBond);
+      col.position.set(i * 1.78 + 0.35, 1.08, -0.35);
       col.userData.noEdges = true;
-      g.add(row, col);
+      // West analog pulse-width row DAC driver cell
+      const rowDac = new THREE.Mesh(createChamferedBoxGeo(0.95, 0.54, 0.95, 0.05, 0.02, 'y'), mats.varistorRingBlue);
+      rowDac.position.set(-4.85, 0.72, i * 1.78 - 0.35);
+      rowDac.userData.noEdges = true;
+      // South column Kirchhoff Current-Summing TIA + ReLU comparator cell
+      const colTia = new THREE.Mesh(createChamferedBoxGeo(0.95, 0.58, 0.95, 0.05, 0.02, 'y'), u.batSocLedGlow);
+      colTia.position.set(i * 1.78 + 0.35, 0.74, 4.85);
+      colTia.userData.noEdges = true;
+      g.add(row, col, rowDac, colTia);
 
       for (let j = -2; j <= 2; j++) {
         const syn = new THREE.Mesh(synGeo, (i + j) % 2 === 0 ? mats.fluorineCoatCyan : mats.loficDielectric);
-        syn.position.set(i * 2.0, 0.83, j * 2.0);
+        syn.position.set(i * 1.78 + 0.35, 0.83, j * 1.78 - 0.35);
         syn.userData.noEdges = true;
         g.add(syn);
       }
@@ -1606,20 +1626,32 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     const tile = makeHiResHorizPlate(createRoundedRectShape(12.2, 12.2, 1.0), 0.95, mats.siliconLogicLayer, 0.1, 2, 18);
     g.add(tile);
 
-    // Binary/Gray-code stair-step capacitor DAC bank + comparator front-end strip + Gray bus traces!
+    // Binary/Gray-code stair-step capacitor DAC bank + twin coarse/fine ramp waveguides + 8-stage Gray ripple flip-flop ladder!
     for (let k = 0; k < 7; k++) {
-      const stepH = 0.36 + k * 0.17;
+      const stepH = 0.36 + k * 0.18;
       const bar = new THREE.Mesh(
-        createChamferedBoxGeo(1.15, stepH, 8.2, 0.06, 0.04, 'y'),
+        createChamferedBoxGeo(1.12, stepH, 6.4, 0.06, 0.04, 'y'),
         k % 2 === 0 ? mats.mountShimBlue : mats.silverElectrode
       );
-      bar.position.set(-4.6 + k * 1.52, 0.48 + stepH * 0.5, -0.8);
+      bar.position.set(-4.5 + k * 1.5, 0.48 + stepH * 0.5, -1.6);
       bar.userData.noEdges = true;
-      g.add(bar);
+      // Individual Gray-code flip-flop latch cell paired below each DAC bit column!
+      const ff = new THREE.Mesh(
+        createChamferedBoxGeo(1.05, 0.44, 1.35, 0.05, 0.02, 'y'),
+        k >= 4 ? mats.copperHybridBond : mats.vcWorkingFluidCyan
+      );
+      ff.position.set(-4.5 + k * 1.5, 0.7, 2.55);
+      ff.userData.noEdges = true;
+      g.add(bar, ff);
     }
-    const compRail = new THREE.Mesh(createChamferedBoxGeo(10.6, 0.62, 1.8, 0.08, 0.05, 'y'), mats.goldPlating);
-    compRail.position.set(0, 0.78, 4.4);
-    g.add(compRail);
+    // Dual Coarse + Fine folded ramp generator bus rails & differential auto-zero comparator front-end
+    const coarseRamp = new THREE.Mesh(createChamferedBoxGeo(10.6, 0.24, 0.42, 0.04, 0.02, 'y'), mats.copperHybridBond);
+    coarseRamp.position.set(0, 1.65, -4.65);
+    const fineRamp = new THREE.Mesh(createChamferedBoxGeo(10.6, 0.24, 0.42, 0.04, 0.02, 'y'), mats.fluorineCoatCyan);
+    fineRamp.position.set(0, 1.25, -4.65);
+    const compRail = new THREE.Mesh(createChamferedBoxGeo(10.6, 0.62, 1.55, 0.08, 0.05, 'y'), mats.goldPlating);
+    compRail.position.set(0, 0.78, 4.45);
+    g.add(coarseRamp, fineRamp, compRail);
 
     parts.push(
       finalizePixelV2Part(
@@ -1642,26 +1674,53 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     g.add(pkg);
 
     // Dual concentric Vernier ring-oscillator TDC tracks + 12 picosecond inverter delay cells + avalanche quench core
-    const outerOsc = new THREE.Mesh(hiResTorus(4.2, 0.34, 10, 40), mats.goldPlating);
+    // + corner Weighted-Photon-Count Lookup Table (LUT) & Dead-Time Compensator!
+    const outerOsc = new THREE.Mesh(hiResTorus(4.1, 0.34, 10, 36), mats.goldPlating);
     outerOsc.rotation.x = Math.PI / 2;
     outerOsc.position.y = 0.78;
-    const innerOsc = new THREE.Mesh(hiResTorus(2.4, 0.28, 10, 32), mats.fluorineCoatCyan);
+    const innerOsc = new THREE.Mesh(hiResTorus(2.35, 0.28, 10, 28), mats.fluorineCoatCyan);
     innerOsc.rotation.x = Math.PI / 2;
     innerOsc.position.y = 0.88;
-    const quenchHub = new THREE.Mesh(hiResCyl(1.15, 1.15, 0.85, 20), mats.bodyRecRed);
-    quenchHub.position.y = 0.85;
-    g.add(outerOsc, innerOsc, quenchHub);
+    const quenchHub = new THREE.Mesh(hiResCyl(1.15, 1.15, 0.95, 18), mats.bodyRecRed);
+    quenchHub.position.y = 0.88;
+    const quenchCap = new THREE.Mesh(hiResCyl(0.65, 0.65, 0.35, 14), mats.goldPlating);
+    quenchCap.position.y = 1.48;
+    g.add(outerOsc, innerOsc, quenchHub, quenchCap);
 
     for (let i = 0; i < 12; i++) {
       const ang = (i / 12) * Math.PI * 2;
       const inv = new THREE.Mesh(
-        createChamferedBoxGeo(0.92, 0.64, 0.92, 0.05, 0.04, 'y'),
+        createChamferedBoxGeo(0.88, 0.64, 0.88, 0.05, 0.04, 'y'),
         i % 2 === 0 ? mats.bodyRecRed : mats.copperHybridBond
       );
-      inv.position.set(Math.cos(ang) * 4.2, 1.02, Math.sin(ang) * 4.2);
+      inv.position.set(Math.cos(ang) * 4.1, 1.02, Math.sin(ang) * 4.1);
       inv.rotation.y = -ang;
       inv.userData.noEdges = true;
+      // Radial Vernier phase-comparison tap spoke between inner & outer rings
+      if (i % 2 === 0) {
+        g.add(
+          makeStrutBetween(
+            new THREE.Vector3(Math.cos(ang) * 2.35, 0.9, Math.sin(ang) * 2.35),
+            new THREE.Vector3(Math.cos(ang) * 4.0, 0.9, Math.sin(ang) * 4.0),
+            0.09,
+            mats.silverElectrode,
+            6
+          )
+        );
+      }
       g.add(inv);
+    }
+    // 4 Corner Weighted-Photon Accumulator LUT blocks (converting first-photon timestamp -> linearized HDR intensity!)
+    for (const [cx, cz] of [
+      [-4.6, -4.6],
+      [4.6, -4.6],
+      [-4.6, 4.6],
+      [4.6, 4.6],
+    ]) {
+      const lut = new THREE.Mesh(createChamferedBoxGeo(1.7, 0.66, 1.7, 0.06, 0.03, 'y'), mats.ispSiliconDie);
+      lut.position.set(cx, 0.8, cz);
+      lut.userData.noEdges = true;
+      g.add(lut);
     }
 
     parts.push(
@@ -1684,17 +1743,21 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     const hub = makeHiResHorizPlate(createRoundedRectShape(14.8, 14.8, 1.4), 0.92, mats.siliconLogicLayer, 0.1, 2, 20);
     g.add(hub);
 
-    // Symmetrical H-tree clock-sync arms + 4-quadrant MUX switch nodes + central shared ADC core
+    // Symmetrical H-tree clock-sync arms + 4-quadrant MUX switch nodes + diagonal shielded conduits + PLL lock-detect ring!
     const crossX = new THREE.Mesh(createChamferedBoxGeo(12.6, 0.42, 1.35, 0.08, 0.05, 'y'), mats.copperHybridBond);
     crossX.position.y = 0.64;
     const crossZ = new THREE.Mesh(createChamferedBoxGeo(1.35, 0.42, 12.6, 0.08, 0.05, 'y'), mats.copperHybridBond);
     crossZ.position.y = 0.64;
-    const syncCore = new THREE.Mesh(hiResCyl(2.45, 2.45, 0.92, 24), mats.goldPlating);
-    syncCore.position.y = 0.78;
-    const syncHalo = new THREE.Mesh(hiResTorus(3.15, 0.22, 10, 32), mats.fluorineCoatCyan);
+    const syncCore = new THREE.Mesh(hiResCyl(2.45, 2.45, 0.96, 24), mats.goldPlating);
+    syncCore.position.y = 0.8;
+    const syncHalo = new THREE.Mesh(hiResTorus(3.2, 0.22, 10, 30), mats.fluorineCoatCyan);
     syncHalo.rotation.x = Math.PI / 2;
     syncHalo.position.y = 0.72;
-    g.add(crossX, crossZ, syncCore, syncHalo);
+    const pllRing = new THREE.Mesh(hiResTorus(1.55, 0.16, 8, 22), mats.bodyRecRed);
+    pllRing.rotation.x = Math.PI / 2;
+    pllRing.position.y = 1.32;
+    pllRing.userData.noEdges = true;
+    g.add(crossX, crossZ, syncCore, syncHalo, pllRing);
 
     for (const [qx, qz] of [
       [-4.6, -4.6],
@@ -1702,10 +1765,23 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
       [-4.6, 4.6],
       [4.6, 4.6],
     ]) {
-      const mux = new THREE.Mesh(createChamferedBoxGeo(2.8, 0.62, 2.8, 0.08, 0.05, 'y'), mats.stainlessMachined);
+      const mux = new THREE.Mesh(createChamferedBoxGeo(2.85, 0.64, 2.85, 0.08, 0.05, 'y'), mats.stainlessMachined);
       mux.position.set(qx, 0.74, qz);
       mux.userData.noEdges = true;
-      g.add(mux);
+      const muxCap = new THREE.Mesh(createChamferedBoxGeo(1.4, 0.22, 1.4, 0.04, 0.02, 'y'), mats.vcWorkingFluidCyan);
+      muxCap.position.set(qx, 1.15, qz);
+      muxCap.userData.noEdges = true;
+      g.add(
+        mux,
+        muxCap,
+        makeStrutBetween(
+          new THREE.Vector3(qx * 0.42, 0.92, qz * 0.42),
+          new THREE.Vector3(qx * 0.88, 0.92, qz * 0.88),
+          0.14,
+          mats.goldPlating,
+          7
+        )
+      );
     }
 
     parts.push(
@@ -1735,7 +1811,17 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
       leadMat: mats.goldPlating,
     });
     g.add(shield);
-    // 4 quad-pixel entropy sense cells + central differential comparator + hardware SHA/ECDSA hash ring
+    // 4 quad-pixel entropy sense cells + central differential comparator + SHA-384/ECDSA perimeter security ring!
+    const guardFrame = makeHiResHorizPlate(
+      createFrameShape(10.2, 7.6, 0.5, 9.2, 6.6, 0.35),
+      0.24,
+      mats.copperHybridBond,
+      0.03,
+      1,
+      14
+    );
+    guardFrame.position.y = 0.74;
+    g.add(guardFrame);
     for (const [px, pz] of [
       [-3.1, -2.0],
       [3.1, -2.0],
@@ -1745,14 +1831,22 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
       const bitCell = new THREE.Mesh(createChamferedBoxGeo(2.2, 0.52, 2.1, 0.06, 0.04, 'y'), mats.mountShimBlue);
       bitCell.position.set(px, 0.80, pz);
       bitCell.userData.noEdges = true;
-      const cap = new THREE.Mesh(hiResCyl(0.55, 0.55, 0.24, 12), mats.goldPlating);
-      cap.position.set(px, 1.12, pz);
+      const cap = new THREE.Mesh(hiResCyl(0.55, 0.55, 0.28, 12), mats.goldPlating);
+      cap.position.set(px, 1.14, pz);
       cap.userData.noEdges = true;
-      g.add(bitCell, cap);
+      g.add(
+        bitCell,
+        cap,
+        makeStrutBetween(new THREE.Vector3(px, 0.98, pz), new THREE.Vector3(0, 0.98, 0), 0.1, mats.goldPlating, 6)
+      );
     }
-    const pufCmp = new THREE.Mesh(hiResCyl(1.25, 1.25, 0.62, 18), mats.fluorineCoatCyan);
-    pufCmp.position.y = 0.86;
-    g.add(pufCmp);
+    const pufCmp = new THREE.Mesh(hiResCyl(1.28, 1.28, 0.68, 6), mats.fluorineCoatCyan);
+    pufCmp.position.y = 0.9;
+    const pufRing = new THREE.Mesh(hiResTorus(1.62, 0.11, 7, 18), mats.goldPlating);
+    pufRing.rotation.x = Math.PI / 2;
+    pufRing.position.y = 0.94;
+    pufRing.userData.noEdges = true;
+    g.add(pufCmp, pufRing);
 
     parts.push(
       finalizePixelV2Part(
@@ -1774,16 +1868,38 @@ export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[] {
     const base = makeHiResHorizPlate(createRoundedRectShape(11.8, 8.8, 1.1), 1.12, mats.siliconDramLayer, 0.1, 2, 18);
     g.add(base);
 
-    // Dual-input HDR pipeline (HCG/LCG DCG path + Ultra-Short VS path -> motion-adaptive pixel fusion block!)
-    const pipeA = new THREE.Mesh(createChamferedBoxGeo(9.4, 0.44, 1.75, 0.08, 0.05, 'y'), mats.fluorineCoatCyan);
-    pipeA.position.set(-0.4, 0.76, -2.25);
-    const pipeB = new THREE.Mesh(createChamferedBoxGeo(9.4, 0.44, 1.75, 0.08, 0.05, 'y'), mats.goldPlating);
-    pipeB.position.set(-0.4, 0.76, 2.25);
-    const motionMask = new THREE.Mesh(createChamferedBoxGeo(2.4, 0.62, 2.2, 0.06, 0.04, 'y'), mats.bodyRecRed);
-    motionMask.position.set(-1.2, 0.85, 0);
-    const merger = new THREE.Mesh(createChamferedBoxGeo(3.4, 0.86, 6.4, 0.1, 0.06, 'y'), mats.copperHybridBond);
-    merger.position.set(2.8, 0.94, 0);
-    g.add(pipeA, pipeB, motionMask, merger);
+    // Dual-input HDR pipeline (HCG/LCG DCG path + Ultra-Short VS path + motion-vector ghost-detector + 20-bit linear fusion engine!)
+    const pipeA = new THREE.Mesh(createChamferedBoxGeo(8.2, 0.44, 1.65, 0.08, 0.05, 'y'), mats.fluorineCoatCyan);
+    pipeA.position.set(-1.1, 0.76, -2.35);
+    const pipeB = new THREE.Mesh(createChamferedBoxGeo(8.2, 0.44, 1.65, 0.08, 0.05, 'y'), mats.goldPlating);
+    pipeB.position.set(-1.1, 0.76, 2.35);
+    // Discrete HCG/LCG/VS gain-ratio calibration LUT micro-blocks along both pipelines
+    for (const gx of [-3.6, -1.2, 1.2]) {
+      const lutA = new THREE.Mesh(createChamferedBoxGeo(1.15, 0.32, 1.2, 0.04, 0.02, 'y'), mats.varistorRingBlue);
+      lutA.position.set(gx, 1.12, -2.35);
+      lutA.userData.noEdges = true;
+      const lutB = new THREE.Mesh(createChamferedBoxGeo(1.15, 0.32, 1.2, 0.04, 0.02, 'y'), mats.copperCoil);
+      lutB.position.set(gx, 1.12, 2.35);
+      lutB.userData.noEdges = true;
+      g.add(lutA, lutB);
+    }
+    // Central ghost-free motion-adaptive optical-flow mask block
+    const motionMask = new THREE.Mesh(createChamferedBoxGeo(2.6, 0.72, 2.25, 0.06, 0.04, 'y'), mats.bodyRecRed);
+    motionMask.position.set(-1.1, 0.88, 0);
+    const motionRing = new THREE.Mesh(hiResTorus(0.76, 0.09, 6, 16), mats.goldPlating);
+    motionRing.rotation.x = Math.PI / 2;
+    motionRing.position.set(-1.1, 1.32, 0);
+    motionRing.userData.noEdges = true;
+    // Output 20-bit linear HDR tone-compression merger & SLVS-EC output dock
+    const merger = new THREE.Mesh(createChamferedBoxGeo(3.2, 0.94, 6.6, 0.1, 0.06, 'y'), mats.copperHybridBond);
+    merger.position.set(3.2, 0.98, 0);
+    for (const oz of [-2.0, 0, 2.0]) {
+      const outPin = new THREE.Mesh(createChamferedBoxGeo(0.75, 0.34, 0.56, 0.03, 0.02, 'y'), mats.goldPlating);
+      outPin.position.set(5.1, 0.85, oz);
+      outPin.userData.noEdges = true;
+      g.add(outPin);
+    }
+    g.add(pipeA, pipeB, motionMask, motionRing, merger);
 
     parts.push(
       finalizePixelV2Part(
