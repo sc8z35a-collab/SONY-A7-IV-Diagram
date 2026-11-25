@@ -8,6 +8,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import {
+  applyBoxUVs,
   applyPlanarUVs,
   buildChipPackage,
   buildCrimpedSteelCanGeometry,
@@ -57,7 +58,7 @@ function finalizeBatteryPart(
 }
 
 /**
- * Phase 26A — Standalone Flagship Camera Battery Pack Ultra-Dissection (Sony NP-FZ100 & Next-Gen: 30 Parts P01–P30).
+ * Phase 26A — Standalone Flagship Camera Battery Pack Ultra-Dissection (Sony NP-FZ100 & Next-Gen: 70 Parts P01–P70).
  * True 1:1 mm NP-FZ100 architectural proportions (38.7 × 51.7 × 22.7 mm), centered at (0, 0, 0).
  * Left 18500 cell (x = -9.5) shows genuine Sony/Murata US18500GR olive-emerald wrapped steel pressure can;
  * Right 18500 cell (x = +9.5) reveals a true multi-turn spiral jelly-roll cutaway!
@@ -72,9 +73,9 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Genuine Sony jet-charcoal satin VDI-27 textured UL94 V-0 polycarbonate front housing
+    // Genuine Sony jet-charcoal satin VDI-27 textured UL94 V-0 polycarbonate front housing (seamless box UVs!)
     const frontWallGeo = extrudeHiRes(createRoundedRectShape(38.7, 51.7, 4.4), 1.65, 0.42, 0.42, 3, 28);
-    applyPlanarUVs(frontWallGeo, 38.7, 51.7, 'xy');
+    applyBoxUVs(frontWallGeo, 14.0);
     const frontWall = new THREE.Mesh(frontWallGeo, u.batPolycarbonateShell);
     frontWall.position.z = 5.15;
 
@@ -86,15 +87,16 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
       2,
       28
     );
+    applyBoxUVs(perimeterWallGeo, 14.0);
     const perimeterWall = new THREE.Mesh(perimeterWallGeo, u.batPolycarbonateShell);
     perimeterWall.position.z = 0.0;
 
-    // Subtle molded perimeter label-recess border trim framing P03 nameplate
+    // Subtle molded perimeter label-recess border trim framing P03 nameplate cleanly
     const labelRecessTrim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(33.2, 35.6, 2.5, 31.6, 34.0, 2.1), 0.24, 0.06, 0.06, 2, 20),
+      extrudeHiRes(createFrameShape(33.2, 35.6, 2.5, 31.4, 33.8, 2.1), 0.28, 0.06, 0.06, 2, 20),
       mats.matteBlackAnodized
     );
-    labelRecessTrim.position.set(0, -2.0, 5.95);
+    labelRecessTrim.position.set(0, -2.0, 5.98);
     labelRecessTrim.userData.noEdges = true;
 
     // Molded tactile side insertion grip ribs on left & right shell flanks
@@ -107,6 +109,18 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
       }
     }
 
+    // Precision injection-molded interior cell-cradle stiffening ribs & ejector boss posts (visible in exploded view!)
+    for (const ry of [-15.0, -5.0, 5.0, 14.0]) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(34.6, 0.72, 1.85), u.batPolycarbonateShell);
+      rib.position.set(0, ry, 3.6);
+      rib.userData.noEdges = true;
+      g.add(rib);
+    }
+    const centerSeptum = new THREE.Mesh(new THREE.BoxGeometry(0.85, 36.0, 2.4), u.batPolycarbonateShell);
+    centerSeptum.position.set(0, -2.0, 3.2);
+    centerSeptum.userData.noEdges = true;
+    g.add(centerSeptum);
+
     // Molded Sony recessed triangular insertion-direction chevron ('▲') above nameplate!
     const arrowShape = new THREE.Shape();
     arrowShape.moveTo(0, 1.05);
@@ -117,8 +131,26 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
       extrudeHiRes(arrowShape, 0.16, 0.03, 0.03, 1, 6),
       mats.stainlessMachined
     );
-    arrowMesh.position.set(0, 23.6, 5.95);
+    arrowMesh.position.set(0, 23.6, 6.02);
     arrowMesh.userData.noEdges = true;
+
+    // Authentic Sony NP-FZ100 top-edge 4-slot recessed gold terminal polarizing keyways (+ / T / S / -)
+    const topTermBay = new THREE.Mesh(
+      createChamferedBoxGeo(22.6, 0.52, 5.2, 0.65, 0.08, 'y'),
+      mats.matteBlackAnodized
+    );
+    topTermBay.position.set(0, 25.82, 0.2);
+    topTermBay.userData.noEdges = true;
+    g.add(topTermBay);
+    for (const tx of [-7.5, -2.5, 2.5, 7.5]) {
+      const slotWall = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.56, 3.8), mats.mountPpsInsulator);
+      slotWall.position.set(tx, 25.88, 0.2);
+      slotWall.userData.noEdges = true;
+      const goldLip = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.36, 2.85), mats.goldPlating);
+      goldLip.position.set(tx, 26.02, 0.2);
+      goldLip.userData.noEdges = true;
+      g.add(slotWall, goldLip);
+    }
 
     // Ultrasonic weld energy-director ridge along mating seam
     const weldRib = new THREE.Mesh(
@@ -148,15 +180,22 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const rearWallGeo = extrudeHiRes(createRoundedRectShape(38.7, 51.7, 4.4), 1.65, 0.42, 0.42, 3, 28);
-    applyPlanarUVs(rearWallGeo, 38.7, 51.7, 'xy-back');
+    applyBoxUVs(rearWallGeo, 14.0);
     const rearWall = new THREE.Mesh(rearWallGeo, u.batPolycarbonateShell);
     rearWall.position.z = -5.15;
 
-    const rearRim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(38.7, 51.7, 4.4, 35.9, 48.9, 3.2), 10.8, 0.24, 0.24, 2, 28),
-      u.batPolycarbonateShell
-    );
+    const rearRimGeo = extrudeHiRes(createFrameShape(38.7, 51.7, 4.4, 35.9, 48.9, 3.2), 10.8, 0.24, 0.24, 2, 28);
+    applyBoxUVs(rearRimGeo, 14.0);
+    const rearRim = new THREE.Mesh(rearRimGeo, u.batPolycarbonateShell);
     rearRim.position.z = 0.0;
+
+    // Precision injection-molded interior rear cell-cradle ribs & center divider
+    for (const ry of [-15.0, -5.0, 5.0, 14.0]) {
+      const rib = new THREE.Mesh(new THREE.BoxGeometry(34.6, 0.72, 1.85), u.batPolycarbonateShell);
+      rib.position.set(0, ry, -3.6);
+      rib.userData.noEdges = true;
+      g.add(rib);
+    }
 
     // Asymmetric poka-yoke anti-reverse keying rail & chamfered lead-in ramp
     const keyRail = new THREE.Mesh(
@@ -208,7 +247,7 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
 
     // Full-resolution photorealistic Sony NP-FZ100 InfoLITHIUM Z nameplate!
     // (SONY serif, InfoLITHIUM [Z], NP-FZ100, 7.2V 2280mAh 16.4Wh, safety notice, Li-ion 20/PSE/CE/UKCA/WEEE/EAC)
-    const specGeo = extrudeHiRes(createRoundedRectShape(labelW, labelH, 2.2), 0.24, 0.04, 0.04, 1, 22);
+    const specGeo = extrudeHiRes(createRoundedRectShape(labelW, labelH, 2.2), 0.28, 0.04, 0.04, 1, 22);
     applyPlanarUVs(specGeo, labelW, labelH, 'xy');
     const specPlate = new THREE.Mesh(specGeo, u.batFrontLabel);
 
@@ -218,7 +257,7 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
     const holoGeo = extrudeHiRes(createRoundedRectShape(holoW, holoH, 0.55), 0.28, 0.04, 0.04, 1, 16);
     applyPlanarUVs(holoGeo, holoW, holoH, 'xy');
     const holoBadge = new THREE.Mesh(holoGeo, u.batHologramFoil);
-    holoBadge.position.set(9.1, 10.12, 0.1);
+    holoBadge.position.set(9.1, 10.12, 0.14);
     holoBadge.userData.noEdges = true;
 
     // Subtle metallic security micro-frame around hologram sticker
@@ -226,7 +265,7 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
       extrudeHiRes(createFrameShape(holoW + 0.45, holoH + 0.45, 0.7, holoW - 0.1, holoH - 0.1, 0.45), 0.16, 0.03, 0.03, 1, 14),
       mats.silverElectrode
     );
-    holoFrame.position.set(9.1, 10.12, 0.06);
+    holoFrame.position.set(9.1, 10.12, 0.09);
     holoFrame.userData.noEdges = true;
     g.add(specPlate, holoBadge, holoFrame);
 
@@ -236,7 +275,7 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
         3,
         '#a855f7',
         g,
-        new THREE.Vector3(0, -2.0, 11.45),
+        new THREE.Vector3(0, -2.0, 11.62),
         new THREE.Vector3(-42, 14, 78),
         cp,
         0.16
@@ -430,7 +469,6 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 6,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });
@@ -1341,28 +1379,38 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
     chromeTrim.position.z = 0.28;
     chromeTrim.userData.noEdges = true;
 
-    // Smooth circular ENIG gold capacitive touch sensor coin (preserved hi-res cylinder!)
+    // Smooth circular ENIG gold capacitive touch sensor coin with concentric tactile micro-ring
     const touchCoin = new THREE.Mesh(hiResCyl(1.22, 1.22, 0.42, 28).rotateX(Math.PI / 2), mats.goldPlating);
     touchCoin.position.set(-6.2, 0, 0.18);
     touchCoin.userData.noEdges = true;
+    const touchInner = new THREE.Mesh(hiResTorus(0.72, 0.07, 8, 24), mats.matteBlackAnodized);
+    touchInner.position.set(-6.2, 0, 0.40);
+    touchInner.userData.noEdges = true;
     const touchRing = new THREE.Mesh(hiResTorus(1.38, 0.1, 8, 28), mats.silverElectrode);
     touchRing.position.set(-6.2, 0, 0.36);
     touchRing.userData.noEdges = true;
-    g.add(bezel, chromeTrim, touchCoin, touchRing);
+    g.add(bezel, chromeTrim, touchCoin, touchInner, touchRing);
 
-    // 4 smooth circular luminous LED light-guide pips (25% / 50% / 75% / 100%) with brushed rings
+    // 4 smooth circular opaque luminous emerald-green LED light-guide pips (25% / 50% / 75% / 100%)
     for (let i = 0; i < 4; i++) {
       const lx = -1.6 + i * 2.85;
-      const ledRing = new THREE.Mesh(hiResTorus(0.76, 0.1, 8, 24), mats.stainlessMachined);
+      const ledRing = new THREE.Mesh(hiResTorus(0.76, 0.11, 8, 24), mats.stainlessMachined);
       ledRing.position.set(lx, 0, 0.36);
       ledRing.userData.noEdges = true;
-      const led = new THREE.Mesh(
-        hiResCyl(0.64, 0.64, 0.44, 24).rotateX(Math.PI / 2),
-        mats.fluorineCoatCyan
+      const ledWell = new THREE.Mesh(
+        hiResCyl(0.68, 0.68, 0.24, 24).rotateX(Math.PI / 2),
+        mats.matteBlackAnodized
       );
-      led.position.set(lx, 0, 0.22);
+      ledWell.position.set(lx, 0, 0.20);
+      ledWell.userData.noEdges = true;
+      const led = new THREE.Mesh(
+        hiResSphere(0.56, 18, 12),
+        u.batSocLedGlow
+      );
+      led.scale.set(1.0, 1.0, 0.46);
+      led.position.set(lx, 0, 0.31);
       led.userData.noEdges = true;
-      g.add(ledRing, led);
+      g.add(ledRing, ledWell, led);
     }
 
     parts.push(

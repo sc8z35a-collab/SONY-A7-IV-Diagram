@@ -297,9 +297,9 @@ export class CadViewport {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xffffff);
 
-    // Camera & OrbitControls (supports ultra-close watchmaker micro-zoom down to 7 mm!)
+    // Camera & OrbitControls (supports ultra-close watchmaker micro-zoom down to 7 mm with 7x sharper depth precision!)
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.12, 4800);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.85, 4200);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
@@ -1092,20 +1092,20 @@ export class CadViewport {
       d = 168 + e * 475;
       target = new THREE.Vector3(10.0 * e, -2.0, -4.0 - e * 46.0);
     } else if (this.mode === 'battery') {
-      d = 112 + e * 320;
-      target = new THREE.Vector3(e * 10.0, e * 4.0, e * 4.0);
+      d = 104 + e * 310;
+      target = new THREE.Vector3(e * 8.0, e * 3.0, e * 4.0);
     } else if (this.mode === 'cfexpress') {
-      d = 116 + e * 316;
+      d = 108 + e * 305;
       target = new THREE.Vector3(0.0, e * 2.0, e * 4.0);
     } else if (this.mode === 'bionz') {
-      d = 94 + e * 195;
-      target = new THREE.Vector3(0, 1.8 + e * 1.5, 0);
+      d = 78 + e * 190;
+      target = new THREE.Vector3(0, 1.5 + e * 1.5, 0);
     } else if (this.mode === 'mishoe') {
       d = 114 + e * 165;
       target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
     } else if (this.mode === 'mic') {
-      d = 116 + e * 172;
-      target = new THREE.Vector3(0, 1.0 - e * 1.5, -1.0);
+      d = 94 + e * 172;
+      target = new THREE.Vector3(0, 1.5 - e * 1.5, 0.5);
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -1196,13 +1196,13 @@ export class CadViewport {
             const isoZ = e > 0.25 ? 0.51 : 0.72;
             offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
           } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
-            offset = new THREE.Vector3(d * 0.62, d * 0.32, d * 0.72);
+            offset = new THREE.Vector3(d * 0.58, d * 0.30, d * 0.76);
           } else if (this.mode === 'bionz') {
             offset = new THREE.Vector3(d * 0.62, d * 0.46, d * 0.64);
           } else if (this.mode === 'mishoe') {
             offset = new THREE.Vector3(d * 0.58, d * 0.42, d * 0.70);
           } else if (this.mode === 'mic') {
-            offset = new THREE.Vector3(d * 0.46, d * 0.38, d * 0.80);
+            offset = new THREE.Vector3(-d * 0.50, d * 0.36, d * 0.78);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }

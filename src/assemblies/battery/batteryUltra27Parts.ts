@@ -362,7 +362,6 @@ export function buildBatteryUltra27Parts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 4,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });
@@ -1189,16 +1188,16 @@ export function buildBatteryUltra27Parts(mats: MaterialLibrary): CadPart[] {
       extrudeHiRes(createFrameShape(38.1, 51.1, 4.0, 36.7, 49.7, 3.4), 0.72, 0.08, 0.08, 2, 24),
       u.micRubberBootBlack
     );
-    // Silicone moisture-barrier collar bead isolating the 4-pin top terminal header pocket
+    // Opaque elastomer moisture-barrier collar bead isolating the 4-pin top terminal header pocket
     const topBead = makeHiResHorizPlate(
-      createFrameShape(23.8, 7.2, 1.1, 21.8, 5.2, 0.7),
-      0.56,
-      mats.fluorineCoatCyan,
-      0.08,
+      createFrameShape(23.2, 6.8, 1.0, 21.4, 5.0, 0.65),
+      0.48,
+      mats.epdmGasket,
+      0.06,
       2,
       18
     );
-    topBead.position.set(0, 23.8, 0);
+    topBead.position.set(0, 23.6, 0);
     g.add(shearRing, topBead);
     parts.push(
       finalizeBatteryUltra27Part(
@@ -1248,32 +1247,35 @@ export function buildBatteryUltra27Parts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Cutaway reference of the α7 IV battery chamber ceiling header poised cleanly above P04/P05!
+    // Low-profile precision cutaway of the α7 IV battery chamber terminal header engaged cleanly into P04/P05!
     const headerBar = new THREE.Mesh(
-      createChamferedBoxGeo(26.4, 2.2, 6.2, 0.5, 0.1, 'y'),
+      createChamferedBoxGeo(23.2, 1.45, 5.2, 0.45, 0.1, 'y'),
       mats.mountPpsInsulator
     );
-    headerBar.position.y = 2.0;
-    // 4 precision hard-gold-plated camera-side contact blades ready to enter the 4 bifurcated slots (+/T/S/-)
+    headerBar.position.y = 0.72;
+    // 4 precision hard-gold-plated camera-side contact blades seated cleanly inside the 4 bifurcated slots (+/T/S/-)
     for (const px of [-7.5, -2.5, 2.5, 7.5]) {
       const blade = new THREE.Mesh(
-        createChamferedBoxGeo(0.56, 3.6, 2.8, 0.12, 0.04, 'z'),
+        createChamferedBoxGeo(0.56, 3.1, 2.6, 0.12, 0.04, 'z'),
         mats.goldPlating
       );
-      blade.position.set(px, -0.45, 0);
+      blade.position.set(px, -0.95, 0);
       g.add(blade);
     }
-    // Spring-loaded white POM battery-ejection plunger pin + helical spring on right shoulder
-    const plunger = new THREE.Mesh(hiResCyl(1.18, 1.18, 3.6, 18), mats.ceramicAlumina);
-    plunger.position.set(14.8, 0.2, 0);
-    for (let i = 0; i < 4; i++) {
-      const coil = new THREE.Mesh(hiResTorus(1.42, 0.16, 8, 20), mats.stainlessMachined);
+    // Compact spring-loaded POM ejector bumper flush beside the header bar with neat dark guide cap
+    const plunger = new THREE.Mesh(hiResCyl(0.82, 0.88, 1.15, 18), mats.matteBlackAnodized);
+    plunger.position.set(13.2, 0.05, 0);
+    const plungerCap = new THREE.Mesh(hiResCyl(1.02, 1.02, 0.32, 18), mats.titaniumRivet);
+    plungerCap.position.set(13.2, 0.68, 0);
+    plungerCap.userData.noEdges = true;
+    for (let i = 0; i < 2; i++) {
+      const coil = new THREE.Mesh(hiResTorus(0.95, 0.11, 8, 18), mats.stainlessMachined);
       coil.rotation.x = Math.PI / 2;
-      coil.position.set(14.8, 0.5 + i * 0.62, 0);
+      coil.position.set(13.2, 0.12 + i * 0.32, 0);
       coil.userData.noEdges = true;
       g.add(coil);
     }
-    g.add(headerBar, plunger);
+    g.add(headerBar, plunger, plungerCap);
 
     parts.push(
       finalizeBatteryUltra27Part(
@@ -1281,7 +1283,7 @@ export function buildBatteryUltra27Parts(mats: MaterialLibrary): CadPart[] {
         65,
         '#eab308',
         g,
-        new THREE.Vector3(0, 29.2, 0),
+        new THREE.Vector3(0, 26.15, 0),
         new THREE.Vector3(0, 86, 18),
         cp
       )

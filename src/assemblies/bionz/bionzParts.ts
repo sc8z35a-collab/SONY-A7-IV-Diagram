@@ -11,6 +11,7 @@ import {
   applyPlanarUVs,
   buildChipPackage,
   buildGoldWirebondLoop,
+  buildPhillipsScrew,
   buildShieldedInductor,
   buildSmdPassive,
   buildTantalumCap,
@@ -109,7 +110,7 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
     pin1.userData.noEdges = true;
     g.add(pin1);
 
-    // 4 machined gold optical cross-fiducials & corner copper EMI grounding clip shoes
+    // 4 machined gold optical cross-fiducials & sleek precision-stamped nickel-silver EMI shield corner ribs
     for (const [fx, fz] of [
       [-13.8, 13.8],
       [13.8, -13.8],
@@ -123,51 +124,50 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       fV.userData.noEdges = true;
       g.add(fH, fV);
     }
-    for (const [cx, cz] of [
-      [-15.6, -15.6],
-      [15.6, -15.6],
-      [-15.6, 15.6],
-      [15.6, 15.6],
-    ]) {
-      const cornerClip = new THREE.Mesh(
-        createChamferedBoxGeo(1.85, 2.35, 1.85, 0.42, 0.08, 'y'),
-        mats.copperHeatSpreader
-      );
-      cornerClip.position.set(cx, -1.15, cz);
-      cornerClip.userData.noEdges = true;
-      g.add(cornerClip);
-    }
 
-    // Precision bent EMI grounding skirt walls with slotted spring-finger grounding tabs on all 4 edges
+    // Full-depth stamped nickel-silver conformal EMI shield perimeter skirt seating flush onto the PoP frame!
+    const emiSkirt = makeHiResHorizPlate(
+      createFrameShape(PKG_W + 0.55, PKG_W + 0.55, 2.0, PKG_W - 0.65, PKG_W - 0.65, 1.6),
+      4.68,
+      mats.emiShieldCan,
+      0.08,
+      2,
+      24
+    );
+    emiSkirt.position.y = -2.56;
+    g.add(emiSkirt);
+
+    // Precision stamped EMI grounding spring-fingers, micro-dimples & dark laser-slit kerf reliefs along lower skirt!
     for (const [sx, sz, rotY] of [
-      [0, PKG_W * 0.5 + 0.16, 0],
-      [0, -PKG_W * 0.5 - 0.16, 0],
-      [PKG_W * 0.5 + 0.16, 0, Math.PI / 2],
-      [-PKG_W * 0.5 - 0.16, 0, Math.PI / 2],
+      [0, PKG_W * 0.5 + 0.28, 0],
+      [0, -PKG_W * 0.5 - 0.28, 0],
+      [PKG_W * 0.5 + 0.28, 0, Math.PI / 2],
+      [-PKG_W * 0.5 - 0.28, 0, Math.PI / 2],
     ] as Array<[number, number, number]>) {
-      const skirtBar = new THREE.Mesh(
-        createChamferedBoxGeo(PKG_W - 4.2, 1.05, 0.28, 0.08, 0.05, 'y'),
-        mats.emiShieldCan
-      );
-      skirtBar.position.set(sx, -0.68, sz);
-      skirtBar.rotation.y = rotY;
-      g.add(skirtBar);
-
-      // 6 discrete stamped EMI grounding spring fingers per side
       for (let i = -2.5; i <= 2.5; i += 1.0) {
         const finger = new THREE.Mesh(
-          createChamferedBoxGeo(2.8, 1.35, 0.22, 0.06, 0.04, 'y'),
+          createChamferedBoxGeo(2.55, 1.38, 0.20, 0.06, 0.03, 'y'),
           mats.stainlessMachined
         );
-        const along = i * 4.4;
+        const dimple = new THREE.Mesh(hiResSphere(0.24, 10, 8), mats.silverElectrode);
+        const kerf = new THREE.Mesh(new THREE.BoxGeometry(0.26, 1.55, 0.26), mats.matteBlackAnodized);
+        const along = i * 4.6;
         if (rotY === 0) {
-          finger.position.set(along, -1.65, sz);
+          finger.position.set(along, -4.18, sz);
+          dimple.position.set(along, -4.18, sz + Math.sign(sz) * 0.12);
+          kerf.position.set(along + 2.3, -4.18, sz);
         } else {
-          finger.position.set(sx, -1.65, along);
+          finger.position.set(sx, -4.18, along);
           finger.rotation.y = rotY;
+          dimple.position.set(sx + Math.sign(sx) * 0.12, -4.18, along);
+          kerf.position.set(sx, -4.18, along + 2.3);
+          kerf.rotation.y = rotY;
         }
         finger.userData.noEdges = true;
-        g.add(finger);
+        dimple.userData.noEdges = true;
+        kerf.userData.noEdges = true;
+        g.add(finger, dimple);
+        if (i < 2.5) g.add(kerf);
       }
     }
 
@@ -1396,15 +1396,17 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
     const abfTop = new THREE.Mesh(abfGeo, u.bionzAbfSubstrate);
     g.add(abfTop);
 
-    // Top-side perimeter 01005 SMD decoupling capacitor ring flanking the die moat (real FC-BGA look!)
-    for (let i = -4; i <= 4; i += 2) {
+    // Dense real-world FC-BGA perimeter 01005/0201 SMD decoupling MLCC + resistor banks flanking all 4 package edges!
+    for (let i = -5; i <= 5; i++) {
       for (const side of [-1, 1]) {
-        const cap1 = buildSmdPassive(1.25, 0.64, 0.54, mats.smdCeramic, mats.solderBallSilver, 'y');
-        cap1.position.set(i * 2.4, 0.84, side * 12.6);
+        const isRes = Math.abs(i) === 4;
+        const bodyMat = isRes ? mats.matteBlackAnodized : mats.smdCeramic;
+        const cap1 = buildSmdPassive(1.18, 0.58, 0.50, bodyMat, mats.solderBallSilver, 'y');
+        cap1.position.set(i * 2.18, 0.82, side * 13.45);
         g.add(cap1);
-        const cap2 = buildSmdPassive(1.25, 0.64, 0.54, mats.smdCeramic, mats.solderBallSilver, 'y');
+        const cap2 = buildSmdPassive(1.18, 0.58, 0.50, bodyMat, mats.solderBallSilver, 'y');
         cap2.rotation.y = Math.PI / 2;
-        cap2.position.set(side * 12.6, 0.84, i * 2.4);
+        cap2.position.set(side * 13.45, 0.82, i * 2.18);
         g.add(cap2);
       }
     }
@@ -1596,15 +1598,11 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Dedicated power-delivery daughter zone flanking the BIONZ XR package
-    const pdnPad = makeHiResHorizPlate(
-      createRoundedRectShape(11.6, 26.0, 1.1),
-      0.85,
-      u.batBmsPcb,
-      0.08,
-      2,
-      18
-    );
+    // Dedicated power-delivery daughter zone flanking the BIONZ XR package (with crisp planar PCB trace UVs!)
+    const pdnGeo = extrudeHiRes(createRoundedRectShape(11.6, 26.0, 1.1), 0.85, 0.08, 0.08, 2, 18);
+    pdnGeo.rotateX(-Math.PI / 2);
+    applyPlanarUVs(pdnGeo, 11.6, 26.0, 'xz');
+    const pdnPad = new THREE.Mesh(pdnGeo, u.batBmsPcb);
     g.add(pdnPad);
 
     // Multi-phase QFN-48 Sony custom camera SoC PMIC (0.75V VDD_CORE / 1.1V LPDDR5X / 1.8V I/O)
@@ -1616,7 +1614,6 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 10,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });
@@ -1733,14 +1730,10 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const carrier = makeHiResHorizPlate(
-      createRoundedRectShape(9.4, 7.6, 0.7),
-      0.58,
-      u.bionzAbfSubstrate,
-      0.06,
-      1,
-      16
-    );
+    const carrierGeo = extrudeHiRes(createRoundedRectShape(9.4, 7.6, 0.7), 0.58, 0.06, 0.06, 2, 16);
+    carrierGeo.rotateX(-Math.PI / 2);
+    applyPlanarUVs(carrierGeo, 9.4, 7.6, 'xz');
+    const carrier = new THREE.Mesh(carrierGeo, u.bionzAbfSubstrate);
     // WSON-8 / SOIC-8 256Mb Octal-SPI NOR Flash storing BIONZ XR bootloader, lens LUTs & C2PA root cert
     const norFlash = buildChipPackage({
       w: 6.2,
@@ -1750,7 +1743,6 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 4,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });
@@ -1784,47 +1776,63 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
     // Authentic Sony α7 IV Σ-shaped high-orientation pyrolytic graphite bridge (k ≈ 1500 W/m·K in-plane)
     // Cutaway window over front-center so the SONY BIONZ XR CXD90066GG laser-etched lid stays 100% visible!
     const contactBar = new THREE.Mesh(
-      createChamferedBoxGeo(PKG_W + 2.4, 0.36, 7.6, 1.0, 0.05, 'y'),
+      createChamferedBoxGeo(PKG_W + 2.4, 0.42, 7.6, 1.0, 0.06, 'y'),
       mats.pyroGraphite
     );
     contactBar.position.set(0, 0, -PKG_W * 0.5 - 1.2);
-    // Iconic Σ-shaped double-fold thermal hinge rising gracefully behind the SoC toward the Mg chassis
-    const sigmaCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0, -PKG_W * 0.5 - 4.4),
-      new THREE.Vector3(0, 1.6, -PKG_W * 0.5 - 7.8),
-      new THREE.Vector3(0, 3.4, -PKG_W * 0.5 - 5.2),
-      new THREE.Vector3(0, 5.2, -PKG_W * 0.5 - 8.6),
+
+    // Continuous solid closed 3D-extruded Σ-shaped double-fold thermal hinge (100% solid from EVERY 360° angle!)
+    const spine2D = new THREE.SplineCurve([
+      new THREE.Vector2(-PKG_W * 0.5 - 4.2, 0.0),
+      new THREE.Vector2(-PKG_W * 0.5 - 7.8, 1.55),
+      new THREE.Vector2(-PKG_W * 0.5 - 5.2, 3.35),
+      new THREE.Vector2(-PKG_W * 0.5 - 8.6, 5.15),
     ]);
-    const sigmaPts = sigmaCurve.getPoints(18);
-    for (let i = 0; i < sigmaPts.length - 1; i++) {
-      const a = sigmaPts[i];
-      const b = sigmaPts[i + 1];
-      const len = a.distanceTo(b) + 0.14;
-      const seg = new THREE.Mesh(new THREE.BoxGeometry(PKG_W - 2.0, 0.24, len), mats.pyroGraphite);
-      seg.position.copy(a).lerp(b, 0.5);
-      seg.lookAt(b);
-      seg.userData.noEdges = true;
-      g.add(seg);
+    const sampled = spine2D.getPoints(28);
+    const halfT = 0.24;
+    const upper: THREE.Vector2[] = [];
+    const lower: THREE.Vector2[] = [];
+    for (let i = 0; i < sampled.length; i++) {
+      const pPrev = sampled[Math.max(0, i - 1)];
+      const pNext = sampled[Math.min(sampled.length - 1, i + 1)];
+      const tx = pNext.x - pPrev.x;
+      const ty = pNext.y - pPrev.y;
+      const len = Math.hypot(tx, ty) || 1;
+      const nx = -ty / len;
+      const ny = tx / len;
+      upper.push(new THREE.Vector2(sampled[i].x + nx * halfT, sampled[i].y + ny * halfT));
+      lower.push(new THREE.Vector2(sampled[i].x - nx * halfT, sampled[i].y - ny * halfT));
     }
+    const sigmaShape = new THREE.Shape();
+    sigmaShape.moveTo(upper[0].x, upper[0].y);
+    for (let i = 1; i < upper.length; i++) sigmaShape.lineTo(upper[i].x, upper[i].y);
+    for (let i = lower.length - 1; i >= 0; i--) sigmaShape.lineTo(lower[i].x, lower[i].y);
+    sigmaShape.closePath();
+
+    const sigmaGeo = extrudeHiRes(sigmaShape, PKG_W - 1.6, 0.06, 0.06, 2, 16);
+    sigmaGeo.rotateY(-Math.PI / 2);
+    const sigmaFold = new THREE.Mesh(sigmaGeo, mats.pyroGraphite);
+    g.add(sigmaFold);
+
     // Laminated copper foil thermal booster core along the contact flange
     const cuRibbon = new THREE.Mesh(
-      createChamferedBoxGeo(PKG_W - 1.6, 0.14, 4.8, 0.6, 0.02, 'y'),
+      createChamferedBoxGeo(PKG_W - 1.6, 0.16, 4.8, 0.6, 0.02, 'y'),
       u.cfeCopperThermal
     );
-    cuRibbon.position.set(0, 0.22, -PKG_W * 0.5 - 1.2);
+    cuRibbon.position.set(0, 0.26, -PKG_W * 0.5 - 1.2);
     cuRibbon.userData.noEdges = true;
 
-    // Twin stainless spring-steel press clips clamping the graphite flange cleanly onto the IHS shoulder
+    // Twin stainless spring-steel press clips with true M1.2 Phillips titanium micro-screws clamping graphite flange!
     for (const sx of [-11.5, 11.5]) {
       const clip = new THREE.Mesh(
-        createChamferedBoxGeo(3.2, 0.56, 6.2, 0.4, 0.06, 'y'),
+        createChamferedBoxGeo(3.4, 0.56, 6.4, 0.4, 0.06, 'y'),
         mats.stainlessMachined
       );
-      clip.position.set(sx, 0.34, -PKG_W * 0.5 - 1.0);
-      const rivet = new THREE.Mesh(hiResCyl(0.45, 0.45, 0.78, 14), mats.titaniumRivet);
-      rivet.position.set(sx, 0.36, -PKG_W * 0.5 - 1.0);
-      rivet.userData.noEdges = true;
-      g.add(clip, rivet);
+      clip.position.set(sx, 0.36, -PKG_W * 0.5 - 1.0);
+      const scr = buildPhillipsScrew(0.76, 0.38, 0.34, 0.9, mats.titaniumRivet, mats.matteBlackAnodized, mats.stainlessMachined);
+      scr.rotation.x = Math.PI;
+      scr.position.set(sx, 0.66, -PKG_W * 0.5 - 1.0);
+      g.add(clip, scr);
     }
     g.add(contactBar, cuRibbon);
 
@@ -1847,14 +1855,10 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const busDeck = makeHiResHorizPlate(
-      createRoundedRectShape(24.0, 9.6, 0.9),
-      0.72,
-      u.batBmsPcb,
-      0.06,
-      2,
-      18
-    );
+    const busGeo = extrudeHiRes(createRoundedRectShape(24.0, 9.6, 0.9), 0.72, 0.06, 0.06, 2, 18);
+    busGeo.rotateX(-Math.PI / 2);
+    applyPlanarUVs(busGeo, 24.0, 9.6, 'xz');
+    const busDeck = new THREE.Mesh(busGeo, u.batBmsPcb);
     g.add(busDeck);
 
     // 8 matched-length 100-ohm SLVS-EC 2.0 differential lane pairs + 16 0201 AC-coupling caps
@@ -1875,7 +1879,7 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
         g.add(acCap);
       }
     }
-    // Shielded micro-B2B sensor-ribbon landing header along front edge (+Z)
+    // Shielded micro-B2B sensor-ribbon landing header along front edge (+Z) with 24 gleaming micro-gold pin pairs!
     const b2bBody = new THREE.Mesh(
       createChamferedBoxGeo(21.6, 1.15, 2.2, 0.25, 0.06, 'y'),
       mats.matteBlackAnodized
@@ -1890,7 +1894,28 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       14
     );
     b2bShield.position.set(0, 1.38, 3.15);
-    g.add(b2bBody, b2bShield);
+    // 24 precision micro-gold B2B contact pins arranged along dual rows inside receptacle bay
+    const pinGeo = new THREE.BoxGeometry(0.32, 0.22, 0.42);
+    const pinInst = new THREE.InstancedMesh(pinGeo, mats.goldPlating, 48);
+    const dmPin = new THREE.Object3D();
+    let pi = 0;
+    for (let k = 0; k < 24; k++) {
+      const px = -9.75 + k * 0.848;
+      for (const pz of [2.85, 3.45]) {
+        dmPin.position.set(px, 1.46, pz);
+        dmPin.updateMatrix();
+        pinInst.setMatrixAt(pi++, dmPin.matrix);
+      }
+    }
+    pinInst.instanceMatrix.needsUpdate = true;
+    pinInst.userData.noEdges = true;
+    // Twin miniature common-mode EMI choke coils flanking the SLVS-EC bus
+    for (const cx of [-10.8, 10.8]) {
+      const choke = buildSmdPassive(1.25, 0.88, 0.62, mats.ferriteInductor, mats.goldPlating, 'y');
+      choke.position.set(cx, 0.68, -2.85);
+      g.add(choke);
+    }
+    g.add(b2bBody, b2bShield, pinInst);
 
     parts.push(
       finalizeBionzPart(
@@ -1911,15 +1936,11 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const carrier = makeHiResHorizPlate(
-      createRoundedRectShape(10.8, 13.8, 0.85),
-      0.68,
-      u.batBmsPcb,
-      0.06,
-      2,
-      18
-    );
-    // QFN-40 HDMI 2.1 48Gbps FRL Retimer/Redriver IC
+    const carrierGeo = extrudeHiRes(createRoundedRectShape(10.8, 13.8, 0.85), 0.68, 0.06, 0.06, 2, 18);
+    carrierGeo.rotateX(-Math.PI / 2);
+    applyPlanarUVs(carrierGeo, 10.8, 13.8, 'xz');
+    const carrier = new THREE.Mesh(carrierGeo, u.batBmsPcb);
+    // QFN-40 HDMI 2.1 48Gbps FRL Retimer/Redriver IC (authentic dark matte laser-etched epoxy!)
     const retimer = buildChipPackage({
       w: 5.8,
       d: 5.8,
@@ -1928,7 +1949,6 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 9,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });
@@ -1977,14 +1997,10 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const subDeck = makeHiResHorizPlate(
-      createRoundedRectShape(11.4, 10.6, 0.8),
-      0.68,
-      u.batBmsPcb,
-      0.06,
-      2,
-      18
-    );
+    const subDeckGeo = extrudeHiRes(createRoundedRectShape(11.4, 10.6, 0.8), 0.68, 0.06, 0.06, 2, 18);
+    subDeckGeo.rotateX(-Math.PI / 2);
+    applyPlanarUVs(subDeckGeo, 11.4, 10.6, 'xz');
+    const subDeck = new THREE.Mesh(subDeckGeo, u.batBmsPcb);
     const subPmic = buildChipPackage({
       w: 4.8,
       d: 4.8,
@@ -1993,7 +2009,6 @@ export function buildBionzParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 7,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzCetusDie,
       pin1Mat: mats.goldPlating,
       axis: 'y',
     });

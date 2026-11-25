@@ -478,33 +478,43 @@ void main() {
   vec3 R = N * (2.0 * ndv) - V;
 
   float ny = N.y;
-  vec3 diffIrr = vec3(0.84, 0.86, 0.89)
-    + ny * vec3(0.32, 0.33, 0.35)
-    + N.z * vec3(0.16, 0.16, 0.18)
-    - N.x * vec3(0.14, 0.14, 0.15)
-    + (ny * ny) * vec3(0.12, 0.12, 0.14);
+  // Sculptural studio product photography hemisphere + warm key / cool rim directional modeling
+  vec3 diffIrr = vec3(0.56, 0.58, 0.62)
+    + ny * vec3(0.42, 0.43, 0.46)
+    + N.z * vec3(0.27, 0.26, 0.26)
+    - N.x * vec3(0.21, 0.22, 0.25)
+    + (ny * ny) * vec3(0.15, 0.16, 0.18);
+  diffIrr = max(diffIrr, vec3(0.16, 0.17, 0.20));
 
   float rough = vDiffSpec.w;
-  float softS = 4.6 - rough * 3.68;
+  float softS = 5.8 - rough * 4.85;
   float softB = 1.0 - softS;
-  float softG = 1.18 - rough * 0.80;
+  float softG = 1.42 - rough * 0.96;
 
-  float ry = clamp(R.y * 0.72 + 0.50, 0.0, 1.0);
-  vec3 specRad = mix(vec3(0.46, 0.50, 0.56), vec3(1.14, 1.17, 1.22), ry);
+  // Photorealistic studio cyclorama lightbox environment (crisp dark studio horizon band + overhead/side softboxes)
+  float ry = clamp(R.y * 0.88 + 0.44, 0.0, 1.0);
+  float horizonDip = 1.0 - 0.52 * exp(-abs(R.y) * 8.4);
+  vec3 specRad = mix(vec3(0.20, 0.23, 0.29), vec3(1.26, 1.29, 1.35), ry) * horizonDip;
   float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
   float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
+  float aRim = clamp(dot(R, vec3(0.64, 0.36, -0.66)) * softS + softB, 0.0, 1.0);
+  float aFill = clamp(dot(R, vec3(0.54, 0.62, 0.56)) * (softS * 0.65) + (1.0 - softS * 0.65), 0.0, 1.0);
   aTop *= aTop;
   aKey *= aKey;
-  specRad += (vec3(1.68, 1.70, 1.75) * (aTop * aTop)
-            + vec3(1.42, 1.44, 1.50) * (aKey * aKey)) * softG;
+  aRim *= aRim;
+  aFill *= aFill;
+  specRad += (vec3(2.12, 2.14, 2.20) * (aTop * aTop)
+            + vec3(1.88, 1.84, 1.78) * (aKey * aKey)
+            + vec3(1.18, 1.32, 1.54) * (aRim * aRim)
+            + vec3(0.52, 0.56, 0.64) * (aFill * aFill)) * softG;
 
   float om = 1.0 - ndv;
   float om2 = om * om;
   float fres = om2 * om2;
-  vec3 envF = max(vec3((1.0 - rough) * 0.85), vF0Coat.xyz);
-  vec3 brdf = mix(vF0Coat.xyz, envF, fres) * (0.94 - rough * 0.122);
+  vec3 envF = max(vec3((1.0 - rough) * 0.90), vF0Coat.xyz);
+  vec3 brdf = mix(vF0Coat.xyz, envF, fres) * (0.98 - rough * 0.14);
 
-  vec3 col = max(vDiffSpec.xyz * diffIrr + specRad * brdf + vec3(vF0Coat.w * fres), vec3(0.0));
+  vec3 col = max(vDiffSpec.xyz * diffIrr + specRad * brdf + vec3(vF0Coat.w * (0.14 + 0.86 * fres) * (0.35 + aTop + aKey * 0.8)), vec3(0.0));
   fragColor = vec4((col * (32.06 * col + 6.394)) / (col * (31.61 * col + 8.988) + 1.0), 1.0);
 }
 `;
@@ -605,8 +615,8 @@ uniform sampler2DArray uTexArrayTile;
 
 in vec3 vViewVec;
 in vec3 vWorldNorm;
-in vec3 vWorldPos;
-in vec2 vUv;
+in highp vec3 vWorldPos;
+in highp vec2 vUv;
 flat in vec4 vMat0;
 flat in vec4 vMat1;
 flat in int vMatId;
@@ -660,15 +670,15 @@ void main() {
     if (lut4.x >= -0.5) {
       hasTex = true;
       vec4 lut5 = texelFetch(uMatLutTex, ivec2(5, vMatId), 0);
-      vec2 tiledUv = vUv * lut4.zw + lut5.yz;
-      vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
+      highp vec2 tiledUv = vUv * lut4.zw + lut5.yz;
+      highp vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
       vec4 texCol = lut4.x < 99.5
         ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
         : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 100.0));
       albedo *= texCol.rgb;
-      alpha *= texCol.a;
+      ${isGlassPass ? 'alpha *= texCol.a;' : ''}
       texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
       if (lut5.x > 0.5) {
         emissive = texCol.rgb * lut2.rgb;
@@ -682,58 +692,64 @@ void main() {
     }
   }
 
-  // Screen-space micro-relief bump normal perturbation + micro-cavity roughness detail for metallic/PCB/engraved surfaces
+  // High-precision screen-space micro-relief bump normal perturbation + micro-cavity roughness/AO detail
+  float microAo = 1.0;
   if (hasTex && bumpStr > 0.004) {
-    vec3 dPosX = dFdx(vWorldPos);
-    vec3 dPosY = dFdy(vWorldPos);
-    vec3 r1 = cross(dPosY, N);
-    vec3 r2 = cross(N, dPosX);
-    float det = dot(dPosX, r1);
+    highp vec3 dPosX = dFdx(vWorldPos);
+    highp vec3 dPosY = dFdy(vWorldPos);
+    highp vec3 r1 = cross(dPosY, N);
+    highp vec3 r2 = cross(N, dPosX);
+    highp float det = dot(dPosX, r1);
     if (abs(det) > 1e-6) {
-      float dHdx = dFdx(texLuma);
-      float dHdy = dFdy(texLuma);
-      vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
-      float gradLen = length(surfGrad);
-      vec3 clampedGrad = gradLen > 2.5 ? surfGrad * (2.5 / gradLen) : surfGrad;
-      N = normalize(N - clampedGrad * bumpStr);
+      highp float dHdx = dFdx(texLuma);
+      highp float dHdy = dFdy(texLuma);
+      highp vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
+      highp float gradLen = length(surfGrad);
+      highp vec3 clampedGrad = gradLen > 3.2 ? surfGrad * (3.2 / gradLen) : surfGrad;
+      N = normalize(N - clampedGrad * (bumpStr * 1.42));
     }
-    // Subtle micro-cavity roughness contrast: bright engraved/metallic features gleam crisply, micro-grooves stay satin
-    rough = clamp(rough + (0.48 - texLuma) * bumpStr * 1.15, 0.05, 0.98);
+    rough = clamp(rough + (0.48 - texLuma) * bumpStr * 1.60, 0.04, 0.98);
+    microAo = clamp(0.84 + texLuma * 0.24, 0.80, 1.08);
   }
 
   float ndv = clamp(dot(N, V), 0.001, 1.0);
   vec3 R = N * (2.0 * ndv) - V;
 
   float ny = N.y;
-  vec3 diffIrr = vec3(0.84, 0.86, 0.89)
-    + ny * vec3(0.32, 0.33, 0.35)
-    + N.z * vec3(0.16, 0.16, 0.18)
-    - N.x * vec3(0.14, 0.14, 0.15)
-    + (ny * ny) * vec3(0.12, 0.12, 0.14);
+  vec3 diffIrr = max((vec3(0.56, 0.58, 0.62)
+    + ny * vec3(0.42, 0.43, 0.46)
+    + N.z * vec3(0.27, 0.26, 0.26)
+    - N.x * vec3(0.21, 0.22, 0.25)
+    + (ny * ny) * vec3(0.15, 0.16, 0.18)), vec3(0.16, 0.17, 0.20)) * microAo;
 
-  float ry = clamp(R.y * 0.72 + 0.50, 0.0, 1.0);
-  vec3 specRad = mix(vec3(0.46, 0.50, 0.56), vec3(1.14, 1.17, 1.22), ry);
-  float softS = 4.6 - rough * 3.68;
+  // Photorealistic studio cyclorama lightbox environment (crisp dark studio horizon band + overhead/side softboxes)
+  float ry = clamp(R.y * 0.88 + 0.44, 0.0, 1.0);
+  float horizonDip = 1.0 - 0.52 * exp(-abs(R.y) * 8.4);
+  vec3 specRad = mix(vec3(0.20, 0.23, 0.29), vec3(1.28, 1.31, 1.37), ry) * horizonDip;
+  float softS = 5.8 - rough * 4.85;
   float softB = 1.0 - softS;
-  float softG = 1.18 - rough * 0.80;
+  float softG = 1.44 - rough * 0.96;
 
   float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
   float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
-  float aRim = clamp(dot(R, vec3(0.64, 0.38, -0.66)) * softS + softB, 0.0, 1.0);
+  float aRim = clamp(dot(R, vec3(0.64, 0.36, -0.66)) * softS + softB, 0.0, 1.0);
+  float aFill = clamp(dot(R, vec3(0.54, 0.62, 0.56)) * (softS * 0.65) + (1.0 - softS * 0.65), 0.0, 1.0);
   aTop *= aTop;
   aKey *= aKey;
   aRim *= aRim;
-  specRad += (vec3(1.72, 1.74, 1.80) * (aTop * aTop)
-            + vec3(1.45, 1.47, 1.52) * (aKey * aKey)
-            + vec3(0.95, 1.02, 1.14) * (aRim * aRim)) * softG;
+  aFill *= aFill;
+  specRad += (vec3(2.15, 2.17, 2.24) * (aTop * aTop)
+            + vec3(1.90, 1.86, 1.80) * (aKey * aKey)
+            + vec3(1.20, 1.34, 1.56) * (aRim * aRim)
+            + vec3(0.52, 0.56, 0.64) * (aFill * aFill)) * softG;
 
   float om = 1.0 - ndv;
   float om2 = om * om;
   float fres4 = om2 * om2;
   vec3 F0 = mix(vec3(0.04), albedo, metal);
-  vec3 envF = max(vec3((1.0 - rough) * 0.85), F0);
-  vec3 brdf = mix(F0, envF, fres4) * (0.94 - rough * 0.122);
-  vec3 col = albedo * (1.0 - metal) * diffIrr + specRad * brdf + emissive;
+  vec3 envF = max(vec3((1.0 - rough) * 0.90), F0);
+  vec3 brdf = mix(F0, envF, fres4) * (0.98 - rough * 0.14);
+  vec3 col = albedo * (1.0 - metal) * diffIrr + specRad * brdf * microAo + emissive;
 
   ${
     isGlassPass
@@ -750,14 +766,16 @@ void main() {
   `
       : `
   if (clearcoat > 0.05) {
-    col += vec3(0.22 * clearcoat * (0.04 + 0.96 * fres4));
+    float coatLobe = pow(clamp(dot(R, vec3(-0.42, 0.72, 0.55)), 0.0, 1.0), 18.0);
+    float coatSpec = (aTop * aTop * 0.52 + aKey * aKey * 0.38 + coatLobe * 0.68 + 0.05 + 0.95 * fres4) * clearcoat * 0.28;
+    col += vec3(coatSpec);
   }
   if (irid > 0.04) {
     float fres = om2 * om;
-    vec3 specIrid = 0.5 + 0.5 * cos(6.28318 * (iridIor * 0.65 * ndv + 0.12) + vec3(0.0, 2.094, 4.188));
-    col += specIrid * irid * (0.06 + 0.20 * fres);
+    vec3 specIrid = 0.5 + 0.5 * cos(6.28318 * (iridIor * 0.72 * ndv + 0.15) + vec3(0.0, 2.094, 4.188));
+    col += specIrid * irid * (0.08 + 0.28 * fres);
   }
-  fragColor = vec4(fastAcesSrgb(col), alpha);
+  fragColor = vec4(fastAcesSrgb(col), 1.0);
   `
   }
 }
@@ -1041,7 +1059,7 @@ class DualTierTextureArrayPacker {
     this.hiArray.minFilter = THREE.LinearMipmapLinearFilter;
     this.hiArray.magFilter = THREE.LinearFilter;
     this.hiArray.generateMipmaps = true;
-    this.hiArray.anisotropy = GPU_PROFILE.isMobile ? 1 : 4;
+    this.hiArray.anisotropy = GPU_PROFILE.maxAnisotropy;
     this.hiArray.needsUpdate = true;
 
     this.tileData = new Uint8Array(TILE_TEX_SIZE * TILE_TEX_SIZE * TILE_TEX_MAX_LAYERS * 4);
@@ -1058,7 +1076,7 @@ class DualTierTextureArrayPacker {
     this.tileArray.minFilter = THREE.LinearMipmapLinearFilter;
     this.tileArray.magFilter = THREE.LinearFilter;
     this.tileArray.generateMipmaps = true;
-    this.tileArray.anisotropy = GPU_PROFILE.isMobile ? 1 : 4;
+    this.tileArray.anisotropy = GPU_PROFILE.maxAnisotropy;
     this.tileArray.needsUpdate = true;
   }
 
@@ -2565,7 +2583,7 @@ function collectPartsIntoBuckets(
             } else {
               collector.glassFront.push(entry);
             }
-          } else if (isOpen) {
+          } else if (forceDouble) {
             collector.opaqueDouble.push(entry);
           } else if (hasExtra) {
             collector.opaqueTexFront.push(entry);

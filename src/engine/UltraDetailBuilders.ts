@@ -112,6 +112,69 @@ export function applyPlanarUVs(
 }
 
 /**
+ * Apply seamless triplanar box UVs based on vertex normal dominant axis so extruded 3D housings
+ * (battery shells, CFexpress frames, mic top decks) never show stretched stripe artifacts on side walls!
+ */
+export function applyBoxUVs(
+  geo: THREE.BufferGeometry,
+  tileWorldSize = 18.0
+): THREE.BufferGeometry {
+  if (!geo.getAttribute('normal')) {
+    geo.computeVertexNormals();
+  }
+  const pos = geo.getAttribute('position');
+  const norm = geo.getAttribute('normal');
+  if (!pos || !norm) return geo;
+  const count = pos.count;
+  const uvs = new Float32Array(count * 2);
+  const inv = 1 / Math.max(1e-4, tileWorldSize);
+
+  const projectVertex = (i: number, axis: 0 | 1 | 2) => {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    const z = pos.getZ(i);
+    if (axis === 2) {
+      uvs[i * 2] = x * inv;
+      uvs[i * 2 + 1] = y * inv;
+    } else if (axis === 0) {
+      uvs[i * 2] = z * inv;
+      uvs[i * 2 + 1] = y * inv;
+    } else {
+      uvs[i * 2] = x * inv;
+      uvs[i * 2 + 1] = z * inv;
+    }
+  };
+
+  if (!geo.index && count % 3 === 0) {
+    // Non-indexed triangle soup (ExtrudeGeometry, chamfered shells): choose ONE consistent
+    // dominant projection axis per triangle face normal so curved bevels have ZERO UV seam jumps!
+    for (let i = 0; i < count; i += 3) {
+      const ax0 = pos.getX(i), ay0 = pos.getY(i), az0 = pos.getZ(i);
+      const e1x = pos.getX(i + 1) - ax0, e1y = pos.getY(i + 1) - ay0, e1z = pos.getZ(i + 1) - az0;
+      const e2x = pos.getX(i + 2) - ax0, e2y = pos.getY(i + 2) - ay0, e2z = pos.getZ(i + 2) - az0;
+      const nx = Math.abs(e1y * e2z - e1z * e2y);
+      const ny = Math.abs(e1z * e2x - e1x * e2z);
+      const nz = Math.abs(e1x * e2y - e1y * e2x);
+      const axis: 0 | 1 | 2 = nz >= nx && nz >= ny ? 2 : nx >= ny && nx >= nz ? 0 : 1;
+      projectVertex(i, axis);
+      projectVertex(i + 1, axis);
+      projectVertex(i + 2, axis);
+    }
+  } else {
+    for (let i = 0; i < count; i++) {
+      const ax = Math.abs(norm.getX(i));
+      const ay = Math.abs(norm.getY(i));
+      const az = Math.abs(norm.getZ(i));
+      const axis: 0 | 1 | 2 = az >= ax && az >= ay ? 2 : ax >= ay && ax >= az ? 0 : 1;
+      projectVertex(i, axis);
+    }
+  }
+
+  geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  return geo;
+}
+
+/**
  * Create a high-resolution preserved CylinderGeometry.
  */
 export function hiResCyl(
@@ -265,12 +328,23 @@ export function buildChipPackage(opts: ChipPackageOptions): THREE.Group {
     g.add(topPlate);
   }
 
-  // Pin-1 laser-etched index dimple on top corner
-  const pin1R = Math.max(0.14, Math.min(w, d) * 0.065);
-  const pin1 = new THREE.Mesh(hiResCyl(pin1R, pin1R, 0.06, 12), pin1Mat ?? leadMat);
-  pin1.position.set(-w * 0.34, body.position.y + bodyH * 0.5 + 0.02, -d * 0.34);
+  // Pin-1 laser-etched index dimple on top corner + opposite mold ejector pin recess ring
+  const pin1R = Math.max(0.14, Math.min(w, d) * 0.062);
+  const pin1 = new THREE.Mesh(hiResCyl(pin1R, pin1R, 0.05, 14), pin1Mat ?? leadMat);
+  pin1.position.set(-w * 0.33, body.position.y + bodyH * 0.5 + 0.018, -d * 0.33);
   pin1.userData.noEdges = true;
   g.add(pin1);
+
+  if (Math.min(w, d) >= 3.0) {
+    const ejR = Math.max(0.16, Math.min(w, d) * 0.075);
+    const ejector = new THREE.Mesh(
+      hiResTorus(ejR, ejR * 0.16, 6, 16).rotateX(Math.PI / 2),
+      bodyMat
+    );
+    ejector.position.set(w * 0.31, body.position.y + bodyH * 0.5 + 0.015, d * 0.31);
+    ejector.userData.noEdges = true;
+    g.add(ejector);
+  }
 
   // Leads / pins according to package style
   if (style === 'qfn') {

@@ -8,6 +8,7 @@ import {
   tagPartMeshes,
 } from '../../engine/CadHelpers';
 import {
+  applyBoxUVs,
   applyPlanarUVs,
   buildChipPackage,
   buildShieldedInductor,
@@ -52,7 +53,7 @@ function finalizeCfexpressPart(
 }
 
 /**
- * Phase 26B — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.0: 30 Parts C01–C30).
+ * Phase 26B — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.0: 70 Parts C01–C70).
  * Rendered at crisp 2.0× macro inspection scale (40.0 × 56.0 × 5.6 mm for real 20 × 28 × 2.8 mm Type A card), centered at (0, 0, 0).
  * Card stands upright along Y (verified 21-pin staggered PCIe Gold Edge Connector at bottom y ≈ -26.5, Non-Slip Pull-Tab at top y ≈ +26.5).
  */
@@ -66,20 +67,20 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // CNC-chamfered brushed gunmetal-titanium Sony CEA-G1920T TOUGH armor plate!
+    // CNC-chamfered brushed gunmetal-titanium Sony CEA-G1920T TOUGH armor plate seated flush in monolithic frame!
     // Displays iconic cinnabar-orange TOUGH stripe, SONY serif, gold G, CFexpress [A] 4.0, 1920GB, R:1800 / W:1700, VPG400 & VPG800!
-    const armorW = 39.4;
-    const armorH = 52.4;
-    const armorGeo = extrudeHiRes(createRoundedRectShape(armorW, armorH, 2.8), 0.78, 0.16, 0.16, 3, 24);
+    const armorW = 38.6;
+    const armorH = 51.4;
+    const armorGeo = extrudeHiRes(createRoundedRectShape(armorW, armorH, 2.3), 0.78, 0.14, 0.14, 3, 24);
     applyPlanarUVs(armorGeo, armorW, armorH, 'xy');
     const topArmor = new THREE.Mesh(armorGeo, u.cfeTopArmorShell);
 
-    // Subtle micro-stepped perimeter chamfer bezel catching crisp studio specular highlights
+    // Precision CNC-milled titanium micro-bevel trim framing the front TOUGH label cleanly
     const bezelRim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(armorW - 0.5, armorH - 0.5, 2.5, armorW - 1.8, armorH - 1.8, 2.1), 0.12, 0.03, 0.03, 1, 20),
-      mats.stainlessMachined
+      extrudeHiRes(createFrameShape(armorW + 0.35, armorH + 0.35, 2.5, armorW - 1.15, armorH - 1.15, 2.0), 0.28, 0.05, 0.05, 2, 22),
+      mats.titaniumRivet
     );
-    bezelRim.position.z = 0.36;
+    bezelRim.position.z = 0.24;
     bezelRim.userData.noEdges = true;
     g.add(topArmor, bezelRim);
 
@@ -89,7 +90,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         1,
         '#272d38',
         g,
-        new THREE.Vector3(0, 1.2, 2.45),
+        new THREE.Vector3(0, 1.4, 2.48),
         new THREE.Vector3(0, 0, 68),
         cp,
         0.16
@@ -104,12 +105,20 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     // Brushed stainless steel heat-dissipation backplate with razor-sharp dark laser etching
     // (SONY CEA-G1920T, VPG800 clapperboard, 2D DataMatrix, CE/FC/UKCA/VCCI/WEEE, S/N, MADE IN TAIWAN)!
-    const plateW = 39.4;
-    const plateH = 51.0;
-    const botGeo = extrudeHiRes(createRoundedRectShape(plateW, plateH, 2.6), 0.74, 0.14, 0.14, 3, 24);
+    const plateW = 38.6;
+    const plateH = 50.4;
+    const botGeo = extrudeHiRes(createRoundedRectShape(plateW, plateH, 2.2), 0.66, 0.12, 0.12, 3, 24);
     applyPlanarUVs(botGeo, plateW, plateH, 'xy-back');
     const botPlate = new THREE.Mesh(botGeo, u.cfeBackplateLaser);
-    g.add(botPlate);
+
+    // Solid brushed stainless inner thermal-contact face (+Z) so exploded view NEVER shows mirrored rear text!
+    const innerThermalFace = new THREE.Mesh(
+      extrudeHiRes(createRoundedRectShape(plateW - 0.8, plateH - 0.8, 1.9), 0.22, 0.04, 0.04, 1, 20),
+      mats.stainlessMachined
+    );
+    innerThermalFace.position.z = 0.30;
+    innerThermalFace.userData.noEdges = true;
+    g.add(botPlate, innerThermalFace);
 
     parts.push(
       finalizeCfexpressPart(
@@ -117,7 +126,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         2,
         '#94a3b8',
         g,
-        new THREE.Vector3(0, 1.6, -2.45),
+        new THREE.Vector3(0, 1.6, -2.48),
         new THREE.Vector3(0, 0, -62),
         cp,
         0.16
@@ -130,17 +139,46 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const monoFrame = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(40.2, 55.4, 3.0, 34.4, 48.2, 1.8), 4.12, 0.18, 0.18, 2, 24),
-      u.batPolycarbonateShell
-    );
-    // Asymmetric Type-A side poka-yoke lock rail + chamfered lead-in notch
-    const sideRail = new THREE.Mesh(
-      createChamferedBoxGeo(1.42, 34.2, 2.25, 0.35, 0.12, 'z'),
-      mats.matteBlackAnodized
-    );
-    sideRail.position.set(-20.2, 2.0, 0);
-    g.add(monoFrame, sideRail);
+    // Full-depth 5.45 mm Sony TOUGH monolithic obsidian-resin perimeter body sealing ALL 4 sides 100% solid!
+    const monoGeo = extrudeHiRes(createFrameShape(40.4, 55.8, 3.0, 35.2, 48.8, 1.9), 5.42, 0.24, 0.22, 3, 26);
+    applyBoxUVs(monoGeo, 14.0);
+    const monoFrame = new THREE.Mesh(monoGeo, u.batPolycarbonateShell);
+
+    // Molded upper-left & upper-right side grip chamfers + asymmetric Type-A poka-yoke lock rail
+    const sideRailGeo = createChamferedBoxGeo(1.45, 34.8, 2.8, 0.35, 0.14, 'z');
+    applyBoxUVs(sideRailGeo, 12.0);
+    const sideRail = new THREE.Mesh(sideRailGeo, mats.matteBlackAnodized);
+    sideRail.position.set(-20.1, 2.0, 0);
+
+    // Right-side solid stepped flange & lock detent pocket (seals card right wall completely!)
+    const rightFlangeGeo = createChamferedBoxGeo(1.05, 48.0, 5.15, 0.25, 0.12, 'z');
+    applyBoxUVs(rightFlangeGeo, 12.0);
+    const rightFlange = new THREE.Mesh(rightFlangeGeo, u.batPolycarbonateShell);
+    rightFlange.position.set(19.75, 1.2, 0);
+    rightFlange.userData.noEdges = true;
+
+    // Authentic Sony CFexpress TOUGH top-edge horizontal non-slip tactile finger-pull grip ridges (+Y)
+    for (const rz of [-1.25, 0, 1.25]) {
+      const pullRib = new THREE.Mesh(
+        createChamferedBoxGeo(26.0, 0.36, 0.56, 0.18, 0.06, 'y'),
+        mats.matteBlackAnodized
+      );
+      pullRib.position.set(0, 27.92, rz);
+      pullRib.userData.noEdges = true;
+      g.add(pullRib);
+    }
+
+    // Subtle molded upper-left & upper-right side extraction grip flutes
+    for (const sx of [-20.18, 20.18]) {
+      for (let i = 0; i < 4; i++) {
+        const flute = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.72, 3.6), mats.matteBlackAnodized);
+        flute.position.set(sx, 19.2 + i * 1.65, 0);
+        flute.userData.noEdges = true;
+        g.add(flute);
+      }
+    }
+
+    g.add(monoFrame, sideRail, rightFlange);
 
     parts.push(
       finalizeCfexpressPart(
@@ -161,17 +199,18 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Dual-lip IP57 seamless fluoropolymer & matte EPDM perimeter gasket rings
+    // Authentic opaque dark-teal/graphite fluorocarbon IP57 dual-lip O-ring gasket seated STRICTLY INSIDE
+    // the monolithic armor channel (ZERO translucent cyan halo bleeding outside the card when assembled!)
     const ip57Seal = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(39.8, 54.6, 2.8, 38.1, 52.9, 2.2), 0.65, 0.08, 0.08, 2, 22),
-      mats.fluorineCoatCyan
+      extrudeHiRes(createFrameShape(36.8, 49.6, 2.1, 35.3, 48.1, 1.65), 0.55, 0.08, 0.08, 2, 22),
+      mats.epdmGasket
     );
-    ip57Seal.position.z = 1.85;
+    ip57Seal.position.set(0, 1.3, 1.55);
     const ip57Back = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(39.8, 54.6, 2.8, 38.1, 52.9, 2.2), 0.65, 0.08, 0.08, 2, 22),
+      extrudeHiRes(createFrameShape(36.8, 49.6, 2.1, 35.3, 48.1, 1.65), 0.55, 0.08, 0.08, 2, 22),
       u.micRubberBootBlack
     );
-    ip57Back.position.z = -1.85;
+    ip57Back.position.set(0, 1.3, -1.55);
     g.add(ip57Seal, ip57Back);
 
     parts.push(
@@ -251,15 +290,13 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const shroudTop = new THREE.Mesh(
-      createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z'),
-      u.batPolycarbonateShell
-    );
+    const shroudTopGeo = createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z');
+    applyBoxUVs(shroudTopGeo, 14.0);
+    const shroudTop = new THREE.Mesh(shroudTopGeo, u.batPolycarbonateShell);
     shroudTop.position.z = 1.65;
-    const shroudBot = new THREE.Mesh(
-      createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z'),
-      u.batPolycarbonateShell
-    );
+    const shroudBotGeo = createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z');
+    applyBoxUVs(shroudBotGeo, 14.0);
+    const shroudBot = new THREE.Mesh(shroudBotGeo, u.batPolycarbonateShell);
     shroudBot.position.z = -1.65;
 
     // Polarized Type-A asymmetric keying cheek & anti-reverse ribs protecting the 21 pins
@@ -274,14 +311,22 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
     );
     leftCheek.position.set(-18.6, 0, 0);
 
-    // Molded protective inter-pin comb separators along front shroud lip
-    for (const sx of [-10.5, -3.5, 3.5, 10.5]) {
-      const comb = new THREE.Mesh(new THREE.BoxGeometry(0.45, 5.2, 0.55), mats.matteBlackAnodized);
-      comb.position.set(sx, -0.4, 1.0);
-      comb.userData.noEdges = true;
-      g.add(comb);
+    // 20 razor-thin precision molded dielectric inter-pin separator comb fins framing every gold finger!
+    const combGeo = new THREE.BoxGeometry(0.24, 5.45, 0.56);
+    const combInst = new THREE.InstancedMesh(combGeo, mats.matteBlackAnodized, 40);
+    const dm = new THREE.Object3D();
+    let ci = 0;
+    for (let k = 0; k < 20; k++) {
+      const cx = -14.25 + k * 1.5;
+      for (const cz of [-0.95, 0.95]) {
+        dm.position.set(cx, -0.32, cz);
+        dm.updateMatrix();
+        combInst.setMatrixAt(ci++, dm.matrix);
+      }
     }
-    g.add(shroudTop, shroudBot, keyTab, leftCheek);
+    combInst.instanceMatrix.needsUpdate = true;
+    combInst.userData.noEdges = true;
+    g.add(shroudTop, shroudBot, keyTab, leftCheek, combInst);
 
     parts.push(
       finalizeCfexpressPart(
@@ -666,7 +711,6 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
       pinsPerSide: 8,
       bodyMat: u.icEpoxyLaser,
       leadMat: mats.silverElectrode,
-      topAccentMat: u.bionzIpDieTile,
       pin1Mat: mats.goldPlating,
       axis: 'z',
     });
@@ -1143,33 +1187,31 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Sculpted 4-ridge ergonomic non-slip extraction pull-tab bar at card tail (y = +26.4)
-    const pullBase = new THREE.Mesh(
-      createChamferedBoxGeo(36.4, 4.1, 1.45, 0.75, 0.16, 'z'),
-      u.batPolycarbonateShell
-    );
-    pullBase.position.set(0, 26.25, 0);
+    // Sculpted 5-ridge ergonomic non-slip extraction pull-tab bar at card tail (y = +26.4)
+    const pullBaseGeo = createChamferedBoxGeo(36.8, 3.8, 2.8, 0.75, 0.16, 'z');
+    applyBoxUVs(pullBaseGeo, 12.0);
+    const pullBase = new THREE.Mesh(pullBaseGeo, u.batPolycarbonateShell);
+    pullBase.position.set(0, 26.35, 0);
     g.add(pullBase);
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       const rib = new THREE.Mesh(
-        createChamferedBoxGeo(32.8, 0.44, 1.88, 0.18, 0.08, 'z'),
+        createChamferedBoxGeo(33.2, 0.36, 3.18, 0.14, 0.06, 'z'),
         mats.matteBlackAnodized
       );
-      rib.position.set(0, 24.85 + i * 0.92, 0);
+      rib.position.set(0, 25.05 + i * 0.66, 0);
       rib.userData.noEdges = true;
       g.add(rib);
     }
 
-    // Ultra-clean hairline perimeter anti-UV / anti-static protective optical frame
-    // (preserves 100% crisp contrast on the Sony CEA-G1920T TOUGH front armor plate!)
-    const uvRim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(38.0, 50.8, 2.4, 36.6, 49.4, 2.0), 0.1, 0.02, 0.02, 1, 20),
-      mats.opticalCementClear
+    // Internal anti-X-ray metallic foil strip concealed beneath top lip (zero translucent rim on C01!)
+    const xrayInlay = new THREE.Mesh(
+      createChamferedBoxGeo(32.0, 1.4, 0.14, 0.2, 0.02, 'z'),
+      mats.silverElectrode
     );
-    uvRim.position.set(0, 1.2, 2.9);
-    uvRim.userData.noEdges = true;
-    g.add(uvRim);
+    xrayInlay.position.set(0, 25.2, 1.72);
+    xrayInlay.userData.noEdges = true;
+    g.add(xrayInlay);
 
     parts.push(
       finalizeCfexpressPart(

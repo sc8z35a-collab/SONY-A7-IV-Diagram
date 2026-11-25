@@ -26,6 +26,7 @@ export interface UltraRealisticMaterials {
   micRubberBootBlack: THREE.MeshStandardMaterial;
   micAcousticFelt: THREE.MeshStandardMaterial;
   micEcmJfetPcb: THREE.MeshStandardMaterial;
+  micGreenJackCollar: THREE.MeshPhysicalMaterial;
   // Sony NP-FZ100 Battery Pack bespoke materials
   batPolycarbonateShell: THREE.MeshPhysicalMaterial;
   batFrontLabel: THREE.MeshPhysicalMaterial;
@@ -34,6 +35,7 @@ export interface UltraRealisticMaterials {
   batCellWrapGreen: THREE.MeshPhysicalMaterial;
   batBmsPcb: THREE.MeshPhysicalMaterial;
   batElectrodeCoating: THREE.MeshStandardMaterial;
+  batSocLedGlow: THREE.MeshPhysicalMaterial;
   // Sony CFexpress 4.0 Type A TOUGH bespoke materials
   cfeTopArmorShell: THREE.MeshPhysicalMaterial;
   cfeBackplateLaser: THREE.MeshPhysicalMaterial;
@@ -872,16 +874,17 @@ function createBionzBtCoreTexture(): THREE.CanvasTexture {
 function createMicDeadcatFurTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
-  // Soft plush charcoal-graphite acoustic faux-fur base
-  ctx.fillStyle = '#202329';
+  // Deep velvety charcoal-obsidian acoustic plush fleece (100% seamlessly tileable!)
+  ctx.fillStyle = '#17191f';
   ctx.fillRect(0, 0, s, s);
 
   const rng = mulberry32(401);
-  // Batched combed charcoal/slate/silver-tipped acoustic fur strands (3 fast path passes!)
+  // Ultra-fine high-density directional synthetic fleece micro-strands (wrapped toroidally across edges!)
   const passes: Array<[string, number, number]> = [
-    ['rgba(18, 20, 25, 0.72)', 2.1, 450],
-    ['rgba(74, 80, 92, 0.62)', 1.7, 500],
-    ['rgba(175, 184, 198, 0.36)', 1.2, 220],
+    ['rgba(9, 11, 15, 0.80)', 1.25, 1100],
+    ['rgba(38, 43, 52, 0.68)', 1.0, 1500],
+    ['rgba(78, 86, 98, 0.50)', 0.78, 1250],
+    ['rgba(156, 166, 182, 0.28)', 0.52, 720],
   ];
   for (const [color, lw, n] of passes) {
     ctx.strokeStyle = color;
@@ -890,41 +893,48 @@ function createMicDeadcatFurTexture(): THREE.CanvasTexture {
     for (let i = 0; i < n; i++) {
       const x = rng() * s;
       const y = rng() * s;
-      const len = 10 + rng() * 24;
-      const ang = -Math.PI * 0.5 + (rng() - 0.5) * 0.75;
+      const len = 7 + rng() * 14;
+      const ang = -Math.PI * 0.5 + (rng() - 0.5) * 0.65;
+      const dx = Math.cos(ang) * len;
+      const dy = Math.sin(ang) * len;
+      const cx = Math.cos(ang + 0.16) * len * 0.5;
+      const cy = Math.sin(ang + 0.16) * len * 0.5;
       ctx.moveTo(x, y);
-      ctx.quadraticCurveTo(
-        x + Math.cos(ang + 0.2) * len * 0.5,
-        y + Math.sin(ang + 0.2) * len * 0.5,
-        x + Math.cos(ang) * len,
-        y + Math.sin(ang) * len
-      );
+      ctx.quadraticCurveTo(x + cx, y + cy, x + dx, y + dy);
+      if (y + dy < 0) {
+        ctx.moveTo(x, y + s);
+        ctx.quadraticCurveTo(x + cx, y + s + cy, x + dx, y + s + dy);
+      }
+      if (x + dx < 0) {
+        ctx.moveTo(x + s, y);
+        ctx.quadraticCurveTo(x + s + cx, y + cy, x + s + dx, y + dy);
+      } else if (x + dx > s) {
+        ctx.moveTo(x - s, y);
+        ctx.quadraticCurveTo(x - s + cx, y + cy, x - s + dx, y + dy);
+      }
     }
     ctx.stroke();
   }
 
-  return toTileTex(canvas, 4, 2);
+  return toTileTex(canvas, 5, 3);
 }
 
 function createMicTopDeckMgTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
-  // Authentic Sony Alpha powder-coated fine-grain magnesium satin black
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, '#272b33');
-  g.addColorStop(0.5, '#1f232a');
-  g.addColorStop(1, '#252931');
-  ctx.fillStyle = g;
+  // Authentic Sony Alpha powder-coated fine-grain magnesium satin obsidian-black
+  // (Uniform dark base extending cleanly to edges -> ZERO bright border smearing across curved corner bevels!)
+  ctx.fillStyle = '#1b1f26';
   ctx.fillRect(0, 0, w, h);
-  drawMicroGrain(ctx, w, h, 3200, 412, 0.055);
+  drawMicroGrain(ctx, w, h, 5200, 412, 0.028);
 
-  // Subtle recessed border chamfer gleam
-  ctx.strokeStyle = 'rgba(203, 213, 225, 0.22)';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(20, 20, w - 40, h - 40);
+  // Subtle inset machined acoustic deck perimeter line WELL INSIDE the flat top plane (clear of bevels!)
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.16)';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(58, 58, w - 116, h - 116);
 
   // Crisp Sony laser-printed L & R stereo microphone icons beside the L/R grilles
-  ctx.fillStyle = 'rgba(241, 245, 249, 0.90)';
+  ctx.fillStyle = 'rgba(241, 245, 249, 0.92)';
   ctx.font = '700 44px "Helvetica Neue", Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -932,12 +942,17 @@ function createMicTopDeckMgTexture(): THREE.CanvasTexture {
   ctx.fillText('R', 586, 344);
 
   // Subtle rear 3rd directional / voice-memo mic indicator (clear of rear grille bezel)
-  ctx.fillStyle = 'rgba(186, 198, 214, 0.78)';
-  ctx.font = '600 22px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillStyle = 'rgba(186, 198, 214, 0.80)';
+  ctx.font = '600 21px "Helvetica Neue", Arial, sans-serif';
   ctx.fillText('VOICE MEMO / REAR MIC', w * 0.5, 268);
 
+  // Crisp Sony digital audio micro-stencil along front top-deck apron
+  ctx.fillStyle = 'rgba(186, 198, 214, 0.62)';
+  ctx.font = '700 18px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillText('DIGITAL AUDIO  •  3-CAPSULE ARRAY', w * 0.5, 654);
+
   // Subtle top-deck Sony microphone wave icon
-  ctx.strokeStyle = 'rgba(226, 232, 240, 0.65)';
+  ctx.strokeStyle = 'rgba(226, 232, 240, 0.68)';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.arc(w * 0.5, 510, 14, 0, Math.PI * 2);
@@ -1231,11 +1246,24 @@ function createMicAcousticFeltTexture(): THREE.CanvasTexture {
 function createMattePcShellTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
-  // Authentic genuine Sony jet-charcoal satin UL94 V-0 polycarbonate (VDI-27 fine mold grain)
-  ctx.fillStyle = '#1e2128';
+  // Authentic genuine Sony jet-charcoal satin UL94 V-0 polycarbonate (100% seamlessly tileable VDI-27 EDM micro-pebble!)
+  ctx.fillStyle = '#1b1e25';
   ctx.fillRect(0, 0, s, s);
-  drawMicroGrain(ctx, s, s, 2600, 501, 0.055);
-  return toTileTex(canvas, 3, 4);
+  const rng = mulberry32(501);
+  for (let pass = 0; pass < 2; pass++) {
+    ctx.beginPath();
+    for (let i = 0; i < 4800; i++) {
+      const x = rng() * s;
+      const y = rng() * s;
+      const sz = 0.45 + rng() * 0.72;
+      ctx.rect(x, y, sz, sz);
+      if (x + sz > s) ctx.rect(x - s, y, sz, sz);
+      if (y + sz > s) ctx.rect(x, y - s, sz, sz);
+    }
+    ctx.fillStyle = pass === 0 ? 'rgba(255,255,255,0.024)' : 'rgba(0,0,0,0.048)';
+    ctx.fill();
+  }
+  return toTileTex(canvas, 4, 4);
 }
 
 function createBatteryFrontLabelTexture(): THREE.CanvasTexture {
@@ -1747,16 +1775,16 @@ function createCfeBackplateLaserTexture(): THREE.CanvasTexture {
   // Horizontal laser divider
   ctx.fillRect(62, 162, w - 124, 3);
 
-  // Laser-etched VPG800 clapperboard & DataMatrix
-  drawVpgBadge(ctx, 62, 198, 168, 138, '800', etch, 'rgba(226, 232, 240, 0.25)');
-  drawDataMatrix(ctx, 514, 198, 178, 14, etch, null, 61920);
+  // Laser-etched VPG800 clapperboard & DataMatrix (clean breathing room — zero overlap!)
+  drawVpgBadge(ctx, 58, 198, 160, 134, '800', etch, 'rgba(226, 232, 240, 0.25)');
+  drawDataMatrix(ctx, 536, 196, 166, 14, etch, null, 61920);
 
   // Technical spec block
   ctx.textAlign = 'left';
-  ctx.font = '700 28px "Courier New", monospace';
-  ctx.fillText('3.3V  NVMe 2.0', 252, 224);
-  ctx.fillText('IP57  150N TOUGH', 252, 266);
-  ctx.fillText('R:1800  W:1700', 252, 308);
+  ctx.font = '700 22px "Courier New", monospace';
+  ctx.fillText('3.3V   NVMe 2.0', 238, 224);
+  ctx.fillText('IP57  150N TOUGH', 238, 266);
+  ctx.fillText('R:1800   W:1700', 238, 308);
 
   // Compliance icon row (CE, FC, UKCA, VCCI, WEEE)
   ctx.textAlign = 'center';
@@ -2008,11 +2036,24 @@ function createCfeCopperThermalTexture(): THREE.CanvasTexture {
 function createIcEpoxyLaserTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
-  // Fine matte silica-filled semiconductor molding compound with micro-grain
-  ctx.fillStyle = '#1b1f27';
+  // Fine matte dark silica-filled semiconductor molding compound with realistic laser-etch contrast
+  const g = ctx.createLinearGradient(0, 0, s, s);
+  g.addColorStop(0, '#181b22');
+  g.addColorStop(0.5, '#1d212a');
+  g.addColorStop(1, '#14171d');
+  ctx.fillStyle = g;
   ctx.fillRect(0, 0, s, s);
-  drawMicroGrain(ctx, s, s, 2200, 701, 0.065);
-  return toTileTex(canvas, 2, 2);
+  const rng = mulberry32(701);
+  for (let pass = 0; pass < 2; pass++) {
+    ctx.beginPath();
+    for (let i = 0; i < 4200; i++) {
+      const sz = 0.45 + rng() * 0.7;
+      ctx.rect(rng() * s, rng() * s, sz, sz);
+    }
+    ctx.fillStyle = pass === 0 ? 'rgba(255,255,255,0.032)' : 'rgba(0,0,0,0.055)';
+    ctx.fill();
+  }
+  return toTileTex(canvas, 3, 3);
 }
 
 // =============================================================================
@@ -2241,6 +2282,15 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.08
   );
 
+  // Iconic Sony anodized emerald-green 3.5mm headphone monitor jack bezel collar (100% opaque!)
+  const micGreenJackCollar = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x0f8f58,
+    metalness: 0.72,
+    roughness: 0.26,
+    clearcoat: 0.42,
+  });
+
   // --- SONY NP-FZ100 BATTERY PACK ---
   const batPolycarbonateShell = tagBump(
     new THREE.MeshPhysicalMaterial({
@@ -2248,8 +2298,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: mattePcTex,
       metalness: 0.05,
-      roughness: 0.62,
-      clearcoat: 0.10,
+      roughness: 0.58,
+      clearcoat: 0.14,
     }),
     0.08
   );
@@ -2260,8 +2310,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createBatteryFrontLabelTexture(),
       metalness: 0.06,
-      roughness: 0.52,
-      clearcoat: 0.16,
+      roughness: 0.48,
+      clearcoat: 0.22,
     }),
     0.06
   );
@@ -2271,9 +2321,9 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       ...common,
       color: 0xffffff,
       map: createBatteryHologramTexture(),
-      metalness: 0.68,
-      roughness: 0.16,
-      clearcoat: 0.85,
+      metalness: 0.74,
+      roughness: 0.14,
+      clearcoat: 0.92,
       iridescence: 1.0,
       iridescenceIOR: 1.72,
     }),
@@ -2286,8 +2336,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createBatteryRearLaserTexture(),
       metalness: 0.06,
-      roughness: 0.58,
-      clearcoat: 0.10,
+      roughness: 0.56,
+      clearcoat: 0.12,
     }),
     0.08
   );
@@ -2298,8 +2348,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createBatteryCellWrapTexture(),
       metalness: 0.12,
-      roughness: 0.36,
-      clearcoat: 0.45,
+      roughness: 0.34,
+      clearcoat: 0.48,
       side: THREE.DoubleSide,
     }),
     0.05
@@ -2311,8 +2361,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createBatteryBmsPcbTexture(),
       metalness: 0.18,
-      roughness: 0.40,
-      clearcoat: 0.42,
+      roughness: 0.38,
+      clearcoat: 0.46,
     }),
     0.08
   );
@@ -2328,17 +2378,28 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.12
   );
 
+  // Crisp opaque illuminated emerald-green LED lens for the 4-level SOC fuel gauge (ZERO hollow translucency!)
+  const batSocLedGlow = new THREE.MeshPhysicalMaterial({
+    ...common,
+    color: 0x34d399,
+    emissive: 0x10b981,
+    emissiveIntensity: 0.65,
+    metalness: 0.08,
+    roughness: 0.12,
+    clearcoat: 0.95,
+  });
+
   // --- SONY CFEXPRESS 4.0 TYPE A TOUGH ---
   const cfeTopArmorShell = tagBump(
     new THREE.MeshPhysicalMaterial({
       ...common,
       color: 0xffffff,
       map: createCfeTopArmorTexture(),
-      metalness: 0.42,
-      roughness: 0.34,
-      clearcoat: 0.34,
+      metalness: 0.48,
+      roughness: 0.30,
+      clearcoat: 0.42,
     }),
-    0.07
+    0.08
   );
 
   const cfeBackplateLaser = tagBump(
@@ -2346,11 +2407,11 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       ...common,
       color: 0xffffff,
       map: createCfeBackplateLaserTexture(),
-      metalness: 0.74,
-      roughness: 0.30,
-      clearcoat: 0.18,
+      metalness: 0.80,
+      roughness: 0.26,
+      clearcoat: 0.22,
     }),
-    0.08
+    0.09
   );
 
   const cfeHdiPcb = tagBump(
@@ -2359,8 +2420,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createCfeHdiPcbTexture(),
       metalness: 0.16,
-      roughness: 0.42,
-      clearcoat: 0.30,
+      roughness: 0.40,
+      clearcoat: 0.34,
     }),
     0.09
   );
@@ -2371,8 +2432,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createCfeControllerPkgTexture(),
       metalness: 0.08,
-      roughness: 0.58,
-      clearcoat: 0.14,
+      roughness: 0.56,
+      clearcoat: 0.16,
     }),
     0.08
   );
@@ -2383,8 +2444,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createCfeNandPkgTexture(),
       metalness: 0.08,
-      roughness: 0.60,
-      clearcoat: 0.14,
+      roughness: 0.58,
+      clearcoat: 0.16,
     }),
     0.08
   );
@@ -2394,9 +2455,9 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       ...common,
       color: 0xffffff,
       map: createCfeCopperThermalTexture(),
-      metalness: 0.86,
-      roughness: 0.28,
-      clearcoat: 0.22,
+      metalness: 0.88,
+      roughness: 0.26,
+      clearcoat: 0.24,
     }),
     0.09
   );
@@ -2407,8 +2468,8 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
       color: 0xffffff,
       map: createIcEpoxyLaserTexture(),
       metalness: 0.06,
-      roughness: 0.64,
-      clearcoat: 0.10,
+      roughness: 0.62,
+      clearcoat: 0.12,
     }),
     0.08
   );
@@ -2431,6 +2492,7 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micRubberBootBlack,
     micAcousticFelt,
     micEcmJfetPcb,
+    micGreenJackCollar,
     batPolycarbonateShell,
     batFrontLabel,
     batHologramFoil,
@@ -2438,6 +2500,7 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     batCellWrapGreen,
     batBmsPcb,
     batElectrodeCoating,
+    batSocLedGlow,
     cfeTopArmorShell,
     cfeBackplateLaser,
     cfeHdiPcb,
@@ -2465,6 +2528,7 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micRubberBootBlack,
     micAcousticFelt,
     micEcmJfetPcb,
+    micGreenJackCollar,
     batPolycarbonateShell,
     batFrontLabel,
     batHologramFoil,
@@ -2472,6 +2536,7 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     batCellWrapGreen,
     batBmsPcb,
     batElectrodeCoating,
+    batSocLedGlow,
     cfeTopArmorShell,
     cfeBackplateLaser,
     cfeHdiPcb,
