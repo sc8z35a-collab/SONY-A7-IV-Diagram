@@ -18,7 +18,12 @@ import {
   ReusablePartTlas,
   rayTriangleScalar,
 } from './FastBvhRaycaster';
-import { GPU_PROFILE } from './GpuOptimizer';
+import {
+  GPU_PROFILE,
+  NATIVE_HI_TEX_H,
+  NATIVE_HI_TEX_W,
+  NATIVE_TILE_TEX_SIZE,
+} from './GpuOptimizer';
 
 /**
  * GpuMegaBatch v7 — "OMEGA-CAD v7" Ultra-Low-Overhead GPU-Driven WebGL2 Engine:
@@ -525,6 +530,7 @@ in vec2 uv;
 
 out vec3 vViewVec;
 out vec3 vWorldNorm;
+out vec3 vWorldPos;
 out vec2 vUv;
 flat out vec4 vMat0;
 flat out vec4 vMat1;
@@ -542,6 +548,7 @@ void main() {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
     vViewVec = vec3(0.0, 0.0, 1.0);
     vWorldNorm = vec3(0.0, 1.0, 0.0);
+    vWorldPos = vec3(0.0);
     vUv = vec2(0.0);
     vMat0 = vec4(0.0);
     vMat1 = vec4(0.0);
@@ -576,6 +583,7 @@ void main() {
   vMatId = matId;
   vViewVec = normalize(uCamPos - worldPos + vec3(0.0, 0.0, 1e-5));
   vWorldNorm = worldNorm;
+  vWorldPos = worldPos;
   vUv = uv;
   ${isGlassPass ? 'vSlot = slot;' : ''}
   ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
@@ -597,6 +605,7 @@ uniform sampler2DArray uTexArrayTile;
 
 in vec3 vViewVec;
 in vec3 vWorldNorm;
+in vec3 vWorldPos;
 in vec2 vUv;
 flat in vec4 vMat0;
 flat in vec4 vMat1;
@@ -636,6 +645,8 @@ void main() {
   vec3 emissive = vec3(0.0);
   float irid = 0.0;
   float iridIor = 1.45;
+  float bumpStr = 0.0;
+  float texLuma = 0.5;
   bool hasTex = false;
 
   if (vMat1.w > 0.5) {
@@ -644,6 +655,7 @@ void main() {
     vec4 lut4 = texelFetch(uMatLutTex, ivec2(4, vMatId), 0);
     emissive = lut2.rgb;
     irid = lut2.w;
+    bumpStr = lut3.y;
     iridIor = lut3.z;
     if (lut4.x >= -0.5) {
       hasTex = true;
@@ -657,6 +669,7 @@ void main() {
         : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 100.0));
       albedo *= texCol.rgb;
       alpha *= texCol.a;
+      texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
       if (lut5.x > 0.5) {
         emissive = texCol.rgb * lut2.rgb;
       }
@@ -667,6 +680,25 @@ void main() {
         rough = clamp(rough * rSamp, 0.04, 1.0);
       }
     }
+  }
+
+  // Screen-space micro-relief bump normal perturbation + micro-cavity roughness detail for metallic/PCB/engraved surfaces
+  if (hasTex && bumpStr > 0.004) {
+    vec3 dPosX = dFdx(vWorldPos);
+    vec3 dPosY = dFdy(vWorldPos);
+    vec3 r1 = cross(dPosY, N);
+    vec3 r2 = cross(N, dPosX);
+    float det = dot(dPosX, r1);
+    if (abs(det) > 1e-6) {
+      float dHdx = dFdx(texLuma);
+      float dHdy = dFdy(texLuma);
+      vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
+      float gradLen = length(surfGrad);
+      vec3 clampedGrad = gradLen > 2.5 ? surfGrad * (2.5 / gradLen) : surfGrad;
+      N = normalize(N - clampedGrad * bumpStr);
+    }
+    // Subtle micro-cavity roughness contrast: bright engraved/metallic features gleam crisply, micro-grooves stay satin
+    rough = clamp(rough + (0.48 - texLuma) * bumpStr * 1.15, 0.05, 0.98);
   }
 
   float ndv = clamp(dot(N, V), 0.001, 1.0);
@@ -687,10 +719,13 @@ void main() {
 
   float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
   float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
+  float aRim = clamp(dot(R, vec3(0.64, 0.38, -0.66)) * softS + softB, 0.0, 1.0);
   aTop *= aTop;
   aKey *= aKey;
-  specRad += (vec3(1.68, 1.70, 1.75) * (aTop * aTop)
-            + vec3(1.42, 1.44, 1.50) * (aKey * aKey)) * softG;
+  aRim *= aRim;
+  specRad += (vec3(1.72, 1.74, 1.80) * (aTop * aTop)
+            + vec3(1.45, 1.47, 1.52) * (aKey * aKey)
+            + vec3(0.95, 1.02, 1.14) * (aRim * aRim)) * softG;
 
   float om = 1.0 - ndv;
   float om2 = om * om;
@@ -954,11 +989,11 @@ void main() {
 // 3. OMEGA-14: NATIVE-RESOLUTION DUAL-TIER TEXTURE2DARRAY PACKER (Zero-DOM Fast-Paths!)
 // =============================================================================
 
-const HI_TEX_W = GPU_PROFILE.isMobile ? 256 : 512;
-const HI_TEX_H = GPU_PROFILE.isMobile ? 192 : 384;
-const HI_TEX_MAX_LAYERS = 7;
-const TILE_TEX_SIZE = 128;
-const TILE_TEX_MAX_LAYERS = 14;
+const HI_TEX_W = NATIVE_HI_TEX_W;
+const HI_TEX_H = NATIVE_HI_TEX_H;
+const HI_TEX_MAX_LAYERS = 34;
+const TILE_TEX_SIZE = NATIVE_TILE_TEX_SIZE;
+const TILE_TEX_MAX_LAYERS = 28;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {
@@ -1195,7 +1230,7 @@ export interface SharedBatchUniforms {
 }
 
 export class MaterialLutRegistry {
-  public readonly lutData: Float32Array;
+  public lutData: Float32Array;
   public lutTexture: THREE.DataTexture;
   public readonly solidUniformData: Float32Array;
   public readonly texPacker: DualTierTextureArrayPacker;
@@ -1469,14 +1504,20 @@ export class MaterialLutRegistry {
           : 1.45;
     const envI = typeof std.envMapIntensity === 'number' ? std.envMapIntensity : 1.0;
     const bumpChannel = (mat.userData.bumpChannel as number) || 0;
-    const bumpScale =
-      bumpChannel > 0
-        ? typeof mat.userData.lutBumpScale === 'number'
-          ? (mat.userData.lutBumpScale as number)
-          : typeof std.bumpScale === 'number'
-            ? std.bumpScale
-            : 0.04
+    const texBumpStrength =
+      typeof mat.userData.texBumpStrength === 'number'
+        ? (mat.userData.texBumpStrength as number)
         : 0;
+    const bumpScale =
+      texBumpStrength > 0
+        ? texBumpStrength
+        : bumpChannel > 0
+          ? typeof mat.userData.lutBumpScale === 'number'
+            ? (mat.userData.lutBumpScale as number)
+            : typeof std.bumpScale === 'number'
+              ? std.bumpScale
+              : 0.04
+          : 0;
 
     const primaryMap = std.map ?? std.emissiveMap ?? null;
     const texLayer = primaryMap ? this.texPacker.packTexture(primaryMap, false) : -1;
@@ -1550,6 +1591,7 @@ export class MaterialLutRegistry {
       freshLut.generateMipmaps = false;
       freshLut.needsUpdate = true;
       this.lutTexture.dispose();
+      this.lutData = freshBuf;
       this.lutTexture = freshLut;
       this.uniforms.uMatLutTex.value = freshLut;
       this.lutRenderedOnce = false;

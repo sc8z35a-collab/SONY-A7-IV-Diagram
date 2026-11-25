@@ -1015,4 +1015,275 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'xr_sac305_bga_balls',
   },
+
+  'xr-pmic-vrm-rails': {
+    title: 'XR37. 専用マルチフェーズ電源PMIC ＆ シールド降圧インダクタ群（VDD_CORE 0.75V PDN）',
+    subtitle: 'Dedicated Multi-Phase Core VRM PMIC & Shielded 0.47 μH Buck Inductor Power Delivery Network',
+    category: 'BIONZ XRパッケージ内部超解剖 XR37 — 4K60p／AI AF時の瞬間大電流を0.75Vへ超精密供給する「専属変電所」',
+    plainAnalogy:
+      'NP-FZ100バッテリーから来る7.2Vの電気をそのまま最新4nmチップに入れると一瞬で焼き切れてしまいます。この専用PMICと4連シールドコイルは、BIONZ XRのすぐ横に陣取る「専属の超高速変電所」。AI NPUや動画エンコーダが一気に動き出す0.000001秒の瞬間にも電圧が1ミリボルトも落ちないよう、0.75V・1.1V・1.8Vの複数系統を安定供給します。',
+    summary:
+      'BIONZ XR / XR2直近に配置されたマルチフェーズ降圧レギュレータ（PMIC）、メタルコンポジット系シールドインダクタ（0.47 μH×4）、およびポリマー・タンタルバルクコンデンサによる低インピーダンス電源供給網（PDN）。',
+    opticsAndPhysics: [
+      '4相インターリーブ降圧（位相を90°ずつずらしてスイッチング）により、出力電圧リップルを劇的に打ち消し、高感度センサー近傍への電磁誘導ノイズを最小限に抑え込みます。',
+      'BIONZ XR内部のDVFS制御（XR25）とデジタルI2C/SPMIバスで直結し、待機時は0.55Vへ降圧して省電力化、10fps RAW連写や8K記録の瞬間だけ0.82Vへ瞬時昇圧します。',
+      'インダクタ本体を鉄粉系磁性体モールドで完全密閉したシールド構造とすることで、漏れ磁束が直近のSLVS-ECやオーディオ配線へ飛び込むのを防ぎます。',
+    ],
+    formula: {
+      expression: 'ΔV_droop = L_eff · (dI / dt) + I_peak · R_PDN   （多相化でリップル電流を1/4以下へ低減）',
+      description: 'チップのすぐ隣に低損失インダクタとタンタルコンデンサを置くことで、急激な負荷変動でも電圧降下を防ぐ',
+    },
+    nextGenInnovation:
+      'BIONZ XR2のAI推論ユニット統合によるスパイク電流増加に対応し、高飽和電流メタルアロイ・インダクタと超低ESR導電性高分子コンデンサを組み合わせています。',
+    specs: [
+      { label: '出力系統', value: 'VDD_CORE 0.75V / LPDDR5X 1.1V / I/O 1.8V マルチレール' },
+      { label: '降圧コイル', value: '0.47 μH シールドメタルコンポジット・パワーインダクタ ×4相' },
+      { label: '動的電圧制御', value: 'DVFS連動 マイクロ秒応答アダプティブ電圧スケーリング' },
+      { label: 'バルク容量', value: '低ESR ポリマー・タンタルキャパシタ ＋ 0201 MLCC配列' },
+    ],
+    diagramType: 'xr_esicap_mlcc_decaps',
+  },
+
+  'xr-tcxo-24mhz-clock': {
+    title: 'XR38. 超低ジッタ 24 MHz 金封止水晶発振器（TCXO 基準クロック源）',
+    subtitle: 'Ultra-Low-Jitter 24.000 MHz Hermetic Gold-Lid TCXO Reference Crystal Oscillator',
+    category: 'BIONZ XRパッケージ内部超解剖 XR38 — 映像・音声・シャッターのすべてを1兆分の1秒精度で刻む「絶対メトロノーム」',
+    plainAnalogy:
+      'オーケストラ全員がズレずに演奏するには正確な指揮者が必要です。セラミックの土台に金のフタを真空溶接したこの極小水晶発振器（TCXO）は、真冬の雪山でも真夏の炎天下でも1秒間にぴったり2,400万回振動し続け、BIONZ XRのすべての動画フレームレート（23.976fps/59.94fps）や音声48kHz同期の「狂わない基準リズム」を生み出します。',
+    summary:
+      'BIONZ XR内部のPLLクロックツリー（XR25）へ基準周波数を供給する温度補償型水晶発振器（TCXO：24.000 MHz）。金属コバール金めっきシーム溶接リッドによる気密パッケージで、極めて低い位相ノイズ・ジッタを実現します。',
+    opticsAndPhysics: [
+      '内部のATカット人工水晶振動子と温度補償回路により、−20℃〜＋85℃の広い撮影環境でも周波数偏差を ±1.5 ppm 以内に抑え、長回し動画での音ズレ（A/Vドリフト）を防ぎます。',
+      'SLVS-EC 2.0やHDMI 2.1・USB 10GbpsといったマルチGHz高速シリアル通信は、この24 MHz基準クロックを内部PLLで逓倍して生成するため、基準源の低ジッタ（< 150 fs RMS）が通信安定性の要となります。',
+    ],
+    formula: {
+      expression: 'f_sys = f_TCXO (24.000 MHz) × (N / M)   （温度偏差 ±1.5 ppm 以内・ジッタ < 150 fs）',
+      description: '100万分の1.5しか狂わない水晶の振動をベースに、CPU・センサー・HDMIの全クロックを作り出す',
+    },
+    nextGenInnovation:
+      'タイムコード同期（TC In/Out）やマルチカメラ収録でも長時間フレームズレが起きない業務用シネマ級の周波数安定度を備えます。',
+    specs: [
+      { label: '発振周波数', value: '24.000 MHz（温度補償型 TCXO・高精度ATカット水晶）' },
+      { label: 'パッケージ構造', value: 'アルミナセラミックベース ＋ 金めっきコバール気密シーム蓋' },
+      { label: '周波数安定度', value: '±1.5 ppm（−20℃〜＋85℃ 全撮影温度域）' },
+      { label: 'RMSジッタ', value: '< 150 fs（12 kHz 〜 20 MHz 積分帯域）' },
+    ],
+    diagramType: 'xr_pll_clock_dvfs_ring',
+  },
+
+  'xr-qspi-boot-nor-rom': {
+    title: 'XR39. 256 Mb Octal-SPI ブートファームウェア NORフラッシュ ＆ 工場キャリブレーションROM',
+    subtitle: '256 Mb Octal-SPI Bootloader NOR Flash & Factory Optical Calibration LUT ROM',
+    category: 'BIONZ XRパッケージ内部超解剖 XR39 — 電源ONから0.4秒でカメラを目覚めさせる「起動レシピ＆個体補正メモリ」',
+    plainAnalogy:
+      '電源スイッチをONにした瞬間、まだ頭脳（BIONZ XR）の作業机（LPDDR5X）は真っ白です。そこで真っ先にこのNORフラッシュROMから「起動プログラム」や、工場で1台ずつ測定した「センサー画素欠陥マップ・色補正データ・暗号署名鍵」を超高速に読み込み、わずか0.4秒でシャッターが切れる状態へ立ち上げます。',
+    summary:
+      'BIONZ XR / XR2のセキュアブート・ファームウェア、工場出荷時個体キャリブレーションデータ（ピクセル欠陥補正・シェーディング・AF調整値）、およびEマウントレンズ通信テーブルを格納する高速Octal-SPI NORフラッシュメモリIC。',
+    opticsAndPhysics: [
+      'データ保持信頼性が極めて高いNOR型フラッシュ（20年データ保持）と8ビット並列DDR（Octal-SPI）インターフェースを組み合わせ、コールドブートから即座にブートコードとC2PA電子署名ルート証明書を検証ロードします。',
+      '電源断の瞬間でもシステム設定やファームウェア更新が破損しないよう、A/Bデュアルバンク構成とハードウェアCRC検証を備えます。',
+    ],
+    formula: {
+      expression: '実効読出帯域 = 200 MHz × 2 (DDR) × 8 bit = 400 MB/s（高速コールドブート実現）',
+      description: '8本並列の高速読み込みにより、電源ONから一瞬でOSと画像処理エンジンを起動する',
+    },
+    nextGenInnovation:
+      'カメラ真正性証明（C2PA）のハードウェア鍵検証チェーンの起点となり、改ざんされていない正規ファームウェアのみを起動許可するセキュアブートを支えます。',
+    specs: [
+      { label: '容量・規格', value: '256 Mb（32 MB）Octal-SPI / QSPI 高信頼NORフラッシュ' },
+      { label: '格納データ', value: 'ブートローダ / OS / 工場個体補正LUT / C2PAルート鍵' },
+      { label: 'パッケージ', value: 'SOIC-8 / WSON-8 極薄面実装パッケージ' },
+      { label: 'データ保持', value: '20年以上（10万回書換耐性・A/Bフェイルセーフ構成）' },
+    ],
+    diagramType: 'xr_c2pa_crypto_enclave',
+  },
+
+  'xr-sigma-graphite-clamp': {
+    title: 'XR40. ソニー独自 Σ（シグマ）形状パイロリティック・グラファイト放熱シート ＆ 圧着クリップ',
+    subtitle: 'Sony α7 IV Σ-Shaped High-Orientation Pyrolytic Graphite Thermal Bridge & Spring Press Clip',
+    category: 'BIONZ XRパッケージ内部超解剖 XR40 — 銅の4倍速で熱を運び、ボディ全体へ逃がす「α7 IV伝説のΣ字ヒートブリッジ」',
+    plainAnalogy:
+      'BIONZ XRと銅のフタ（IHS）が集めた熱をカメラ外装へ運ぶ最後の切り札が、ソニーα7 IV・α7S IIIで特許取得された「Σ（シグマ）字」に折り畳まれた黒鉛（グラファイト）シートです！このシートは面の方向に銅の約4倍ものスピードで熱を運び、折り畳みバネ構造がIBIS手ブレ補正ユニットの動きを邪魔せず、熱だけをマグネシウム筐体へどんどん逃がし続けます。',
+    summary:
+      'BIONZ XRの放熱リッド外周からマグネシウム合金シャーシへ熱をバイパスする、高配向パイロリティック・グラファイトシート（PGS）＋銅箔補強コア＋ステンレス圧着クリップによるΣ字フレキシブル放熱ブリッジ構造。',
+    opticsAndPhysics: [
+      '高配向グラファイトシートは結晶面内方向の熱伝導率が約 1,300〜1,600 W/m·K（無酸素銅の3〜4倍！）に達し、わずか 0.1〜0.2 mm の極薄シートで数ワットの発熱を数センチ先のシャーシ放熱部へ高速輸送します。',
+      'Σ（シグマ）字型に蛇腹折りすることで、衝撃や熱膨張による基板とシャーシ間の微細な寸法変化をストレスなく吸収し、長期間にわたって一定の接触熱圧着力を維持します。',
+    ],
+    formula: {
+      expression: 'k_in-plane (PGS) ≈ 1,500 W/m·K ≈ 3.8 × k_Cu （超薄・超軽量で驚異的な面内熱拡散）',
+      description: '銅の約4倍の熱伝導スピードを持つ特殊グラファイト層が、ファンレスボディでの長時間4K60p撮影を可能にする',
+    },
+    nextGenInnovation:
+      '防塵防滴シーリングを破る冷却ファンを使わずに、α7 IV / α7 Vで4K60p 10-bit 4:2:2の長時間連続収録を実現するソニー独自のパッシブ熱設計の象徴です。',
+    specs: [
+      { label: '熱伝導率（面内）', value: '約 1,300 〜 1,600 W/m·K（無酸素銅の約3.5〜4倍）' },
+      { label: '構造特徴', value: 'ソニー独自 Σ（シグマ）字フレキシブル折り畳み ＋ 銅箔補強コア' },
+      { label: '固定機構', value: 'ステンレスばね圧着クリップ ×2（一定面圧維持）' },
+      { label: '効果', value: '4K60p/8K連続動画記録時の熱シャットダウン耐性を大幅向上' },
+    ],
+    diagramType: 'xr_nickel_cu_ihs',
+  },
+
+  'xr-slvs-ec-microcoax-bus': {
+    title: 'XR41. 8レーン SLVS-EC 2.0 差動マイクロストリップ ＆ AC結合コンデンサ群（センサー直結バス）',
+    subtitle: '8-Lane SLVS-EC 2.0 Differential 100-Ohm Microstrip Bus & 0201 AC-Coupling Capacitor Fan-Out',
+    category: 'BIONZ XRパッケージ内部超解剖 XR41 — イメージセンサーから毎秒40ギガビット超のRAW光データを受け止める「8車線の超高速幹線」',
+    plainAnalogy:
+      'イメージセンサーが撮った膨大な3300万画素RAWデータを、一滴もこぼさずBIONZ XRへ送り込むのがソニー独自規格「SLVS-EC 2.0」です。1レーンあたり最大5 Gbpsもの超高速波を通すため、長さを0.1ミリ単位でピタリと揃えた8対の金・銅の差動ペア線と、直流ノイズを遮断する16個の極小AC結合コンデンサがずらりと並んでいます！',
+    summary:
+      'フルサイズExmor RセンサーのB2BコネクタからBIONZ XRのSLVS-EC受信PHY（XR10）へ直結される、8レーン100 Ωインピーダンス整合差動マイクロストリップ線路、16個の0201 AC結合コンデンサ列、およびシールドB2Bインターフェースヘッダ。',
+    opticsAndPhysics: [
+      'SLVS-EC（Scalable Low Voltage Signaling with Embedded Clock）はクロック信号をデータ波形に埋め込むことで、レーン間のタイミングズレ（スキュー）耐性を劇的に高め、従来のLVDS比で最大2〜4倍の高速伝送を実現します。',
+      '各差動ペアの直列に挿入された0201超小型AC結合コンデンサがセンサー側とBIONZ XR側の直流電位差を絶縁しつつ、8b/10bまたは64b/66b符号化されたマルチGHz信号だけを無反射で通過させます。',
+    ],
+    formula: {
+      expression: '8レーン × 4.76 Gbps = 38.1 Gbps（33MP 14-bit RAW連写・7Kオーバーサンプリング4K60pを余裕伝送）',
+      description: 'クロック埋込式の8レーン高速差動配線が、センサーの表現力をそのままBIONZ XRへ届ける',
+    },
+    nextGenInnovation:
+      '将来世代のSLVS-EC v3.0では1レーン10 Gbps超へ進化し、60MP超グローバルシャッター機や8K120p動画の膨大なデータを極小基板面積で伝送可能にします。',
+    specs: [
+      { label: '規格・レーン数', value: 'Sony独自 SLVS-EC 2.0 × 8レーン（クロック埋込差動伝送）' },
+      { label: '特性インピーダンス', value: '差動 100 Ω ±5%（等長蛇行スキュー整合配線）' },
+      { label: '直列結合素子', value: '0201超小型 低ESL AC結合MLCC × 16個（各レーンP/N対）' },
+      { label: '実効スループット', value: '最大 約 38 〜 40 Gbps（センサー⇔SoC直結）' },
+    ],
+    diagramType: 'xr_slvsec_rx_phy',
+  },
+
+  'xr-hdmi21-retimer-esd': {
+    title: 'XR42. HDMI 2.1（48 Gbps FRL）リタイマ／リドライバIC ＆ ±15 kV 超低容量ESD保護アレイ',
+    subtitle: 'HDMI 2.1 / 48 Gbps FRL Signal Retimer IC & ±15 kV Ultra-Low-Capacitance ESD Protection Array',
+    category: 'BIONZ XRパッケージ内部超解剖 XR42 — フルサイズHDMI Type-A端子へ4K60p 10-bit 4:2:2／RAW映像を無劣化出力する「高速波形整形＆雷ガード」',
+    plainAnalogy:
+      'α7 IVの頼もしい特徴であるフルサイズHDMI端子から外部モニターへ長いケーブルで4K60p映像を送るとき、電気信号はケーブルの抵抗で弱ってしまいます。このリタイマICがBIONZ XRから出た映像波形をもう一度くっきり整形して送り出し、手前の超高速ESDダイオードが静電気のパチッという衝撃から高価なBIONZ XRを守り抜きます！',
+    summary:
+      'BIONZ XRの表示出力ブロック（XR23）とカメラ側フルサイズHDMI Type-Aポート間に配置される高速TMDS/FRL信号リドライバ／リタイマQFN IC、超低静電容量（< 0.25 pF）TVS ESD保護ダイオードアレイ、およびAC結合コンデンサ群。',
+    opticsAndPhysics: [
+      'リタイマIC内蔵のCDR（Clock & Data Recovery）と適応イコライザが、基板配線でのジッタ蓄積をゼロにリセットしてクリーンなアイパターンを再生成し、10 m級の長尺HDMIケーブルでも映像途切れを防ぎます。',
+      '12 Gbps/レーン（4レーン計48 Gbps）の超高速信号線を保護するため、信号波形を鈍らせない極小寄生容量（0.2 pF級）の専用TVSダイオードがIEC 61000-4-2 ±15 kV気中静電気放電をナノ秒でGNDへ逃がします。',
+    ],
+    formula: {
+      expression: '4レーン × 12 Gbps (HDMI 2.1 FRL) = 48 Gbps ／ ESD寄生容量 C_j < 0.25 pF（無劣化保護）',
+      description: '超低容量ガードと波形リタイマにより、現場での抜き差し静電気からSoCを守りつつ長距離4K/8K出力を安定化',
+    },
+    nextGenInnovation:
+      '外部レコーダーへの16-bit RAW出力や4K120p非圧縮モニタリングを、スタジオや過酷な屋外中継現場でも安全かつ安定して運用できるプロ仕様I/O設計です。',
+    specs: [
+      { label: '対応規格', value: 'HDMI 2.0 / 2.1 FRL（最大 48 Gbps 4K60p 4:2:2 / 16-bit RAW対応）' },
+      { label: '信号処理IC', value: 'QFN-40 高速リタイマ／リドライバ（内蔵CDR＆適応等化）' },
+      { label: '静電気保護', value: 'IEC 61000-4-2 ±15 kV 気中 / ±8 kV 接触（DFN-10 超低容量TVS）' },
+      { label: '寄生容量', value: '< 0.25 pF / ライン（高周波アイパターン劣化を極小化）' },
+    ],
+    diagramType: 'xr_display_evf_hdmi_tx',
+  },
+
+  'xr-ddr5-vddq-pmic-sub': {
+    title: 'XR43. LPDDR5X PoPメモリ専用 電源サブPMIC（VDD2H 1.05 V / VDDQ 0.5 V）＆ 低ESLコンデンサ群',
+    subtitle: 'Dedicated LPDDR5X PoP Memory Power-Rail Sub-PMIC (VDD2H 1.05V / VDDQ 0.5V) & Low-ESL Array',
+    category: 'BIONZ XRパッケージ内部超解剖 XR43 — 上に載った超高速メモリ（LPDDR5X）へ0.5 Vの超静音電気を届ける「メモリ専属の給電係」',
+    plainAnalogy:
+      'BIONZ XRの頭上に載っているLPDDR5Xメモリは、たった「0.5ボルト」という極小の電圧で毎秒85億回も0と1をやり取りする超繊細な部品です。CPUやNPUの大きな電流変動に巻き込まれて電圧が揺れるとデータが化けてしまうため、メモリ専用の独立した超低ノイズ電源IC（サブPMIC）が隣で静かに電気を安定させ続けています！',
+    summary:
+      'PoP積層LPDDR5X-8533フレームバッファ（XR05）専用の3系統独立電源レール（VDD1 1.8 V / VDD2H 1.05 V / VDDQ 0.5 V）を生成する専用サブPMIC、超小型0.24 μH高周波インダクタ、および低ESLセラミックコンデンサアレイ。',
+    opticsAndPhysics: [
+      'LPDDR5XではI/O電源電圧 VDDQ をわずか 0.5 V まで下げることで高速連写バッファ書き込み時の消費電力を約30%削減していますが、許容リプル電圧は ±25 mV 以下と極めてシビアです。',
+      'コア用PMIC（XR37）から物理・電気的に分離した専用サブPMICを最短距離に配置し、電源投入・遮断シーケンス（VDD1 → VDD2 → VDDQ）をマイクロ秒精度で制御してラッチアップを防ぎます。',
+    ],
+    formula: {
+      expression: 'P_IO ∝ C · V_DDQ² · f   （V_DDQ = 0.5 V 低電圧化で高速転送時の消費電力を劇的削減）',
+      description: 'わずか0.5 Vの超精密・超低リプル電源が、無限連写バッファの安定動作と省電力を両立する',
+    },
+    nextGenInnovation:
+      'DVFS（動的電圧周波数制御）と連動し、待機時はVDDQ/VDD2を高速省電力ステートへ落とすことでバッテリー持ちと発熱低減に貢献します。',
+    specs: [
+      { label: '出力レール', value: 'VDD1 (1.8 V) / VDD2H (1.05 V) / VDD2L (0.9 V) / VDDQ (0.5 V)' },
+      { label: '電圧精度', value: '±1.0% 以内（8533 MT/s動作時の電源リプル < 20 mVpp）' },
+      { label: 'インダクタ', value: '超低背 0.24 μH メタルコンポジット高周波インダクタ ×2' },
+      { label: 'シーケンス制御', value: 'JEDEC LPDDR5X準拠 厳密電源立上げ／立下げ制御内蔵' },
+    ],
+    diagramType: 'xr_ddr_mem_controller',
+  },
+
+  'xr-die-thermal-diode-ring': {
+    title: 'XR44. オンダイ多点ジャンクション温度センス・ダイオード群 ＆ 熱テレメトリリング',
+    subtitle: 'Multi-Zone On-Die P-N Junction Thermal Sense Diode Array & Active Hotspot Telemetry Ring',
+    category: 'BIONZ XRパッケージ内部超解剖 XR44 — シリコン内部のAI・動画・CPUそれぞれの発熱を0.5℃精度で監視する「6つの体温計」',
+    plainAnalogy:
+      '4K60p撮影中は動画圧縮回路が、AI被写体認識中はNPUが、というようにチップの中で「一番熱い場所（ホットスポット）」は刻々と変わります！そこでシリコンの奥に6個の極小な温度計ダイオードを埋め込み、1ミリ秒ごとに各地点の温度を読み取って「ここは少しクロックを下げよう」と賢く調整しているんです。',
+    summary:
+      'BIONZ XRシリコンダイ内の主要発熱IPブロック（AI NPU・ARM CPU・HEVCコーデック・RAW ISP・DDR PHY・Cetus）直上に配置された6点バンドギャップ温度センスP-Nダイオードと、DVFSコントローラ（XR25）へ結ぶ専用アナログ・テレメトリ配線リング。',
+    opticsAndPhysics: [
+      'シリコンP-N接合ダイオードの順方向電圧 V_f は絶対温度に対して約 −2.0 mV/℃ の極めて直線的な負の温度係数を持つため、2つの異なる定電流比（ΔV_BE法）を測定することで製造ばらつきを打ち消し ±0.5℃ 精度でジャンクション温度 T_j を計測します。',
+      '単一の基板サーミスタでは捉えきれない局所ホットスポットの急昇温（ミリ秒オーダー）を直接検知し、DVFS電圧周波数制御や緊急サーマルシャットダウンを安全に発動します。',
+    ],
+    formula: {
+      expression: 'ΔV_BE = (k · T_j / q) · ln(I₂ / I₁)   （絶対温度 T_j に完全比例するオンダイ精密温度計）',
+      description: '物理定数だけに基づくオンダイ温度計測が、熱暴走を防ぎつつ極限の連続録画時間を引き出す',
+    },
+    nextGenInnovation:
+      '各IPブロックごとのリアルタイム熱マップに基づき、録画を止めずにAI推論レートやノイズ低減強度を段階最適化するインテリジェント熱マネジメントを支えます。',
+    specs: [
+      { label: '計測ポイント', value: 'ダイ内 6ゾーン独立（AI NPU / CPU / HEVC / ISP / DDR / Cetus）' },
+      { label: '測定方式', value: 'デュアル電流比 ΔV_BE バンドギャップP-N接合温度センス' },
+      { label: '計測精度・周期', value: '±0.5 ℃（0〜125 ℃）・サンプリング周期 < 1 ms' },
+      { label: '連動制御', value: 'DVFS動的クロック制御 ＆ 熱警告・自動保護シャットダウン' },
+    ],
+    diagramType: 'xr_pll_clock_dvfs_ring',
+  },
+
+  'xr-bga-corner-underfill': {
+    title: 'XR45. メイン基板実装 4隅エポキシ・エッジボンド補強フィレット（耐落下衝撃スタビライザ）',
+    subtitle: 'Mainboard-Level Corner Epoxy Edge-Bonding & Drop-Shock Fillet Stakes (4 Corners)',
+    category: 'BIONZ XRパッケージ内部超解剖 XR45 — カメラを落としても1,400個のBGAはんだボールが割れないよう四隅を固める「耐震アンカー」',
+    plainAnalogy:
+      '1,400個以上の小さな銀色のはんだボール（XR36）だけで基板に乗っているBIONZ XRは、カメラをうっかり落としたとき基板がたわんで「四隅のボール」に一番強い力が集中します！ソニーα7 IVの実機メイン基板では、この四隅をガッチリと黒い特殊エポキシ樹脂で補強留め（コーナーボンド）し、プロの激しい衝撃でも絶対にはんだ割れを起こしません！',
+    summary:
+      'メイン基板（SY-1122）へのリフロー実装後にBIONZ XRパッケージ（ABF基板外周）の4隅へ精密ディスペンス硬化される、低弾性率・高破壊靭性コーナーエッジボンド・エポキシフィレット。',
+    opticsAndPhysics: [
+      '基板の曲げ応力・落下衝撃および温度サイクル（−20℃⇔＋85℃のCTE膨張差）によるせん断ひずみは、パッケージ中心からの距離（DNP：Distance to Neutral Point）が最大の4隅BGAボールに集中します。',
+      '全面アンダーフィルではなく「4隅エッジボンド」を採用することで、落下耐性を数倍へ引き上げつつ、サービスセンターでのリワーク（交換修理）可能性と製造スループットを両立しています。',
+    ],
+    formula: {
+      expression: 'コーナーせん断応力 τ_max ∝ DNP × Δα × ΔT   （4隅樹脂固定で応力を約70%低減！）',
+      description: '最も力が集中する四隅をエポキシ樹脂アンカーで支え、落下衝撃や寒暖差によるはんだ破断を徹底防止',
+    },
+    nextGenInnovation:
+      'α7 IV以降のソニー大型BGA実装で標準化された高信頼実装プロセスで、過酷な報道・ネイチャー撮影現場での基板クラック故障を劇的に減らしています。',
+    specs: [
+      { label: '補強箇所', value: 'FC-BGA基板 4隅コーナーステーキング（最大DNP応力点集中補強）' },
+      { label: '樹脂材料', value: '高靭性・熱硬化エポキシ系コーナーエッジボンド樹脂' },
+      { label: '耐衝撃効果', value: 'JEDEC落下試験（1,500 G）でのはんだボール破断寿命を大幅延長' },
+      { label: '整備性', value: '全面充填と異なり局所加熱によるBGAリワーク性を確保' },
+    ],
+    diagramType: 'xr_capillary_underfill',
+  },
+
+  'xr-jtag-swd-debug-header': {
+    title: 'XR46. 工場ATE / JTAG / SWD マイクロプローブ検査パッド列 ＆ セキュリティeFuseヒューズバンク',
+    subtitle: 'Factory ATE / JTAG / SWD Micro-Probe Test Pad Matrix & OTP Security eFuse Blow-Link Bank',
+    category: 'BIONZ XRパッケージ内部超解剖 XR46 — 工場出荷前の最終検査を終えた瞬間、二度とハッキングされないよう物理ヒューズを焼き切る「秘密の検査口」',
+    plainAnalogy:
+      '工場でカメラが組み上がった直後、検査ロボットが針（ポゴピン）をこの16個の金色の丸パッドに当てて「全機能が100%正常か」を一瞬で診断します。そして合格した瞬間、横の極小ヒューズ（eFuse）をレーザーや電流でパチッと焼き切って検査口を永久ロック！これにより出荷後は誰も中身を不正改造できなくなるんです。',
+    summary:
+      '量産工場の自動テスト装置（ATE）がバウンダリスキャン（JTAG/SWD）とブートストラップ診断を行う2×8 ENIG金めっきマイクロテストパッドアレイ、ブートモード設定抵抗、および出荷時ロック用ワンタイム書込（OTP）セキュリティeFuseバンク。',
+    opticsAndPhysics: [
+      '製造ラインのスプリングプローブ（ポゴピン）が低接触抵抗で確実に当たるよう、厚膜ENIG金めっきランドを0.8 mmピッチで整列させ、高速バウンダリスキャン（IEEE 1149.1）で1,400球超のBGAはんだ導通を数秒で全数検証します。',
+      '出荷最終工程でオンダイ／基板側のOTP eFuseリンクを溶断することで、デバッグポートをハードウェア的に永久封印し、C2PA電子署名秘密鍵（XR21）の不正吸い出しを物理レベルで阻止します。',
+    ],
+    formula: {
+      expression: '工場ATE全数検査（JTAG/SWD） → 最終出荷時 OTP eFuse 永久溶断 → C2PA署名鍵を物理封印',
+      description: '生産品質100%検査と出荷後の鉄壁セキュリティを両立する、量産カメラ基板に必ず存在する裏方機構',
+    },
+    nextGenInnovation:
+      '報道写真の改ざんを防ぐソニーのカメラ内電子署名（Camera Authenticity Solution）の信頼性を、製造工場の最終ロック工程から担保する重要ハードウェアです。',
+    specs: [
+      { label: '検査インターフェース', value: 'IEEE 1149.1 JTAG / ARM SWD / UART 2×8 マイクロプローブパッド' },
+      { label: 'パッド処理', value: '厚膜ENIG無電解ニッケル／金めっき（ポゴピン高耐久仕様）' },
+      { label: 'セキュリティ封印', value: 'OTP（One-Time Programmable）eFuse 出荷時デバッグ永久ロック' },
+      { label: '構成部品', value: '16テストパッド ＋ ブートストラップ0201抵抗アレイ ＋ eFuseセル' },
+    ],
+    diagramType: 'xr_c2pa_crypto_enclave',
+  },
 };

@@ -491,6 +491,7 @@ export function retessellatePrimitiveSagitta(
   geo: THREE.BufferGeometry,
   toleranceMm: number
 ): THREE.BufferGeometry {
+  if (geo.userData && geo.userData.__preserveHiRes) return geo;
   const gType = geo.type;
   const params = (geo as unknown as { parameters?: Record<string, unknown> }).parameters;
   if (!params) return geo;
