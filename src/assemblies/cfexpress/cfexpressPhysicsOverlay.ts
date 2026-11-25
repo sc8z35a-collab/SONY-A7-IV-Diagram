@@ -11,8 +11,8 @@ export interface CfexpressPhysicsOverlayController {
 }
 
 /**
- * Animated PCIe Gen4 NVMe High-Speed Data Flow + Thermal Diffusion Waves + 6-Way Dashed Explode Guides
- * for the Standalone CFexpress 4.0 Card Ultra-Dissection (C01–C60).
+ * Animated PCIe Gen4 NVMe + Toggle 6.0 4.8 Gb/s Data Flow + Dual-Side Copper-Coin Thermal/PLP Waves
+ * + 6-Way Dashed Explode Guides for the Standalone 100-Part CFexpress 4.0 Card Ultra-Dissection (C01–C100).
  */
 export function createCfexpressPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,13 +23,15 @@ export function createCfexpressPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 72);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 112);
   explodeGuides.add(radialGuides.group);
 
-  // High-speed data & thermal paths:
-  // 1) 21-pin Gold Edge Connector -> AC-Coupling -> 7nm PCIe 4.0 SoC -> Primary 3D NAND (cyan)
+  // High-speed data, power & dual-side thermal paths:
+  // 1) 21-pin Gold Edge Connector -> AC-Coupling + Antipad Void -> 7nm PCIe 4.0 SoC -> Primary 3D NAND (cyan)
   // 2) PCIe SoC -> LPDDR4 DRAM Cache -> Rear Interleaved 3D NAND (violet)
-  // 3) Controller SoC Heat -> Copper Heat Spreader -> Metal Armor Shell (amber)
+  // 3) Controller SoC Heat -> Pure Copper Heat Spreader -> Front Metal Armor Shell (amber)
+  // 4) Toggle DDR 6.0 / SCA 4.8 Gb/s 6-Plane BiCS10 Parallel Bus -> Multi-Plane NAND Crown (emerald)
+  // 5) Under-Controller Copper Coin -> Rear Alumina Gap Filler -> Rear SUS Backplate Dual Dissipation (rose-gold)
   const routeDefs: Array<{ pts: THREE.Vector3[]; color: number }> = [
     {
       pts: [
@@ -54,7 +56,25 @@ export function createCfexpressPhysicsOverlay(
         new THREE.Vector3(-2, 0, 2.0),
         new THREE.Vector3(0, 14, 2.7),
       ],
-      color: 0xf97316, // Copper heat spreader thermal dissipation
+      color: 0xf97316, // Front copper heat spreader thermal dissipation
+    },
+    {
+      pts: [
+        new THREE.Vector3(-4, -6, 1.2),
+        new THREE.Vector3(3.5, 3.6, 1.1),
+        new THREE.Vector3(2.0, 12.6, 1.3),
+        new THREE.Vector3(0, 16.5, 1.35),
+      ],
+      color: 0x10b981, // 2026 Toggle 6.0 4.8 Gb/s + SCA 6-plane MPIR highway
+    },
+    {
+      pts: [
+        new THREE.Vector3(-6.2, -9.0, 0.4),
+        new THREE.Vector3(-6.2, -9.0, -0.8),
+        new THREE.Vector3(-5.0, -4.0, -1.8),
+        new THREE.Vector3(0, 4.0, -2.55),
+      ],
+      color: 0xf43f5e, // Rear copper-coin & alumina gap-filler dual-side cooling path
     },
   ];
 
