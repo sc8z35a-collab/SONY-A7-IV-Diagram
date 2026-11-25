@@ -5,7 +5,7 @@ import { createMicPhysicsOverlay } from './micPhysicsOverlay';
 
 /**
  * Assemble the lazy-hydrated standalone Internal Stereo / 3-Capsule MEMS & ECM
- * Microphone Ultra-Dissection subsystem (32 parts: MC01–MC32).
+ * Microphone Ultra-Dissection subsystem (80 parts: MC01–MC80, incl. 2026 Optical MEMS & 32-bit Float Dual-ADC).
  * Strictly visible ONLY in standalone 'mic' mode (zero startup cost!).
  */
 export function createMicAssembly(mats: MaterialLibrary): AssemblyController {
@@ -20,7 +20,7 @@ export function createMicAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 32,
+    deferredStandaloneCount: 80,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;

@@ -960,7 +960,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '界面抵抗', value: '< 0.5 mΩ（大電流放電時の発熱抑制）' },
       { label: '耐環境性', value: '異種金属接触腐食（ガルバニック腐食）を構造的に防止' },
     ],
-    diagramType: 'bat_electrode_tabs_weld',
+    diagramType: 'bat_bimetal_al_ni_strip',
   },
 
   'bat-bms-copper-shunt-bus': {
@@ -987,7 +987,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '計測方式', value: '4端子ケルビン接続（5 mΩシャント抵抗直結差動配線）' },
       { label: '効果', value: 'IRドロップ低減 ＋ クーロン積算誤差の極小化' },
     ],
-    diagramType: 'bat_shunt_resistor',
+    diagramType: 'bat_bms_copper_shunt_bus',
   },
 
   'bat-ultrasonic-seal-gasket': {
@@ -1014,7 +1014,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '機械強度', value: '1.5 mコンクリート落下耐性・外装剥離防止' },
       { label: '防水思想', value: 'カメラボディ側バッテリー蓋パッキンとの二重防滴連携' },
     ],
-    diagramType: 'bat_outer_shell_front',
+    diagramType: 'bat_ultrasonic_seal_gasket',
   },
 
   'bat-cell-electrolyte-fill-ball': {
@@ -1041,7 +1041,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '気密等級', value: 'ヘリウムリーク検査準拠（水分透過ゼロ完全密閉）' },
       { label: '目的', value: '電解液揮発防止 ＋ 外気水分によるLiPF₆劣化（HF生成）遮断' },
     ],
-    diagramType: 'bat_electrolyte_sei',
+    diagramType: 'bat_cell_electrolyte_fill_ball',
   },
 
   'bat-camera-pogo-mating-pins': {
@@ -1068,7 +1068,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '接触抵抗', value: '< 10 mΩ（大電流8 Aパルス時の発熱・電圧降下を防止）' },
       { label: '防振効果', value: '常時ばね予圧により落下・連写振動時の接点瞬断をゼロ化' },
     ],
-    diagramType: 'bat_terminal_block_4pin',
+    diagramType: 'bat_camera_pogo_mating_pins',
   },
 
   'bat-cell-matching-divider': {
@@ -1095,7 +1095,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '安全機能', value: 'BMS故障時のBMライン大電流短絡・発煙を物理制限' },
       { label: '計測安定', value: 'シャッター／DC-DC高周波ノイズによる保護IC誤トリップ防止' },
     ],
-    diagramType: 'bat_cell_balancer_ic',
+    diagramType: 'bat_cell_matching_divider',
   },
 
   'bat-cell-insulation-collar': {
@@ -1122,7 +1122,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '構造特徴', value: 'ツイン18500底面絶縁カフ ＋ 中央アーク放電防止隔壁フィン' },
       { label: '耐熱特性', value: '溶融・滴下なし（異常昇温時も絶縁形状を維持）' },
     ],
-    diagramType: 'bat_cell_bottom_insulator',
+    diagramType: 'bat_cell_insulation_collar',
   },
 
   'bat-bms-crystal-osc': {
@@ -1149,7 +1149,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '負荷容量', value: '12.5 pF 整合（外付C0G 0201コンデンサ ×2）' },
       { label: '用途', value: '保管時自己放電補正・クーロン時間積分・カレンダーSOH計測' },
     ],
-    diagramType: 'bat_infolithium_fuelgauge',
+    diagramType: 'bat_bms_crystal_osc',
   },
 
   'bat-bms-current-comparator': {
@@ -1176,7 +1176,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '基準抵抗精度', value: '±0.1% 薄膜精密チップ抵抗（温度ドリフト < 25 ppm/℃）' },
       { label: '復帰動作', value: 'ラッチ保護（負荷解放検知または充電器接続で安全復帰）' },
     ],
-    diagramType: 'bat_protection_mosfet',
+    diagramType: 'bat_bms_current_comparator',
   },
 
   'bat-pc-flame-retardant-ribs': {
@@ -1203,7 +1203,7 @@ export const BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '保護目標', value: '落下・圧迫時の18500鋼缶の局所圧潰（内部短絡原因）を防止' },
       { label: '副次効果', value: 'セル間の微細エアギャップ維持による断熱・防振効果' },
     ],
-    diagramType: 'bat_cell_holder_frame',
+    diagramType: 'bat_pc_flame_retardant_ribs',
   },
 };
 

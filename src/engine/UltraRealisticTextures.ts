@@ -81,6 +81,13 @@ export interface UltraRealisticMaterials {
   sensorPztStack: THREE.MeshStandardMaterial;
   sensorPyroGraphite: THREE.MeshPhysicalMaterial;
   sensorEptfeVent: THREE.MeshStandardMaterial;
+  // Phase 30: Battery 2026 Si-C/NMC/EIS & Microphone 2026 Optical/32-bit/Acoustic UHD PBR Materials
+  batSiCNanoScaffold: THREE.MeshPhysicalMaterial;
+  batSingleCrystalNmc: THREE.MeshPhysicalMaterial;
+  batEisNyquistDie: THREE.MeshPhysicalMaterial;
+  micOpticalInterferometer: THREE.MeshPhysicalMaterial;
+  micAudioDsp32Float: THREE.MeshPhysicalMaterial;
+  micAcousticDelayCloth: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -3698,6 +3705,382 @@ function createSensorEptfeVentTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 30 UHD PROCEDURAL PBR TEXTURES: BATTERY 2026 & MICROPHONE 2026
+// =============================================================================
+
+/** Battery 2026 CVD Porous Carbon Scaffold containing Amorphous Nano-Si Cores & Void Buffers */
+function createBatSiCNanoScaffoldTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#131720');
+  bg.addColorStop(0.5, '#1d2432');
+  bg.addColorStop(1, '#11151d');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Hexagonal CVD porous carbon scaffold wall mesh
+  const rng = mulberry32(3071);
+  const stepX = 68;
+  const stepY = 58;
+  for (let row = -1; row <= h / stepY + 1; row++) {
+    for (let col = -1; col <= w / stepX + 1; col++) {
+      const cx = col * stepX + (row % 2 === 0 ? 0 : stepX * 0.5);
+      const cy = row * stepY;
+      // Carbon pore cavity void buffer
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (k * Math.PI) / 3 + Math.PI / 6;
+        const px = cx + Math.cos(a) * 32;
+        const py = cy + Math.sin(a) * 32;
+        if (k === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#090d14';
+      ctx.fill();
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 4.2;
+      ctx.stroke();
+
+      // Inner CVD-deposited glowing metallic-amber nano-Si droplet (leaves void space for 300% expansion!)
+      const rSi = 13 + rng() * 5.5;
+      const ox = (rng() - 0.5) * 4;
+      const oy = (rng() - 0.5) * 4;
+      const sg = ctx.createRadialGradient(cx + ox - 4, cy + oy - 4, 2, cx + ox, cy + oy, rSi);
+      sg.addColorStop(0, '#fef08a');
+      sg.addColorStop(0.45, '#f59e0b');
+      sg.addColorStop(0.85, '#b45309');
+      sg.addColorStop(1, '#451a03');
+      ctx.beginPath();
+      ctx.arc(cx + ox, cy + oy, rSi, 0, Math.PI * 2);
+      ctx.fillStyle = sg;
+      ctx.fill();
+
+      // Thin LiF artificial SEI halo ring around nano-Si
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+  }
+  drawMicroGrain(ctx, w, h, 2600, 3072, 0.05);
+  return toHiTex(canvas);
+}
+
+/** Battery 2026 Single-Crystal Ni-Rich NMC811 Layered Oxide Lattice & ALD Barrier Sheen */
+function createBatSingleCrystalNmcTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f223d');
+  bg.addColorStop(0.5, '#1d4ed8');
+  bg.addColorStop(1, '#0c4a6e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Diagonal single-crystal layered transition-metal oxide (Ni/Mn/Co) slabs & Li+ intercalation galleries
+  for (let y = -w; y < h + w; y += 26) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y - w * 0.38);
+    ctx.strokeStyle = 'rgba(125, 211, 252, 0.42)';
+    ctx.lineWidth = 5.5;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, y + 11);
+    ctx.lineTo(w, y + 11 - w * 0.38);
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+    ctx.lineWidth = 2.0;
+    ctx.setLineDash([8, 10]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Faceted octahedral crystal grain highlights + ALD Al2O3/LiNbO3 thin-film iridescent interference bands
+  const rng = mulberry32(3073);
+  for (let i = 0; i < 18; i++) {
+    const cx = rng() * w;
+    const cy = rng() * h;
+    const sz = 48 + rng() * 68;
+    const fg = ctx.createLinearGradient(cx - sz, cy - sz, cx + sz, cy + sz);
+    fg.addColorStop(0, 'rgba(186, 230, 253, 0.28)');
+    fg.addColorStop(0.5, 'rgba(56, 189, 248, 0.08)');
+    fg.addColorStop(1, 'rgba(12, 74, 110, 0.28)');
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - sz * 0.7);
+    ctx.lineTo(cx + sz * 0.65, cy);
+    ctx.lineTo(cx, cy + sz * 0.7);
+    ctx.lineTo(cx - sz * 0.65, cy);
+    ctx.closePath();
+    ctx.fillStyle = fg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(224, 242, 254, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+  drawBrushedStreaks(ctx, w, h, false, 180, 3074, 0.05, 0.05);
+  return toHiTex(canvas);
+}
+
+/** Battery 2026 Smart EIS Predictive BMS / USB PD 3.2 AVS / EU Battery Passport Silicon Die */
+function createBatEisNyquistDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0c1322';
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle gold/cyan silicon macro sub-grid
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.16)';
+  ctx.lineWidth = 1.2;
+  for (let i = 32; i < w; i += 32) {
+    ctx.beginPath();
+    ctx.moveTo(i, 20);
+    ctx.lineTo(i, h - 20);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(20, i);
+    ctx.lineTo(w - 20, i);
+    ctx.stroke();
+  }
+
+  // Left quadrant: EIS Nyquist impedance semicircle spectroscopy DSP core
+  ctx.fillStyle = '#11223a';
+  ctx.fillRect(42, 44, 330, 310);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(42, 44, 330, 310);
+  // Glowing EIS Nyquist arc + Warburg diffusion tail
+  ctx.beginPath();
+  ctx.arc(160, 278, 86, Math.PI, 0, false);
+  ctx.lineTo(334, 152);
+  ctx.strokeStyle = '#22d3ee';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('EIS 0.1Hz-10kHz', 62, 86);
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillStyle = '#facc15';
+  ctx.fillText('R_ct / SEI / Li-PLATE', 62, 332);
+
+  // Right quadrant: EU Battery Passport 2027 PQC Secure Vault & DataMatrix
+  ctx.fillStyle = '#1e1636';
+  ctx.fillRect(396, 44, 330, 310);
+  ctx.strokeStyle = '#a855f7';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(396, 44, 330, 310);
+  drawDataMatrix(ctx, 434, 108, 176, 14, '#e9d5ff', '#1e1636', 3095);
+  ctx.fillStyle = '#f3e8ff';
+  ctx.font = 'bold 22px ui-monospace, monospace';
+  ctx.fillText('EU-DPP 71 / PQC', 420, 86);
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillText('2026-2027 PASS', 432, 326);
+
+  // Bottom strip: USB PD 3.2 SPR AVS 100mV ladder & GaN 2MHz Buck-Boost stage
+  ctx.fillStyle = '#162521';
+  ctx.fillRect(42, 384, 684, 340);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(42, 384, 684, 340);
+  for (let i = 0; i < 12; i++) {
+    const bh = 55 + i * 16;
+    ctx.fillStyle = i < 4 ? '#0ea5e9' : i < 8 ? '#10b981' : '#f59e0b';
+    ctx.fillRect(70 + i * 52, 678 - bh, 38, bh);
+  }
+  ctx.fillStyle = '#fef3c7';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('USB PD 3.2 SPR AVS · 100mV STEP · 2MHz GaN', 66, 434);
+
+  // Perimeter gold wirebond pads
+  ctx.fillStyle = '#eab308';
+  for (let i = 54; i <= w - 54; i += 28) {
+    ctx.fillRect(i - 6, 8, 12, 16);
+    ctx.fillRect(i - 6, h - 24, 12, 16);
+    ctx.fillRect(8, i - 6, 16, 12);
+    ctx.fillRect(w - 24, i - 6, 16, 12);
+  }
+  return toHiTex(canvas);
+}
+
+/** Microphone 2026 Optical MEMS VCSEL Laser Interferometer & Diffractive Grating Substrate */
+function createMicOpticalInterferometerTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createRadialGradient(w * 0.5, h * 0.5, 24, w * 0.5, h * 0.5, w * 0.62);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.55, '#1e293b');
+  bg.addColorStop(1, '#090d16');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Concentric Fabry-Perot / diffractive interferometer rainbow fringes
+  const fringeColors = ['#38bdf8', '#22d3ee', '#a855f7', '#ec4899', '#f59e0b', '#10b981'];
+  for (let r = 340; r >= 40; r -= 16) {
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.5, r, 0, Math.PI * 2);
+    ctx.strokeStyle = fringeColors[(r / 16) % fringeColors.length];
+    ctx.globalAlpha = 0.34;
+    ctx.lineWidth = 6.5;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1.0;
+
+  // Precision sub-wavelength diffractive optical grating parallel slits across center
+  for (let x = 160; x <= w - 160; x += 14) {
+    ctx.fillStyle = x % 28 === 0 ? 'rgba(56, 189, 248, 0.58)' : 'rgba(250, 204, 21, 0.42)';
+    ctx.fillRect(x, 180, 5, h - 360);
+  }
+
+  // Central VCSEL 850nm ruby-cyan laser aperture & 4 surrounding photodiode quadrants
+  const quadCoords: Array<[number, number]> = [
+    [130, 130],
+    [w - 130, 130],
+    [130, h - 130],
+    [w - 130, h - 130],
+  ];
+  for (const [qx, qy] of quadCoords) {
+    ctx.fillStyle = '#0e7490';
+    ctx.fillRect(qx - 58, qy - 58, 116, 116);
+    ctx.strokeStyle = '#eab308';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(qx - 58, qy - 58, 116, 116);
+  }
+  const laserG = ctx.createRadialGradient(w * 0.5, h * 0.5, 4, w * 0.5, h * 0.5, 68);
+  laserG.addColorStop(0, '#ffffff');
+  laserG.addColorStop(0.28, '#f43f5e');
+  laserG.addColorStop(0.65, '#38bdf8');
+  laserG.addColorStop(1, 'rgba(15,23,42,0)');
+  ctx.beginPath();
+  ctx.arc(w * 0.5, h * 0.5, 68, 0, Math.PI * 2);
+  ctx.fillStyle = laserG;
+  ctx.fill();
+
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('OPTICAL MEMS · 84dBA SNR · 146dB AOP', 92, 62);
+  return toHiTex(canvas);
+}
+
+/** Microphone 2026 32-Bit Float Dual-ADC & TinyML Neural Speech-Separation DSP Silicon Die */
+function createMicAudioDsp32FloatTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0d1424';
+  ctx.fillRect(0, 0, w, h);
+
+  // Fine copper/gold interconnect routing mesh
+  ctx.strokeStyle = 'rgba(234, 179, 8, 0.16)';
+  ctx.lineWidth = 1.4;
+  for (let i = 24; i < w; i += 24) {
+    ctx.beginPath();
+    ctx.moveTo(i, 24);
+    ctx.lineTo(i, h - 24);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(24, i);
+    ctx.lineTo(w - 24, i);
+    ctx.stroke();
+  }
+
+  // Top-Left: High-Gain ADC (-130 dBFS whisper capture)
+  ctx.fillStyle = '#0c2d48';
+  ctx.fillRect(40, 44, 330, 270);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 3.2;
+  ctx.strokeRect(40, 44, 330, 270);
+  ctx.fillStyle = '#bae6fd';
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('ADC-1 HIGH GAIN', 64, 88);
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillText('WHISPER / -130 dBFS', 64, 120);
+
+  // Top-Right: Low-Gain ADC (146 dB SPL clip-free capture)
+  ctx.fillStyle = '#3b1f0b';
+  ctx.fillRect(398, 44, 330, 270);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3.2;
+  ctx.strokeRect(398, 44, 330, 270);
+  ctx.fillStyle = '#fef3c7';
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('ADC-2 LOW GAIN', 424, 88);
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillText('EXPLOSION / 0% CLIP', 424, 120);
+
+  // Glowing sine waveform traversing both ADCs seamlessly into IEEE-754 32-bit float stitcher
+  ctx.beginPath();
+  for (let x = 60; x <= 700; x += 6) {
+    const t = (x - 60) / 640;
+    const amp = 26 + Math.sin(t * Math.PI) * 58;
+    const y = 216 + Math.sin(t * Math.PI * 10) * amp;
+    if (x === 60) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  // Bottom Half: TinyML Transformer 3-Stem Spectrogram & MVDR Beamformer Core
+  ctx.fillStyle = '#1b1335';
+  ctx.fillRect(40, 344, 688, 380);
+  ctx.strokeStyle = '#a855f7';
+  ctx.lineWidth = 3.5;
+  ctx.strokeRect(40, 344, 688, 380);
+  ctx.fillStyle = '#f3e8ff';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('32-BIT FLOAT STITCH · TinyML VOICE NPU', 66, 392);
+
+  // 16×6 neural systolic MAC spectrogram tiles
+  const rng = mulberry32(3058);
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 14; c++) {
+      const v = rng();
+      ctx.fillStyle = v > 0.65 ? '#f59e0b' : v > 0.35 ? '#06b6d4' : '#6366f1';
+      ctx.globalAlpha = 0.45 + v * 0.5;
+      ctx.fillRect(68 + c * 45, 424 + r * 44, 36, 34);
+    }
+  }
+  ctx.globalAlpha = 1.0;
+
+  // Perimeter gold pads
+  ctx.fillStyle = '#eab308';
+  for (let i = 54; i <= w - 54; i += 28) {
+    ctx.fillRect(i - 6, 8, 12, 16);
+    ctx.fillRect(i - 6, h - 24, 12, 16);
+    ctx.fillRect(8, i - 6, 16, 12);
+    ctx.fillRect(w - 24, i - 6, 16, 12);
+  }
+  return toHiTex(canvas);
+}
+
+/** Microphone Acoustic Phase-Delay Woven Silk Mesh & Electret Corona-Dipole Micro-Texture */
+function createMicAcousticDelayClothTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#1e242c';
+  ctx.fillRect(0, 0, w, h);
+
+  // Precision twill acoustic-resistance weave controlling rear cardioid phase delay
+  const step = 16;
+  for (let y = 0; y < h; y += step) {
+    for (let x = 0; x < w; x += step) {
+      const parity = ((x / step + y / step) & 1) === 0;
+      ctx.fillStyle = parity ? '#475569' : '#334155';
+      ctx.fillRect(x + 1, y + 1, step - 3, step - 3);
+      ctx.fillStyle = parity ? 'rgba(226,232,240,0.22)' : 'rgba(234,179,8,0.16)';
+      ctx.fillRect(x + 3, y + 3, step - 7, 3);
+    }
+  }
+  // Subtle concentric acoustic calibration reticles
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.34)';
+  ctx.lineWidth = 3;
+  for (const rad of [110, 210, 310]) {
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.5, rad, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  drawMicroGrain(ctx, w, h, 2400, 3067, 0.05);
+  return toHiTex(canvas);
+}
+
+// =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
@@ -4549,6 +4932,89 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.10
   );
 
+  // --- Phase 30: Battery 2026 & Microphone 2026 Ultra-Microscopic UHD PBR Materials ---
+  const batSiCNanoScaffold = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBatSiCNanoScaffoldTexture(),
+      metalness: 0.38,
+      roughness: 0.34,
+      clearcoat: 0.48,
+      iridescence: 0.36,
+      iridescenceIOR: 1.62,
+    }),
+    0.14
+  );
+
+  const batSingleCrystalNmc = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBatSingleCrystalNmcTexture(),
+      metalness: 0.44,
+      roughness: 0.22,
+      clearcoat: 0.82,
+      iridescence: 0.78,
+      iridescenceIOR: 1.84,
+    }),
+    0.13
+  );
+
+  const batEisNyquistDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBatEisNyquistDieTexture(),
+      metalness: 0.54,
+      roughness: 0.24,
+      clearcoat: 0.62,
+      iridescence: 0.54,
+      iridescenceIOR: 1.72,
+    }),
+    0.11
+  );
+
+  const micOpticalInterferometer = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createMicOpticalInterferometerTexture(),
+      metalness: 0.62,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.96,
+      iridescenceIOR: 1.92,
+    }),
+    0.12
+  );
+
+  const micAudioDsp32Float = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createMicAudioDsp32FloatTexture(),
+      metalness: 0.56,
+      roughness: 0.22,
+      clearcoat: 0.64,
+      iridescence: 0.58,
+      iridescenceIOR: 1.74,
+    }),
+    0.11
+  );
+
+  const micAcousticDelayCloth = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createMicAcousticDelayClothTexture(),
+      metalness: 0.22,
+      roughness: 0.58,
+      clearcoat: 0.16,
+    }),
+    0.15
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -4616,6 +5082,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     sensorPztStack,
     sensorPyroGraphite,
     sensorEptfeVent,
+    batSiCNanoScaffold,
+    batSingleCrystalNmc,
+    batEisNyquistDie,
+    micOpticalInterferometer,
+    micAudioDsp32Float,
+    micAcousticDelayCloth,
   ];
 
   return {
@@ -4685,6 +5157,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     sensorPztStack,
     sensorPyroGraphite,
     sensorEptfeVent,
+    batSiCNanoScaffold,
+    batSingleCrystalNmc,
+    batEisNyquistDie,
+    micOpticalInterferometer,
+    micAudioDsp32Float,
+    micAcousticDelayCloth,
     list,
   };
 }
