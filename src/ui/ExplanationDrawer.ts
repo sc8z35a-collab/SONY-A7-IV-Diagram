@@ -1,4 +1,4 @@
-import { CadPart, PartExplanation } from '../assemblies/types';
+import { CadPart, PartExplanation, ScaleMode } from '../assemblies/types';
 import { isLazyExplanationStub, resolvePartExplanation } from '../assemblies/lazyExplanations';
 import { OpticalScenarioId } from '../assemblies/lens/lensOpticalSim';
 
@@ -9,6 +9,7 @@ export interface ExplanationDrawerHandlers {
   onToggleIsolate: () => void;
   onHideCurrent: () => void;
   onOpenOpticsMotion?: (scenario: OpticalScenarioId, partId: string) => void;
+  onSwitchMode?: (mode: ScaleMode) => void;
 }
 
 type SchematicRendererFn = (type: PartExplanation['diagramType']) => string;
@@ -206,6 +207,49 @@ export class ExplanationDrawer {
         </button>`
         : '';
 
+    const v2SwitchConfig: { target: ScaleMode; label: string; isV2Target: boolean } | null =
+      this.handlers.onSwitchMode
+        ? part.subsystem === 'micro'
+          ? {
+              target: 'micro_v2',
+              label: 'V2 極超解剖図へ（さらに微細な原子・ナノ構造を拡大）',
+              isV2Target: true,
+            }
+          : part.subsystem === 'micro_v2'
+            ? {
+                target: 'micro',
+                label: 'V1 ピクセル配列図へ戻る',
+                isV2Target: false,
+              }
+            : part.subsystem === 'bionz'
+              ? {
+                  target: 'bionz_v2',
+                  label: 'V2 極超解剖図へ（2nm GAA・裏面電源を極超拡大）',
+                  isV2Target: true,
+                }
+              : part.subsystem === 'bionz_v2'
+                ? {
+                    target: 'bionz',
+                    label: 'V1 BIONZ XR パッケージ図へ戻る',
+                    isV2Target: false,
+                  }
+                : null
+        : null;
+
+    const v2SwitchBtnHtml = v2SwitchConfig
+      ? `
+        <button type="button" class="exp-optics-cta exp-v2-cta${v2SwitchConfig.isV2Target ? ' is-v2-target' : ''}" data-switch-mode="${v2SwitchConfig.target}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            ${
+              v2SwitchConfig.isV2Target
+                ? '<path d="M12 2.5l2.1 6.2 6.4 3.3-6.4 3.3L12 21.5l-2.1-6.2-6.4-3.3 6.4-3.3z"/>'
+                : '<polyline points="15 18 9 12 15 6"/><line x1="9" y1="12" x2="20" y2="12"/>'
+            }
+          </svg>
+          <span>${v2SwitchConfig.label}</span>
+        </button>`
+      : '';
+
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
 
     this.bodyEl.innerHTML = `
@@ -216,6 +260,7 @@ export class ExplanationDrawer {
       </div>
 
       ${opticsMotionBtnHtml}
+      ${v2SwitchBtnHtml}
 
       ${analogyHtml}
 
@@ -254,6 +299,13 @@ export class ExplanationDrawer {
     if (ctaBtn && this.handlers.onOpenOpticsMotion) {
       ctaBtn.addEventListener('click', () => {
         this.handlers.onOpenOpticsMotion?.(recommendedScenarioForLensPart(part.id), part.id);
+      });
+    }
+
+    const v2Btn = this.bodyEl.querySelector<HTMLButtonElement>('[data-switch-mode]');
+    if (v2Btn && v2SwitchConfig && this.handlers.onSwitchMode) {
+      v2Btn.addEventListener('click', () => {
+        this.handlers.onSwitchMode?.(v2SwitchConfig.target);
       });
     }
 

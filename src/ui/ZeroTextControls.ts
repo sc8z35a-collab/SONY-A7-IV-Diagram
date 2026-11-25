@@ -219,6 +219,10 @@ export class ZeroTextControls {
   private lensSec2Btn: HTMLButtonElement;
   private lensSec3Btn: HTMLButtonElement;
 
+  private v2PhaseBar: HTMLElement;
+  private v1PhaseBtn: HTMLButtonElement;
+  private v2PhaseBtn: HTMLButtonElement;
+
   private qualityStdBtn: HTMLButtonElement;
   private qualityHighBtn: HTMLButtonElement;
   private qualityUltraBtn: HTMLButtonElement;
@@ -335,6 +339,46 @@ export class ZeroTextControls {
     this.root.appendChild(this.lensSectionBar);
 
     // -----------------------------------------------------------------------
+    // 1C. Top-Center [ V1 | V2 ] Ultra-Microscopic Dissection Switcher Pill
+    //     Visible ONLY in Pixel ('micro' / 'micro_v2') and BIONZ XR ('bionz' / 'bionz_v2') modes!
+    // -----------------------------------------------------------------------
+    this.v2PhaseBar = document.createElement('div');
+    this.v2PhaseBar.className = 'v2-phase-bar is-hidden';
+    this.v2PhaseBar.setAttribute('role', 'group');
+    this.v2PhaseBar.setAttribute('aria-label', '極超解剖 V1 / V2 切替');
+
+    this.v1PhaseBtn = document.createElement('button');
+    this.v1PhaseBtn.type = 'button';
+    this.v1PhaseBtn.className = 'v2-phase-btn is-v1 is-active';
+    this.v1PhaseBtn.dataset.phaseVersion = 'v1';
+    this.v1PhaseBtn.setAttribute('aria-label', 'V1 個別解剖図');
+    const v1Span = document.createElement('span');
+    v1Span.textContent = 'V1';
+    this.v1PhaseBtn.appendChild(v1Span);
+
+    this.v2PhaseBtn = document.createElement('button');
+    this.v2PhaseBtn.type = 'button';
+    this.v2PhaseBtn.className = 'v2-phase-btn is-v2';
+    this.v2PhaseBtn.dataset.phaseVersion = 'v2';
+    this.v2PhaseBtn.setAttribute('aria-label', 'V2 さらに微細な部品極超解剖図');
+    this.v2PhaseBtn.appendChild(svgIcon(ICONS.ultraRayStar));
+    const v2Span = document.createElement('span');
+    v2Span.textContent = 'V2';
+    this.v2PhaseBtn.appendChild(v2Span);
+
+    this.v1PhaseBtn.addEventListener('click', () => {
+      if (this.currentMode === 'micro_v2') this.setMode('micro');
+      else if (this.currentMode === 'bionz_v2') this.setMode('bionz');
+    });
+    this.v2PhaseBtn.addEventListener('click', () => {
+      if (this.currentMode === 'micro') this.setMode('micro_v2');
+      else if (this.currentMode === 'bionz') this.setMode('bionz_v2');
+    });
+
+    this.v2PhaseBar.append(this.v1PhaseBtn, this.v2PhaseBtn);
+    this.root.appendChild(this.v2PhaseBar);
+
+    // -----------------------------------------------------------------------
     // 2. Left Vertical Layer Dissection Strip (Single Event Delegation — 0 per-row closures!)
     // -----------------------------------------------------------------------
     this.layerRail = document.createElement('div');
@@ -402,6 +446,8 @@ export class ZeroTextControls {
     ultraSep.className = 'cad-sub-divider';
 
     this.microBtn = createIconButton(ICONS.microPixel);
+    this.microBtn.dataset.mode = 'micro';
+    this.microBtn.setAttribute('aria-label', 'ピクセル個別超解剖');
 
     this.batteryBtn = createIconButton(ICONS.batteryPack);
     this.batteryBtn.dataset.mode = 'battery';
@@ -586,6 +632,10 @@ export class ZeroTextControls {
     this.root.appendChild(dock);
   }
 
+  private isV2CapableMode(mode: ScaleMode): boolean {
+    return mode === 'micro' || mode === 'micro_v2' || mode === 'bionz' || mode === 'bionz_v2';
+  }
+
   private applyModeButtons(mode: ScaleMode): void {
     this.integratedBtn.classList.toggle('is-active', mode === 'integrated');
     this.cameraBodyBtn.classList.toggle('is-active', mode === 'camera_body');
@@ -597,13 +647,31 @@ export class ZeroTextControls {
     this.evfBtn.classList.toggle('is-active', mode === 'evf');
     this.lcdBtn.classList.toggle('is-active', mode === 'lcd');
     this.bodyBtn.classList.toggle('is-active', mode === 'body');
-    this.microBtn.classList.toggle('is-active', mode === 'micro');
+    this.microBtn.classList.toggle('is-active', mode === 'micro' || mode === 'micro_v2');
     this.batteryBtn.classList.toggle('is-active', mode === 'battery');
     this.cfexpressBtn.classList.toggle('is-active', mode === 'cfexpress');
-    this.bionzBtn.classList.toggle('is-active', mode === 'bionz');
+    this.bionzBtn.classList.toggle('is-active', mode === 'bionz' || mode === 'bionz_v2');
     this.mishoeBtn.classList.toggle('is-active', mode === 'mishoe');
     this.micBtn.classList.toggle('is-active', mode === 'mic');
     this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
+
+    const showV2Bar = this.isV2CapableMode(mode);
+    this.v2PhaseBar.classList.toggle('is-hidden', !showV2Bar);
+    if (showV2Bar) {
+      const isV2 = mode === 'micro_v2' || mode === 'bionz_v2';
+      const isMicroFamily = mode === 'micro' || mode === 'micro_v2';
+      this.v2PhaseBar.dataset.phaseFamily = isMicroFamily ? 'micro' : 'bionz';
+      this.v1PhaseBtn.classList.toggle('is-active', !isV2);
+      this.v2PhaseBtn.classList.toggle('is-active', isV2);
+      this.v1PhaseBtn.setAttribute(
+        'aria-label',
+        isMicroFamily ? 'V1 ピクセル配列図' : 'V1 BIONZ XR パッケージ図'
+      );
+      this.v2PhaseBtn.setAttribute(
+        'aria-label',
+        isMicroFamily ? 'V2 ピクセル原子・量子極超解剖図' : 'V2 BIONZ XR 2nm GAA極超解剖図'
+      );
+    }
   }
 
   private applyLensSectionButtons(section: LensSection): void {
@@ -713,6 +781,7 @@ export class ZeroTextControls {
   public syncOpticsStudio(active: boolean): void {
     this.opticsStudioBtn.classList.toggle('is-active', active);
     this.lensSectionBar.classList.toggle('is-hidden', active || this.currentMode !== 'lens');
+    this.v2PhaseBar.classList.toggle('is-hidden', active || !this.isV2CapableMode(this.currentMode));
   }
 
   public syncFullscreen(active: boolean): void {
@@ -1418,6 +1487,67 @@ export class ZeroTextControls {
                 part.order === 31
               ? 25
               : 18;
+      } else if (part.subsystem === 'micro_v2') {
+        // Pixel V2 Ultra-Microscopic Atomic & 2026 Quantum Dissection (P2-01–P2-30)
+        widthPx =
+          part.order === 1 ||
+          part.order === 2 ||
+          part.order === 7 ||
+          part.order === 9 ||
+          part.order === 13 ||
+          part.order === 16 ||
+          part.order === 19 ||
+          part.order === 23 ||
+          part.order === 24 ||
+          part.order === 26 ||
+          part.order === 30
+            ? 32
+            : part.order === 3 ||
+                part.order === 5 ||
+                part.order === 8 ||
+                part.order === 10 ||
+                part.order === 12 ||
+                part.order === 14 ||
+                part.order === 17 ||
+                part.order === 20 ||
+                part.order === 22 ||
+                part.order === 25 ||
+                part.order === 27 ||
+                part.order === 29
+              ? 25
+              : 19;
+      } else if (part.subsystem === 'bionz_v2') {
+        // BIONZ XR / XR2 V2 Ultra-Microscopic 2nm GAA / A16 BSPDN Dissection (X2-01–X2-30)
+        widthPx =
+          part.order === 1 ||
+          part.order === 3 ||
+          part.order === 4 ||
+          part.order === 7 ||
+          part.order === 12 ||
+          part.order === 13 ||
+          part.order === 16 ||
+          part.order === 18 ||
+          part.order === 20 ||
+          part.order === 26 ||
+          part.order === 27 ||
+          part.order === 30
+            ? 32
+            : part.order === 2 ||
+                part.order === 5 ||
+                part.order === 6 ||
+                part.order === 8 ||
+                part.order === 10 ||
+                part.order === 14 ||
+                part.order === 15 ||
+                part.order === 17 ||
+                part.order === 19 ||
+                part.order === 21 ||
+                part.order === 24 ||
+                part.order === 25 ||
+                part.order === 28 ||
+                part.order === 29
+              ? 25
+              : 19;
       } else {
         // Micro pixel cross-section (15 core M01–M15 + 60 standalone-only ultra-nano M16–M75)
         if (part.order <= 15) {
