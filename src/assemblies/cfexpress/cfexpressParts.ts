@@ -5,9 +5,19 @@ import {
   attachCadEdges,
   createFrameShape,
   createRoundedRectShape,
-  extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
+import {
+  applyPlanarUVs,
+  buildChipPackage,
+  buildShieldedInductor,
+  buildSmdPassive,
+  buildTantalumCap,
+  createChamferedBoxGeo,
+  extrudeHiRes,
+  hiResCyl,
+  hiResSphere,
+} from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 import { buildCfexpressUltra27Parts } from './cfexpressUltra27Parts';
 
@@ -19,11 +29,11 @@ function finalizeCfexpressPart(
   assembledPos: THREE.Vector3,
   explodeOffset: THREE.Vector3,
   clippingPlanes: THREE.Plane[],
-  edgeOpacity = 0.25
+  edgeOpacity = 0.2
 ): CadPart {
   group.position.copy(assembledPos);
   tagPartMeshes(group, id);
-  const { meshes, edges } = attachCadEdges(group, clippingPlanes, 26, edgeOpacity);
+  const { meshes, edges } = attachCadEdges(group, clippingPlanes, 32, edgeOpacity);
 
   return {
     id,
@@ -42,39 +52,47 @@ function finalizeCfexpressPart(
 }
 
 /**
- * Phase 26B — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G Type A TOUGH / PCIe Gen4 NVMe 2.0: 30 Parts C01–C30).
+ * Phase 26B — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.0: 30 Parts C01–C30).
  * Rendered at crisp 2.0× macro inspection scale (40.0 × 56.0 × 5.6 mm for real 20 × 28 × 2.8 mm Type A card), centered at (0, 0, 0).
- * Card stands upright along Y (21-pin PCIe Gold Edge Connector at bottom y ≈ -26.5, Non-Slip Pull-Tab at top y ≈ +26.5).
+ * Card stands upright along Y (verified 21-pin staggered PCIe Gold Edge Connector at bottom y ≈ -26.5, Non-Slip Pull-Tab at top y ≈ +26.5).
  */
 export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   const parts: CadPart[] = [];
   const cp = mats.clippingPlanes;
+  const u = mats.ultra;
 
   // =========================================================================
   // C01. Top Metal Armor Shell (TOUGH 150N Bend / 7.5m Drop)
   // =========================================================================
   {
     const g = new THREE.Group();
-    const topArmor = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(39.4, 52.4, 2.6), 0.75, 0.12, 0.12, 14),
-      mats.bodyMgShell
+    // CNC-chamfered brushed gunmetal-titanium Sony CEA-G1920T TOUGH armor plate!
+    // Displays iconic cinnabar-orange TOUGH stripe, SONY serif, gold G, CFexpress [A] 4.0, 1920GB, R:1800 / W:1700, VPG400 & VPG800!
+    const armorW = 39.4;
+    const armorH = 52.4;
+    const armorGeo = extrudeHiRes(createRoundedRectShape(armorW, armorH, 2.8), 0.78, 0.16, 0.16, 3, 24);
+    applyPlanarUVs(armorGeo, armorW, armorH, 'xy');
+    const topArmor = new THREE.Mesh(armorGeo, u.cfeTopArmorShell);
+
+    // Subtle micro-stepped perimeter chamfer bezel catching crisp studio specular highlights
+    const bezelRim = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(armorW - 0.5, armorH - 0.5, 2.5, armorW - 1.8, armorH - 1.8, 2.1), 0.12, 0.03, 0.03, 1, 20),
+      mats.stainlessMachined
     );
-    const toughStripe = new THREE.Mesh(new THREE.BoxGeometry(36.0, 4.4, 0.82), mats.cinnabarAnodized);
-    toughStripe.position.set(0, 18.0, 0.06);
-    const goldBadge = new THREE.Mesh(new THREE.BoxGeometry(10.5, 4.2, 0.82), mats.goldPlating);
-    goldBadge.position.set(11.5, -16.5, 0.06);
-    g.add(topArmor, toughStripe, goldBadge);
+    bezelRim.position.z = 0.36;
+    bezelRim.userData.noEdges = true;
+    g.add(topArmor, bezelRim);
 
     parts.push(
       finalizeCfexpressPart(
         'cfe-top-metal-armor',
         1,
-        '#334155',
+        '#272d38',
         g,
         new THREE.Vector3(0, 1.2, 2.45),
-        new THREE.Vector3(0, 0, 62),
+        new THREE.Vector3(0, 0, 68),
         cp,
-        0.24
+        0.16
       )
     );
   }
@@ -84,15 +102,14 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const botPlate = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(39.4, 51.0, 2.4), 0.72, 0.1, 0.1, 14),
-      mats.stainlessMachined
-    );
-    const vpgBadge = new THREE.Mesh(new THREE.BoxGeometry(12.0, 7.2, 0.78), mats.matteBlackAnodized);
-    vpgBadge.position.set(-9.5, -12.0, -0.05);
-    const serialBar = new THREE.Mesh(new THREE.BoxGeometry(24.0, 2.2, 0.78), mats.silverElectrode);
-    serialBar.position.set(0, 14.0, -0.05);
-    g.add(botPlate, vpgBadge, serialBar);
+    // Brushed stainless steel heat-dissipation backplate with razor-sharp dark laser etching
+    // (SONY CEA-G1920T, VPG800 clapperboard, 2D DataMatrix, CE/FC/UKCA/VCCI/WEEE, S/N, MADE IN TAIWAN)!
+    const plateW = 39.4;
+    const plateH = 51.0;
+    const botGeo = extrudeHiRes(createRoundedRectShape(plateW, plateH, 2.6), 0.74, 0.14, 0.14, 3, 24);
+    applyPlanarUVs(botGeo, plateW, plateH, 'xy-back');
+    const botPlate = new THREE.Mesh(botGeo, u.cfeBackplateLaser);
+    g.add(botPlate);
 
     parts.push(
       finalizeCfexpressPart(
@@ -103,7 +120,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 1.6, -2.45),
         new THREE.Vector3(0, 0, -62),
         cp,
-        0.24
+        0.16
       )
     );
   }
@@ -114,11 +131,14 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const monoFrame = new THREE.Mesh(
-      extrudeCentered(createFrameShape(40.2, 55.4, 2.8, 34.4, 48.2, 1.6), 4.1, 0.12, 0.12, 14),
-      mats.shutterChassis
+      extrudeHiRes(createFrameShape(40.2, 55.4, 3.0, 34.4, 48.2, 1.8), 4.12, 0.18, 0.18, 2, 24),
+      u.batPolycarbonateShell
     );
-    // Asymmetric Type A side lock notch & key guide rail
-    const sideRail = new THREE.Mesh(new THREE.BoxGeometry(1.4, 34.0, 2.2), mats.matteBlackAnodized);
+    // Asymmetric Type-A side poka-yoke lock rail + chamfered lead-in notch
+    const sideRail = new THREE.Mesh(
+      createChamferedBoxGeo(1.42, 34.2, 2.25, 0.35, 0.12, 'z'),
+      mats.matteBlackAnodized
+    );
     sideRail.position.set(-20.2, 2.0, 0);
     g.add(monoFrame, sideRail);
 
@@ -126,12 +146,12 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
       finalizeCfexpressPart(
         'cfe-monolithic-resin',
         3,
-        '#1e293b',
+        '#1e2128',
         g,
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(-64, 0, 12),
         cp,
-        0.26
+        0.18
       )
     );
   }
@@ -141,14 +161,15 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
+    // Dual-lip IP57 seamless fluoropolymer & matte EPDM perimeter gasket rings
     const ip57Seal = new THREE.Mesh(
-      extrudeCentered(createFrameShape(39.8, 54.6, 2.7, 37.8, 52.6, 2.1), 0.75, 0.05, 0.05, 14),
+      extrudeHiRes(createFrameShape(39.8, 54.6, 2.8, 38.1, 52.9, 2.2), 0.65, 0.08, 0.08, 2, 22),
       mats.fluorineCoatCyan
     );
     ip57Seal.position.z = 1.85;
     const ip57Back = new THREE.Mesh(
-      extrudeCentered(createFrameShape(39.8, 54.6, 2.7, 37.8, 52.6, 2.1), 0.75, 0.05, 0.05, 14),
-      mats.epdmGasket
+      extrudeHiRes(createFrameShape(39.8, 54.6, 2.8, 38.1, 52.9, 2.2), 0.65, 0.08, 0.08, 2, 22),
+      u.micRubberBootBlack
     );
     ip57Back.position.z = -1.85;
     g.add(ip57Seal, ip57Back);
@@ -162,7 +183,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(64, 0, 22),
         cp,
-        0.24
+        0.18
       )
     );
   }
@@ -172,18 +193,43 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const fingerBar = new THREE.Mesh(new THREE.BoxGeometry(33.2, 6.2, 1.05), mats.hdiMainboardPcb);
+    const fingerBar = new THREE.Mesh(
+      createChamferedBoxGeo(33.4, 6.2, 1.04, 0.35, 0.08, 'z'),
+      u.cfeHdiPcb
+    );
     g.add(fingerBar);
-    // 21 crisp hard-gold PCIe fingers (staggered power/GND pins slightly longer!)
-    for (let i = 0; i < 21; i++) {
-      const fx = -15.0 + i * 1.5;
-      const isPowerGnd = i % 3 === 0;
-      const len = isPowerGnd ? 5.4 : 4.5;
-      const pinTop = new THREE.Mesh(new THREE.BoxGeometry(0.92, len, 0.22), mats.goldPlating);
-      pinTop.position.set(fx, -0.35 - (len - 4.5) * 0.4, 0.62);
-      const pinBot = new THREE.Mesh(new THREE.BoxGeometry(0.92, len, 0.22), mats.goldPlating);
-      pinBot.position.set(fx, -0.35 - (len - 4.5) * 0.4, -0.62);
-      g.add(pinTop, pinBot);
+
+    // Verified exact CFexpress Type A 21-pin staggered hard-gold contact array:
+    // First-make longer GND/+3V3 pins: 1, 4, 10, 15, 18, 21; Last-make recessed INS# card-detect: pin 12!
+    const firstMakePins = new Set([1, 4, 10, 15, 18, 21]);
+    for (let pin = 1; pin <= 21; pin++) {
+      const fx = -15.0 + (pin - 1) * 1.5;
+      const isLong = firstMakePins.has(pin);
+      const isIns = pin === 12;
+      const len = isLong ? 5.6 : isIns ? 3.8 : 4.75;
+      const yShift = isLong ? -0.42 : isIns ? 0.45 : -0.05;
+
+      // Primary lower contact face (-Z) & top mirror contact face (+Z) with rounded lead-in tips
+      for (const sz of [-0.6, 0.6]) {
+        const finger = new THREE.Mesh(
+          createChamferedBoxGeo(0.96, len, 0.2, 0.22, 0.04, 'z'),
+          mats.goldPlating
+        );
+        finger.position.set(fx, yShift, sz);
+        finger.userData.noEdges = true;
+        g.add(finger);
+
+        // Micro gold neck trace rising from each contact finger up into the HDI bus via collar
+        const neck = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.35, 0.1), mats.copperCoil);
+        neck.position.set(fx, 2.35, sz * 0.92);
+        neck.userData.noEdges = true;
+        g.add(neck);
+      }
+      // Micro-via transition pad connecting each gold finger up into the 8-layer HDI bus
+      const via = new THREE.Mesh(hiResCyl(0.32, 0.32, 1.18, 12).rotateX(Math.PI / 2), mats.goldPlating);
+      via.position.set(fx, 2.88, 0);
+      via.userData.noEdges = true;
+      g.add(via);
     }
 
     parts.push(
@@ -195,7 +241,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, -24.6, 0),
         new THREE.Vector3(0, -56, 16),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -205,27 +251,48 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const shroudTop = new THREE.Mesh(new THREE.BoxGeometry(39.6, 6.4, 1.15), mats.bodyBatteryShell);
+    const shroudTop = new THREE.Mesh(
+      createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z'),
+      u.batPolycarbonateShell
+    );
     shroudTop.position.z = 1.65;
-    const shroudBot = new THREE.Mesh(new THREE.BoxGeometry(39.6, 6.4, 1.15), mats.bodyBatteryShell);
+    const shroudBot = new THREE.Mesh(
+      createChamferedBoxGeo(39.6, 6.4, 1.15, 0.4, 0.12, 'z'),
+      u.batPolycarbonateShell
+    );
     shroudBot.position.z = -1.65;
-    // Polarized Type-A asymmetric keying cheek on right edge
-    const keyTab = new THREE.Mesh(new THREE.BoxGeometry(3.4, 6.6, 4.4), mats.matteBlackAnodized);
+
+    // Polarized Type-A asymmetric keying cheek & anti-reverse ribs protecting the 21 pins
+    const keyTab = new THREE.Mesh(
+      createChamferedBoxGeo(3.4, 6.6, 4.4, 0.45, 0.12, 'z'),
+      mats.matteBlackAnodized
+    );
     keyTab.position.set(18.2, 0, 0);
-    const leftCheek = new THREE.Mesh(new THREE.BoxGeometry(2.6, 6.6, 4.4), mats.matteBlackAnodized);
+    const leftCheek = new THREE.Mesh(
+      createChamferedBoxGeo(2.6, 6.6, 4.4, 0.45, 0.12, 'z'),
+      mats.matteBlackAnodized
+    );
     leftCheek.position.set(-18.6, 0, 0);
+
+    // Molded protective inter-pin comb separators along front shroud lip
+    for (const sx of [-10.5, -3.5, 3.5, 10.5]) {
+      const comb = new THREE.Mesh(new THREE.BoxGeometry(0.45, 5.2, 0.55), mats.matteBlackAnodized);
+      comb.position.set(sx, -0.4, 1.0);
+      comb.userData.noEdges = true;
+      g.add(comb);
+    }
     g.add(shroudTop, shroudBot, keyTab, leftCheek);
 
     parts.push(
       finalizeCfexpressPart(
         'cfe-connector-shroud',
         6,
-        '#475569',
+        '#334155',
         g,
         new THREE.Vector3(0, -24.8, 0),
         new THREE.Vector3(0, -76, -14),
         cp,
-        0.26
+        0.2
       )
     );
   }
@@ -235,28 +302,31 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const pcbCore = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(34.0, 46.8, 1.4), 0.95, 0.04, 0.04, 12),
-      mats.hdiMainboardPcb
+    // High-DPI emerald-black 8-layer impedance-controlled HDI PCB (85Ω serpentine pairs, VIPPO vias, silkscreen!)
+    const pcbW = 34.0;
+    const pcbH = 46.8;
+    const pcbGeo = extrudeHiRes(createRoundedRectShape(pcbW, pcbH, 1.5), 0.96, 0.08, 0.08, 2, 20);
+    applyPlanarUVs(pcbGeo, pcbW, pcbH, 'xy');
+    const pcbCore = new THREE.Mesh(pcbGeo, u.cfeHdiPcb);
+
+    // Subtle copper laminate edge strip visible along PCB thickness perimeter
+    const edgeCopper = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(pcbW + 0.04, pcbH + 0.04, 1.5, pcbW - 0.35, pcbH - 0.35, 1.3), 0.36, 0.02, 0.02, 1, 18),
+      mats.pcbEdgeLaminate
     );
-    // Serpentine matched-length PCIe Gen4 differential copper bus lines
-    for (let i = -2; i <= 2; i++) {
-      const trace = new THREE.Mesh(new THREE.BoxGeometry(0.42, 16.0, 1.06), mats.copperHeatSpreader);
-      trace.position.set(i * 1.4, -14.5, 0);
-      g.add(trace);
-    }
-    g.add(pcbCore);
+    edgeCopper.userData.noEdges = true;
+    g.add(pcbCore, edgeCopper);
 
     parts.push(
       finalizeCfexpressPart(
         'cfe-hdi-8layer-pcb',
         7,
-        '#15803d',
+        '#0f3c30',
         g,
         new THREE.Vector3(0, 0.5, 0),
         new THREE.Vector3(0, 0, 0),
         cp,
-        0.24
+        0.18
       )
     );
   }
@@ -266,12 +336,26 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const substrate = new THREE.Mesh(new THREE.BoxGeometry(14.0, 14.0, 0.45), mats.abfSubstrate);
-    const socBody = new THREE.Mesh(new THREE.BoxGeometry(13.2, 13.2, 0.95), mats.icEpoxy);
-    socBody.position.z = 0.55;
-    const metalLid = new THREE.Mesh(new THREE.BoxGeometry(10.6, 10.6, 0.26), mats.ispSiliconDie);
-    metalLid.position.z = 1.08;
-    g.add(substrate, socBody, metalLid);
+    // AT&S ABF carrier substrate
+    const subGeo = createChamferedBoxGeo(14.2, 14.2, 0.44, 0.4, 0.05, 'z');
+    applyPlanarUVs(subGeo, 14.2, 14.2, 'xy');
+    const substrate = new THREE.Mesh(subGeo, u.bionzAbfSubstrate);
+
+    // Laser-marked Sony / Phison PS5027-E27T PCIe Gen4 NVMe 2.0 BGA controller package!
+    const socGeo = createChamferedBoxGeo(13.2, 13.2, 0.96, 0.35, 0.1, 'z');
+    applyPlanarUVs(socGeo, 13.2, 13.2, 'xy');
+    const socBody = new THREE.Mesh(socGeo, u.cfeControllerPkg);
+    socBody.position.z = 0.64;
+
+    // 8 ultra-miniature 0201 decoupling MLCCs flanking the controller on its ABF carrier
+    for (let i = 0; i < 4; i++) {
+      for (const sy of [-6.95, 6.95]) {
+        const cap = buildSmdPassive(1.15, 0.6, 0.42, mats.smdCeramic, mats.silverElectrode, 'z');
+        cap.position.set(-4.2 + i * 2.8, sy, 0.38);
+        g.add(cap);
+      }
+    }
+    g.add(substrate, socBody);
 
     parts.push(
       finalizeCfexpressPart(
@@ -282,7 +366,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-6.2, -9.0, 0.65),
         new THREE.Vector3(-42, -26, 26),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -292,13 +376,26 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const armCore1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 4.2, 0.42), mats.npuSiliconDie);
-    armCore1.position.set(-2.3, 2.2, 0);
-    const armCore2 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 4.2, 0.42), mats.npuSiliconDie);
-    armCore2.position.set(2.3, 2.2, 0);
-    const ftlBus = new THREE.Mesh(new THREE.BoxGeometry(8.8, 1.4, 0.35), mats.goldPlating);
+    // Photolithographic bare silicon dual-core ARM Cortex-R5 + FTL mapping logic blocks
+    for (const cx of [-2.35, 2.35]) {
+      const coreGeo = createChamferedBoxGeo(4.2, 4.2, 0.42, 0.16, 0.04, 'z');
+      applyPlanarUVs(coreGeo, 4.2, 4.2, 'xy');
+      const core = new THREE.Mesh(coreGeo, u.bionzDieFloorplan);
+      core.position.set(cx, 2.2, 0);
+      const frame = new THREE.Mesh(
+        extrudeHiRes(createFrameShape(4.3, 4.3, 0.18, 3.85, 3.85, 0.12), 0.1, 0.02, 0.02, 1, 10),
+        mats.goldPlating
+      );
+      frame.position.set(cx, 2.2, 0.22);
+      frame.userData.noEdges = true;
+      g.add(core, frame);
+    }
+    const ftlBus = new THREE.Mesh(
+      createChamferedBoxGeo(8.9, 1.45, 0.36, 0.16, 0.04, 'z'),
+      mats.goldPlating
+    );
     ftlBus.position.set(0, -1.2, 0);
-    g.add(armCore1, armCore2, ftlBus);
+    g.add(ftlBus);
 
     parts.push(
       finalizeCfexpressPart(
@@ -309,7 +406,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-6.2, -9.0, 1.3),
         new THREE.Vector3(-62, -16, 42),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -319,10 +416,18 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const ldpcMatrix = new THREE.Mesh(new THREE.BoxGeometry(5.6, 3.6, 0.4), mats.siliconLogicLayer);
-    const parityBars = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.65, 0.48), mats.copperHybridBond);
-    parityBars.position.y = -1.2;
-    g.add(ldpcMatrix, parityBars);
+    const ldpcGeo = createChamferedBoxGeo(5.7, 3.7, 0.4, 0.16, 0.04, 'z');
+    applyPlanarUVs(ldpcGeo, 5.7, 3.7, 'xy');
+    const ldpcMatrix = new THREE.Mesh(ldpcGeo, u.bionzCetusDie);
+
+    // Sculpted parity-check matrix rails
+    for (let i = 0; i < 4; i++) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.58, 0.2), mats.copperHybridBond);
+      bar.position.set(-1.95 + i * 1.3, -1.18, 0.22);
+      bar.userData.noEdges = true;
+      g.add(bar);
+    }
+    g.add(ldpcMatrix);
 
     parts.push(
       finalizeCfexpressPart(
@@ -333,7 +438,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-6.2, -11.8, 1.3),
         new THREE.Vector3(-62, -40, 42),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -343,9 +448,17 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const aesVault = new THREE.Mesh(new THREE.BoxGeometry(4.4, 3.8, 0.45), mats.goldPlating);
-    const lockShield = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.2, 0.56), mats.icEpoxy);
-    g.add(aesVault, lockShield);
+    const aesVault = new THREE.Mesh(
+      createChamferedBoxGeo(4.45, 3.85, 0.44, 0.25, 0.06, 'z'),
+      mats.goldPlating
+    );
+    const lockShield = new THREE.Mesh(
+      createChamferedBoxGeo(2.45, 2.25, 0.56, 0.2, 0.05, 'z'),
+      u.icEpoxyLaser
+    );
+    const keyRing = new THREE.Mesh(hiResCyl(0.55, 0.55, 0.62, 16).rotateX(Math.PI / 2), mats.goldPlating);
+    keyRing.userData.noEdges = true;
+    g.add(aesVault, lockShield, keyRing);
 
     parts.push(
       finalizeCfexpressPart(
@@ -356,7 +469,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-10.2, -10.8, 1.3),
         new THREE.Vector3(-82, -28, 32),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -366,13 +479,26 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 4 visibly stacked stepped silicon dies peeking inside BGA housing
-    const bgaBase = new THREE.Mesh(new THREE.BoxGeometry(25.6, 17.6, 0.45), mats.abfSubstrate);
-    const bgaMold = new THREE.Mesh(new THREE.BoxGeometry(24.8, 16.8, 1.05), mats.icEpoxy);
-    bgaMold.position.z = 0.65;
-    const dieGlow = new THREE.Mesh(new THREE.BoxGeometry(20.6, 12.6, 0.22), mats.siliconDramLayer);
-    dieGlow.position.z = 1.22;
-    g.add(bgaBase, bgaMold, dieGlow);
+    // Green ABF substrate base
+    const subGeo = createChamferedBoxGeo(25.8, 17.8, 0.44, 0.45, 0.05, 'z');
+    applyPlanarUVs(subGeo, 25.8, 17.8, 'xy');
+    const bgaBase = new THREE.Mesh(subGeo, u.bionzAbfSubstrate);
+
+    // Authentic KIOXIA BiCS8 3D TLC 218L-CBA 16DP laser-marked BGA NAND package!
+    const moldGeo = createChamferedBoxGeo(24.9, 16.9, 1.08, 0.4, 0.12, 'z');
+    applyPlanarUVs(moldGeo, 24.9, 16.9, 'xy');
+    const bgaMold = new THREE.Mesh(moldGeo, u.cfeNandPkg);
+    bgaMold.position.z = 0.68;
+
+    // 6 miniature 0201 VCCQ/VCC decoupling MLCCs seated cleanly along the NAND ABF substrate edges!
+    for (let i = 0; i < 3; i++) {
+      for (const sy of [-9.35, 9.35]) {
+        const cap = buildSmdPassive(1.18, 0.62, 0.44, mats.smdCeramic, mats.silverElectrode, 'z');
+        cap.position.set(-7.5 + i * 7.5, sy, 0.36);
+        g.add(cap);
+      }
+    }
+    g.add(bgaBase, bgaMold);
 
     parts.push(
       finalizeCfexpressPart(
@@ -383,7 +509,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 12.6, 0.7),
         new THREE.Vector3(-34, 38, 28),
         cp,
-        0.26
+        0.2
       )
     );
   }
@@ -393,12 +519,15 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const bgaBase = new THREE.Mesh(new THREE.BoxGeometry(25.6, 17.6, 0.45), mats.abfSubstrate);
-    const bgaMold = new THREE.Mesh(new THREE.BoxGeometry(24.8, 16.8, 1.05), mats.icEpoxy);
-    bgaMold.position.z = -0.65;
-    const dieGlow = new THREE.Mesh(new THREE.BoxGeometry(20.6, 12.6, 0.22), mats.siliconSensorDie);
-    dieGlow.position.z = -1.22;
-    g.add(bgaBase, bgaMold, dieGlow);
+    const subGeo = createChamferedBoxGeo(25.8, 17.8, 0.44, 0.45, 0.05, 'z');
+    applyPlanarUVs(subGeo, 25.8, 17.8, 'xy-back');
+    const bgaBase = new THREE.Mesh(subGeo, u.bionzAbfSubstrate);
+
+    const moldGeo = createChamferedBoxGeo(24.9, 16.9, 1.08, 0.4, 0.12, 'z');
+    applyPlanarUVs(moldGeo, 24.9, 16.9, 'xy-back');
+    const bgaMold = new THREE.Mesh(moldGeo, u.cfeNandPkg);
+    bgaMold.position.z = -0.68;
+    g.add(bgaBase, bgaMold);
 
     parts.push(
       finalizeCfexpressPart(
@@ -409,7 +538,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 12.6, -0.7),
         new THREE.Vector3(34, 38, -28),
         cp,
-        0.26
+        0.2
       )
     );
   }
@@ -419,9 +548,18 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const pslcTile = new THREE.Mesh(new THREE.BoxGeometry(20.0, 5.2, 0.38), mats.cinnabarAnodized);
-    const turboRail = new THREE.Mesh(new THREE.BoxGeometry(18.6, 1.2, 0.46), mats.goldPlating);
-    g.add(pslcTile, turboRail);
+    const pslcTile = new THREE.Mesh(
+      createChamferedBoxGeo(20.0, 5.2, 0.36, 0.3, 0.05, 'z'),
+      mats.cinnabarAnodized
+    );
+    // 8 parallel high-speed pSLC interleaved plane stripes + gold turbo rail
+    for (let i = 0; i < 8; i++) {
+      const lane = new THREE.Mesh(new THREE.BoxGeometry(1.7, 3.4, 0.16), mats.goldPlating);
+      lane.position.set(-7.8 + i * 2.22, 0, 0.22);
+      lane.userData.noEdges = true;
+      g.add(lane);
+    }
+    g.add(pslcTile);
 
     parts.push(
       finalizeCfexpressPart(
@@ -432,7 +570,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 7.6, 1.45),
         new THREE.Vector3(44, 24, 36),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -442,22 +580,28 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 5 stacked horizontal tungsten wordline plates pierced by 3x2 vertical CTF memory pillars!
-    for (let k = 0; k < 5; k++) {
+    // 9 alternating tungsten wordline & oxide dielectric decks pierced by 4×2 smooth vertical CTF pillars!
+    for (let k = 0; k < 9; k++) {
       const wl = new THREE.Mesh(
-        new THREE.BoxGeometry(10.0, 6.2, 0.24),
+        createChamferedBoxGeo(10.6, 6.4, 0.12, 0.18, 0.02, 'z'),
         k % 2 === 0 ? mats.tungstenGrid : mats.interlayerDielectric
       );
-      wl.position.z = (k - 2) * 0.45;
+      wl.position.z = (k - 4) * 0.19;
       g.add(wl);
     }
-    const pillarGeo = new THREE.CylinderGeometry(0.55, 0.55, 2.5, 12);
+    const pillarGeo = hiResCyl(0.46, 0.46, 1.78, 18);
     pillarGeo.rotateX(Math.PI / 2);
-    for (const px of [-3.0, 0.0, 3.0]) {
-      for (const py of [-1.5, 1.5]) {
+    const coreGeo = hiResCyl(0.24, 0.24, 1.88, 14);
+    coreGeo.rotateX(Math.PI / 2);
+    for (const px of [-3.6, -1.2, 1.2, 3.6]) {
+      for (const py of [-1.55, 1.55]) {
         const pillar = new THREE.Mesh(pillarGeo, mats.siliconPhotodiode);
         pillar.position.set(px, py, 0);
-        g.add(pillar);
+        pillar.userData.noEdges = true;
+        const core = new THREE.Mesh(coreGeo, mats.goldPlating);
+        core.position.set(px, py, 0);
+        core.userData.noEdges = true;
+        g.add(pillar, core);
       }
     }
 
@@ -467,10 +611,10 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         15,
         '#a855f7',
         g,
-        new THREE.Vector3(0, 15.8, 1.55),
+        new THREE.Vector3(0, 15.8, 1.38),
         new THREE.Vector3(-24, 62, 54),
         cp,
-        0.28
+        0.18
       )
     );
   }
@@ -480,10 +624,20 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const dramBody = new THREE.Mesh(new THREE.BoxGeometry(9.6, 11.4, 0.9), mats.icEpoxy);
-    const dramTop = new THREE.Mesh(new THREE.BoxGeometry(7.2, 8.6, 0.2), mats.siliconTsvDram);
-    dramTop.position.z = 0.5;
-    g.add(dramBody, dramTop);
+    // Laser-marked Micron LPDDR4 FBGA DRAM cache package with ABF substrate & Pin-1 dot
+    const dramPkg = buildChipPackage({
+      w: 9.6,
+      d: 11.4,
+      h: 0.92,
+      style: 'bga',
+      bodyMat: u.icEpoxyLaser,
+      leadMat: mats.silverElectrode,
+      topAccentMat: u.bionzPopDramTop,
+      pin1Mat: mats.goldPlating,
+      substrateMat: u.bionzAbfSubstrate,
+      axis: 'z',
+    });
+    g.add(dramPkg);
 
     parts.push(
       finalizeCfexpressPart(
@@ -494,7 +648,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(9.4, -8.5, 0.85),
         new THREE.Vector3(56, -24, 24),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -504,12 +658,21 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const pmic = new THREE.Mesh(new THREE.BoxGeometry(6.8, 6.8, 0.85), mats.icEpoxy);
-    const pmicPads = new THREE.Mesh(new THREE.BoxGeometry(7.4, 7.4, 0.25), mats.silverElectrode);
-    pmicPads.position.z = -0.32;
-    const capAccent = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.4, 0.22), mats.goldPlating);
-    capAccent.position.z = 0.48;
-    g.add(pmic, pmicPads, capAccent);
+    const pmic = buildChipPackage({
+      w: 6.9,
+      d: 6.9,
+      h: 0.86,
+      style: 'qfn',
+      pinsPerSide: 8,
+      bodyMat: u.icEpoxyLaser,
+      leadMat: mats.silverElectrode,
+      topAccentMat: u.bionzIpDieTile,
+      pin1Mat: mats.goldPlating,
+      axis: 'z',
+    });
+    // Faces -Z (rear side of PCB)
+    pmic.rotation.y = Math.PI;
+    g.add(pmic);
 
     parts.push(
       finalizeCfexpressPart(
@@ -520,7 +683,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(9.6, -9.2, -0.85),
         new THREE.Vector3(56, -22, -26),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -530,15 +693,24 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 3 ultra-low-profile shielded metal power inductors + row of 0201 MLCCs
+    // 3 genuine ultra-low-profile molded shielded metal-alloy power inductors (1R0 / 2R2) on rear side
     for (let i = 0; i < 3; i++) {
-      const ind = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 0.9), mats.ferriteInductor);
-      ind.position.set(4.5 + i * 3.8, -1.6, -0.85);
+      const ind = buildShieldedInductor(
+        3.25,
+        0.92,
+        mats.ferriteInductor,
+        mats.silverElectrode,
+        mats.silverElectrode,
+        'z'
+      );
+      ind.rotation.y = Math.PI;
+      ind.position.set(4.5 + i * 3.85, -1.6, -0.86);
       g.add(ind);
     }
-    for (let i = 0; i < 8; i++) {
-      const mlcc = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.65, 0.55), mats.smdCeramic);
-      mlcc.position.set(-12.0 + i * 2.2, 1.2, 0.72);
+    // 10 realistic 0201 ceramic decoupling MLCC capacitors with wrapped Ni-Sn end-caps!
+    for (let i = 0; i < 10; i++) {
+      const mlcc = buildSmdPassive(1.18, 0.66, 0.54, mats.smdCeramic, mats.silverElectrode, 'z');
+      mlcc.position.set(-12.6 + i * 1.95, 1.25, 0.72);
       g.add(mlcc);
     }
 
@@ -551,7 +723,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(54, 4, -36),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -561,12 +733,20 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    for (const cy of [-2.4, 2.4]) {
-      const tant = new THREE.Mesh(new THREE.BoxGeometry(6.8, 3.6, 1.0), mats.tantalumCapYellow);
+    // 2 authentic molded yellow tantalum PLP hold-up capacitors with anode polarity bar & J-leads!
+    for (const cy of [-2.45, 2.45]) {
+      const tant = buildTantalumCap(
+        7.0,
+        3.65,
+        1.02,
+        mats.tantalumCapYellow,
+        mats.cinnabarAnodized,
+        mats.silverElectrode,
+        'z'
+      );
+      tant.rotation.y = Math.PI;
       tant.position.y = cy;
-      const band = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3.7, 1.06), mats.cinnabarAnodized);
-      band.position.set(2.5, cy, 0);
-      g.add(tant, band);
+      g.add(tant);
     }
 
     parts.push(
@@ -578,7 +758,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-10.2, -10.5, -0.9),
         new THREE.Vector3(-56, -24, -30),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -590,13 +770,10 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     for (let i = 0; i < 4; i++) {
       const cx = -4.5 + i * 3.0;
-      const cap = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.4, 0.6), mats.smdCeramic);
+      const cap = buildSmdPassive(2.45, 1.4, 0.6, mats.smdCeramic, mats.silverElectrode, 'z');
+      cap.rotation.z = Math.PI / 2;
       cap.position.x = cx;
-      const padT = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.55, 0.64), mats.silverElectrode);
-      padT.position.set(cx, 1.0, 0);
-      const padB = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.55, 0.64), mats.silverElectrode);
-      padB.position.set(cx, -1.0, 0);
-      g.add(cap, padT, padB);
+      g.add(cap);
     }
 
     parts.push(
@@ -608,7 +785,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-2.0, -18.5, 0.72),
         new THREE.Vector3(-34, -52, 34),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -619,11 +796,20 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     for (const sx of [-6.0, 6.0]) {
-      const tvs = new THREE.Mesh(new THREE.BoxGeometry(5.6, 2.2, 0.65), mats.icEpoxy);
+      const tvs = buildChipPackage({
+        w: 5.6,
+        d: 2.25,
+        h: 0.66,
+        style: 'dfn',
+        pinsPerSide: 5,
+        bodyMat: u.icEpoxyLaser,
+        leadMat: mats.goldPlating,
+        pin1Mat: mats.silverElectrode,
+        axis: 'z',
+      });
+      tvs.rotation.y = Math.PI;
       tvs.position.x = sx;
-      const leads = new THREE.Mesh(new THREE.BoxGeometry(5.8, 2.6, 0.24), mats.goldPlating);
-      leads.position.set(sx, 0, -0.2);
-      g.add(tvs, leads);
+      g.add(tvs);
     }
 
     parts.push(
@@ -635,7 +821,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, -20.8, -0.75),
         new THREE.Vector3(34, -52, -34),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -645,11 +831,31 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const xtalLid = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.8, 0.8), mats.goldPlating);
-    xtalLid.position.x = -2.4;
-    const pllBuf = new THREE.Mesh(new THREE.BoxGeometry(3.4, 3.4, 0.65), mats.icEpoxy);
+    // Ceramic base + chamfered gold-seam-welded 2520 crystal oscillator lid
+    const xtalBase = new THREE.Mesh(
+      createChamferedBoxGeo(3.9, 2.9, 0.38, 0.25, 0.04, 'z'),
+      mats.ceramicAlumina
+    );
+    xtalBase.position.set(-2.4, 0, -0.15);
+    const xtalLid = new THREE.Mesh(
+      createChamferedBoxGeo(3.45, 2.45, 0.45, 0.22, 0.05, 'z'),
+      mats.goldPlating
+    );
+    xtalLid.position.set(-2.4, 0, 0.22);
+
+    const pllBuf = buildChipPackage({
+      w: 3.4,
+      d: 3.4,
+      h: 0.66,
+      style: 'qfn',
+      pinsPerSide: 4,
+      bodyMat: u.icEpoxyLaser,
+      leadMat: mats.silverElectrode,
+      pin1Mat: mats.goldPlating,
+      axis: 'z',
+    });
     pllBuf.position.x = 2.4;
-    g.add(xtalLid, pllBuf);
+    g.add(xtalBase, xtalLid, pllBuf);
 
     parts.push(
       finalizeCfexpressPart(
@@ -660,7 +866,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(8.5, -17.5, 0.75),
         new THREE.Vector3(46, -46, 30),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -670,10 +876,19 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const norIc = new THREE.Mesh(new THREE.BoxGeometry(5.8, 4.6, 0.85), mats.icEpoxy);
-    const pinDot = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.95, 10).rotateX(Math.PI / 2), mats.goldPlating);
-    pinDot.position.set(-2.0, 1.4, 0);
-    g.add(norIc, pinDot);
+    const norIc = buildChipPackage({
+      w: 5.8,
+      d: 4.6,
+      h: 0.85,
+      style: 'soic',
+      pinsPerSide: 4,
+      bodyMat: u.icEpoxyLaser,
+      leadMat: mats.silverElectrode,
+      pin1Mat: mats.goldPlating,
+      axis: 'z',
+    });
+    norIc.rotation.y = Math.PI;
+    g.add(norIc);
 
     parts.push(
       finalizeCfexpressPart(
@@ -684,7 +899,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-11.2, 0.2, -0.82),
         new THREE.Vector3(-60, 8, -32),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -694,10 +909,24 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const sensorIc = new THREE.Mesh(new THREE.BoxGeometry(3.8, 3.8, 0.75), mats.cinnabarAnodized);
-    const senseRing = new THREE.Mesh(new THREE.BoxGeometry(4.4, 4.4, 0.25), mats.copperHeatSpreader);
-    senseRing.position.z = -0.25;
-    g.add(sensorIc, senseRing);
+    const sensorIc = buildChipPackage({
+      w: 3.8,
+      d: 3.8,
+      h: 0.72,
+      style: 'dfn',
+      pinsPerSide: 4,
+      bodyMat: mats.cinnabarAnodized,
+      leadMat: mats.goldPlating,
+      pin1Mat: mats.goldPlating,
+      axis: 'z',
+    });
+    const sensePad = new THREE.Mesh(
+      createChamferedBoxGeo(4.45, 4.45, 0.16, 0.3, 0.02, 'z'),
+      mats.copperHeatSpreader
+    );
+    sensePad.position.z = -0.32;
+    sensePad.userData.noEdges = true;
+    g.add(sensorIc, sensePad);
 
     parts.push(
       finalizeCfexpressPart(
@@ -708,7 +937,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-0.2, -2.0, 0.75),
         new THREE.Vector3(-42, 4, 42),
         cp,
-        0.28
+        0.22
       )
     );
   }
@@ -718,13 +947,22 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const cuPlate = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(34.6, 44.0, 1.6), 0.36, 0.03, 0.03, 12),
-      mats.vaporChamberCopper
+    const cuGeo = extrudeHiRes(createRoundedRectShape(34.6, 44.0, 1.8), 0.36, 0.05, 0.05, 2, 20);
+    applyPlanarUVs(cuGeo, 34.6, 44.0, 'xy');
+    const cuPlate = new THREE.Mesh(cuGeo, u.cfeCopperThermal);
+
+    // Stamped embossed thermal contact pedestals pressing directly onto Controller SoC & Primary NAND!
+    const bossSoc = new THREE.Mesh(
+      createChamferedBoxGeo(13.6, 13.6, 0.44, 0.6, 0.08, 'z'),
+      mats.copperHeatSpreader
     );
-    const bossSoc = new THREE.Mesh(new THREE.BoxGeometry(13.6, 13.6, 0.45), mats.copperHeatSpreader);
     bossSoc.position.set(-6.2, -9.0, -0.22);
-    g.add(cuPlate, bossSoc);
+    const bossNand = new THREE.Mesh(
+      createChamferedBoxGeo(24.0, 16.0, 0.3, 0.8, 0.06, 'z'),
+      mats.copperHeatSpreader
+    );
+    bossNand.position.set(0, 12.6, -0.16);
+    g.add(cuPlate, bossSoc, bossNand);
 
     parts.push(
       finalizeCfexpressPart(
@@ -735,7 +973,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 2.2, 1.78),
         new THREE.Vector3(0, 0, 44),
         cp,
-        0.24
+        0.18
       )
     );
   }
@@ -745,12 +983,18 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const timSoc = new THREE.Mesh(new THREE.BoxGeometry(13.2, 13.2, 0.38), mats.thermalPadPink);
+    const timSoc = new THREE.Mesh(
+      createChamferedBoxGeo(13.2, 13.2, 0.38, 0.65, 0.08, 'z'),
+      mats.thermalPadPink
+    );
     timSoc.position.set(-6.2, -9.0, 0.15);
-    const timNand = new THREE.Mesh(new THREE.BoxGeometry(24.2, 16.4, 0.34), mats.thermalPadBlue);
+    const timNand = new THREE.Mesh(
+      createChamferedBoxGeo(24.2, 16.4, 0.34, 0.75, 0.07, 'z'),
+      mats.thermalPadBlue
+    );
     timNand.position.set(0, 12.6, 0.15);
     const grapheneBack = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(33.8, 43.0, 1.4), 0.24, 0.02, 0.02, 12),
+      extrudeHiRes(createRoundedRectShape(33.8, 43.0, 1.6), 0.24, 0.04, 0.04, 1, 20),
       mats.pyroGraphite
     );
     grapheneBack.position.set(0, 2.2, -3.15);
@@ -765,7 +1009,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 0, 1.38),
         new THREE.Vector3(0, 0, -42),
         cp,
-        0.24
+        0.18
       )
     );
   }
@@ -776,9 +1020,18 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const emiCollar = new THREE.Mesh(
-      extrudeCentered(createFrameShape(17.4, 17.4, 1.2, 14.4, 14.4, 0.8), 1.25, 0.04, 0.04, 12),
+      extrudeHiRes(createFrameShape(17.4, 17.4, 1.3, 14.4, 14.4, 0.9), 1.25, 0.06, 0.06, 2, 20),
       mats.emiShieldCan
     );
+    // Stamped corner retention spring tabs on EMI shield fence
+    for (const sx of [-7.8, 7.8]) {
+      for (const sy of [-5.2, 5.2]) {
+        const dimple = new THREE.Mesh(hiResCyl(0.45, 0.45, 0.28, 12).rotateX(Math.PI / 2), mats.silverElectrode);
+        dimple.position.set(sx, sy, 0.65);
+        dimple.userData.noEdges = true;
+        g.add(dimple);
+      }
+    }
     g.add(emiCollar);
 
     parts.push(
@@ -790,7 +1043,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(-6.2, -9.0, 1.0),
         new THREE.Vector3(-74, -46, 14),
         cp,
-        0.26
+        0.2
       )
     );
   }
@@ -800,20 +1053,34 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Underfill perimeter collar + visible miniature silver BGA solder ball grid
-    const underfillSoc = new THREE.Mesh(new THREE.BoxGeometry(14.8, 14.8, 0.32), mats.makeupSealViolet);
+    // Sloped perimeter capillary underfill fillets framing Controller & NAND BGAs
+    const underfillSoc = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(15.0, 15.0, 0.7, 13.2, 13.2, 0.4), 0.34, 0.08, 0.08, 2, 16),
+      mats.makeupSealViolet
+    );
     underfillSoc.position.set(-6.2, -9.0, 0);
-    const underfillNand = new THREE.Mesh(new THREE.BoxGeometry(26.4, 18.4, 0.32), mats.makeupSealViolet);
+    const underfillNand = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(26.4, 18.4, 0.8, 24.4, 16.4, 0.5), 0.34, 0.08, 0.08, 2, 16),
+      mats.makeupSealViolet
+    );
     underfillNand.position.set(0, 12.6, 0);
     g.add(underfillSoc, underfillNand);
-    const ballGeo = new THREE.SphereGeometry(0.32, 8, 6);
+
+    // Smooth spherical SAC305 BGA solder ball array (preserved hi-res spheres via InstancedMesh!)
+    const ballGeo = hiResSphere(0.32, 10, 8);
+    const ballInst = new THREE.InstancedMesh(ballGeo, mats.solderBallSilver, 35);
+    const dm = new THREE.Object3D();
+    let idx = 0;
     for (let ix = -3; ix <= 3; ix++) {
       for (let iy = -2; iy <= 2; iy++) {
-        const b = new THREE.Mesh(ballGeo, mats.solderBallSilver);
-        b.position.set(ix * 3.0, 12.6 + iy * 3.0, -0.1);
-        g.add(b);
+        dm.position.set(ix * 3.0, 12.6 + iy * 3.0, -0.1);
+        dm.updateMatrix();
+        ballInst.setMatrixAt(idx++, dm.matrix);
       }
     }
+    ballInst.instanceMatrix.needsUpdate = true;
+    ballInst.userData.noEdges = true;
+    g.add(ballInst);
 
     parts.push(
       finalizeCfexpressPart(
@@ -824,7 +1091,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 0, 0.54),
         new THREE.Vector3(-56, 36, -18),
         cp,
-        0.26
+        0.2
       )
     );
   }
@@ -834,14 +1101,28 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const smartBlock = new THREE.Mesh(new THREE.BoxGeometry(8.2, 5.2, 0.55), mats.sensorPcb);
-    const healthBar1 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3.2, 0.65), mats.cfaGreen);
-    healthBar1.position.x = -2.4;
-    const healthBar2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3.2, 0.65), mats.cfaGreen);
-    healthBar2.position.x = -0.4;
-    const healthBar3 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 3.2, 0.65), mats.cfaGreen);
-    healthBar3.position.x = 1.6;
-    g.add(smartBlock, healthBar1, healthBar2, healthBar3);
+    const smartBlock = buildChipPackage({
+      w: 8.2,
+      d: 5.2,
+      h: 0.56,
+      style: 'qfn',
+      pinsPerSide: 6,
+      bodyMat: u.batBmsPcb,
+      leadMat: mats.goldPlating,
+      pin1Mat: mats.goldPlating,
+      axis: 'z',
+    });
+    // 3 stepped emerald health-telemetry LED status bars on top
+    for (let i = 0; i < 3; i++) {
+      const bar = new THREE.Mesh(
+        createChamferedBoxGeo(1.42, 3.1, 0.16, 0.14, 0.03, 'z'),
+        mats.cfaGreen
+      );
+      bar.position.set(-2.2 + i * 2.1, 0, 0.34);
+      bar.userData.noEdges = true;
+      g.add(bar);
+    }
+    g.add(smartBlock);
 
     parts.push(
       finalizeCfexpressPart(
@@ -852,7 +1133,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(9.8, 0.5, 0.8),
         new THREE.Vector3(60, 14, 42),
         cp,
-        0.28
+        0.2
       )
     );
   }
@@ -862,22 +1143,33 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Stepped non-slip pull-tab grip bar at card tail (y = +26.4)
-    const pullBase = new THREE.Mesh(new THREE.BoxGeometry(36.0, 4.0, 1.35), mats.matteBlackAnodized);
-    pullBase.position.set(0, 26.2, 0);
+    // Sculpted 4-ridge ergonomic non-slip extraction pull-tab bar at card tail (y = +26.4)
+    const pullBase = new THREE.Mesh(
+      createChamferedBoxGeo(36.4, 4.1, 1.45, 0.75, 0.16, 'z'),
+      u.batPolycarbonateShell
+    );
+    pullBase.position.set(0, 26.25, 0);
     g.add(pullBase);
-    for (let i = 0; i < 3; i++) {
-      const rib = new THREE.Mesh(new THREE.BoxGeometry(32.0, 0.55, 1.75), mats.bodyLeatherette);
-      rib.position.set(0, 25.0 + i * 1.15, 0);
+
+    for (let i = 0; i < 4; i++) {
+      const rib = new THREE.Mesh(
+        createChamferedBoxGeo(32.8, 0.44, 1.88, 0.18, 0.08, 'z'),
+        mats.matteBlackAnodized
+      );
+      rib.position.set(0, 24.85 + i * 0.92, 0);
+      rib.userData.noEdges = true;
       g.add(rib);
     }
-    // Thin multi-layer anti-UV / anti-static protective top label film
-    const uvFilm = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(36.0, 42.0, 1.8), 0.16, 0.02, 0.02, 12),
-      mats.nanoArIridescent
+
+    // Ultra-clean hairline perimeter anti-UV / anti-static protective optical frame
+    // (preserves 100% crisp contrast on the Sony CEA-G1920T TOUGH front armor plate!)
+    const uvRim = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(38.0, 50.8, 2.4, 36.6, 49.4, 2.0), 0.1, 0.02, 0.02, 1, 20),
+      mats.opticalCementClear
     );
-    uvFilm.position.set(0, 0.5, 2.95);
-    g.add(uvFilm);
+    uvRim.position.set(0, 1.2, 2.9);
+    uvRim.userData.noEdges = true;
+    g.add(uvRim);
 
     parts.push(
       finalizeCfexpressPart(
@@ -888,7 +1180,7 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(22, 48, 34),
         cp,
-        0.24
+        0.18
       )
     );
   }

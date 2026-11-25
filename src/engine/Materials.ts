@@ -1,5 +1,17 @@
 import * as THREE from 'three';
-import { GPU_PROFILE, optimizeMaterialsForGpu } from './GpuOptimizer';
+import {
+  GPU_PROFILE,
+  NATIVE_HI_TEX_H,
+  NATIVE_HI_TEX_W,
+  NATIVE_TILE_TEX_SIZE,
+  optimizeMaterialsForGpu,
+} from './GpuOptimizer';
+import {
+  createUltraRealisticMaterials,
+  UltraRealisticMaterials,
+} from './UltraRealisticTextures';
+
+export { NATIVE_HI_TEX_H, NATIVE_HI_TEX_W, NATIVE_TILE_TEX_SIZE };
 
 export interface MaterialLibrary {
   clippingPlanes: THREE.Plane[];
@@ -161,13 +173,11 @@ export interface MaterialLibrary {
   thermalPuttyPink: THREE.MeshStandardMaterial;
   gMasterRedBadge: THREE.MeshPhysicalMaterial;
   makeupSealViolet: THREE.MeshPhysicalMaterial;
+  // Ultra-HD Photorealistic Component Materials (BIONZ XR / Mic / Battery / CFexpress)
+  ultra: UltraRealisticMaterials;
   // Utility
   allMaterials: THREE.Material[];
 }
-
-export const NATIVE_HI_TEX_W = GPU_PROFILE.isMobile ? 256 : 512;
-export const NATIVE_HI_TEX_H = GPU_PROFILE.isMobile ? 192 : 384;
-export const NATIVE_TILE_TEX_SIZE = 128;
 
 function createScaledCanvas(
   baseW: number,
@@ -770,9 +780,10 @@ function createPcbLaminateEdgeTexture(): THREE.DataTexture {
   const size = NATIVE_TILE_TEX_SIZE;
   const data = new Uint8Array(size * size * 4);
   const copperRows = new Uint8Array(size);
+  const bandH = Math.max(3, Math.round(size / 42));
   for (let i = 0; i < 12; i++) {
-    const y0 = Math.round(6 + (i / 11) * 112);
-    for (let dy = 0; dy < 3 && y0 + dy < size; dy++) copperRows[size - 1 - (y0 + dy)] = 1;
+    const y0 = Math.round(size * 0.05 + (i / 11) * (size * 0.88));
+    for (let dy = 0; dy < bandH && y0 + dy < size; dy++) copperRows[size - 1 - (y0 + dy)] = 1;
   }
   for (let y = 0; y < size; y++) {
     const isCu = copperRows[y] === 1;
@@ -2816,6 +2827,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     makeupSealViolet,
   ];
 
+  const ultra = createUltraRealisticMaterials(clippingPlanes);
+  allMaterials.push(...ultra.list);
+
   // Tag procedural micro-bump channels so GpuMegaBatch folds all 287 bump-mapped meshes
   // directly into ONE single Opaque LUT draw call with screen-space dual-channel bump!
   // Also eliminate redundant duplicate bumpMap shader permutations on dynamic parts.
@@ -2843,6 +2857,9 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
       lensEdGlass,
       evfDichroicMirror,
       fluorineCoatCyan,
+      ultra.batHologramFoil,
+      ultra.bionzDieFloorplan,
+      ultra.micMemsSiliconDiaphragm,
     ]),
     GPU_PROFILE
   );
@@ -2991,6 +3008,7 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
     thermalPuttyPink,
     gMasterRedBadge,
     makeupSealViolet,
+    ultra,
     allMaterials,
   };
 }

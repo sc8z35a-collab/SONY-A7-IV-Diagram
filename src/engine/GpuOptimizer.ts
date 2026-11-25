@@ -78,6 +78,11 @@ function detectGpuProfile(): GpuProfile {
 /** Singleton GPU profile evaluated once at startup so geometry, materials & renderer match. */
 export const GPU_PROFILE: GpuProfile = detectGpuProfile();
 
+/** Shared native Power-of-Two Texture2DArray dimensions (single source of truth for Materials + GpuMegaBatch). */
+export const NATIVE_HI_TEX_W = GPU_PROFILE.isMobile ? 256 : 1024;
+export const NATIVE_HI_TEX_H = GPU_PROFILE.isMobile ? 256 : 1024;
+export const NATIVE_TILE_TEX_SIZE = GPU_PROFILE.isMobile ? 128 : 256;
+
 /** Scale a geometry segment count cleanly according to the active GPU profile. */
 export function scaleSegments(segments: number, minSegments = 6): number {
   if (GPU_PROFILE.curveScale >= 0.999) return segments;

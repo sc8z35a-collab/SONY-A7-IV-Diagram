@@ -935,5 +935,275 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
     ],
     diagramType: 'cfe_read_reclaim_scrub',
   },
+
+  'cfe-pcie-gen4-serdes-phy': {
+    title: 'C61. 16 GT/s PCIe Gen4 ×1 アナログSerDes PHY ＆ CTLE/DFE波形イコライザ',
+    subtitle: '16 GT/s PCIe Gen4 ×1 Analog SerDes Transceiver PHY & CTLE/DFE Equalizer Front-End',
+    category: '毎秒160億回の波をくっきり蘇らせる耳と口 C61 — なまった超高速信号をオンダイコイルで整形するアナログ最前線',
+    plainAnalogy:
+      'CFexpress 4.0では1秒間に160億回もの速さで0と1の電気の波が飛び交いますが、たった数センチ基板を走っただけで波の形は丸く潰れてしまいます。そこでコントローラ入口に極小の渦巻き銅コイル（ピーキングインダクタ）とCTLE/DFE波形復元回路を置き、潰れた波を一瞬でピンと蘇らせて読み誤りゼロを保ちます！',
+    summary:
+      'PCIe Gen4（16 GT/s NRZ）通信の物理層を担うコントローラ内蔵アナログSerDes PHYブロック。オンダイ・スパイラルピーキングインダクタ、100 Ω精密終端抵抗、連続時間線形等化器（CTLE）、判定帰還等化器（DFE）を集積しています。',
+    opticsAndPhysics: [
+      '8 GHzナイキスト周波数における基板・コネクタの表皮効果損失（Insertion Loss）を、送信側プリエンファシスと受信側CTLE/DFEの適応イコライゼーションで自動補償します。',
+      'クロック・データ・リカバリ（CDR）PLLがデータ波形自体からピコ秒単位の最適サンプリング位相を常時追尾し、8K RAW連続記録中のビット誤り率（BER < 10⁻¹²）を保証します。',
+    ],
+    formula: {
+      expression: '16 GT/s × 128b/130b符号化 ≈ 1.969 GB/s（単一PCIe Gen4レーン理論帯域・BER < 10⁻¹²）',
+      description: 'たった1レーン（TX/RX各1対）で毎秒約2ギガバイトを通すため、極限のアナログ波形整形技術が動く',
+    },
+    nextGenInnovation:
+      'CFexpress 4.0 Type A（最大1,800 MB/s）から将来のPCIe Gen5 PAM4世代へと進化する際の中核となる超高周波アナログフロントエンド技術です。',
+    specs: [
+      { label: '物理層速度', value: 'PCIe Gen4 ×1（16.0 GT/s・128b/130bエンコーディング）' },
+      { label: '波形等化回路', value: 'TX 3-Tap FFE ＋ RX 適応型 CTLE / マルチタップ DFE' },
+      { label: '高周波素子', value: 'オンダイ極小スパイラル銅ピーキングインダクタ ＋ 100 Ω精密終端' },
+      { label: 'クロック復元', value: '低ジッタCDR（Clock & Data Recovery）位相追尾ループ' },
+    ],
+    diagramType: 'cfe_diff_85ohm_serpentine',
+  },
+
+  'cfe-nand-toggle5-phy-bus': {
+    title: 'C62. ONFI / Toggle 5.0 3,200 MT/s DDR 8チャネルNANDバス ＆ DQSストローブ配線',
+    subtitle: 'ONFI / Toggle 5.0 3200 MT/s DDR 8-Channel NAND Interface Bus & Differential DQS Strobe Bridge',
+    category: '頭脳と記憶チップを結ぶ8車線ハイウェイ C62 — コントローラとBiCS8 NANDを毎秒32億回で並列往復する超高速配線網',
+    plainAnalogy:
+      'カメラからの映像をコントローラが受け取ったあと、記憶チップ（3D NAND）へ書き込む道路が狭いと渋滞してしまいます。このToggle 5.0バスはコントローラと表裏のNANDチップを最大8車線並列で結び、データ（DQ）と一緒に正確な合図（差動DQSストローブ）を毎秒32億回送り出して8K動画を詰まらせません！',
+    summary:
+      'PCIe Gen4コントローラ（U1）と表裏のKIOXIA BiCS8 3D NANDパッケージ（U2/U3）間を並列接続する、Toggle DDR 5.0（最大3,200〜3,600 MT/s）対応インピーダンス制御マルチチャネルバスおよび差動DQSストローブ配線群。',
+    opticsAndPhysics: [
+      'データ線（DQ0〜7）と基準クロック（DQS_t / DQS_c 差動対）の配線長を±0.1 mm以内で厳密等長化（スキュー制御）し、1.2 V低振幅VCCQインターフェースで高速・低消費電力転送を実現します。',
+      'オンダイ終端（ODT）とZ_Qキャリブレーションにより、16ダイ積層（16DP）の大きな入力容量でも波形反射を抑え、VPG800持続書込のボトルネックを解消します。',
+    ],
+    formula: {
+      expression: 'チャネル帯域 = 3,200 MT/s × 8 bit = 3.2 GB/s/ch（並列インターリーブで書込1,700 MB/s持続）',
+      description: 'コントローラから表裏の16層NANDダイへ同時並列にデータを流し込み、圧倒的な書込速度を生む',
+    },
+    nextGenInnovation:
+      'BiCS8 CBA世代の高速I/O（3.2〜3.6 Gb/s）と組み合わせることで、Type A極小カードでもプロ用シネマRAWの持続書込を余裕でこなします。',
+    specs: [
+      { label: 'インターフェース', value: 'Toggle DDR 5.0 / ONFI 5.1（1.2 V 低消費電力高速I/O）' },
+      { label: '転送レート', value: '最大 3,200 〜 3,600 MT/s（差動DQSストローブ同期）' },
+      { label: '並列構成', value: '表裏インターリーブ多チャネル並列アクセス（16DP対応）' },
+      { label: '信号整合', value: '等長配線 ＋ オンダイ終端（ODT）＆ ZQ自動インピーダンス校正' },
+    ],
+    diagramType: 'cfe_hdi_8layer_pcb',
+  },
+
+  'cfe-thermal-via-copper-slug': {
+    title: 'C63. コントローラ直下 銅充填サーマルビア群 ＆ 基板埋込純銅サーマルコイン',
+    subtitle: 'Under-Controller Stacked Copper Thermal Via Array & Embedded Solid-Copper PCB Thermal Coin Slug',
+    category: '基板を貫く純銅の放熱エレベーター C63 — 7nmコントローラの熱を基板の裏側まで一気に貫通させて両面放熱！',
+    plainAnalogy:
+      '8層基板の材料（ガラスエポキシ）はプラスチックと同じで熱を通しにくい性質があります。そのためコントローラの真下にそのままでは熱が裏のステンレス放熱板へ届きません！そこでコントローラ真下の基板を純銅の塊（サーマルコイン）と25本の銅ビアでぶち抜き、表の銅板と裏の金属板の「両面同時放熱」を実現しています！',
+    summary:
+      'NVMe Gen4コントローラ（C08）のサーマルグラウンドパッド直下に埋め込まれた高熱伝導純銅サーマルコイン（Copper Coin）および5×5銅めっき充填サーマルビア（VIPPO）貫通アレイ。',
+    opticsAndPhysics: [
+      'FR-4樹脂基板の厚み方向熱伝導率はわずか約 0.3 W/m·K ですが、純銅サーマルコイン＋銅充填ビア（約 380 W/m·K）を貫通させることで、垂直方向の熱抵抗を100分の1以下へ激減させます。',
+      'コントローラの発熱を表面の純銅スプレッダ（C25）だけでなく裏面ステンレスバックプレート（C02）へも50:50で均等分配し、8K連続録画時のサーマルスロットリング発動を大幅に遅らせます。',
+    ],
+    formula: {
+      expression: 'k_Cu (380 W/m·K) / k_FR4 (0.3 W/m·K) > 1,200倍（表裏デュアル放熱ルート開通！）',
+      description: 'コントローラ直下を純銅の柱で貫通させることで、カードの表面と裏面の両方から効率よく熱を逃がす',
+    },
+    nextGenInnovation:
+      '極小体積のCFexpress Type AでGen4 1,800 MB/sの発熱を捌き切るための、プロシネマカード専用の高密度熱設計構造です。',
+    specs: [
+      { label: '構造部材', value: '基板埋込型無酸素銅サーマルコイン ＋ 銅充填VIPPOビア（5×5）' },
+      { label: '熱伝導率', value: '約 380 W/m·K（FR-4基板単体比 約1,200倍の垂直熱輸送）' },
+      { label: '放熱経路', value: 'コントローラ直下 → 表銅板（C25）＆ 裏SUS放熱板（C02）両面分配' },
+      { label: '効果', value: 'VPG800 / 8K連続収録時の温度上昇と速度低下を抑制' },
+    ],
+    diagramType: 'cfe_copper_heat_spreader',
+  },
+
+  'cfe-slot-contact-wiper-interface': {
+    title: 'C64. カメラ側 CFexpress Type A コンボスロット 21ピン金ばね接点 ＆ プッシュ式ロック機構',
+    subtitle: 'Camera-Side CFexpress Type A Combo-Slot 21-Pin Gold Spring Wiper Block & Push-Push Eject Latch',
+    category: 'カードを受け止めるカメラ側の精密ソケット C64 — 21本の金バネとカチッと留まるハートカム機構で1万回挿抜に対応！',
+    plainAnalogy:
+      'カードをカメラに押し込んだとき「カチッ」と心地よくロックされ、もう一度押すとスッと飛び出す仕組みの正体がこれ！カメラ側のコンボスロット内部には、カードの21枚の金端子を優しく挟み込む金めっきバネ接点と、ボールペンのノックと同じ「ハートカム＋ステンレスラッチ爪」が仕込まれているんです！',
+    summary:
+      'Sony α7 IV / α1 / FX3等に採用されるSD・CFexpress Type Aデュアル対応コンボスロットのカード側結合インターフェース。21本の金めっきりん青銅ばねワイパー接点と、側面ノッチ（C33）を係止するステンレス製プッシュ・プッシュ式イジェクト機構です。',
+    opticsAndPhysics: [
+      'カードを挿入すると、まず長いGND/+3.3Vピン（C32）が金ばねワイパーに接触して静電気を逃がし、最後に凹んだINS#検出ピンが触れた瞬間にカメラ側電源投入シーケンスが開始します。',
+      '右側面デテント溝（C33）に噛み合うステンレス製イジェクト爪と戻しコイルばねは、10,000回以上の抜き差しサイクルに耐える高信頼設計です。',
+    ],
+    formula: {
+      expression: '挿抜耐久 ≥ 10,000回 ／ 接触ワイプ荷重 ≈ 0.4 N/pin × 21ピン（低挿抜力＋耐衝撃ロック）',
+      description: 'カメラ側の21本金バネとハートカムラッチが、高速データ通信と確実な抜け止めを両立する',
+    },
+    nextGenInnovation:
+      '1つのスロットでSDカードとCFexpress Type Aの両方を自動判別・物理保持できるソニーα独自の革新的なハイブリッド・コンボスロット機構です。',
+    specs: [
+      { label: '接点構造', value: '21ピン 金めっきりん青銅スプリングワイパー接点アレイ' },
+      { label: 'ロック機構', value: 'ステンレス製ハートカム プッシュ・プッシュ着脱ラッチ ＋ 戻しばね' },
+      { label: '互換方式', value: 'Sony α独自 CFexpress Type A / SD UHS-II 兼用コンボスロット' },
+      { label: '機械寿命', value: '10,000回以上の着脱サイクル保証' },
+    ],
+    diagramType: 'cfe_21pin_gold_fingers',
+  },
+
+  'cfe-pcie-refclk-diff-term': {
+    title: 'C65. 100 MHz HCSL PCIe基準クロック差動線路 ＆ 50 Ω精密終端抵抗ネットワーク',
+    subtitle: '100 MHz HCSL PCIe Reference Clock Differential Pair & 50-Ohm Precision Termination Network',
+    category: 'カメラとカードの鼓動をピタリ合わせる基準線 C65 — 100 MHzの極低ジッタ基準クロックを反射ゼロで受け取る終端回路',
+    plainAnalogy:
+      'カメラ（BIONZ XR）とCFexpressカードが毎秒160億回もの超高速データ転送を息ピッタリで行うには、共通の「100 MHzメトロノーム信号（REFCLK）」が欠かせません。この専用差動ペア線と0.1%精度の49.9 Ω終端抵抗が、信号の跳ね返り（反射）を完全に吸収し、クロックの揺らぎをピコ秒未満に保ちます！',
+    summary:
+      'エッジコネクタ（ピン16/17）からPCIe Gen4コントローラのPLLクロック入力へ供給される100 MHz HCSL差動リファレンスクロック（REFCLK+ / REFCLK−）の等長伝送線路、49.9 Ω精密終端抵抗対、およびAC結合コンデンサ群。',
+    opticsAndPhysics: [
+      'PCIe Gen4（16 GT/s）仕様では100 MHz基準クロックのRMSジッタ上限が 0.5 ps（500フェムト秒）以下と極めて厳格であり、特性インピーダンス 85 Ω/100 Ω 整合と精密終端抵抗による反射吸収が通信エラー防止の要となります。',
+      '両側のグラウンドガードトレースとステッチングビアでクロック差動対を完全包囲し、隣接する3.3 V大電流電源線やNANDデータ線からのクロストークを遮断します。',
+    ],
+    formula: {
+      expression: 'f_REFCLK = 100.000 MHz (HCSL差動) ／ 許容ジッタ < 0.5 ps RMS（PCIe Gen4 16 GT/s規格）',
+      description: '2兆分の1秒以下の狂いしか許されない超精密基準クロック配線を、50 Ω終端で完璧に受け止める',
+    },
+    nextGenInnovation:
+      '省電力モード（L1.2サブステート）時にはCLKREQ#信号でカメラ側100 MHzクロック供給を自動一時停止させ、待機消費電力と発熱を劇的に削減します。',
+    specs: [
+      { label: 'クロック規格', value: 'PCIe Gen4 100 MHz 差動HCSL（SSCG拡散スペクトラム対応）' },
+      { label: '終端ネットワーク', value: '49.9 Ω ±0.1% 薄膜精密終端抵抗 ×2 ＋ 0201 AC結合MLCC ×2' },
+      { label: '許容ジッタ', value: '< 0.5 ps RMS（PCI-SIG PCIe 4.0 CEM仕様準拠）' },
+      { label: 'シールド構造', value: '両側GNDガードライン ＋ 接地ステッチングビア遮蔽' },
+    ],
+    diagramType: 'cfe_xtal_clock_gen',
+  },
+
+  'cfe-vcore-ldo-buck-rails': {
+    title: 'C66. マルチレール Point-of-Load 同期降圧電源フィルタバンク（0.85 V / 1.2 V / 1.8 V）',
+    subtitle: 'Multi-Rail Core 0.85V / NAND 1.8V / VCCQ 1.2V Point-of-Load Synchronous Buck Filter Bank',
+    category: '電圧を3種類へ精密仕分けする静音フィルタ C66 — コントローラ頭脳・メモリ・NANDそれぞれへ最適な超クリーン電圧を分配！',
+    plainAnalogy:
+      'カードへ届く3.3 Vの電気は、PMIC（C17）で「頭脳コア用の0.85 V」「高速I/O用の1.2 V」「3D NAND用の1.8 V」の3種類へ変換されます。でも変換した直後の電気には細かい波（リプル）が残っているため、この超小型セラミックコンデンサ＆フェライトビーズのπ型フィルタ群で鏡のように滑らかに整えてから各チップへ届けます！',
+    summary:
+      'オンカードPMIC（C17）の各同期降圧出力（VCORE 0.85 V / VCCQ 1.2 V / VIO 1.8 V）の直近に配置される、多系統Point-of-Load（PoL）低ESLセラミックMLCC・高周波フェライトビーズ・厚銅アイランドによる電源フィルタバンク。',
+    opticsAndPhysics: [
+      '7 nm / 12 nm微細プロセスのコントローラコアはわずか 0.85 V で動作するため、負荷急変時（アイドル→1,800 MB/s連続書込の遷移）の過渡電圧ドロップ（±30 mV以内）を抑えるため、極低ESL（等価直列インダクタンス）の0201/0402 MLCCを複数並列に配置しています。',
+      '1.2 V Toggle 5.0 NAND I/OレールとアナログSerDes PHYレールを高周波フェライトビーズで分離し、NANDの同時スイッチング雑音がPCIe Gen4信号へ混入するのを防ぎます。',
+    ],
+    formula: {
+      expression: '3.3 V入力 → PoL独立3レール（VCORE 0.85 V / VCCQ 1.2 V / VIO 1.8 V・リプル < 15 mVpp）',
+      description: '3種類の超低電圧電源を互いに干渉させず鏡のように安定化することで、極限の高速書込を支える',
+    },
+    nextGenInnovation:
+      '微細化が進む最新コントローラ世代ほど低電圧・高電流化するため、ミリ単位の基板空間へ多段PoLフィルタを凝縮するPDN設計が信頼性の鍵を握ります。',
+    specs: [
+      { label: '生成電源レール', value: 'VCORE (0.85 V) / NAND VCCQ (1.2 V) / 周辺VIO (1.8 V)' },
+      { label: 'フィルタ構成', value: '0201/0402 低ESL X5R/X7R MLCC群 ＋ 高周波フェライトπフィルタ' },
+      { label: '電源リプル', value: '< 15 mVpp（フルロード1,800 MB/s転送時）' },
+      { label: '銅箔配線', value: '低抵抗 2 oz 厚銅ローカル電源アイランド直結' },
+    ],
+    diagramType: 'cfe_power_inductors_mlcc',
+  },
+
+  'cfe-nand-ce-rb-mux': {
+    title: 'C67. 16ダイ並列 チップイネーブル（CE#）＆ Ready/Busy（R/B#）インターリーブ調停マトリクス',
+    subtitle: '16-Die Chip-Enable (CE#) & Ready/Busy (R/B#) Parallel Interleave Arbiter Matrix',
+    category: '16枚の記憶チップを隙間なく回す交通管制官 C67 — 書込み待ちの時間をゼロにする16並列バトンリレー制御！',
+    plainAnalogy:
+      'NANDメモリ1枚あたりの書き込みには約0.5ミリ秒の「処理中（Busy）」時間がかかります。そのまま待つと8K動画が詰まってしまうため、この交通管制マトリクスが表裏16枚のNANDダイの状態（Ready/Busy）を瞬時に監視し、手が空いたダイへ次々とデータを流し込むことで1秒1,700 MBの爆速持続書込を実現します！',
+    summary:
+      '16ダイ積層3D NAND（16DP：C12/C13/C50）それぞれのチップ選択信号（CE0#〜CE15#）と処理状態信号（R/B#）をリアルタイム監視し、マルチプレーン＆ダイ・インターリーブ書込みをスケジュールする並列調停マトリクス配線およびオンダイ調停回路。',
+    opticsAndPhysics: [
+      'ダイ0がプログラム動作（tPROG ≈ 400〜600 μs）に入った瞬間にCE#を切り替えてダイ1〜ダイ15へ連続データ転送を行う「ダイ・インターリーブ」により、NAND固有の書込みレイテンシを完全に隠蔽します。',
+      'R/B#オープンドレイン監視線の高速プルアップとピーク電流分散スケジューリング（同時書込ダイ数の動的制御）により、3.3 V電源の瞬間大電流スパイクによる電圧降下も抑え込みます。',
+    ],
+    formula: {
+      expression: '実効持続書込帯域 = (16ダイ並列 × マルチプレーン) / t_PROG ≥ 1,700 MB/s（VPG800余裕クリア！）',
+      description: '16枚の記憶チップをバトンリレー式に休まず稼働させることで、待ち時間ゼロのシネマ連続収録を達成する',
+    },
+    nextGenInnovation:
+      'VPG800（最低800 MB/s連続書込保証）をあらゆる空き容量・発熱条件下で達成するための、コントローラ並列スケジューリングの中核です。',
+    specs: [
+      { label: '管理ダイ数', value: '最大 16ダイ独立制御（CE0#〜CE15# ＋ R/B# 並列監視）' },
+      { label: '並列最適化', value: 'ダイ・インターリーブ ＋ 4プレーン同時プログラム制御' },
+      { label: '電源平準化', value: 'ピーク書込電流の時間分散（スタッガード・プログラム制御）' },
+      { label: '性能貢献', value: '書込み待ち時間 tPROG の完全隠蔽とVPG800安定維持' },
+    ],
+    diagramType: 'cfe_nand_staggered_16die',
+  },
+
+  'cfe-thermal-paste-underfill': {
+    title: 'C68. 裏面アルミナ微粒子充填 導電エラストマー・サーマルギャップフィラー層',
+    subtitle: 'Controller-to-Backplate Conductive Elastomer Thermal Gap Filler & Alumina Micro-Sphere Layer',
+    category: '基板裏の純銅コインとステンレス板をつなぐ熱の架け橋 C68 — ミクロの空気のすき間を埋めて背面からも一気に放熱！',
+    plainAnalogy:
+      'コントローラ直下の基板を貫通した純銅サーマルコイン（C63）の熱を、裏面のステンレス放熱板（C02）へ確実に受け渡すための「やわらかい熱伝導クッション」です！アルミナ（酸化アルミニウム）の極小セラミック球をびっしり練り込んだ特殊シリコーンが、ミクロの空気の隙間を完璧に埋めて背面放熱を最大化します。',
+    summary:
+      '基板埋込純銅サーマルコイン（C63）の裏面とステンレス放熱バックプレート（C02）間の微小クリアランス（約 0.15〜0.25 mm）を低熱抵抗で密着架橋する、高充填アルミナ微粒子シリコーン・サーマルギャップフィラー層。',
+    opticsAndPhysics: [
+      '空気の熱伝導率はわずか 0.026 W/m·K しかなく、0.1 mmの隙間があるだけで裏面放熱ルートが機能しなくなります。高熱伝導（6〜8 W/m·K）の柔軟ギャップフィラーで密着充填することで界面熱抵抗を劇的に低減します。',
+      '高い柔軟性（低ショア硬度）により、TOUGH規格の150 N曲げ荷重や7.5 m落下衝撃が加わった際にも背面金属板からの衝撃応力を吸収し、コントローラBGAはんだ部への直接伝達を防ぎます。',
+    ],
+    formula: {
+      expression: 'R_TIM = t / (k_TIM · A)   （k_TIM ≈ 7 W/m·K ≒ 空気の約270倍の熱伝導で背面放熱を開通！）',
+      description: '空気の約270倍熱を通すやわらかいセラミック微粒子クッションが、放熱と耐衝撃緩衝を同時に叶える',
+    },
+    nextGenInnovation:
+      '表面（C25/C26）と裏面（C63/C68）の両面サンドイッチ放熱構造を完成させ、極小CFexpress Type Aカードの熱容量限界を押し広げます。',
+    specs: [
+      { label: '材料組成', value: '高充填アルミナ（Al₂O₃）セラミック微粒子 ＋ 柔軟シリコーンマトリクス' },
+      { label: '熱伝導率', value: '約 6.0 〜 8.0 W/m·K（空気層比 約270倍）' },
+      { label: '配置位置', value: '裏面純銅サーマルコイン（C63）⇔ SUS放熱バックプレート（C02）間' },
+      { label: '副次効果', value: '落下・曲げ荷重に対する衝撃緩衝クッション＆絶縁保護' },
+    ],
+    diagramType: 'cfe_graphene_tim_pad',
+  },
+
+  'cfe-card-detect-pullup-ins': {
+    title: 'C69. ホットプラグ挿入検出（INS# ピン12）デバウンスRC回路 ＆ パワーグッド監視IC',
+    subtitle: 'Hot-Plug Card-Detect (INS# Pin 12) Debounce RC Network & Power-Good Sequencing Supervisor',
+    category: '「奥までカチッと入った！」を確認する安全ゲート C69 — 半挿しでのデータ破損や電源ショートを完全防止する見張り番',
+    plainAnalogy:
+      'CFexpressの21本の金端子のうち、真ん中の12番ピン（INS#）だけ少し奥に引っ込んでいます。カードが奥までしっかり刺さって12番ピンが触れた瞬間、このデバウンス回路が「チャタリング（微細な接触ブレ）」を除去し、パワーグッド監視ICが「よし完全装着！3.3 V電源を滑らかにONせよ！」と安全ゴーサインを出します！',
+    summary:
+      '奥まった最短ピンである挿入検出端子（INS# Pin 12）の接触バウンスを除去するRCデバウンス回路と、3.3 V主電源の安定確立（Power-Good）およびPCIe PERST#リセット解除を厳密に順序制御するSOT-353スーパーバイザIC。',
+    opticsAndPhysics: [
+      'カードの活線挿抜（ホットプラグ）時にピンが微細に跳ねるチャタリング現象（数ms）をRC時定数フィルタで除去し、誤った電源断続やNAND書込途中の半端な起動を防ぎます。',
+      '3.3 V供給電圧が規定しきい値（約 2.95 V）を下回った瞬間には、パワーグッド監視ICがマイクロ秒単位で警告割り込みを発行し、PLPタンタルコンデンサ（C19）による緊急データ退避シーケンスを即座に起動させます。',
+    ],
+    formula: {
+      expression: 'GND/3.3V先行接触 → INS#最後接触 → RCデバウンス（τ ≈ 1 ms） → 電源PG確立 → PERST#解除',
+      description: '厳密な電源シーケンス制御が、撮影現場でのスピーディなカード交換でもデータ破損ゼロを保証する',
+    },
+    nextGenInnovation:
+      'PLPホールドアップ回路（C19）と直結連携することで、万一録画中に誤ってスロット蓋を開けても直前までの映像ファイルを安全にクローズ保護します。',
+    specs: [
+      { label: '検出対象', value: 'ピン12 INS#（最短ラストメイク挿入検出端子）' },
+      { label: '監視IC', value: '超小型SOT-353 電源電圧スーパーバイザ（精度 ±1.0%）' },
+      { label: 'デバウンス回路', value: '100 kΩプルアップ抵抗 ＋ C0G RCデバウンスフィルタ' },
+      { label: '保護連携', value: 'eFuse（C40）ソフトスタート許可 ＆ PLP緊急退避トリガ連動' },
+    ],
+    diagramType: 'cfe_efuse_hotplug_switch',
+  },
+
+  'cfe-raid-xor-parity-engine': {
+    title: 'C70. オンダイ NANDダイ間 XOR RAIDパリティ保護 ＆ 予備ブロック自動復旧エンジン',
+    subtitle: 'On-Die Internal NAND Die-Level XOR RAID Parity & Bad-Block Spare-Pool Recovery Engine',
+    category: '1チップ丸ごと故障しても8K映像を復元する「カード内RAID」C70 — 企業サーバー級のパリティ保護を親指サイズに凝縮！',
+    plainAnalogy:
+      '大切な結婚式の瞬間や8K映画のワンテイクを記録中、もし16枚あるNANDチップの1ブロックが突然寿命で壊れたら大変です！そこでプロ用CFexpressコントローラは、複数のNANDダイにまたがって「足し算パリティ（XOR RAID）」を自動生成し、万一1つのダイやページが読めなくなっても残りのデータから元の8Kフレームを100%無傷で計算復元するんです！',
+    summary:
+      'コントローラSoC内部に実装されたハードウェアXORパリティ演算エンジン（ダイ間RAID-5相当のRAIN：Redundant Array of Independent NAND）および、工場・運用時の不良ブロックを即座に差し替えるオーバープロビジョニング予備ブロック管理プール。',
+    opticsAndPhysics: [
+      '通常の4K LDPC誤り訂正（C10）で訂正しきれないページ単位・ワード線ショート・ダイ単位の壊滅的エラーが発生しても、他ダイ群のデータとXORパリティストライプを排他的論理和演算（D_lost = P_XOR ⊕ D₁ ⊕ D₂ …）することで、ビット誤りゼロで瞬時に完全復旧します。',
+      '全容量の数%〜十数%を隠し予備領域（オーバープロビジョニング）として常時確保し、劣化兆候のあるブロックを裏側でシームレスに新ブロックへ代替マッピングします。',
+    ],
+    formula: {
+      expression: 'P_XOR = D₀ ⊕ D₁ ⊕ D₂ ⊕ … ⊕ Dₙ   （任意の1ダイ故障時も残余データとXOR演算で100%復元！）',
+      description: 'LDPC誤り訂正すら超える最終防衛網「オンカードRAIN/XOR RAID」が、絶対に失敗できないプロの収録を守り抜く',
+    },
+    nextGenInnovation:
+      'エンタープライズデータセンター用NVMe SSDのRAIN（Redundant Array of Independent NAND）信頼性アーキテクチャを、20×28 mm極小シネマカードへ統合した最高峰のデータ保護技術です。',
+    specs: [
+      { label: '保護方式', value: 'ハードウェア高速XOR演算 ダイ／プレーン横断型 RAIN（RAID-5相当）' },
+      { label: '救済範囲', value: 'LDPC訂正限界超えのページ破損・ワード線断線・単一ダイ障害' },
+      { label: '予備領域', value: 'ダイナミック・バッドブロック自動代替＆オーバープロビジョニングプール' },
+      { label: '信頼性指標', value: 'UBER（訂正不能ビット誤り率）< 10⁻¹⁷ プロシネマ基準達成' },
+    ],
+    diagramType: 'cfe_ldpc_ecc_engine',
+  },
 };
 
