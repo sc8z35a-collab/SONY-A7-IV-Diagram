@@ -129,11 +129,13 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./cfexpress/cfexpressExplanations'),
         import('./cfexpress/cfexpressUltra27Explanations'),
         import('./cfexpress/cfexpressUltra28Explanations'),
-      ]).then(([mBase, mU27, mU28]) =>
+        import('./cfexpress/cfexpressUltra29Explanations'),
+      ]).then(([mBase, mU27, mU28, mU29]) =>
         finish({
           ...mBase.CFEXPRESS_EXPLANATIONS,
           ...mU27.CFEXPRESS_ULTRA27_EXPLANATIONS,
           ...mU28.CFEXPRESS_ULTRA28_EXPLANATIONS,
+          ...mU29.CFEXPRESS_ULTRA29_EXPLANATIONS,
         })
       );
       break;

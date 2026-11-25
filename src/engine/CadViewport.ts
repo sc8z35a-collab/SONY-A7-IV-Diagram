@@ -1150,8 +1150,8 @@ export class CadViewport {
       d = 104 + e * 310;
       target = new THREE.Vector3(e * 8.0, e * 3.0, e * 4.0);
     } else if (this.mode === 'cfexpress') {
-      d = 136 + e * 365;
-      target = new THREE.Vector3(0.0, -0.8 + e * 6.8, e * 6.0);
+      d = 136 + e * 475;
+      target = new THREE.Vector3(0.0, -0.8 + e * 1.5, e * 4.0);
     } else if (this.mode === 'bionz') {
       d = 78 + e * 190;
       target = new THREE.Vector3(0, 1.5 + e * 1.5, 0);
