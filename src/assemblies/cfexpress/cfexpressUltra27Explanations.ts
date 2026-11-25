@@ -960,7 +960,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '高周波素子', value: 'オンダイ極小スパイラル銅ピーキングインダクタ ＋ 100 Ω精密終端' },
       { label: 'クロック復元', value: '低ジッタCDR（Clock & Data Recovery）位相追尾ループ' },
     ],
-    diagramType: 'cfe_diff_85ohm_serpentine',
+    diagramType: 'cfe_pcie_gen4_serdes_phy',
   },
 
   'cfe-nand-toggle5-phy-bus': {
@@ -987,7 +987,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '並列構成', value: '表裏インターリーブ多チャネル並列アクセス（16DP対応）' },
       { label: '信号整合', value: '等長配線 ＋ オンダイ終端（ODT）＆ ZQ自動インピーダンス校正' },
     ],
-    diagramType: 'cfe_hdi_8layer_pcb',
+    diagramType: 'cfe_nand_toggle5_phy_bus',
   },
 
   'cfe-thermal-via-copper-slug': {
@@ -1014,7 +1014,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '放熱経路', value: 'コントローラ直下 → 表銅板（C25）＆ 裏SUS放熱板（C02）両面分配' },
       { label: '効果', value: 'VPG800 / 8K連続収録時の温度上昇と速度低下を抑制' },
     ],
-    diagramType: 'cfe_copper_heat_spreader',
+    diagramType: 'cfe_thermal_via_copper_slug',
   },
 
   'cfe-slot-contact-wiper-interface': {
@@ -1041,7 +1041,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '互換方式', value: 'Sony α独自 CFexpress Type A / SD UHS-II 兼用コンボスロット' },
       { label: '機械寿命', value: '10,000回以上の着脱サイクル保証' },
     ],
-    diagramType: 'cfe_21pin_gold_fingers',
+    diagramType: 'cfe_slot_contact_wiper_interface',
   },
 
   'cfe-pcie-refclk-diff-term': {
@@ -1068,7 +1068,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '許容ジッタ', value: '< 0.5 ps RMS（PCI-SIG PCIe 4.0 CEM仕様準拠）' },
       { label: 'シールド構造', value: '両側GNDガードライン ＋ 接地ステッチングビア遮蔽' },
     ],
-    diagramType: 'cfe_xtal_clock_gen',
+    diagramType: 'cfe_pcie_refclk_diff_term',
   },
 
   'cfe-vcore-ldo-buck-rails': {
@@ -1095,7 +1095,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '電源リプル', value: '< 15 mVpp（フルロード1,800 MB/s転送時）' },
       { label: '銅箔配線', value: '低抵抗 2 oz 厚銅ローカル電源アイランド直結' },
     ],
-    diagramType: 'cfe_power_inductors_mlcc',
+    diagramType: 'cfe_vcore_ldo_buck_rails',
   },
 
   'cfe-nand-ce-rb-mux': {
@@ -1122,7 +1122,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '電源平準化', value: 'ピーク書込電流の時間分散（スタッガード・プログラム制御）' },
       { label: '性能貢献', value: '書込み待ち時間 tPROG の完全隠蔽とVPG800安定維持' },
     ],
-    diagramType: 'cfe_nand_staggered_16die',
+    diagramType: 'cfe_nand_ce_rb_mux',
   },
 
   'cfe-thermal-paste-underfill': {
@@ -1149,7 +1149,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '配置位置', value: '裏面純銅サーマルコイン（C63）⇔ SUS放熱バックプレート（C02）間' },
       { label: '副次効果', value: '落下・曲げ荷重に対する衝撃緩衝クッション＆絶縁保護' },
     ],
-    diagramType: 'cfe_graphene_tim_pad',
+    diagramType: 'cfe_thermal_paste_underfill',
   },
 
   'cfe-card-detect-pullup-ins': {
@@ -1176,7 +1176,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'デバウンス回路', value: '100 kΩプルアップ抵抗 ＋ C0G RCデバウンスフィルタ' },
       { label: '保護連携', value: 'eFuse（C40）ソフトスタート許可 ＆ PLP緊急退避トリガ連動' },
     ],
-    diagramType: 'cfe_efuse_hotplug_switch',
+    diagramType: 'cfe_card_detect_pullup_ins',
   },
 
   'cfe-raid-xor-parity-engine': {
@@ -1203,7 +1203,7 @@ export const CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '予備領域', value: 'ダイナミック・バッドブロック自動代替＆オーバープロビジョニングプール' },
       { label: '信頼性指標', value: 'UBER（訂正不能ビット誤り率）< 10⁻¹⁷ プロシネマ基準達成' },
     ],
-    diagramType: 'cfe_ldpc_ecc_engine',
+    diagramType: 'cfe_raid_xor_parity_engine',
   },
 };
 

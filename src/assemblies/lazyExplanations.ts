@@ -117,10 +117,12 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = Promise.all([
         import('./cfexpress/cfexpressExplanations'),
         import('./cfexpress/cfexpressUltra27Explanations'),
-      ]).then(([mBase, mU27]) =>
+        import('./cfexpress/cfexpressUltra28Explanations'),
+      ]).then(([mBase, mU27, mU28]) =>
         finish({
           ...mBase.CFEXPRESS_EXPLANATIONS,
           ...mU27.CFEXPRESS_ULTRA27_EXPLANATIONS,
+          ...mU28.CFEXPRESS_ULTRA28_EXPLANATIONS,
         })
       );
       break;

@@ -21,6 +21,7 @@ import {
 } from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 import { buildCfexpressUltra27Parts } from './cfexpressUltra27Parts';
+import { buildCfexpressUltra28Parts } from './cfexpressUltra28Parts';
 
 function finalizeCfexpressPart(
   id: string,
@@ -53,7 +54,7 @@ function finalizeCfexpressPart(
 }
 
 /**
- * Phase 26B — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.0: 70 Parts C01–C70).
+ * Phase 26B / 27 / 28 — Standalone CFexpress 4.0 Card Ultra-Dissection (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.4 / BiCS10 332L: 100 Parts C01–C100).
  * Rendered at crisp 2.0× macro inspection scale (40.0 × 56.0 × 5.6 mm for real 20 × 28 × 2.8 mm Type A card), centered at (0, 0, 0).
  * Card stands upright along Y (verified 21-pin staggered PCIe Gold Edge Connector at bottom y ≈ -26.5, Non-Slip Pull-Tab at top y ≈ +26.5).
  */
@@ -1228,5 +1229,6 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   }
 
   parts.push(...buildCfexpressUltra27Parts(mats));
+  parts.push(...buildCfexpressUltra28Parts(mats));
   return parts;
 }
