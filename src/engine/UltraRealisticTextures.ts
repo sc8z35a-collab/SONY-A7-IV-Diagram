@@ -43,6 +43,10 @@ export interface UltraRealisticMaterials {
   cfeControllerPkg: THREE.MeshPhysicalMaterial;
   cfeNandPkg: THREE.MeshPhysicalMaterial;
   cfeCopperThermal: THREE.MeshPhysicalMaterial;
+  cfeBiCS10WaferDie: THREE.MeshPhysicalMaterial;
+  cfeGlassWeaveCore: THREE.MeshPhysicalMaterial;
+  cfeMolyWordlineMetal: THREE.MeshPhysicalMaterial;
+  cfePqcSecurityDie: THREE.MeshPhysicalMaterial;
   // Shared ultra-realistic IC molding compound
   icEpoxyLaser: THREE.MeshPhysicalMaterial;
   // Phase 28: Pixel V2 & BIONZ XR V2 Ultra-Microscopic Nanoscale Materials (2026)
@@ -1899,20 +1903,39 @@ function createCfeHdiPcbTexture(): THREE.CanvasTexture {
   }
   ctx.fill();
 
-  // Crisp SMT component silkscreen outlines & designators
+  // Crisp SMT component silkscreen outlines & designators + 2026 SI features (ZQ 240Ω, AC-cap antipad void, 10° routing!)
   ctx.strokeStyle = 'rgba(241, 245, 249, 0.72)';
   ctx.lineWidth = 2.5;
   ctx.strokeRect(102, 74, 564, 274); // U2 Primary 3D NAND footprint
   ctx.strokeRect(114, 412, 260, 210); // U1 NVMe Gen4 Controller
   ctx.strokeRect(434, 424, 186, 176); // U3 LPDDR4 DRAM Cache
 
+  // Dashed cyan antipad reference-void callout window under PCIe AC-coupling caps
+  ctx.save();
+  ctx.setLineDash([7, 5]);
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.78)';
+  ctx.lineWidth = 2.2;
+  ctx.strokeRect(160, 562, 184, 52);
+  ctx.restore();
+
+  // Precision ZQ 240-ohm 0.1% resistor silkscreen footprints beside NAND & Controller
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.85)';
+  ctx.lineWidth = 2.0;
+  ctx.strokeRect(584, 366, 56, 26);
+  ctx.strokeRect(584, 398, 56, 26);
+
   ctx.fillStyle = 'rgba(241, 245, 249, 0.88)';
   ctx.font = '700 22px "Courier New", monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('U2  BiCS8-NAND-16DP  TOGGLE5', 114, 102);
+  ctx.fillText('U2  BiCS10/8-332L  TOGGLE6', 114, 102);
   ctx.fillText('U1  PS5027-G4', 124, 438);
   ctx.fillText('U3  LPDDR4', 446, 450);
-  ctx.fillText('SONY CFE-A 8L-HDI  Z0=85Ω  REV.4A', 114, 678);
+  ctx.font = '700 17px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(250, 204, 21, 0.90)';
+  ctx.fillText('R_ZQ 240Ω±0.1%', 440, 394);
+  ctx.fillStyle = 'rgba(241, 245, 249, 0.88)';
+  ctx.font = '700 21px "Courier New", monospace';
+  ctx.fillText('SONY CFE-A 8L-HDI  Z0=85Ω  10°WEAVE', 102, 678);
 
   return toHiTex(canvas);
 }
@@ -1959,10 +1982,10 @@ function createCfeControllerPkgTexture(): THREE.CanvasTexture {
   ctx.fillText('PS5027-E27T', 100, 260);
   ctx.fillStyle = 'rgba(192, 204, 220, 0.82)';
   ctx.font = '700 32px "Courier New", monospace';
-  ctx.fillText('PCIe Gen4 NVMe 2.0', 100, 326);
+  ctx.fillText('PCIe Gen4 NVMe 2.4', 100, 326);
   ctx.fillText('7nm ARM  4K-LDPC', 100, 378);
-  ctx.fillText('AES-256  VPG800', 100, 430);
-  ctx.fillText('TW  2548  G4A1', 100, 502);
+  ctx.fillText('PQC-PUF  VPG800', 100, 430);
+  ctx.fillText('TW  2638  G4A2', 100, 502);
 
   drawDataMatrix(ctx, 514, 514, 164, 12, 'rgba(236, 242, 250, 0.88)', null, 50274);
 
@@ -2008,10 +2031,10 @@ function createCfeNandPkgTexture(): THREE.CanvasTexture {
   ctx.fillStyle = 'rgba(208, 218, 232, 0.88)';
   ctx.font = '700 40px "Courier New", monospace';
   ctx.fillText('TH58LKT2T25BA8C', 82, 276);
-  ctx.font = '700 34px "Courier New", monospace';
-  ctx.fillText('BiCS8 3D TLC  218L-CBA', 82, 352);
-  ctx.fillText('16DP  TOGGLE 5.0  3.2Gb/s', 82, 408);
-  ctx.fillText('JAPAN   2546K   960GB', 82, 488);
+  ctx.font = '700 32px "Courier New", monospace';
+  ctx.fillText('BiCS10/8 3D TLC  332L-CBA', 82, 352);
+  ctx.fillText('16DP  TOGGLE 6.0  4.8Gb/s', 82, 408);
+  ctx.fillText('JAPAN   2634K   960GB', 82, 488);
 
   drawDataMatrix(ctx, 520, 520, 160, 12, 'rgba(236, 242, 250, 0.88)', null, 21816);
 
@@ -2040,6 +2063,206 @@ function createCfeCopperThermalTexture(): THREE.CanvasTexture {
     ctx.stroke();
   }
   return toTileTex(canvas, 3, 4);
+}
+
+function createCfeBiCS10WaferDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // 2026 Kioxia/Sandisk BiCS10 332-Layer 6-Plane CBA Silicon Die Floorplan with prismatic diffraction sheen
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0a1f36');
+  bg.addColorStop(0.28, '#133d6b');
+  bg.addColorStop(0.55, '#1d4d7c');
+  bg.addColorStop(0.82, '#2a2b68');
+  bg.addColorStop(1, '#0d2b45');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer silicon crack-stopper seal ring (gold-copper BEOL fortress moat)
+  ctx.strokeStyle = '#d4a644';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(14, 14, w - 28, h - 28);
+  ctx.strokeStyle = '#58c4dd';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(28, 28, w - 56, h - 56);
+
+  // 6 Independent Memory Planes (3 columns × 2 rows) for Multi-Plane Independent Read (MPIR)!
+  const planeColors = ['#0f5f7a', '#16528e', '#2c488f', '#126472', '#1d4b88', '#373e8b'];
+  const padX = 48;
+  const padY = 48;
+  const gapX = 28;
+  const gapY = 42;
+  const pw = (w - padX * 2 - gapX * 2) / 3;
+  const ph = (h - padY * 2 - gapY) / 2;
+
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 3; c++) {
+      const idx = r * 3 + c;
+      const px = padX + c * (pw + gapX);
+      const py = padY + r * (ph + gapY);
+      const pg = ctx.createLinearGradient(px, py, px + pw, py + ph);
+      pg.addColorStop(0, planeColors[idx]);
+      pg.addColorStop(0.5, '#1e88a8');
+      pg.addColorStop(1, '#122c56');
+      ctx.fillStyle = pg;
+      ctx.fillRect(px, py, pw, ph);
+
+      // Sub-block bitline diffraction grating lines inside each plane
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      for (let bx = px + 8; bx < px + pw - 6; bx += 9) {
+        ctx.moveTo(bx, py + 6);
+        ctx.lineTo(bx, py + ph - 6);
+      }
+      ctx.stroke();
+
+      // Dedicated per-plane 16KB Page Buffer & Sense-Amp strip along center spine
+      ctx.fillStyle = 'rgba(236, 196, 88, 0.85)';
+      ctx.fillRect(px + 4, r === 0 ? py + ph - 18 : py + 4, pw - 8, 14);
+
+      ctx.strokeStyle = 'rgba(241, 245, 249, 0.55)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(px, py, pw, ph);
+
+      ctx.fillStyle = 'rgba(248, 250, 252, 0.92)';
+      ctx.font = '800 22px "Courier New", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`PLANE ${idx}`, px + pw * 0.5, py + ph * 0.5 + 6);
+    }
+  }
+
+  // Central horizontal CBA Cu-Cu hybrid-bond bus spine & staircase decoder strip
+  ctx.fillStyle = '#091526';
+  ctx.fillRect(42, h * 0.5 - 16, w - 84, 32);
+  ctx.fillStyle = '#e69d45';
+  for (let x = 58; x < w - 58; x += 22) {
+    ctx.fillRect(x, h * 0.5 - 8, 11, 16);
+  }
+
+  return toHiTex(canvas);
+}
+
+function createCfeGlassWeaveCoreTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+
+  // Low-Dk / Low-Df Megtron-7 emerald-amber epoxy resin base
+  ctx.fillStyle = '#1c3b2e';
+  ctx.fillRect(0, 0, s, s);
+
+  // Flat-spread 1067 E-Glass perpendicular warp & weft fiber yarn bundles!
+  const pitch = 32;
+  for (let y = 0; y < s; y += pitch) {
+    const yg = ctx.createLinearGradient(0, y, 0, y + 18);
+    yg.addColorStop(0, 'rgba(182, 214, 178, 0.12)');
+    yg.addColorStop(0.5, 'rgba(222, 240, 206, 0.58)');
+    yg.addColorStop(1, 'rgba(182, 214, 178, 0.12)');
+    ctx.fillStyle = yg;
+    ctx.fillRect(0, y + 6, s, 18);
+  }
+  for (let x = 0; x < s; x += pitch) {
+    const xg = ctx.createLinearGradient(x, 0, x + 18, 0);
+    xg.addColorStop(0, 'rgba(164, 204, 172, 0.14)');
+    xg.addColorStop(0.5, 'rgba(235, 248, 224, 0.62)');
+    xg.addColorStop(1, 'rgba(164, 204, 172, 0.14)');
+    ctx.fillStyle = xg;
+    ctx.fillRect(x + 6, 0, 18, s);
+  }
+
+  // Subtle woven over-under intersection specular glints
+  ctx.fillStyle = 'rgba(255, 255, 245, 0.26)';
+  for (let y = 0; y < s; y += pitch) {
+    for (let x = 0; x < s; x += pitch) {
+      if (((x + y) / pitch) % 2 === 0) {
+        ctx.fillRect(x + 8, y + 8, 14, 14);
+      }
+    }
+  }
+  return toTileTex(canvas, 4, 4);
+}
+
+function createCfeMolyWordlineMetalTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+
+  // Barrierless ALD Molybdenum (Mo) cool silver-blue metallic crystal grain
+  const g = ctx.createLinearGradient(0, 0, s, s);
+  g.addColorStop(0, '#96adc4');
+  g.addColorStop(0.45, '#c8daec');
+  g.addColorStop(0.75, '#89a1ba');
+  g.addColorStop(1, '#b4c9df');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  drawBrushedStreaks(ctx, s, s, false, 180, 677, 0.08, 0.065);
+  drawMicroGrain(ctx, s, s, 1400, 678, 0.04);
+
+  // Subtle nanometer ALD deposition horizontal crystal seam highlights
+  ctx.strokeStyle = 'rgba(241, 248, 255, 0.24)';
+  ctx.lineWidth = 1.5;
+  for (let y = 8; y < s; y += 24) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(s, y);
+    ctx.stroke();
+  }
+  return toTileTex(canvas, 2, 2);
+}
+
+function createCfePqcSecurityDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Obsidian-indigo silicon enclave with golden ML-DSA Post-Quantum Lattice & PUF SRAM Fingerprint!
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#101222');
+  bg.addColorStop(0.5, '#1d1b3a');
+  bg.addColorStop(1, '#0d101e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Armored Faraday perimeter shield ring
+  ctx.strokeStyle = '#eab308';
+  ctx.lineWidth = 12;
+  ctx.strokeRect(20, 20, w - 40, h - 40);
+
+  // Top-left: Silicon PUF Fingerprint unique random bit-cell matrix
+  const rng = mulberry32(202608);
+  for (let r = 0; r < 14; r++) {
+    for (let c = 0; c < 14; c++) {
+      ctx.fillStyle = rng() > 0.48 ? 'rgba(250, 204, 21, 0.85)' : 'rgba(56, 189, 248, 0.28)';
+      ctx.fillRect(62 + c * 20, 62 + r * 20, 14, 14);
+    }
+  }
+
+  // Right: Post-Quantum ML-DSA / Kyber Lattice Cryptographic Accelerator Grid
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.72)';
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  for (let i = 0; i <= 10; i++) {
+    ctx.moveTo(410 + i * 28, 66);
+    ctx.lineTo(410 + i * 28, 346);
+    ctx.moveTo(410, 66 + i * 28);
+    ctx.lineTo(690, 66 + i * 28);
+  }
+  ctx.stroke();
+
+  // Bottom: Laser-etched OTP eFuse Root-of-Trust key tracks + 2026 NVMe 2.4 PQC stamp
+  ctx.fillStyle = 'rgba(234, 179, 8, 0.22)';
+  ctx.fillRect(62, 412, w - 124, 286);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(62, 412, w - 124, 286);
+
+  ctx.fillStyle = '#fde68a';
+  ctx.font = '800 44px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('NVMe 2.4  PQC + PUF', w * 0.5, 494);
+  ctx.fillStyle = '#7dd3fc';
+  ctx.font = '700 32px "Courier New", monospace';
+  ctx.fillText('ML-DSA  AES-256  C2PA', w * 0.5, 566);
+  ctx.fillStyle = 'rgba(248, 250, 252, 0.84)';
+  ctx.font = '700 26px "Courier New", monospace';
+  ctx.fillText('HARDWARE ROOT OF TRUST', w * 0.5, 636);
+
+  return toHiTex(canvas);
 }
 
 function createIcEpoxyLaserTexture(): THREE.CanvasTexture {
@@ -2802,6 +3025,58 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.09
   );
 
+  const cfeBiCS10WaferDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeBiCS10WaferDieTexture(),
+      metalness: 0.58,
+      roughness: 0.22,
+      clearcoat: 0.52,
+      iridescence: 0.78,
+      iridescenceIOR: 1.68,
+    }),
+    0.11
+  );
+
+  const cfeGlassWeaveCore = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeGlassWeaveCoreTexture(),
+      metalness: 0.08,
+      roughness: 0.42,
+      clearcoat: 0.36,
+    }),
+    0.12
+  );
+
+  const cfeMolyWordlineMetal = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeMolyWordlineMetalTexture(),
+      metalness: 0.92,
+      roughness: 0.18,
+      clearcoat: 0.35,
+    }),
+    0.09
+  );
+
+  const cfePqcSecurityDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfePqcSecurityDieTexture(),
+      metalness: 0.52,
+      roughness: 0.26,
+      clearcoat: 0.48,
+      iridescence: 0.62,
+      iridescenceIOR: 1.62,
+    }),
+    0.10
+  );
+
   const icEpoxyLaser = tagBump(
     new THREE.MeshPhysicalMaterial({
       ...common,
@@ -2956,6 +3231,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     cfeControllerPkg,
     cfeNandPkg,
     cfeCopperThermal,
+    cfeBiCS10WaferDie,
+    cfeGlassWeaveCore,
+    cfeMolyWordlineMetal,
+    cfePqcSecurityDie,
     icEpoxyLaser,
     v2PixelMetasurface,
     v2PixelSiLattice,
@@ -3000,6 +3279,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     cfeControllerPkg,
     cfeNandPkg,
     cfeCopperThermal,
+    cfeBiCS10WaferDie,
+    cfeGlassWeaveCore,
+    cfeMolyWordlineMetal,
+    cfePqcSecurityDie,
     icEpoxyLaser,
     v2PixelMetasurface,
     v2PixelSiLattice,
