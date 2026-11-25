@@ -1,5 +1,5 @@
 import './styles/main.css';
-import { SectionAxis } from './assemblies/types';
+import { GraphicsQuality, SectionAxis } from './assemblies/types';
 import { sharedLensOpticalSim } from './assemblies/lens/lensOpticalSim';
 import { CadViewport } from './engine/CadViewport';
 import { ZeroTextControls } from './ui/ZeroTextControls';
@@ -195,6 +195,9 @@ viewport = new CadViewport(viewportEl, {
     drawer.setIsolatedState(viewport.isIsolated());
     syncRail();
   },
+  onQualityChanged: (quality) => {
+    if (controls) controls.syncQuality(quality);
+  },
 });
 
 controls = new ZeroTextControls(appRoot, {
@@ -226,6 +229,9 @@ controls = new ZeroTextControls(appRoot, {
   },
   onRenderModeChange: (mode) => {
     viewport.setRenderMode(mode);
+  },
+  onQualityChange: (quality) => {
+    viewport.setQuality(quality);
   },
   onPhysicsToggle: (active) => {
     viewport.setPhysicsActive(active);
@@ -285,6 +291,11 @@ document.addEventListener('webkitfullscreenchange', () => {
   syncFullscreenState();
 });
 
+const setQuality = (q: GraphicsQuality): void => {
+  viewport.setQuality(q);
+  controls.syncQuality(viewport.getQuality());
+};
+
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (zenFullscreen) {
@@ -315,6 +326,15 @@ window.addEventListener('keydown', (e) => {
     !e.altKey
   ) {
     void toggleFullscreen();
+  } else if (
+    (e.key === 'u' || e.key === 'U') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    const cur = viewport.getQuality();
+    const next: GraphicsQuality = cur === 'standard' ? 'high' : cur === 'high' ? 'ultra' : 'standard';
+    setQuality(next);
   } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
     if (viewport.getSelectedPart()) viewport.stepSelectedPart(1);
   } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -322,18 +342,32 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+// Sync initial quality pill with GPU_PROFILE default (ULTRA on desktop, HIGH on mobile) and optional ?quality= param
+const urlParams = new URLSearchParams(window.location.search);
+const qualityParam = urlParams.get('quality')?.toLowerCase();
+if (qualityParam === 'standard' || qualityParam === 'std') {
+  setQuality('standard');
+} else if (qualityParam === 'high') {
+  setQuality('high');
+} else if (qualityParam === 'ultra') {
+  setQuality('ultra');
+} else {
+  controls.syncQuality(viewport.getQuality());
+}
+
 // Expose lightweight inspection hooks on window
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
   opticsStudio,
   toggleFullscreen,
+  setQuality,
 };
 
 syncRail();
 
 // Optional URL preset for reproducible views (default startup has no params and zero text in Complete 160-part Camera mode)
-const preset = new URLSearchParams(window.location.search).get('preset');
+const preset = urlParams.get('preset');
 if (preset === 'complete_assembled') {
   viewport.setMode('integrated', true);
   controls.syncMode('integrated');
