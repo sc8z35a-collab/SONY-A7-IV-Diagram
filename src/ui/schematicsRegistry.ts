@@ -26,6 +26,7 @@ import { renderPhase25MicSchematicSvg } from './phase25MicSchematics';
 import { renderPhase27BatteryUltraSchematicSvg } from './phase27BatteryUltraSchematics';
 import { renderPhase27CfexpressUltraSchematicSvg } from './phase27CfexpressUltraSchematics';
 import { renderPhase28CfexpressUltraSchematicSvg } from './phase28CfexpressUltraSchematics';
+import { renderPhase29CfexpressUltraSchematicSvg } from './phase29CfexpressUltraSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -114,6 +115,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase28CfexpressUltraSvg = renderPhase28CfexpressUltraSchematicSvg(type);
   if (phase28CfexpressUltraSvg) return phase28CfexpressUltraSvg;
+
+  const phase29CfexpressUltraSvg = renderPhase29CfexpressUltraSchematicSvg(type);
+  if (phase29CfexpressUltraSvg) return phase29CfexpressUltraSvg;
 
   switch (type) {
     case 'baffle':

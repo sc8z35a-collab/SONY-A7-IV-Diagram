@@ -1228,6 +1228,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cfe-multiplane-6plane-mpir', false);
   syncRail();
+} else if (preset === 'cfexpress_ultra130') {
+  viewport.setMode('cfexpress', true);
+  controls.syncMode('cfexpress');
+  viewport.setExplode(0.94, true);
+  controls.setExplodeValue(0.94);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('cfe-fenand-hzo-igzo-2026', false);
+  syncRail();
 } else if (preset === 'bionz_assembled') {
   viewport.setMode('bionz', true);
   controls.syncMode('bionz');

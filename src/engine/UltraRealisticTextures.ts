@@ -47,6 +47,10 @@ export interface UltraRealisticMaterials {
   cfeGlassWeaveCore: THREE.MeshPhysicalMaterial;
   cfeMolyWordlineMetal: THREE.MeshPhysicalMaterial;
   cfePqcSecurityDie: THREE.MeshPhysicalMaterial;
+  cfeQuantumChargeTrapStack: THREE.MeshPhysicalMaterial;
+  cfeSolderImcMicrostructure: THREE.MeshPhysicalMaterial;
+  cfeSerdesEyeDiagramDie: THREE.MeshPhysicalMaterial;
+  cfeFerroelectricHzoCrystal: THREE.MeshPhysicalMaterial;
   // Shared ultra-realistic IC molding compound
   icEpoxyLaser: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
@@ -2256,6 +2260,259 @@ function createCfePqcSecurityDieTexture(): THREE.CanvasTexture {
   return toHiTex(canvas);
 }
 
+function createCfeQuantumChargeTrapStackTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Sub-nanometer atomic cutaway: Poly-Si Channel -> O1/N1/O2 BE-SONOS -> a-Si3N4 Trap Wells -> Al2O3 High-k -> Mo Wordline
+  const bg = ctx.createLinearGradient(0, 0, w, 0);
+  bg.addColorStop(0.0, '#0f172a');
+  bg.addColorStop(0.18, '#38bdf8');
+  bg.addColorStop(0.24, '#fef08a');
+  bg.addColorStop(0.30, '#f59e0b');
+  bg.addColorStop(0.36, '#fef08a');
+  bg.addColorStop(0.58, '#7c3aed');
+  bg.addColorStop(0.76, '#0284c7');
+  bg.addColorStop(0.84, '#94a3b8');
+  bg.addColorStop(1.0, '#cbd5e1');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Crisp vertical atomic interface stratification boundaries
+  const bands = [142, 186, 230, 274, 446, 584, 646];
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+  ctx.lineWidth = 3;
+  for (const bx of bands) {
+    ctx.beginPath();
+    ctx.moveTo(bx, 0);
+    ctx.lineTo(bx, h);
+    ctx.stroke();
+  }
+
+  // Glowing trapped electron quantum clouds inside amorphous Si3N4 (0.87 eV trap wells!)
+  const rng = mulberry32(2026101);
+  for (let i = 0; i < 42; i++) {
+    const ex = 295 + rng() * 130;
+    const ey = 64 + rng() * (h - 128);
+    const rg = ctx.createRadialGradient(ex, ey, 2, ex, ey, 18);
+    rg.addColorStop(0, 'rgba(253, 224, 71, 0.96)');
+    rg.addColorStop(0.5, 'rgba(192, 132, 252, 0.45)');
+    rg.addColorStop(1, 'rgba(124, 58, 237, 0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath();
+    ctx.arc(ex, ey, 18, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Quantum tunneling sinusoidal wavepackets penetrating O1/N1/O2 barrier
+  ctx.strokeStyle = 'rgba(254, 249, 195, 0.9)';
+  ctx.lineWidth = 3.2;
+  for (let row = 0; row < 5; row++) {
+    const y0 = 132 + row * 126;
+    ctx.beginPath();
+    for (let x = 70; x <= 340; x += 6) {
+      const amp = x < 142 ? 15 : x < 274 ? 15 * Math.exp(-(x - 142) / 90) : 7;
+      const yy = y0 + Math.sin((x - 70) * 0.14) * amp;
+      if (x === 70) ctx.moveTo(x, yy);
+      else ctx.lineTo(x, yy);
+    }
+    ctx.stroke();
+  }
+
+  // Clean dark telemetry footer ribbon
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.86)';
+  ctx.fillRect(24, h - 108, w - 48, 84);
+  ctx.fillStyle = '#fef08a';
+  ctx.font = '800 28px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Si | O1/N1/O2 | a-Si3N4 (0.87eV) | Al2O3 | Mo', w * 0.5, h - 56);
+
+  return toHiTex(canvas);
+}
+
+function createCfeSolderImcMicrostructureTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+
+  // SEM metallographic cross-section: SAC305 Tin-Silver-Copper dendrites + scalloped Cu6Sn5 + planar Cu3Sn + Copper UBM
+  const bg = ctx.createLinearGradient(0, 0, 0, s);
+  bg.addColorStop(0.0, '#cbd5e1');
+  bg.addColorStop(0.55, '#94a3b8');
+  bg.addColorStop(0.72, '#d97706');
+  bg.addColorStop(0.84, '#b45309');
+  bg.addColorStop(1.0, '#ea580c');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, s, s);
+
+  // β-Sn & Ag3Sn grain boundaries in upper solder matrix
+  const rng = mulberry32(2026109);
+  ctx.strokeStyle = 'rgba(241, 245, 249, 0.28)';
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < 36; i++) {
+    const cx = rng() * s;
+    const cy = rng() * (s * 0.54);
+    const r = 6 + rng() * 14;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Iconic scalloped η-Cu6Sn5 intermetallic domes along the solder/Cu reaction zone
+  ctx.fillStyle = '#e2e8f0';
+  ctx.strokeStyle = '#475569';
+  ctx.lineWidth = 1.6;
+  for (let x = 8; x < s; x += 22) {
+    const hDom = 12 + (rng() * 8);
+    ctx.beginPath();
+    ctx.arc(x, s * 0.71, hDom, Math.PI, 0);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // Planar ε-Cu3Sn diffusion layer
+  ctx.fillStyle = '#78350f';
+  ctx.fillRect(0, s * 0.72, s, 14);
+  drawMicroGrain(ctx, s, s, 1600, 1091, 0.05);
+
+  return toTileTex(canvas, 2, 2);
+}
+
+function createCfeSerdesEyeDiagramDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // 6nm FinFET / GAA SerDes PHY die with glowing golden-cyan open 16/32 GT/s Eye Diagram + LC-Tank spiral inductors!
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#071324');
+  bg.addColorStop(0.5, '#0c2240');
+  bg.addColorStop(1, '#05101e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Fine FinFET / 6T SRAM background grid
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.14)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 32; i < w; i += 32) {
+    ctx.moveTo(i, 32);
+    ctx.lineTo(i, h - 32);
+    ctx.moveTo(32, i);
+    ctx.lineTo(w - 32, i);
+  }
+  ctx.stroke();
+
+  // Golden die seal ring
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(20, 20, w - 40, h - 40);
+
+  // Centerpiece: Crisp Equalized 16/32 GT/s NRZ Eye Diagram (CTLE + DFE open eye!)
+  const eyY = 265;
+  const eyH = 148;
+  for (let trace = -4; trace <= 4; trace++) {
+    const jitter = trace * 4.5;
+    ctx.strokeStyle = trace === 0 ? '#22d3ee' : 'rgba(56, 189, 248, 0.42)';
+    ctx.lineWidth = trace === 0 ? 5 : 2.2;
+    ctx.beginPath();
+    for (let x = 76; x <= w - 76; x += 6) {
+      const ph = ((x - 76 + jitter) / (w - 152)) * Math.PI * 2;
+      const yTop = eyY - Math.sin(ph) * eyH * 0.65;
+      if (x === 76) ctx.moveTo(x, yTop);
+      else ctx.lineTo(x, yTop);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    for (let x = 76; x <= w - 76; x += 6) {
+      const ph = ((x - 76 - jitter) / (w - 152)) * Math.PI * 2;
+      const yBot = eyY + Math.sin(ph) * eyH * 0.65;
+      if (x === 76) ctx.moveTo(x, yBot);
+      else ctx.lineTo(x, yBot);
+    }
+    ctx.stroke();
+  }
+
+  // Golden sampling crosshair inside open eye
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(w * 0.5, eyY - 96);
+  ctx.lineTo(w * 0.5, eyY + 96);
+  ctx.moveTo(w * 0.5 - 92, eyY);
+  ctx.lineTo(w * 0.5 + 92, eyY);
+  ctx.stroke();
+
+  // Bottom dual octagonal LC-Tank PLL spiral inductors
+  for (const cx of [210, 558]) {
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 5;
+    for (let r = 24; r <= 88; r += 16) {
+      ctx.strokeRect(cx - r, 556 - r, r * 2, r * 2);
+    }
+  }
+
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = '800 32px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('PCIe Gen4/5 16-32GT/s SERDES', w * 0.5, 92);
+  ctx.fillStyle = '#fde047';
+  ctx.font = '700 26px "Courier New", monospace';
+  ctx.fillText('FFE + CTLE + DFE + LC-PLL', w * 0.5, 706);
+
+  return toHiTex(canvas);
+}
+
+function createCfeFerroelectricHzoCrystalTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // 2026 imec/arXiv Orthorhombic Hf0.5Zr0.5O2 (HZO) Ferroelectric Dipole Crystal + a-IGZO Oxide Channel
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#1e1b4b');
+  bg.addColorStop(0.38, '#312e81');
+  bg.addColorStop(0.68, '#0f766e');
+  bg.addColorStop(1, '#083344');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Ferroelectric orthorhombic crystal domain tessellation with upward/downward polarization arrows
+  const cols = 6;
+  const rows = 5;
+  const cw = (w - 96) / cols;
+  const ch = (h - 176) / rows;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const up = (r + c) % 2 === 0;
+      const x = 48 + c * cw;
+      const y = 48 + r * ch;
+      ctx.fillStyle = up ? 'rgba(56, 189, 248, 0.24)' : 'rgba(244, 114, 182, 0.24)';
+      ctx.fillRect(x + 4, y + 4, cw - 8, ch - 8);
+      ctx.strokeStyle = up ? '#38bdf8' : '#f472b6';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x + 4, y + 4, cw - 8, ch - 8);
+
+      // Polarization dipole arrow inside crystal unit cell
+      const mx = x + cw * 0.5;
+      const my = y + ch * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(mx, my + (up ? 28 : -28));
+      ctx.lineTo(mx, my + (up ? -28 : 28));
+      ctx.stroke();
+      ctx.beginPath();
+      const tipY = my + (up ? -28 : 28);
+      const dir = up ? 1 : -1;
+      ctx.moveTo(mx - 12, tipY + dir * 14);
+      ctx.lineTo(mx, tipY);
+      ctx.lineTo(mx + 12, tipY + dir * 14);
+      ctx.stroke();
+    }
+  }
+
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+  ctx.fillRect(36, h - 104, w - 72, 74);
+  ctx.fillStyle = '#f0abfc';
+  ctx.font = '800 30px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('2026 FeNAND  HZO (Hf0.5Zr0.5O2) + a-IGZO', w * 0.5, h - 56);
+
+  return toHiTex(canvas);
+}
+
 function createIcEpoxyLaserTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
@@ -2737,6 +2994,60 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.10
   );
 
+  const cfeQuantumChargeTrapStack = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeQuantumChargeTrapStackTexture(),
+      metalness: 0.34,
+      roughness: 0.22,
+      clearcoat: 0.65,
+      iridescence: 0.72,
+      iridescenceIOR: 1.54,
+    }),
+    0.09
+  );
+
+  const cfeSolderImcMicrostructure = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeSolderImcMicrostructureTexture(),
+      metalness: 0.86,
+      roughness: 0.26,
+      clearcoat: 0.28,
+    }),
+    0.14
+  );
+
+  const cfeSerdesEyeDiagramDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeSerdesEyeDiagramDieTexture(),
+      metalness: 0.46,
+      roughness: 0.22,
+      clearcoat: 0.55,
+      iridescence: 0.58,
+      iridescenceIOR: 1.65,
+    }),
+    0.09
+  );
+
+  const cfeFerroelectricHzoCrystal = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createCfeFerroelectricHzoCrystalTexture(),
+      metalness: 0.38,
+      roughness: 0.18,
+      clearcoat: 0.78,
+      iridescence: 0.88,
+      iridescenceIOR: 1.72,
+    }),
+    0.08
+  );
+
   const icEpoxyLaser = tagBump(
     new THREE.MeshPhysicalMaterial({
       ...common,
@@ -2786,6 +3097,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     cfeGlassWeaveCore,
     cfeMolyWordlineMetal,
     cfePqcSecurityDie,
+    cfeQuantumChargeTrapStack,
+    cfeSolderImcMicrostructure,
+    cfeSerdesEyeDiagramDie,
+    cfeFerroelectricHzoCrystal,
     icEpoxyLaser,
   ];
 
@@ -2826,6 +3141,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     cfeGlassWeaveCore,
     cfeMolyWordlineMetal,
     cfePqcSecurityDie,
+    cfeQuantumChargeTrapStack,
+    cfeSolderImcMicrostructure,
+    cfeSerdesEyeDiagramDie,
+    cfeFerroelectricHzoCrystal,
     icEpoxyLaser,
     list,
   };
