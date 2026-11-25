@@ -608,20 +608,20 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
     // Crisp hollow cyan perimeter hydrophobic vapor-seal frame + 4 corner hydrophobic nano-beads
     // (zero central milky occlusion over C01 TOUGH armor or C07 HDI PCB!)
     const nanoRim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(34.8, 47.0, 1.7, 33.1, 45.3, 1.35), 0.2, 0.03, 0.03, 1, 20),
+      extrudeHiRes(createFrameShape(33.2, 44.8, 1.5, 31.8, 43.4, 1.2), 0.16, 0.02, 0.02, 1, 20),
       mats.fluorineCoatCyan
     );
     g.add(nanoRim);
     // 4 gleaming micro-scale hydrophobic beading droplets demonstrating >115° contact angle
     for (const [dx, dy] of [
-      [-15.8, 21.8],
-      [15.8, 21.8],
-      [-15.8, -21.8],
-      [15.8, -21.8],
+      [-14.8, 20.6],
+      [14.8, 20.6],
+      [-14.8, -20.6],
+      [14.8, -20.6],
     ]) {
-      const drop = new THREE.Mesh(hiResSphere(0.55, 14, 10), mats.vcWorkingFluidCyan);
-      drop.position.set(dx, dy, 0.22);
-      drop.scale.set(1.0, 1.0, 0.72);
+      const drop = new THREE.Mesh(hiResSphere(0.45, 14, 10), mats.vcWorkingFluidCyan);
+      drop.position.set(dx, dy, 0.18);
+      drop.scale.set(1.0, 1.0, 0.68);
       drop.userData.noEdges = true;
       g.add(drop);
     }
@@ -631,7 +631,7 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
         46,
         '#06b6d4',
         g,
-        new THREE.Vector3(0, 1.5, 1.05),
+        new THREE.Vector3(0, 1.5, 0.65),
         new THREE.Vector3(-76, 36, 8),
         cp,
         0.14
@@ -1308,21 +1308,21 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
       g.add(wiper, tail);
     }
 
-    // Stainless heart-cam push-push card-eject latch mechanism + helical return spring on right flank
+    // Compact stainless heart-cam push-push card-eject latch & helical spring tucked neatly at connector side
     const latchArm = new THREE.Mesh(
-      createChamferedBoxGeo(2.0, 16.5, 1.85, 0.35, 0.08, 'z'),
+      createChamferedBoxGeo(1.4, 8.2, 1.45, 0.28, 0.06, 'z'),
       mats.stainlessMachined
     );
-    latchArm.position.set(20.8, 8.8, -0.25);
+    latchArm.position.set(19.25, 1.2, -0.45);
     const latchHook = new THREE.Mesh(
-      createChamferedBoxGeo(2.3, 3.2, 2.05, 0.3, 0.08, 'z'),
-      mats.cinnabarAnodized
+      createChamferedBoxGeo(1.5, 1.85, 1.55, 0.24, 0.06, 'z'),
+      mats.titaniumRivet
     );
-    latchHook.position.set(19.6, 15.8, -0.25);
-    for (let i = 0; i < 6; i++) {
-      const coil = new THREE.Mesh(hiResTorus(0.86, 0.16, 8, 18), mats.silverElectrode);
+    latchHook.position.set(18.75, 4.9, -0.45);
+    for (let i = 0; i < 5; i++) {
+      const coil = new THREE.Mesh(hiResTorus(0.56, 0.12, 8, 16), mats.silverElectrode);
       coil.rotation.x = Math.PI / 2;
-      coil.position.set(20.8, 1.4 + i * 0.95, -0.25);
+      coil.position.set(19.25, -2.0 + i * 0.62, -0.45);
       coil.userData.noEdges = true;
       g.add(coil);
     }
