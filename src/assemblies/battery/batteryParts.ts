@@ -26,6 +26,7 @@ import {
 } from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 import { buildBatteryUltra27Parts } from './batteryUltra27Parts';
+import { buildBatteryUltra30Parts } from './batteryUltra30Parts';
 
 function finalizeBatteryPart(
   id: string,
@@ -1093,17 +1094,24 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // TRUE 4.2-turn Archimedean spiral NMC811 cathode ribbon + gleaming protruding Al foil edge!
+    // TRUE 4.2-turn Archimedean spiral single-crystal NMC811 cathode ribbon + gleaming protruding Al foil edge!
     const nmcSpiral = new THREE.Mesh(
       buildSpiralJellyRollGeometry(2.65, 7.85, 4.2, 35.2, 0.22, Math.PI * 0.82, 0.36),
-      u.batElectrodeCoating
+      u.batSingleCrystalNmc
     );
     const alFoilSpiral = new THREE.Mesh(
-      buildSpiralJellyRollGeometry(2.77, 7.97, 4.2, 36.5, 0.09, Math.PI * 0.82, 0.36),
+      buildSpiralJellyRollGeometry(2.77, 7.97, 4.2, 36.6, 0.1, Math.PI * 0.82, 0.36),
       mats.silverElectrode
     );
     alFoilSpiral.userData.noEdges = true;
-    g.add(nmcSpiral, alFoilSpiral);
+    const alTopCrown = new THREE.Mesh(
+      hiResTorus(5.3, 0.14, 10, 32, Math.PI * 1.1),
+      mats.silverElectrode
+    );
+    alTopCrown.rotation.x = Math.PI / 2;
+    alTopCrown.position.y = 18.25;
+    alTopCrown.userData.noEdges = true;
+    g.add(nmcSpiral, alFoilSpiral, alTopCrown);
 
     parts.push(
       finalizeBatteryPart(
@@ -1124,17 +1132,24 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Interleaved 4.2-turn Archimedean spiral Si-C graphite anode + bright copper current collector edge!
+    // Interleaved 4.2-turn Archimedean spiral CVD Si-C graphite anode + bright copper current collector edge!
     const siAnodeSpiral = new THREE.Mesh(
       buildSpiralJellyRollGeometry(2.05, 7.25, 4.2, 34.6, 0.21, Math.PI * 0.82, 0.26),
-      mats.pyroGraphite
+      u.batSiCNanoScaffold
     );
     const cuFoilSpiral = new THREE.Mesh(
-      buildSpiralJellyRollGeometry(2.17, 7.37, 4.2, 36.0, 0.09, Math.PI * 0.82, 0.26),
+      buildSpiralJellyRollGeometry(2.17, 7.37, 4.2, 36.1, 0.1, Math.PI * 0.82, 0.26),
       mats.copperHeatSpreader
     );
     cuFoilSpiral.userData.noEdges = true;
-    g.add(siAnodeSpiral, cuFoilSpiral);
+    const cuBotCrown = new THREE.Mesh(
+      hiResTorus(4.7, 0.14, 10, 32, Math.PI * 1.1),
+      mats.copperHeatSpreader
+    );
+    cuBotCrown.rotation.x = Math.PI / 2;
+    cuBotCrown.position.y = -18.0;
+    cuBotCrown.userData.noEdges = true;
+    g.add(siAnodeSpiral, cuFoilSpiral, cuBotCrown);
 
     parts.push(
       finalizeBatteryPart(
@@ -1461,5 +1476,6 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
   }
 
   parts.push(...buildBatteryUltra27Parts(mats));
+  parts.push(...buildBatteryUltra30Parts(mats));
   return parts;
 }

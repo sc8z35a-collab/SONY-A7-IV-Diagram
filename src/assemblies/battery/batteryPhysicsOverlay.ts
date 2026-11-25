@@ -11,8 +11,8 @@ export interface BatteryPhysicsOverlayController {
 }
 
 /**
- * Animated Li+ Ion / Electron Power-Flow Overlay + 6-Way Dashed Explode Guides
- * for the Standalone Flagship Camera Battery Pack Ultra-Dissection (P01–P60).
+ * Animated Li+ Ion / Electron Power-Flow, 2026 Online EIS Diagnostic & Active 2S Balancing Overlay
+ * + 6-Way Dashed Explode Guides for the Standalone 100-Part Battery Pack Ultra-Dissection (P01–P100).
  */
 export function createBatteryPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,10 +23,10 @@ export function createBatteryPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 72);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 110);
   explodeGuides.add(radialGuides.group);
 
-  // Power & Ion flow paths: Left Cell -> Bottom 2S Bridge -> Right Cell -> BMS MOSFET -> 4-Pin Terminal
+  // Power, Ion, EIS & Active-Balance flow paths across 2S cells & 2026 Smart BMS
   const routeDefs: Array<{ pts: THREE.Vector3[]; color: number }> = [
     {
       pts: [
@@ -52,7 +52,25 @@ export function createBatteryPhysicsOverlay(
         new THREE.Vector3(-4.5, 21.5, 1.8),
         new THREE.Vector3(2.5, 24.0, 0),
       ],
-      color: 0x8b5cf6, // InfoLITHIUM S-Data telemetry & protection sense path (violet)
+      color: 0x8b5cf6, // InfoLITHIUM S-Data telemetry & EU Battery Passport path (violet)
+    },
+    {
+      pts: [
+        new THREE.Vector3(-4.2, 21.6, 0.2),
+        new THREE.Vector3(0.0, 14.0, 5.2),
+        new THREE.Vector3(9.5, 2.0, 5.5),
+        new THREE.Vector3(9.5, -14.0, 4.2),
+      ],
+      color: 0x10b981, // 2026 Online EIS AC impedance spectroscopy diagnostic probe wave (emerald)
+    },
+    {
+      pts: [
+        new THREE.Vector3(-9.5, 17.5, -3.5),
+        new THREE.Vector3(0.0, 21.5, -3.2),
+        new THREE.Vector3(4.4, 21.5, -2.8),
+        new THREE.Vector3(9.5, 17.5, -3.5),
+      ],
+      color: 0xec4899, // Lossless switched-capacitor active 2S balancing shuttle (magenta)
     },
   ];
 
