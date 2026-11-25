@@ -23,7 +23,7 @@ export function extrudeHiRes(
   bevelSegments = 2,
   curveSegments = 24
 ): THREE.ExtrudeGeometry {
-  const effCurve = GPU_PROFILE.isMobile ? Math.max(10, Math.round(curveSegments * 0.65)) : curveSegments;
+  const effCurve = GPU_PROFILE.isMobile ? Math.max(8, Math.round(curveSegments * 0.5)) : curveSegments;
   const effBevelSegs = bevelSize > 0.005 && bevelThickness > 0.005
     ? (GPU_PROFILE.isMobile ? Math.max(1, bevelSegments - 1) : bevelSegments)
     : 0;
@@ -186,7 +186,7 @@ export function hiResCyl(
   thetaStart = 0,
   thetaLength = Math.PI * 2
 ): THREE.CylinderGeometry {
-  const segs = GPU_PROFILE.isMobile ? Math.max(12, Math.round(radialSegments * 0.65)) : radialSegments;
+  const segs = GPU_PROFILE.isMobile ? Math.max(8, Math.round(radialSegments * 0.5)) : radialSegments;
   return markHiRes(new THREE.CylinderGeometry(rTop, rBot, height, segs, 1, openEnded, thetaStart, thetaLength));
 }
 
@@ -202,8 +202,8 @@ export function hiResSphere(
   thetaStart = 0,
   thetaLen = Math.PI
 ): THREE.SphereGeometry {
-  const ew = GPU_PROFILE.isMobile ? Math.max(8, Math.round(wSegs * 0.65)) : wSegs;
-  const eh = GPU_PROFILE.isMobile ? Math.max(6, Math.round(hSegs * 0.65)) : hSegs;
+  const ew = GPU_PROFILE.isMobile ? Math.max(6, Math.round(wSegs * 0.5)) : wSegs;
+  const eh = GPU_PROFILE.isMobile ? Math.max(5, Math.round(hSegs * 0.5)) : hSegs;
   return markHiRes(new THREE.SphereGeometry(radius, ew, eh, phiStart, phiLen, thetaStart, thetaLen));
 }
 
@@ -217,8 +217,8 @@ export function hiResTorus(
   tubSegs = 32,
   arc = Math.PI * 2
 ): THREE.TorusGeometry {
-  const er = GPU_PROFILE.isMobile ? Math.max(6, Math.round(radSegs * 0.7)) : radSegs;
-  const et = GPU_PROFILE.isMobile ? Math.max(14, Math.round(tubSegs * 0.65)) : tubSegs;
+  const er = GPU_PROFILE.isMobile ? Math.max(5, Math.round(radSegs * 0.52)) : radSegs;
+  const et = GPU_PROFILE.isMobile ? Math.max(10, Math.round(tubSegs * 0.5)) : tubSegs;
   return markHiRes(new THREE.TorusGeometry(radius, tube, er, et, arc));
 }
 

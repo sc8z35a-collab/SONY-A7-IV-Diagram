@@ -347,6 +347,17 @@ export class PartStateTextureBuffer {
     this.dirty = true;
   }
 
+  /** Re-populate and mark ALL 4 ring textures dirty after a WebGL context restore so no ring slot reads zeroed VRAM! */
+  public refreshAfterContextRestore(): void {
+    for (let r = 0; r < STATE_RING_SIZE; r++) {
+      this.ringData[r].set(this.data);
+      this.ringMinRow[r] = MAX_PARTS_CAPACITY;
+      this.ringMaxRow[r] = -1;
+      this.textures[r].needsUpdate = true;
+    }
+    this.dirty = false;
+  }
+
   public dispose(): void {
     for (let r = 0; r < STATE_RING_SIZE; r++) {
       this.textures[r].dispose();
@@ -369,7 +380,17 @@ vec3 decodeOctNormal(vec2 f) {
   float t = max(-n.z, 0.0);
   n.x += n.x >= 0.0 ? -t : t;
   n.y += n.y >= 0.0 ? -t : t;
-  return normalize(n);
+  return normalize(n + vec3(0.0, 0.0, 1e-6));
+}
+
+vec2 encodeOctNormal(vec3 n) {
+  float denom = max(abs(n.x) + abs(n.y) + abs(n.z), 1e-5);
+  vec2 p = n.xy / denom;
+  if (n.z < 0.0) {
+    vec2 s = vec2(p.x >= 0.0 ? 1.0 : -1.0, p.y >= 0.0 ? 1.0 : -1.0);
+    p = (1.0 - abs(p.yx)) * s;
+  }
+  return p;
 }
 `;
 
@@ -385,11 +406,260 @@ vec3 fastAcesSrgb(vec3 x) {
 }
 `;
 
-// --- OMEGA-2 + OMEGA-3: Zero-Material-Sampler 4-Varying Quantized Opaque Solid PBR (95% of CAD!) ---
+// Shared Studio Key/Rim/Top/Fill PBR + HIGH 8-tap PCF / ULTRA 16-tap PCSS Soft Shadow + GGX HDR BRDF Library
+const GLSL3_STUDIO_SHADOW_BRDF = /* glsl */ `
+const vec3 STUDIO_KEY_DIR  = vec3(-0.5174, 0.7164, 0.4577);
+const vec3 STUDIO_TOP_DIR  = vec3( 0.0503, 0.9647, 0.2584);
+const vec3 STUDIO_RIM_DIR  = vec3( 0.6484, 0.3647,-0.6687);
+const vec3 STUDIO_FILL_DIR = vec3( 0.5432, 0.5633, 0.6237);
+
+const vec2 POISSON_8[8] = vec2[8](
+  vec2(-0.6134,  0.6175), vec2( 0.1700, -0.0402),
+  vec2(-0.2994,  0.7919), vec2( 0.6456,  0.5286),
+  vec2(-0.8180, -0.3510), vec2( 0.0689, -0.8213),
+  vec2( 0.7794, -0.3991), vec2(-0.2545, -0.4519)
+);
+
+float studioIgn(vec2 p) {
+  return fract(52.9829189 * fract(dot(p, vec2(0.06711056, 0.00583715))));
+}
+
+float computeStudioShadow(
+  vec3 worldPos,
+  vec3 N,
+  highp sampler2D shadowMap,
+  mat4 lightViewProj,
+  vec4 shadowParams,
+  float qualityTier
+) {
+  if (qualityTier < 0.5 || shadowParams.z <= 0.001) return 1.0;
+
+  float ndl = max(dot(N, STUDIO_KEY_DIR), 0.0);
+  vec3 offsetPos = worldPos + N * (shadowParams.x * (0.45 + 0.85 * (1.0 - ndl)));
+  vec4 sc = lightViewProj * vec4(offsetPos, 1.0);
+  vec3 proj = (sc.xyz / max(sc.w, 1e-5)) * 0.5 + 0.5;
+  if (proj.x <= 0.002 || proj.x >= 0.998 || proj.y <= 0.002 || proj.y >= 0.998 || proj.z <= 0.0 || proj.z >= 0.999) {
+    return 1.0;
+  }
+
+  float edgeFade = smoothstep(0.002, 0.055, min(min(proj.x, 1.0 - proj.x), min(proj.y, 1.0 - proj.y)));
+  float zBias = 0.00045 + 0.00135 * (1.0 - ndl);
+  float refZ = proj.z - zBias;
+  float texel = shadowParams.y;
+
+  float ang = studioIgn(gl_FragCoord.xy) * 6.2831853;
+  float ca = cos(ang);
+  float sa = sin(ang);
+  mat2 rot = mat2(ca, -sa, sa, ca);
+
+  if (qualityTier < 1.5) {
+    // HIGH: 8-tap rotated Poisson PCF soft shadow
+    float vis = 0.0;
+    float rad = texel * 1.65;
+    for (int i = 0; i < 8; i++) {
+      vec2 off = (rot * POISSON_8[i]) * rad;
+      float d = texture(shadowMap, proj.xy + off).r;
+      vis += refZ <= d ? 1.0 : 0.0;
+    }
+    return mix(1.0, vis * 0.125, shadowParams.z * edgeFade);
+  }
+
+  // ULTRA: PCSS Blocker Search (8 taps) + Variable-Penumbra 16-tap Vogel-Disk PCF!
+  float searchRad = texel * shadowParams.w;
+  float blockerSum = 0.0;
+  float blockerCnt = 0.0;
+  for (int i = 0; i < 8; i++) {
+    vec2 off = (rot * POISSON_8[i]) * searchRad;
+    float d = texture(shadowMap, proj.xy + off).r;
+    if (d < refZ) {
+      blockerSum += d;
+      blockerCnt += 1.0;
+    }
+  }
+  if (blockerCnt < 0.5) return 1.0;
+
+  float avgBlocker = blockerSum / blockerCnt;
+  float penumbra = clamp((refZ - avgBlocker) * 48.0, 0.85, 6.4) * texel;
+  float vis = 0.0;
+  for (int i = 0; i < 16; i++) {
+    float fi = float(i);
+    float r = sqrt((fi + 0.5) * 0.0625) * penumbra;
+    float th = fi * 2.3999632 + ang;
+    vec2 off = vec2(cos(th), sin(th)) * r;
+    float d = texture(shadowMap, proj.xy + off).r;
+    vis += refZ <= d ? 1.0 : 0.0;
+  }
+  return mix(1.0, vis * 0.0625, shadowParams.z * edgeFade);
+}
+
+float ggxD(float ndh, float a2) {
+  float d = (ndh * ndh) * (a2 - 1.0) + 1.0;
+  return a2 / max(3.14159265 * d * d, 1e-5);
+}
+
+float ggxV(float ndv, float ndl, float a2) {
+  float gv = ndl * sqrt(ndv * ndv * (1.0 - a2) + a2);
+  float gl = ndv * sqrt(ndl * ndl * (1.0 - a2) + a2);
+  return 0.5 / max(gv + gl, 1e-4);
+}
+
+vec3 fresnelSchlick(vec3 F0, float vdh) {
+  float om = clamp(1.0 - vdh, 0.0, 1.0);
+  float om2 = om * om;
+  return F0 + (vec3(1.0) - F0) * (om2 * om2 * om);
+}
+
+vec3 evalDirectLightGGX(
+  vec3 N,
+  vec3 V,
+  vec3 L,
+  vec3 radiance,
+  vec3 diffColor,
+  vec3 F0,
+  float a2,
+  float ndv
+) {
+  float ndl = max(dot(N, L), 0.0);
+  if (ndl <= 0.0005) return vec3(0.0);
+  vec3 H = normalize(V + L + vec3(0.0, 0.0, 1e-6));
+  float ndh = max(dot(N, H), 0.0);
+  float vdh = max(dot(V, H), 0.0);
+  vec3 F = fresnelSchlick(F0, vdh);
+  float D = ggxD(ndh, a2);
+  float Vis = ggxV(ndv, ndl, a2);
+  vec3 spec = D * Vis * F;
+  vec3 kD = vec3(1.0) - F;
+  return (diffColor * kD * 0.31830989 + spec) * radiance * ndl;
+}
+
+vec3 evalStudioPbrLighting(
+  vec3 N,
+  vec3 V,
+  vec3 diffColor,
+  vec3 F0,
+  float rough,
+  float metal,
+  float clearcoat,
+  float microAo,
+  float shadowVis,
+  float qualityTier
+) {
+  float ndv = clamp(dot(N, V), 0.001, 1.0);
+  vec3 R = N * (2.0 * ndv) - V;
+  float om = 1.0 - ndv;
+  float om2 = om * om;
+  float fres4 = om2 * om2;
+
+  float ny = N.y;
+  float softS = 5.8 - rough * 4.85;
+  float softB = 1.0 - softS;
+  float softG = 1.44 - rough * 0.96;
+
+  float ry = clamp(R.y * 0.88 + 0.44, 0.0, 1.0);
+  float horizonDip = 1.0 - 0.54 * exp(-abs(R.y) * 8.6);
+
+  float aTop = clamp(dot(R, STUDIO_TOP_DIR) * softS + softB, 0.0, 1.0);
+  float aKey = clamp(dot(R, STUDIO_KEY_DIR) * softS + softB, 0.0, 1.0);
+  float aRim = clamp(dot(R, STUDIO_RIM_DIR) * softS + softB, 0.0, 1.0);
+  float aFill = clamp(dot(R, STUDIO_FILL_DIR) * (softS * 0.65) + (1.0 - softS * 0.65), 0.0, 1.0);
+  aTop *= aTop;
+  aKey *= aKey;
+  aRim *= aRim;
+  aFill *= aFill;
+
+  if (qualityTier < 1.5) {
+    // STD & HIGH Studio Product Photography Lighting
+    float keyShadow = mix(0.46, 1.0, shadowVis);
+    vec3 diffIrr = max((vec3(0.56, 0.58, 0.62)
+      + ny * vec3(0.42, 0.43, 0.46)
+      + N.z * vec3(0.27, 0.26, 0.26)
+      - N.x * vec3(0.21, 0.22, 0.25)
+      + (ny * ny) * vec3(0.15, 0.16, 0.18)), vec3(0.16, 0.17, 0.20)) * microAo;
+    vec3 bounceTint = mix(vec3(0.86, 0.90, 0.98), vec3(1.0), shadowVis);
+    diffIrr *= keyShadow * bounceTint;
+
+    vec3 specRad = mix(vec3(0.20, 0.23, 0.29), vec3(1.28, 1.31, 1.37), ry) * horizonDip;
+    specRad += (vec3(2.14, 2.16, 2.22) * (aTop * aTop)
+              + vec3(1.90, 1.86, 1.80) * (aKey * aKey) * mix(0.25, 1.0, shadowVis)
+              + vec3(1.20, 1.34, 1.56) * (aRim * aRim)
+              + vec3(0.52, 0.56, 0.64) * (aFill * aFill)) * softG;
+
+    vec3 envF = max(vec3((1.0 - rough) * 0.90), F0);
+    vec3 brdf = mix(F0, envF, fres4) * (0.98 - rough * 0.14);
+    vec3 col = diffColor * diffIrr + specRad * brdf * microAo;
+
+    if (clearcoat > 0.05) {
+      float cd = clamp(dot(R, vec3(-0.42, 0.72, 0.55)), 0.0, 1.0);
+      float c2 = cd * cd;
+      float c4 = c2 * c2;
+      float c16 = c4 * c4;
+      float coatLobe = c16 * c2;
+      float coatSpec = (aTop * aTop * 0.52 + aKey * aKey * 0.38 * shadowVis + coatLobe * 0.68 + 0.05 + 0.95 * fres4) * clearcoat * 0.28;
+      col += vec3(coatSpec);
+    }
+    return max(col, vec3(0.0));
+  }
+
+  // ULTRA: Physically-Based GGX Cook-Torrance Direct Softbox Rig + 6-Stop HDR Cyclorama IBL + Multi-Scattering!
+  float rClamped = clamp(rough, 0.045, 0.98);
+  float a = rClamped * rClamped;
+  float a2 = max(a * a, 0.0004);
+
+  // Direct studio softboxes with true GGX microfacet specular & real PCSS shadow visibility
+  vec3 direct = vec3(0.0);
+  direct += evalDirectLightGGX(N, V, STUDIO_KEY_DIR,  vec3(1.82, 1.77, 1.70) * shadowVis, diffColor, F0, a2, ndv);
+  direct += evalDirectLightGGX(N, V, STUDIO_TOP_DIR,  vec3(1.22, 1.25, 1.32) * mix(0.62, 1.0, shadowVis), diffColor, F0, a2, ndv);
+  direct += evalDirectLightGGX(N, V, STUDIO_RIM_DIR,  vec3(1.05, 1.18, 1.42), diffColor, F0, a2, ndv);
+  direct += evalDirectLightGGX(N, V, STUDIO_FILL_DIR, vec3(0.62, 0.66, 0.74), diffColor, F0, a2, ndv);
+
+  // Ambient studio cyclorama hemisphere IBL (rich cool-sky / warm-table floor bounce)
+  vec3 envDiff = mix(vec3(0.32, 0.34, 0.39), vec3(0.76, 0.79, 0.85), clamp(ny * 0.5 + 0.5, 0.0, 1.0)) * microAo;
+  envDiff *= mix(vec3(0.78, 0.84, 0.95), vec3(1.0), shadowVis);
+
+  // 6-Stop Linear HDR Studio Cyclorama Reflections (dark contrast horizon ribbon + bright HDR softbox windows!)
+  float horizonRibbon = 1.0 - 0.68 * exp(-abs(R.y) * 10.5);
+  vec3 envSpec = mix(vec3(0.18, 0.21, 0.27), vec3(1.42, 1.46, 1.54), ry) * horizonRibbon;
+
+  // Dual overhead studio strip softboxes + key reflector + crisp HDR highlights (> 1.5..4.2 linear radiance!)
+  float hdrGain = mix(1.85, 0.58, rClamped);
+  envSpec += (vec3(3.15, 3.18, 3.30) * (aTop * aTop)
+            + vec3(2.85, 2.74, 2.58) * (aKey * aKey) * mix(0.30, 1.0, shadowVis)
+            + vec3(1.65, 1.88, 2.24) * (aRim * aRim)
+            + vec3(0.68, 0.74, 0.84) * (aFill * aFill)) * hdrGain;
+
+  // Anisotropic brushed-metal studio highlight stretch for CNC metals & magnesium housings
+  if (metal > 0.55) {
+    vec3 anisoDir = normalize(cross(N, vec3(0.0, 1.0, 0.001)) + vec3(1e-4, 0.0, 0.0));
+    float anisoH = abs(dot(R, anisoDir));
+    float anisoBand = exp(-anisoH * anisoH * mix(22.0, 4.5, rClamped)) * (1.0 - rClamped * 0.7);
+    envSpec += vec3(0.88, 0.92, 0.98) * anisoBand * metal * mix(0.45, 1.0, shadowVis);
+  }
+
+  // Multi-scattering energy compensation for rough metals (prevents dark metallic edges!)
+  vec3 envF = max(vec3((1.0 - rClamped) * 0.94), F0);
+  vec3 brdfEnv = mix(F0, envF, fres4) * (1.0 + metal * rClamped * 0.38);
+
+  vec3 col = diffColor * envDiff + direct * microAo + envSpec * brdfEnv * microAo * 0.72;
+
+  if (clearcoat > 0.05) {
+    float cd = clamp(dot(R, vec3(-0.42, 0.72, 0.55)), 0.0, 1.0);
+    float c2 = cd * cd;
+    float c4 = c2 * c2;
+    float c16 = c4 * c4;
+    float coatLobe = c16 * c2;
+    float coatSpec = (aTop * aTop * 0.78 + aKey * aKey * 0.62 * shadowVis + coatLobe * 1.45 + 0.04 + 0.96 * fres4) * clearcoat * 0.34;
+    col += vec3(coatSpec);
+  }
+  return max(col, vec3(0.0));
+}
+`;
+
+// --- OMEGA-2 + OMEGA-3: Zero-Material-Sampler Quantized Opaque Solid PBR (95% of CAD!) ---
 function buildOmegaPbrSolidVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
+precision highp sampler2D;
 
 uniform mat4 uViewProj;
 uniform vec3 uCamPos;
@@ -402,11 +672,12 @@ in vec4 aPosSlot;
 in vec2 aOctNorm;
 in vec2 aMatMeta;
 
-out vec3 vViewDir;
-out vec3 vWorldNorm;
+out highp vec3 vWorldPos;
+out highp vec3 vViewDir;
+out highp vec3 vWorldNorm;
 flat out vec4 vDiffSpec;
 flat out vec4 vF0Coat;
-${useClip ? 'out float vClipDist;' : ''}
+${useClip ? 'out highp float vClipDist;' : ''}
 
 ${GLSL3_CORE_LIB}
 
@@ -416,6 +687,7 @@ void main() {
   float packed = posVis.w;
   if (packed < 0.5) {
     gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    vWorldPos = vec3(0.0);
     vViewDir = vec3(0.0, 0.0, 1.0);
     vWorldNorm = vec3(0.0, 1.0, 0.0);
     vDiffSpec = vec4(0.0);
@@ -437,7 +709,7 @@ void main() {
     vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
     vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
     worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
-    worldNorm = normalize(kmbRotateByQuat(localNorm, quat));
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
   } else {
     worldPos = position + posVis.xyz;
     worldNorm = localNorm;
@@ -446,6 +718,7 @@ void main() {
   int mIdx = int(aMatMeta.x + 0.5) * 2;
   vDiffSpec = uMatSolid[mIdx];
   vF0Coat = uMatSolid[mIdx + 1];
+  vWorldPos = worldPos;
   vViewDir = normalize(uCamPos - worldPos + vec3(0.0, 0.0, 1e-5));
   vWorldNorm = worldNorm;
   ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
@@ -456,66 +729,48 @@ void main() {
 
 function buildOmegaPbrSolidFs(useClip: boolean): string {
   return /* glsl */ `
-precision mediump float;
+precision highp float;
+precision highp int;
+precision highp sampler2D;
 
-in vec3 vViewDir;
-in vec3 vWorldNorm;
+uniform highp sampler2D uShadowMap;
+uniform mat4 uLightViewProj;
+uniform vec4 uShadowParams;
+uniform float uQualityTier;
+uniform float uHdrLinearOutput;
+
+in highp vec3 vWorldPos;
+in highp vec3 vViewDir;
+in highp vec3 vWorldNorm;
 flat in vec4 vDiffSpec;
 flat in vec4 vF0Coat;
-${useClip ? 'in float vClipDist;' : ''}
+${useClip ? 'in highp float vClipDist;' : ''}
 
 out vec4 fragColor;
+
+${GLSL3_TONEMAP_SRGB}
+${GLSL3_STUDIO_SHADOW_BRDF}
 
 void main() {
   ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
 
-  vec3 N = vWorldNorm;
-  N *= (1.5 - 0.5 * dot(N, N));
+  vec3 N = normalize(vWorldNorm + vec3(0.0, 0.0, 1e-6));
   ${useClip ? 'if (!gl_FrontFacing) N = -N;' : ''}
-  vec3 V = vViewDir;
-
-  float ndv = clamp(dot(N, V), 0.001, 1.0);
-  vec3 R = N * (2.0 * ndv) - V;
-
-  float ny = N.y;
-  // Sculptural studio product photography hemisphere + warm key / cool rim directional modeling
-  vec3 diffIrr = vec3(0.56, 0.58, 0.62)
-    + ny * vec3(0.42, 0.43, 0.46)
-    + N.z * vec3(0.27, 0.26, 0.26)
-    - N.x * vec3(0.21, 0.22, 0.25)
-    + (ny * ny) * vec3(0.15, 0.16, 0.18);
-  diffIrr = max(diffIrr, vec3(0.16, 0.17, 0.20));
+  vec3 V = normalize(vViewDir + vec3(0.0, 0.0, 1e-6));
 
   float rough = vDiffSpec.w;
-  float softS = 5.8 - rough * 4.85;
-  float softB = 1.0 - softS;
-  float softG = 1.42 - rough * 0.96;
+  vec3 F0 = vF0Coat.xyz;
+  float metalEst = clamp((max(max(F0.r, F0.g), F0.b) - 0.05) * 2.2, 0.0, 1.0);
+  float clearcoat = vF0Coat.w * 4.545;
 
-  // Photorealistic studio cyclorama lightbox environment (crisp dark studio horizon band + overhead/side softboxes)
-  float ry = clamp(R.y * 0.88 + 0.44, 0.0, 1.0);
-  float horizonDip = 1.0 - 0.52 * exp(-abs(R.y) * 8.4);
-  vec3 specRad = mix(vec3(0.20, 0.23, 0.29), vec3(1.26, 1.29, 1.35), ry) * horizonDip;
-  float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
-  float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
-  float aRim = clamp(dot(R, vec3(0.64, 0.36, -0.66)) * softS + softB, 0.0, 1.0);
-  float aFill = clamp(dot(R, vec3(0.54, 0.62, 0.56)) * (softS * 0.65) + (1.0 - softS * 0.65), 0.0, 1.0);
-  aTop *= aTop;
-  aKey *= aKey;
-  aRim *= aRim;
-  aFill *= aFill;
-  specRad += (vec3(2.12, 2.14, 2.20) * (aTop * aTop)
-            + vec3(1.88, 1.84, 1.78) * (aKey * aKey)
-            + vec3(1.18, 1.32, 1.54) * (aRim * aRim)
-            + vec3(0.52, 0.56, 0.64) * (aFill * aFill)) * softG;
+  float shadowVis = computeStudioShadow(vWorldPos, N, uShadowMap, uLightViewProj, uShadowParams, uQualityTier);
+  vec3 col = evalStudioPbrLighting(N, V, vDiffSpec.xyz, F0, rough, metalEst, clearcoat, 1.0, shadowVis, uQualityTier);
 
-  float om = 1.0 - ndv;
-  float om2 = om * om;
-  float fres = om2 * om2;
-  vec3 envF = max(vec3((1.0 - rough) * 0.90), vF0Coat.xyz);
-  vec3 brdf = mix(vF0Coat.xyz, envF, fres) * (0.98 - rough * 0.14);
-
-  vec3 col = max(vDiffSpec.xyz * diffIrr + specRad * brdf + vec3(vF0Coat.w * (0.14 + 0.86 * fres) * (0.35 + aTop + aKey * 0.8)), vec3(0.0));
-  fragColor = vec4((col * (32.06 * col + 6.394)) / (col * (31.61 * col + 8.988) + 1.0), 1.0);
+  if (uHdrLinearOutput > 0.5) {
+    fragColor = vec4(col, 1.0);
+  } else {
+    fragColor = vec4(fastAcesSrgb(col), 1.0);
+  }
 }
 `;
 }
@@ -525,6 +780,7 @@ function buildOmegaPbrVs(useClip: boolean, isGlassPass: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
+precision highp sampler2D;
 
 uniform mat4 uViewProj;
 uniform vec3 uCamPos;
@@ -538,15 +794,15 @@ in vec2 aOctNorm;
 in vec2 aMatMeta;
 in vec2 uv;
 
-out vec3 vViewVec;
-out vec3 vWorldNorm;
-out vec3 vWorldPos;
-out vec2 vUv;
+out highp vec3 vViewVec;
+out highp vec3 vWorldNorm;
+out highp vec3 vWorldPos;
+out highp vec2 vUv;
 flat out vec4 vMat0;
 flat out vec4 vMat1;
 flat out int vMatId;
 ${isGlassPass ? 'flat out int vSlot;' : ''}
-${useClip ? 'out float vClipDist;' : ''}
+${useClip ? 'out highp float vClipDist;' : ''}
 
 ${GLSL3_CORE_LIB}
 
@@ -581,7 +837,7 @@ void main() {
     vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
     vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
     worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
-    worldNorm = normalize(kmbRotateByQuat(localNorm, quat));
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
   } else {
     worldPos = position + posVis.xyz;
     worldNorm = localNorm;
@@ -604,28 +860,35 @@ void main() {
 
 function buildOmegaPbrFs(useClip: boolean, isGlassPass: boolean): string {
   return /* glsl */ `
-precision mediump float;
-precision mediump int;
+precision highp float;
+precision highp int;
+precision highp sampler2D;
 precision mediump sampler2DArray;
 
 uniform highp sampler2D uMatLutTex;
 ${isGlassPass ? 'uniform highp sampler2D uPartStateTex;' : ''}
+uniform highp sampler2D uShadowMap;
+uniform mat4 uLightViewProj;
+uniform vec4 uShadowParams;
+uniform float uQualityTier;
+uniform float uHdrLinearOutput;
 uniform sampler2DArray uTexArrayHi;
 uniform sampler2DArray uTexArrayTile;
 
-in vec3 vViewVec;
-in vec3 vWorldNorm;
+in highp vec3 vViewVec;
+in highp vec3 vWorldNorm;
 in highp vec3 vWorldPos;
 in highp vec2 vUv;
 flat in vec4 vMat0;
 flat in vec4 vMat1;
 flat in int vMatId;
 ${isGlassPass ? 'flat in int vSlot;' : ''}
-${useClip ? 'in float vClipDist;' : ''}
+${useClip ? 'in highp float vClipDist;' : ''}
 
 out vec4 fragColor;
 
 ${GLSL3_TONEMAP_SRGB}
+${GLSL3_STUDIO_SHADOW_BRDF}
 
 void main() {
   ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
@@ -635,17 +898,20 @@ void main() {
       ? `
   if (vMatId == 0) {
     vec4 glowCol = texelFetch(uPartStateTex, ivec2(2, vSlot), 0);
-    fragColor = vec4(fastLinearToSrgb(glowCol.rgb), glowCol.a);
+    if (uHdrLinearOutput > 0.5) {
+      fragColor = vec4(glowCol.rgb * 1.85, glowCol.a);
+    } else {
+      fragColor = vec4(fastLinearToSrgb(glowCol.rgb), glowCol.a);
+    }
     return;
   }
   `
       : ''
   }
 
-  vec3 N = vWorldNorm;
-  N *= (1.5 - 0.5 * dot(N, N));
+  vec3 N = normalize(vWorldNorm + vec3(0.0, 0.0, 1e-6));
   if (!gl_FrontFacing) N = -N;
-  vec3 V = vViewVec;
+  vec3 V = normalize(vViewVec + vec3(0.0, 0.0, 1e-6));
 
   vec3 albedo = vMat0.rgb;
   float alpha = vMat0.a;
@@ -670,8 +936,8 @@ void main() {
     if (lut4.x >= -0.5) {
       hasTex = true;
       vec4 lut5 = texelFetch(uMatLutTex, ivec2(5, vMatId), 0);
-      highp vec2 tiledUv = vUv * lut4.zw + lut5.yz;
-      highp vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
+      vec2 tiledUv = vUv * lut4.zw + lut5.yz;
+      vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
       vec4 texCol = lut4.x < 99.5
@@ -692,64 +958,35 @@ void main() {
     }
   }
 
-  // High-precision screen-space micro-relief bump normal perturbation + micro-cavity roughness/AO detail
   float microAo = 1.0;
   if (hasTex && bumpStr > 0.004) {
-    highp vec3 dPosX = dFdx(vWorldPos);
-    highp vec3 dPosY = dFdy(vWorldPos);
-    highp vec3 r1 = cross(dPosY, N);
-    highp vec3 r2 = cross(N, dPosX);
-    highp float det = dot(dPosX, r1);
+    vec3 dPosX = dFdx(vWorldPos);
+    vec3 dPosY = dFdy(vWorldPos);
+    vec3 r1 = cross(dPosY, N);
+    vec3 r2 = cross(N, dPosX);
+    float det = dot(dPosX, r1);
     if (abs(det) > 1e-6) {
-      highp float dHdx = dFdx(texLuma);
-      highp float dHdy = dFdy(texLuma);
-      highp vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
-      highp float gradLen = length(surfGrad);
-      highp vec3 clampedGrad = gradLen > 3.2 ? surfGrad * (3.2 / gradLen) : surfGrad;
-      N = normalize(N - clampedGrad * (bumpStr * 1.42));
+      float dHdx = dFdx(texLuma);
+      float dHdy = dFdy(texLuma);
+      vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
+      float gradLen = length(surfGrad);
+      vec3 clampedGrad = gradLen > 3.2 ? surfGrad * (3.2 / gradLen) : surfGrad;
+      N = normalize(N - clampedGrad * (bumpStr * 1.42) + vec3(0.0, 0.0, 1e-6));
     }
     rough = clamp(rough + (0.48 - texLuma) * bumpStr * 1.60, 0.04, 0.98);
     microAo = clamp(0.84 + texLuma * 0.24, 0.80, 1.08);
   }
 
   float ndv = clamp(dot(N, V), 0.001, 1.0);
-  vec3 R = N * (2.0 * ndv) - V;
-
-  float ny = N.y;
-  vec3 diffIrr = max((vec3(0.56, 0.58, 0.62)
-    + ny * vec3(0.42, 0.43, 0.46)
-    + N.z * vec3(0.27, 0.26, 0.26)
-    - N.x * vec3(0.21, 0.22, 0.25)
-    + (ny * ny) * vec3(0.15, 0.16, 0.18)), vec3(0.16, 0.17, 0.20)) * microAo;
-
-  // Photorealistic studio cyclorama lightbox environment (crisp dark studio horizon band + overhead/side softboxes)
-  float ry = clamp(R.y * 0.88 + 0.44, 0.0, 1.0);
-  float horizonDip = 1.0 - 0.52 * exp(-abs(R.y) * 8.4);
-  vec3 specRad = mix(vec3(0.20, 0.23, 0.29), vec3(1.28, 1.31, 1.37), ry) * horizonDip;
-  float softS = 5.8 - rough * 4.85;
-  float softB = 1.0 - softS;
-  float softG = 1.44 - rough * 0.96;
-
-  float aTop = clamp(dot(R, vec3(0.05, 0.96, 0.26)) * softS + softB, 0.0, 1.0);
-  float aKey = clamp(dot(R, vec3(-0.56, 0.52, 0.64)) * softS + softB, 0.0, 1.0);
-  float aRim = clamp(dot(R, vec3(0.64, 0.36, -0.66)) * softS + softB, 0.0, 1.0);
-  float aFill = clamp(dot(R, vec3(0.54, 0.62, 0.56)) * (softS * 0.65) + (1.0 - softS * 0.65), 0.0, 1.0);
-  aTop *= aTop;
-  aKey *= aKey;
-  aRim *= aRim;
-  aFill *= aFill;
-  specRad += (vec3(2.15, 2.17, 2.24) * (aTop * aTop)
-            + vec3(1.90, 1.86, 1.80) * (aKey * aKey)
-            + vec3(1.20, 1.34, 1.56) * (aRim * aRim)
-            + vec3(0.52, 0.56, 0.64) * (aFill * aFill)) * softG;
-
   float om = 1.0 - ndv;
   float om2 = om * om;
   float fres4 = om2 * om2;
   vec3 F0 = mix(vec3(0.04), albedo, metal);
-  vec3 envF = max(vec3((1.0 - rough) * 0.90), F0);
-  vec3 brdf = mix(F0, envF, fres4) * (0.98 - rough * 0.14);
-  vec3 col = albedo * (1.0 - metal) * diffIrr + specRad * brdf * microAo + emissive;
+  vec3 diffColor = albedo * (1.0 - metal);
+
+  float shadowVis = ${isGlassPass ? '1.0' : 'computeStudioShadow(vWorldPos, N, uShadowMap, uLightViewProj, uShadowParams, uQualityTier)'};
+  vec3 col = evalStudioPbrLighting(N, V, diffColor, F0, rough, metal, ${isGlassPass ? '0.0' : 'clearcoat'}, microAo, shadowVis, uQualityTier);
+  col += emissive * (uQualityTier > 1.5 ? 1.55 : 1.0);
 
   ${
     isGlassPass
@@ -758,26 +995,314 @@ void main() {
   if (irid > 0.02) {
     float phase = 6.28318 * (iridIor * 0.72 * ndv + 0.14);
     vec3 spectral = 0.5 + 0.5 * cos(phase + vec3(0.0, 2.094, 4.188));
-    col += spectral * irid * (0.14 + 0.36 * fres);
+    col += spectral * irid * (0.14 + 0.36 * fres) * (uQualityTier > 1.5 ? 1.35 : 1.0);
   }
-  col += vec3(0.24 * fres * (0.4 + clearcoat * 0.6));
+  col += vec3(0.28 * fres * (0.4 + clearcoat * 0.6)) * (uQualityTier > 1.5 ? 1.35 : 1.0);
   float outAlpha = hasTex ? alpha : clamp(alpha + fres * 0.26, 0.05, 0.94);
-  fragColor = vec4(fastAcesSrgb(col), outAlpha);
+  if (uHdrLinearOutput > 0.5) {
+    fragColor = vec4(col, outAlpha);
+  } else {
+    fragColor = vec4(fastAcesSrgb(col), outAlpha);
+  }
   `
       : `
-  if (clearcoat > 0.05) {
-    float coatLobe = pow(clamp(dot(R, vec3(-0.42, 0.72, 0.55)), 0.0, 1.0), 18.0);
-    float coatSpec = (aTop * aTop * 0.52 + aKey * aKey * 0.38 + coatLobe * 0.68 + 0.05 + 0.95 * fres4) * clearcoat * 0.28;
-    col += vec3(coatSpec);
-  }
   if (irid > 0.04) {
     float fres = om2 * om;
     vec3 specIrid = 0.5 + 0.5 * cos(6.28318 * (iridIor * 0.72 * ndv + 0.15) + vec3(0.0, 2.094, 4.188));
-    col += specIrid * irid * (0.08 + 0.28 * fres);
+    col += specIrid * irid * (0.08 + 0.28 * fres) * (uQualityTier > 1.5 ? 1.35 : 1.0);
   }
-  fragColor = vec4(fastAcesSrgb(col), 1.0);
+  if (uHdrLinearOutput > 0.5) {
+    fragColor = vec4(col, 1.0);
+  } else {
+    fragColor = vec4(fastAcesSrgb(col), 1.0);
+  }
   `
   }
+}
+`;
+}
+
+// --- HIGH & ULTRA Tight-Frustum Depth-Only Shadow Caster Shader (0 color writes, 3-5 draw calls!) ---
+function buildOmegaShadowDepthVs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
+uniform mat4 uLightViewProj;
+uniform sampler2D uPartStateTex;
+uniform float uExplode;
+${useClip ? 'uniform vec4 uClipPlane;' : ''}
+
+in vec4 aPosSlot;
+${useClip ? 'out highp float vClipDist;' : ''}
+
+${GLSL3_CORE_LIB}
+
+void main() {
+  int slot = int(aPosSlot.w + 0.5);
+  vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
+  float packed = posVis.w;
+  if (packed < 0.5) {
+    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    ${useClip ? 'vClipDist = -1.0;' : ''}
+    return;
+  }
+  vec3 position = aPosSlot.xyz * 0.015625;
+  vec3 worldPos;
+  if (packed >= 7.5) {
+    vec3 expDelta = texelFetch(uPartStateTex, ivec2(1, slot), 0).xyz;
+    worldPos = position + posVis.xyz + expDelta * uExplode;
+  } else if (packed >= 3.5) {
+    vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
+    vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
+    worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
+  } else {
+    worldPos = position + posVis.xyz;
+  }
+  ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
+  gl_Position = uLightViewProj * vec4(worldPos, 1.0);
+}
+`;
+}
+
+function buildOmegaShadowDepthFs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+${useClip ? 'in highp float vClipDist;' : ''}
+out vec4 fragColor;
+void main() {
+  ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
+  fragColor = vec4(1.0);
+}
+`;
+}
+
+// --- ULTRA Screen-Space Ray Tracing G-Buffer Shader (View-Space OctNormal + Roughness + Metalness) ---
+function buildOmegaGbufSolidVs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
+uniform mat4 uViewProj;
+uniform mat4 uViewMatrix;
+uniform sampler2D uPartStateTex;
+uniform vec4 uMatSolid[${MAX_FAST_SOLID_MATS * 2}];
+uniform float uExplode;
+${useClip ? 'uniform vec4 uClipPlane;' : ''}
+
+in vec4 aPosSlot;
+in vec2 aOctNorm;
+in vec2 aMatMeta;
+
+out highp vec3 vViewNorm;
+flat out vec2 vRoughMetal;
+${useClip ? 'out highp float vClipDist;' : ''}
+
+${GLSL3_CORE_LIB}
+
+void main() {
+  int slot = int(aPosSlot.w + 0.5);
+  vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
+  float packed = posVis.w;
+  if (packed < 0.5) {
+    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    vViewNorm = vec3(0.0, 0.0, 1.0);
+    vRoughMetal = vec2(0.5, 0.0);
+    ${useClip ? 'vClipDist = -1.0;' : ''}
+    return;
+  }
+  vec3 position = aPosSlot.xyz * 0.015625;
+  vec3 localNorm = decodeOctNormal(aOctNorm);
+  vec3 worldPos;
+  vec3 worldNorm;
+  if (packed >= 7.5) {
+    vec3 expDelta = texelFetch(uPartStateTex, ivec2(1, slot), 0).xyz;
+    worldPos = position + posVis.xyz + expDelta * uExplode;
+    worldNorm = localNorm;
+  } else if (packed >= 3.5) {
+    vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
+    vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
+    worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
+  } else {
+    worldPos = position + posVis.xyz;
+    worldNorm = localNorm;
+  }
+  int mIdx = int(aMatMeta.x + 0.5) * 2;
+  vec4 m0 = uMatSolid[mIdx];
+  vec4 m1 = uMatSolid[mIdx + 1];
+  float metalEst = clamp((max(max(m1.r, m1.g), m1.b) - 0.05) * 2.2, 0.0, 1.0);
+  vRoughMetal = vec2(m0.w, metalEst);
+  vViewNorm = normalize(mat3(uViewMatrix) * worldNorm + vec3(0.0, 0.0, 1e-6));
+  ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
+  gl_Position = uViewProj * vec4(worldPos, 1.0);
+}
+`;
+}
+
+function buildOmegaGbufSolidFs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+
+in highp vec3 vViewNorm;
+flat in vec2 vRoughMetal;
+${useClip ? 'in highp float vClipDist;' : ''}
+
+out vec4 fragColor;
+
+${GLSL3_CORE_LIB}
+
+void main() {
+  ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
+  vec3 N = normalize(vViewNorm + vec3(0.0, 0.0, 1e-6));
+  ${useClip ? 'if (!gl_FrontFacing) N = -N;' : ''}
+  fragColor = vec4(encodeOctNormal(N) * 0.5 + 0.5, vRoughMetal.x, vRoughMetal.y);
+}
+`;
+}
+
+function buildOmegaGbufTexVs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+
+uniform mat4 uViewProj;
+uniform mat4 uViewMatrix;
+uniform sampler2D uPartStateTex;
+uniform sampler2D uMatLutTex;
+uniform float uExplode;
+${useClip ? 'uniform vec4 uClipPlane;' : ''}
+
+in vec4 aPosSlot;
+in vec2 aOctNorm;
+in vec2 aMatMeta;
+in vec2 uv;
+
+out highp vec3 vWorldNorm;
+out highp vec3 vWorldPos;
+out highp vec2 vUv;
+flat out vec4 vMat1;
+flat out int vMatId;
+${useClip ? 'out highp float vClipDist;' : ''}
+
+${GLSL3_CORE_LIB}
+
+void main() {
+  int slot = int(aPosSlot.w + 0.5);
+  vec4 posVis = texelFetch(uPartStateTex, ivec2(0, slot), 0);
+  float packed = posVis.w;
+  if (packed < 0.5) {
+    gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+    vWorldNorm = vec3(0.0, 1.0, 0.0);
+    vWorldPos = vec3(0.0);
+    vUv = vec2(0.0);
+    vMat1 = vec4(0.0, 0.5, 0.0, 0.0);
+    vMatId = 0;
+    ${useClip ? 'vClipDist = -1.0;' : ''}
+    return;
+  }
+  vec3 position = aPosSlot.xyz * 0.015625;
+  vec3 localNorm = decodeOctNormal(aOctNorm);
+  vec3 worldPos;
+  vec3 worldNorm;
+  if (packed >= 7.5) {
+    vec3 expDelta = texelFetch(uPartStateTex, ivec2(1, slot), 0).xyz;
+    worldPos = position + posVis.xyz + expDelta * uExplode;
+    worldNorm = localNorm;
+  } else if (packed >= 3.5) {
+    vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
+    vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
+    worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
+  } else {
+    worldPos = position + posVis.xyz;
+    worldNorm = localNorm;
+  }
+  int matId = int(aMatMeta.x + 0.5);
+  vMat1 = texelFetch(uMatLutTex, ivec2(1, matId), 0);
+  vMatId = matId;
+  vWorldNorm = worldNorm;
+  vWorldPos = worldPos;
+  vUv = uv;
+  ${useClip ? 'vClipDist = dot(worldPos, uClipPlane.xyz) + uClipPlane.w;' : ''}
+  gl_Position = uViewProj * vec4(worldPos, 1.0);
+}
+`;
+}
+
+function buildOmegaGbufTexFs(useClip: boolean): string {
+  return /* glsl */ `
+precision highp float;
+precision highp int;
+precision highp sampler2D;
+precision mediump sampler2DArray;
+
+uniform mat4 uViewMatrix;
+uniform highp sampler2D uMatLutTex;
+uniform sampler2DArray uTexArrayHi;
+uniform sampler2DArray uTexArrayTile;
+
+in highp vec3 vWorldNorm;
+in highp vec3 vWorldPos;
+in highp vec2 vUv;
+flat in vec4 vMat1;
+flat in int vMatId;
+${useClip ? 'in highp float vClipDist;' : ''}
+
+out vec4 fragColor;
+
+${GLSL3_CORE_LIB}
+
+void main() {
+  ${useClip ? 'if (vClipDist < 0.0) discard;' : ''}
+  vec3 N = normalize(vWorldNorm + vec3(0.0, 0.0, 1e-6));
+  if (!gl_FrontFacing) N = -N;
+  float metal = vMat1.x;
+  float rough = clamp(vMat1.y, 0.04, 1.0);
+
+  if (vMat1.w > 0.5) {
+    vec4 lut3 = texelFetch(uMatLutTex, ivec2(3, vMatId), 0);
+    vec4 lut4 = texelFetch(uMatLutTex, ivec2(4, vMatId), 0);
+    float bumpStr = lut3.y;
+    if (lut4.x >= -0.5) {
+      vec4 lut5 = texelFetch(uMatLutTex, ivec2(5, vMatId), 0);
+      vec2 tiledUv = vUv * lut4.zw + lut5.yz;
+      vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
+        ? clamp(tiledUv, vec2(0.002), vec2(0.998))
+        : tiledUv;
+      vec4 texCol = lut4.x < 99.5
+        ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
+        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 100.0));
+      float texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
+      if (lut4.y >= -0.5) {
+        float rSamp = lut4.y < 99.5
+          ? texture(uTexArrayHi, vec3(sampleUv, lut4.y)).g
+          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 100.0)).g;
+        rough = clamp(rough * rSamp, 0.04, 1.0);
+      }
+      if (bumpStr > 0.004) {
+        vec3 dPosX = dFdx(vWorldPos);
+        vec3 dPosY = dFdy(vWorldPos);
+        vec3 r1 = cross(dPosY, N);
+        vec3 r2 = cross(N, dPosX);
+        float det = dot(dPosX, r1);
+        if (abs(det) > 1e-6) {
+          float dHdx = dFdx(texLuma);
+          float dHdy = dFdy(texLuma);
+          vec3 surfGrad = (sign(det) * (dHdx * r1 + dHdy * r2)) / max(abs(det), 1e-4);
+          float gradLen = length(surfGrad);
+          vec3 clampedGrad = gradLen > 3.2 ? surfGrad * (3.2 / gradLen) : surfGrad;
+          N = normalize(N - clampedGrad * (bumpStr * 1.35) + vec3(0.0, 0.0, 1e-6));
+        }
+        rough = clamp(rough + (0.48 - texLuma) * bumpStr * 1.45, 0.04, 0.98);
+      }
+    }
+  }
+  vec3 viewN = normalize(mat3(uViewMatrix) * N + vec3(0.0, 0.0, 1e-6));
+  fragColor = vec4(encodeOctNormal(viewN) * 0.5 + 0.5, rough, metal);
 }
 `;
 }
@@ -787,6 +1312,7 @@ function buildCadClayVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
+precision highp sampler2D;
 
 uniform mat4 uViewProj;
 uniform sampler2D uPartStateTex;
@@ -823,7 +1349,7 @@ void main() {
     vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
     vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
     worldPos = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
-    worldNorm = normalize(kmbRotateByQuat(localNorm, quat));
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
   } else {
     worldPos = position + posVis.xyz;
     worldNorm = localNorm;
@@ -860,10 +1386,12 @@ function buildMegaEdgeVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
+precision highp sampler2D;
 
 uniform mat4 uViewProj;
 uniform sampler2D uPartStateTex;
 uniform float uExplode;
+uniform float uHdrLinearOutput;
 ${useClip ? 'uniform vec4 uClipPlane;' : ''}
 
 in vec4 aEdgePacked;
@@ -907,7 +1435,8 @@ void main() {
   } else {
     transformed = position + posVis.xyz;
   }
-  vEdgeColor = vec4(fastLinearToSrgb(edgeStyle.rgb), alpha);
+  vec3 ec = uHdrLinearOutput > 0.5 ? edgeStyle.rgb : fastLinearToSrgb(edgeStyle.rgb);
+  vEdgeColor = vec4(ec, alpha);
   ${useClip ? 'vClipDist = dot(transformed, uClipPlane.xyz) + uClipPlane.w;' : ''}
   gl_Position = uViewProj * vec4(transformed, 1.0);
 }
@@ -934,6 +1463,7 @@ function buildXrayGhostVs(useClip: boolean): string {
   return /* glsl */ `
 precision highp float;
 precision highp int;
+precision highp sampler2D;
 
 uniform mat4 uViewProj;
 uniform vec3 uCamPos;
@@ -973,7 +1503,7 @@ void main() {
     vec4 quat = texelFetch(uPartStateTex, ivec2(1, slot), 0);
     vec4 scl = texelFetch(uPartStateTex, ivec2(3, slot), 0);
     transformed = kmbRotateByQuat(position * scl.xyz, quat) + posVis.xyz;
-    worldNorm = normalize(kmbRotateByQuat(localNorm, quat));
+    worldNorm = normalize(kmbRotateByQuat(localNorm, quat) + vec3(0.0, 0.0, 1e-6));
   } else {
     transformed = position + posVis.xyz;
     worldNorm = localNorm;
@@ -1009,9 +1539,9 @@ void main() {
 
 const HI_TEX_W = NATIVE_HI_TEX_W;
 const HI_TEX_H = NATIVE_HI_TEX_H;
-const HI_TEX_MAX_LAYERS = 34;
+const HI_TEX_MAX_LAYERS = 30;
 const TILE_TEX_SIZE = NATIVE_TILE_TEX_SIZE;
-const TILE_TEX_MAX_LAYERS = 28;
+const TILE_TEX_MAX_LAYERS = 24;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {
@@ -1045,6 +1575,7 @@ class DualTierTextureArrayPacker {
   private scratchTileCtx: CanvasRenderingContext2D | null = null;
 
   constructor() {
+    const safeArrayAniso = GPU_PROFILE.isMobile ? 1 : Math.min(4, GPU_PROFILE.maxAnisotropy);
     this.hiData = new Uint8Array(HI_TEX_W * HI_TEX_H * HI_TEX_MAX_LAYERS * 4);
     this.hiData.fill(255);
     this.hiArray = new THREE.DataArrayTexture(
@@ -1059,7 +1590,7 @@ class DualTierTextureArrayPacker {
     this.hiArray.minFilter = THREE.LinearMipmapLinearFilter;
     this.hiArray.magFilter = THREE.LinearFilter;
     this.hiArray.generateMipmaps = true;
-    this.hiArray.anisotropy = GPU_PROFILE.maxAnisotropy;
+    this.hiArray.anisotropy = safeArrayAniso;
     this.hiArray.needsUpdate = true;
 
     this.tileData = new Uint8Array(TILE_TEX_SIZE * TILE_TEX_SIZE * TILE_TEX_MAX_LAYERS * 4);
@@ -1076,7 +1607,7 @@ class DualTierTextureArrayPacker {
     this.tileArray.minFilter = THREE.LinearMipmapLinearFilter;
     this.tileArray.magFilter = THREE.LinearFilter;
     this.tileArray.generateMipmaps = true;
-    this.tileArray.anisotropy = GPU_PROFILE.maxAnisotropy;
+    this.tileArray.anisotropy = safeArrayAniso;
     this.tileArray.needsUpdate = true;
   }
 
@@ -1236,6 +1767,7 @@ class DualTierTextureArrayPacker {
 
 export interface SharedBatchUniforms {
   uViewProj: { value: THREE.Matrix4 };
+  uViewMatrix: { value: THREE.Matrix4 };
   uCamPos: { value: THREE.Vector3 };
   uPartStateTex: { value: THREE.DataTexture };
   uMatLutTex: { value: THREE.DataTexture };
@@ -1245,11 +1777,17 @@ export interface SharedBatchUniforms {
   uExplode: { value: number };
   uSkipHighlighted: { value: number };
   uClipPlane: { value: THREE.Vector4 };
+  uShadowMap: { value: THREE.Texture };
+  uLightViewProj: { value: THREE.Matrix4 };
+  uShadowParams: { value: THREE.Vector4 };
+  uQualityTier: { value: number };
+  uHdrLinearOutput: { value: number };
 }
 
 export class MaterialLutRegistry {
   public lutData: Float32Array;
   public lutTexture: THREE.DataTexture;
+  public readonly dummyShadowTex: THREE.DataTexture;
   public readonly solidUniformData: Float32Array;
   public readonly texPacker: DualTierTextureArrayPacker;
   public readonly uniforms: SharedBatchUniforms;
@@ -1282,6 +1820,16 @@ export class MaterialLutRegistry {
   private cadGlassFrontClipMat: THREE.RawShaderMaterial | null = null;
   private cadGlassDoubleClipMat: THREE.RawShaderMaterial | null = null;
 
+  // Lazy HIGH/ULTRA Shadow Depth & ULTRA G-Buffer Materials (compiled ONLY when HIGH/ULTRA runs!)
+  private shadowDepthFrontMat: THREE.RawShaderMaterial | null = null;
+  private shadowDepthDoubleMat: THREE.RawShaderMaterial | null = null;
+  private shadowDepthClipMat: THREE.RawShaderMaterial | null = null;
+  private gbufSolidFrontMat: THREE.RawShaderMaterial | null = null;
+  private gbufSolidClipMat: THREE.RawShaderMaterial | null = null;
+  private gbufTexFrontMat: THREE.RawShaderMaterial | null = null;
+  private gbufTexDoubleMat: THREE.RawShaderMaterial | null = null;
+  private gbufTexClipMat: THREE.RawShaderMaterial | null = null;
+
   public readonly dynamicGlowMatId: number;
   public renderMode: RenderMode = 'solid';
   public sectionCutActive = false;
@@ -1307,12 +1855,25 @@ export class MaterialLutRegistry {
     this.lutTexture.generateMipmaps = false;
     this.lutTexture.needsUpdate = true;
 
+    this.dummyShadowTex = new THREE.DataTexture(
+      new Uint8Array([255, 255, 255, 255]),
+      1,
+      1,
+      THREE.RGBAFormat,
+      THREE.UnsignedByteType
+    );
+    this.dummyShadowTex.minFilter = THREE.NearestFilter;
+    this.dummyShadowTex.magFilter = THREE.NearestFilter;
+    this.dummyShadowTex.generateMipmaps = false;
+    this.dummyShadowTex.needsUpdate = true;
+
     this.solidUniformData = new Float32Array(MAX_FAST_SOLID_MATS * 2 * 4);
     this.texPacker = new DualTierTextureArrayPacker();
 
     const cp = clippingPlanes[0];
     this.uniforms = {
       uViewProj: { value: new THREE.Matrix4() },
+      uViewMatrix: { value: new THREE.Matrix4() },
       uCamPos: { value: new THREE.Vector3() },
       uPartStateTex: { value: partStateTex },
       uMatLutTex: { value: this.lutTexture },
@@ -1324,6 +1885,11 @@ export class MaterialLutRegistry {
       uClipPlane: {
         value: new THREE.Vector4(cp.normal.x, cp.normal.y, cp.normal.z, cp.constant),
       },
+      uShadowMap: { value: this.dummyShadowTex },
+      uLightViewProj: { value: new THREE.Matrix4() },
+      uShadowParams: { value: new THREE.Vector4(0.18, 1 / 1024, 0.0, 6.0) },
+      uQualityTier: { value: 0 },
+      uHdrLinearOutput: { value: 0 },
     };
 
     this.dynamicGlowMatId = this.reserveDynamicGlowLutSlot();
@@ -1354,6 +1920,7 @@ export class MaterialLutRegistry {
 
   public syncViewProj(camera: THREE.Camera): void {
     this.lutRenderedOnce = true;
+    this.uniforms.uViewMatrix.value.copy(camera.matrixWorldInverse);
     this.uniforms.uViewProj.value.multiplyMatrices(
       camera.projectionMatrix,
       camera.matrixWorldInverse
@@ -1631,6 +2198,11 @@ export class MaterialLutRegistry {
       uPartStateTex: this.uniforms.uPartStateTex,
       uMatSolid: this.uniforms.uMatSolid,
       uExplode: this.uniforms.uExplode,
+      uShadowMap: this.uniforms.uShadowMap,
+      uLightViewProj: this.uniforms.uLightViewProj,
+      uShadowParams: this.uniforms.uShadowParams,
+      uQualityTier: this.uniforms.uQualityTier,
+      uHdrLinearOutput: this.uniforms.uHdrLinearOutput,
     };
     if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
     const mat = new THREE.RawShaderMaterial({
@@ -1642,7 +2214,7 @@ export class MaterialLutRegistry {
       fragmentShader: buildOmegaPbrSolidFs(useClip),
       uniforms,
     });
-    mat.customProgramCacheKey = () => `omega-pbr-solid-v7-${useClip ? 'c' : 'nc'}`;
+    mat.customProgramCacheKey = () => `omega-pbr-solid-v8-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1660,6 +2232,11 @@ export class MaterialLutRegistry {
       uTexArrayHi: this.uniforms.uTexArrayHi,
       uTexArrayTile: this.uniforms.uTexArrayTile,
       uExplode: this.uniforms.uExplode,
+      uShadowMap: this.uniforms.uShadowMap,
+      uLightViewProj: this.uniforms.uLightViewProj,
+      uShadowParams: this.uniforms.uShadowParams,
+      uQualityTier: this.uniforms.uQualityTier,
+      uHdrLinearOutput: this.uniforms.uHdrLinearOutput,
     };
     if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
     const mat = new THREE.RawShaderMaterial({
@@ -1672,7 +2249,102 @@ export class MaterialLutRegistry {
       uniforms,
     });
     mat.customProgramCacheKey = () =>
-      `omega-pbr-v7-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
+      `omega-pbr-v8-${transparent ? 'g' : 'o'}-${useClip ? 'c' : 'nc'}`;
+    return mat;
+  }
+
+  public getShadowDepthMaterial(side: THREE.Side, useClip: boolean): THREE.RawShaderMaterial {
+    if (useClip) {
+      return (this.shadowDepthClipMat ??= this.createShadowDepthMat(THREE.DoubleSide, true));
+    }
+    if (side === THREE.DoubleSide) {
+      return (this.shadowDepthDoubleMat ??= this.createShadowDepthMat(THREE.DoubleSide, false));
+    }
+    return (this.shadowDepthFrontMat ??= this.createShadowDepthMat(THREE.FrontSide, false));
+  }
+
+  public getGbufMaterial(
+    bucket: 'opaqueSolidFront' | 'opaqueTexFront' | 'opaqueDouble',
+    useClip: boolean
+  ): THREE.RawShaderMaterial {
+    if (bucket === 'opaqueSolidFront') {
+      return useClip
+        ? (this.gbufSolidClipMat ??= this.createGbufSolidMat(THREE.DoubleSide, true))
+        : (this.gbufSolidFrontMat ??= this.createGbufSolidMat(THREE.FrontSide, false));
+    }
+    if (useClip) {
+      return (this.gbufTexClipMat ??= this.createGbufTexMat(THREE.DoubleSide, true));
+    }
+    if (bucket === 'opaqueDouble') {
+      return (this.gbufTexDoubleMat ??= this.createGbufTexMat(THREE.DoubleSide, false));
+    }
+    return (this.gbufTexFrontMat ??= this.createGbufTexMat(THREE.FrontSide, false));
+  }
+
+  private createShadowDepthMat(side: THREE.Side, useClip: boolean): THREE.RawShaderMaterial {
+    const uniforms: Record<string, { value: unknown }> = {
+      uLightViewProj: this.uniforms.uLightViewProj,
+      uPartStateTex: this.uniforms.uPartStateTex,
+      uExplode: this.uniforms.uExplode,
+    };
+    if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
+    const mat = new THREE.RawShaderMaterial({
+      glslVersion: THREE.GLSL3,
+      side,
+      transparent: false,
+      depthWrite: true,
+      colorWrite: false,
+      vertexShader: buildOmegaShadowDepthVs(useClip),
+      fragmentShader: buildOmegaShadowDepthFs(useClip),
+      uniforms,
+    });
+    mat.customProgramCacheKey = () => `omega-shadow-v8-${useClip ? 'c' : 'nc'}`;
+    return mat;
+  }
+
+  private createGbufSolidMat(side: THREE.Side, useClip: boolean): THREE.RawShaderMaterial {
+    const uniforms: Record<string, { value: unknown }> = {
+      uViewProj: this.uniforms.uViewProj,
+      uViewMatrix: this.uniforms.uViewMatrix,
+      uPartStateTex: this.uniforms.uPartStateTex,
+      uMatSolid: this.uniforms.uMatSolid,
+      uExplode: this.uniforms.uExplode,
+    };
+    if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
+    const mat = new THREE.RawShaderMaterial({
+      glslVersion: THREE.GLSL3,
+      side,
+      transparent: false,
+      depthWrite: true,
+      vertexShader: buildOmegaGbufSolidVs(useClip),
+      fragmentShader: buildOmegaGbufSolidFs(useClip),
+      uniforms,
+    });
+    mat.customProgramCacheKey = () => `omega-gbuf-solid-v8-${useClip ? 'c' : 'nc'}`;
+    return mat;
+  }
+
+  private createGbufTexMat(side: THREE.Side, useClip: boolean): THREE.RawShaderMaterial {
+    const uniforms: Record<string, { value: unknown }> = {
+      uViewProj: this.uniforms.uViewProj,
+      uViewMatrix: this.uniforms.uViewMatrix,
+      uPartStateTex: this.uniforms.uPartStateTex,
+      uMatLutTex: this.uniforms.uMatLutTex,
+      uTexArrayHi: this.uniforms.uTexArrayHi,
+      uTexArrayTile: this.uniforms.uTexArrayTile,
+      uExplode: this.uniforms.uExplode,
+    };
+    if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
+    const mat = new THREE.RawShaderMaterial({
+      glslVersion: THREE.GLSL3,
+      side,
+      transparent: false,
+      depthWrite: true,
+      vertexShader: buildOmegaGbufTexVs(useClip),
+      fragmentShader: buildOmegaGbufTexFs(useClip),
+      uniforms,
+    });
+    mat.customProgramCacheKey = () => `omega-gbuf-tex-v8-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1707,6 +2379,7 @@ export class MaterialLutRegistry {
       uViewProj: this.uniforms.uViewProj,
       uPartStateTex: this.uniforms.uPartStateTex,
       uExplode: this.uniforms.uExplode,
+      uHdrLinearOutput: this.uniforms.uHdrLinearOutput,
     };
     if (useClip) uniforms.uClipPlane = this.uniforms.uClipPlane;
     const mat = new THREE.RawShaderMaterial({
@@ -1717,7 +2390,7 @@ export class MaterialLutRegistry {
       fragmentShader: buildMegaEdgeFs(useClip),
       uniforms,
     });
-    mat.customProgramCacheKey = () => `omega-edge-v7-${useClip ? 'c' : 'nc'}`;
+    mat.customProgramCacheKey = () => `omega-edge-v8-${useClip ? 'c' : 'nc'}`;
     return mat;
   }
 
@@ -1743,10 +2416,8 @@ export class MaterialLutRegistry {
     return mat;
   }
 
-  public refreshAfterContextRestore(): void {
-    this.lutTexture.needsUpdate = true;
-    this.texPacker.refreshAfterContextRestore();
-    const allMats = [
+  private getAllMaterialsList(): Array<THREE.RawShaderMaterial | null> {
+    return [
       this.opaqueSolidFrontMat,
       this.opaqueFrontMat,
       this.opaqueDoubleMat,
@@ -1769,40 +2440,31 @@ export class MaterialLutRegistry {
       this.cadOpaqueDoubleClipMat,
       this.cadGlassFrontClipMat,
       this.cadGlassDoubleClipMat,
+      this.shadowDepthFrontMat,
+      this.shadowDepthDoubleMat,
+      this.shadowDepthClipMat,
+      this.gbufSolidFrontMat,
+      this.gbufSolidClipMat,
+      this.gbufTexFrontMat,
+      this.gbufTexDoubleMat,
+      this.gbufTexClipMat,
     ];
-    for (const m of allMats) {
+  }
+
+  public refreshAfterContextRestore(): void {
+    this.lutTexture.needsUpdate = true;
+    this.dummyShadowTex.needsUpdate = true;
+    this.texPacker.refreshAfterContextRestore();
+    for (const m of this.getAllMaterialsList()) {
       if (m) m.needsUpdate = true;
     }
   }
 
   public dispose(): void {
     this.lutTexture.dispose();
+    this.dummyShadowTex.dispose();
     this.texPacker.dispose();
-    const allMats = [
-      this.opaqueSolidFrontMat,
-      this.opaqueFrontMat,
-      this.opaqueDoubleMat,
-      this.glassMat,
-      this.glassDoubleMat,
-      this.megaEdgeMat,
-      this.xrayGhostMat,
-      this.opaqueSolidFrontClipMat,
-      this.opaqueFrontClipMat,
-      this.opaqueDoubleClipMat,
-      this.glassClipMat,
-      this.glassDoubleClipMat,
-      this.megaEdgeClipMat,
-      this.xrayGhostClipMat,
-      this.cadOpaqueFrontMat,
-      this.cadOpaqueDoubleMat,
-      this.cadGlassFrontMat,
-      this.cadGlassDoubleMat,
-      this.cadOpaqueFrontClipMat,
-      this.cadOpaqueDoubleClipMat,
-      this.cadGlassFrontClipMat,
-      this.cadGlassDoubleClipMat,
-    ];
-    for (const m of allMats) {
+    for (const m of this.getAllMaterialsList()) {
       if (m) m.dispose();
     }
   }

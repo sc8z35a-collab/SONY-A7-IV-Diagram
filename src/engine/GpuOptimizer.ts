@@ -51,12 +51,12 @@ function detectGpuProfile(): GpuProfile {
   if (isMobile) {
     return {
       isMobile: true,
-      maxPixelRatio: 1.75,
-      antialias: true,
-      textureScale: 0.65,
-      maxAnisotropy: 4,
-      curveScale: 0.72,
-      edgeThresholdBoost: 5,
+      maxPixelRatio: 1.5,
+      antialias: false,
+      textureScale: 0.55,
+      maxAnisotropy: 2,
+      curveScale: 0.62,
+      edgeThresholdBoost: 6,
       simplifyPhysicalShaders: true,
       lightRigMode: 'mobile',
     };
@@ -67,7 +67,7 @@ function detectGpuProfile(): GpuProfile {
     maxPixelRatio: 2.0,
     antialias: true,
     textureScale: 1.0,
-    maxAnisotropy: 8,
+    maxAnisotropy: 4,
     curveScale: 1.0,
     edgeThresholdBoost: 0,
     simplifyPhysicalShaders: false,
@@ -78,10 +78,11 @@ function detectGpuProfile(): GpuProfile {
 /** Singleton GPU profile evaluated once at startup so geometry, materials & renderer match. */
 export const GPU_PROFILE: GpuProfile = detectGpuProfile();
 
-/** Shared native Power-of-Two Texture2DArray dimensions (single source of truth for Materials + GpuMegaBatch). */
-export const NATIVE_HI_TEX_W = GPU_PROFILE.isMobile ? 512 : 1024;
-export const NATIVE_HI_TEX_H = GPU_PROFILE.isMobile ? 512 : 1024;
-export const NATIVE_TILE_TEX_SIZE = GPU_PROFILE.isMobile ? 256 : 512;
+/** Shared native Power-of-Two Texture2DArray dimensions (single source of truth for Materials + GpuMegaBatch).
+ *  Lean POT dimensions keep total Texture2DArray GPU VRAM safe on both mobile Adreno & desktop with ULTRA HDR FBOs! */
+export const NATIVE_HI_TEX_W = 512;
+export const NATIVE_HI_TEX_H = 512;
+export const NATIVE_TILE_TEX_SIZE = GPU_PROFILE.isMobile ? 128 : 256;
 
 /** Scale a geometry segment count cleanly according to the active GPU profile. */
 export function scaleSegments(segments: number, minSegments = 6): number {

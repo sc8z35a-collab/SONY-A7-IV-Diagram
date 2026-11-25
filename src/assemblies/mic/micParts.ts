@@ -23,6 +23,7 @@ import {
   markHiRes,
 } from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
+import { GPU_PROFILE } from '../../engine/GpuOptimizer';
 
 function finalizeMicPart(
   id: string,
@@ -165,13 +166,15 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       { ox: 0.22, oz: 0.05, len: 2.62, rad: 0.130, bendZ: 1.44, bendX: 0.46, splayX: 0.26, splayZ: 0.08 },
       { ox: 0.04, oz: -0.18, len: 2.38, rad: 0.122, bendZ: 1.18, bendX: -0.18, splayX: -0.08, splayZ: -0.20 },
     ];
-    const radialSegs = 4;
-    const heightSegs = 4;
+    const isMobFur = GPU_PROFILE.isMobile;
+    const radialSegs = isMobFur ? 3 : 4;
+    const heightSegs = isMobFur ? 3 : 4;
+    const mobRadBoost = isMobFur ? 1.24 : 1.0;
     let vBase = 0;
     for (const sp of strandSpecs) {
       for (let iy = 0; iy <= heightSegs; iy++) {
         const t = iy / heightSegs;
-        const r = sp.rad * (1.0 - t * 0.90) * (1.0 + Math.sin(t * Math.PI) * 0.28);
+        const r = sp.rad * mobRadBoost * (1.0 - t * 0.90) * (1.0 + Math.sin(t * Math.PI) * 0.28);
         const cx = sp.ox + t * sp.splayX + Math.sin(t * Math.PI * 0.9) * sp.bendX * 0.65;
         const cy = t * sp.len * (1.0 - t * 0.18);
         const cz = sp.oz + t * sp.splayZ + t * t * sp.bendZ;
@@ -210,7 +213,7 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
     };
 
     const makePlushFurLayer = (
-      count: number,
+      rawCount: number,
       mat: THREE.Material,
       lenScale: number,
       rSpread: number,
@@ -218,6 +221,7 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       yBias: number,
       rimBandOnly = false
     ) => {
+      const count = isMobFur ? Math.max(80, Math.round(rawCount * 0.42)) : rawCount;
       const inst = new THREE.InstancedMesh(lockGeo, mat, count);
       const dm = new THREE.Object3D();
       // CRITICAL: 'YXZ' Euler order applies azimuthal yaw around world Y FIRST, then radial outward tilt!
@@ -252,7 +256,7 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       return inst;
     };
 
-    // 1,850 multi-filament clusters (= 7,400 individual silky overlapping faux-fur hairs!) covering 100% of dome + collar rim!
+    // 1,850 multi-filament clusters (= 7,400 individual silky overlapping faux-fur hairs on desktop; mobile-scaled for Adreno safety!)
     const furUndercoat = makePlushFurLayer(640, u.micAcousticFelt, 0.94, 0.99, 17, -0.10, false);
     const furMidcoat = makePlushFurLayer(660, u.micDeadcatFur, 1.04, 1.00, 83, 0.04, false);
     const furSilverTips = makePlushFurLayer(330, mats.lensFoamSeal, 1.06, 1.01, 211, 0.14, false);

@@ -18,6 +18,7 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic';
 export type RenderMode = 'solid' | 'xray' | 'cad';
+export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
 export type LensSection = 1 | 2 | 3;

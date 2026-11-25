@@ -1,4 +1,12 @@
-import { CadPart, CameraPreset, LensSection, RenderMode, ScaleMode, SectionAxis } from '../assemblies/types';
+import {
+  CadPart,
+  CameraPreset,
+  GraphicsQuality,
+  LensSection,
+  RenderMode,
+  ScaleMode,
+  SectionAxis,
+} from '../assemblies/types';
 
 export interface ZeroTextUIHandlers {
   onModeChange: (mode: ScaleMode) => void;
@@ -7,6 +15,7 @@ export interface ZeroTextUIHandlers {
   onSectionAxisChange: (axis: SectionAxis) => void;
   onSectionValueChange: (value: number) => void;
   onRenderModeChange: (mode: RenderMode) => void;
+  onQualityChange: (quality: GraphicsQuality) => void;
   onPhysicsToggle: (active: boolean) => void;
   onOpticsStudioToggle: () => void;
   onResetVisibility: () => void;
@@ -175,12 +184,14 @@ const ICONS = {
     '<rect x="9" y="4" width="6" height="16" rx="1.5"/><line x1="4" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="20" y2="12"/>',
   viewBack:
     '<rect x="5" y="5" width="14" height="14" rx="2"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/><line x1="15.5" y1="8.5" x2="8.5" y2="15.5"/>',
+  // ULTRA Ray Tracing + HDR 4-point specular star
+  ultraRayStar:
+    '<path d="M12 2.5l2.1 6.2 6.4 3.3-6.4 3.3L12 21.5l-2.1-6.2-6.4-3.3 6.4-3.3z"/>',
 };
 
 /**
- * Strictly Zero-Text CAD HUD:
- * Contains ONLY SVG pictograms, geometric sliders, and color/bar layer strips.
- * Zero visible letters, zero numbers, zero text tooltips.
+ * CAD HUD Controls:
+ * Crisp industrial SVG pictograms, geometric sliders, layer strips, and 3-tier STD/HIGH/ULTRA quality selector.
  */
 export class ZeroTextControls {
   private root: HTMLElement;
@@ -207,6 +218,10 @@ export class ZeroTextControls {
   private lensSec1Btn: HTMLButtonElement;
   private lensSec2Btn: HTMLButtonElement;
   private lensSec3Btn: HTMLButtonElement;
+
+  private qualityStdBtn: HTMLButtonElement;
+  private qualityHighBtn: HTMLButtonElement;
+  private qualityUltraBtn: HTMLButtonElement;
 
   private explodeRange: HTMLInputElement;
   private assembleBtn: HTMLButtonElement;
@@ -236,6 +251,7 @@ export class ZeroTextControls {
   private currentLensSection: LensSection = 1;
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
+  private currentQuality: GraphicsQuality = 'ultra';
   private physicsActive = false;
 
   constructor(root: HTMLElement, handlers: ZeroTextUIHandlers) {
@@ -260,6 +276,37 @@ export class ZeroTextControls {
 
     viewCluster.append(vIso, vFront, vSide, vBack);
     this.root.appendChild(viewCluster);
+
+    // -----------------------------------------------------------------------
+    // 1A. Top-Right 3-Tier Graphics Quality Switcher Pill (STD / HIGH / ULTRA)
+    // -----------------------------------------------------------------------
+    const qualityCluster = document.createElement('div');
+    qualityCluster.className = 'quality-cluster';
+    qualityCluster.setAttribute('role', 'group');
+    qualityCluster.setAttribute('aria-label', '画質設定');
+
+    const makeQualityBtn = (q: GraphicsQuality, label: string, withStar = false): HTMLButtonElement => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = q === 'ultra' ? 'quality-btn is-ultra' : 'quality-btn';
+      btn.dataset.quality = q;
+      if (withStar) {
+        btn.appendChild(svgIcon(ICONS.ultraRayStar));
+      }
+      const span = document.createElement('span');
+      span.textContent = label;
+      btn.appendChild(span);
+      btn.addEventListener('click', () => this.setQuality(q));
+      return btn;
+    };
+
+    this.qualityStdBtn = makeQualityBtn('standard', 'STD');
+    this.qualityHighBtn = makeQualityBtn('high', 'HIGH');
+    this.qualityUltraBtn = makeQualityBtn('ultra', 'ULTRA', true);
+    this.qualityUltraBtn.classList.add('is-active');
+
+    qualityCluster.append(this.qualityStdBtn, this.qualityHighBtn, this.qualityUltraBtn);
+    this.root.appendChild(qualityCluster);
 
     // -----------------------------------------------------------------------
     // 1B. Top-Center 3-Section Lightweight GM Lens Switcher Pill (1: Rear, 2: Mid, 3: Front)
@@ -613,6 +660,24 @@ export class ZeroTextControls {
     this.xrayBtn.classList.toggle('is-active', mode === 'xray');
     this.cadBtn.classList.toggle('is-active', mode === 'cad');
     this.handlers.onRenderModeChange(mode);
+  }
+
+  private applyQualityButtons(quality: GraphicsQuality): void {
+    this.qualityStdBtn.classList.toggle('is-active', quality === 'standard');
+    this.qualityHighBtn.classList.toggle('is-active', quality === 'high');
+    this.qualityUltraBtn.classList.toggle('is-active', quality === 'ultra');
+  }
+
+  private setQuality(quality: GraphicsQuality): void {
+    if (this.currentQuality === quality) return;
+    this.currentQuality = quality;
+    this.applyQualityButtons(quality);
+    this.handlers.onQualityChange(quality);
+  }
+
+  public syncQuality(quality: GraphicsQuality): void {
+    this.currentQuality = quality;
+    this.applyQualityButtons(quality);
   }
 
   public setExplodeValue(v: number): void {

@@ -4,6 +4,7 @@ import {
   AssemblyController,
   CadPart,
   CameraPreset,
+  GraphicsQuality,
   LensSection,
   RenderMode,
   ScaleMode,
@@ -29,6 +30,7 @@ import {
 import { bakeAssembledVisibilityMask, computeActiveOracleViewBits } from './OcclusionOracle';
 import { buildPrebakedOcclusionMask } from './PrebakedPvsOracle';
 import { OverlaySource, PhysicsOverlayBatcher } from './PhysicsOverlayBatcher';
+import { UltraRaytraceHdrPipeline } from './UltraRaytraceHdrPipeline';
 import { createLensAssembly } from '../assemblies/lens';
 import { sharedLensOpticalSim } from '../assemblies/lens/lensOpticalSim';
 import { createMountAssembly } from '../assemblies/mount';
@@ -48,6 +50,7 @@ export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
   onHoverPart: (partId: string | null) => void;
   onVisibilityChanged: () => void;
+  onQualityChanged?: (quality: GraphicsQuality) => void;
 }
 
 type SubsystemKey = CadPart['subsystem'];
@@ -182,6 +185,9 @@ export class CadViewport {
   private assembledIntegratedMask: Uint16Array | null = null;
   private assembledBodyMask: Uint16Array | null = null;
   private inOracleBake = false;
+  private inSubPass = false;
+  private ultraPipeline: UltraRaytraceHdrPipeline;
+  private drawBufSize = new THREE.Vector2(1, 1);
 
   // OMEGA-4 & OMEGA-10: Dual-Channel Overlay + Temporal Visibility Memoization state
   private visibilityDirty = true;
@@ -213,6 +219,7 @@ export class CadViewport {
   /** Active lightweight 1/3 standalone GM lens section: 1 = Rear (default), 2 = Middle, 3 = Front */
   private lensSection: LensSection = 1;
   private renderMode: RenderMode = 'solid';
+  private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'high' : 'ultra';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
   private targetExplode = 0;
@@ -255,7 +262,7 @@ export class CadViewport {
 
   private clock = new THREE.Clock();
   private rafId = 0;
-  private dirtyFrames = 2;
+  private dirtyFrames = 1;
   private idleFrameStreak = 0;
   private disposed = false;
   private cachedDomRect: DOMRect | null = null;
@@ -272,8 +279,8 @@ export class CadViewport {
       powerPreference: 'high-performance',
       preserveDrawingBuffer: false,
     });
-    // Eliminate synchronous gl.getProgramInfoLog() pipeline stalls during WebGL shader linking!
-    this.renderer.debug.checkShaderErrors = false;
+    // Keep one-time shader compile/link diagnostics enabled so driver errors are never silently swallowed
+    this.renderer.debug.checkShaderErrors = true;
     this.renderer.shadowMap.enabled = false;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.currentMaxPixelRatio));
     this.renderer.setSize(container.clientWidth, container.clientHeight);
@@ -326,6 +333,10 @@ export class CadViewport {
       this.matRegistry.uniforms.uViewProj,
       this.matRegistry.uniforms.uClipPlane
     );
+
+    // Initialize 3-Tier Studio Shadow / Ray Tracing / Planar Reflection / 16-Bit HDR Pipeline
+    this.ultraPipeline = new UltraRaytraceHdrPipeline(this.renderer, this.matRegistry);
+    this.scene.add(this.ultraPipeline.getHighFloorMesh());
 
     // Hook WebGLRenderer.render() automatically so EVERY render updates uViewProj, overlays & front-to-back IBO compaction!
     this.scene.onBeforeRender = (_renderer, _scene, camera) => {
@@ -933,6 +944,24 @@ export class CadViewport {
     this.applyVisibilityAndStyles();
   }
 
+  public setQuality(quality: GraphicsQuality): void {
+    if (this.quality === quality) return;
+    this.quality = quality;
+    if (GPU_PROFILE.isMobile) {
+      const targetMax = quality === 'ultra' ? 1.6 : 1.5;
+      if (this.contextLossCount === 0) {
+        this.currentMaxPixelRatio = targetMax;
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.currentMaxPixelRatio));
+      }
+    }
+    this.callbacks.onQualityChanged?.(quality);
+    this.markDirty(1);
+  }
+
+  public getQuality(): GraphicsQuality {
+    return this.quality;
+  }
+
   public setSection(axis: SectionAxis, normalizedValue?: number): void {
     this.sectionAxis = axis;
     if (typeof normalizedValue === 'number') {
@@ -1467,7 +1496,7 @@ export class CadViewport {
   }
 
   private prepareFrameForRender(camera: THREE.Camera): void {
-    if (this.inOracleBake) return;
+    if (this.inOracleBake || this.inSubPass) return;
 
     const epoch = advanceMegaBatchRenderEpoch();
     this.overlayBatcher.advanceFrameEpoch(epoch);
@@ -2052,16 +2081,27 @@ export class CadViewport {
 
   private handleContextRestored(): void {
     this.currentMaxPixelRatio = Math.max(1.0, Number((this.currentMaxPixelRatio * 0.85).toFixed(2)));
+    // Auto-step quality down on WebGL context loss so memory-constrained mobile devices never loop into a blank screen!
+    if (this.quality === 'ultra') {
+      this.quality = 'high';
+      this.callbacks.onQualityChanged?.(this.quality);
+    } else if (this.quality === 'high' && this.contextLossCount >= 2) {
+      this.quality = 'standard';
+      this.callbacks.onQualityChanged?.(this.quality);
+    }
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.currentMaxPixelRatio));
     this.renderer.setSize(
       Math.max(1, this.container.clientWidth),
       Math.max(1, this.container.clientHeight)
     );
+    const drawBuf = this.renderer.getDrawingBufferSize(new THREE.Vector2());
+    this.ultraPipeline.setSize(drawBuf.x, drawBuf.y);
     this.cachedDomRect = this.renderer.domElement.getBoundingClientRect();
-    this.partStateBuf.markDirty();
-    this.partStateBuf.flushIfDirty(this.matRegistry.uniforms.uPartStateTex);
+    this.partStateBuf.refreshAfterContextRestore();
+    this.matRegistry.uniforms.uPartStateTex.value = this.partStateBuf.texture;
     this.matRegistry.refreshAfterContextRestore();
     this.overlayBatcher.refreshAfterContextRestore();
+    this.ultraPipeline.handleContextRestored();
     for (const chunk of this.allChunks) {
       chunk.syncMaterials(this.matRegistry);
       for (const b of chunk.buckets) {
@@ -2082,7 +2122,44 @@ export class CadViewport {
     this.guidesDirty = true;
     this.physicsOverlaysDirty = true;
     this.markDirty(4);
-    this.renderer.render(this.scene, this.camera);
+    this.renderFrame();
+  }
+
+  private renderFrame(): void {
+    const useEnhanced =
+      this.renderMode === 'solid' &&
+      this.quality !== 'standard' &&
+      this.ultraPipeline.healthy;
+
+    if (!useEnhanced) {
+      this.matRegistry.uniforms.uQualityTier.value = 0;
+      this.matRegistry.uniforms.uHdrLinearOutput.value = 0;
+      this.matRegistry.uniforms.uShadowMap.value = this.matRegistry.dummyShadowTex;
+      this.ultraPipeline.getHighFloorMesh().visible = false;
+      this.renderer.render(this.scene, this.camera);
+      return;
+    }
+
+    this.camera.updateMatrixWorld();
+    this.prepareFrameForRender(this.camera);
+    this.renderer.getDrawingBufferSize(this.drawBufSize);
+    this.ultraPipeline.setSize(this.drawBufSize.x, this.drawBufSize.y);
+    this.ultraPipeline.render({
+      quality: this.quality,
+      scene: this.scene,
+      camera: this.camera,
+      controlsTarget: this.controls.target,
+      activeChunks: this.activeChunks,
+      activePickRecords: this.activePickRecords,
+      isPartVisible: (partId) => !this.isPartHidden(partId),
+      matRegistry: this.matRegistry,
+      overlayGroup: this.overlayBatcher.group,
+      explode: this.currentExplode,
+      sectionActive: this.sectionAxis !== 'off',
+      setSubPass: (flag) => {
+        this.inSubPass = flag;
+      },
+    });
   }
 
   private handleVisibilityChange(): void {
@@ -2095,6 +2172,8 @@ export class CadViewport {
 
   public getGpuStats(): {
     profile: typeof GPU_PROFILE;
+    quality: GraphicsQuality;
+    ultraHealthy: boolean;
     pixelRatio: number;
     contextLost: boolean;
     contextLossCount: number;
@@ -2116,6 +2195,8 @@ export class CadViewport {
     }
     return {
       profile: GPU_PROFILE,
+      quality: this.quality,
+      ultraHealthy: this.ultraPipeline.healthy,
       pixelRatio: this.renderer.getPixelRatio(),
       contextLost: this.contextLost,
       contextLossCount: this.contextLossCount,
@@ -2289,7 +2370,7 @@ export class CadViewport {
       if (needsGuideUpdate) {
         this.updateActiveExplodeGuides();
       }
-      this.renderer.render(this.scene, this.camera);
+      this.renderFrame();
       if (this.dirtyFrames > 0) this.dirtyFrames--;
     } else {
       this.idleFrameStreak++;
@@ -2324,6 +2405,7 @@ export class CadViewport {
     window.removeEventListener('resize', this.boundHandleResize);
     document.removeEventListener('fullscreenchange', this.boundHandleResize);
     this.resizeObserver?.disconnect();
+    this.ultraPipeline.dispose();
     this.partStateBuf.dispose();
     this.matRegistry.dispose();
     this.overlayBatcher.dispose();
