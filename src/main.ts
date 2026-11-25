@@ -280,6 +280,15 @@ drawer = new ExplanationDrawer(appRoot, {
     viewport.selectPart(null, false);
     opticsStudio.open(scenario, partId);
   },
+  onSwitchMode: (nextMode) => {
+    if (opticsStudio.getIsOpen()) {
+      opticsStudio.close();
+    }
+    viewport.setMode(nextMode);
+    controls.syncMode(nextMode);
+    controls.setExplodeValue(viewport.getExplode());
+    syncRail();
+  },
 });
 
 document.addEventListener('fullscreenchange', () => {
@@ -319,6 +328,29 @@ window.addEventListener('keydown', (e) => {
     viewport.setLensSection(sec);
     controls.syncLensSection(sec);
     syncRail();
+  } else if (
+    (e.key === 'v' || e.key === 'V') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    const curMode = viewport.getMode();
+    const toggledMode =
+      curMode === 'micro'
+        ? 'micro_v2'
+        : curMode === 'micro_v2'
+          ? 'micro'
+          : curMode === 'bionz'
+            ? 'bionz_v2'
+            : curMode === 'bionz_v2'
+              ? 'bionz'
+              : null;
+    if (toggledMode) {
+      viewport.setMode(toggledMode);
+      controls.syncMode(toggledMode);
+      controls.setExplodeValue(viewport.getExplode());
+      syncRail();
+    }
   } else if (
     (e.key === 'f' || e.key === 'F') &&
     !e.ctrlKey &&
@@ -1305,6 +1337,58 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mc-mems-sdm-vacuum-cell', false);
+  syncRail();
+} else if (preset === 'micro_v2_assembled') {
+  viewport.setMode('micro_v2', true);
+  controls.syncMode('micro_v2');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'micro_v2_exploded') {
+  viewport.setMode('micro_v2', true);
+  controls.syncMode('micro_v2');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'micro_v2_drawer') {
+  viewport.setMode('micro_v2', true);
+  controls.syncMode('micro_v2');
+  viewport.setExplode(0.76, true);
+  controls.setExplodeValue(0.76);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('pv2-lofic-3d-pillar-cap', false);
+  syncRail();
+} else if (preset === 'bionz_v2_assembled') {
+  viewport.setMode('bionz_v2', true);
+  controls.syncMode('bionz_v2');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'bionz_v2_exploded') {
+  viewport.setMode('bionz_v2', true);
+  controls.syncMode('bionz_v2');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'bionz_v2_drawer') {
+  viewport.setMode('bionz_v2', true);
+  controls.syncMode('bionz_v2');
+  viewport.setExplode(0.76, true);
+  controls.setExplodeValue(0.76);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('xv2-gaa-si-nanosheets', false);
   syncRail();
 }
 
