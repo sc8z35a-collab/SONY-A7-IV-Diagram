@@ -1156,11 +1156,11 @@ export class CadViewport {
       d = 78 + e * 190;
       target = new THREE.Vector3(0, 1.5 + e * 1.5, 0);
     } else if (this.mode === 'bionz_v2') {
-      d = 96 + e * 224;
+      d = 124 + e * 282;
       target = new THREE.Vector3(0, 0.2 - e * 1.2, 0);
     } else if (this.mode === 'micro_v2') {
-      d = 88 + e * 228;
-      target = new THREE.Vector3(0, -0.5 - e * 2.4, 0);
+      d = 114 + e * 270;
+      target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);
     } else if (this.mode === 'mishoe') {
       d = 114 + e * 165;
       target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);

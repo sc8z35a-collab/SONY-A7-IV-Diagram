@@ -20,13 +20,16 @@ export function createMicroPixelV2Assembly(mats: MaterialLibrary): AssemblyContr
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 30,
+    deferredStandaloneCount: 55,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
-      const { buildMicroPixelV2Parts } = await import('./microPixelV2Parts');
+      const [{ buildMicroPixelV2Parts }, { buildMicroPixelV2DeepParts }] = await Promise.all([
+        import('./microPixelV2Parts'),
+        import('./microPixelV2DeepParts'),
+      ]);
       controller.deferredStandaloneCount = 0;
-      const built = buildMicroPixelV2Parts(mats);
+      const built = [...buildMicroPixelV2Parts(mats), ...buildMicroPixelV2DeepParts(mats)];
       for (const p of built) {
         parts.push(p);
         rootGroup.add(p.group);
