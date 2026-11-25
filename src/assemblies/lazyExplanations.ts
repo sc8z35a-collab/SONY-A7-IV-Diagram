@@ -117,10 +117,12 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = Promise.all([
         import('./battery/batteryExplanations'),
         import('./battery/batteryUltra27Explanations'),
-      ]).then(([mBase, mU27]) =>
+        import('./battery/batteryUltra30Explanations'),
+      ]).then(([mBase, mU27, mU30]) =>
         finish({
           ...mBase.BATTERY_EXPLANATIONS,
           ...mU27.BATTERY_ULTRA27_EXPLANATIONS,
+          ...mU30.BATTERY_ULTRA30_EXPLANATIONS,
         })
       );
       break;
@@ -157,7 +159,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./mishoe/miShoeExplanations').then((m) => finish(m.MISHOE_EXPLANATIONS));
       break;
     case 'mic':
-      inflight = import('./mic/micExplanations').then((m) => finish(m.MIC_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./mic/micExplanations'),
+        import('./mic/micUltra30Explanations'),
+      ]).then(([mBase, mU30]) =>
+        finish({
+          ...mBase.MIC_EXPLANATIONS,
+          ...mU30.MIC_ULTRA30_EXPLANATIONS,
+        })
+      );
       break;
   }
 

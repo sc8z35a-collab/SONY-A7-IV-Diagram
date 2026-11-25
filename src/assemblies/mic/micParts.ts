@@ -24,6 +24,7 @@ import {
 } from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 import { GPU_PROFILE } from '../../engine/GpuOptimizer';
+import { buildMicUltra30Parts } from './micUltra30Parts';
 
 function finalizeMicPart(
   id: string,
@@ -2695,6 +2696,8 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       )
     );
   }
+
+  parts.push(...buildMicUltra30Parts(mats));
 
   return parts;
 }

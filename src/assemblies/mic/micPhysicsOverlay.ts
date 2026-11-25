@@ -54,7 +54,7 @@ export function createMicPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 40);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 90);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -193,6 +193,23 @@ export function createMicPhysicsOverlay(
   registerFlow(0xa855f7, 1.35, 3, false, (m) => {
     pt(_a, m, 'mc-windcut-hpf-circuit', 2.0, 1.2, 0);
     pt(_b, m, 'mc-ai-noise-cut-agc', -4.0, 1.6, 0);
+    return _pair;
+  });
+  // 7. 2026 sensiBel Optical MEMS VCSEL Laser Interferometer -> 32-Bit Float Dual-ADC
+  registerFlow(0xf43f5e, 1.5, 3, false, (m) => {
+    pt(_a, m, 'mc-optical-mems-vcsel-2026', 0, 1.2, 0);
+    pt(_b, m, 'mc-32bit-float-dual-adc-2026', -1.2, 0.8, 0);
+    return _pair;
+  });
+  // 8. 2026 32-Bit Float Dual-ADC -> Dual-Path PGA Stitcher -> TinyML 3-Stem Transformer
+  registerFlow(0x10b981, 1.45, 3, true, (m) => {
+    pt(_a, m, 'mc-32bit-float-dual-adc-2026', 1.5, 0.6, 0);
+    pt(_b, m, 'mc-dual-stage-pga-stitch', -1.5, 0.6, 0);
+    return _pair;
+  });
+  registerFlow(0xc026d3, 1.4, 3, false, (m) => {
+    pt(_a, m, 'mc-32bit-float-dual-adc-2026', 0, 0.6, -1.2);
+    pt(_b, m, 'mc-tinyml-transformer-sep-2026', 0, 0.8, 1.2);
     return _pair;
   });
 

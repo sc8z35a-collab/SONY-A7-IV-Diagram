@@ -940,7 +940,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '接点めっき', value: 'りん青銅ばね ＋ 硬質金めっき（ガルウィングSMT実装）' },
       { label: '接続相手', value: 'Sony純正 SH-1035 差動シールドフレキ（MC27）' },
     ],
-    diagramType: 'mc_sh1035_diff_flex',
+    diagramType: 'mc_zif_10pin_connector',
   },
 
   'mc-35mm-trs-mic-jack': {
@@ -967,7 +967,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '内蔵機構', value: '物理プラグ挿入検知スイッチ（内蔵マイク自動ミュート連動）' },
       { label: '接点構成', value: '5ピン（T / R / S / 検出SW×2）金めっき基板実装' },
     ],
-    diagramType: 'mc_rf_ferrite_esd_filter',
+    diagramType: 'mc_35mm_trs_mic_jack',
   },
 
   'mc-mi-shoe-digital-bridge': {
@@ -994,7 +994,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'シールド構造', value: 'ポリイミドFPC ＋ 導電銀インクEMIシールドフィルム全面ラミネート' },
       { label: 'ノイズ耐性', value: 'アナログADCバイパスにより熱雑音・RFハムを根本排除' },
     ],
-    diagramType: 'mc_audio_codec_adc_pga',
+    diagramType: 'mc_mi_shoe_digital_bridge',
   },
 
   'mc-rear-helmholtz-baffle': {
@@ -1021,7 +1021,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '音響効果', value: '背面定在波吸収・カーディオイド指向性の周波数平坦化' },
       { label: 'EMI保護', value: 'トップデッキ全面のファラデーシールド接地を確立' },
     ],
-    diagramType: 'mc_helmholtz_front_chamber',
+    diagramType: 'mc_rear_helmholtz_baffle',
   },
 
   'mc-headphone-monitor-amp': {
@@ -1048,7 +1048,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '対応インピーダンス', value: '16 Ω 〜 64 Ω（プロ用モニターヘッドホン MDR-7506等対応）' },
       { label: '歪率・SN比', value: 'THD+N < 0.005% ／ ダイナミックレンジ > 102 dB' },
     ],
-    diagramType: 'mc_audio_codec_adc_pga',
+    diagramType: 'mc_headphone_monitor_amp',
   },
 
   'mc-micbias-lownoise-ldo': {
@@ -1075,7 +1075,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'リプル除去比', value: 'PSRR > 80 dB @ 1 kHz（デジタル電源からの完全アイソレーション）' },
       { label: 'フィルタ構成', value: 'L/R独立 RC π型フィルタ ＋ タンタル／C0G低ノイズコンデンサ' },
     ],
-    diagramType: 'mc_rf_ferrite_esd_filter',
+    diagramType: 'mc_micbias_lownoise_ldo',
   },
 
   'mc-esd-tvs-rail-guard': {
@@ -1102,7 +1102,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '応答速度', value: '< 1.0 ns（アバランシェ・クランプ動作）' },
       { label: '漏れ電流', value: '< 10 nA @ 3.3 V（微弱マイク信号への影響ゼロ）' },
     ],
-    diagramType: 'mc_rf_ferrite_esd_filter',
+    diagramType: 'mc_esd_tvs_rail_guard',
   },
 
   'mc-ibis-motor-notch-ref': {
@@ -1129,7 +1129,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '低減効果', value: 'メカ・AF駆動帯域の不要ノイズを最大 −18 〜 −24 dB 選択低減' },
       { label: '連携先', value: 'MC31 指向性DSP ＆ MC32 BIONZ XR2 AIオーディオノイズカット' },
     ],
-    diagramType: 'mc_beamforming_phase_dsp',
+    diagramType: 'mc_ibis_motor_notch_ref',
   },
 
   'mc-cap-solder-strain-relief': {
@@ -1156,7 +1156,7 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '除振効果', value: 'ケーブル経由の固体伝搬バイパス振動を −15 dB 以上抑制' },
       { label: '信頼性', value: '繰り返し衝撃に対するカプセルはんだ接合部の疲労破断防止' },
     ],
-    diagramType: 'mc_oem_rubber_boot',
+    diagramType: 'mc_cap_solder_strain_relief',
   },
 
   'mc-topdeck-waterproof-o-ring': {
@@ -1183,6 +1183,6 @@ export const MIC_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '防水・防塵', value: 'トップデッキ接合部の毛細管雨水・微細粉塵侵入を全周遮断' },
       { label: '副次効果', value: 'カメラ内部メカ駆動音のマイク室側への音響リーク低減' },
     ],
-    diagramType: 'mc_silicone_acoustic_gasket',
+    diagramType: 'mc_topdeck_waterproof_o_ring',
   },
 };
