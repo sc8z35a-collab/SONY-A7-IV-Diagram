@@ -536,7 +536,10 @@ export class CadViewport {
         this.registerChunkRecords(chunk);
       }
     } else if (subsystem === 'sensor_fab') {
-      for (const vol of [0, 1] as SensorFabVolume[]) {
+      const volumes = Array.from(new Set(parts.map((p) => (p.fabVolume ?? 0) as SensorFabVolume))).sort(
+        (a, b) => a - b
+      );
+      for (const vol of volumes) {
         const volParts = parts.filter((p) => (p.fabVolume ?? 0) === vol);
         if (volParts.length === 0) continue;
         const chunk = compileMegaBatchChunk(
@@ -1247,8 +1250,13 @@ export class CadViewport {
       d = 94 + e * 235;
       target = new THREE.Vector3(0, 1.5 - e * 2.0, 0.5 + e * 2.0);
     } else if (this.mode === 'sensor_fab') {
-      d = 212 + e * 220;
-      target = new THREE.Vector3(0, 1.5 + e * 2.5, -2.5);
+      if (this.sensorFabVolume === 2) {
+        d = 228 + e * 228;
+        target = new THREE.Vector3(0, 2.0 + e * 1.5, 0.5);
+      } else {
+        d = 212 + e * 220;
+        target = new THREE.Vector3(0, 1.5 + e * 2.5, -2.5);
+      }
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -1372,10 +1380,10 @@ export class CadViewport {
     }
   }
 
-  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0 & Vol.1) */
+  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1 & Vol.2) */
   public focusSensorFabStage(stage: SensorFabStage, immediate = false): void {
     if (this.mode !== 'sensor_fab') return;
-    if (stage === 'overview' || stage === 'v1_overview') {
+    if (stage === 'overview' || stage === 'v1_overview' || stage === 'v2_overview') {
       this.setCameraPreset('iso', immediate);
       return;
     }
@@ -1413,11 +1421,31 @@ export class CadViewport {
       const d = (128 + e * 110) * aspectScale;
       target = new THREE.Vector3(7.0 + e * 8.0, 2.6 + e * 14.0, 4.0 + e * 8.0);
       offset = new THREE.Vector3(d * 0.14, d * 0.42, d * 0.89);
-    } else {
-      // v1_wall — Ch.4: Full-Frame Exposure Wall & Lower 300mm Wafer Yield Curve (640 -> 134 -> 48 -> 26 -> Stacked)
+    } else if (stage === 'v1_wall') {
+      // v1_wall — Ch.4: Full-Frame Exposure Wall & Lower 300mm Wafer Yield Curve
       const d = (146 + e * 125) * aspectScale;
       target = new THREE.Vector3(8.0 + e * 6.0, -8.5 - e * 18.0, 9.0 + e * 12.0);
       offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
+    } else if (stage === 'v2_refine') {
+      // Vol.2 Block 1-A & 1-B: Quartzite Mine -> 2,000°C Arc Furnace -> TCS Distillation -> Siemens 11N
+      const d = (138 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 4.2 + e * 10.0, -21.5 - e * 14.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.34, d * 0.93);
+    } else if (stage === 'v2_mcz') {
+      // Vol.2 Block 1-C: Spruce Pine 32" Crucible -> MCZ Superconducting Magnet -> Dash Neck -> 300mm V/G Ingot
+      const d = (118 + e * 98) * aspectScale;
+      target = new THREE.Vector3(-22.0 - e * 6.0, 4.8 + e * 11.0, -2.0 - e * 2.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.34, d * 0.93);
+    } else if (stage === 'v2_wafer') {
+      // Vol.2 Block 1-D & 1-E: Multi-Wire Saw 1,000 Wires -> Edge Bevel -> DSP 775µm -> Finish CMP Ra<0.1nm -> RCA
+      const d = (138 + e * 110) * aspectScale;
+      target = new THREE.Vector3(-4.0 - e * 4.0, 3.2 + e * 10.0, 10.0 + e * 8.0);
+      offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
+    } else {
+      // v2_epi_ship — Vol.2 Block 1-F & 1-G: Molecular Ion Implanter + 2026 SUMCO 5nm CI Gettering + Epi + Surfscan/FOSB
+      const d = (150 + e * 120) * aspectScale;
+      target = new THREE.Vector3(14.0 + e * 5.0, -4.5 - e * 4.0, 14.0 + e * 12.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.32, d * 0.93);
     }
 
     const pos = target.clone().add(offset);

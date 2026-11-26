@@ -113,6 +113,11 @@ export interface UltraRealisticMaterials {
   fab1WaferSmartphone640: THREE.MeshPhysicalMaterial;
   fab1WaferApsc134: THREE.MeshPhysicalMaterial;
   fab1WaferMediumFormat26: THREE.MeshPhysicalMaterial;
+  // Phase 32: Sensor Manufacturing Process (Fab Vol.2) Sand-to-Epi-Wafer Plant Deck, MCZ V/G Crystal, Surfscan LPD & WaferSight Nanotopography
+  fab2Phase1PlantDeck: THREE.MeshPhysicalMaterial;
+  fab2IngotVgCrystalMap: THREE.MeshPhysicalMaterial;
+  fab2LpdDefectMap: THREE.MeshPhysicalMaterial;
+  fab2NanotopoMap: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -5472,6 +5477,299 @@ function createFab1WaferMediumFormat26Texture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 32: SENSOR MANUFACTURING PROCESS VOL.2 (PHASE 1: SAND -> EPI WAFER)
+// =============================================================================
+
+function createFab2Phase1PlantDeckTexture(): THREE.CanvasTexture {
+  // 7-Block Industrial Smelter -> Chemical Plant -> ISO Class 1 Cleanroom Blueprint Deck
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  ctx.fillStyle = '#eef2f7';
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle architectural CAD millimeter grid
+  ctx.strokeStyle = 'rgba(15, 23, 42, 0.055)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = 24; x < w; x += 24) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+  }
+  for (let y = 24; y < h; y += 24) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+  }
+  ctx.stroke();
+
+  // Back Row Zones: 1-A Smelter (warm amber/terracotta) & 1-B Chemical 11N Distillation/Siemens (cyan-teal)
+  const drawZone = (
+    x: number,
+    y: number,
+    zw: number,
+    zh: number,
+    fill: string,
+    stroke: string,
+    accent: string
+  ) => {
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, zw, zh);
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2.4;
+    ctx.strokeRect(x, y, zw, zh);
+    ctx.fillStyle = accent;
+    ctx.fillRect(x, y, zw, 7);
+  };
+
+  // Row 1 (Back, Z = -21.5): 1-A (Left 44%) + 1-B (Right 52%)
+  drawZone(18, 22, 336, 134, 'rgba(234, 88, 12, 0.09)', 'rgba(234, 88, 12, 0.42)', '#ea580c');
+  drawZone(368, 22, 382, 134, 'rgba(14, 116, 144, 0.09)', 'rgba(14, 116, 144, 0.42)', '#0e7490');
+
+  // Row 2 (Center, Z = -2.0): 1-C MCZ Single Crystal (indigo-gold) + 1-D Multi-Wire Slicing (slate-blue)
+  drawZone(18, 186, 448, 140, 'rgba(79, 70, 229, 0.09)', 'rgba(79, 70, 229, 0.44)', '#4f46e5');
+  drawZone(480, 186, 270, 140, 'rgba(2, 132, 199, 0.09)', 'rgba(2, 132, 199, 0.42)', '#0284c7');
+
+  // Row 3 (Front, Z = +18.0): 1-E CMP Ra<0.1nm (emerald-sky) + 1-F CIS Molecular Ion Gettering & Epi (royal-magenta)
+  drawZone(18, 354, 362, 136, 'rgba(5, 150, 105, 0.09)', 'rgba(5, 150, 105, 0.44)', '#059669');
+  drawZone(394, 354, 356, 136, 'rgba(192, 38, 211, 0.09)', 'rgba(192, 38, 211, 0.44)', '#c026d3');
+
+  // Purity Escalation Process Bus Rail (S-curve connecting 1-A -> 1-B -> 1-C -> 1-D -> 1-E -> 1-F)
+  ctx.strokeStyle = 'rgba(15, 23, 42, 0.24)';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([10, 6]);
+  ctx.beginPath();
+  ctx.moveTo(46, 90);
+  ctx.lineTo(724, 90);
+  ctx.lineTo(724, 170);
+  ctx.lineTo(44, 170);
+  ctx.lineTo(44, 256);
+  ctx.lineTo(724, 256);
+  ctx.lineTo(724, 338);
+  ctx.lineTo(44, 338);
+  ctx.lineTo(44, 422);
+  ctx.lineTo(724, 422);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Cleanroom Airlock Boundary Stripes between 1-B/1-C and 1-E/1-F
+  ctx.strokeStyle = 'rgba(14, 165, 233, 0.35)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(12, 170);
+  ctx.lineTo(w - 12, 170);
+  ctx.moveTo(12, 338);
+  ctx.lineTo(w - 12, 338);
+  ctx.stroke();
+
+  // Corner fiducial crosshairs
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2;
+  for (const [cx, cy] of [
+    [28, 34],
+    [w - 28, 34],
+    [28, h - 24],
+    [w - 28, h - 24],
+  ]) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+    ctx.moveTo(cx - 11, cy);
+    ctx.lineTo(cx + 11, cy);
+    ctx.moveTo(cx, cy - 11);
+    ctx.lineTo(cx, cy + 11);
+    ctx.stroke();
+  }
+
+  return toHiTex(canvas);
+}
+
+function createFab2IngotVgCrystalMapTexture(): THREE.CanvasTexture {
+  // Scientific MCZ V/G Defect-Free Window & <100> Silicon Ingot Striation Map
+  const { canvas, ctx, w, h } = makeHiCanvas(512, 512);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#1e293b');
+  bg.addColorStop(0.5, '#334155');
+  bg.addColorStop(1, '#0f172a');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle horizontal rotational growth striations (MCZ counter-rotation)
+  for (let y = 0; y < h; y += 6) {
+    const alpha = 0.04 + 0.03 * Math.sin(y * 0.22);
+    ctx.fillStyle = `rgba(226, 232, 240, ${alpha.toFixed(3)})`;
+    ctx.fillRect(0, y, w, 2);
+  }
+
+  // Central V-rich (COP) -> OSF Ring -> Defect-Free Neutral Window -> I-rich profile bands
+  const radGrad = ctx.createLinearGradient(0, 0, w, 0);
+  radGrad.addColorStop(0.0, 'rgba(56, 189, 248, 0.28)');
+  radGrad.addColorStop(0.18, 'rgba(16, 185, 129, 0.42)');
+  radGrad.addColorStop(0.5, 'rgba(248, 250, 252, 0.34)');
+  radGrad.addColorStop(0.82, 'rgba(16, 185, 129, 0.42)');
+  radGrad.addColorStop(1.0, 'rgba(56, 189, 248, 0.28)');
+  ctx.fillStyle = radGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Parabolic solid-liquid crystallization isotherm arcs (V/G control!)
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+  ctx.lineWidth = 2.0;
+  for (let y = 44; y < h; y += 54) {
+    ctx.beginPath();
+    ctx.moveTo(28, y - 16);
+    ctx.quadraticCurveTo(w * 0.5, y + 26, w - 28, y - 16);
+    ctx.stroke();
+  }
+
+  // Fine <100> diamond-cubic lattice grid overlay
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.16)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = 32; x < w; x += 32) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+  }
+  ctx.stroke();
+
+  return toHiTex(canvas);
+}
+
+function createFab2LpdDefectMapTexture(): THREE.CanvasTexture {
+  // 300mm KLA Surfscan SP Oblique Laser Scattering 19–30nm LPD Inspection Map
+  const { canvas, ctx, w, h } = makeHiCanvas(512, 512);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const r = w * 0.46;
+
+  ctx.fillStyle = '#070c18';
+  ctx.fillRect(0, 0, w, h);
+
+  // Iridescent dark-mirror epi wafer surface
+  const disc = ctx.createRadialGradient(cx - 50, cy - 50, 20, cx, cy, r);
+  disc.addColorStop(0, '#1e3a5f');
+  disc.addColorStop(0.45, '#0f2547');
+  disc.addColorStop(0.85, '#0c1a33');
+  disc.addColorStop(1, '#1e293b');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = disc;
+  ctx.fill();
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Polar laser scan rings & angular sector lines
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.24)';
+  ctx.lineWidth = 1.4;
+  for (const frac of [0.25, 0.5, 0.75, 0.94]) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * frac, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  for (let a = 0; a < 8; a++) {
+    const ang = (a * Math.PI) / 4;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r);
+    ctx.stroke();
+  }
+
+  // Ultra-low count (CIS prime grade!) sub-30nm scattered LPD markers with crosshairs
+  const rng = mulberry32(3201);
+  for (let i = 0; i < 14; i++) {
+    const ang = rng() * Math.PI * 2;
+    const rr = Math.sqrt(rng()) * r * 0.88;
+    const px = cx + Math.cos(ang) * rr;
+    const py = cy + Math.sin(ang) * rr;
+    ctx.fillStyle = i < 4 ? '#f43f5e' : '#38bdf8';
+    ctx.beginPath();
+    ctx.arc(px, py, i < 4 ? 5.2 : 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = i < 4 ? 'rgba(244, 63, 94, 0.65)' : 'rgba(56, 189, 248, 0.55)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(px, py, 10, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Bottom 1mm SEMI V-Notch marker
+  ctx.fillStyle = '#020617';
+  ctx.beginPath();
+  ctx.moveTo(cx - 11, cy + r + 2);
+  ctx.lineTo(cx, cy + r - 14);
+  ctx.lineTo(cx + 11, cy + r + 2);
+  ctx.closePath();
+  ctx.fill();
+
+  return toHiTex(canvas);
+}
+
+function createFab2NanotopoMapTexture(): THREE.CanvasTexture {
+  // KLA WaferSight Optical Fizeau Nanotopography + FTIR Epi Thickness Uniformity Map (±1%)
+  const { canvas, ctx, w, h } = makeHiCanvas(512, 512);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const r = w * 0.46;
+
+  ctx.fillStyle = '#0b1120';
+  ctx.fillRect(0, 0, w, h);
+
+  // Rainbow interferometric height fringes (nm-scale nanotopography)
+  const fringe = ctx.createRadialGradient(cx + 18, cy - 16, 10, cx, cy, r);
+  fringe.addColorStop(0.0, '#10b981');
+  fringe.addColorStop(0.22, '#06b6d4');
+  fringe.addColorStop(0.42, '#3b82f6');
+  fringe.addColorStop(0.62, '#14b8a6');
+  fringe.addColorStop(0.80, '#22c55e');
+  fringe.addColorStop(0.93, '#eab308');
+  fringe.addColorStop(1.0, '#0284c7');
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = fringe;
+  ctx.fillRect(0, 0, w, h);
+
+  // Concentric iso-height contour lines (SFQR < 15nm + FTIR 49-point measurement grid!)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.34)';
+  ctx.lineWidth = 1.6;
+  for (let rr = 34; rr < r; rr += 34) {
+    ctx.beginPath();
+    ctx.arc(cx + 10, cy - 8, rr, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // 49-point FTIR / eddy-current measurement probe dots across diameter
+  ctx.fillStyle = '#ffffff';
+  for (let gx = -3; gx <= 3; gx++) {
+    for (let gy = -3; gy <= 3; gy++) {
+      const px = cx + gx * 56;
+      const py = cy + gy * 56;
+      if (Math.hypot(px - cx, py - cy) < r * 0.88) {
+        ctx.beginPath();
+        ctx.arc(px, py, 3.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  ctx.restore();
+
+  // Outer precision bezel + V-Notch
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = '#0b1120';
+  ctx.beginPath();
+  ctx.moveTo(cx - 11, cy + r + 2);
+  ctx.lineTo(cx, cy + r - 14);
+  ctx.lineTo(cx + 11, cy + r + 2);
+  ctx.closePath();
+  ctx.fill();
+
+  return toHiTex(canvas);
+}
+
+// =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
@@ -6688,6 +6986,61 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.09
   );
 
+  // --- Phase 32: Sensor Manufacturing Process (Fab Vol.2) Sand-to-Epi-Wafer PBR Materials ---
+  const fab2Phase1PlantDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab2Phase1PlantDeckTexture(),
+      metalness: 0.16,
+      roughness: 0.36,
+      clearcoat: 0.26,
+    }),
+    0.06
+  );
+
+  const fab2IngotVgCrystalMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab2IngotVgCrystalMapTexture(),
+      metalness: 0.78,
+      roughness: 0.16,
+      clearcoat: 0.90,
+      iridescence: 0.54,
+      iridescenceIOR: 1.72,
+    }),
+    0.07
+  );
+
+  const fab2LpdDefectMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab2LpdDefectMapTexture(),
+      metalness: 0.56,
+      roughness: 0.15,
+      clearcoat: 0.92,
+      iridescence: 0.82,
+      iridescenceIOR: 1.76,
+    }),
+    0.08
+  );
+
+  const fab2NanotopoMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab2NanotopoMapTexture(),
+      metalness: 0.44,
+      roughness: 0.14,
+      clearcoat: 0.94,
+      iridescence: 0.92,
+      iridescenceIOR: 1.82,
+    }),
+    0.07
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -6783,6 +7136,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab1WaferSmartphone640,
     fab1WaferApsc134,
     fab1WaferMediumFormat26,
+    fab2Phase1PlantDeck,
+    fab2IngotVgCrystalMap,
+    fab2LpdDefectMap,
+    fab2NanotopoMap,
   ];
 
   return {
@@ -6880,6 +7237,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab1WaferSmartphone640,
     fab1WaferApsc134,
     fab1WaferMediumFormat26,
+    fab2Phase1PlantDeck,
+    fab2IngotVgCrystalMap,
+    fab2LpdDefectMap,
+    fab2NanotopoMap,
     list,
   };
 }
