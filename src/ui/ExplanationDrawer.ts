@@ -314,7 +314,13 @@ export class ExplanationDrawer {
                             label: 'ピクセル極超解剖図 V2（ナノ構造拡大）へ移動',
                             isV2Target: true,
                           }
-                    : null
+                    : part.subsystem === 'drybox' && part.id === 'db-camera-lens-showcase'
+                      ? {
+                          target: 'integrated',
+                          label: '収納カメラ本体＆50mm F1.2 全体3D解剖図へ移動',
+                          isV2Target: false,
+                        }
+                      : null
         : null;
 
     const v2SwitchBtnHtml = v2SwitchConfig
@@ -375,7 +381,8 @@ export class ExplanationDrawer {
       svg.includes('data-evf-hd="1"') ||
       svg.includes('data-fab-hd="1"') ||
       svg.includes('data-bionz-diagram=') ||
-      svg.includes('data-sensor-hd="1"');
+      svg.includes('data-sensor-hd="1"') ||
+      svg.includes('data-drybox-hd="1"');
     const isSyncHd = isHdDiagram(syncSvg);
 
     this.bodyEl.innerHTML = `

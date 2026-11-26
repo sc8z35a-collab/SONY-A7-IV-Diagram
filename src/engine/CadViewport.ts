@@ -50,6 +50,7 @@ import { createMicroPixelV2Assembly } from '../assemblies/sensor/microPixelV2Ind
 import { createMiShoeAssembly } from '../assemblies/mishoe';
 import { createMicAssembly } from '../assemblies/mic';
 import { createSensorFabAssembly } from '../assemblies/sensorFab';
+import { createDryboxAssembly } from '../assemblies/drybox';
 
 export interface ViewportCallbacks {
   onSelectPart: (part: CadPart | null) => void;
@@ -170,6 +171,7 @@ export class CadViewport {
   private mishoeAssembly: AssemblyController;
   private micAssembly: AssemblyController;
   private sensorFabAssembly: AssemblyController;
+  private dryboxAssembly: AssemblyController;
   private assemblyBySubsystem: Record<SubsystemKey, AssemblyController>;
   private allParts: CadPart[] = [];
   private partById = new Map<string, CadPart>();
@@ -373,6 +375,7 @@ export class CadViewport {
     this.mishoeAssembly = createMiShoeAssembly(this.materials);
     this.micAssembly = createMicAssembly(this.materials);
     this.sensorFabAssembly = createSensorFabAssembly(this.materials);
+    this.dryboxAssembly = createDryboxAssembly(this.materials);
 
     this.assemblyBySubsystem = {
       lens: this.lensAssembly,
@@ -392,6 +395,7 @@ export class CadViewport {
       mishoe: this.mishoeAssembly,
       mic: this.micAssembly,
       sensor_fab: this.sensorFabAssembly,
+      drybox: this.dryboxAssembly,
     };
 
     const emptyChunks = (): SubsystemChunks => ({
@@ -416,6 +420,7 @@ export class CadViewport {
       mishoe: emptyChunks(),
       mic: emptyChunks(),
       sensor_fab: emptyChunks(),
+      drybox: emptyChunks(),
     };
 
     this.scene.add(
@@ -435,7 +440,8 @@ export class CadViewport {
       this.bionzV2Assembly.rootGroup,
       this.mishoeAssembly.rootGroup,
       this.micAssembly.rootGroup,
-      this.sensorFabAssembly.rootGroup
+      this.sensorFabAssembly.rootGroup,
+      this.dryboxAssembly.rootGroup
     );
 
     // Breakthrough #17/27: Compile ALL 305 startup macro parts into ONE Unified Compactable VBO/IBO!
@@ -677,7 +683,8 @@ export class CadViewport {
       mode === 'bionz_v2' ||
       mode === 'mishoe' ||
       mode === 'mic' ||
-      mode === 'sensor_fab'
+      mode === 'sensor_fab' ||
+      mode === 'drybox'
     );
   }
 
@@ -691,7 +698,8 @@ export class CadViewport {
       part.subsystem === 'bionz_v2' ||
       part.subsystem === 'mishoe' ||
       part.subsystem === 'mic' ||
-      part.subsystem === 'sensor_fab';
+      part.subsystem === 'sensor_fab' ||
+      part.subsystem === 'drybox';
     if (this.mode === 'integrated') {
       return !isUltraStandalone && !part.standaloneOnly;
     }
@@ -722,7 +730,7 @@ export class CadViewport {
       this.activeChunks.push(this.macroBatch);
     }
 
-    // Standalone / Micro / Micro V2 / Battery / CFexpress / BIONZ / BIONZ V2 / MI Shoe / Mic / Sensor Fab lazily hydrated chunks
+    // Standalone / Micro / Micro V2 / Battery / CFexpress / BIONZ / BIONZ V2 / MI Shoe / Mic / Sensor Fab / Drybox lazily hydrated chunks
     for (const sub of Object.keys(this.subsystemChunks) as SubsystemKey[]) {
       const chunks = this.subsystemChunks[sub];
       const asmVisible = this.assemblyBySubsystem[sub].rootGroup.visible;
@@ -789,6 +797,10 @@ export class CadViewport {
       this.currentExplode,
       this.sensorFabAssembly.rootGroup.visible
     );
+    this.dryboxAssembly.updateExplodeGuides(
+      this.currentExplode,
+      this.dryboxAssembly.rootGroup.visible
+    );
     this.guidesDirty = true;
   }
 
@@ -811,6 +823,7 @@ export class CadViewport {
     const showMiShoe = this.mode === 'mishoe';
     const showMic = this.mode === 'mic';
     const showSensorFab = this.mode === 'sensor_fab';
+    const showDrybox = this.mode === 'drybox';
 
     this.lensAssembly.rootGroup.visible = showLens;
     this.mountAssembly.rootGroup.visible = showMount;
@@ -829,6 +842,7 @@ export class CadViewport {
     this.mishoeAssembly.rootGroup.visible = showMiShoe;
     this.micAssembly.rootGroup.visible = showMic;
     this.sensorFabAssembly.rootGroup.visible = showSensorFab;
+    this.dryboxAssembly.rootGroup.visible = showDrybox;
 
     for (const part of this.allParts) {
       part.group.visible = this.isPartInCurrentMode(part) && !this.isPartHidden(part.id);
@@ -853,6 +867,7 @@ export class CadViewport {
     this.mishoeAssembly.setPhysicsVisible(this.physicsActive && showMiShoe);
     this.micAssembly.setPhysicsVisible(this.physicsActive && showMic);
     this.sensorFabAssembly.setPhysicsVisible(this.physicsActive && showSensorFab);
+    this.dryboxAssembly.setPhysicsVisible(this.physicsActive && showDrybox);
     this.physicsOverlaysDirty = true;
 
     this.updateActiveExplodeGuides();
@@ -877,6 +892,7 @@ export class CadViewport {
       mishoe: 14,
       mic: 15,
       sensor_fab: 16,
+      drybox: 17,
     };
     return this.allParts
       .filter((p) => this.isPartInCurrentMode(p))
@@ -1263,6 +1279,9 @@ export class CadViewport {
         d = 212 + e * 220;
         target = new THREE.Vector3(0, 1.5 + e * 2.5, -2.5);
       }
+    } else if (this.mode === 'drybox') {
+      d = 242 + e * 212;
+      target = new THREE.Vector3(0, -3.5, -2.0 * e);
     } else {
       d = 96 + e * 235;
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
@@ -1366,6 +1385,8 @@ export class CadViewport {
             offset = new THREE.Vector3(-d * 0.50, d * 0.36, d * 0.78);
           } else if (this.mode === 'sensor_fab') {
             offset = new THREE.Vector3(d * 0.38, d * 0.44, d * 0.81);
+          } else if (this.mode === 'drybox') {
+            offset = new THREE.Vector3(d * 0.56, d * 0.24, d * 0.79);
           } else {
             offset = new THREE.Vector3(d * 0.68, d * 0.44, d * 0.66);
           }
@@ -1531,26 +1552,31 @@ export class CadViewport {
       this.mode === 'mic';
     const isCompactStandalone = this.mode === 'battery' || this.mode === 'cfexpress';
     const isSensorFab = this.mode === 'sensor_fab';
+    const isDrybox = this.mode === 'drybox';
     const maxDist = isMicro
       ? 72
       : isSensorFab
         ? 68
-        : isCompactStandalone
-          ? 98
-          : this.mode === 'evf'
-            ? 112
-            : this.mode === 'integrated' || this.mode === 'camera_body'
-              ? 280
-              : 168;
+        : isDrybox
+          ? 148
+          : isCompactStandalone
+            ? 98
+            : this.mode === 'evf'
+              ? 112
+              : this.mode === 'integrated' || this.mode === 'camera_body'
+                ? 280
+                : 168;
     const minDist = isMicro
       ? 34
       : isSensorFab
         ? 28
-        : isCompactStandalone
-          ? 38
-          : this.mode === 'evf'
-            ? 44
-            : 56;
+        : isDrybox
+          ? 48
+          : isCompactStandalone
+            ? 38
+            : this.mode === 'evf'
+              ? 44
+              : 56;
     const desiredDist = Math.min(_focusOffset.length(), maxDist);
     _focusOffset.setLength(Math.max(desiredDist, minDist));
 
@@ -1677,6 +1703,14 @@ export class CadViewport {
       } else {
         minCoord = -18;
         maxCoord = 24;
+      }
+    } else if (this.mode === 'drybox') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -30;
+        maxCoord = 30;
+      } else {
+        minCoord = -55;
+        maxCoord = 55;
       }
     } else if (this.mode === 'lens') {
       minCoord = -46;
@@ -2561,6 +2595,7 @@ export class CadViewport {
       this.mishoeAssembly,
       this.micAssembly,
       this.sensorFabAssembly,
+      this.dryboxAssembly,
     ];
     for (const asm of standaloneUltraAssemblies) {
       if (asm.rootGroup.visible) {
