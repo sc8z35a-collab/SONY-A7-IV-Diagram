@@ -1852,7 +1852,18 @@ export class ZeroTextControls {
           part.order === 125 ||
           part.order === 126 ||
           part.order === 128 ||
-          part.order === 130
+          part.order === 130 ||
+          part.order === 131 ||
+          part.order === 134 ||
+          part.order === 139 ||
+          part.order === 142 ||
+          part.order === 145 ||
+          part.order === 149 ||
+          part.order === 150 ||
+          part.order === 161 ||
+          part.order === 165 ||
+          part.order === 168 ||
+          part.order === 170
             ? 32
             : part.order === 2 ||
                 part.order === 4 ||
@@ -1913,7 +1924,22 @@ export class ZeroTextControls {
                 part.order === 123 ||
                 part.order === 124 ||
                 part.order === 127 ||
-                part.order === 129
+                part.order === 129 ||
+                part.order === 132 ||
+                part.order === 133 ||
+                part.order === 136 ||
+                part.order === 138 ||
+                part.order === 140 ||
+                part.order === 143 ||
+                part.order === 146 ||
+                part.order === 148 ||
+                part.order === 152 ||
+                part.order === 154 ||
+                part.order === 158 ||
+                part.order === 162 ||
+                part.order === 164 ||
+                part.order === 166 ||
+                part.order === 169
               ? 25
               : 19;
       } else if (part.subsystem === 'bionz') {

@@ -4,8 +4,8 @@ import { MaterialLibrary } from '../../engine/Materials';
 import { createCfexpressPhysicsOverlay } from './cfexpressPhysicsOverlay';
 
 /**
- * Assemble the Standalone 130-part CFexpress 4.0 Card Ultra-Dissection
- * (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.4 / 16DP / BiCS8–10 332L / Quantum & SerDes, C01–C130).
+ * Assemble the Standalone 170-part CFexpress 4.0 Card Ultra-Dissection
+ * (Sony CEA-G1920T Type A TOUGH / PCIe Gen4 NVMe 2.4 / 16DP / BiCS8–10 332L / Quantum, Protocol & USB4, C01–C170).
  * 100% lazy-hydrated on first visit to 'cfexpress' mode (0 startup overhead!).
  */
 export function createCfexpressAssembly(mats: MaterialLibrary): AssemblyController {
@@ -20,7 +20,7 @@ export function createCfexpressAssembly(mats: MaterialLibrary): AssemblyControll
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 130,
+    deferredStandaloneCount: 170,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;

@@ -1362,6 +1362,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cfe-fenand-hzo-igzo-2026', false);
   syncRail();
+} else if (preset === 'cfexpress_ultra170') {
+  viewport.setMode('cfexpress', true);
+  controls.syncMode('cfexpress');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('cfe-bwwpc-wafer-power-grid', false);
+  syncRail();
 } else if (preset === 'bionz_assembled') {
   viewport.setMode('bionz', true);
   controls.syncMode('bionz');
