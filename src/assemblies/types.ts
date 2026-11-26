@@ -21,7 +21,7 @@ export type ScaleMode =
   | 'mic'
   | 'sensor_fab'
   | 'drybox';
-export type SensorFabVolume = 0 | 1 | 2 | 3 | 4;
+export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
 export type SensorFabStage =
   | 'overview'
   | 'phases'
@@ -46,7 +46,12 @@ export type SensorFabStage =
   | 'v4_sti_dti'
   | 'v4_ppd_mev'
   | 'v4_vtg_gate'
-  | 'v4_pin_sab';
+  | 'v4_pin_sab'
+  | 'v5_overview'
+  | 'v5_w_m1'
+  | 'v5_m2_m4'
+  | 'v5_m5_wat'
+  | 'v5_hb_cmp';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1618,6 +1623,50 @@ export interface PartExplanation {
     | 'fab4_p379_salicide_cosi_nisi'
     | 'fab4_p380_h2_sinter_feol_wat'
     | 'fab4_feol_380_to_vol5_beol'
+    // Sensor Manufacturing Process Vol.5 (Phase 4 Pixel Wafer BEOL — 210 Steps / 13 Masks, 38 Parts F5-01–F5-38)
+    | 'fab5_hero_beol_5floor_highway'
+    | 'fab5_phase4_beol_terrace_deck'
+    // Block 4-A (P04-001–022, Mask #26: PMD & Tungsten W Contact Plugs)
+    | 'fab5_p001_cesl_sin_stopper'
+    | 'fab5_p002_pmd_bpsg_cmp'
+    | 'fab5_p005_pmd_clean_metro'
+    | 'fab5_m26_contact_hole_etch'
+    | 'fab5_p019_titin_w_cvd_nail'
+    | 'fab5_p021_w_cmp_inspect'
+    // Block 4-B (P04-023–044, Mask #27: M1 Copper Single Damascene)
+    | 'fab5_p023_m1_sicn_lowk'
+    | 'fab5_m27_m1_single_damascene'
+    | 'fab5_p038_tantal_barrier_seed'
+    | 'fab5_p040_cu_ecd_superfill'
+    | 'fab5_p042_cu_2stage_cmp_bta'
+    // Block 4-C (P04-045–134, Masks #28–#33: M2–M4 Dual Damascene x3 Floors = 90 Steps)
+    | 'fab5_p045_m2_sicn_lowk'
+    | 'fab5_m28_via1_pattern'
+    | 'fab5_m29_m2_row_drive'
+    | 'fab5_p072_m2_dual_fill_cmp'
+    | 'fab5_p075_m3_sicn_lowk'
+    | 'fab5_m30_via2_pattern'
+    | 'fab5_m31_m3_vsl_shield'
+    | 'fab5_p102_m3_dual_fill_cmp'
+    | 'fab5_p105_m4_sicn_imd'
+    | 'fab5_m32_via3_pattern'
+    | 'fab5_m33_m4_power_mesh'
+    | 'fab5_p132_m4_dual_fill_cmp'
+    // Block 4-D (P04-135–178, Masks #34–#36: M5 Thick Top Cu + Al-Cu Pad + Pre-Bond WAT)
+    | 'fab5_p135_m5_thick_imd'
+    | 'fab5_m34_via4_heavy'
+    | 'fab5_m35_m5_top_trunk'
+    | 'fab5_p161_m5_fill_cmp'
+    | 'fab5_p163_alcu_pad_sputter'
+    | 'fab5_m36_al_pad_ir_mark'
+    | 'fab5_p177_prebond_wat_gate'
+    // Block 4-E (P04-179–210, Masks #37–#38 + Vol.6 Logic Bridge: Cu-Cu Hybrid Bonding & 2-5nm Cu Recess)
+    | 'fab5_p179_hb_sicn_dielectric'
+    | 'fab5_m37_hb_via_pattern'
+    | 'fab5_m38_hb_cu_pad_50m'
+    | 'fab5_p206_hb_recess_cmp'
+    | 'fab5_p209_afm_surfscan_zero'
+    | 'fab5_beol_700_to_vol6_logic'
     // Phase 35: 2026 Flagship Hybrid Electronic Camera Dry Cabinet Ultra-Dissection (44 Parts: DB01–DB44)
     | 'db_door_alu_frame'
     | 'db_door_lowe_glass'

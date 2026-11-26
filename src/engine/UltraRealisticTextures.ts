@@ -209,6 +209,13 @@ export interface UltraRealisticMaterials extends Omit<BionzHeroMaterials, 'heroL
   micPhotonicMziDie: THREE.MeshPhysicalMaterial;
   micOemScrewSteel: THREE.MeshPhysicalMaterial;
   micMgBeadBlast: THREE.MeshPhysicalMaterial;
+  // Sensor Manufacturing Process (Fab Vol.5) Pixel BEOL 210-Step Copper Highway PBR Materials
+  fab5Phase4BeolDeck: THREE.MeshPhysicalMaterial;
+  fab5FsiVsBsiBeolCutaway: THREE.MeshPhysicalMaterial;
+  fab5DualDamasceneCrossSection: THREE.MeshPhysicalMaterial;
+  fab5M2M4RoutingGrid: THREE.MeshPhysicalMaterial;
+  fab5HbCuPadArray50m: THREE.MeshPhysicalMaterial;
+  fab5CuRecessWindowMap: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -11523,6 +11530,246 @@ function createFab4SalicideBlockSplitTexture(): THREE.CanvasTexture {
   return toHiTex(canvas);
 }
 
+// -----------------------------------------------------------------------------
+// PHASE 35: SENSOR MANUFACTURING PROCESS (VOL.5) — PHASE 4 PIXEL BEOL (210 STEPS)
+// -----------------------------------------------------------------------------
+
+function createFab5Phase4BeolDeckTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.5, '#1e293b');
+  bg.addColorStop(1, '#0c1220');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle cleanroom copper-bus grid
+  ctx.strokeStyle = 'rgba(251, 146, 60, 0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 32; i++) {
+    const p = (i / 32) * w;
+    ctx.beginPath();
+    ctx.moveTo(p, 0);
+    ctx.lineTo(p, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, p);
+    ctx.lineTo(w, p);
+    ctx.stroke();
+  }
+
+  const lanes = [
+    { y: 24, h: 132, color: '#0ea5e9', label: '4-A W-CONTACT NAILS & 4-B M1 Cu DAMASCENE (P04-001–044 / M#26–27)' },
+    { y: 174, h: 176, color: '#ea580c', label: '4-C M2–M4 DUAL-DAMASCENE x3 FLOORS = 90 STEPS (P04-045–134 / M#28–33)' },
+    { y: 368, h: 162, color: '#f59e0b', label: '4-D M5 THICK TRUNK + Al-Cu PAD + PRE-BOND WAT (P04-135–178 / M#34–36)' },
+    { y: 554, h: 190, color: '#10b981', label: 'LOWER TERRACE 4-E: 50.4M Cu-Cu HYBRID BONDING & 2–5nm RECESS CMP (P04-179–210)' },
+  ];
+  for (const l of lanes) {
+    ctx.strokeStyle = l.color;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(20, l.y, w - 40, l.h);
+    ctx.fillStyle = l.color;
+    ctx.globalAlpha = 0.09;
+    ctx.fillRect(20, l.y, w - 40, l.h);
+    ctx.globalAlpha = 1;
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText(l.label, 32, l.y + 22);
+  }
+  return toHiTex(canvas);
+}
+
+function createFab5FsiVsBsiBeolCutawayTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Left: FSI shaded by wires
+  ctx.fillStyle = '#1e1b2e';
+  ctx.fillRect(26, 78, 344, 650);
+  ctx.strokeStyle = '#e11d48';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(26, 78, 344, 650);
+  ctx.fillStyle = '#fda4af';
+  ctx.font = 'bold 21px monospace';
+  ctx.fillText('OLD FSI (SHADED!)', 78, 120);
+  for (let row = 0; row < 5; row++) {
+    ctx.fillStyle = '#ea580c';
+    ctx.fillRect(54, 170 + row * 68, 96, 26);
+    ctx.fillRect(246, 170 + row * 68, 96, 26);
+  }
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(54, 540, 288, 154);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('PHOTODIODE (DIM)', 98, 626);
+
+  // Right: BSI Inverted Unobstructed Light + 50.4M Cu-Cu Bottom
+  ctx.fillStyle = '#0c1f2e';
+  ctx.fillRect(398, 78, 344, 650);
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(398, 78, 344, 650);
+  ctx.fillStyle = '#6ee7b7';
+  ctx.font = 'bold 21px monospace';
+  ctx.fillText('BSI STACKED (100% LIGHT!)', 418, 120);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(426, 152, 288, 140);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('TOP LIGHT -> PD (100%)', 442, 232);
+  for (let row = 0; row < 5; row++) {
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(426, 320 + row * 56, 288, 28);
+  }
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillRect(426, 616, 288, 78);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 19px monospace';
+  ctx.fillText('50.4M Cu-Cu -> LOGIC', 452, 664);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('BSI Cu5 + Al1 BEOL FREEDOM (IEDM 2017)', 120, 50);
+  return toHiTex(canvas);
+}
+
+function createFab5DualDamasceneCrossSectionTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Low-k SiOC dielectric
+  ctx.fillStyle = '#1e3a5f';
+  ctx.fillRect(40, 120, 688, 560);
+  // TaN/Ta 5-10nm violet barrier armor lining T-shaped Dual Damascene cavity
+  ctx.fillStyle = '#8b5cf6';
+  ctx.fillRect(140, 120, 488, 260);
+  ctx.fillRect(300, 360, 168, 320);
+  // Bright Copper ECD Superfill inside barrier
+  const cu = ctx.createLinearGradient(160, 120, 608, 680);
+  cu.addColorStop(0, '#fdba74');
+  cu.addColorStop(0.5, '#ea580c');
+  cu.addColorStop(1, '#c2410c');
+  ctx.fillStyle = cu;
+  ctx.fillRect(162, 120, 444, 236);
+  ctx.fillRect(322, 344, 124, 336);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 24px monospace';
+  ctx.fillText('DUAL DAMASCENE Cu ECD SUPERFILL', 136, 64);
+  ctx.font = 'bold 21px monospace';
+  ctx.fillText('M2–M4 TRENCH (BOTTOM-UP FILL)', 194, 246);
+  ctx.fillText('VIA', 362, 520);
+  ctx.fillStyle = '#e9d5ff';
+  ctx.fillText('TaN/Ta 5–10nm BARRIER', 240, 728);
+  return toHiTex(canvas);
+}
+
+function createFab5M2M4RoutingGridTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0b1120';
+  ctx.fillRect(0, 0, w, h);
+
+  // M2 Horizontal Row Drive Lines (Amber)
+  ctx.fillStyle = 'rgba(245, 158, 11, 0.72)';
+  for (let y = 110; y < 710; y += 64) {
+    ctx.fillRect(32, y, 704, 16);
+  }
+  // M3 Vertical VSL Signal (Cyan) flanked by Ground Shields (Emerald)
+  for (let x = 76; x < 710; x += 96) {
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.68)';
+    ctx.fillRect(x - 16, 88, 10, 636);
+    ctx.fillRect(x + 22, 88, 10, 636);
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.90)';
+    ctx.fillRect(x, 88, 16, 636);
+  }
+  // M4 Heavy VDD/VSS Power Mesh Nodes (Copper)
+  ctx.strokeStyle = '#fb923c';
+  ctx.lineWidth = 6;
+  for (let i = 1; i <= 3; i++) {
+    ctx.strokeRect(48, 92 + (i - 1) * 212, 672, 188);
+  }
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('M2 ROW / M3 VSL+SHIELD / M4 POWER MESH', 110, 56);
+  return toHiTex(canvas);
+}
+
+function createFab5HbCuPadArray50mTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // Mirror SiCN hydrophilic dielectric surface
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.5, '#1e3a5f');
+  bg.addColorStop(1, '#0f172a');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Dense uniform Cu-Cu Hybrid Bonding Pads (0.5–3.0µm square) + CMP Dummy Border
+  const padSize = 34;
+  const pitch = 56;
+  for (let r = 0; r < 11; r++) {
+    for (let c = 0; c < 12; c++) {
+      const x = 52 + c * pitch;
+      const y = 104 + r * pitch;
+      const isDummy = r === 0 || r === 10 || c === 0 || c === 11;
+      const g = ctx.createLinearGradient(x, y, x + padSize, y + padSize);
+      g.addColorStop(0, isDummy ? '#fcd34d' : '#fdba74');
+      g.addColorStop(1, isDummy ? '#b45309' : '#c2410c');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, padSize, padSize);
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, padSize, padSize);
+    }
+  }
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('MASK #38: 50.4M Cu-Cu HYBRID PADS (1–6um)', 96, 60);
+  return toHiTex(canvas);
+}
+
+function createFab5CuRecessWindowMapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('HYBRID BONDING CMP: 2–5nm Cu RECESS WINDOW', 84, 56);
+
+  // 3 Stacked AFM Profile Bands: NG Protrusion, OK 2-5nm Sweet Spot, NG Too Deep
+  const bands = [
+    { y: 100, col: '#e11d48', title: 'NG: PROTRUDING (+1nm) -> DIELECTRIC VOID!', recess: -18 },
+    { y: 318, col: '#10b981', title: 'OK: 2–5nm RECESS + Ra<0.3nm -> PERFECT BOND!', recess: 16 },
+    { y: 536, col: '#f59e0b', title: 'NG: DEEP DISH (>10nm) -> OPEN CIRCUIT!', recess: 46 },
+  ];
+  for (const b of bands) {
+    ctx.strokeStyle = b.col;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(36, b.y, 696, 190);
+    ctx.fillStyle = b.col;
+    ctx.font = 'bold 18px monospace';
+    ctx.fillText(b.title, 54, b.y + 32);
+
+    // SiCN shoulders left & right
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(72, b.y + 84, 188, 86);
+    ctx.fillRect(508, b.y + 84, 188, 86);
+    // Copper Pad recessed/protruding in center
+    ctx.fillStyle = '#ea580c';
+    ctx.fillRect(260, b.y + 84 + b.recess, 248, 86 - b.recess);
+    ctx.strokeStyle = '#ffffff';
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.moveTo(60, b.y + 84);
+    ctx.lineTo(708, b.y + 84);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  return toHiTex(canvas);
+}
+
 // =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
@@ -13715,6 +13962,90 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.09
   );
 
+  // Sensor Manufacturing Process (Fab Vol.5) Pixel BEOL 210-Step Copper Highway Materials
+  const fab5Phase4BeolDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5Phase4BeolDeckTexture(),
+      metalness: 0.34,
+      roughness: 0.24,
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.14,
+    }),
+    0.06
+  );
+
+  const fab5FsiVsBsiBeolCutaway = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5FsiVsBsiBeolCutawayTexture(),
+      metalness: 0.48,
+      roughness: 0.16,
+      clearcoat: 0.94,
+      iridescence: 0.62,
+      iridescenceIOR: 1.62,
+    }),
+    0.08
+  );
+
+  const fab5DualDamasceneCrossSection = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5DualDamasceneCrossSectionTexture(),
+      metalness: 0.66,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.56,
+      iridescenceIOR: 1.58,
+    }),
+    0.09
+  );
+
+  const fab5M2M4RoutingGrid = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5M2M4RoutingGridTexture(),
+      metalness: 0.64,
+      roughness: 0.15,
+      clearcoat: 0.92,
+      iridescence: 0.58,
+      iridescenceIOR: 1.60,
+    }),
+    0.08
+  );
+
+  const fab5HbCuPadArray50m = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5HbCuPadArray50mTexture(),
+      metalness: 0.78,
+      roughness: 0.12,
+      clearcoat: 0.96,
+      iridescence: 0.64,
+      iridescenceIOR: 1.66,
+    }),
+    0.07
+  );
+
+  const fab5CuRecessWindowMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab5CuRecessWindowMapTexture(),
+      metalness: 0.44,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.62,
+      iridescenceIOR: 1.62,
+    }),
+    0.08
+  );
+
   // --- Phase 35: CFexpress 4.0 Type A Top-20 Hero Parts Ultra-HD Bespoke Materials ---
   const cfeHdiPcbRear = tagBump(
     new THREE.MeshPhysicalMaterial({
@@ -13866,7 +14197,6 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
 
   const bionzHero = createBionzHeroMaterials(clippingPlanes);
   const { heroList: bionzHeroList, ...bionzHeroMap } = bionzHero;
-
   const list: THREE.Material[] = [
     ...bionzHeroList,
     bionzEmiLid,
@@ -14015,6 +14345,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab4DualPixelSplitProfile,
     fab4PpdPinningBarrier,
     fab4SalicideBlockSplit,
+    fab5Phase4BeolDeck,
+    fab5FsiVsBsiBeolCutaway,
+    fab5DualDamasceneCrossSection,
+    fab5M2M4RoutingGrid,
+    fab5HbCuPadArray50m,
+    fab5CuRecessWindowMap,
     cfeHdiPcbRear,
     cfeToughResinMold,
     cfeHardGoldFingers,
@@ -14200,6 +14536,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab4DualPixelSplitProfile,
     fab4PpdPinningBarrier,
     fab4SalicideBlockSplit,
+    fab5Phase4BeolDeck,
+    fab5FsiVsBsiBeolCutaway,
+    fab5DualDamasceneCrossSection,
+    fab5M2M4RoutingGrid,
+    fab5HbCuPadArray50m,
+    fab5CuRecessWindowMap,
     cfeHdiPcbRear,
     cfeToughResinMold,
     cfeHardGoldFingers,

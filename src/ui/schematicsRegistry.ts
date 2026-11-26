@@ -40,6 +40,7 @@ import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Sc
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
 import { renderPhase33SensorFabVol3SchematicSvg } from './fabVol3HdSchematics';
 import { renderPhase34SensorFabVol4SchematicSvg } from './fabVol4HdSchematics';
+import { renderPhase35SensorFabVol5SchematicSvg } from './fabVol5HdSchematics';
 import { renderEvfHdSchematicSvg } from './evfHdSchematics';
 import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchematicsA';
 import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
@@ -72,6 +73,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase34SensorFabVol4Svg = renderPhase34SensorFabVol4SchematicSvg(type);
   if (phase34SensorFabVol4Svg) return phase34SensorFabVol4Svg;
+
+  const phase35SensorFabVol5Svg = renderPhase35SensorFabVol5SchematicSvg(type);
+  if (phase35SensorFabVol5Svg) return phase35SensorFabVol5Svg;
 
   const dryboxHdSvg = renderDryboxHdSchematicSvg(type);
   if (dryboxHdSvg) return dryboxHdSvg;
