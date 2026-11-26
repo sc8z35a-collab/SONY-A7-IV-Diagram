@@ -119,7 +119,7 @@ export class ExplanationDrawer {
   private bodyEl: HTMLElement;
   private lightboxEl: HTMLElement;
   private lightboxTitleEl: HTMLElement;
-  private lightboxCanvasEl: HTMLElement;
+  private lightboxStageEl: HTMLElement;
   private handlers: ExplanationDrawerHandlers;
   private renderSeq = 0;
 
@@ -165,29 +165,36 @@ export class ExplanationDrawer {
     this.drawerEl.append(toolbar, this.bodyEl);
     root.appendChild(this.drawerEl);
 
-    // High-resolution Click-to-Enlarge Diagram Lightbox (opened only when user clicks a diagram)
+    // Fullscreen vector HD schematic zoom lightbox (allows inspecting micron-scale details at full width!)
     this.lightboxEl = document.createElement('div');
-    this.lightboxEl.className = 'diagram-lightbox';
+    this.lightboxEl.className = 'schematic-lightbox';
     this.lightboxEl.setAttribute('aria-hidden', 'true');
-    const lbCard = document.createElement('div');
-    lbCard.className = 'diagram-lightbox-card';
-    const lbHeader = document.createElement('div');
-    lbHeader.className = 'diagram-lightbox-header';
+
+    const card = document.createElement('div');
+    card.className = 'schematic-lightbox-card';
+
+    const header = document.createElement('div');
+    header.className = 'schematic-lightbox-header';
+
     this.lightboxTitleEl = document.createElement('div');
-    this.lightboxTitleEl.className = 'diagram-lightbox-title';
-    const lbClose = makeIconBtn(DRAWER_ICONS.close);
-    lbClose.setAttribute('aria-label', '閉じる');
-    lbClose.addEventListener('click', () => this.closeLightbox());
-    lbHeader.append(this.lightboxTitleEl, lbClose);
-    this.lightboxCanvasEl = document.createElement('div');
-    this.lightboxCanvasEl.className = 'diagram-lightbox-canvas';
-    lbCard.append(lbHeader, this.lightboxCanvasEl);
-    this.lightboxEl.appendChild(lbCard);
-    this.lightboxEl.addEventListener('click', (e) => {
-      if (e.target === this.lightboxEl) this.closeLightbox();
+    this.lightboxTitleEl.className = 'schematic-lightbox-title';
+
+    const lbCloseBtn = makeIconBtn(DRAWER_ICONS.close);
+    lbCloseBtn.setAttribute('aria-label', '閉じる');
+    lbCloseBtn.addEventListener('click', () => this.closeLightbox());
+
+    header.append(this.lightboxTitleEl, lbCloseBtn);
+
+    this.lightboxStageEl = document.createElement('div');
+    this.lightboxStageEl.className = 'schematic-lightbox-stage';
+
+    card.append(header, this.lightboxStageEl);
+    this.lightboxEl.append(card);
+    this.lightboxEl.addEventListener('click', (ev) => {
+      if (ev.target === this.lightboxEl) this.closeLightbox();
     });
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.lightboxEl.classList.contains('is-open')) {
+    window.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && this.lightboxEl.classList.contains('is-open')) {
         this.closeLightbox();
       }
     });
@@ -196,12 +203,12 @@ export class ExplanationDrawer {
 
   private openLightbox(title: string, svgMarkup: string): void {
     if (!svgMarkup) return;
-    // Namespace SVG <defs> IDs in lightbox clone so gradients/clips/markers never collide with drawer SVG
-    const scoped = svgMarkup
-      .replace(/\bid="([^"]+)"/g, 'id="lb_$1"')
-      .replace(/url\(#([^)]+)\)/g, 'url(#lb_$1)');
+    // Suffix all SVG <defs> IDs with '-lb' so simultaneous drawer + lightbox SVGs never collide!
+    const safeSvg = svgMarkup
+      .replace(/\bid="([^"]+)"/g, 'id="$1-lb"')
+      .replace(/url\(#([^)]+)\)/g, 'url(#$1-lb)');
     this.lightboxTitleEl.textContent = title;
-    this.lightboxCanvasEl.innerHTML = scoped;
+    this.lightboxStageEl.innerHTML = safeSvg;
     this.lightboxEl.classList.add('is-open');
     this.lightboxEl.setAttribute('aria-hidden', 'false');
   }
@@ -209,7 +216,7 @@ export class ExplanationDrawer {
   private closeLightbox(): void {
     this.lightboxEl.classList.remove('is-open');
     this.lightboxEl.setAttribute('aria-hidden', 'true');
-    this.lightboxCanvasEl.replaceChildren();
+    this.lightboxStageEl.replaceChildren();
   }
 
   private renderPopulatedPart(part: CadPart, exp: PartExplanation, seq: number): void {
@@ -331,10 +338,15 @@ export class ExplanationDrawer {
               targetVol: 1,
               label: '第1巻：超入門・センサーのしくみと2026年最新アーキテクチャへ進む',
             }
-          : {
-              targetVol: 0,
-              label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ移動',
-            }
+          : (part.fabVolume ?? 0) === 1
+            ? {
+                targetVol: 2,
+                label: '第2巻：フェーズ1 砂から超純度エピタキシャルウェーハまで（全60工程）へ進む',
+              }
+            : {
+                targetVol: 0,
+                label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
+              }
         : null;
 
     const fabVolBtnHtml = fabVolSwitchConfig
@@ -349,6 +361,9 @@ export class ExplanationDrawer {
       : '';
 
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
+    const isHdDiagram = (svg: string) =>
+      svg.includes('data-evf-hd="1"') || svg.includes('data-bionz-diagram=');
+    const isSyncHd = isHdDiagram(syncSvg);
 
     this.bodyEl.innerHTML = `
       <div>
@@ -363,8 +378,9 @@ export class ExplanationDrawer {
 
       ${analogyHtml}
 
-      <div class="exp-diagram-box" data-schematic-box role="button" tabindex="0" title="クリックで図解を拡大表示">
-        ${syncSvg}
+      <div class="exp-diagram-box${isSyncHd ? ' is-hd-schematic' : ''}" data-schematic-box role="button" tabindex="0" title="クリックして図解を高精細拡大">
+        <div class="exp-diagram-content" data-schematic-content>${syncSvg}</div>
+        <span class="exp-diagram-zoom-pill">🔍 クリックで高精細拡大</span>
       </div>
 
       <p class="exp-summary">${exp.summary}</p>
@@ -387,22 +403,27 @@ export class ExplanationDrawer {
     `;
 
     const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
-    if (!cachedSchematicRenderer) {
+    const contentEl = this.bodyEl.querySelector<HTMLElement>('[data-schematic-content]');
+    let latestSvg = syncSvg;
+
+    if (!cachedSchematicRenderer && box && contentEl) {
       void loadSchematicRenderer().then((renderFn) => {
-        if (seq !== this.renderSeq || !box || !box.isConnected) return;
-        box.innerHTML = renderFn(exp.diagramType);
+        if (seq !== this.renderSeq || !box.isConnected) return;
+        latestSvg = renderFn(exp.diagramType);
+        contentEl.innerHTML = latestSvg;
+        box.classList.toggle('is-hd-schematic', isHdDiagram(latestSvg));
       });
     }
+
     if (box) {
-      const openZoom = () => {
-        const svgEl = box.querySelector('svg');
-        if (svgEl) this.openLightbox(exp.title, svgEl.outerHTML);
+      const triggerZoom = () => {
+        if (latestSvg) this.openLightbox(exp.title, latestSvg);
       };
-      box.addEventListener('click', openZoom);
-      box.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openZoom();
+      box.addEventListener('click', triggerZoom);
+      box.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          triggerZoom();
         }
       });
     }

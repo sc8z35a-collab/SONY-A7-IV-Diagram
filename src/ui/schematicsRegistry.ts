@@ -37,11 +37,16 @@ import { renderPhase31BatteryUltraSchematicSvg } from './phase31BatteryUltraSche
 import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
+import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
+import { renderEvfHdSchematicSvg } from './evfHdSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
+  const evfHdSvg = renderEvfHdSchematicSvg(type);
+  if (evfHdSvg) return evfHdSvg;
+
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;
 
@@ -158,6 +163,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase31SensorFabVol1Svg = renderPhase31SensorFabVol1SchematicSvg(type);
   if (phase31SensorFabVol1Svg) return phase31SensorFabVol1Svg;
+
+  const phase32SensorFabVol2Svg = renderPhase32SensorFabVol2SchematicSvg(type);
+  if (phase32SensorFabVol2Svg) return phase32SensorFabVol2Svg;
 
   switch (type) {
     case 'baffle':

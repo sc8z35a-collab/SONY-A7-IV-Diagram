@@ -20,7 +20,7 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab';
-export type SensorFabVolume = 0 | 1;
+export type SensorFabVolume = 0 | 1 | 2;
 export type SensorFabStage =
   | 'overview'
   | 'phases'
@@ -30,7 +30,12 @@ export type SensorFabStage =
   | 'v1_photonics'
   | 'v1_archs'
   | 'v1_duel'
-  | 'v1_wall';
+  | 'v1_wall'
+  | 'v2_overview'
+  | 'v2_refine'
+  | 'v2_mcz'
+  | 'v2_wafer'
+  | 'v2_epi_ship';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1454,7 +1459,44 @@ export interface PartExplanation {
     | 'fab1_wafer_apsc_134'
     | 'fab1_wafer_fullframe_48'
     | 'fab1_wafer_mediumformat_26'
-    | 'fab1_stacked_yield_multiply';
+    | 'fab1_stacked_yield_multiply'
+    // Phase 32: Sensor Manufacturing Process Vol.2 — フェーズ1：砂から超純度エピタキシャルウェーハまで (36 Parts: F2-01–F2-36, P01-001–060)
+    | 'fab2_hero_purity_mirror_monument'
+    | 'fab2_phase1_plant_deck'
+    | 'fab2_quartzite_mine_crusher'
+    | 'fab2_carbon_reductant_blender'
+    | 'fab2_submerged_arc_furnace'
+    | 'fab2_ladle_refining_grinding'
+    | 'fab2_tcs_fluidized_cyclone'
+    | 'fab2_multistage_distillation'
+    | 'fab2_h2_purifier_slimrods'
+    | 'fab2_siemens_cvd_reactor'
+    | 'fab2_nonmetal_crush_acid_pack'
+    | 'fab2_spruce_pine_crucible'
+    | 'fab2_poly_boron_dopant_load'
+    | 'fab2_mcz_superconducting_magnet'
+    | 'fab2_seed_dash_necking'
+    | 'fab2_mcz_body_pulling_vg'
+    | 'fab2_tail_detachment_unloading'
+    | 'fab2_crop_od_grinding'
+    | 'fab2_xray_notch_grinding'
+    | 'fab2_multiwire_saw_slicing'
+    | 'fab2_debond_laser_id'
+    | 'fab2_edge_bevel_grinding'
+    | 'fab2_chem_etch_donor_killer'
+    | 'fab2_edge_mirror_dsp'
+    | 'fab2_final_finish_cmp'
+    | 'fab2_rca_megasonic_pw_check'
+    | 'fab2_backside_seal_preclean'
+    | 'fab2_molecular_ion_implanter'
+    | 'fab2_ci_complex_gettering_cutaway'
+    | 'fab2_single_wafer_epi_reactor'
+    | 'fab2_double_epi_post_clean'
+    | 'fab2_surfscan_lpd_inspection'
+    | 'fab2_wafersight_epi_mapping'
+    | 'fab2_vpd_icpms_edge_check'
+    | 'fab2_fosb_25wafer_clean_load'
+    | 'fab2_controlled_logistics_fab_bridge';
 }
 
 export interface CadPart {
@@ -1497,7 +1539,7 @@ export interface CadPart {
   standaloneOnly?: boolean;
   /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
   lensSection?: LensSection;
-  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0 (Master Map), 1 = Vol.1 (Physics & 2026 Architectures) */
+  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0, 1 = Vol.1, 2 = Vol.2 (Phase 1 Sand-to-Epi-Wafer) */
   fabVolume?: SensorFabVolume;
 }
 
