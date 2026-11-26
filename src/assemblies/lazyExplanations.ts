@@ -51,10 +51,30 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./lens/lensExplanations').then((m) => finish(m.LENS_EXPLANATIONS));
       break;
     case 'mount':
-      inflight = import('./mount/mountExplanations').then((m) => finish(m.MOUNT_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./mount/mountExplanations'),
+        import('./mount/mountUltra34ExplanationsA'),
+        import('./mount/mountUltra34ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B]) =>
+        finish({
+          ...mBase.MOUNT_EXPLANATIONS,
+          ...mU34A.MOUNT_ULTRA34_EXPLANATIONS_A,
+          ...mU34B.MOUNT_ULTRA34_EXPLANATIONS_B,
+        })
+      );
       break;
     case 'shutter':
-      inflight = import('./shutter/shutterExplanations').then((m) => finish(m.SHUTTER_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./shutter/shutterExplanations'),
+        import('./shutter/shutterUltra34ExplanationsA'),
+        import('./shutter/shutterUltra34ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B]) =>
+        finish({
+          ...mBase.SHUTTER_EXPLANATIONS,
+          ...mU34A.SHUTTER_ULTRA34_EXPLANATIONS_A,
+          ...mU34B.SHUTTER_ULTRA34_EXPLANATIONS_B,
+        })
+      );
       break;
     case 'sensor':
       inflight = Promise.all([
@@ -188,13 +208,36 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./sensorFab/sensorFabVol2Explanations'),
         import('./sensorFab/sensorFabVol3Explanations'),
         import('./sensorFab/sensorFabVol4Explanations'),
-      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4]) =>
+        import('./sensorFab/sensorFabVol5Explanations'),
+      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4, mVol5]) =>
         finish({
           ...mVol0.SENSOR_FAB_EXPLANATIONS,
           ...mVol1.SENSOR_FAB_VOL1_EXPLANATIONS,
           ...mVol2.SENSOR_FAB_VOL2_EXPLANATIONS,
           ...mVol3.SENSOR_FAB_VOL3_EXPLANATIONS,
           ...mVol4.SENSOR_FAB_VOL4_EXPLANATIONS,
+          ...mVol5.SENSOR_FAB_VOL5_EXPLANATIONS,
+        })
+      );
+      break;
+    case 'drybox':
+      inflight = Promise.all([
+        import('./drybox/dryboxExplanationsA'),
+        import('./drybox/dryboxExplanationsB'),
+        import('./drybox/dryboxExplanationsC'),
+        import('./drybox/dryboxExplanationsD'),
+        import('./drybox/dryboxExplanationsE'),
+        import('./drybox/dryboxExplanationsF'),
+        import('./drybox/dryboxExplanationsG'),
+      ]).then(([mA, mB, mC, mD, mE, mF, mG]) =>
+        finish({
+          ...mA.DRYBOX_EXPLANATIONS_A,
+          ...mB.DRYBOX_EXPLANATIONS_B,
+          ...mC.DRYBOX_EXPLANATIONS_C,
+          ...mD.DRYBOX_EXPLANATIONS_D,
+          ...mE.DRYBOX_EXPLANATIONS_E,
+          ...mF.DRYBOX_EXPLANATIONS_F,
+          ...mG.DRYBOX_EXPLANATIONS_G,
         })
       );
       break;

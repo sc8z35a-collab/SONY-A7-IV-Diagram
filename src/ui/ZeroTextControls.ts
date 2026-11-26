@@ -129,6 +129,10 @@ const ICONS = {
   sensorFab:
     '<circle cx="12" cy="12" r="8.6"/><line x1="6.4" y1="9.2" x2="17.6" y2="9.2"/><line x1="6.4" y1="14.8" x2="17.6" y2="14.8"/><line x1="9.2" y1="6.2" x2="9.2" y2="17.8"/><line x1="14.8" y1="6.2" x2="14.8" y2="17.8"/><rect x="9.8" y="9.8" width="4.4" height="4.4" rx="0.5" fill="currentColor" stroke="none"/><path d="M10.8 20.5 L12 18.8 L13.2 20.5" fill="currentColor" stroke="none"/>',
 
+  // Electronic Camera Dry Cabinet (Dual-Zone Hermetic Door + Shelves + Humidity Droplet, zero text!)
+  dryboxCabinet:
+    '<rect x="4.5" y="2.8" width="15" height="18.4" rx="1.8"/><line x1="4.5" y1="6.8" x2="19.5" y2="6.8"/><line x1="6.8" y1="13.5" x2="17.2" y2="13.5" opacity="0.65"/><line x1="6.8" y1="17.2" x2="17.2" y2="17.2" opacity="0.65"/><line x1="16.8" y1="9.2" x2="16.8" y2="11.6"/><path d="M10.8 8.3c0 0-2 2.2-2 3.3a2 2 0 1 0 4 0c0-1.1-2-3.3-2-3.3z"/><line x1="7.2" y1="4.8" x2="13.2" y2="4.8"/>',
+
   // Assembled compact stack
   assembled:
     '<polygon points="12 5 20 9.5 12 14 4 9.5 12 5"/><polyline points="4 13 12 17.5 20 13"/>',
@@ -222,6 +226,7 @@ export class ZeroTextControls {
   private mishoeBtn: HTMLButtonElement;
   private micBtn: HTMLButtonElement;
   private sensorFabBtn: HTMLButtonElement;
+  private dryboxBtn: HTMLButtonElement;
 
   private lensSectionBar: HTMLElement;
   private lensSec1Btn: HTMLButtonElement;
@@ -418,18 +423,20 @@ export class ZeroTextControls {
     const volGroup = document.createElement('div');
     volGroup.className = 'fab-vol-group';
     this.fabVolBtns = {
-      0: makeFabVolBtn(0, '第0巻 総目次'),
-      1: makeFabVolBtn(1, '第1巻 超入門'),
-      2: makeFabVolBtn(2, '第2巻 Wafer'),
-      3: makeFabVolBtn(3, '第3巻 マスク'),
-      4: makeFabVolBtn(4, '第4巻 FEOL'),
+      0: makeFabVolBtn(0, '0巻 総目次'),
+      1: makeFabVolBtn(1, '1巻 超入門'),
+      2: makeFabVolBtn(2, '2巻 Wafer'),
+      3: makeFabVolBtn(3, '3巻 マスク'),
+      4: makeFabVolBtn(4, '4巻 FEOL'),
+      5: makeFabVolBtn(5, '5巻 BEOL'),
     };
     volGroup.append(
       this.fabVolBtns[0],
       this.fabVolBtns[1],
       this.fabVolBtns[2],
       this.fabVolBtns[3],
-      this.fabVolBtns[4]
+      this.fabVolBtns[4],
+      this.fabVolBtns[5]
     );
 
     const barDivider = document.createElement('div');
@@ -443,7 +450,8 @@ export class ZeroTextControls {
         stage === 'v1_overview' ||
         stage === 'v2_overview' ||
         stage === 'v3_overview' ||
-        stage === 'v4_overview'
+        stage === 'v4_overview' ||
+        stage === 'v5_overview'
           ? 'fab-stage-btn is-active'
           : 'fab-stage-btn';
       btn.dataset.fabStage = stage;
@@ -479,6 +487,11 @@ export class ZeroTextControls {
       v4_ppd_mev: makeFabStageBtn('v4_ppd_mev', '3C RGB注入'),
       v4_vtg_gate: makeFabStageBtn('v4_vtg_gate', '3D VTG・ゲート'),
       v4_pin_sab: makeFabStageBtn('v4_pin_sab', '3E-F P+・SAB'),
+      v5_overview: makeFabStageBtn('v5_overview', '全体'),
+      v5_w_m1: makeFabStageBtn('v5_w_m1', '4A-B W釘・M1'),
+      v5_m2_m4: makeFabStageBtn('v5_m2_m4', '4C M2–M4'),
+      v5_m5_wat: makeFabStageBtn('v5_m5_wat', '4D M5・WAT'),
+      v5_hb_cmp: makeFabStageBtn('v5_hb_cmp', '4E Cu-Cu接合'),
     };
 
     const vol0StageGroup = document.createElement('div');
@@ -530,12 +543,23 @@ export class ZeroTextControls {
       this.fabStageBtns.v4_pin_sab
     );
 
+    const vol5StageGroup = document.createElement('div');
+    vol5StageGroup.className = 'fab-stage-group is-hidden';
+    vol5StageGroup.append(
+      this.fabStageBtns.v5_overview,
+      this.fabStageBtns.v5_w_m1,
+      this.fabStageBtns.v5_m2_m4,
+      this.fabStageBtns.v5_m5_wat,
+      this.fabStageBtns.v5_hb_cmp
+    );
+
     this.fabStageGroups = {
       0: vol0StageGroup,
       1: vol1StageGroup,
       2: vol2StageGroup,
       3: vol3StageGroup,
       4: vol4StageGroup,
+      5: vol5StageGroup,
     };
 
     this.fabStageBar.append(
@@ -545,7 +569,8 @@ export class ZeroTextControls {
       vol1StageGroup,
       vol2StageGroup,
       vol3StageGroup,
-      vol4StageGroup
+      vol4StageGroup,
+      vol5StageGroup
     );
     this.root.appendChild(this.fabStageBar);
 
@@ -655,6 +680,17 @@ export class ZeroTextControls {
     fabLabel.textContent = 'センサー製造工程';
     this.sensorFabBtn.appendChild(fabLabel);
 
+    this.dryboxBtn = document.createElement('button');
+    this.dryboxBtn.type = 'button';
+    this.dryboxBtn.className = 'icon-btn is-fab-pill is-drybox-pill';
+    this.dryboxBtn.dataset.mode = 'drybox';
+    this.dryboxBtn.setAttribute('aria-label', 'ドライボックス超解剖');
+    this.dryboxBtn.title = '2026年最新 カメラ専用ドライボックス（防湿庫）全150部品 3D CAD超解剖図';
+    this.dryboxBtn.appendChild(svgIcon(ICONS.dryboxCabinet));
+    const dryboxLabel = document.createElement('span');
+    dryboxLabel.textContent = 'ドライボックス';
+    this.dryboxBtn.appendChild(dryboxLabel);
+
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.cameraBodyBtn.addEventListener('click', () => this.setMode('camera_body'));
     this.lensBtn.addEventListener('click', () => this.setMode('lens'));
@@ -672,6 +708,7 @@ export class ZeroTextControls {
     this.mishoeBtn.addEventListener('click', () => this.setMode('mishoe'));
     this.micBtn.addEventListener('click', () => this.setMode('mic'));
     this.sensorFabBtn.addEventListener('click', () => this.setMode('sensor_fab'));
+    this.dryboxBtn.addEventListener('click', () => this.setMode('drybox'));
     scaleGroup.append(
       this.integratedBtn,
       this.cameraBodyBtn,
@@ -692,7 +729,8 @@ export class ZeroTextControls {
       this.mishoeBtn,
       this.micBtn,
       fabSep,
-      this.sensorFabBtn
+      this.sensorFabBtn,
+      this.dryboxBtn
     );
 
     // Group B: Exploded View Dissection Slider
@@ -843,6 +881,7 @@ export class ZeroTextControls {
     this.mishoeBtn.classList.toggle('is-active', mode === 'mishoe');
     this.micBtn.classList.toggle('is-active', mode === 'mic');
     this.sensorFabBtn.classList.toggle('is-active', mode === 'sensor_fab');
+    this.dryboxBtn.classList.toggle('is-active', mode === 'drybox');
     this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
     this.fabStageBar.classList.toggle('is-hidden', mode !== 'sensor_fab');
 
@@ -866,10 +905,13 @@ export class ZeroTextControls {
   }
 
   private applyFabVolumeButtons(vol: SensorFabVolume): void {
-    ([0, 1, 2, 3, 4] as SensorFabVolume[]).forEach((v) => {
+    ([0, 1, 2, 3, 4, 5] as SensorFabVolume[]).forEach((v) => {
       this.fabVolBtns[v].classList.toggle('is-active', v === vol);
       this.fabStageGroups[v].classList.toggle('is-hidden', v !== vol);
     });
+    if (this.currentMode === 'sensor_fab') {
+      this.fabVolBtns[vol].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+    }
   }
 
   private applyFabStageButtons(stage: SensorFabStage): void {
@@ -890,7 +932,9 @@ export class ZeroTextControls {
             ? 'v2_overview'
             : vol === 3
               ? 'v3_overview'
-              : 'v4_overview';
+              : vol === 4
+                ? 'v4_overview'
+                : 'v5_overview';
     this.applyFabVolumeButtons(vol);
     this.applyFabStageButtons(this.currentFabStage);
     if (changed || this.currentMode === 'sensor_fab') {
@@ -949,7 +993,9 @@ export class ZeroTextControls {
               ? 'v2_overview'
               : this.currentFabVolume === 3
                 ? 'v3_overview'
-                : 'v4_overview';
+                : this.currentFabVolume === 4
+                  ? 'v4_overview'
+                  : 'v5_overview';
       this.applyFabVolumeButtons(this.currentFabVolume);
       this.applyFabStageButtons(this.currentFabStage);
     }
@@ -1014,6 +1060,8 @@ export class ZeroTextControls {
       this.applyFabVolumeButtons(this.currentFabVolume);
       this.applyFabStageButtons(this.currentFabStage);
       this.sensorFabBtn.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+    } else if (mode === 'drybox') {
+      this.dryboxBtn.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
     }
     this.applyModeButtons(mode);
   }
@@ -1116,32 +1164,62 @@ export class ZeroTextControls {
       if (
         (prevSubsystem && prevSubsystem !== part.subsystem) ||
         (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly) ||
+        (prevSubsystem === 'drybox' &&
+          part.subsystem === 'drybox' &&
+          (part.order === 8 ||
+            part.order === 14 ||
+            part.order === 21 ||
+            part.order === 28 ||
+            part.order === 33 ||
+            part.order === 41 ||
+            part.order === 45 ||
+            part.order === 51 ||
+            part.order === 57 ||
+            part.order === 65 ||
+            part.order === 74 ||
+            part.order === 79 ||
+            part.order === 85 ||
+            part.order === 91 ||
+            part.order === 99 ||
+            part.order === 107 ||
+            part.order === 117 ||
+            part.order === 125 ||
+            part.order === 131 ||
+            part.order === 136 ||
+            part.order === 141 ||
+            part.order === 146)) ||
         (prevSubsystem === 'sensor_fab' &&
           part.subsystem === 'sensor_fab' &&
-          ((part.fabVolume ?? 0) === 4
+          ((part.fabVolume ?? 0) === 5
             ? part.order === 3 ||
-              part.order === 11 ||
-              part.order === 15 ||
-              part.order === 28 ||
-              part.order === 34 ||
-              part.order === 41
-            : (part.fabVolume ?? 0) === 3
+              part.order === 9 ||
+              part.order === 14 ||
+              part.order === 26 ||
+              part.order === 33
+            : (part.fabVolume ?? 0) === 4
               ? part.order === 3 ||
-                part.order === 13 ||
-                part.order === 25 ||
-                part.order === 35 ||
-                part.order === 45
-              : (part.fabVolume ?? 0) === 2
+                part.order === 11 ||
+                part.order === 15 ||
+                part.order === 28 ||
+                part.order === 34 ||
+                part.order === 41
+              : (part.fabVolume ?? 0) === 3
                 ? part.order === 3 ||
-                  part.order === 7 ||
-                  part.order === 12 ||
-                  part.order === 18 ||
-                  part.order === 22 ||
-                  part.order === 27 ||
-                  part.order === 32
-                : (part.fabVolume ?? 0) === 1
-                  ? part.order === 3 || part.order === 10 || part.order === 17 || part.order === 24
-                  : part.order === 4 || part.order === 16 || part.order === 28))
+                  part.order === 13 ||
+                  part.order === 25 ||
+                  part.order === 35 ||
+                  part.order === 45
+                : (part.fabVolume ?? 0) === 2
+                  ? part.order === 3 ||
+                    part.order === 7 ||
+                    part.order === 12 ||
+                    part.order === 18 ||
+                    part.order === 22 ||
+                    part.order === 27 ||
+                    part.order === 32
+                  : (part.fabVolume ?? 0) === 1
+                    ? part.order === 3 || part.order === 10 || part.order === 17 || part.order === 24
+                    : part.order === 4 || part.order === 16 || part.order === 28))
       ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
@@ -1376,7 +1454,23 @@ export class ZeroTextControls {
           part.order === 50 ||
           part.order === 52 ||
           part.order === 53 ||
-          part.order === 56
+          part.order === 56 ||
+          part.order === 62 ||
+          part.order === 65 ||
+          part.order === 67 ||
+          part.order === 68 ||
+          part.order === 71 ||
+          part.order === 76 ||
+          part.order === 78 ||
+          part.order === 80 ||
+          part.order === 82 ||
+          part.order === 86 ||
+          part.order === 87 ||
+          part.order === 91 ||
+          part.order === 93 ||
+          part.order === 95 ||
+          part.order === 97 ||
+          part.order === 100
             ? 32
             : part.order === 3 ||
                 part.order === 4 ||
@@ -1399,7 +1493,25 @@ export class ZeroTextControls {
                 part.order === 51 ||
                 part.order === 55 ||
                 part.order === 58 ||
-                part.order === 59
+                part.order === 59 ||
+                part.order === 61 ||
+                part.order === 64 ||
+                part.order === 70 ||
+                part.order === 72 ||
+                part.order === 74 ||
+                part.order === 75 ||
+                part.order === 77 ||
+                part.order === 79 ||
+                part.order === 81 ||
+                part.order === 83 ||
+                part.order === 85 ||
+                part.order === 88 ||
+                part.order === 90 ||
+                part.order === 92 ||
+                part.order === 94 ||
+                part.order === 96 ||
+                part.order === 98 ||
+                part.order === 99
               ? 25
               : part.order >= 27
                 ? 19
@@ -2068,7 +2180,43 @@ export class ZeroTextControls {
               ? 25
               : 19;
       } else if (part.subsystem === 'sensor_fab') {
-        if ((part.fabVolume ?? 0) === 4) {
+        if ((part.fabVolume ?? 0) === 5) {
+          // Sensor Manufacturing Process Vol.5 (38 parts: F5-01–F5-38, Phase 4 Pixel Wafer BEOL 210 Steps / 13 Masks)
+          widthPx =
+            part.order === 1 ||
+            part.order === 6 ||
+            part.order === 7 ||
+            part.order === 10 ||
+            part.order === 11 ||
+            part.order === 12 ||
+            part.order === 16 ||
+            part.order === 20 ||
+            part.order === 24 ||
+            part.order === 25 ||
+            part.order === 28 ||
+            part.order === 30 ||
+            part.order === 31 ||
+            part.order === 32 ||
+            part.order === 35 ||
+            part.order === 36 ||
+            part.order === 37 ||
+            part.order === 38
+              ? 32
+              : part.order === 2 ||
+                  part.order === 4 ||
+                  part.order === 8 ||
+                  part.order === 13 ||
+                  part.order === 15 ||
+                  part.order === 17 ||
+                  part.order === 19 ||
+                  part.order === 21 ||
+                  part.order === 23 ||
+                  part.order === 27 ||
+                  part.order === 29 ||
+                  part.order === 34
+                ? 25
+                : 19;
+        } else if ((part.fabVolume ?? 0) === 4) {
           // Sensor Manufacturing Process Vol.4 (45 parts: F4-01–F4-45, Phase 3 Pixel Wafer FEOL 380 Steps / 25 Masks)
           widthPx =
             part.order === 1 ||
@@ -2209,6 +2357,126 @@ export class ZeroTextControls {
                 ? 25
                 : 19;
         }
+      } else if (part.subsystem === 'drybox') {
+        // 2026 Flagship Electronic Camera Dry Cabinet (150 parts: DB01–DB150 across 23 MECE groups)
+        widthPx =
+          part.order === 1 ||
+          part.order === 2 ||
+          part.order === 8 ||
+          part.order === 14 ||
+          part.order === 15 ||
+          part.order === 21 ||
+          part.order === 22 ||
+          part.order === 25 ||
+          part.order === 28 ||
+          part.order === 33 ||
+          part.order === 37 ||
+          part.order === 40 ||
+          part.order === 41 ||
+          part.order === 50 ||
+          part.order === 51 ||
+          part.order === 56 ||
+          part.order === 63 ||
+          part.order === 65 ||
+          part.order === 68 ||
+          part.order === 72 ||
+          part.order === 74 ||
+          part.order === 77 ||
+          part.order === 79 ||
+          part.order === 81 ||
+          part.order === 82 ||
+          part.order === 86 ||
+          part.order === 90 ||
+          part.order === 92 ||
+          part.order === 95 ||
+          part.order === 100 ||
+          part.order === 107 ||
+          part.order === 113 ||
+          part.order === 117 ||
+          part.order === 119 ||
+          part.order === 122 ||
+          part.order === 130 ||
+          part.order === 131 ||
+          part.order === 134 ||
+          part.order === 136 ||
+          part.order === 137 ||
+          part.order === 138 ||
+          part.order === 139 ||
+          part.order === 141 ||
+          part.order === 144 ||
+          part.order === 148 ||
+          part.order === 149 ||
+          part.order === 150
+            ? 32
+            : part.order === 3 ||
+                part.order === 4 ||
+                part.order === 5 ||
+                part.order === 10 ||
+                part.order === 11 ||
+                part.order === 16 ||
+                part.order === 17 ||
+                part.order === 18 ||
+                part.order === 23 ||
+                part.order === 24 ||
+                part.order === 26 ||
+                part.order === 29 ||
+                part.order === 30 ||
+                part.order === 34 ||
+                part.order === 35 ||
+                part.order === 38 ||
+                part.order === 42 ||
+                part.order === 44 ||
+                part.order === 45 ||
+                part.order === 47 ||
+                part.order === 48 ||
+                part.order === 52 ||
+                part.order === 53 ||
+                part.order === 55 ||
+                part.order === 58 ||
+                part.order === 59 ||
+                part.order === 61 ||
+                part.order === 62 ||
+                part.order === 64 ||
+                part.order === 66 ||
+                part.order === 67 ||
+                part.order === 70 ||
+                part.order === 75 ||
+                part.order === 78 ||
+                part.order === 80 ||
+                part.order === 83 ||
+                part.order === 84 ||
+                part.order === 89 ||
+                part.order === 91 ||
+                part.order === 93 ||
+                part.order === 97 ||
+                part.order === 99 ||
+                part.order === 101 ||
+                part.order === 103 ||
+                part.order === 106 ||
+                part.order === 108 ||
+                part.order === 109 ||
+                part.order === 111 ||
+                part.order === 112 ||
+                part.order === 114 ||
+                part.order === 116 ||
+                part.order === 118 ||
+                part.order === 120 ||
+                part.order === 121 ||
+                part.order === 123 ||
+                part.order === 124 ||
+                part.order === 127 ||
+                part.order === 129 ||
+                part.order === 132 ||
+                part.order === 133 ||
+                part.order === 135 ||
+                part.order === 140 ||
+                part.order === 142 ||
+                part.order === 143 ||
+                part.order === 145 ||
+                part.order === 146 ||
+                part.order === 147
+              ? 25
+              : 19;
       } else {
         // Micro pixel cross-section (15 core M01–M15 + 60 standalone-only ultra-nano M16–M75)
         if (part.order <= 15) {
