@@ -54,7 +54,17 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./mount/mountExplanations').then((m) => finish(m.MOUNT_EXPLANATIONS));
       break;
     case 'shutter':
-      inflight = import('./shutter/shutterExplanations').then((m) => finish(m.SHUTTER_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./shutter/shutterExplanations'),
+        import('./shutter/shutterUltra34ExplanationsA'),
+        import('./shutter/shutterUltra34ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B]) =>
+        finish({
+          ...mBase.SHUTTER_EXPLANATIONS,
+          ...mU34A.SHUTTER_ULTRA34_EXPLANATIONS_A,
+          ...mU34B.SHUTTER_ULTRA34_EXPLANATIONS_B,
+        })
+      );
       break;
     case 'sensor':
       inflight = Promise.all([

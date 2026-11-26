@@ -1220,8 +1220,8 @@ export class CadViewport {
       d = 192 + e * 340;
       target = new THREE.Vector3(-18.0 * e, 0.0 + e * 2.0, -22.0 - e * 4.0);
     } else if (this.mode === 'shutter') {
-      d = 194 + e * 430;
-      target = new THREE.Vector3(6.0 + e * 44.0, -2.5 + e * 2.0, 14.0 - e * 6.0);
+      d = 194 + e * 475;
+      target = new THREE.Vector3(6.0 + e * 10.0, -2.5 + e * 2.0, 14.0 + e * 2.0);
     } else if (this.mode === 'integrated') {
       d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);

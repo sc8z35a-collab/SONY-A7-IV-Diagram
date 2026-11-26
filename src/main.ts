@@ -1080,6 +1080,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('shutter-rivet-reinforce-collars', false);
   syncRail();
+} else if (preset === 'phase34_shutter') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.96, true);
+  controls.setExplodeValue(0.96);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-coaxial-friction-brake', false);
+  syncRail();
 } else if (preset === 'phase18_lens') {
   viewport.setMode('lens', true);
   viewport.setLensSection(3, true);
