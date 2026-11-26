@@ -58,11 +58,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./shutter/shutterExplanations'),
         import('./shutter/shutterUltra34ExplanationsA'),
         import('./shutter/shutterUltra34ExplanationsB'),
-      ]).then(([mBase, mU34A, mU34B]) =>
+        import('./shutter/shutterUltra36ExplanationsA'),
+        import('./shutter/shutterUltra36ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B, mU36A, mU36B]) =>
         finish({
           ...mBase.SHUTTER_EXPLANATIONS,
           ...mU34A.SHUTTER_ULTRA34_EXPLANATIONS_A,
           ...mU34B.SHUTTER_ULTRA34_EXPLANATIONS_B,
+          ...mU36A.SHUTTER_ULTRA36_EXPLANATIONS_A,
+          ...mU36B.SHUTTER_ULTRA36_EXPLANATIONS_B,
         })
       );
       break;

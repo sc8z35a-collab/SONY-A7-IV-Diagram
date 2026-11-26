@@ -69,7 +69,7 @@ export function createShutterPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 160);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 220);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
