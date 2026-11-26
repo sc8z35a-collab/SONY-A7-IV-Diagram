@@ -56,7 +56,7 @@ export function createDryboxPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 52);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 96);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -157,17 +157,17 @@ export function createDryboxPhysicsOverlay(
     return _pair;
   });
 
-  // 4. Peltier TEC Cold-Plate -> Capillary PTFE Wick Tankless Evaporation Flow
+  // 4. Peltier TEC Cold-Plate -> Capillary PTFE Wick -> 3D Al2O3 Ceramic Metasurface Evaporator
   registerFlow(0x3b82f6, 0.78, 3, true, (m) => {
     pt(_a, m, 'db-hydrophilic-wick-drain', 0, -5.0, 1.5);
-    pt(_b, m, 'db-rear-skived-heatsink', 0, -17.0, -2.5);
+    pt(_b, m, 'db-ceramic-metasurface-evap', 0, 0, -1.0);
     return _pair;
   });
 
-  // 5. Violet Deep UV-C 265/280nm & TiO2 450nm Purification Vortex (confined in duct!)
+  // 5. Violet Deep UV-C 265/280nm Fused Silica Cavity -> Solar-Blind SiC Monitor PD & TiO2 Vortex
   registerFlow(0x8b5cf6, 1.15, 3, false, (m) => {
-    pt(_a, m, 'db-uvc-265-280-sterilizer', -8.0, 0, 1.5);
-    pt(_b, m, 'db-uvc-265-280-sterilizer', 8.0, 0, 1.5);
+    pt(_a, m, 'db-uvc-fused-silica-cavity', -7.5, 0, 1.0);
+    pt(_b, m, 'db-uvc-sic-monitor-pd', 0, 0, 0.5);
     return _pair;
   });
   registerFlow(0x6366f1, 1.05, 3, true, (m) => {
@@ -195,7 +195,7 @@ export function createDryboxPhysicsOverlay(
     return _pair;
   });
 
-  // 8. Digital Telemetry Bus (SHT45 / SGP41 -> Matter over Thread IoT PCB -> E-Ink)
+  // 8. Digital Telemetry Bus (SHT45 / SGP41 -> Matter over Thread IoT PCB -> External RF Radome)
   registerFlow(0x14b8a6, 0.95, 3, true, (m) => {
     pt(_a, m, 'db-sht45-upper-sensor', 0, 2.0, 0);
     pt(_b, m, 'db-matter-thread-iot-soc', -10.0, 0, -3.0);
@@ -204,6 +204,38 @@ export function createDryboxPhysicsOverlay(
   registerFlow(0xf59e0b, 0.95, 3, true, (m) => {
     pt(_a, m, 'db-sgp41-voc-sensor', 0, 2.0, 0);
     pt(_b, m, 'db-matter-thread-iot-soc', 10.0, 0, -3.0);
+    return _pair;
+  });
+  // 9. Faraday-Cage Bypass: Matter SoC Coax -> External 2.4GHz RF Radome Antenna Radiation
+  registerFlow(0x38bdf8, 1.25, 3, true, (m) => {
+    pt(_a, m, 'db-matter-thread-iot-soc', 8.0, 1.5, -4.0);
+    pt(_b, m, 'db-external-rf-radome-ant', 0, 5.5, 0);
+    return _pair;
+  });
+
+  // 10. Automated Proportional N2 Purge Solenoid -> Cabinet Chamber Positive-Pressure Flow
+  registerFlow(0x0ea5e9, 0.88, 3, false, (m) => {
+    pt(_a, m, 'db-n2-auto-solenoid-valve', 0, 0, -3.0);
+    pt(_b, m, 'db-laminar-air-plenum', -14.0, -32.0, 2.0);
+    return _pair;
+  });
+
+  // 11. Li-Ion Early H2/CO Thermal-Runaway Off-Gas Safety Interlock (Battery Dock -> Sensor -> Flame Arrestor)
+  registerFlow(0xf43f5e, 1.12, 3, true, (m) => {
+    pt(_a, m, 'db-battery-h2co-offgas-sensor', 0, 0, 0);
+    pt(_b, m, 'db-battery-flame-arrestor', 0, 0, -1.5);
+    return _pair;
+  });
+
+  // 12. Clean Power Bus: Locking IEC C14 Dual-Stage EMI Inlet -> GaN PSU -> Ideal-Diode ORing BMS
+  registerFlow(0xeab308, 1.05, 3, false, (m) => {
+    pt(_a, m, 'db-iec-c14-emi-inlet', 0, 0, 1.0);
+    pt(_b, m, 'db-gan-power-supply', 0, 0, 0);
+    return _pair;
+  });
+  registerFlow(0x10b981, 1.05, 3, true, (m) => {
+    pt(_a, m, 'db-gan-power-supply', 0, 0, 1.0);
+    pt(_b, m, 'db-ideal-diode-oring-bms', 0, 0, 0);
     return _pair;
   });
 
