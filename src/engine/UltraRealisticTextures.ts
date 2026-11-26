@@ -88,6 +88,23 @@ export interface UltraRealisticMaterials {
   micOpticalInterferometer: THREE.MeshPhysicalMaterial;
   micAudioDsp32Float: THREE.MeshPhysicalMaterial;
   micAcousticDelayCloth: THREE.MeshPhysicalMaterial;
+  // Phase 31: BIONZ XR / XR2 Semiconductor Package Forensic Ultra-CAD Materials (XR01-XR46)
+  bionzIhsNickelCu: THREE.MeshPhysicalMaterial;
+  bionzIndiumStim: THREE.MeshPhysicalMaterial;
+  bionzLpddr5xDie: THREE.MeshPhysicalMaterial;
+  bionzPopInterposer: THREE.MeshPhysicalMaterial;
+  bionzEmcSilica: THREE.MeshStandardMaterial;
+  bionzAbfBottomSr: THREE.MeshPhysicalMaterial;
+  bionzFeolFinfet: THREE.MeshPhysicalMaterial;
+  bionzBeolDamascene: THREE.MeshPhysicalMaterial;
+  bionzLsiBridge: THREE.MeshPhysicalMaterial;
+  bionzCufSilica: THREE.MeshPhysicalMaterial;
+  bionzEsicapDie: THREE.MeshPhysicalMaterial;
+  bionzPmicIc: THREE.MeshPhysicalMaterial;
+  bionzInductorR47: THREE.MeshStandardMaterial;
+  bionzTcxoGoldLid: THREE.MeshPhysicalMaterial;
+  bionzNorFlashIc: THREE.MeshPhysicalMaterial;
+  bionzHdmiRetimerIc: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -337,119 +354,148 @@ function drawLiIonRecycle(ctx: CanvasRenderingContext2D, cx: number, cy: number,
 }
 
 // =============================================================================
-// 1. BIONZ XR / XR2 PROCEDURAL TEXTURES
+// 1. BIONZ XR / XR2 PROCEDURAL TEXTURES (7 Upgraded Core + 16 Phase 31 Bespoke)
 // =============================================================================
 
 function createBionzEmiLidTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
-  // Anisotropic brushed nickel-silver sputtered EMI shield alloy with realistic CNC lapping sheen
+  // Tri-layer Amkor/ASE sputtered SUS / Cu / SUS conformal EMI alloy with anisotropic brushed sheen
   const grad = ctx.createLinearGradient(0, 0, w, h);
-  grad.addColorStop(0, '#495160');
-  grad.addColorStop(0.24, '#667183');
-  grad.addColorStop(0.46, '#505968');
-  grad.addColorStop(0.72, '#6f7b8e');
-  grad.addColorStop(1, '#414854');
+  grad.addColorStop(0, '#464f5e');
+  grad.addColorStop(0.22, '#6c788a');
+  grad.addColorStop(0.45, '#4e5868');
+  grad.addColorStop(0.68, '#778397');
+  grad.addColorStop(0.86, '#556070');
+  grad.addColorStop(1, '#3d4552');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
-  drawBrushedStreaks(ctx, w, h, false, 640, 101, 0.085, 0.085);
-  drawMicroGrain(ctx, w, h, 1400, 102, 0.038);
+  drawBrushedStreaks(ctx, w, h, false, 720, 101, 0.09, 0.09);
+  drawBrushedStreaks(ctx, w, h, true, 160, 103, 0.032, 0.032);
+  drawMicroGrain(ctx, w, h, 1800, 102, 0.042);
 
-  // Subtle concentric CNC thermal-lapping reflection arcs
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-  ctx.lineWidth = 2;
+  // Subtle concentric CNC thermal-lapping reflection arcs across top contact plane
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.055)';
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  for (let r = 80; r <= 340; r += 26) {
+  for (let r = 64; r <= 346; r += 22) {
     ctx.moveTo(w * 0.5 + r, h * 0.5);
     ctx.arc(w * 0.5, h * 0.5, r, 0, Math.PI * 2);
   }
   ctx.stroke();
 
-  // Recessed stepped thermal-spreader moat border with crisp studio light/shadow bevels
-  ctx.strokeStyle = 'rgba(232, 240, 250, 0.52)';
+  // Laser-ablated outer EMI compartment ground-trench moat showing subtle dark Cu-oxide kerf
+  ctx.strokeStyle = 'rgba(236, 242, 252, 0.56)';
   ctx.lineWidth = 4;
-  ctx.strokeRect(38, 38, w - 76, h - 76);
-  ctx.strokeStyle = 'rgba(14, 18, 24, 0.65)';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(45, 45, w - 90, h - 90);
-  ctx.strokeStyle = 'rgba(203, 213, 225, 0.28)';
+  ctx.strokeRect(32, 32, w - 64, h - 64);
+  ctx.strokeStyle = 'rgba(18, 22, 28, 0.78)';
+  ctx.lineWidth = 5;
+  ctx.strokeRect(39, 39, w - 78, h - 78);
+  ctx.strokeStyle = 'rgba(205, 134, 72, 0.44)'; // Exposed Cu sputter sub-layer hint in laser trench!
   ctx.lineWidth = 2;
-  ctx.strokeRect(54, 54, w - 108, h - 108);
+  ctx.strokeRect(44, 44, w - 88, h - 88);
+  ctx.strokeStyle = 'rgba(218, 228, 240, 0.34)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(56, 56, w - 112, h - 112);
 
-  // Corner laser alignment fiducials & Pin-1 triangular chamfer index (top-left)
-  ctx.fillStyle = '#ecc45e';
+  // Perimeter BGA coordinate index ticks & micro-stitching ground-via markers (A..AF / 1..32)
+  ctx.fillStyle = 'rgba(226, 234, 244, 0.52)';
+  for (let t = 96; t <= w - 96; t += 24) {
+    ctx.fillRect(t, 16, 2.5, 11);
+    ctx.fillRect(t, h - 27, 2.5, 11);
+    ctx.fillRect(16, t, 11, 2.5);
+    ctx.fillRect(w - 27, t, 11, 2.5);
+  }
+  ctx.fillStyle = 'rgba(218, 228, 242, 0.62)';
+  ctx.font = '700 13px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const colIdx = ['A', 'E', 'J', 'N', 'T', 'Y', 'AC', 'AF'];
+  const rowIdx = ['1', '5', '9', '13', '17', '21', '26', '32'];
+  for (let i = 0; i < 8; i++) {
+    const pos = 116 + i * 76;
+    ctx.fillText(colIdx[i], pos, 68);
+    ctx.fillText(rowIdx[i], 68, pos);
+  }
+
+  // Gold Pin-1 triangular chamfer fiducial & concentric AOI alignment ring (top-left)
+  ctx.fillStyle = '#f0c858';
   ctx.beginPath();
-  ctx.moveTo(74, 74);
-  ctx.lineTo(138, 74);
-  ctx.lineTo(74, 138);
+  ctx.moveTo(82, 82);
+  ctx.lineTo(148, 82);
+  ctx.lineTo(82, 148);
   ctx.closePath();
   ctx.fill();
-
-  ctx.strokeStyle = 'rgba(241, 245, 249, 0.72)';
+  ctx.strokeStyle = 'rgba(241, 245, 249, 0.80)';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(106, 106, 24, 0, Math.PI * 2);
+  ctx.arc(112, 112, 23, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Authentic crisp laser-etched Sony BIONZ XR / XR2 semiconductor typography (dual-pass micro-etch shadow + bright mark)
+  // Authentic dual-pass YAG laser-etched Sony BIONZ XR / CXD90057 "Mira" / CXD90066GG XR2 typography
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.font = '700 74px Georgia, "Times New Roman", serif';
-  ctx.fillStyle = 'rgba(12, 16, 22, 0.48)';
-  ctx.fillText('SONY', 176, 180);
-  ctx.fillStyle = 'rgba(238, 244, 252, 0.94)';
-  ctx.fillText('SONY', 174, 178);
+  ctx.font = '700 76px Georgia, "Times New Roman", serif';
+  ctx.fillStyle = 'rgba(10, 14, 20, 0.52)';
+  ctx.fillText('SONY', 174, 174);
+  ctx.fillStyle = 'rgba(242, 247, 255, 0.96)';
+  ctx.fillText('SONY', 172, 172);
 
-  // Subtle engraved copper-orange Sony Alpha accent rule
-  ctx.fillStyle = 'rgba(226, 126, 56, 0.90)';
-  ctx.fillRect(174, 224, 424, 6);
-  ctx.fillStyle = 'rgba(255, 214, 170, 0.45)';
-  ctx.fillRect(174, 224, 424, 2);
+  // Engraved Alpha cinnabar accent bar with specular bevel line
+  ctx.fillStyle = 'rgba(228, 124, 52, 0.94)';
+  ctx.fillRect(172, 218, 434, 7);
+  ctx.fillStyle = 'rgba(255, 224, 184, 0.56)';
+  ctx.fillRect(172, 218, 434, 2);
 
   ctx.font = '800 58px "Helvetica Neue", Arial, sans-serif';
-  ctx.fillStyle = 'rgba(12, 16, 22, 0.42)';
-  ctx.fillText('BIONZ XR', 176, 288);
-  ctx.fillStyle = 'rgba(245, 248, 252, 0.95)';
-  ctx.fillText('BIONZ XR', 174, 286);
+  ctx.fillStyle = 'rgba(10, 14, 20, 0.48)';
+  ctx.fillText('BIONZ XR', 174, 282);
+  ctx.fillStyle = 'rgba(246, 250, 255, 0.96)';
+  ctx.fillText('BIONZ XR', 172, 280);
 
-  ctx.fillStyle = 'rgba(214, 224, 236, 0.90)';
-  ctx.font = '600 32px "Courier New", monospace';
-  ctx.fillText('CXD90066GG / XR2', 174, 348);
-  ctx.fillText('PoP-LPDDR5X  AI-NPU', 174, 392);
+  // Authentic OpenMemories + teardown part codes
+  ctx.fillStyle = 'rgba(222, 232, 244, 0.92)';
+  ctx.font = '700 28px "Courier New", monospace';
+  ctx.fillText('CXD90057 / CXD90066GG', 172, 340);
+  ctx.fillStyle = 'rgba(206, 218, 234, 0.88)';
+  ctx.font = '600 26px "Courier New", monospace';
+  ctx.fillText('MIRA+CETUS  PoP-LPDDR5X', 172, 382);
 
-  // Secondary fab & lot code micro-block
-  ctx.fillStyle = 'rgba(208, 218, 232, 0.78)';
-  ctx.font = '600 24px "Courier New", monospace';
-  ctx.fillText('JAPAN   2548K104', 174, 464);
-  ctx.fillText('AT&S-HDI  4nm EUV', 174, 500);
-  ctx.fillText('EMI-SPUTTER Cu/Ni', 174, 536);
-  ctx.font = '600 18px "Courier New", monospace';
-  ctx.fillStyle = 'rgba(190, 204, 222, 0.65)';
-  ctx.fillText('SONY SEMICONDUCTOR SOLUTIONS  A1..AF32', 174, 578);
+  // Secondary fab, process & EMI sputter telemetry block
+  ctx.fillStyle = 'rgba(212, 224, 238, 0.82)';
+  ctx.font = '600 22px "Courier New", monospace';
+  ctx.fillText('JAPAN    2548K104-B2', 172, 444);
+  ctx.fillText('AT&S-ABF  4nm EUV FinFET', 172, 478);
+  ctx.fillText('SPUTTER SUS/Cu/SUS 4um', 172, 512);
+  ctx.fillText('C2PA-RoT  AI-NPU XR2', 172, 546);
 
-  // Sharp laser-etched 2D DataMatrix in bottom-right
-  drawDataMatrix(ctx, 514, 456, 148, 14, 'rgba(240, 246, 252, 0.92)', 'rgba(20, 26, 34, 0.62)', 90066);
+  ctx.font = '600 17px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(194, 208, 226, 0.72)';
+  ctx.fillText('SONY SEMICONDUCTOR SOLUTIONS  A1..AF32', 172, 608);
 
-  // Laser-etched corner micro-crosshairs & perimeter alignment ticks
-  ctx.strokeStyle = 'rgba(226, 232, 240, 0.58)';
+  // Crisp 16x16 ECC-200 2D DataMatrix barcode with quiet zone in lower-right
+  drawDataMatrix(ctx, 520, 446, 152, 16, 'rgba(242, 248, 255, 0.94)', 'rgba(16, 22, 30, 0.72)', 90066);
+  ctx.strokeStyle = 'rgba(226, 236, 248, 0.42)';
   ctx.lineWidth = 2;
+  ctx.strokeRect(512, 438, 168, 168);
+
+  // 3-corner laser AOI crosshairs
+  ctx.strokeStyle = 'rgba(232, 240, 250, 0.66)';
+  ctx.lineWidth = 2.2;
   for (const [cx, cy] of [
-    [w - 92, 92],
-    [92, h - 92],
+    [w - 96, 96],
+    [96, h - 96],
+    [w - 96, h - 96],
   ]) {
     ctx.beginPath();
-    ctx.moveTo(cx - 18, cy);
-    ctx.lineTo(cx + 18, cy);
-    ctx.moveTo(cx, cy - 18);
-    ctx.lineTo(cx, cy + 18);
+    ctx.moveTo(cx - 20, cy);
+    ctx.lineTo(cx + 20, cy);
+    ctx.moveTo(cx, cy - 20);
+    ctx.lineTo(cx, cy + 20);
     ctx.stroke();
-  }
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.45)';
-  for (let t = 140; t <= w - 140; t += 48) {
-    ctx.fillRect(t, 24, 3, 10);
-    ctx.fillRect(t, h - 34, 3, 10);
-    ctx.fillRect(24, t, 10, 3);
-    ctx.fillRect(w - 34, t, 10, 3);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+    ctx.stroke();
   }
 
   return toHiTex(canvas);
@@ -458,65 +504,98 @@ function createBionzEmiLidTexture(): THREE.CanvasTexture {
 function createBionzPopDramTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
-  // Matte dark charcoal silica-filled EMC epoxy mold compound
-  ctx.fillStyle = '#1b1f27';
+  // Matte dark charcoal high-silica (88wt%) EMC transfer-mold epoxy compound
+  ctx.fillStyle = '#181c24';
   ctx.fillRect(0, 0, w, h);
-  drawMicroGrain(ctx, w, h, 2800, 201, 0.058);
+  drawMicroGrain(ctx, w, h, 3600, 201, 0.068);
 
-  // Fine perimeter mold bevel highlight + authentic molded circular ejector-pin marks in corners
-  ctx.strokeStyle = 'rgba(148, 163, 184, 0.28)';
-  ctx.lineWidth = 6;
-  ctx.strokeRect(20, 20, w - 40, h - 40);
-  for (const [ex, ey] of [
-    [w - 92, 92],
-    [92, h - 92],
-  ]) {
-    ctx.fillStyle = 'rgba(10, 12, 16, 0.55)';
-    ctx.beginPath();
-    ctx.arc(ex, ey, 22, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  // Subtle shimmering fused-silica quartz filler flecks embedded in EMC
+  const rng = mulberry32(204);
+  ctx.fillStyle = 'rgba(186, 198, 214, 0.14)';
+  for (let i = 0; i < 650; i++) {
+    ctx.fillRect(rng() * w, rng() * h, 1.4 + rng() * 1.8, 1.4 + rng() * 1.8);
   }
 
-  // Pin-1 circular molded crater dot (top-left)
-  ctx.fillStyle = '#0e1116';
-  ctx.beginPath();
-  ctx.arc(92, 92, 26, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(203, 213, 225, 0.62)';
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  // Mold parting chamfer frame & left-side transfer-mold gate runner witness mark
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.30)';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(18, 18, w - 36, h - 36);
+  ctx.fillStyle = 'rgba(120, 134, 152, 0.24)';
+  ctx.fillRect(8, h * 0.44, 16, h * 0.12); // Mold gate scar on -X edge
 
-  // Authentic Micron PoP LPDDR5X marking (D8DNH verified from A7 V BIONZ XR2 teardown!)
-  ctx.save();
-  ctx.strokeStyle = 'rgba(226, 232, 240, 0.86)';
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.88)';
-  ctx.lineWidth = 5;
+  // 2 recessed circular mold ejector-pin witness depressions with molded cavity codes
+  const ejectors: Array<[number, number, string]> = [
+    [w - 92, 92, 'A2'],
+    [92, h - 92, 'M4'],
+  ];
+  for (const [ex, ey, cid] of ejectors) {
+    ctx.fillStyle = 'rgba(8, 10, 14, 0.70)';
+    ctx.beginPath();
+    ctx.arc(ex, ey, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(156, 170, 188, 0.34)';
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.42)';
+    ctx.font = '700 15px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(cid, ex, ey);
+  }
+
+  // Deep laser Pin-1 orientation crater & corner chamfer arrow (top-left)
+  ctx.fillStyle = '#0a0d12';
   ctx.beginPath();
-  ctx.ellipse(210, 200, 62, 34, -0.25, 0, Math.PI * 2);
+  ctx.arc(92, 92, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(226, 234, 244, 0.72)';
+  ctx.lineWidth = 3.2;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(226, 234, 244, 0.78)';
+  ctx.beginPath();
+  ctx.moveTo(48, 48);
+  ctx.lineTo(74, 48);
+  ctx.lineTo(48, 74);
+  ctx.closePath();
+  ctx.fill();
+
+  // Authentic Micron PoP LPDDR5X-8533 laser marking (verified from Sony A7 V BIONZ XR2 teardown!)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(232, 238, 246, 0.90)';
+  ctx.fillStyle = 'rgba(232, 238, 246, 0.92)';
+  ctx.lineWidth = 5.5;
+  ctx.beginPath();
+  ctx.ellipse(208, 194, 64, 34, -0.26, 0, Math.PI * 2);
   ctx.stroke();
   ctx.font = '800 54px "Helvetica Neue", Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('M', 210, 202);
+  ctx.fillText('M', 208, 196);
   ctx.restore();
 
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.86)';
+  ctx.fillStyle = 'rgba(232, 238, 246, 0.90)';
   ctx.textAlign = 'left';
-  ctx.font = '700 50px "Courier New", monospace';
-  ctx.fillText('4NA47', 310, 198);
-  ctx.font = '700 66px "Courier New", monospace';
-  ctx.fillText('D8DNH', 150, 326);
+  ctx.textBaseline = 'middle';
+  ctx.font = '700 52px "Courier New", monospace';
+  ctx.fillText('4NA47', 306, 194);
+  ctx.font = '700 72px "Courier New", monospace';
+  ctx.fillText('D8DNH', 142, 308);
 
-  ctx.fillStyle = 'rgba(186, 200, 218, 0.78)';
-  ctx.font = '600 30px "Courier New", monospace';
-  ctx.fillText('LPDDR5X-8533  8GB PoP', 150, 412);
-  ctx.fillText('MT62F2G32D8DR-023 WT', 150, 456);
-  ctx.fillText('QUAD-DIE  64-BIT  0.5V', 150, 500);
+  ctx.fillStyle = 'rgba(196, 210, 226, 0.84)';
+  ctx.font = '600 28px "Courier New", monospace';
+  ctx.fillText('LPDDR5X-8533  8GB PoP', 142, 386);
+  ctx.fillText('MT62F2G32D8DR-023 WT', 142, 428);
+  ctx.fillText('4-DIE 64-BIT 0.5V VDDQ', 142, 470);
+  ctx.font = '600 22px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(164, 180, 200, 0.72)';
+  ctx.fillText('FBGA-561  0.35mm TMV  TW', 142, 520);
 
-  drawDataMatrix(ctx, 520, 520, 140, 12, 'rgba(226, 232, 240, 0.84)', null, 58847);
+  // Cutaway inspection quadrant calibration tick ruler along lower-right border
+  ctx.strokeStyle = 'rgba(232, 240, 250, 0.40)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(398, 398, 286, 286);
+
+  drawDataMatrix(ctx, 146, 566, 124, 14, 'rgba(232, 238, 246, 0.86)', null, 58847);
 
   return toHiTex(canvas);
 }
@@ -524,147 +603,199 @@ function createBionzPopDramTexture(): THREE.CanvasTexture {
 function createBionzDieFloorplanTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
-  // Deep iridescent crystalline bare-silicon wafer base
+  // Iridescent 4nm EUV bare-silicon crystalline wafer diffraction backdrop
   const bg = ctx.createLinearGradient(0, 0, w, h);
-  bg.addColorStop(0, '#0c1c36');
-  bg.addColorStop(0.28, '#123a52');
-  bg.addColorStop(0.54, '#241b54');
-  bg.addColorStop(0.78, '#0f3d47');
-  bg.addColorStop(1, '#1a2748');
+  bg.addColorStop(0, '#0a1830');
+  bg.addColorStop(0.24, '#0f364e');
+  bg.addColorStop(0.50, '#221852');
+  bg.addColorStop(0.76, '#0d3c46');
+  bg.addColorStop(1, '#162444');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
 
-  // Dual copper/gold perimeter seal & crack-stop guard rings
-  ctx.strokeStyle = '#e5b347';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(10, 10, w - 20, h - 20);
-  ctx.strokeStyle = '#94a3b8';
+  // Outer dicing scribe street & dual copper/gold crack-stop & moisture-guard seal rings
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(4, 4, w - 8, h - 8);
+  ctx.strokeStyle = '#d98a36';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(12, 12, w - 24, h - 24);
+  ctx.strokeStyle = '#f0c452';
   ctx.lineWidth = 4;
   ctx.strokeRect(24, 24, w - 48, h - 48);
 
-  // Perimeter gold/copper I/O bond pad ring
-  ctx.fillStyle = '#eab64d';
-  for (let i = 40; i < w - 40; i += 14) {
-    ctx.fillRect(i, 30, 8, 14);
-    ctx.fillRect(i, h - 44, 8, 14);
-    ctx.fillRect(30, i, 14, 8);
-    ctx.fillRect(w - 44, i, 14, 8);
+  // 4-corner EUV lithography stepper Vernier alignment targets & PCM test keys
+  for (const [vx, vy] of [
+    [34, 34],
+    [w - 34, 34],
+    [34, h - 34],
+    [w - 34, h - 34],
+  ]) {
+    ctx.strokeStyle = '#fde68a';
+    ctx.lineWidth = 1.6;
+    ctx.strokeRect(vx - 9, vy - 9, 18, 18);
+    ctx.beginPath();
+    ctx.moveTo(vx - 11, vy);
+    ctx.lineTo(vx + 11, vy);
+    ctx.moveTo(vx, vy - 11);
+    ctx.lineTo(vx, vy + 11);
+    ctx.stroke();
   }
 
-  // Draw dense photolithographic 4x4 IP macro floorplan zones matching XR10-XR25!
-  const drawMacro = (
-    x: number,
-    y: number,
-    mw: number,
-    mh: number,
-    c1: string,
-    c2: string,
-    pitchX: number,
-    pitchY: number,
-    kind: 'sram' | 'systolic' | 'logic' | 'lanes'
-  ) => {
-    const g = ctx.createLinearGradient(x, y, x + mw, y + mh);
-    g.addColorStop(0, c1);
-    g.addColorStop(1, c2);
-    ctx.fillStyle = g;
-    ctx.fillRect(x, y, mw, mh);
+  // Dense perimeter GSG I/O & ESD clamp gold bond-pad ring
+  for (let i = 52; i < w - 52; i += 11) {
+    const isGnd = Math.round(i / 11) % 3 === 0;
+    ctx.fillStyle = isGnd ? '#d97736' : '#f2c75c';
+    ctx.fillRect(i, 30, 6.5, 13);
+    ctx.fillRect(i, h - 43, 6.5, 13);
+    ctx.fillRect(30, i, 13, 6.5);
+    ctx.fillRect(w - 43, i, 13, 6.5);
+  }
 
-    ctx.strokeStyle = 'rgba(255,255,255,0.24)';
-    ctx.lineWidth = 1.1;
-    ctx.beginPath();
-    for (let px = x + pitchX; px < x + mw; px += pitchX) {
-      ctx.moveTo(px, y);
-      ctx.lineTo(px, y + mh);
-    }
-    for (let py = y + pitchY; py < y + mh; py += pitchY) {
-      ctx.moveTo(x, py);
-      ctx.lineTo(x + mw, py);
-    }
-    ctx.stroke();
-
-    if (kind === 'systolic') {
-      ctx.fillStyle = 'rgba(250, 204, 21, 0.38)';
-      for (let gx = x + 6; gx < x + mw - 8; gx += 14) {
-        for (let gy = y + 6; gy < y + mh - 8; gy += 14) {
-          ctx.fillRect(gx, gy, 8, 8);
-        }
-      }
-    } else if (kind === 'sram') {
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.30)';
-      for (let sy = y + 6; sy < y + mh - 6; sy += 10) {
-        ctx.fillRect(x + 5, sy, mw - 10, 4.5);
-      }
-    } else if (kind === 'lanes') {
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.44)';
-      for (let lx = x + 8; lx < x + mw - 8; lx += 16) {
-        ctx.fillRect(lx, y + 7, 6, mh - 14);
-      }
-    } else {
-      ctx.fillStyle = 'rgba(186, 230, 253, 0.22)';
-      for (let rx = x + 8; rx < x + mw - 14; rx += 22) {
-        for (let ry = y + 8; ry < y + mh - 14; ry += 18) {
-          ctx.fillRect(rx, ry, 14, 9);
-        }
-      }
-    }
-
-    // Gold power-delivery guard ring framing each IP macro
-    ctx.strokeStyle = 'rgba(238, 188, 62, 0.84)';
-    ctx.lineWidth = 2.4;
-    ctx.strokeRect(x, y, mw, mh);
-  };
-
+  // 16 individually detailed photolithographic IP macro floorplan tiles matching XR10–XR25
   const pad = 54;
   const gap = 12;
   const cell = (w - pad * 2 - gap * 3) / 4;
-  const palette: Array<[string, string, number, number, 'sram' | 'systolic' | 'logic' | 'lanes']> = [
-    ['#0e7490', '#164e63', 10, 14, 'lanes'],
-    ['#0369a1', '#0f766e', 12, 10, 'logic'],
-    ['#0f766e', '#115e59', 10, 8, 'sram'],
-    ['#b45309', '#92400e', 14, 14, 'systolic'],
-    ['#5b21b6', '#3730a3', 16, 16, 'systolic'],
-    ['#1d4ed8', '#1e3a8a', 14, 14, 'logic'],
-    ['#0d9488', '#155e75', 12, 12, 'logic'],
-    ['#9f1239', '#881337', 10, 14, 'lanes'],
-    ['#047857', '#065f46', 12, 10, 'sram'],
-    ['#0284c7', '#1e40af', 8, 12, 'sram'],
-    ['#1e40af', '#312e81', 10, 16, 'lanes'],
-    ['#a16207', '#713f12', 14, 14, 'systolic'],
-    ['#9a3412', '#7c2d12', 12, 12, 'lanes'],
-    ['#075985', '#0c4a6e', 12, 14, 'lanes'],
-    ['#4338ca', '#312e81', 14, 14, 'logic'],
-    ['#86198f', '#581c87', 12, 12, 'systolic'],
+  const macros: Array<[string, string, string, 'serdes' | 'bayer' | 'wavelet' | 'lut3d' | 'systolic' | 'arm' | 'af' | 'codec' | 'audio' | 'sram' | 'ddr' | 'vault' | 'pcie' | 'hdmi' | 'rf' | 'pll']> = [
+    ['#0e7490', '#164e63', 'SLVS-EC', 'serdes'],
+    ['#0369a1', '#0f766e', 'RAW-ISP', 'bayer'],
+    ['#0f766e', '#115e59', 'NR-7K', 'wavelet'],
+    ['#b45309', '#92400e', '3D-LUT', 'lut3d'],
+    ['#5b21b6', '#3730a3', 'AI-NPU', 'systolic'],
+    ['#1d4ed8', '#1e3a8a', '4xA35', 'arm'],
+    ['#0d9488', '#155e75', 'SA-DSP', 'af'],
+    ['#9f1239', '#881337', 'HEVC8K', 'codec'],
+    ['#047857', '#065f46', 'AUD-32', 'audio'],
+    ['#0284c7', '#1e40af', '6T-SRAM', 'sram'],
+    ['#1e40af', '#312e81', 'LPDDR5X', 'ddr'],
+    ['#a16207', '#713f12', 'C2PA', 'vault'],
+    ['#9a3412', '#7c2d12', 'PCIeG4', 'pcie'],
+    ['#075985', '#0c4a6e', 'HDMI2.1', 'hdmi'],
+    ['#4338ca', '#312e81', 'USB/6E', 'rf'],
+    ['#86198f', '#581c87', 'PLL/HTR', 'pll'],
   ];
 
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
-      const [c1, c2, px, py, kind] = palette[r * 4 + c];
-      drawMacro(pad + c * (cell + gap), pad + r * (cell + gap), cell, cell, c1, c2, px, py, kind);
+      const [c1, c2, tag, kind] = macros[r * 4 + c];
+      const x = pad + c * (cell + gap);
+      const y = pad + r * (cell + gap);
+      const g = ctx.createLinearGradient(x, y, x + cell, y + cell);
+      g.addColorStop(0, c1);
+      g.addColorStop(1, c2);
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, cell, cell);
+
+      // Fine standard-cell photolithography grid
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let gx = x + 10; gx < x + cell; gx += 10) {
+        ctx.moveTo(gx, y);
+        ctx.lineTo(gx, y + cell);
+      }
+      for (let gy = y + 10; gy < y + cell; gy += 10) {
+        ctx.moveTo(x, gy);
+        ctx.lineTo(x + cell, gy);
+      }
+      ctx.stroke();
+
+      // Bespoke IP micro-circuit lithography pattern
+      if (kind === 'systolic') {
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.44)';
+        for (let sx = x + 8; sx < x + cell - 10; sx += 14) {
+          for (let sy = y + 8; sy < y + cell - 10; sy += 14) {
+            ctx.fillRect(sx, sy, 9, 9);
+          }
+        }
+      } else if (kind === 'sram' || kind === 'ddr') {
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.34)';
+        for (let sy = y + 6; sy < y + cell - 6; sy += 9) {
+          ctx.fillRect(x + 6, sy, cell * 0.42, 4.5);
+          ctx.fillRect(x + cell * 0.54, sy, cell * 0.40, 4.5);
+        }
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.65)';
+        ctx.fillRect(x + cell * 0.48, y + 4, cell * 0.05, cell - 8);
+      } else if (kind === 'serdes' || kind === 'pcie' || kind === 'hdmi') {
+        ctx.fillStyle = 'rgba(245, 168, 42, 0.52)';
+        for (let lx = x + 8; lx < x + cell - 8; lx += 14) {
+          ctx.fillRect(lx, y + 6, 4, cell - 12);
+          ctx.fillRect(lx + 5, y + 6, 3, cell - 12);
+        }
+      } else if (kind === 'vault') {
+        // Active-shield serpentine tamper mesh
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.70)';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let sy = y + 12; sy < y + cell - 10; sy += 14) {
+          ctx.moveTo(x + 10, sy);
+          ctx.lineTo(x + cell - 10, sy);
+        }
+        ctx.stroke();
+      } else if (kind === 'pll' || kind === 'rf') {
+        // Spiral LC-tank VCO / RF balun coils
+        ctx.strokeStyle = 'rgba(248, 198, 84, 0.72)';
+        ctx.lineWidth = 2.4;
+        for (const rad of [18, 32, 46]) {
+          ctx.beginPath();
+          ctx.arc(x + cell * 0.5, y + cell * 0.5, rad, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      } else if (kind === 'codec') {
+        // Recursive HEVC CTU quadtree boxes
+        ctx.strokeStyle = 'rgba(254, 205, 211, 0.62)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x + 8, y + 8, cell * 0.45, cell * 0.45);
+        ctx.strokeRect(x + cell * 0.52, y + 8, cell * 0.40, cell * 0.22);
+        ctx.strokeRect(x + cell * 0.52, y + cell * 0.34, cell * 0.19, cell * 0.19);
+        ctx.strokeRect(x + cell * 0.73, y + cell * 0.34, cell * 0.19, cell * 0.19);
+        ctx.strokeRect(x + 8, y + cell * 0.56, cell - 16, cell * 0.36);
+      } else {
+        // Quad-core / logic macro tiles
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.24)';
+        for (let rx = x + 10; rx < x + cell - 20; rx += 32) {
+          for (let ry = y + 10; ry < y + cell - 20; ry += 26) {
+            ctx.fillRect(rx, ry, 24, 18);
+          }
+        }
+      }
+
+      // Gold power-delivery guard ring framing each IP macro + subtle reticle tag
+      ctx.strokeStyle = 'rgba(242, 196, 72, 0.88)';
+      ctx.lineWidth = 2.6;
+      ctx.strokeRect(x, y, cell, cell);
+      ctx.fillStyle = 'rgba(255, 248, 220, 0.78)';
+      ctx.font = '700 13px "Courier New", monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(tag, x + 6, y + 5);
     }
   }
 
-  // Orthogonal BEOL copper power-distribution NoC bus highways between macro rows/cols
-  ctx.strokeStyle = 'rgba(248, 200, 92, 0.72)';
-  ctx.lineWidth = 2;
+  // Orthogonal coherent Network-on-Chip (NoC) copper/gold bus superhighways & router nodes
+  ctx.strokeStyle = 'rgba(248, 204, 96, 0.78)';
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   for (let i = 1; i < 4; i++) {
     const pos = pad + i * cell + (i - 0.5) * gap;
-    ctx.moveTo(pad, pos - 2);
-    ctx.lineTo(w - pad, pos - 2);
-    ctx.moveTo(pad, pos + 2);
-    ctx.lineTo(w - pad, pos + 2);
-    ctx.moveTo(pos - 2, pad);
-    ctx.lineTo(pos - 2, h - pad);
-    ctx.moveTo(pos + 2, pad);
-    ctx.lineTo(pos + 2, h - pad);
+    ctx.moveTo(pad, pos - 2.5);
+    ctx.lineTo(w - pad, pos - 2.5);
+    ctx.moveTo(pad, pos + 2.5);
+    ctx.lineTo(w - pad, pos + 2.5);
+    ctx.moveTo(pos - 2.5, pad);
+    ctx.lineTo(pos - 2.5, h - pad);
+    ctx.moveTo(pos + 2.5, pad);
+    ctx.lineTo(pos + 2.5, h - pad);
   }
   ctx.stroke();
 
-  // Micro-lithographic reticle scribe legend along top die seal lane
-  ctx.fillStyle = 'rgba(248, 224, 140, 0.78)';
+  // Micro-lithographic reticle scribe legend along top/bottom seal lanes
+  ctx.fillStyle = 'rgba(250, 228, 148, 0.84)';
   ctx.font = '700 13px "Courier New", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('SONY CXD90066  4NM-EUV-FINFET  RETICLE REV.B  AI-NPU/ISP/HEVC', w * 0.5, 48);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SONY CXD90057/CXD90066  4NM-EUV-FINFET  RETICLE REV.B2  AI-NPU/ISP/HEVC', w * 0.5, 48);
+  ctx.fillText('SEAL-RING Cu/W  CRACK-STOP  NoC-COHERENT-MESH  16-IP FLOORPLAN', w * 0.5, h - 48);
 
   return toHiTex(canvas);
 }
@@ -672,17 +803,16 @@ function createBionzDieFloorplanTexture(): THREE.CanvasTexture {
 function createBionzIpTileTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
-  // Neutral high-contrast photolithographic wafer micro-circuitry tile (multiplies cleanly with block material color!)
-  ctx.fillStyle = '#7e8fa8';
+  // Neutral high-contrast photolithographic EUV standard-cell & CMP dummy-fill wafer tile
+  ctx.fillStyle = '#7b8ca8';
   ctx.fillRect(0, 0, s, s);
 
-  // Sub-block SRAM & logic standard-cell striations
-  for (let y = 0; y < s; y += 12) {
-    ctx.fillStyle = (y / 12) % 2 === 0 ? 'rgba(255,255,255,0.20)' : 'rgba(15,23,42,0.30)';
-    ctx.fillRect(0, y, s, 6);
+  for (let y = 0; y < s; y += 8) {
+    ctx.fillStyle = (y / 8) % 2 === 0 ? 'rgba(255,255,255,0.22)' : 'rgba(12,20,38,0.34)';
+    ctx.fillRect(0, y, s, 4);
   }
-  ctx.strokeStyle = 'rgba(255, 240, 190, 0.38)';
-  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(255, 240, 190, 0.42)';
+  ctx.lineWidth = 1.1;
   ctx.beginPath();
   for (let i = 0; i <= s; i += 12) {
     ctx.moveTo(i, 0);
@@ -692,16 +822,14 @@ function createBionzIpTileTexture(): THREE.CanvasTexture {
   }
   ctx.stroke();
 
-  // Micro-via contact dots at cell intersections
-  ctx.fillStyle = 'rgba(255, 224, 130, 0.62)';
+  // Stacked via-farm gold contact nodes & CMP dummy fill squares
+  ctx.fillStyle = 'rgba(255, 222, 120, 0.68)';
   for (let x = 6; x < s; x += 24) {
     for (let y = 6; y < s; y += 24) {
-      ctx.fillRect(x - 1.8, y - 1.8, 3.6, 3.6);
+      ctx.fillRect(x - 2, y - 2, 4, 4);
     }
   }
-
-  // Perimeter gold bus border
-  ctx.strokeStyle = 'rgba(245, 200, 90, 0.78)';
+  ctx.strokeStyle = 'rgba(245, 200, 90, 0.82)';
   ctx.lineWidth = 4;
   ctx.strokeRect(3, 3, s - 6, s - 6);
 
@@ -712,49 +840,73 @@ function createBionzCetusDieTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
   const bg = ctx.createLinearGradient(0, 0, w, h);
-  bg.addColorStop(0, '#2e1065');
-  bg.addColorStop(0.5, '#1e1b4b');
-  bg.addColorStop(1, '#0f3d56');
+  bg.addColorStop(0, '#2a0f60');
+  bg.addColorStop(0.5, '#1b1a4e');
+  bg.addColorStop(1, '#0d3b54');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = '#eab64d';
+  // Dual copper/gold crack-stop perimeter seal rings
+  ctx.strokeStyle = '#d98a36';
   ctx.lineWidth = 10;
-  ctx.strokeRect(14, 14, w - 28, h - 28);
+  ctx.strokeRect(10, 10, w - 20, h - 20);
+  ctx.strokeStyle = '#f2c852';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
 
-  // 4 stacked Cortex-A35 real-time ISP co-processor core banks along length
+  // 4 stacked ARM Cortex-A35 real-time μITRON RTOS cores with L1 I$/D$ & shared L2 strip
   for (let i = 0; i < 4; i++) {
-    const y0 = 48 + i * 172;
-    const g = ctx.createLinearGradient(60, y0, w - 60, y0 + 148);
+    const y0 = 64 + i * 162;
+    const g = ctx.createLinearGradient(96, y0, w - 58, y0 + 138);
     g.addColorStop(0, '#4c1d95');
-    g.addColorStop(0.5, '#2563eb');
+    g.addColorStop(0.55, '#2563eb');
     g.addColorStop(1, '#0d9488');
     ctx.fillStyle = g;
-    ctx.fillRect(68, y0, w - 136, 148);
+    ctx.fillRect(96, y0, w - 154, 138);
+
+    // Sub-block L1 instruction/data SRAM banks (right third of each core)
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+    ctx.fillRect(w - 220, y0 + 10, 148, 54);
+    ctx.fillRect(w - 220, y0 + 74, 148, 54);
 
     ctx.strokeStyle = 'rgba(255,255,255,0.28)';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    for (let gx = 84; gx < w - 68; gx += 16) {
+    for (let gx = 112; gx < w - 58; gx += 14) {
       ctx.moveTo(gx, y0);
-      ctx.lineTo(gx, y0 + 148);
+      ctx.lineTo(gx, y0 + 138);
     }
-    for (let gy = y0 + 16; gy < y0 + 148; gy += 16) {
-      ctx.moveTo(68, gy);
-      ctx.lineTo(w - 68, gy);
+    for (let gy = y0 + 14; gy < y0 + 138; gy += 14) {
+      ctx.moveTo(96, gy);
+      ctx.lineTo(w - 58, gy);
     }
     ctx.stroke();
 
     ctx.strokeStyle = '#f5c542';
     ctx.lineWidth = 3;
-    ctx.strokeRect(68, y0, w - 136, 148);
+    ctx.strokeRect(96, y0, w - 154, 138);
+
+    ctx.fillStyle = 'rgba(255, 248, 224, 0.85)';
+    ctx.font = '700 18px "Courier New", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`A35 CORE ${i}  L1-I/D  uITRON`, 108, y0 + 10);
   }
 
-  // Left-edge LSI high-speed silicon bridge PHY pad strip
-  ctx.fillStyle = '#e5a838';
-  for (let py = 54; py < h - 54; py += 16) {
-    ctx.fillRect(28, py, 24, 9);
+  // Left-edge LSI high-density 2/2um silicon bridge D2D PHY pad column (alternating G-S-G)
+  for (let py = 62; py < h - 62; py += 12) {
+    ctx.fillStyle = Math.round(py / 12) % 3 === 0 ? '#d97736' : '#f2c852';
+    ctx.fillRect(34, py, 20, 7);
+    ctx.fillRect(60, py + 4, 20, 7);
   }
+
+  // Reticle legend
+  ctx.fillStyle = 'rgba(250, 232, 160, 0.88)';
+  ctx.font = '700 18px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SONY CXD90058 "CETUS"  4xA35  LSI-D2D PHY', w * 0.54, 42);
+  ctx.fillText('PRE-ISP / PDAF / IBIS RTOS CO-PROCESSOR', w * 0.54, h - 40);
 
   return toHiTex(canvas);
 }
@@ -762,124 +914,153 @@ function createBionzCetusDieTexture(): THREE.CanvasTexture {
 function createBionzAbfSubstrateTexture(): THREE.CanvasTexture {
   const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
 
-  // Authentic AT&S emerald-teal Ajinomoto Build-Up Film (ABF) solder resist green
-  ctx.fillStyle = '#0e4a3b';
+  // Authentic AT&S / Ibiden / Shinko emerald-teal Ajinomoto Build-Up Film (ABF) solder resist
+  ctx.fillStyle = '#0c4738';
   ctx.fillRect(0, 0, w, h);
-  drawMicroGrain(ctx, w, h, 1400, 301, 0.032);
+  drawMicroGrain(ctx, w, h, 1800, 301, 0.036);
 
-  // Inner copper ground plane sheen with cross-hatched EMI reference texture
-  ctx.fillStyle = '#125c49';
-  ctx.fillRect(36, 36, w - 72, h - 72);
-  ctx.strokeStyle = 'rgba(42, 165, 122, 0.22)';
+  // Hatched copper reference ground mesh visible beneath translucent green ABF film
+  ctx.fillStyle = '#115b48';
+  ctx.fillRect(32, 32, w - 64, h - 64);
+  ctx.strokeStyle = 'rgba(46, 178, 132, 0.24)';
   ctx.lineWidth = 1.4;
   ctx.beginPath();
-  for (let i = 48; i <= w - 48; i += 24) {
-    ctx.moveTo(i, 40);
-    ctx.lineTo(i, h - 40);
-    ctx.moveTo(40, i);
-    ctx.lineTo(w - 40, i);
+  for (let i = 40; i <= w - 40; i += 20) {
+    ctx.moveTo(i, 36);
+    ctx.lineTo(i, h - 36);
+    ctx.moveTo(36, i);
+    ctx.lineTo(w - 36, i);
   }
   ctx.stroke();
 
-  // Dense radial 9/12 um SAP copper fan-out routing traces from center die to perimeter BGA pads
-  ctx.strokeStyle = '#30b585';
-  ctx.lineWidth = 2.4;
+  // Dense radial 9/12 um SAP differential copper fan-out traces + serpentine length-matching meanders
+  ctx.strokeStyle = '#32bd8c';
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   const cx = w * 0.5;
   const cy = h * 0.5;
-  for (let i = 0; i < 88; i++) {
-    const a = (i / 88) * Math.PI * 2;
-    const r0 = 136;
-    const r1 = 226;
+  for (let i = 0; i < 104; i++) {
+    const a = (i / 104) * Math.PI * 2;
+    const r0 = 132;
+    const r1 = 216;
     const r2 = 344;
-    const bend = a + (i % 2 === 0 ? 0.035 : -0.035);
+    const bend = a + (i % 2 === 0 ? 0.032 : -0.032);
     ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
     ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
     ctx.lineTo(cx + Math.cos(bend) * r2, cy + Math.sin(bend) * r2);
   }
   ctx.stroke();
 
-  // Center flip-chip C4 micro-bump solder-mask opening matrix
-  ctx.fillStyle = '#0b382d';
-  ctx.fillRect(174, 174, w - 348, h - 348);
-  ctx.strokeStyle = '#dfb04b';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(174, 174, w - 348, h - 348);
+  // Length-matched serpentine differential meander groups on 4 cardinal sides
+  ctx.strokeStyle = '#5eead4';
+  ctx.lineWidth = 1.8;
+  for (let m = 0; m < 6; m++) {
+    const base = 240 + m * 46;
+    ctx.beginPath();
+    for (let k = 0; k < 5; k++) {
+      const yTop = 104 + k * 9;
+      ctx.moveTo(base, yTop);
+      ctx.lineTo(base + (k % 2 === 0 ? 18 : -18), yTop + 4);
+    }
+    ctx.stroke();
+  }
 
-  // Gold VIPPO annular rings + tiny resin-plugged dark drill centers inside flip-chip pad array
-  ctx.fillStyle = '#e5bd54';
+  // Center flip-chip C4 micro-bump solder-mask cavity (with resin-plugged VIPPO gold annular rings!)
+  ctx.fillStyle = '#093429';
+  ctx.fillRect(168, 168, w - 336, h - 336);
+  ctx.strokeStyle = '#eab94e';
+  ctx.lineWidth = 3.2;
+  ctx.strokeRect(168, 168, w - 336, h - 336);
+
+  ctx.fillStyle = '#ecc258';
   ctx.beginPath();
-  for (let gx = 194; gx <= w - 194; gx += 20) {
-    for (let gy = 194; gy <= h - 194; gy += 20) {
-      ctx.moveTo(gx + 5.0, gy);
-      ctx.arc(gx, gy, 5.0, 0, Math.PI * 2);
+  for (let gx = 186; gx <= w - 186; gx += 18) {
+    for (let gy = 186; gy <= h - 186; gy += 18) {
+      ctx.moveTo(gx + 4.8, gy);
+      ctx.arc(gx, gy, 4.8, 0, Math.PI * 2);
     }
   }
   ctx.fill();
-  ctx.fillStyle = '#0a2b22';
+  ctx.fillStyle = '#08251d';
   ctx.beginPath();
-  for (let gx = 194; gx <= w - 194; gx += 20) {
-    for (let gy = 194; gy <= h - 194; gy += 20) {
+  for (let gx = 186; gx <= w - 186; gx += 18) {
+    for (let gy = 186; gy <= h - 186; gy += 18) {
       ctx.moveTo(gx + 1.8, gy);
       ctx.arc(gx, gy, 1.8, 0, Math.PI * 2);
     }
   }
   ctx.fill();
 
-  // Outer perimeter PoP TMV gold landing pad dual ring (with dark via centers!)
-  ctx.fillStyle = '#ebc35c';
+  // Outer perimeter PoP TMV gold landing pad dual ring (0.35mm pitch, with laser-via centers)
+  ctx.fillStyle = '#f0c85e';
   ctx.beginPath();
-  for (const ring of [52, 82]) {
-    for (let t = 52; t <= w - 52; t += 28) {
+  for (const ring of [46, 76]) {
+    for (let t = 46; t <= w - 46; t += 24) {
       for (const [px, py] of [
         [t, ring],
         [t, h - ring],
         [ring, t],
         [w - ring, t],
       ]) {
-        ctx.moveTo(px + 6.8, py);
-        ctx.arc(px, py, 6.8, 0, Math.PI * 2);
+        ctx.moveTo(px + 6.4, py);
+        ctx.arc(px, py, 6.4, 0, Math.PI * 2);
       }
     }
   }
   ctx.fill();
-  ctx.fillStyle = '#0a2b22';
+  ctx.fillStyle = '#08261e';
   ctx.beginPath();
-  for (const ring of [52, 82]) {
-    for (let t = 52; t <= w - 52; t += 28) {
+  for (const ring of [46, 76]) {
+    for (let t = 46; t <= w - 46; t += 24) {
       for (const [px, py] of [
         [t, ring],
         [t, h - ring],
         [ring, t],
         [w - ring, t],
       ]) {
-        ctx.moveTo(px + 2.4, py);
-        ctx.arc(px, py, 2.4, 0, Math.PI * 2);
+        ctx.moveTo(px + 2.3, py);
+        ctx.arc(px, py, 2.3, 0, Math.PI * 2);
       }
     }
   }
   ctx.fill();
 
-  // Gold optical alignment fiducials in corners + subtle substrate silkscreen
+  // 4 corner gold optical alignment fiducials with concentric solder-mask clearance moats
   for (const [fx, fy] of [
-    [118, 118],
-    [w - 118, 118],
-    [118, h - 118],
-    [w - 118, h - 118],
+    [116, 116],
+    [w - 116, 116],
+    [116, h - 116],
+    [w - 116, h - 116],
   ]) {
-    ctx.strokeStyle = '#f3cd66';
-    ctx.lineWidth = 2.5;
+    ctx.fillStyle = '#07241c';
     ctx.beginPath();
-    ctx.arc(fx, fy, 15, 0, Math.PI * 2);
+    ctx.arc(fx, fy, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#f5cf64';
+    ctx.lineWidth = 2.6;
+    ctx.beginPath();
+    ctx.arc(fx, fy, 14, 0, Math.PI * 2);
     ctx.stroke();
-    ctx.fillStyle = '#f3cd66';
+    ctx.fillStyle = '#f5cf64';
     ctx.beginPath();
-    ctx.arc(fx, fy, 7.5, 0, Math.PI * 2);
+    ctx.arc(fx, fy, 7.2, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.fillStyle = 'rgba(232, 245, 240, 0.80)';
-  ctx.font = '700 18px "Courier New", monospace';
-  ctx.fillText('AT&S ABF-14L-SAP  CXD90066GG  A1..AF32', 194, 146);
+
+  // White LPI silkscreen legend & Pin-1 triangle + decap courtyards
+  ctx.fillStyle = '#f5cf64';
+  ctx.beginPath();
+  ctx.moveTo(92, 92);
+  ctx.lineTo(114, 92);
+  ctx.lineTo(92, 114);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(236, 248, 244, 0.88)';
+  ctx.font = '700 17px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('AT&S ABF-6-2-6 SAP 9/12um  CXD90057/66  A1..AF32', w * 0.5, 148);
+  ctx.fillText('C101..C144  01005 DECAP RING  ENEPIG', w * 0.5, h - 148);
 
   return toHiTex(canvas);
 }
@@ -887,18 +1068,39 @@ function createBionzAbfSubstrateTexture(): THREE.CanvasTexture {
 function createBionzBtCoreTexture(): THREE.CanvasTexture {
   const { canvas, ctx, s } = makeTileCanvas(256);
 
-  // Woven glass-cloth BT-resin core laminate texture
-  ctx.fillStyle = '#5c4b2c';
+  // Low-CTE woven E-glass / T-glass fiber cloth impregnated in warm amber-brown BT resin
+  ctx.fillStyle = '#5c4727';
   ctx.fillRect(0, 0, s, s);
-  for (let y = 0; y < s; y += 16) {
-    for (let x = 0; x < s; x += 16) {
-      const alt = ((x + y) / 16) % 2 === 0;
-      ctx.fillStyle = alt ? 'rgba(210, 175, 105, 0.28)' : 'rgba(42, 32, 16, 0.34)';
-      ctx.fillRect(x, y, 14, 14);
+
+  const pitch = 16;
+  for (let y = 0; y < s; y += pitch) {
+    for (let x = 0; x < s; x += pitch) {
+      const overWarp = ((x / pitch + y / pitch) & 1) === 0;
+      if (overWarp) {
+        // Horizontal glass-fiber bundle passing over warp
+        const g = ctx.createLinearGradient(x, y, x, y + pitch);
+        g.addColorStop(0, 'rgba(34, 24, 10, 0.55)');
+        g.addColorStop(0.35, 'rgba(222, 188, 124, 0.42)');
+        g.addColorStop(0.55, 'rgba(248, 224, 170, 0.48)');
+        g.addColorStop(1, 'rgba(34, 24, 10, 0.55)');
+        ctx.fillStyle = g;
+        ctx.fillRect(x, y + 1, pitch, pitch - 2);
+      } else {
+        // Vertical glass-fiber bundle passing over weft
+        const g = ctx.createLinearGradient(x, y, x + pitch, y);
+        g.addColorStop(0, 'rgba(34, 24, 10, 0.55)');
+        g.addColorStop(0.35, 'rgba(208, 174, 108, 0.38)');
+        g.addColorStop(0.55, 'rgba(238, 212, 156, 0.44)');
+        g.addColorStop(1, 'rgba(34, 24, 10, 0.55)');
+        ctx.fillStyle = g;
+        ctx.fillRect(x + 1, y, pitch - 2, pitch);
+      }
     }
   }
-  ctx.strokeStyle = 'rgba(225, 152, 74, 0.35)';
-  ctx.lineWidth = 2;
+
+  // Fine copper PTH core-via cross-reference grid ticks
+  ctx.strokeStyle = 'rgba(218, 148, 70, 0.30)';
+  ctx.lineWidth = 1.4;
   for (let i = 0; i < s; i += 32) {
     ctx.beginPath();
     ctx.moveTo(i, 0);
@@ -908,6 +1110,693 @@ function createBionzBtCoreTexture(): THREE.CanvasTexture {
     ctx.stroke();
   }
   return toTileTex(canvas, 3, 3);
+}
+
+// --- PHASE 31: 16 BRAND-NEW BESPOKE BIONZ XR / XR2 TEXTURE GENERATORS ---
+
+/** XR02: CNC-lapped Nickel-Plated C1020 OFHC Copper IHS Top Surface */
+function createBionzIhsNickelCuTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#c6b09c');
+  grad.addColorStop(0.28, '#dfd3c6');
+  grad.addColorStop(0.54, '#c4ad98');
+  grad.addColorStop(0.78, '#e4dad0');
+  grad.addColorStop(1, '#b69c84');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle concentric CNC diamond-flycut lapping swirls
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  for (let r = 36; r <= 420; r += 14) {
+    ctx.moveTo(w * 0.5 + r, h * 0.5);
+    ctx.arc(w * 0.5, h * 0.5, r, 0, Math.PI * 2);
+  }
+  ctx.stroke();
+  drawBrushedStreaks(ctx, w, h, false, 420, 3102, 0.055, 0.048);
+
+  // Stepped chamfered thermal-spreader perimeter rim with warm copper edge reflection
+  ctx.strokeStyle = 'rgba(216, 130, 74, 0.62)';
+  ctx.lineWidth = 14;
+  ctx.strokeRect(18, 18, w - 36, h - 36);
+  ctx.strokeStyle = 'rgba(72, 62, 54, 0.45)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(38, 38, w - 76, h - 76);
+
+  // Inner die-pedestal thermal footprint witness square
+  ctx.strokeStyle = 'rgba(130, 108, 90, 0.34)';
+  ctx.setLineDash([12, 8]);
+  ctx.lineWidth = 2.4;
+  ctx.strokeRect(156, 156, w - 312, h - 312);
+  ctx.setLineDash([]);
+
+  // Subtle laser-etched IHS metallurgical stamp
+  ctx.fillStyle = 'rgba(64, 54, 46, 0.72)';
+  ctx.font = '700 22px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('C1020 OFHC Cu  Ni-4um  k=398W/mK', w * 0.5, 92);
+  ctx.fillText('FLATNESS <25um  IHS-XR2 REV.C', w * 0.5, h - 92);
+
+  return toHiTex(canvas);
+}
+
+/** XR03: Coined & Vacuum-Reflowed Pure Indium Solder TIM1 (STIM) Micro-Crystalline Texture */
+function createBionzIndiumStimTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  ctx.fillStyle = '#c8cfd8';
+  ctx.fillRect(0, 0, s, s);
+
+  // Ductile pure-Indium polycrystalline reflow domains + subtle AuIn2 golden intermetallic halos
+  const rng = mulberry32(3103);
+  for (let i = 0; i < 120; i++) {
+    const cx = rng() * s;
+    const cy = rng() * s;
+    const r = 8 + rng() * 22;
+    const shade = Math.round(172 + rng() * 68);
+    ctx.fillStyle = `rgba(${shade}, ${shade + 4}, ${Math.min(255, shade + 10)}, 0.42)`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Fine reflow coining pressure lines + subtle gold intermetallic sparkle
+  for (let i = 0; i < 240; i++) {
+    ctx.fillStyle = i % 5 === 0 ? 'rgba(234, 188, 92, 0.28)' : 'rgba(255, 255, 255, 0.24)';
+    ctx.fillRect(rng() * s, rng() * s, 2 + rng() * 5, 1.4);
+  }
+  return toTileTex(canvas, 2, 2);
+}
+
+/** XR05: Micron 1-beta / Samsung LPDDR5X-8533 16-Bank DRAM Silicon Die Floorplan */
+function createBionzLpddr5xDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f254a');
+  bg.addColorStop(0.5, '#193b6b');
+  bg.addColorStop(1, '#102952');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer silicon crack-stop seal ring
+  ctx.strokeStyle = '#e5b84c';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(10, 10, w - 20, h - 20);
+
+  // 4 Bank Groups x 4 Banks = 16 symmetric high-density 1T1C DRAM cell array mats!
+  const padX = 58;
+  const padY = 44;
+  const spineW = 46;
+  const spineH = 42;
+  const halfW = (w - padX * 2 - spineW) * 0.5;
+  const halfH = (h - padY * 2 - spineH) * 0.5;
+  const bankW = (halfW - 14) * 0.5;
+  const bankH = (halfH - 28) / 4;
+
+  for (let qx = 0; qx < 2; qx++) {
+    for (let qy = 0; qy < 2; qy++) {
+      const bx0 = padX + qx * (halfW + spineW);
+      const by0 = padY + qy * (halfH + spineH);
+      for (let c = 0; c < 2; c++) {
+        for (let r = 0; r < 4; r++) {
+          const x = bx0 + c * (bankW + 14);
+          const y = by0 + r * (bankH + 9);
+          const bgGrad = ctx.createLinearGradient(x, y, x + bankW, y + bankH);
+          bgGrad.addColorStop(0, '#1d4ed8');
+          bgGrad.addColorStop(0.5, '#0284c7');
+          bgGrad.addColorStop(1, '#1e3a8a');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(x, y, bankW, bankH);
+
+          // Ultra-dense horizontal wordline / vertical bitline 1T1C sub-array striations
+          ctx.strokeStyle = 'rgba(186, 230, 253, 0.36)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (let sy = y + 5; sy < y + bankH; sy += 6) {
+            ctx.moveTo(x, sy);
+            ctx.lineTo(x + bankW, sy);
+          }
+          for (let sx = x + 16; sx < x + bankW; sx += 18) {
+            ctx.moveTo(sx, y);
+            ctx.lineTo(sx, y + bankH);
+          }
+          ctx.stroke();
+
+          ctx.strokeStyle = 'rgba(248, 206, 94, 0.72)';
+          ctx.lineWidth = 1.6;
+          ctx.strokeRect(x, y, bankW, bankH);
+        }
+      }
+    }
+  }
+
+  // Central vertical Row/Column Decoder + Sense-Amplifier spine & horizontal DQ/DLL/ZQ I/O bus
+  ctx.fillStyle = '#0c1c36';
+  ctx.fillRect(w * 0.5 - spineW * 0.5, padY, spineW, h - padY * 2);
+  ctx.fillRect(padX, h * 0.5 - spineH * 0.5, w - padX * 2, spineH);
+  ctx.strokeStyle = '#f2c852';
+  ctx.lineWidth = 2.2;
+  ctx.strokeRect(w * 0.5 - spineW * 0.5, padY, spineW, h - padY * 2);
+  ctx.strokeRect(padX, h * 0.5 - spineH * 0.5, w - padX * 2, spineH);
+
+  // Laser-repair fuse banks & gold wirebond pad rows on left/right stepped terraces
+  ctx.fillStyle = '#f5cf5e';
+  for (let py = 54; py < h - 54; py += 16) {
+    ctx.fillRect(22, py, 24, 9);
+    ctx.fillRect(w - 46, py, 24, 9);
+  }
+  ctx.fillStyle = 'rgba(248, 232, 160, 0.88)';
+  ctx.font = '700 16px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('1b-LPDDR5X  16-BANK  4xBG  0.5V VDDQ  8533MT/s', w * 0.5, h * 0.5);
+
+  return toHiTex(canvas);
+}
+
+/** XR06: Top PoP 4-Layer Ultra-Thin BT Interposer Substrate with Tiered ENIG Wirebond Fingers */
+function createBionzPopInterposerTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0e4234';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 1400, 3106, 0.036);
+
+  // Central die-attach silver-filled epoxy crosshatch landing island
+  ctx.fillStyle = '#185443';
+  ctx.fillRect(154, 154, w - 308, h - 308);
+  ctx.strokeStyle = 'rgba(180, 210, 198, 0.30)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  for (let i = 166; i <= w - 166; i += 18) {
+    ctx.moveTo(i, 160);
+    ctx.lineTo(i, h - 160);
+    ctx.moveTo(160, i);
+    ctx.lineTo(w - 160, i);
+  }
+  ctx.stroke();
+
+  // Matched-length serpentine DQ/DQS/CK copper traces fanning to outer PoP ball rings
+  ctx.strokeStyle = '#34c794';
+  ctx.lineWidth = 2.0;
+  ctx.beginPath();
+  for (let y = 132; y <= h - 132; y += 16) {
+    ctx.moveTo(116, y);
+    ctx.lineTo(74, y + ((y / 16) % 2 === 0 ? 6 : -6));
+    ctx.lineTo(44, y);
+    ctx.moveTo(w - 116, y);
+    ctx.lineTo(w - 74, y + ((y / 16) % 2 === 0 ? -6 : 6));
+    ctx.lineTo(w - 44, y);
+  }
+  ctx.stroke();
+
+  // Double-row staggered ENIG gold wirebond fingers along left/right & top/bottom edges
+  ctx.fillStyle = '#f2cb58';
+  for (let i = 128; i <= h - 128; i += 14) {
+    ctx.fillRect(102, i, 34, 7);
+    ctx.fillRect(w - 136, i, 34, 7);
+    ctx.fillRect(i, 102, 7, 34);
+    ctx.fillRect(i, h - 136, 7, 34);
+  }
+
+  // Outer perimeter PoP pad ring & substrate silkscreen
+  ctx.strokeStyle = '#f0c654';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+  ctx.fillStyle = 'rgba(232, 248, 242, 0.84)';
+  ctx.font = '700 17px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('POP-INT4L 120um BT  D8DNH  GOLD-WB FINGERS', w * 0.5, 68);
+
+  return toHiTex(canvas);
+}
+
+/** XR08 & XR45: Low-Alpha 88wt% Spherical Fused-Silica Epoxy Mold Compound (EMC) */
+function createBionzEmcSilicaTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  ctx.fillStyle = '#1b2029';
+  ctx.fillRect(0, 0, s, s);
+  drawMicroGrain(ctx, s, s, 2600, 3108, 0.08);
+
+  // Shimmering polished cross-sections of spherical fused-silica (SiO2) filler micro-beads
+  const rng = mulberry32(3109);
+  for (let i = 0; i < 320; i++) {
+    const x = rng() * s;
+    const y = rng() * s;
+    const r = 0.8 + rng() * 2.0;
+    ctx.fillStyle = i % 3 === 0 ? 'rgba(186, 198, 216, 0.24)' : 'rgba(104, 118, 138, 0.22)';
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return toTileTex(canvas, 3, 3);
+}
+
+/** XR35: Bottom ABF Fan-Out & Taiyo PSR-4000 Green Solder Resist with ENEPIG SMD BGA Pads */
+function createBionzAbfBottomSrTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Rich glossy Taiyo PSR-4000 AUS703 flip-chip green solder resist mask
+  ctx.fillStyle = '#0c4e2e';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 1400, 3135, 0.032);
+
+  // Dog-bone fan-out copper routing under translucent solder resist
+  ctx.strokeStyle = '#2ea86a';
+  ctx.lineWidth = 2.0;
+  const step = 48;
+  for (let ix = -6; ix <= 6; ix++) {
+    for (let iz = -6; iz <= 6; iz++) {
+      if (Math.abs(ix) <= 2 && Math.abs(iz) <= 2) continue;
+      const px = w * 0.5 + ix * step;
+      const py = h * 0.5 + iz * step;
+      const dx = Math.sign(ix) * 14;
+      const dy = Math.sign(iz) * 14;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(px + dx, py + dy);
+      ctx.stroke();
+
+      // Solder-Mask Defined (SMD) dark green dam ring + gleaming pale-gold ENEPIG (Ni/Pd/Au) ball pad!
+      ctx.fillStyle = '#07351e';
+      ctx.beginPath();
+      ctx.arc(px, py, 16.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e8cf86';
+      ctx.beginPath();
+      ctx.arc(px, py, 13.0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff5cf';
+      ctx.beginPath();
+      ctx.arc(px - 3, py - 3, 4.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Central depopulated Land-Side Capacitor (LSC) 01005 MLCC courtyard (C201..C224)
+  ctx.fillStyle = '#093c23';
+  ctx.fillRect(w * 0.5 - 122, h * 0.5 - 122, 244, 244);
+  ctx.strokeStyle = 'rgba(236, 252, 244, 0.72)';
+  ctx.lineWidth = 2.2;
+  ctx.strokeRect(w * 0.5 - 122, h * 0.5 - 122, 244, 244);
+  for (let cx = -2; cx <= 2; cx++) {
+    for (let cy = -1.5; cy <= 1.5; cy += 1.0) {
+      const mx = w * 0.5 + cx * 44;
+      const my = h * 0.5 + cy * 50;
+      ctx.fillStyle = '#e8cf86';
+      ctx.fillRect(mx - 14, my - 7, 10, 14);
+      ctx.fillRect(mx + 4, my - 7, 10, 14);
+    }
+  }
+
+  // Pin-1 corner gold triangle + Taiyo PSR-4000 / ENEPIG bottom silkscreen
+  ctx.fillStyle = '#f5cf5e';
+  ctx.beginPath();
+  ctx.moveTo(26, 26);
+  ctx.lineTo(74, 26);
+  ctx.lineTo(26, 74);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(236, 250, 244, 0.86)';
+  ctx.font = '700 16px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('TAIYO PSR-4000 AUS703  ENEPIG Ni/Pd/Au  0.4mm BGA', w * 0.5, 22);
+  ctx.fillText('LSC COURTYARD C201-C224  100ohm DIFF FANOUT', w * 0.5, h - 22);
+
+  return toHiTex(canvas);
+}
+
+/** XR26: 4nm/5nm EUV FEOL FinFET / GAA Nanosheet Transistor Wafer Pattern */
+function createBionzFeolFinfetTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  // Deep doped silicon STI oxide trench backdrop
+  ctx.fillStyle = '#1c2c44';
+  ctx.fillRect(0, 0, s, s);
+
+  // Horizontal crystalline silicon FinFET / nanosheet active fins
+  for (let y = 6; y < s; y += 16) {
+    ctx.fillStyle = '#4776a8';
+    ctx.fillRect(0, y, s, 6);
+    ctx.fillStyle = '#7dd3fc';
+    ctx.fillRect(0, y + 1, s, 2);
+  }
+  // Orthogonal High-k HfO2 + TiN Metal Gate stripes & Cobalt M0 S/D contacts
+  for (let x = 8; x < s; x += 32) {
+    ctx.fillStyle = '#d99b38';
+    ctx.fillRect(x, 0, 8, s);
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(x + 2, 0, 2.5, s);
+    // Cobalt M0 trench contact bar between gates
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(x + 16, 4, 6, s - 8);
+  }
+  return toTileTex(canvas, 3, 3);
+}
+
+/** XR27: 14-Layer Dual-Damascene Copper Interconnect & Porous SiOC Ultra-Low-k Dielectric */
+function createBionzBeolDamasceneTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  // Porous SiOC Ultra-Low-k dielectric (k ≈ 2.45)
+  ctx.fillStyle = '#1d3242';
+  ctx.fillRect(0, 0, s, s);
+
+  // Lower-tier fine horizontal copper tracks bordered by silvery-violet TaN barrier liners
+  for (let y = 8; y < s; y += 20) {
+    ctx.fillStyle = '#64748b'; // TaN barrier liner
+    ctx.fillRect(0, y - 1.5, s, 9);
+    ctx.fillStyle = '#d97736'; // Electroplated dual-damascene Cu
+    ctx.fillRect(0, y, s, 6);
+  }
+  // Upper-tier orthogonal wide copper power buses + via pads
+  for (let x = 16; x < s; x += 48) {
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(x - 2, 0, 14, s);
+    ctx.fillStyle = '#e59442';
+    ctx.fillRect(x, 0, 10, s);
+    for (let y = 11; y < s; y += 20) {
+      ctx.fillStyle = '#f5d06e';
+      ctx.beginPath();
+      ctx.arc(x + 5, y, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  return toTileTex(canvas, 2, 2);
+}
+
+/** XR29: TSMC CoWoS-L / InFO_LSI Embedded 2.5D Local Silicon Interconnect Bridge (2/2um RDL) */
+function createBionzLsiBridgeTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0e2847');
+  bg.addColorStop(0.5, '#134e6f');
+  bg.addColorStop(1, '#0c2640');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Gold crack-stop bridge rim
+  ctx.strokeStyle = '#f0c452';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(12, 12, w - 24, h - 24);
+
+  // Ultra-fine 2/2 um horizontal parallel copper RDL die-to-die data highway
+  for (let y = 64; y <= h - 64; y += 10) {
+    ctx.fillStyle = (y / 10) % 2 === 0 ? '#e6903c' : '#f2c85c';
+    ctx.fillRect(140, y, w - 280, 4.5);
+  }
+
+  // Dual staggered 35um-pitch micro-bump landing pad banks on Left (Main SoC) & Right (Cetus)
+  for (const bx of [52, 92, w - 116, w - 76]) {
+    for (let y = 58; y <= h - 58; y += 16) {
+      ctx.fillStyle = '#f5d268';
+      ctx.beginPath();
+      ctx.arc(bx + 12, y + 6, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#c86a24';
+      ctx.beginPath();
+      ctx.arc(bx + 12, y + 6, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Embedded Deep Trench Capacitor (eDTC) decoupling stripes at top & bottom of bridge
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.34)';
+  ctx.fillRect(148, 26, w - 296, 26);
+  ctx.fillRect(148, h - 52, w - 296, 26);
+  ctx.fillStyle = 'rgba(254, 243, 199, 0.90)';
+  ctx.font = '700 18px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('LSI-BRIDGE  2/2um Cu-RDL  eDTC  <0.5pJ/bit', w * 0.5, 39);
+  ctx.fillText('MIRA <-> CETUS  35um MICRO-BUMP D2D', w * 0.5, h - 39);
+
+  return toHiTex(canvas);
+}
+
+/** XR31: Capillary Underfill (CUF) 65wt% Nano-Silica Filled Epoxy Flow Texture */
+function createBionzCufSilicaTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  ctx.fillStyle = '#333d4b';
+  ctx.fillRect(0, 0, s, s);
+  const rng = mulberry32(3131);
+  // Subtle capillary flow bands + dense uniform sub-micron spherical silica particles
+  for (let y = 0; y < s; y += 12) {
+    ctx.fillStyle = y % 24 === 0 ? 'rgba(148, 163, 184, 0.08)' : 'rgba(15, 23, 42, 0.12)';
+    ctx.fillRect(0, y, s, 6);
+  }
+  for (let i = 0; i < 620; i++) {
+    ctx.fillStyle = i % 2 === 0 ? 'rgba(216, 226, 240, 0.24)' : 'rgba(94, 108, 126, 0.22)';
+    ctx.beginPath();
+    ctx.arc(rng() * s, rng() * s, 0.7 + rng() * 1.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return toTileTex(canvas, 3, 3);
+}
+
+/** XR32: Murata / TDK Embedded 3D Deep-Trench Silicon Capacitor (eSiCap) Die */
+function createBionzEsicapDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#1e1b4b');
+  bg.addColorStop(0.5, '#312e81');
+  bg.addColorStop(1, '#1e3a5f');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Dense 3D deep-trench MIM high-k capacitor pore matrix
+  ctx.fillStyle = 'rgba(125, 211, 252, 0.34)';
+  for (let x = 132; x <= w - 132; x += 22) {
+    for (let y = 84; y <= h - 84; y += 22) {
+      ctx.beginPath();
+      ctx.arc(x, y, 6.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  // Interdigitated wide gold VDD / copper VSS comb bus electrodes
+  for (let i = 0; i < 6; i++) {
+    const y = 112 + i * 98;
+    ctx.fillStyle = i % 2 === 0 ? '#f2c852' : '#d97736';
+    ctx.fillRect(i % 2 === 0 ? 48 : 138, y, w - 186, 20);
+  }
+  // Wide left/right terminal copper-gold busbars
+  ctx.fillStyle = '#f2c852';
+  ctx.fillRect(28, 36, 74, h - 72);
+  ctx.fillStyle = '#d97736';
+  ctx.fillRect(w - 102, 36, 74, h - 72);
+
+  ctx.fillStyle = 'rgba(255, 250, 232, 0.90)';
+  ctx.font = '700 26px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('eSiCap 1.0uF <30pH', w * 0.5, 48);
+  ctx.fillText('3D-TRENCH MIM Si-CAP', w * 0.5, h - 48);
+
+  return toHiTex(canvas);
+}
+
+/** XR37 & XR43: Sony Custom Multi-Phase Core VRM PMIC QFN-48 Laser-Marked Epoxy Top */
+function createBionzPmicIcTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#171b22';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 2800, 3137, 0.064);
+
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.34)';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(22, 22, w - 44, h - 44);
+
+  // Pin-1 laser index crater + gold chamfer arrow
+  ctx.fillStyle = '#090b0f';
+  ctx.beginPath();
+  ctx.arc(106, 106, 32, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(226, 234, 244, 0.80)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(232, 238, 246, 0.92)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font = '700 62px Georgia, serif';
+  ctx.fillText('SONY', 178, 182);
+  ctx.font = '700 54px "Courier New", monospace';
+  ctx.fillText('CXD5702GG', 110, 296);
+  ctx.fillStyle = 'rgba(196, 210, 226, 0.84)';
+  ctx.font = '600 34px "Courier New", monospace';
+  ctx.fillText('PMIC 4-PH VRM', 110, 376);
+  ctx.fillText('0.75V / 1.05V / 0.5V', 110, 428);
+  ctx.fillText('2546K08  JAPAN', 110, 488);
+
+  drawDataMatrix(ctx, 514, 514, 148, 12, 'rgba(232, 238, 246, 0.88)', null, 5702);
+  return toHiTex(canvas);
+}
+
+/** XR37 & XR43: Murata DFE / TDK SPM Molded Metal-Alloy Powder Shielded Power Inductor (R47) */
+function createBionzInductorR47Texture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // Matte charcoal carbonyl-iron metal-composite powder body
+  ctx.fillStyle = '#2c313a';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 3600, 3147, 0.088);
+
+  // Subtle metallic carbonyl-iron powder glints
+  const rng = mulberry32(3148);
+  ctx.fillStyle = 'rgba(186, 198, 214, 0.16)';
+  for (let i = 0; i < 420; i++) {
+    ctx.fillRect(rng() * w, rng() * h, 2, 2);
+  }
+
+  // Chamfered press-mold border bevel
+  ctx.strokeStyle = 'rgba(164, 178, 196, 0.34)';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+
+  // Winding start polarity dot
+  ctx.fillStyle = 'rgba(240, 246, 252, 0.90)';
+  ctx.beginPath();
+  ctx.arc(124, 128, 30, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Authentic white laser-etched R47 inductance code & date lot
+  ctx.fillStyle = 'rgba(240, 246, 252, 0.92)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '800 184px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillText('R47', w * 0.5, h * 0.48);
+  ctx.fillStyle = 'rgba(204, 216, 230, 0.78)';
+  ctx.font = '700 44px "Courier New", monospace';
+  ctx.fillText('5K2  0.47uH', w * 0.5, h * 0.78);
+
+  return toHiTex(canvas);
+}
+
+/** XR38: Kyocera KT2520 / Epson Hermetic Seam-Welded Gold-Plated Kovar 24.000 MHz TCXO Lid */
+function createBionzTcxoGoldLidTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // Brushed pale-gold Kovar hermetic metal lid
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#c8a858');
+  grad.addColorStop(0.32, '#e9d08a');
+  grad.addColorStop(0.58, '#cfa952');
+  grad.addColorStop(0.84, '#f2dc98');
+  grad.addColorStop(1, '#b89444');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+  drawBrushedStreaks(ctx, w, h, false, 520, 3138, 0.08, 0.07);
+
+  // Authentic double-pass roller-electrode seam-weld bead framing the Kovar lid perimeter!
+  ctx.strokeStyle = 'rgba(92, 68, 26, 0.76)';
+  ctx.lineWidth = 14;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+  ctx.strokeStyle = 'rgba(255, 246, 206, 0.74)';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(36, 36, w - 72, h - 72);
+
+  // Pin-1 dark laser index dot + beveled corner notch
+  ctx.fillStyle = '#241c0d';
+  ctx.beginPath();
+  ctx.arc(116, 124, 28, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crisp laser-etched crystal frequency & Kyocera/Epson TCXO code
+  ctx.fillStyle = 'rgba(42, 30, 12, 0.88)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '800 116px "Courier New", monospace';
+  ctx.fillText('24.000', w * 0.52, h * 0.36);
+  ctx.font = '700 54px "Courier New", monospace';
+  ctx.fillText('TCXO E2548K', w * 0.5, h * 0.62);
+  ctx.font = '700 38px "Courier New", monospace';
+  ctx.fillText('+/-1.5ppm  <150fs', w * 0.5, h * 0.78);
+
+  return toHiTex(canvas);
+}
+
+/** XR39: Macronix MX25UM25645G 256Mb 1.8V Octal-SPI Boot NOR Flash IC Top */
+function createBionzNorFlashIcTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#191d25';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 2600, 3139, 0.062);
+
+  // Authentic SOIC/WSON chamfered Pin-1 bevel stripe along left edge
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
+  ctx.fillRect(16, 16, 48, h - 32);
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.34)';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(18, 18, w - 36, h - 36);
+
+  // Pin-1 laser dimple
+  ctx.fillStyle = '#090b0f';
+  ctx.beginPath();
+  ctx.arc(116, 116, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(226, 234, 244, 0.76)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Authentic Macronix MXIC brand bar + MX25UM25645G 256Mb Octal-SPI markings
+  ctx.fillStyle = 'rgba(232, 238, 246, 0.94)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font = '900 68px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillText('MXIC', 186, 174);
+  ctx.fillStyle = 'rgba(139, 92, 246, 0.75)';
+  ctx.fillRect(186, 218, 460, 6);
+
+  ctx.fillStyle = 'rgba(232, 238, 246, 0.92)';
+  ctx.font = '700 50px "Courier New", monospace';
+  ctx.fillText('MX25UM25645G', 102, 314);
+  ctx.fillStyle = 'rgba(198, 212, 228, 0.86)';
+  ctx.font = '600 36px "Courier New", monospace';
+  ctx.fillText('1.8V 256Mb OCTAL-SPI', 102, 396);
+  ctx.fillText('BOOT / CAL-LUT / C2PA', 102, 456);
+  ctx.fillText('L254712   TAIWAN', 102, 524);
+
+  drawDataMatrix(ctx, 540, 548, 128, 12, 'rgba(232, 238, 246, 0.86)', null, 25645);
+  return toHiTex(canvas);
+}
+
+/** XR42: TI TDP2004 HDMI 2.1 48Gbps FRL Retimer QFN-40 IC Top */
+function createBionzHdmiRetimerIcTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#181c24';
+  ctx.fillRect(0, 0, w, h);
+  drawMicroGrain(ctx, w, h, 2600, 3142, 0.062);
+
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.34)';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(20, 20, w - 40, h - 40);
+
+  // Pin-1 laser index dot
+  ctx.fillStyle = '#090b0f';
+  ctx.beginPath();
+  ctx.arc(106, 106, 28, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.80)';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(236, 244, 252, 0.94)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.font = '800 66px "Helvetica Neue", Arial, sans-serif';
+  ctx.fillText('TI  TDP2004', 156, 198);
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.82)';
+  ctx.fillRect(112, 248, 544, 6);
+
+  ctx.fillStyle = 'rgba(222, 234, 246, 0.90)';
+  ctx.font = '700 44px "Courier New", monospace';
+  ctx.fillText('HDMI 2.1  48G FRL', 112, 336);
+  ctx.fillStyle = 'rgba(190, 208, 226, 0.84)';
+  ctx.font = '600 34px "Courier New", monospace';
+  ctx.fillText('4-CH 12Gbps CDR/EQ', 112, 412);
+  ctx.fillText('5B8K  G4  QFN-40', 112, 476);
+
+  drawDataMatrix(ctx, 514, 516, 144, 12, 'rgba(232, 240, 248, 0.88)', null, 2004);
+  return toHiTex(canvas);
 }
 
 // =============================================================================
@@ -5015,6 +5904,209 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.15
   );
 
+  // --- Phase 31: BIONZ XR / XR2 Semiconductor Package Forensic Ultra-CAD Materials (XR01-XR46) ---
+  const bionzIhsNickelCu = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzIhsNickelCuTexture(),
+      metalness: 0.88,
+      roughness: 0.22,
+      clearcoat: 0.28,
+    }),
+    0.09
+  );
+
+  const bionzIndiumStim = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzIndiumStimTexture(),
+      metalness: 0.86,
+      roughness: 0.26,
+      clearcoat: 0.34,
+    }),
+    0.11
+  );
+
+  const bionzLpddr5xDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzLpddr5xDieTexture(),
+      metalness: 0.58,
+      roughness: 0.24,
+      clearcoat: 0.52,
+      iridescence: 0.68,
+      iridescenceIOR: 1.72,
+    }),
+    0.11
+  );
+
+  const bionzPopInterposer = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzPopInterposerTexture(),
+      metalness: 0.18,
+      roughness: 0.42,
+      clearcoat: 0.36,
+    }),
+    0.09
+  );
+
+  const bionzEmcSilica = tagBump(
+    new THREE.MeshStandardMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzEmcSilicaTexture(),
+      metalness: 0.08,
+      roughness: 0.68,
+    }),
+    0.12
+  );
+
+  const bionzAbfBottomSr = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzAbfBottomSrTexture(),
+      metalness: 0.20,
+      roughness: 0.36,
+      clearcoat: 0.48,
+    }),
+    0.10
+  );
+
+  const bionzFeolFinfet = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzFeolFinfetTexture(),
+      metalness: 0.64,
+      roughness: 0.24,
+      clearcoat: 0.54,
+      iridescence: 0.72,
+      iridescenceIOR: 1.76,
+    }),
+    0.13
+  );
+
+  const bionzBeolDamascene = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzBeolDamasceneTexture(),
+      metalness: 0.70,
+      roughness: 0.26,
+      clearcoat: 0.42,
+      iridescence: 0.38,
+      iridescenceIOR: 1.56,
+    }),
+    0.13
+  );
+
+  const bionzLsiBridge = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzLsiBridgeTexture(),
+      metalness: 0.62,
+      roughness: 0.22,
+      clearcoat: 0.58,
+      iridescence: 0.64,
+      iridescenceIOR: 1.68,
+    }),
+    0.11
+  );
+
+  const bionzCufSilica = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzCufSilicaTexture(),
+      metalness: 0.08,
+      roughness: 0.42,
+      clearcoat: 0.38,
+      transparent: true,
+      opacity: 0.88,
+    }),
+    0.10
+  );
+
+  const bionzEsicapDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzEsicapDieTexture(),
+      metalness: 0.60,
+      roughness: 0.24,
+      clearcoat: 0.52,
+      iridescence: 0.62,
+      iridescenceIOR: 1.66,
+    }),
+    0.11
+  );
+
+  const bionzPmicIc = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzPmicIcTexture(),
+      metalness: 0.08,
+      roughness: 0.60,
+      clearcoat: 0.16,
+    }),
+    0.09
+  );
+
+  const bionzInductorR47 = tagBump(
+    new THREE.MeshStandardMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzInductorR47Texture(),
+      metalness: 0.24,
+      roughness: 0.66,
+    }),
+    0.11
+  );
+
+  const bionzTcxoGoldLid = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzTcxoGoldLidTexture(),
+      metalness: 0.90,
+      roughness: 0.22,
+      clearcoat: 0.26,
+    }),
+    0.10
+  );
+
+  const bionzNorFlashIc = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzNorFlashIcTexture(),
+      metalness: 0.08,
+      roughness: 0.58,
+      clearcoat: 0.16,
+    }),
+    0.09
+  );
+
+  const bionzHdmiRetimerIc = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBionzHdmiRetimerIcTexture(),
+      metalness: 0.08,
+      roughness: 0.58,
+      clearcoat: 0.16,
+    }),
+    0.09
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -5088,6 +6180,22 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micOpticalInterferometer,
     micAudioDsp32Float,
     micAcousticDelayCloth,
+    bionzIhsNickelCu,
+    bionzIndiumStim,
+    bionzLpddr5xDie,
+    bionzPopInterposer,
+    bionzEmcSilica,
+    bionzAbfBottomSr,
+    bionzFeolFinfet,
+    bionzBeolDamascene,
+    bionzLsiBridge,
+    bionzCufSilica,
+    bionzEsicapDie,
+    bionzPmicIc,
+    bionzInductorR47,
+    bionzTcxoGoldLid,
+    bionzNorFlashIc,
+    bionzHdmiRetimerIc,
   ];
 
   return {
@@ -5163,6 +6271,22 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micOpticalInterferometer,
     micAudioDsp32Float,
     micAcousticDelayCloth,
+    bionzIhsNickelCu,
+    bionzIndiumStim,
+    bionzLpddr5xDie,
+    bionzPopInterposer,
+    bionzEmcSilica,
+    bionzAbfBottomSr,
+    bionzFeolFinfet,
+    bionzBeolDamascene,
+    bionzLsiBridge,
+    bionzCufSilica,
+    bionzEsicapDie,
+    bionzPmicIc,
+    bionzInductorR47,
+    bionzTcxoGoldLid,
+    bionzNorFlashIc,
+    bionzHdmiRetimerIc,
     list,
   };
 }
