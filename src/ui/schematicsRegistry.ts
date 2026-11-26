@@ -45,6 +45,7 @@ import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchemati
 import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
 import { renderPhase32SensorUltraSchematicC } from './phase32SensorUltraSchematicsC';
 import { renderPhase34ShutterHdSchematicSvg } from './shutterHdSchematics';
+import { renderDryboxHdSchematicSvg } from './dryboxHdSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -67,6 +68,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase34SensorFabVol4Svg = renderPhase34SensorFabVol4SchematicSvg(type);
   if (phase34SensorFabVol4Svg) return phase34SensorFabVol4Svg;
+
+  const dryboxHdSvg = renderDryboxHdSchematicSvg(type);
+  if (dryboxHdSvg) return dryboxHdSvg;
 
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;

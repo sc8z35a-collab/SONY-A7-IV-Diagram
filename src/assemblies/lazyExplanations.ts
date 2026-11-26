@@ -200,6 +200,17 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         })
       );
       break;
+    case 'drybox':
+      inflight = Promise.all([
+        import('./drybox/dryboxExplanationsA'),
+        import('./drybox/dryboxExplanationsB'),
+      ]).then(([mA, mB]) =>
+        finish({
+          ...mA.DRYBOX_EXPLANATIONS_A,
+          ...mB.DRYBOX_EXPLANATIONS_B,
+        })
+      );
+      break;
   }
 
   subsystemInflight.set(subsystem, inflight);

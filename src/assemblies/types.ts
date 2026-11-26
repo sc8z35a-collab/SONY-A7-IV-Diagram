@@ -19,7 +19,8 @@ export type ScaleMode =
   | 'bionz_v2'
   | 'mishoe'
   | 'mic'
-  | 'sensor_fab';
+  | 'sensor_fab'
+  | 'drybox';
 export type SensorFabVolume = 0 | 1 | 2 | 3 | 4;
 export type SensorFabStage =
   | 'overview'
@@ -1617,7 +1618,52 @@ export interface PartExplanation {
     | 'fab4_p379_salicide_cosi_nisi'
     | 'fab4_p380_h2_sinter_feol_wat'
     | 'fab4_feol_380_to_vol5_beol'
-    // Phase 35: Shutter Standalone Exhaustive Ultra-Dissection (+53: SH78–SH130 -> 130 total in standalone shutter)
+    // Phase 35: 2026 Flagship Hybrid Electronic Camera Dry Cabinet Ultra-Dissection (44 Parts: DB01–DB44)
+    | 'db_door_alu_frame'
+    | 'db_door_lowe_glass'
+    | 'db_door_ar_esd_coat'
+    | 'db_magnetic_epdm_gasket'
+    | 'db_concealed_damp_hinge'
+    | 'db_biometric_fingerprint_pad'
+    | 'db_solenoid_deadbolt_lock'
+    | 'db_eink_touch_bezel'
+    | 'db_sht45_upper_sensor'
+    | 'db_sht45_lower_sensor'
+    | 'db_sgp41_voc_sensor'
+    | 'db_hall_door_interlock'
+    | 'db_matter_thread_iot_soc'
+    | 'db_spcc_steel_chassis'
+    | 'db_esd_powder_coat'
+    | 'db_silica_aerogel_liner'
+    | 'db_pcm_anticondense_panel'
+    | 'db_dualzone_divider_deck'
+    | 'db_eptfe_breather_vent'
+    | 'db_n2_purge_coupler'
+    | 'db_telescopic_ball_rails'
+    | 'db_perforated_steel_trays'
+    | 'db_archival_xpe_lens_cradle'
+    | 'db_cri97_inspection_led'
+    | 'db_camera_lens_showcase'
+    | 'db_fireproof_battery_bay'
+    | 'db_usbc_pd31_charge_hub'
+    | 'db_uvc_265_280_sterilizer'
+    | 'db_tio2_photocatalyst_mesh'
+    | 'db_voc_carbon_hepa_filter'
+    | 'db_maglev_circulation_fan'
+    | 'db_laminar_air_plenum'
+    | 'db_pem_nafion_membrane'
+    | 'db_pem_ptir_electrodes'
+    | 'db_mof_zeolite_rotor_bed'
+    | 'db_niti_sma_shutter'
+    | 'db_batio3_ptc_heater'
+    | 'db_peltier_tec_module'
+    | 'db_hydrophilic_wick_drain'
+    | 'db_rear_skived_heatsink'
+    | 'db_gan_power_supply'
+    | 'db_supercap_backup_pack'
+    | 'db_esd_copper_ground_bus'
+    | 'db_seismic_gel_feet_anchor'
+    // Phase 36: Shutter Standalone Exhaustive Ultra-Dissection (+53: SH78–SH130 -> 130 total in standalone shutter)
     // Group A: Blade Micro-Anatomy, Tribology & Arc-Slot Sealing (SH78–SH88)
     | 'shutter_rivet_recesses'
     | 'shutter_cryst_pins'
@@ -1698,7 +1744,8 @@ export interface CadPart {
     | 'bionz_v2'
     | 'mishoe'
     | 'mic'
-    | 'sensor_fab';
+    | 'sensor_fab'
+    | 'drybox';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
