@@ -20,7 +20,7 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab';
-export type SensorFabVolume = 0 | 1 | 2 | 3;
+export type SensorFabVolume = 0 | 1 | 2 | 3 | 4;
 export type SensorFabStage =
   | 'overview'
   | 'phases'
@@ -40,7 +40,12 @@ export type SensorFabStage =
   | 'v3_tcad'
   | 'v3_layout'
   | 'v3_opc'
-  | 'v3_maskfab';
+  | 'v3_maskfab'
+  | 'v4_overview'
+  | 'v4_sti_dti'
+  | 'v4_ppd_mev'
+  | 'v4_vtg_gate'
+  | 'v4_pin_sab';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1559,7 +1564,59 @@ export interface PartExplanation {
     | 'fab3_p47_pellicle_08um_mount'
     | 'fab3_p48_starlight_post_pellicle'
     | 'fab3_p49_reticle_smif_pod'
-    | 'fab3_p50_stocker_96set_bridge';
+    | 'fab3_p50_stocker_96set_bridge'
+    // Phase 34: Sensor Manufacturing Process Vol.4 — フェーズ3：画素ウェーハ前工程 FEOL（45 Parts: F4-01–F4-45, All 380 Steps P03-001–380 & All 25 Masks #01–#25）
+    | 'fab4_hero_feol_pixel_heart'
+    | 'fab4_phase3_feol_terrace_deck'
+    // Block 3-A (P03-001–058, Masks #01–#03)
+    | 'fab4_p001_incoming_rca_clean'
+    | 'fab4_p004_initial_pad_oxide'
+    | 'fab4_m01_zero_layer_align'
+    | 'fab4_p019_sti_pad_sin_lpcvd'
+    | 'fab4_m02_sti_trench_etch'
+    | 'fab4_p037_sti_liner_hdp_fill'
+    | 'fab4_m03_sti_reverse_etch'
+    | 'fab4_p053_sti_cmp_sin_strip'
+    // Block 3-B (P03-059–084, Mask #04)
+    | 'fab4_p059_dti_hardmask_dep'
+    | 'fab4_m04_front_dti_deep_etch'
+    | 'fab4_p073_dti_sidewall_passiv'
+    | 'fab4_p079_dti_fill_optic_mirror'
+    // Block 3-C (P03-085–248, Masks #05–#16 + 20-step Crystal Recovery)
+    | 'fab4_m05_deep_pwell_floor'
+    | 'fab4_m06_pixel_iso_pbarrier'
+    | 'fab4_m07_periph_nwell'
+    | 'fab4_m08_pixel_pwell_nmos'
+    | 'fab4_m09_pixel_vt_lownoise'
+    | 'fab4_m10_periph_vt_adjust'
+    | 'fab4_m11_pd_deep_red_mev'
+    | 'fab4_m12_pd_mid_green_n'
+    | 'fab4_m13_pd_shallow_blue_tilt'
+    | 'fab4_m14_dualpixel_pd_split'
+    | 'fab4_m15_antibloom_overflow'
+    | 'fab4_m16_gs_mem_dcg_implant'
+    | 'fab4_p229_pd_recovery_anneal'
+    // Block 3-D (P03-249–296, Masks #17–#19)
+    | 'fab4_m17_vtg_straw_trench'
+    | 'fab4_p261_thick_gate_ox_33v'
+    | 'fab4_m18_dual_gate_ox_etch'
+    | 'fab4_p277_thin_gate_polysilicon'
+    | 'fab4_m19_poly_gate_etch'
+    | 'fab4_p295_gate_reox_cdsem'
+    // Block 3-E (P03-297–364, Masks #20–#24)
+    | 'fab4_p297_offset_spacer'
+    | 'fab4_m20_pixel_nldd_fd'
+    | 'fab4_m21_periph_ldd'
+    | 'fab4_p323_sidewall_spacer'
+    | 'fab4_m22_surface_pinning_ppd'
+    | 'fab4_m23_nplus_sd_contact'
+    | 'fab4_m24_pplus_sd_welltap'
+    // Block 3-F (P03-365–380, Mask #25 + Vol.5 BEOL Bridge)
+    | 'fab4_p365_spike_rta_flash'
+    | 'fab4_m25_salicide_block_sab'
+    | 'fab4_p379_salicide_cosi_nisi'
+    | 'fab4_p380_h2_sinter_feol_wat'
+    | 'fab4_feol_380_to_vol5_beol';
 }
 
 export interface CadPart {
