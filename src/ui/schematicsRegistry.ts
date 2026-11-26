@@ -27,6 +27,7 @@ import { renderPhase27BatteryUltraSchematicSvg } from './phase27BatteryUltraSche
 import { renderPhase27CfexpressUltraSchematicSvg } from './phase27CfexpressUltraSchematics';
 import { renderPhase28CfexpressUltraSchematicSvg } from './phase28CfexpressUltraSchematics';
 import { renderPhase29CfexpressUltraSchematicSvg } from './phase29CfexpressUltraSchematics';
+import { renderPhase35CfexpressUltraSchematicSvg } from './phase35CfexpressUltraSchematics';
 import { renderPhase28PixelV2SchematicSvg } from './phase28PixelV2Schematics';
 import { renderPhase28BionzV2SchematicSvg } from './phase28BionzV2Schematics';
 import { renderPhase29PixelV2DeepSchematicSvg } from './phase29PixelV2DeepSchematics';
@@ -150,6 +151,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase29CfexpressUltraSvg = renderPhase29CfexpressUltraSchematicSvg(type);
   if (phase29CfexpressUltraSvg) return phase29CfexpressUltraSvg;
+
+  const phase35CfexpressUltraSvg = renderPhase35CfexpressUltraSchematicSvg(type);
+  if (phase35CfexpressUltraSvg) return phase35CfexpressUltraSvg;
 
   const phase28PixelV2Svg = renderPhase28PixelV2SchematicSvg(type);
   if (phase28PixelV2Svg) return phase28PixelV2Svg;
