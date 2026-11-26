@@ -122,7 +122,19 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./evf/evfExplanations').then((m) => finish(m.EVF_EXPLANATIONS));
       break;
     case 'lcd':
-      inflight = import('./lcd/lcdExplanations').then((m) => finish(m.LCD_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./lcd/lcdExplanations'),
+        import('./lcd/lcdUltraOemExplanations'),
+        import('./lcd/lcdUltraTechExplanations'),
+        import('./lcd/lcdUltraDeepExplanations'),
+      ]).then(([mBase, mOem, mTech, mDeep]) =>
+        finish({
+          ...mBase.LCD_EXPLANATIONS,
+          ...mOem.LCD_ULTRA_OEM_EXPLANATIONS,
+          ...mTech.LCD_ULTRA_TECH_EXPLANATIONS,
+          ...mDeep.LCD_ULTRA_DEEP_EXPLANATIONS,
+        })
+      );
       break;
     case 'body':
       inflight = Promise.all([

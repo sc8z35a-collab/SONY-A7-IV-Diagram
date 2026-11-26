@@ -1326,7 +1326,40 @@ export class ZeroTextControls {
           part.order === 38 ||
           part.order === 42 ||
           part.order === 43 ||
-          part.order === 47
+          part.order === 47 ||
+          part.order === 52 ||
+          part.order === 53 ||
+          part.order === 63 ||
+          part.order === 66 ||
+          part.order === 78 ||
+          part.order === 79 ||
+          part.order === 84 ||
+          part.order === 88 ||
+          part.order === 89 ||
+          part.order === 101 ||
+          part.order === 102 ||
+          part.order === 103 ||
+          part.order === 105 ||
+          part.order === 107 ||
+          part.order === 108 ||
+          part.order === 110 ||
+          part.order === 111 ||
+          part.order === 113 ||
+          part.order === 115 ||
+          part.order === 121 ||
+          part.order === 122 ||
+          part.order === 126 ||
+          part.order === 132 ||
+          part.order === 133 ||
+          part.order === 135 ||
+          part.order === 136 ||
+          part.order === 141 ||
+          part.order === 143 ||
+          part.order === 144 ||
+          part.order === 145 ||
+          part.order === 147 ||
+          part.order === 149 ||
+          part.order === 150
             ? 30
             : part.order === 2 ||
                 part.order === 6 ||
@@ -1347,8 +1380,9 @@ export class ZeroTextControls {
                 part.order === 44 ||
                 part.order === 48 ||
                 part.order === 50 ||
-                part.order === 51
-              ? 24
+                part.order === 51 ||
+                part.order >= 54
+              ? 22
               : 18;
       } else if (part.subsystem === 'body') {
         widthPx =

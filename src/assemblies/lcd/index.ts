@@ -5,8 +5,8 @@ import { buildLcdParts } from './lcdParts';
 import { createLcdPhysicsOverlay } from './lcdPhysicsOverlay';
 
 /**
- * Assemble the complete 51-part Flagship 4-Axis Multi-Angle Rear LCD Monitor
- * subsystem (27 macro at startup + 24 lazy-hydrated standalone micro parts).
+ * Assemble the complete 150-part Flagship 4-Axis Multi-Angle Rear LCD Monitor
+ * subsystem (27 macro at startup + 123 lazy-hydrated standalone ultra-detail parts: D28–D150).
  */
 export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
@@ -35,19 +35,38 @@ export function createLcdAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 24,
+    deferredStandaloneCount: 123,
     hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
-      const mLcd = await import('./lcdMicroParts');
+      const [mLcd, mOem, mTech, mDeep] = await Promise.all([
+        import('./lcdMicroParts'),
+        import('./lcdUltraOemParts'),
+        import('./lcdUltraTechParts'),
+        import('./lcdUltraDeepParts'),
+      ]);
       const lcdMicro = mLcd.buildLcdMicroParts(mats);
+      const lcdOem = mOem.buildLcdUltraOemParts(mats);
+      const lcdTech = mTech.buildLcdUltraTechParts(mats);
+      const lcdDeep = mDeep.buildLcdUltraDeepParts(mats);
+      const allStandalone = [
+        ...lcdMicro.parts,
+        ...lcdOem.parts,
+        ...lcdTech.parts,
+        ...lcdDeep.parts,
+      ];
       controller.deferredStandaloneCount = 0;
-      for (const p of lcdMicro.parts) {
+      for (const p of allStandalone) {
         parts.push(p);
         rootGroup.add(p.group);
       }
-      rig.monitorParts.push(...lcdMicro.monitorParts);
-      return lcdMicro.parts;
+      rig.monitorParts.push(
+        ...lcdMicro.monitorParts,
+        ...lcdOem.monitorParts,
+        ...lcdTech.monitorParts,
+        ...lcdDeep.monitorParts
+      );
+      return allStandalone;
     },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive, integrated) => {
       updatePositions(explodeFactor, integrated);
