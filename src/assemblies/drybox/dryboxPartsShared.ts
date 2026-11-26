@@ -75,6 +75,20 @@ export interface DryboxPalette {
   rubyThermalFuse: THREE.MeshPhysicalMaterial;
   pcbEmeraldDark: THREE.MeshStandardMaterial;
   ferritic430Steel: THREE.MeshPhysicalMaterial;
+  ceramicFritBlack: THREE.MeshPhysicalMaterial;
+  paryleneVioletGlaze: THREE.MeshPhysicalMaterial;
+  copperInterceptAmber: THREE.MeshPhysicalMaterial;
+  flockedMatteBlack: THREE.MeshStandardMaterial;
+  grayCard18Pct: THREE.MeshStandardMaterial;
+  hardenedSteelHrc60: THREE.MeshPhysicalMaterial;
+  pfasFreeHydroBlue: THREE.MeshPhysicalMaterial;
+  linenBufferBeige: THREE.MeshStandardMaterial;
+  spdTintViolet: THREE.MeshPhysicalMaterial;
+  vipSilverFoil: THREE.MeshPhysicalMaterial;
+  grapheneOxideIridescent: THREE.MeshPhysicalMaterial;
+  farUvcQuartzBlue: THREE.MeshStandardMaterial;
+  opvIndoorAmber: THREE.MeshPhysicalMaterial;
+  fireMicrocapCrimson: THREE.MeshStandardMaterial;
 }
 
 export function createDryboxPalette(cp: THREE.Plane[]): DryboxPalette {
@@ -307,6 +321,113 @@ export function createDryboxPalette(cp: THREE.Plane[]): DryboxPalette {
       metalness: 0.88,
       roughness: 0.28,
       clearcoat: 0.2,
+      clippingPlanes: cp,
+    }),
+    ceramicFritBlack: new THREE.MeshPhysicalMaterial({
+      color: 0x0b0f17,
+      metalness: 0.14,
+      roughness: 0.18,
+      clearcoat: 0.82,
+      clearcoatRoughness: 0.12,
+      clippingPlanes: cp,
+    }),
+    paryleneVioletGlaze: new THREE.MeshPhysicalMaterial({
+      color: 0x818cf8,
+      metalness: 0.08,
+      roughness: 0.14,
+      transparent: true,
+      opacity: 0.34,
+      clearcoat: 0.95,
+      iridescence: 0.75,
+      depthWrite: false,
+      clippingPlanes: cp,
+    }),
+    copperInterceptAmber: new THREE.MeshPhysicalMaterial({
+      color: 0xb45309,
+      metalness: 0.52,
+      roughness: 0.34,
+      clearcoat: 0.35,
+      clippingPlanes: cp,
+    }),
+    flockedMatteBlack: new THREE.MeshStandardMaterial({
+      color: 0x090b0f,
+      metalness: 0.01,
+      roughness: 0.98,
+      clippingPlanes: cp,
+    }),
+    grayCard18Pct: new THREE.MeshStandardMaterial({
+      color: 0x777777,
+      metalness: 0.0,
+      roughness: 0.94,
+      clippingPlanes: cp,
+    }),
+    hardenedSteelHrc60: new THREE.MeshPhysicalMaterial({
+      color: 0x475569,
+      metalness: 0.92,
+      roughness: 0.24,
+      clearcoat: 0.3,
+      clippingPlanes: cp,
+    }),
+    pfasFreeHydroBlue: new THREE.MeshPhysicalMaterial({
+      color: 0x0ea5e9,
+      metalness: 0.18,
+      roughness: 0.12,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.08,
+      clippingPlanes: cp,
+    }),
+    linenBufferBeige: new THREE.MeshStandardMaterial({
+      color: 0xd6cfc2,
+      metalness: 0.02,
+      roughness: 0.9,
+      clippingPlanes: cp,
+    }),
+    spdTintViolet: new THREE.MeshPhysicalMaterial({
+      color: 0x312e81,
+      metalness: 0.12,
+      roughness: 0.08,
+      transparent: true,
+      opacity: 0.28,
+      clearcoat: 1.0,
+      iridescence: 0.6,
+      depthWrite: false,
+      clippingPlanes: cp,
+    }),
+    vipSilverFoil: new THREE.MeshPhysicalMaterial({
+      color: 0xdbe4ee,
+      metalness: 0.92,
+      roughness: 0.18,
+      clearcoat: 0.45,
+      clippingPlanes: cp,
+    }),
+    grapheneOxideIridescent: new THREE.MeshPhysicalMaterial({
+      color: 0x1e293b,
+      metalness: 0.68,
+      roughness: 0.16,
+      clearcoat: 0.9,
+      iridescence: 1.0,
+      clippingPlanes: cp,
+    }),
+    farUvcQuartzBlue: new THREE.MeshStandardMaterial({
+      color: 0x67e8f9,
+      emissive: 0x06b6d4,
+      emissiveIntensity: 1.25,
+      roughness: 0.18,
+      metalness: 0.08,
+      clippingPlanes: cp,
+    }),
+    opvIndoorAmber: new THREE.MeshPhysicalMaterial({
+      color: 0x3b0764,
+      metalness: 0.35,
+      roughness: 0.14,
+      clearcoat: 0.92,
+      iridescence: 0.85,
+      clippingPlanes: cp,
+    }),
+    fireMicrocapCrimson: new THREE.MeshStandardMaterial({
+      color: 0xdc2626,
+      metalness: 0.08,
+      roughness: 0.62,
       clippingPlanes: cp,
     }),
   };

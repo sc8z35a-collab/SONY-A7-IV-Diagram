@@ -19,8 +19,10 @@ interface DryboxFlow {
 
 /**
  * Real-time 3D Dry Cabinet Microclimate, PEM Proton Pumping, Zr-MOF Regeneration,
- * Dual-Zone Laminar Dry Air Circulation, UV-C/TiO2 Sterilization, Low-E IR Rejection,
- * and ESD Earth Grounding Physics Overlay (DB01–DB44).
+ * Dual-Zone Laminar Dry Air Circulation, UV-C/TiO2 & Far-UVC 222nm Sterilization,
+ * SPD-SmartGlass & Low-E IR Rejection, Graphene Oxide Nanoslit Permeation,
+ * MLX90640 Battery IR Monitoring, Indoor OPV Harvest, and ESD Grounding
+ * Physics Overlay (DB01–DB150, 22 animated flows).
  */
 export function createDryboxPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -56,7 +58,7 @@ export function createDryboxPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 96);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 156);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -236,6 +238,81 @@ export function createDryboxPhysicsOverlay(
   registerFlow(0x10b981, 1.05, 3, true, (m) => {
     pt(_a, m, 'db-gan-power-supply', 0, 0, 1.0);
     pt(_b, m, 'db-ideal-diode-oring-bms', 0, 0, 0);
+    return _pair;
+  });
+
+  // 13. IEC 61340-5-1 Door Braided Copper Earth Bonding Strap (DB97) -> Chassis ESD Bus (DB43)
+  registerFlow(0x22c55e, 1.15, 3, true, (m) => {
+    pt(_a, m, 'db-door-braided-earth-strap', 0, 0, 0);
+    pt(_b, m, 'db-esd-copper-ground-bus', -4.0, -34.0, 0);
+    return _pair;
+  });
+
+  // 14. Archival Chemical Scavenging: Acetic-Acid (DB99) & Reactive Copper Sulfide Intercept (DB100)
+  registerFlow(0xd97706, 0.72, 3, true, (m) => {
+    pt(_a, m, 'db-vinegar-acid-scavenger', -2.0, 0, 0);
+    pt(_b, m, 'db-corrosion-intercept-strip', -2.0, 0, 0);
+    return _pair;
+  });
+
+  // 15. PEM Anode Catalytic α-MnO2 Ozone (O3->O2) Removal (DB33 -> DB107)
+  registerFlow(0x14b8a6, 0.96, 3, false, (m) => {
+    pt(_a, m, 'db-pem-nafion-membrane', 0, 0, 0.8);
+    pt(_b, m, 'db-pem-mno2-ozone-catalyst', 0, 0, 0.6);
+    return _pair;
+  });
+
+  // 16. 0.01μm Oil-Free Coalescer + SFM4300 MEMS N2 Mass-Flow Telemetry -> Auto Solenoid (DB116 -> DB77)
+  registerFlow(0x38bdf8, 0.92, 3, false, (m) => {
+    pt(_a, m, 'db-n2-mems-massflow-filter', 0, 2.0, 0);
+    pt(_b, m, 'db-n2-auto-solenoid-valve', 0, 0, 0);
+    return _pair;
+  });
+
+  // 17. 3-Stage Lightning Surge (DB117) -> Zero-Cross SSR (DB121) -> TI TPS3850 Hardware Watchdog (DB118)
+  registerFlow(0xf59e0b, 1.08, 3, false, (m) => {
+    pt(_a, m, 'db-lightning-gdt-mov-ntc', 0, 0, 0);
+    pt(_b, m, 'db-zerocross-ssr-heater', 0, 0, 0);
+    return _pair;
+  });
+  registerFlow(0xe11d48, 1.12, 3, true, (m) => {
+    pt(_a, m, 'db-zerocross-ssr-heater', 0, 2.0, 0);
+    pt(_b, m, 'db-hardware-watchdog-ic', 0, 0, 0);
+    return _pair;
+  });
+
+  // 18. 60 GHz mmWave Radar (DB134) -> SPD-SmartGlass Clear Wake (DB131)
+  registerFlow(0x6366f1, 1.05, 3, true, (m) => {
+    pt(_a, m, 'db-60ghz-mmwave-presence-radar', 0, 0, 1.0);
+    pt(_b, m, 'db-spd-smart-sunshield-glass', 0, 36.0, 0.5);
+    return _pair;
+  });
+
+  // 19. Far-UVC 222nm Curtain (DB139) + Solid-State PiezoMEMS Air-Jet Curtain (DB141)
+  registerFlow(0x06b6d4, 1.18, 4, false, (m) => {
+    pt(_a, m, 'db-far-uvc-222nm-krcl-emitter', 0, -1.5, 0);
+    pt(_b, m, 'db-front-kickplate-guard', 0, 4.0, -3.0);
+    return _pair;
+  });
+
+  // 20. Sub-100nm Graphene Oxide Nanoslit Selective H2O Permeation Exhaust (DB137)
+  registerFlow(0x38bdf8, 0.86, 3, true, (m) => {
+    pt(_a, m, 'db-graphene-oxide-vapor-membrane', 3.0, 0, 0);
+    pt(_b, m, 'db-graphene-oxide-vapor-membrane', -12.0, 0, 0);
+    return _pair;
+  });
+
+  // 21. Melexis MLX90640 32x24 Far-IR Thermal Scan -> Fireproof Battery Drawer (DB148 -> DB27)
+  registerFlow(0xf43f5e, 1.02, 3, true, (m) => {
+    pt(_a, m, 'db-mlx90640-ir-thermal-battery', -3.0, -1.5, 0);
+    pt(_b, m, 'db-usbc-pd31-charge-hub', 4.0, 1.0, 1.0);
+    return _pair;
+  });
+
+  // 22. CES 2026 Indoor OPV Light-Harvesting Strip -> E-Ink & CeraCharge Micro-Power (DB150 -> DB08)
+  registerFlow(0xa855f7, 0.95, 3, false, (m) => {
+    pt(_a, m, 'db-indoor-opv-ceracharge-harvest', 0, -1.0, 0);
+    pt(_b, m, 'db-eink-touch-bezel', 0, 1.5, 0);
     return _pair;
   });
 
