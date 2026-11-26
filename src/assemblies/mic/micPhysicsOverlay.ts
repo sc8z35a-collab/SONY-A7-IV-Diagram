@@ -54,7 +54,7 @@ export function createMicPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 90);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 125);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -210,6 +210,28 @@ export function createMicPhysicsOverlay(
   registerFlow(0xc026d3, 1.4, 3, false, (m) => {
     pt(_a, m, 'mc-32bit-float-dual-adc-2026', 0, 0.6, -1.2);
     pt(_b, m, 'mc-tinyml-transformer-sep-2026', 0, 0.8, 1.2);
+    return _pair;
+  });
+  // 9. 2026 2D Graphene Membrane -> Fabry-Perot Optical Cavity -> Silicon Photonics Waveguide
+  registerFlow(0x38bdf8, 1.55, 3, false, (m) => {
+    pt(_a, m, 'mc-graphene-2d-membrane-2026', 0, 0.3, 0);
+    pt(_b, m, 'mc-fabry-perot-fiber-cavity', 0, 0.5, 0);
+    return _pair;
+  });
+  registerFlow(0xf43f5e, 1.5, 3, true, (m) => {
+    pt(_a, m, 'mc-fabry-perot-fiber-cavity', 0, -0.4, 0);
+    pt(_b, m, 'mc-silicon-photonics-waveguide', 0, 0.4, 0);
+    return _pair;
+  });
+  // 10. 2026 Real-Time AI Dereverb -> Multi-Speaker Diarization -> 3D HRTF Binaural Renderer
+  registerFlow(0x8b5cf6, 1.4, 3, false, (m) => {
+    pt(_a, m, 'mc-ai-dereverb-room-cancel-2026', 1.2, 0.5, 0);
+    pt(_b, m, 'mc-speaker-diarization-track-2026', -1.2, 0.5, 0);
+    return _pair;
+  });
+  registerFlow(0xd946ef, 1.35, 3, true, (m) => {
+    pt(_a, m, 'mc-safety-track-minus20db-mux', 0, 0.4, -1.0);
+    pt(_b, m, 'mc-anechoic-3d-hrtf-binaural-2026', 0, 0.9, 1.0);
     return _pair;
   });
 

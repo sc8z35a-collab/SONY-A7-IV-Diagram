@@ -74,6 +74,11 @@ export interface UltraRealisticMaterials {
   micOpticalInterferometer: THREE.MeshPhysicalMaterial;
   micAudioDsp32Float: THREE.MeshPhysicalMaterial;
   micAcousticDelayCloth: THREE.MeshPhysicalMaterial;
+  // Phase 31: Battery 2026 Sulfide Argyrodite & FBG Optical + Microphone 2D Graphene & Acoustic Metamaterial UHD PBR Materials
+  batSulfideArgyrodite: THREE.MeshPhysicalMaterial;
+  batFiberBraggOptical: THREE.MeshPhysicalMaterial;
+  micGrapheneHexMembrane: THREE.MeshPhysicalMaterial;
+  micSpiralMetamaterial: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -3431,8 +3436,252 @@ function createMicAcousticDelayClothTexture(): THREE.CanvasTexture {
   return toHiTex(canvas);
 }
 
+/** Phase 31A: 2026 Sulfide Argyrodite (Li6PS5Cl) Cubic Lattice & Ag-C Anode-Free Interlayer UHD Texture */
+function createBatSulfideArgyroditeTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.5, '#16253b');
+  bg.addColorStop(1, '#0c1f2e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Argyrodite cubic F-43m crystal polyhedra mosaic + glowing cyan Li+ cage hopping corridors
+  const rng = mulberry32(3101);
+  const step = 64;
+  for (let row = 0; row < h / step + 1; row++) {
+    for (let col = 0; col < w / step + 1; col++) {
+      const cx = col * step + ((row & 1) ? step * 0.5 : 0);
+      const cy = row * step;
+      const rad = step * 0.48;
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (Math.PI / 3) * k + Math.PI / 6;
+        const px = cx + Math.cos(a) * rad;
+        const py = cy + Math.sin(a) * rad;
+        if (k === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      const tone = Math.floor(28 + rng() * 34);
+      ctx.fillStyle = `rgb(${tone}, ${tone + 26}, ${tone + 46})`;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      // PS4 tetrahedron amber core + Li+ ion cyan hopping nodes
+      ctx.fillStyle = rng() > 0.45 ? '#f59e0b' : '#eab308';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 7.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let j = 0; j < 3; j++) {
+        const a = (Math.PI * 2 * j) / 3 + rng() * 0.4;
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * 19, cy + Math.sin(a) * 19, 4.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // Lithiophilic silver nanoparticle (Ag-C) micro-seeds shimmering along grain boundaries
+  for (let i = 0; i < 95; i++) {
+    const sx = rng() * w;
+    const sy = rng() * h;
+    ctx.fillStyle = 'rgba(248, 250, 252, 0.85)';
+    ctx.beginPath();
+    ctx.arc(sx, sy, 2.5 + rng() * 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  drawMicroGrain(ctx, w, h, 2600, 3102, 0.05);
+  return toHiTex(canvas);
+}
+
+/** Phase 31A: 2026 Embedded Fiber Bragg Grating (FBG) Optical Sensor & Ultrasonic Phased-Array CT UHD Texture */
+function createBatFiberBraggOpticalTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#09111f');
+  bg.addColorStop(1, '#102438');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle diagnostic grid
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.14)';
+  ctx.lineWidth = 1.5;
+  for (let p = 0; p < w; p += 48) {
+    ctx.beginPath();
+    ctx.moveTo(p, 0);
+    ctx.lineTo(p, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, p);
+    ctx.lineTo(w, p);
+    ctx.stroke();
+  }
+
+  // Central 0.125 mm silica optical fiber cladding + core
+  ctx.fillStyle = 'rgba(14, 165, 233, 0.22)';
+  ctx.fillRect(0, 270, w, 228);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(0, 270, w, 228);
+
+  const coreGrad = ctx.createLinearGradient(0, 344, 0, 424);
+  coreGrad.addColorStop(0, '#0284c7');
+  coreGrad.addColorStop(0.5, '#67e8f9');
+  coreGrad.addColorStop(1, '#0284c7');
+  ctx.fillStyle = coreGrad;
+  ctx.fillRect(0, 346, w, 76);
+
+  // Periodic UV-inscribed Bragg grating refractive-index notches (10.24 pm/C thermal shift)
+  for (let x = 84; x <= w - 84; x += 26) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+    ctx.fillRect(x, 342, 8, 84);
+    ctx.fillStyle = 'rgba(16, 185, 129, 0.45)';
+    ctx.fillRect(x - 3, 294, 14, 46);
+    ctx.fillRect(x - 3, 428, 14, 46);
+  }
+
+  // Ultrasonic CT phased-array wave fronts above & below fiber
+  ctx.strokeStyle = 'rgba(16, 185, 129, 0.65)';
+  ctx.lineWidth = 3.5;
+  for (let r = 64; r <= 230; r += 38) {
+    ctx.beginPath();
+    ctx.arc(w * 0.5, 110, r, 0.18 * Math.PI, 0.82 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h - 110, r, 1.18 * Math.PI, 1.82 * Math.PI);
+    ctx.stroke();
+  }
+
+  // Crisp instrumentation silkscreen
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('FBG 1550nm · 10.24 pm/°C · US-CT', 72, 64);
+  ctx.fillStyle = '#34d399';
+  ctx.font = 'bold 22px ui-monospace, monospace';
+  ctx.fillText('INTERNAL CORE TEMP & GAS SCAN', 132, h - 42);
+  drawMicroGrain(ctx, w, h, 2000, 3103, 0.04);
+  return toHiTex(canvas);
+}
+
+/** Phase 31B: 2026 2D Graphene Atomically Thin Honeycomb Membrane & Fabry-Perot Interference UHD Texture */
+function createMicGrapheneHexMembraneTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createRadialGradient(w * 0.5, h * 0.5, 24, w * 0.5, h * 0.5, w * 0.56);
+  bg.addColorStop(0, '#1e293b');
+  bg.addColorStop(0.55, '#0f172a');
+  bg.addColorStop(1, '#020617');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Atomically regular sp2 carbon hexagonal graphene lattice
+  const r = 24;
+  const dx = r * 1.5;
+  const dy = r * Math.sqrt(3);
+  ctx.lineWidth = 2.4;
+  for (let col = -1; col < w / dx + 2; col++) {
+    for (let row = -1; row < h / dy + 2; row++) {
+      const cx = col * dx;
+      const cy = row * dy + ((col & 1) ? dy * 0.5 : 0);
+      const dist = Math.hypot(cx - w * 0.5, cy - h * 0.5) / (w * 0.5);
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (Math.PI / 3) * k;
+        const px = cx + Math.cos(a) * r;
+        const py = cy + Math.sin(a) * r;
+        if (k === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle =
+        dist < 0.38
+          ? 'rgba(56, 189, 248, 0.82)'
+          : dist < 0.72
+            ? 'rgba(168, 85, 247, 0.62)'
+            : 'rgba(20, 184, 166, 0.45)';
+      ctx.stroke();
+
+      // Carbon atoms at vertices
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.arc(cx + r, cy, 3.0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Concentric Fabry-Perot optical interference & corrugated stress-relief rings
+  const ringColors = [
+    'rgba(56, 189, 248, 0.55)',
+    'rgba(192, 132, 252, 0.52)',
+    'rgba(45, 212, 191, 0.48)',
+    'rgba(250, 204, 21, 0.44)',
+  ];
+  for (let i = 0; i < 8; i++) {
+    ctx.strokeStyle = ringColors[i % ringColors.length];
+    ctx.lineWidth = 4.2;
+    ctx.beginPath();
+    ctx.arc(w * 0.5, h * 0.5, 58 + i * 42, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  drawMicroGrain(ctx, w, h, 2200, 3104, 0.04);
+  return toHiTex(canvas);
+}
+
+/** Phase 31B: 2026 Coiled-Space Spiral Helmholtz Acoustic Metamaterial Wind-Trap UHD Texture */
+function createMicSpiralMetamaterialTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#181c24';
+  ctx.fillRect(0, 0, w, h);
+
+  // 4×4 matrix of coiled-space labyrinthine Helmholtz spiral acoustic resonators
+  const cell = 192;
+  for (let gy = 0; gy < 4; gy++) {
+    for (let gx = 0; gx < 4; gx++) {
+      const cx = gx * cell + cell * 0.5;
+      const cy = gy * cell + cell * 0.5;
+
+      // Machined dark aluminum cell frame
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(gx * cell + 8, gy * cell + 8, cell - 16, cell - 16);
+
+      // Archimedean coiled acoustic waveguide spiral
+      ctx.beginPath();
+      const turns = 3.2;
+      const maxR = cell * 0.39;
+      for (let s = 0; s <= 120; s++) {
+        const t = s / 120;
+        const ang = t * Math.PI * 2 * turns + ((gx + gy) & 1 ? Math.PI : 0);
+        const rad = 10 + t * (maxR - 10);
+        const px = cx + Math.cos(ang) * rad;
+        const py = cy + Math.sin(ang) * rad;
+        if (s === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = (gx + gy) % 2 === 0 ? '#f59e0b' : '#38bdf8';
+      ctx.lineWidth = 6.5;
+      ctx.stroke();
+
+      // Inner phase-cancellation acoustic aperture
+      ctx.fillStyle = '#090d14';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+  }
+  drawMicroGrain(ctx, w, h, 2600, 3105, 0.05);
+  return toHiTex(canvas);
+}
+
 // =============================================================================
-// FACTORY: CREATE ALL 51 BESPOKE ULTRA-REALISTIC MATERIALS
+// FACTORY: CREATE ALL 55 BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
 export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): UltraRealisticMaterials {
@@ -4204,6 +4453,63 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.15
   );
 
+  // --- Phase 31: Battery 2026 Sulfide Argyrodite & FBG Optical + Microphone 2D Graphene & Acoustic Metamaterial ---
+  const batSulfideArgyrodite = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBatSulfideArgyroditeTexture(),
+      metalness: 0.42,
+      roughness: 0.24,
+      clearcoat: 0.78,
+      iridescence: 0.68,
+      iridescenceIOR: 1.72,
+    }),
+    0.14
+  );
+
+  const batFiberBraggOptical = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createBatFiberBraggOpticalTexture(),
+      metalness: 0.34,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.85,
+      iridescenceIOR: 1.54,
+    }),
+    0.11
+  );
+
+  const micGrapheneHexMembrane = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createMicGrapheneHexMembraneTexture(),
+      metalness: 0.72,
+      roughness: 0.15,
+      clearcoat: 0.88,
+      iridescence: 0.94,
+      iridescenceIOR: 1.98,
+    }),
+    0.12
+  );
+
+  const micSpiralMetamaterial = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createMicSpiralMetamaterialTexture(),
+      metalness: 0.52,
+      roughness: 0.30,
+      clearcoat: 0.48,
+      iridescence: 0.35,
+      iridescenceIOR: 1.62,
+    }),
+    0.16
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -4264,6 +4570,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micOpticalInterferometer,
     micAudioDsp32Float,
     micAcousticDelayCloth,
+    batSulfideArgyrodite,
+    batFiberBraggOptical,
+    micGrapheneHexMembrane,
+    micSpiralMetamaterial,
   ];
 
   return {
@@ -4326,6 +4636,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     micOpticalInterferometer,
     micAudioDsp32Float,
     micAcousticDelayCloth,
+    batSulfideArgyrodite,
+    batFiberBraggOptical,
+    micGrapheneHexMembrane,
+    micSpiralMetamaterial,
     list,
   };
 }

@@ -29,20 +29,20 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_35mm_trs_mic_jack':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#fff5f5" stroke="#fecaca"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#991b1b">φ3.5 mm 赤リング TRS ジャック ＋ 自動切替</text>
-        <rect x="22" y="46" width="14" height="28" rx="2" fill="#dc2626"/>
-        <rect x="36" y="50" width="146" height="20" rx="3" fill="#cbd5e1" stroke="#475569"/>
-        <rect x="150" y="50" width="32" height="20" rx="2" fill="#eab308"/>
-        <line x1="120" y1="50" x2="120" y2="70" stroke="#1e293b" stroke-width="3"/>
-        <line x1="146" y1="50" x2="146" y2="70" stroke="#1e293b" stroke-width="3"/>
-        <text x="58" y="63" font-size="7.5" fill="#1e293b">Sleeve(GND)</text>
-        <text x="125" y="63" font-size="7.5" fill="#1e293b">R</text>
-        <text x="160" y="63" font-size="7.5" font-weight="bold" fill="#1e293b">Tip(L)</text>
-        <path d="M168 48 L194 34 L286 34" fill="none" stroke="#dc2626" stroke-width="1.8"/>
-        <text x="196" y="30" font-size="7.5" font-weight="bold" fill="#b91c1c">挿入検知SW → 内蔵OFF</text>
-        <path d="M168 72 L194 84 L286 84" fill="none" stroke="#0284c7" stroke-width="1.6"/>
-        <text x="196" y="80" font-size="7.5" fill="#0369a1">PIP 2.8 V 電源重畳</text>
-        <text x="24" y="99" font-size="7.5" fill="#64748b">挿すだけで内蔵マイクをミュート＆外部マイクへ自動給電</text>
+        <text x="24" y="24" font-size="8.2" font-weight="bold" fill="#991b1b">φ3.5 mm 赤リング TRS ジャック ＋ 自動切替</text>
+        <rect x="22" y="48" width="14" height="28" rx="2" fill="#dc2626"/>
+        <rect x="36" y="52" width="146" height="20" rx="3" fill="#cbd5e1" stroke="#475569"/>
+        <rect x="150" y="52" width="32" height="20" rx="2" fill="#eab308"/>
+        <line x1="120" y1="52" x2="120" y2="72" stroke="#1e293b" stroke-width="3"/>
+        <line x1="146" y1="52" x2="146" y2="72" stroke="#1e293b" stroke-width="3"/>
+        <text x="58" y="65" font-size="7.5" fill="#1e293b">Sleeve(GND)</text>
+        <text x="125" y="65" font-size="7.5" fill="#1e293b">R</text>
+        <text x="160" y="65" font-size="7.5" font-weight="bold" fill="#1e293b">Tip(L)</text>
+        <path d="M168 50 L194 44 L292 44" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+        <text x="196" y="40" font-size="7.2" font-weight="bold" fill="#b91c1c">挿入検知SW → 内蔵OFF</text>
+        <path d="M168 74 L194 84 L292 84" fill="none" stroke="#0284c7" stroke-width="1.6"/>
+        <text x="196" y="80" font-size="7.2" fill="#0369a1">PIP 2.8 V 電源重畳</text>
+        <text x="24" y="99" font-size="7.3" fill="#64748b">挿すだけで内蔵マイクをミュート＆外部マイクへ自動給電</text>
       `);
 
     case 'mc_mi_shoe_digital_bridge':
@@ -217,17 +217,17 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_mems_squeeze_film_zone':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#0f172a">2 μm スクイーズフィルム空気粘性 ＆ ブラウン熱雑音</text>
-        <rect x="34" y="34" width="252" height="8" fill="#0ea5e9"/>
-        <text x="112" y="31" font-size="7" fill="#0369a1">振動膜 (上下ピストン運動)</text>
-        <rect x="34" y="72" width="60" height="10" fill="#eab308"/>
-        <rect x="114" y="72" width="84" height="10" fill="#eab308"/>
-        <rect x="218" y="72" width="68" height="10" fill="#eab308"/>
-        <path d="M72 56 L104 56 L104 86 M156 56 L208 56 L208 86" fill="none" stroke="#0284c7" stroke-width="1.8"/>
-        <circle cx="132" cy="54" r="3" fill="#f59e0b"/>
-        <circle cx="174" cy="49" r="3" fill="#f59e0b"/>
-        <circle cx="244" cy="57" r="3" fill="#f59e0b"/>
-        <text x="34" y="99" font-size="7.5" fill="#334155">空気粘性 R_a が高いほど熱雑音 p_n = √(4 k_B T R_a) が増大!</text>
+        <text x="24" y="24" font-size="8.2" font-weight="bold" fill="#0f172a">2 μm スクイーズフィルム空気粘性 ＆ ブラウン熱雑音</text>
+        <text x="112" y="38" font-size="7.0" font-weight="bold" fill="#0369a1">振動膜 (上下ピストン運動)</text>
+        <rect x="34" y="42" width="252" height="7" rx="1" fill="#0ea5e9"/>
+        <rect x="34" y="73" width="60" height="10" fill="#eab308"/>
+        <rect x="114" y="73" width="84" height="10" fill="#eab308"/>
+        <rect x="218" y="73" width="68" height="10" fill="#eab308"/>
+        <path d="M72 60 L104 60 L104 86 M156 60 L208 60 L208 86" fill="none" stroke="#0284c7" stroke-width="1.8"/>
+        <circle cx="132" cy="59" r="3" fill="#f59e0b"/>
+        <circle cx="174" cy="55" r="3" fill="#f59e0b"/>
+        <circle cx="244" cy="61" r="3" fill="#f59e0b"/>
+        <text x="34" y="99" font-size="7.4" fill="#334155">空気粘性 R_a が高いほど熱雑音 p_n = √(4 k_B T R_a) が増大!</text>
       `);
 
     case 'mc_mems_stress_relief_springs':
@@ -343,15 +343,15 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_mems_companding_sdm_2026':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#f5f3ff" stroke="#ddd6fe"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#5b21b6">2026 圧伸(Companding) 4次ΣΔ: 399 μW / 114.3 dB DR</text>
+        <text x="24" y="23" font-size="8.4" font-weight="bold" fill="#5b21b6">2026 圧伸(Companding) 4次ΣΔ: 399 μW / 114.3 dB DR</text>
         <line x1="28" y1="86" x2="292" y2="86" stroke="#94a3b8" stroke-width="1.2"/>
         <rect x="34" y="34" width="110" height="52" fill="#dcfce7" opacity="0.55"/>
-        <text x="44" y="46" font-size="7.5" font-weight="bold" fill="#15803d">可聴帯 20Hz–20kHz</text>
-        <text x="48" y="64" font-size="8" font-weight="bold" fill="#166534">114.3 dB DR!</text>
-        <path d="M34 82 L140 80 C175 76, 200 40, 286 34" fill="none" stroke="#7c3aed" stroke-width="2.4"/>
-        <text x="178" y="54" font-size="7.5" font-weight="bold" fill="#6d28d9">量子化雑音を超音波へ</text>
-        <text x="184" y="67" font-size="7.5" fill="#7c3aed">4次ノイズシェーピング</text>
-        <text x="24" y="101" font-size="7.5" fill="#4c1d95">音量に応じ自動ゲイン伸縮し、たった 0.4 mW でスタジオ級レンジ</text>
+        <text x="89" y="47" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#15803d">可聴帯 20Hz–20kHz</text>
+        <text x="89" y="65" text-anchor="middle" font-size="8.2" font-weight="bold" fill="#166534">114.3 dB DR!</text>
+        <path d="M34 82 L140 80 C172 78, 196 42, 286 35" fill="none" stroke="#7c3aed" stroke-width="2.4"/>
+        <text x="196" y="42" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#6d28d9">量子化雑音を超音波へ</text>
+        <text x="240" y="72" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#7c3aed">4次ノイズシェーピング</text>
+        <text x="160" y="101" text-anchor="middle" font-size="7.3" fill="#4c1d95">音量に応じ自動ゲイン伸縮し、たった 0.4 mW でスタジオ級レンジ</text>
       `);
 
     case 'mc_mems_cic_decimation_fir':
@@ -454,15 +454,16 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_dual_stage_pga_stitch':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#ecfeff" stroke="#a5f3fc"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#155e75">デュアルPGA −129 dBu ＆ ゼログリッチ自動合成</text>
-        <line x1="28" y1="84" x2="292" y2="84" stroke="#94a3b8" stroke-width="1"/>
-        <path d="M32 76 L138 38 L166 38" fill="none" stroke="#0ea5e9" stroke-width="2.4"/>
-        <path d="M138 76 L278 34" fill="none" stroke="#e11d48" stroke-width="2.4"/>
-        <rect x="130" y="34" width="44" height="50" fill="#facc15" opacity="0.28" stroke="#eab308" stroke-dasharray="3 2"/>
-        <text x="128" y="96" font-size="7.5" font-weight="bold" fill="#b45309">重複域で0.01dB自動整合</text>
-        <text x="34" y="46" font-size="7.5" fill="#0369a1">静音高ゲイン路</text>
-        <text x="192" y="46" font-size="7.5" fill="#be123c">爆音低ゲイン路</text>
-        <text x="24" y="104" font-size="7" fill="#334155">滑らかクロスフェードで切替ノイズ (グリッチ) を聴感上完全ゼロ化</text>
+        <text x="24" y="23" font-size="8.4" font-weight="bold" fill="#155e75">デュアルPGA −129 dBu ＆ ゼログリッチ自動合成</text>
+        <line x1="28" y1="80" x2="292" y2="80" stroke="#94a3b8" stroke-width="1"/>
+        <rect x="128" y="32" width="46" height="48" fill="#fef08a" opacity="0.45" stroke="#eab308" stroke-dasharray="3 2"/>
+        <path d="M32 74 L136 37 L168 37" fill="none" stroke="#0ea5e9" stroke-width="2.4"/>
+        <path d="M136 74 L278 35" fill="none" stroke="#e11d48" stroke-width="2.4"/>
+        <text x="34" y="45" font-size="7.3" font-weight="bold" fill="#0369a1">静音高ゲイン路</text>
+        <text x="224" y="68" font-size="7.3" font-weight="bold" fill="#be123c">爆音低ゲイン路</text>
+        <rect x="108" y="82" width="104" height="12" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="0.9"/>
+        <text x="160" y="90.5" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#b45309">重複域で0.01dB自動整合</text>
+        <text x="160" y="103.5" text-anchor="middle" font-size="6.8" fill="#334155">滑らかクロスフェードで切替ノイズ (グリッチ) を聴感上完全ゼロ化</text>
       `);
 
     case 'mc_8capsule_beamform_array':
@@ -485,16 +486,16 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_mvdr_adaptive_null_dsp':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#f0fdfa" stroke="#5eead4"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#115e59">適応 MVDR ＆ 瞳AF連動 動的ヌルステアリング</text>
-        <circle cx="96" cy="64" r="28" fill="none" stroke="#94a3b8" stroke-dasharray="2 2"/>
-        <path d="M96 64 C80 34, 112 34, 96 64" fill="#14b8a6" opacity="0.55" stroke="#0f766e" stroke-width="1.8"/>
-        <line x1="96" y1="64" x2="128" y2="82" stroke="#dc2626" stroke-width="2" stroke-dasharray="3 2"/>
-        <circle cx="132" cy="84" r="5" fill="#dc2626"/>
-        <text x="72" y="34" font-size="7.5" font-weight="bold" fill="#0f766e">瞳AF主役 (100%)</text>
-        <text x="144" y="48" font-size="7.5" font-weight="bold" fill="#be123c">横の騒音源へ自動で</text>
-        <text x="144" y="61" font-size="7.5" font-weight="bold" fill="#be123c">深い消音ヌル (−30 dB)</text>
-        <text x="144" y="76" font-size="7.5" fill="#334155">主役の声色は一切無歪み!</text>
-        <text x="24" y="102" font-size="7.3" fill="#134e4a">被写体が動いても音のスポットライトと騒音ブロックの穴が自動追従</text>
+        <text x="24" y="23" font-size="8.4" font-weight="bold" fill="#115e59">適応 MVDR ＆ 瞳AF連動 動的ヌルステアリング</text>
+        <text x="90" y="37" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#0f766e">瞳AF主役 (100%)</text>
+        <circle cx="90" cy="67" r="24" fill="none" stroke="#94a3b8" stroke-dasharray="2 2"/>
+        <path d="M90 67 C76 42, 104 42, 90 67" fill="#14b8a6" opacity="0.55" stroke="#0f766e" stroke-width="1.8"/>
+        <line x1="90" y1="67" x2="119" y2="83" stroke="#dc2626" stroke-width="2" stroke-dasharray="3 2"/>
+        <circle cx="123" cy="85" r="4.5" fill="#dc2626"/>
+        <text x="146" y="48" font-size="7.4" font-weight="bold" fill="#be123c">横の騒音源へ自動で</text>
+        <text x="146" y="61" font-size="7.4" font-weight="bold" fill="#be123c">深い消音ヌル (−30 dB)</text>
+        <text x="146" y="76" font-size="7.4" fill="#334155">主役の声色は一切無歪み!</text>
+        <text x="160" y="101.5" text-anchor="middle" font-size="7.2" fill="#134e4a">被写体が動いても音のスポットライトと騒音ブロックの穴が自動追従</text>
       `);
 
     case 'mc_tinyml_transformer_sep_2026':
@@ -525,18 +526,22 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_ecm_corona_fep_dipole':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#fffbeb" stroke="#fcd34d"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#92400e">コロナ帯電 FEP 永久トラップ空間電荷 (100年保持!)</text>
-        <rect x="28" y="44" width="166" height="28" rx="4" fill="#f59e0b" opacity="0.45" stroke="#d97706" stroke-width="1.6"/>
-        ${[46, 78, 110, 142, 174]
+        <text x="24" y="23" font-size="8.3" font-weight="bold" fill="#92400e">コロナ帯電 FEP 永久トラップ空間電荷 (100年保持!)</text>
+        <rect x="26" y="31" width="166" height="6" rx="1.5" fill="#94a3b8"/>
+        <text x="109" y="36" text-anchor="middle" font-size="4.8" font-weight="bold" fill="#0f172a">金属極板 (静電界を常時発生)</text>
+        <rect x="26" y="42" width="166" height="32" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+        ${[44, 76, 108, 140, 172]
           .map(
             (x) =>
-              `<circle cx="${x}" cy="51" r="4.5" fill="#dc2626"/><text x="${x - 2.5}" y="54" font-size="7" fill="#fff">+</text><circle cx="${x}" cy="65" r="4.5" fill="#0284c7"/><text x="${x - 2}" y="68" font-size="7" fill="#fff">−</text>`
+              `<line x1="${x}" y1="37" x2="${x}" y2="42" stroke="#dc2626" stroke-width="1"/><circle cx="${x}" cy="50" r="4.8" fill="#dc2626"/><text x="${x}" y="52.4" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">+</text><circle cx="${x}" cy="65" r="4.8" fill="#0284c7"/><text x="${x}" y="67.4" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#fff">−</text>`
           )
           .join('')}
-        <text x="204" y="48" font-size="7.5" font-weight="bold" fill="#b45309">等価電位 250 V</text>
-        <text x="204" y="61" font-size="7.5" fill="#334155">深い分子トラップ</text>
-        <text x="204" y="74" font-size="7.5" font-weight="bold" fill="#0369a1">48V電源不要!</text>
-        <text x="24" y="96" font-size="7.5" fill="#78350f">1万Vコロナ放電＋180℃アニールで「一生消えない電気の磁石」化</text>
+        <rect x="26" y="76" width="166" height="5" rx="1.5" fill="#b45309"/>
+        <rect x="200" y="31" width="98" height="50" rx="4" fill="#ffffff" stroke="#f59e0b" stroke-width="1.1"/>
+        <text x="249" y="44" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#b45309">等価電位 250 V</text>
+        <text x="249" y="57" text-anchor="middle" font-size="6.6" fill="#334155">深いフッ素分子トラップ</text>
+        <text x="249" y="71" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#0369a1">48V電源不要!</text>
+        <text x="160" y="98" text-anchor="middle" font-size="7.2" fill="#78350f">1万Vコロナ放電＋180℃アニールで「一生消えない電気の磁石」化</text>
       `);
 
     case 'mc_ecm_back_electret_weld':
@@ -584,16 +589,25 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_cardioid_rear_delay_mesh':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#fff7ed" stroke="#fed7aa"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#9a3412">単一指向性 背面位相遅延・精密絹織抵抗メッシュ</text>
-        <rect x="118" y="36" width="10" height="46" fill="#0ea5e9"/>
-        <rect x="148" y="36" width="12" height="46" fill="#b45309" stroke="#78350f"/>
-        <path d="M26 59 L114 59" stroke="#16a34a" stroke-width="2.4"/>
-        <text x="26" y="51" font-size="7.5" font-weight="bold" fill="#15803d">前方音 (強収音!)</text>
-        <path d="M274 59 L164 59" stroke="#dc2626" stroke-width="2" stroke-dasharray="3 2"/>
-        <text x="174" y="48" font-size="7.5" font-weight="bold" fill="#dc2626">後方音 → 遅延一致</text>
-        <text x="174" y="61" font-size="7.5" fill="#991b1b">表裏が同相で押合い</text>
-        <text x="174" y="74" font-size="7.5" font-weight="bold" fill="#9a3412">ΔP = 0 で自動消滅!</text>
-        <text x="24" y="100" font-size="7.5" fill="#7c2d12">τ_int = R_mesh·C_v = ΔL/c により電気ゼロでカーディオイド指向性を形成</text>
+        <text x="24" y="23" font-size="8.3" font-weight="bold" fill="#9a3412">単一指向性 背面位相遅延・精密絹織抵抗メッシュ</text>
+        <rect x="114" y="34" width="10" height="48" rx="1.5" fill="#0ea5e9" stroke="#0369a1" stroke-width="1"/>
+        <text x="119" y="90" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#0369a1">振動膜</text>
+        <rect x="126" y="38" width="20" height="40" fill="#ffedd5" stroke="#fdba74" stroke-dasharray="2 1.5"/>
+        <text x="136" y="60" text-anchor="middle" font-size="5.5" fill="#9a3412">気室</text>
+        <rect x="148" y="34" width="12" height="48" rx="1.5" fill="#b45309" stroke="#78350f" stroke-width="1"/>
+        <text x="154" y="90" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#92400e">絹メッシュ</text>
+        <path d="M24 58 L108 58" stroke="#16a34a" stroke-width="2.4"/>
+        <polygon points="106,54 113,58 106,62" fill="#16a34a"/>
+        <text x="66" y="48" text-anchor="middle" font-size="7.3" font-weight="bold" fill="#15803d">前方音 (強収音!)</text>
+        <text x="66" y="72" text-anchor="middle" font-size="6.4" fill="#166534">膜を強く振動させる</text>
+        <rect x="172" y="32" width="124" height="34" rx="4" fill="#ffffff" stroke="#fca5a5" stroke-width="1"/>
+        <text x="234" y="43" text-anchor="middle" font-size="6.9" font-weight="bold" fill="#dc2626">後方音 → 抵抗網で遅延一致</text>
+        <text x="234" y="53" text-anchor="middle" font-size="6.4" fill="#991b1b">表裏が同相で押合い相殺</text>
+        <text x="234" y="63" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#9a3412">ΔP = 0 で自動消滅!</text>
+        <path d="M290 76 L166 76" stroke="#dc2626" stroke-width="2" stroke-dasharray="3.5 2"/>
+        <polygon points="168,72.5 161,76 168,79.5" fill="#dc2626"/>
+        <text x="234" y="88" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#b91c1c">← 背面ポートから進入 (遅延 τ)</text>
+        <text x="160" y="102" text-anchor="middle" font-size="6.8" fill="#7c2d12">τ_int = R_mesh·C_v = ΔL/c により電気ゼロでカーディオイド指向性を形成</text>
       `);
 
     case 'mc_vent_tube_lfe_bass_port':
@@ -622,10 +636,10 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
         <rect x="34" y="79" width="76" height="12" rx="2" fill="#475569"/>
         <text x="40" y="88" font-size="7" fill="#fff">ボディ AF振動</text>
         <line x1="138" y1="86" x2="292" y2="86" stroke="#94a3b8"/>
-        <path d="M144 40 L182 40 L264 62" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 2"/>
-        <path d="M144 40 L182 40 L254 84" fill="none" stroke="#0284c7" stroke-width="2.4"/>
-        <text x="218" y="48" font-size="7" fill="#64748b">1段 −12dB/oct</text>
-        <text x="206" y="78" font-size="7.5" font-weight="bold" fill="#0369a1">2段 −24dB/oct!</text>
+        <path d="M144 40 L184 40 L272 58" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 2"/>
+        <path d="M144 40 L184 40 L256 84" fill="none" stroke="#0284c7" stroke-width="2.4"/>
+        <text x="232" y="45" text-anchor="middle" font-size="7" fill="#64748b">1段 −12dB/oct</text>
+        <text x="176" y="79" text-anchor="middle" font-size="7.4" font-weight="bold" fill="#0369a1">2段 −24dB/oct!</text>
       `);
 
     case 'mc_thermal_drift_ntc_comp':
@@ -703,16 +717,16 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_35mm_plug_detect_switch':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#fff1f2" stroke="#fda4af"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#9f1239">3.5 mm 物理挿入検知リーフSW ＆ 自動入力踏切</text>
-        <rect x="24" y="54" width="96" height="18" rx="3" fill="#eab308" stroke="#b45309"/>
-        <text x="36" y="66" font-size="7.5" font-weight="bold" fill="#1e293b">TRSプラグ挿入→</text>
-        <path d="M112 52 L162 36" stroke="#f59e0b" stroke-width="3"/>
-        <circle cx="164" cy="48" r="4" fill="#64748b"/>
-        <text x="122" y="34" font-size="7.5" font-weight="bold" fill="#be123c">金バネ開離 (NC→Open)</text>
-        <rect x="192" y="36" width="104" height="44" rx="5" fill="#1e293b"/>
-        <text x="200" y="52" font-size="7.5" font-weight="bold" fill="#38bdf8">20 ms デバウンス</text>
-        <text x="200" y="66" font-size="7.5" fill="#4ade80">内蔵OFF→外部ON!</text>
-        <text x="24" y="96" font-size="7.5" fill="#881337">物理バネ＋チャタリング除去＋ゼロクロス連動で1万回挿抜耐久</text>
+        <text x="24" y="23" font-size="8.4" font-weight="bold" fill="#9f1239">3.5 mm 物理挿入検知リーフSW ＆ 自動入力踏切</text>
+        <rect x="24" y="58" width="94" height="18" rx="3" fill="#eab308" stroke="#b45309"/>
+        <text x="71" y="70" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1e293b">TRSプラグ挿入→</text>
+        <path d="M112 56 L164 43" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="166" cy="54" r="4" fill="#64748b"/>
+        <text x="144" y="36.5" text-anchor="middle" font-size="7.2" font-weight="bold" fill="#be123c">金バネ開離 (NC→Open)</text>
+        <rect x="192" y="38" width="104" height="42" rx="5" fill="#1e293b"/>
+        <text x="244" y="54" text-anchor="middle" font-size="7.4" font-weight="bold" fill="#38bdf8">20 ms デバウンス</text>
+        <text x="244" y="68" text-anchor="middle" font-size="7.4" fill="#4ade80">内蔵OFF→外部ON!</text>
+        <text x="160" y="96" text-anchor="middle" font-size="7.3" fill="#881337">物理バネ＋チャタリング除去＋ゼロクロス連動で1万回挿抜耐久</text>
       `);
 
     case 'mc_xlr_k3m_48v_phantom_if':
@@ -766,31 +780,34 @@ export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagram
     case 'mc_spatial_ambisonics_matrix':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#ecfeff" stroke="#a5f3fc"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#155e75">3D空間オーディオ / 1次アンビソニックス (W・X・Y・Z)</text>
-        <circle cx="80" cy="60" r="26" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6"/>
-        <line x1="80" y1="30" x2="80" y2="90" stroke="#0f766e" stroke-width="1.5"/>
-        <line x1="50" y1="60" x2="110" y2="60" stroke="#dc2626" stroke-width="1.5"/>
-        <line x1="62" y1="78" x2="98" y2="42" stroke="#d97706" stroke-width="1.5"/>
-        <text x="84" y="38" font-size="7" font-weight="bold" fill="#0f766e">Z(上下)</text>
-        <text x="108" y="58" font-size="7" font-weight="bold" fill="#dc2626">Y</text>
-        <rect x="134" y="34" width="162" height="52" rx="5" fill="#1e293b"/>
-        <text x="142" y="48" font-size="7.5" font-weight="bold" fill="#facc15">B-Format 4ch 空間変換</text>
-        <text x="142" y="61" font-size="7" fill="#38bdf8">W: 全方向音圧 / X: 前後</text>
-        <text x="142" y="73" font-size="7" fill="#4ade80">Y: 左右 / Z: 上下 360°記録</text>
-        <text x="24" y="101" font-size="7.5" fill="#164e63">撮影後に360°どの方向へも自在に仮想マイクを向け直せる立体音響</text>
+        <text x="24" y="23" font-size="8.2" font-weight="bold" fill="#155e75">3D空間オーディオ / 1次アンビソニックス (W・X・Y・Z)</text>
+        <circle cx="74" cy="64" r="21" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <ellipse cx="74" cy="64" rx="21" ry="6.5" fill="none" stroke="#0284c7" stroke-width="0.9" stroke-dasharray="2.5 2"/>
+        <line x1="74" y1="39" x2="74" y2="89" stroke="#0f766e" stroke-width="1.5"/>
+        <line x1="48" y1="64" x2="100" y2="64" stroke="#dc2626" stroke-width="1.5"/>
+        <line x1="59" y1="78" x2="89" y2="50" stroke="#d97706" stroke-width="1.5"/>
+        <circle cx="74" cy="64" r="2.6" fill="#0369a1"/>
+        <text x="74" y="35" text-anchor="middle" font-size="6.8" font-weight="bold" fill="#0f766e">Z (上下)</text>
+        <text x="103" y="66.5" font-size="6.8" font-weight="bold" fill="#dc2626">Y (左右)</text>
+        <text x="24" y="83" font-size="6.6" font-weight="bold" fill="#b45309">X (前後)</text>
+        <rect x="138" y="32" width="160" height="54" rx="5" fill="#1e293b"/>
+        <text x="218" y="46" text-anchor="middle" font-size="7.4" font-weight="bold" fill="#facc15">B-Format 4ch 空間変換</text>
+        <text x="146" y="60" font-size="6.8" fill="#38bdf8">W: 全方向音圧 ／ X: 前後</text>
+        <text x="146" y="74" font-size="6.8" fill="#4ade80">Y: 左右 ／ Z: 上下 360°記録</text>
+        <text x="160" y="101" text-anchor="middle" font-size="7.2" fill="#164e63">撮影後に360°どの方向へも自在に仮想マイクを向け直せる立体音響</text>
       `);
 
     case 'mc_true_peak_lookahead_limiter':
       return wrap(`
         <rect x="14" y="10" width="292" height="98" rx="6" fill="#fff1f2" stroke="#fecdd3"/>
-        <text x="24" y="24" font-size="8.5" font-weight="bold" fill="#9f1239">5 ms 先読みトゥルーピーク・リミッター (−1.0 dBTP)</text>
-        <line x1="26" y1="42" x2="294" y2="42" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="4 2"/>
-        <text x="220" y="37" font-size="7" font-weight="bold" fill="#dc2626">天井 −1.0 dBTP</text>
-        <path d="M28 74 L92 74 L126 28 L158 74 L288 74" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
-        <path d="M28 74 L76 74 C96 74, 108 42, 126 42 C144 42, 158 74, 184 74 L288 74" fill="none" stroke="#e11d48" stroke-width="2.4"/>
-        <rect x="76" y="76" width="50" height="14" rx="2" fill="#0ea5e9"/>
-        <text x="80" y="86" font-size="7" font-weight="bold" fill="#fff">5ms先読み</text>
-        <text x="24" y="102" font-size="7.5" fill="#881337">240サンプル遅延バッファで未来の爆音を予知し無歪みソフト着地!</text>
+        <text x="24" y="23" font-size="8.4" font-weight="bold" fill="#9f1239">5 ms 先読みトゥルーピーク・リミッター (−1.0 dBTP)</text>
+        <line x1="26" y1="44" x2="294" y2="44" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="4 2"/>
+        <text x="220" y="38.5" font-size="7" font-weight="bold" fill="#dc2626">天井 −1.0 dBTP</text>
+        <path d="M28 74 L92 74 L126 31 L158 74 L288 74" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2"/>
+        <path d="M28 74 L76 74 C96 74, 108 44, 126 44 C144 44, 158 74, 184 74 L288 74" fill="none" stroke="#e11d48" stroke-width="2.4"/>
+        <rect x="76" y="76" width="52" height="14" rx="2" fill="#0ea5e9"/>
+        <text x="102" y="85.5" text-anchor="middle" font-size="7" font-weight="bold" fill="#fff">5ms先読み</text>
+        <text x="160" y="102" text-anchor="middle" font-size="7.3" fill="#881337">240サンプル遅延バッファで未来の爆音を予知し無歪みソフト着地!</text>
       `);
 
     case 'mc_factory_anechoic_cal_otp':

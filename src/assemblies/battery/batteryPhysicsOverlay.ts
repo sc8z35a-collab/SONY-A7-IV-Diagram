@@ -11,8 +11,9 @@ export interface BatteryPhysicsOverlayController {
 }
 
 /**
- * Animated Li+ Ion / Electron Power-Flow, 2026 Online EIS Diagnostic & Active 2S Balancing Overlay
- * + 6-Way Dashed Explode Guides for the Standalone 100-Part Battery Pack Ultra-Dissection (P01–P100).
+ * Animated Li+ Ion / Electron Power-Flow, 2026 Online EIS Diagnostic, Active 2S Balancing,
+ * Embedded FBG Optical Fiber Laser & Ultrasonic Phased-Array CT Overlay
+ * + 6-Way Dashed Explode Guides for the Standalone 130-Part Battery Pack Ultra-Dissection (P01–P130).
  */
 export function createBatteryPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,10 +24,10 @@ export function createBatteryPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 110);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 145);
   explodeGuides.add(radialGuides.group);
 
-  // Power, Ion, EIS & Active-Balance flow paths across 2S cells & 2026 Smart BMS
+  // Power, Ion, EIS, Active-Balance, 2026 FBG Optical Fiber & Ultrasonic CT paths
   const routeDefs: Array<{ pts: THREE.Vector3[]; color: number }> = [
     {
       pts: [
@@ -71,6 +72,24 @@ export function createBatteryPhysicsOverlay(
         new THREE.Vector3(9.5, 17.5, -3.5),
       ],
       color: 0xec4899, // Lossless switched-capacitor active 2S balancing shuttle (magenta)
+    },
+    {
+      pts: [
+        new THREE.Vector3(-9.2, 16.5, 2.8),
+        new THREE.Vector3(-9.2, 4.0, 3.6),
+        new THREE.Vector3(-9.2, -12.0, 2.8),
+        new THREE.Vector3(0.0, -17.5, 2.2),
+      ],
+      color: 0x38bdf8, // 2026 Embedded 0.125 mm FBG 1550 nm optical fiber internal thermal laser pulse (sky)
+    },
+    {
+      pts: [
+        new THREE.Vector3(-12.0, 6.0, 4.5),
+        new THREE.Vector3(-3.0, 2.0, 5.4),
+        new THREE.Vector3(6.0, -2.0, 5.4),
+        new THREE.Vector3(12.0, -6.0, 4.5),
+      ],
+      color: 0x22c55e, // 2026 Ultrasonic phased-array Battery CT gas & SOH acoustic scan sweep (lime)
     },
   ];
 
