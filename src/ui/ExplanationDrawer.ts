@@ -1,4 +1,4 @@
-import { CadPart, PartExplanation, ScaleMode } from '../assemblies/types';
+import { CadPart, PartExplanation, ScaleMode, SensorFabVolume } from '../assemblies/types';
 import { isLazyExplanationStub, resolvePartExplanation } from '../assemblies/lazyExplanations';
 import { OpticalScenarioId } from '../assemblies/lens/lensOpticalSim';
 
@@ -10,6 +10,7 @@ export interface ExplanationDrawerHandlers {
   onHideCurrent: () => void;
   onOpenOpticsMotion?: (scenario: OpticalScenarioId, partId: string) => void;
   onSwitchMode?: (mode: ScaleMode) => void;
+  onSwitchFabVolume?: (vol: SensorFabVolume) => void;
 }
 
 type SchematicRendererFn = (type: PartExplanation['diagramType']) => string;
@@ -274,6 +275,30 @@ export class ExplanationDrawer {
         </button>`
       : '';
 
+    const fabVolSwitchConfig: { targetVol: SensorFabVolume; label: string } | null =
+      this.handlers.onSwitchFabVolume && part.subsystem === 'sensor_fab'
+        ? (part.fabVolume ?? 0) === 0
+          ? {
+              targetVol: 1,
+              label: '第1巻：超入門・センサーのしくみと2026年最新アーキテクチャへ進む',
+            }
+          : {
+              targetVol: 0,
+              label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ移動',
+            }
+        : null;
+
+    const fabVolBtnHtml = fabVolSwitchConfig
+      ? `
+        <button type="button" class="exp-optics-cta" data-switch-fab-vol="${fabVolSwitchConfig.targetVol}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="2.5"/>
+            <path d="M9 8h6M9 12h6M9 16h4"/>
+          </svg>
+          <span>${fabVolSwitchConfig.label}</span>
+        </button>`
+      : '';
+
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
 
     this.bodyEl.innerHTML = `
@@ -284,6 +309,7 @@ export class ExplanationDrawer {
       </div>
 
       ${opticsMotionBtnHtml}
+      ${fabVolBtnHtml}
       ${v2SwitchBtnHtml}
 
       ${analogyHtml}
@@ -323,6 +349,13 @@ export class ExplanationDrawer {
     if (ctaBtn && this.handlers.onOpenOpticsMotion) {
       ctaBtn.addEventListener('click', () => {
         this.handlers.onOpenOpticsMotion?.(recommendedScenarioForLensPart(part.id), part.id);
+      });
+    }
+
+    const fabVolBtn = this.bodyEl.querySelector<HTMLButtonElement>('[data-switch-fab-vol]');
+    if (fabVolBtn && fabVolSwitchConfig && this.handlers.onSwitchFabVolume) {
+      fabVolBtn.addEventListener('click', () => {
+        this.handlers.onSwitchFabVolume?.(fabVolSwitchConfig.targetVol);
       });
     }
 

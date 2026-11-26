@@ -20,7 +20,17 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab';
-export type SensorFabStage = 'overview' | 'phases' | 'litho' | 'variants';
+export type SensorFabVolume = 0 | 1;
+export type SensorFabStage =
+  | 'overview'
+  | 'phases'
+  | 'litho'
+  | 'variants'
+  | 'v1_overview'
+  | 'v1_photonics'
+  | 'v1_archs'
+  | 'v1_duel'
+  | 'v1_wall';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1339,7 +1349,40 @@ export interface PartExplanation {
     | 'mc_timecode_ltc_audio_sync'
     | 'mc_spatial_ambisonics_matrix'
     | 'mc_true_peak_lookahead_limiter'
-    | 'mc_factory_anechoic_cal_otp';
+    | 'mc_factory_anechoic_cal_otp'
+    // Phase 31: Sensor Manufacturing Process Vol.1 — 超入門：センサーのしくみと2026年最新アーキテクチャ (32 Parts: F1-01–F1-32)
+    | 'fab1_hero_optics_photonics'
+    | 'fab1_base_exhibition_deck'
+    | 'fab1_step1_pd_bucket_fwc'
+    | 'fab1_step3_tg_sluice_gate'
+    | 'fab1_step4_fd_dcg_cups'
+    | 'fab1_step5_rst_sf_sel_cds'
+    | 'fab1_column_14bit_adc'
+    | 'fab1_pixel_parallel_adc'
+    | 'fab1_ccd_vs_cmos_arena'
+    | 'fab1_arch1_fsi_r6m3'
+    | 'fab1_arch2_bsi_a7iv'
+    | 'fab1_arch3_partial_stack_a7v'
+    | 'fab1_arch4_full_stack_a7rvi'
+    | 'fab1_arch4b_3layer_dram'
+    | 'fab1_arch5_gs_stacked_a9iii'
+    | 'fab1_arch6_2layer_tr_lytia'
+    | 'fab1_canon_dpaf_standard'
+    | 'fab1_canon_r1_crosstype_af'
+    | 'fab1_sony_pdaf_mask_ocl'
+    | 'fab1_gs_rolling_vs_global'
+    | 'fab1_gs_charge_domain'
+    | 'fab1_gs_voltage_domain_a9iii'
+    | 'fab1_gs_pixel_adc_isscc2025'
+    | 'fab1_wall_field_overflow'
+    | 'fab1_canon_fpa6300esw'
+    | 'fab1_canon_fpa5550ix'
+    | 'fab1_stitching_exposure'
+    | 'fab1_wafer_smartphone_640'
+    | 'fab1_wafer_apsc_134'
+    | 'fab1_wafer_fullframe_48'
+    | 'fab1_wafer_mediumformat_26'
+    | 'fab1_stacked_yield_multiply';
 }
 
 export interface CadPart {
@@ -1382,6 +1425,8 @@ export interface CadPart {
   standaloneOnly?: boolean;
   /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
   lensSection?: LensSection;
+  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0 (Master Map), 1 = Vol.1 (Physics & 2026 Architectures) */
+  fabVolume?: SensorFabVolume;
 }
 
 export interface AssemblyController {
@@ -1391,6 +1436,8 @@ export interface AssemblyController {
   deferredStandaloneCount?: number;
   /** Lazily build & attach standalone-only micro-parts on first standalone visit (returns newly built parts) */
   hydrateStandalone?: () => CadPart[] | Promise<CadPart[]>;
+  /** Optional active volume setter for multi-volume standalone encyclopedias (sensor_fab) */
+  setActiveVolume?: (vol: SensorFabVolume) => void;
   updateAnimation: (
     elapsed: number,
     delta: number,

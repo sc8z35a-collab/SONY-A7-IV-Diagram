@@ -93,6 +93,11 @@ export interface UltraRealisticMaterials {
   fabQuartzReticleMask: THREE.MeshPhysicalMaterial;
   fabCleanroomProcessDeck: THREE.MeshPhysicalMaterial;
   fabWaferBinningMap: THREE.MeshPhysicalMaterial;
+  // Phase 31: Sensor Manufacturing Process (Fab Vol.1) Exhibition Deck & 4-Size Wafer Yield Maps
+  fab1ArchExhibitionDeck: THREE.MeshPhysicalMaterial;
+  fab1WaferSmartphone640: THREE.MeshPhysicalMaterial;
+  fab1WaferApsc134: THREE.MeshPhysicalMaterial;
+  fab1WaferMediumFormat26: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -4424,6 +4429,234 @@ function createFabWaferBinningMapTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 31: SENSOR MANUFACTURING PROCESS (VOL.1) PROCEDURAL PBR TEXTURES
+// =============================================================================
+
+/** Vol.1 4-Chapter Architectural Exhibition Floor (Ch.1 Photonics, Ch.2 6-Arch, Ch.3 Sony vs Canon, Ch.4 Exposure Wall) */
+function createFab1ArchExhibitionDeckTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Crisp studio ceramic-white cleanroom plinth surface
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#f8fafc');
+  bg.addColorStop(0.5, '#f1f5f9');
+  bg.addColorStop(1, '#e8eef5');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Fine CAD 1mm-style orthographic floor grid
+  ctx.strokeStyle = 'rgba(100, 116, 139, 0.14)';
+  ctx.lineWidth = 1.2;
+  for (let x = 0; x <= w; x += 24) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= h; y += 24) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  // 4 Color-Coded Chapter Zone Pads (matching Row 3 Rear, Row 2 Mid, Row 1 Front)
+  // Zone 2 (Top / Rear Z=-20): 6 Major Architectures Gallery (Royal Blue tint)
+  ctx.fillStyle = 'rgba(37, 99, 235, 0.08)';
+  ctx.fillRect(36, 28, w - 72, 186);
+  ctx.strokeStyle = 'rgba(37, 99, 235, 0.36)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(36, 28, w - 72, 186);
+
+  // Zone 3 (Middle-Left/Center Z=-3): Sony vs Canon AF & GS Duel (Violet tint)
+  ctx.fillStyle = 'rgba(124, 58, 237, 0.075)';
+  ctx.fillRect(36, 240, 444, 214);
+  ctx.strokeStyle = 'rgba(124, 58, 237, 0.34)';
+  ctx.strokeRect(36, 240, 444, 214);
+
+  // Zone 4 (Middle-Right Z=-3): Exposure Wall & Scanners (Amber tint)
+  ctx.fillStyle = 'rgba(217, 119, 6, 0.085)';
+  ctx.fillRect(502, 240, w - 538, 214);
+  ctx.strokeStyle = 'rgba(217, 119, 6, 0.42)';
+  ctx.strokeRect(502, 240, w - 538, 214);
+
+  // Zone 1 (Front-Left Z=+12): 5-Step Light-to-Photo & 4T-PPD (Sky Cyan tint)
+  ctx.fillStyle = 'rgba(14, 165, 233, 0.085)';
+  ctx.fillRect(36, 482, 468, 248);
+  ctx.strokeStyle = 'rgba(14, 165, 233, 0.42)';
+  ctx.strokeRect(36, 482, 468, 248);
+
+  // Zone 3B (Front-Right Z=+12): 3 Global Shutter Architectures (Indigo-Teal tint)
+  ctx.fillStyle = 'rgba(79, 70, 229, 0.085)';
+  ctx.fillRect(524, 482, w - 560, 248);
+  ctx.strokeStyle = 'rgba(79, 70, 229, 0.40)';
+  ctx.strokeRect(524, 482, w - 560, 248);
+
+  // Clean signal bus traces etched into floor connecting stations
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(14, 165, 233, 0.55)';
+  ctx.beginPath();
+  ctx.moveTo(64, 606);
+  ctx.lineTo(480, 606);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(37, 99, 235, 0.50)';
+  ctx.beginPath();
+  ctx.moveTo(76, 122);
+  ctx.lineTo(w - 76, 122);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(217, 119, 6, 0.55)';
+  ctx.beginPath();
+  ctx.moveTo(532, 348);
+  ctx.lineTo(w - 58, 348);
+  ctx.stroke();
+
+  // Outer perimeter technical hairline bezel
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(12, 12, w - 24, h - 24);
+
+  return toHiTex(canvas);
+}
+
+/** Shared helper for 300mm wafer die-count & 10-particle yield comparison textures (Vol.1 Ch.4) */
+function drawVol1WaferYieldCanvas(
+  dieW: number,
+  dieH: number,
+  gap: number,
+  seed: number,
+  defectCount: number,
+  accentA: string,
+  accentB: string
+): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const R = w * 0.482;
+  const usableR = R * 0.945; // 3mm edge-exclusion margin on 300mm wafer
+
+  // Monocrystalline silicon wafer substrate gradient
+  const bg = ctx.createRadialGradient(cx - 80, cy - 90, 25, cx, cy, R);
+  bg.addColorStop(0, '#1e3a5f');
+  bg.addColorStop(0.55, '#132744');
+  bg.addColorStop(1, '#0b1324');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle 3mm edge-exclusion ring (amber dashed)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(251, 191, 36, 0.52)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([10, 7]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, usableR, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // Generate exact complete dies inside usableR
+  const stepX = dieW + gap;
+  const stepY = dieH + gap;
+  const maxC = Math.ceil(usableR / stepX) + 1;
+  const maxR = Math.ceil(usableR / stepY) + 1;
+  const dies: Array<{ x: number; y: number }> = [];
+
+  for (let r = -maxR; r <= maxR; r++) {
+    for (let c = -maxC; c <= maxC; c++) {
+      const dx = cx + c * stepX - dieW * 0.5;
+      const dy = cy + r * stepY - dieH * 0.5;
+      const corners = [
+        [dx, dy],
+        [dx + dieW, dy],
+        [dx, dy + dieH],
+        [dx + dieW, dy + dieH],
+      ];
+      const allInside = corners.every(([px, py]) => Math.hypot(px - cx, py - cy) <= usableR);
+      if (allInside) dies.push({ x: dx, y: dy });
+    }
+  }
+
+  // Deterministic 10-particle dust defect hits distributed across usable area
+  const rng = mulberry32(seed);
+  const hitSet = new Set<number>();
+  const dustPts: Array<{ px: number; py: number }> = [];
+  for (let k = 0; k < defectCount && dies.length > 0; k++) {
+    const idx = Math.floor(rng() * dies.length);
+    hitSet.add(idx);
+    const d = dies[idx];
+    dustPts.push({
+      px: d.x + dieW * (0.25 + rng() * 0.5),
+      py: d.y + dieH * (0.25 + rng() * 0.5),
+    });
+  }
+
+  // Draw all complete dies: iridescent good vs crimson defect-hit
+  for (let i = 0; i < dies.length; i++) {
+    const d = dies[i];
+    const isBad = hitSet.has(i);
+    if (isBad) {
+      ctx.fillStyle = '#dc2626';
+      ctx.fillRect(d.x, d.y, dieW, dieH);
+      ctx.strokeStyle = '#fecaca';
+      ctx.lineWidth = Math.max(1.2, Math.min(3.5, dieW * 0.04));
+      ctx.strokeRect(d.x + 1, d.y + 1, dieW - 2, dieH - 2);
+    } else {
+      const dg = ctx.createLinearGradient(d.x, d.y, d.x + dieW, d.y + dieH);
+      dg.addColorStop(0, accentA);
+      dg.addColorStop(1, accentB);
+      ctx.fillStyle = dg;
+      ctx.fillRect(d.x, d.y, dieW, dieH);
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.58)';
+      ctx.lineWidth = Math.max(0.8, Math.min(2.5, dieW * 0.025));
+      ctx.strokeRect(d.x, d.y, dieW, dieH);
+
+      // Active pixel imaging rectangle inside larger dies
+      if (dieW >= 32) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+        ctx.fillRect(d.x + dieW * 0.1, d.y + dieH * 0.12, dieW * 0.8, dieH * 0.76);
+      }
+    }
+  }
+
+  // Draw 10 glowing orange-red dust defect impact stars
+  for (const pt of dustPts) {
+    ctx.fillStyle = '#fef08a';
+    ctx.beginPath();
+    ctx.arc(pt.px, pt.py, Math.max(4.5, Math.min(9, dieW * 0.12)), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#991b1b';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Standard 300mm wafer orientation V-notch at bottom edge
+  ctx.fillStyle = '#020617';
+  ctx.beginPath();
+  ctx.moveTo(cx - 12, cy + R - 2);
+  ctx.lineTo(cx, cy + R - 20);
+  ctx.lineTo(cx + 12, cy + R - 2);
+  ctx.closePath();
+  ctx.fill();
+
+  return toHiTex(canvas);
+}
+
+function createFab1WaferSmartphone640Texture(): THREE.CanvasTexture {
+  // ~11x9mm scaled onto 768px 300mm disc -> ~25x20px dies (~600+ dies, 10 hits -> ~98% yield!)
+  return drawVol1WaferYieldCanvas(24, 19, 3, 3101, 10, '#059669', '#0284c7');
+}
+
+function createFab1WaferApsc134Texture(): THREE.CanvasTexture {
+  // ~25x17mm scaled onto 768px 300mm disc -> ~56x38px dies (~134 dies, 10 hits -> ~93% yield!)
+  return drawVol1WaferYieldCanvas(55, 38, 5, 3102, 10, '#0ea5e9', '#2563eb');
+}
+
+function createFab1WaferMediumFormat26Texture(): THREE.CanvasTexture {
+  // ~46x35mm scaled onto 768px 300mm disc -> ~106x80px dies (~26 dies, 10 hits -> ~68% yield!)
+  return drawVol1WaferYieldCanvas(104, 79, 8, 3103, 10, '#6366f1', '#7c3aed');
+}
+
+// =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
@@ -5411,6 +5644,61 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.09
   );
 
+  // --- Phase 31: Sensor Manufacturing Process (Fab Vol.1) Exhibition Deck & 4-Size Wafer Yield Maps ---
+  const fab1ArchExhibitionDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab1ArchExhibitionDeckTexture(),
+      metalness: 0.18,
+      roughness: 0.36,
+      clearcoat: 0.28,
+    }),
+    0.06
+  );
+
+  const fab1WaferSmartphone640 = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab1WaferSmartphone640Texture(),
+      metalness: 0.56,
+      roughness: 0.18,
+      clearcoat: 0.85,
+      iridescence: 0.82,
+      iridescenceIOR: 1.76,
+    }),
+    0.09
+  );
+
+  const fab1WaferApsc134 = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab1WaferApsc134Texture(),
+      metalness: 0.58,
+      roughness: 0.18,
+      clearcoat: 0.86,
+      iridescence: 0.86,
+      iridescenceIOR: 1.78,
+    }),
+    0.09
+  );
+
+  const fab1WaferMediumFormat26 = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab1WaferMediumFormat26Texture(),
+      metalness: 0.60,
+      roughness: 0.18,
+      clearcoat: 0.88,
+      iridescence: 0.88,
+      iridescenceIOR: 1.80,
+    }),
+    0.09
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -5488,6 +5776,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fabQuartzReticleMask,
     fabCleanroomProcessDeck,
     fabWaferBinningMap,
+    fab1ArchExhibitionDeck,
+    fab1WaferSmartphone640,
+    fab1WaferApsc134,
+    fab1WaferMediumFormat26,
   ];
 
   return {
@@ -5567,6 +5859,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fabQuartzReticleMask,
     fabCleanroomProcessDeck,
     fabWaferBinningMap,
+    fab1ArchExhibitionDeck,
+    fab1WaferSmartphone640,
+    fab1WaferApsc134,
+    fab1WaferMediumFormat26,
     list,
   };
 }

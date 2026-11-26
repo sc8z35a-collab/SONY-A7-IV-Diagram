@@ -1,11 +1,21 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,242 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,274 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (1,242 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 937 Standalone-Only Micro/Ultra/Fab)
+## Complete Camera Assembly (1,274 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 969 Standalone-Only Micro/Ultra/Fab)
+
+### Phase 31 — 「センサー製造工程」 Vol.1: 超入門・一眼カメラセンサーのしくみと2026年最新アーキテクチャ (+32 Parts → 1,274 Total across 17 Modes!)
+Based exhaustively on **第1巻：超入門 ── 一眼カメラセンサーのしくみと2026年最新アーキテクチャ** (`01_超入門_一眼カメラセンサーのしくみと2026年最新アーキテクチャ.md`), featuring per-volume GPU chunk isolation (`fabVolume: 0 | 1`) and a unified top-center Volume + Stage navigator (`第0巻 全工程` / `第1巻 超入門・2026` + chapter camera presets):
+- **4 Bespoke Vol.1 Procedural PBR Textures (`UltraRealisticTextures.ts` & `GpuMegaBatch.ts`)**: 4-Zone Architectural Exhibition Floor (`fab1ArchExhibitionDeck`), 300mm Wafer Smartphone 640-Die Yield Map (`fab1WaferSmartphone640`), APS-C 134-Die Yield Map (`fab1WaferApsc134`), and Medium-Format 26-Die Yield Map (`fab1WaferMediumFormat26`), with WebGL2 `Texture2DArray` atlas expanded to `HI_TEX_MAX_LAYERS: 100`, `TILE_TEX_MAX_LAYERS: 66`.
+- **32 Museum-Grade 3D CAD Sculptures across 4 Thematic Chapters (`F1-01`–`F1-32`)**:
+  - **Hero & Ch.1 (`F1-01`–`F1-09`)**: Wavelength-Depth Photoelectric Prism Monument (Blue 450nm / Green 530nm / Red 650nm), 4-Zone Exhibition Plinth, 4T-PPD Rainwater Bucket & FWC Comparison (Full-Frame `3.7–6µm` vs Smartphone `0.6–1.2µm`), Transfer Gate (`TG`) Sluice, Floating Diffusion (`FD`) + Dual Conversion Gain (`DCG` / Dual Native ISO), `RST/SF/SEL` + `CDS` kTC Noise Subtractor, Column-Parallel 14-bit ADC (`16,384` levels), Pixel-Parallel ADC Bridge, and CCD Bucket-Brigade vs. CMOS Parallel Arena.
+  - **Ch.2 (`F1-10`–`F1-16`)**: All 6+1 Commercial 2026 Architectures (`FSI EOS R6 Mark III 32.5MP`, `BSI α7 IV/α7R V/Zf/Z5II`, `Partially Stacked Z6III IMX820AQJ / LUMIX S1II / α7 V 33MP 16-stop DR`, `Full 2-Layer Stacked α1 II / α7R VI 66.8MP / EOS R1 / R5 II / Z9 / Canon LI8030SA 410MP`, `3-Layer DRAM`, `Global Shutter α9 III IMX810AQL / IMX927 105.51MP / ISSCC 2025`, and `2-Layer Transistor Pixel Exmor T / LYTIA`).
+  - **Ch.3 (`F1-17`–`F1-23`)**: Sony vs. Canon AF Duel (Canon Dual Pixel CMOS AF, EOS R1 90°-Rotated Cross-Type AF, Sony Shielded Mask & `2×1`/`2×2 OCL`) + Rolling Skew vs. Global Shutter Sync (`1/80,000s`) + All 3 GS Methods (Charge-Domain Pregius/PLS, Voltage-Domain α9 III `IMX810AQL`, and Sony ISSCC 2025 `90nm/40nm` `50.4M Cu-Cu` `8×1→4×2` 14-bit Pixel-Parallel ADC `120fps / 2.66 e-rms / 1,545mW`).
+  - **Ch.4 (`F1-24`–`F1-32`)**: Full-Frame Exposure Wall (`26×33mm` vs. `27×38mm`), Canon `FPA-6300ESW` (`KrF 248nm`, `1:3.125`, `33×42.2mm`), Canon `FPA-5550iX` (`i-line 365nm`, `50×50mm`, BSI IR alignment), Reticle Stitching (Tower Semiconductor Medium Format), all 4 Sensor-Size 300mm Wafer Yield Stations (`640 / 98%` → `134 / 93%` → `48 / 81%` → `26 / 68%`), and Stacked Wafer-to-Wafer Yield Multiplication Trap.
+- **Dedicated Vol.1 3D Physics Overlay + 32 Beginner-Friendly Japanese Explanations & 32 Bespoke `320×118` Japanese SVGs**: Preserves all source accuracy tags (`[確認済み]`/`[学会・論文]`/`[業界標準]`/`[推定]`/`[未確認]`) and cross-links seamlessly with Vol.0, `sensor`, and `micro_v2`.
 
 ### Phase 30 — Dedicated 「センサー製造工程」 Mode: Vol.0 Complete 2,110-Step Manufacturing Map 3D CAD Anatomy (+32 Parts → 1,242 Total across 17 Modes!)
 Based on **第0巻：総目次と全工程マップ ── 砂からミラーレス一眼へ・全2,110工程の完全設計図（2026年11月版）** (`00_総目次と全工程マップ.md`), with explicit source-accuracy tags (`[確認済み]` / `[学会・論文]` / `[業界標準]` / `[推定]`) preserved across all specs and explanations:

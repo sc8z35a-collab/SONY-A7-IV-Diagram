@@ -10,6 +10,7 @@ import {
   ScaleMode,
   SectionAxis,
   SensorFabStage,
+  SensorFabVolume,
 } from '../assemblies/types';
 import { createMaterialLibrary, MaterialLibrary } from './Materials';
 import { GPU_PROFILE } from './GpuOptimizer';
@@ -61,8 +62,8 @@ type SubsystemKey = CadPart['subsystem'];
 
 interface SubsystemChunks {
   standalone: MegaBatchChunk[];
-  /** For lens 3-section fast GPU culling: maps chunk -> lensSection (1|2|3) */
-  chunkSection: Map<MegaBatchChunk, LensSection>;
+  /** Maps chunk -> lensSection (1|2|3) or sensor_fab volume (0|1|...) for fast GPU culling */
+  chunkSection: Map<MegaBatchChunk, number>;
 }
 
 const _focusBox = new THREE.Box3();
@@ -225,6 +226,8 @@ export class CadViewport {
   private mode: ScaleMode = 'integrated';
   /** Active lightweight 1/3 standalone GM lens section: 1 = Rear (default), 2 = Middle, 3 = Front */
   private lensSection: LensSection = 1;
+  /** Active volume inside standalone Sensor Manufacturing Process encyclopedia: 0 = Vol.0, 1 = Vol.1 */
+  private sensorFabVolume: SensorFabVolume = 0;
   private renderMode: RenderMode = 'solid';
   private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'high' : 'ultra';
   private sectionAxis: SectionAxis = 'off';
@@ -532,6 +535,21 @@ export class CadViewport {
         bucket.chunkSection.set(chunk, sec);
         this.registerChunkRecords(chunk);
       }
+    } else if (subsystem === 'sensor_fab') {
+      for (const vol of [0, 1] as SensorFabVolume[]) {
+        const volParts = parts.filter((p) => (p.fabVolume ?? 0) === vol);
+        if (volParts.length === 0) continue;
+        const chunk = compileMegaBatchChunk(
+          volParts,
+          this.partStateBuf,
+          this.matRegistry,
+          [this.clippingPlane]
+        );
+        asm.rootGroup.add(chunk.group);
+        bucket.standalone.push(chunk);
+        bucket.chunkSection.set(chunk, vol);
+        this.registerChunkRecords(chunk);
+      }
     } else {
       const chunk = compileMegaBatchChunk(
         parts,
@@ -684,6 +702,9 @@ export class CadViewport {
       }
       return (part.lensSection ?? 2) === this.lensSection;
     }
+    if (this.mode === 'sensor_fab') {
+      return part.subsystem === 'sensor_fab' && (part.fabVolume ?? 0) === this.sensorFabVolume;
+    }
     return part.subsystem === this.mode;
   }
 
@@ -712,6 +733,12 @@ export class CadViewport {
         const showStandalone = this.mode === 'lens' && !sharedLensOpticalSim.studioOpen;
         for (const c of chunks.standalone) {
           c.group.visible = showStandalone && chunks.chunkSection.get(c) === this.lensSection;
+          if (c.group.visible) this.activeChunks.push(c);
+        }
+      } else if (sub === 'sensor_fab') {
+        const showStandalone = this.mode === 'sensor_fab';
+        for (const c of chunks.standalone) {
+          c.group.visible = showStandalone && chunks.chunkSection.get(c) === this.sensorFabVolume;
           if (c.group.visible) this.activeChunks.push(c);
         }
       } else {
@@ -904,6 +931,41 @@ export class CadViewport {
     }
 
     this.hydrateSubsystemIfNeeded('lens');
+
+    this.selectedPartId = null;
+    this.hoveredPartId = null;
+    this.isolatedPartId = null;
+    this.hiddenPartIds.clear();
+    this.kinematicsDirty = true;
+
+    this.syncAssemblyVisibility();
+    this.stepActiveAssemblies(this.clock.getElapsedTime(), 0);
+    this.updateActiveExplodeGuides();
+    this.applyVisibilityAndStyles();
+    this.renderer.renderLists.dispose();
+    this.updateClippingPlane();
+    this.setCameraPreset('iso', immediateCamera);
+
+    this.callbacks.onSelectPart(null);
+    this.callbacks.onHoverPart(null);
+    this.callbacks.onVisibilityChanged();
+  }
+
+  public getSensorFabVolume(): SensorFabVolume {
+    return this.sensorFabVolume;
+  }
+
+  public setSensorFabVolume(vol: SensorFabVolume, immediateCamera = false): void {
+    const changed = this.sensorFabVolume !== vol;
+    this.sensorFabVolume = vol;
+    this.sensorFabAssembly.setActiveVolume?.(vol);
+    if (this.mode !== 'sensor_fab') return;
+    if (!changed && !immediateCamera) {
+      this.setCameraPreset('iso', false);
+      return;
+    }
+
+    this.hydrateSubsystemIfNeeded('sensor_fab');
 
     this.selectedPartId = null;
     this.hoveredPartId = null;
@@ -1310,10 +1372,10 @@ export class CadViewport {
     }
   }
 
-  /** Smoothly frame one of the 4 thematic sculptural zones inside Sensor Manufacturing Process (Vol.0) */
+  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0 & Vol.1) */
   public focusSensorFabStage(stage: SensorFabStage, immediate = false): void {
     if (this.mode !== 'sensor_fab') return;
-    if (stage === 'overview') {
+    if (stage === 'overview' || stage === 'v1_overview') {
       this.setCameraPreset('iso', immediate);
       return;
     }
@@ -1332,10 +1394,30 @@ export class CadViewport {
       const d = (138 + e * 135) * aspectScale;
       target = new THREE.Vector3(0, -11.5 - e * 26.0, 2.0);
       offset = new THREE.Vector3(d * 0.22, d * 0.34, d * 0.91);
-    } else {
+    } else if (stage === 'variants') {
       const d = (104 + e * 85) * aspectScale;
       target = new THREE.Vector3(10.0 + e * 8.0, 3.6 + e * 18.0, -24.0 - e * 24.0);
       offset = new THREE.Vector3(d * 0.16, d * 0.34, d * 0.92);
+    } else if (stage === 'v1_photonics') {
+      // Ch.1: Front-Left 4T-PPD 5-Step Pipeline + CCD vs CMOS
+      const d = (118 + e * 110) * aspectScale;
+      target = new THREE.Vector3(-19.0 - e * 14.0, 2.8 + e * 12.0, 9.5 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.42, d * 0.89);
+    } else if (stage === 'v1_archs') {
+      // Ch.2: Rear Gallery of ALL 6+1 Commercial 2026 Architectures
+      const d = (122 + e * 95) * aspectScale;
+      target = new THREE.Vector3(2.0, 3.6 + e * 16.0, -20.0 - e * 22.0);
+      offset = new THREE.Vector3(d * 0.12, d * 0.34, d * 0.93);
+    } else if (stage === 'v1_duel') {
+      // Ch.3: Sony vs Canon AF Duel & 3 Global Shutter Methods
+      const d = (128 + e * 110) * aspectScale;
+      target = new THREE.Vector3(7.0 + e * 8.0, 2.6 + e * 14.0, 4.0 + e * 8.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.42, d * 0.89);
+    } else {
+      // v1_wall — Ch.4: Full-Frame Exposure Wall & Lower 300mm Wafer Yield Curve (640 -> 134 -> 48 -> 26 -> Stacked)
+      const d = (146 + e * 125) * aspectScale;
+      target = new THREE.Vector3(8.0 + e * 6.0, -8.5 - e * 18.0, 9.0 + e * 12.0);
+      offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
     }
 
     const pos = target.clone().add(offset);
