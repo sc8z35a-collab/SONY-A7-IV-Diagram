@@ -665,7 +665,7 @@ export class ZeroTextControls {
     this.dryboxBtn.className = 'icon-btn is-fab-pill is-drybox-pill';
     this.dryboxBtn.dataset.mode = 'drybox';
     this.dryboxBtn.setAttribute('aria-label', 'ドライボックス超解剖');
-    this.dryboxBtn.title = '2026年最新 カメラ専用ドライボックス（防湿庫）全90部品 3D CAD超解剖図';
+    this.dryboxBtn.title = '2026年最新 カメラ専用ドライボックス（防湿庫）全150部品 3D CAD超解剖図';
     this.dryboxBtn.appendChild(svgIcon(ICONS.dryboxCabinet));
     const dryboxLabel = document.createElement('span');
     dryboxLabel.textContent = 'ドライボックス';
@@ -1151,7 +1151,16 @@ export class ZeroTextControls {
             part.order === 65 ||
             part.order === 74 ||
             part.order === 79 ||
-            part.order === 85)) ||
+            part.order === 85 ||
+            part.order === 91 ||
+            part.order === 99 ||
+            part.order === 107 ||
+            part.order === 117 ||
+            part.order === 125 ||
+            part.order === 131 ||
+            part.order === 136 ||
+            part.order === 141 ||
+            part.order === 146)) ||
         (prevSubsystem === 'sensor_fab' &&
           part.subsystem === 'sensor_fab' &&
           ((part.fabVolume ?? 0) === 4
@@ -2261,7 +2270,7 @@ export class ZeroTextControls {
                 : 19;
         }
       } else if (part.subsystem === 'drybox') {
-        // 2026 Flagship Electronic Camera Dry Cabinet (90 parts: DB01–DB90 across 14 MECE groups)
+        // 2026 Flagship Electronic Camera Dry Cabinet (150 parts: DB01–DB150 across 23 MECE groups)
         widthPx =
           part.order === 1 ||
           part.order === 2 ||
@@ -2289,7 +2298,27 @@ export class ZeroTextControls {
           part.order === 81 ||
           part.order === 82 ||
           part.order === 86 ||
-          part.order === 90
+          part.order === 90 ||
+          part.order === 92 ||
+          part.order === 95 ||
+          part.order === 100 ||
+          part.order === 107 ||
+          part.order === 113 ||
+          part.order === 117 ||
+          part.order === 119 ||
+          part.order === 122 ||
+          part.order === 130 ||
+          part.order === 131 ||
+          part.order === 134 ||
+          part.order === 136 ||
+          part.order === 137 ||
+          part.order === 138 ||
+          part.order === 139 ||
+          part.order === 141 ||
+          part.order === 144 ||
+          part.order === 148 ||
+          part.order === 149 ||
+          part.order === 150
             ? 32
             : part.order === 3 ||
                 part.order === 4 ||
@@ -2328,7 +2357,36 @@ export class ZeroTextControls {
                 part.order === 80 ||
                 part.order === 83 ||
                 part.order === 84 ||
-                part.order === 89
+                part.order === 89 ||
+                part.order === 91 ||
+                part.order === 93 ||
+                part.order === 97 ||
+                part.order === 99 ||
+                part.order === 101 ||
+                part.order === 103 ||
+                part.order === 106 ||
+                part.order === 108 ||
+                part.order === 109 ||
+                part.order === 111 ||
+                part.order === 112 ||
+                part.order === 114 ||
+                part.order === 116 ||
+                part.order === 118 ||
+                part.order === 120 ||
+                part.order === 121 ||
+                part.order === 123 ||
+                part.order === 124 ||
+                part.order === 127 ||
+                part.order === 129 ||
+                part.order === 132 ||
+                part.order === 133 ||
+                part.order === 135 ||
+                part.order === 140 ||
+                part.order === 142 ||
+                part.order === 143 ||
+                part.order === 145 ||
+                part.order === 146 ||
+                part.order === 147
               ? 25
               : 19;
       } else {

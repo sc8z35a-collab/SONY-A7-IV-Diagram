@@ -5,7 +5,7 @@ import { createDryboxPhysicsOverlay } from './dryboxPhysicsOverlay';
 
 /**
  * Assemble the lazy-hydrated standalone 2026 Flagship Dual-Zone Hybrid Electronic
- * Camera Dry Cabinet Ultra-Dissection subsystem (90 parts: DB01–DB90).
+ * Camera Dry Cabinet Ultra-Dissection subsystem (150 parts: DB01–DB150).
  * Strictly visible ONLY in standalone 'drybox' mode (zero startup cost!).
  */
 export function createDryboxAssembly(mats: MaterialLibrary): AssemblyController {
@@ -20,7 +20,7 @@ export function createDryboxAssembly(mats: MaterialLibrary): AssemblyController 
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 90,
+    deferredStandaloneCount: 150,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;

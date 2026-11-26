@@ -216,12 +216,18 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./drybox/dryboxExplanationsB'),
         import('./drybox/dryboxExplanationsC'),
         import('./drybox/dryboxExplanationsD'),
-      ]).then(([mA, mB, mC, mD]) =>
+        import('./drybox/dryboxExplanationsE'),
+        import('./drybox/dryboxExplanationsF'),
+        import('./drybox/dryboxExplanationsG'),
+      ]).then(([mA, mB, mC, mD, mE, mF, mG]) =>
         finish({
           ...mA.DRYBOX_EXPLANATIONS_A,
           ...mB.DRYBOX_EXPLANATIONS_B,
           ...mC.DRYBOX_EXPLANATIONS_C,
           ...mD.DRYBOX_EXPLANATIONS_D,
+          ...mE.DRYBOX_EXPLANATIONS_E,
+          ...mF.DRYBOX_EXPLANATIONS_F,
+          ...mG.DRYBOX_EXPLANATIONS_G,
         })
       );
       break;
