@@ -217,6 +217,12 @@ controls = new ZeroTextControls(appRoot, {
     viewport.setLensSection(section);
     syncRail();
   },
+  onSensorFabVolumeChange: (vol) => {
+    viewport.setSensorFabVolume(vol, false);
+    controls.syncFabVolume(vol);
+    controls.syncFabStage(vol === 0 ? 'overview' : 'v1_overview');
+    syncRail();
+  },
   onSensorFabStageChange: (stage) => {
     viewport.focusSensorFabStage(stage, false);
   },
@@ -290,6 +296,14 @@ drawer = new ExplanationDrawer(appRoot, {
     viewport.setMode(nextMode);
     controls.syncMode(nextMode);
     controls.setExplodeValue(viewport.getExplode());
+    syncRail();
+  },
+  onSwitchFabVolume: (vol) => {
+    viewport.setMode('sensor_fab', false);
+    viewport.setSensorFabVolume(vol, false);
+    controls.syncFabVolume(vol);
+    controls.syncFabStage(vol === 0 ? 'overview' : 'v1_overview');
+    controls.syncMode('sensor_fab');
     syncRail();
   },
 });
@@ -1486,6 +1500,73 @@ if (preset === 'complete_assembled') {
   viewport.setSection('x', 0.52);
   controls.syncSectionAxis('x', 0.52);
   viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_assembled') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_exploded') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.75, true);
+  controls.setExplodeValue(0.75);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_drawer') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.35, true);
+  controls.setExplodeValue(0.35);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('fab1-gs-pixel-adc-isscc2025', false);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_archs') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_archs');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.12, true);
+  controls.setExplodeValue(0.12);
+  viewport.focusSensorFabStage('v1_archs', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_duel') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_duel');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.12, true);
+  controls.setExplodeValue(0.12);
+  viewport.focusSensorFabStage('v1_duel', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol1_wall') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(1, true);
+  controls.syncFabVolume(1);
+  controls.syncFabStage('v1_wall');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.12, true);
+  controls.setExplodeValue(0.12);
+  viewport.focusSensorFabStage('v1_wall', true);
   syncRail();
 }
 

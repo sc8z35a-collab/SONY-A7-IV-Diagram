@@ -601,6 +601,59 @@ body,
   box-shadow: 0 2px 10px rgba(13, 91, 217, 0.3);
 }
 
+.fab-vol-group,
+.fab-stage-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.fab-stage-group.is-hidden {
+  display: none;
+}
+
+.fab-stage-divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 3px;
+  background: rgba(18, 20, 26, 0.14);
+  flex-shrink: 0;
+}
+
+.fab-vol-btn {
+  appearance: none;
+  border: 1px solid rgba(13, 91, 217, 0.16);
+  background: rgba(13, 91, 217, 0.05);
+  height: 29px;
+  padding: 0 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e3a8a;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.fab-vol-btn:hover {
+  background: rgba(13, 91, 217, 0.12);
+  border-color: rgba(13, 91, 217, 0.32);
+}
+
+.fab-vol-btn.is-active {
+  background: linear-gradient(135deg, #0d5bd9 0%, #2563eb 100%);
+  border-color: #0d5bd9;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(13, 91, 217, 0.32);
+}
+
 /* Zen Fullscreen fallback (when Fullscreen API is restricted in embedded preview iframes) */
 #app.is-zen-fullscreen .view-cluster,
 #app.is-zen-fullscreen .quality-cluster,
@@ -1566,6 +1619,7 @@ body,
     left: 50%;
   }
   .v2-phase-btn,
+  .fab-vol-btn,
   .fab-stage-btn {
     height: 27px;
     padding: 0 8px;
