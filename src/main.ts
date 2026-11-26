@@ -1100,6 +1100,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('shutter-rivet-reinforce-collars', false);
   syncRail();
+} else if (preset === 'phase34_shutter') {
+  viewport.setMode('shutter', true);
+  controls.syncMode('shutter');
+  viewport.setExplode(0.96, true);
+  controls.setExplodeValue(0.96);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('shutter-coaxial-friction-brake', false);
+  syncRail();
 } else if (preset === 'phase18_lens') {
   viewport.setMode('lens', true);
   viewport.setLensSection(3, true);
@@ -1855,6 +1865,24 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   syncRail();
+} else if (preset === 'drybox_assembled') {
+  viewport.setMode('drybox', true);
+  controls.syncMode('drybox');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setPhysicsActive(false);
+  controls.syncPhysics(false);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'drybox_exploded') {
+  viewport.setMode('drybox', true);
+  controls.syncMode('drybox');
+  viewport.setExplode(0.86, true);
+  controls.setExplodeValue(0.86);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
 } else if (preset === 'sensor_fab_vol5_exploded') {
   viewport.setMode('sensor_fab', true);
   viewport.setSensorFabVolume(5, true);
@@ -1919,6 +1947,35 @@ if (preset === 'complete_assembled') {
   viewport.setExplode(0.08, true);
   controls.setExplodeValue(0.08);
   viewport.focusSensorFabStage('v5_hb_cmp', true);
+  syncRail();
+} else if (preset === 'drybox_back') {
+  viewport.setMode('drybox', true);
+  controls.syncMode('drybox');
+  viewport.setExplode(0.45, true);
+  controls.setExplodeValue(0.45);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('back', true);
+  syncRail();
+} else if (preset === 'drybox_section') {
+  viewport.setMode('drybox', true);
+  controls.syncMode('drybox');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.52);
+  controls.syncSectionAxis('x', 0.52);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'drybox_drawer') {
+  viewport.setMode('drybox', true);
+  controls.syncMode('drybox');
+  viewport.setExplode(0.55, true);
+  controls.setExplodeValue(0.55);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('db-pem-nafion-membrane', false);
   syncRail();
 }
 
