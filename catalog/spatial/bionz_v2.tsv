@@ -1,0 +1,56 @@
+id	code	name	group	pos	size	exp	mat
+xv2-soic-hybrid-bond-3d	X2-01	TSMC SoIC 3Dチップ積層サブ1	#001-030	0,14.8,0	30.96,1.37,30.96	0,56,0	cucu_hybrid_copper
+xv2-cowos-l-active-lsi	X2-02	CoWoS-L	#001-030	0,13,-7.8	24.2,1.37,11.6	0,48,-26	silicon_hero
+xv2-lpddr6-1c-phy	X2-03	ISSCC 2026最先端1c nm	#001-030	0,13,8.8	23.8,1.47,8.8	0,48,28	silicon_hero
+xv2-glass-core-tgv	X2-04	次世代ガラスコアパッケージ基板	#001-030	0,11,0	32.28,1.61,32.28	-34,38,0	matte_chassis
+xv2-electro-optical-cpo	X2-05	ISSCC 2026最先端シリコンフォト	#001-030	-8.4,9.6,0	15.28,1.31,11.56	-34,30,18	matte_chassis
+xv2-slvsec-pam4-cdr	X2-06	次世代センサー直結SLVS-EC	#001-030	8.4,9.6,0	14.16,1.66,11.56	34,30,-18	silicon_hero
+xv2-beol-airgap-ulk	X2-07	上層BEOLナノ・エアギャップ	#001-030	0,7.6,0	30.76,1.65,30.76	0,24,0	silicon_dielectric
+xv2-ru-mo-m0-tracks	X2-08	最下層M0/M1極細21nmピッチルテニ	#001-030	0,5.4,0	26.52,0.89,26.52	0,17,0	titanium_machined
+xv2-beol-metal-temp-sensor	X2-09	ISSCC 2026 Samsung	#001-030	-10.2,6.6,10.2	8.72,0.92,8.72	-34,20,24	silicon_hero
+xv2-shpmim-decap	X2-10	TSMC N2P採用超高密度3Dトレンチ	#001-030	10.2,6.6,10.2	9.5,2.06,9.5	34,20,24	cucu_hybrid_copper
+xv2-em-reservoir-via	X2-11	エレクトロマイグレーション防止コバルトキ	#001-030	0,4.3,-10.8	14.16,2.05,2.94	0,14,-32	cucu_hybrid_copper
+xv2-gaa-si-nanosheets	X2-12	2nm / A16世代4段水平積層シリコ	#001-030	0,0.2,0	16.96,4.88,6.37	0,2,0	silicon_wafer_dark
+xv2-hkmg-all-around	X2-13	360°全周包み込みHigh-k	#001-030	0,0.2,0	6.6,7.76,6.24	0,11,-18	stainless_machined
+xv2-hk-dipole-vth	X2-14	原子1層ランタン／アルミニウム界面ダイポ	#001-030	0,0.2,0	6.12,5.46,0.31	0,7,24	pin_carrier_gloss
+xv2-sige-inner-spacer	X2-15	GAA必須の極微細部品三日月型	#001-030	0,0.2,0	8.55,6.05,8.26	-24,4,18	silicon_dielectric
+xv2-sd-epi-strain	X2-16	結晶ひずみエンジニアリング{111}ダイ	#001-030	0,0.2,0	19.88,6.88,7.86	28,2,0	membrane_translucent
+xv2-mol-silicide-contact	X2-17	MOL極低抵抗ラップアラウンド	#001-030	0,0.2,0	18.9,2.93,7.9	-28,10,0	solder_silver
+xv2-monolithic-cfet	X2-18	次世代究極トランジスタモノリシックCFE	#001-030	12.8,0.2,10.6	8.3,6.4,4.95	36,2,28	cucu_hybrid_copper
+xv2-xbit-sram-cell	X2-19	ISSCC 2026 MediaTekx	#001-030	-11.4,-2.6,-9.6	11.6,1.98,9.6	-34,-8,-24	pin_carrier_gloss
+xv2-npu-systolic-mac	X2-20	BIONZ XR2統合AI処理ユニットI	#001-030	11.4,-2.6,-9.6	12,1.88,10.8	34,-8,-24	silicon_hero
+xv2-ai-awb-spectral-dsp	X2-21	α7 V / α7R VI新搭載AIオー	#001-030	-12.2,-2.8,9.6	10.76,2.81,8.76	-36,-10,24	silicon_hero
+xv2-demosaic-ring-buffer	X2-22	16bitリニアRAWリアルタイム方向適	#001-030	0,-4.4,11.4	11.76,2.41,7.96	0,-14,34	silicon_hero
+xv2-ibis-kalman-accelerator	X2-23	8.5段手ブレ補正対応6軸ジャイロ	#001-030	0,-4.4,-11.4	11.76,3.12,7.96	0,-14,-34	silicon_hero
+xv2-c2pa-puf-ecdsa-core	X2-24	ソニーカメラ真正性ソリューション専用	#001-030	12.2,-3.8,0	9.88,1.8,9.88	36,-16,0	gold_plating
+xv2-bpr-buried-rail	X2-25	トランジスタ地下埋設ベリード・パワーレー	#001-030	0,-5.6,0	25.16,1.92,14.16	0,-24,0	silicon_dielectric
+xv2-a16-spr-vb-contact	X2-26	TSMC A16Super Power	#001-030	0,-7.8,0	16.43,4.1,11.06	0,-32,0	titanium_machined
+xv2-backside-pdn-grid	X2-27	ウェハー裏面極低抵抗・極太バックサイド電	#001-030	0,-10.2,0	32.28,3.3,32.28	0,-44,0	silicon_hero
+xv2-backside-clock-tree	X2-28	次世代裏面グローバルクロック分配網	#001-030	0,-8.8,0	22.88,1.02,14.86	34,-38,14	cucu_hybrid_copper
+xv2-selfheating-phonon-via	X2-29	BSPDN自己発熱パラドックス対策：熱フ	#001-030	0,-12.4,0	24.2,2.61,24.2	-34,-52,-14	matte_chassis
+xv2-unified-memory-noc	X2-30	BIONZ XR2省電力の要コヒーレント	#001-030	0,-3.4,0	28.92,1.52,28.92	0,-56,0	gold_plating
+xv2-nanoflex-width-pair	X2-31	TSMC N2/A16NanoFlex	#031-055	-18.6,2.6,4.4	5.1,3.27,5.5	-54,10,14	matte_chassis
+xv2-hybrid-orient-cfet	X2-32	ハイブリッド結晶方位モノリシックCFET	#031-055	19.2,3.8,-4.8	4.6,2.83,4.6	54,14,-16	matte_chassis
+xv2-2d-tmd-mos2-channel	X2-33	0.7nm原子単層2D TMD蜂の巣チャ	#031-055	19.6,1,4.2	5.08,3.29,5.08	56,4,18	solder_silver
+xv2-radical-ox-il-layer	X2-34	無電荷O* / H* ラジカル酸化	#031-055	0,3,-18.6	6.56,2.95,3.53	0,12,-54	matte_chassis
+xv2-cfet-nci-butt-contact	X2-35	CFETナノシート切断隔離	#031-055	-18.6,0.2,-5.8	4.88,3.45,4.48	-54,2,-22	matte_chassis
+xv2-cfet-epi-via-bdi	X2-36	CFETエピ対エピ垂直ビア	#031-055	18.6,-2.6,-5.8	4.56,3.57,5.48	54,-10,-22	matte_chassis
+xv2-samsung-42nm-emdi-fet	X2-37	42nmゲートピッチ3+3枚ナノシート	#031-055	0,0.4,18.6	6.5,3.64,3.9	0,2,54	matte_chassis
+xv2-18ap-dual-power-boost	X2-38	Intel 18A-PPower	#031-055	-18.6,-3.2,5.4	4.66,4.24,4	-54,-12,18	matte_chassis
+xv2-sru-16nm-fsav-airgap	X2-39	16nmピッチ減算エッチング・ルテニウム	#031-055	-18.6,7.6,-2.4	4.9,3.05,4.9	-54,26,-8	matte_chassis
+xv2-highna-euv-mor-ler	X2-40	High-NA EUVアナモルフィック露	#031-055	18.6,7.6,-2.4	4.88,3.42,4.88	54,26,-8	silicon_hero
+xv2-a7-gear-ratio-m1	X2-41	A7世代ギア比 2:1 M0→M1	#031-055	0,7.6,-18.6	6.48,2.24,3.68	0,26,-54	silicon_hero
+xv2-nbti-pbti-trap-monitor	X2-42	オンダイ原子水素トラップNBTI /	#031-055	-18.6,6.6,8.4	4.7,1.78,4.7	-54,22,28	silicon_hero
+xv2-backside-ntsv-landing	X2-43	裏面ナノTSV シリサイド着地パッド	#031-055	18.6,-7.8,4.8	4.86,3.36,4.86	54,-30,16	matte_chassis
+xv2-scfet-5t1-sram	X2-44	imec VLSI 20265T+1	#031-055	-18.6,-5.8,-5.8	4.9,2.71,4.9	-54,-22,-22	matte_chassis
+xv2-3d-fefet-2tnf-cim	X2-45	3D垂直2TnF HfZrO₂	#031-055	18.6,-5.2,-10.8	4.9,3,4.9	54,-20,-36	gold_plating
+xv2-igzo-2t0c-edram	X2-46	PE-ALD水素アニールIGZO	#031-055	-18.6,-8.4,0.4	4.38,2.45,4.14	-54,-34,2	silicon_hero
+xv2-sot-mram-mtj-weights	X2-47	垂直磁化SOT-MRAM スピン軌道トル	#031-055	18.6,-4.4,11.4	5.14,2.71,3.64	54,-16,38	matte_chassis
+xv2-gan-si-monolithic-ivr	X2-48	300mmモノリシックGaN nMOS	#031-055	0,-7.8,-18.6	6.5,2.13,3.9	0,-30,-54	silicon_hero
+xv2-ucie-s-56g-d2d-phy	X2-49	ISSCC 2026UCIe-S 56	#031-055	18.6,11.6,6.6	4.7,1.42,5.5	54,42,22	silicon_hero
+xv2-hbm4-2048b-base-die	X2-50	HBM42048ビット超広幅ベースダイ	#031-055	-18.6,11.6,6.6	4.92,1.72,5.52	-54,42,22	silicon_hero
+xv2-gesi-110ghz-eam-cpo	X2-51	>110 GHz CバンドGeSi電界吸	#031-055	-18.6,11.2,-9.2	4.7,1.38,5.5	-54,40,-30	matte_chassis
+xv2-microfluidic-si-cooler	X2-52	シリコン直彫り3D ICマイクロ流体	#031-055	0,-15.2,0	36.3,2.7,33	0,-68,0	matte_chassis
+xv2-si-baw-clock-resonator	X2-53	マルチせん断モードシリコンBAW	#031-055	0,-8.8,18.6	6.52,1.27,4.22	0,-34,54	silicon_hero
+xv2-sidechannel-ecc-guard	X2-54	デュアルレールサイドチャネル電力マスキン	#031-055	18.6,-9.8,-1.6	4.7,1.92,4.9	54,-38,-6	titanium_machined
+xv2-coupe-35d-interposer	X2-55	TSMC 3.5DCOUPE 4.5μm	#031-055	0,16.8,0	36.1,1.71,36.1	0,68,0	matte_chassis

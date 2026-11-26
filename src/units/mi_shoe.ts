@@ -5,6 +5,8 @@ import { CadPart, PartExplanation, RenderMode } from '../assemblies/types';
 import { createFrameShape, createRoundedRectShape } from '../engine/CadHelpers';
 import { disposeObject3D } from '../core/dispose';
 import {
+  getCadTintLuma,
+  liftDarkCadTint,
   MaterialBucketKey,
   QUALITY_TIER_CONFIG,
   ResourceCache,
@@ -65,7 +67,7 @@ function pinX(pinNum: number): number {
   return (pinNum - 11) * PIN_PITCH;
 }
 
-// Structural hero parts whose subtle technical edges stay visible in HIGH/ULTRA Solid mode
+// Structural hero parts whose subtle technical edges stay visible in Solid mode
 const HERO_EDGE_PARTS = new Set<string>([
   'mi-shoe-cap-875',
   'mi-accessory-wp-skirt',
@@ -131,6 +133,7 @@ interface EdgeLineRecord {
   readonly partId: string;
   readonly line: THREE.LineSegments;
   readonly isHero: boolean;
+  readonly isDark: boolean;
 }
 
 interface PhysicsFlowSpec {
@@ -1244,8 +1247,9 @@ export class MiShoeUnit implements OptimizedUnit {
         localScale[p3 + 1] = r.localScale[1];
         localScale[p3 + 2] = r.localScale[2];
 
-        baseColors[i] = r.colorHex;
-        _tmpColor.setHex(r.colorHex);
+        const liftedHex = liftDarkCadTint(r.colorHex);
+        baseColors[i] = liftedHex;
+        _tmpColor.setHex(liftedHex);
         mesh.setColorAt(i, _tmpColor);
       }
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -1277,6 +1281,8 @@ export class MiShoeUnit implements OptimizedUnit {
 
     // Build all Tier-2 BatchedMeshes grouped by material bucket
     const piecesByBucket = new Map<MaterialBucketKey, BatchedPieceSpec[]>();
+    const partLumaSum = new Float32Array(partCount);
+    const partLumaCnt = new Uint16Array(partCount);
     for (let i = 0; i < batchedPieces.length; i++) {
       const bp = batchedPieces[i];
       let arr = piecesByBucket.get(bp.bucket);
@@ -1311,14 +1317,17 @@ export class MiShoeUnit implements OptimizedUnit {
         const bp = list[i];
         const geoId = batchedMesh.addGeometry(bp.geometry);
         const instId = batchedMesh.addInstance(geoId);
+        const liftedHex = liftDarkCadTint(bp.colorHex);
         batchIds[i] = instId;
         partIndices[i] = bp.partIdx;
         batchIdToPartId[instId] = bp.partId;
-        baseColors[i] = bp.colorHex;
+        baseColors[i] = liftedHex;
+        partLumaSum[bp.partIdx] += getCadTintLuma(liftedHex);
+        partLumaCnt[bp.partIdx] += 1;
         registeredPartIds.add(bp.partId);
         partBindingIndexSets[bp.partIdx].add(bindingIndex);
 
-        _tmpColor.setHex(bp.colorHex);
+        _tmpColor.setHex(liftedHex);
         batchedMesh.setColorAt(instId, _tmpColor);
         estimatedTriangles += Math.floor(bp.geometry.getAttribute('position').count / 3);
       }
@@ -1357,16 +1366,11 @@ export class MiShoeUnit implements OptimizedUnit {
     const finalStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
     this.edgeLines = [];
-    const edgeMatDefault = cache.acquireLineMaterial('mishoe-edge-solid', {
-      color: 0x181c24,
-      opacity: 0.24,
-      clippingPlanes: this.clippingPlanes,
-    });
     const edgeGroup = new THREE.Group();
     edgeGroup.name = 'mishoe-v2-edges';
     setNodeStaticMatrix(edgeGroup);
 
-    const thresholdAngle = quality === 'standard' ? 38 : quality === 'high' ? 30 : 26;
+    const thresholdAngle = quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
     for (let pi = 0; pi < partCount; pi++) {
       const srcGeos = edgeSourceByPart.get(pi);
       if (!srcGeos || srcGeos.length === 0) continue;
@@ -1380,9 +1384,11 @@ export class MiShoeUnit implements OptimizedUnit {
         return edges;
       });
 
-      const matRef = cache.acquireLineMaterial('mishoe-edge-solid', {
-        color: 0x181c24,
-        opacity: 0.24,
+      const avgLuma = partLumaCnt[pi] > 0 ? partLumaSum[pi] / partLumaCnt[pi] : 0.5;
+      const isDark = avgLuma < 0.36;
+      const matRef = cache.acquireLineMaterial(isDark ? 'mishoe-edge-solid-dark' : 'mishoe-edge-solid', {
+        color: isDark ? 0x7a889e : 0x181c24,
+        opacity: isDark ? 0.32 : 0.26,
         clippingPlanes: this.clippingPlanes,
       });
       const line = new THREE.LineSegments(edgeGeo, matRef);
@@ -1396,7 +1402,7 @@ export class MiShoeUnit implements OptimizedUnit {
       line.visible = cfg.showSolidStructuralEdges && isHero;
       setNodeStaticMatrix(line);
       edgeGroup.add(line);
-      this.edgeLines.push({ partIdx: pi, partId, line, isHero });
+      this.edgeLines.push({ partIdx: pi, partId, line, isHero, isDark });
 
       const edgeNow = typeof performance !== 'undefined' ? performance.now() : Date.now();
       if (!synchronous && edgeNow - sliceStart >= frameBudgetMs) {
@@ -1405,15 +1411,12 @@ export class MiShoeUnit implements OptimizedUnit {
         sliceStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
         if (isAborted()) {
           for (let i = 0; i < batchedPieces.length; i++) batchedPieces[i].geometry.dispose();
-          cache.releaseMaterialInstance(edgeMatDefault);
           rootGroup.add(edgeGroup);
           this.dispose(cache);
           throw new Error('MiShoeUnit build aborted');
         }
       }
     }
-    // Release the temporary initial acquisition since each line holds its own ref
-    cache.releaseMaterialInstance(edgeMatDefault);
     rootGroup.add(edgeGroup);
 
     // Dispose all staging temporary geometries now that BatchedMeshes & EdgesGeometries have copied them!
@@ -1986,7 +1989,9 @@ export class MiShoeUnit implements OptimizedUnit {
               ? 'mishoe-edge-cad'
               : renderMode === 'xray'
                 ? 'mishoe-edge-xray'
-                : 'mishoe-edge-solid';
+                : rec.isDark
+                  ? 'mishoe-edge-solid-dark'
+                  : 'mishoe-edge-solid';
         const prevMat = rec.line.material as THREE.Material;
         if (prevMat.userData?.__cacheKey !== `line:${targetKey}`) {
           const nextMat = cache.acquireLineMaterial(targetKey, {
@@ -1998,8 +2003,20 @@ export class MiShoeUnit implements OptimizedUnit {
                   ? 0x14161a
                   : renderMode === 'xray'
                     ? 0x3a516e
-                    : 0x181c24,
-            opacity: isSel ? 0.92 : isHov ? 0.72 : renderMode === 'cad' ? 0.72 : renderMode === 'xray' ? 0.36 : 0.24,
+                    : rec.isDark
+                      ? 0x7a889e
+                      : 0x181c24,
+            opacity: isSel
+              ? 0.92
+              : isHov
+                ? 0.72
+                : renderMode === 'cad'
+                  ? 0.72
+                  : renderMode === 'xray'
+                    ? 0.36
+                    : rec.isDark
+                      ? 0.32
+                      : 0.26,
             clippingPlanes: this.clippingPlanes,
           });
           rec.line.material = nextMat;

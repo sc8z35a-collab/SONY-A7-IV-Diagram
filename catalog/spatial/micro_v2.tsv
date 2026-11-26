@@ -1,0 +1,56 @@
+id	code	name	group	pos	size	exp	mat
+pv2-brochosome-ar	P2-01	バイオミメティックナノ多孔ブロコソーム超	#001-030	0,14.3,0	26.18,2.58,26.18	0,54,0	matte_chassis
+pv2-meta-phase-pillars	P2-02	メタサーフェス位相勾配非対称TiO₂ナノ	#001-030	0,12.2,0	25.84,2.81,25.84	0,45,0	matte_chassis
+pv2-qd-swir-absorber	P2-03	コロイド量子ドット短波赤外・可視拡張ナノ	#001-030	0,10.6,0	25,1.44,25	-30,38,12	cucu_hybrid_copper
+pv2-cfa-quantum-dye	P2-04	ナノ分散DPP有機顔料	#001-030	0,9.5,0	24.88,1.19,24.88	0,32,0	solder_silver
+pv2-plasmonic-aperture	P2-05	サブ波長プラズモニック金属ナノスリット導	#001-030	0,8.6,0	25.68,1.45,25.68	30,26,-10	gold_plating
+pv2-fresnel-zone-step	P2-06	画素内マルチレベルナノ・フレネル回折階段	#001-030	0,7.7,0	23.68,0.84,23.68	-26,21,-16	matte_chassis
+pv2-si-diamond-lattice	P2-07	単結晶シリコンダイヤモンド原子結晶格子	#001-030	0,4.4,0	23.84,5.42,23.84	0,12,0	silicon_wafer_dark
+pv2-ald-dipole-interface	P2-08	ALD原子層堆積Al₂O₃/HfO₂	#001-030	0,6.9,0	24.68,1.62,24.68	28,17,14	pin_carrier_gloss
+pv2-dti-core-stress-liner	P2-09	3-Wafer 0.43μm画素向け多層	#001-030	0,4.2,0	26.12,7.49,26.12	-32,10,-18	silicon_dielectric
+pv2-quantum-confinement-well	P2-10	3D電位トラフポテンシャルポケット	#001-030	0,3.2,0	14.94,3.31,14.94	30,7,18	silicon_photodiode
+pv2-nir-photonic-crystal	P2-11	シリコン裏面2Dフォトニック結晶ナノホー	#001-030	0,6.2,0	23.72,0.86,23.72	-30,15,18	solder_silver
+pv2-multi-tap-iToF-gates	P2-12	6タップ超短パルスiToF高速電荷振り分	#001-030	0,1.7,0	21.82,1.56,19.41	34,4,-14	membrane_translucent
+pv2-tg-halo-pocket	P2-13	転送ゲート直下残像消去ポケット注入	#001-030	0,0.2,0	9.58,5.04,4.6	-30,1,16	silicon_hero
+pv2-tg-null-feedthrough	P2-14	転送ゲート結合ノイズ打ち消し逆相補償ライ	#001-030	0,-0.8,0	21.5,0.75,7.25	32,-2,16	cucu_hybrid_copper
+pv2-fd-airgap-isolation	P2-15	超低容量フローティングディフュージョン周	#001-030	4.4,-1.6,4.4	11.68,2.84,11.68	26,-5,26	silicon_dielectric
+pv2-lofic-3d-pillar-cap	P2-16	LYTIA L910採用3D極細円筒トレ	#001-030	-5.8,-2.5,-5.2	11.76,4.57,11.76	-34,-8,-18	stainless_machined
+pv2-sf-rtnoise-trap-shield	P2-17	ソースフォロワ酸化膜単一電子トラップ抑制	#001-030	-5,-3.5,5.6	11.2,3.07,6.16	-30,-12,22	membrane_translucent
+pv2-noise-coupled-pixel-amp	P2-18	VLSI 2026最先端75.6 μV	#001-030	5.6,-4.2,-5	11.56,2.38,9.96	34,-14,-20	silicon_hero
+pv2-hbond-protruding-cu	P2-19	300nm–400nmピッチ超微細凸型C	#001-030	0,-6.2,0	26.16,2.01,26.16	0,-22,0	cucu_hybrid_copper
+pv2-sicn-oh-fusion-seam	P2-20	プラズマ活性化SiCN表面水酸基ファンデ	#001-030	0,-7.2,0	26.32,1.22,26.32	30,-25,12	titanium_machined
+pv2-cu-nanotwin-grain	P2-21	ナノ双晶配向銅グレイン結晶	#001-030	0,-8.2,0	18.62,2.2,18.85	-30,-28,-12	cucu_hybrid_copper
+pv2-ru-airgap-local-beol	P2-22	極細画素ローカル配線ルテニウムバリアレス	#001-030	0,-9.2,0	25.52,1.06,25.52	0,-32,0	silicon_dielectric
+pv2-3wafer-f2f-f2b-tsv	P2-23	3層ウェハー積層F2F＋F2B6μmピッ	#001-030	0,-10.2,0	25.82,9.28,25.82	-36,-35,14	matte_chassis
+pv2-on-sensor-ai-remosaic	P2-24	ソニー LYTIA 901搭載センサー内	#001-030	-6.4,-11.4,-6.4	12.4,2.02,12.4	-25,-40,-25	silicon_hero
+pv2-compute-in-pixel-mac	P2-25	画素直下コンピュート・イン・ピクセルアナ	#001-030	6.4,-11.4,-6.4	12.4,1.66,12.4	25,-40,-25	silicon_hero
+pv2-fine12bit-dual-ramp	P2-26	Fine12bit / 14bit	#001-030	-6.4,-11.4,6.4	12.4,2.39,12.4	-25,-40,25	silicon_hero
+pv2-weighted-spad-tdc	P2-27	キヤノン VLSI 2025/2026重	#001-030	6.4,-11.4,6.4	12.4,2.13,12.4	25,-40,25	silicon_hero
+pv2-2x2-shared-hybrid-gs	P2-28	2026年次世代2×2共有画素内ADCハ	#001-030	0,-13,0	15,1.93,15	0,-48,0	silicon_hero
+pv2-quad-pixel-puf	P2-29	ISVLSI 2026最先端クアッド画素	#001-030	-6.8,-14.4,0	12.08,1.88,9.28	-27,-56,0	gold_plating
+pv2-hf-hdr-fusion-engine	P2-30	ソニー 2025/2026最新ハイブリッ	#001-030	6.8,-14.4,0	12,2.01,9	27,-56,0	silicon_hero
+pv2-perovskite-3rgb-stack	P2-31	3層垂直積層ハロゲン化ペロブスカイト無フ	#031-055	-15.4,12.2,-5.8	4.89,3.93,4.7	-46,46,-20	cfa_gloss_filter
+pv2-qdpd-metasurface-cavity	P2-32	メタサーフェス直結量子ドットSWIR共振	#031-055	15.4,11.8,-5.8	4.68,2.88,4.68	46,44,-20	matte_chassis
+pv2-subwave-airgap-lightpipe	P2-33	サブ波長エアギャップ空洞・高屈折Si₃N	#031-055	0,10.6,-15.4	4.77,2.78,4.77	0,38,-46	matte_chassis
+pv2-dual-depth-gs-dti	P2-34	単一マスク7.2/7.5μm 二段深さグ	#031-055	-15.4,4.8,2.4	3.3,5.27,4.8	-48,14,8	matte_chassis
+pv2-bsi-align-fiducial-trench	P2-35	表裏ウェハー超精密位置合わせ深掘りバーニ	#031-055	15.2,8,7.6	4.52,1.6,4.52	44,26,26	silicon_hero
+pv2-dual-metal-pls-hood	P2-36	二重金属タングステン／TiN放物面アンチ	#031-055	-15.2,8.2,8.4	4.58,2.56,4.58	-44,26,28	titanium_machined
+pv2-deuterium-sid-passivation	P2-37	重水素Si–D同位体インターフェース終端	#031-055	15.4,4.4,-0.4	4.8,3.17,4.8	48,14,0	matte_chassis
+pv2-carbon-cluster-gettering	P2-38	炭化水素分子イオンC₃H₆ / CH₂P	#031-055	-15.4,1,-7.2	4.82,3.13,4.82	-48,4,-24	matte_chassis
+pv2-pp-surface-pinning-skin	P2-39	20nm極薄P⁺ホウ素 表面ピニング正孔	#031-055	0,6.8,15.2	7.02,1.9,3.05	0,24,46	pin_carrier_gloss
+pv2-graded-potential-stair	P2-40	多段傾斜N⁻ / N / N⁺	#031-055	15.4,1,-7.2	4.96,3.12,4.83	48,4,-24	titanium_machined
+pv2-radical-ox-chargefree-il	P2-41	ラジカル酸化O* / H* 無電荷インタ	#031-055	0,3.6,-15.4	5.91,2.62,3.34	0,12,-48	membrane_translucent
+pv2-dual-vtg-twin-pillar	P2-42	デュアル垂直転送ゲートD-VTG	#031-055	15.2,0.4,7.2	4.56,4.65,3.97	48,2,24	matte_chassis
+pv2-vod-antiblooming-barrier	P2-43	垂直オーバーフロードレインVOD	#031-055	-15.2,-1.2,7.6	4.82,3.21,4.62	-48,-4,26	titanium_machined
+pv2-rts-oxide-border-trap	P2-44	単一電子RTS 酸化膜ボーダートラップ欠	#031-055	-15.4,-2.6,-0.4	4.7,3.17,4.7	-48,-8,0	matte_chassis
+pv2-qis-pump-gate-jot	P2-45	室温単一光子計数QIS ポンプゲート	#031-055	15.4,-3.4,0.8	4.88,2.74,4.28	48,-12,4	silicon_hero
+pv2-ge-on-si-swir-spad	P2-46	10μmピッチGe-on-Si	#031-055	15.4,-4.6,-7.8	4.26,3.55,4.22	48,-16,-28	titanium_machined
+pv2-double-junction-harvest-pd	P2-47	二重接合P⁺PNPP⁺ 自己発電ハイブリ	#031-055	-15.4,-5.2,-7.8	4.94,3.32,4.48	-48,-18,-28	pin_carrier_gloss
+pv2-evs-log-change-pixel	P2-48	画素内非同期対数受光	#031-055	0,-3.6,15.2	6.6,1.9,3.5	0,-12,48	silicon_hero
+pv2-200nm-w2w-hybrid-array	P2-49	200nm極小ピッチウェハー間 W2W	#031-055	0,-7.2,-15.4	6.3,2.27,3.9	0,-24,-48	cucu_hybrid_copper
+pv2-gs-storage-node-trench	P2-50	地下遮光電荷ドメインGSストレージノード	#031-055	-15.2,-7.4,6.4	5.98,2.38,4.53	-48,-26,22	titanium_machined
+pv2-thermometer-ramp-dac	P2-51	列並列温度計コード電流ステアリング	#031-055	15.2,-8.8,7	4.7,2.91,4.9	48,-32,24	silicon_hero
+pv2-16to1-cml-serializer	P2-52	超高速16:1 TSPC / CML	#031-055	0,-10.8,15.2	6.9,1.5,3.5	0,-38,48	silicon_hero
+pv2-ob-dark-ref-pixel	P2-53	光学的黒OB暗電流リアルタイム基準ダミー	#031-055	-15.2,-11.8,-1.6	4.91,2.6,4.66	-48,-42,-6	titanium_machined
+pv2-cosmic-alpha-guard-ring	P2-54	宇宙線・低α線対策深掘り基板電荷回収ガー	#031-055	0,-15.8,0	30.72,1.45,30.53	0,-64,0	matte_chassis
+pv2-dual-cds-clamp-bridge	P2-55	列並列スイッチドキャパシタデュアルCDS	#031-055	15.2,-12.4,-1.6	4.7,1.95,4.9	48,-44,-6	silicon_hero

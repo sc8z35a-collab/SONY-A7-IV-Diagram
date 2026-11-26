@@ -1,0 +1,151 @@
+id	code	name	group	pos	size	exp	mat
+db-door-alu-frame	DB01	CNCアルミ押出ドアフレーム	#001-030	0,-3.15,25	53.76,95.56,3.67	0,0,56	matte_black_anodized
+db-door-lowe-glass	DB02	Low-E 銀スパッタ遮熱 ＋ UV	#001-030	0,-3.15,25.35	45.2,86.6,0.85	0,0,72	optical_ar_iridescent
+db-door-ar-esd-coat	DB03	博物館級 低反射AR	#001-030	0,-3.15,24.7	45.4,85.6,0.45	0,0,44	gold_plating
+db-magnetic-epdm-gasket	DB04	マグネット内蔵 デュアルリップEPDM気	#001-030	0,-3.15,23.6	51.4,93.2,1.37	0,0,32	magnesium_cast
+db-concealed-damp-hinge	DB05	180°多関節コンシールド	#001-030	-25.8,-3.15,23.2	3.12,77.2,5.45	-24,0,26	stainless_machined
+db-biometric-fingerprint-pad	DB06	静電容量式3D生体指紋	#001-030	24.2,3.5,26.2	3.8,17.5,1.52	22,0,64	ic_epoxy_dark
+db-solenoid-deadbolt-lock	DB07	フェイルセキュア電磁ソレノイド錠	#001-030	24,-5.5,20.8	3.4,12.6,8	28,0,26	stainless_machined
+db-eink-touch-bezel	DB08	電子ペーパー常時表示 ＋ 静電タッチ操作	#001-030	0,47.6,24.4	52.8,7.2,1.75	0,18,34	emissive_glow
+db-sht45-upper-sensor	DB09	上段カメラ室 Sensirion	#001-030	-16.5,34,-17.8	6.2,4.8,3.34	-34,14,16	matte_black_anodized
+db-sht45-lower-sensor	DB10	下段シネマ／特殊機材室 独立SHT45セ	#001-030	-16.5,-18.5,-17.8	5.6,12.3,3.18	-36,-10,18	magnesium_cast
+db-sgp41-voc-sensor	DB11	Sensirion SGP41	#001-030	16.5,34,-17.8	6.4,4.8,3.29	34,14,16	matte_black_anodized
+db-hall-door-interlock	DB12	磁気ホール効果ドア開閉センサー	#001-030	19.5,43.4,22.8	4.6,3.6,7.3	24,22,32	pcb_textured
+db-matter-thread-iot-soc	DB13	Matter over Thread /	#001-030	0,47.4,15	44,2.3,11.5	0,32,14	pcb_textured
+db-spcc-steel-chassis	DB14	1.2mm SPCC冷間圧延鋼板	#001-030	0,0,0	54,104,48	0,0,0	stainless_machined
+db-esd-powder-coat	DB15	IEC 61340-5-1準拠	#001-030	0,0,0	55.65,104.8,48.6	-34,8,0	magnesium_cast
+db-silica-aerogel-liner	DB16	メソ多孔質シリカエアロゲル超断熱ライナー	#001-030	0,0,0	51.15,101.25,44.6	34,6,-4	foam_felt_matte
+db-pcm-anticondense-panel	DB17	相変化マイクロカプセル結露防止内壁シート	#001-030	0,0,0	49.05,98,41	-22,22,-8	pin_carrier_gloss
+db-dualzone-divider-deck	DB18	上下デュアルゾーン気密断熱パーティション	#001-030	0,-12,1.8	47.8,2.2,42.35	0,-4,34	magnesium_cast
+db-eptfe-breather-vent	DB19	延伸PTFE気圧平衡ブリーザーメンブレン	#001-030	-27.8,26,-8	2.91,4.72,5.2	-44,10,-8	stainless_machined
+db-n2-purge-coupler	DB20	ラボ仕様 乾燥窒素クイックパージ	#001-030	27.8,26,-8	4.3,8.07,6.2	44,10,-8	matte_chassis
+db-telescopic-ball-rails	DB21	フルエクステンション・ソフトクローズ鋼球	#001-030	0,0,0	47.25,86,34.2	-24,0,16	stainless_machined
+db-perforated-steel-trays	DB22	ベンチレーション・スリット付き高剛性スラ	#001-030	0,0,0	43.8,51.61,35.32	0,0,26	ic_epoxy_dark
+db-archival-xpe-lens-cradle	DB23	無硫黄・独立気泡XPE/EVAウェーブレ	#001-030	0,0,0	42.34,52.33,33.4	0,5.5,34	foam_felt_matte
+db-cri97-inspection-led	DB24	高演色Ra97フリッカーフリー庫内検品L	#001-030	0,0,0	47.43,85.6,1.78	0,0,20	stainless_machined
+db-camera-lens-showcase	DB25	保管対象モデル：カメラ	#001-030	0,0,0	34.62,59.69,18.39	0,10,44	matte_black_anodized
+db-fireproof-battery-bay	DB26	VDMA 24994思想 耐火セラミック	#001-030	0,-42.5,1.2	44.3,11.48,36.95	0,-14,42	magnesium_cast
+db-usbc-pd31-charge-hub	DB27	USB-C PD 3.1	#001-030	0,-45.1,-2.5	34,7.8,14	0,-8,56	matte_black_anodized
+db-uvc-265-280-sterilizer	DB28	デュアル波長 深紫外AlGaN UV-C	#001-030	0,-6.5,-21.2	22,9.6,4.12	-28,-4,-18	matte_black_anodized
+db-tio2-photocatalyst-mesh	DB29	可視光応答型 C/Nドープ二酸化チタン光	#001-030	0,5.2,-21.2	22.4,10.6,2.45	28,6,-18	stainless_machined
+db-voc-carbon-hepa-filter	DB30	ヤシ殻活性炭 ＋ 酸性ガス吸着	#001-030	0,16.8,-21.2	22.6,12.05,2.6	-28,18,-16	matte_black_anodized
+db-maglev-circulation-fan	DB31	磁気浮上超静音マイクロ循環ファン	#031-060	0,29.8,-21.2	13.6,13.6,2.8	26,28,-16	matte_black_anodized
+db-laminar-air-plenum	DB32	背面デュアルゾーン層流エアダクト	#031-060	0,3,-18.8	26.4,78,3	0,0,-6	magnesium_cast
+db-pem-nafion-membrane	DB33	固体高分子電解質膜電解除湿コア	#031-060	0,14.5,-25.6	22,13,1.8	0,18,-34	matte_chassis
+db-pem-ptir-electrodes	DB34	白金・イリジウム多孔質ガス拡散触媒電極	#031-060	0,14.5,-25.6	23.2,9.2,2.34	18,22,-48	gold_plating
+db-mof-zeolite-rotor-bed	DB35	次世代ジルコニウムMOF＋ ゼオライト4	#031-060	0,-0.5,-25.8	23.2,13.6,3.73	0,0,-42	stainless_machined
+db-niti-sma-shutter	DB36	ニチノール形状記憶合金 デュアルシャッタ	#031-060	0,-0.5,-25.8	30.83,12.4,6.32	-22,-2,-56	magnesium_cast
+db-batio3-ptc-heater	DB37	チタン酸バリウム自己温度制御PTCセラミ	#031-060	0,-0.5,-25.8	20.8,10.23,1.75	24,-2,-64	stainless_machined
+db-peltier-tec-module	DB38	急速回復用 テルル化ビスマスペルチェ熱電	#031-060	0,-15.5,-26	15.9,11,2.35	0,-16,-52	ic_epoxy_dark
+db-hydrophilic-wick-drain	DB39	親水微細溝アルミ冷却凝縮板	#031-060	0,-15.5,-25.8	15.2,14.11,7.72	-22,-16,-34	foam_felt_matte
+db-rear-skived-heatsink	DB40	背面スカイブド・アルミ放熱フィン	#031-060	0,1,-29.8	29.4,48.2,4.6	0,0,-76	stainless_machined
+db-gan-power-supply	DB41	窒化ガリウムマルチレベル高効率AC	#031-060	-10.5,-36.5,-26.2	16.5,11.5,5.3	-26,-22,-42	matte_black_anodized
+db-supercap-backup-pack	DB42	高耐久スーパーキャパシタ	#031-060	10.5,-36.5,-26.2	16.5,11.5,4.65	26,-22,-42	magnesium_cast
+db-esd-copper-ground-bus	DB43	1MΩ安全保護抵抗内蔵 銅アースバスバー	#031-060	0,-2,-24.5	44,89.1,3.61	0,-18,-32	copper_thermal
+db-seismic-gel-feet-anchor	DB44	制振粘弾性ゲル内蔵 耐震アジャスター脚	#031-060	0,0,0	49.3,106.82,47.43	0,-28,0	stainless_machined
+db-glazing-uchannel-blocks	DB45	EPDMグレージングUチャネル	#031-060	0,-3.15,25.35	46.05,87.23,1.45	-4,0,56.5	elastomer_rubber
+db-miter-corner-cleats	DB46	45°マイター角SUS304 L字クリー	#031-060	0,-3.15,25.4	50.79,91.99,1.6	0,6,49.5	elastomer_rubber
+db-emergency-key-usbc-jump	DB47	緊急ディンプルキーシリンダー	#031-060	24.7,-14.2,25.7	2.6,8.6,3.02	22,-8,54	matte_black_anodized
+db-ferritic430-strike-plate	DB48	フェライト系SUS430強磁性ドアストラ	#031-060	0,-3.15,23.85	51.8,93.4,3.25	14,0,26.5	ic_epoxy_dark
+db-door-swing-stopper-ptfe	DB49	120°開度リミッター	#031-060	0,0,0	2.56,71.82,7.88	-28,0,34	stainless_machined
+db-pa66-thermal-break-bead	DB50	PA66-GF25ポリアミド断熱サーマル	#031-060	0,-3.15,25.3	51.4,93,1.72	5,-4,44	matte_chassis
+db-chassis-corner-gussets	DB51	筐体内側コーナー三角ガセット補強板	#031-060	0,0,0	51.75,101,44.15	-22,14,-10	ic_epoxy_dark
+db-inner-silicone-airlock	DB52	庫内インナーリップ・シリコーン二次気密エ	#031-060	0,-3.15,24.3	48.2,89.6,1.48	0,-3,31.5	matte_black_anodized
+db-engine-service-flange	DB53	背面除湿ユニット着脱フランジ	#031-060	0,-1,-24.3	28,56,2.01	0,0,-20.5	stainless_machined
+db-ip68-hermetic-glands	DB54	IP68二段ダイアフラム・シリコーン気密	#031-060	0,0,0	31.92,66.42,5.05	-18,-8,-26	membrane_translucent
+db-rear-hatch-butyl-cld	DB55	ブチルゴム＋アルミ箔 拘束層制振デッドニ	#031-060	0,0,0	52.05,77,36	24,-16,-48	elastomer_rubber
+db-analog-hair-hygrometer	DB56	ゼロ電源 合成毛髪アナログ基準湿度計	#031-060	16.8,34.5,-16.8	7,7,2.45	24,26,22	brass_precision
+db-pilaster-shelf-clips	DB57	25 mmピッチ・ステンレス柱	#031-060	0,0,0	46.12,86,30.1	34,0,12	stainless_machined
+db-antiroll-rail-detent	DB58	耐震ストッパーバー	#031-060	0,0,0	42.6,53.85,1.4	0,3,42	stainless_machined
+db-telephoto-vcradle-dividers	DB59	大口径超望遠レンズ専用 V字ウェーブクレ	#031-060	0,0,0	11.95,52.9,26.5	16,9,32	foam_felt_matte
+db-esd-card-filter-tray	DB60	ESD導電フォーム内蔵 CFexpres	#031-060	12.8,4.05,2.2	15.5,4.55,22	24,4,38	foam_felt_matte
+db-saturated-salt-cal-port	DB61	ISO 483 飽和塩法現場校正用密閉テ	#061-090	-27.2,14,2	5.75,4.73,4.8	-34,6,8	stainless_machined
+db-flickerfree-led-driver	DB62	25 kHz超T-PWM＋CCRハイブリ	#061-090	0,44,7.6	45.24,87.38,15.3	0,24,22	optical_ar_iridescent
+db-battery-h2co-offgas-sensor	DB63	リチウム電池早期熱暴走検知 水素	#061-090	0,-36.1,2	12,2.78,6.2	-14,-18,38	pcb_textured
+db-battery-flame-arrestor	DB64	SUS316L焼結多孔質メタル	#061-090	-12.5,-41.5,-23.6	6.2,6.2,4.37	-24,-22,-34	stainless_machined
+db-pem-bipolar-flowplates	DB65	チタン製サーペンタイン流路セパレーター	#061-090	0,12,-25.4	14.8,12.6,3.89	0,14,-34	titanium_machined
+db-pem-hbridge-driver-pcb	DB66	PEM専用 3.0 V定電圧フォールドバ	#061-090	12.2,12,-25.6	9.6,6.2,1.7	24,14,-40	pcb_textured
+db-mof-mesh-ptfe-cage	DB67	SUS316微細メッシュ＋ePTFE撥水	#061-090	0,-1.5,-25.4	13.6,11.63,2.9	-18,2,-44	stainless_machined
+db-bimetal-thermal-fuse138	DB68	120°Cバイメタルサーモスタット ＋	#061-090	6.8,-5.8,-26.8	9.15,2.3,2.27	24,-5,-52	stainless_machined
+db-exhaust-check-labyrinth	DB69	シリコーン逆止弁フラップ ＋ 防虫	#061-090	0,-1.5,-28.4	12.2,6.4,3.34	0,-2,-72	matte_black_anodized
+db-tec-graphite-peek-mount	DB70	熱分解グラファイトシート＋ PEEK断熱	#061-090	0,-16.2,-25.8	16.12,11.8,3.6	-22,-14,-56	membrane_translucent
+db-tec-coldplate-ntc-probe	DB71	ペルチェ冷却板直結 NTC高精度サーミス	#061-090	3.2,-16.2,-23	11.55,3,1.24	24,-16,-30	membrane_translucent
+db-ceramic-metasurface-evap	DB72	3D造形ハニカム多孔質アルミナメタサーフ	#061-090	0,-23.4,-27.8	15.6,6.83,4.4	0,-24,-68	matte_black_anodized
+db-heatsink-thermal-break	DB73	放熱ヒートシンク〜筐体間 シリコーン気密	#061-090	0,-2,-27.1	25.2,46.5,1.5	0,0,-60	matte_chassis
+db-uvc-fused-silica-cavity	DB74	合成溶融石英UV透過ウィンドウ ＋	#061-090	0,22.8,-21.2	15.2,6.2,3.97	-22,22,-24	elastomer_rubber
+db-uvc-sic-monitor-pd	DB75	ソーラーブラインド SiCUV	#061-090	9.2,22.8,-21.2	5.6,4.2,1.68	28,22,-24	pcb_textured
+db-honeycomb-flow-grid	DB76	アルミ製ハニカム層流整流グリッド	#061-090	0,0,0	22,54.6,1.11	0,8,-14	stainless_machined
+db-n2-auto-solenoid-valve	DB77	自動比例制御 N₂窒素パージ電磁弁	#061-090	23,24.5,-4.5	5.7,9.2,6.22	44,18,-8	brass_precision
+db-stepper-butterfly-damper	DB78	ステッピングモーター駆動 上下ゾーン独立	#061-090	-4,-12,-19.5	8.4,3.82,5.6	-28,-8,-28	stainless_machined
+db-iec-c14-emi-inlet	DB79	ロック機構付きIEC 60320	#061-090	16.5,-39.5,-24.2	6.8,5.36,7.21	34,-26,-48	emi_shield_metal
+db-tvs-esd-galvanic-iso	DB80	±30 kV TVS静電気保護ダイオード	#061-090	-12.8,45.8,8.2	8.8,1.33,5.25	-34,32,18	ic_epoxy_dark
+db-ideal-diode-oring-bms	DB81	N-MOSFET理想ダイオードORing	#061-090	-12,-39.2,-23.2	10.8,5.8,1.1	-34,-28,-48	pcb_textured
+db-external-rf-radome-ant	DB82	外付け2.4 GHzセラミックRFレドー	#061-090	14.5,52.8,-12.5	12.5,3.69,8.2	24,40,-18	foam_felt_matte
+db-tcxo-rtc-fram-logger	DB83	±2 ppm温度補償水晶RTC	#061-090	12.8,45.8,8.2	8.2,1.45,6.2	34,32,18	pcb_textured
+db-astm595-ptfe-harness	DB84	NASA ASTM E595準拠	#061-090	0,0,0	18.95,86,24.9	-42,4,-12	foam_felt_matte
+db-piezo-alarm-lightpipe	DB85	圧電セラミック異常警報ブザー	#061-090	0,47.6,25	40.45,5.33,1.69	0,32,42	emissive_glow
+db-locking-pu-casters	DB86	耐荷重270 kg デュアルロック	#061-090	0,-52.8,0	51.5,4.88,44.5	0,-34,0	matte_black_anodized
+db-bullseye-spirit-level	DB87	筐体天面埋め込み 360°ブルズアイ気泡	#061-090	-21.2,52.35,18.8	4.9,2.02,4.9	-30,36,24	matte_black_anodized
+db-rear-50mm-wall-bumpers	DB88	背面50 mm強制放熱クリアランス確保	#061-090	0,0,0	50.51,91.6,6.55	0,0,-56	matte_chassis
+db-copper-ion-esd-mat	DB89	銅イオン抗菌・抗カビ	#061-090	0,-10.65,1	44.2,1.26,34.5	-18,2,48	copper_thermal
+db-nist-nfc-cal-plate	DB90	NISTトレーサブル校正証明書レーザー刻	#061-090	27.25,38,8.5	0.5,9.5,14.5	38,26,14	stainless_machined
+db-structural-glazing-tape	DB91	構造用アクリルVHBグレージングテープ	#091-120	0,-3.15,25.45	44.2,85.6,0.54	4,4,62	pin_carrier_gloss
+db-glass-shatter-laminate-film	DB92	ANSI Z97.1 / EN 356	#091-120	0,-3.15,25.02	43.05,84.45,0.35	-4,-4,66.5	pin_carrier_gloss
+db-hinge-side-dogbolts	DB93	焼入れ鋼ヒンジ側こじ開け防止ドッグボルト	#091-120	-25.6,-3.15,22.8	2.84,66.2,5.9	-38,-4,32	stainless_machined
+db-3d-eccentric-hinge-cam	DB94	3軸偏心カム式ヒンジ微調整プレート	#091-120	-26.2,-3.15,22	2,79.6,3.8	-38,8,22	stainless_machined
+db-3axis-tamper-seismic-mems	DB95	超低消費電力 3軸タンパー	#091-120	21.5,45.2,16.5	5.8,3.6,2.9	38,26,28	stainless_machined
+db-door-slam-cushion-vent	DB96	扉閉鎖エアクッション逃がし・ワンウェイ微	#091-120	25.4,24,22.2	3.05,3.84,3.88	38,12,36	brass_precision
+db-door-braided-earth-strap	DB97	IEC 61340-5-1 扉・筐体間	#091-120	-25.2,-39.5,22.8	4.14,7.54,4.75	-38,-18,34	gold_plating
+db-security-tether-shackle	DB98	背面 焼入れ鋼筐体丸ごと盗難防止アンカー	#091-120	-21,-44,-24.8	12.22,6.02,6.79	-40,-34,-34	stainless_machined
+db-vinegar-acid-scavenger	DB99	IPI A-Dストリップ酸度インジケータ	#091-120	24.4,28.5,6	2.47,11.4,8.2	42,22,18	stainless_machined
+db-corrosion-intercept-strip	DB100	反応性銅結合ポリマーコロージョン	#091-120	24.4,11,6	2,13.6,5.2	44,4,16	stainless_machined
+db-cobaltfree-hic-card	DB101	EU R49/R46・JEDEC準拠	#091-120	-24.4,28.5,8.5	1.74,10.6,6.8	-44,22,22	stainless_machined
+db-seam-epoxy-hermetic-caulk	DB102	庫内12辺全周 低VOC2液エポキシ	#091-120	0,0,0	52.06,102.06,45.99	26,-14,-8	pin_carrier_gloss
+db-bayonet-mount-parking-dock	DB103	シリコーン緩衝POMバヨネット垂直レンズ	#091-120	-11,4,3	16.8,2.3,15.6	-22,10,44	magnesium_cast
+db-leather-strap-hanger-bar	DB104	多孔ステンレス革ストラップ・蛇腹エアフロ	#091-120	-14.5,40.5,2	16.8,6.66,2.2	-30,28,32	stainless_machined
+db-shelf-esd-wiper-brush	DB105	リン青銅バネ式 引き出し棚ESD連続接地	#091-120	0,0,0	52.12,51.7,3.6	-36,-6,18	stainless_machined
+db-interdigital-condensation-strip	DB106	金めっき150 μmピッチ櫛歯PCB結露	#091-120	0,-24.6,-24.2	18.6,1.03,3.8	-16,-28,-32	gold_plating
+db-pem-mno2-ozone-catalyst	DB107	PEMアノード側 八面体分子篩 α	#091-120	0,14.5,-24.2	13.8,11.4,0.95	-22,22,-38	stainless_machined
+db-pem-carbon-gdl-mpl	DB108	PEMカソード撥水PTFE処理カーボンペ	#091-120	0,14.5,-25.1	12.2,10,1.7	22,26,-36	membrane_translucent
+db-mof-rotor-gear-motor	DB109	0.5 rpm 超静音ブラシレス遊星DC	#091-120	-11.5,-0.5,-25.6	5.83,5.3,6.85	-36,2,-44	stainless_machined
+db-mof-rotor-sector-seal	DB110	低摩擦PTFEフェルト 270°吸着	#091-120	0,-0.5,-25	13.54,13.54,1.6	22,4,-44	foam_felt_matte
+db-tec-thermal-expansion-strap	DB111	積層OFHC無酸素銅箔 CTE吸収フレキ	#091-120	0,-15.5,-26.8	9.6,8.6,1.88	26,-16,-56	copper_coil
+db-pfasfree-hydrophobic-duct	DB112	2026年EU REACH準拠	#091-120	0,-1.5,-27.6	10.4,6.29,4.99	-20,-6,-70	pin_carrier_gloss
+db-filter-dp-mems-sensor	DB113	デジタルMEMS差圧センサーHEPAフィ	#091-120	-12.5,16.8,-21	8.1,7.08,3.25	-42,20,-24	pin_carrier_gloss
+db-fan-silicone-grommets	DB114	Shore A 40シリコーン防振プルピ	#091-120	0,29.8,-21.6	13.6,13.6,4.2	38,34,-22	membrane_translucent
+db-filter-rfid-lifecycle-tag	DB115	13.56 MHz フィルター装着インタ	#091-120	11.8,16.8,-21	5.8,5.2,1.1	42,20,-24	pcb_textured
+db-n2-mems-massflow-filter	DB116	Sensirion SFM4300	#091-120	24.5,15,-6.5	4.2,8.68,9.8	50,12,-16	brass_precision
+db-lightning-gdt-mov-ntc	DB117	IEC 61643-11 Class	#091-120	18,-32,-24.6	8.8,5.8,3.03	44,-22,-52	pcb_textured
+db-hardware-watchdog-ic	DB118	独立精密電圧監視	#091-120	-8,47.4,15	6.8,1.3,5.2	-22,40,14	pcb_textured
+db-secure-element-hsm	DB119	耐タンパー・ハードウェア・セキュアエレメ	#091-120	8,47.4,15	6.4,1.51,5	22,40,14	pcb_textured
+db-ups-lfp-lowtemp-heater	DB120	停電UPS用 LiFePO₄ 氷点下セル	#091-120	10.5,-36.5,-24.8	11.6,7.6,0.86	36,-32,-40	membrane_translucent
+db-zerocross-ssr-heater	DB121	ゼロクロス駆動フォトトライアック	#121-150	14.5,-8.5,-25.8	5.6,7.2,3.05	36,-8,-60	stainless_machined
+db-pcb-parylene-conformal	DB122	IPC-CC-830C Class 3	#121-150	0,47.4,15.4	26.4,1.59,8.6	0,46,26	optical_ar_iridescent
+db-service-pogo-quick-coupler	DB123	密閉金めっき外部磁気ポゴピン診断ポート	#121-150	-17.5,-14,-25.2	5.8,8.73,3.6	-42,-14,-44	matte_chassis
+db-dry-contact-alarm-relay	DB124	フォト絶縁 SPDT Form-C	#121-150	17.5,-22.5,-25.2	6.6,4.4,2.73	42,-18,-38	pcb_textured
+db-magnetic-side-caddy	DB125	非穿孔ネオジム・ラバー被覆マグネット式ス	#121-150	28.6,0,6	6.35,16.4,11.45	52,-6,14	magnesium_cast
+db-rear-cord-winder-cleat	DB126	背面50 mm放熱クリアランス内蔵	#121-150	-14.5,-28,-27.2	13.1,4.35,3.48	-38,-30,-60	matte_chassis
+db-18pct-gray-check-liner	DB127	無反射フロック黒色光学検品バックドロップ	#121-150	0,31.5,-16.8	24.8,12.2,0.82	0,28,34	stainless_machined
+db-front-kickplate-guard	DB128	ヘアラインSUS304下部前面トウキック	#121-150	0,-50.6,24.4	53.7,3.3,1.9	0,-30,36	elastomer_rubber
+db-modular-gang-brackets	DB129	モジュラー複数台連結SUS304耐震ギャ	#121-150	-27.8,38,-12	5.15,78.4,9.65	-50,32,-14	stainless_machined
+db-dfd-iso11469-eco-id	DB130	2026年EU ESPR	#121-150	27.25,-40.5,-14	0.66,9.8,7.6	46,-36,-16	stainless_machined
+db-spd-smart-sunshield-glass	DB131	2026年美術館級 90 μm	#121-150	0,-3.15,25.18	42.65,84.7,0.77	4,-4,77.5	optical_dichroic
+db-compression-pull-latch	DB132	バイズアクション軸方向＋6 mm引き込み	#121-150	25.2,-23.5,24.8	5.3,8.8,5.27	34,-18,52	stainless_machined
+db-ble6-channel-sounding-ant	DB133	Bluetooth 6.0 / 6.3	#121-150	21.5,47.4,23.4	6.4,3.2,1.08	34,34,46	ic_epoxy_dark
+db-60ghz-mmwave-presence-radar	DB134	2026年 60 GHz MIMO	#121-150	-18.5,47.4,23.4	6.8,3,1.21	-30,36,48	magnesium_cast
+db-365-405nm-fungus-inspect-led	DB135	デュアル波長 365 nm／405 nm	#121-150	0,41.2,6	20.4,1.78,2.2	0,38,36	stainless_machined
+db-fumed-silica-vip-panel	DB136	フュームドシリカ芯 真空断熱パネル	#121-150	0,0,0	49.2,100.8,43.48	0,46,-24	emi_shield_metal
+db-graphene-oxide-vapor-membrane	DB137	2026年 100 nm未満 酸化グラフ	#121-150	-27.8,12,-12	1.6,6.8,7.9	-52,14,-22	stainless_machined
+db-mof-hydrogel-blackout-buffer	DB138	2026年 階層多孔MOF-303	#121-150	0,-13.5,1.5	34,1.63,18	20,-10,46	stainless_machined
+db-far-uvc-222nm-krcl-emitter	DB139	光学フィルター付き人体安全 Far	#121-150	0,43,21.5	28,2.55,2.8	0,44,48	magnesium_cast
+db-vislight-gc3n4-antimold-coat	DB140	2026年 金属フリー可視光応答 g	#121-150	0,0,0	44.2,49.74,34.4	-16,12,38	membrane_translucent
+db-piezo-mems-airjet-curtain	DB141	2026年 羽根なし完全固体PiezoM	#121-150	0,42.2,18	32,1.71,4.4	14,36,50	copper_coil
+db-vitrimer-selfheal-seal-lip	DB142	2026年 動的ジスルフィド／水素結合	#121-150	0,-3.15,23.2	48.8,91.6,0.82	-12,-4,38	pin_carrier_gloss
+db-sen66-laser-pm-spore-counter	DB143	2026年 Sensirion	#121-150	-16.5,16,-17.8	5.8,5.2,2.79	-44,8,14	magnesium_cast
+db-qcm-5mhz-outgas-monitor	DB144	NASA/ESA宇宙光学級 5 MHz	#121-150	16.5,16,-17.8	5.6,5.6,2.9	44,14,14	stainless_machined
+db-ultrasonic-40khz-leak-mems	DB145	40 kHz 超音波気密リーク検知	#121-150	22.5,34.5,19.5	4.6,4,2.63	42,26,38	pcb_textured
+db-bmp585-optical-o2-anoxic	DB146	Bosch BMP585高精度気圧計 ＋	#121-150	16.5,-18.5,-17.8	6.8,4.6,1.4	44,-16,14	pcb_textured
+db-rain-rfid-gen2x-asset-shelf	DB147	2026年 UHF RAIN RFID	#121-150	0,0,0	38,49.88,18	22,14,44	pcb_textured
+db-mlx90640-ir-thermal-battery	DB148	Melexis MLX90640	#121-150	12,-36.1,2	12.4,1.78,6.2	22,-24,44	pcb_textured
+db-microcapsule-aerosol-firesheet	DB149	2025–2026年 熱応答マイクロカプ	#121-150	0,-35.7,-1.5	36,0.75,26	0,-24,52	pin_carrier_gloss
+db-indoor-opv-ceracharge-harvest	DB150	CES 2026 室内光有機薄膜太陽電池	#121-150	0,50.6,24.4	36,2.2,1.64	0,52,38	silicon_photodiode

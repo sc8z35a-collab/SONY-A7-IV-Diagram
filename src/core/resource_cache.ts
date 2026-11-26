@@ -120,21 +120,21 @@ export interface QualityTierConfig {
 export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
   standard: {
     maxPixelRatio: 1.0,
-    curveSegments: 6,
-    radialSegments: 8,
-    torusTubularSegments: 10,
-    sphereSegments: 10,
+    curveSegments: 10,
+    radialSegments: 14,
+    torusTubularSegments: 14,
+    sphereSegments: 12,
     shadowsEnabled: false,
     postProcessEnabled: false,
-    enableStudioEnv: false,
-    showSolidStructuralEdges: false,
-    maxHeroTextureDim: 256,
+    enableStudioEnv: true,
+    showSolidStructuralEdges: true,
+    maxHeroTextureDim: 512,
   },
   high: {
     maxPixelRatio: 1.5,
-    curveSegments: 12,
-    radialSegments: 14,
-    torusTubularSegments: 16,
+    curveSegments: 14,
+    radialSegments: 18,
+    torusTubularSegments: 18,
     sphereSegments: 16,
     shadowsEnabled: false,
     postProcessEnabled: false,
@@ -155,6 +155,39 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     maxHeroTextureDim: 1024,
   },
 };
+
+/**
+ * Smooth, hue-preserving dark-tone toe lift for CAD shadow readability.
+ * Lifts extreme near-black tints (0x090b0f..0x2c323d) cleanly into legible studio charcoal
+ * so ACESFilmicToneMapping never crushes dark housings/grips/barrels into flat #000,
+ * while leaving midtones and bright accent colors 100% untouched.
+ */
+export function liftDarkCadTint(hex: number): number {
+  const r = ((hex >> 16) & 0xff) / 255;
+  const g = ((hex >> 8) & 0xff) / 255;
+  const b = (hex & 0xff) / 255;
+  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const threshold = 0.3;
+  if (luma >= threshold) return hex;
+
+  const t = 1 - luma / threshold;
+  const lift = 0.195 * t * t;
+  const nr = Math.min(1, r + lift * 0.96);
+  const ng = Math.min(1, g + lift * 0.99);
+  const nb = Math.min(1, b + lift * 1.05);
+  return (
+    ((Math.round(nr * 255) & 0xff) << 16) |
+    ((Math.round(ng * 255) & 0xff) << 8) |
+    (Math.round(nb * 255) & 0xff)
+  );
+}
+
+export function getCadTintLuma(hex: number): number {
+  const r = ((hex >> 16) & 0xff) / 255;
+  const g = ((hex >> 8) & 0xff) / 255;
+  const b = (hex & 0xff) / 255;
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
 
 export interface MaterialSpec {
   readonly color: number;
@@ -292,13 +325,11 @@ export const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     color: 0xffffff,
     metalness: 0.48,
     roughness: 0.46,
-    stdLambert: true,
   },
   pin_carrier_gloss: {
     color: 0xffffff,
     metalness: 0.14,
     roughness: 0.26,
-    stdLambert: true,
     ultraPhysical: { clearcoat: 0.58, clearcoatRoughness: 0.14 },
   },
   copper_coil: {
@@ -346,7 +377,6 @@ export const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     color: 0xffffff,
     metalness: 0.62,
     roughness: 0.44,
-    stdLambert: true,
     bumpTextureKey: 'mg_grain',
     bumpScale: 0.032,
   },
@@ -592,16 +622,19 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         const dy = cosT;
         const dz = sinT * Math.sin(phi);
 
-        let lum = 0.62 + Math.max(0, dy) * 0.26;
+        let lum = 0.76 + Math.max(0, dy) * 0.24;
         const keyDot = Math.max(0, dx * -0.517 + dy * 0.716 + dz * 0.458);
-        lum += Math.pow(keyDot, 6) * 0.55;
+        lum += Math.pow(keyDot, 5) * 0.48;
         const rimDot = Math.max(0, dx * 0.648 + dy * 0.365 + dz * -0.669);
-        lum += Math.pow(rimDot, 8) * 0.45;
+        lum += Math.pow(rimDot, 6) * 0.42;
+        // Soft studio lower-front reflector bounce so vertical walls and undersides never crush
+        const bounceDot = Math.max(0, dx * 0.32 + dy * -0.45 + dz * 0.83);
+        lum += Math.pow(bounceDot, 3) * 0.28;
         const band = Math.exp(-Math.pow((dy + 0.08) * 7.5, 2));
-        lum *= 1.0 - band * 0.42;
+        lum *= 1.0 - band * 0.16;
 
-        const r = Math.min(255, Math.max(0, Math.round(lum * 246)));
-        const g = Math.min(255, Math.max(0, Math.round(lum * 249)));
+        const r = Math.min(255, Math.max(0, Math.round(lum * 248)));
+        const g = Math.min(255, Math.max(0, Math.round(lum * 250)));
         const b = Math.min(255, Math.max(0, Math.round(lum * 255)));
         const idx = (y * w + x) * 4;
         data[idx] = r;
@@ -641,35 +674,38 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         data[idx + 2] = v;
         data[idx + 3] = 255;
       } else if (key === 'hdi_pcb') {
+        // High-value modulation map so multiplying by instanceColor tint preserves crisp emerald PCB & bright traces/vias
         const isTrace = x % 8 === 0 || y % 12 === 0;
         const isVia = x % 16 === 4 && y % 16 === 4;
         if (isVia) {
-          data[idx] = 212;
-          data[idx + 1] = 176;
-          data[idx + 2] = 74;
+          data[idx] = 255;
+          data[idx + 1] = 242;
+          data[idx + 2] = 196;
         } else if (isTrace) {
-          data[idx] = 32;
-          data[idx + 1] = 104;
-          data[idx + 2] = 84;
+          data[idx] = 210;
+          data[idx + 1] = 244;
+          data[idx + 2] = 228;
         } else {
-          data[idx] = 18;
-          data[idx + 1] = 68;
-          data[idx + 2] = 56;
+          data[idx] = 176;
+          data[idx + 1] = 208;
+          data[idx + 2] = 196;
         }
         data[idx + 3] = 255;
       } else if (key === 'copper_coil') {
+        // Bright neutral-warm modulation so copper instance tint stays luminous without double-darkening
         const wave = 0.5 + 0.5 * Math.sin((x / size) * Math.PI * 16);
-        data[idx] = Math.round(170 + wave * 64);
-        data[idx + 1] = Math.round(88 + wave * 42);
-        data[idx + 2] = Math.round(42 + wave * 24);
+        data[idx] = Math.round(202 + wave * 50);
+        data[idx + 1] = Math.round(186 + wave * 48);
+        data[idx + 2] = Math.round(170 + wave * 44);
         data[idx + 3] = 255;
       } else if (key === 'carbon_weave') {
+        // Normalized woven pattern modulation (0.68..0.94) so dark carbon tint shows visible diagonal twill instead of black crush
         const cell = ((x >> 2) + (y >> 2)) & 1;
         const fiber = cell === 0 ? Math.sin((x & 3) * 1.2) : Math.sin((y & 3) * 1.2);
-        const v = Math.min(255, Math.max(0, Math.round(42 + cell * 28 + fiber * 14)));
+        const v = Math.min(255, Math.max(0, Math.round(174 + cell * 40 + fiber * 20)));
         data[idx] = v;
-        data[idx + 1] = v + 2;
-        data[idx + 2] = v + 6;
+        data[idx + 1] = Math.min(255, v + 3);
+        data[idx + 2] = Math.min(255, v + 8);
         data[idx + 3] = 255;
       } else if (key === 'leather_grain') {
         const pebble =
@@ -680,27 +716,29 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         data[idx + 2] = v;
         data[idx + 3] = 255;
       } else if (key === 'wafer_grid') {
+        // Normalized bright silicon grid modulation so wafer/die tint retains crisp blue/slate sheen
         const scribe = x % 16 === 0 || y % 16 === 0;
         const fine = x % 4 === 0 || y % 4 === 0;
         if (scribe) {
-          data[idx] = 164;
-          data[idx + 1] = 188;
-          data[idx + 2] = 224;
+          data[idx] = 236;
+          data[idx + 1] = 244;
+          data[idx + 2] = 255;
         } else if (fine) {
-          data[idx] = 74;
-          data[idx + 1] = 98;
-          data[idx + 2] = 140;
+          data[idx] = 196;
+          data[idx + 1] = 212;
+          data[idx + 2] = 232;
         } else {
-          data[idx] = 44;
-          data[idx + 1] = 62;
-          data[idx + 2] = 96;
+          data[idx] = 172;
+          data[idx + 1] = 188;
+          data[idx + 2] = 210;
         }
         data[idx + 3] = 255;
       } else if (key === 'optical_diffraction') {
+        // High-value pastel iridescence modulation so photodiode/sensor tints stay vibrant and legible
         const phase = ((x + y * 0.7) / size) * Math.PI * 4;
-        data[idx] = Math.round(92 + 54 * Math.sin(phase));
-        data[idx + 1] = Math.round(138 + 68 * Math.sin(phase + 2.1));
-        data[idx + 2] = Math.round(184 + 62 * Math.sin(phase + 4.2));
+        data[idx] = Math.round(186 + 44 * Math.sin(phase));
+        data[idx + 1] = Math.round(202 + 42 * Math.sin(phase + 2.1));
+        data[idx + 2] = Math.round(218 + 34 * Math.sin(phase + 4.2));
         data[idx + 3] = 255;
       } else if (key === 'ceramic_grain') {
         const v = Math.min(255, Math.max(0, Math.round(120 + (hash - 0.5) * 44)));
@@ -716,10 +754,10 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         data[idx + 3] = 255;
       } else {
         // silicon_die subtle grid
-        const grid = x % 8 === 0 || y % 8 === 0 ? 18 : 0;
-        data[idx] = 72 + grid;
-        data[idx + 1] = 96 + grid;
-        data[idx + 2] = 132 + grid;
+        const grid = x % 8 === 0 || y % 8 === 0 ? 28 : 0;
+        data[idx] = 182 + grid;
+        data[idx + 1] = 196 + grid;
+        data[idx + 2] = 218 + grid;
         data[idx + 3] = 255;
       }
     }
@@ -970,8 +1008,9 @@ export class ResourceCache {
         mat = new THREE.MeshStandardMaterial({
           ...commonProps,
           map: mapTex,
-          metalness: spec.metalness * 0.85,
-          roughness: Math.min(1, spec.roughness + 0.08),
+          metalness: spec.metalness * 0.88,
+          roughness: Math.min(1, spec.roughness + 0.04),
+          envMapIntensity: 0.9,
           emissive: spec.emissive ?? 0x000000,
           emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
@@ -1067,8 +1106,9 @@ export class ResourceCache {
           ? new THREE.MeshLambertMaterial(commonProps)
           : new THREE.MeshStandardMaterial({
               ...commonProps,
-              metalness: metalness * 0.85,
-              roughness: Math.min(1, roughness + 0.08),
+              metalness: metalness * 0.88,
+              roughness: Math.min(1, roughness + 0.04),
+              envMapIntensity: 0.9,
             });
     } else if (quality === 'ultra' && bucketSpec.ultraPhysical) {
       mat = new THREE.MeshPhysicalMaterial({

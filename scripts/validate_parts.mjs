@@ -188,8 +188,11 @@ console.log('===================================================================
 // 1. Syntax & TypeScript Build Verification
 // -----------------------------------------------------------------------------
 try {
-  execSync('node --check scripts/validate_parts.mjs', { cwd: ROOT, stdio: 'pipe' });
-  pass('1-1 Syntax Check', 'node --check scripts/validate_parts.mjs exited 0');
+  execSync('node --check scripts/validate_parts.mjs && node --check scripts/generate_catalogs.mjs', {
+    cwd: ROOT,
+    stdio: 'pipe',
+  });
+  pass('1-1 Syntax Check', 'node --check scripts/validate_parts.mjs & scripts/generate_catalogs.mjs exited 0');
 } catch (err) {
   fail('1-1 Syntax Check', String(err?.stderr || err));
 }
@@ -684,6 +687,147 @@ try {
   }
 } catch (err) {
   fail('4 Runtime Verification', err instanceof Error ? err.stack || err.message : String(err));
+}
+
+// -----------------------------------------------------------------------------
+// 5. 3-Tier Part Catalog Freshness Check (L0 / L1 / L2 + WORKER_RULE.md)
+// -----------------------------------------------------------------------------
+if (process.argv.includes('--skip-catalog')) {
+  pass('5-1 Catalog Freshness', 'Skipped via --skip-catalog flag');
+} else {
+  try {
+    const catErrors = [];
+    const indexPath = path.join(ROOT, 'catalog/INDEX.tsv');
+    const allNamesPath = path.join(ROOT, 'catalog/ALL_NAMES.txt');
+    const workerRulePath = path.join(ROOT, 'catalog/WORKER_RULE.md');
+
+    for (const [label, p] of [
+      ['catalog/INDEX.tsv', indexPath],
+      ['catalog/ALL_NAMES.txt', allNamesPath],
+      ['catalog/WORKER_RULE.md', workerRulePath],
+    ]) {
+      if (!fs.existsSync(p)) catErrors.push(`Missing required file ${label}`);
+    }
+
+    if (fs.existsSync(workerRulePath)) {
+      const ruleBytes = fs.statSync(workerRulePath).size;
+      if (ruleBytes > 1536) {
+        catErrors.push(`catalog/WORKER_RULE.md exceeds 1.5 kB budget (${ruleBytes} bytes > 1536)`);
+      }
+    }
+
+    if (fs.existsSync(indexPath) && fs.existsSync(allNamesPath)) {
+      const indexLines = fs
+        .readFileSync(indexPath, 'utf8')
+        .split('\n')
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0 && !l.startsWith('#'));
+      const indexByMode = new Map();
+      for (let i = 1; i < indexLines.length; i++) {
+        const cols = indexLines[i].split('\t');
+        if (cols.length >= 11) {
+          indexByMode.set(cols[0], {
+            kind: cols[1],
+            parts: Number.parseInt(cols[2], 10),
+            dataFile: cols[8],
+            l1File: cols[9],
+            l2File: cols[10],
+          });
+        }
+      }
+
+      const allNamesText = fs.readFileSync(allNamesPath, 'utf8');
+      const jsonFiles = listJsonFiles(DATA_DIR);
+      let checkedModes = 0;
+
+      for (const relJson of jsonFiles) {
+        const jsonData = JSON.parse(fs.readFileSync(path.join(ROOT, relJson), 'utf8'));
+        const mode = jsonData.unitId;
+        const jsonIds = new Set(jsonData.parts.map((p) => p.id));
+        const expectedCount = jsonData.parts.length;
+        const idxEntry = indexByMode.get(mode);
+        if (!idxEntry) {
+          catErrors.push(`catalog/INDEX.tsv missing mode '${mode}'`);
+          continue;
+        }
+        if (idxEntry.parts !== expectedCount) {
+          catErrors.push(
+            `INDEX.tsv part count mismatch for '${mode}' (catalog=${idxEntry.parts}, json=${expectedCount})`
+          );
+        }
+
+        const l1Path = path.join(ROOT, idxEntry.l1File);
+        const l2Path = path.join(ROOT, idxEntry.l2File);
+        if (!fs.existsSync(l1Path)) {
+          catErrors.push(`Missing L1 file ${idxEntry.l1File}`);
+        } else {
+          const firstLine = fs.readFileSync(l1Path, 'utf8').split('\n')[0] || '';
+          if (!firstLine.includes(`# ${mode} (${expectedCount}p |`)) {
+            catErrors.push(`${idxEntry.l1File} header count mismatch (${firstLine})`);
+          }
+        }
+
+        if (!COMPOSITE_UNIT_IDS.has(mode)) {
+          if (!allNamesText.includes(`# ${mode} (${expectedCount}p |`)) {
+            catErrors.push(`catalog/ALL_NAMES.txt missing or stale section for '${mode}' (${expectedCount}p)`);
+          }
+        }
+
+        if (!fs.existsSync(l2Path)) {
+          catErrors.push(`Missing L2 file ${idxEntry.l2File}`);
+        } else {
+          const l2Lines = fs
+            .readFileSync(l2Path, 'utf8')
+            .split('\n')
+            .filter((l) => l.trim().length > 0);
+          const l2Ids = new Set();
+          for (let i = 1; i < l2Lines.length; i++) {
+            const id = l2Lines[i].split('\t')[0];
+            if (id) l2Ids.add(id);
+          }
+          if (l2Ids.size !== expectedCount) {
+            catErrors.push(
+              `${idxEntry.l2File} row count mismatch (catalog=${l2Ids.size}, json=${expectedCount})`
+            );
+          } else {
+            for (const jid of jsonIds) {
+              if (!l2Ids.has(jid)) {
+                catErrors.push(`${idxEntry.l2File} missing part id '${jid}'`);
+                break;
+              }
+            }
+          }
+        }
+        checkedModes++;
+      }
+
+      if (indexByMode.size !== jsonFiles.length) {
+        catErrors.push(
+          `INDEX.tsv mode count (${indexByMode.size}) !== src/data/*.json count (${jsonFiles.length})`
+        );
+      }
+
+      if (catErrors.length === 0) {
+        const ruleBytes = fs.statSync(workerRulePath).size;
+        pass(
+          '5-1 Catalog Freshness',
+          `All ${checkedModes} modes L0/L1/L2 100% synchronized with src/data/*.json, WORKER_RULE.md=${ruleBytes}B (<=1.5 kB)`
+        );
+      } else {
+        fail(
+          '5-1 Catalog Freshness',
+          `${catErrors.slice(0, 8).join('; ')}${catErrors.length > 8 ? ` (+${catErrors.length - 8} more)` : ''} — Run "npm run catalog" to synchronize catalogs`
+        );
+      }
+    } else {
+      fail(
+        '5-1 Catalog Freshness',
+        `${catErrors.join('; ')} — Run "npm run catalog" to generate catalogs`
+      );
+    }
+  } catch (err) {
+    fail('5-1 Catalog Freshness', String(err));
+  }
 }
 
 console.log('====================================================================');
