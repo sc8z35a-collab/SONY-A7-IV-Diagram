@@ -754,19 +754,120 @@ body,
 }
 
 .exp-diagram-box {
+  position: relative;
   width: 100%;
   background: #f8f9fb;
-  border: 1px solid rgba(18, 20, 26, 0.07);
+  border: 1px solid rgba(18, 20, 26, 0.08);
   border-radius: 12px;
-  padding: 12px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: zoom-in;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.exp-diagram-box:hover {
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.07);
+}
+
+.exp-diagram-box::after {
+  content: "拡大";
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.exp-diagram-box:hover::after {
+  opacity: 1;
 }
 
 .exp-diagram-box svg {
   width: 100%;
   height: auto;
+  display: block;
+}
+
+.diagram-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.diagram-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.diagram-lightbox-card {
+  width: min(880px, 94vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 28px 72px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+  transform: scale(0.96);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.diagram-lightbox.is-open .diagram-lightbox-card {
+  transform: scale(1);
+}
+
+.diagram-lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+}
+
+.diagram-lightbox-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.diagram-lightbox-canvas {
+  padding: 14px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.diagram-lightbox-canvas svg {
+  width: 100%;
+  height: auto;
+  max-height: 78vh;
   display: block;
 }
 

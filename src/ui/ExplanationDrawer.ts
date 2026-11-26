@@ -116,6 +116,9 @@ export class ExplanationDrawer {
   private swatchEl: HTMLElement;
   private isolateBtn: HTMLButtonElement;
   private bodyEl: HTMLElement;
+  private lightboxEl: HTMLElement;
+  private lightboxTitleEl: HTMLElement;
+  private lightboxCanvasEl: HTMLElement;
   private handlers: ExplanationDrawerHandlers;
   private renderSeq = 0;
 
@@ -160,6 +163,52 @@ export class ExplanationDrawer {
 
     this.drawerEl.append(toolbar, this.bodyEl);
     root.appendChild(this.drawerEl);
+
+    // High-resolution Click-to-Enlarge Diagram Lightbox (opened only when user clicks a diagram)
+    this.lightboxEl = document.createElement('div');
+    this.lightboxEl.className = 'diagram-lightbox';
+    this.lightboxEl.setAttribute('aria-hidden', 'true');
+    const lbCard = document.createElement('div');
+    lbCard.className = 'diagram-lightbox-card';
+    const lbHeader = document.createElement('div');
+    lbHeader.className = 'diagram-lightbox-header';
+    this.lightboxTitleEl = document.createElement('div');
+    this.lightboxTitleEl.className = 'diagram-lightbox-title';
+    const lbClose = makeIconBtn(DRAWER_ICONS.close);
+    lbClose.setAttribute('aria-label', '閉じる');
+    lbClose.addEventListener('click', () => this.closeLightbox());
+    lbHeader.append(this.lightboxTitleEl, lbClose);
+    this.lightboxCanvasEl = document.createElement('div');
+    this.lightboxCanvasEl.className = 'diagram-lightbox-canvas';
+    lbCard.append(lbHeader, this.lightboxCanvasEl);
+    this.lightboxEl.appendChild(lbCard);
+    this.lightboxEl.addEventListener('click', (e) => {
+      if (e.target === this.lightboxEl) this.closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.lightboxEl.classList.contains('is-open')) {
+        this.closeLightbox();
+      }
+    });
+    root.appendChild(this.lightboxEl);
+  }
+
+  private openLightbox(title: string, svgMarkup: string): void {
+    if (!svgMarkup) return;
+    // Namespace SVG <defs> IDs in lightbox clone so gradients/clips/markers never collide with drawer SVG
+    const scoped = svgMarkup
+      .replace(/\bid="([^"]+)"/g, 'id="lb_$1"')
+      .replace(/url\(#([^)]+)\)/g, 'url(#lb_$1)');
+    this.lightboxTitleEl.textContent = title;
+    this.lightboxCanvasEl.innerHTML = scoped;
+    this.lightboxEl.classList.add('is-open');
+    this.lightboxEl.setAttribute('aria-hidden', 'false');
+  }
+
+  private closeLightbox(): void {
+    this.lightboxEl.classList.remove('is-open');
+    this.lightboxEl.setAttribute('aria-hidden', 'true');
+    this.lightboxCanvasEl.replaceChildren();
   }
 
   private renderPopulatedPart(part: CadPart, exp: PartExplanation, seq: number): void {
@@ -264,7 +313,7 @@ export class ExplanationDrawer {
 
       ${analogyHtml}
 
-      <div class="exp-diagram-box" data-schematic-box>
+      <div class="exp-diagram-box" data-schematic-box role="button" tabindex="0" title="クリックで図解を拡大表示">
         ${syncSvg}
       </div>
 
@@ -287,11 +336,24 @@ export class ExplanationDrawer {
       </div>
     `;
 
+    const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
     if (!cachedSchematicRenderer) {
-      const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
       void loadSchematicRenderer().then((renderFn) => {
         if (seq !== this.renderSeq || !box || !box.isConnected) return;
         box.innerHTML = renderFn(exp.diagramType);
+      });
+    }
+    if (box) {
+      const openZoom = () => {
+        const svgEl = box.querySelector('svg');
+        if (svgEl) this.openLightbox(exp.title, svgEl.outerHTML);
+      };
+      box.addEventListener('click', openZoom);
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openZoom();
+        }
       });
     }
 
@@ -337,6 +399,7 @@ export class ExplanationDrawer {
 
   public hide(): void {
     this.renderSeq++;
+    this.closeLightbox();
     this.drawerEl.classList.remove('is-open');
     this.drawerEl.setAttribute('aria-hidden', 'true');
     window.setTimeout(() => {
