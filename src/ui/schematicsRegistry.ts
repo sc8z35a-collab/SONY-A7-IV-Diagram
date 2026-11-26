@@ -37,11 +37,20 @@ import { renderPhase31BatteryUltraSchematicSvg } from './phase31BatteryUltraSche
 import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
+import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchematicsA';
+import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
+import { renderPhase32SensorUltraSchematicC } from './phase32SensorUltraSchematicsC';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
+  const phase32SensorSvg =
+    renderPhase32SensorUltraSchematicA(type) ??
+    renderPhase32SensorUltraSchematicB(type) ??
+    renderPhase32SensorUltraSchematicC(type);
+  if (phase32SensorSvg) return phase32SensorSvg;
+
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;
 
