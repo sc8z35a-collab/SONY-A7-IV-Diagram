@@ -1250,7 +1250,10 @@ export class CadViewport {
       d = 94 + e * 278;
       target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
-      if (this.sensorFabVolume === 4) {
+      if (this.sensorFabVolume === 5) {
+        d = 248 + e * 238;
+        target = new THREE.Vector3(0, -1.0 + e * 1.5, 2.0);
+      } else if (this.sensorFabVolume === 4) {
         d = 252 + e * 240;
         target = new THREE.Vector3(0, -1.5 + e * 1.5, 6.5);
       } else if (this.sensorFabVolume === 3) {
@@ -1386,7 +1389,7 @@ export class CadViewport {
     }
   }
 
-  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1, Vol.2, Vol.3 & Vol.4) */
+  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0–Vol.5) */
   public focusSensorFabStage(stage: SensorFabStage, immediate = false): void {
     if (this.mode !== 'sensor_fab') return;
     if (
@@ -1394,7 +1397,8 @@ export class CadViewport {
       stage === 'v1_overview' ||
       stage === 'v2_overview' ||
       stage === 'v3_overview' ||
-      stage === 'v4_overview'
+      stage === 'v4_overview' ||
+      stage === 'v5_overview'
     ) {
       this.setCameraPreset('iso', immediate);
       return;
@@ -1493,10 +1497,30 @@ export class CadViewport {
       const d = (138 + e * 105) * aspectScale;
       target = new THREE.Vector3(0, 3.4 + e * 10.0, 5.0 + e * 14.0);
       offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
-    } else {
+    } else if (stage === 'v4_pin_sab') {
       // v4_pin_sab — Vol.4 Lower Stepped Cleanroom Terrace (Blocks 3-E & 3-F): Mask #22 P+ Pinning Lid, Spike RTA, Mask #25 SAB, H2 Sinter, Vol.5 BEOL Portal
       const d = (158 + e * 125) * aspectScale;
       target = new THREE.Vector3(0, -6.5 - e * 11.0, 33.5 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
+    } else if (stage === 'v5_w_m1') {
+      // Vol.5 Blocks 4-A & 4-B (Upper Row 1): CESL/PMD -> Mask #26 W-Nails -> Mask #27 M1 -> TaN/Ta Barrier -> Cu ECD Superfill
+      const d = (142 + e * 108) * aspectScale;
+      target = new THREE.Vector3(0, 3.6 + e * 14.0, -29.0 - e * 15.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.36, d * 0.92);
+    } else if (stage === 'v5_m2_m4') {
+      // Vol.5 Block 4-C (Upper Row 2): Masks #28–#33 M2 Row Drive -> M3 VSL Shield -> M4 Power Mesh Dual-Damascene
+      const d = (146 + e * 112) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 11.0, -12.0 - e * 3.0);
+      offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
+    } else if (stage === 'v5_m5_wat') {
+      // Vol.5 Block 4-D (Upper Row 3): Masks #34–#36 M5 Thick Trunk -> Al-Cu Pad + BSI IR Mark -> Keysight Pre-Bond WAT Gate
+      const d = (138 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 9.0, 5.0 + e * 12.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
+    } else {
+      // v5_hb_cmp — Vol.5 Lower Stepped Cleanroom Terrace (Block 4-E): Masks #37–#38 50.4M HB-Pads -> 2–5nm Cu Recess CMP -> AFM/Surfscan -> Vol.6 Logic Portal
+      const d = (144 + e * 112) * aspectScale;
+      target = new THREE.Vector3(0, -6.5 - e * 10.0, 29.0 + e * 14.0);
       offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
     }
 
