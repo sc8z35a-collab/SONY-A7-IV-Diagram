@@ -156,6 +156,45 @@ body,
   pointer-events: none;
 }
 
+/* Dedicated "センサー製造工程" pill button inside bottom CAD dock */
+.icon-btn.is-fab-pill {
+  width: auto;
+  padding: 0 9px;
+  gap: 5px;
+  color: #0b4ec0;
+  background: rgba(13, 91, 217, 0.06);
+  border: 1px solid rgba(13, 91, 217, 0.16);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.icon-btn.is-fab-pill svg {
+  width: 14.5px;
+  height: 14.5px;
+  flex-shrink: 0;
+}
+
+.icon-btn.is-fab-pill:hover {
+  background: rgba(13, 91, 217, 0.12);
+  border-color: rgba(13, 91, 217, 0.3);
+  color: #093f9e;
+}
+
+.icon-btn.is-fab-pill.is-active {
+  background: linear-gradient(135deg, #0d5bd9 0%, #141b2d 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(13, 91, 217, 0.34);
+}
+
+.icon-btn.is-fab-pill.is-active:hover {
+  background: linear-gradient(135deg, #1064ea 0%, #1d2740 100%);
+  color: #ffffff;
+}
+
 /* Slider cluster (explode & section cut) */
 .slider-cluster {
   display: flex;
@@ -497,18 +536,85 @@ body,
   pointer-events: none;
 }
 
+/* Top-center Sensor Manufacturing Process Vol.0 Stage Switcher Pill (visible only in 'sensor_fab' mode) */
+.fab-stage-bar {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 21;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(18, 20, 26, 0.11);
+  border-radius: 13px;
+  box-shadow: 0 8px 28px rgba(15, 20, 30, 0.08), 0 1px 2px rgba(15, 20, 30, 0.04);
+  contain: layout style paint;
+  transition: left 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease, transform 0.24s ease;
+}
+
+.fab-stage-bar.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -14px);
+}
+
+#app.has-drawer .fab-stage-bar {
+  left: calc(50% - 215px);
+}
+
+.fab-stage-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  height: 29px;
+  padding: 0 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #454b58;
+  cursor: pointer;
+  white-space: nowrap;
+  outline: none;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.14s ease, box-shadow 0.2s ease;
+}
+
+.fab-stage-btn:hover {
+  background: rgba(18, 20, 26, 0.06);
+  color: #111318;
+}
+
+.fab-stage-btn:active {
+  transform: scale(0.94);
+}
+
+.fab-stage-btn.is-active {
+  background: linear-gradient(135deg, #0d5bd9 0%, #141b2d 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(13, 91, 217, 0.3);
+}
+
 /* Zen Fullscreen fallback (when Fullscreen API is restricted in embedded preview iframes) */
 #app.is-zen-fullscreen .view-cluster,
 #app.is-zen-fullscreen .quality-cluster,
 #app.is-zen-fullscreen .lens-section-bar,
-#app.is-zen-fullscreen .v2-phase-bar {
+#app.is-zen-fullscreen .v2-phase-bar,
+#app.is-zen-fullscreen .fab-stage-bar {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-14px);
 }
 
 #app.is-zen-fullscreen .lens-section-bar,
-#app.is-zen-fullscreen .v2-phase-bar {
+#app.is-zen-fullscreen .v2-phase-bar,
+#app.is-zen-fullscreen .fab-stage-bar {
   transform: translate(-50%, -14px);
 }
 
@@ -1445,18 +1551,29 @@ body,
     height: 10.5px;
   }
   .v2-phase-bar,
-  .lens-section-bar {
+  .lens-section-bar,
+  .fab-stage-bar {
     top: 56px;
     padding: 3px;
     gap: 2px;
+    max-width: calc(100vw - 20px);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
   #app.has-drawer .v2-phase-bar,
-  #app.has-drawer .lens-section-bar {
+  #app.has-drawer .lens-section-bar,
+  #app.has-drawer .fab-stage-bar {
     left: 50%;
   }
-  .v2-phase-btn {
+  .v2-phase-btn,
+  .fab-stage-btn {
     height: 27px;
-    padding: 0 9px;
+    padding: 0 8px;
+    font-size: 10px;
+    gap: 4px;
+  }
+  .icon-btn.is-fab-pill {
+    padding: 0 8px;
     font-size: 10px;
     gap: 4px;
   }
@@ -1472,6 +1589,10 @@ body,
   }
   .layer-rail {
     left: 10px;
+    top: 100px;
+    bottom: 72px;
+    transform: none;
+    max-height: none;
     padding: 6px 5px;
   }
   .explanation-drawer {

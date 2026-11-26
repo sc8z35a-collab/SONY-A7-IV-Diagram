@@ -233,7 +233,31 @@ export class ExplanationDrawer {
                     label: 'V1 BIONZ XR パッケージ図へ戻る',
                     isV2Target: false,
                   }
-                : null
+                : part.subsystem === 'sensor'
+                  ? {
+                      target: 'sensor_fab',
+                      label: 'センサー製造工程（全2,110工程 3D解剖図）を見る',
+                      isV2Target: true,
+                    }
+                  : part.subsystem === 'sensor_fab'
+                    ? part.id === 'fab0-p11-sensor-unit-ibis' || part.id === 'fab0-p09-dicing-package'
+                      ? {
+                          target: 'sensor',
+                          label: 'フルサイズセンサー ＆ 5軸IBIS 3D解剖図へ移動',
+                          isV2Target: false,
+                        }
+                      : part.id === 'fab0-p12-camera-integration'
+                        ? {
+                            target: 'integrated',
+                            label: '完成ミラーレス一眼カメラ全体 3D解剖図へ移動',
+                            isV2Target: false,
+                          }
+                        : {
+                            target: 'micro_v2',
+                            label: 'ピクセル極超解剖図 V2（ナノ構造拡大）へ移動',
+                            isV2Target: true,
+                          }
+                    : null
         : null;
 
     const v2SwitchBtnHtml = v2SwitchConfig
