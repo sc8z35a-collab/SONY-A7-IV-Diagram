@@ -404,6 +404,14 @@ window.addEventListener('keydown', (e) => {
     const cur = viewport.getQuality();
     const next: GraphicsQuality = cur === 'standard' ? 'high' : cur === 'high' ? 'ultra' : 'standard';
     setQuality(next);
+  } else if (
+    (e.key === 'p' || e.key === 'P') &&
+    viewport.getMode() === 'mishoe' &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    viewport.getMiShoeV2Runtime().togglePerfHud();
   } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
     if (viewport.getSelectedPart()) viewport.stepSelectedPart(1);
   } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -431,6 +439,12 @@ if (qualityParam === 'standard' || qualityParam === 'std') {
   opticsStudio,
   toggleFullscreen,
   setQuality,
+  mishoeV2: {
+    getDiagnostics: () => viewport.getMiShoeV2Runtime().getDiagnostics(),
+    togglePerfHud: () => viewport.getMiShoeV2Runtime().togglePerfHud(),
+    setPerfHudVisible: (visible: boolean) =>
+      viewport.getMiShoeV2Runtime().setPerfHudVisible(visible),
+  },
 };
 
 syncRail();
