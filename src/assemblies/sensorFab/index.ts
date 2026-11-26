@@ -6,6 +6,7 @@ import { createSensorFabVol1PhysicsOverlay } from './sensorFabVol1PhysicsOverlay
 import { createSensorFabVol2PhysicsOverlay } from './sensorFabVol2PhysicsOverlay';
 import { createSensorFabVol3PhysicsOverlay } from './sensorFabVol3PhysicsOverlay';
 import { createSensorFabVol4PhysicsOverlay } from './sensorFabVol4PhysicsOverlay';
+import { createSensorFabVol5PhysicsOverlay } from './sensorFabVol5PhysicsOverlay';
 
 /**
  * Assemble the lazy-hydrated standalone **Sensor Manufacturing Process (センサー製造工程)**
@@ -15,6 +16,7 @@ import { createSensorFabVol4PhysicsOverlay } from './sensorFabVol4PhysicsOverlay
  * - **Vol.2 (`fabVolume: 2`, `F2-01`–`F2-36`, 36 parts)**: フェーズ1・砂から超純度エピタキシャルウェーハまで（P01-001〜060）
  * - **Vol.3 (`fabVolume: 3`, `F3-01`–`F3-52`, 52 parts)**: フェーズ2・センサー設計と「ナノの型紙」フォトマスク製造（P02-001〜050）
  * - **Vol.4 (`fabVolume: 4`, `F4-01`–`F4-45`, 45 parts)**: フェーズ3・画素ウェーハ前工程FEOL：光を受け止める心臓部（P03-001〜380 / 全25マスク）
+ * - **Vol.5 (`fabVolume: 5`, `F5-01`–`F5-38`, 38 parts)**: フェーズ4・画素ウェーハ配線工程BEOL：銅の立体高速道路と接合面（P04-001〜210 / 全13マスク）
  * Strictly visible ONLY in standalone `'sensor_fab'` mode, with only the active volume rendered on GPU!
  */
 export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyController {
@@ -25,12 +27,14 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
   const vol2Parts: CadPart[] = [];
   const vol3Parts: CadPart[] = [];
   const vol4Parts: CadPart[] = [];
+  const vol5Parts: CadPart[] = [];
 
   const overlay0 = createSensorFabPhysicsOverlay(mats.clippingPlanes);
   const overlay1 = createSensorFabVol1PhysicsOverlay(mats.clippingPlanes);
   const overlay2 = createSensorFabVol2PhysicsOverlay(mats.clippingPlanes);
   const overlay3 = createSensorFabVol3PhysicsOverlay(mats.clippingPlanes);
   const overlay4 = createSensorFabVol4PhysicsOverlay(mats.clippingPlanes);
+  const overlay5 = createSensorFabVol5PhysicsOverlay(mats.clippingPlanes);
   rootGroup.add(
     overlay0.overlayGroup,
     overlay0.explodeGuides,
@@ -41,7 +45,9 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
     overlay3.overlayGroup,
     overlay3.explodeGuides,
     overlay4.overlayGroup,
-    overlay4.explodeGuides
+    overlay4.explodeGuides,
+    overlay5.overlayGroup,
+    overlay5.explodeGuides
   );
 
   let activeVolume: SensorFabVolume = 0;
@@ -54,12 +60,13 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
     overlay2.setVisible(lastPhysicsVisible && activeVolume === 2);
     overlay3.setVisible(lastPhysicsVisible && activeVolume === 3);
     overlay4.setVisible(lastPhysicsVisible && activeVolume === 4);
+    overlay5.setVisible(lastPhysicsVisible && activeVolume === 5);
   };
 
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 197,
+    deferredStandaloneCount: 235,
     setActiveVolume: (vol: SensorFabVolume) => {
       activeVolume = vol;
       syncOverlayVisibility();
@@ -73,12 +80,14 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
         { buildSensorFabVol2Parts },
         { buildSensorFabVol3Parts },
         { buildSensorFabVol4Parts },
+        { buildSensorFabVol5Parts },
       ] = await Promise.all([
         import('./sensorFabParts'),
         import('./sensorFabVol1Parts'),
         import('./sensorFabVol2Parts'),
         import('./sensorFabVol3Parts'),
         import('./sensorFabVol4Parts'),
+        import('./sensorFabVol5Parts'),
       ]);
       controller.deferredStandaloneCount = 0;
 
@@ -122,8 +131,16 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
         rootGroup.add(p.group);
       }
 
+      const built5 = buildSensorFabVol5Parts(mats);
+      for (const p of built5) {
+        p.fabVolume = 5;
+        vol5Parts.push(p);
+        parts.push(p);
+        rootGroup.add(p.group);
+      }
+
       syncOverlayVisibility();
-      return [...built0, ...built1, ...built2, ...built3, ...built4];
+      return [...built0, ...built1, ...built2, ...built3, ...built4, ...built5];
     },
     updateAnimation: (elapsed, _delta, explodeFactor, physicsActive) => {
       if (parts.length === 0) return;
@@ -136,7 +153,9 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
               ? vol2Parts
               : activeVolume === 3
                 ? vol3Parts
-                : vol4Parts;
+                : activeVolume === 4
+                  ? vol4Parts
+                  : vol5Parts;
       for (const p of activeList) {
         p.group.position.set(
           p.assembledPos.x + p.explodeOffset.x * explodeFactor,
@@ -152,8 +171,10 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
         overlay2.update(elapsed, explodeFactor, physicsActive, vol2Parts);
       } else if (activeVolume === 3) {
         overlay3.update(elapsed, explodeFactor, physicsActive, vol3Parts);
-      } else {
+      } else if (activeVolume === 4) {
         overlay4.update(elapsed, explodeFactor, physicsActive, vol4Parts);
+      } else {
+        overlay5.update(elapsed, explodeFactor, physicsActive, vol5Parts);
       }
     },
     setPhysicsVisible: (visible: boolean) => {
@@ -166,6 +187,7 @@ export function createSensorFabAssembly(mats: MaterialLibrary): AssemblyControll
       overlay2.updateGuides(explodeFactor, visible && activeVolume === 2, vol2Parts);
       overlay3.updateGuides(explodeFactor, visible && activeVolume === 3, vol3Parts);
       overlay4.updateGuides(explodeFactor, visible && activeVolume === 4, vol4Parts);
+      overlay5.updateGuides(explodeFactor, visible && activeVolume === 5, vol5Parts);
     },
   };
 

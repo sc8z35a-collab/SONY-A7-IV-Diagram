@@ -195,6 +195,31 @@ body,
   color: #ffffff;
 }
 
+/* Dedicated "ドライボックス" pill button accent inside bottom CAD dock */
+.icon-btn.is-fab-pill.is-drybox-pill {
+  color: #0e7490;
+  background: rgba(8, 145, 178, 0.07);
+  border-color: rgba(8, 145, 178, 0.22);
+}
+
+.icon-btn.is-fab-pill.is-drybox-pill:hover {
+  background: rgba(8, 145, 178, 0.14);
+  border-color: rgba(8, 145, 178, 0.36);
+  color: #0c5f75;
+}
+
+.icon-btn.is-fab-pill.is-drybox-pill.is-active {
+  background: linear-gradient(135deg, #0891b2 0%, #0f2942 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(8, 145, 178, 0.36);
+}
+
+.icon-btn.is-fab-pill.is-drybox-pill.is-active:hover {
+  background: linear-gradient(135deg, #06b6d4 0%, #163a5c 100%);
+  color: #ffffff;
+}
+
 /* Slider cluster (explode & section cut) */
 .slider-cluster {
   display: flex;
@@ -1826,4 +1851,148 @@ body,
     transform: rotate(360deg);
   }
 }
+
+/* ============================================================================
+   MI SHOE V2 DEVELOPER PERFORMANCE HUD (Visible strictly in standalone mishoe mode)
+   ============================================================================ */
+.mishoe-v2-perf-toggle {
+  position: fixed;
+  top: 66px;
+  right: 20px;
+  z-index: 24;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(18, 20, 26, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  color: #1e293b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(15, 20, 30, 0.07);
+  transition: right 0.36s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+#app.has-drawer .mishoe-v2-perf-toggle,
+#app.has-drawer .mishoe-v2-perf-panel {
+  right: 446px;
+}
+
+.mishoe-v2-perf-toggle svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mishoe-v2-perf-toggle:hover {
+  background: rgba(241, 245, 249, 0.98);
+}
+
+.mishoe-v2-perf-toggle.is-active {
+  background: #0f172a;
+  color: #f8fafc;
+  border-color: #0f172a;
+}
+
+.mishoe-v2-perf-toggle.is-hidden,
+.mishoe-v2-perf-panel.is-hidden {
+  display: none !important;
+}
+
+.mishoe-v2-perf-panel {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 24;
+  width: 268px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.11);
+  pointer-events: none;
+  contain: layout style paint;
+  transition: right 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mishoe-v2-perf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.mishoe-v2-perf-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #0f172a;
+}
+
+.mishoe-v2-perf-state {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.mishoe-v2-perf-state.is-idle {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.mishoe-v2-perf-state.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.mishoe-v2-perf-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mishoe-v2-perf-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mishoe-v2-perf-key {
+  color: #64748b;
+  font-size: 10px;
+}
+
+.mishoe-v2-perf-val {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 10.5px;
+  text-align: right;
+}
+
+.mishoe-v2-perf-val.is-ok {
+  color: #15803d;
+}
+
+.mishoe-v2-perf-val.is-warn {
+  color: #dc2626;
+}
+
 

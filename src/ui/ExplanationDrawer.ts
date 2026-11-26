@@ -314,7 +314,13 @@ export class ExplanationDrawer {
                             label: 'ピクセル極超解剖図 V2（ナノ構造拡大）へ移動',
                             isV2Target: true,
                           }
-                    : null
+                    : part.subsystem === 'drybox' && part.id === 'db-camera-lens-showcase'
+                      ? {
+                          target: 'integrated',
+                          label: '収納カメラ本体＆50mm F1.2 全体3D解剖図へ移動',
+                          isV2Target: false,
+                        }
+                      : null
         : null;
 
     const v2SwitchBtnHtml = v2SwitchConfig
@@ -353,10 +359,15 @@ export class ExplanationDrawer {
                     targetVol: 4,
                     label: '第4巻：フェーズ3 画素ウェーハ前工程FEOL（全380工程・25マスク）へ進む',
                   }
-                : {
-                    targetVol: 0,
-                    label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
-                  }
+                : (part.fabVolume ?? 0) === 4
+                  ? {
+                      targetVol: 5,
+                      label: '第5巻：フェーズ4 画素ウェーハ配線工程BEOL（全210工程・Cu5＋Al1）へ進む',
+                    }
+                  : {
+                      targetVol: 0,
+                      label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
+                    }
         : null;
 
     const fabVolBtnHtml = fabVolSwitchConfig
@@ -375,7 +386,10 @@ export class ExplanationDrawer {
       svg.includes('data-evf-hd="1"') ||
       svg.includes('data-fab-hd="1"') ||
       svg.includes('data-bionz-diagram=') ||
-      svg.includes('data-sensor-hd="1"');
+      svg.includes('data-sensor-hd="1"') ||
+      svg.includes('data-mount-hd="1"') ||
+      svg.includes('data-shutter-hd="1"') ||
+      svg.includes('data-drybox-hd="1"');
     const isSyncHd = isHdDiagram(syncSvg);
 
     this.bodyEl.innerHTML = `
