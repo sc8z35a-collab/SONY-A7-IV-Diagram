@@ -5,8 +5,8 @@ import { buildShutterParts, buildShutterStandaloneParts } from './shutterParts';
 import { createShutterPhysicsOverlay } from './shutterPhysicsOverlay';
 
 /**
- * Assemble the complete 130-part Dual-Driven Carbon-Fiber Focal-Plane Shutter
- * subsystem (39 macro at startup + 91 lazy-hydrated standalone micro parts SH40–SH130).
+ * Assemble the complete 180-part Dual-Driven Carbon-Fiber Focal-Plane Shutter
+ * subsystem (39 macro at startup + 141 lazy-hydrated standalone micro parts SH40–SH180).
  */
 export function createShutterAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
@@ -42,7 +42,7 @@ export function createShutterAssembly(mats: MaterialLibrary): AssemblyController
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 91,
+    deferredStandaloneCount: 141,
     hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
