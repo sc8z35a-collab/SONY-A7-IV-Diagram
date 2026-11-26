@@ -34,11 +34,15 @@ import { renderPhase29BionzV2DeepSchematicSvg } from './phase29BionzV2DeepSchema
 import { renderPhase30BatteryUltraSchematicSvg } from './phase30BatteryUltraSchematics';
 import { renderPhase30MicUltraSchematicSvg } from './phase30MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
+import { renderEvfHdSchematicSvg } from './evfHdSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
+  const evfHdSvg = renderEvfHdSchematicSvg(type);
+  if (evfHdSvg) return evfHdSvg;
+
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;
 
