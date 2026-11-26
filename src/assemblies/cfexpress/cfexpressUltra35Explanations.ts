@@ -1,0 +1,1141 @@
+import { PartExplanation } from '../types';
+
+export const CFEXPRESS_ULTRA35_EXPLANATIONS: Record<string, PartExplanation> = {
+  // =========================================================================
+  // GROUP A: Kioxia BiCS10 ISSCC 2025/2026 & 3D NAND Ultra-Micro Architecture (C131–C137)
+  // =========================================================================
+  'cfe-bwwpc-wafer-power-grid': {
+    category: 'ウエハ同士を太い銅で直結する「空中送電網」 C131 — メモリ層と回路層の電圧降下を消し去り、面積まで半減させるキオクシアISSCC 2025技術！',
+    title: 'C131. BWWPC ウエハ間直接電源接合パッド＆4プレーン縦型電源グリッド',
+    subtitle: 'BWWPC (Bonding Pads for Wafer-to-Wafer Power Connection) Low-Resistance Top-Metal Grid',
+    plainAnalogy:
+      '超高層マンション（332層の3D NANDメモリ）と1階の司令室（CMOS制御回路）を別々に作って合体させるCBA技術では、電力を建物の「外周の細い階段」だけから運ぶと途中で電圧がヘタってしまいます。そこでキオクシアがISSCC 2025で発表したのが「BWWPC」——2枚のウエハの接合面全面に、もっとも電気抵抗の低い最上層メタルの太い銅柱（送電網）をズラリと並べて真上から電気を届ける構造です！おかげで電圧降下が激減し、チップのはみ出し面積まで半分に縮みました！',
+    summary:
+      'キオクシア（Kioxia）がISSCC 2025で発表したBiCS FLASH世代のCBA（CMOS directly Bonded to Array）向けウエハ間電源直結構造「BWWPC」です。メモリセルウエハとCMOSウエハの貼り合わせ界面に最低シート抵抗の最上層メタル電源グリッドを敷き、4プレーン縦型フロアプランで高電流動作時のIRドロップを抑えます。',
+    opticsAndPhysics: [
+      '従来のチップ周辺部（ペリフェラル）から電源を引き回す設計では、16ダイ並列書込や4.8 Gbps高速I/O動作時に数十mVの電源電圧降下（IRドロップ）が生じ、しきい値電圧の読み出し誤差を招いていました。',
+      'BWWPCでは、メモリセルアレイウエハとCMOSウエハの最上層厚膜メタル同士を微細銅パッド群で面内全域にわたってダイレクト接合し、電源インピーダンスを劇的に低減します。',
+      'さらに4プレーンを縦方向に配置する新しいフロアプランと組み合わせることで、従来のペリフェラル配線用オーバーハング（余白面積）を約50%削減し、極小CFexpress Type A内への大容量実装に貢献しています。',
+    ],
+    formula: {
+      expression: 'ΔV_IR = I_peak × (R_sheet · L / W) / N_BWWPC   (Overhang Area ≈ −50%)',
+      description: '多数のBWWPC並列電源接合パッド（N_BWWPC）で電流経路長 L を極小化し、大電流並列書込時の電圧降下 ΔV_IR を抑え込む。',
+    },
+    nextGenInnovation:
+      '2025〜2026年の第10世代BiCS（332層）では、BWWPCによる低抵抗電源供給がToggle DDR 6.0（4.8 Gbps）とマルチプレーン並列書込の安定動作を支える屋台骨となっています。',
+    specs: [
+      { label: '出典・発表', value: 'Kioxia ISSCC 2025（CBA世代3D NAND）' },
+      { label: '配線構造', value: '最低シート抵抗 最上層メタル ウエハ間直接接合' },
+      { label: 'フロアプラン', value: '4プレーン縦型配置（オーバーハング面積 約50%削減）' },
+      { label: '主要効果', value: '高速並列動作時のIRドロップ抑制＆ダイ小型化' },
+    ],
+    diagramType: 'cfe_bwwpc_wafer_power_grid',
+  },
+
+  'cfe-2ti-dfe-ddsr-receiver': {
+    category: '4.8 Gbpsの超高速信号を「半分の回路」で読み切る受信機 C132 — 自分のデータで自分をリセットする魔法のラッチ！',
+    title: 'C132. 2TI-DFE（データ駆動セルフリセット DDSR）＆ピン別VREF学習レシーバ',
+    subtitle: '2-Way Time-Interleaved DFE with Data-Driven Self-Reset (DDSR) & Per-Pin VREF Training (PPVT)',
+    plainAnalogy:
+      '1秒間に48億回も点滅する超高速データ（Toggle DDR 6.0）を正確に受け取るには、普通は受信係（センスアンプ）を4人並べて交代勤務させる必要があり、電力も場所も食います。キオクシアBiCS10の受信回路「2TI-DFE＋DDSR」は、データを受け取った瞬間に自分自身をリセットする超効率3入力NANDラッチを採用！なんと受信係を4人から2人へ半減させ、さらにピン1本ごとに判定ライン（VREF）を自動調整（PPVT）してエラーゼロで高速データを受け取るんです！',
+    summary:
+      'キオクシアBiCS10（Toggle DDR 6.0 / 4.8 Gbps）に採用されたUnmatched-DQS対応の2ウェイ時間インターリーブ判定帰還型イコライザ（2TI-DFE）レシーバです。データ駆動セルフリセット（DDSR）とピン単位の基準電圧学習（PPVT）で高速受信と省電力を両立します。',
+    opticsAndPhysics: [
+      '4.8 Gbps（UI＝約208 ps）ではパッケージ内反射や符号間干渉（ISI）で波形が潰れるため、1ビット前の判定結果を次ビットの判定に差し戻す1タップDFEが不可欠ですが、従来の4ウェイ並列DFEはクロック負荷と消費電力が肥大化します。',
+      'DDSR（Data-Driven Self-Reset）方式では3入力NANDベースの自己リセット型ラッチを導入し、センスアンプのプリチャージ時間を極限まで圧縮することで、インターリーブ段数を4から2（2TI-DFE）へ半減させました。',
+      '加えてPPVT（Per-Pin VREF Training）がDQ0〜DQ7各ピンの微妙な配線長差やオフセット電圧を個別に較正し、Unmatched-DQSトポロジ下でも極めて広いタイミング・電圧マージンを確保します。',
+    ],
+    formula: {
+      expression: 'y[n] = sgn(x[n] − α₁ · y[n−1] − V_REF,pin),   UI = 1 / 4.8 Gbps ≈ 208.3 ps',
+      description: '前ビット判定 y[n−1] を帰還係数 α₁ で差し引きつつ、ピン個別学習した V_REF,pin で0/1を確定する2TI-DFE数式。',
+    },
+    nextGenInnovation:
+      '2025〜2026年の次世代NAND I/O（4.8〜5.6 Gbps）では、2TI-DFE＋DDSR＋PPVTの三位一体設計が、発熱制限の厳しい小型CFexpress Type Aで3,000 MB/s超のNAND帯域を引き出す鍵となります。',
+    specs: [
+      { label: '対応インターフェース', value: 'Toggle DDR 6.0（最大 4.8 Gbps / ピン）' },
+      { label: '回路革新', value: '3入力NAND DDSRラッチでDFEセンスアンプ 4→2 半減' },
+      { label: 'キャリブレーション', value: 'PPVT（Per-Pin VREF Training）個別電圧最適化' },
+      { label: '主要効果', value: 'Unmatched-DQS時の高速受信＆I/O電力大幅削減' },
+    ],
+    diagramType: 'cfe_2ti_dfe_ddsr_receiver',
+  },
+
+  'cfe-wl-swing-precharge': {
+    category: '電圧を「ゼロまで落とさない」省エネ早ワザ C133 — 読み出しを10%速くし、電気代を29%も節約する中間電位プリチャージ！',
+    title: 'C133. 非選択ワード線 中間電位スイング低減プリチャージ回路（ISSCC 2025）',
+    subtitle: 'Unselected Word-Line Intermediate-Potential Swing Reduction Precharge Architecture',
+    plainAnalogy:
+      'エレベーターで毎回1階（0 V）まで降りてからまた8階（読み出し電圧）へ上ると、時間も電気もムダになりますよね。332層もある3D NANDでは、読んでいない331本のワード線にも「通り道を開く電圧」をかけるため、毎回0 Vまで放電すると莫大な電気と時間が消えます。そこで「どうせすぐ次を読むなら、途中の5階（中間電位）で待機しておこう！」という大発明がこれ。読み出し時間が4マイクロ秒（10%）も速くなり、消費エネルギーも一気に29%削減されたんです！',
+    summary:
+      'キオクシアがISSCC 2025で実証した3D NAND連続読み出し高速化・省電力技術です。読み出し終了時に非選択ワード線（Unselected WL）をVSS（0 V）まで完全放電せず中間電位へ保持することで、次ページ読み出し時の充電時間と充放電エネルギーを劇的に削減します。',
+    opticsAndPhysics: [
+      '300層超の3D NANDではワード線1本あたりの寄生容量 C_WL が大きく、読み出しパス電圧 V_READ（約6〜8 V）への充放電が読み出し消費エネルギーとレイテンシ（tR）の大部分を占めます。',
+      '連続リード時に非選択ワード線を 0 V ではなく中間電位 V_MID へ放電・保持するスイング低減制御を行うことで、次の読み出しサイクルでの再昇圧幅（V_READ − V_MID）を大幅に短縮できます。',
+      'ISSCC 2025の報告では、この中間電位プリチャージにより読み出し時間 tRead を 4 μs 短縮（約10%高速化）すると同時に、読み出し動作エネルギーを 29% 削減することに成功しています。',
+    ],
+    formula: {
+      expression: 'E_WL = C_WL · V_READ · (V_READ − V_MID)   (ΔtRead = −4 μs / −10%,  E_read = −29%)',
+      description: 'スイング幅を V_READ から (V_READ − V_MID) へ縮小することで、静電容量充放電エネルギーと充電遅延を同時に削減。',
+    },
+    nextGenInnovation:
+      '高解像度動画の連続再生や8K RAWファイルのPC高速転送時、カードの発熱を抑えながらランダム／シーケンシャル読出レスポンスを底上げする中核省電力アーキテクチャです。',
+    specs: [
+      { label: '出典技術', value: 'Kioxia ISSCC 2025（連続リード最適化）' },
+      { label: '読出速度改善', value: 'tRead −4 μs 短縮（約 10% 高速化）' },
+      { label: '消費電力削減', value: 'リード動作エネルギー 29% 削減' },
+      { label: '動作原理', value: '非選択WLをVSS(0V)まで落とさず中間電位へ保持' },
+    ],
+    diagramType: 'cfe_wl_swing_precharge',
+  },
+
+  'cfe-32die-twintower-stack': {
+    category: '厚さ2mm未満に「32枚のチップ」を積む超絶折り紙 C134 — 髪の毛より薄い30μmチップを2本の階段タワーで積む8TB実装！',
+    title: 'C134. 32ダイ・ツインタワー2mm未満積層パッケージ＆片持ちオーバーハング配線',
+    subtitle: '32-Die Twin-Tower Sub-2mm Package Stack & Cantilever Overhang Anti-Crack Wirebonding',
+    plainAnalogy:
+      'CFexpress Type Aの厚みはわずか2.8 mm。外装や基板を引くと、NANDメモリに許される高さは2 mm未満しかありません！そこに32枚ものシリコンチップを積み上げるには、チップ1枚をコピー用紙の3分の1以下（わずか30〜40マイクロメートル！）まで薄く削り、誤差±2マイクロメートル以内で2本の「階段タワー（ツインタワー）」のように少しズラしながら重ねます。さらに飛び出した極薄の庇（ひさし）を割らずに金線で結ぶ、日本半導体パッケージングの極致です！',
+    summary:
+      'キオクシアが2025年9月に発表した、11.5×13.5 mm・高さ2 mm未満の極薄パッケージ内に2 Tb NANDダイを32枚（合計8 TB）収める超高密度積層実装技術です。30〜40 μm極薄研削、ツインタワー階段配置、および低ダメージ片持ちワイヤボンディングを統合しています。',
+    opticsAndPhysics: [
+      '32層積層で高さ2.0 mm未満を達成するには、ダイ1枚の厚みばらつきが±2 μmあるだけで 32枚合計で 64 μm もの累積高さ誤差となりモールド封止不良を招くため、超精密バックグラインディング（DBG）が不可欠です。',
+      '1本の塔に32枚積むと階段シフト量が横方向に大きくなりすぎるため、16枚＋16枚の「ツインタワー構造」に分割配置し、狭小フットプリント内で全32ダイのボンディングパッドを露出させます。',
+      '階段状に突き出た厚さ30 μm台のシリコン庇（片持ちオーバーハング）へワイヤボンディングする際、超音波荷重でシリコンクラックが生じやすいため、DAF（Die Attach Film）の弾性率最適化と低荷重ボンド波形制御で割れを防止します。',
+    ],
+    formula: {
+      expression: 'H_pkg = H_sub + 32 × (t_die + t_DAF) + H_loop + H_mold < 2.0 mm   (t_die ≈ 30–40 μm)',
+      description: '32枚の極薄ダイ厚 t_die と接着フィルム t_DAF、ワイヤループ高の総和を厳密な±2μm公差で2mm枠内へ収める実装方程式。',
+    },
+    nextGenInnovation:
+      '現在は1.92 TB〜2 TBが主流のCFexpress Type Aカードも、この32ダイ・ツインタワー超薄型実装技術により将来的に4 TB〜8 TBの超大容量カードが同じ切手サイズで実現可能となります。',
+    specs: [
+      { label: 'パッケージ寸法', value: '11.5 × 13.5 × <2.0 mm（32ダイ＝最大 8 TB）' },
+      { label: 'ダイ極薄研削', value: '30〜40 μm（±2 μm × 32枚＝64 μm累積公差管理）' },
+      { label: '積層トポロジ', value: '16＋16 ツインタワー階段積層（片持ちオーバーハング）' },
+      { label: 'クラック対策', value: '最適DAF弾性率＆低超音波荷重ワイヤボンド制御' },
+    ],
+    diagramType: 'cfe_32die_twintower_stack',
+  },
+
+  'cfe-dummy-channel-support': {
+    category: '332階建てビルを支える「電気を流さない柱」 C135 — 製造中に金属を流し込む一瞬、超絶高層メモリが崩れないための鉄骨！',
+    title: 'C135. 3D NAND ダミーチャネル構造支持柱（リプレースメントゲート崩落防止柱）',
+    subtitle: '3D NAND Non-Electrical Dummy Channel Support Pillars (Replacement-Gate Anti-Collapse Columns)',
+    plainAnalogy:
+      '332階建ての3D NANDを作る工程では、最初に仮の絶縁膜を332段積んだあと、薬品で仮の膜だけを全部溶かして空洞にし、そこへ金属（モリブデンやタングステン）を流し込みます（リプレースメントゲート製法）。でも332枚の薄い床が宙に浮いた瞬間、支えがないとペチャンコに崩落してしまいます！そこで記憶には一切使わない「補強専用の太い柱（ダミーチャネル）」を要所に立てて建物をガッチリ支え、さらに内部応力（−280 MPa）を逃がしているんです！',
+    summary:
+      '300層超の3D NAND製造におけるリプレースメントゲート（犠牲窒化膜ウェットエッチング→金属ワード線充填）工程で、積層スリット構造の機械的倒壊を防ぐ非電気的「ダミーチャネル支持柱」群です。',
+    opticsAndPhysics: [
+      'リプレースメントゲート（RG）方式では、O/N（酸化膜/窒化膜）交互積層からスリット経由で熱いリン酸によりSi3N4層を選択除去する際、数百層のSiO2薄板が水平に張り出した極限のアスペクト比構造となります。',
+      'この瞬間の表面張力（乾燥スティクション）や金属CVD充填時の残留応力によるパターン倒壊・スリット曲がりを防ぐため、スリット近傍およびメモリブロック境界に電気的に孤立したダミーチャネル柱を高密度配置します。',
+      '最新の応力解析では、金属ゲート充填に伴うポリシリコンチャネルの圧縮応力（約 −280 MPa 級）をダミー柱配置とトレンチ形状で分散させることで、セル電流ばらつきとウェハ反りを抑制します。',
+    ],
+    formula: {
+      expression: 'σ_buckle = (π² · E · I) / (K · H_stack)²   (H_stack > 12 μm, 332L 倒壊限界評価)',
+      description: '332層（高さ12μm超）の座屈限界応力をクリアするため、ダミー支持柱の間隔と断面二次モーメント I を力学設計する。',
+    },
+    nextGenInnovation:
+      '400〜500層超の次世代3D NANDでは、ダミーチャネルを単なる犠牲柱ではなく高熱伝導セラミック柱や応力バッファ柱として機能させる構造最適化が進んでいます。',
+    specs: [
+      { label: '配置目的', value: 'リプレースメントゲート犠牲膜除去時の積層崩落防止' },
+      { label: '電気的役割', value: '非電気的（記憶には不使用の純機械構造サポート柱）' },
+      { label: '対象応力', value: '332層金属充填時のチャネル圧縮応力（〜−280 MPa）' },
+      { label: '設計トレードオフ', value: '高密度化（面積最小）vs スリット倒壊マージン最大化' },
+    ],
+    diagramType: 'cfe_dummy_channel_support',
+  },
+
+  'cfe-efuse-redundancy-repair': {
+    category: '工場で不良箇所を瞬間スキップする「電子ヒューズ」 C136 — 何千億個もの穴に数個キズがあっても、予備列へ切り替えて100%良品化！',
+    title: 'C136. オンダイ eFuse 冗長救済回路＆不良カラム／ブロック自動リマップバンク',
+    subtitle: 'On-Die Electromigration eFuse Redundancy & Bad-Column/Block Transparent Remap Bank',
+    plainAnalogy:
+      '1枚のNANDチップには何千億個もの極小メモリ穴が空いています。どんなに清潔なクリーンルームでも、微細なホコリで数本だけ穴が詰まることは避けられません。そのまま捨てたらカードが何十万円にもなってしまいます！そこでチップの隅に「予備の列（冗長カラム）」と「eFuse（電子ヒューズ）」を用意。工場検査で不良列を見つけたらヒューズに電流を流してパチンと焼き切り、以後は自動的に予備列へ迂回させることで完璧な良品に仕上げるんです！',
+    summary:
+      'ウエハプローブ検査（CPテスト）で検出された微細欠陥ビット線（不良カラム）や不良ブロックのアドレスを不揮発記録し、実行時にゼロ遅延で予備冗長アレイへ自動切替するオンダイeFuseリマップバンクです。',
+    opticsAndPhysics: [
+      '従来のレーザー溶断ヒューズは微細化限界と開口部ダメージの問題がありましたが、現代のBiCS/V-NANDはエレクトロマイグレーション現象を利用した微細電気ヒューズ（eFuse）またはアンチヒューズ（酸化膜絶縁破壊型OTP）を採用しています。',
+      '電源投入時のブートシーケンス（POR直後）に、ROM領域とeFuseバンクから不良カラム／プレーン置換テーブルが高速SRAMレジスタへ自動ロードされ、外部コントローラからは100%欠陥のない連続メモリ空間に見えます。',
+      'さらに製造初期不良（Factory Bad Block）は各ブロックのスペア領域へマークされ、コントローラ側FTLの初期不良テーブルと二重管理されることで高い長期信頼性を維持します。',
+    ],
+    formula: {
+      expression: 'Yield_repaired = Σ_{k=0}^{R} C(N, k) · p^k · (1 − p)^(N−k)   (R = 予備冗長カラム数)',
+      description: '欠陥確率 p に対し R 本の予備列をeFuseで自動置換するだけで、超大面積3D NANDの歩留まりが飛躍的に100%へ近づく。',
+    },
+    nextGenInnovation:
+      '2026年以降の超高層NANDでは、出荷後の経年劣化で発生した局所カラム不良をバックグラウンドで再マッピングする「ポストパッケージ修復（PPR）」技術との連携が強化されています。',
+    specs: [
+      { label: '記録素子', value: 'エレクトロマイグレーション型 eFuse / 酸化膜アンチヒューズ' },
+      { label: '救済対象', value: '不良ビット線（カラム）・不良ワード線・初期不良ブロック' },
+      { label: '切替タイミング', value: '電源投入（POR）時にハードウェアSRAMレジスタへ自動展開' },
+      { label: '効果', value: '超高密度2Tbダイの歩留まり劇的向上＆透過的データ保証' },
+    ],
+    diagramType: 'cfe_efuse_redundancy_repair',
+  },
+
+  'cfe-prog-suspend-resume': {
+    category: '書き込みを一瞬止めて読み込みを通す「救急車優先レーン」 C137 — 連写中でもプレビュー再生がサクサク開く魔法の割り込み制御！',
+    title: 'C137. プログラム一時停止／再開（Program-Suspend）＆マルチプレーン・キャッシュ読出',
+    subtitle: 'TLC Program-Suspend / Read-Resume & Multi-Plane Cache-Read Low-Latency Pipeline',
+    plainAnalogy:
+      'カメラで連写した直後に「今の写真、ピント合ってるかな？」と再生ボタンを押すこと、ありますよね！でもNANDメモリは「書き込み（約500マイクロ秒）」のほうが「読み込み（約40マイクロ秒）」より10倍以上時間がかかります。もし書き込み完了を律儀に待つと画面表示がカクつきます。そこで「書き込みの階段パルスを一瞬だけ一時停止（サスペンド）→最優先で読み込み（救急車）を通す→すぐ続きから書き込み再開！」をハードウェアで自動実行するのがこの回路なんです！',
+    summary:
+      'TLC/QLC NANDの長時間ISPP書込動作（約400〜800 μs）の途中で高圧チャージポンプ状態を保持したまま書込を一時中断し、緊急の読み出し要求（カメラ再生プレビューやFTLメタデータ参照）を数十μsで割り込み処理したのち安全に書込を再開するパイプライン機構です。',
+    opticsAndPhysics: [
+      'TLC書込は多数のステップ電圧パルス（ISPP）とベリファイで構成されるため、1ページ書込完了まで約 500 μs 前後かかり、その間同じプレーンへの通常リードはブロックされてしまいます。',
+      'Program-Suspendコマンドを受信すると、NAND内部ステートマシンは現在のISPPパルス番号・昇圧レベル・未完了セルのページバッファラッチを退避保持した状態で直ちに高電圧を放電し、緊急リード（tR ≈ 40〜60 μs）を実行します。',
+      'さらにMulti-Plane Cache-Readと併用することで、データレジスタからコントローラへ4.8 Gbpsで転送しながら裏側で次のページを並行センスでき、撮影中のライブビュー再生やサムネイル一覧の応答性を劇的に高めます。',
+    ],
+    formula: {
+      expression: 't_Read_QoS = t_Suspend (~15 μs) + t_R (~40 μs) ≪ t_Prog (~550 μs)   (最大 約90% 遅延短縮)',
+      description: '長い書込 t_Prog の完了を待たずに t_Suspend で割り込むことで、テイルレイテンシ（99.9%応答遅延）を1桁近く短縮。',
+    },
+    nextGenInnovation:
+      '最新のVPG400/VPG800対応コントローラは、サスペンド回数上限を自律制御して書込帯域の低下（スタベーション）を防ぎながら、カメラ操作の瞬間レスポンスを両立させています。',
+    specs: [
+      { label: '書込中断時間', value: '約 10〜20 μs（ISPPステップ＆ページラッチ保持）' },
+      { label: '割込読出遅延', value: '約 55〜65 μs（通常待機時 500 μs超から大幅短縮）' },
+      { label: '併用パイプライン', value: 'Multi-Plane Cache-Read（センス＆I/O転送完全並列化）' },
+      { label: 'カメラ体感効果', value: '連写直後のRAW拡大ピント確認＆メタデータ高速応答' },
+    ],
+    diagramType: 'cfe_prog_suspend_resume',
+  },
+
+  // =========================================================================
+  // GROUP B: PCIe 4.0 PHY/DLL/Transaction & NVMe 2.1–2.4 Hardware Engines (C138–C149)
+  // =========================================================================
+  'cfe-sris-elastic-skp-buf': {
+    category: 'カメラとカードの時計ズレを吸収する「伸び縮みクッション」 C138 — 電波ノイズ低減クロックの揺れをSKP記号の出し入れで無傷吸収！',
+    title: 'C138. PCIe 4.0 SRIS / SSC（5000 ppm）受信エラスティックバッファ＆SKP補償器',
+    subtitle: 'PCIe 4.0 SRIS / 5000 ppm SSC RX Elastic FIFO Buffer & SKP Ordered-Set Compensator',
+    plainAnalogy:
+      'カメラ本体とCFexpressカードは、ノイズを減らすためにあえて少し揺らした基準時計（SSC）や別々の水晶時計（SRIS）で動くことがあります。1秒間に160億回もデータを送るPCIe 4.0では、時計がほんの0.5%（5000 ppm）ズレただけで178回に1回はデータが衝突してしまいます！そこで受信口に置かれた伸縮自在のクッション（エラスティックバッファ）が、データパケットの隙間にある「SKP（スキップ）記号」をこっそり足したり削ったりして、時計ズレを完全吸収するんです！',
+    summary:
+      'PCIe 4.0物理層（PHY）受信端に実装されたクロックドメイン乗せ換え用エラスティックFIFOバッファです。最大±5000 ppmの拡散スペクトラムクロック（SSC）や独立基準クロック（SRIS）による周波数偏差を、SKP Ordered Setの動的挿入・削除で吸収します。',
+    opticsAndPhysics: [
+      'カメラ内部のEMI（電磁妨害）を無線やマイクへ漏らさないため、100 MHz PCIeリファレンスクロックは0〜−5000 ppmのダウン・スプレッド（SSC）変調されるのが一般的です。',
+      'SRIS（Separate Refclk Independent SSC）構成では送信側と受信側の周波数差が最大 5600 ppm（約178クロックごとに1UIのスリップ）に達するため、固定タイミングでは即座にFIFOオーバーフロー／アンダーフローを起こします。',
+      'PCIe 4.0の128b/130bエンコーディングでは定期的にSKP Ordered Setが送出されており、エラスティックバッファはFIFO充填率が半分からズレた瞬間にSKPシンボルを4バイト単位で増減して同期を永久維持します。',
+    ],
+    formula: {
+      expression: 'Δf_max = 5600 ppm (SRIS)  ⇒  1 UI slip every ~178 clks  →  SKP ±4B Auto-Trim',
+      description: '最大5600 ppmの独立クロック偏差に対し、定期的に挿入されるSKP記号を増減して受信FIFOの中央水位を保つ。',
+    },
+    nextGenInnovation:
+      '小型カードリーダーやカメラの極小スロットでREFCLK配線長やEMI制限が厳しくなる中、SRIS対応エラスティックバッファが安定した16 GT/sリンク維持の影の立役者です。',
+    specs: [
+      { label: '最大許容偏差', value: '±5000 ppm SSC / 最大 5600 ppm（SRIS独立クロック）' },
+      { label: '補償メカニズム', value: '128b/130b SKP Ordered Set 動的挿入・削除' },
+      { label: 'バッファ動作', value: 'Half-Full基準 伸縮FIFO（RXリカバリクロック→内部CLK）' },
+      { label: 'EMI効果', value: 'カメラ内ワイヤレス・マイク帯域へのクロックノイズ低減' },
+    ],
+    diagramType: 'cfe_sris_elastic_skp_buf',
+  },
+
+  'cfe-pcie-lmr-eye-scanner': {
+    category: '通信を止めずに信号の健康診断をする「内蔵アイ・スキャナ」 C139 — 16 GT/sの極小な目（アイ開口）の余裕をリアルタイム測定！',
+    title: 'C139. PCIe 4.0 受信端レーンマージニング（LMR）＆Control-SKP アイ開口スキャナ',
+    subtitle: 'PCIe 4.0 Lane Margining at Receiver (LMR) Non-Disruptive Eye-Opening Scanner',
+    plainAnalogy:
+      '時速300 kmで走る新幹線の線路幅を調べるのに、わざわざ列車を止めて高価な計測器を運び込むのは大変ですよね。PCIe 4.0から義務化された「LMR（レーンマージニング）」は、なんとカード内部の受信チップ自身が「データ転送（L0状態）を1ミリも止めずに」時間軸と電圧軸の判定ポイントを少しずつ左右上下へズラして、あとどれだけ余裕（アイ開口マージン）があるかを自動スキャンする内蔵オシロスコープなんです！',
+    summary:
+      'PCIe 4.0（16 GT/s）仕様で全デバイスに必須実装となった受信端レーンマージニング（LMR）ハードウェアエンジンです。通常稼働（L0状態）のままControl SKP Ordered Set経由でコマンドを受け取り、実稼働ビットエラー率から受信アイのタイミング・電圧余裕を非破壊計測します。',
+    opticsAndPhysics: [
+      '16 GT/s（1ビット幅わずか 62.5 ps）では基板やスロット接点の微小なインピーダンス乱れで受信波形（アイパターン）が閉じやすいため、外部プローブを当てるとプローブ自体の静電容量で波形が壊れて正確に測れません。',
+      'LMRエンジンは主データサンプラの横に独立した「マージン観測サンプラ」を備え、基準クロック位相（左右タイミング）と基準電圧（上下しきい値）を微小ステップで掃引しながら主サンプラ結果と比較し、エラー発生境界を特定します。',
+      'カメラ開発・量産検査ではLMRにより、α7 IVの実機スロットにカードを挿したまま、高温70℃環境下でも十分なアイ開口（時間・電圧マージン）が残っているかを100%定量検証できます。',
+    ],
+    formula: {
+      expression: 'Eye Margin = (Δt_Left + Δt_Right) [UI]  ×  (ΔV_Up + ΔV_Down) [mV]  @ BER < 10⁻¹²',
+      description: '主通信を止めず副サンプラで上下左右のエラー境界を掃引し、ビットエラー率10⁻¹²未満の安全領域を実測する。',
+    },
+    nextGenInnovation:
+      '将来のPCIe 5.0/6.0（CFexpress 5.0世代）では、LMRの結果をリアルタイムでTX FFEやRX DFEタップ再調整へフィードバックする「自律リンク自己修復」へ進化しています。',
+    specs: [
+      { label: '規格要件', value: 'PCIe 4.0（16 GT/s）必須ハードウェア機能（L0非破壊）' },
+      { label: '制御通信', value: 'Control SKP Ordered Set ＋ Marginingレジスタ' },
+      { label: '計測項目', value: 'タイミング余裕（左右UI）＆ 電圧余裕（上下mV）' },
+      { label: '品質効果', value: 'カメラ実機スロット＋高温動作時の信号健全性を100%保証' },
+    ],
+    diagramType: 'cfe_pcie_lmr_eye_scanner',
+  },
+
+  'cfe-pcie-tlp-replay-lcrc': {
+    category: '通信ミスを「0.001秒未満で自動再送」する記憶バッファ C140 — カメラからの写真データを1ビットたりとも化けさせない鉄壁の照合係！',
+    title: 'C140. PCIe データリンク層 TLPリプレイ（再送）バッファ＆32bit LCRC / Ack-Nak エンジン',
+    subtitle: 'PCIe Data-Link Layer TLP Replay (Retry) Buffer & 32-bit LCRC / Ack-Nak Integrity Engine',
+    plainAnalogy:
+      '高速連写でカメラから飛んでくる写真パケット（TLP）が、もし一瞬の電磁ノイズで1ビットだけ化けてしまったら大変！そこでPCIeのデータリンク層では、送ったパケットすべてに「32ビットの偽造防止ハンコ（LCRC）」を押し、相手から「無事届いたよ（Ack）」という返事が来るまで控えをリプレイバッファに保管します。もし「文字化けした！（Nak）」と返ったら、OSやカメラアプリに気づかれる間もなくハードウェアが瞬時に自動再送するんです！',
+    summary:
+      'PCIeデータリンク層（DLL）の中核を担うTLP（Transaction Layer Packet）信頼性保証エンジンです。全送信TLPへ12ビット連番と32ビットLCRCを付加してリプレイバッファに保持し、Ack/Nak DLLPによるハードウェア自動再送で無損失リンクを実現します。',
+    opticsAndPhysics: [
+      'PCIe 4.0（16 GT/s）の物理層は生ビットエラー率（BER）10⁻¹²以下を目標としますが、長時間の8K動画収録（テラバイト級転送）では稀に単発のビット反転が発生し得ます。',
+      'データリンク層は送信TLPごとに12ビットシーケンス番号と32ビット巡回冗長検査（LCRC）を付加し、送信と同時にオンチップSRAMの「リプレイバッファ」へコピーを待機させます。',
+      '受信側でLCRC不一致を検出すると即座にNak DLLPを返送し、送信側は該当シーケンス番号以降の全TLPを数マイクロ秒以内に自動再送するため、上位NVMe層へは完全にエラーフリーの転送が保証されます。',
+    ],
+    formula: {
+      expression: 'LCRC_32(TLP) = CRC-32(SeqNum₁₂ ‖ TLP_Header ‖ Payload)   ⇒   Mismatch → Nak → Auto-Replay',
+      description: '全TLPの32bit LCRC検査が1ビットでも不一致ならNak DLLPを発行し、リプレイバッファから即座にハードウェア再送。',
+    },
+    nextGenInnovation:
+      'PCIe 6.0（PAM4）では生BERが10⁻⁶級へ上がるため、軽量FECと固定長FLITリトライへと進化しますが、CFexpress 4.0（PCIe 4.0 NRZ）ではこの32bit LCRC＋TLPリプレイが超低遅延と絶対信頼性を両立します。',
+    specs: [
+      { label: '誤り検出符号', value: '32-bit LCRC（全TLPパケット単位ハードウェア生成・検証）' },
+      { label: '再送制御', value: '12-bit連番 ＋ Ack/Nak DLLP ＋ Replay Timer自動再送' },
+      { label: 'バッファ実装', value: 'コントローラ内蔵オンチップ高速SRAMリプレイキュー' },
+      { label: '信頼性効果', value: '物理層ノイズ発生時も1ビット欠損なく動画・RAW転送継続' },
+    ],
+    diagramType: 'cfe_pcie_tlp_replay_lcrc',
+  },
+
+  'cfe-pcie-bar0-cfg-space': {
+    category: 'カメラが「おっ、NVMeカードだ！」と瞬時に認識する名札 C141 — 起動0.1秒でメモリ空間を開通させるPCIe設定レジスタ＆DMA橋！',
+    title: 'C141. PCIe コンフィギュレーション空間（Class 01:08:02）・BAR0 MMIO＆バスマスタ橋',
+    subtitle: 'PCIe Configuration Space (Class 01:08:02 NVMe), 64-bit BAR0 MMIO & Bus-Master DMA Bridge',
+    plainAnalogy:
+      'カメラの電源を入れた瞬間、BIONZ XRはカードスロットへ「そこに誰かいる？」と呼びかけます。するとこの回路が「はい！クラス番号 01:08:02（NVMe SSD）です！操作パネル（BAR0）はここに開いてください！」と自己紹介（コンフィギュレーション空間）を返答。さらにカメラの許可（Bus Master Enable）を受け取った瞬間、カード側からカメラのメモリへ直接データを読み書きできる超高速バイパス橋が開通するんです！',
+    summary:
+      'PCIeデバイス列挙時にカメラ側ルートコンプレックスへNVMeコントローラ属性（Class Code 01:08:02）を提示し、64ビットBAR0（Base Address Register 0）へCAP/AQA/ASQ/ACQ/CC/CSTS等のNVMe制御レジスタをマップするフロントエンドブリッジです。',
+    opticsAndPhysics: [
+      'PCIe電源投入・リンクアップ（L0到達）直後、ホストCPUはType 0コンフィギュレーション空間（オフセット0x00〜0xFFF）を読み出し、Vendor/Device IDとClass Code `01h/08h/02h`（Mass Storage / NVM / NVMe）を識別します。',
+      'ホストはCommandレジスタのMemory Space EnableとBus Master Enable（BME）ビットを立て、BAR0/BAR1へ64ビットMMIOベースアドレスを割り当てることで、コントローラ内部レジスタ（CC.EN起動・CSTS.RDY確認）への直接アクセスが開通します。',
+      'さらにPCIe拡張ケイパビリティ構造（PM, MSI-X, PCIe Cap, L1 Substates, AER, LTR）がこの空間に連鎖配置され、カメラの省電力設定やエラー報告ポリシーがすべて標準プロトコルで統合管理されます。',
+    ],
+    formula: {
+      expression: 'MMIO_Addr = BAR0_64bit + Offset   (CAP=0x00, CC=0x14, CSTS=0x1C, Doorbells=0x1000+)',
+      description: '64bit BAR0アドレスを起点にコントローラ制御レジスタと高速ドアベル領域をホスト物理メモリ空間へ直結。',
+    },
+    nextGenInnovation:
+      'CFexpress 4.0（NVMe 2.x）では起動時間短縮のため、BAR0初期化からAdminキュー開通・Ready応答までのブートシーケンスが数十ミリ秒台まで最適化されています。',
+    specs: [
+      { label: 'PCIクラスコード', value: '01:08:02（Mass Storage / NVM / NVMe 準拠）' },
+      { label: '主要レジスタ', value: '64-bit BAR0（CAP / VS / AQA / ASQ / ACQ / CC / CSTS）' },
+      { label: 'DMA権限制御', value: 'Bus Master Enable（BME）によるカード主導高速DMA許可' },
+      { label: '拡張ケイパビリティ', value: 'MSI-X / L1.1-L1.2 Substates / AER / LMR統合管理' },
+    ],
+    diagramType: 'cfe_pcie_bar0_cfg_space',
+  },
+
+  'cfe-nvme-sqcq-doorbell': {
+    category: '最大6万5千本の注文レーンを鳴らす「4バイトの呼び鈴」 C142 — CPUを待たせず連写データを並列処理するNVMeリングキュー！',
+    title: 'C142. NVMe サブミッション／コンプリーション・リングキュー（SQ/CQ）＆ドアベル検出器',
+    subtitle: 'NVMe Lockless Submission/Completion Ring Queues (SQ/CQ) & 4-Byte BAR0 Doorbell Detector',
+    plainAnalogy:
+      '昔のSDカードやSATA SSDは「レジが1台だけ」で行列待ちが起きていました。NVMeは最大65,535組もの注文レーン（SQ）と受取レーン（CQ）を並列開設できる超大型フードコート！カメラがメモリ上に注文票（64バイト）を置いたら、カードのBAR0にある「たった4バイトの呼び鈴（ドアベル）」をチーン！と1回鳴らすだけ。ロック待ちゼロでコントローラが注文を一気に吸い上げ、完了票（16バイト）を返すから爆速なんです！',
+    summary:
+      'NVMeプロトコルの超高IOPS・超低遅延を生み出すリングバッファ型コマンドキュー（Submission Queue / Completion Queue）管理エンジンと、BAR0 MMIOオフセット0x1000以降の4バイト・ドアベル書込検出ハードウェアです。',
+    opticsAndPhysics: [
+      'NVMe規格では1つのコントローラで最大65,535本のI/Oキューペア、各キュー最大65,535エントリ（1コマンド＝64バイトSQE、完了通知＝16バイトCQE）をロックレスな循環リングバッファとしてホストRAM上に配置できます。',
+      'カメラ側（ホスト）がSQへ複数コマンドを書き込んだ後、カード側BAR0のSubmission Queue Tail Doorbellレジスタへわずか4バイトのMMIOライトを行うだけで、カード内ハードウェア検出器が即時DMAフェッチを起動します。',
+      '従来のAHCI/SATA（1キュー深さ32、多数のMMIOレジスタ往復が必要）と比較し、MMIOアクセス回数を劇的に削減できるため、カメラのマルチコアBIONZ XRから並列にRAW書込・プロキシ動画・音声メタデータを遅延なく投入できます。',
+    ],
+    formula: {
+      expression: 'Max Parallelism = 65,535 Queues × 65,535 Depth   (SQE = 64 B,  CQE = 16 B,  Doorbell = 4 B)',
+      description: 'ロック不要の並列リングキューと最小4バイトのドアベル書込だけで超並列NVMeコマンド投入を実現。',
+    },
+    nextGenInnovation:
+      '最新のNVMe 2.1〜2.4対応コントローラでは、ドアベル連打時のPCIe負荷を減らす「Shadow Doorbell Buffer」にも対応し、マルチストリーム動画記録時の効率をさらに高めています。',
+    specs: [
+      { label: '規格並列度', value: '最大 65,535 キューペア × 深さ 65,535（ロックレス設計）' },
+      { label: 'エントリサイズ', value: 'SQコマンド 64 Byte / CQ完了エントリ 16 Byte' },
+      { label: '起動トリガ', value: 'BAR0 0x1000+ 4-Byte Tail/Head Doorbell MMIO検出' },
+      { label: '優位性', value: 'SD/AHCI比でコマンド往復オーバーヘッドを桁違いに削減' },
+    ],
+    diagramType: 'cfe_nvme_sqcq_doorbell',
+  },
+
+  'cfe-nvme-prp-sgl-dma': {
+    category: '散らばったRAW画像を一撃で回収する「ゼロコピー高速便」 C143 — カメラのCPUを働かせず、4KBの断片を自動で1本のストリームに束ねる！',
+    title: 'C143. NVMe PRP / SGL ハードウェア・スキャッタギャザー Zero-Copy DMA エンジン',
+    subtitle: 'NVMe PRP (Physical Region Page) / SGL Hardware Scatter-Gather Zero-Copy DMA Engine',
+    plainAnalogy:
+      'カメラのバッファメモリには、3300万画素RAW写真や4K 60p動画のデータが4 KBずつの小さな部屋にバラバラに置かれています。もしカメラのCPUがそれを1か所に並べ直してからカードへ渡すと処理が詰まってしまいます。そこでCFexpress内蔵のDMAエンジンが「PRP（住所リスト）」や「SGL（区画リスト）」を読み取り、散らばった部屋から直接データをかき集めて（ギャザー）そのままNANDへ流し込む！CPU負担ほぼゼロの超特急輸送なんです！',
+    summary:
+      'NVMeコマンド内のPRP（Physical Region Page）リストまたはSGL（Scatter Gather List）ディスクリプタをハードウェア解析し、ホスト物理メモリ上の不連続な4 KBページ群とカード内部SRAM/NAND間をCPU介在ゼロで直結転送するDMAエンジンです。',
+    opticsAndPhysics: [
+      'カメラのOSやISPバッファでは物理メモリが4 KBページ単位で断片化していますが、NVMeコマンドには先頭アドレス（PRP1）とアドレス配列へのポインタ（PRP2 / PRP List）または任意長セグメント配列（SGL）が格納されています。',
+      'ハードウェアPRP/SGLフェッチャはPCIe Memory Read TLPを自律的にパイプライン発行し、不連続なホストページをコントローラ内部のSRAMデータバッファへ途切れなく連続ストリームとして集約（Zero-Copy）します。',
+      'CFexpress 4.0 Type A（PCIe Gen4 x1）の理論実効上限に近い約1,800 MB/s（読出）〜1,700 MB/s（書込）を持続させるため、最大ペイロードサイズ（MPS 256B/512B）と複数アウトスタンディング読出タグをフル活用してPCIe往復遅延を完全に隠蔽します。',
+    ],
+    formula: {
+      expression: 'Throughput_DMA = min(BW_PCIe4_x1 ≈ 1.97 GB/s,  N_tags × MRRS / RTT_PCIe)',
+      description: '多数の並列DMAタグ（N_tags）でPCIe往復遅延 RTT を隠蔽し、Gen4 x1の実効帯域限界までゼロコピー転送を飽和させる。',
+    },
+    nextGenInnovation:
+      '最新コントローラはSGLネイティブ高速処理とインラインCRC/AES/LDPCパイプラインをDMAエンジン直結で組み込み、メモリコピー回数を文字通りゼロに抑えています。',
+    specs: [
+      { label: '対応記述子', value: 'PRP（4 KBページ配列）＆ SGL（任意バイト長セグメント）' },
+      { label: '転送方式', value: 'PCIe Bus-Master ハードウェア Zero-Copy スキャッタギャザー' },
+      { label: '実効スループット', value: '最大 約 1,800 MB/s（PCIe 4.0 x1 帯域を極限まで活用）' },
+      { label: '連動処理', value: 'DMA転送中にインラインAES暗号化＆CRC32Cを同時計算' },
+    ],
+    diagramType: 'cfe_nvme_prp_sgl_dma',
+  },
+
+  'cfe-nvme-msix-coalescing': {
+    category: '完了通知を「まとめて1回」で知らせる賢い秘書 C144 — 1秒間に何十万回もCPUの肩を叩かず、電池も発熱も守る割り込み制御！',
+    title: 'C144. NVMe MSI-X キュー別割込ベクタ表＆コアレッシング（集約）通知器',
+    subtitle: 'NVMe MSI-X Per-Queue Interrupt Vector Table & Adaptive Coalescing Aggregator',
+    plainAnalogy:
+      '書込が終わるたびに「1枚終わりました！」「2枚終わりました！」と1秒に何十万回もカメラの頭脳（CPU）の肩を叩くと、CPUは返事するだけでヘトヘトになってしまいます。NVMeの「MSI-X」はキューごとに専用直通ラインを持ち、最短2〜5マイクロ秒で通知できる一方、高負荷時は「コアレッシング（まとめ通知）」機能が働いて「8件まとまったら1回だけ報告するね！」と自動調整。超低遅延とカメラの省電力を両立する賢い秘書なんです！',
+    summary:
+      'PCIe MSI-X（Message Signaled Interrupts-Extended）による最大2,048本のキュー別独立割込ベクタ表と、NVMe Set Features（0x08）に基づく適応型割込コアレッシング（時間閾値／完了件数閾値集約）ハードウェアです。',
+    opticsAndPhysics: [
+      '従来のピン割込（INTx）は共有とロック競合でボトルネックになりましたが、MSI-XはPCIeのメモリアドレス書込（Posted Memory Write TLP）として各CPUコアへ直接割込を配送し、完了通知レイテンシを約2〜5 μsまで短縮します。',
+      '一方で高ビットレート4K/8K連写中に全CQEごとにMSI-Xを飛ばすとホストCPUの割込ハンドラ負荷（コンテキストスイッチ）が急増するため、NVMe Interrupt Coalescing回路が「Aggregation Threshold（件数）」と「Aggregation Time（100 μs単位）」で通知を賢く束ねます。',
+      '低負荷の単写プレビュー時は即時通知で応答性を最優先し、連続バースト書込時はバッチ通知へ自動移行することで、カメラ側のバッテリー消費と発熱を大きく抑制します。',
+    ],
+    formula: {
+      expression: 'IRQ_rate = IOPS / min(N_agg_threshold,  IOPS · T_agg_window)   (Latency ≈ 2–5 μs)',
+      description: '集約件数 N_agg と集約窓 T_agg により、低負荷時は即応・高負荷時は割込回数を1/Nへ圧縮。',
+    },
+    nextGenInnovation:
+      'NVMe 2.x対応ホストではさらに超低遅延ポーリング（iopoll）と動的MSI-Xコアレッシングをハイブリッド運用し、プロシネマ機のフレームドロップを徹底排除しています。',
+    specs: [
+      { label: '割込方式', value: 'PCIe MSI-X（最大 2,048 独立ベクタ / Posted Write配送）' },
+      { label: '最小通知遅延', value: '約 2〜5 μs（単写・メタデータ読出時の即応性）' },
+      { label: '集約制御', value: 'NVMe Set Features (0x08) 件数＆時間ウィンドウ集約' },
+      { label: 'システム効果', value: '連続撮影時のカメラCPU割込負荷・消費電力を大幅低減' },
+    ],
+    diagramType: 'cfe_nvme_msix_coalescing',
+  },
+
+  'cfe-nvme-sanitize-huk-mek': {
+    category: '暗号カギを消して「一瞬で完全抹消」する秘密金庫 C145 — 2TBの極秘データもミリ秒で復元不能にするHUK/MEK＆Sanitize 0x84！',
+    title: 'C145. NVMe Sanitize（0x84）暗号消去＆シリコン融合 HUK / MEK 金庫（TCG Opal 2.01）',
+    subtitle: 'NVMe Sanitize (Opcode 0x84) Crypto-Erase & Silicon-Fused HUK / MEK Key Vault',
+    plainAnalogy:
+      '報道カメラマンや映画の極秘ロケで撮った2 TB分のデータを「絶対に復元できないように消したい」とき、普通に全領域を上書きすると何十分もかかります。そこでカード内の全データは普段から「MEK（メディア暗号鍵）」で常時AES-256暗号化され、そのMEKはチップのシリコンにレーザー焼き付けされた唯一無二の「HUK（固有鍵）」で二重ロックされています！NVMe Sanitize暗号消去を押すとMEKを一瞬で破壊・再生成——2 TBすべてがわずか数ミリ秒で解読不能な砂嵐に変わるんです！',
+    summary:
+      'NVMe Sanitizeコマンド（Opcode 0x84: Crypto Erase / Block Erase）を司るハードウェア鍵管理金庫です。コントローラシリコン内に物理融合されたHardware Unique Key（HUK）でMedia Encryption Key（MEK）をラップ保護し、暗号学的完全消去を実現します。',
+    opticsAndPhysics: [
+      'TCG Opal 2.01 / AES-256 XTS対応カードでは、NANDへ書き込まれる全ユーザーデータが意識されることなく常時256ビットMEKで暗号化されており、MEK自体はチップ固有のHUK（PUFまたはOTPヒューズ由来で外部読出不可）でラップして保存されます。',
+      'NVMe Sanitize（0x84）のCrypto Erase（SANACT=0x04）を実行すると、NAND全ブロックを物理消去する代わりに金庫内のMEKをハードウェア乱数（TRNG）で即座に破棄・再生成するため、キャッシュ・予備OP領域・不良ブロック内に残った断片データまで含めて数ミリ秒で数学的に復元不可能となります。',
+      'またSanitize実行中に万一電源が抜けても、次回起動時に不揮発ステートログから自動で消去完了まで再開する電源断耐性（Power-Loss Resilient Sanitize）がNVMe規格で厳格に義務付けられています。',
+    ],
+    formula: {
+      expression: 'Ciphertext = AES-256-XTS(MEK, Plaintext),   Wrapped_MEK = Wrap(HUK_silicon, MEK)',
+      description: 'HUKで守られたMEKを破棄（Crypto-Erase）するだけで、予備領域や不良ブロック残骸まで含め全2TBが即座に復元不能化。',
+    },
+    nextGenInnovation:
+      '報道・映画制作・産業ドローン用途では、Sanitize 0x84とC2PA真正性署名ハードウェア鍵を同一の耐タンパセキュアエンクレーブで保護する統合設計が2026年の新標準になりつつあります。',
+    specs: [
+      { label: 'NVMeコマンド', value: 'Sanitize Opcode 0x84（Crypto Erase / Block Erase対応）' },
+      { label: '鍵階層構造', value: 'シリコン融合 HUK（外部読出不可）→ AES-256 MEKラップ' },
+      { label: '暗号消去時間', value: '数ミリ秒（予備OP・不良ブロック残骸まで完全無力化）' },
+      { label: '電源断耐性', value: '処理中の突然抜去後も次回通電時に自動再開・完了保証' },
+    ],
+    diagramType: 'cfe_nvme_sanitize_huk_mek',
+  },
+
+  'cfe-nvme-apst-autosave': {
+    category: '撮影の合間に自動で「最大89%省エネ仮眠」するタイマー C146 — カメラの電池持ちを劇的に伸ばし、カード発熱まで冷ます自律省電力！',
+    title: 'C146. NVMe APST 自律電源状態タイマー＆ダイナミック省電力（最大 −89%）',
+    subtitle: 'NVMe APST (Autonomous Power State Transitions) Watchdog & Dynamic Auto Power Save',
+    plainAnalogy:
+      'シャッターを切った直後の0.5秒間は全力疾走（PS0：約3.8 W）でデータを書き込む必要がありますが、次のシャッターチャンスを構えて待っている数秒間まで全力エンジンを吹かし続けると、カメラのバッテリーはみるみる減り、カードもアツアツになります。NVMeの「APST」は「50ミリ秒仕事がなければ自動でギアを下げ、200ミリ秒で超省エネ仮眠（PS3/PS4）へ！」とカード自身が自律制御。アイドル電力を最大89%もカットし、次のシャッターでは一瞬で目覚めるんです！',
+    summary:
+      'NVMe Autonomous Power State Transitions（APST）規格に基づく自律型アイドル監視タイマーと電力ステート（PS0〜PS4）遷移エンジンです。ホストCPUからの都度指示なしに非動作時電力を最大約89%削減（ソニー／Nextorage CFexpress 4.0 Type A実測仕様）します。',
+    opticsAndPhysics: [
+      'CFexpress 4.0（PCIe Gen4）はGen2比で2倍の帯域を持つ反面、アクティブ時のSerDes PHYとコントローラ電力が上がりやすいため、細粒度な動的電力制御が小型Type A筐体の熱設計に直結します。',
+      'APSTテーブル（Set Features 0x0C）へ各電力状態のアイドル閾値（ITPT：ミリ秒単位）を事前登録しておくと、コマンドキューが空になった瞬間にハードウェアタイマーが計時を開始し、PS0（Active）→PS1/PS2→PS3/PS4（PCIe L1.2 Substate / 数十mW級）へ自律移行します。',
+      'これにより撮影待機中のカメラ内温度上昇を抑えて8K動画の熱停止マージンを稼ぐと同時に、α7 IV等のNP-FZ100バッテリー駆動撮影枚数を大幅に伸ばします（Dynamic Auto Power Save技術で非アクセス時最大89%低減）。',
+    ],
+    formula: {
+      expression: 'P_avg = D_burst · P_PS0 (~3.8 W) + (1 − D_burst) · P_PS4 (<0.05 W)   (Idle −89%)',
+      description: 'バースト書込比率 D_burst 以外の待機時間をハードウェアAPSTで即座にPS3/PS4へ落とし、平均発熱と電池消費を激減。',
+    },
+    nextGenInnovation:
+      '最新のCFexpress 4.0 Type Aカードでは、APSTとPCIe L1.2 CLKREQ#ゲート制御・NANDディープスリープをミリ秒単位で協調させ、Gen2カード以下の低発熱で2倍の速度を達成しています。',
+    specs: [
+      { label: '規格機構', value: 'NVMe APST（PS0〜PS4自律遷移）＋ PCIe L1.2 Substates' },
+      { label: '省電力実績', value: 'Dynamic Auto Power Save 待機時最大 89% 消費電力削減' },
+      { label: '復帰レイテンシ', value: 'PS3：数ms / PS4：十数ms（シャッター操作を阻害せず復帰）' },
+      { label: '撮影メリット', value: 'NP-FZ100電池持ち向上 ＆ 動画連続収録の熱余裕拡大' },
+    ],
+    diagramType: 'cfe_nvme_apst_autosave',
+  },
+
+  'cfe-nvme-telemetry-log': {
+    category: 'カードの体調と異常履歴を記録する「フライトレコーダー」 C147 — 突然死の前にソニーMedia Scan Utilityへ警告を出す診断ログ！',
+    title: 'C147. NVMe パーシステント・イベントログ＆Media Scan Utility テレメトリ診断記録器',
+    subtitle: 'NVMe Persistent Event Log (Log Page 0x0D) & Sony Media Scan Utility Health Telemetry',
+    plainAnalogy:
+      '飛行機に事故原因を調べるブラックボックス（フライトレコーダー）が積まれているように、プロの現場で使われるCFexpressカード内部にも「不揮発の健康カルテ（パーシステント・イベントログ）」が入っています！「何月何日に温度が70℃を超えてブレーキをかけた」「このブロックでECC訂正が何回起きた」「撮影中に電池切れで急停止した」といった出来事をずっと記録。PCに繋ぐとソニー純正Media Scan Utilityがそれを読み取り、寿命が来る前に交換を教えてくれるんです！',
+    summary:
+      'NVMe 1.4/2.x規格のPersistent Event Log（Log Page 0x0D）およびSMART / Health Information（Log Page 0x02）を不揮発循環バッファへ永続記録する診断テレメトリ回路です。ソニーMedia Scan Utilityによる事前寿命診断と不良セクタ検査の根拠データを提供します。',
+    opticsAndPhysics: [
+      '従来の簡易SMARTカウンタは「累計値」しか見られませんでしたが、NVMe Persistent Event Logはタイムスタンプ付きで「異常電源断」「サーマルスロットリング発動」「ファームウェア更新」「リトライECC多発イベント」等を時系列の循環ログとしてNAND専用保護領域へ記録します。',
+      'ソニーのMedia Scan UtilityはUSB4リーダー（MRW-G3等）経由でこのSMART/Telemetryログと全フラッシュブロックのリードエラー率をスキャンし、書換上限（TBW）到達前に明確なアラートを出します。',
+      'またPCIeのAER（Advanced Error Reporting）で検出された物理層リプレイ回数増大も記録されるため、カード本体不良とカメラ側スロット接点汚れの切り分け診断にも威力を発揮します。',
+    ],
+    formula: {
+      expression: 'Health_Index = f(PEC_avg / PEC_max,  LDPC_SoftRetry_Rate,  Spare_Blocks_Left,  ΔT_events)',
+      description: '消去回数・ソフトLDPCリトライ頻度・予備ブロック残量・高温履歴を統合評価し、データ消失前に交換時期を予知。',
+    },
+    nextGenInnovation:
+      '2025〜2026年のプロ用カードは、カメラ本体のメニュー画面上から直接NVMe SMART寿命警告を表示する連携や、クラウド機材管理向けのJSONテレメトリ出力へ対応を広げています。',
+    specs: [
+      { label: '対応NVMeログ', value: 'SMART/Health (0x02) / Telemetry (0x07) / Persistent Event (0x0D)' },
+      { label: '記録イベント', value: '高温スロットル履歴・急電源断・ECCソフトリトライ・予備残量' },
+      { label: '連携ソフト', value: 'Sony Media Scan Utility（カード寿命＆全セクタ健全性診断）' },
+      { label: 'プロ現場効果', value: '婚礼・報道ロケでの「突然のデータ消失トラブル」を未然防止' },
+    ],
+    diagramType: 'cfe_nvme_telemetry_log',
+  },
+
+  'cfe-ftl-gc-op-compactor': {
+    category: '散らかった部屋を裏で片付けて「空きスペース」を作る整理職人 C148 — 撮影が止まらないように7〜15%の隠し予備部屋もやりくり！',
+    title: 'C148. FTL バックグラウンド・ガベージコレクション（GC）有効ページ圧縮＆動的OP予備プール',
+    subtitle: 'FTL Background Garbage Collection (GC) Valid-Page Compactor & Dynamic Over-Provisioning Pool',
+    plainAnalogy:
+      'フラッシュメモリは「1ページ単位で書き込めるのに、消すときは大きな箱（ブロック）丸ごとでしか消せない」というクセがあります。写真を消したり上書きしたりすると、箱の中に「まだ必要な写真」と「不要なゴミ」が混ざってスカスカになります。そこで撮影の合間に裏で動く片付け職人（GC）が、必要な写真だけを新しい箱へギュッと引っ越して古い箱を一括消去！さらに表に見えない7〜15%の隠し予備部屋（OP）があるから、容量ギリギリでも連写速度が落ちないんです！',
+    summary:
+      'NAND特有の「消去前書込不可（Erase-Before-Write）」制約を解消するFTL（Flash Translation Layer）バックグラウンド・ガベージコレクション圧縮エンジンと、WAF（書込増幅率）を抑え込む動的オーバープロビジョニング（OP：約7〜15%）管理プールです。',
+    opticsAndPhysics: [
+      'ユーザーが見えている「1920 GB」の背後には、物理的に2048 GiB（2 Tb×8ダイ＝約2199 GB）のNANDが搭載されており、差分の約7〜14%が隠れたオーバープロビジョニング（OP）予備ブロック群としてFTL専用に確保されています。',
+      'ガベージコレクション（GC）は最も無効（削除済み）ページ比率が高いブロックをGreedy/Cost-Benefitアルゴリズムで選び出し、残存する有効ページだけを新ブロックへ移動した上で旧ブロックを丸ごと消去（Erase）して即書込可能なフリープールへ戻します。',
+      '動画収録（VPG400/VPG800）中にフォアグラウンドGCが突然発生すると書込速度が一瞬ガクッと落ちてコマ落ち原因となるため、最新のプロ用FTLはアイドル時バックグラウンドGCとpSLC/TLC間の動的OP割当で定常書込速度をフラットに維持します。',
+    ],
+    formula: {
+      expression: 'WAF = (Physical_NAND_Writes) / (Host_Writes)  ≈  1 + (1 − OP) / (2 · OP)   (ランダム時目安)',
+      description: 'オーバープロビジョニング率 OP を7〜15%確保することで、GCによる余計な内部書込（WAF）を抑え速度と寿命を守る。',
+    },
+    nextGenInnovation:
+      '2026年のプロ用カードは、カメラのTRIM/DeallocateコマンドとVPG動画ストリーム検出を連動させ、撮影終了直後の数秒間に静音バックグラウンドGCを完了させる賢いスケジューラを備えます。',
+    specs: [
+      { label: '物理 vs 表示容量', value: '物理 2048 GiB → ユーザー 1920 GB（約 12% 隠しOP確保）' },
+      { label: '主要アルゴリズム', value: '有効ページ圧縮移動（GC）＋ TRIM/Deallocate即時解放' },
+      { label: 'VPG対策', value: '動画記録中のGC割込を平準化し最低保証書込速度を死守' },
+      { label: '寿命効果', value: 'WAF（書込増幅率）低減により総書込耐性（TBW）を大幅延長' },
+    ],
+    diagramType: 'cfe_ftl_gc_op_compactor',
+  },
+
+  'cfe-nvme-zns-cinema-zone': {
+    category: '8Kシネマ動画を「1本道」で流し込む専用ゾーン C149 — 片付け（GC）をゼロにして永遠にコマ落ちさせない次世代NVMe記録方式！',
+    title: 'C149. NVMe ZNS（ゾーン名前空間）シネマ連続書込ストリーム・ゾーンバッファ',
+    subtitle: 'NVMe ZNS (Zoned Namespaces) Append-Only Sequential Cinema Write-Stream Zone Buffer',
+    plainAnalogy:
+      '映画の8K RAWやX-OCN動画は、最初から最後までひたすら順番に書き続ける「巨大な1本道のデータ」です。なのに従来の仕組みでは他の細かいファイルと混ぜて書いてしまうため、あとで片付け（GC）が必要になり速度低下や発熱の原因になりました。次世代NVMeの「ZNS（ゾーン名前空間）」は、NANDの物理消去ブロックとピッタリの大きさの専用レーン（ゾーン）を用意し、先頭から追記オンリーで整然と流し込む仕組み！無駄な片付けが消滅し、発熱も速度低下もゼロになるんです！',
+    summary:
+      'NVMe 2.0/2.1 Zoned Namespaces（ZNS）コマンドセットに対応した追記専用（Append-Only）シーケンシャル書込ゾーン管理バッファです。8K/12Kシネマ動画ストリームをNANDの物理消去単位（スーパーブロック）へ直接アラインし、WAF≈1.0を実現します。',
+    opticsAndPhysics: [
+      '従来のLBAブロック管理では小さなファイル（メタデータ・サムネイル・音声）と巨大な動画ファイルが同一NANDブロックに混在し、削除時に深刻なフラグメンテーションとGCコスト（WAF増大）を引き起こしていました。',
+      'ZNSでは名前空間を固定容量の「ゾーン」へ分割し、各ゾーン内のライトポインタ（WP）位置へ順次追記のみを許可することで、カメラの映像ストリームが物理NANDスーパーブロックへ1対1で無駄なく収まります。',
+      'これによりカード内部のFTLマッピングDRAM必要量とGCによる内部書込（WAF）が理論最小の 1.0 に近づき、CFA VPG800（最低800 MB/s保証）や将来の12K/16Kシネマ記録において極めて低い消費電力と不変の持続速度を両立できます。',
+    ],
+    formula: {
+      expression: 'WAF_ZNS → 1.00,   Zone_Size = k × (Plane_Count × Die_Count × Block_Size)',
+      description: 'ゾーン境界をNAND物理消去ブロック群へ完全整合させ、ガベージコレクション不要で書込増幅率を理論最小1.0へ近づける。',
+    },
+    nextGenInnovation:
+      'FDP（Flexible Data Placement：C128）と並び、ZNSは2026年以降のハイエンドシネマカメラ・CFexpress 4.0/5.0エコシステムで「GCスパイク完全ゼロ」を実現する最先端プロトコルです。',
+    specs: [
+      { label: '対応規格', value: 'NVMe 2.0 / 2.1 ZNS（Zoned Namespaces Command Set）' },
+      { label: '書込モデル', value: 'ライトポインタ（WP）順の追記専用（Append-Only）ゾーン' },
+      { label: '目標WAF', value: '約 1.0（動画収録中の不要GCとDRAM負荷を極小化）' },
+      { label: '最適用途', value: '8K RAW / X-OCN / VPG800 連続高ビットレートシネマ収録' },
+    ],
+    diagramType: 'cfe_nvme_zns_cinema_zone',
+  },
+
+  // =========================================================================
+  // GROUP C: LPDDR4X-4266 Internal Dual-Channel Sub-Circuits (C150–C153)
+  // =========================================================================
+  'cfe-lpddr4x-8bank-1t1c': {
+    category: 'FTL住所録を爆速検索する「8バンク独立メモリ」 C150 — わずか0.6 Vの超省エネI/Oで2系統同時に走るLPDDR4Xの中身！',
+    title: 'C150. LPDDR4X デュアルチャネル8バンク 1T1Cトレンチキャパシタ配列＆センスアンプ',
+    subtitle: 'LPDDR4X-4266 Dual 16-bit Channel 8-Bank 1T1C Cell Array & Open-Bitline Sense Amplifiers',
+    plainAnalogy:
+      'CFexpressカードの中にあるDRAMチップ（LPDDR4X）は、2 TB分のNANDの「どこにどの写真が入っているか」という超巨大な住所録（FTLテーブル）を暗記しています。その内部は、独立して同時に動ける2本の高速道路（16bit×2チャネル）と、それぞれ8つの引き出し（8バンク）に分かれた超精密倉庫！しかも引き出しの中の極小コンデンサ（1T1C）からデータを出し入れする電圧（VDDQ）を従来の1.1 Vからわずか0.6 Vまで下げて、発熱をギュッと抑えているんです！',
+    summary:
+      'JEDEC JESD209-4B準拠のLPDDR4X-4266（2133 MHz / 4266 MT/s）内部コア構造です。独立デュアル16ビットチャネル（各8バンク）の超高アスペクト比1T1Cメモリセル配列、オープンビット線センスアンプ、および超低電圧VDDQ=0.6 V LVSTL出力段を備えます。',
+    opticsAndPhysics: [
+      'LPDDR4Xは従来のLPDDR4からI/O電源電圧 VDDQ を 1.1 V → 0.6 V へ約45%引き下げ（VDD1=1.8 V / VDD2=1.1 Vは維持）、4266 MT/s超高速アクセス時のI/O消費電力を約17〜20%削減しています。',
+      '1つのパッケージ内に完全独立した2系統の16ビットチャネル（Ch-A / Ch-B）と各8バンクを内蔵しているため、あるバンクでFTLマップを行オープン（ACT）している最中に、別バンクから即座にLDPCパリティや書込メタデータを並列読出できます。',
+      'メモリセル1個は1つの極小トランジスタと深い円筒トレンチ型キャパシタ（数fF〜十数fF）で構成され、微小電荷を中央の差動オープンビット線センスアンプ群が瞬時に0/1へ増幅します。',
+    ],
+    formula: {
+      expression: 'P_IO ∝ C_load · V_DDQ² · f   (V_DDQ: 1.1 V → 0.6 V  ⇒  V² 比で約 70% 動的I/O電力削減)',
+      description: 'I/O電圧 VDDQ を0.6 VのLVSTL方式へ下げることで、電圧の2乗に比例する高速I/Oスイッチング電力を劇的に低減。',
+    },
+    nextGenInnovation:
+      '次世代CFexpress 4.0/5.0ハイエンドカードでは、LPDDR4Xの低消費電力設計をさらに推し進めたLPDDR5/5Xキャッシュや、オンダイ大型SRAMとのハイブリッド化が進行中です。',
+    specs: [
+      { label: 'JEDEC規格', value: 'JESD209-4B LPDDR4X-4266（最大 4266 MT/s）' },
+      { label: '電源レール', value: 'VDD1 = 1.8 V / VDD2 = 1.1 V / VDDQ = 0.6 V（LVSTL）' },
+      { label: '内部構成', value: '独立デュアル16-bitチャネル × 各8バンク（1T1Cセル）' },
+      { label: 'カード内役割', value: '2 TB級FTL住所録マップ＆書込バッファの超低遅延キャッシュ' },
+    ],
+    diagramType: 'cfe_lpddr4x_8bank_1t1c',
+  },
+
+  'cfe-lpddr4x-dbi-encoder': {
+    category: '「1が多すぎたら全部ひっくり返す」省エネ頭脳 C151 — 同時切替ノイズを半分以下に抑えるDBIデータバス反転エンコーダ！',
+    title: 'C151. LPDDR4X データバス反転（DBI-AC/DC）低SSOノイズ・スイッチングエンコーダ',
+    subtitle: 'LPDDR4X Data Bus Inversion (DBI-AC / DBI-DC) Low-SSO Ground-Bounce Encoder',
+    plainAnalogy:
+      '8本のデータ線が一度に全部「0→1」へ一斉に切り替わると、大電流がドンと流れて電源がグラグラ揺れ（同時切替ノイズ：SSO）、電気も無駄食いします。そこでLPDDR4Xが使う超クレバーな工夫が「DBI（データバス反転）」！8ビット中5本以上が切り替わりそうなら「よし、8本とも白黒ひっくり返して、9本目の『反転したよフラグ（DBI）』を立てよう！」と自動判断。常に4本以下しか動かないようにしてノイズも消費電力も激減させるんです！',
+    summary:
+      'LPDDR4Xの8ビットDQバイトレーンごとに専用DBI_nピンを1本追加し、Lowレベル（またはトグル）ビットが5本以上のときデータを論理反転送出することで、同時切替出力（SSO）ノイズと終端直流電力を抑制する符号化回路です。',
+    opticsAndPhysics: [
+      'LPDDR4XのLVSTL（Low Voltage Swing Terminated Logic）はVSS側へプルダウン終端（またはVDDQ終端）されるため、論理「1」を出力し続けるピンが多いほど静的な終端電流が増え、同時トグルが多いほどグラウンドバウンス（L·di/dtノイズ）が増大します。',
+      'DBIエンコーダは1バイト（DQ0〜DQ7）中の「1」の個数を高速多数決ロジックで数え、5ビット以上であれば全8ビットを反転して「1」の数を3ビット以下に抑えつつ、DBIピンをアサートして受信側で元へ復号します。',
+      'これにより最悪ケースの同時スイッチング電流とグラウンドバウンスを最大50%削減し、極薄0.45 mm 8層HDI基板上でも4266 MT/sのクリーンな信号品質を維持します。',
+    ],
+    formula: {
+      expression: 'If popcount(DQ[7:0]) ≥ 5  ⇒  TX = ~DQ[7:0],  DBI = 1   (Max active bits ≤ 4 / byte)',
+      description: '1バイト中のアクティブ／トグル本数を常に4本以下へ数学的に制限し、SSOノイズとI/O消費電力を同時削減。',
+    },
+    nextGenInnovation:
+      '高速DRAMのみならず、次世代NAND Toggle DDR 6.0（4.8 Gbps）でも同様のDBI-DC/AC機能が採用され、カード全体のEMI放射と電源リップルを抑え込んでいます。',
+    specs: [
+      { label: '符号化単位', value: 'DQ 8-bit バイトレーンごと ＋ 専用 DBI_n 信号線 1本' },
+      { label: '最大同時変化', value: '8本 → 最大 4本以下へ制限（SSOノイズ最大 50% 低減）' },
+      { label: '対応モード', value: 'DBI-DC（静電力削減）＆ DBI-AC（トグルノイズ削減）' },
+      { label: '基板効果', value: '極薄HDI基板のグラウンドバウンス抑制＆アイ開口拡大' },
+    ],
+    diagramType: 'cfe_lpddr4x_dbi_encoder',
+  },
+
+  'cfe-lpddr4x-trr-tcsr': {
+    category: '連打による隣りの列のデータ化けを防ぐ「見張り番」 C152 — 熱に応じて記憶の掛け直し間隔も自動調整するTRR＆TCSR！',
+    title: 'C152. LPDDR4X ターゲット行リフレッシュ（TRR）RowHammer防御＆TCSR温度補償',
+    subtitle: 'LPDDR4X Target Row Refresh (TRR) RowHammer Guard & TCSR Thermal Refresh Controller',
+    plainAnalogy:
+      'DRAMのメモリ行はぎっしり隣り合っているので、同じ行ばかり何十万回も高速アクセス（連打）すると、電気の揺れが壁越しに伝わって隣りの行の記憶が化けてしまう「RowHammer（ロウハンマー）現象」が起きます。さらに夏場の炎天下でカードが70℃を超えると、コンデンサの電気は低温時より何倍も速く抜けてしまいます！そこで「連打された行の隣りを自動で優先リフレッシュするTRR」と「チップ内蔵温度計で掛け直し間隔を自動調整するTCSR」が、FTL住所録の1ビット化けも防いでいるんです！',
+    summary:
+      '微細化LPDDR4Xにおける隣接行外乱（RowHammer）を防ぐターゲット行リフレッシュ（TRR / RFM）監視回路と、−12℃〜＋85℃の広い動作温度範囲に応じてセル保持リフレッシュ周期を動的制御するTCSR（Temperature Compensated Self-Refresh）回路です。',
+    opticsAndPhysics: [
+      'DRAMセルキャパシタの電荷漏洩電流（リーク）は温度が約10℃上がるごとに倍増するため、85℃超の高温撮影時は通常の32 ms周期ではなく 16 ms / 8 ms（2×/4×リフレッシュ）へ短縮しないとFTLマップが破損します。',
+      'TCSR内蔵温度センサ（MR4レジスタ出力）はチップ実温をリアルタイム監視し、寒冷地撮影（−12℃）時はリフレッシュ頻度を下げて待機電力を削減、猛暑8K収録時は即座に高頻度リフレッシュへ切り替えます。',
+      '同時にTRR（Target Row Refresh）カウンタが特定ワード線への高頻度アクティベート（アグレッサ行）を検知すると、通常リフレッシュの合間に隣接するビクティム行（N±1）へ優先的に電荷を再充電し、FTLテーブルのサイレント破損を防ぎます。',
+    ],
+    formula: {
+      expression: 't_REFI(T) = t_REFI,nom × k(T)   (T ≤ 45℃: 2×省電力,  T > 85℃: 0.5×倍速保護)',
+      description: '内蔵温度センサ（MR4）に基づきリフレッシュ間隔 t_REFI を自動伸縮させ、極寒の省電力と高温のデータ保全を両立。',
+    },
+    nextGenInnovation:
+      '最新世代LPDDR4X/5ではコントローラ側から明示的に管理するRFM（Refresh Management）コマンドも整備され、超高負荷FTLランダム更新下での長期データ完全性がさらに高まっています。',
+    specs: [
+      { label: '外乱防御', value: 'TRR（Target Row Refresh）隣接ビクティム行（N±1）保護' },
+      { label: '温度連動', value: 'TCSR（MR4温度レジスタ連動 0.25×〜4×動的リフレッシュ）' },
+      { label: '動作保証温度', value: '−12℃〜＋72℃（カード動作）／接合部85℃超も安定保持' },
+      { label: '信頼性効果', value: 'FTL住所録のビット反転によるカード認識不能トラブル防止' },
+    ],
+    diagramType: 'cfe_lpddr4x_trr_tcsr',
+  },
+
+  'cfe-lpddr4x-dwl-ca-train': {
+    category: '4266 MT/sの足並みをピコ秒単位で揃える「起動チューナー」 C153 — 配線長1mmのズレも電源オン時に自動学習するライトレベリング！',
+    title: 'C153. LPDDR4X ライトレベリング（DWL）＆CS/CA-Vref 4266 MT/s スキュー学習回路',
+    subtitle: 'LPDDR4X Write Leveling (DWL) & Command/Address VREF-CA 4266 MT/s Skew Training Engine',
+    plainAnalogy:
+      '1秒間に42億6600万回もデータが飛び交うLPDDR4Xでは、プリント基板の銅配線がわずか1ミリ長いだけで到着タイミングが約6ピコ秒ズレてしまいます！手作業でピッタリ合わせることは不可能です。そこでカードの電源を入れるたびに、コントローラとDRAMが「合図（DQS）と時計（CK）がピッタリ重なる遅延量」と「コマンド線（CA）のど真ん中の電圧（Vref-CA）」を自動テストしてピコ秒単位で合わせる起動チューニング（DWL＆CBT）を行っているんです！',
+    summary:
+      'LPDDR4X-4266の起動初期化シーケンスで必須となる、クロック（CK）対データストローブ（DQS）位相整合回路「ライトレベリング（DWL）」および6ビットDDRコマンド／アドレス（CA）バスとVref-CA最適中心を学習するトレーニングエンジンです。',
+    opticsAndPhysics: [
+      'LPDDR4Xのフライバイ／Tブランチ配線ではCK_t/CK_cと各バイトレーンのDQS_t/DQS_c間に微小な配線長スキューが存在するため、起動時にDWL（Write Leveling）モードへ入り、DRAM側がDQS立ち上がり時のCK状態をDQピンへフィードバックすることでコントローラ側ディレイラインをピコ秒分解能で調整します。',
+      '続いてCBT（Command Bus Training）により、6本しかない高速DDRコマンド・アドレス線（CA0〜CA5）のサンプル位相とチップ内蔵VREF(CA)電圧（MR12レジスタ）を2次元掃引し、アイ開口の幾何学的中心へロックします。',
+      'さらに稼働中の温度変化によるタイミングドリフトに対しても、DQS発振器（DQS Interval Oscillator）が定期的に遅延変動を計測し、4266 MT/s動作を−12℃から＋72℃まで途切れず安定維持します。',
+    ],
+    formula: {
+      expression: 't_DQSS = t_flight(DQS) − t_flight(CK) + Δt_DLL → 0 ± 0.25 tCK   (1 UI ≈ 234 ps @ 4266 MT/s)',
+      description: '基板配線飛行時間差をコントローラ側DLL遅延 Δt_DLL で相殺し、4266 MT/sの極狭234 ps窓のど真ん中へ合わせる。',
+    },
+    nextGenInnovation:
+      '温度ドリフト追従型のバックグラウンドDQSオシレータ再学習により、カメラ内でカード温度が25℃から70℃へ急上昇する8K長時間収録中でもDRAMエラーゼロを維持します。',
+    specs: [
+      { label: '主要学習項目', value: 'Write Leveling（CK-DQS位相）＆ CBT（CA位相・Vref-CA）' },
+      { label: 'データ窓幅', value: '1 UI ≈ 234 ps（4266 MT/s動作時の超高精度スキュー補正）' },
+      { label: '温度追従', value: '内蔵 DQS Interval Oscillator による稼働中ドリフト補正' },
+      { label: '設定レジスタ', value: 'JEDEC MR2 / MR12 (Vref-CA) / MR14 (Vref-DQ) 自動最適化' },
+    ],
+    diagramType: 'cfe_lpddr4x_dwl_ca_train',
+  },
+
+  // =========================================================================
+  // GROUP D: Board-Level Discrete Analog, Power & ESD Support Circuits (C154–C160)
+  // =========================================================================
+  'cfe-serdes-uln-ldo-avdd': {
+    category: '高速通信のPLLに「純水のような無雑音電源」を届ける濾過器 C154 — スイッチング電源の波紋を65 dB以上消し去る専用超低ノイズLDO！',
+    title: 'C154. SerDes専用 超低ノイズ・アナログLDOポストレギュレータ（AVDD 0.85V/1.8V）',
+    subtitle: 'Ultra-Low-Noise SerDes Analog LDO Post-Regulator (AVDD 0.85 V / 1.8 V, >65 dB PSRR)',
+    plainAnalogy:
+      'メインのDC-DC電源（PMIC）は高効率ですが、1秒に数百万回スイッチをON/OFFするため電気が少し波打っています（リップル）。その波打つ電気をそのままPCIe 4.0の超高精度な時計回路（PLL/VCO）に流すと、波紋がそのまま時間ブレ（ジッタ）に化けて16 GT/s通信がエラーだらけになります！そこでPLL専用に「超低ノイズLDO」という極細フィルターを1段かませ、リップルを1/2000以下（>65 dB PSRR）に濾過した「純水のような静かな電気」だけを注いでいるんです！',
+    summary:
+      'PCIe Gen4 SerDesのLCタンクPLL・VCO・CDRアナログフロントエンドへ専用の超低ノイズ電源（AVDD 0.85 V / 1.8 V）を供給する高PSRRリニア・ポストレギュレータ（DFN極小パッケージ＋低ESRセラミックフィルタ）です。',
+    opticsAndPhysics: [
+      'PMICの同期整流降圧（Buck）コンバータはスイッチング周波数（2〜4 MHz）および高調波に十数mVppのリップルを含みますが、PLLのVCO制御電圧へ電源ノイズが回り込むと決定論的位相ジッタ（Deterministic Jitter）としてアイ開口を直撃します。',
+      '超低ノイズLDO（出力ノイズ <10 μVrms、PSRR >65 dB @ 1 MHz）をPMICの後段に配置することで、高効率を維持しながらSerDesアナログレールだけを極めて静かな直流電圧へ安定化させます。',
+      'さらにLDO直近へ超小型フェライトビーズと0201低ESLセラミックコンデンサによるπ（パイ）型フィルタを組み合わせ、GHz帯のデジタルコアスイッチング雑音からの逆流アイソレーションも確保しています。',
+    ],
+    formula: {
+      expression: 'PSRR = 20 · log₁₀(ΔV_in / ΔV_out) > 65 dB   ⇒   Jitter_supply = K_PSRR · ΔV_out → 極小',
+      description: '65 dB超の電源電圧変動除去比（PSRR）でPMICスイッチング波紋を1/1800以下へ減衰させ、16 GT/sのPLLジッタを防ぐ。',
+    },
+    nextGenInnovation:
+      '6nm/5nm次世代コントローラではデジタルLDO内蔵化も進みますが、16〜32 GT/sアナログPLL電源には依然として外付け超低ノイズLDO＋専用プレーン分離が最強の切り札です。',
+    specs: [
+      { label: '出力レール', value: 'SerDes専用 AVDD 0.85 V / 1.8 V（デジタル電源と完全分離）' },
+      { label: 'ノイズ除去性能', value: 'PSRR >65 dB（100 kHz〜1 MHz）/ 出力ノイズ <10 μVrms' },
+      { label: '実装パッケージ', value: '超極薄 DFN-6 / WLCSP（高さ <0.4 mm）＋ π型フィルタ' },
+      { label: '通信効果', value: '16 GT/s PCIe Gen4 PLL位相雑音＆ジッタを劇的に抑制' },
+    ],
+    diagramType: 'cfe_serdes_uln_ldo_avdd',
+  },
+
+  'cfe-por-bor-supervisor': {
+    category: '電圧が下がりすぎた瞬間に「暴走を止める非常ブレーキ」 C155 — 電池切れ寸前の誤書き込みから大切な写真データを死守する監視IC！',
+    title: 'C155. 高精度 パワーオンリセット（POR）＆ブラウンアウト電圧監視IC（BOR）',
+    subtitle: 'Precision Power-On-Reset (POR) & Brown-Out Voltage Detector Supervisor IC (SOT-23/X2SON)',
+    plainAnalogy:
+      'カメラのバッテリーがカラになる瞬間や、接点が一瞬浮いたとき、カードへの電圧（3.3 V）が中途半端に2.2 Vくらいへグラッと落ちることがあります。中途半端な電圧のままコントローラが動き続けると、デタラメな命令を実行して写真フォルダ（FTL）を丸ごと壊してしまいます！そこで見張っているのが「POR/BOR電圧監視IC」。電源投入時は全電圧が揃うまで起動を待たせ、異常低下（ブラウンアウト）を感知したマイクロ秒で即リセットをかけて暴走を完全阻止するんです！',
+    summary:
+      'ホスト供給3.3 Vおよび内部コア電圧（0.8 V / 1.8 V / 2.5 V）の立ち上がり順序（Power-On-Reset）と瞬断・電圧低下（Brown-Out Reset）を±1%精度で常時監視する独立スーパーバイザICです。',
+    opticsAndPhysics: [
+      'コントローラ・DRAM・3D NANDはそれぞれ異なる起動電圧順序を必要とするため、電源投入時にPORスーパーバイザが全レールのPower-Goodを確認し、規定遅延時間（例：数ms）後にクリーンなリセット解除信号を出力します。',
+      '運用中にカメラの急激な電池切れや接触不良で3.3 Vラインが規定しきい値（例：2.93 V ±1%）を下回ると、BORコンパレータがマイクロ秒オーダーで割り込み／リセットを叩き、中途半端な電圧でのNAND誤書込（プログラムディスターブ）を遮断します。',
+      'この瞬時のBOR検知信号はタンタル予備コンデンサ（PLP）によるメタデータ緊急退避トリガとも連動し、撮影直後の大切なRAWフレーム破損リスクを最小化します。',
+    ],
+    formula: {
+      expression: 'V_3V3 < V_TH,BOR (≈ 2.93 V ±1%)  ⇒  t_detect < 5 μs → Assert #RST / Safe-Halt',
+      description: '3.3 V電源が危険域へ落ちた瞬間、数マイクロ秒でブラウンアウト検知しコントローラ暴走とNAND誤書込を未然防止。',
+    },
+    nextGenInnovation:
+      '超低消費電力（静止電流 <1 μA）かつマルチレール同時監視のWLCSPスーパーバイザにより、APST省電力モード中も消費電力を増やさず24時間監視を続けます。',
+    specs: [
+      { label: '監視精度', value: '±1.0% 高精度しきい値（3.3 V系：約 2.93 V BOR検知）' },
+      { label: '応答速度', value: 'グリッチフィルタ付き 数 μs 以内の即時アサート' },
+      { label: '静止消費電流', value: '約 0.5〜2 μA（待機省電力APSTを一切阻害しない極小消費）' },
+      { label: '保護役割', value: '起動シーケンス保証＆低電圧暴走によるFTL破損の完全防止' },
+    ],
+    diagramType: 'cfe_por_bor_supervisor',
+  },
+
+  'cfe-bootstrap-strap-0ohm': {
+    category: 'カードの基本性格を決め、緊急時は救出扉を開く「0Ω設定ピン」 C156 — 工場検査＆データ復旧のプロが使うROM_SAFE隠しパッド！',
+    title: 'C156. コントローラ 0201 起動ストラップ抵抗（0 Ω）＆ ROM_SAFE 工場リカバリパッド',
+    subtitle: 'Controller 0201 Hardware Bootstrap Strap Resistors (0 Ω) & ROM_SAFE Recovery Test Pads',
+    plainAnalogy:
+      'コントローラICは同じチップでも「どのメーカーのNANDを使うか」「クロック方式はどれか」を電源オンの瞬間に知る必要があります。そこで基板上に並ぶゴマ粒より小さい0201サイズの「0Ωストラップ抵抗」の有無でハードウェア初期設定を伝えています！さらに基板の端には、万が一ファームウェアが壊れてカードが認識しなくなったとき、専門のデータ復旧装置（PC-3000等）がピンを短絡して安全起動（ROMモード）させるための金色2連パッドも隠れているんです！',
+    summary:
+      'コントローラ起動時のハードウェア動作モード（ブート元ROM/NAND、PCIe基準クロック方式、デバッグUART有効化等）を確定する0201サイズ0 Ωブートストラップ抵抗群と、緊急保守・データ復旧用のENIG金メッキROM_SAFEテストパッドです。',
+    opticsAndPhysics: [
+      '電源投入直後のPOR立ち上がりエッジで、コントローラは特定GPIOピン群のHigh/Lowレベルをラッチし、内蔵マスクROMブートか外部SPI NOR/NANDブートか、SRISクロック有効かなどの基本ハードウェア構成を確定します。',
+      '0201（0.6×0.3 mm）サイズの0 Ωチップ抵抗（または10 kΩプルアップ／プルダウン）の実装・非実装（DNI）を切り替えるだけで、同一PCB設計のまま複数容量グレードや異なるNANDベンダー構成へ柔軟に対応できます。',
+      '隣接する一対の丸型金メッキパッド（ROM_SAFE）を短絡した状態で通電すると、破損したFTLやファームウェアの読み込みをスキップして最小限のROMセーフモードで起動でき、量産工場でのファーム書込やプロデータ復旧の最終手段として機能します。',
+    ],
+    formula: {
+      expression: 'Boot_Mode[3:0] = Latch(GPIO_Strap[3:0]) @ ↑POR   (ROM_SAFE Short ⇒ Force Mask-ROM)',
+      description: 'POR解除瞬間のハードウェア抵抗状態でブート経路を決定。異常時はROM_SAFE短絡でファーム迂回起動が可能。',
+    },
+    nextGenInnovation:
+      'セキュリティ強化世代では、工場出荷後にeFuseでデバッグ・ROMアクセスに暗号署名認証（Secure Boot）を必須化し、物理プローブによる不正改ざんを防いでいます。',
+    specs: [
+      { label: '実装部品', value: '0201（0.6×0.3 mm）0 Ωジャンパ＆プルアップ／ダウン抵抗群' },
+      { label: '設定項目', value: 'ブート優先順位・NANDチャネル幅・PCIeクロックモード' },
+      { label: '保守パッド', value: 'ENIG金メッキ 2連 ROM_SAFE テストパッド（工場＆復旧用）' },
+      { label: '設計価値', value: '1枚の8層HDI基板で複数容量・世代バリエーションを共通化' },
+    ],
+    diagramType: 'cfe_bootstrap_strap_0ohm',
+  },
+
+  'cfe-smbus-nvme-mi-bus': {
+    category: '高速データ線の横を走る「2本線の健康診断専用回線」 C157 — カードが忙しくても裏道から温度や状態を聞けるSMBus / NVMe-MI！',
+    title: 'C157. SMBus / I²C サイドバンド管理バス（NVMe-MI）＆プルアップ抵抗ネットワーク',
+    subtitle: 'SMBus / I2C Out-of-Band Management Interface (NVMe-MI) & Pull-Up Resistor Network',
+    plainAnalogy:
+      '高速道路（PCIe Gen4）が8K動画のデータで大渋滞しているときでも、管理センターから「今、何度？ 元気？」とサッと確認できる専用連絡電話があると便利ですよね。それがわずか2本の細い信号線（SMBCLK / SMBDAT）で動く「SMBus（I²C）サイドバンド管理バス」！NVMe-MI規格により、メイン通信が止まっていても裏道から温度やカードID・健全性ステータスを確実に読み出せる縁の下の管理インフラなんです！',
+    summary:
+      'PCIeメインデータレーンとは完全に独立した2線式（SMBCLK / SMBDAT）の帯域外管理インターフェース（SMBus / I²C, NVMe-MI準拠）と、オープンドレイン信号線を安定駆動するプルアップ抵抗・ESD保護ネットワークです。',
+    opticsAndPhysics: [
+      'NVMe-MI（Management Interface）はSMBus/I²C上のMCTP（Management Component Transport Protocol）または基本管理コマンド（Basic Management Command, アドレス0x6A）を通じて、ホストOSやカメラ制御マイコンがPCIeドライバを介さずカード温度・故障フラグ・シリアル番号を読み取れる仕組みです。',
+      'SMBusはオープンドレイン駆動（100 kHz〜400 kHz / 1 MHz）のため、バス容量に応じた適切なプルアップ抵抗（数kΩ）による立ち上がりスルーレート最適化と、低容量ESD保護が安定したサイドバンド通信の鍵になります。',
+      'CFexpressカード内部でも、コントローラとPMIC・外付け高精度温度センサ・FRU/EEPROM間の内部設定＆リアルタイム温度ポーリングに高速I²C/SMBusローカルバスが活躍しています。',
+    ],
+    formula: {
+      expression: 't_rise ≈ 0.8473 × R_pullup × C_bus ≤ 300 ns   (Fast-Mode I²C / SMBus 400 kHz)',
+      description: 'プルアップ抵抗 R_pullup と配線容量 C_bus の積を制限内に収め、立ち上がり波形を崩さず正確な管理通信を実現。',
+    },
+    nextGenInnovation:
+      '次世代システムではI²C/SMBusからさらに高速・低電圧なMIPI I3C（12.5 MHz）への移行も視野に入り、より高度なリアルタイム熱・電力テレメトリ連携が進んでいます。',
+    specs: [
+      { label: '物理バス', value: '2線式オープンドレイン（SMBCLK / SMBDAT, 100k〜1 MHz）' },
+      { label: '対応プロトコル', value: 'NVMe-MI（Basic Management 0x6A / MCTP）＆ 内部PMIC制御' },
+      { label: '取得情報', value: '複合温度・サーマル警告・ドライブ状態・シリアル番号' },
+      { label: '信頼性効果', value: 'メインPCIe負荷やハング時にも帯域外から安全監視可能' },
+    ],
+    diagramType: 'cfe_smbus_nvme_mi_bus',
+  },
+
+  'cfe-pcb-sparkgap-esd': {
+    category: '基板の銅箔で作った「0.15mmの避雷針」 C158 — 冬場のパチッ！1万5000ボルト静電気をチップ到達前に逃がすノコギリ歯！',
+    title: 'C158. PCIeエッジ ノコギリ歯銅スパークギャップESD避雷器＆1 MΩ静電ブリード抵抗',
+    subtitle: 'PCIe Edge Sawtooth Copper Spark-Gap ESD Arrestor & 1 MΩ Static Bleed Resistor',
+    plainAnalogy:
+      '真冬の乾燥したスタジオでCFexpressカードをポケットから取り出した瞬間、指先から「パチッ！」と最大1万5,000ボルトもの静電気（ESD）が飛ぶことがあります。もちろん専用の保護部品（TVSダイオード）もありますが、そのさらに最前線に「基板の銅箔を鋭いノコギリ歯のように0.15 mm間隔で向かい合わせた避雷針（スパークギャップ）」を配置！超高電圧が来た瞬間だけ空気中でパチンと放電させてグラウンドへ逃がし、さらに1 MΩ抵抗で静電気をジワッと抜く二重防御なんです！',
+    summary:
+      'カード接点近傍のプリント基板銅箔パターンで形成されたパッシブ型ノコギリ歯スパークギャップESD避雷器と、筐体シェルと回路グラウンド間の静電電位差を安全に逃がす1 MΩ高耐圧ブリード抵抗の複合保護構造です。',
+    opticsAndPhysics: [
+      'IEC 61000-4-2（気中放電 ±15 kV / 接触放電 ±8 kV）クラスの極端な静電気サージは立ち上がり時間がわずか0.7〜1 nsと極めて速く、能動半導体TVSダイオード単体へ過大なエネルギーが集中すると破損リスクがあります。',
+      'ソルダーマスクを開口した鋭角三角形の向かい合う銅箔（ギャップ約0.15〜0.20 mm）は、通常電圧（3.3 V）ではほぼ0 pFの完全絶縁体として16 GT/s信号を一切邪魔せず、数kV超のサージ到来時のみパッシェンの法則に従って瞬間空気絶縁破壊し大電流を筐体GNDへ分流します。',
+      'さらに金属TOUGH外装と内部シグナルグラウンドを1 MΩブリード抵抗（並列高耐圧コンデンサ付き）で結ぶことで、持ち運び中の帯電電荷を安全に逃がしつつ高周波コモンモード雑音の回り込みを防ぎます。',
+    ],
+    formula: {
+      expression: 'V_breakdown ≈ 300 V + 3.0 kV/mm × d_gap   (d_gap ≈ 0.15 mm,  C_parasitic < 0.05 pF)',
+      description: '寄生容量ゼロ同然で16 GT/s高速信号を劣化させず、kV級の超高電圧サージ時のみ空気放電で一次クランプする。',
+    },
+    nextGenInnovation:
+      '極小ESDダイオードと基板一体型スパークギャップの2段協調保護により、真冬の乾燥地帯や航空機内での頻繁なカード抜き差しでも故障率を極限まで下げています。',
+    specs: [
+      { label: '対応静電規格', value: 'IEC 61000-4-2（気中 ±15 kV / 接触 ±8 kV）一次保護' },
+      { label: '構造形状', value: 'マスク開口 鋭角ノコギリ歯対向銅パターン（間隔 ~0.15 mm）' },
+      { label: '寄生容量', value: '<0.05 pF（PCIe Gen4 16 GT/s高速信号へ悪影響ゼロ）' },
+      { label: '帯電対策', value: '金属外装—GND間 1 MΩ ブリード抵抗で静電蓄積を常時解消' },
+    ],
+    diagramType: 'cfe_pcb_sparkgap_esd',
+  },
+
+  'cfe-pmic-active-discharge': {
+    category: '電源オンは優しく、抜いた瞬間はスパッと抜く「電流の門番」 C159 — カメラへ突入電流を与えず、再挿入時の誤動作も防ぐFET群！',
+    title: 'C159. PMIC 同期ソフトスタート＆アクティブ電源レール急速放電FETアレイ',
+    subtitle: 'PMIC Synchronized Soft-Start & Active Output Rail-Discharge MOSFET Array',
+    plainAnalogy:
+      'カードをカメラに挿して電源が入った瞬間、カード内の何十個ものコンデンサが一斉に電気を吸い込むと、カメラ側の3.3 V電源がガクンと落ち込んでカメラごと再起動してしまう危険があります（突入電流）。そこでPMICの「ソフトスタート」が蛇口をゆっくり開くように電圧を滑らかに立ち上げます！逆にカードを抜いたときは、コンデンサに中途半端な電気が残っていると次に挿したとき誤動作するため「アクティブ放電FET」が瞬時に電気をゼロへ抜き切るんです！',
+    summary:
+      'PMIC内部および出力レールに統合された、突入電流（Inrush Current）を制限する同期ソフトスタート制御と、シャットダウン／活線抜去時に各出力レール（VCC/VDDQ/VCORE）の残留電荷をミリ秒で0 Vへ引き抜くアクティブ放電MOSFETアレイです。',
+    opticsAndPhysics: [
+      'カード基板上には総計数十〜百μF超のデカップリング容量が載っているため、ソフトスタートなしに3.3 Vを直接印加すると数アンペア級の突入電流スパイク（I = C·dV/dt）が発生し、カメラのカードスロット電源スイッチや接点を傷めます。',
+      'ソフトスタート制御は出力基準電圧を約0.5〜2 msかけてリニアに立ち上げ（dV/dt制限）、NAND・DRAM・コントローラの規定パワーアップ順序（Power Sequencing）を守りながら突入電流を安全な数百mA域へ抑えます。',
+      '電源オフや突然の抜去時には、各電源レールに並列接続されたNchアクティブ放電FET（オン抵抗 数十〜数百Ω）が自動でオンになり、残留電荷を速やかにグランドへ逃がして「中途半端な残電圧によるラッチアップやブート失敗」を防止します。',
+    ],
+    formula: {
+      expression: 'I_inrush = C_total · (dV / dt_soft),   t_discharge ≈ 3 · R_dis · C_rail (< 2 ms)',
+      description: '起動時は dV/dt を緩めて突入電流を抑え、終了時は低抵抗 R_dis で素早く完全0V放電する対称安全設計。',
+    },
+    nextGenInnovation:
+      '最新のCFexpress 4.0専用PMICはソフトスタート時間・シーケンス順・放電抵抗値をI²Cレジスタで100%プログラム可能とし、新世代NANDへの乗り換えを容易にしています。',
+    specs: [
+      { label: '起動制御', value: '同期リニア・ソフトスタート（0.5〜2 ms 突入電流制限）' },
+      { label: '終了制御', value: '全出力レール独立 Nch アクティブ急速放電FET内蔵' },
+      { label: 'シーケンス管理', value: 'VCORE → VDDIO/VDDQ → NAND VCC 厳密順序制御' },
+      { label: '保護効果', value: 'スロット接点アーク防止＆連続抜き差し時の確実な再起動' },
+    ],
+    diagramType: 'cfe_pmic_active_discharge',
+  },
+
+  'cfe-pdn-multidecade-mlcc': {
+    category: '大・中・小のコンデンサを揃える「電源ノイズの全帯域フラット化」 C160 — 100 kHzから5 GHzまで電源の揺れを真っ平らに抑え込む！',
+    title: 'C160. マルチデケードPDNプレーン容量＆反共振抑制デカップリングMLCCカスケード',
+    subtitle: 'Multi-Decade PDN Plane Capacitance & Anti-Resonance Decoupling MLCC Cascade',
+    plainAnalogy:
+      '大きなコンデンサ（10 μF）はゆったりした大電流の補給が得意ですが、高周波の超高速ノイズには体が重くて反応できません。逆にゴマ粒の1/4ほど極小な01005コンデンサ（10 nF）は5 GHzの超高速ノイズに即反応できますが、貯められる電気はわずかです。そこで「大（0603）→中（0402）→小（0201）→極小（01005）→基板の内層銅板」とサイズ違いのバケツを絶妙な比率で並べ、低周波から5 GHzまで電源のインピーダンスを真っ平らに抑え込んでいるんです！',
+    summary:
+      'CFexpress 8層HDI基板の電源分配網（PDN）において、100 kHzから5 GHz超の広帯域にわたってターゲットインピーダンス（数十mΩ以下）を平坦維持する、多段階容量・多サイズ（0603/0402/0201/01005）MLCC＋薄誘電体プレーン容量のカスケード設計です。',
+    opticsAndPhysics: [
+      '積層セラミックコンデンサ（MLCC）は自身の寄生インダクタンス（ESL）により自己共振周波数（SRF）以上では誘導性（コイル）に転じてしまうため、単一容量ではGHz帯のノイズを抑えられません。',
+      'さらに異なる容量のMLCCを無計画に並べると、大きい側の誘導成分と小さい側の容量成分が「並列反共振（Anti-Resonance）」を起こして特定周波数でインピーダンスが針のように跳ね上がります。',
+      'プロのPDN設計では、10 μF→1 μF→100 nF→10 nFの容量比とESR値、さらに基板内層の超薄誘電体電源・グラウンドプレーン対（数GHz帯担当）をSI/PI電磁界シミュレーションで精密整合し、反共振ピークを押し潰しています。',
+    ],
+    formula: {
+      expression: 'Z_target = (V_rail × %Ripple) / ΔI_transient,   f_SRF = 1 / (2π √(ESL · C))',
+      description: '大電流急変 ΔI に対し、自己共振周波数 f_SRF の異なるMLCC群と内層プレーンで全帯域 Z_PDN < Z_target を達成。',
+    },
+    nextGenInnovation:
+      'PCIe 4.0/5.0世代の極小Type A基板では、コントローラ直下に極低ESLの逆アスペクト比（LW逆転型）MLCCや埋め込みキャパシタ層を使う高密度PDN設計が標準化しています。',
+    specs: [
+      { label: '多段階カスケード', value: '10 μF (0603) → 1 μF (0402) → 100 nF (0201) → 10 nF (01005)' },
+      { label: 'カバー周波数', value: '100 kHz（PMIC帯）〜 5 GHz超（内層プレーン容量連携）' },
+      { label: '設計要点', value: '反共振（Anti-Resonance）インピーダンスピークの徹底抑制' },
+      { label: '電源品質', value: '8ダイ同時書込＆16 GT/s通信時のレール変動 ±3% 以内維持' },
+    ],
+    diagramType: 'cfe_pdn_multidecade_mlcc',
+  },
+
+  // =========================================================================
+  // GROUP E: Advanced Substrate, Packaging, Metallurgy, QA & Environmental Armor (C161–C167)
+  // =========================================================================
+  'cfe-msap-12um-abf-trace': {
+    category: '髪の毛の1/6の銅線を「垂直に切り出す」最新基板製法 C161 — 削らずに積み上げるmSAPで6nmコントローラの極細配線を100%引き出す！',
+    title: 'C161. mSAP（セミアディティブ工法）12/12 μm 極微細 ABF ビルドアップ銅配線',
+    subtitle: 'mSAP (Modified Semi-Additive Process) 12/12 μm Ultra-Fine ABF Build-Up Copper Traces',
+    plainAnalogy:
+      '普通の基板は厚い銅板を薬品で溶かして配線を作る（サブトラクティブ法）ので、横からも溶けて台形になり、細くすると途切れてしまいます。ところが6nmコントローラチップの下にある何百個もの極小バンプから配線を引き出すには、幅わずか12マイクロメートル（髪の毛の6分の1！）の銅線がぎっしり必要！そこで使われるのが「mSAP」——ごく薄い銅の種（シード）の上に型を作ってから電気めっきで垂直に銅を育てる工法で、四角く美しい超高密度配線が生まれるんです！',
+    summary:
+      '6nm PCIe 4.0コントローラ用FCBGAパッケージ基板（ABFビルドアップ層）および次世代SLP基板に採用される、モディファイド・セミアディティブ工法（mSAP）によるライン／スペース 12/12 μm級の極微細・矩形断面銅配線構造です。',
+    opticsAndPhysics: [
+      '従来のサブトラクティブ・エッチングでは等方性腐食によるサイドエッチ（アンダーカット）で配線断面が台形化し、ライン／スペース 25〜30 μm以下では16 GT/sの特性インピーダンス（85 Ω/100 Ω）がばらついてしまいます。',
+      'mSAPではABF絶縁樹脂表面に厚さ約0.5〜1 μmの極薄無電解銅シード層を形成し、フォトリソグラフィで微細レジスト溝を切ったあと電解銅めっきで垂直側壁の銅配線を成長させ、最後にフラッシュエッチングで極薄シードのみを除去します。',
+      '結果として断面がほぼ完全な長方形（エッチングファクタ極大）かつ12/12 μm以下の超狭ピッチが実現し、限られたCFexpress Type A面積内でコントローラからNAND・DRAM・PCIeへの全高速差動ペアを最短距離で脱出配線できます。',
+    ],
+    formula: {
+      expression: 'Z_0 = f(W_rect, H_Cu, H_ABF, ε_r)   (mSAP 12/12 μm: 台形誤差ゼロ ⇒ ΔZ_0 < ±5%)',
+      description: '側壁が垂直なmSAP矩形銅断面により、極細12μm配線でも16 GT/s高速差動インピーダンスのばらつきを極小化。',
+    },
+    nextGenInnovation:
+      '2025〜2026年の先端パッケージ基板ではmSAPのさらなる微細化（5/5 μm〜2/2 μm RDL）が進み、次世代5nm/3nm CFexpress 5.0コントローラの高ピン密度を支えています。',
+    specs: [
+      { label: '製造工法', value: 'mSAP（無電解Cuシード＋電解パターンめっき＋フラッシュエッチ）' },
+      { label: '配線微細度', value: 'ライン／スペース 12/12 μm 級（ABFビルドアップ層）' },
+      { label: '断面形状', value: 'サイドエッチ極小の垂直矩形断面（高精度インピーダンス制御）' },
+      { label: '実装価値', value: '高ピン数6nmコントローラからの最短ファンアウト脱出配線' },
+    ],
+    diagramType: 'cfe_msap_12um_abf_trace',
+  },
+
+  'cfe-tcb-lab-ncf-bond': {
+    category: 'レーザーの瞬間加熱で「反りゼロ接合」する最新実装 C162 — 薄いチップが熱で反る前に0.1秒でピタリと固めるTCB/LAB＆NCF！',
+    title: 'C162. 熱圧着／レーザー援用ボンディング（TCB / LAB）＆非導電フィルム（NCF）接合',
+    subtitle: 'Thermal Compression / Laser-Assisted Bonding (TCB/LAB) & Non-Conductive Film (NCF)',
+    plainAnalogy:
+      '極薄のコントローラチップを基板へ乗せてオーブン全体でじっくり焼く（従来のリフロー炉）と、チップと基板の熱の伸び方の違いで反り返ってしまい、隣の極小ハンダ同士がくっつく（ブリッジ不良）リスクがあります。そこで登場したのが「TCB（熱圧着）」や「LAB（レーザー援用ボンディング）」！あらかじめ絶縁保護シート（NCF）を挟んだ状態で、上からの精密プレスとレーザーの瞬間加熱（1秒未満）でチップ側だけをピンポイント接合し、反りゼロ・ズレゼロを実現するんです！',
+    summary:
+      '狭ピッチ（<40〜50 μm）フリップチップ・コントローラ実装において、従来のマス・リフローに代わり採用が進む熱圧着接合（TCB）およびレーザー援用接合（LAB）と、事前貼付型の非導電接着フィルム（NCF）による一体封止技術です。',
+    opticsAndPhysics: [
+      '従来のマス・リフローでは基板と極薄6nmダイの熱膨張係数差（CTEミスマッチ：Si 約2.6 ppm/℃ vs ABF基板 約14〜17 ppm/℃）により250℃加熱中にダイや基板が反り、狭ピッチCuピラーバンプのオープン／ブリッジ不良が生じます。',
+      'TCB/LABではボンディングヘッドでダイを平面保持したまま局所加熱（特にLABは面発光レーザーでチップのみを数百ミリ秒〜1秒台で瞬間昇温）するため、基板側の熱膨張と反りを劇的に抑制できます。',
+      'さらにバンプ間にあらかじめNCF（シリカフィラー配合の非導電フィルム）を挟み込んで圧着することで、接合と同時にフラックス洗浄不要の完全アンダーフィル封止まで一工程で完了します。',
+    ],
+    formula: {
+      expression: 'ΔL_warpage ∝ (α_sub − α_Si) · L_die · ΔT_sub   (LAB瞬間局所加熱で ΔT_sub を極小化)',
+      description: '基板全体の温度上昇 ΔT_sub を抑えながらダイ側バンプだけを瞬間溶融し、CTE差による反りとハンダブリッジを根絶。',
+    },
+    nextGenInnovation:
+      '2025〜2026年はフラックスレスTCBやLABの量産導入が急速に進み、超薄型モバイルSSD・CFexpressコントローラや次世代3D積層実装の標準プロセスとなりつつあります。',
+    specs: [
+      { label: '接合プロセス', value: 'TCB（熱圧着） / LAB（面発光レーザー瞬間局所加熱）' },
+      { label: '封止材料', value: 'NCF（非導電フィルム事前貼付・フラックスレス一体封止）' },
+      { label: '対応ピッチ', value: '40〜50 μm 級ファインピッチ Cuピラー・マイクロバンプ' },
+      { label: '品質メリット', value: '極薄ダイの熱反り・ハンダブリッジ・ボイド不良を激減' },
+    ],
+    diagramType: 'cfe_tcb_lab_ncf_bond',
+  },
+
+  'cfe-lts-bisn-warpage-joint': {
+    category: '従来より75℃も低い温度で溶ける「優しい低温ハンダ」 C163 — 0.45mm極薄基板の反りを防ぎ、製造エネルギーまで節約するBi-Sn合金！',
+    title: 'C163. 低温ビスマス-スズハンダ（LTS, 約138〜170℃）反り抑制BGAインターコネクト',
+    subtitle: 'Low-Temperature Bi-Sn Solder (LTS, ~138–170°C) Warpage-Control BGA Interconnect',
+    plainAnalogy:
+      '通常の鉛フリーハンダ（SAC305）を溶かすには約245℃もの高温オーブンに入れる必要があり、CFexpressの厚さわずか0.45 mmという紙のように薄い8層基板は熱でグニャッと反り返ってしまいます（ポテトチップス現象）。そこで注目されているのが、スズにビスマス（Bi）を混ぜて融点を約138〜170℃まで一気に下げた「低温ハンダ（LTS）」！基板が反る前に優しくピタリとハンダ付けでき、さらに工場のCO2排出量まで約30%削減できる次世代実装技術なんです！',
+    summary:
+      '厚さ0.45 mm級の極薄HDI基板と大面積16〜32ダイNANDパッケージ間のリフロー反り（動的ウォーページ）を大幅に低減する、Sn-Bi系低温ハンダ（LTS：ピーク温度160〜180℃）によるBGA表面実装インターコネクト技術です。',
+    opticsAndPhysics: [
+      '従来のSAC305（Sn-3.0Ag-0.5Cu、融点217℃／ピーク245℃）では、極薄基板上の大面積NAND BGAで「ヘッドインピロー（HiP）」やコーナー部の未接続不良を引き起こす熱反りが深刻な課題でした。',
+      'Sn-58Bi共晶（融点138℃）をベースに微量銀・銅・インジウムや樹脂補強（Resin-Reinforced LTS）を加えた改良型LTS合金は、リフローピーク温度を約170〜185℃へ下げ、動的反り量をSAC305比で最大50〜70%低減します。',
+      'ビスマス特有の脆さ（落下衝撃耐性低下）を克服するため、SACボールとSn-Biペーストを組み合わせたハイブリッド接合やエポキシ樹脂補強型ペーストにより、ソニーTOUGH規格級の落下・曲げ耐性との両立が進められています。',
+    ],
+    formula: {
+      expression: 'T_peak: 245℃ (SAC305) → ~170℃ (Sn-Bi LTS)   ⇒   Dynamic Warpage −50〜70%',
+      description: 'リフロー温度を約75℃引き下げることで、極薄0.45 mm 8層HDI基板と大面積BGAの熱反り応力を劇的に緩和。',
+    },
+    nextGenInnovation:
+      'IPCおよびJEDECで標準化が進む樹脂補強型LTSやドープSn-Bi合金は、2025〜2026年の超薄型メモリカード・ノートPC基板量産の新たな業界スタンダードへ急拡大しています。',
+    specs: [
+      { label: '合金組成', value: 'Sn-Bi系低温ハンダ（LTS：共晶 138℃ / ピーク ~170℃）' },
+      { label: '従来比低減', value: 'SAC305（245℃）比でリフロー温度 −75℃ / 反り最大 −70%' },
+      { label: '衝撃対策', value: '微量添加元素・ハイブリッド接合・樹脂補強型ペースト採用' },
+      { label: '環境効果', value: 'リフロー炉の消費電力＆CO2排出量を約 25〜35% 削減' },
+    ],
+    diagramType: 'cfe_lts_bisn_warpage_joint',
+  },
+
+  'cfe-csam-xray-void-gate': {
+    category: '出荷前に超音波と3D X線で「見えない気泡」を全数透視！ C164 — 15%未満のボイド基準で発熱暴走や落下断線を未然に弾く品質関所！',
+    title: 'C164. C-SAM 超音波探傷＆3DマイクロCT X線 BGA／アンダーフィル・ボイド検査ゲート',
+    subtitle: 'C-SAM (Scanning Acoustic Microscopy) & 3D Micro-CT X-Ray BGA/Underfill Void Inspection',
+    plainAnalogy:
+      'チップの下に隠れたハンダボール（BGA）や放熱シート（TIM）、樹脂封止（アンダーフィル）の中に目に見えない小さな空気の泡（ボイド）が閉じ込められていると、そこから熱が逃げられなくなったり、落とした衝撃でヒビが入ったりします。でも外からは絶対に見えません！そこで出荷前の品質関所では、妊婦健診のエコーを超極細にした「C-SAM超音波顕微鏡」と「3DマイクロCT X線」で中身を丸裸に透視し、気泡ゼロ級の完璧な個体だけを送り出しているんです！',
+    summary:
+      'CFexpress量産工程における非破壊内部品質保証ゲートです。C-SAM（走査型超音波顕微鏡）によるアンダーフィル／樹脂剥離・TIM気泡検出と、3DマイクロCT X線によるIPC-7093準拠BGAハンダボイド率（<15%〜25%）の精密検査を統合します。',
+    opticsAndPhysics: [
+      '超音波（15〜300 MHz）は固体中を伝播しますが、わずか数ミクロンの空気層（剥離やボイド）に当たると音響インピーダンス差でほぼ100%反射するため、C-SAMはX線では映りにくい樹脂アンダーフィルの剥離やダイ接着層（DAF）の微細気泡を鮮明に可視化します。',
+      '一方、マイクロフォーカス3D X線CTは高密度な金属（Sn/Ag/Cuハンダボール、32層極細ワイヤボンディング、マイクロビア）をサブミクロン解像度で3次元再構成し、IPC-7093規格のBGAボイド面積率基準やワイヤ流れ（Wire Sweep）を自動AI判定します。',
+      '特にCFexpress Type Aのような高発熱・高剛性TOUGH一体モールド製品では、この超音波＋X線のダブル透視検査が「8K収録時の異常発熱」や「長期使用後の突然死」を工場段階で根絶する最後の砦となります。',
+    ],
+    formula: {
+      expression: 'R_acoustic = ((Z₂ − Z₁) / (Z₂ + Z₁))² ≈ 0.9999 (Solid → Air Void),   Void% < 15% (IPC)',
+      description: '固体と空気の巨大な音響インピーダンス差でミクロン級剥離を100%反射検出し、X線CTでBGAボイド率を厳格管理。',
+    },
+    nextGenInnovation:
+      '2025〜2026年のスマート工場では、インライン自動X線検査（AXI）＋AIディープラーニング画像解析が全数リアルタイムでボイド分布と熱抵抗相関を学習・選別しています。',
+    specs: [
+      { label: '超音波検査', value: 'C-SAM（15〜300 MHz：樹脂剥離・DAF/TIM気泡を完全検出）' },
+      { label: 'X線検査', value: '3D マイクロCT / AXI（BGAボイド・ワイヤ流れ・マイクロビア）' },
+      { label: '品質基準', value: 'IPC-7093 / IPC-A-610 準拠（高信頼BGAボイド率 <15〜20%）' },
+      { label: '信頼性保証', value: '熱抵抗悪化・落下クラック要因を出荷前ゲートで完全排除' },
+    ],
+    diagramType: 'cfe_csam_xray_void_gate',
+  },
+
+  'cfe-neutral-axis-150n-bend': {
+    category: '150ニュートンで曲げても「基板に伸び縮みゼロ」の特等席！ C165 — ソニーTOUGH驚異の曲げ耐性10倍を生む中立軸サンドイッチ力学！',
+    title: 'C165. 150 N 3点曲げ・中立軸（Neutral Axis）PCB配置＆せん断荷重分散アーマー背骨',
+    subtitle: '150 N 3-Point Bend Neutral-Axis PCB Placement & Shear-Load Armor Spine (Sony TOUGH)',
+    plainAnalogy:
+      '分厚い本をグッと曲げたとき、外側の表紙は引き伸ばされ、内側の表紙はギュッと縮みますが、ちょうど真ん中のページだけは「伸びも縮みもしない（応力ゼロの特等席）」になります！これが材料力学の「中立軸（ニュートラル・アクシス）」。ソニーTOUGHカードは表面と裏面の強靭な外装アーマーと一体モールド樹脂で挟み込み、壊れやすい極薄シリコンチップとハンダボールをちょうど「伸び縮みゼロの中立軸」へ配置！だから150ニュートン（約15 kgの曲げ力＝規格の10倍！）にも耐えられるんです！',
+    summary:
+      'ソニーCEA-G TOUGHシリーズが誇る「曲げ強度150 N（CFA規格比10倍）／落下耐性7.5 m（規格比5倍）」を支える複合梁（サンドイッチ構造）力学設計です。壊れやすい8層HDI基板とBGA接合部を断面の中立軸（Neutral Axis）付近へ精密配置し、曲げ引張・圧縮ひずみを最小化します。',
+    opticsAndPhysics: [
+      '梁が曲げモーメント M を受けるとき、中立軸からの距離 y に比例して軸方向応力 σ = M·y / I が発生するため、外装の剛性金属プレート（高ヤング率 E）を外側表皮（y 大）へ配し、基板＆シリコンを y ≈ 0 の中立面へ置くことで、外部荷重の大部分を外装が肩代わりします。',
+      'さらに表裏アーマーと基板の隙間を一体高剛性レジン（C03）で隙間なく充填することで、3点曲げ時に生じる層間せん断応力（τ = V·Q / I·b）を面全体へ均一分散させ、薄板同士のズレ（デラミネーション）を防ぎます。',
+      '結果としてポケットに入れたまま座ったり、厳寒のロケでカメラバッグに強い圧力がかかっても、極薄30〜40 μmの積層NANDダイや極小0201 MLCCにクラックが入らない驚異のタフネスを実現しています。',
+    ],
+    formula: {
+      expression: 'σ(y) = (M · y) / I_composite   ⇒   PCB @ y ≈ 0 (中立軸) なら 曲げひずみ ε_PCB → 0',
+      description: '高剛性外装を表皮に配して断面二次モーメント I を稼ぎつつ、脆弱な基板とシリコンを歪みゼロの中立面へ守護。',
+    },
+    nextGenInnovation:
+      '将来のさらに大容量な32ダイ積層（薄型ダイ多層化）時代ほど、この中立軸サンドイッチ力学設計とフレキシブル端子MLCCの併用がプロ用カードの生存率を分けます。',
+    specs: [
+      { label: '曲げ強度実績', value: '150 N（CFexpress Type A規格基準の約 10 倍）' },
+      { label: '落下耐性実績', value: '7.5 m 落下試験クリア（規格基準の約 5 倍）' },
+      { label: '力学配置', value: '表裏高剛性外装＋一体モールドでPCBを中立軸（y≈0）へ配置' },
+      { label: '保護対象', value: '30μm極薄積層NAND・6nmコントローラBGA・0201 MLCC割れ防止' },
+    ],
+    diagramType: 'cfe_neutral_axis_150n_bend',
+  },
+
+  'cfe-eptfe-pressure-vent': {
+    category: '水もホコリも完全シャットアウトしつつ「空気圧だけ呼吸する膜」 C166 — 飛行機や5000m雪山でも膨らまず割れないIP57防塵防水シール！',
+    title: 'C166. 超音波ハーメチック溶着シーム＆微多孔 ePTFE 気圧平衡ブリーザー構造',
+    subtitle: 'Ultrasonic Hermetic Seam & Micro-Porous ePTFE Barometric Pressure Equalizer (IP57)',
+    plainAnalogy:
+      '防水（IP57）にするためにカードを完全に密閉しすぎると、飛行機に乗ったり標高5,000 mの雪山へ登ったとき、中の空気が膨らんでシールが破れたり、逆に温度が下がったとき外から水滴を吸い込んでしまいます！そこで使われるハイテク構造が、周囲を超音波でビシッと完全溶着（継ぎ目ゼロ）しつつ、必要に応じてアウトドアウェア（ゴアテックス等）と同じ「水滴より1万倍小さく、空気分子だけ通す微多孔ePTFE膜」で内圧を逃がす呼吸システムなんです！',
+    summary:
+      'ソニーTOUGH規格のIP57（防塵5級・水深1 m×30分防水7級）一体成型シーリングと、高度変化（海抜−400 m〜5,000 m）や撮影発熱（−12℃→＋72℃）に伴う内外気圧差・結露ダメージを抑える耐環境ハーメチック＆微多孔ePTFE調圧構造です。',
+    opticsAndPhysics: [
+      '従来の2枚貼り合わせプラスチック殻カードは、継ぎ目から微細な砂塵や雨水が浸入しやすく、落下衝撃でパカッと割れる弱点がありましたが、TOUGH一体モールド＋超音波溶着シームは外部への隙間を物理的に消滅させています。',
+      '密閉キャビティ内の空気は理想気体の法則（PV = nRT）に従い、撮影中の60℃昇温や航空機・高山での0.5気圧低下で大きな差圧を生むため、完全充填ポッティングあるいは微多孔疎水ePTFE膜（孔径約0.1〜0.5 μm）による気圧平衡設計が長期防水シールの疲労破壊を防ぎます。',
+      'ePTFE（延伸ポリテトラフルオロエチレン）の極めて高い撥水性（接触角 >110°）と表面張力により、水深1 m相当の水圧でも液体の水や塩分・砂埃をブロックしながら水蒸気・空気分子だけを透過させます。',
+    ],
+    formula: {
+      expression: 'ΔP_water_entry = (−2 · γ · cos θ) / r_pore > P_IP57 (10 kPa @ 1 m)   (r_pore ≈ 0.2 μm)',
+      description: '極小孔半径 r_pore と撥水接触角 θ>110° によるヤング・ラプラス耐水圧でIP57防水と気圧呼吸を両立。',
+    },
+    nextGenInnovation:
+      '耐油・撥水コーティングを施した次世代疎油性ePTFEとレーザー溶接金属シームの組み合わせにより、過酷な砂漠・豪雨・極地ドキュメンタリー現場での完全無故障を目指しています。',
+    specs: [
+      { label: '防塵・防水等級', value: 'IP57（粉塵侵入防止 ＆ 水深 1 m・30 分間浸漬保護）' },
+      { label: '封止構造', value: '一体成型モールド ＋ 超音波溶着シーム（リブレス高剛性）' },
+      { label: '気圧・環境耐性', value: '航空機・標高 5,000 m 級 ＆ 温度差 84℃（−12〜＋72℃）対応' },
+      { label: 'ePTFE特性', value: '微細孔（~0.2 μm）で液水・塵を完全阻止しつつ気体分子のみ透過' },
+    ],
+    diagramType: 'cfe_eptfe_pressure_vent',
+  },
+
+  'cfe-iso7816-xray-ser-guard': {
+    category: '空港の手荷物X線も宇宙線アルファ粒子も跳ね返す「量子シールド」 C167 — ISO 7816-1準拠の耐X線性能＆超低アルファ素材で10年データ防衛！',
+    title: 'C167. ISO 7816-1（0.1 Gy）耐X線シールド＆超低アルファ線（<0.002 cph/cm²）SER防護層',
+    subtitle: 'ISO 7816-1 (0.1 Gy) X-Ray Immunity & Ultra-Low-Alpha (<0.002 cph/cm²) Soft-Error Guard',
+    plainAnalogy:
+      '海外ロケで何度も空港の手荷物X線検査を通ったり、パッケージ自身の材料からわずかに出る自然放射線（アルファ線）がメモリセルに直撃すると、閉じ込めてあった電子が弾き飛ばされて写真が化ける恐れがあります！そこでソニーTOUGHカードはISO 7816-1規格（0.1 Gy）の耐X線設計に加え、チップを包む樹脂やハンダから放射性不純物を極限まで取り除いた「超低アルファ（ULA）素材」を採用。さらにLDPC訂正との合わせ技で世界中の空を飛んでもデータを守り抜くんです！',
+    summary:
+      '空港セキュリティスキャナ（ISO 7816-1: 0.1 Gy X線照射）や自然放射線・パッケージ由来アルファ粒子によるソフトエラー（SER：Single Event Upset）から3D NAND電荷捕獲層およびオンチップSRAMを守る、高Z遮蔽＋超低アルファ（ULA <0.002 cph/cm²）防護アーキテクチャです。',
+    opticsAndPhysics: [
+      'X線（光子エネルギー数十〜百数十keV）が3D NANDの絶縁膜を通過すると光電効果・コンプトン散乱で電子正孔対が発生し、Si3N4電荷捕獲層内の蓄積電荷がわずかにシフト（Vth低下）しますが、金属外装・高Z Ag/Sn層・広Vthマージン設計＋強力LDPCによりISO 7816-1（0.1 Gy）照射下でも無欠損動作を保証します。',
+      '一方、ハンダやモールド樹脂中の極微量ウラン・トリウム不純物が崩壊して放つアルファ粒子（数MeV）は、6nmコントローラ内蔵SRAMやレジスタへ直接飛び込んでビット反転（ソフトエラー）を引き起こす最大要因です。',
+      'そのため先端パッケージでは不純物をppb未満へ精製した超低アルファ（ULA：<0.002 counts/hr/cm²）モールドレジンおよびULAハンダを採用し、さらにSRAM全ビットへECC（SECDED）を施す多層防御を敷いています。',
+    ],
+    formula: {
+      expression: 'I_Xray = I₀ · exp(−μ_m · ρ · t),   α_emission < 0.002 cph/cm² (ULA Grade)',
+      description: '高密度遮蔽層によるX線減衰と超低アルファ素材（ULA）＋SRAM ECC／NAND LDPCの多層防護で放射線データ化けを防止。',
+    },
+    nextGenInnovation:
+      '近年空港で普及が進む高線量3D CT型手荷物検査機に対しても、強耐放射線電荷トラップ設計とリアルタイムパトロールリード（リフレッシュ）がデータ安全性を一層高めています。',
+    specs: [
+      { label: '耐X線規格', value: 'ISO 7816-1 準拠（0.1 Gy X線照射耐性・空港検査対応）' },
+      { label: 'ULA素材基準', value: 'アルファ線放出率 <0.002 cph/cm²（超低アルファ樹脂＆ハンダ）' },
+      { label: '併用保護', value: '耐静電気・耐UV・耐磁＋SRAM SECDED ECC＋NAND LDPC' },
+      { label: '撮影シーン', value: '海外出張・航空機移動・高高度空撮でのデータ完全保全' },
+    ],
+    diagramType: 'cfe_iso7816_xray_ser_guard',
+  },
+
+  // =========================================================================
+  // GROUP F: USB4 40Gbps Reader (MRW-G3 / ASM2464PD) & Sony α7 IV Combo-Slot Internals (C168–C170)
+  // =========================================================================
+  'cfe-asm2464pd-usb4-bridge': {
+    category: '40 Gbps USB4の中にPCIe 4.0を丸ごと通す「超特急トンネル司令塔」 C168 — MRW-G3リーダーで2TBの写真を爆速取り込みするASM2464PD！',
+    title: 'C168. ASMedia ASM2464PD USB4 Gen3×2（40 Gbps）PCIeトンネリングブリッジSoC',
+    subtitle: 'ASMedia ASM2464PD USB4 Gen3×2 (40 Gbps) Native PCIe Gen4 Tunneling Bridge SoC & Dual 20G PHY',
+    plainAnalogy:
+      'CFexpress 4.0カードの驚異的な読出速度（最大1,800 MB/s超）をPCへ取り込むとき、普通のUSB 10 Gbpsリーダーだと約1,000 MB/sで渋滞してしまいます。ソニーMRW-G3等の最新USB4 40 Gbpsリーダーの中枢に載る「ASM2464PD」クラスの大脳チップは、USB-Cケーブルの2本×20 Gbps（合計40 Gbps）の太いパイプの中に、なんとカードのPCIe Gen4信号を変換ロスのない「ネイティブPCIeトンネル」でそのままPCへ直結！撮影後のコピー待ち時間を半分以下に縮めるんです！',
+    summary:
+      'USB4 40 Gbps（Gen3×2）およびThunderbolt 3/4互換のCFexpress 4.0リーダー中枢を担う、ASMedia ASM2464PDクラスの10×10 mm FCCSP PCIeトンネリングブリッジSoCです。デュアル20 Gbps USB4 PHY、PCIe Gen4ルート／スイッチ、および25 MHz水晶から100 MHz PCIe REFCLKを生成する内蔵PLLを集積します。',
+    opticsAndPhysics: [
+      '従来のUSB 3.2 Gen2（10 Gbps）ブリッジはNVMeコマンドをSCSI/UASPプロトコルへ翻訳していたため遅延と1 GB/sの天井がありましたが、USB4（40 Gbps）ではPC側ホストコントローラとCFexpressカード間を「PCIeトンネリング」で直接接続でき、PCのOSからカードが内蔵NVMe SSD同然に見えます。',
+      'ASM2464PDはわずか10×10 mmパッケージに20 Gbps×2レーンのUSB4 SerDes、最大PCIe Gen4 x4（Type Aカード時はx1 16 GT/s）ダウンストリームポート、内蔵25 MHz→100 MHz REFCLKシンセサイザ、およびUSB 3.2/2.0フォールバック用UASPブリッジまでワンチップ統合しています。',
+      'これによりソニーCEA-G1920T（CFexpress 4.0 Type A）の約1,800 MB/s読出性能をUSB4ポート上で100%ボトルネックゼロで引き出し、約1 TBの8K素材も約10分でPCへ取り込めます。',
+    ],
+    formula: {
+      expression: 'BW_USB4 = 2 × 20 Gbps = 40 Gbps (PCIe Tunnel ~3.8 GB/s)  ≫  CFexpress 4.0 Type A (~1.8 GB/s)',
+      description: '40 Gbps USB4のネイティブPCIeトンネリングにより、Type AカードのGen4 x1全帯域をプロトコル変換ロスなくPCへ直結。',
+    },
+    nextGenInnovation:
+      '次世代USB4 v2（80 Gbps / PAM3）ブリッジチップへの進化により、将来的にはCFexpress 4.0/5.0 Type Bの4,000〜7,000 MB/s級カードまでも外部リーダーでフルスピード転送可能になります。',
+    specs: [
+      { label: '代表チップ構造', value: 'ASMedia ASM2464PD 級（10×10 mm FCCSP ワンチップ統合）' },
+      { label: 'ホスト帯域', value: 'USB4 Gen3×2（40 Gbps）/ Thunderbolt 3・4 / USB 3.2互換' },
+      { label: '転送アーキテクチャ', value: 'ネイティブ PCIe Gen4 トンネリング（UASP自動フォールバック付）' },
+      { label: '内蔵クロック', value: '外付け 25 MHz XTAL → 内蔵PLLで 100 MHz PCIe REFCLK生成' },
+    ],
+    diagramType: 'cfe_asm2464pd_usb4_bridge',
+  },
+
+  'cfe-usbc-cc-bmc-pd-ctrl': {
+    category: 'USB-Cの裏表を0.01秒で判別し、USB4モードへ切り替える「外交官」 C169 — CC1/CC2ピンで電力も40 Gbps高速配線も自動交渉するPD 3.1頭脳！',
+    title: 'C169. USB Type-C CC1/CC2 表裏反転切替ロジック＆BMC USB-PD 3.1 シンク制御IC',
+    subtitle: 'USB Type-C CC1/CC2 Orientation Flip MUX & Bi-Phase Mark Coding (BMC) USB-PD 3.1 Controller',
+    plainAnalogy:
+      'USB Type-Cケーブルは上下どちらの向きに挿しても使えますが、中身では「表か裏か」によって40 Gbpsの超高速信号線（TX1/RX1とTX2/RX2）が左右ひっくり返ります！そこでケーブルを挿した瞬間に動く外交官がこのIC。CC1/CC2ピンの抵抗（5.1 kΩ）で裏表を即判定して高速スイッチ（MUX）を切り替え、さらにBMC通信（USB-PD 3.1）でパソコンと「USB4 40 Gbpsモードに入ろう！電力は5V/3A（15W）ちょうだい！」と0.01秒で握手を交わすんです！',
+    summary:
+      'USB4カードリーダーのType-Cレセプタクル直下に配置されるCC1/CC2プラグ向き検出回路、USB-PD 3.1 BMC（Bi-Phase Mark Coding）プロトコルコントローラ、および40 Gbps超高速レーン向き整合（Orientation Flip）制御ICです。',
+    opticsAndPhysics: [
+      'Type-Cコネクタを接続すると、リーダー側（Sink）のCC1・CC2ピンに接続されたRd＝5.1 kΩプルダウン抵抗とPC側（Source）のRpプルアップ抵抗の分圧電圧から、プラグの表裏向きと給電能力（最大5 V / 3 A = 15 W）をハードウェアが即時判別します。',
+      '続いてCCピン上で300 kbpsのBMC（Bi-Phase Mark Coding）信号によるUSB-PD 3.1ネゴシエーションが行われ、アクティブケーブルのeMarkerチップ（40 Gbps対応確認）を読み取ったうえで「Enter_USB（USB4モード遷移）」またはTBT3 VDMハンドシェイクを完了します。',
+      'CFexpress 4.0カード＋USB4ブリッジの合計ピーク消費電力は約5〜7 Wに達するため、USB-PD制御ICが確実に15 W（5 V/3 A）契約と過電流／VBUS過電圧保護を担保することで、転送途中の電力不足によるアンマウント事故を防ぎます。',
+    ],
+    formula: {
+      expression: 'CC_Detect(Rd = 5.1 kΩ) → BMC PD 3.1 (300 kbps) → Enter_USB(40 Gbps) + VBUS 5 V / 3 A',
+      description: '5.1 kΩ検知→BMC交渉→eMarker検証→USB4モード突入と15W給電確保を接続後数十ミリ秒で自動完結。',
+    },
+    nextGenInnovation:
+      '最新世代ではUSB-PD 3.1コントローラとリドライバ／リタイマが協調し、ケーブル減衰が大きい長尺USB4ケーブルでも自動で信号強調量を最適化するインテリジェント接続へ進化しています。',
+    specs: [
+      { label: '向き＆電力検知', value: 'CC1/CC2 5.1 kΩ Rd 抵抗判定 ＋ USB-PD 3.1 5V/3A (15W) 交渉' },
+      { label: '交渉プロトコル', value: '300 kbps BMC通信（Enter_USB 40G / TBT3 VDM / eMarker読出）' },
+      { label: '高速切替', value: '裏表リバーシブル 20 Gbps×2 差動レーン自動フリップ制御' },
+      { label: '安全保護', value: 'VBUS 過電圧（OVP）・過電流（OCP）・CC短絡保護内蔵' },
+    ],
+    diagramType: 'cfe_usbc_cc_bmc_pd_ctrl',
+  },
+
+  'cfe-combo-sd-uhs2-interlock': {
+    category: '1つの穴に「2規格・計38本の金接点」が同居するソニーの神ワザ C170 — 幅20mmのCFexpress Type Aと幅24mmのSD UHS-IIを誤挿入ゼロで受け止める！',
+    title: 'C170. ソニー α7 IV 兼用スロット CFexpress Type A / SD UHS-II 2段接点インターロック機構',
+    subtitle: 'Sony α7 IV Dual-Standard CFexpress Type A (21-Pin) / SD UHS-II (17-Pin) Stacked Contact Interlock',
+    plainAnalogy:
+      'ソニーα7 IVのすごいところは、たった1つのカードスロットに「CFexpress Type A（幅20 mm・厚さ2.8 mm・21ピン）」と「SD UHS-II（幅24 mm・厚さ2.1 mm・2列17ピン）」という全く形もピン数も違う2種類のカードがそのまま挿さること！その秘密がこの「2段接点インターロック」です。幅の狭いCFexpressが入ると奥の21ピンへ直進し、幅の広いSDカードが入ると両脇の段差ガイドに導かれて下の17ピン（UHS-II 2列接点）へピタッと着地！ショートや誤挿入が絶対に起きない、ソニー機械工学の傑作なんです！',
+    summary:
+      'ソニーα7 IV / α1 / α7S III等に採用された画期的な「CFexpress Type A / SD UHS-IIデュアル互換スロット」内部の段差幅判別ガイド＆2層独立接点インターロック機構です。合計38本（CFexpress 21ピン＋SD UHS-II 17ピン）のバネ接点を1ベイ内に安全共存させます。',
+    opticsAndPhysics: [
+      'CFexpress Type A（20.0×28.0×2.8 mm）はSDカード（24.0×32.0×2.1 mm）より幅が4 mm狭く厚みが0.7 mm厚いという絶妙な寸法差を活かし、スロット内壁に2段の精密LCPガイドレールとメカニカル幅判別カムを造形しています。',
+      'SD UHS-IIカードは前面1列目に従来SD/UHS-I用の9ピン、奥の2列目にLVDS高速差動通信用の8ピン（計17ピン）を持ちますが、CFexpress Type A挿入時は厚いカード底面がSD接点列を傷めないよう退避高さと専用進入角度が厳密に分離されています。',
+      'さらに両規格の独立カード検知スイッチ（CD#）が挿入カード種別を電源印加前にBIONZ XR側電源マルチプレクサへ通知し、CFexpress時はPCIe Gen4（3.3 V）を、SD時はUHS-II（1.8 V/3.3 V）だけを排他通電して完全な電気的安全性を確保します。',
+    ],
+    formula: {
+      expression: 'Bay_Compat = { CFe-A: 20×28×2.8 mm (21-pin PCIe)  ∥  SD UHS-II: 24×32×2.1 mm (9+8=17-pin) }',
+      description: '幅4 mm・厚み0.7 mmの寸法差を機械インターロックで厳密分離し、計38本接点の排他通電と5万回挿抜耐久を実現。',
+    },
+    nextGenInnovation:
+      '大型なCFexpress Type Bでは不可能な「デュアルスロット両方でSDとCFexpressを自由に使い分けられる」というαシステム最大の現場メリットを支える象徴的メカニズムです。',
+    specs: [
+      { label: '共存ピン数', value: '合計 38 ピン（CFexpress Type A 21ピン ＋ SD UHS-II 9+8=17ピン）' },
+      { label: '判別機構', value: '幅4 mm／厚0.7 mm差を利用する2段LCPガイド＆金属カム' },
+      { label: '電気安全', value: '挿入カード種別CD#事前検知によるPCIe / SD排他電源切替' },
+      { label: '対応ボディ', value: 'Sony α7 IV / α7R V / α7S III / α1 / FX3 / FX6 兼用ベイ' },
+    ],
+    diagramType: 'cfe_combo_sd_uhs2_interlock',
+  },
+};
