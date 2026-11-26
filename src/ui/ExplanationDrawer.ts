@@ -354,10 +354,15 @@ export class ExplanationDrawer {
                   targetVol: 3,
                   label: '第3巻：フェーズ2 センサー設計とフォトマスク製造（全50工程・96枚）へ進む',
                 }
-              : {
-                  targetVol: 0,
-                  label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
-                }
+              : (part.fabVolume ?? 0) === 3
+                ? {
+                    targetVol: 4,
+                    label: '第4巻：フェーズ3 画素ウェーハ前工程FEOL（全380工程・25マスク）へ進む',
+                  }
+                : {
+                    targetVol: 0,
+                    label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
+                  }
         : null;
 
     const fabVolBtnHtml = fabVolSwitchConfig

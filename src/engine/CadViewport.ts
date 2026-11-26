@@ -1266,7 +1266,10 @@ export class CadViewport {
       d = 94 + e * 278;
       target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
-      if (this.sensorFabVolume === 3) {
+      if (this.sensorFabVolume === 4) {
+        d = 252 + e * 240;
+        target = new THREE.Vector3(0, -1.5 + e * 1.5, 6.5);
+      } else if (this.sensorFabVolume === 3) {
         d = 248 + e * 238;
         target = new THREE.Vector3(0, -1.5 + e * 1.5, 6.5);
       } else if (this.sensorFabVolume === 2) {
@@ -1404,14 +1407,15 @@ export class CadViewport {
     }
   }
 
-  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1, Vol.2 & Vol.3) */
+  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1, Vol.2, Vol.3 & Vol.4) */
   public focusSensorFabStage(stage: SensorFabStage, immediate = false): void {
     if (this.mode !== 'sensor_fab') return;
     if (
       stage === 'overview' ||
       stage === 'v1_overview' ||
       stage === 'v2_overview' ||
-      stage === 'v3_overview'
+      stage === 'v3_overview' ||
+      stage === 'v4_overview'
     ) {
       this.setCameraPreset('iso', immediate);
       return;
@@ -1490,10 +1494,30 @@ export class CadViewport {
       const d = (136 + e * 105) * aspectScale;
       target = new THREE.Vector3(0, 3.2 + e * 8.0, 5.0 + e * 14.0);
       offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
-    } else {
-      // v3_maskfab — Vol.3 Lower Stepped Cleanroom Terrace (Blocks 2-D & 2-E): Quartz -> 260k Multi-Beam EB -> MeRiT -> 0.8µm Pellicle -> 96-Mask Stocker
+    } else if (stage === 'v3_maskfab') {
+      // v3_maskfab — Vol.3 Lower Stepped Cleanroom Terrace (Blocks 2-D & 2-E)
       const d = (158 + e * 128) * aspectScale;
       target = new THREE.Vector3(0, -6.2 - e * 18.0, 33.5 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
+    } else if (stage === 'v4_sti_dti') {
+      // Vol.4 Blocks 3-A & 3-B (Upper Row 1): RCA Clean -> Mask #01 Align -> STI -> Mask #04 Deep F-DTI Mirror Wall
+      const d = (142 + e * 108) * aspectScale;
+      target = new THREE.Vector3(0, 3.6 + e * 15.0, -29.0 - e * 16.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.36, d * 0.92);
+    } else if (stage === 'v4_ppd_mev') {
+      // Vol.4 Block 3-C (Upper Row 2): Masks #05–#16 Wells, Vt, RGB 3-Depth MeV PD, Canon EOS R1 Dual-Pixel, Recovery Anneal
+      const d = (146 + e * 112) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 12.0, -12.0 - e * 3.0);
+      offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
+    } else if (stage === 'v4_vtg_gate') {
+      // Vol.4 Block 3-D (Upper Row 3): Mask #17 VTG Straw -> 3.3V/1.2V Dual Gate Ox -> Mask #19 >50:1 Poly-Si Gate Etch
+      const d = (138 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 10.0, 5.0 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
+    } else {
+      // v4_pin_sab — Vol.4 Lower Stepped Cleanroom Terrace (Blocks 3-E & 3-F): Mask #22 P+ Pinning Lid, Spike RTA, Mask #25 SAB, H2 Sinter, Vol.5 BEOL Portal
+      const d = (158 + e * 125) * aspectScale;
+      target = new THREE.Vector3(0, -6.5 - e * 11.0, 33.5 + e * 14.0);
       offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
     }
 

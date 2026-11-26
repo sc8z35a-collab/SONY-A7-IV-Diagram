@@ -400,48 +400,104 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    const plateGeo = extrudeHiRes(createRoundedRectShape(32.2, 42.2, 2.0), 0.28, 0.05, 0.05, 2, 20);
+    // 0.30 mm Ultra-Thin Copper Vapor Chamber (UTVC) mapped with sintered 70μm Cu-powder wick texture!
+    const plateGeo = extrudeHiRes(createRoundedRectShape(32.2, 42.2, 2.0), 0.28, 0.05, 0.05, 2, 22);
     applyPlanarUVs(plateGeo, 32.2, 42.2, 'xy');
-    const plate = new THREE.Mesh(plateGeo, u.cfeCopperThermal);
+    const plate = new THREE.Mesh(plateGeo, u.cfeMicroVaporWick);
 
-    // Diffusion-bonded vacuum-sealed copper perimeter rim
+    // Diffusion-bonded stepped vacuum-sealed copper perimeter weld flange + dark furnace-braze fillet step!
     const sealRim = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(32.4, 42.4, 2.0, 30.2, 40.2, 1.65), 0.14, 0.02, 0.02, 1, 18),
+      extrudeHiRes(createFrameShape(32.45, 42.45, 2.05, 30.15, 40.15, 1.65), 0.16, 0.03, 0.03, 2, 20),
       mats.copperHeatSpreader
     );
     sealRim.position.z = 0.18;
     sealRim.userData.noEdges = true;
 
-    // 13 longitudinal sintered-copper micro-capillary vapor wick channels + top/bottom vapor manifold headers!
-    const finGeo = createChamferedBoxGeo(0.64, 37.0, 0.18, 0.14, 0.03, 'z');
+    const brazeStep = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(30.3, 40.3, 1.68, 29.4, 39.4, 1.52), 0.10, 0.015, 0.015, 1, 18),
+      mats.copperCoil
+    );
+    brazeStep.position.z = 0.21;
+    brazeStep.userData.noEdges = true;
+
+    // 13 longitudinal photo-etched porous sintered-copper capillary wick arteries + cross-hatched SoC evaporator boiling mesh!
+    const finGeo = createChamferedBoxGeo(0.58, 36.2, 0.17, 0.12, 0.03, 'z');
     for (let i = -6; i <= 6; i++) {
       const fin = new THREE.Mesh(finGeo, mats.vcCopperMeshWick);
-      fin.position.set(i * 2.2, 0, 0.19);
+      fin.position.set(i * 2.18, 0, 0.19);
       fin.userData.noEdges = true;
       g.add(fin);
     }
-    for (const my of [-18.8, 18.8]) {
-      const manifold = new THREE.Mesh(createChamferedBoxGeo(27.8, 1.15, 0.18, 0.2, 0.03, 'z'), mats.vcWorkingFluidCyan);
-      manifold.position.set(0, my, 0.19);
+
+    // Expanded SoC boiling-evaporator sintered nucleation zone (lower-left directly above C08 controller!)
+    const evapFrame = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(12.2, 11.8, 0.55, 11.2, 10.8, 0.35), 0.12, 0.02, 0.02, 1, 14),
+      mats.vcWorkingFluidCyan
+    );
+    evapFrame.position.set(-6.2, -9.8, 0.21);
+    evapFrame.userData.noEdges = true;
+    const meshBarX = new THREE.BoxGeometry(10.8, 0.20, 0.10);
+    for (let k = -3; k <= 3; k++) {
+      const mb = new THREE.Mesh(meshBarX, mats.copperCoil);
+      mb.position.set(-6.2, -9.8 + k * 1.45, 0.23);
+      mb.userData.noEdges = true;
+      g.add(mb);
+    }
+
+    // Top condenser & bottom evaporator DI-H2O working-fluid manifold headers with vapor distribution port notches
+    for (const my of [-18.6, 18.6]) {
+      const manifold = new THREE.Mesh(createChamferedBoxGeo(27.8, 1.18, 0.18, 0.22, 0.03, 'z'), mats.vcWorkingFluidCyan);
+      manifold.position.set(0, my, 0.20);
       manifold.userData.noEdges = true;
       g.add(manifold);
     }
 
-    // 4×6 micro-etched copper support pillars preventing ultra-thin vacuum-chamber collapse (InstancedMesh!)
-    const pilGeo = hiResCyl(0.28, 0.28, 0.24, 10).rotateX(Math.PI / 2);
-    const pilInst = new THREE.InstancedMesh(pilGeo, mats.goldPlating, 24);
+    // 4×7 = 28 micro-etched anti-collapse vacuum support pillars with concentric diffusion-braze collars (InstancedMesh!)
+    const pilGeo = hiResCyl(0.26, 0.26, 0.26, 12).rotateX(Math.PI / 2);
+    const colGeo = hiResTorus(0.36, 0.065, 6, 14);
+    const pilInst = new THREE.InstancedMesh(pilGeo, mats.goldPlating, 28);
+    const colInst = new THREE.InstancedMesh(colGeo, mats.copperHeatSpreader, 28);
     const dm = new THREE.Object3D();
     let idx = 0;
-    for (let r = 0; r < 6; r++) {
+    for (let r = 0; r < 7; r++) {
       for (let c = 0; c < 4; c++) {
-        dm.position.set(-9.9 + c * 6.6, -15.0 + r * 6.0, 0.20);
+        const px = -9.9 + c * 6.6;
+        const py = -15.6 + r * 5.2;
+        dm.position.set(px, py, 0.21);
         dm.updateMatrix();
-        pilInst.setMatrixAt(idx++, dm.matrix);
+        pilInst.setMatrixAt(idx, dm.matrix);
+        dm.position.set(px, py, 0.26);
+        dm.updateMatrix();
+        colInst.setMatrixAt(idx, dm.matrix);
+        idx++;
       }
     }
     pilInst.instanceMatrix.needsUpdate = true;
+    colInst.instanceMatrix.needsUpdate = true;
     pilInst.userData.noEdges = true;
-    g.add(plate, sealRim, pilInst);
+    colInst.userData.noEdges = true;
+
+    // Authentic crimped & laser-pinched copper vacuum evacuation / DI-H2O charge tail stub at upper-right perimeter!
+    const fillTube = new THREE.Mesh(
+      hiResCyl(0.38, 0.56, 2.25, 12).rotateZ(-Math.PI / 2),
+      mats.copperHeatSpreader
+    );
+    fillTube.position.set(16.65, 18.6, 0.12);
+    fillTube.userData.noEdges = true;
+    const pinchCrimp = new THREE.Mesh(
+      createChamferedBoxGeo(0.76, 1.12, 0.22, 0.10, 0.04, 'z'),
+      mats.copperCoil
+    );
+    pinchCrimp.position.set(17.75, 18.6, 0.12);
+    pinchCrimp.userData.noEdges = true;
+    const weldTip = new THREE.Mesh(
+      createChamferedBoxGeo(0.24, 1.04, 0.26, 0.05, 0.03, 'z'),
+      mats.solderBallSilver
+    );
+    weldTip.position.set(18.18, 18.6, 0.12);
+    weldTip.userData.noEdges = true;
+
+    g.add(plate, sealRim, brazeStep, evapFrame, pilInst, colInst, fillTube, pinchCrimp, weldTip);
 
     parts.push(
       finalizeCfexpressUltra27Part(
@@ -1166,17 +1222,41 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Authentic 16-die dual opposing-staircase 3D TLC NAND stack (8-die lower +X staircase -> alumina spacer -> 8-die upper -X staircase!)
+    // Multi-layer green BT/ABF package substrate carrier base + left/right ENEPIG gold wirebond landing shelves!
+    const carrierGeo = createChamferedBoxGeo(20.6, 12.8, 0.24, 0.36, 0.04, 'z');
+    applyPlanarUVs(carrierGeo, 20.6, 12.8, 'xy');
+    const carrierBase = new THREE.Mesh(carrierGeo, u.bionzAbfSubstrate);
+    carrierBase.position.z = -0.98;
+    g.add(carrierBase);
+
+    for (const sx of [-9.45, 9.45]) {
+      const shelf = new THREE.Mesh(createChamferedBoxGeo(1.15, 11.4, 0.08, 0.12, 0.015, 'z'), mats.goldPlating);
+      shelf.position.set(sx, 0, -0.84);
+      shelf.userData.noEdges = true;
+      g.add(shelf);
+    }
+
+    // Authentic 16-die dual opposing-staircase 3D TLC NAND stack (8-die lower +X -> alumina spacer -> 8-die upper -X!)
     const dieGeo = createChamferedBoxGeo(14.8, 11.6, 0.068, 0.14, 0.014, 'z');
     applyPlanarUVs(dieGeo, 14.8, 11.6, 'xy');
-    const dafGeo = new THREE.BoxGeometry(14.5, 11.3, 0.022);
-    const ledgeGeo = new THREE.BoxGeometry(0.24, 10.4, 0.025);
+    const dafGeo = new THREE.BoxGeometry(14.55, 11.35, 0.022);
+
+    // 128 instanced ENIG gold micro-bond-pad fingers exposed along ALL 16 staggered die overhang terraces (8 per die!)
+    const padGeo = new THREE.BoxGeometry(0.28, 0.62, 0.032);
+    const padInst = new THREE.InstancedMesh(padGeo, mats.goldPlating, 128);
+    const dm = new THREE.Object3D();
+    let padIdx = 0;
+
+    // 16 cascading ultra-fine golden PdCu wirebond loops arcing from BOTH staircases down to substrate shelves!
+    const fabGeo = hiResSphere(0.11, 8, 6);
+    const fabInst = new THREE.InstancedMesh(fabGeo, mats.goldPlating, 16);
+    let fabIdx = 0;
 
     for (let d = 0; d < 17; d++) {
       const isSpacer = d === 8;
       const zPos = -0.78 + d * 0.095;
       const xOff = d < 8 ? -1.55 + d * 0.36 : d === 8 ? 0 : 1.55 - (d - 9) * 0.36;
-      const die = new THREE.Mesh(dieGeo, isSpacer ? mats.ceramicAlumina : d % 2 === 0 ? u.bionzIpDieTile : u.cfeBiCS10WaferDie);
+      const die = new THREE.Mesh(dieGeo, isSpacer ? mats.ceramicAlumina : u.cfeBiCS10WaferDie);
       die.position.set(xOff, 0, zPos);
       g.add(die);
 
@@ -1184,13 +1264,49 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
         const daf = new THREE.Mesh(dafGeo, mats.polyimideFpc);
         daf.position.set(xOff, 0, zPos - 0.044);
         daf.userData.noEdges = true;
-        // Gold wirebond pad shelf exposed cleanly on the stepped overhang edge of EVERY die!
-        const ledge = new THREE.Mesh(ledgeGeo, mats.goldPlating);
-        ledge.position.set(xOff + (d < 8 ? 7.12 : -7.12), 0, zPos + 0.042);
-        ledge.userData.noEdges = true;
-        g.add(daf, ledge);
+        g.add(daf);
+
+        const isLower = d < 8;
+        const stepIdx = isLower ? d : d - 9;
+        const padX = xOff + (isLower ? 7.12 : -7.12);
+
+        // 8 distinct exposed gold bond-pad fingers along each terrace edge
+        for (let p = 0; p < 8; p++) {
+          dm.position.set(padX, -4.55 + p * 1.30, zPos + 0.046);
+          dm.updateMatrix();
+          padInst.setMatrixAt(padIdx++, dm.matrix);
+        }
+
+        // Cascading PdCu wirebond loop from this die's exposed terrace down to the matching substrate landing shelf!
+        const wy = -4.55 + stepIdx * 1.30;
+        const dir = isLower ? 1 : -1;
+        const shelfX = dir * 9.35;
+        const wireCurve = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(padX, wy, zPos + 0.05),
+          new THREE.Vector3(padX + dir * 0.28, wy, zPos + 0.42),
+          new THREE.Vector3(padX + dir * 0.95, wy, zPos + 0.34),
+          new THREE.Vector3(shelfX - dir * 0.55, wy, -0.35 + stepIdx * 0.06),
+          new THREE.Vector3(shelfX, wy, -0.80),
+        ]);
+        const wire = new THREE.Mesh(
+          markHiRes(new THREE.TubeGeometry(wireCurve, 12, 0.048, 6, false)),
+          stepIdx % 2 === 0 ? mats.goldPlating : mats.copperCoil
+        );
+        wire.userData.noEdges = true;
+        g.add(wire);
+
+        dm.position.set(padX, wy, zPos + 0.06);
+        dm.updateMatrix();
+        fabInst.setMatrixAt(fabIdx++, dm.matrix);
       }
     }
+
+    padInst.instanceMatrix.needsUpdate = true;
+    fabInst.instanceMatrix.needsUpdate = true;
+    padInst.userData.noEdges = true;
+    fabInst.userData.noEdges = true;
+    g.add(padInst, fabInst);
+
     parts.push(
       finalizeCfexpressUltra27Part(
         'cfe-nand-staggered-16die',
@@ -1939,100 +2055,166 @@ export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Open-front cutaway camera combo-slot cradle seated cleanly BEHIND/BELOW C05!
+    // Open-front cutaway Sony α7 IV (1-849-712-11) LCP combo-slot cradle seated cleanly BEHIND/BELOW C05!
     const slotBackWall = new THREE.Mesh(
       createChamferedBoxGeo(37.6, 5.4, 1.35, 0.4, 0.1, 'z'),
-      u.batPolycarbonateShell
+      u.cfeToughResinMold
     );
     slotBackWall.position.set(0, -0.65, -2.05);
     const slotBottomRail = new THREE.Mesh(
       createChamferedBoxGeo(38.0, 1.55, 4.4, 0.45, 0.1, 'z'),
-      u.batPolycarbonateShell
+      u.cfeToughResinMold
     );
     slotBottomRail.position.set(0, -2.85, -0.45);
 
-    // Machined left/right side guide cheeks + stainless EMI shell grounding clips
+    // Machined left/right side guide cheeks + multi-prong stainless EMI grounding tabs + SMT board-lock solder pegs!
+    const pegGeo = createChamferedBoxGeo(0.45, 0.95, 1.15, 0.08, 0.02, 'z');
     for (const sx of [-18.4, 18.4]) {
+      const sideSign = sx < 0 ? -1 : 1;
       const cheek = new THREE.Mesh(
         createChamferedBoxGeo(1.65, 5.2, 4.2, 0.3, 0.08, 'z'),
-        mats.matteBlackAnodized
+        u.cfeToughResinMold
       );
       cheek.position.set(sx, -0.75, -0.45);
-      const emiTab = new THREE.Mesh(createChamferedBoxGeo(0.32, 3.6, 3.4, 0.1, 0.03, 'z'), mats.stainlessMachined);
-      emiTab.position.set(sx + (sx < 0 ? -0.92 : 0.92), -0.75, -0.45);
+      const emiTab = new THREE.Mesh(createChamferedBoxGeo(0.32, 3.8, 3.5, 0.1, 0.03, 'z'), mats.stainlessMachined);
+      emiTab.position.set(sx + sideSign * 0.92, -0.75, -0.45);
       emiTab.userData.noEdges = true;
+      for (const pz of [-1.45, 0.55]) {
+        const peg = new THREE.Mesh(pegGeo, mats.solderBallSilver);
+        peg.position.set(sx + sideSign * 1.12, -3.12, pz);
+        peg.userData.noEdges = true;
+        g.add(peg);
+      }
       g.add(cheek, emiTab);
     }
 
-    // Rear stainless EMI chassis plate backing the combo-slot housing
-    const emiBack = new THREE.Mesh(createChamferedBoxGeo(36.2, 4.4, 0.22, 0.3, 0.04, 'z'), mats.stainlessMachined);
-    emiBack.position.set(0, -0.65, -2.80);
+    // Rear stamped SUS301 stainless EMI outer chassis plate mapped with exact 7.88:1 aspect u.cfeComboSlotShell ('xy-back'!)
+    const emiBackGeo = createChamferedBoxGeo(36.2, 4.6, 0.24, 0.3, 0.04, 'z');
+    applyPlanarUVs(emiBackGeo, 36.2, 4.6, 'xy-back');
+    const emiBack = new THREE.Mesh(emiBackGeo, u.cfeComboSlotShell);
+    emiBack.position.set(0, -0.65, -2.82);
     emiBack.userData.noEdges = true;
+
+    // 5 stamped hemispherical EMI shell dimples & 4 lower SMT chassis ground-anchor feet on rear SUS301 plate!
+    const shDimpleGeo = hiResSphere(0.26, 10, 8);
+    for (const dx of [-15.2, -7.6, 0, 7.6, 15.2]) {
+      const dmpl = new THREE.Mesh(shDimpleGeo, mats.stainlessMachined);
+      dmpl.scale.set(1, 1, 0.45);
+      dmpl.position.set(dx, 0.95, -2.95);
+      dmpl.userData.noEdges = true;
+      g.add(dmpl);
+    }
+    const anchorGeo = createChamferedBoxGeo(1.85, 0.45, 0.95, 0.08, 0.02, 'z');
+    for (const ax of [-13.8, -4.6, 4.6, 13.8]) {
+      const anc = new THREE.Mesh(anchorGeo, mats.solderBallSilver);
+      anc.position.set(ax, -3.32, -2.55);
+      anc.userData.noEdges = true;
+      g.add(anc);
+    }
+
     g.add(slotBackWall, slotBottomRail, emiBack);
 
-    // 21 genuinely curved arched phosphor-bronze gold spring wipers + domed contact tips + SMT solder tails!
+    // 21 arched phosphor-bronze gold spring wipers + bifurcated dual-domed contact tips (42 points!) + gull-wing tails on ENIG host pads!
     const wiperCurve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(0, -2.15, -1.25),
       new THREE.Vector3(0, -1.05, -1.18),
       new THREE.Vector3(0, 0.15, -0.58),
       new THREE.Vector3(0, 0.85, -1.02),
     ]);
-    const wiperGeo = markHiRes(new THREE.TubeGeometry(wiperCurve, 12, 0.16, 6, false));
+    const wiperGeo = markHiRes(new THREE.TubeGeometry(wiperCurve, 12, 0.15, 6, false));
     const wiperInst = new THREE.InstancedMesh(wiperGeo, mats.beCuSpring, 21);
-    const domeGeo = hiResSphere(0.24, 8, 6);
-    const domeInst = new THREE.InstancedMesh(domeGeo, mats.goldPlating, 21);
-    const tailGeo = createChamferedBoxGeo(0.54, 0.48, 1.32, 0.08, 0.02, 'z');
+    const domeGeo = hiResSphere(0.16, 8, 6);
+    const domeInst = new THREE.InstancedMesh(domeGeo, mats.goldPlating, 42);
+    const tailGeo = createChamferedBoxGeo(0.52, 0.44, 1.32, 0.08, 0.02, 'z');
     const tailInst = new THREE.InstancedMesh(tailGeo, mats.goldPlating, 21);
+    const hostPadGeo = new THREE.BoxGeometry(0.76, 0.10, 1.56);
+    const hostPadInst = new THREE.InstancedMesh(hostPadGeo, mats.goldPlating, 21);
     const dm = new THREE.Object3D();
 
+    let domeIdx = 0;
     for (let pin = 0; pin < 21; pin++) {
       const px = -15.0 + pin * 1.5;
       dm.position.set(px, 0, 0);
-      dm.scale.set(1.6, 1.0, 0.72);
+      dm.scale.set(1.55, 1.0, 0.72);
       dm.updateMatrix();
       wiperInst.setMatrixAt(pin, dm.matrix);
 
-      dm.position.set(px, 0.15, -0.42);
-      dm.scale.set(1.2, 1.0, 0.65);
-      dm.updateMatrix();
-      domeInst.setMatrixAt(pin, dm.matrix);
+      // Bifurcated dual-contact gold micro-domes per wiper (redundant dual-point contact!)
+      for (const dx of [-0.15, 0.15]) {
+        dm.position.set(px + dx, 0.15, -0.43);
+        dm.scale.set(0.95, 1.15, 0.70);
+        dm.updateMatrix();
+        domeInst.setMatrixAt(domeIdx++, dm.matrix);
+      }
 
       dm.position.set(px, -2.18, 0.56);
       dm.scale.set(1, 1, 1);
       dm.updateMatrix();
       tailInst.setMatrixAt(pin, dm.matrix);
+
+      dm.position.set(px, -2.44, 0.58);
+      dm.scale.set(1, 1, 1);
+      dm.updateMatrix();
+      hostPadInst.setMatrixAt(pin, dm.matrix);
     }
-    for (const inst of [wiperInst, domeInst, tailInst]) {
+    for (const inst of [wiperInst, domeInst, tailInst, hostPadInst]) {
       inst.instanceMatrix.needsUpdate = true;
       inst.userData.noEdges = true;
       g.add(inst);
     }
 
-    // Stainless heart-cam push-push card-eject latch plate, recessed heart track, follower wire pin & 7-turn helical spring!
+    // Miniature gold-contact card-detect (CD#) micro leaf switch tucked into rear-left corner
+    const cdBase = new THREE.Mesh(createChamferedBoxGeo(1.45, 2.25, 0.85, 0.15, 0.03, 'z'), mats.matteBlackAnodized);
+    cdBase.position.set(-16.9, -1.05, -0.95);
+    cdBase.userData.noEdges = true;
+    const cdLeaf = new THREE.Mesh(createChamferedBoxGeo(0.18, 2.35, 0.55, 0.04, 0.02, 'z'), mats.goldPlating);
+    cdLeaf.rotation.z = -0.18;
+    cdLeaf.position.set(-16.25, -0.85, -0.85);
+    cdLeaf.userData.noEdges = true;
+    g.add(cdBase, cdLeaf);
+
+    // Ultra-detailed right-side push-push heart-cam eject mechanism:
+    // Stainless cam carriage + recessed heart-loop track + brass follower pin + leaf clip + latch hook + 9-turn helical spring on guide rod!
     const latchArm = new THREE.Mesh(
-      createChamferedBoxGeo(1.45, 8.2, 1.45, 0.28, 0.06, 'z'),
+      createChamferedBoxGeo(1.56, 8.4, 1.52, 0.28, 0.06, 'z'),
       mats.stainlessMachined
     );
-    latchArm.position.set(19.25, 1.2, -0.45);
-    const heartTrack = new THREE.Mesh(createChamferedBoxGeo(0.56, 3.2, 0.24, 0.18, 0.03, 'z'), mats.matteBlackAnodized);
-    heartTrack.position.set(19.25, 1.5, 0.34);
+    latchArm.position.set(19.25, 1.25, -0.45);
+
+    const heartTrack = new THREE.Mesh(createChamferedBoxGeo(0.76, 3.35, 0.24, 0.22, 0.03, 'z'), mats.matteBlackAnodized);
+    heartTrack.position.set(19.25, 1.55, 0.34);
     heartTrack.userData.noEdges = true;
-    const followerPin = new THREE.Mesh(hiResCyl(0.14, 0.14, 2.2, 8), mats.goldPlating);
-    followerPin.position.set(19.25, 0.35, 0.42);
+    // Central heart-cam island lobe inside the recessed track creating the authentic push-push catch notch!
+    const heartIsland = new THREE.Mesh(hiResCyl(0.24, 0.14, 0.22, 3).rotateX(Math.PI / 2), mats.stainlessMachined);
+    heartIsland.position.set(19.25, 1.72, 0.39);
+    heartIsland.userData.noEdges = true;
+
+    const followerPin = new THREE.Mesh(hiResCyl(0.13, 0.13, 2.45, 10), mats.goldPlating);
+    followerPin.position.set(19.25, 0.38, 0.45);
     followerPin.userData.noEdges = true;
+    const retentionLeaf = new THREE.Mesh(createChamferedBoxGeo(0.95, 2.85, 0.14, 0.12, 0.02, 'z'), mats.beCuSpring);
+    retentionLeaf.position.set(19.25, 0.55, 0.58);
+    retentionLeaf.userData.noEdges = true;
+
     const latchHook = new THREE.Mesh(
-      createChamferedBoxGeo(1.5, 1.85, 1.55, 0.24, 0.06, 'z'),
+      createChamferedBoxGeo(1.58, 1.92, 1.62, 0.24, 0.06, 'z'),
       mats.titaniumRivet
     );
-    latchHook.position.set(18.75, 4.9, -0.45);
-    for (let i = 0; i < 7; i++) {
-      const coil = new THREE.Mesh(hiResTorus(0.56, 0.11, 8, 16), mats.silverElectrode);
+    latchHook.position.set(18.75, 4.95, -0.45);
+
+    // Central stainless spring guide rod + 9-turn precision helical return spring
+    const guideRod = new THREE.Mesh(hiResCyl(0.20, 0.20, 4.1, 10), mats.stainlessMachined);
+    guideRod.position.set(19.25, -0.65, -0.45);
+    guideRod.userData.noEdges = true;
+
+    for (let i = 0; i < 9; i++) {
+      const coil = new THREE.Mesh(hiResTorus(0.56, 0.095, 8, 18), mats.silverElectrode);
       coil.rotation.x = Math.PI / 2;
-      coil.position.set(19.25, -2.15 + i * 0.44, -0.45);
+      coil.position.set(19.25, -2.35 + i * 0.38, -0.45);
       coil.userData.noEdges = true;
       g.add(coil);
     }
-    g.add(latchArm, heartTrack, followerPin, latchHook);
+    g.add(latchArm, heartTrack, heartIsland, followerPin, retentionLeaf, latchHook, guideRod);
 
     parts.push(
       finalizeCfexpressUltra27Part(

@@ -595,8 +595,14 @@ body,
 
 #app.has-drawer .fab-stage-bar {
   top: 68px;
-  left: calc(50% - 190px);
-  max-width: calc(100vw - 550px);
+  left: calc(50% - 155px);
+  max-width: calc(100vw - 580px);
+}
+
+#app.has-drawer .fab-stage-bar .fab-vol-btn,
+#app.has-drawer .fab-stage-bar .fab-stage-btn {
+  padding: 0 7px;
+  font-size: 10.5px;
 }
 
 .fab-stage-btn {

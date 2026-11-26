@@ -221,7 +221,15 @@ controls = new ZeroTextControls(appRoot, {
     viewport.setSensorFabVolume(vol, false);
     controls.syncFabVolume(vol);
     controls.syncFabStage(
-      vol === 0 ? 'overview' : vol === 1 ? 'v1_overview' : vol === 2 ? 'v2_overview' : 'v3_overview'
+      vol === 0
+        ? 'overview'
+        : vol === 1
+          ? 'v1_overview'
+          : vol === 2
+            ? 'v2_overview'
+            : vol === 3
+              ? 'v3_overview'
+              : 'v4_overview'
     );
     syncRail();
   },
@@ -305,7 +313,15 @@ drawer = new ExplanationDrawer(appRoot, {
     viewport.setSensorFabVolume(vol, false);
     controls.syncFabVolume(vol);
     controls.syncFabStage(
-      vol === 0 ? 'overview' : vol === 1 ? 'v1_overview' : vol === 2 ? 'v2_overview' : 'v3_overview'
+      vol === 0
+        ? 'overview'
+        : vol === 1
+          ? 'v1_overview'
+          : vol === 2
+            ? 'v2_overview'
+            : vol === 3
+              ? 'v3_overview'
+              : 'v4_overview'
     );
     controls.syncMode('sensor_fab');
     syncRail();
@@ -1745,6 +1761,83 @@ if (preset === 'complete_assembled') {
   viewport.setExplode(0.08, true);
   controls.setExplodeValue(0.08);
   viewport.focusSensorFabStage('v3_maskfab', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_assembled') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_exploded') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_drawer') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_overview');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.24, true);
+  controls.setExplodeValue(0.24);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('fab4-m22-surface-pinning-ppd', false);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_sti_dti') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_sti_dti');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.08, true);
+  controls.setExplodeValue(0.08);
+  viewport.focusSensorFabStage('v4_sti_dti', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_ppd_mev') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_ppd_mev');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.08, true);
+  controls.setExplodeValue(0.08);
+  viewport.focusSensorFabStage('v4_ppd_mev', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_vtg_gate') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_vtg_gate');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.08, true);
+  controls.setExplodeValue(0.08);
+  viewport.focusSensorFabStage('v4_vtg_gate', true);
+  syncRail();
+} else if (preset === 'sensor_fab_vol4_pin_sab') {
+  viewport.setMode('sensor_fab', true);
+  viewport.setSensorFabVolume(4, true);
+  controls.syncFabVolume(4);
+  controls.syncFabStage('v4_pin_sab');
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.08, true);
+  controls.setExplodeValue(0.08);
+  viewport.focusSensorFabStage('v4_pin_sab', true);
   syncRail();
 } else if (preset === 'drybox_assembled') {
   viewport.setMode('drybox', true);
