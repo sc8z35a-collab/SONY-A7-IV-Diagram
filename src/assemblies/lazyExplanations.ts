@@ -157,6 +157,11 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
     case 'mic':
       inflight = import('./mic/micExplanations').then((m) => finish(m.MIC_EXPLANATIONS));
       break;
+    case 'sensor_fab':
+      inflight = import('./sensorFab/sensorFabExplanations').then((m) =>
+        finish(m.SENSOR_FAB_EXPLANATIONS)
+      );
+      break;
   }
 
   subsystemInflight.set(subsystem, inflight);

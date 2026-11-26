@@ -30,6 +30,7 @@ import { renderPhase28PixelV2SchematicSvg } from './phase28PixelV2Schematics';
 import { renderPhase28BionzV2SchematicSvg } from './phase28BionzV2Schematics';
 import { renderPhase29PixelV2DeepSchematicSvg } from './phase29PixelV2DeepSchematics';
 import { renderPhase29BionzV2DeepSchematicSvg } from './phase29BionzV2DeepSchematics';
+import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -130,6 +131,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase29BionzV2DeepSvg = renderPhase29BionzV2DeepSchematicSvg(type);
   if (phase29BionzV2DeepSvg) return phase29BionzV2DeepSvg;
+
+  const phase30SensorFabSvg = renderPhase30SensorFabSchematicSvg(type);
+  if (phase30SensorFabSvg) return phase30SensorFabSvg;
 
   switch (type) {
     case 'baffle':

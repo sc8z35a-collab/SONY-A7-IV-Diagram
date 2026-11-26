@@ -63,6 +63,11 @@ export interface UltraRealisticMaterials {
   v2PixelDeuteriumInterface: THREE.MeshPhysicalMaterial;
   v2Bionz2dTmdLattice: THREE.MeshPhysicalMaterial;
   v2BionzMicrofluidicGrid: THREE.MeshPhysicalMaterial;
+  // Phase 30: Sensor Manufacturing Process (Fab Vol.0) Cleanroom, 300mm Wafer, Photomask & CP Yield Materials
+  fabWafer300mmDieMap: THREE.MeshPhysicalMaterial;
+  fabQuartzReticleMask: THREE.MeshPhysicalMaterial;
+  fabCleanroomProcessDeck: THREE.MeshPhysicalMaterial;
+  fabWaferBinningMap: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -2792,7 +2797,345 @@ function createV2BionzMicrofluidicGridTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
-// FACTORY: CREATE ALL 45 BESPOKE ULTRA-REALISTIC MATERIALS
+// PHASE 30: SENSOR MANUFACTURING PROCESS (VOL.0) PROCEDURAL PBR TEXTURES
+// =============================================================================
+
+function createFabWafer300mmDieMapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const R = w * 0.485;
+
+  // Iridescent monocrystalline 300mm silicon wafer base
+  const bg = ctx.createRadialGradient(cx - 90, cy - 110, 30, cx, cy, R);
+  bg.addColorStop(0, '#1e3a5f');
+  bg.addColorStop(0.32, '#0f4c5c');
+  bg.addColorStop(0.62, '#1d2d62');
+  bg.addColorStop(0.88, '#132238');
+  bg.addColorStop(1, '#0b1220');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Diagonal diffraction sheen across full-frame reticle array
+  const sheen = ctx.createLinearGradient(0, 0, w, h);
+  sheen.addColorStop(0.0, 'rgba(34, 211, 238, 0.28)');
+  sheen.addColorStop(0.28, 'rgba(59, 130, 246, 0.24)');
+  sheen.addColorStop(0.55, 'rgba(139, 92, 246, 0.26)');
+  sheen.addColorStop(0.82, 'rgba(16, 185, 129, 0.28)');
+  sheen.addColorStop(1.0, 'rgba(14, 165, 233, 0.22)');
+  ctx.fillStyle = sheen;
+  ctx.fillRect(0, 0, w, h);
+
+  // 36x24mm Full-Frame Sensor Dies tiled across 300mm wafer (~42 complete dies!)
+  const dieW = 92;
+  const dieH = 62;
+  const gap = 8;
+  const stepX = dieW + gap;
+  const stepY = dieH + gap;
+
+  for (let row = -5; row <= 5; row++) {
+    for (let col = -4; col <= 4; col++) {
+      const dx = cx + col * stepX - dieW * 0.5;
+      const dy = cy + row * stepY - dieH * 0.5;
+      const corners = [
+        [dx, dy],
+        [dx + dieW, dy],
+        [dx, dy + dieH],
+        [dx + dieW, dy + dieH],
+      ];
+      const maxDist = Math.max(...corners.map(([x, y]) => Math.hypot(x - cx, y - cy)));
+      if (maxDist > R - 18) continue;
+
+      // Active 3:2 photodiode imaging area with micro-rainbow hue shift
+      const hue = 175 + ((col * 17 + row * 23 + 360) % 95);
+      const dieGrad = ctx.createLinearGradient(dx, dy, dx + dieW, dy + dieH);
+      dieGrad.addColorStop(0, `hsla(${hue}, 74%, 40%, 0.92)`);
+      dieGrad.addColorStop(0.5, `hsla(${(hue + 38) % 360}, 68%, 34%, 0.92)`);
+      dieGrad.addColorStop(1, `hsla(${(hue + 72) % 360}, 72%, 38%, 0.92)`);
+      ctx.fillStyle = dieGrad;
+      ctx.fillRect(dx + 4, dy + 4, dieW - 8, dieH - 8);
+
+      // Optical black & peripheral logic readout collar
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.55)';
+      ctx.lineWidth = 1.6;
+      ctx.strokeRect(dx + 1, dy + 1, dieW - 2, dieH - 2);
+
+      // Gold perimeter bond pad ticks along top/bottom of each die
+      ctx.fillStyle = '#eab308';
+      for (let px = dx + 8; px < dx + dieW - 8; px += 8) {
+        ctx.fillRect(px, dy + 1.5, 4, 2.5);
+        ctx.fillRect(px, dy + dieH - 4, 4, 2.5);
+      }
+
+      // Column ADC vertical stripe dividers inside active die
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.24)';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      for (let s = 1; s < 4; s++) {
+        const sx = dx + 4 + ((dieW - 8) / 4) * s;
+        ctx.moveTo(sx, dy + 4);
+        ctx.lineTo(sx, dy + dieH - 4);
+      }
+      ctx.stroke();
+    }
+  }
+
+  // Scribe-street alignment fiducials & outer exclusion bevel ring
+  ctx.strokeStyle = 'rgba(250, 204, 21, 0.42)';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R - 10, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Bottom crystal orientation V-notch indicator
+  ctx.fillStyle = '#090d16';
+  ctx.beginPath();
+  ctx.moveTo(cx - 14, cy + R - 2);
+  ctx.lineTo(cx, cy + R - 24);
+  ctx.lineTo(cx + 14, cy + R - 2);
+  ctx.closePath();
+  ctx.fill();
+
+  return toHiTex(canvas);
+}
+
+function createFabQuartzReticleMaskTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Dark chrome absorber frame on synthetic fused quartz
+  ctx.fillStyle = '#181d26';
+  ctx.fillRect(0, 0, w, h);
+
+  // Pellicle silver mounting border
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(36, 36, w - 72, h - 72);
+
+  // Central translucent quartz exposure field (4x magnified full-frame 3:2 reticle)
+  const fx = 92;
+  const fy = 148;
+  const fw = w - 184;
+  const fh = h - 296;
+  const qGrad = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
+  qGrad.addColorStop(0, '#bae6fd');
+  qGrad.addColorStop(0.5, '#e0f2fe');
+  qGrad.addColorStop(1, '#c7d2fe');
+  ctx.fillStyle = qGrad;
+  ctx.fillRect(fx, fy, fw, fh);
+
+  // Micro-etched Cr/MoSi OPC circuit pattern inside quartz window
+  ctx.fillStyle = '#1e293b';
+  for (let y = fy + 16; y < fy + fh - 16; y += 22) {
+    for (let x = fx + 16; x < fx + fw - 16; x += 28) {
+      ctx.fillRect(x, y, 18, 12);
+      // OPC corner serif squares
+      ctx.fillRect(x - 2, y - 2, 4, 4);
+      ctx.fillRect(x + 16, y + 10, 4, 4);
+    }
+  }
+
+  // Peripheral column-ADC & SLVS-EC mask strips
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(fx, fy, fw, 26);
+  ctx.fillRect(fx, fy + fh - 26, fw, 26);
+  ctx.fillStyle = '#38bdf8';
+  for (let x = fx + 14; x < fx + fw - 14; x += 18) {
+    ctx.fillRect(x, fy + 6, 8, 14);
+    ctx.fillRect(x, fy + fh - 20, 8, 14);
+  }
+
+  // Corner optical alignment vernier crosshairs
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  for (const [ax, ay] of [
+    [66, 118],
+    [w - 66, 118],
+    [66, h - 118],
+    [w - 66, h - 118],
+  ]) {
+    ctx.beginPath();
+    ctx.moveTo(ax - 16, ay);
+    ctx.lineTo(ax + 16, ay);
+    ctx.moveTo(ax, ay - 16);
+    ctx.lineTo(ax, ay + 16);
+    ctx.stroke();
+    ctx.strokeRect(ax - 9, ay - 9, 18, 18);
+  }
+
+  // Top & bottom laser reticle barcode bands
+  ctx.fillStyle = '#cbd5e1';
+  const rng = mulberry32(3002);
+  for (let x = 140; x < w - 140; x += 10) {
+    const bw = rng() > 0.45 ? 5 : 2;
+    ctx.fillRect(x, 64, bw, 32);
+    ctx.fillRect(x, h - 96, bw, 32);
+  }
+
+  return toHiTex(canvas);
+}
+
+function createFabCleanroomProcessDeckTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+
+  // Satin white-aluminum ISO Class-1 cleanroom floor deck
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#f1f5f9');
+  bg.addColorStop(0.5, '#e6ecf5');
+  bg.addColorStop(1, '#dce4f0');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Cleanroom HEPA perforated raised-floor tile grid
+  ctx.strokeStyle = 'rgba(100, 116, 139, 0.22)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  for (let x = 0; x <= w; x += 48) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+  }
+  for (let y = 0; y <= h; y += 48) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+  }
+  ctx.stroke();
+
+  // Subtle airflow vent micro-dots on floor tiles
+  ctx.fillStyle = 'rgba(71, 85, 105, 0.16)';
+  for (let y = 24; y < h; y += 48) {
+    for (let x = 24; x < w; x += 48) {
+      ctx.fillRect(x - 3, y - 3, 6, 6);
+    }
+  }
+
+  // Dual-Track Parallel Fab Flow Guide Lanes (Pixel Wafer cyan + Logic Wafer royal-blue merging at center -> gold-amber downstream!)
+  ctx.lineWidth = 10;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Upper track: P1 -> P3 -> P4 -> P6 (Pixel Wafer)
+  ctx.strokeStyle = '#0ea5e9';
+  ctx.beginPath();
+  ctx.moveTo(64, 384);
+  ctx.lineTo(185, 290);
+  ctx.lineTo(310, 290);
+  ctx.lineTo(372, 384);
+  ctx.stroke();
+
+  // Lower track: P1 -> P5 -> P6 (Parallel Logic Wafer — 720 steps)
+  ctx.strokeStyle = '#2563eb';
+  ctx.beginPath();
+  ctx.moveTo(64, 384);
+  ctx.lineTo(240, 515);
+  ctx.lineTo(372, 384);
+  ctx.stroke();
+
+  // Downstream merged track: P6 -> P7 -> P8 -> P9 -> P10 -> P11 -> P12
+  ctx.strokeStyle = '#d97706';
+  ctx.beginPath();
+  ctx.moveTo(372, 384);
+  ctx.lineTo(706, 384);
+  ctx.lineTo(706, 585);
+  ctx.lineTo(540, 595);
+  ctx.stroke();
+
+  // Photomask feed dashes from P2
+  ctx.strokeStyle = '#7c3aed';
+  ctx.lineWidth = 5;
+  ctx.setLineDash([12, 8]);
+  ctx.beginPath();
+  ctx.moveTo(160, 140);
+  ctx.lineTo(185, 290);
+  ctx.moveTo(160, 140);
+  ctx.lineTo(310, 290);
+  ctx.moveTo(160, 140);
+  ctx.lineTo(240, 515);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 5-stage 180-day (6-month) T1..T5 progress bar bands along bottom edge
+  const bandColors = ['#64748b', '#0ea5e9', '#8b5cf6', '#d97706', '#059669'];
+  const bandW = (w - 80) / 5;
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = bandColors[i];
+    ctx.fillRect(40 + i * bandW + 4, h - 42, bandW - 8, 16);
+  }
+
+  // Outer anodized framing border
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(10, 10, w - 20, h - 20);
+
+  return toHiTex(canvas);
+}
+
+function createFabWaferBinningMapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const R = w * 0.475;
+
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer wafer metallic edge
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // EMVA 1288 CP Wafer Probe Yield / Binning Map across 36x24mm dies
+  const dieW = 84;
+  const dieH = 56;
+  const gap = 8;
+  const stepX = dieW + gap;
+  const stepY = dieH + gap;
+  const rng = mulberry32(1288);
+
+  for (let row = -5; row <= 5; row++) {
+    for (let col = -4; col <= 4; col++) {
+      const dx = cx + col * stepX - dieW * 0.5;
+      const dy = cy + row * stepY - dieH * 0.5;
+      const dist = Math.hypot(dx + dieW * 0.5 - cx, dy + dieH * 0.5 - cy);
+      if (dist > R - 52) continue;
+
+      const roll = rng();
+      // Center dies have higher Grade-A yield; edge dies show realistic defect roll-off
+      const edgePenalty = dist / R;
+      let fill = '#10b981'; // Pass Standard (Emerald)
+      if (roll < 0.08 + edgePenalty * 0.14) {
+        fill = '#ef4444'; // Defect / Reject (Crimson)
+      } else if (roll < 0.24 + edgePenalty * 0.12) {
+        fill = '#f59e0b'; // Bin-B Optical Spec (Amber)
+      } else if (dist < R * 0.58 && roll > 0.55) {
+        fill = '#06b6d4'; // Flagship Grade-A Low-Dark-Current (Cyan)
+      }
+
+      ctx.fillStyle = fill;
+      ctx.fillRect(dx, dy, dieW, dieH);
+
+      // Probe needle contact mark grid inside each tested die
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = 1.4;
+      ctx.strokeRect(dx + 2, dy + 2, dieW - 4, dieH - 4);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
+      for (let px = dx + 10; px < dx + dieW - 10; px += 12) {
+        ctx.fillRect(px, dy + 5, 4, 3);
+        ctx.fillRect(px, dy + dieH - 8, 4, 3);
+      }
+    }
+  }
+
+  // Probe target reticle ring around active center test die
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(cx - dieW * 0.5 - 4, cy - dieH * 0.5 - 4, dieW + 8, dieH + 8);
+
+  return toHiTex(canvas);
+}
+
+// =============================================================================
+// FACTORY: CREATE ALL 53 BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
 export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): UltraRealisticMaterials {
@@ -3427,6 +3770,59 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.13
   );
 
+  // --- Phase 30: Sensor Manufacturing Process (Fab Vol.0) Cleanroom, 300mm Wafer, Photomask & CP Yield ---
+  const fabWafer300mmDieMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFabWafer300mmDieMapTexture(),
+      metalness: 0.68,
+      roughness: 0.16,
+      clearcoat: 0.90,
+      iridescence: 0.94,
+      iridescenceIOR: 1.78,
+    }),
+    0.11
+  );
+
+  const fabQuartzReticleMask = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFabQuartzReticleMaskTexture(),
+      metalness: 0.42,
+      roughness: 0.14,
+      clearcoat: 0.86,
+      iridescence: 0.54,
+      iridescenceIOR: 1.54,
+    }),
+    0.10
+  );
+
+  const fabCleanroomProcessDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFabCleanroomProcessDeckTexture(),
+      metalness: 0.22,
+      roughness: 0.36,
+      clearcoat: 0.28,
+    }),
+    0.07
+  );
+
+  const fabWaferBinningMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFabWaferBinningMapTexture(),
+      metalness: 0.34,
+      roughness: 0.24,
+      clearcoat: 0.62,
+    }),
+    0.09
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -3477,6 +3873,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     v2PixelDeuteriumInterface,
     v2Bionz2dTmdLattice,
     v2BionzMicrofluidicGrid,
+    fabWafer300mmDieMap,
+    fabQuartzReticleMask,
+    fabCleanroomProcessDeck,
+    fabWaferBinningMap,
   ];
 
   return {
@@ -3529,6 +3929,10 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     v2PixelDeuteriumInterface,
     v2Bionz2dTmdLattice,
     v2BionzMicrofluidicGrid,
+    fabWafer300mmDieMap,
+    fabQuartzReticleMask,
+    fabCleanroomProcessDeck,
+    fabWaferBinningMap,
     list,
   };
 }
