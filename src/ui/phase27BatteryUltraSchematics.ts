@@ -392,11 +392,11 @@ export function renderPhase27BatteryUltraSchematicSvg(
     case 'bat_cell_crimp_bead_groove':
       return wrapSvg(`
         <rect x="18" y="18" width="96" height="64" rx="5" fill="#f1f5f9" stroke="#64748b"/>
-        <path d="M36 74 V42 L48 36 L36 30 V22 H54" fill="none" stroke="#334155" stroke-width="3.2"/>
-        <path d="M96 74 V42 L84 36 L96 30 V22 H78" fill="none" stroke="#334155" stroke-width="3.2"/>
-        <rect x="50" y="24" width="32" height="10" rx="2" fill="#0284c7"/>
-        <text x="66" y="31" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#fff">封口キャップ</text>
-        <text x="66" y="55" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#475569">1.2mmくびれ溝</text>
+        <path d="M34 74 V44 L45 38 L34 32 V22 H48" fill="none" stroke="#334155" stroke-width="3.0"/>
+        <path d="M98 74 V44 L87 38 L98 32 V22 H84" fill="none" stroke="#334155" stroke-width="3.0"/>
+        <rect x="47" y="25" width="38" height="12" rx="2" fill="#0284c7"/>
+        <text x="66" y="33" text-anchor="middle" font-size="5.2" font-weight="bold" fill="#fff">封口キャップ</text>
+        <text x="66" y="56" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#475569">1.2mmくびれ溝</text>
         <text x="66" y="92" text-anchor="middle" font-size="5.9" font-weight="bold" fill="#334155">気密ロールクリンプ &gt;1.3MPa</text>
         <rect x="128" y="14" width="182" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
         <text x="136" y="29" font-size="7.4" font-weight="bold" fill="#0f172a">P52 鋼缶くびれ溝＆クリンプ封口</text>
@@ -409,12 +409,12 @@ export function renderPhase27BatteryUltraSchematicSvg(
     case 'bat_positive_cap_button':
       return wrapSvg(`
         <rect x="18" y="18" width="96" height="64" rx="5" fill="#f8fafc" stroke="#475569"/>
-        <path d="M30 62 H42 L48 36 H84 L90 62 H102" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
-        <rect x="46" y="48" width="8" height="6" fill="#0f172a"/>
-        <rect x="78" y="48" width="8" height="6" fill="#0f172a"/>
-        <path d="M44 51 L24 47 M88 51 L108 47" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="3 2"/>
-        <text x="66" y="30" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#0f172a">正極凸キャップ</text>
-        <text x="66" y="75" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#dc2626">放射ガス排気孔×4</text>
+        <path d="M30 64 H42 L48 39 H84 L90 64 H102" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
+        <rect x="46" y="50" width="8" height="6" fill="#0f172a"/>
+        <rect x="78" y="50" width="8" height="6" fill="#0f172a"/>
+        <path d="M44 53 L24 49 M88 53 L108 49" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <text x="66" y="30" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#0f172a">正極凸キャップ</text>
+        <text x="66" y="76" text-anchor="middle" font-size="5.5" font-weight="bold" fill="#dc2626">放射ガス排気孔×4</text>
         <text x="66" y="92" text-anchor="middle" font-size="5.9" fill="#475569">開裂圧 1.3〜2.0 MPa 安全排気</text>
         <rect x="128" y="14" width="182" height="74" rx="5" fill="#f8fafc" stroke="#475569"/>
         <text x="136" y="29" font-size="7.4" font-weight="bold" fill="#0f172a">P53 排気孔付き正極トップキャップ</text>
@@ -432,7 +432,7 @@ export function renderPhase27BatteryUltraSchematicSvg(
         <rect x="61" y="22" width="10" height="34" fill="#d97706"/>
         <circle cx="58" cy="61" r="4.5" fill="#facc15" stroke="#b45309"/>
         <circle cx="74" cy="61" r="4.5" fill="#facc15" stroke="#b45309"/>
-        <text x="66" y="34" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#fff">電極棒</text>
+        <text x="92" y="38" text-anchor="middle" font-size="5.4" font-weight="bold" fill="#b45309">溶接電極棒</text>
         <text x="66" y="92" text-anchor="middle" font-size="5.9" font-weight="bold" fill="#a16207">底面2点ナゲット &lt; 0.5mΩ</text>
         <rect x="128" y="14" width="182" height="74" rx="5" fill="#fefce8" stroke="#eab308"/>
         <text x="136" y="29" font-size="7.4" font-weight="bold" fill="#854d0e">P54 セル底面・負極スポット溶接</text>
