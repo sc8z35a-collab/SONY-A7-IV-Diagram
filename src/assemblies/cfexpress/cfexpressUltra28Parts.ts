@@ -979,44 +979,121 @@ export function buildCfexpressUltra28Parts(mats: MaterialLibrary): CadPart[] {
     const diePlate = new THREE.Mesh(dieGeo, u.cfeBiCS10WaferDie);
     g.add(diePlate);
 
-    // 6 sculpted independent Plane sub-arrays (3×2) — each with its own Gold Row Decoder + Cyan 16KB Page Buffer!
+    // Dual-moat beveled perimeter gold & copper wafer crack-stopper seal ring + 4 corner ASML stepper alignment marks!
+    const outerSeal = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(16.6, 12.0, 0.32, 16.12, 11.52, 0.24), 0.09, 0.015, 0.015, 1, 16),
+      mats.goldPlating
+    );
+    outerSeal.position.z = 0.19;
+    outerSeal.userData.noEdges = true;
+    const innerSeal = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(15.92, 11.32, 0.24, 15.62, 11.02, 0.18), 0.07, 0.01, 0.01, 1, 14),
+      mats.copperHybridBond
+    );
+    innerSeal.position.z = 0.19;
+    innerSeal.userData.noEdges = true;
+    g.add(outerSeal, innerSeal);
+
+    const alignH = new THREE.BoxGeometry(0.68, 0.10, 0.08);
+    const alignV = new THREE.BoxGeometry(0.10, 0.68, 0.08);
+    for (const [ax, ay] of [
+      [-7.45, 5.15],
+      [7.45, 5.15],
+      [-7.45, -5.15],
+      [7.45, -5.15],
+    ]) {
+      const ch = new THREE.Mesh(alignH, mats.goldPlating);
+      ch.position.set(ax, ay, 0.21);
+      ch.userData.noEdges = true;
+      const cv = new THREE.Mesh(alignV, mats.goldPlating);
+      cv.position.set(ax, ay, 0.21);
+      cv.userData.noEdges = true;
+      g.add(ch, cv);
+    }
+
+    // 6 sculpted independent Plane sub-arrays (3×2) — each with 6 bitline sub-blocks, Gold WL Staircase Decoder, Cyan 16KB Page Buffer & Charge Pump!
+    const subTileGeo = createChamferedBoxGeo(1.02, 1.56, 0.08, 0.04, 0.01, 'z');
+    const subTileInst = new THREE.InstancedMesh(subTileGeo, mats.siliconTsvDram, 36);
+    const dm = new THREE.Object3D();
+    let stIdx = 0;
+
     for (let r = 0; r < 2; r++) {
       for (let c = 0; c < 3; c++) {
         const px = -5.0 + c * 5.0;
         const py = r === 0 ? 2.85 : -2.85;
         const planeTile = new THREE.Mesh(
-          createChamferedBoxGeo(4.15, 4.25, 0.12, 0.14, 0.02, 'z'),
+          createChamferedBoxGeo(4.24, 4.28, 0.11, 0.14, 0.02, 'z'),
           mats.siliconSensorDie
         );
-        planeTile.position.set(px, py, 0.21);
+        planeTile.position.set(px, py, 0.20);
         planeTile.userData.noEdges = true;
 
-        // Independent per-plane gold Row Decoder sidebar
-        const rowDec = new THREE.Mesh(new THREE.BoxGeometry(0.42, 4.1, 0.14), mats.goldPlating);
-        rowDec.position.set(px - 1.95, py, 0.24);
+        // 3×2 sculpted sub-block bitline diffraction micro-tiles inside each independent plane!
+        for (let sr = 0; sr < 2; sr++) {
+          for (let sc = 0; sc < 3; sc++) {
+            dm.position.set(px - 0.85 + sc * 1.08, py + (sr === 0 ? 0.92 : -0.82) + (r === 0 ? 0.24 : -0.24), 0.27);
+            dm.updateMatrix();
+            subTileInst.setMatrixAt(stIdx++, dm.matrix);
+          }
+        }
+
+        // Independent per-plane gold Row / Wordline Staircase Decoder sidebar + 4 staircase contact steps
+        const rowDec = new THREE.Mesh(new THREE.BoxGeometry(0.44, 4.16, 0.14), mats.goldPlating);
+        rowDec.position.set(px - 1.98, py, 0.24);
         rowDec.userData.noEdges = true;
 
-        // Independent per-plane cyan 16KB Page Buffer footer
-        const pageBuf = new THREE.Mesh(new THREE.BoxGeometry(3.85, 0.52, 0.14), mats.vcWorkingFluidCyan);
-        pageBuf.position.set(px + 0.12, r === 0 ? 0.92 : -0.92, 0.24);
+        // Independent per-plane cyan 16KB Page Buffer & LBUS Coupling Sense-Amp bar
+        const pageBuf = new THREE.Mesh(new THREE.BoxGeometry(3.62, 0.48, 0.14), mats.vcWorkingFluidCyan);
+        pageBuf.position.set(px + 0.16, r === 0 ? 0.92 : -0.92, 0.24);
         pageBuf.userData.noEdges = true;
-        g.add(planeTile, rowDec, pageBuf);
+
+        // Per-plane local HV charge-pump copper micro-block on outer plane corner
+        const cpBlk = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.34, 0.13), mats.copperHeatSpreader);
+        cpBlk.position.set(px + 1.56, r === 0 ? 4.68 : -4.68, 0.23);
+        cpBlk.userData.noEdges = true;
+
+        g.add(planeTile, rowDec, pageBuf, cpBlk);
       }
     }
+    subTileInst.instanceMatrix.needsUpdate = true;
+    subTileInst.userData.noEdges = true;
+    g.add(subTileInst);
 
-    // Central horizontal CBA high-speed I/O spine + perimeter bond-pad row along bottom edge
-    const ioSpine = new THREE.Mesh(new THREE.BoxGeometry(15.6, 0.42, 0.14), mats.copperHybridBond);
+    // Central horizontal BWWPC Cu-Cu hybrid-bond power/IO spine studded with 24 instanced copper micro-vias!
+    const ioSpine = new THREE.Mesh(new THREE.BoxGeometry(15.4, 0.46, 0.14), mats.copperHybridBond);
     ioSpine.position.set(0, 0, 0.24);
     ioSpine.userData.noEdges = true;
-    g.add(ioSpine);
 
-    const bondGeo = new THREE.BoxGeometry(0.42, 0.48, 0.10);
-    for (let b = -6; b <= 6; b++) {
-      const pad = new THREE.Mesh(bondGeo, mats.goldPlating);
-      pad.position.set(b * 1.15, -5.65, 0.21);
-      pad.userData.noEdges = true;
-      g.add(pad);
+    const cuPadGeo = hiResCyl(0.14, 0.14, 0.10, 10).rotateX(Math.PI / 2);
+    const cuPadInst = new THREE.InstancedMesh(cuPadGeo, mats.goldPlating, 24);
+    for (let i = 0; i < 24; i++) {
+      dm.position.set(-7.15 + i * 0.62, 0, 0.32);
+      dm.updateMatrix();
+      cuPadInst.setMatrixAt(i, dm.matrix);
     }
+    cuPadInst.instanceMatrix.needsUpdate = true;
+    cuPadInst.userData.noEdges = true;
+
+    // Bottom edge row of 24 fine-pitch ENEPIG gold wirebond pads inside recessed passivation windows (InstancedMesh!)
+    const padWinGeo = new THREE.BoxGeometry(0.46, 0.54, 0.08);
+    const padGoldGeo = new THREE.BoxGeometry(0.36, 0.44, 0.11);
+    const padWinInst = new THREE.InstancedMesh(padWinGeo, mats.matteBlackAnodized, 24);
+    const padGoldInst = new THREE.InstancedMesh(padGoldGeo, mats.goldPlating, 24);
+    for (let b = 0; b < 24; b++) {
+      const bx = -7.15 + b * 0.62;
+      dm.position.set(bx, -5.58, 0.20);
+      dm.updateMatrix();
+      padWinInst.setMatrixAt(b, dm.matrix);
+      dm.position.set(bx, -5.58, 0.22);
+      dm.updateMatrix();
+      padGoldInst.setMatrixAt(b, dm.matrix);
+    }
+    padWinInst.instanceMatrix.needsUpdate = true;
+    padGoldInst.instanceMatrix.needsUpdate = true;
+    padWinInst.userData.noEdges = true;
+    padGoldInst.userData.noEdges = true;
+
+    g.add(ioSpine, cuPadInst, padWinInst, padGoldInst);
 
     parts.push(
       finalizeCfexpressUltra28Part(
@@ -1693,53 +1770,89 @@ export function buildCfexpressUltra28Parts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Sleek cutaway CNC-machined gunmetal aluminum USB4 40Gbps reader thermal bridge & finned crown
+    // Sleek cutaway CNC-machined bead-blasted gunmetal aluminum Sony MRW-G3 USB4 40Gbps reader crown
     // seated cleanly above the top pull-tab edge (y = +28.95) so BOTH card hero faces stay 100% unobstructed!
-    const crownBaseGeo = createChamferedBoxGeo(35.2, 1.55, 4.7, 0.65, 0.12, 'z');
-    applyBoxUVs(crownBaseGeo, 14.0);
-    const crownBase = new THREE.Mesh(crownBaseGeo, mats.matteBlackAnodized);
+    const crownBaseGeo = createChamferedBoxGeo(35.2, 1.76, 4.7, 0.65, 0.12, 'z');
+    applyPlanarUVs(crownBaseGeo, 35.2, 1.76, 'xy');
+    const crownBase = new THREE.Mesh(crownBaseGeo, u.cfeMrwg3CncAluminum);
+    crownBase.position.y = 0.08;
 
-    // Lower copper thermal-transfer coupling bridge contacting card top armor edge
+    // Dedicated rear (-Z) CNC aluminum nameplate plaque with upright 'xy-back' UVs (zero mirrored SONY MRW-G3 text!)
+    const rearPlaqueGeo = createChamferedBoxGeo(34.6, 1.68, 0.10, 0.50, 0.02, 'z');
+    applyPlanarUVs(rearPlaqueGeo, 34.6, 1.68, 'xy-back');
+    const rearPlaque = new THREE.Mesh(rearPlaqueGeo, u.cfeMrwg3CncAluminum);
+    rearPlaque.position.set(0, 0.08, -2.33);
+    rearPlaque.userData.noEdges = true;
+
+    // Lower pure-copper thermal-transfer coupling bridge + recessed compliant pink TIM strip contacting card top!
     const thermalBridge = new THREE.Mesh(
       createChamferedBoxGeo(29.8, 0.24, 3.6, 0.35, 0.04, 'z'),
       mats.copperHeatSpreader
     );
-    thermalBridge.position.set(0, -0.82, 0);
+    thermalBridge.position.set(0, -0.84, 0);
     thermalBridge.userData.noEdges = true;
 
-    // 15 precision CNC machined cooling fins along top edge dissipating 1.9 TB continuous USB4 40 Gbps offload heat!
-    const finGeo = createChamferedBoxGeo(0.84, 0.96, 4.35, 0.14, 0.04, 'z');
+    const timContactGeo = createChamferedBoxGeo(27.8, 0.12, 2.75, 0.25, 0.02, 'z');
+    applyBoxUVs(timContactGeo, 8.0);
+    const timContact = new THREE.Mesh(timContactGeo, u.cfeTimSiliconeWaffle);
+    timContact.position.set(0, -0.96, 0);
+    timContact.userData.noEdges = true;
+
+    // Recessed dark-anodized inter-fin airflow plenum + 15 precision CNC chamfered cooling fins dissipating 40Gbps offload heat!
+    const plenum = new THREE.Mesh(
+      createChamferedBoxGeo(33.4, 0.24, 4.15, 0.28, 0.03, 'z'),
+      mats.matteBlackAnodized
+    );
+    plenum.position.set(0, 1.00, 0);
+    plenum.userData.noEdges = true;
+
+    const finGeo = createChamferedBoxGeo(0.84, 0.98, 4.35, 0.14, 0.04, 'z');
     for (let i = -7; i <= 7; i++) {
       if (Math.abs(i) <= 1) continue; // Clear central cradle for USB4 Type-C port housing!
       const fin = new THREE.Mesh(finGeo, mats.stainlessMachined);
-      fin.position.set(i * 2.18, 1.06, 0);
+      fin.position.set(i * 2.18, 1.18, 0);
       fin.userData.noEdges = true;
       g.add(fin);
     }
 
-    // Miniature stainless USB4 Type-C 40 Gbps port housing + gold internal tongue + 2×12 micro gold receptacle pins!
+    // Ultra-detailed seamless stainless USB4 Type-C 24-pin receptacle (drawn shell, EMI dimples, LCP tongue, stainless mid-plate, 2×12 gold pins!)
     const usbcShell = new THREE.Mesh(
-      extrudeHiRes(createFrameShape(8.4, 2.25, 0.92, 7.1, 1.38, 0.52), 1.40, 0.07, 0.07, 2, 18),
+      extrudeHiRes(createFrameShape(8.4, 2.35, 0.96, 7.1, 1.44, 0.56), 1.45, 0.07, 0.07, 2, 20),
       mats.titaniumRivet
     );
     usbcShell.rotation.x = Math.PI / 2;
-    usbcShell.position.set(0, 1.85, 0);
+    usbcShell.position.set(0, 1.94, 0);
 
-    const usbcTongue = new THREE.Mesh(
-      createChamferedBoxGeo(5.8, 0.85, 0.30, 0.14, 0.03, 'z'),
-      mats.matteBlackAnodized
-    );
-    usbcTongue.position.set(0, 1.85, 0);
+    // Top laser-welded seam line & dual EMI grounding retention dimples on front/rear of Type-C shroud
+    const dimpleGeo = hiResCyl(0.24, 0.24, 0.10, 10).rotateX(Math.PI / 2);
+    for (const dx of [-2.2, 2.2]) {
+      for (const dz of [-1.20, 1.20]) {
+        const dmp = new THREE.Mesh(dimpleGeo, mats.stainlessMachined);
+        dmp.position.set(dx, 1.96, dz);
+        dmp.userData.noEdges = true;
+        g.add(dmp);
+      }
+    }
+
+    const usbcTongueGeo = createChamferedBoxGeo(5.9, 0.88, 0.34, 0.14, 0.03, 'z');
+    applyBoxUVs(usbcTongueGeo, 4.0);
+    const usbcTongue = new THREE.Mesh(usbcTongueGeo, u.cfeToughResinMold);
+    usbcTongue.position.set(0, 1.94, 0);
     usbcTongue.userData.noEdges = true;
 
-    const pinGeo = new THREE.BoxGeometry(0.24, 0.72, 0.07);
+    // Stainless internal EMC mid-plate shield & side locking hooks inside the Type-C tongue
+    const midPlate = new THREE.Mesh(new THREE.BoxGeometry(6.25, 0.92, 0.08), mats.stainlessMachined);
+    midPlate.position.set(0, 1.94, 0);
+    midPlate.userData.noEdges = true;
+
+    const pinGeo = new THREE.BoxGeometry(0.22, 0.74, 0.07);
     const pinInst = new THREE.InstancedMesh(pinGeo, mats.goldPlating, 24);
     const dm = new THREE.Object3D();
     let idx = 0;
     for (let p = 0; p < 12; p++) {
       const px = -2.475 + p * 0.45;
-      for (const pz of [-0.18, 0.18]) {
-        dm.position.set(px, 1.85, pz);
+      for (const pz of [-0.19, 0.19]) {
+        dm.position.set(px, 1.94, pz);
         dm.updateMatrix();
         pinInst.setMatrixAt(idx++, dm.matrix);
       }
@@ -1747,15 +1860,37 @@ export function buildCfexpressUltra28Parts(mats: MaterialLibrary): CadPart[] {
     pinInst.instanceMatrix.needsUpdate = true;
     pinInst.userData.noEdges = true;
 
-    // Miniature emerald USB4 40Gbps link-active status jewel LED + chamfered brass bezel on right shoulder
-    const ledBezel = new THREE.Mesh(hiResTorus(0.36, 0.08, 6, 16), mats.stainlessMachined);
-    ledBezel.position.set(14.8, 0, 2.38);
-    ledBezel.userData.noEdges = true;
-    const ledJewel = new THREE.Mesh(hiResSphere(0.26, 10, 8), mats.cfaGreen);
-    ledJewel.position.set(14.8, 0, 2.38);
-    ledJewel.userData.noEdges = true;
+    // Sculpted emerald USB4 40Gbps ACCESS status jewel LED + chamfered stainless bezel (front x=+14.8, rear x=-14.8 matching xy-back!)
+    for (const [lx, sz] of [
+      [14.8, 2.38],
+      [-14.8, -2.38],
+    ]) {
+      const ledBezel = new THREE.Mesh(hiResTorus(0.36, 0.08, 6, 16), mats.stainlessMachined);
+      ledBezel.position.set(lx, 0.08, sz);
+      ledBezel.userData.noEdges = true;
+      const ledJewel = new THREE.Mesh(hiResSphere(0.26, 10, 8), mats.cfaGreen);
+      ledJewel.position.set(lx, 0.08, sz);
+      ledJewel.userData.noEdges = true;
+      g.add(ledBezel, ledJewel);
+    }
 
-    g.add(crownBase, thermalBridge, usbcShell, usbcTongue, pinInst, ledBezel, ledJewel);
+    // Precision machined Torx-T3 assembly micro-screws with 6-lobe star drive recesses (front x=-16.35, rear x=+16.35 matching xy-back!)
+    const screwHeadGeo = hiResCyl(0.40, 0.40, 0.12, 16).rotateX(Math.PI / 2);
+    const torxSocketGeo = hiResCyl(0.18, 0.18, 0.14, 6).rotateX(Math.PI / 2);
+    for (const [sx, sz] of [
+      [-16.35, 2.36],
+      [16.35, -2.36],
+    ]) {
+      const head = new THREE.Mesh(screwHeadGeo, mats.stainlessMachined);
+      head.position.set(sx, 0.08, sz);
+      head.userData.noEdges = true;
+      const socket = new THREE.Mesh(torxSocketGeo, mats.matteBlackAnodized);
+      socket.position.set(sx, 0.08, sz + (sz > 0 ? 0.02 : -0.02));
+      socket.userData.noEdges = true;
+      g.add(head, socket);
+    }
+
+    g.add(crownBase, rearPlaque, thermalBridge, timContact, plenum, usbcShell, usbcTongue, midPlate, pinInst);
 
     parts.push(
       finalizeCfexpressUltra28Part(
