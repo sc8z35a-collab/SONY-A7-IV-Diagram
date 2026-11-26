@@ -194,10 +194,14 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = Promise.all([
         import('./drybox/dryboxExplanationsA'),
         import('./drybox/dryboxExplanationsB'),
-      ]).then(([mA, mB]) =>
+        import('./drybox/dryboxExplanationsC'),
+        import('./drybox/dryboxExplanationsD'),
+      ]).then(([mA, mB, mC, mD]) =>
         finish({
           ...mA.DRYBOX_EXPLANATIONS_A,
           ...mB.DRYBOX_EXPLANATIONS_B,
+          ...mC.DRYBOX_EXPLANATIONS_C,
+          ...mD.DRYBOX_EXPLANATIONS_D,
         })
       );
       break;
