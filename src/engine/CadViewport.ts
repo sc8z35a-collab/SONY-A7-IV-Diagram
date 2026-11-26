@@ -1211,8 +1211,8 @@ export class CadViewport {
       d = 290 + e * 515;
       target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
     } else if (this.mode === 'mount') {
-      d = 188 + e * 375;
-      target = new THREE.Vector3(2.0 + e * 44.0, -2.0 - e * 2.0, 25.0 + e * 22.0);
+      d = 188 + e * 515;
+      target = new THREE.Vector3(2.0 + e * 8.0, -2.0 - e * 4.0, 25.0 + e * 38.0);
     } else if (this.mode === 'evf') {
       d = 140 + e * 380;
       target = new THREE.Vector3(1.5 * (1 - e) - e * 14.0, 38.6 + e * 1.5, -16.5 + e * 12.0);
@@ -1675,11 +1675,11 @@ export class CadViewport {
       }
     } else if (this.mode === 'mount') {
       if (this.sectionAxis === 'x') {
-        minCoord = -46;
-        maxCoord = 46;
+        minCoord = -50;
+        maxCoord = 50;
       } else {
-        minCoord = -40;
-        maxCoord = 40;
+        minCoord = -44;
+        maxCoord = 46;
       }
     } else if (this.mode === 'evf') {
       if (this.sectionAxis === 'x') {
