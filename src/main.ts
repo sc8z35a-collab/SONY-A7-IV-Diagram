@@ -1040,6 +1040,26 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('lcd-fine-coaxial-bundle', false);
   syncRail();
+} else if (preset === 'phase34_lcd') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-tandem-oled-stack', false);
+  syncRail();
+} else if (preset === 'phase35_lcd') {
+  viewport.setMode('lcd', true);
+  controls.syncMode('lcd');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('lcd-microled-gan-array', false);
+  syncRail();
 } else if (preset === 'phase16_mainboard') {
   viewport.setMode('mainboard', true);
   controls.syncMode('mainboard');

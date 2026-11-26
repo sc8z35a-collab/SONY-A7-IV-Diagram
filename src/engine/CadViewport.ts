@@ -1205,8 +1205,8 @@ export class CadViewport {
       d = 335 + e * 565;
       target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 18.0);
     } else if (this.mode === 'lcd') {
-      d = 174 + e * 355;
-      target = new THREE.Vector3(8.0 - e * 18.0, -7.0, -32.0 - e * 32.0);
+      d = 174 + e * 635;
+      target = new THREE.Vector3(14.0 - e * 4.0, -4.0 + e * 18.0, -32.0 - e * 14.0);
     } else if (this.mode === 'body') {
       d = 290 + e * 515;
       target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
