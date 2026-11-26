@@ -75,7 +75,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-pzt-bar': {
     title: '積層圧電セラミック超音波アクチュエータ（PZTバー）',
     subtitle: 'Multi-Layer PZT Piezoelectric Ultrasonic Actuator & Silver Electrodes',
-    category: 'S03 / 逆圧電効果・超音波励振',
+    category: 'S04 / 逆圧電効果・超音波励振',
     plainAnalogy:
       '電気をかけると目に見えない超高速で伸び縮みする「魔法のセラミック棒」です。ガスコンロの点火装置や超音波メガネ洗浄機と同じ「圧電効果」を逆に使い、わずか数ミリの棒が毎秒何万回も振動して、上の防塵ガラス板にゴミを吹き飛ばす強力な揺れを送り込みます。',
     summary:
@@ -106,7 +106,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'olpf-16pt': {
     title: '前面・人工水晶複屈折光学ローパスフィルター（水平/斜め分離層）',
     subtitle: 'Front Birefringent Synthetic Quartz OLPF (H-Split & ±45° Separation)',
-    category: 'S04 / 波動光学・空間周波数制御',
+    category: 'S05 / 波動光学・空間周波数制御',
     plainAnalogy:
       '細かいチェック柄のシャツを撮ったときに出る「変な虹色のモヤモヤ（偽色・モアレ）」を防ぐための、特殊な人工水晶のガラス板です。1本の光の粒を水晶の不思議な性質（複屈折）でミクロの距離だけ2本にそっと分けることで、デジタル特有のギザギザや偽色を自然に消してくれます。',
     summary:
@@ -137,7 +137,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-qwp-plate': {
     title: '1/4波長位相差板（円偏光解消）＆ 後面・垂直分離水晶板',
     subtitle: 'Zero-Order λ/4 Quarter-Wave Plate & Rear Vertical Quartz OLPF',
-    category: 'S05 / 偏光光学・16点ガウス分離完成層',
+    category: 'S06 / 偏光光学・16点ガウス分離完成層',
     plainAnalogy:
       '偏光サングラスをかけたままカメラで空や水面を撮っても変に暗くなったり縞が出たりしないよう、光の「振動の向き（偏光）」をクルクル回る円偏光に整え直す透明シートと、タテ方向にも光を優しく分離する2枚目の水晶板です。S04とタッグを組んで完璧なモアレ防止フィルターを完成させます。',
     summary:
@@ -168,7 +168,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'ir-cut-filter': {
     title: 'ハイブリッド赤外線吸収ガラス ＆ 誘電体多層膜IR/UVカット',
     subtitle: 'Cu²⁺ Phosphate IR-Absorption + Dichroic Multilayer Filter',
-    category: 'S06 / 分光光学・薄膜干渉',
+    category: 'S07 / 分光光学・薄膜干渉',
     plainAnalogy:
       '人間の目には見えないけれどセンサーには強く写ってしまう「赤外線」と「紫外線」だけをカットする、鮮やかな青緑色の特製サングラスです。これがないと黒い服が赤紫に写ったりピントがズレたりするため、カメラの色を人間の目と同じ自然な色に合わせる絶対不可欠なフィルターです。',
     summary:
@@ -199,7 +199,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'cover-glass': {
     title: '低α線光学カバーガラス ＆ コバール気密封止リング',
     subtitle: 'Low-Alpha Borosilicate Cover Glass & Kovar Hermetic Seal',
-    category: 'S07 / 半導体実装・環境保護',
+    category: 'S08 / 半導体実装・環境保護',
     plainAnalogy:
       '超繊細な半導体チップ（センサー）をホコリや結露から完全に守る「博物館の気密ショーケースのガラス蓋」です。しかも普通のガラスに微量含まれる自然放射線（α線）すら極限まで取り除いた超純粋ガラスを使い、星空の長時間露光でも謎の白い点ノイズが出ないようにしています。',
     summary:
@@ -230,7 +230,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'cmos-die': {
     title: '第1ウェハー：フルサイズ・グローバルシャッター BSI画素ダイ',
     subtitle: 'Wafer 1: Full-Frame Global Shutter + 2-Layer Transistor BSI Pixel Die',
-    category: 'S08 / 光電変換・第1積層ウェハー',
+    category: 'S09 / 光電変換・第1積層ウェハー',
     plainAnalogy:
       'カメラの「網膜」にあたる一番主役の半導体チップです。36×24 mmの虹色に光る面に数千万個の「光の粒を電気に変えるバケツ（画素）」がぎっしり並び、しかも全バケツが一斉に「せーの！」で光を閉じ込めるグローバルシャッター方式なので、高速回転するプロペラやゴルフクラブも一切歪まずに写せます。',
     summary:
@@ -262,7 +262,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-cucu-layer': {
     title: 'Cu-Cu バンプレス直接ハイブリッド接合層（3 μmピッチ垂直配線網）',
     subtitle: '3 μm-Pitch Wafer-on-Wafer Cu-Cu Bumpless Direct Hybrid Bonding Interface',
-    category: 'S09 / 3D半導体実装・直接分子接合',
+    category: 'S10 / 3D半導体実装・直接分子接合',
     plainAnalogy:
       '上層の「光をキャッチする階（S08）」と下層の「高速計算する階（S10）」を、はんだボールも使わず数百万本の極細銅エレベーターで真下に直結する「超高層ビルの中間接続フロア」です。外周をぐるっと遠回りせず真下へ電気を送れるため、120コマ/秒という異次元の爆速データ転送と省電力が実現します。',
     summary:
@@ -293,7 +293,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-logic-dram': {
     title: '第2・第3ウェハー：高速列並列ADCロジック ＆ 積層DRAMバッファ',
     subtitle: 'Wafer 2 & 3: High-Speed Column-Parallel CDS/ADC Logic & 120fps Stacked DRAM',
-    category: 'S10 / 超高速A/D変換・オンセンサーDRAM',
+    category: 'S11 / 超高速A/D変換・オンセンサーDRAM',
     plainAnalogy:
       '画素チップ（S08）のすぐ真下に貼り合わされた「超高速な通訳（ADC）と巨大メモ帳（DRAM）」の2階建てチップです。数千万画素からのアナログ電気信号を数千レーン並列で一瞬のうちに14〜16bitのデジタル数値へ翻訳し、120コマ/秒の膨大なデータをDRAMのメモ帳へ一時保存してからメイン基板へ送り出します。',
     summary:
@@ -324,7 +324,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'wire-bonds': {
     title: '超高密度 99.99% 純金 低ループ・ワイヤーボンディング',
     subtitle: '4N Au Ultra-Low-Loop Thermosonic Wire Bond Array',
-    category: 'S11 / マイクロ電気実装',
+    category: 'S13 / マイクロ電気実装',
     plainAnalogy:
       '半導体チップ（S08〜S10）の周りにある小さな電極と、外側のセラミック容器（S12）を数百本の「髪の毛より細い99.99%純金の糸」でびっしり結ぶ超微細ブリッジです。一瞬の大電流や100ギガビット級の高速信号がブレないように、純金の糸を極限まで低く短くアーチ状に張っています。',
     summary:
@@ -355,7 +355,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'ceramic-package': {
     title: '高剛性アルミナ12層 HTCC セラミック LGA パッケージ',
     subtitle: 'High-Flatness HTCC Alumina Ceramic Cavity Package & CuW Slug',
-    category: 'S12 / 精密パッケージ・平坦度維持',
+    category: 'S14 / 精密パッケージ・平坦度維持',
     plainAnalogy:
       'センサーチップを1ミクロンも反らせず真っ平らに寝かせて支える「超高精度な焼き物（セラミック）の器」です。F1.2の極薄ピントではセンサーが髪の毛の1/10反るだけで四隅がボケてしまうため、プラスチックではなく極めて硬いアルミナセラミックを使い、底には熱を逃がす金属プレートを埋め込んでいます。',
     summary:
@@ -386,7 +386,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-pcb': {
     title: '高多層センサーリジッド基板 ＆ 分離アナログ電源回路網',
     subtitle: 'High-Density Build-Up Sensor PCB & Ultra-Low-Noise Power Stage',
-    category: 'S13 / 低ノイズ電源・信号整合',
+    category: 'S16 / 低ノイズ電源・信号整合',
     plainAnalogy:
       'セラミック容器（S12）のすぐ裏側にくっついて、ノイズの一切ない「超きれいな電気」をセンサーへ供給する専用ミニ基板です。デジタル回路の電気ノイズが混ざると写真に横縞が出てしまうため、専用の静かな電源ICと数十個のコンデンサで電気を丁寧にろ過してからセンサーへ渡します。',
     summary:
@@ -417,7 +417,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'slvs-fpc': {
     title: 'SLVS-EC v3 超高速シールド・フレキシブル伝送基板',
     subtitle: 'Impedance-Controlled SLVS-EC v3 U-Loop Shielded Flex Harness',
-    category: 'S14 / 超高速インターフェース・可動配線',
+    category: 'S17 / 超高速インターフェース・可動配線',
     plainAnalogy:
       '手ぶれ補正（IBIS）で空中をフワフワ動くセンサーと、固定されたメイン基板を結ぶ「超やわらかくて超高速なデータの架け橋」です。硬いケーブルだと手ぶれ補正の邪魔になるため、左右対称のU字カーブでしなやかに曲がりつつ、1秒間にブルーレイ映画何本分もの写真データを送ります。',
     summary:
@@ -448,7 +448,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'ibis-carrier': {
     title: '5軸IBIS可動マグネシウム合金ステージ（フローティングキャリア）',
     subtitle: '5-Axis IBIS Topology-Optimized Die-Cast Magnesium Movable Stage',
-    category: 'S15 / 5軸手ぶれ補正・可動骨格',
+    category: 'S19 / 5軸手ぶれ補正・可動骨格',
     plainAnalogy:
       'イメージセンサー一式を背負って、手ぶれと逆向きに空中をビュンビュン滑る「超軽量な空飛ぶソリ」です。重たいと素早く動けず、柔らかいと振動でブレてしまうため、レーシングカーのフレームのようにコンピューターで肉抜き最適化されたマグネシウム合金で作られています。',
     summary:
@@ -479,7 +479,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-vcm-coils': {
     title: '3軸独立・空芯平面銅ボイスコイルモーター群（VCMコイル）',
     subtitle: '3x Independent Air-Core Flat Copper Voice Coils (Y1 / Y2 / X1) & Flex Bus',
-    category: 'S16 / ローレンツ力アクチュエータ',
+    category: 'S21 / ローレンツ力アクチュエータ',
     plainAnalogy:
       'スピーカーの音を鳴らす仕組みと同じ「磁石と電気の押し引き」でセンサーを動かす、3つの平らな銅線コイルです。歯車もネジも一切使わないためガタつきがゼロで、下にある2つのコイルが同時に動くと上下（Y）、逆向きに動くと回転（ロール）、右のコイルが左右（X）を一瞬で動かします。',
     summary:
@@ -510,7 +510,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-hall-pcb': {
     title: '3軸サブミクロン・ホール効果位置センサー基板 ＆ 検出IC群',
     subtitle: '3-Axis Sub-Micron Hall-Effect Position Feedback PCB & Sensing ICs',
-    category: 'S17 / 非接触磁気センシング・精密帰還制御',
+    category: 'S22 / 非接触磁気センシング・精密帰還制御',
     plainAnalogy:
       '手ぶれ補正で動くセンサーが「今ちょうど何ミクロンの場所にいるか」を、触れずに磁力のわずかな変化から読み取る超精密な「磁気の目」です。なんと0.006度（100m先の髪の毛の揺れレベル）の手ぶれすら見逃さず、1秒間に数千回も現在位置を報告して完璧なピタ止めを支えます。',
     summary:
@@ -541,7 +541,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'ceramic-balls': {
     title: '3点窒化ケイ素（Si₃N₄）セラミックボール ＆ 焼入れレース',
     subtitle: 'Kinematic 3-Point Si₃N₄ Ceramic Ball Bearings & Hardened Stainless Races',
-    category: 'S18 / キネマティック機械力学',
+    category: 'S23 / キネマティック機械力学',
     plainAnalogy:
       '3本脚のイスがどんな床でも絶対にガタつかないのと同じ原理で、センサーのソリを3粒の「超ツルツルで磁石にくっつかないセラミックの玉」で支える仕組みです。油を差さなくてもスーッと滑るため、センサー室に油が飛び散る心配ゼロで、ピント面の傾きを1ミクロン以下に保ちます。',
     summary:
@@ -572,7 +572,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-preload-plates': {
     title: '磁気プリロード強磁性吸引プレート ＆ 重心バランスウェイト',
     subtitle: 'Ferromagnetic Preload Attraction Plates & Tungsten-Copper Counterbalance',
-    category: 'S19 / 磁気予圧・重心力学設計',
+    category: 'S24 / 磁気予圧・重心力学設計',
     plainAnalogy:
       'カメラを真下に向けて撮ってもセンサーが重力で前に垂れ下がらないよう、裏のネオジム磁石（S21）と引っ張り合って3粒のセラミック球へ優しく押し付け続ける「見えない磁気の吸盤プレート」と、左右の重さをヤジロベエのように釣り合わせる「おもり」のセットです。',
     summary:
@@ -603,7 +603,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-ibis-lock': {
     title: '電源OFF時メカニカルIBISロック機構（ソレノイド＆ロックピン）',
     subtitle: 'Power-Off Mechanical IBIS Park-Lock Solenoid, Return Spring & Latch Arm',
-    category: 'S20 / 機械保護・衝撃フェイルセーフ',
+    category: 'S26 / 機械保護・衝撃フェイルセーフ',
     plainAnalogy:
       'カメラの電源を切った瞬間、宙に浮いていた手ぶれ補正ステージを「カチッ！」と中央で物理的に固定するシートベルト＆駐車ブレーキです。カバンに入れて持ち歩くときや飛行機での輸送中に、電源オフのセンサーが中でカタカタ暴れて故障するのを防ぎます。',
     summary:
@@ -634,7 +634,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-n52-magnets': {
     title: 'N52 2極ネオジム永久磁石アレイ ＆ 閉磁気回路軟鉄ヨーク',
     subtitle: '3x Dual-Pole N52 NdFeB Permanent Magnet Arrays & Soft-Iron Back Yokes',
-    category: 'S21 / 強磁界磁気回路設計',
+    category: 'S27 / 強磁界磁気回路設計',
     plainAnalogy:
       '手ぶれ補正コイル（S16）に強力なパワーを与えるための「世界最強クラスの磁石（N52ネオジム磁石）」のペア×3組です。N極とS極をぴったり隣り合わせに並べ、裏側を鉄板（ヨーク）でつなぐことで、磁力が外へ逃げず全部コイルだけに集中する強力な磁気エンジンになっています。',
     summary:
@@ -665,7 +665,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'ibis-base-magnets': {
     title: 'IBIS固定マグネシウム・ベースシャーシ（基準骨格フレーム）',
     subtitle: 'Stationary Die-Cast Magnesium IBIS Base Chassis & Thermal Window',
-    category: 'S22 / 剛性基準フレーム・振動遮断',
+    category: 'S28 / 剛性基準フレーム・振動遮断',
     plainAnalogy:
       '手ぶれ補正機構全体をカメラ本体の骨格へガッチリ固定する「頑丈な土台プレート」です。強力なネオジム磁石（S21）を受け止めながら、真ん中に大きな窓を開けてあり、そこから放熱用のグラファイトシート（S25）を通してセンサーの熱を後ろへ逃がす巧みな作りになっています。',
     summary:
@@ -696,7 +696,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-tilt-springs': {
     title: '3点フランジバック＆像面傾き（片ボケ）ミクロン校正ばね・ねじ群',
     subtitle: '3-Point Micron Flange-Back & Optical Plane Tilt Calibration Springs / Bolts',
-    category: 'S23 / 工場レーザー干渉計校正・像面平行度',
+    category: 'S29 / 工場レーザー干渉計校正・像面平行度',
     plainAnalogy:
       'レンズの取り付け面とセンサーの距離・傾きを「1ミクロン単位で完璧に水平出しする3本のバネ付き微調整ネジ」です。工場の最終検査でレーザー光線を当てながらこの3本のネジをわずかに回すことで、大口径F1.2レンズでも画面の四隅まできっちりピントが合う「片ボケゼロ」を実現します。',
     summary:
@@ -727,7 +727,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-tim-pad': {
     title: '高熱伝導シリコーン放熱界面パッド（TIMパッド）',
     subtitle: 'High-Conductivity Compliant Silicone Thermal Interface Pad (TIM)',
-    category: 'S24 / 界面伝熱工学・接触熱抵抗低減',
+    category: 'S30 / 界面伝熱工学・接触熱抵抗低減',
     plainAnalogy:
       '発熱するセンサー基板（S13）の裏面と、熱を運ぶグラファイトシート（S25）の間の目に見えないミクロの空気のすき間を埋める「熱をめちゃくちゃよく通す、もちもちのシリコーン座布団」です。空気は熱を通しにくいため、このパッドが密着することで熱が一気に逃げるようになります。',
     summary:
@@ -758,7 +758,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sigma-graphite': {
     title: 'Σ（シグマ）字型・異方性人工グラファイトフレキシブル熱橋',
     subtitle: 'Sigma-Folded Pyrolytic Graphite Sheet (PGS) Flexible Thermal Bridge',
-    category: 'S25 / 異方性伝熱・フローティング放熱',
+    category: 'S31 / 異方性伝熱・フローティング放熱',
     plainAnalogy:
       '手ぶれ補正で空中に浮くセンサーの熱を、動きを一切邪魔せずに後ろの放熱板へ運ぶ「Σ（シグマ）の形に折りたたまれた、銅の4倍も熱を運ぶ魔法のカーボンリボン」です。紙のようにペラペラに柔らかいため手ぶれ補正に負担をかけず、8K動画でも熱暴走を防ぎます。',
     summary:
@@ -789,7 +789,7 @@ export const MACRO_EXPLANATIONS: Record<string, PartExplanation> = {
   'sensor-copper-sink': {
     title: '背面・純銅マイクロフィンヒートシンク ＆ グラファイト拡散板',
     subtitle: 'Stationary Pure-Copper Micro-Fin Heatsink & Chassis Thermal Spreader',
-    category: 'S26 / 熱拡散・筐体最終放熱ステージ',
+    category: 'S34 / 熱拡散・筐体最終放熱ステージ',
     plainAnalogy:
       'Σ字のカーボンリボン（S25）が運んできた熱をドンと受け止め、背面のギザギザの銅フィンとカメラ本体全体へ一気に散らして冷ます「最終放熱ラジエーター」です。高い熱容量を持つ純銅プレートが急激な発熱ショックを吸い込み、長時間の高画質撮影を涼しく支えます。',
     summary:

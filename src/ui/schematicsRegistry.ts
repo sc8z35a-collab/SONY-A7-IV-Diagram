@@ -39,17 +39,30 @@ import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
 import { renderPhase33SensorFabVol3SchematicSvg } from './fabVol3HdSchematics';
+import { renderPhase34SensorFabVol4SchematicSvg } from './fabVol4HdSchematics';
 import { renderEvfHdSchematicSvg } from './evfHdSchematics';
+import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchematicsA';
+import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
+import { renderPhase32SensorUltraSchematicC } from './phase32SensorUltraSchematicsC';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
+  const phase32SensorSvg =
+    renderPhase32SensorUltraSchematicA(type) ??
+    renderPhase32SensorUltraSchematicB(type) ??
+    renderPhase32SensorUltraSchematicC(type);
+  if (phase32SensorSvg) return phase32SensorSvg;
+
   const evfHdSvg = renderEvfHdSchematicSvg(type);
   if (evfHdSvg) return evfHdSvg;
 
   const phase33SensorFabVol3Svg = renderPhase33SensorFabVol3SchematicSvg(type);
   if (phase33SensorFabVol3Svg) return phase33SensorFabVol3Svg;
+
+  const phase34SensorFabVol4Svg = renderPhase34SensorFabVol4SchematicSvg(type);
+  if (phase34SensorFabVol4Svg) return phase34SensorFabVol4Svg;
 
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;
