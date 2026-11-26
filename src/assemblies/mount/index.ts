@@ -5,8 +5,8 @@ import { buildMountParts, buildMountStandaloneParts } from './mountParts';
 import { createMountPhysicsOverlay } from './mountPhysicsOverlay';
 
 /**
- * Assemble the complete 60-part Flagship 55mm Large-Diameter Mirrorless Lens Mount
- * subsystem (26 macro at startup + 34 lazy-hydrated standalone micro parts).
+ * Assemble the complete 100-part Flagship 55mm Large-Diameter Mirrorless Lens Mount
+ * subsystem (26 macro at startup + 74 lazy-hydrated standalone ultra-HD micro parts).
  */
 export function createMountAssembly(mats: MaterialLibrary): AssemblyController {
   const rootGroup = new THREE.Group();
@@ -42,7 +42,7 @@ export function createMountAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 34,
+    deferredStandaloneCount: 74,
     hydrateStandalone: async () => {
       if (standaloneHydrated) return [];
       standaloneHydrated = true;
