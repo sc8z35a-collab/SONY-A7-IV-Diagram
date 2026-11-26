@@ -170,7 +170,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       );
       break;
     case 'bionz':
-      inflight = import('./bionz/bionzExplanations').then((m) => finish(m.BIONZ_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./bionz/bionzExplanations'),
+        import('./bionz/bionzExtraExplanations'),
+      ]).then(([mBase, mExtra]) =>
+        finish({
+          ...mBase.BIONZ_EXPLANATIONS,
+          ...mExtra.BIONZ_EXTRA_EXPLANATIONS,
+        })
+      );
       break;
     case 'bionz_v2':
       inflight = Promise.all([
@@ -191,11 +199,13 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./mic/micExplanations'),
         import('./mic/micUltra30Explanations'),
         import('./mic/micUltra31Explanations'),
-      ]).then(([mBase, mU30, mU31]) =>
+        import('./mic/micUltra36Explanations'),
+      ]).then(([mBase, mU30, mU31, mU36]) =>
         finish({
           ...mBase.MIC_EXPLANATIONS,
           ...mU30.MIC_ULTRA30_EXPLANATIONS,
           ...mU31.MIC_ULTRA31_EXPLANATIONS,
+          ...mU36.MIC_ULTRA36_EXPLANATIONS,
         })
       );
       break;

@@ -36,6 +36,7 @@ import { renderPhase30BatteryUltraSchematicSvg } from './phase30BatteryUltraSche
 import { renderPhase30MicUltraSchematicSvg } from './phase30MicUltraSchematics';
 import { renderPhase31BatteryUltraSchematicSvg } from './phase31BatteryUltraSchematics';
 import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
+import { renderPhase36MicUltraSchematicSvg } from './phase36MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
@@ -194,6 +195,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase31MicUltraSvg = renderPhase31MicUltraSchematicSvg(type);
   if (phase31MicUltraSvg) return phase31MicUltraSvg;
+
+  const phase36MicUltraSvg = renderPhase36MicUltraSchematicSvg(type);
+  if (phase36MicUltraSvg) return phase36MicUltraSvg;
 
   const phase30SensorFabSvg = renderPhase30SensorFabSchematicSvg(type);
   if (phase30SensorFabSvg) return phase30SensorFabSvg;

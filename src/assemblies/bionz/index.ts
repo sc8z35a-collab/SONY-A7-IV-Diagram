@@ -5,7 +5,7 @@ import { createBionzPhysicsOverlay } from './bionzPhysicsOverlay';
 
 /**
  * Assemble the lazy-hydrated standalone BIONZ XR / BIONZ XR2 Semiconductor Package
- * Internal Ultra-Dissection subsystem (46 parts: XR01–XR46).
+ * & SY-1122 Mainboard Companion Ultra-Dissection subsystem (70 parts: XR01–XR70).
  * Strictly visible ONLY in standalone 'bionz' mode (zero startup cost!).
  */
 export function createBionzAssembly(mats: MaterialLibrary): AssemblyController {
@@ -20,13 +20,16 @@ export function createBionzAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 46,
+    deferredStandaloneCount: 70,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
-      const { buildBionzParts } = await import('./bionzParts');
+      const [{ buildBionzParts }, { buildBionzExtraParts }] = await Promise.all([
+        import('./bionzParts'),
+        import('./bionzExtraParts'),
+      ]);
       controller.deferredStandaloneCount = 0;
-      const built = buildBionzParts(mats);
+      const built = [...buildBionzParts(mats), ...buildBionzExtraParts(mats)];
       for (const p of built) {
         parts.push(p);
         rootGroup.add(p.group);
