@@ -140,7 +140,7 @@ export function renderPhase26BatterySchematicSvg(
         <text x="34" y="48" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#1e293b">カメラ</text>
         <path d="M52 38 H74 M74 52 H52" stroke="#7c3aed" stroke-width="1.8"/>
         <text x="63" y="34" text-anchor="middle" font-size="5.4" fill="#6d28d9">乱数</text>
-        <text x="63" y="62" text-anchor="middle" font-size="5.4" fill="#6d28d9">暗号署名</text>
+        <text x="63" y="65" text-anchor="middle" font-size="4.8" font-weight="bold" fill="#6d28d9">暗号署名</text>
         <rect x="74" y="28" width="44" height="34" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6"/>
         <text x="96" y="43" text-anchor="middle" font-size="6.4" font-weight="bold" fill="#5b21b6">認証MCU</text>
         <text x="96" y="55" text-anchor="middle" font-size="5.6" fill="#6d28d9">&lt;15ms</text>
@@ -342,11 +342,11 @@ export function renderPhase26BatterySchematicSvg(
 
     case 'bat_cell_ptc_ring':
       return wrapSvg(`
-        <circle cx="62" cy="48" r="24" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>
-        <circle cx="62" cy="48" r="11" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
-        <text x="62" y="34" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#9a3412">PTC環</text>
-        <text x="62" y="67" text-anchor="middle" font-size="5.6" fill="#7c2d12">高温で抵抗1000倍</text>
-        <text x="62" y="88" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#c2410c">冷えれば自動復帰する自己防衛環</text>
+        <circle cx="62" cy="45" r="24" fill="#fed7aa" stroke="#ea580c" stroke-width="2.2"/>
+        <circle cx="62" cy="45" r="10.5" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/>
+        <text x="62" y="31" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#9a3412">PTC環</text>
+        <text x="62" y="79" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#7c2d12">高温で抵抗1000倍</text>
+        <text x="62" y="91" text-anchor="middle" font-size="5.6" font-weight="bold" fill="#c2410c">冷えれば自動復帰</text>
         <rect x="128" y="14" width="182" height="74" rx="5" fill="#fff7ed" stroke="#ea580c"/>
         <text x="136" y="29" font-size="7.5" font-weight="bold" fill="#9a3412">P20 セル頭部ドーナツ型PTC環</text>
         <text x="136" y="43" font-size="7.0" fill="#7c2d12">・常温20mΩ→110℃超で100Ω以上へ急変</text>
