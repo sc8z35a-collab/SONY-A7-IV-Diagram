@@ -2029,7 +2029,7 @@ export class ZeroTextControls {
               ? 25
               : 18;
       } else if (part.subsystem === 'mic') {
-        // Internal Stereo / 3-Capsule MEMS, ECM & 2026 Graphene/Optical/Metamaterial Mic Ultra-Dissection (MC01–MC110)
+        // Internal Stereo / 3-Capsule MEMS, ECM, OEM Service-BOM & Pro Audio Ultra-Dissection (MC01–MC150)
         widthPx =
           part.order === 1 ||
           part.order === 2 ||
@@ -2069,7 +2069,27 @@ export class ZeroTextControls {
           part.order === 101 ||
           part.order === 102 ||
           part.order === 104 ||
-          part.order === 110
+          part.order === 110 ||
+          part.order === 111 ||
+          part.order === 115 ||
+          part.order === 116 ||
+          part.order === 119 ||
+          part.order === 121 ||
+          part.order === 123 ||
+          part.order === 124 ||
+          part.order === 131 ||
+          part.order === 132 ||
+          part.order === 133 ||
+          part.order === 136 ||
+          part.order === 138 ||
+          part.order === 141 ||
+          part.order === 142 ||
+          part.order === 144 ||
+          part.order === 145 ||
+          part.order === 146 ||
+          part.order === 147 ||
+          part.order === 148 ||
+          part.order === 150
             ? 32
             : part.order === 3 ||
                 part.order === 5 ||
@@ -2117,7 +2137,24 @@ export class ZeroTextControls {
                 part.order === 105 ||
                 part.order === 106 ||
                 part.order === 108 ||
-                part.order === 109
+                part.order === 109 ||
+                part.order === 112 ||
+                part.order === 114 ||
+                part.order === 117 ||
+                part.order === 118 ||
+                part.order === 120 ||
+                part.order === 122 ||
+                part.order === 125 ||
+                part.order === 127 ||
+                part.order === 129 ||
+                part.order === 130 ||
+                part.order === 134 ||
+                part.order === 135 ||
+                part.order === 137 ||
+                part.order === 139 ||
+                part.order === 140 ||
+                part.order === 143 ||
+                part.order === 149
               ? 25
               : 18;
       } else if (part.subsystem === 'micro_v2') {
