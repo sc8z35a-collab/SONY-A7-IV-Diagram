@@ -93,6 +93,21 @@ export interface UltraRealisticMaterials {
   fabQuartzReticleMask: THREE.MeshPhysicalMaterial;
   fabCleanroomProcessDeck: THREE.MeshPhysicalMaterial;
   fabWaferBinningMap: THREE.MeshPhysicalMaterial;
+  // Phase 31: Electronic Viewfinder (EVF) & Eye-Control AF Bespoke Ultra-CAD Materials (E01-E55)
+  evfOledBackplaneQr: THREE.MeshPhysicalMaterial;
+  evfOledSiliconFront: THREE.MeshPhysicalMaterial;
+  evfTandemCavityStack: THREE.MeshPhysicalMaterial;
+  evfTconPcb: THREE.MeshPhysicalMaterial;
+  evfTconEmiCan: THREE.MeshPhysicalMaterial;
+  evfOemFlexRibbon: THREE.MeshPhysicalMaterial;
+  evfMipiShieldMesh: THREE.MeshPhysicalMaterial;
+  evfVfRadiationSheet: THREE.MeshStandardMaterial;
+  evfGazeNirDie: THREE.MeshPhysicalMaterial;
+  evfDiopterDialCap: THREE.MeshPhysicalMaterial;
+  evfFinderCoverMold: THREE.MeshStandardMaterial;
+  evfShimEtchedBrass: THREE.MeshPhysicalMaterial;
+  evfZeoliteBeadBed: THREE.MeshStandardMaterial;
+  evfAmbientRgbDie: THREE.MeshPhysicalMaterial;
   // Phase 31: Sensor Manufacturing Process (Fab Vol.1) Exhibition Deck & 4-Size Wafer Yield Maps
   fab1ArchExhibitionDeck: THREE.MeshPhysicalMaterial;
   fab1WaferSmartphone640: THREE.MeshPhysicalMaterial;
@@ -4091,6 +4106,806 @@ function createMicAcousticDelayClothTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 31: ELECTRONIC VIEWFINDER (EVF) & EYE-CONTROL AF BESPOKE TEXTURES (E01-E55)
+// =============================================================================
+
+/** E14 Rear: Sony LCD902 (ECX337AA-1 / ECX343E 0.64" QXGA) HTCC Ceramic Backplate with Factory 2D Calibration QR/DataMatrix */
+function createEvfOledBackplaneQrTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Warm slate-alumina HTCC ceramic carrier substrate
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#c8c4b8');
+  bg.addColorStop(0.5, '#d5d1c6');
+  bg.addColorStop(1, '#bcb7aa');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle recessed metallic Kovar perimeter rim + Pin-1 chamfer triangle
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(14, 14, w - 28, h - 28);
+  ctx.fillStyle = '#eab308';
+  ctx.beginPath();
+  ctx.moveTo(24, 24);
+  ctx.lineTo(68, 24);
+  ctx.lineTo(24, 68);
+  ctx.closePath();
+  ctx.fill();
+
+  // Central gleaming ENIG gold thermal die-attach contact pad (mates with E17 TIM!)
+  const padGrad = ctx.createLinearGradient(256, 72, 704, 420);
+  padGrad.addColorStop(0, '#c99732');
+  padGrad.addColorStop(0.45, '#f0ca68');
+  padGrad.addColorStop(0.75, '#d4a33a');
+  padGrad.addColorStop(1, '#b68624');
+  ctx.fillStyle = padGrad;
+  ctx.fillRect(284, 72, 430, 310);
+  ctx.strokeStyle = '#854d0e';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(284, 72, 430, 310);
+  drawBrushedStreaks(ctx, w, h, false, 90, 3101, 0.04, 0.04);
+
+  // Authentic Sony LCD902 Service-Manual Factory EVF Calibration 2D DataMatrix/QR Code (left bay!)
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(42, 86, 212, 212);
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(42, 86, 212, 212);
+  drawDataMatrix(ctx, 56, 100, 184, 16, '#0f172a', '#f8fafc', 3102);
+
+  // Authentic crisp Sony laser-etched microdisplay stencil markings
+  ctx.fillStyle = '#1e293b';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('SONY  LCD902', 44, 336);
+  ctx.font = 'bold 20px ui-monospace, monospace';
+  ctx.fillText('ECX343E / 0.64" QXGA', 44, 368);
+  ctx.fillStyle = '#475569';
+  ctx.font = 'bold 17px ui-monospace, monospace';
+  ctx.fillText('EVF CAL DATA · 9.44M', 44, 398);
+  ctx.fillText('9440K · 240Hz · LF', 44, 424);
+
+  // Laser-etched thermal-pad crosshair alignment fiducials & part lot stamp
+  ctx.fillStyle = '#713f12';
+  ctx.font = 'bold 22px ui-monospace, monospace';
+  ctx.fillText('TANDEM OLEDoS · 4000cd/m²', 312, 114);
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillText('8-756-074-19  LOT 26K4A', 312, 356);
+  ctx.strokeStyle = '#713f12';
+  ctx.lineWidth = 2;
+  for (const [fx, fy] of [
+    [306, 94],
+    [692, 94],
+    [306, 360],
+    [692, 360],
+  ]) {
+    ctx.beginPath();
+    ctx.moveTo(fx - 8, fy);
+    ctx.lineTo(fx + 8, fy);
+    ctx.moveTo(fx, fy - 8);
+    ctx.lineTo(fx, fy + 8);
+    ctx.stroke();
+  }
+
+  // Bottom 60-pin FPC root pad strip
+  ctx.fillStyle = '#eab308';
+  for (let x = 86; x <= w - 86; x += 12) {
+    ctx.fillRect(x, h - 38, 7, 18);
+  }
+  drawMicroGrain(ctx, w, h, 1800, 3103, 0.045);
+  return toHiTex(canvas);
+}
+
+/** E14 Front: Monocrystalline CMOS Silicon Backplane Surround (4P-2C pixel compensation + 240fps dual-line scanners) */
+function createEvfOledSiliconFrontTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Deep iridescent monocrystalline silicon wafer base
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.5, '#1e293b');
+  bg.addColorStop(1, '#0c1322');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer silicon scribe street & passivation bevel
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(8, 8, w - 16, h - 16);
+
+  // Top & Bottom 240fps Dual-Line Progressive Column Source Drivers & DAC banks
+  const mx = 68;
+  const my = 54;
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.28)';
+  ctx.fillRect(mx, 22, w - mx * 2, 24);
+  ctx.fillRect(mx, h - 46, w - mx * 2, 24);
+  ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
+  ctx.lineWidth = 1.4;
+  for (let x = mx + 8; x < w - mx; x += 16) {
+    ctx.beginPath();
+    ctx.moveTo(x, 22);
+    ctx.lineTo(x, 46);
+    ctx.moveTo(x, h - 46);
+    ctx.lineTo(x, h - 22);
+    ctx.stroke();
+  }
+
+  // Left & Right Row-Scanner Gate Driver & 4P-2C Luminance Compensation Logic Columns
+  ctx.fillStyle = 'rgba(139, 92, 246, 0.30)';
+  ctx.fillRect(22, my, 36, h - my * 2);
+  ctx.fillRect(w - 58, my, 36, h - my * 2);
+  ctx.strokeStyle = 'rgba(196, 181, 253, 0.42)';
+  for (let y = my + 6; y < h - my; y += 12) {
+    ctx.beginPath();
+    ctx.moveTo(24, y);
+    ctx.lineTo(56, y);
+    ctx.moveTo(w - 56, y);
+    ctx.lineTo(w - 24, y);
+    ctx.stroke();
+  }
+
+  // Dense perimeter Au wire-bond pad banks along top & bottom edges
+  ctx.fillStyle = '#facc15';
+  for (let x = 76; x <= w - 76; x += 14) {
+    ctx.fillRect(x - 4, 6, 8, 12);
+    ctx.fillRect(x - 4, h - 18, 8, 12);
+  }
+
+  // 4-corner photolithography stepper Vernier alignment targets
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 2.2;
+  for (const [fx, fy] of [
+    [38, 30],
+    [w - 38, 30],
+    [38, h - 30],
+    [w - 38, h - 30],
+  ]) {
+    ctx.strokeRect(fx - 7, fy - 7, 14, 14);
+    ctx.beginPath();
+    ctx.moveTo(fx - 11, fy);
+    ctx.lineTo(fx + 11, fy);
+    ctx.moveTo(fx, fy - 11);
+    ctx.lineTo(fx, fy + 11);
+    ctx.stroke();
+  }
+
+  // Inner active matrix backplane subtle grid (framed by OLED display)
+  ctx.fillStyle = '#0a1220';
+  ctx.fillRect(mx, my, w - mx * 2, h - my * 2);
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.14)';
+  ctx.lineWidth = 1;
+  for (let x = mx; x <= w - mx; x += 18) {
+    ctx.beginPath();
+    ctx.moveTo(x, my);
+    ctx.lineTo(x, h - my);
+    ctx.stroke();
+  }
+  for (let y = my; y <= h - my; y += 18) {
+    ctx.beginPath();
+    ctx.moveTo(mx, y);
+    ctx.lineTo(w - mx, y);
+    ctx.stroke();
+  }
+  return toHiTex(canvas);
+}
+
+/** E46: 2-Stack Tandem WOLED + Charge Generation Layer + Fabry-Perot Optical Micro-Cavity & Symmetrical OCCF Pixel Lattice */
+function createEvfTandemCavityStackTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Deep Fabry-Perot micro-cavity optical interference substrate
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#071022');
+  bg.addColorStop(0.5, '#0f1c38');
+  bg.addColorStop(1, '#081326');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Sony symmetrical OCCF (On-Chip Color Filter) 6.3um RGB micro-cavity pixel emitters
+  const pitchX = 24;
+  const pitchY = 24;
+  const subPal = [
+    { fill: '#ef4444', glow: '#fca5a5' }, // Red cavity (d_c tuned 630nm)
+    { fill: '#10b981', glow: '#6ee7b7' }, // Green cavity (d_c tuned 532nm)
+    { fill: '#3b82f6', glow: '#93c5fd' }, // Blue cavity (d_c tuned 460nm)
+  ];
+  for (let row = 0; row < h / pitchY; row++) {
+    for (let col = 0; col < w / pitchX; col++) {
+      const x = col * pitchX + 2;
+      const y = row * pitchY + 2;
+      // Symmetrical Sony color array order alternates cleanly per row to cancel oblique color shift!
+      const idx = row % 2 === 0 ? col % 3 : (2 - (col % 3) + 3) % 3;
+      const pal = subPal[idx];
+      ctx.fillStyle = pal.fill;
+      ctx.fillRect(x + 2, y + 2, pitchX - 7, pitchY - 7);
+      // Reflective Al/Ag pixel anode micro-cavity bright center resonance spot
+      ctx.fillStyle = pal.glow;
+      ctx.fillRect(x + 6, y + 6, pitchX - 15, pitchY - 15);
+    }
+  }
+
+  // Diagonal spectral Fabry-Perot optical interference resonance sheen bands
+  const irid = ctx.createLinearGradient(0, 0, w, h);
+  irid.addColorStop(0.0, 'rgba(56, 189, 248, 0.22)');
+  irid.addColorStop(0.28, 'rgba(168, 85, 247, 0.20)');
+  irid.addColorStop(0.55, 'rgba(250, 204, 21, 0.18)');
+  irid.addColorStop(0.82, 'rgba(16, 185, 129, 0.22)');
+  irid.addColorStop(1.0, 'rgba(244, 63, 94, 0.20)');
+  ctx.fillStyle = irid;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle horizontal metallic CGL (Charge Generation Layer) & MgAg cathode bus grid
+  ctx.strokeStyle = 'rgba(253, 224, 71, 0.34)';
+  ctx.lineWidth = 1.4;
+  for (let y = 0; y < h; y += 24) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(226, 232, 240, 0.48)';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(6, 6, w - 12, h - 12);
+  return toHiTex(canvas);
+}
+
+/** E16 / E04 / E07 / E30: 8-Layer Emerald HDI 240Hz MIPI-DSI TCON PCB with Meander Diff Pairs & Silkscreen */
+function createEvfTconPcbTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Deep high-Tg emerald solder mask
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0a442d');
+  bg.addColorStop(0.5, '#0e583b');
+  bg.addColorStop(1, '#083a26');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle internal copper power plane pour blocks visible under translucent green solder mask
+  ctx.fillStyle = 'rgba(22, 124, 82, 0.45)';
+  ctx.fillRect(36, 36, 280, 210);
+  ctx.fillRect(356, 36, 376, 190);
+  ctx.fillRect(36, 270, 696, 200);
+
+  // Length-matched 4+4 lane MIPI-DSI differential meander serpentine traces routing down to CN901 ZIF!
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 2.6;
+  for (let lane = 0; lane < 8; lane++) {
+    const lx = 240 + lane * 34;
+    ctx.beginPath();
+    ctx.moveTo(lx, 210);
+    for (let s = 0; s < 6; s++) {
+      const sy = 236 + s * 28;
+      const amp = (lane % 2 === 0 ? 1 : -1) * 10;
+      ctx.lineTo(lx + amp, sy);
+      ctx.lineTo(lx - amp, sy + 14);
+    }
+    ctx.lineTo(lx, 444);
+    ctx.stroke();
+  }
+
+  // Horizontal high-speed bus traces & ELVDD/ELVSS wide power rails
+  ctx.strokeStyle = 'rgba(110, 231, 183, 0.55)';
+  ctx.lineWidth = 4.2;
+  ctx.beginPath();
+  ctx.moveTo(52, 118);
+  ctx.lineTo(716, 118);
+  ctx.moveTo(52, 152);
+  ctx.lineTo(716, 152);
+  ctx.stroke();
+
+  // Perimeter ENIG gold RF guard via stitching fence
+  ctx.fillStyle = '#eab308';
+  for (let x = 22; x <= w - 22; x += 22) {
+    ctx.beginPath();
+    ctx.arc(x, 16, 3.6, 0, Math.PI * 2);
+    ctx.arc(x, h - 16, 3.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (let y = 36; y <= h - 36; y += 22) {
+    ctx.beginPath();
+    ctx.arc(16, y, 3.6, 0, Math.PI * 2);
+    ctx.arc(w - 16, y, 3.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 4-corner ENIG gold plated mounting ring pads with via petals
+  for (const [mx, my] of [
+    [42, 42],
+    [w - 42, 42],
+    [42, h - 42],
+    [w - 42, h - 42],
+  ]) {
+    ctx.fillStyle = '#eab308';
+    ctx.beginPath();
+    ctx.arc(mx, my, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#092d1e';
+    ctx.beginPath();
+    ctx.arc(mx, my, 9, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Crisp white PCB engineering silkscreen outlines & Sony board designation legends
+  ctx.strokeStyle = 'rgba(248, 250, 252, 0.82)';
+  ctx.lineWidth = 2.0;
+  ctx.strokeRect(216, 76, 176, 146); // IC901 TCON courtyard
+  ctx.strokeRect(472, 68, 128, 108); // IC902 OLED PMIC courtyard
+  ctx.strokeRect(228, 412, 312, 64); // CN901 60-pin ZIF outline
+
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = 'bold 20px ui-monospace, monospace';
+  ctx.fillText('VF-TCON-240  1-012-844-11', 76, 54);
+  ctx.font = 'bold 17px ui-monospace, monospace';
+  ctx.fillText('IC901 DSC-TCON', 222, 70);
+  ctx.fillText('IC902 ELVDD/SS', 474, 62);
+  ctx.fillText('CN901 MIPI-DSI 4+4L', 252, 405);
+  ctx.fillText('X901 27MHz', 82, 422);
+  ctx.fillText('LF', 686, 444);
+
+  // Gold circular test points (TP1..TP8)
+  ctx.fillStyle = '#facc15';
+  for (let i = 0; i < 6; i++) {
+    ctx.beginPath();
+    ctx.arc(82 + i * 24, 344, 5.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return toHiTex(canvas);
+}
+
+/** E24 / E36: Stamped Nickel-Silver (Cu-Ni-Zn) RF EMI Faraday Shield Cage Texture */
+function createEvfTconEmiCanTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#c6cdd6');
+  bg.addColorStop(0.35, '#dce2ea');
+  bg.addColorStop(0.7, '#b8c1cd');
+  bg.addColorStop(1, '#cfd6df');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Fine directional cold-rolled Cu-Ni-Zn metal grain
+  drawBrushedStreaks(ctx, w, h, false, 240, 3105, 0.055, 0.055);
+
+  // Embossed stamping stiffening channel borders & corner relief crease highlights
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(26, 26, w - 52, h - 52);
+  ctx.strokeStyle = 'rgba(51, 65, 85, 0.42)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(32, 32, w - 64, h - 64);
+
+  // Perimeter laser-spot grounding dimple witness marks
+  for (let x = 72; x <= w - 72; x += 88) {
+    for (const y of [44, h - 44]) {
+      ctx.fillStyle = '#64748b';
+      ctx.beginPath();
+      ctx.arc(x, y, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.arc(x - 1.5, y - 1.5, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Subtle laser-etched Sony EMI shield part identification
+  ctx.fillStyle = 'rgba(51, 65, 85, 0.62)';
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('VF-SHD-89100  CuNi18Zn20', 54, 92);
+  ctx.font = 'bold 18px ui-monospace, monospace';
+  ctx.fillText('RF FARADAY >35dB · 240Hz MIPI', 54, h - 64);
+  return toHiTex(canvas);
+}
+
+/** E34 / E38 / E41 / E48 / E16: Authentic Sony Amber Polyimide OEM Flexible Circuit Texture */
+function createEvfOemFlexRibbonTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Translucent amber Kapton polyimide substrate over rolled-annealed copper
+  const bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#b45309');
+  bg.addColorStop(0.5, '#d97706');
+  bg.addColorStop(1, '#92400e');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Dense parallel impedance-controlled differential copper trace lanes gleaming beneath Kapton coverlay
+  for (let x = 28; x <= w - 28; x += 14) {
+    const isDiffGap = Math.floor((x - 28) / 14) % 3 === 2;
+    ctx.fillStyle = isDiffGap ? 'rgba(120, 53, 15, 0.42)' : 'rgba(251, 191, 36, 0.56)';
+    ctx.fillRect(x, 12, isDiffGap ? 4 : 7, h - 24);
+  }
+
+  // Cross-hatched ground mesh band along upper & lower margins
+  ctx.strokeStyle = 'rgba(253, 224, 71, 0.25)';
+  ctx.lineWidth = 1.4;
+  for (let i = -h; i < w + h; i += 22) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + 80, 80);
+    ctx.moveTo(i, h);
+    ctx.lineTo(i + 80, h - 80);
+    ctx.stroke();
+  }
+
+  // Perimeter gold micro-vias & stiffener boundary line
+  ctx.fillStyle = '#fde047';
+  for (let y = 36; y <= h - 36; y += 34) {
+    ctx.beginPath();
+    ctx.arc(16, y, 4.5, 0, Math.PI * 2);
+    ctx.arc(w - 16, y, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Crisp white Sony OEM flex silkscreen designation legends
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.90)';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('SONY  VF-FPC · LCD902 / ES-1008', 48, 72);
+  ctx.font = 'bold 20px ui-monospace, monospace';
+  ctx.fillText('JK-1028 / MIS-2006  >PI<  LF  100Ω', 48, 108);
+  ctx.fillText('▲ PIN 1     240Hz SUB-LVDS / MIPI', 48, h - 36);
+  return toHiTex(canvas);
+}
+
+/** E55 / E16: Silver-Ink Hatched EMI-Shielded 240Hz MIPI-DSI Flex Jacket Texture */
+function createEvfMipiShieldMeshTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Matte anthracite silver-paste conductive laminate
+  ctx.fillStyle = '#202630';
+  ctx.fillRect(0, 0, w, h);
+
+  // Diagonal micro-hatched metallic silver-ink EMI Faraday shielding mesh
+  ctx.strokeStyle = 'rgba(186, 200, 218, 0.34)';
+  ctx.lineWidth = 2.2;
+  for (let i = -h; i < w + h; i += 16) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + h, h);
+    ctx.moveTo(i + h, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+  }
+
+  // Left & right laser-ablated conductive adhesive ground-via stitching strips
+  ctx.fillStyle = '#cbd5e1';
+  for (let y = 26; y <= h - 26; y += 26) {
+    ctx.beginPath();
+    ctx.arc(24, y, 5.5, 0, Math.PI * 2);
+    ctx.arc(w - 24, y, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(46, 0, 6, h);
+  ctx.fillRect(w - 52, 0, 6, h);
+
+  // Crisp metallic silver technical stencil
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.78)';
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('EMI-SHD  Ag-MESH  Zdiff=100Ω ±5%', 76, 76);
+  ctx.font = 'bold 19px ui-monospace, monospace';
+  ctx.fillText('240Hz MIPI-DSI  FERRITE FILTERED', 76, h - 52);
+  drawMicroGrain(ctx, w, h, 2000, 3107, 0.05);
+  return toHiTex(canvas);
+}
+
+/** E35 / E17: Authentic Sony OEM 4-575-780-01 VF SHEET, RADIATION (795) Blue Thermal Pad + Coral-Pink Strip */
+function createEvfVfRadiationSheetTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Signature Sony sky-blue high-k silicone thermal radiation pad
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#4ea3d8');
+  bg.addColorStop(0.5, '#62b5e6');
+  bg.addColorStop(1, '#3d91c7');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Authentic Sony coral-pink thermal-border lower edge strip (4-575-780-01!)
+  const pinkY = h - 108;
+  const pGrad = ctx.createLinearGradient(0, pinkY, w, h);
+  pGrad.addColorStop(0, '#f472b6');
+  pGrad.addColorStop(0.5, '#fb7185');
+  pGrad.addColorStop(1, '#ec4899');
+  ctx.fillStyle = pGrad;
+  ctx.fillRect(0, pinkY, w, 108);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+  ctx.fillRect(0, pinkY - 3, w, 5);
+
+  // Subtle silicone micro-embossed anti-air-bubble diamond grid
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+  ctx.lineWidth = 1.4;
+  for (let i = -h; i < w + h; i += 28) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + h, h);
+    ctx.moveTo(i + h, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+  }
+
+  // Faint Sony OEM service-part identification stencil & alignment fiducials
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.45)';
+  ctx.font = 'bold 28px ui-monospace, monospace';
+  ctx.fillText('SONY  4-575-780-01', 48, 72);
+  ctx.font = 'bold 20px ui-monospace, monospace';
+  ctx.fillText('VF SHEET, RADIATION (795) · 8.0 W/m·K', 48, 108);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+  ctx.fillText('ANTI-ADHESION BORDER · REF.203', 48, h - 42);
+  drawMicroGrain(ctx, w, h, 2600, 3108, 0.045);
+  return toHiTex(canvas);
+}
+
+/** E07 / E04: Canon/Flagship 307K-Pixel (640x480) 850nm NIR Line-of-Sight Gaze CMOS Sensor Die */
+function createEvfGazeNirDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  // Deep ruby-indigo NIR-enhanced BSI silicon base
+  ctx.fillStyle = '#120a1c';
+  ctx.fillRect(0, 0, w, h);
+
+  // Peripheral optical-black & readout logic frame
+  const mx = 74;
+  const my = 58;
+  ctx.fillStyle = '#1f1630';
+  ctx.fillRect(14, 14, w - 28, h - 28);
+
+  // Active 640x480 (307K-px) NIR photodiode matrix with subtle 850nm crimson-violet diffraction sheen
+  const act = ctx.createLinearGradient(mx, my, w - mx, h - my);
+  act.addColorStop(0.0, '#2e1036');
+  act.addColorStop(0.35, '#7f1d4e');
+  act.addColorStop(0.65, '#3b1c63');
+  act.addColorStop(1.0, '#1e1038');
+  ctx.fillStyle = act;
+  ctx.fillRect(mx, my, w - mx * 2, h - my * 2);
+
+  // Fine pixel readout matrix lines & Purkinje-centroid calibration crosshairs
+  ctx.strokeStyle = 'rgba(251, 113, 133, 0.24)';
+  ctx.lineWidth = 1.2;
+  for (let x = mx; x <= w - mx; x += 20) {
+    ctx.beginPath();
+    ctx.moveTo(x, my);
+    ctx.lineTo(x, h - my);
+    ctx.stroke();
+  }
+  for (let y = my; y <= h - my; y += 20) {
+    ctx.beginPath();
+    ctx.moveTo(mx, y);
+    ctx.lineTo(w - mx, y);
+    ctx.stroke();
+  }
+
+  // Optical-black light shield border + perimeter gold wire-bond pads
+  ctx.strokeStyle = '#fb7185';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(mx, my, w - mx * 2, h - my * 2);
+
+  ctx.fillStyle = '#facc15';
+  for (let x = 64; x <= w - 64; x += 22) {
+    ctx.fillRect(x - 5, 16, 10, 14);
+    ctx.fillRect(x - 5, h - 30, 10, 14);
+  }
+  for (let y = 54; y <= h - 54; y += 22) {
+    ctx.fillRect(16, y - 5, 14, 10);
+    ctx.fillRect(w - 30, y - 5, 14, 10);
+  }
+
+  // 4-corner silicon alignment targets
+  ctx.strokeStyle = '#fde047';
+  ctx.lineWidth = 2;
+  for (const [fx, fy] of [
+    [42, 36],
+    [w - 42, 36],
+    [42, h - 36],
+    [w - 42, h - 36],
+  ]) {
+    ctx.strokeRect(fx - 7, fy - 7, 14, 14);
+  }
+  return toHiTex(canvas);
+}
+
+/** E12 / E37: Sony CV DIOPTER ADJUST DIAL (500367201) Circular Spun-Black Cap with Laser - / 0 / + Scale */
+function createEvfDiopterDialCapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(512, 512);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  // Satin anodized aluminum radial spun cap base
+  const radG = ctx.createRadialGradient(cx, cy, 12, cx, cy, 250);
+  radG.addColorStop(0, '#272c35');
+  radG.addColorStop(0.55, '#191d24');
+  radG.addColorStop(0.88, '#2b313c');
+  radG.addColorStop(1, '#14171d');
+  ctx.fillStyle = radG;
+  ctx.fillRect(0, 0, w, h);
+
+  // Fine concentric lathe-turned metallic sheen rings
+  for (let r = 26; r <= 238; r += 6) {
+    ctx.strokeStyle = r % 12 === 0 ? 'rgba(255,255,255,0.065)' : 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Crisp white laser-engraved diopter adjustment scale arc (-4.0 .. 0 .. +3.0 m^-1)
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 4.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 178, -Math.PI * 0.78, -Math.PI * 0.22);
+  ctx.stroke();
+
+  // Graduated tick marks along upper arc
+  for (let i = -4; i <= 4; i++) {
+    const a = -Math.PI * 0.5 + i * 0.22;
+    const r0 = i === 0 ? 156 : 164;
+    const r1 = 186;
+    ctx.strokeStyle = i === 0 ? '#38bdf8' : '#e2e8f0';
+    ctx.lineWidth = i === 0 ? 6 : 3;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
+    ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+    ctx.stroke();
+  }
+
+  // Bold white engraved "-" (left) and "+" (right) optical diopter symbols + top zero triangle
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(88, cy - 8, 56, 16); // "-" symbol
+  ctx.fillRect(w - 144, cy - 8, 56, 16); // "+" horizontal
+  ctx.fillRect(w - 124, cy - 28, 16, 56); // "+" vertical
+
+  // Zero-diopter index triangle pip at 12 o'clock
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath();
+  ctx.moveTo(cx, 92);
+  ctx.lineTo(cx - 18, 126);
+  ctx.lineTo(cx + 18, 126);
+  ctx.closePath();
+  ctx.fill();
+
+  // Recessed central service screw bezel ring
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 56, 0, Math.PI * 2);
+  ctx.stroke();
+  return toHiTex(canvas);
+}
+
+/** E32 / E01: Sony OEM FINDER COVER (89100) (A5038709A) Matte GF-PC Pebble Grain & Cavity Mold Marks */
+function createEvfFinderCoverMoldTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  ctx.fillStyle = '#252931';
+  ctx.fillRect(0, 0, w, h);
+
+  // VDI-27 fine camera-body polycarbonate pebble grain
+  drawMicroGrain(ctx, w, h, 5200, 3111, 0.065);
+
+  // Subtle molded labyrinth boundary steps & mold ejector pin witness rings
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+  for (const [ex, ey] of [
+    [68, 68],
+    [w - 68, 68],
+    [68, h - 68],
+    [w - 68, h - 68],
+  ]) {
+    ctx.beginPath();
+    ctx.arc(ex, ey, 16, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Authentic Sony internal plastic mold cavity stencil
+  ctx.fillStyle = 'rgba(203, 213, 225, 0.34)';
+  ctx.font = 'bold 26px ui-monospace, monospace';
+  ctx.fillText('SONY  89100  >PC-GF20<', 56, 72);
+  ctx.font = 'bold 20px ui-monospace, monospace';
+  ctx.fillText('A5038709A · CAV-2 · FDA-EP19/21', 56, h - 48);
+  return toHiTex(canvas);
+}
+
+/** E28 / E51: Chemical Photo-Etched Precision Optical Calibration Shim (0.01 / 0.02 / 0.05 mm) */
+function createEvfShimEtchedBrassTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 512);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#c2922c');
+  bg.addColorStop(0.45, '#e8be58');
+  bg.addColorStop(0.75, '#cca038');
+  bg.addColorStop(1, '#a97d22');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+  drawBrushedStreaks(ctx, w, h, false, 180, 3112, 0.06, 0.06);
+
+  // Chemical half-etched optical datum circles & calibration thickness callouts
+  ctx.strokeStyle = 'rgba(69, 26, 3, 0.45)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(w * 0.5, h * 0.5, 210, 0, Math.PI * 2);
+  ctx.arc(w * 0.5, h * 0.5, 164, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(69, 26, 3, 0.72)';
+  ctx.font = 'bold 30px ui-monospace, monospace';
+  ctx.fillText('t=0.02mm  OPT-SHIM  ±2μm', 58, 72);
+  ctx.font = 'bold 24px ui-monospace, monospace';
+  ctx.fillText('C2680-H · EYE-AF / G2-G4', 58, h - 48);
+  return toHiTex(canvas);
+}
+
+/** E29: Close-Packed 3A Synthetic Zeolite Molecular-Sieve Desiccant Spherical Bead Bed (256px seamless tile) */
+function createEvfZeoliteBeadBedTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, s } = makeTileCanvas(256);
+  ctx.fillStyle = '#6b6456';
+  ctx.fillRect(0, 0, s, s);
+
+  const rng = mulberry32(3113);
+  const step = 28;
+  for (let row = -1; row <= s / (step * 0.866) + 1; row++) {
+    for (let col = -1; col <= s / step + 1; col++) {
+      const cx = col * step + (row % 2 === 0 ? 0 : step * 0.5) + (rng() - 0.5) * 3;
+      const cy = row * step * 0.866 + (rng() - 0.5) * 3;
+      const r = 12.2 + rng() * 1.8;
+      // Spherical ceramic zeolite 3A bead with warm specular highlight & ambient-occlusion rim
+      const g = ctx.createRadialGradient(cx - r * 0.32, cy - r * 0.32, 1.5, cx, cy, r);
+      g.addColorStop(0.0, '#fbf8f0');
+      g.addColorStop(0.45, '#e8dfd0');
+      g.addColorStop(0.82, '#bfb39e');
+      g.addColorStop(1.0, '#6e6556');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  drawMicroGrain(ctx, s, s, 900, 3114, 0.05);
+  return toTileTex(canvas, 2, 3);
+}
+
+/** E30 / E04: V(lambda) Ambient Light & Color-Temperature RGB+Clear 4-Quadrant Photodiode IC Die */
+function createEvfAmbientRgbDieTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(512, 512);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer metallic Al light-shield guard frame
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(20, 20, w - 40, h - 40);
+
+  // 4 distinct optical interference filter photodiode quadrants: Red, Green, Blue, Clear/V(lambda)
+  const quads: Array<[number, number, string, string, string]> = [
+    [48, 48, '#dc2626', '#fca5a5', 'R'],
+    [268, 48, '#10b981', '#6ee7b7', 'G'],
+    [48, 268, '#2563eb', '#93c5fd', 'B'],
+    [268, 268, '#e2e8f0', '#ffffff', 'C/Vλ'],
+  ];
+  for (const [qx, qy, fill, hi, label] of quads) {
+    const qg = ctx.createLinearGradient(qx, qy, qx + 196, qy + 196);
+    qg.addColorStop(0, hi);
+    qg.addColorStop(0.4, fill);
+    qg.addColorStop(1, '#0f172a');
+    ctx.fillStyle = qg;
+    ctx.fillRect(qx, qy, 196, 196);
+    ctx.strokeStyle = '#eab308';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(qx, qy, 196, 196);
+    // Fine interdigitated photodiode finger grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+    ctx.lineWidth = 1.6;
+    for (let i = 14; i < 190; i += 14) {
+      ctx.beginPath();
+      ctx.moveTo(qx + i, qy + 8);
+      ctx.lineTo(qx + i, qy + 188);
+      ctx.stroke();
+    }
+    ctx.fillStyle = label === 'C/Vλ' ? '#0f172a' : '#f8fafc';
+    ctx.font = 'bold 42px ui-monospace, monospace';
+    ctx.fillText(label, qx + 20, qy + 62);
+  }
+
+  // Perimeter gold bond pads
+  ctx.fillStyle = '#facc15';
+  for (let i = 72; i <= w - 72; i += 44) {
+    ctx.fillRect(i - 8, 6, 16, 12);
+    ctx.fillRect(i - 8, h - 18, 16, 12);
+  }
+  return toHiTex(canvas);
+}
+
+// =============================================================================
 // PHASE 30: SENSOR MANUFACTURING PROCESS (VOL.0) PROCEDURAL PBR TEXTURES
 // =============================================================================
 
@@ -5644,6 +6459,180 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.09
   );
 
+  // --- PHASE 31: ELECTRONIC VIEWFINDER (EVF) & EYE-CONTROL AF BESPOKE ULTRA-CAD MATERIALS (E01-E55) ---
+  const evfOledBackplaneQr = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfOledBackplaneQrTexture(),
+      metalness: 0.34,
+      roughness: 0.34,
+      clearcoat: 0.24,
+    }),
+    0.09
+  );
+
+  const evfOledSiliconFront = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfOledSiliconFrontTexture(),
+      metalness: 0.62,
+      roughness: 0.22,
+      clearcoat: 0.62,
+      iridescence: 0.72,
+      iridescenceIOR: 1.72,
+    }),
+    0.10
+  );
+
+  const evfTandemCavityStack = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfTandemCavityStackTexture(),
+      metalness: 0.42,
+      roughness: 0.18,
+      clearcoat: 0.85,
+      iridescence: 0.92,
+      iridescenceIOR: 1.82,
+    }),
+    0.11
+  );
+
+  const evfTconPcb = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfTconPcbTexture(),
+      metalness: 0.22,
+      roughness: 0.40,
+      clearcoat: 0.36,
+    }),
+    0.10
+  );
+
+  const evfTconEmiCan = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfTconEmiCanTexture(),
+      metalness: 0.86,
+      roughness: 0.26,
+      clearcoat: 0.22,
+    }),
+    0.09
+  );
+
+  const evfOemFlexRibbon = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfOemFlexRibbonTexture(),
+      metalness: 0.38,
+      roughness: 0.30,
+      clearcoat: 0.56,
+    }),
+    0.08
+  );
+
+  const evfMipiShieldMesh = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfMipiShieldMeshTexture(),
+      metalness: 0.58,
+      roughness: 0.38,
+      clearcoat: 0.18,
+    }),
+    0.12
+  );
+
+  const evfVfRadiationSheet = tagBump(
+    new THREE.MeshStandardMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfVfRadiationSheetTexture(),
+      metalness: 0.04,
+      roughness: 0.76,
+    }),
+    0.10
+  );
+
+  const evfGazeNirDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfGazeNirDieTexture(),
+      metalness: 0.54,
+      roughness: 0.18,
+      clearcoat: 0.78,
+      iridescence: 0.84,
+      iridescenceIOR: 1.76,
+    }),
+    0.10
+  );
+
+  const evfDiopterDialCap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfDiopterDialCapTexture(),
+      metalness: 0.66,
+      roughness: 0.32,
+      clearcoat: 0.28,
+    }),
+    0.11
+  );
+
+  const evfFinderCoverMold = tagBump(
+    new THREE.MeshStandardMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfFinderCoverMoldTexture(),
+      metalness: 0.08,
+      roughness: 0.68,
+    }),
+    0.11
+  );
+
+  const evfShimEtchedBrass = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfShimEtchedBrassTexture(),
+      metalness: 0.88,
+      roughness: 0.26,
+      clearcoat: 0.24,
+    }),
+    0.09
+  );
+
+  const evfZeoliteBeadBed = tagBump(
+    new THREE.MeshStandardMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfZeoliteBeadBedTexture(),
+      metalness: 0.04,
+      roughness: 0.84,
+    }),
+    0.18
+  );
+
+  const evfAmbientRgbDie = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createEvfAmbientRgbDieTexture(),
+      metalness: 0.44,
+      roughness: 0.18,
+      clearcoat: 0.86,
+      iridescence: 0.65,
+      iridescenceIOR: 1.64,
+    }),
+    0.09
+  );
+
   // --- Phase 31: Sensor Manufacturing Process (Fab Vol.1) Exhibition Deck & 4-Size Wafer Yield Maps ---
   const fab1ArchExhibitionDeck = tagBump(
     new THREE.MeshPhysicalMaterial({
@@ -5776,6 +6765,20 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fabQuartzReticleMask,
     fabCleanroomProcessDeck,
     fabWaferBinningMap,
+    evfOledBackplaneQr,
+    evfOledSiliconFront,
+    evfTandemCavityStack,
+    evfTconPcb,
+    evfTconEmiCan,
+    evfOemFlexRibbon,
+    evfMipiShieldMesh,
+    evfVfRadiationSheet,
+    evfGazeNirDie,
+    evfDiopterDialCap,
+    evfFinderCoverMold,
+    evfShimEtchedBrass,
+    evfZeoliteBeadBed,
+    evfAmbientRgbDie,
     fab1ArchExhibitionDeck,
     fab1WaferSmartphone640,
     fab1WaferApsc134,
@@ -5859,6 +6862,20 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fabQuartzReticleMask,
     fabCleanroomProcessDeck,
     fabWaferBinningMap,
+    evfOledBackplaneQr,
+    evfOledSiliconFront,
+    evfTandemCavityStack,
+    evfTconPcb,
+    evfTconEmiCan,
+    evfOemFlexRibbon,
+    evfMipiShieldMesh,
+    evfVfRadiationSheet,
+    evfGazeNirDie,
+    evfDiopterDialCap,
+    evfFinderCoverMold,
+    evfShimEtchedBrass,
+    evfZeoliteBeadBed,
+    evfAmbientRgbDie,
     fab1ArchExhibitionDeck,
     fab1WaferSmartphone640,
     fab1WaferApsc134,

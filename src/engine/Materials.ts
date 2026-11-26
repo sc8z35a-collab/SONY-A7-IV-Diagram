@@ -953,60 +953,87 @@ function createPcbLaminateEdgeTexture(): THREE.DataTexture {
 function createOledViewfinderTexture(): THREE.CanvasTexture {
   const { canvas: c, ctx, w, h } = createScaledCanvas(640, 480, 0.5);
 
-  ctx.fillStyle = '#03050a';
+  ctx.fillStyle = '#020408';
   ctx.fillRect(0, 0, w, h);
 
   const vx = 24;
   const vy = 42;
   const vw = w - 48;
-  const vh = 394;
+  const vh = 392;
 
+  // DCI-P3 4,000-nit HDR golden-hour alpine twilight sky
   const sky = ctx.createLinearGradient(vx, vy, vx, vy + vh * 0.68);
-  sky.addColorStop(0.0, '#0a1d4e');
-  sky.addColorStop(0.32, '#1d4ed8');
-  sky.addColorStop(0.62, '#7c3aed');
-  sky.addColorStop(0.84, '#f43f5e');
-  sky.addColorStop(1.0, '#fbbf24');
+  sky.addColorStop(0.0, '#07153d');
+  sky.addColorStop(0.28, '#1d4ed8');
+  sky.addColorStop(0.56, '#6d28d9');
+  sky.addColorStop(0.80, '#e11d48');
+  sky.addColorStop(0.94, '#fb923c');
+  sky.addColorStop(1.0, '#fde047');
   ctx.fillStyle = sky;
   ctx.fillRect(vx, vy, vw, vh * 0.68);
 
+  // Subtle HDR cirrus cloud strata catching sunset rim light
+  ctx.fillStyle = 'rgba(253, 186, 116, 0.22)';
+  for (let i = 0; i < 4; i++) {
+    const cy = vy + 46 + i * 32;
+    ctx.beginPath();
+    ctx.ellipse(vx + vw * (0.28 + i * 0.14), cy, 96 - i * 12, 9, -0.05, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Intense 4,000-nit HDR solar specular disc + atmospheric corona
   const sunX = vx + vw * 0.62;
   const sunY = vy + vh * 0.44;
-  const sunGlow = ctx.createRadialGradient(sunX, sunY, 6, sunX, sunY, 130);
+  const sunGlow = ctx.createRadialGradient(sunX, sunY, 5, sunX, sunY, 145);
   sunGlow.addColorStop(0.0, '#ffffff');
-  sunGlow.addColorStop(0.18, '#fef08a');
-  sunGlow.addColorStop(0.45, 'rgba(251, 146, 60, 0.55)');
+  sunGlow.addColorStop(0.14, '#fef9c3');
+  sunGlow.addColorStop(0.38, 'rgba(251, 146, 60, 0.64)');
+  sunGlow.addColorStop(0.75, 'rgba(244, 63, 94, 0.18)');
   sunGlow.addColorStop(1.0, 'rgba(244, 63, 94, 0)');
   ctx.fillStyle = sunGlow;
   ctx.fillRect(vx, vy, vw, vh * 0.72);
 
+  // Alpine lake water reflection
   const lakeY = vy + vh * 0.68;
   const lakeH = vh * 0.32;
   const lake = ctx.createLinearGradient(vx, lakeY, vx, lakeY + lakeH);
   lake.addColorStop(0.0, '#fb923c');
-  lake.addColorStop(0.35, '#4338ca');
-  lake.addColorStop(1.0, '#091124');
+  lake.addColorStop(0.28, '#6366f1');
+  lake.addColorStop(0.65, '#1e1b4b');
+  lake.addColorStop(1.0, '#070c1a');
   ctx.fillStyle = lake;
   ctx.fillRect(vx, lakeY, vw, lakeH);
 
+  // Distant snowy mountain range silhouette with sunlit crest highlights
   ctx.fillStyle = '#1e1b4b';
   ctx.beginPath();
   ctx.moveTo(vx, lakeY);
   ctx.lineTo(vx + vw * 0.14, vy + vh * 0.48);
   ctx.lineTo(vx + vw * 0.28, vy + vh * 0.56);
-  ctx.lineTo(vx + vw * 0.46, vy + vh * 0.34);
+  ctx.lineTo(vx + vw * 0.46, vy + vh * 0.32);
   ctx.lineTo(vx + vw * 0.60, vy + vh * 0.52);
-  ctx.lineTo(vx + vw * 0.79, vy + vh * 0.38);
+  ctx.lineTo(vx + vw * 0.79, vy + vh * 0.37);
   ctx.lineTo(vx + vw * 0.92, vy + vh * 0.50);
   ctx.lineTo(vx + vw, vy + vh * 0.46);
   ctx.lineTo(vx + vw, lakeY);
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = '#0b1020';
+  // Golden rim highlights along right-facing mountain ridges facing the sun
+  ctx.strokeStyle = 'rgba(253, 224, 71, 0.55)';
+  ctx.lineWidth = 2.0;
+  ctx.beginPath();
+  ctx.moveTo(vx + vw * 0.46, vy + vh * 0.32);
+  ctx.lineTo(vx + vw * 0.54, vy + vh * 0.44);
+  ctx.moveTo(vx + vw * 0.79, vy + vh * 0.37);
+  ctx.lineTo(vx + vw * 0.71, vy + vh * 0.46);
+  ctx.stroke();
+
+  // Foreground dark mountain ridge
+  ctx.fillStyle = '#090e1c';
   ctx.beginPath();
   ctx.moveTo(vx, lakeY);
-  ctx.lineTo(vx + vw * 0.22, vy + vh * 0.56);
+  ctx.lineTo(vx + vw * 0.22, vy + vh * 0.55);
   ctx.lineTo(vx + vw * 0.40, vy + vh * 0.62);
   ctx.lineTo(vx + vw * 0.68, vy + vh * 0.54);
   ctx.lineTo(vx + vw * 0.88, vy + vh * 0.60);
@@ -1015,14 +1042,16 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = 'rgba(254, 240, 138, 0.42)';
-  for (let i = 0; i < 9; i++) {
-    const wy = lakeY + 8 + i * 11;
-    const ww = 92 - i * 7;
-    ctx.fillRect(sunX - ww * 0.5 + Math.sin(i * 1.9) * 8, wy, ww, 2.5);
+  // Shimmering solar reflection ripples on alpine lake
+  ctx.fillStyle = 'rgba(254, 240, 138, 0.52)';
+  for (let i = 0; i < 11; i++) {
+    const wy = lakeY + 6 + i * 10;
+    const ww = 98 - i * 6.5;
+    ctx.fillRect(sunX - ww * 0.5 + Math.sin(i * 1.9) * 8, wy, ww, 2.4);
   }
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+  // Rule-of-thirds composition grid
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
   ctx.lineWidth = 1;
   ctx.beginPath();
   for (let i = 1; i <= 2; i++) {
@@ -1035,9 +1064,10 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   }
   ctx.stroke();
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+  // 4-corner white framing brackets
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
   ctx.lineWidth = 2.4;
-  const br = 20;
+  const br = 22;
   const corners = [
     [vx + 10, vy + 10, 1, 1],
     [vx + vw - 10, vy + 10, -1, 1],
@@ -1052,64 +1082,104 @@ function createOledViewfinderTexture(): THREE.CanvasTexture {
   }
   ctx.stroke();
 
+  // Dual-axis emerald digital horizon & pitch electronic spirit level
   const midX = vx + vw * 0.5;
   const midY = vy + vh * 0.5;
   ctx.strokeStyle = '#34d399';
-  ctx.lineWidth = 2.2;
+  ctx.lineWidth = 2.4;
   ctx.beginPath();
-  ctx.moveTo(midX - 52, midY);
-  ctx.lineTo(midX - 18, midY);
-  ctx.moveTo(midX + 18, midY);
-  ctx.lineTo(midX + 52, midY);
+  ctx.moveTo(midX - 58, midY);
+  ctx.lineTo(midX - 20, midY);
+  ctx.moveTo(midX + 20, midY);
+  ctx.lineTo(midX + 58, midY);
+  ctx.arc(midX, midY, 16, -0.35, 0.35);
+  ctx.moveTo(midX - 16 * Math.cos(0.35), midY - 16 * Math.sin(0.35));
+  ctx.arc(midX, midY, 16, Math.PI - 0.35, Math.PI + 0.35);
   ctx.stroke();
 
+  // Eye-Control AF glowing cyan gaze reticle + real-time subject lock tracking frame
   const afX = vx + vw * 0.46;
-  const afY = vy + vh * 0.36;
+  const afY = vy + vh * 0.35;
   ctx.strokeStyle = '#38bdf8';
   ctx.lineWidth = 2.6;
   ctx.beginPath();
   ctx.arc(afX, afY, 22, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.strokeStyle = '#67e8f9';
+  ctx.strokeStyle = 'rgba(244, 114, 182, 0.85)';
   ctx.lineWidth = 1.6;
-  ctx.strokeRect(afX - 30, afY - 22, 60, 44);
+  ctx.beginPath();
+  ctx.arc(afX, afY, 14, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = '#67e8f9';
+  ctx.lineWidth = 1.8;
+  ctx.strokeRect(afX - 32, afY - 24, 64, 48);
   ctx.fillStyle = '#38bdf8';
   ctx.beginPath();
-  ctx.arc(afX, afY, 3.5, 0, Math.PI * 2);
+  ctx.arc(afX, afY, 3.6, 0, Math.PI * 2);
   ctx.fill();
 
-  const hx = vx + vw - 110;
-  const hy = h - 34;
+  // Top telemetry bar icons (pure sharp geometric HUD icons — battery, dual card slots, 240fps/HDR badge)
+  // Top-left battery gauge
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 2.0;
+  ctx.strokeRect(vx + 6, 12, 34, 16);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(vx + 40, 16, 4, 8);
+  ctx.fillStyle = '#34d399';
+  for (let b = 0; b < 4; b++) ctx.fillRect(vx + 9 + b * 7, 15, 5, 10);
+  // Top-right dual card slot & IBIS icons
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 1.8;
+  ctx.strokeRect(vx + vw - 52, 11, 16, 19);
+  ctx.strokeRect(vx + vw - 30, 11, 16, 19);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(vx + vw - 48, 15, 8, 11);
+
+  // Bottom HUD bar: live luminance histogram (right) + exposure EV meter dots (center) + aperture/shutter bars (left)
+  const hx = vx + vw - 114;
+  const hy = h - 35;
   ctx.fillStyle = 'rgba(255, 255, 255, 0.14)';
-  ctx.fillRect(hx, hy, 102, 24);
-  ctx.fillStyle = 'rgba(226, 232, 240, 0.85)';
+  ctx.fillRect(hx, hy, 106, 25);
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(hx, hy, 106, 25);
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.88)';
   ctx.beginPath();
-  ctx.moveTo(hx + 2, hy + 22);
-  for (let i = 0; i <= 24; i++) {
-    const t = i / 24;
+  ctx.moveTo(hx + 2, hy + 23);
+  for (let i = 0; i <= 26; i++) {
+    const t = i / 26;
     const amp =
-      Math.exp(-Math.pow((t - 0.32) / 0.18, 2)) * 16 +
-      Math.exp(-Math.pow((t - 0.72) / 0.14, 2)) * 13;
-    ctx.lineTo(hx + 2 + t * 98, hy + 22 - amp);
+      Math.exp(-Math.pow((t - 0.30) / 0.17, 2)) * 18 +
+      Math.exp(-Math.pow((t - 0.72) / 0.14, 2)) * 15;
+    ctx.lineTo(hx + 2 + t * 102, hy + 23 - amp);
   }
-  ctx.lineTo(hx + 100, hy + 22);
+  ctx.lineTo(hx + 104, hy + 23);
   ctx.closePath();
   ctx.fill();
 
-  for (let i = -4; i <= 4; i++) {
-    ctx.fillStyle = i === 0 ? '#34d399' : 'rgba(226, 232, 240, 0.55)';
-    const r = i === 0 ? 3.5 : 2.0;
+  // Bottom-center EV scale dots (-3 .. 0 .. +3)
+  for (let i = -5; i <= 5; i++) {
+    ctx.fillStyle = i === 0 ? '#34d399' : Math.abs(i) === 3 ? '#facc15' : 'rgba(226, 232, 240, 0.55)';
+    const r = i === 0 ? 3.8 : Math.abs(i) === 3 ? 2.6 : 1.8;
     ctx.beginPath();
-    ctx.arc(w * 0.5 + i * 16, h - 22, r, 0, Math.PI * 2);
+    ctx.arc(w * 0.5 + i * 14, h - 22, r, 0, Math.PI * 2);
     ctx.fill();
   }
+  // Bottom-left geometric shutter/aperture/ISO indicator pills
+  ctx.fillStyle = 'rgba(248, 250, 252, 0.78)';
+  ctx.fillRect(vx + 6, h - 27, 46, 9);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(vx + 60, h - 27, 34, 9);
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(vx + 102, h - 27, 38, 9);
 
+  // Subtle 9.44M-dot OLED sub-pixel matrix lattice shimmer
   ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
-  for (let x = vx; x < vx + vw; x += 8) {
-    ctx.fillRect(x, vy, 1.5, vh);
+  for (let x = vx; x < vx + vw; x += 6) {
+    ctx.fillRect(x, vy, 1.2, vh);
   }
-  for (let y = vy; y < vy + vh; y += 8) {
-    ctx.fillRect(vx, y, vw, 1.5);
+  for (let y = vy; y < vy + vh; y += 6) {
+    ctx.fillRect(vx, y, vw, 1.2);
   }
 
   const tex = new THREE.CanvasTexture(c);
@@ -1303,40 +1373,54 @@ function createPolarizerLatticeTexture(): THREE.DataTexture {
   return tex;
 }
 
-/** Procedural hexagonal On-Chip Micro-Lens Array (MLA) light-extraction optical cap texture */
+/** Procedural hexagonal On-Chip Micro-Lens Array (MLA) over Sony symmetrical OCCF RGB sub-pixels */
 function createHexMlaTexture(): THREE.CanvasTexture {
-  const { canvas: c, ctx, w: s } = createScaledCanvas(128, 128, 1.0, true);
-  ctx.fillStyle = '#e0f2fe';
+  const { canvas: c, ctx, w: s } = createScaledCanvas(256, 256, 1.0, true);
+  ctx.fillStyle = '#0c1f35';
   ctx.fillRect(0, 0, s, s);
-  const step = 16;
-  ctx.fillStyle = '#38bdf8';
-  ctx.beginPath();
-  for (let r = 0; r < s / step + 2; r++) {
-    for (let col = 0; col < s / step + 2; col++) {
+  const step = 20;
+  const rowH = step * 0.866;
+  const subColors = ['#f43f5e', '#10b981', '#38bdf8'];
+  for (let r = -1; r < s / rowH + 2; r++) {
+    for (let col = -1; col < s / step + 2; col++) {
       const cx = col * step + (r % 2 === 0 ? 0 : step * 0.5);
-      const cy = r * step * 0.866;
-      ctx.moveTo(cx + step * 0.44, cy);
-      ctx.arc(cx, cy, step * 0.44, 0, Math.PI * 2);
+      const cy = r * rowH;
+      const rad = step * 0.48;
+      // Symmetrical Sony OCCF RGB sub-pixel tint glowing softly beneath each hexagonal micro-lens dome
+      const subTint = subColors[(((col + r) % 3) + 3) % 3];
+      const grad = ctx.createRadialGradient(cx - rad * 0.25, cy - rad * 0.25, rad * 0.08, cx, cy, rad);
+      grad.addColorStop(0.0, '#f0f9ff');
+      grad.addColorStop(0.32, '#bae6fd');
+      grad.addColorStop(0.70, subTint);
+      grad.addColorStop(1.0, '#0f2942');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (k * Math.PI) / 3 + Math.PI / 6;
+        const px = cx + Math.cos(a) * rad;
+        const py = cy + Math.sin(a) * rad;
+        if (k === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(224, 242, 254, 0.42)';
+      ctx.lineWidth = 0.85;
+      ctx.stroke();
+
+      // Specular apex glint on each micro-lens dome
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.beginPath();
+      ctx.arc(cx - rad * 0.24, cy - rad * 0.24, rad * 0.19, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
-  ctx.fill();
-  ctx.fillStyle = '#e0f7ff';
-  ctx.beginPath();
-  for (let r = 0; r < s / step + 2; r++) {
-    for (let col = 0; col < s / step + 2; col++) {
-      const cx = col * step + (r % 2 === 0 ? 0 : step * 0.5) - 1.6;
-      const cy = r * step * 0.866 - 1.6;
-      ctx.moveTo(cx + step * 0.22, cy);
-      ctx.arc(cx, cy, step * 0.22, 0, Math.PI * 2);
-    }
-  }
-  ctx.fill();
   const tex = new THREE.CanvasTexture(c);
   tex.flipY = false;
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(4, 3);
+  tex.repeat.set(5, 4);
   return tex;
 }
 
@@ -2044,8 +2128,10 @@ export function createMaterialLibrary(clippingPlanes: THREE.Plane[]): MaterialLi
   const evfEyecupRubber = new THREE.MeshStandardMaterial({
     ...common,
     color: 0x262930,
+    bumpMap: mgGrainTex,
+    bumpScale: 0.018,
     metalness: 0.04,
-    roughness: 0.86,
+    roughness: 0.88,
   });
 
   const evfAntiFogGlass = new THREE.MeshPhysicalMaterial({
