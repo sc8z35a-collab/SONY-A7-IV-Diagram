@@ -12,9 +12,6 @@ import { lazyExplanationStub } from '../lazyExplanations';
 /**
  * Shared dimensions for the 2026 Flagship 160L Dual-Zone Hybrid Electronic Dry Cabinet
  * Scale: 1 CAD unit = 8 mm real-world (54 x 104 x 48 CAD units ≈ 432 x 832 x 384 mm)
- * Axes: +Z = Front Glass Door, -Z = Rear Hybrid Dehumidifier Engine,
- *       +Y = Top / Upper Optical Zone (40% RH), -Y = Bottom / Lower Cine+Battery Zone (35% RH),
- *       -X = Left (Hinges / ePTFE Vent), +X = Right (Biometric Lock / N2 Purge).
  */
 export const DB_DIM = {
   W: 54.0,
@@ -24,21 +21,16 @@ export const DB_DIM = {
   HH: 52.0,
   HD: 24.0,
   WALL: 1.3,
-  // Front door opening & frame
   DOOR_Y_MIN: -49.5,
   DOOR_Y_MAX: 43.2,
   DOOR_CY: -3.15,
   DOOR_H: 92.7,
   DOOR_W: 49.2,
-  // Dual-zone divider elevation
   DIVIDER_Y: -12.0,
-  // 3 sliding tray elevations
   SHELF_TOP_Y: 21.5,
   SHELF_MID_Y: 2.5,
   SHELF_LOW_Y: -28.0,
-  // Fireproof battery drawer center Y
   BATT_DRAWER_Y: -42.5,
-  // Rear dehumidifier bay center X/Y
   ENGINE_Z: -25.6,
 };
 
@@ -75,6 +67,21 @@ export interface DryboxPalette {
   rubyThermalFuse: THREE.MeshPhysicalMaterial;
   pcbEmeraldDark: THREE.MeshStandardMaterial;
   ferritic430Steel: THREE.MeshPhysicalMaterial;
+  // 150-part MECE expansion (PR #34)
+  ceramicFritBlack: THREE.MeshPhysicalMaterial;
+  paryleneVioletGlaze: THREE.MeshPhysicalMaterial;
+  copperInterceptAmber: THREE.MeshPhysicalMaterial;
+  flockedMatteBlack: THREE.MeshStandardMaterial;
+  grayCard18Pct: THREE.MeshStandardMaterial;
+  hardenedSteelHrc60: THREE.MeshPhysicalMaterial;
+  pfasFreeHydroBlue: THREE.MeshPhysicalMaterial;
+  linenBufferBeige: THREE.MeshStandardMaterial;
+  spdTintViolet: THREE.MeshPhysicalMaterial;
+  vipSilverFoil: THREE.MeshPhysicalMaterial;
+  grapheneOxideIridescent: THREE.MeshPhysicalMaterial;
+  farUvcQuartzBlue: THREE.MeshStandardMaterial;
+  opvIndoorAmber: THREE.MeshPhysicalMaterial;
+  fireMicrocapCrimson: THREE.MeshStandardMaterial;
 }
 
 export function finalizeDryboxPart(

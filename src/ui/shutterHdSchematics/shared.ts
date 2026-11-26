@@ -1,9 +1,9 @@
 /**
  * Shared SVG frame, scoped arrow markers, and typography helpers for
- * Phase 34 Ultra-Detailed Shutter Technical Schematics (SH78–SH130).
+ * Phase 34 & Phase 36 Ultra-Detailed Shutter Technical Schematics (SH78–SH180).
  *
  * Canvas: viewBox="0 0 360 176" (data-shutter-hd="1")
- *   - Header strip:  y = 2..23  (badge SH78..SH130 + title + view tag)
+ *   - Header strip:  y = 2..23  (badge SH78..SH180 + title + view tag)
  *   - Diagram zone:  x = 10..350, y = 26..150 (cutaway / kinematic / timing / optical diagram)
  *   - Caption strip: y = 152..172 (single crisp Japanese takeaway sentence)
  */

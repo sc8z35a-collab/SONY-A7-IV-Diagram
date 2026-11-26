@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import lcdJson from '../data/lcd.json';
 import { buildLcdParts } from '../assemblies/lcd/lcdParts';
 import { buildLcdMicroParts } from '../assemblies/lcd/lcdMicroParts';
+import { buildLcdUltraOemParts } from '../assemblies/lcd/lcdUltraOemParts';
+import { buildLcdUltraTechParts } from '../assemblies/lcd/lcdUltraTechParts';
+import { buildLcdUltraDeepParts } from '../assemblies/lcd/lcdUltraDeepParts';
 import { createLcdPhysicsOverlay } from '../assemblies/lcd/lcdPhysicsOverlay';
 import { HeroMaterialSpec } from '../core/resource_cache';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
@@ -63,8 +66,16 @@ export function createLcdUnit(): OptimizedUnit {
     buildRaw: (mats, _quality, { clippingPlanes }) => {
       const { parts, rig } = buildLcdParts(mats, false);
       const micro = buildLcdMicroParts(mats);
-      const allParts = [...parts, ...micro.parts];
-      rig.monitorParts.push(...micro.monitorParts);
+      const oem = buildLcdUltraOemParts(mats);
+      const tech = buildLcdUltraTechParts(mats);
+      const deep = buildLcdUltraDeepParts(mats);
+      const allParts = [...parts, ...micro.parts, ...oem.parts, ...tech.parts, ...deep.parts];
+      rig.monitorParts.push(
+        ...micro.monitorParts,
+        ...oem.monitorParts,
+        ...tech.monitorParts,
+        ...deep.monitorParts
+      );
 
       const overlay = createLcdPhysicsOverlay(clippingPlanes);
       const animatedNodes = new Set<THREE.Object3D>([

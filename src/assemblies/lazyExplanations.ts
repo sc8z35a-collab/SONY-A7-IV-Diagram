@@ -68,11 +68,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./shutter/shutterExplanations'),
         import('./shutter/shutterUltra34ExplanationsA'),
         import('./shutter/shutterUltra34ExplanationsB'),
-      ]).then(([mBase, mU34A, mU34B]) =>
+        import('./shutter/shutterUltra36ExplanationsA'),
+        import('./shutter/shutterUltra36ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B, mU36A, mU36B]) =>
         finish({
           ...mBase.SHUTTER_EXPLANATIONS,
           ...mU34A.SHUTTER_ULTRA34_EXPLANATIONS_A,
           ...mU34B.SHUTTER_ULTRA34_EXPLANATIONS_B,
+          ...mU36A.SHUTTER_ULTRA36_EXPLANATIONS_A,
+          ...mU36B.SHUTTER_ULTRA36_EXPLANATIONS_B,
         })
       );
       break;
@@ -118,7 +122,19 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       inflight = import('./evf/evfExplanations').then((m) => finish(m.EVF_EXPLANATIONS));
       break;
     case 'lcd':
-      inflight = import('./lcd/lcdExplanations').then((m) => finish(m.LCD_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./lcd/lcdExplanations'),
+        import('./lcd/lcdUltraOemExplanations'),
+        import('./lcd/lcdUltraTechExplanations'),
+        import('./lcd/lcdUltraDeepExplanations'),
+      ]).then(([mBase, mOem, mTech, mDeep]) =>
+        finish({
+          ...mBase.LCD_EXPLANATIONS,
+          ...mOem.LCD_ULTRA_OEM_EXPLANATIONS,
+          ...mTech.LCD_ULTRA_TECH_EXPLANATIONS,
+          ...mDeep.LCD_ULTRA_DEEP_EXPLANATIONS,
+        })
+      );
       break;
     case 'body':
       inflight = Promise.all([
@@ -154,17 +170,27 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./cfexpress/cfexpressUltra27Explanations'),
         import('./cfexpress/cfexpressUltra28Explanations'),
         import('./cfexpress/cfexpressUltra29Explanations'),
-      ]).then(([mBase, mU27, mU28, mU29]) =>
+        import('./cfexpress/cfexpressUltra35Explanations'),
+      ]).then(([mBase, mU27, mU28, mU29, mU35]) =>
         finish({
           ...mBase.CFEXPRESS_EXPLANATIONS,
           ...mU27.CFEXPRESS_ULTRA27_EXPLANATIONS,
           ...mU28.CFEXPRESS_ULTRA28_EXPLANATIONS,
           ...mU29.CFEXPRESS_ULTRA29_EXPLANATIONS,
+          ...mU35.CFEXPRESS_ULTRA35_EXPLANATIONS,
         })
       );
       break;
     case 'bionz':
-      inflight = import('./bionz/bionzExplanations').then((m) => finish(m.BIONZ_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./bionz/bionzExplanations'),
+        import('./bionz/bionzExtraExplanations'),
+      ]).then(([mBase, mExtra]) =>
+        finish({
+          ...mBase.BIONZ_EXPLANATIONS,
+          ...mExtra.BIONZ_EXTRA_EXPLANATIONS,
+        })
+      );
       break;
     case 'bionz_v2':
       inflight = Promise.all([
@@ -185,11 +211,13 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./mic/micExplanations'),
         import('./mic/micUltra30Explanations'),
         import('./mic/micUltra31Explanations'),
-      ]).then(([mBase, mU30, mU31]) =>
+        import('./mic/micUltra36Explanations'),
+      ]).then(([mBase, mU30, mU31, mU36]) =>
         finish({
           ...mBase.MIC_EXPLANATIONS,
           ...mU30.MIC_ULTRA30_EXPLANATIONS,
           ...mU31.MIC_ULTRA31_EXPLANATIONS,
+          ...mU36.MIC_ULTRA36_EXPLANATIONS,
         })
       );
       break;
@@ -200,13 +228,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./sensorFab/sensorFabVol2Explanations'),
         import('./sensorFab/sensorFabVol3Explanations'),
         import('./sensorFab/sensorFabVol4Explanations'),
-      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4]) =>
+        import('./sensorFab/sensorFabVol5Explanations'),
+      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4, mVol5]) =>
         finish({
           ...mVol0.SENSOR_FAB_EXPLANATIONS,
           ...mVol1.SENSOR_FAB_VOL1_EXPLANATIONS,
           ...mVol2.SENSOR_FAB_VOL2_EXPLANATIONS,
           ...mVol3.SENSOR_FAB_VOL3_EXPLANATIONS,
           ...mVol4.SENSOR_FAB_VOL4_EXPLANATIONS,
+          ...mVol5.SENSOR_FAB_VOL5_EXPLANATIONS,
         })
       );
       break;
@@ -216,12 +246,18 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./drybox/dryboxExplanationsB'),
         import('./drybox/dryboxExplanationsC'),
         import('./drybox/dryboxExplanationsD'),
-      ]).then(([mA, mB, mC, mD]) =>
+        import('./drybox/dryboxExplanationsE'),
+        import('./drybox/dryboxExplanationsF'),
+        import('./drybox/dryboxExplanationsG'),
+      ]).then(([mA, mB, mC, mD, mE, mF, mG]) =>
         finish({
           ...mA.DRYBOX_EXPLANATIONS_A,
           ...mB.DRYBOX_EXPLANATIONS_B,
           ...mC.DRYBOX_EXPLANATIONS_C,
           ...mD.DRYBOX_EXPLANATIONS_D,
+          ...mE.DRYBOX_EXPLANATIONS_E,
+          ...mF.DRYBOX_EXPLANATIONS_F,
+          ...mG.DRYBOX_EXPLANATIONS_G,
         })
       );
       break;

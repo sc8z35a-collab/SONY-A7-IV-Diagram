@@ -1,5 +1,6 @@
 import bionzJson from '../data/bionz.json';
 import { buildBionzParts } from '../assemblies/bionz/bionzParts';
+import { buildBionzExtraParts } from '../assemblies/bionz/bionzExtraParts';
 import { createBionzPhysicsOverlay } from '../assemblies/bionz/bionzPhysicsOverlay';
 import { HeroMaterialSpec } from '../core/resource_cache';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
@@ -66,7 +67,7 @@ export function createBionzUnit(): OptimizedUnit {
     meta: BIONZ_META,
     heroSpecs: BIONZ_HERO_SPECS,
     buildRaw: (mats, _quality, { clippingPlanes }) => {
-      const parts = buildBionzParts(mats);
+      const parts = [...buildBionzParts(mats), ...buildBionzExtraParts(mats)];
       const overlay = createBionzPhysicsOverlay(clippingPlanes);
       return {
         parts,

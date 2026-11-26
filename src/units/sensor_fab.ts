@@ -6,11 +6,13 @@ import { buildSensorFabVol1Parts } from '../assemblies/sensorFab/sensorFabVol1Pa
 import { buildSensorFabVol2Parts } from '../assemblies/sensorFab/sensorFabVol2Parts';
 import { buildSensorFabVol3Parts } from '../assemblies/sensorFab/sensorFabVol3Parts';
 import { buildSensorFabVol4Parts } from '../assemblies/sensorFab/sensorFabVol4Parts';
+import { buildSensorFabVol5Parts } from '../assemblies/sensorFab/sensorFabVol5Parts';
 import { createSensorFabPhysicsOverlay } from '../assemblies/sensorFab/sensorFabPhysicsOverlay';
 import { createSensorFabVol1PhysicsOverlay } from '../assemblies/sensorFab/sensorFabVol1PhysicsOverlay';
 import { createSensorFabVol2PhysicsOverlay } from '../assemblies/sensorFab/sensorFabVol2PhysicsOverlay';
 import { createSensorFabVol3PhysicsOverlay } from '../assemblies/sensorFab/sensorFabVol3PhysicsOverlay';
 import { createSensorFabVol4PhysicsOverlay } from '../assemblies/sensorFab/sensorFabVol4PhysicsOverlay';
+import { createSensorFabVol5PhysicsOverlay } from '../assemblies/sensorFab/sensorFabVol5PhysicsOverlay';
 import { HeroMaterialSpec } from '../core/resource_cache';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
 import { CompiledV2Unit } from '../core/v2_unit_compiler';
@@ -99,15 +101,25 @@ export function createSensorFabUnit(): OptimizedUnit {
       for (const p of built3) p.fabVolume = 3;
       const built4 = buildSensorFabVol4Parts(mats);
       for (const p of built4) p.fabVolume = 4;
+      const built5 = buildSensorFabVol5Parts(mats);
+      for (const p of built5) p.fabVolume = 5;
 
-      const allParts: CadPart[] = [...built0, ...built1, ...built2, ...built3, ...built4];
+      const allParts: CadPart[] = [
+        ...built0,
+        ...built1,
+        ...built2,
+        ...built3,
+        ...built4,
+        ...built5,
+      ];
 
       const overlay0 = createSensorFabPhysicsOverlay(clippingPlanes);
       const overlay1 = createSensorFabVol1PhysicsOverlay(clippingPlanes);
       const overlay2 = createSensorFabVol2PhysicsOverlay(clippingPlanes);
       const overlay3 = createSensorFabVol3PhysicsOverlay(clippingPlanes);
       const overlay4 = createSensorFabVol4PhysicsOverlay(clippingPlanes);
-      const overlays = [overlay0, overlay1, overlay2, overlay3, overlay4];
+      const overlay5 = createSensorFabVol5PhysicsOverlay(clippingPlanes);
+      const overlays = [overlay0, overlay1, overlay2, overlay3, overlay4, overlay5];
 
       const overlayRoot = new THREE.Group();
       overlayRoot.name = 'sensor-fab-overlays';
@@ -133,7 +145,7 @@ export function createSensorFabUnit(): OptimizedUnit {
         overlayGroup: overlayRoot,
         explodeGuides: guidesRoot,
         onSubViewChange: (subView: number) => {
-          const clamped = Math.max(0, Math.min(4, subView)) as SensorFabVolume;
+          const clamped = Math.max(0, Math.min(5, subView)) as SensorFabVolume;
           activeVolume = clamped;
           syncOverlayVisibility();
         },

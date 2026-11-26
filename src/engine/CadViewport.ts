@@ -512,8 +512,8 @@ export class CadViewport {
       d = 335 + e * 565;
       target = new THREE.Vector3(-8.0 - e * 8.0, 3.0 + e * 9.0, -10.0 - e * 18.0);
     } else if (this.mode === 'lcd') {
-      d = 174 + e * 355;
-      target = new THREE.Vector3(8.0 - e * 18.0, -7.0, -32.0 - e * 32.0);
+      d = 174 + e * 635;
+      target = new THREE.Vector3(14.0 - e * 4.0, -4.0 + e * 18.0, -32.0 - e * 14.0);
     } else if (this.mode === 'body') {
       d = 290 + e * 515;
       target = new THREE.Vector3(-6.0 + e * 14.0, 4.0 - e * 2.0, 0.0 + e * 12.0);
@@ -527,8 +527,8 @@ export class CadViewport {
       d = 192 + e * 340;
       target = new THREE.Vector3(-18.0 * e, 0.0 + e * 2.0, -22.0 - e * 4.0);
     } else if (this.mode === 'shutter') {
-      d = 194 + e * 475;
-      target = new THREE.Vector3(6.0 + e * 10.0, -2.5 + e * 2.0, 14.0 + e * 2.0);
+      d = 194 + e * 565;
+      target = new THREE.Vector3(6.0 + e * 14.0, -2.5 + e * 0.0, 14.0 + e * 14.0);
     } else if (this.mode === 'integrated') {
       d = 390 + e * 1290;
       target = new THREE.Vector3(-8.0 - e * 6.0, 6.0 + e * 10.0, 34.0 + e * 96.0);
@@ -542,8 +542,8 @@ export class CadViewport {
       d = 136 + e * 475;
       target = new THREE.Vector3(0.0, -0.8 + e * 1.5, e * 4.0);
     } else if (this.mode === 'bionz') {
-      d = 78 + e * 190;
-      target = new THREE.Vector3(0, 1.5 + e * 1.5, 0);
+      d = 122 + e * 245;
+      target = new THREE.Vector3(0, -1.0 + e * 1.0, 0);
     } else if (this.mode === 'bionz_v2') {
       d = 124 + e * 282;
       target = new THREE.Vector3(0, 0.2 - e * 1.2, 0);
@@ -554,10 +554,13 @@ export class CadViewport {
       d = 114 + e * 165;
       target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
     } else if (this.mode === 'mic') {
-      d = 94 + e * 278;
+      d = 94 + e * 336;
       target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
-      if (this.sensorFabVolume === 4) {
+      if (this.sensorFabVolume === 5) {
+        d = 248 + e * 238;
+        target = new THREE.Vector3(0, -1.0 + e * 1.5, 2.0);
+      } else if (this.sensorFabVolume === 4) {
         d = 252 + e * 240;
         target = new THREE.Vector3(0, -1.5 + e * 1.5, 6.5);
       } else if (this.sensorFabVolume === 3) {
@@ -706,7 +709,8 @@ export class CadViewport {
       stage === 'v1_overview' ||
       stage === 'v2_overview' ||
       stage === 'v3_overview' ||
-      stage === 'v4_overview'
+      stage === 'v4_overview' ||
+      stage === 'v5_overview'
     ) {
       this.setCameraPreset('iso', immediate);
       return;
@@ -790,9 +794,25 @@ export class CadViewport {
       const d = (138 + e * 105) * aspectScale;
       target = new THREE.Vector3(0, 3.4 + e * 10.0, 5.0 + e * 14.0);
       offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
-    } else {
+    } else if (stage === 'v4_pin_sab') {
       const d = (158 + e * 125) * aspectScale;
       target = new THREE.Vector3(0, -6.5 - e * 11.0, 33.5 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
+    } else if (stage === 'v5_w_m1') {
+      const d = (142 + e * 108) * aspectScale;
+      target = new THREE.Vector3(0, 3.6 + e * 14.0, -29.0 - e * 15.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.36, d * 0.92);
+    } else if (stage === 'v5_m2_m4') {
+      const d = (146 + e * 112) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 11.0, -12.0 - e * 3.0);
+      offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
+    } else if (stage === 'v5_m5_wat') {
+      const d = (138 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 3.4 + e * 9.0, 5.0 + e * 12.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
+    } else {
+      const d = (144 + e * 112) * aspectScale;
+      target = new THREE.Vector3(0, -6.5 - e * 10.0, 29.0 + e * 14.0);
       offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
     }
 
@@ -928,7 +948,15 @@ export class CadViewport {
     } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
       minCoord = -30;
       maxCoord = 30;
-    } else if (this.mode === 'bionz' || this.mode === 'bionz_v2') {
+    } else if (this.mode === 'bionz') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -48;
+        maxCoord = 48;
+      } else {
+        minCoord = -16;
+        maxCoord = 18;
+      }
+    } else if (this.mode === 'bionz_v2') {
       if (this.sectionAxis === 'x') {
         minCoord = -20;
         maxCoord = 20;

@@ -9520,7 +9520,7 @@
       "id": "shutter-front-cover",
       "order": 1,
       "swatchColor": "#202328",
-      "groupKey": "shutter:S01_外装保護・迷光遮断",
+      "groupKey": "shutter:shutter-front",
       "assembledPos": [
         0,
         0,
@@ -9536,7 +9536,6 @@
         0,
         96
       ],
-      "edgeOpacity": 0.22,
       "title": "フロント保護カバー板 ＆ 迷光防止開口枠",
       "subtitle": "Front Protective Shutter Cover Plate & Matte Baffle Frame",
       "category": "S01 / 外装保護・迷光遮断",
@@ -9547,10 +9546,6 @@
         "表面にはつや消し黒の低反射処理を施し、大口径レンズから斜めに入ってくる強い光が枠に当たって写真に白っぽいモヤ（フレア・ゴースト）が出るのを防ぎます。",
         "四隅の精密ねじと位置決めピンにより、ベース基板とミクロン単位の平行度を保ちながら羽根室を密閉します。"
       ],
-      "formula": {
-        "expression": "クリアランス δ ≈ 0.15 – 0.25 mm（羽根とカバー板のすき間）",
-        "description": "すき間が狭すぎると摩擦で減速し、広すぎると光漏れや羽根のバタつきが起きるため精密に設計されています。"
-      },
       "nextGenInnovation": "最新の高耐久50万回シャッターでは、カバー板に超軽量な炭素繊維配合樹脂や特殊ステンレスを採用し、剛性を高めつつユニット全体の薄型化（ショートフランジバック対応）を実現しています。",
       "specs": [
         {
@@ -9576,7 +9571,7 @@
       "id": "shutter-dust-shield",
       "order": 2,
       "swatchColor": "#4c5869",
-      "groupKey": "shutter:S02_レンズ交換時防塵プロテクション",
+      "groupKey": "shutter:shutter-dust",
       "assembledPos": [
         0,
         0,
@@ -9592,7 +9587,6 @@
         0,
         88
       ],
-      "edgeOpacity": 0.22,
       "title": "電源OFF時・独立センサー保護シールドカーテン",
       "subtitle": "Dedicated Anti-Dust Protective Sensor Shield Curtain",
       "category": "S02 / レンズ交換時防塵プロテクション",
@@ -9603,10 +9597,6 @@
         "撮影用の高速カーボン羽根（厚さ 0.05 mm）は息を吹きかけただけで曲がるほど繊細ですが、専用の保護シールドはやや厚く丈夫な硬質アルミ合金ブレードを採用し、耐衝撃性と防塵性を高めています。",
         "撮影用シャッター幕そのものを電源OFF時に閉める方式（Canon / Sony系）と、メカシャッター非搭載機で独立した専用保護幕を備える方式（Nikon Z9 / Z8系）の2つの最新アプローチがあります。"
       ],
-      "formula": {
-        "expression": "電源OFF → 自動閉鎖（防塵バリア） / 電源ON → 0.1秒以下で高速退避",
-        "description": "露光用シャッターとは独立した保護構造により、レンズ交換時のセンサー汚れリスクを激減させます。"
-      },
       "nextGenInnovation": "2024〜2026年の最新ミラーレス（Sony α7 V / α1 II、Canon EOS R1 / R5 II、Nikon Z9 / Z8）では、電源OFF時自動閉鎖のアンチダストシャッター／センサーシールドがプロ機の標準装備となっています。",
       "specs": [
         {
@@ -9632,7 +9622,7 @@
       "id": "shutter-shield-actuator",
       "order": 3,
       "swatchColor": "#0ea5e9",
-      "groupKey": "shutter:SH_保護幕専用アクチュエータ",
+      "groupKey": "shutter:shutter-shield",
       "assembledPos": [
         0,
         0,
@@ -9648,7 +9638,6 @@
         22,
         86
       ],
-      "edgeOpacity": 0.22,
       "title": "ダストシールド専用 マイクロ駆動ステッパー＆ラックカム機構",
       "subtitle": "Dedicated Sensor Dust-Shield Micro-Stepper Actuator & POM Rack-Cam Drive",
       "category": "SH / 保護幕専用アクチュエータ",
@@ -9659,10 +9648,6 @@
         "ウォーム／ラック減速比を高く設定したセルフロック構造により、電源を完全に抜いた状態でも重力や携帯振動で保護幕が勝手に開きません。",
         "終端には微小電流検出または光学リミットセンサーを備え、異物を挟み込んだ際は瞬時に巻き戻す安全トルクリミッタが働きます。"
       ],
-      "formula": {
-        "expression": "F_lock = μ_rack · F_normal > m_shield · 15g   (無通電セルフロック保持)",
-        "description": "高い減速摩擦により電源OFF時の消費電力0 mWで防塵幕を確実に閉鎖維持。"
-      },
       "nextGenInnovation": "メカシャッターレス機（グローバルシャッター／完全電子シャッター旗艦機）でも、この独立モーター駆動センサーシールド機構だけは不可欠な機械ユニットとして生き残っています。",
       "specs": [
         {
@@ -9688,7 +9673,7 @@
       "id": "shutter-curtain-1",
       "order": 4,
       "swatchColor": "#1f242d",
-      "groupKey": "shutter:S03_露光スタート幕・超軽量炭素繊維",
+      "groupKey": "shutter:shutter-curtain",
       "assembledPos": [
         0,
         0,
@@ -9704,7 +9689,6 @@
         0,
         78
       ],
-      "edgeOpacity": 0.22,
       "title": "先幕（1st Curtain）カーボンファイバー羽根群 × 4枚",
       "subtitle": "1st (Front) Curtain — 4-Blade Ultra-Thin CFRP Shutter Blades",
       "category": "S03 / 露光スタート幕・超軽量炭素繊維",
@@ -9715,10 +9699,6 @@
         "なぜカーボンファイバー（CFRP）なの？：同じ強さの鉄より約5倍も軽いため、動き始めの慣性（重たさ）が極小になります。軽いほどバネの力で一瞬のうちに最高速度（時速約35〜40 km）へ到達でき、50万回叩きつけても折れません。",
         "最先端の1枚目（スリット形成羽根）のエッジは真っ直ぐ光を切るナイフの刃のように極めて高精度に仕上げられ、後幕との間に均一な「光のすき間（スリット）」を作ります。"
       ],
-      "formula": {
-        "expression": "走行時間 t_travel ≈ 2.0 – 2.5 ms（24 mmを平均時速約 35–43 km/h で疾走）",
-        "description": "加速度 a = F / m。羽根の質量 m を 0.05 mm CFRPで極限まで軽くすることで 3,000 G 級の瞬間加速を実現します。"
-      },
       "nextGenInnovation": "最新フラッグシップ（Sony α1 II 等）では、航空宇宙グレードの超軽量カーボンファイバー羽根を採用し、フルサイズ縦24 mmを約2ミリ秒台で走り抜ける超高速幕速と50万回超の耐久性を両立しています。",
       "specs": [
         {
@@ -9744,7 +9724,7 @@
       "id": "shutter-curtain1-guide",
       "order": 5,
       "swatchColor": "#e2e8f0",
-      "groupKey": "shutter:SH_先幕高速走行ガイド",
+      "groupKey": "shutter:shutter-curtain1",
       "assembledPos": [
         0,
         0,
@@ -9760,7 +9740,6 @@
         0,
         75
       ],
-      "edgeOpacity": 0.22,
       "title": "先幕専用 低摩擦POMアンチフラッターガイド＆チタン案内ローラー",
       "subtitle": "1st-Curtain Low-Friction POM Anti-Flutter Guide Tracks & Titanium Micro-Rollers",
       "category": "SH / 先幕高速走行ガイド",
@@ -9771,10 +9750,6 @@
         "自己潤滑性・低摩擦係数（μ ≈ 0.12）のフッ素改質POMレールがドライ潤滑で羽根側面を滑らせ、オイル飛散によるセンサー汚れを根絶しつつ最高速走行を安定化。",
         "左端には光漏れ迷路（ラビリンス溝）を一体化し、閉幕時のサイド隙間からの迷光侵入を10⁻⁶以下に遮断しています。"
       ],
-      "formula": {
-        "expression": "f_flutter ∝ (t / L²) · √(E / ρ),   クリアランス δ_guide ≈ 0.08 mm",
-        "description": "極薄羽根の空気力学的フラッターを精密ガイド溝で物理拘束し、1/8000秒スリットの平行度を死守。"
-      },
       "nextGenInnovation": "カーボン繊維配合の超低摩耗エンジニアリング樹脂ガイドにより、50万回走行後もガイド溝の摩耗粉（ダスト）発生をほぼゼロに抑えています。",
       "specs": [
         {
@@ -9800,7 +9775,7 @@
       "id": "shutter-link-1",
       "order": 6,
       "swatchColor": "#adb8c7",
-      "groupKey": "shutter:S04_精密リンク運動学",
+      "groupKey": "shutter:shutter-link",
       "assembledPos": [
         0,
         0,
@@ -9816,7 +9791,6 @@
         0,
         70
       ],
-      "edgeOpacity": 0.22,
       "title": "先幕用・平行4節リンクアーム（パラレログラム機構）",
       "subtitle": "1st Curtain Parallelogram 4-Bar Linkage Arms & Micro Rivets",
       "category": "S04 / 精密リンク運動学",
@@ -9827,10 +9801,6 @@
         "羽根ごとにアームへの取り付け位置（半径 r₁ > r₂ > r₃ > r₄）を少しずつ変えてあるため、アームが90°回ると一番外側の1枚目は大きく移動し、4枚目は小さく移動して、全員が同時にピッタリ1枚分に折り重なります！",
         "軸ピン（カシメ）のガタがわずか数ミクロンでも増えると高速走行時に羽根同士が擦れて故障するため、超高精度ステンレス抜き加工と耐摩耗DLCコーティングが施されています。"
       ],
-      "formula": {
-        "expression": "y_i(θ) = r_i · sin(θ)   （r₁ > r₂ > r₃ > r₄ の比率設計で全4枚が同期折りたたみ）",
-        "description": "同じ回転角 θ でもピン半径 r_i を階段状に変えることで、4枚の羽根が重なりながら均一に展開・収納されます。"
-      },
       "nextGenInnovation": "リンクアームの穴あけ軽量化（トポロジー最適化）と低摩擦カシメ軸により、回転慣性モーメントを徹底削減。連写10〜15コマ/秒の高速往復でも50万回以上の長寿命を実現しています。",
       "specs": [
         {
@@ -9856,7 +9826,7 @@
       "id": "shutter-pivot-jewels",
       "order": 7,
       "swatchColor": "#eab308",
-      "groupKey": "shutter:SH_高耐久回転軸受",
+      "groupKey": "shutter:shutter-pivot",
       "assembledPos": [
         0,
         0,
@@ -9872,7 +9842,6 @@
         12,
         66
       ],
-      "edgeOpacity": 0.22,
       "title": "リンク機構 DLC硬質支点スピンドル＆焼結含油ブロンズ軸受群",
       "subtitle": "DLC-Coated Hardened Pivot Spindles, Sintered Bronze Bushings & E-Clips",
       "category": "SH / 高耐久回転軸受",
@@ -9883,10 +9852,6 @@
         "ビッカース硬度 HV 2500以上のDLC皮膜を軸側へ、自己潤滑性の極微小孔焼結ブロンズをブッシュ側へ組み合わせることで、異種材焼き付き防止と極低摩擦トルクを両立。",
         "極薄ステンレスEリングとウェーブ座金によりZ軸方向の遊び（アキシャルガタ）を数ミクロン以内に押さえ込みます。"
       ],
-      "formula": {
-        "expression": "τ_friction = μ_DLC · F_radial · r_pin   (μ_DLC < 0.08, HV > 2500)",
-        "description": "DLC硬質軸と焼結ブロンズ軸受が摩擦ロスと摩耗を極小化し、50万回全域で幕速を一定維持。"
-      },
       "nextGenInnovation": "航空宇宙ベアリング由来のDLC＋ドライ固体潤滑膜技術により、−20℃の極寒でも潤滑グリスが固まってシャッター速度が落ちる低温遅延トラブルを払拭しています。",
       "specs": [
         {
@@ -9912,7 +9877,7 @@
       "id": "shutter-mid-plate",
       "order": 8,
       "swatchColor": "#4e5868",
-      "groupKey": "shutter:S05_2室分離・非接触ガイド",
+      "groupKey": "shutter:shutter-mid",
       "assembledPos": [
         0,
         0,
@@ -9928,7 +9893,6 @@
         0,
         62
       ],
-      "edgeOpacity": 0.22,
       "title": "中間遮光仕切り板（インターミディエイト・セパレータ）",
       "subtitle": "Intermediate Partition Plate (Curtain Chamber Separator)",
       "category": "S05 / 2室分離・非接触ガイド",
@@ -9939,10 +9903,6 @@
         "中板は羽根の走行空間を完全に前後の2部屋へ分割しつつ、厚みを極限まで薄く設計しています。なぜ薄くするのか？→ 先幕と後幕の距離が離れすぎると、大口径レンズの斜め光束に対して影の落ち方が変わり、露出ムラが生じてしまうためです。",
         "表面にはフッ素系などの超低摩擦・艶消し黒処理が施され、羽根が万が一軽く触れても傷や静電気・ブレーキ抵抗が起きないように配慮されています。"
       ],
-      "formula": {
-        "expression": "Δz_curtains ≈ 0.4 – 0.6 mm（極薄中板 0.15 mm を挟んだ最小分離距離）",
-        "description": "「絶対に衝突させない安全性」と「光学的にほぼ同一平面とみなせる極薄設計」の両立。"
-      },
       "nextGenInnovation": "最新の高画素・大口径F1.2レンズ時代では、中板のさらなる薄肉化とエッジの極低反射処理により、1/8000秒の極細スリット露光時でも画面上下の明るさムラ（露出均一性）を極限まで高めています。",
       "specs": [
         {
@@ -9968,7 +9928,7 @@
       "id": "shutter-curtain-2",
       "order": 9,
       "swatchColor": "#56657c",
-      "groupKey": "shutter:S06_露光ストップ幕・スリット露光原理",
+      "groupKey": "shutter:shutter-curtain",
       "assembledPos": [
         0,
         0,
@@ -9984,7 +9944,6 @@
         0,
         54
       ],
-      "edgeOpacity": 0.22,
       "title": "後幕（2nd Curtain）カーボン＆アルミ合金羽根群 × 4枚",
       "subtitle": "2nd (Rear) Curtain — Slit-Forming Exposure Termination Blades",
       "category": "S06 / 露光ストップ幕・スリット露光原理",
@@ -9995,10 +9954,6 @@
         "【なぜフラッシュは 1/250〜1/400秒 までなの？】ストロボの一瞬の閃光は「センサー全体がパカッと全開になっている瞬間」に光らせないと、幕に隠れた部分が真っ黒に写ってしまいます。先幕が全開になりきる限界速度が「フラッシュ同調速度（X-sync）」です。",
         "【電子先幕（EFCS）のボケ欠け原理】先幕だけ電子化すると、先幕はセンサー表面（z=0）、後幕は数mm手前（z=+4mm）を走る段差ができ、F1.2＋1/4000秒以上の極細スリットでは斜め光の片側が遮られて玉ボケの上下が欠けます。メカ先幕＋メカ後幕なら同じ距離なので美しい丸ボケが保たれます！"
       ],
-      "formula": {
-        "expression": "スリット幅 W_slit = H · (t_exp / t_travel)   ⇒  1/8000秒時: 24 mm × (0.125 / 2.2) ≈ 1.36 mm",
-        "description": "シャッタースピードが速くなるほど2枚のカーテンの間隔（スリット幅）が細くなります。"
-      },
       "nextGenInnovation": "先幕と後幕の走行カーブ（加速プロファイル）をマイクロ秒レベルで完全一致させることで、幅わずか1.3 mmの1/8000秒スリットでも画面の上端から下端まで明るさ誤差ほぼゼロの超高精度露光を実現しています。",
       "specs": [
         {
@@ -10024,7 +9979,7 @@
       "id": "shutter-curtain2-guide",
       "order": 10,
       "swatchColor": "#64748b",
-      "groupKey": "shutter:SH_後幕走行ガイド・遮光",
+      "groupKey": "shutter:shutter-curtain2",
       "assembledPos": [
         0,
         0,
@@ -10040,7 +9995,6 @@
         0,
         51
       ],
-      "edgeOpacity": 0.22,
       "title": "後幕専用 精密スリット平行度レール＆光漏れ防止ラビリンス枠",
       "subtitle": "2nd-Curtain Slit-Parallelism Guide Rails & Light-Tight Labyrinth Seal Lip",
       "category": "SH / 後幕走行ガイド・遮光",
@@ -10051,10 +10005,6 @@
         "ガイドレール内面に微細段差（マイクロリブ）を設けることで羽根との接触面積を点接触へ近づけ、静電気吸着（羽根同士の張り付き）を防止します。",
         "またシャッター待機時に強い太陽光がセンサーへ漏れ込まないよう、後幕ポケット出口に黒色ラビリンス遮光リップを備えています。"
       ],
-      "formula": {
-        "expression": "ΔE / E = Δw_slit / w_slit   (w ≈ 0.9 mm @ 1/8000 s → 許容傾き < 20 μm)",
-        "description": "極細スリット露光での露出均一性を保証する後幕専用平行ガイド設計。"
-      },
       "nextGenInnovation": "レーザー変位計による全数検査でガイドレールの平行度とZ間隔を管理し、1/8000秒の高速連写でも画面端まで完璧な均一露光を維持します。",
       "specs": [
         {
@@ -10080,7 +10030,7 @@
       "id": "shutter-link-2",
       "order": 11,
       "swatchColor": "#8c99ab",
-      "groupKey": "shutter:S07_同期リンク機構",
+      "groupKey": "shutter:shutter-link",
       "assembledPos": [
         0,
         0,
@@ -10096,7 +10046,6 @@
         0,
         46
       ],
-      "edgeOpacity": 0.22,
       "title": "後幕用・平行4節リンクアーム ＆ ドライブピン",
       "subtitle": "2nd Curtain Parallelogram Linkage Arms & High-Strength Drive Pin",
       "category": "S07 / 同期リンク機構",
@@ -10107,10 +10056,6 @@
         "ドライブピンは駆動バネの強烈なトルクをリンクアームへ伝える要（かなめ）の部品。50万回もの高衝撃荷重に耐えるため、焼き入れクロムモリブデン鋼や表面硬化処理が施されています。",
         "シャッター待機状態（ライブビュー中）では、先幕は下ポケット・後幕は上ポケットに退避してセンサーを全開にしておき、電子ファインダー（EVF）にリアルタイム映像を映します。"
       ],
-      "formula": {
-        "expression": "v_curtain2(y) ≡ v_curtain1(y)   ⇒   画面全域で Δt_exp(y) = const.",
-        "description": "任意の位置 y で先幕と後幕の速度が一致しているときのみ、スリット幅と露光時間が画面全域で均一になります。"
-      },
       "nextGenInnovation": "ミラーレス機ではライブビューのため撮影直前までシャッターを開きっぱなしにする必要があり、撮影の瞬間に先幕を閉じる動作を省く「電子先幕（EFCS）」時は、この後幕リンクだけが単独で高速駆動します。",
       "specs": [
         {
@@ -10136,7 +10081,7 @@
       "id": "shutter-tension-drums",
       "order": 12,
       "swatchColor": "#f59e0b",
-      "groupKey": "shutter:SH_幕速動力ばね・張力校正",
+      "groupKey": "shutter:shutter-tension",
       "assembledPos": [
         0,
         0,
@@ -10152,7 +10097,6 @@
         8,
         44
       ],
-      "edgeOpacity": 0.22,
       "title": "先幕・後幕独立 高張力トーションスプリング＆真鍮ウォーム張力微調ドラム",
       "subtitle": "Dual Curtain Helical Torsion Springs & Brass Vernier Tension-Adjuster Worm Drums",
       "category": "SH / 幕速動力ばね・張力校正",
@@ -10163,10 +10107,6 @@
         "工場調整工程ではこの真鍮ラチェットドラムを微小回転させて先幕・後幕の走行カーブを完全に一致させ、ばねの個体差をゼロへ追い込みます。",
         "50万回の高応力繰り返しでも金属疲労（へたり）による幕速低下を防ぐため、ショットピーニング強化された高耐疲労合金ばね線を使用しています。"
       ],
-      "formula": {
-        "expression": "τ(θ) = k_torsion · (θ₀ + Δθ_drum),   t_curtain ≈ 2.5–3.2 ms (先幕＝後幕同期)",
-        "description": "真鍮ドラムの初期予圧角 Δθ で先幕・後幕の走行時間曲線を完全一致させます。"
-      },
       "nextGenInnovation": "ばねの純機械パワーに加え、1/320〜1/400秒フラッシュ同調時のみ隣の電磁ブースト（shutter-dual-drive）が並列アシストする「デュアル駆動方式」で耐久性と超高速を両立しています。",
       "specs": [
         {
@@ -10192,7 +10132,7 @@
       "id": "shutter-dual-drive",
       "order": 13,
       "swatchColor": "#c86432",
-      "groupKey": "shutter:S08_ハイブリッド超高速動力源",
+      "groupKey": "shutter:shutter-dual",
       "assembledPos": [
         0,
         0,
@@ -10208,7 +10148,6 @@
         2,
         42
       ],
-      "edgeOpacity": 0.22,
       "title": "デュアル駆動アクチュエータ（高張力トーションバネ ＋ 電磁ブースター）",
       "subtitle": "Dual-Driven Actuator — Torsion Springs & Electromagnetic Boost Motor",
       "category": "S08 / ハイブリッド超高速動力源",
@@ -10219,10 +10158,6 @@
         "最新「デュアル駆動」のブレイクスルー：バネを強くしすぎると衝撃と摩耗が増えて寿命が縮みます。そこで普段はバネ駆動で軽快＆長寿命を保ち、1/320〜1/400秒の高速フラッシュ同調が必要なときだけ電磁アクチュエータがローレンツ力で追加加速（ブースト）して幕速を極限まで引き上げます！",
         "トーションバネ基部の微調整ラチェットにより、工場組立時に先幕・後幕のバネ張力をミリ秒精度で完璧にバランス調整できます。"
       ],
-      "formula": {
-        "expression": "τ_total = k_spring · θ + K_t · I_boost   （バネ弾性トルク ＋ 電磁ブーストトルク）",
-        "description": "バネの高瞬発力と電磁アクチュエータの可変ブーストを組み合わせ、世界最速クラスのメカ1/400秒同調を達成。"
-      },
       "nextGenInnovation": "フルサイズ一眼のメカシャッターでは長年 1/250秒が壁とされてきましたが、カーボン羽根＋バネ＆電磁アクチュエータのデュアル駆動により、メカシャッターで世界最速の「1/400秒フラッシュ同調」と「50万回耐久」を同時に突破しました。",
       "specs": [
         {
@@ -10248,7 +10183,7 @@
       "id": "shutter-counterweight",
       "order": 14,
       "swatchColor": "#b45309",
-      "groupKey": "shutter:SH_シャッター微ブレ相殺機構",
+      "groupKey": "shutter:shutter-counterweight",
       "assembledPos": [
         0,
         0,
@@ -10264,7 +10199,6 @@
         -12,
         48
       ],
-      "edgeOpacity": 0.22,
       "title": "逆位相タングステン銅（CuW）慣性カウンターウェイト制振バランサー",
       "subtitle": "Counter-Rotating CuW Inertial Counterweight Shutter-Shock Balancer Lever",
       "category": "SH / シャッター微ブレ相殺機構",
@@ -10275,10 +10209,6 @@
         "駆動軸と逆回転に噛み合う高比重タングステン銅（比重約16 g/cm³）のカウンターウェイトを同時動作させることで、Σ(m_i · a_i) ≈ 0 となり並進・回転反力をシャッター内部で自己キャンセルします。",
         "小さな設置スペースで十分な慣性モーメントを稼ぐため、鉄の2倍以上の密度を持つCuW焼結合金を先端へ集中配置しています。"
       ],
-      "formula": {
-        "expression": "m_curtain · a_curtain + m_cw · a_cw ≈ 0   （作用反作用の内部相殺）",
-        "description": "逆位相タングステン銅バランサーがシャッター加減速時の反力を内部で打ち消し、望遠・高画素の微ブレを抑制。"
-      },
       "nextGenInnovation": "4点フローティング防振ゴム（shutter-floating-grommets）と逆位相慣性バランサーの二重制振により、三脚なしの1/125秒撮影でも解像力低下ゼロを実現しています。",
       "specs": [
         {
@@ -10304,7 +10234,7 @@
       "id": "shutter-magnets",
       "order": 15,
       "swatchColor": "#d97724",
-      "groupKey": "shutter:S09_電子タイミング制御トリガー",
+      "groupKey": "shutter:shutter-magnets",
       "assembledPos": [
         0,
         0,
@@ -10320,7 +10250,6 @@
         18,
         36
       ],
-      "edgeOpacity": 0.22,
       "title": "マイクロ秒制御・先幕＆後幕ホールド電磁石（ツイン・ソレノイド）",
       "subtitle": "Microsecond-Precision Front & Rear Holding Electromagnets",
       "category": "S09 / 電子タイミング制御トリガー",
@@ -10331,10 +10260,6 @@
         "超高速磁気切れ設計：普通の鉄は電気を切っても少し磁力が残って（残留磁気）離れるのが遅れます。そこでヒステリシス損失が極めて小さいパーマロイ（ニッケル鉄合金）鉄心と逆パルス消磁回路を使い、電気を切った瞬間にゼロ遅延でアマチュア（鉄片）を解放します。",
         "消費電力削減のため、永久磁石と打ち消しコイルを組み合わせた省エネ型ホールド方式も最新ミラーレスで広く採用されています。"
       ],
-      "formula": {
-        "expression": "Δt_release = t_rear_off − t_front_off = 1 / (Shutter Speed)   （分解能 < 1 μs）",
-        "description": "2つの電磁石の解放時刻の差 Δt_release が、そのまま写真のシャッタースピードになります。"
-      },
       "nextGenInnovation": "後述の「光学式幕速モニター」と連動し、気温変化や経年変化で電磁石の応答遅れ（数マイクロ秒）が起きても自動で通電遮断タイミングを補正するクローズドループ制御が実装されています。",
       "specs": [
         {
@@ -10360,7 +10285,7 @@
       "id": "shutter-armature-levers",
       "order": 16,
       "swatchColor": "#38bdf8",
-      "groupKey": "shutter:SH_超高速トリガー掛け金",
+      "groupKey": "shutter:shutter-armature",
       "assembledPos": [
         0,
         0,
@@ -10376,7 +10301,6 @@
         18,
         39
       ],
-      "edgeOpacity": 0.22,
       "title": "10マイクロ秒 幕保持アーマチュア掛け金レバー＆ゼロバウンスばね",
       "subtitle": "10-Microsecond Curtain Latch Armature Levers & Zero-Bounce Release Springs",
       "category": "SH / 超高速トリガー掛け金",
@@ -10387,10 +10311,6 @@
         "鉄芯との接触面は平面度 0.5 μm 以下にラップ鏡面研磨され、さらに極小の離脱ばねが常に剥がれる方向へ微小予圧を与えることで、通電OFFから約10 μs以内という驚異的な再現性で離脱します。",
         "巻き上げ（チャージ）時にはカムがアーマチュアを鉄芯へソフトタッチで押し当て、着座時の跳ね返り（チャタリング）を防いでいます。"
       ],
-      "formula": {
-        "expression": "Δt_jitter < 10 μs   →   1/8000 s (125 μs) の露光精度 ±0.05 EV 以内",
-        "description": "鏡面ラップされた磁性アーマチュアと予圧離脱ばねが、超高速1/8000秒の時間差をマイクロ秒精度で刻みます。"
-      },
       "nextGenInnovation": "残留磁束を瞬時に消す逆パルス消磁制御（デマグネタイズパルス）と組み合わせることで、高速連写時のシャッター速度ばらつきを限界まで抑えています。",
       "specs": [
         {
@@ -10416,7 +10336,7 @@
       "id": "shutter-charge-gears",
       "order": 17,
       "swatchColor": "#facc15",
-      "groupKey": "shutter:SH_高速巻き上げ減速歯車列",
+      "groupKey": "shutter:shutter-charge",
       "assembledPos": [
         0,
         0,
@@ -10432,7 +10352,6 @@
         -16,
         31
       ],
-      "edgeOpacity": 0.22,
       "title": "4段POM・真鍮遊星減速ギアトレイン＆逆転防止ワンウェイクラッチ",
       "subtitle": "4-Stage POM/Brass Precision Reduction Gear Train & Anti-Reverse One-Way Clutch",
       "category": "SH / 高速巻き上げ減速歯車列",
@@ -10443,10 +10362,6 @@
         "減速比 i = 50 によりモーター出力トルクを約50倍へ増幅し、10〜15コマ/秒のメカ連写でも1フレームあたり約35 msで強力な2本のトーションばねをチャージ完了します。",
         "出力段に組み込まれたワンウェイクラッチが、強力なばねの反力でモーター側へ逆転キックバックが伝わるのを遮断しています。"
       ],
-      "formula": {
-        "expression": "T_cam = T_motor · i_gear · η   (減速比 i ≈ 48, 効率 η ≈ 84%)",
-        "description": "4段異種材減速ギアが超小型モーターから強大なばね巻き上げトルクを引き出します。"
-      },
       "nextGenInnovation": "インボリュート転位歯形とカーボン強化POMの採用により、毎秒15回もの急加減速を繰り返すプロスポーツ連写でも歯元疲労折損を防止しています。",
       "specs": [
         {
@@ -10472,7 +10387,7 @@
       "id": "shutter-charge-motor",
       "order": 18,
       "swatchColor": "#d4a948",
-      "groupKey": "shutter:S10_高速自動巻き上げ駆動系",
+      "groupKey": "shutter:shutter-charge",
       "assembledPos": [
         0,
         0,
@@ -10488,7 +10403,6 @@
         -12,
         29
       ],
-      "edgeOpacity": 0.22,
       "title": "50万回耐久コアレスDCチャージモーター ＆ 減速ギア・チャージカム",
       "subtitle": "High-Speed Coreless DC Charge Motor, Gear Train & Cocking Cam",
       "category": "S10 / 高速自動巻き上げ駆動系",
@@ -10499,10 +10413,6 @@
         "多段減速ギアトレイン：モーターの高速・低トルク回転を、真鍮ピニオンギアと静音・自己潤滑性の高いPOM（ポリアセタール）樹脂平歯車の多段噛み合いで大きな力（高トルク）へ変換し、強力なシャッター駆動バネを軽々と巻き上げます。",
         "偏心チャージカムとレバー：カムが1回転する間に、まず先幕・後幕のリンクアームを押し上げてバネをねじり、電磁石に密着させた後、カムが逃げて次の発射の邪魔にならない位置で待機します。"
       ],
-      "formula": {
-        "expression": "τ_cam = τ_motor × (Z₂/Z₁) × (Z₄/Z₃) × η_gear   （減速比 約 25:1 〜 40:1）",
-        "description": "高速回転の小型コアレスモーターの力を減速ギア列で数十倍のトルクに増幅し、毎秒10〜15回の高速連写を支えます。"
-      },
       "nextGenInnovation": "最新ミラーレスでは静音化も極めて重視されており、歯車プロファイルの最適化と低振動コアレス制御（チャージ速度を撮影モードに応じて可変制御するサイレントチャージ）により、動作音と振動を大幅に低減しています。",
       "specs": [
         {
@@ -10528,7 +10438,7 @@
       "id": "shutter-cocking-cam",
       "order": 19,
       "swatchColor": "#ca8a04",
-      "groupKey": "shutter:SH_幕チャージ・カムリンク",
+      "groupKey": "shutter:shutter-cocking",
       "assembledPos": [
         0,
         0,
@@ -10544,7 +10454,6 @@
         -24,
         35
       ],
-      "edgeOpacity": 0.22,
       "title": "ハート形偏心チャージカム＆ツイン幕巻き上げロッカーレバー",
       "subtitle": "Heart-Profile Eccentric Cocking Cam Wheel & Twin Curtain Charging Rocker Levers",
       "category": "SH / 幕チャージ・カムリンク",
@@ -10555,10 +10464,6 @@
         "カムの頂点を越えた瞬間にロッカーレバーが急降下して幕リンクから完全に離れる（デカップリング）ことで、次の露光走行時にカムや歯車の慣性が一切邪魔にならないフリー走行を実現。",
         "カム外周には硬化焼入れ真鍮／鋼材を使い、高面圧の摺動接触でも50万回摩耗を防いでいます。"
       ],
-      "formula": {
-        "expression": "r_cam(φ) = r₀ + s_stroke · (3u² − 2u³)   (滑らかS字チャージ＋急退避カム曲線)",
-        "description": "滑らかなS字上昇曲線で振動を抑えつつ巻き上げ、頂点通過後に即座にリンクから離脱します。"
-      },
       "nextGenInnovation": "カムの着座終端スロープを極低速カーブに設計することで、チャージ完了時の「カチャッ」という金属衝突音と振動を従来比半分以下へ低減しています。",
       "specs": [
         {
@@ -10584,7 +10489,7 @@
       "id": "shutter-cam-switch",
       "order": 20,
       "swatchColor": "#16a34a",
-      "groupKey": "shutter:SH_シーケンス位相検出",
+      "groupKey": "shutter:shutter-cam",
       "assembledPos": [
         0,
         0,
@@ -10600,7 +10505,6 @@
         -26,
         33
       ],
-      "edgeOpacity": 0.22,
       "title": "チャージ完了検知 カム位置リーフスイッチ＆ロータリータイミング円盤",
       "subtitle": "Cocking-Completion Rotary Cam Home-Position Leaf Switch & Timing Encoder Disc",
       "category": "SH / シーケンス位相検出",
@@ -10611,10 +10515,6 @@
         "カム軸と一体の導電タイミング円盤および複接点金めっきリーフスイッチ（または光学スリット）が正確な停止角度を検知し、モーターへ瞬時にショートブレーキ（逆起電力制動）をかけて ±2° 以内にピタ止めします。",
         "接点は自己清浄効果（ワイピング作用）を持つ摺動リーフ構造とし、数十万回の開閉でも酸化被膜による接触不良を防ぎます。"
       ],
-      "formula": {
-        "expression": "θ_stop = θ_home ± 2°   (検知遅延 < 0.1 ms → DCモーター瞬時ショート制動)",
-        "description": "カム位相の正確な検知とモーター回生ショートブレーキにより、毎秒15コマ連写でも正確な位置決めを実現。"
-      },
       "nextGenInnovation": "最新世代では摩耗ゼロの非接触ホールICや光学エンコーダーと冗長組み合わせることで、異常回転やバッテリー電圧低下時のチャージ途中停止を安全リカバリします。",
       "specs": [
         {
@@ -10640,7 +10540,7 @@
       "id": "shutter-optical-sensor",
       "order": 21,
       "swatchColor": "#be123c",
-      "groupKey": "shutter:S11_光学自己診断・自動キャリブレーション",
+      "groupKey": "shutter:shutter-optical",
       "assembledPos": [
         0,
         0,
@@ -10656,7 +10556,6 @@
         4,
         24
       ],
-      "edgeOpacity": 0.22,
       "title": "幕速自己診断・赤外線フォトインタラプタ光学センサー",
       "subtitle": "Self-Diagnostic IR Photo-Interrupter Curtain Speed Monitor",
       "category": "S11 / 光学自己診断・自動キャリブレーション",
@@ -10667,10 +10566,6 @@
         "フォトインタラプタの仕組み：コの字型センサーの片側から目に見えない赤外線LED（波長 ~940 nm）を照射し、反対側の受光素子で受けます。シャッター幕の端が横切って光が途切れた瞬間の電圧変化から、走行時間をマイクロ秒単位で自動測定します。",
         "自動補正フィードバック：実測した走行速度と理想値のわずかな差をカメラが学習し、次のショットの電磁石オフ時刻をリアルタイムで自動補正。工場出荷時の精度を50万回まで維持し続けます。"
       ],
-      "formula": {
-        "expression": "t_error = t_measured − t_ideal   ⇒   t_next_rear = t_rear − K_p · t_error",
-        "description": "毎ショットの赤外線通過時間計測に基づくクローズドループ自己診断キャリブレーション。"
-      },
       "nextGenInnovation": "ハイエンド機ではこの光学モニターが異常な減速や羽根破損の予兆まで自動検知し、撮像センサーを傷つける前にエラー停止するフェイルセーフ保護機能も担っています。",
       "specs": [
         {
@@ -10696,7 +10591,7 @@
       "id": "shutter-blade-brakes",
       "order": 22,
       "swatchColor": "#dc2626",
-      "groupKey": "shutter:SH_600G羽根・跳ね返り制動",
+      "groupKey": "shutter:shutter-blade",
       "assembledPos": [
         0,
         0,
@@ -10712,7 +10607,6 @@
         0,
         34
       ],
-      "edgeOpacity": 0.22,
       "title": "上下デュアル 高減衰エラストマー跳ね返り防止ブレーキ＆摩擦シュー",
       "subtitle": "Upper & Lower High-Hysteresis Elastomer Blade-Bounce Brakes & Brass Friction Shoes",
       "category": "SH / 600G羽根・跳ね返り制動",
@@ -10723,10 +10617,6 @@
         "通常のゴムは反発弾性が高く跳ね返りますが、シャッターブレーキには反発係数 e < 0.08 の特殊高ヒステリシス・ブチル／シリコーンエラストマーと、羽根を横から挟み込む摩擦シューを組み合わせて運動エネルギーの95%以上を即座に熱へ変えます。",
         "上下両端へ対称配置することで、下向き走行（露光終了）だけでなく上向き復帰時のバウンドも完全封止しています。"
       ],
-      "formula": {
-        "expression": "e_rebound = v_after / v_before < 0.08   →   E_dissipated = (1 − e²)·½mv² > 99%",
-        "description": "反発係数0.08未満の粘弾性ブレーキが、超高速走行後の幕バウンドを物理的に根絶。"
-      },
       "nextGenInnovation": "低温−20℃でもガラス転移硬化しにくいワイドレンジ粘弾性エラストマー配合により、雪山でも真夏の砂漠でも変わらぬブレーキ減衰特性を発揮します。",
       "specs": [
         {
@@ -10752,7 +10642,7 @@
       "id": "shutter-shock-piston",
       "order": 23,
       "swatchColor": "#ec4899",
-      "groupKey": "shutter:SH_リンク衝撃吸収ダンパー",
+      "groupKey": "shutter:shutter-shock",
       "assembledPos": [
         0,
         0,
@@ -10768,7 +10658,6 @@
         10,
         26
       ],
-      "edgeOpacity": 0.22,
       "title": "リンク終端 キネティック・シリコンエアダンパー緩衝ピストン",
       "subtitle": "Linkage End-Stop Kinetic Silicone Air-Dashpot Impact Absorber Cylinders",
       "category": "SH / リンク衝撃吸収ダンパー",
@@ -10779,10 +10668,6 @@
         "リンクアームが終端ストッパーへ激突する前に、粘弾性シリコンリングと微小空気圧縮室（エアダッシュポット）が段階的に減速させることで、金属同士の甲高い「ガシャン！」音を上品な「コトッ」という低振動音へ調律します。",
         "さらにリンクアーム根元の衝撃応力ピークを半減させ、50万回走行時のアーム折損やピン抜けを防いでいます。"
       ],
-      "formula": {
-        "expression": "F_peak = E_rot / Δs_stroke   (緩衝ストローク Δs 拡大で衝撃力ピークを 60% 低減)",
-        "description": "段階的なシリコン＋空気圧縮緩衝により、金属リンク終端衝突のピーク衝撃力と高周波音を大幅カット。"
-      },
       "nextGenInnovation": "近年のプロ用ミラーレス機で評価される「心地よく静かなシャッターフィーリング」は、このリンク終端ダンパーの音響・振動チューニングによって作り込まれています。",
       "specs": [
         {
@@ -10808,7 +10693,7 @@
       "id": "shutter-fpc-driver",
       "order": 24,
       "swatchColor": "#f97316",
-      "groupKey": "shutter:SH_大電流シャッター制御配線",
+      "groupKey": "shutter:shutter-fpc",
       "assembledPos": [
         0,
         0,
@@ -10824,7 +10709,6 @@
         24,
         20
       ],
-      "edgeOpacity": 0.22,
       "title": "シャッター専用 大電流電磁駆動＆フライバック保護フレキ配線（FPC）",
       "subtitle": "High-Current Shutter Solenoid/Boost FPC Harness with Flyback Protection Diodes",
       "category": "SH / 大電流シャッター制御配線",
@@ -10835,10 +10719,6 @@
         "シャッター直近のFPC上に超高速リカバリ・ツェナー／ショットキー回路を配置し、サージ電圧を安全クランプしながら磁束を10マイクロ秒以内に一気にゼロへ落とします。",
         "大電流モーター線（太幅銅箔）と微小なIR光学センサー信号線を同一FPC内で離間・シールド配線し誤動作を防止しています。"
       ],
-      "formula": {
-        "expression": "V_flyback = −L · (dI / dt),   τ_decay = L / R_clamp < 10 μs",
-        "description": "高速クランプ回路により電磁石の逆起電力サージを防ぎつつ、超高速な磁場消滅を実現。"
-      },
       "nextGenInnovation": "高耐熱カプトン基材と金メッキZIFコネクタにより、シャッターユニット単独の着脱メンテナンス性を高めつつ、大電流ブースト駆動の電圧降下を極小化しています。",
       "specs": [
         {
@@ -10864,7 +10744,7 @@
       "id": "shutter-floating-grommets",
       "order": 25,
       "swatchColor": "#2563eb",
-      "groupKey": "shutter:SH_シャッター音響・振動絶縁",
+      "groupKey": "shutter:shutter-floating",
       "assembledPos": [
         0,
         0,
@@ -10880,7 +10760,6 @@
         0,
         19
       ],
-      "edgeOpacity": 0.22,
       "title": "4点フローティング粘弾性シリコン防振ブッシュ＆真鍮リミットカラー",
       "subtitle": "4-Corner Floating Viscoelastic Silicone Isolation Grommets & Brass Compression Sleeves",
       "category": "SH / シャッター音響・振動絶縁",
@@ -10891,10 +10770,6 @@
         "固有振動数 f_n をシャッター衝撃の主要振動帯域より十分低くチューニングした粘弾性シリコングロメットで4点懸架することで、振動伝達率 T_r を −15 dB 以上減衰させます。",
         "中央の真鍮リミットスリーブが規定の圧縮率（約15%）で正確に底突きするため、工場で誰がねじを締めても光学平行度（Z軸傾き）と防振性能が完璧に再現されます。"
       ],
-      "formula": {
-        "expression": "T_r = √[(1 + (2ζr)²) / ((1 − r²)² + (2ζr)²)]  ≪ 1   (r = f / f_n > √2 振動絶縁)",
-        "description": "4点フローティング粘弾性サスペンションが、シャッター衝撃波の本筐体・センサー伝達を大幅遮断。"
-      },
       "nextGenInnovation": "最新世代では防振ゴムの硬度を左右（駆動 bay 側 vs 光学窓側）で最適化し、偏心した質量中心に対して回転共振（ピッチ／ヨー揺れ）まで均等に抑え込んでいます。",
       "specs": [
         {
@@ -10920,7 +10795,7 @@
       "id": "shutter-base-damper",
       "order": 26,
       "swatchColor": "#c44536",
-      "groupKey": "shutter:S12_衝撃吸収・シャッターブレ防止",
+      "groupKey": "shutter:shutter-base",
       "assembledPos": [
         0,
         0,
@@ -10936,7 +10811,6 @@
         0,
         14
       ],
-      "edgeOpacity": 0.22,
       "title": "高剛性ベース基板 ＆ バウンド防止ブレーキ・フローティング防振ダンパー",
       "subtitle": "Shutter Base Chassis, Rebound Brake Damper & Anti-Vibration Floating Mounts",
       "category": "S12 / 衝撃吸収・シャッターブレ防止",
@@ -10947,10 +10821,6 @@
         "シャッターショック（微ブレ）の遮断：5000万画素を超える最新高画素カメラでは、羽根が止まる瞬間のわずかな衝撃だけで1ピクセル以上ブレて解像感が落ちます。四隅を弾性シリコン防振ブッシュ（青いゴムリング）でフローティング懸架することで、ボディ本体や隣の5軸IBISセンサーへの振動伝達を劇的にカットします。",
         "さらに静音化にも大きく貢献し、プロ機特有の「コトッ」という上品でキレのある低振動シャッター音を生み出します。"
       ],
-      "formula": {
-        "expression": "E_kinetic = ½ m v²  →  ブレーキ粘弾性ヒステリシスで 95% 以上を熱散逸（反発係数 e → 0）",
-        "description": "高い減衰比 ζ を持つブレーキゴムと防振ブッシュにより「バウンドゼロ」と「シャッターブレ極小化」を実現。"
-      },
       "nextGenInnovation": "最新の高画素ミラーレス（Sony α1 II / α7R V、Canon EOS R5 II等）では、フローティングダンパー構造と電子先幕シャッター（EFCS）の併用により、三脚なしの望遠・高画素撮影でもシャッターショックによる微ブレをほぼ完全に解消しています。",
       "specs": [
         {
@@ -10976,7 +10846,7 @@
       "id": "shutter-drive-bay-cover",
       "order": 27,
       "swatchColor": "#334155",
-      "groupKey": "shutter:SH27_駆動室気密密閉・油飛散防止_電磁ノイズ遮蔽",
+      "groupKey": "shutter:shutter-drive",
       "assembledPos": [
         0,
         0,
@@ -10992,7 +10862,6 @@
         0,
         102
       ],
-      "edgeOpacity": 0.22,
       "title": "駆動ベイ 遮音・防塵ステンレス密閉カバー ＆ パーマロイEMIシールド蓋",
       "subtitle": "Drive-Bay Acoustic Stainless Lid, Permalloy EMI Shield & Lubrication Seal Cover",
       "category": "SH27 / 駆動室気密密閉・油飛散防止＆電磁ノイズ遮蔽",
@@ -11003,10 +10872,6 @@
         "高周波アクチュエーター音の音響調律：内側の微細ウレタン吸音ライナーが、電磁石の吸着音やギア噛み合い音の高周波金属鳴き（4–12kHz）を吸収し、プロ機特有の「低く短いキレのあるシャッター音」へ整えます。",
         "パーマロイ磁気シールド：1/400秒ブーストコイルの大電流パルス磁界がすぐ前のレンズ通信ピン（M11）やマウント電子回路へノイズ誘導するのを防ぎます。"
       ],
-      "formula": {
-        "expression": "TL_acoustic = 20 log₁₀(m · f / 2ρc) + α_foam   (高周波金属鳴き −12 dB 減衰)",
-        "description": "質量則に基づくステンレス遮音蓋＋吸音ライナー＋パーマロイ磁気箔により、防塵・防油・静音・EMI保護を一括実現。"
-      },
       "nextGenInnovation": "2024–2026年のプロ機では、この駆動ベイカバーをシャッター前フレームとレーザー溶接・精密ビス止めで高剛性ボックス断面化することで、50万回耐久の高速連写でも駆動軸のたわみをゼロに抑えています。",
       "specs": [
         {
@@ -11032,7 +10897,7 @@
       "id": "shutter-blade-rivets",
       "order": 28,
       "swatchColor": "#cbd5e1",
-      "groupKey": "shutter:SH28_4節平行リンク超軽量関節・0_05g級無潤滑ピボット軸",
+      "groupKey": "shutter:shutter-blade",
       "assembledPos": [
         0,
         0,
@@ -11048,7 +10913,6 @@
         14,
         74
       ],
-      "edgeOpacity": 0.22,
       "title": "16連 超軽量チタン中空マイクロリベット ＆ PTFE低摩擦ピボットワッシャー群",
       "subtitle": "16x Ultralight Ti-6Al-4V Hollow Micro-Rivets & PTFE Low-Friction Pivot Washers",
       "category": "SH28 / 4節平行リンク超軽量関節・0.05g級無潤滑ピボット軸",
@@ -11059,10 +10923,6 @@
         "無潤滑PTFEワッシャーによる焼き付き＆油汚れ防止：シャッター羽根の関節にはホコリを吸着する液体オイルを差せません。自己潤滑性PTFE（動摩擦係数 μ ≈ 0.04）の極薄ワッシャーを挟み、50万回もの高速摺動でも摩耗粉を出さずに滑らかに稼働します。",
         "μm級のカシメ隙間（アキシャルクリアランス）制御：リベットのカシメが緩すぎると羽根が暴れて擦れ合い、きつすぎると走行ムラになります。全16点をサーボ圧入機で±5μmの軸方向隙間管理を行っています。"
       ],
-      "formula": {
-        "expression": "F_inertia = m_rivet · a_peak (a_peak ≈ 250 G)   ⇒   中空Ti化で慣性衝撃 −65% 削減!",
-        "description": "羽根先端の可動質量を1ミリグラム単位で削る中空チタンリベットが、1/8000秒高速走行と50万回耐久の鍵。"
-      },
       "nextGenInnovation": "最新フラッグシップのカーボン羽根シャッターでは、リベット表面へ超硬質DLC膜をコーティングしてカーボン繊維端面による摩耗（カーボンエッジ削れ）を完全に防ぐ技術が採用されています。",
       "specs": [
         {
@@ -11088,7 +10948,7 @@
       "id": "shutter-pocket-lighttrap",
       "order": 29,
       "swatchColor": "#0f172a",
-      "groupKey": "shutter:SH29_1_8000s露光時の格納ポケット光漏れ遮断・逆光黒浮",
+      "groupKey": "shutter:shutter-pocket",
       "assembledPos": [
         0,
         0,
@@ -11104,7 +10964,6 @@
         28,
         68
       ],
-      "edgeOpacity": 0.22,
       "title": "上下シャッター羽根格納ポケット・植毛迷光トラップ ＆ 遮光フード",
       "subtitle": "Upper & Lower Blade-Storage Pocket Velvet Light-Trap Seals & Baffle Hoods",
       "category": "SH29 / 1/8000s露光時の格納ポケット光漏れ遮断・逆光黒浮き防止",
@@ -11115,10 +10974,6 @@
         "ラビリンス遮光フード＆超黒植毛：入口に鋭角の遮光ひさし（フード）を突き出し、内壁に反射率0.1%台の無発塵マイクロ植毛を貼ることで、ポケットへ入った斜光線を確実に消滅させます。",
         "羽根の空気クッション整流効果：高速走行した羽根がポケットへ飛び込む瞬間、閉じ込められた空気が急圧縮されて羽根を跳ね返す（エアバウンス）現象を防ぐため、側面に微小な空気逃がしベントスリットを備えています。"
       ],
-      "formula": {
-        "expression": "P_air_cushion = ½ ρ v²   ⇒   側面ベント逃がし＋植毛ライトトラップでバウンス＆迷光を同時抑制",
-        "description": "羽根ポケットの光学的遮光と空力的な空気抜きを両立し、1/8000秒高速走行の安定性と逆光コントラストを両立。"
-      },
       "nextGenInnovation": "大口径F1.2・超広角レンズ時代に入りシャッター開口直近への入射角がさらに急峻化したため、上下ポケットフードの先端形状は3Dレイトレーシング解析で最適化されています。",
       "specs": [
         {
@@ -11144,7 +10999,7 @@
       "id": "shutter-curtain-hooks",
       "order": 30,
       "swatchColor": "#64748b",
-      "groupKey": "shutter:SH30_高速チャージ係合・チャージ中誤走行防止フェイルセーフ",
+      "groupKey": "shutter:shutter-curtain",
       "assembledPos": [
         0,
         0,
@@ -11160,7 +11015,6 @@
         -32,
         44
       ],
-      "edgeOpacity": 0.22,
       "title": "先幕・後幕 ステンレス巻上げキャッチフック ＆ 暴走防止インターロック爪",
       "subtitle": "1st/2nd Curtain Stainless Charging Catch Hooks & Safety Interlock Pawls",
       "category": "SH30 / 高速チャージ係合・チャージ中誤走行防止フェイルセーフ",
@@ -11171,10 +11025,6 @@
         "高速離脱クリアランス（フライバック回避）：チャージ完了後、フックは瞬時に安全退避位置へ戻り、次の露光走行時に時速50kmで振り抜けるリンクアームと一切干渉しないクリアランスを確保します。",
         "真鍮ローラーフォロワーの転がり接触：カム面との摺動をすべり摩擦から転がり摩擦へ変えることで、コアレスDCモーターの消費電力を下げ、50万回チャージの耐摩耗性を確保しています。"
       ],
-      "formula": {
-        "expression": "Δy_overlap(t) ≥ 1.8 mm  (∀ t ∈ t_charge)   ⇒   高速チャージ中の光漏れ確率 0%",
-        "description": "先幕・後幕の巻き上げ位相を機械フックで完全同期し、露光時以外のセンサー遮光をフェイルセーフ保証。"
-      },
       "nextGenInnovation": "電子先幕（EFCS）とメカフルシャッターを自動切替する最新カメラでは、先幕フックのみを独立解放・保持できるセパレート制御に対応し、高速応答と長寿命を両立しています。",
       "specs": [
         {
@@ -11200,7 +11050,7 @@
       "id": "shutter-coil-heat-bridge",
       "order": 31,
       "swatchColor": "#ea580c",
-      "groupKey": "shutter:SH31_高速連写時の電磁コイル発熱排出・磁気リリース遅延ドリフ",
+      "groupKey": "shutter:shutter-coil",
       "assembledPos": [
         0,
         0,
@@ -11216,7 +11066,6 @@
         26,
         48
       ],
-      "edgeOpacity": 0.22,
       "title": "1/400s 電磁ブーストコイル ＆ 保持ソレノイド専用 銅ヒートブリッジ放熱板",
       "subtitle": "1/400s Boost-Coil Copper Thermal Bridge & Holding-Solenoid Dissipation Shroud",
       "category": "SH31 / 高速連写時の電磁コイル発熱排出・磁気リリース遅延ドリフト防止",
@@ -11227,10 +11076,6 @@
         "シャッター発熱のセンサー隔離：シャッター駆動室の発熱がすぐ数mm裏のCMOSセンサーへ伝わると暗電流ノイズが増えます。純銅ブリッジが熱をセンサーとは逆のボディ右側マグネシウムフレームへ優先バイパス排出します。",
         "シリコーンTIM＋銅ラミネートテープの柔軟密着：フローティング防振懸架（SH25）されたシャッターユニットの動きを妨げずに熱だけを逃がす低剛性熱ブリッジ構造です。"
       ],
-      "formula": {
-        "expression": "R_coil(T) = R_20 · [ 1 + 0.00393 (T − 20) ]   ⇒   ΔT 抑制で 1/8000 s 露出誤差 < ±0.05 EV",
-        "description": "ブースト＆保持コイルの温度上昇を純銅ヒートブリッジで抑え込み、プロスポーツの極限連写でも一貫した幕速と露出精度を維持。"
-      },
       "nextGenInnovation": "フラッグシップ機では、この放熱ブリッジで温度上昇を抑えつつ、さらにIR光学速度モニター（SH21）の毎コマ実測結果からブースト電流をフィードバック補正する「熱×光学ハイブリッド制御」を行っています。",
       "specs": [
         {
@@ -11256,7 +11101,7 @@
       "id": "shutter-x-sync-contact",
       "order": 32,
       "swatchColor": "#0ea5e9",
-      "groupKey": "shutter:SH32_ストロボ同調最速1_400s・先幕到達マイクロ秒検出ト",
+      "groupKey": "shutter:shutter-x",
       "assembledPos": [
         0,
         0,
@@ -11272,7 +11117,6 @@
         -22,
         38
       ],
-      "edgeOpacity": 0.22,
       "title": "1/400s ストロボ X接点（先幕全開同期トリガー）＆ マイクロ秒閃光タイミングゲート",
       "subtitle": "1/400s Flash X-Sync Curtain-1 Full-Open Trigger Contact & Timing Gate",
       "category": "SH32 / ストロボ同調最速1/400s・先幕到達マイクロ秒検出トリガー",
@@ -11283,10 +11127,6 @@
         "マイクロ秒ジッタの重要性：1/400秒同調時の全開ウィンドウ余裕時間はわずか約0.3ミリ秒（300マイクロ秒）しかありません！X接点トリガーの遅延がわずかでもブレると画面の下端が後幕の影で黒くケラレるため、チャタリングゼロの高精度検知ゲートが必須です。",
         "絶縁フォトカプラ／高速MOSFET出力段：高電圧の大型スタジオストロボをシンクロ端子へ繋いでもカメラ内部が破損しないよう、耐圧保護回路を介してゼロ遅延トリガーを出力します。"
       ],
-      "formula": {
-        "expression": "t_window = t_shutter − t_travel   (1/400 s = 2.5 ms, t_travel = 2.2 ms ⇒ 全開余裕わずか 0.3 ms!)",
-        "description": "先幕到達をマイクロ秒精度で捉えるX接点トリガーが、スタジオ撮影・日中シンクロの極限1/400秒同調を実現。"
-      },
       "nextGenInnovation": "2024–2026年プロ機（Sony α1 II等）では、カーボン幕＋電磁ブーストによる2.2ms級超高速走行とマイクロ秒X接点同期により、メカニカルシャッター単体で驚異の1/400秒（APS-Cクロップ時1/500秒）ストロボ同調を実現しています。",
       "specs": [
         {
@@ -11312,7 +11152,7 @@
       "id": "shutter-rear-mask-gasket",
       "order": 33,
       "swatchColor": "#1e293b",
-      "groupKey": "shutter:SH33_シャッター・センサー界面の完全遮光・防塵_気密遮音シー",
+      "groupKey": "shutter:shutter-rear",
       "assembledPos": [
         0,
         0,
@@ -11328,7 +11168,6 @@
         0,
         8.5
       ],
-      "edgeOpacity": 0.22,
       "title": "シャッター背面 36×24mm ナイフエッジ遮光マスク ＆ センサー室気密EPDMガスケット",
       "subtitle": "Rear 36×24mm Knife-Edge Stray-Light Mask & Sensor-Chamber EPDM Acoustic Seal",
       "category": "SH33 / シャッター・センサー界面の完全遮光・防塵＆気密遮音シール",
@@ -11339,10 +11178,6 @@
         "IBIS浮上ステージへの風圧（エアパルス）緩和：シャッター羽根が毎秒10メートル超で縦走する際、すぐ背後のIBISセンサー面へ空気の圧力波が叩きつけられます。全周EPDMシールの微細通気ダクトが圧力波を逃がし、フローティングセンサーの微揺れを抑えます。",
         "防塵の最終防衛ライン：シャッターの駆動室やカメラ内部のボタン隙間から侵入した極小ダストがセンサー室へ回り込む最後の隙間を全周封止します。"
       ],
-      "formula": {
-        "expression": "ΔP_pulse ∝ ρ_air · v_blade²   ⇒   背面EPDMシール＆圧力ベントでIBIS風圧外乱を遮断",
-        "description": "シャッター最背面のナイフエッジ遮光とEPDM気密シールの組み合わせが、センサー室の清浄性と高コントラスト描写を守り抜く。"
-      },
       "nextGenInnovation": "高感度・高画素化が進む最新フルサイズ機では、センサー直前わずか2mmに位置するこの背面マスクの反射率を0.2%以下へ抑え込むことで、夜景・天体撮影での明るい星周りのハローゴーストを徹底的に抑えています。",
       "specs": [
         {
@@ -11368,7 +11203,7 @@
       "id": "shutter-no-nc-switch",
       "order": 34,
       "swatchColor": "#0ea5e9",
-      "groupKey": "shutter:SH34_ミラーレス常時ライブビュー省電力ロック機構",
+      "groupKey": "shutter:shutter-no",
       "assembledPos": [
         0,
         0,
@@ -11384,7 +11219,6 @@
         36,
         56
       ],
-      "edgeOpacity": 0.22,
       "title": "SH34. 常開／常閉（NO/NC）電磁石切替ロックレバー＆省電力ライブビューカム",
       "subtitle": "Normally-Open / Normally-Closed Electromagnet Switching Lock Lever (US20160109782A1)",
       "category": "SH34 / ミラーレス常時ライブビュー省電力ロック機構",
@@ -11394,10 +11228,6 @@
         "一眼レフと異なりミラーレス機は電源ON中の99%の時間を「シャッター全開（ライブビュー）」で過ごします。機械式係止爪が先幕チャージ位置を無電力保持することで、シャッターユニットの待機消費電力をゼロにし、同時にコイルの発熱（センサーへの熱ノイズ源）を根絶します。",
         "シャッターボタン全押しと同時に電子先幕／メカ先幕切替シーケンスが作動し、わずか数ミリ秒で電磁石保持へスムーズに引き継ぎます。"
       ],
-      "formula": {
-        "expression": "P_hold_LV = 0.0 mW (機械ロック保持)   vs   P_coil_on ≈ 650 mW (連続通電時)",
-        "description": "常開／常閉機械ロック切替により、ライブビュー長時間待機時のバッテリー消費とコイル発熱をゼロ化。"
-      },
       "nextGenInnovation": "省電力化と8K動画収録時のシャッター室無発熱化を同時に支える、ミラーレス専用シャッター設計ならではの重要特許機構です。",
       "specs": [
         {
@@ -11423,7 +11253,7 @@
       "id": "shutter-sensor-shield",
       "order": 35,
       "swatchColor": "#6366f1",
-      "groupKey": "shutter:SH35_レンズ交換時センサー防塵保護幕・耐衝撃誤開防止ロック",
+      "groupKey": "shutter:shutter-sensor",
       "assembledPos": [
         0,
         0,
@@ -11439,7 +11269,6 @@
         26,
         34
       ],
-      "edgeOpacity": 0.22,
       "title": "SH35. 電源OFFセンサー保護シャッター閉鎖インターロック爪＆駆動カム",
       "subtitle": "Power-Off Sensor Protection Dust-Shield Interlock Latch & Drive Cam",
       "category": "SH35 / レンズ交換時センサー防塵保護幕・耐衝撃誤開防止ロック",
@@ -11449,10 +11278,6 @@
         "通常のメカシャッターは電源OFF時に幕が開いた待機姿勢に戻りますが、本インターロック機構はチャージモーターの逆転カム位相を利用して電源遮断直前に保護幕を静かに閉鎖し、機械デッドロック爪で無電力施錠します。",
         "万一レンズ交換中に誤って指が近づくリスクも考慮し、剛性の高いチタン／カーボン複合最外羽根と過負荷逃げクラッチを組み合わせています。"
       ],
-      "formula": {
-        "expression": "t_close_off ≈ 45 ms (電源OFF自動施錠)   /   無電力保持耐衝撃 > 100 G",
-        "description": "電源断時の自動閉鎖＆機械ロックにより、屋外でのレンズ交換時の砂塵・水滴から撮像素子を徹底防護。"
-      },
       "nextGenInnovation": "近年では電源OFF時のセンサー保護幕を標準装備することが、屋外フィールドのプロミラーレス機における必須信頼性要件となっています。",
       "specs": [
         {
@@ -11478,7 +11303,7 @@
       "id": "shutter-diff-cock-cam",
       "order": 36,
       "swatchColor": "#d97706",
-      "groupKey": "shutter:SH36_15fps高速連写チャージピーク電流半減・静音巻上カム",
+      "groupKey": "shutter:shutter-diff",
       "assembledPos": [
         0,
         0,
@@ -11494,7 +11319,6 @@
         -8,
         42
       ],
-      "edgeOpacity": 0.22,
       "title": "SH36. 先幕／後幕 位相差ディファレンシャル・コッキングカム＆偏心ピン",
       "subtitle": "Leading/Trailing Curtain Differential Cocking Cam & Offset Eccentric Pin (US20110103787A1)",
       "category": "SH36 / 15fps高速連写チャージピーク電流半減・静音巻上カム",
@@ -11504,10 +11328,6 @@
         "高速シャッター（幕速2.5 ms）の駆動バネは非常に強力なため、先幕・後幕を同位相で巻き上げるとチャージモーターのピーク電流が急増し、ギヤ打音とバッテリー電圧降下を引き起こします。",
         "二段位相差カム（60°オフセット）によりトルク山を平坦化することで、小型コアレスモーターのまま最高15fps超の連続チャージと、耳障りな衝撃音の低減を両立します。"
       ],
-      "formula": {
-        "expression": "T_peak(Δφ=60°) ≈ 0.58 · T_peak(Δφ=0°)   ⇒   巻上ピーク電流 −42% 低減",
-        "description": "先幕・後幕のバネチャージ位相を60°分散する偏心カム曲線により、高速連写時の静音性と省電力を両立。"
-      },
       "nextGenInnovation": "精密ワイヤー放電加工（EDM）による滑らかなサイクロイドカム曲線と固体潤滑MoS₂コーティングにより、50万回連写でもチャージ速度が劣化しません。",
       "specs": [
         {
@@ -11533,7 +11353,7 @@
       "id": "shutter-rebound-governor",
       "order": 37,
       "swatchColor": "#dc2626",
-      "groupKey": "shutter:SH37_1_8000s幕跳ね返り_二重露光ムラ_完全封止ブレー",
+      "groupKey": "shutter:shutter-rebound",
       "assembledPos": [
         0,
         0,
@@ -11549,7 +11369,6 @@
         -12,
         62
       ],
-      "edgeOpacity": 0.22,
       "title": "SH37. 高速幕バウンド吸収ブレーキレバー＆摩擦クラッチ・ガバナー機構",
       "subtitle": "High-Speed Curtain-Bounce Brake Lever & Friction Clutch Rebound Governor",
       "category": "SH37 / 1/8000s幕跳ね返り（二重露光ムラ）完全封止ブレーキ",
@@ -11559,10 +11378,6 @@
         "1/8000秒の極狭スリット（幅わずか約0.9 mm）で露光した後、後幕がストッパーでわずか0.5 mmでも跳ね返ると光が再侵入して画面端に帯状の露光ムラ（バウンドカブリ）が発生します。",
         "制動直前の最終2°で摩擦ブレーキ爪がアームと係合し、跳ね返り方向（逆転方向）の運動エネルギーを摩擦熱とラッチ係止で瞬時に散逸させます。"
       ],
-      "formula": {
-        "expression": "e_rebound < 0.04  (バウンド復帰量 < 0.08 mm ≪ 1/8000s スリット幅 0.9 mm)",
-        "description": "反発係数 0.04 未満の機械的バウンド捕捉により、最高速1/8000s撮影でも画面端まで完全均一な露光を保証。"
-      },
       "nextGenInnovation": "50万回耐久クラスでは、エラストマー緩衝材（SH11）の経年硬化に左右されない機械式摩擦ガバナーを併用することで、低温−20℃でも幕バウンドゼロを維持します。",
       "specs": [
         {
@@ -11588,7 +11403,7 @@
       "id": "shutter-slit-baffle-wall",
       "order": 38,
       "swatchColor": "#0f172a",
-      "groupKey": "shutter:SH38_F1_2大口径斜め入射光・ゲート端面反射フレア完全吸収",
+      "groupKey": "shutter:shutter-slit",
       "assembledPos": [
         0,
         0,
@@ -11604,7 +11419,6 @@
         -28,
         82
       ],
-      "edgeOpacity": 0.22,
       "title": "SH38. 傾斜マットブラック迷光遮断アパーチャーバッフル壁（18°ナイフエッジ）",
       "subtitle": "Inclined Matte-Black Aperture Stray-Light Baffle Wall (US20020172519A1)",
       "category": "SH38 / F1.2大口径斜め入射光・ゲート端面反射フレア完全吸収",
@@ -11614,10 +11428,6 @@
         "大口径F1.2レンズの周辺光束は光軸に対して最大30°近い急角度でシャッターゲートを通過します。垂直な金属端面ではかすめ角（Grazing Angle）のフレネル反射率が跳ね上がり、センサー端へ白い帯状フレアを落とします。",
         "端面を18°後方傾斜させ、さらに微細セレーション溝＋光吸収植毛マット処理を施すことで、かすめ角入射光を内部トラップ側へ反らし、反射率0.15%以下へ落とし込みます。"
       ],
-      "formula": {
-        "expression": "θ_baffle = 18° 傾斜 ＋ セレーション多重反射  →  かすめ角反射率 R_grazing < 0.15 %",
-        "description": "大口径レンズの斜め入射光がアパーチャー端面で鏡面反射するのを幾何学的に完全遮断。"
-      },
       "nextGenInnovation": "最新ミラーレスはフランジバックが18mmと短くレンズ後玉がシャッターに極近接するため、傾斜ナイフエッジ迷光壁の設計が逆光ヌケの良さを大きく左右します。",
       "specs": [
         {
@@ -11643,7 +11453,7 @@
       "id": "shutter-cycle-hall",
       "order": 39,
       "swatchColor": "#10b981",
-      "groupKey": "shutter:SH39_50万回経年幕速自動キャリブレーション・露出精度維持",
+      "groupKey": "shutter:shutter-cycle",
       "assembledPos": [
         0,
         0,
@@ -11659,7 +11469,6 @@
         -38,
         30
       ],
-      "edgeOpacity": 0.22,
       "title": "SH39. 幕速自己診断リアルタイム・ホール効果センサー＆タイミング基準磁石",
       "subtitle": "Sub-Millisecond Curtain-Velocity Diagnostic Hall Sensor & Timing Reference Magnet",
       "category": "SH39 / 50万回経年幕速自動キャリブレーション・露出精度維持",
@@ -11669,10 +11478,6 @@
         "1/8000秒（125 μs）の露光時間は、先幕と後幕の離脱タイミング差で決まります。もし極寒の雪山でグリス粘度がわずかに上がって幕速が30 μs遅れるだけで、1/8000秒の露出は24%も狂ってしまいます。",
         "毎ショットの走行時間 T_run をホールICで実測してマイコンがフィードバック補正することで、−20℃の極寒から50万回撮影後まで全シャッター速度で±0.05 EV以内の完璧な露出精度を維持します。"
       ],
-      "formula": {
-        "expression": "t_exp = t_release2 − t_release1 + (T_run2 − T_run1)  →  自動学習誤差 ≤ ±5 μs",
-        "description": "毎回の実測幕速から電磁石の開放タイミングをマイクロ秒単位で自律補正するクローズドループ露出制御。"
-      },
       "nextGenInnovation": "プロ用フラッグシップ機の「電子先幕⇔メカ後幕」シームレス切替や、1/400s極限ストロボ同調のタイミング精度は、この幕速リアルタイム自己診断センサーによって初めて成立しています。",
       "specs": [
         {
@@ -15605,7 +15410,7 @@
       "id": "lcd-rear-bezel-glass",
       "order": 1,
       "swatchColor": "#38bdf8",
-      "groupKey": "lcd:表面保護・タッチ入力_Touch_Cover_Glass",
+      "groupKey": "lcd:lcd-rear",
       "assembledPos": [
         6,
         -7,
@@ -15621,7 +15426,6 @@
         0,
         -352
       ],
-      "edgeOpacity": 0.22,
       "title": "D01. OCA光学接着カバーガラス＆静電容量タッチ層（PCAP）",
       "subtitle": "Zero-Air-Gap OCA Optically Bonded Aluminosilicate Glass & PCAP ITO Touch Grid",
       "category": "表面保護・タッチ入力 / Touch Cover Glass",
@@ -15632,10 +15436,6 @@
         "指先が近づくとITO格子交点の相互静電容量 ΔC_m がピコファラド単位で変化し、タッチAFポイント移動やタッチトラッキング追尾を数ミリ秒で認識します。",
         "最表面にはAR（反射防止）コートと防汚フッ素コートを多層蒸着し、屋外晴天時の高い視認性と指滑りの良さを両立しています。"
       ],
-      "formula": {
-        "expression": "R_interface = ((n₁ - n₂) / (n₁ + n₂))² ≈ 0.004%   (n_glass ≈ 1.51, n_OCA ≈ 1.49)",
-        "description": "フレネル反射式。空気層を排除したOCAダイレクトボンディングにより、直射日光下でのコントラスト低下（白浮き）を根本解消します。"
-      },
       "nextGenInnovation": "手袋着用時や雨滴付着時でも誤作動を抑える自己容量・相互容量ハイブリッドスキャンにより、厳冬期のフィールド撮影でも確実なタッチAF操作が可能です。",
       "specs": [
         {
@@ -15661,7 +15461,7 @@
       "id": "lcd-ips-panel",
       "order": 2,
       "swatchColor": "#0ea5e9",
-      "groupKey": "lcd:映像表示セル_IPS_LCD_Cell",
+      "groupKey": "lcd:lcd-ips",
       "assembledPos": [
         6,
         -7,
@@ -15677,7 +15477,6 @@
         0,
         -324
       ],
-      "edgeOpacity": 0.22,
       "title": "D02. 3.2型 210万ドット広視野角IPS液晶セル＆COFドライバ",
       "subtitle": "3.2-Type 2.1M-Dot Wide-Gamut IPS Liquid Crystal Cell & COF Driver IC",
       "category": "映像表示セル / IPS LCD Cell",
@@ -15688,10 +15487,6 @@
         "直交ニコル配置の偏光板の間で、電界強度により液晶層を通過する偏光面を制御し、RGB各サブピクセルの透過光量 I = I₀·sin²(2φ)·sin²(π·Δn·d / λ) を10bit階調で制御。",
         "パネル下縁のCOF（Chip-on-Film）ソースドライバICがメイン基板からのMIPI-DSI映像信号を高速ライン駆動します。"
       ],
-      "formula": {
-        "expression": "T(λ) = sin²(2φ(V)) · sin²(π · Δn · d / λ)   (IPS面内スイッチング透過率)",
-        "description": "駆動電圧 V で液晶配向角 φ を回転させることで、斜め視認でも階調反転のない高精度な輝度変調を実現します。"
-      },
       "nextGenInnovation": "4画素をRGBWまたは高開口率LTPS-TFTで駆動する「屋外晴天モード」では、ガンマ曲線と輝度を自動最適化して真昼の雪原でも明瞭に視認できます。",
       "specs": [
         {
@@ -15717,7 +15512,7 @@
       "id": "lcd-backlight-stack",
       "order": 3,
       "swatchColor": "#7dd3fc",
-      "groupKey": "lcd:高輝度バックライト_BEF_Backlight",
+      "groupKey": "lcd:lcd-backlight",
       "assembledPos": [
         6,
         -7,
@@ -15733,7 +15528,6 @@
         0,
         -312
       ],
-      "edgeOpacity": 0.22,
       "title": "D03. デュアルBEFプリズムシート＆エッジLED導光バックライト",
       "subtitle": "Dual-BEF Micro-Prism Collimation Stack, Edge-Lit LED Array & Acrylic LGP",
       "category": "高輝度バックライト / BEF Backlight",
@@ -15744,10 +15538,6 @@
         "直交2層のマイクロプリズムシート（頂角90°）が斜め方向へ逃げる光を全反射でリサイクルしつつ正面方向へ集光（コリメート）し、正面輝度を約1.8〜2.1倍へ増幅します。",
         "背面には反射率98%超の多層誘電体ESR（Enhanced Specular Reflector）ミラーシートを敷き、光のロスを極限まで回収しています。"
       ],
-      "formula": {
-        "expression": "L_out = G_BEF1 · G_BEF2 · η_LGP · Φ_LED / A_panel   (G_dual ≈ 1.9× 輝度増幅)",
-        "description": "直交デュアルBEFプリズムによる光の角度再利用（リサイクリング）効果。バッテリー消費を抑えながら屋外視認性を確保します。"
-      },
       "nextGenInnovation": "蛍光体KSF/量子ドット（QD）白色LEDと高効率DBEF（反射型偏光フィルム）の採用により、偏光板での50%光吸収ロスを回収し、広色域と省電力を両立しています。",
       "specs": [
         {
@@ -15773,7 +15563,7 @@
       "id": "lcd-chassis-shell",
       "order": 4,
       "swatchColor": "#334155",
-      "groupKey": "lcd:モニター筐体_LCD_Rear_Shell",
+      "groupKey": "lcd:lcd-chassis",
       "assembledPos": [
         6,
         -7,
@@ -15789,7 +15579,6 @@
         0,
         -288
       ],
-      "edgeOpacity": 0.22,
       "title": "D04. CNCアルミ／マグネシウム薄型モニター外装＆放熱シールド",
       "subtitle": "Ultra-Slim CNC Aluminum/Magnesium Monitor Rear Tray & Thermal Foil",
       "category": "モニター筐体 / LCD Rear Shell",
@@ -15800,10 +15589,6 @@
         "周囲をゴムガスケットで封止し、雨天撮影時にモニター裏面へ水滴が回り込んでも内部LED駆動回路をショートさせません。",
         "モニターを閉じてボディへ格納する際、底部の小型ネオジム磁石とホールICが「画面反転・裏返し収納」を非接触検知して自動消灯します。"
       ],
-      "formula": {
-        "expression": "θ_twist = (T · L) / (G · J_box)   (閉断面ボックスリブによる高ねじり剛性)",
-        "description": "片持ちタッチ操作時のねじれ角抑制。高せん断弾性率 G の金属シェルが薄型でありながら確かな操作剛性を生みます。"
-      },
       "nextGenInnovation": "4軸マルチアングル機構を載せてもボディが厚くならないよう、パネル背面トレイの肉厚を0.6 mm級まで極限薄肉化しつつ局部強化リブで剛性を確保しています。",
       "specs": [
         {
@@ -15829,7 +15614,7 @@
       "id": "lcd-orientation-hall",
       "order": 5,
       "swatchColor": "#16a34a",
-      "groupKey": "lcd:4軸LCD_非接触角度・反転検知",
+      "groupKey": "lcd:lcd-orientation",
       "assembledPos": [
         6,
         -7,
@@ -15845,7 +15630,6 @@
         -22,
         -282
       ],
-      "edgeOpacity": 0.22,
       "title": "D05. 2軸磁気ホール開閉・180°反転自動検知センサー基板＆ネオジム磁石",
       "subtitle": "Dual-Axis Hall-Effect LCD Flip/Stow Orientation Sensor PCB & Trigger Magnets",
       "category": "4軸LCD / 非接触角度・反転検知",
@@ -15856,10 +15640,6 @@
         "モニターを裏返して収納（液晶面を内側へ保護）した瞬間にバックライトとタッチパネルを即座に完全遮断し、誤タッチとバッテリー消費をゼロ化します。",
         "横開き展開を検知すると自動的にEVF近接センサーを無効化し、ローアングル撮影で体がファインダーに近づいても画面が暗転するストレスを防ぎます。"
       ],
-      "formula": {
-        "expression": "V_Hall = (I · B_z) / (n · e · d)   →  極性判定で {収納 / 展開 / 180°反転} 識別",
-        "description": "2系統ホールセンサーが磁束の向きと強さから4軸画面の姿勢を非接触・遅延ゼロで自動判定。"
-      },
       "nextGenInnovation": "自撮り反転（180°）を検知した瞬間に自動で人物瞳AF・3秒セルフタイマー・赤枠タリー表示へ切り替えるVlog連携ワークフローのトリガー源となっています。",
       "specs": [
         {
@@ -15885,7 +15665,7 @@
       "id": "lcd-swivel-clutch",
       "order": 6,
       "swatchColor": "#eab308",
-      "groupKey": "lcd:4軸LCD_定トルク摩擦クラッチ",
+      "groupKey": "lcd:lcd-swivel",
       "assembledPos": [
         44.8,
         -7,
@@ -15901,7 +15681,6 @@
         18,
         -278
       ],
-      "edgeOpacity": 0.22,
       "title": "D06. 270°水平軸 多板ステンレス皿ばね（ベルビル）定トルク摩擦クラッチ",
       "subtitle": "270° Horizontal-Axis Belleville Disc-Spring Friction Torque Clutch Stack",
       "category": "4軸LCD / 定トルク摩擦クラッチ",
@@ -15912,10 +15691,6 @@
         "ステンレスとリン青銅の異種金属摺動面へ高粘度フッ素系ダンピンググリスを封入し、静摩擦と動摩擦の差を縮めることで「動き出しのカクつき（スティック・スリップ）」を消しています。",
         "ジンバル搭載時や歩行撮影中の激しい振動でも画面角度がズレない保持力と、片手親指で角度変更できる軽快さの黄金バランスを0.01 N·m単位で管理しています。"
       ],
-      "formula": {
-        "expression": "T_clutch = N_faces · μ · F_Belleville · R_eff ≈ 0.18 N·m   (摩耗自己補償定トルク)",
-        "description": "多板皿ばねの平坦荷重特性と異種材摩擦板が、10万回開閉後もガタつかずピタッと止まる保持力を実現。"
-      },
       "nextGenInnovation": "表面マイクロディンプル（微小油溜まり窪み）加工を施した摩擦ワッシャーにより、グリス切れによるギシギシ音やトルク劣化を10年スパンで防いでいます。",
       "specs": [
         {
@@ -15941,7 +15716,7 @@
       "id": "lcd-swivel-hinge",
       "order": 7,
       "swatchColor": "#d97706",
-      "groupKey": "lcd:バリアングル2軸関節_Swivel_Hinge",
+      "groupKey": "lcd:lcd-swivel",
       "assembledPos": [
         44.8,
         -7,
@@ -15957,8 +15732,7 @@
         0,
         -266
       ],
-      "edgeOpacity": 0.22,
-      "title": "D05. 横開き176°／回転270° バリアングル2軸フリクションヒンジ＆同軸配線",
+      "title": "D07. 横開き176°／回転270° バリアングル2軸フリクションヒンジ＆同軸配線",
       "subtitle": "Dual-Axis 176° Open / 270° Swivel Friction Hinge & Coiled Display FPC",
       "category": "バリアングル2軸関節 / Swivel Hinge",
       "plainAnalogy": "画面を横にパカッと開いてクルッと自分の方へ向けられる「精密な金属の関節」です。どの角度で手を離してもピタッと止まる絶妙な硬さを持ち、軸の真ん中を映像ケーブルが傷まず通り抜けます。",
@@ -15968,11 +15742,7 @@
         "0°・90°・180°の基準位置には微細なクリックディテント溝を設け、手元を見なくても水平・反転ポジションが指先の感触で分かります。",
         "極細同軸ケーブルまたは高屈曲耐性圧延銅箔FPCをヒンジ回転軸に沿って中立面配置することで、10万回以上の開閉サイクルでも断線を防ぎます。"
       ],
-      "formula": {
-        "expression": "τ_hold = n_disc · μ · F_spring · r_eff  >  m_LCD · g · L_cg",
-        "description": "多板皿ばね摩擦ヒンジの保持トルク条件。モニター自重モーメントと加速度振動に対して余裕ある静止摩擦を確保します。"
-      },
-      "nextGenInnovation": "従来のバリアングル機は左側I/Oケーブル（HDMI/USB-C）と画面が干渉する弱点がありましたが、次のD06「4軸チルトクレードル」と組み合わせることでケーブル干渉を完全に回避できます。",
+      "nextGenInnovation": "従来のバリアングル機は左側I/Oケーブル（HDMI/USB-C）と画面が干渉する弱点がありましたが、D14「4軸チルトクレードル」と組み合わせることでケーブル干渉を完全に回避できます。",
       "specs": [
         {
           "label": "可動範囲",
@@ -15997,7 +15767,7 @@
       "id": "lcd-detent-stops",
       "order": 8,
       "swatchColor": "#f59e0b",
-      "groupKey": "lcd:4軸LCD_基準角クリック_終端規制",
+      "groupKey": "lcd:lcd-detent",
       "assembledPos": [
         44.8,
         -7,
@@ -16013,7 +15783,6 @@
         -18,
         -272
       ],
-      "edgeOpacity": 0.22,
       "title": "D08. 0°・90°・180° 鋼球クリックディテント＆焼入れ終端ストッパーカム",
       "subtitle": "0° / 90° / 180° Spring-Loaded Steel Detent Ball & Hardened Stop-Cam Collar",
       "category": "4軸LCD / 基準角クリック＆終端規制",
@@ -16024,10 +15793,6 @@
         "基準角（0°水平、90°ウエストレベル、180°対面）に彫られた微細V字ノッチへばね加圧鋼球が落ち込むことで、目視しなくても指先の感触だけで画面をピタリと水平・垂直へ合わせられます。",
         "ストッパー衝突面には微小なウレタン緩衝面を設け、勢いよく開いた際の金属衝撃が液晶ガラスへ伝わるのを防ぎます。"
       ],
-      "formula": {
-        "expression": "θ_swivel ∈ [−90°, +180°] (全 270°規制),   クリック復元角: {0°, 90°, 180°}",
-        "description": "内部配線を断線から守る焼入れ終端カムと、指先の触覚で水平を出す鋼球ディテント機構。"
-      },
       "nextGenInnovation": "ストッパー強度を従来の2倍以上へ引き上げる一体MIM（金属粉末射出成形）焼入れカムにより、不意にモニターへ手が当たった際のヒンジ破損耐性を劇的に高めています。",
       "specs": [
         {
@@ -16053,7 +15818,7 @@
       "id": "lcd-coaxial-fpc",
       "order": 9,
       "swatchColor": "#f97316",
-      "groupKey": "lcd:4軸LCD_高屈曲ヒンジ内配線",
+      "groupKey": "lcd:lcd-coaxial",
       "assembledPos": [
         44.8,
         -7,
@@ -16069,7 +15834,6 @@
         0,
         -258
       ],
-      "edgeOpacity": 0.22,
       "title": "D09. 中空ヒンジ軸挿通 らせんトーション逃がし高屈曲MIPI-DSIフレキ配線",
       "subtitle": "Hollow-Shaft Helical Torsion-Relief Coaxial MIPI-DSI Flex Harness",
       "category": "4軸LCD / 高屈曲ヒンジ内配線",
@@ -16080,10 +15844,6 @@
         "MIPI-DSI高速差動映像信号（数Gbps）を電磁ノイズから守りつつ、周囲のWi-Fi/Bluetoothアンテナへの放射ノイズも防ぐ銀ナノ粒子導電シールドフィルムをラミネートしています。",
         "両端は極小ピッチB2Bコネクタで着脱でき、長期運用後の修理交換にも対応しています。"
       ],
-      "formula": {
-        "expression": "Δr_spiral = r₀ · (Δθ / 2πN)   →   ε_Cu = t_Cu / (2·R_min) < 0.12% (> 10⁵回耐久)",
-        "description": "中空軸内のぜんまい状スパイラル逃がし構造が、270°のねじれを微小な曲げ変化へ変換し断線を防止。"
-      },
       "nextGenInnovation": "4軸マルチアングル機構ではチルト軸とバリアングル軸の両方を跨ぐため、滑走PTFE低摩擦保護シートを螺旋内周へ共巻きして金属軸との擦れ摩耗を完全に絶っています。",
       "specs": [
         {
@@ -16109,7 +15869,7 @@
       "id": "lcd-pantograph-links",
       "order": 10,
       "swatchColor": "#94a3b8",
-      "groupKey": "lcd:4軸LCD_光軸チルト平行リンク",
+      "groupKey": "lcd:lcd-pantograph",
       "assembledPos": [
         6,
         -7,
@@ -16125,7 +15885,6 @@
         0,
         -270
       ],
-      "edgeOpacity": 0.22,
       "title": "D10. 左右対称CNCステンレス 4軸チルト・パンタグラフ平行リンクアーム群",
       "subtitle": "Symmetrical CNC Stainless Dual-Link 4-Axis Tilt Pantograph Scissor Arms",
       "category": "4軸LCD / 光軸チルト平行リンク",
@@ -16136,10 +15895,6 @@
         "2本の長さが異なるリンクアームを組み合わせた4節リンク（パンタグラフ）運動学により、傾けると同時にモニター全体を後方へ約14 mm平行引き出しすることで、大型EVFも三脚雲台も綺麗に避けて最大角まで展開できます。",
         "さらにこの後方引き出し位置から横開きバリアングルを展開できるため、左側の太いフルサイズHDMIやUSB-Cケーブルとも一切干渉しません。"
       ],
-      "formula": {
-        "expression": "Δz_clear(θ) = L₁·sin θ + L₂·(1 − cos α) ≈ 14 mm   (EVF・三脚・HDMI干渉回避)",
-        "description": "4節パンタグラフ機構の複合軌跡が、狭い背面空間でEVFとケーブルを完璧に回避。"
-      },
       "nextGenInnovation": "厚さわずか1.1 mmの析出硬化系ステンレス（SUS630系）を採用し、4軸という複雑な二重可動構造ながらボディ厚みの増加をわずか数ミリに抑え込んでいます。",
       "specs": [
         {
@@ -16165,7 +15920,7 @@
       "id": "lcd-tilt-torque-cams",
       "order": 11,
       "swatchColor": "#b45309",
-      "groupKey": "lcd:4軸LCD_チルト制動・重力補助",
+      "groupKey": "lcd:lcd-tilt",
       "assembledPos": [
         6,
         -7,
@@ -16181,7 +15936,6 @@
         28,
         -260
       ],
-      "edgeOpacity": 0.22,
       "title": "D11. 光軸チルト専用 ツイスト摩擦ドラムブレーキ＆補助トーションばね",
       "subtitle": "Optical-Axis Tilt Friction Drum Brakes & Counter-Gravity Torsion Assist Springs",
       "category": "4軸LCD / チルト制動・重力補助",
@@ -16192,10 +15946,6 @@
         "チルト軸根元へトーション補助ばねを組み込んで自重モーメントの一部を相殺しつつ、円筒摩擦ドラム（バンド式フリクションクラッチ）で上下均等な操作感を実現しています。",
         "特にハイアングル（下向き40°）でモニターを頭上へ掲げた際、振動で画面が閉じ方向へ垂れてこない絶妙な非対称カムプロファイルが仕込まれています。"
       ],
-      "formula": {
-        "expression": "T_drum + T_spring(θ) > m_LCD · g · L_cg · cos θ   (全チルト角静止保持)",
-        "description": "重力補償トーションばねと摩擦ドラムブレーキの協調が、重い4軸ユニットを滑らかにピタ止め。"
-      },
       "nextGenInnovation": "バリアングル軸（D06）よりチルト軸（D11）の始動トルクをわずかに低く調律することで、「指で下から持ち上げれば素直にチルトし、横に引けばバリアングルが開く」直感的な操作分離を達成しています。",
       "specs": [
         {
@@ -16221,7 +15971,7 @@
       "id": "lcd-tilt-slide-rails",
       "order": 12,
       "swatchColor": "#cbd5e1",
-      "groupKey": "lcd:4軸LCD_スライド案内トラック",
+      "groupKey": "lcd:lcd-tilt",
       "assembledPos": [
         6,
         -7,
@@ -16237,7 +15987,6 @@
         -28,
         -260
       ],
-      "edgeOpacity": 0.22,
       "title": "D12. 下方チルト用 精密スライドガイド溝＆POM低摩擦スライダーシュー",
       "subtitle": "Downward-Tilt Linear Guide Slots & Self-Lubricating POM Slider Shoes",
       "category": "4軸LCD / スライド案内トラック",
@@ -16248,10 +15997,6 @@
         "左右の精密リニアガイド溝と低摩擦POMシューがアームの運動を1軸軌跡へ厳密拘束することで、画面のどちらの角を指で引っ張っても左右均等にスッと平行に引き出せます。",
         "金属同士の摺動を避けてPOM樹脂シューを介在させることで、動画収録中にモニター角度を変えても「キィッ」という金属擦過音を一切出しません。"
       ],
-      "formula": {
-        "expression": "F_slide = μ_POM · N_twist   (μ_POM ≈ 0.14, 片側引き時のこじりロック防止)",
-        "description": "左右のPOMスライダーが片手操作時のこじりを抑え、無音かつ真っ直ぐな引き出し動作を保証。"
-      },
       "nextGenInnovation": "耐塵ラビリンス溝形状により、砂浜や粉塵環境でモニターを開閉しても砂粒がスライド面に噛み込みにくいプロ耐候構造を採用しています。",
       "specs": [
         {
@@ -16277,7 +16022,7 @@
       "id": "lcd-cradle-locks",
       "order": 13,
       "swatchColor": "#ec4899",
-      "groupKey": "lcd:4軸LCD_収納密着・ガタ防止",
+      "groupKey": "lcd:lcd-cradle",
       "assembledPos": [
         6,
         -7,
@@ -16293,7 +16038,6 @@
         24,
         -252
       ],
-      "edgeOpacity": 0.22,
       "title": "D13. 磁気フラット収納ロックキャッチ＆シリコン防振・無音バンパー群",
       "subtitle": "Magnetic Flush-Stow Retention Catch & Silicone Anti-Rattle Bumpers",
       "category": "4軸LCD / 収納密着・ガタ防止",
@@ -16304,10 +16048,6 @@
         "収納位置（ギャップ 0 mm）で磁気吸引力が距離の2乗に反比例して急上昇するネオジムキャッチにより、閉じ切る最後の2 mmで「スッ、パチッ」と吸い付く高級感あふれる収納フィールとタッチ操作時の高剛性を両立。",
         "四隅のシリコンバンパーがモニター外枠の塗装剥がれと高速シャッター振動による共振ノイズを防いでいます。"
       ],
-      "formula": {
-        "expression": "F_mag(d) ∝ B²·A / (2μ₀ · (1 + d/d₀)²)   →  閉じ際 2 mm でピタッと自動吸着",
-        "description": "磁気キャッチの急峻な近接吸引力と4隅シリコンバンパーが、可動液晶とは思えない一体剛性を実現。"
-      },
       "nextGenInnovation": "機械式爪ロックのように指で解除レバーを押す手間が無く、下端ノッチに指を掛けて軽く引くだけで即座にワンアクション・チルト起動できる速写設計です。",
       "specs": [
         {
@@ -16333,7 +16073,7 @@
       "id": "lcd-4axis-tilt-frame",
       "order": 14,
       "swatchColor": "#64748b",
-      "groupKey": "lcd:4軸チルト基盤_4_Axis_Tilt_Cradle",
+      "groupKey": "lcd:lcd-4axis",
       "assembledPos": [
         6,
         -7,
@@ -16349,8 +16089,7 @@
         0,
         -244
       ],
-      "edgeOpacity": 0.22,
-      "title": "D06. 4軸マルチアングル 光軸チルトクレードル＆ダブルリンク機構",
+      "title": "D14. 4軸マルチアングル 光軸チルトクレードル＆ダブルリンク機構",
       "subtitle": "4-Axis Multi-Angle Optical-Axis Dual-Link Tilt Cradle Frame",
       "category": "4軸チルト基盤 / 4-Axis Tilt Cradle",
       "plainAnalogy": "「上下チルト」の素早さと「横開きバリアングル」の自由度を1台に合体させた最新フラッグシップだけの革命的メカニズムです。レンズの真後ろ（光軸上）のまま瞬時に画面を起こせます。",
@@ -16360,10 +16099,6 @@
         "4軸チルトクレードルは2本の精密ステンレス平行リンクアームとガイドカムで上チルト・下チルトの2軸を追加し、光軸直上のままワンアクションでロー／ハイアングル撮影へ移行できます。",
         "さらにクレードルをわずかに後方へ引き出した状態から横開きバリアングルを展開できるため、大型EVFアイカップや左側I/O端子ケーブルとの物理干渉を完全に回避します。"
       ],
-      "formula": {
-        "expression": "DOF_4axis = θ_tilt_up (98°) + θ_tilt_down (40°) + θ_open (176°) + θ_swivel (270°)",
-        "description": "4自由度（4-Axis）空間運動学。光軸直上チルト2軸と横開きバリアングル2軸を直列結合した最新世代フラッグシップ機構。"
-      },
       "nextGenInnovation": "静止画プロが愛する「光軸チルト」と動画クリエイター必須の「バリアングル」の10年越しの論争を終結させた、2024〜2026年最新フラッグシップ機ならではの究極のモニター構造です。",
       "specs": [
         {
@@ -16389,11 +16124,11 @@
       "id": "lcd-touch-controller",
       "order": 15,
       "swatchColor": "#0284c7",
-      "groupKey": "lcd:4軸LCD_超高速タッチAF_誤操作防止フロントエンド",
+      "groupKey": "lcd:lcd-touch",
       "assembledPos": [
         6,
         -7,
-        -35.2
+        -33.6
       ],
       "explodeOffset": [
         24,
@@ -16405,7 +16140,6 @@
         -26,
         -338
       ],
-      "edgeOpacity": 0.22,
       "title": "D15. 240Hz PCAP 静電容量タッチコントローラーIC サブFPC ＆ 耐水ノイズ除去回路",
       "subtitle": "240Hz PCAP Touch-Sensing Controller ASIC Sub-FPC, ESD Array & Wet-Finger DSP",
       "category": "4軸LCD / 超高速タッチAF＆誤操作防止フロントエンド",
@@ -16416,10 +16150,6 @@
         "LCD駆動ノイズ同期ブランキング：わずか0.3mm下にあるIPS液晶（D02）の画素書換え電圧は強烈なコモンモードノイズ源です。タッチコントローラーがLCDの垂直/水平ブランキング期間へ正確に同期走査することで、高いS/N比（>45 dB）と薄手グローブ対応を実現しています。",
         "±15kV静電気サージ防護：背面モニターは撮影者の指先や衣類が最も頻繁に擦れる部品であるため、FPC根元のTVSダイオードが静電気放電を即座にグラウンドへ逃がします。"
       ],
-      "formula": {
-        "expression": "ΔC_touch = C_m(no-finger) − C_m(finger) ≈ 0.2 〜 1.5 pF   (f_scan = 240 Hz, 遅延 < 4.2 ms)",
-        "description": "ピコファラド未満の微小な静電容量変化を240Hzでノイズ同期検出し、スマホ並みに滑らかなタッチトラッキングAFを実現。"
-      },
       "nextGenInnovation": "2025–2026年ミラーレスでは、画面を閉じて保護している間は自動スリープしつつ、EVF接眼時に画面半分だけを絶対座標/相対座標トラックパッド化するハイブリッドタッチ制御が定着しています。",
       "specs": [
         {
@@ -16445,11 +16175,11 @@
       "id": "lcd-polarizer-stack",
       "order": 16,
       "swatchColor": "#6366f1",
-      "groupKey": "lcd:4軸LCD_液晶コントラスト・斜め視野角色ズレゼロ光学膜",
+      "groupKey": "lcd:lcd-polarizer",
       "assembledPos": [
         6,
         -7,
-        -35.05
+        -34.24
       ],
       "explodeOffset": [
         0,
@@ -16461,7 +16191,6 @@
         0,
         -338
       ],
-      "edgeOpacity": 0.22,
       "title": "D16. 直交 0°/90° 広視野角偏光板・TAC保護膜 ＆ 位相差光学補償フィルムスタック",
       "subtitle": "Crossed 0°/90° Wide-View Polarizer Films, TAC Substrates & Optical Retarder Stack",
       "category": "4軸LCD / 液晶コントラスト・斜め視野角色ズレゼロ光学膜",
@@ -16472,10 +16201,6 @@
         "斜め視角の光漏れ補償（二軸位相差フィルム）：通常の直交偏光板は斜め45°方向から覗くと幾何学的に軸が90°より広がって黒が浮いてしまいます。二軸性光学補償フィルムを積層することで、ハイアングル／ローアングル撮影の斜め視線でも深い黒を維持します。",
         "低反射AG/AR表面コート＆防湿TAC膜：PVA偏光層は水分に極めて弱いため、低複屈折TAC保護層と耐候アクリル粘着層で密閉保護しています。"
       ],
-      "formula": {
-        "expression": "I(φ) = I_0 · sin²(2φ) · sin²(π · Δn · d / λ)   (IPS面内回転角 φ: 0°→黒, 45°→最大輝度)",
-        "description": "直交偏光板とIPS液晶複屈折 Δn·d の精密制御により、視野角178°全域で色転びのないリファレンスモニター品質を達成。"
-      },
       "nextGenInnovation": "屋外晴天での視認性を飛躍的に高めるため、最新カメラのLCDでは偏光板表面に微細モスアイ反射防止処理を融合させ、太陽光下の画面反射率を従来の4%から1%未満へ抑えています。",
       "specs": [
         {
@@ -16501,7 +16226,7 @@
       "id": "lcd-lgp-led-bar",
       "order": 17,
       "swatchColor": "#bae6fd",
-      "groupKey": "lcd:4軸LCD_1_200nit級超高輝度・面内均一バックライト光源",
+      "groupKey": "lcd:lcd-lgp",
       "assembledPos": [
         6,
         -7,
@@ -16517,7 +16242,6 @@
         0,
         -300
       ],
-      "edgeOpacity": 0.22,
       "title": "D17. 高演色10連サイドエッジ白色LEDバー・レーザー微細ドット導光板 (LGP) ＆ ESR銀反射シート",
       "subtitle": "10x High-CRI Edge W-LED Bar, Laser-Dot Acrylic Light-Guide Plate (LGP) & ESR Mirror",
       "category": "4軸LCD / 1,200nit級超高輝度・面内均一バックライト光源ユニット",
@@ -16528,10 +16252,6 @@
         "ESR（Enhanced Specular Reflector）超鏡面反射シート：導光板の裏側（ボディ側）へ漏れた光を98.5%以上の超高効率で再び前面へ跳ね返し、金属銀鏡のような腐食劣化もなくLED消費電力を大幅に節約します。",
         "高演色（DCI-P3 / sRGB 100%）KSF蛍光体W-LED：青色LED＋狭帯域赤色KSF/緑色β-サイアロン蛍光体により、カメラのRAW現像カラー確認にふさわしい正確な発色スペクトルを供給します。"
       ],
-      "formula": {
-        "expression": "θ_TIR = arcsin(1 / n_PMMA) ≈ 42.2°,   R_ESR > 98.5 %   ⇒   面輝度均一性 > 92%",
-        "description": "全反射導光・ドット密度最適化・98.5%超鏡面反射の三拍子により、わずか1.1mm厚で炎天下でも見える高輝度面光源を構成。"
-      },
       "nextGenInnovation": "真夏の屋外撮影（サニーウェザーモード）に対応するため、PWMフリッカーレス定電流駆動と高放熱LEDバー基板により、1,000〜1,200 nit級のブースト輝度でも色温度ズレを起こしません。",
       "specs": [
         {
@@ -16557,7 +16277,7 @@
       "id": "lcd-emi-thermal-shield",
       "order": 18,
       "swatchColor": "#475569",
-      "groupKey": "lcd:4軸LCD_バックライト発熱均一化・液晶セル構造剛性_EMIシー",
+      "groupKey": "lcd:lcd-emi",
       "assembledPos": [
         6,
         -7,
@@ -16573,7 +16293,6 @@
         20,
         -294
       ],
-      "edgeOpacity": 0.22,
       "title": "D18. 極薄ステンレスEMI遮蔽バックプレート ＆ 多層グラファイト放熱拡散シート",
       "subtitle": "Ultra-Thin Stainless EMI Backplate & Multi-Layer Graphite Thermal Spreading Liner",
       "category": "4軸LCD / バックライト発熱均一化・液晶セル構造剛性＆EMIシールド",
@@ -16584,10 +16303,6 @@
         "タッチ押圧の面分散（液晶プーリング防止）：指で強く画面をタッチした際、極薄ステンレスバックプレートが荷重を背面マグネシウムシェルへ均等逃がし、IPS液晶層のセルギャップ（約3μm）が潰れて波紋が出る（プーリング現象）のを防ぎます。",
         "導電銅タブによるヒンジ連続アース：端部の銅グラウンドタブがヒンジ経由でカメラ本体のシャーシGNDへ接続され、モニター全体が電波ノイズのアンテナ化するのを防ぎます。"
       ],
-      "formula": {
-        "expression": "ΔT_panel = Q_LED · L / (k_gr · t · W) < 2.0 ℃   (k_gr ≈ 1,500 W/(m·K) 面内高速拡散)",
-        "description": "高配向グラファイト箔と0.25mmステンレスシールドの積層により、薄さ・剛性・熱均一性・EMI防護を同時達成。"
-      },
       "nextGenInnovation": "4K60p/8K長時間収録中にモニターをボディ背面へ閉じたままでも、カメラ本体のメイン基板から伝わる熱をこの背面グラファイト層が外気側へ逃がす副次放熱パスとしても活用されています。",
       "specs": [
         {
@@ -16613,7 +16328,7 @@
       "id": "lcd-pullin-cam-spring",
       "order": 19,
       "swatchColor": "#d97706",
-      "groupKey": "lcd:4軸LCD_Canon_R1系エンジニア開発・閉じ際吸い込み力_",
+      "groupKey": "lcd:lcd-pullin",
       "assembledPos": [
         44.8,
         -7,
@@ -16629,7 +16344,6 @@
         24,
         -266
       ],
-      "edgeOpacity": 0.22,
       "title": "D19. 自閉吸い込みカムヒンジ（オーバーセンター引き込みカム）＆ 予圧トーションバネ",
       "subtitle": "Self-Closing Pull-In Over-Center Cam Hinge & Preload Torsion Assist Spring",
       "category": "4軸LCD / Canon R1系エンジニア開発・閉じ際吸い込み力＆ガタゼロ密着",
@@ -16640,10 +16354,6 @@
         "磁石だけに頼らない強固な収納保持：磁気キャッチ（D13）に加えてヒンジ根元側からも引き込み予圧をかけ続けることで、カメラを首から下げて全力疾走してもモニターが勝手に浮き上がったりビビったりしません。",
         "高級感あるタクタイル・クロージングフィール：カム斜面の曲率プロファイルを最適化することで、勢いよく閉じた際の「バチン！」という衝撃を和らげつつ確実な節度感を生み出します。"
       ],
-      "formula": {
-        "expression": "τ_pullin(θ) = −F_spring · r_cam · tan(α(θ)) < 0   (0° < θ < 15° で自動吸い込み密着!)",
-        "description": "カム圧力角 α(θ) の符号が閉じ際15°で反転するオーバーセンター設計により、心地よい「吸い込み力」と完全無ガタ収納を実現。"
-      },
       "nextGenInnovation": "2024–2026年のプロ用バリアングル／4軸ヒンジでは、単純なフリクション蝶番から、この「引き込みカム＋ベリリウム銅バネ＋ダンピンググリス」を組み合わせた精密カムヒンジへと劇的に洗練されています。",
       "specs": [
         {
@@ -16669,7 +16379,7 @@
       "id": "lcd-hinge-weather-boots",
       "order": 20,
       "swatchColor": "#1f2937",
-      "groupKey": "lcd:4軸LCD_可動ヒンジ貫通部の豪雨防水・砂塵侵入ゼロ封止",
+      "groupKey": "lcd:lcd-hinge",
       "assembledPos": [
         43.6,
         -7,
@@ -16685,7 +16395,6 @@
         -24,
         -256
       ],
-      "edgeOpacity": 0.22,
       "title": "D20. 蛇腹式 EPDM ヒンジ防塵防滴シールブーツ ＆ 回転軸ラビリンスガスケット",
       "subtitle": "Molded Accordion EPDM Hinge Weather-Seal Boots & Rotary Shaft Labyrinth Gaskets",
       "category": "4軸LCD / 可動ヒンジ貫通部の豪雨防水・砂塵侵入ゼロ封止",
@@ -16696,10 +16405,6 @@
         "排水ドレイン溝設計：モニターとボディの隙間へ入り込んだ雨水は、クレードル下端の傾斜ドレイン溝へ誘導され、ヒンジ軸部へ溜まらずに外部へ自然排出されます。",
         "−20℃耐寒弾性エラストマー：厳冬期の雪山撮影でも蛇腹ゴムが硬化してヒンジ操作が重くなったり亀裂が入ったりしない耐寒EPDM配合を採用しています。"
       ],
-      "formula": {
-        "expression": "P_seal_contact = E_EPDM · (δ_squeeze / t) > P_rain_jet   (回転・傾動下でも完全水密)",
-        "description": "低摩擦二重Oリング＋蛇腹EPDMブーツの多段ラビリンス構造が、4軸可動モニター搭載機のプロ級防塵防滴性能を担保。"
-      },
       "nextGenInnovation": "かつて「バリアングル液晶は防水に弱い」とされた常識を覆し、最新プロ機（Canon R1/R5 II, Sony α1 II/α7 V等）はヒンジ貫通部のブーツ＆ラビリンス構造によって固定液晶機と同等の過酷な防塵防滴規格を達成しています。",
       "specs": [
         {
@@ -16725,7 +16430,7 @@
       "id": "lcd-bulkhead-b2b-pcb",
       "order": 21,
       "swatchColor": "#10b981",
-      "groupKey": "lcd:4軸LCD_モニター脱着メンテナンス性・高速MIPI中継_耐衝撃",
+      "groupKey": "lcd:lcd-bulkhead",
       "assembledPos": [
         6,
         -7,
@@ -16741,7 +16446,6 @@
         0,
         -230
       ],
-      "edgeOpacity": 0.22,
       "title": "D21. ボディ側バルクヘッド MIPI-DSI B2B中継基板・ESD保護 ＆ 抜け止めクランプ板",
       "subtitle": "Body-Side Bulkhead MIPI-DSI B2B Relay PCB, ±15kV ESD Protection & Clamp Plate",
       "category": "4軸LCD / モニター脱着メンテナンス性・高速MIPI中継＆耐衝撃ロック",
@@ -16752,10 +16456,6 @@
         "高速MIPI-DSIインピーダンス整合（100Ω差動）：ヒンジ貫通のらせんFPC（D09）とメイン基板の間で信号反射が起きないよう、中継基板上の差動ペア配線長と特性インピーダンスを100Ω±5%で厳密整合しています。",
         "ステンレス・クランプバーによる衝撃脱落防止：B2Bプラグの上からウレタン緩衝材付きのステンレス抑え板をM1.4ビス2本で締結し、強い落下衝撃下でもコネクタ浮きをゼロにします。"
       ],
-      "formula": {
-        "expression": "Z_diff(MIPI-DSI) = 100 Ω ± 5 %,   Γ = (Z_L − Z_0)/(Z_L + Z_0) ≈ 0   (波形反射ゼロ中継)",
-        "description": "インピーダンス整合B2B中継基板と金属クランプにより、高信頼な映像伝送とプロ機材ならではの迅速なモジュール修理性を両立。"
-      },
       "nextGenInnovation": "Sony α7 V や Canon EOS R5 Mark II の最新実機分解でも、背面マグネシウム隔壁に整備性の高いモジュラーB2B中継とクランプ保護構造が採用されていることが確認されています。",
       "specs": [
         {
@@ -16781,7 +16481,7 @@
       "id": "lcd-rear-stiffener",
       "order": 22,
       "swatchColor": "#64748b",
-      "groupKey": "lcd:D22_薄型モニター剛性確保・強圧タッチ時のニュートンリング防止",
+      "groupKey": "lcd:lcd-rear",
       "assembledPos": [
         6,
         -7,
@@ -16797,7 +16497,6 @@
         0,
         -276
       ],
-      "edgeOpacity": 0.22,
       "title": "D22. モニター背面カーボン／ステンレス反り防止スティフナー補強板",
       "subtitle": "Rear Monitor Carbon-Steel Anti-Warp Stiffener Plate & Touch-Force Rib Frame",
       "category": "D22 / 薄型モニター剛性確保・強圧タッチ時のニュートンリング防止",
@@ -16807,10 +16506,6 @@
         "静電容量タッチパネルをグローブ越しや雨天時に強く押し込むと、IPS液晶セル（ギャップわずか3 μm）が局所的にたわんで虹色のムラ（ニュートンリング／プーリング現象）が発生します。",
         "断面リブ付き極薄ステンレス補強板が押圧力をモニター全周のアルミ／マグネシウム外枠へ分散することで、超薄型設計のままプロ機らしいガッシリしたタッチ剛性を実現します。"
       ],
-      "formula": {
-        "expression": "δ_center = (F_touch · L²) / (48 · E · I_stiff) < 8 μm  (ニュートンリング完全ゼロ)",
-        "description": "極薄高弾性スティフナー板により、強圧タッチ時や片手チルト操作時のパネルねじれ・色ムラを根絶。"
-      },
       "nextGenInnovation": "4軸マルチアングル機構ではモニターを左端1か所のヒンジ（片持ち）で支える姿勢が多いため、モニター自身のねじり剛性を高める内部スティフナーが不可欠です。",
       "specs": [
         {
@@ -16836,7 +16531,7 @@
       "id": "lcd-torque-washers",
       "order": 23,
       "swatchColor": "#d97706",
-      "groupKey": "lcd:D23_10万回開閉・一定トルクフリーストップ保持機構",
+      "groupKey": "lcd:lcd-torque",
       "assembledPos": [
         44.8,
         -7,
@@ -16852,7 +16547,6 @@
         22,
         -284
       ],
-      "edgeOpacity": 0.22,
       "title": "D23. 4軸ヒンジ皿ばね（ベルビルワッシャー）フリクショントルク積層スタック",
       "subtitle": "4-Axis Hinge Belleville Disc-Spring Friction Torque Washer Stack & PTFE Slip Discs",
       "category": "D23 / 10万回開閉・一定トルクフリーストップ保持機構",
@@ -16862,10 +16556,6 @@
         "通常の平ワッシャーではわずかな摩耗（数十μm）で軸力が抜けてヒンジがブラブラになります。お椀状に反った皿ばねを背中合わせに積層することで、摩耗が進んでも常に一定の押付荷重（F_axial ≈ 65 N）を自動維持します。",
         "摩擦係数差（静摩擦 μ_s ≈ 動摩擦 μ_k）が極めて小さい含油焼結ディスク＋PTFEグリス層を挟み込むことで、「動き出しだけ硬くてガクッとなる」不快なスティックスリップ現象を排除しています。"
       ],
-      "formula": {
-        "expression": "T_hold = n_pairs · μ_eff · F_Belleville · r_mean ≈ 0.35 N·m  (10万回開閉後 維持率 > 85%)",
-        "description": "皿ばねの非線形定荷重領域を活用し、長年の過酷な開閉後も新車同様の滑らかなフリーストップ感を維持。"
-      },
       "nextGenInnovation": "Sony α7R V / α1 IIの4軸マルチアングルは、重いモニターを2段チルト＋回転の複合姿勢でピタリと保持するため、チルト軸と回転軸それぞれに専用チューニングされた皿ばねスタックを備えています。",
       "specs": [
         {
@@ -16891,11 +16581,11 @@
       "id": "lcd-ambient-color-sensor",
       "order": 24,
       "swatchColor": "#0ea5e9",
-      "groupKey": "lcd:D24_1_200_nit_晴天屋外自動ブースト_色再現最適化",
+      "groupKey": "lcd:lcd-ambient",
       "assembledPos": [
         6,
         -7,
-        -34.8
+        -33.75
       ],
       "explodeOffset": [
         0,
@@ -16907,7 +16597,6 @@
         -34,
         -318
       ],
-      "edgeOpacity": 0.22,
       "title": "D24. 背面ベゼル内蔵・屋外晴天ブースト用RGB周囲光＆色温度センサー",
       "subtitle": "Rear-Bezel RGB Ambient Light & Color-Temperature Photodiode Sensor Module",
       "category": "D24 / 1,200 nit 晴天屋外自動ブースト＆色再現最適化",
@@ -16917,10 +16606,6 @@
         "晴天屋外の直射日光下では液晶表面の反射光に負けて構図やピントが見えなくなります。内蔵ALSセンサーが周囲照度 > 25,000 lx を検知すると、LEDバックライト電流を一時ブーストして最高輝度（晴天屋外モード）へ自動移行させます。",
         "同時にRGBカラー比率から周囲照明の相関色温度（CCT）を推定し、蛍光灯下・夕暮れ・スタジオ照明下それぞれで撮影者が正しいホワイトバランス判断を下せるよう支援します。"
       ],
-      "formula": {
-        "expression": "CR_sunlight = (L_LCD_boost + R_AR · E_sun/π) / (R_AR · E_sun/π)  →  屋外視認性大幅改善",
-        "description": "低反射ARコート（D01）と周囲光連動の自動輝度ブーストの相乗効果で、炎天下でも鮮明なライブビューを提供。"
-      },
       "nextGenInnovation": "モニター可動側にセンサーを搭載しているため、バリアングル展開やチルト姿勢でも常に「撮影者の目の前の環境光」を正確に捉えられます。",
       "specs": [
         {
@@ -16946,7 +16631,7 @@
       "id": "lcd-flip-reed-magnets",
       "order": 25,
       "swatchColor": "#6366f1",
-      "groupKey": "lcd:D25_バリアングル自撮りミラー反転・背面収納保護オートスリープ",
+      "groupKey": "lcd:lcd-flip",
       "assembledPos": [
         6,
         -7,
@@ -16962,7 +16647,6 @@
         26,
         -290
       ],
-      "edgeOpacity": 0.22,
       "title": "D25. 180°自撮り上下反転＆画面閉鎖自動消灯用 ネオジム磁石・ホール検出対",
       "subtitle": "Selfie 180° Flip & Closed-Dock Auto-Rotate Neodymium Magnet & Dual Hall Sensor Pair",
       "category": "D25 / バリアングル自撮りミラー反転・背面収納保護オートスリープ",
@@ -16972,10 +16656,6 @@
         "機械式リミットスイッチと異なり完全非接触の磁気検出（磁束密度しきい値 B_op ≈ ±3.5 mT）であるため、防塵防滴ボディのマグネシウム隔壁越しでも摩耗ゼロ・故障ゼロでモニターの「180°前方反転」「面裏収納（閉鎖）」を瞬時に判別します。",
         "画面を内側に向けて閉じた状態では即座にバックライトとタッチパネルを完全遮断し、誤タッチとバッテリー消費を防ぎつつEVF自動運用へ切り替えます。"
       ],
-      "formula": {
-        "expression": "B_sense ≥ 3.5 mT (非接触マグネシウム壁透過検出)   /   消費電流 I_Hall < 1.5 μA",
-        "description": "完全非接触・防水隔壁透過の磁気センシングにより、自撮り反転と収納時オートスリープを瞬時切替。"
-      },
       "nextGenInnovation": "Vlog／ハイブリッド動画撮影の増加に伴い、180°展開と連動して自動で自撮り用トラッキングAF・タリー表示・画面反転を一括起動するUXの中核センサーです。",
       "specs": [
         {
@@ -17001,7 +16681,7 @@
       "id": "lcd-hinge-grommet",
       "order": 26,
       "swatchColor": "#f8fafc",
-      "groupKey": "lcd:D26_270_回転_10万回・極薄FPC擦れ断線防止プロテクタ",
+      "groupKey": "lcd:lcd-hinge",
       "assembledPos": [
         44.8,
         -7,
@@ -17017,7 +16697,6 @@
         -6,
         -270
       ],
-      "edgeOpacity": 0.22,
       "title": "D26. らせんFPC中空ヒンジ軸貫通部・耐摩耗PTFE保護スリーブ＆応力逃がしグロメット",
       "subtitle": "Spiral FPC Hinge-Axle Anti-Chafe PTFE Sleeve & Strain-Relief Grommet",
       "category": "D26 / 270°回転×10万回・極薄FPC擦れ断線防止プロテクター",
@@ -17027,10 +16706,6 @@
         "バリアングル液晶の最大の経年故障原因は「ヒンジ回転時にFPCのエッジが金属シャフト内壁のバリに擦れて徐々に断線する」現象です。",
         "摩擦係数 μ ≈ 0.05 の極薄PTFEチューブで中空軸内壁を完全ライニングし、さらに両端のフレア形状グロメットで曲げ半径Rを一定以上に保つことで、270°回転＋180°展開を10万回繰り返しても信号インピーダンス劣化ゼロを保証します。"
       ],
-      "formula": {
-        "expression": "μ_PTFE/PI ≈ 0.05,   R_min_grommet ≥ 1.6 mm  →  回転FPC断線寿命 > 150,000 回",
-        "description": "中空軸内の極低摩擦PTFE保護筒と出口曲率グロメットにより、バリアングル機最大の弱点であるFPC疲労断線を撲滅。"
-      },
       "nextGenInnovation": "最新世代ではポリイミドFPC表面への潤滑マイラー積層とPTFE中空軸スリーブの二重保護により、寒冷地での屈曲耐久性も飛躍的に向上しています。",
       "specs": [
         {
@@ -17056,7 +16731,7 @@
       "id": "lcd-dock-bumper-pads",
       "order": 27,
       "swatchColor": "#334155",
-      "groupKey": "lcd:D27_収納時ゼロガタつき・衝撃吸収_上質な閉扉クリック感",
+      "groupKey": "lcd:lcd-dock",
       "assembledPos": [
         6,
         -7,
@@ -17072,7 +16747,6 @@
         -30,
         -244
       ],
-      "edgeOpacity": 0.22,
       "title": "D27. 背面モニター収納ポケット 4隅マイクロセルウレタン緩衝パッド＆着座キャッチ",
       "subtitle": "4-Corner Micro-Cellular Urethane Monitor Dock Cushion Pads & Tactile Seat Catch",
       "category": "D27 / 収納時ゼロガタつき・衝撃吸収＆上質な閉扉クリック感",
@@ -17082,10 +16756,6 @@
         "手持ち撮影や三脚移動中に収納状態のモニターがわずか0.2 mmでもガタつくと、内蔵ステレオマイクへカタカタ音が混入し、また落下衝撃がヒンジ軸受へダイレクトに伝わります。",
         "四隅のマイクロセルウレタンバンパーが約0.3 mm予圧圧縮されてモニター背面を均等に受け止めることで、動画収録時の異音ゼロと高級機らしいしっとりした閉扉タッチを生み出します。"
       ],
-      "formula": {
-        "expression": "η_loss(Micro-Urethane) ≈ 0.42  →  閉扉バウンド＆動画収録時ガタつき音 0 dB",
-        "description": "高損失係数マイクロセルウレタン四隅パッドとPOM着座キャッチで、収納時の衝撃保護と完全無音固定を両立。"
-      },
       "nextGenInnovation": "細部まで手を抜かないプロ機のビルドクオリティを象徴する、指先と耳で感じる「閉めた瞬間の高級感」を設計した精密ダンパー部品です。",
       "specs": [
         {

@@ -3,6 +3,9 @@ import { buildDryboxExteriorParts } from '../assemblies/drybox/dryboxExteriorPar
 import { buildDryboxInteriorCoreParts } from '../assemblies/drybox/dryboxInteriorCoreParts';
 import { buildDryboxMicroDoorChassisParts } from '../assemblies/drybox/dryboxMicroDoorChassisParts';
 import { buildDryboxMicroCoreElectricsParts } from '../assemblies/drybox/dryboxMicroCoreElectricsParts';
+import { buildDryboxUltraConservationParts } from '../assemblies/drybox/dryboxUltraConservationParts';
+import { buildDryboxUltraSafetyUtilityParts } from '../assemblies/drybox/dryboxUltraSafetyUtilityParts';
+import { buildDryboxFrontier2026Parts } from '../assemblies/drybox/dryboxFrontier2026Parts';
 import type { DryboxPalette } from '../assemblies/drybox/dryboxPartsShared';
 import { createDryboxPhysicsOverlay } from '../assemblies/drybox/dryboxPhysicsOverlay';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
@@ -23,7 +26,7 @@ export function createDryboxUnit(): OptimizedUnit {
     subsystem: 'drybox',
     meta: DRYBOX_META,
     buildRaw: (mats, _quality, { clippingPlanes, dryboxPalette }) => {
-      // Zero inline new THREE.Mesh*Material: route all 32 DryboxPalette materials through ResourceCache!
+      // Zero inline new THREE.Mesh*Material: route all 46 DryboxPalette materials through ResourceCache!
       const ctx = {
         mats,
         pal: dryboxPalette as unknown as DryboxPalette,
@@ -34,6 +37,9 @@ export function createDryboxUnit(): OptimizedUnit {
         ...buildDryboxInteriorCoreParts(ctx),
         ...buildDryboxMicroDoorChassisParts(ctx),
         ...buildDryboxMicroCoreElectricsParts(ctx),
+        ...buildDryboxUltraConservationParts(ctx),
+        ...buildDryboxUltraSafetyUtilityParts(ctx),
+        ...buildDryboxFrontier2026Parts(ctx),
       ].sort((a, b) => a.order - b.order);
 
       const overlay = createDryboxPhysicsOverlay(clippingPlanes);

@@ -62,8 +62,8 @@ export function createCfexpressUnit(): OptimizedUnit {
     subsystem: 'cfexpress',
     meta: CFEXPRESS_META,
     heroSpecs: CFEXPRESS_HERO_SPECS,
-    buildRaw: (mats, _quality, { clippingPlanes }) => {
-      const parts = buildCfexpressParts(mats);
+    buildRaw: async (mats, _quality, { clippingPlanes }) => {
+      const parts = await buildCfexpressParts(mats);
       const overlay = createCfexpressPhysicsOverlay(clippingPlanes);
       return {
         parts,

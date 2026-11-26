@@ -1,6 +1,6 @@
-import { PartExplanation } from '../types';
+import lcdJson from '../../data/lcd.json';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
-import unitData from '../../data/lcd.json';
+import { PartExplanation } from '../types';
 
-/** Derived directly from pure JSON single source of truth (../../data/lcd.json). */
-export const LCD_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData);
+export const LCD_EXPLANATIONS: Record<string, PartExplanation> =
+  explanationsFromUnitJson(lcdJson);

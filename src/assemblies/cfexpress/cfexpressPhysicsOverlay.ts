@@ -12,7 +12,7 @@ export interface CfexpressPhysicsOverlayController {
 
 /**
  * Animated PCIe Gen4 NVMe + Toggle 6.0 4.8 Gb/s + SerDes CTLE/DFE + FDP Reclaim Unit Data Flows
- * + Dual-Side Copper-Coin Thermal Waves + 6-Way Dashed Explode Guides for the 130-Part CFexpress Ultra-Dissection (C01–C130).
+ * + Dual-Side Copper-Coin Thermal Waves + 6-Way Dashed Explode Guides for the 170-Part CFexpress Ultra-Dissection (C01–C170).
  */
 export function createCfexpressPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,7 +23,7 @@ export function createCfexpressPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 145);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 185);
   explodeGuides.add(radialGuides.group);
 
   // High-speed data, power & dual-side thermal paths:
