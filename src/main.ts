@@ -1220,6 +1220,23 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('bat-infolithium-fuelgauge', false);
   syncRail();
+} else if (preset === 'battery_assembled') {
+  viewport.setMode('battery', true);
+  controls.syncMode('battery');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'battery_ultra100') {
+  viewport.setMode('battery', true);
+  controls.syncMode('battery');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('bat-cvd-sic-porous-scaffold', false);
+  syncRail();
 } else if (preset === 'cfexpress') {
   viewport.setMode('cfexpress', true);
   controls.syncMode('cfexpress');
@@ -1262,6 +1279,16 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cfe-multiplane-6plane-mpir', false);
+  syncRail();
+} else if (preset === 'cfexpress_ultra130') {
+  viewport.setMode('cfexpress', true);
+  controls.syncMode('cfexpress');
+  viewport.setExplode(0.94, true);
+  controls.setExplodeValue(0.94);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('cfe-fenand-hzo-igzo-2026', false);
   syncRail();
 } else if (preset === 'bionz_assembled') {
   viewport.setMode('bionz', true);
@@ -1340,6 +1367,16 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mc-mems-sdm-vacuum-cell', false);
+  syncRail();
+} else if (preset === 'mic_ultra80') {
+  viewport.setMode('mic', true);
+  controls.syncMode('mic');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mc-optical-mems-vcsel-2026', false);
   syncRail();
 } else if (preset === 'micro_v2_assembled') {
   viewport.setMode('micro_v2', true);

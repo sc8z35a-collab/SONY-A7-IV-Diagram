@@ -26,10 +26,13 @@ import { renderPhase25MicSchematicSvg } from './phase25MicSchematics';
 import { renderPhase27BatteryUltraSchematicSvg } from './phase27BatteryUltraSchematics';
 import { renderPhase27CfexpressUltraSchematicSvg } from './phase27CfexpressUltraSchematics';
 import { renderPhase28CfexpressUltraSchematicSvg } from './phase28CfexpressUltraSchematics';
+import { renderPhase29CfexpressUltraSchematicSvg } from './phase29CfexpressUltraSchematics';
 import { renderPhase28PixelV2SchematicSvg } from './phase28PixelV2Schematics';
 import { renderPhase28BionzV2SchematicSvg } from './phase28BionzV2Schematics';
 import { renderPhase29PixelV2DeepSchematicSvg } from './phase29PixelV2DeepSchematics';
 import { renderPhase29BionzV2DeepSchematicSvg } from './phase29BionzV2DeepSchematics';
+import { renderPhase30BatteryUltraSchematicSvg } from './phase30BatteryUltraSchematics';
+import { renderPhase30MicUltraSchematicSvg } from './phase30MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 
 /**
@@ -120,6 +123,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
   const phase28CfexpressUltraSvg = renderPhase28CfexpressUltraSchematicSvg(type);
   if (phase28CfexpressUltraSvg) return phase28CfexpressUltraSvg;
 
+  const phase29CfexpressUltraSvg = renderPhase29CfexpressUltraSchematicSvg(type);
+  if (phase29CfexpressUltraSvg) return phase29CfexpressUltraSvg;
+
   const phase28PixelV2Svg = renderPhase28PixelV2SchematicSvg(type);
   if (phase28PixelV2Svg) return phase28PixelV2Svg;
 
@@ -131,6 +137,12 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase29BionzV2DeepSvg = renderPhase29BionzV2DeepSchematicSvg(type);
   if (phase29BionzV2DeepSvg) return phase29BionzV2DeepSvg;
+
+  const phase30BatteryUltraSvg = renderPhase30BatteryUltraSchematicSvg(type);
+  if (phase30BatteryUltraSvg) return phase30BatteryUltraSvg;
+
+  const phase30MicUltraSvg = renderPhase30MicUltraSchematicSvg(type);
+  if (phase30MicUltraSvg) return phase30MicUltraSvg;
 
   const phase30SensorFabSvg = renderPhase30SensorFabSchematicSvg(type);
   if (phase30SensorFabSvg) return phase30SensorFabSvg;

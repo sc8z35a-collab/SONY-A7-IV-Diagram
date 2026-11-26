@@ -1408,6 +1408,7 @@ export class ZeroTextControls {
                 : 18;
         }
       } else if (part.subsystem === 'battery') {
+        // Standalone NP-FZ100 & 2026 Silicon-Carbon Battery Pack Ultra-Dissection (P01–P100)
         widthPx =
           part.order === 1 ||
           part.order === 4 ||
@@ -1425,7 +1426,17 @@ export class ZeroTextControls {
           part.order === 46 ||
           part.order === 47 ||
           part.order === 56 ||
-          part.order === 59
+          part.order === 59 ||
+          part.order === 71 ||
+          part.order === 72 ||
+          part.order === 73 ||
+          part.order === 78 ||
+          part.order === 80 ||
+          part.order === 85 ||
+          part.order === 91 ||
+          part.order === 93 ||
+          part.order === 97 ||
+          part.order === 100
             ? 32
             : part.order === 2 ||
                 part.order === 8 ||
@@ -1446,7 +1457,24 @@ export class ZeroTextControls {
                 part.order === 52 ||
                 part.order === 53 ||
                 part.order === 57 ||
-                part.order === 58
+                part.order === 58 ||
+                part.order === 61 ||
+                part.order === 64 ||
+                part.order === 66 ||
+                part.order === 68 ||
+                part.order === 74 ||
+                part.order === 75 ||
+                part.order === 76 ||
+                part.order === 79 ||
+                part.order === 82 ||
+                part.order === 84 ||
+                part.order === 87 ||
+                part.order === 89 ||
+                part.order === 92 ||
+                part.order === 94 ||
+                part.order === 96 ||
+                part.order === 98 ||
+                part.order === 99
               ? 25
               : 19;
       } else if (part.subsystem === 'cfexpress') {
@@ -1484,7 +1512,20 @@ export class ZeroTextControls {
           part.order === 92 ||
           part.order === 93 ||
           part.order === 99 ||
-          part.order === 100
+          part.order === 100 ||
+          part.order === 101 ||
+          part.order === 103 ||
+          part.order === 106 ||
+          part.order === 108 ||
+          part.order === 109 ||
+          part.order === 112 ||
+          part.order === 115 ||
+          part.order === 118 ||
+          part.order === 122 ||
+          part.order === 125 ||
+          part.order === 126 ||
+          part.order === 128 ||
+          part.order === 130
             ? 32
             : part.order === 2 ||
                 part.order === 4 ||
@@ -1530,7 +1571,22 @@ export class ZeroTextControls {
                 part.order === 91 ||
                 part.order === 94 ||
                 part.order === 95 ||
-                part.order === 96
+                part.order === 96 ||
+                part.order === 102 ||
+                part.order === 104 ||
+                part.order === 105 ||
+                part.order === 107 ||
+                part.order === 110 ||
+                part.order === 111 ||
+                part.order === 113 ||
+                part.order === 116 ||
+                part.order === 117 ||
+                part.order === 119 ||
+                part.order === 121 ||
+                part.order === 123 ||
+                part.order === 124 ||
+                part.order === 127 ||
+                part.order === 129
               ? 25
               : 19;
       } else if (part.subsystem === 'bionz') {
@@ -1586,7 +1642,7 @@ export class ZeroTextControls {
               ? 25
               : 18;
       } else if (part.subsystem === 'mic') {
-        // Internal Stereo / 3-Capsule MEMS & ECM Microphone Ultra-Dissection (MC01–MC32)
+        // Internal Stereo / 3-Capsule MEMS, ECM & 2026 Optical MEMS Microphone Ultra-Dissection (MC01–MC80)
         widthPx =
           part.order === 1 ||
           part.order === 2 ||
@@ -1600,7 +1656,21 @@ export class ZeroTextControls {
           part.order === 26 ||
           part.order === 27 ||
           part.order === 29 ||
-          part.order === 32
+          part.order === 32 ||
+          part.order === 34 ||
+          part.order === 35 ||
+          part.order === 47 ||
+          part.order === 53 ||
+          part.order === 55 ||
+          part.order === 56 ||
+          part.order === 58 ||
+          part.order === 60 ||
+          part.order === 62 ||
+          part.order === 63 ||
+          part.order === 71 ||
+          part.order === 75 ||
+          part.order === 78 ||
+          part.order === 80
             ? 32
             : part.order === 3 ||
                 part.order === 5 ||
@@ -1612,7 +1682,28 @@ export class ZeroTextControls {
                 part.order === 23 ||
                 part.order === 25 ||
                 part.order === 30 ||
-                part.order === 31
+                part.order === 31 ||
+                part.order === 36 ||
+                part.order === 37 ||
+                part.order === 38 ||
+                part.order === 40 ||
+                part.order === 42 ||
+                part.order === 43 ||
+                part.order === 45 ||
+                part.order === 46 ||
+                part.order === 50 ||
+                part.order === 52 ||
+                part.order === 54 ||
+                part.order === 57 ||
+                part.order === 59 ||
+                part.order === 61 ||
+                part.order === 65 ||
+                part.order === 67 ||
+                part.order === 69 ||
+                part.order === 72 ||
+                part.order === 76 ||
+                part.order === 77 ||
+                part.order === 79
               ? 25
               : 18;
       } else if (part.subsystem === 'micro_v2') {

@@ -2,12 +2,23 @@ import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import {
+  addCircleHoles,
   attachCadEdges,
   createFrameShape,
   createRoundedRectShape,
   extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
+import {
+  applyBoxUVs,
+  applyPlanarUVs,
+  createChamferedBoxGeo,
+  extrudeHiRes,
+  hiResCyl,
+  hiResSphere,
+  hiResTorus,
+  markHiRes,
+} from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeSensorAuditPart(
@@ -81,21 +92,56 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
   // S65. Dual-Axis Birefringent Quartz OLPF Crystal Pair & λ/4 Depolarizer Plate
   {
     const g = new THREE.Group();
+    // Front 45-deg H-split synthetic quartz crystal plate + ground edge rim + H-axis gold datum notch
     const q1 = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(37.6, 25.6, 0.8), 0.35, 0.03, 0.03, 12),
+      extrudeHiRes(createRoundedRectShape(37.6, 25.6, 0.8), 0.34, 0.04, 0.04, 2, 18),
       mats.quartzOlpf
     );
     q1.position.z = 0.45;
+    const q1Rim = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(37.85, 25.85, 0.85, 37.0, 25.0, 0.7), 0.30, 0.02, 0.02, 1, 14),
+      mats.quartzEdge
+    );
+    q1Rim.position.z = 0.45;
+    q1Rim.userData.noEdges = true;
+    const hTick = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.28, 0.12), mats.goldPlating);
+    hTick.position.set(16.2, 12.2, 0.65);
+    hTick.userData.noEdges = true;
+
+    // Middle zero-order λ/4 depolarizer waveplate (iridescent circular-polarization conversion) + 45° tick
     const qwp = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(37.4, 25.4, 0.8), 0.14, 0.02, 0.02, 12),
+      extrudeHiRes(createRoundedRectShape(37.4, 25.4, 0.8), 0.14, 0.02, 0.02, 1, 16),
       mats.nanoArIridescent
     );
+    const diagTick = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.24, 0.16), mats.goldPlating);
+    diagTick.position.set(0, 12.1, 0.04);
+    diagTick.rotation.z = Math.PI / 4;
+    diagTick.userData.noEdges = true;
+
+    // Rear V-split synthetic quartz crystal plate + ground edge rim + vertical-axis datum notch
     const q2 = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(37.6, 25.6, 0.8), 0.35, 0.03, 0.03, 12),
+      extrudeHiRes(createRoundedRectShape(37.6, 25.6, 0.8), 0.34, 0.04, 0.04, 2, 18),
       mats.quartzOlpf
     );
     q2.position.z = -0.45;
-    g.add(q1, qwp, q2);
+    const q2Rim = q1Rim.clone();
+    q2Rim.position.z = -0.45;
+    const vTick = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.8, 0.12), mats.goldPlating);
+    vTick.position.set(-17.8, 10.6, -0.65);
+    vTick.userData.noEdges = true;
+
+    // Dual optical cement seam fillets sandwiching the λ/4 waveplate
+    for (const sz of [-0.20, 0.20]) {
+      const seam = new THREE.Mesh(
+        extrudeHiRes(createFrameShape(37.5, 25.5, 0.8, 36.9, 24.9, 0.7), 0.08, 0.01, 0.01, 1, 14),
+        mats.opticalCementClear
+      );
+      seam.position.z = sz;
+      seam.userData.noEdges = true;
+      g.add(seam);
+    }
+
+    g.add(q1, q1Rim, hTick, qwp, diagTick, q2, q2Rim, vTick);
 
     parts.push(
       finalizeSensorAuditPart(
@@ -114,16 +160,38 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
   // S66. Dual-Mechanism IR-Cut Stack: Blue Phosphate Absorptive Glass (CM500) + 42-Layer Dichroic Coating
   {
     const g = new THREE.Group();
+    // Deep cyan-blue Cu²⁺-doped CM500 fluorophosphate absorptive core with ground edge bezel
     const cm500 = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(37.8, 25.8, 0.8), 0.42, 0.03, 0.03, 12),
+      extrudeHiRes(createRoundedRectShape(37.8, 25.8, 0.8), 0.42, 0.05, 0.05, 2, 18),
       mats.irCutGlass
     );
+    const edgeBevel = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(38.1, 26.1, 0.85, 37.3, 25.3, 0.72), 0.36, 0.02, 0.02, 1, 14),
+      mats.quartzEdge
+    );
+    edgeBevel.userData.noEdges = true;
+
+    // Front 42-layer TiO2/SiO2 dielectric dichroic hot-mirror film + rear broadband AR stratum
     const dichroicCoat = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(37.6, 25.6, 0.7), 0.08, 0.01, 0.01, 10),
+      extrudeHiRes(createRoundedRectShape(37.5, 25.5, 0.7), 0.08, 0.01, 0.01, 1, 14),
       mats.fluorineCoatCyan
     );
     dichroicCoat.position.z = 0.26;
-    g.add(cm500, dichroicCoat);
+    const arRear = new THREE.Mesh(
+      extrudeHiRes(createRoundedRectShape(37.5, 25.5, 0.7), 0.06, 0.01, 0.01, 1, 14),
+      mats.nanoArIridescent
+    );
+    arRear.position.z = -0.25;
+    arRear.userData.noEdges = true;
+
+    // Corner orientation chamfer index tab identifying coated dichroic front face
+    const idxTab = new THREE.Mesh(
+      createChamferedBoxGeo(1.8, 0.55, 0.56, 0.08, 0.03, 'z'),
+      mats.goldPlating
+    );
+    idxTab.position.set(17.8, -12.95, 0.02);
+
+    g.add(cm500, edgeBevel, dichroicCoat, arRear, idxTab);
 
     parts.push(
       finalizeSensorAuditPart(
@@ -142,13 +210,39 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
   // S67. Ultrasonic SSWF PZT Piezo Dual Fired Ag-Ni Electrode Films & Acoustic Matching Bond
   {
     const g = new THREE.Group();
-    const agTop = new THREE.Mesh(new THREE.BoxGeometry(2.8, 25.2, 0.12), mats.silverElectrode);
-    agTop.position.set(-20.4, 0, 0.36);
-    const pztCore = new THREE.Mesh(new THREE.BoxGeometry(2.6, 25.0, 0.45), mats.pztCeramic);
+    // Multilayer co-fired PZT-5H ceramic bar with stratified texture (US8966704)
+    const pztGeo = createChamferedBoxGeo(2.6, 25.0, 0.48, 0.2, 0.05, 'z');
+    applyBoxUVs(pztGeo, 10.0);
+    const pztCore = new THREE.Mesh(pztGeo, mats.ultra.sensorPztStack);
     pztCore.position.set(-20.4, 0, 0);
-    const bondLayer = new THREE.Mesh(new THREE.BoxGeometry(2.9, 25.4, 0.14), mats.opticalCementClear);
-    bondLayer.position.set(-20.4, 0, -0.34);
-    g.add(agTop, pztCore, bondLayer);
+
+    // Dual symmetric fired Ag-Ni split drive electrode films separated by central isolation trench + solder bumps
+    for (const sy of [-6.4, 6.4]) {
+      const agSeg = new THREE.Mesh(
+        createChamferedBoxGeo(2.75, 11.4, 0.12, 0.14, 0.02, 'z'),
+        mats.silverElectrode
+      );
+      agSeg.position.set(-20.4, sy, 0.34);
+      const solder = new THREE.Mesh(hiResSphere(0.36, 8, 6), mats.solderBallSilver);
+      solder.scale.set(1.1, 1.5, 0.45);
+      solder.position.set(-20.4, sy + Math.sign(sy) * 4.4, 0.42);
+      solder.userData.noEdges = true;
+      g.add(agSeg, solder);
+    }
+
+    // Wrap-around rear gold ground electrode + rigid <15um acoustic-impedance-matched epoxy bond film
+    const rearGnd = new THREE.Mesh(
+      createChamferedBoxGeo(2.65, 24.4, 0.08, 0.12, 0.015, 'z'),
+      mats.goldPlating
+    );
+    rearGnd.position.set(-20.4, 0, -0.26);
+    const bondLayer = new THREE.Mesh(
+      createChamferedBoxGeo(2.95, 25.4, 0.14, 0.2, 0.03, 'z'),
+      mats.opticalCementClear
+    );
+    bondLayer.position.set(-20.4, 0, -0.37);
+
+    g.add(pztCore, rearGnd, bondLayer);
 
     parts.push(
       finalizeSensorAuditPart(
@@ -173,17 +267,27 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
       [0, -18.5],
     ];
     for (const [bx, by] of ballCoords) {
+      // Front mirror-lapped hardened SUS440C martensitic steel wear insert with beveled press-fit flange
       const raceFront = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.2, 3.2, 0.38, 20).rotateX(Math.PI / 2),
+        hiResCyl(3.15, 3.35, 0.38, 24).rotateX(Math.PI / 2),
         mats.stainlessMachined
       );
       raceFront.position.set(bx, by, 1.35);
+      const lapRingF = new THREE.Mesh(hiResTorus(2.65, 0.12, 6, 22), mats.silverElectrode);
+      lapRingF.position.set(bx, by, 1.15);
+      lapRingF.userData.noEdges = true;
+
+      // Rear white ZrO2 zirconia ceramic ultra-hard wear insert + precision stainless press-fit collar
       const raceRear = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.2, 3.2, 0.38, 20).rotateX(Math.PI / 2),
+        hiResCyl(3.15, 3.35, 0.38, 24).rotateX(Math.PI / 2),
         mats.ceramicAlumina
       );
       raceRear.position.set(bx, by, -1.35);
-      g.add(raceFront, raceRear);
+      const rearCollar = new THREE.Mesh(hiResTorus(3.38, 0.22, 8, 24), mats.titaniumRivet);
+      rearCollar.position.set(bx, by, -1.35);
+      rearCollar.userData.noEdges = true;
+
+      g.add(raceFront, lapRingF, raceRear, rearCollar);
     }
 
     parts.push(
@@ -203,19 +307,58 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
   // S69. Moving-Stage Rear Slotted Ferromagnetic Flux-Return Shunt & Anti-Eddy Shield
   {
     const g = new THREE.Group();
+    // Photo-etched Permalloy flux-return frame with TRUE THROUGH-CUT eddy-current-breaking slots!
+    const shuntShape = createFrameShape(50.0, 38.0, 2.5, 34.0, 22.0, 1.2);
+    // Cut 14 real rectangular through-slots along top & bottom rails + 6 along side rails!
+    for (let i = -3; i <= 3; i++) {
+      const sx = i * 5.8;
+      for (const sy of [15.0, -15.0]) {
+        const hole = new THREE.Path();
+        hole.moveTo(sx - 0.35, sy - 2.6);
+        hole.lineTo(sx + 0.35, sy - 2.6);
+        hole.lineTo(sx + 0.35, sy + 2.6);
+        hole.lineTo(sx - 0.35, sy + 2.6);
+        hole.closePath();
+        shuntShape.holes.push(hole);
+      }
+    }
+    for (let j = -1; j <= 1; j++) {
+      const sy = j * 6.5;
+      for (const sx of [-21.0, 21.0]) {
+        const hole = new THREE.Path();
+        hole.moveTo(sx - 2.4, sy - 0.35);
+        hole.lineTo(sx + 2.4, sy - 0.35);
+        hole.lineTo(sx + 2.4, sy + 0.35);
+        hole.lineTo(sx - 2.4, sy + 0.35);
+        hole.closePath();
+        shuntShape.holes.push(hole);
+      }
+    }
+    addCircleHoles(shuntShape, [
+      [-22.2, 16.2, 1.0],
+      [22.2, 16.2, 1.0],
+      [-22.2, -16.2, 1.0],
+      [22.2, -16.2, 1.0],
+    ]);
+
     const shuntFrame = new THREE.Mesh(
-      extrudeCentered(createFrameShape(50.0, 38.0, 2.5, 34.0, 22.0, 1.2), 0.26, 0.03, 0.03, 18),
+      extrudeHiRes(shuntShape, 0.28, 0.03, 0.03, 2, 22),
       mats.lensPermalloyShield
     );
-    // Eddy-current breaking slots etched around perimeter
-    for (let i = -3; i <= 3; i++) {
-      const slot = new THREE.Mesh(new THREE.BoxGeometry(0.45, 5.2, 0.32), mats.matteBlackAnodized);
-      slot.position.set(i * 6.4, 15.0, 0);
-      const slotB = slot.clone();
-      slotB.position.y = -15.0;
-      g.add(slot, slotB);
-    }
     g.add(shuntFrame);
+
+    // 4 gold-plated grounding contact washers at corner mounting bores
+    for (const [cx, cy] of [
+      [-22.2, 16.2],
+      [22.2, 16.2],
+      [-22.2, -16.2],
+      [22.2, -16.2],
+    ] as Array<[number, number]>) {
+      const gw = new THREE.Mesh(hiResTorus(1.35, 0.24, 6, 16), mats.goldPlating);
+      gw.position.set(cx, cy, 0.16);
+      gw.userData.noEdges = true;
+      g.add(gw);
+    }
 
     parts.push(
       finalizeSensorAuditPart(
@@ -234,17 +377,51 @@ export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[] {
   // S70. Sensor Optical-Cavity Hydrophobic ePTFE Barometric Breather Vent & Desiccant Strip
   {
     const g = new THREE.Group();
-    const ventPad = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(4.8, 3.2, 0.7), 0.35, 0.04, 0.04, 8),
-      mats.zifIvoryPlastic
+    // Authentic W.L. Gore-style adhesive ePTFE breather vent disc (dark acrylic PSA ring + white micro-fibril ePTFE!)
+    const ventBody = new THREE.Mesh(
+      hiResCyl(2.45, 2.45, 0.36, 26).rotateX(Math.PI / 2),
+      mats.matteBlackAnodized
     );
-    ventPad.position.set(20.6, 11.2, 0);
-    const desiccantBar = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(16.0, 1.8, 0.5), 0.42, 0.04, 0.04, 8),
+    ventBody.position.set(20.6, 11.2, 0);
+
+    const ventFaceGeo = markHiRes(new THREE.CircleGeometry(2.38, 26));
+    applyPlanarUVs(ventFaceGeo, 4.76, 4.76, 'xy');
+    const ventFaceFront = new THREE.Mesh(ventFaceGeo, mats.ultra.sensorEptfeVent);
+    ventFaceFront.position.set(20.6, 11.2, 0.20);
+    ventFaceFront.userData.noEdges = true;
+
+    const ventFaceRear = new THREE.Mesh(ventFaceGeo, mats.ultra.sensorEptfeVent);
+    ventFaceRear.rotation.y = Math.PI;
+    ventFaceRear.position.set(20.6, 11.2, -0.20);
+    ventFaceRear.userData.noEdges = true;
+
+    // Perforated polymer desiccant cartridge bar along lower cavity border housing molecular-sieve beads!
+    const cartFrame = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(16.4, 2.1, 0.55, 14.2, 1.15, 0.3), 0.46, 0.04, 0.04, 2, 14),
+      mats.matteBlackAnodized
+    );
+    cartFrame.position.set(0, -14.8, 0);
+    const porousBack = new THREE.Mesh(
+      createChamferedBoxGeo(15.2, 1.65, 0.16, 0.35, 0.02, 'z'),
       mats.oilTrapPorousPad
     );
-    desiccantBar.position.set(0, -14.8, 0);
-    g.add(ventPad, desiccantBar);
+    porousBack.position.set(0, -14.8, -0.14);
+
+    // Instanced spherical white zeolite / silica-gel molecular-sieve desiccant microbeads visible inside cartridge!
+    const beadGeo = hiResSphere(0.32, 8, 6);
+    const beads = new THREE.InstancedMesh(beadGeo, mats.ceramicAlumina, 22);
+    const bd = new THREE.Object3D();
+    for (let i = 0; i < 22; i++) {
+      const bx = -6.3 + i * 0.6;
+      const by = -14.8 + (i % 2 === 0 ? 0.18 : -0.18);
+      bd.position.set(bx, by, 0.06);
+      bd.updateMatrix();
+      beads.setMatrixAt(i, bd.matrix);
+    }
+    beads.instanceMatrix.needsUpdate = true;
+    beads.userData.noEdges = true;
+
+    g.add(ventBody, ventFaceFront, ventFaceRear, cartFrame, porousBack, beads);
 
     parts.push(
       finalizeSensorAuditPart(

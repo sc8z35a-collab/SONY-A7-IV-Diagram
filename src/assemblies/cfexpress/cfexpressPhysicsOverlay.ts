@@ -11,8 +11,8 @@ export interface CfexpressPhysicsOverlayController {
 }
 
 /**
- * Animated PCIe Gen4 NVMe + Toggle 6.0 4.8 Gb/s Data Flow + Dual-Side Copper-Coin Thermal/PLP Waves
- * + 6-Way Dashed Explode Guides for the Standalone 100-Part CFexpress 4.0 Card Ultra-Dissection (C01–C100).
+ * Animated PCIe Gen4 NVMe + Toggle 6.0 4.8 Gb/s + SerDes CTLE/DFE + FDP Reclaim Unit Data Flows
+ * + Dual-Side Copper-Coin Thermal Waves + 6-Way Dashed Explode Guides for the 130-Part CFexpress Ultra-Dissection (C01–C130).
  */
 export function createCfexpressPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -23,15 +23,17 @@ export function createCfexpressPhysicsOverlay(
   const explodeGuides = new THREE.Group();
   explodeGuides.visible = false;
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 112);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 145);
   explodeGuides.add(radialGuides.group);
 
   // High-speed data, power & dual-side thermal paths:
-  // 1) 21-pin Gold Edge Connector -> AC-Coupling + Antipad Void -> 7nm PCIe 4.0 SoC -> Primary 3D NAND (cyan)
+  // 1) 21-pin Gold Edge Connector -> AC-Coupling + Antipad Void -> 6nm PCIe 4.0 SoC -> Primary 3D NAND (cyan)
   // 2) PCIe SoC -> LPDDR4 DRAM Cache -> Rear Interleaved 3D NAND (violet)
   // 3) Controller SoC Heat -> Pure Copper Heat Spreader -> Front Metal Armor Shell (amber)
   // 4) Toggle DDR 6.0 / SCA 4.8 Gb/s 6-Plane BiCS10 Parallel Bus -> Multi-Plane NAND Crown (emerald)
   // 5) Under-Controller Copper Coin -> Rear Alumina Gap Filler -> Rear SUS Backplate Dual Dissipation (rose-gold)
+  // 6) PCIe Gen4/5 SerDes TX FFE -> HVLP2/Megtron7 -> RX CTLE/DFE Equalized Highway (gold)
+  // 7) 2026 NVMe FDP Reclaim Units -> Superblock Multi-Die Interleaved Parallel Write (magenta)
   const routeDefs: Array<{ pts: THREE.Vector3[]; color: number }> = [
     {
       pts: [
@@ -75,6 +77,24 @@ export function createCfexpressPhysicsOverlay(
         new THREE.Vector3(0, 4.0, -2.55),
       ],
       color: 0xf43f5e, // Rear copper-coin & alumina gap-filler dual-side cooling path
+    },
+    {
+      pts: [
+        new THREE.Vector3(3.5, -25.0, 0.9),
+        new THREE.Vector3(2.4, -16.0, 0.85),
+        new THREE.Vector3(-1.0, -14.2, 0.95),
+        new THREE.Vector3(-5.5, -10.5, 1.05),
+      ],
+      color: 0xfacc15, // SerDes FFE/CTLE/DFE + HVLP2 equalized 16 GT/s path
+    },
+    {
+      pts: [
+        new THREE.Vector3(-9.0, -6.5, 0.9),
+        new THREE.Vector3(-10.2, 2.8, 0.95),
+        new THREE.Vector3(-3.0, 13.5, 1.15),
+        new THREE.Vector3(3.2, 17.2, 1.2),
+      ],
+      color: 0xd946ef, // 2026 NVMe FDP Reclaim Units -> Quantum NAND Superblock stream
     },
   ];
 

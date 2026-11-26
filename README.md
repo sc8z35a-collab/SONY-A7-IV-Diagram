@@ -1,16 +1,16 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,124 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,242 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (1,124 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 819 Standalone-Only Micro/Ultra/Fab)
+## Complete Camera Assembly (1,242 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 937 Standalone-Only Micro/Ultra/Fab)
 
-### Phase 30 — Dedicated 「センサー製造工程」 Mode: Vol.0 Complete 2,110-Step Manufacturing Map 3D CAD Anatomy (+32 Parts → 1,124 Total across 17 Modes!)
+### Phase 30 — Dedicated 「センサー製造工程」 Mode: Vol.0 Complete 2,110-Step Manufacturing Map 3D CAD Anatomy (+32 Parts → 1,242 Total across 17 Modes!)
 Based on **第0巻：総目次と全工程マップ ── 砂からミラーレス一眼へ・全2,110工程の完全設計図（2026年11月版）** (`00_総目次と全工程マップ.md`), with explicit source-accuracy tags (`[確認済み]` / `[学会・論文]` / `[業界標準]` / `[推定]`) preserved across all specs and explanations:
 - **Prominent 「センサー製造工程」 Button & Top-Center Stage Navigator**: Adds a dedicated 300mm-wafer SVG pill button (`センサー製造工程`, `data-mode="sensor_fab"`) in the bottom floating CAD dock plus a contextual top-center 4-stage camera switcher (`第0巻 全工程` / `P1–P12` / `L01–L12` / `5方式比較`). Strictly lazy-hydrated (`deferredStandaloneCount: 32`) with zero startup cost (`305` hydrated at boot).
-- **4 Bespoke Procedural PBR Cleanroom Textures (`UltraRealisticTextures.ts` & `GpuMegaBatch.ts`)**: 300mm Full-Frame Stitched Reticle Die Map (`fabWafer300mmDieMap`), Chrome-on-Quartz Photomask (`fabQuartzReticleMask`), Cleanroom Process Deck (`fabCleanroomProcessDeck`), and EMVA 1288 Wafer Binning Map (`fabWaferBinningMap`), with WebGL2 `Texture2DArray` atlas capacity expanded cleanly (`HI_TEX_MAX_LAYERS: 60`, `TILE_TEX_MAX_LAYERS: 46`).
+- **4 Bespoke Procedural PBR Cleanroom Textures (`UltraRealisticTextures.ts` & `GpuMegaBatch.ts`)**: 300mm Full-Frame Stitched Reticle Die Map (`fabWafer300mmDieMap`), Chrome-on-Quartz Photomask (`fabQuartzReticleMask`), Cleanroom Process Deck (`fabCleanroomProcessDeck`), and EMVA 1288 Wafer Binning Map (`fabWaferBinningMap`), with WebGL2 `Texture2DArray` atlas capacity expanded cleanly (`HI_TEX_MAX_LAYERS: 94`, `TILE_TEX_MAX_LAYERS: 62`).
 - **4-Deck Sequential 3D Cleanroom Anatomy (`sensor_fab` — 32 Parts: `F0-01`–`F0-32`)**:
   - **Deck 0 (`F0-01`–`F0-03`)**: 36×24mm Postage-Stamp 3D High-Tech City Hero Sensor (`F0-01`), 300mm Silicon Wafer Single-Shot vs. 2-to-4-Shot Stitching Yield Comparison (`F0-02`), and 180-Day `T1–T5` Cleanroom Floor, Structural Columns, Lower Litho Track & Perimeter OHT FOUP Monorail (`F0-03`).
   - **Deck 1 (`F0-04`–`F0-15`, `P1–P12`)**: Chronological 12-phase manufacturing line featuring parallel **Pixel Wafer (`P3` 380 steps + `P4` 210 steps)** and **Logic Wafer (`P5` 720 steps)** tracks merging at **`P6` (Cu-Cu Hybrid Bonding & 775 µm → 3–6 µm BSI Thinning)**, continuing through `P7` (CFA/OCL), `P8` (EMVA 1288 CP Test), `P9` (Stealth Dicing & Ceramic/AR Glass Packaging), `P10` (FT & JEDEC Tray), `P11` (5-Axis IBIS Unit), and `P12` (Mirrorless Camera Final Assembly & Calibration).
