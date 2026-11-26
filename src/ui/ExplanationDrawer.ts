@@ -117,6 +117,9 @@ export class ExplanationDrawer {
   private swatchEl: HTMLElement;
   private isolateBtn: HTMLButtonElement;
   private bodyEl: HTMLElement;
+  private lightboxEl: HTMLElement;
+  private lightboxTitleEl: HTMLElement;
+  private lightboxStageEl: HTMLElement;
   private handlers: ExplanationDrawerHandlers;
   private renderSeq = 0;
 
@@ -161,6 +164,57 @@ export class ExplanationDrawer {
 
     this.drawerEl.append(toolbar, this.bodyEl);
     root.appendChild(this.drawerEl);
+
+    // Fullscreen vector HD schematic zoom lightbox (allows inspecting micron-scale details at full width!)
+    this.lightboxEl = document.createElement('div');
+    this.lightboxEl.className = 'schematic-lightbox';
+    this.lightboxEl.setAttribute('aria-hidden', 'true');
+
+    const card = document.createElement('div');
+    card.className = 'schematic-lightbox-card';
+
+    const header = document.createElement('div');
+    header.className = 'schematic-lightbox-header';
+
+    this.lightboxTitleEl = document.createElement('div');
+    this.lightboxTitleEl.className = 'schematic-lightbox-title';
+
+    const lbCloseBtn = makeIconBtn(DRAWER_ICONS.close);
+    lbCloseBtn.setAttribute('aria-label', '閉じる');
+    lbCloseBtn.addEventListener('click', () => this.closeLightbox());
+
+    header.append(this.lightboxTitleEl, lbCloseBtn);
+
+    this.lightboxStageEl = document.createElement('div');
+    this.lightboxStageEl.className = 'schematic-lightbox-stage';
+
+    card.append(header, this.lightboxStageEl);
+    this.lightboxEl.append(card);
+    this.lightboxEl.addEventListener('click', (ev) => {
+      if (ev.target === this.lightboxEl) this.closeLightbox();
+    });
+    window.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && this.lightboxEl.classList.contains('is-open')) {
+        this.closeLightbox();
+      }
+    });
+    root.appendChild(this.lightboxEl);
+  }
+
+  private openLightbox(title: string, svgMarkup: string): void {
+    // Suffix all SVG <defs> IDs with '-lb' so simultaneous drawer + lightbox SVGs never collide!
+    const safeSvg = svgMarkup
+      .replace(/\bid="([^"]+)"/g, 'id="$1-lb"')
+      .replace(/url\(#([^)]+)\)/g, 'url(#$1-lb)');
+    this.lightboxTitleEl.textContent = title;
+    this.lightboxStageEl.innerHTML = safeSvg;
+    this.lightboxEl.classList.add('is-open');
+    this.lightboxEl.setAttribute('aria-hidden', 'false');
+  }
+
+  private closeLightbox(): void {
+    this.lightboxEl.classList.remove('is-open');
+    this.lightboxEl.setAttribute('aria-hidden', 'true');
   }
 
   private renderPopulatedPart(part: CadPart, exp: PartExplanation, seq: number): void {
@@ -305,6 +359,7 @@ export class ExplanationDrawer {
       : '';
 
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
+    const isSyncHd = syncSvg.includes('data-evf-hd="1"');
 
     this.bodyEl.innerHTML = `
       <div>
@@ -319,8 +374,9 @@ export class ExplanationDrawer {
 
       ${analogyHtml}
 
-      <div class="exp-diagram-box" data-schematic-box>
-        ${syncSvg}
+      <div class="exp-diagram-box${isSyncHd ? ' is-hd-schematic' : ''}" data-schematic-box role="button" tabindex="0" title="クリックして図解を高精細拡大">
+        <div class="exp-diagram-content" data-schematic-content>${syncSvg}</div>
+        <span class="exp-diagram-zoom-pill">🔍 クリックで高精細拡大</span>
       </div>
 
       <p class="exp-summary">${exp.summary}</p>
@@ -342,11 +398,29 @@ export class ExplanationDrawer {
       </div>
     `;
 
-    if (!cachedSchematicRenderer) {
-      const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
+    const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
+    const contentEl = this.bodyEl.querySelector<HTMLElement>('[data-schematic-content]');
+    let latestSvg = syncSvg;
+
+    if (!cachedSchematicRenderer && box && contentEl) {
       void loadSchematicRenderer().then((renderFn) => {
-        if (seq !== this.renderSeq || !box || !box.isConnected) return;
-        box.innerHTML = renderFn(exp.diagramType);
+        if (seq !== this.renderSeq || !box.isConnected) return;
+        latestSvg = renderFn(exp.diagramType);
+        contentEl.innerHTML = latestSvg;
+        box.classList.toggle('is-hd-schematic', latestSvg.includes('data-evf-hd="1"'));
+      });
+    }
+
+    if (box) {
+      const triggerZoom = () => {
+        if (latestSvg) this.openLightbox(exp.title, latestSvg);
+      };
+      box.addEventListener('click', triggerZoom);
+      box.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          triggerZoom();
+        }
       });
     }
 
@@ -399,6 +473,7 @@ export class ExplanationDrawer {
 
   public hide(): void {
     this.renderSeq++;
+    this.closeLightbox();
     this.drawerEl.classList.remove('is-open');
     this.drawerEl.setAttribute('aria-hidden', 'true');
     window.setTimeout(() => {
