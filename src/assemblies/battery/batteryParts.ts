@@ -27,6 +27,7 @@ import {
 import { lazyExplanationStub } from '../lazyExplanations';
 import { buildBatteryUltra27Parts } from './batteryUltra27Parts';
 import { buildBatteryUltra30Parts } from './batteryUltra30Parts';
+import { buildBatteryUltra31Parts } from './batteryUltra31Parts';
 
 function finalizeBatteryPart(
   id: string,
@@ -1477,5 +1478,6 @@ export function buildBatteryParts(mats: MaterialLibrary): CadPart[] {
 
   parts.push(...buildBatteryUltra27Parts(mats));
   parts.push(...buildBatteryUltra30Parts(mats));
+  parts.push(...buildBatteryUltra31Parts(mats));
   return parts;
 }

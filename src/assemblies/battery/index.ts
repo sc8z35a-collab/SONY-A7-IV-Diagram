@@ -4,9 +4,9 @@ import { MaterialLibrary } from '../../engine/Materials';
 import { createBatteryPhysicsOverlay } from './batteryPhysicsOverlay';
 
 /**
- * Assemble the Standalone 100-part Flagship Camera Battery Pack Ultra-Dissection
- * (Sony NP-FZ100 + 2026 CVD Si-C / Single-Crystal NMC / LFO Pre-Lithiation / Bilayer SEI /
- *  Tabless / LLZO Solid-State / Online EIS / USB PD 3.2 SPR AVS / EU Battery Passport, P01–P100).
+ * Assemble the Standalone 130-part Flagship Camera Battery Pack Ultra-Dissection
+ * (Sony NP-FZ100 + 2026 Sulfide Argyrodite / Ag-C Anode-Free / LHCE / FBG Optical Fiber /
+ *  Ultrasonic CT / GB 38031-2025 Off-Gas MEMS / AC Self-Heat / EKF & AI SOH, P01–P130).
  * 100% lazy-hydrated on first visit to 'battery' mode (0 startup overhead!).
  */
 export function createBatteryAssembly(mats: MaterialLibrary): AssemblyController {
@@ -21,7 +21,7 @@ export function createBatteryAssembly(mats: MaterialLibrary): AssemblyController
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 100,
+    deferredStandaloneCount: 130,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;

@@ -7,11 +7,13 @@ import {
   ScaleMode,
   SectionAxis,
   SensorFabStage,
+  SensorFabVolume,
 } from '../assemblies/types';
 
 export interface ZeroTextUIHandlers {
   onModeChange: (mode: ScaleMode) => void;
   onLensSectionChange: (section: LensSection) => void;
+  onSensorFabVolumeChange: (vol: SensorFabVolume) => void;
   onSensorFabStageChange: (stage: SensorFabStage) => void;
   onExplodeChange: (value: number) => void;
   onSectionAxisChange: (axis: SectionAxis) => void;
@@ -231,6 +233,8 @@ export class ZeroTextControls {
   private v2PhaseBtn: HTMLButtonElement;
 
   private fabStageBar: HTMLElement;
+  private fabVolBtns: Record<SensorFabVolume, HTMLButtonElement>;
+  private fabStageGroups: Record<SensorFabVolume, HTMLElement>;
   private fabStageBtns: Record<SensorFabStage, HTMLButtonElement>;
 
   private qualityStdBtn: HTMLButtonElement;
@@ -263,6 +267,7 @@ export class ZeroTextControls {
 
   private currentMode: ScaleMode = 'integrated';
   private currentLensSection: LensSection = 1;
+  private currentFabVolume: SensorFabVolume = 0;
   private currentFabStage: SensorFabStage = 'overview';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
@@ -390,18 +395,44 @@ export class ZeroTextControls {
     this.root.appendChild(this.v2PhaseBar);
 
     // -----------------------------------------------------------------------
-    // 1D. Top-Center Sensor Manufacturing Process Vol.0 Stage Navigator Pill
+    // 1D. Top-Center Sensor Manufacturing Process Volume & Stage Navigator Pill
     //     Visible ONLY in standalone 'sensor_fab' mode!
     // -----------------------------------------------------------------------
     this.fabStageBar = document.createElement('div');
     this.fabStageBar.className = 'fab-stage-bar is-hidden';
     this.fabStageBar.setAttribute('role', 'group');
-    this.fabStageBar.setAttribute('aria-label', 'センサー製造工程 第0巻 ステージ切替');
+    this.fabStageBar.setAttribute('aria-label', 'センサー製造工程 巻・ステージ切替');
+
+    const makeFabVolBtn = (vol: SensorFabVolume, label: string): HTMLButtonElement => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = vol === 0 ? 'fab-vol-btn is-active' : 'fab-vol-btn';
+      btn.dataset.fabVol = String(vol);
+      const span = document.createElement('span');
+      span.textContent = label;
+      btn.appendChild(span);
+      btn.addEventListener('click', () => this.setFabVolume(vol));
+      return btn;
+    };
+
+    const volGroup = document.createElement('div');
+    volGroup.className = 'fab-vol-group';
+    this.fabVolBtns = {
+      0: makeFabVolBtn(0, '第0巻 全工程'),
+      1: makeFabVolBtn(1, '第1巻 超入門・2026'),
+    };
+    volGroup.append(this.fabVolBtns[0], this.fabVolBtns[1]);
+
+    const barDivider = document.createElement('div');
+    barDivider.className = 'fab-stage-divider';
 
     const makeFabStageBtn = (stage: SensorFabStage, label: string): HTMLButtonElement => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = stage === 'overview' ? 'fab-stage-btn is-active' : 'fab-stage-btn';
+      btn.className =
+        stage === 'overview' || stage === 'v1_overview'
+          ? 'fab-stage-btn is-active'
+          : 'fab-stage-btn';
       btn.dataset.fabStage = stage;
       const span = document.createElement('span');
       span.textContent = label;
@@ -411,18 +442,42 @@ export class ZeroTextControls {
     };
 
     this.fabStageBtns = {
-      overview: makeFabStageBtn('overview', '第0巻 全工程'),
+      overview: makeFabStageBtn('overview', '全体'),
       phases: makeFabStageBtn('phases', 'P1–P12'),
       litho: makeFabStageBtn('litho', 'L01–L12'),
       variants: makeFabStageBtn('variants', '5方式比較'),
+      v1_overview: makeFabStageBtn('v1_overview', '全体'),
+      v1_photonics: makeFabStageBtn('v1_photonics', '1.光→写真'),
+      v1_archs: makeFabStageBtn('v1_archs', '2.6大構造'),
+      v1_duel: makeFabStageBtn('v1_duel', '3.Sony対Canon'),
+      v1_wall: makeFabStageBtn('v1_wall', '4.露光の壁'),
     };
 
-    this.fabStageBar.append(
+    const vol0StageGroup = document.createElement('div');
+    vol0StageGroup.className = 'fab-stage-group';
+    vol0StageGroup.append(
       this.fabStageBtns.overview,
       this.fabStageBtns.phases,
       this.fabStageBtns.litho,
       this.fabStageBtns.variants
     );
+
+    const vol1StageGroup = document.createElement('div');
+    vol1StageGroup.className = 'fab-stage-group is-hidden';
+    vol1StageGroup.append(
+      this.fabStageBtns.v1_overview,
+      this.fabStageBtns.v1_photonics,
+      this.fabStageBtns.v1_archs,
+      this.fabStageBtns.v1_duel,
+      this.fabStageBtns.v1_wall
+    );
+
+    this.fabStageGroups = {
+      0: vol0StageGroup,
+      1: vol1StageGroup,
+    };
+
+    this.fabStageBar.append(volGroup, barDivider, vol0StageGroup, vol1StageGroup);
     this.root.appendChild(this.fabStageBar);
 
     // -----------------------------------------------------------------------
@@ -741,10 +796,33 @@ export class ZeroTextControls {
     }
   }
 
+  private applyFabVolumeButtons(vol: SensorFabVolume): void {
+    ([0, 1] as SensorFabVolume[]).forEach((v) => {
+      this.fabVolBtns[v].classList.toggle('is-active', v === vol);
+      this.fabStageGroups[v].classList.toggle('is-hidden', v !== vol);
+    });
+  }
+
   private applyFabStageButtons(stage: SensorFabStage): void {
     (Object.keys(this.fabStageBtns) as SensorFabStage[]).forEach((key) => {
       this.fabStageBtns[key].classList.toggle('is-active', key === stage);
     });
+  }
+
+  private setFabVolume(vol: SensorFabVolume): void {
+    const changed = this.currentFabVolume !== vol;
+    this.currentFabVolume = vol;
+    this.currentFabStage = vol === 0 ? 'overview' : 'v1_overview';
+    this.applyFabVolumeButtons(vol);
+    this.applyFabStageButtons(this.currentFabStage);
+    if (changed || this.currentMode === 'sensor_fab') {
+      this.handlers.onSensorFabVolumeChange(vol);
+    }
+  }
+
+  public syncFabVolume(vol: SensorFabVolume): void {
+    this.currentFabVolume = vol;
+    this.applyFabVolumeButtons(vol);
   }
 
   private setFabStage(stage: SensorFabStage): void {
@@ -784,8 +862,9 @@ export class ZeroTextControls {
       this.currentLensSection = 1;
       this.applyLensSectionButtons(1);
     } else if (mode === 'sensor_fab') {
-      this.currentFabStage = 'overview';
-      this.applyFabStageButtons('overview');
+      this.currentFabStage = this.currentFabVolume === 0 ? 'overview' : 'v1_overview';
+      this.applyFabVolumeButtons(this.currentFabVolume);
+      this.applyFabStageButtons(this.currentFabStage);
     }
     this.applyModeButtons(mode);
     this.handlers.onModeChange(mode);
@@ -845,6 +924,7 @@ export class ZeroTextControls {
     if (mode === 'lens') {
       this.applyLensSectionButtons(this.currentLensSection);
     } else if (mode === 'sensor_fab') {
+      this.applyFabVolumeButtons(this.currentFabVolume);
       this.applyFabStageButtons(this.currentFabStage);
       this.sensorFabBtn.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
     }
@@ -951,7 +1031,9 @@ export class ZeroTextControls {
         (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly) ||
         (prevSubsystem === 'sensor_fab' &&
           part.subsystem === 'sensor_fab' &&
-          (part.order === 4 || part.order === 16 || part.order === 28))
+          ((part.fabVolume ?? 0) === 1
+            ? part.order === 3 || part.order === 10 || part.order === 17 || part.order === 24
+            : part.order === 4 || part.order === 16 || part.order === 28))
       ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
@@ -1436,7 +1518,19 @@ export class ZeroTextControls {
           part.order === 91 ||
           part.order === 93 ||
           part.order === 97 ||
-          part.order === 100
+          part.order === 100 ||
+          part.order === 101 ||
+          part.order === 102 ||
+          part.order === 104 ||
+          part.order === 105 ||
+          part.order === 111 ||
+          part.order === 112 ||
+          part.order === 114 ||
+          part.order === 115 ||
+          part.order === 118 ||
+          part.order === 121 ||
+          part.order === 128 ||
+          part.order === 130
             ? 32
             : part.order === 2 ||
                 part.order === 8 ||
@@ -1474,7 +1568,20 @@ export class ZeroTextControls {
                 part.order === 94 ||
                 part.order === 96 ||
                 part.order === 98 ||
-                part.order === 99
+                part.order === 99 ||
+                part.order === 103 ||
+                part.order === 106 ||
+                part.order === 108 ||
+                part.order === 109 ||
+                part.order === 113 ||
+                part.order === 116 ||
+                part.order === 117 ||
+                part.order === 120 ||
+                part.order === 122 ||
+                part.order === 123 ||
+                part.order === 125 ||
+                part.order === 126 ||
+                part.order === 129
               ? 25
               : 19;
       } else if (part.subsystem === 'cfexpress') {
@@ -1642,7 +1749,7 @@ export class ZeroTextControls {
               ? 25
               : 18;
       } else if (part.subsystem === 'mic') {
-        // Internal Stereo / 3-Capsule MEMS, ECM & 2026 Optical MEMS Microphone Ultra-Dissection (MC01–MC80)
+        // Internal Stereo / 3-Capsule MEMS, ECM & 2026 Graphene/Optical/Metamaterial Mic Ultra-Dissection (MC01–MC110)
         widthPx =
           part.order === 1 ||
           part.order === 2 ||
@@ -1670,7 +1777,19 @@ export class ZeroTextControls {
           part.order === 71 ||
           part.order === 75 ||
           part.order === 78 ||
-          part.order === 80
+          part.order === 80 ||
+          part.order === 81 ||
+          part.order === 82 ||
+          part.order === 84 ||
+          part.order === 85 ||
+          part.order === 91 ||
+          part.order === 92 ||
+          part.order === 93 ||
+          part.order === 99 ||
+          part.order === 101 ||
+          part.order === 102 ||
+          part.order === 104 ||
+          part.order === 110
             ? 32
             : part.order === 3 ||
                 part.order === 5 ||
@@ -1703,7 +1822,22 @@ export class ZeroTextControls {
                 part.order === 72 ||
                 part.order === 76 ||
                 part.order === 77 ||
-                part.order === 79
+                part.order === 79 ||
+                part.order === 83 ||
+                part.order === 86 ||
+                part.order === 87 ||
+                part.order === 89 ||
+                part.order === 90 ||
+                part.order === 94 ||
+                part.order === 95 ||
+                part.order === 96 ||
+                part.order === 98 ||
+                part.order === 100 ||
+                part.order === 103 ||
+                part.order === 105 ||
+                part.order === 106 ||
+                part.order === 108 ||
+                part.order === 109
               ? 25
               : 18;
       } else if (part.subsystem === 'micro_v2') {

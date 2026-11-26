@@ -65,7 +65,7 @@ export function renderPhase25MicSchematicSvg(
         <rect x="18" y="44" width="100" height="12" rx="2" fill="#ffffff" stroke="#0f172a" stroke-width="1.6"/>
         <text x="68" y="53" text-anchor="middle" font-size="6.1" font-weight="bold" fill="#0f172a">撥水 ePTFE 膜 (0.5μm孔)</text>
         <path d="M88 20 Q96 32 88 44 Q80 58 88 76" fill="none" stroke="#10b981" stroke-width="2.4"/>
-        <text x="98" y="72" text-anchor="middle" font-size="6.0" font-weight="bold" fill="#047857">音は透過!</text>
+        <text x="108" y="74" text-anchor="middle" font-size="5.8" font-weight="bold" fill="#047857">音は透過!</text>
         <rect x="134" y="14" width="176" height="74" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
         <text x="142" y="29" font-size="7.6" font-weight="bold" fill="#0369a1">MC04 撥水多孔質ePTFE防水膜</text>
         <text x="142" y="43" font-size="7.0" fill="#0c4a6e">・ゴアテックスと同じ撥水角＞120°フッ素膜</text>
@@ -496,7 +496,7 @@ export function renderPhase25MicSchematicSvg(
         <text x="142" y="43" font-size="7.0" fill="#164e63">・各カプセル1万分の1秒の時間ズレを合成</text>
         <text x="142" y="56" font-size="7.0" fill="#164e63">・前方/後方/全方位を物理交換なしで切替</text>
         <text x="142" y="69" font-size="7.0" fill="#164e63">・AI顔認識に連動し喋る人へ音を自動追尾!</text>
-        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#155e75">瞳AFのように「音のスポットライト」もAI顔認識で自動追尾し、狙った人の声だけ浮かび上がらせる</text>
+        <text x="160" y="106" text-anchor="middle" font-size="6.2" fill="#155e75">瞳AFのように「音のスポットライト」もAI顔認識で自動追尾し、狙った人の声だけ浮かび上がらせる</text>
       `);
 
     case 'mc_ai_noise_cut_agc':
@@ -514,7 +514,7 @@ export function renderPhase25MicSchematicSvg(
         <text x="142" y="43" font-size="7.0" fill="#4c1d95">・α7 V/α7R VIのAIが声と環境騒音を分離</text>
         <text x="142" y="56" font-size="7.0" fill="#4c1d95">・ズーム駆動指令連動でモーター音も狙い消し</text>
         <text x="142" y="69" font-size="7.0" fill="#4c1d95">・スマートAGC＆ソフトリミッターで音割れゼロ</text>
-        <text x="160" y="106" text-anchor="middle" font-size="7.0" fill="#5b21b6">2025–2026年最新AI頭脳が雑音とズーム音だけをリアルタイムに消し、撮った瞬間から聞きやすい音声へ</text>
+        <text x="160" y="106" text-anchor="middle" font-size="5.9" fill="#5b21b6">2025–2026年最新AI頭脳が雑音とズーム音だけをリアルタイムに消し、撮った瞬間から聞きやすい音声へ</text>
       `);
 
     default:

@@ -20,7 +20,17 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab';
-export type SensorFabStage = 'overview' | 'phases' | 'litho' | 'variants';
+export type SensorFabVolume = 0 | 1;
+export type SensorFabStage =
+  | 'overview'
+  | 'phases'
+  | 'litho'
+  | 'variants'
+  | 'v1_overview'
+  | 'v1_photonics'
+  | 'v1_archs'
+  | 'v1_duel'
+  | 'v1_wall';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1339,7 +1349,102 @@ export interface PartExplanation {
     | 'mc_timecode_ltc_audio_sync'
     | 'mc_spatial_ambisonics_matrix'
     | 'mc_true_peak_lookahead_limiter'
-    | 'mc_factory_anechoic_cal_otp';
+    | 'mc_factory_anechoic_cal_otp'
+    // Phase 31A: Battery Ultra-Micro 130-Part Expansion (+30 brand-new 2026 parts P101–P130 -> 130 total!)
+    | 'bat_argyrodite_li6ps5cl_2026'
+    | 'bat_ag_c_anodefree_interlayer'
+    | 'bat_lhce_fluorinated_ether'
+    | 'bat_supramolecular_selfheal_binder'
+    | 'bat_gb_dendrite_grain_passiv'
+    | 'bat_na_li_hybrid_cold_cell'
+    | 'bat_swcnt_mwcnt_3d_web'
+    | 'bat_solvation_sheath_tunnel'
+    | 'bat_hv_45v_cobalt_surface_spinel'
+    | 'bat_solid_polymer_peo_bridge'
+    | 'bat_fbg_optical_fiber_sensor'
+    | 'bat_ultrasonic_phased_ct_2026'
+    | 'bat_acoustic_emission_crack_mic'
+    | 'bat_h2_co_voc_offgas_mems'
+    | 'bat_ac_pulse_selfheat_core'
+    | 'bat_hybrid_supercap_pulse_buf'
+    | 'bat_hall_magnetic_flux_shunt'
+    | 'bat_laser_tabless_petal_weld'
+    | 'bat_jellyroll_axial_spring_pad'
+    | 'bat_ceramic_arc_quench_vent'
+    | 'bat_kalman_ekf_soc_dsp'
+    | 'bat_ai_cloud_soh_telemetry'
+    | 'bat_dual_redundant_afe_adc'
+    | 'bat_active_emi_cm_choke'
+    | 'bat_gold_wiper_selfclean_slot'
+    | 'bat_potting_phase_change_pcm'
+    | 'bat_hydrophobic_pcb_nano_coat'
+    | 'bat_second_source_id_puf'
+    | 'bat_recycle_direct_cathode_tag'
+    | 'bat_un383_crush_mandrel_guard'
+    // Phase 31B: Microphone Ultra-Micro 110-Part Expansion (+30 brand-new 2026 parts MC81–MC110 -> 110 total!)
+    | 'mc_graphene_2d_membrane_2026'
+    | 'mc_fabry_perot_fiber_cavity'
+    | 'mc_silicon_photonics_waveguide'
+    | 'mc_3d_tsv_mems_cmos_stack'
+    | 'mc_wake_on_sound_5ua_aad'
+    | 'mc_pmut_ultrasonic_range_2026'
+    | 'mc_corrugated_poly_si_rings'
+    | 'mc_sio2_sacrificial_etch_stops'
+    | 'mc_drie_bosch_scallop_wall'
+    | 'mc_metal_lid_solder_ring_seal'
+    | 'mc_spiral_helmholtz_metamaterial'
+    | 'mc_tubular_front_cavity_wind'
+    | 'mc_lowfreq_metamaterial_booster'
+    | 'mc_acoustic_edge_diffraction_chamfer'
+    | 'mc_dual_layer_wind_boundary_mesh'
+    | 'mc_hydrophobic_oleophobic_mesh'
+    | 'mc_proximity_effect_eq_baffle'
+    | 'mc_acoustic_crosstalk_barrier'
+    | 'mc_high_spl_membrane_vent_flap'
+    | 'mc_sibilance_acoustic_diffuser'
+    | 'mc_ai_dereverb_room_cancel_2026'
+    | 'mc_speaker_diarization_track_2026'
+    | 'mc_uwb_24g_lossless_rx_2026'
+    | 'mc_safety_track_minus20db_mux'
+    | 'mc_lufs_broadcast_loudness_dsp'
+    | 'mc_ultrasonic_shutter_vcm_filter'
+    | 'mc_dc_servo_subsonic_integrator'
+    | 'mc_pdm_tdm_clk_spread_spectrum'
+    | 'mc_headphone_sidetone_eq_monitor'
+    | 'mc_anechoic_3d_hrtf_binaural_2026'
+    // Phase 31: Sensor Manufacturing Process Vol.1 — 超入門：センサーのしくみと2026年最新アーキテクチャ (32 Parts: F1-01–F1-32)
+    | 'fab1_hero_optics_photonics'
+    | 'fab1_base_exhibition_deck'
+    | 'fab1_step1_pd_bucket_fwc'
+    | 'fab1_step3_tg_sluice_gate'
+    | 'fab1_step4_fd_dcg_cups'
+    | 'fab1_step5_rst_sf_sel_cds'
+    | 'fab1_column_14bit_adc'
+    | 'fab1_pixel_parallel_adc'
+    | 'fab1_ccd_vs_cmos_arena'
+    | 'fab1_arch1_fsi_r6m3'
+    | 'fab1_arch2_bsi_a7iv'
+    | 'fab1_arch3_partial_stack_a7v'
+    | 'fab1_arch4_full_stack_a7rvi'
+    | 'fab1_arch4b_3layer_dram'
+    | 'fab1_arch5_gs_stacked_a9iii'
+    | 'fab1_arch6_2layer_tr_lytia'
+    | 'fab1_canon_dpaf_standard'
+    | 'fab1_canon_r1_crosstype_af'
+    | 'fab1_sony_pdaf_mask_ocl'
+    | 'fab1_gs_rolling_vs_global'
+    | 'fab1_gs_charge_domain'
+    | 'fab1_gs_voltage_domain_a9iii'
+    | 'fab1_gs_pixel_adc_isscc2025'
+    | 'fab1_wall_field_overflow'
+    | 'fab1_canon_fpa6300esw'
+    | 'fab1_canon_fpa5550ix'
+    | 'fab1_stitching_exposure'
+    | 'fab1_wafer_smartphone_640'
+    | 'fab1_wafer_apsc_134'
+    | 'fab1_wafer_fullframe_48'
+    | 'fab1_wafer_mediumformat_26'
+    | 'fab1_stacked_yield_multiply';
 }
 
 export interface CadPart {
@@ -1382,6 +1487,8 @@ export interface CadPart {
   standaloneOnly?: boolean;
   /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
   lensSection?: LensSection;
+  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0 (Master Map), 1 = Vol.1 (Physics & 2026 Architectures) */
+  fabVolume?: SensorFabVolume;
 }
 
 export interface AssemblyController {
@@ -1391,6 +1498,8 @@ export interface AssemblyController {
   deferredStandaloneCount?: number;
   /** Lazily build & attach standalone-only micro-parts on first standalone visit (returns newly built parts) */
   hydrateStandalone?: () => CadPart[] | Promise<CadPart[]>;
+  /** Optional active volume setter for multi-volume standalone encyclopedias (sensor_fab) */
+  setActiveVolume?: (vol: SensorFabVolume) => void;
   updateAnimation: (
     elapsed: number,
     delta: number,
