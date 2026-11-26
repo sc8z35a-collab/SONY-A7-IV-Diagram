@@ -164,6 +164,13 @@ export interface UltraRealisticMaterials {
   fab3ChipLayoutOasis: THREE.MeshPhysicalMaterial;
   fab3MaskCdMap: THREE.MeshPhysicalMaterial;
   fab3BossungWindowMap: THREE.MeshPhysicalMaterial;
+  // Phase 34: Sensor Manufacturing Process (Fab Vol.4) Pixel FEOL 380-Step PBR Materials
+  fab4Phase3FeolDeck: THREE.MeshPhysicalMaterial;
+  fab4RgbAbsorptionProfile: THREE.MeshPhysicalMaterial;
+  fab4FdtiWallCrossSection: THREE.MeshPhysicalMaterial;
+  fab4DualPixelSplitProfile: THREE.MeshPhysicalMaterial;
+  fab4PpdPinningBarrier: THREE.MeshPhysicalMaterial;
+  fab4SalicideBlockSplit: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -8030,6 +8037,348 @@ function createFab3BossungWindowMapTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 34: SENSOR FAB VOL.4 — PIXEL WAFER FEOL (380 STEPS / 25 MASKS) PBR TEXTURES
+// =============================================================================
+
+function createFab4Phase3FeolDeckTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0d1526');
+  bg.addColorStop(0.5, '#132038');
+  bg.addColorStop(1, '#0b1424');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle nanometer lithography grid
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.10)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= w; i += 24) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(w, i);
+    ctx.stroke();
+  }
+
+  // Three horizontal FEOL upper cleanroom lanes (3-A/3-B STI+DTI, 3-C RGB MeV PPD, 3-D VTG & Gate)
+  const lanes: Array<{ y: number; h: number; color: string; title: string; sub: string }> = [
+    { y: 54, h: 196, color: '#0ea5e9', title: '3-A/3-B  ALIGN / STI MOAT / DEEP F-DTI WALLS', sub: 'P03-001 -> P03-084 (M#01-04)' },
+    { y: 286, h: 196, color: '#ec4899', title: '3-C  WELLS / RGB 3-DEPTH MeV PPD / DUAL PIXEL SPLIT', sub: 'P03-085 -> P03-248 (M#05-16)' },
+    { y: 518, h: 196, color: '#8b5cf6', title: '3-D  VTG STRAW GATE / 3-7nm GATE OX / POLY-Si GATE', sub: 'P03-249 -> P03-296 (M#17-19)' },
+  ];
+  for (const lane of lanes) {
+    ctx.fillStyle = `${lane.color}18`;
+    ctx.fillRect(26, lane.y, w - 52, lane.h);
+    ctx.strokeStyle = `${lane.color}bb`;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(26, lane.y, w - 52, lane.h);
+    ctx.fillStyle = lane.color;
+    ctx.fillRect(26, lane.y, w - 52, 8);
+    ctx.fillStyle = '#f1f5f9';
+    ctx.font = 'bold 15px monospace';
+    ctx.fillText(lane.title, 40, lane.y + 30);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText(lane.sub, w - 268, lane.y + 30);
+
+    ctx.strokeStyle = `${lane.color}66`;
+    ctx.lineWidth = 2;
+    for (let x = 86; x < w - 80; x += 68) {
+      const cy = lane.y + lane.h - 16;
+      ctx.beginPath();
+      ctx.moveTo(x - 10, cy - 6);
+      ctx.lineTo(x, cy);
+      ctx.lineTo(x - 10, cy + 6);
+      ctx.stroke();
+    }
+  }
+
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 14.5px monospace';
+  ctx.fillText('PHASE 3: PIXEL WAFER FEOL — 380 STEPS (25 MASKS x 12 + 80 NON-LITHO) · 90-65nm CIS', 26, 34);
+  ctx.fillStyle = '#10b981';
+  ctx.fillText('LOWER TERRACE: 3-E LDD / SPACER / SURFACE P+ PINNING  |  3-F SPIKE RTA / SAB / H2 SINTER', 26, 748);
+  return toHiTex(canvas);
+}
+
+function createFab4RgbAbsorptionProfileTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#09101f';
+  ctx.fillRect(0, 0, w, h);
+
+  // Silicon bulk background with depth scale ticks (0um to 5um)
+  ctx.fillStyle = '#132036';
+  ctx.fillRect(72, 92, 624, 592);
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+  ctx.lineWidth = 1.5;
+  for (let d = 0; d <= 5; d++) {
+    const y = 92 + d * 112;
+    ctx.beginPath();
+    ctx.moveTo(72, y);
+    ctx.lineTo(696, y);
+    ctx.stroke();
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText(`${d}.0um`, 12, y + 6);
+  }
+
+  // Deep P-Well Floor (Mask #05) at bottom (4.4 - 5.0 um)
+  ctx.fillStyle = 'rgba(139, 92, 246, 0.48)';
+  ctx.fillRect(72, 588, 624, 96);
+  ctx.fillStyle = '#e9d5ff';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('DEEP P-WELL FLOOR (MASK #05 — REFLECTS ELECTRONS UP!)', 92, 642);
+
+  // 3 Stacked N-Type Photodiode Doping Zones (Shallow Blue, Mid Green, Deep Red)
+  // Blue zone (0.49 um)
+  ctx.fillStyle = 'rgba(56, 189, 248, 0.42)';
+  ctx.fillRect(102, 114, 564, 96);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(102, 114, 564, 96);
+
+  // Green zone (1.73 um)
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.36)';
+  ctx.fillRect(102, 224, 564, 146);
+  ctx.strokeStyle = '#4ade80';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(102, 224, 564, 146);
+
+  // Red deep zone (4.0 um MeV implant)
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.36)';
+  ctx.fillRect(102, 386, 564, 188);
+  ctx.strokeStyle = '#fb7185';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(102, 386, 564, 188);
+
+  // Surface P+ Pinning Lid (Mask #22) on top
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(102, 92, 564, 20);
+
+  // RGB vertical photon rays plunging to exact physical 1/alpha depths
+  const drawRay = (x: number, endY: number, col: string, label: string) => {
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(x, 38);
+    ctx.lineTo(x, endY);
+    ctx.stroke();
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(x, endY, 16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 17px monospace';
+    ctx.fillText(label, x - 62, endY + 34);
+  };
+  drawRay(210, 152, '#38bdf8', 'BLUE 450nm (0.49um)');
+  drawRay(384, 290, '#4ade80', 'GREEN 550nm (1.73um)');
+  drawRay(558, 512, '#fb7185', 'RED 650nm (4.0um MeV)');
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('3-STAGE RGB PHOTODIODE DEPTH MAP (MASK #11-13)', 96, 32);
+  return toHiTex(canvas);
+}
+
+function createFab4FdtiWallCrossSectionTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0a1220';
+  ctx.fillRect(0, 0, w, h);
+
+  // Adjacent Red & Green Pixels separated by a razor-deep F-DTI Wall (AR 15-30)
+  ctx.fillStyle = 'rgba(244, 63, 94, 0.25)';
+  ctx.fillRect(36, 92, 312, 608);
+  ctx.fillStyle = 'rgba(34, 197, 94, 0.25)';
+  ctx.fillRect(420, 92, 312, 608);
+
+  // Deep F-DTI Trench Wall (width 100-200nm, depth 2-5um, AR 15-30)
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(348, 92, 72, 578);
+  // Inner Poly-Si optical mirror core
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillRect(368, 108, 32, 544);
+  // ALD negative fixed-charge / P+ passivation sidewalls (glowing violet)
+  ctx.fillStyle = '#a855f7';
+  ctx.fillRect(340, 92, 10, 578);
+  ctx.fillRect(418, 92, 10, 578);
+
+  // Oblique red ray bouncing cleanly off the F-DTI mirror back into Red PD!
+  ctx.strokeStyle = '#fb7185';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(120, 110);
+  ctx.lineTo(340, 390);
+  ctx.lineTo(180, 600);
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('FRONT DTI DEEP WALL (W:100-200nm / D:2-5um / AR 15-30)', 48, 48);
+  ctx.fillStyle = '#fda4af';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('PIXEL R (REFLECTED!)', 64, 160);
+  ctx.fillStyle = '#86efac';
+  ctx.fillText('PIXEL G (ZERO CROSSTALK)', 442, 160);
+  ctx.fillStyle = '#e9d5ff';
+  ctx.fillText('P+ / ALD NEGATIVE CHARGE SIDEWALL', 190, 736);
+  return toHiTex(canvas);
+}
+
+function createFab4DualPixelSplitProfileTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0b1120';
+  ctx.fillRect(0, 0, w, h);
+
+  // Single pixel split down the middle into A-Image PD (Cyan) and B-Image PD (Rose) by Mask #14 P-Wall!
+  const gA = ctx.createRadialGradient(220, 390, 20, 220, 390, 170);
+  gA.addColorStop(0, '#22d3ee');
+  gA.addColorStop(1, '#0c4a6e');
+  ctx.fillStyle = gA;
+  ctx.fillRect(54, 120, 304, 520);
+
+  const gB = ctx.createRadialGradient(548, 390, 20, 548, 390, 170);
+  gB.addColorStop(0, '#fb7185');
+  gB.addColorStop(1, '#881337');
+  ctx.fillStyle = gB;
+  ctx.fillRect(410, 120, 304, 520);
+
+  // Central Mask #14 P-Type Separation Barrier Wall
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(358, 120, 52, 520);
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(358, 120, 52, 520);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 21px monospace';
+  ctx.fillText('MASK #14: CROSS-TYPE DUAL PIXEL SPLIT (EOS R1)', 82, 60);
+  ctx.font = 'bold 28px monospace';
+  ctx.fillText('PD-A', 166, 400);
+  ctx.fillText('PD-B', 524, 400);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 17px monospace';
+  ctx.save();
+  ctx.translate(390, 505);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('P-TYPE SPLIT BARRIER', 0, 0);
+  ctx.restore();
+  ctx.fillStyle = '#fde68a';
+  ctx.font = 'bold 17px monospace';
+  ctx.fillText('DUAL INDEPENDENT ELECTRON BUCKETS -> INSTANT PHASE AF!', 92, 704);
+  return toHiTex(canvas);
+}
+
+function createFab4PpdPinningBarrierTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#09111f';
+  ctx.fillRect(0, 0, w, h);
+
+  // Top Oxide Interface with Dangling Bonds (red traps)
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(36, 92, 696, 86);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('SiO2 SURFACE (DANGLING-BOND TRAPS -> DARK ELECTRONS)', 84, 142);
+
+  // Crimson-Gold Ultra-Shallow P+ Pinning Lid (Mask #22) annihilating dark electrons!
+  const lid = ctx.createLinearGradient(0, 178, 0, 290);
+  lid.addColorStop(0, '#f43f5e');
+  lid.addColorStop(1, '#be123c');
+  ctx.fillStyle = lid;
+  ctx.fillRect(36, 178, 696, 114);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 24px monospace';
+  ctx.fillText('MASK #22: SURFACE P+ PINNING LID (B+ / BF2+)', 68, 242);
+
+  // Positive holes (+) sealing out dark electrons
+  ctx.fillStyle = '#fef08a';
+  ctx.font = 'bold 26px monospace';
+  for (let x = 72; x < 700; x += 72) {
+    ctx.fillText('⊕', x, 278);
+  }
+
+  // Buried Clean N-Type Photodiode Deep Inside Crystal
+  const pd = ctx.createLinearGradient(0, 292, 0, 680);
+  pd.addColorStop(0, '#0284c7');
+  pd.addColorStop(1, '#0c4a6e');
+  ctx.fillStyle = pd;
+  ctx.fillRect(36, 292, 696, 386);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 24px monospace';
+  ctx.fillText('BURIED N-TYPE PINNED PHOTODIODE (PPD)', 116, 470);
+  ctx.fillStyle = '#6ee7b7';
+  ctx.font = 'bold 22px monospace';
+  ctx.fillText('DARK CURRENT CUT BY 1/100 TO 1/1,000!', 126, 540);
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('CLEAN PHOTO-ELECTRONS SAFE INSIDE CRYSTAL', 148, 728);
+  return toHiTex(canvas);
+}
+
+function createFab4SalicideBlockSplitTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0b1120';
+  ctx.fillRect(0, 0, w, h);
+
+  // Left Half: Pixel Area PROTECTED under Salicide Block (SAB 30-50nm Oxide Cap)
+  ctx.fillStyle = '#0c2742';
+  ctx.fillRect(28, 92, 344, 594);
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(28, 92, 344, 594);
+  // SAB Protective Blanket
+  ctx.fillStyle = '#10b981';
+  ctx.fillRect(46, 224, 308, 74);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('PIXEL AREA (SAB SHIELD!)', 56, 146);
+  ctx.fillStyle = '#064e3b';
+  ctx.font = 'bold 19px monospace';
+  ctx.fillText('SAB CAP (30-50nm SiO2)', 66, 268);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillRect(46, 310, 308, 250);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('ZERO Co/Ni METAL', 96, 430);
+  ctx.fillText('ZERO WHITE SPOTS!', 92, 472);
+
+  // Right Half: Periphery Logic OPEN -> Self-Aligned Metallic NiSi / CoSi2!
+  ctx.fillStyle = '#24180b';
+  ctx.fillRect(396, 92, 344, 594);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(396, 92, 344, 594);
+  ctx.fillStyle = '#fde68a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('PERIPHERY (OPEN WINDOW)', 428, 146);
+  // Metallic CoSi2 / NiSi contact strips
+  const met = ctx.createLinearGradient(396, 224, 720, 298);
+  met.addColorStop(0, '#f8fafc');
+  met.addColorStop(0.5, '#f59e0b');
+  met.addColorStop(1, '#cbd5e1');
+  ctx.fillStyle = met;
+  ctx.fillRect(414, 224, 308, 74);
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 19px monospace';
+  ctx.fillText('NiSi / CoSi2 SALICIDE', 446, 268);
+  ctx.fillStyle = '#475569';
+  ctx.fillRect(414, 310, 308, 250);
+  ctx.fillStyle = '#fef08a';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('ULTRA-LOW RESISTANCE', 444, 430);
+  ctx.fillText('HIGH-SPEED SWITCHING', 444, 472);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('MASK #25 SALICIDE BLOCK (CIS SECRET vs CPU)', 110, 52);
+  return toHiTex(canvas);
+}
+
+// =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
@@ -9846,6 +10195,89 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.06
   );
 
+  // --- Phase 34: Sensor Fab Vol.4 (Pixel Wafer FEOL 380-Step / 25-Mask PBR) ---
+  const fab4Phase3FeolDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4Phase3FeolDeckTexture(),
+      metalness: 0.34,
+      roughness: 0.30,
+      clearcoat: 0.44,
+    }),
+    0.05
+  );
+
+  const fab4RgbAbsorptionProfile = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4RgbAbsorptionProfileTexture(),
+      metalness: 0.42,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.72,
+      iridescenceIOR: 1.72,
+    }),
+    0.08
+  );
+
+  const fab4FdtiWallCrossSection = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4FdtiWallCrossSectionTexture(),
+      metalness: 0.56,
+      roughness: 0.18,
+      clearcoat: 0.88,
+      iridescence: 0.58,
+      iridescenceIOR: 1.62,
+    }),
+    0.09
+  );
+
+  const fab4DualPixelSplitProfile = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4DualPixelSplitProfileTexture(),
+      metalness: 0.48,
+      roughness: 0.17,
+      clearcoat: 0.90,
+      iridescence: 0.66,
+      iridescenceIOR: 1.68,
+    }),
+    0.08
+  );
+
+  const fab4PpdPinningBarrier = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4PpdPinningBarrierTexture(),
+      metalness: 0.46,
+      roughness: 0.15,
+      clearcoat: 0.94,
+      iridescence: 0.74,
+      iridescenceIOR: 1.74,
+    }),
+    0.09
+  );
+
+  const fab4SalicideBlockSplit = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab4SalicideBlockSplitTexture(),
+      metalness: 0.62,
+      roughness: 0.16,
+      clearcoat: 0.90,
+      iridescence: 0.54,
+      iridescenceIOR: 1.56,
+    }),
+    0.09
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -9987,6 +10419,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab3ChipLayoutOasis,
     fab3MaskCdMap,
     fab3BossungWindowMap,
+    fab4Phase3FeolDeck,
+    fab4RgbAbsorptionProfile,
+    fab4FdtiWallCrossSection,
+    fab4DualPixelSplitProfile,
+    fab4PpdPinningBarrier,
+    fab4SalicideBlockSplit,
   ];
 
   return {
@@ -10130,6 +10568,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab3ChipLayoutOasis,
     fab3MaskCdMap,
     fab3BossungWindowMap,
+    fab4Phase3FeolDeck,
+    fab4RgbAbsorptionProfile,
+    fab4FdtiWallCrossSection,
+    fab4DualPixelSplitProfile,
+    fab4PpdPinningBarrier,
+    fab4SalicideBlockSplit,
     list,
   };
 }

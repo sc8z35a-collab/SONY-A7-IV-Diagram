@@ -55,7 +55,16 @@ export function wrapFab3HdSvg(spec: Fab3HdSpec): string {
       </g>`;
   };
 
-  const titleSize = spec.title.length > 35 ? 11.4 : spec.title.length > 30 ? 12.2 : 13.4;
+  const titleSize =
+    spec.title.length > 42
+      ? 10.0
+      : spec.title.length > 38
+        ? 10.6
+        : spec.title.length > 34
+          ? 11.3
+          : spec.title.length > 30
+            ? 12.1
+            : 13.4;
 
   return `<svg class="evf-hd-svg" data-fab-hd="1" viewBox="0 0 720 470" xmlns="http://www.w3.org/2000/svg" style="font-family:${FONT_STACK};">
   <defs>
