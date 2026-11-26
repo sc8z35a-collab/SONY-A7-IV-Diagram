@@ -144,7 +144,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       );
       break;
     case 'bionz':
-      inflight = import('./bionz/bionzExplanations').then((m) => finish(m.BIONZ_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./bionz/bionzExplanations'),
+        import('./bionz/bionzExtraExplanations'),
+      ]).then(([mBase, mExtra]) =>
+        finish({
+          ...mBase.BIONZ_EXPLANATIONS,
+          ...mExtra.BIONZ_EXTRA_EXPLANATIONS,
+        })
+      );
       break;
     case 'bionz_v2':
       inflight = Promise.all([

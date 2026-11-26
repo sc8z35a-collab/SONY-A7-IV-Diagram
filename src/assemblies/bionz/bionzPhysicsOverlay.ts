@@ -54,7 +54,7 @@ export function createBionzPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 48);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 76);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -153,7 +153,7 @@ export function createBionzPhysicsOverlay(
     pt(_b, m, 'xr-pcie-cfx-dma');
     return _pair;
   });
-  // 7. Vertical Thermal Heat-Flux Streamlines: Silicon Die -> TIM1 -> Copper IHS
+  // 7. Vertical Thermal Heat-Flux Streamlines: Silicon Die -> Copper IHS -> Mg Chassis Pedestal
   registerFlow(0xef4444, 0.72, 3, true, (m) => {
     pt(_a, m, 'xr-die-bulk-silicon', -3.0, 0.4, -2.0);
     pt(_b, m, 'xr-nickel-cu-ihs', -3.0, 0.2, -2.0);
@@ -162,6 +162,42 @@ export function createBionzPhysicsOverlay(
   registerFlow(0xf97316, 0.72, 3, true, (m) => {
     pt(_a, m, 'xr-die-bulk-silicon', 4.0, 0.4, 3.0);
     pt(_b, m, 'xr-nickel-cu-ihs', 4.0, 0.2, 3.0);
+    return _pair;
+  });
+  registerFlow(0xdc2626, 0.68, 3, true, (m) => {
+    pt(_a, m, 'xr-nickel-cu-ihs', 0, 0.5, 0);
+    pt(_b, m, 'xr-mg-chassis-tim3-sink', 0, -0.4, 0);
+    return _pair;
+  });
+  // 8. Companion SY-1122 High-Speed & Real-Time Servo Buses (XR53–XR70)
+  registerFlow(0xa855f7, 1.2, 3, false, (m) => {
+    pt(_a, m, 'xr-ai-npu-systolic', -4.0, -2.0, -4.0);
+    pt(_b, m, 'xr-dedicated-ai-coproc', 0, 1.2, 0);
+    return _pair;
+  });
+  registerFlow(0x10b981, 1.15, 2, false, (m) => {
+    pt(_a, m, 'xr-usb-network-hub', 4.0, -2.0, -4.0);
+    pt(_b, m, 'xr-wifi6e-bt-sip-module', 0, 1.4, 0);
+    return _pair;
+  });
+  registerFlow(0x06b6d4, 1.3, 3, false, (m) => {
+    pt(_a, m, 'xr-usb-network-hub', 4.0, -2.0, 0);
+    pt(_b, m, 'xr-usbc-pd-10g-redriver', 0, 1.2, 0);
+    return _pair;
+  });
+  registerFlow(0xec4899, 1.25, 3, false, (m) => {
+    pt(_a, m, 'xr-pcie-cfx-dma', 4.0, -2.0, 4.0);
+    pt(_b, m, 'xr-pcie-cfx-clock-mux', 0, 1.2, 0);
+    return _pair;
+  });
+  registerFlow(0xeab308, 1.1, 2, false, (m) => {
+    pt(_a, m, 'xr-epson-quartz-gyro-imu', 0, 1.2, 0);
+    pt(_b, m, 'xr-ibis-servo-mcu', 0, 1.2, 0);
+    return _pair;
+  });
+  registerFlow(0xf59e0b, 1.1, 2, false, (m) => {
+    pt(_a, m, 'xr-ibis-servo-mcu', 0, 1.2, 0);
+    pt(_b, m, 'xr-sa-dsp-af-core', 0, -1.5, -4.0);
     return _pair;
   });
 
@@ -178,8 +214,8 @@ export function createBionzPhysicsOverlay(
       explodeGuides.visible = show;
       if (!show) return;
       guideMat.opacity = 0.34 * THREE.MathUtils.smoothstep(explodeFactor, 0.04, 0.35);
-      const yMin = -8.5 - explodeFactor * 54.0;
-      const yMax = 12.6 + explodeFactor * 56.0;
+      const yMin = -12.0 - explodeFactor * 84.0;
+      const yMax = 14.0 + explodeFactor * 76.0;
       for (let i = 0; i < cornerLines.length; i++) {
         const [cx, cz] = corners[i];
         updateLine2PtsInPlace(cornerLines[i], cx, yMin, cz, cx, yMax, cz, true);

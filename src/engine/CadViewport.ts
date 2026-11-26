@@ -1235,8 +1235,8 @@ export class CadViewport {
       d = 136 + e * 475;
       target = new THREE.Vector3(0.0, -0.8 + e * 1.5, e * 4.0);
     } else if (this.mode === 'bionz') {
-      d = 78 + e * 190;
-      target = new THREE.Vector3(0, 1.5 + e * 1.5, 0);
+      d = 122 + e * 245;
+      target = new THREE.Vector3(0, -1.0 + e * 1.0, 0);
     } else if (this.mode === 'bionz_v2') {
       d = 124 + e * 282;
       target = new THREE.Vector3(0, 0.2 - e * 1.2, 0);
@@ -1646,7 +1646,15 @@ export class CadViewport {
     } else if (this.mode === 'battery' || this.mode === 'cfexpress') {
       minCoord = -30;
       maxCoord = 30;
-    } else if (this.mode === 'bionz' || this.mode === 'bionz_v2') {
+    } else if (this.mode === 'bionz') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -48;
+        maxCoord = 48;
+      } else {
+        minCoord = -16;
+        maxCoord = 18;
+      }
+    } else if (this.mode === 'bionz_v2') {
       if (this.sectionAxis === 'x') {
         minCoord = -20;
         maxCoord = 20;
