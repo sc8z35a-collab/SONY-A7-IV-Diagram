@@ -1336,7 +1336,7 @@ export class CadViewport {
       d = 114 + e * 165;
       target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
     } else if (this.mode === 'mic') {
-      d = 94 + e * 278;
+      d = 94 + e * 336;
       target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
       if (this.sensorFabVolume === 4) {
