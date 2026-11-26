@@ -11,7 +11,11 @@ export interface UnitPartMeta {
   readonly groupKey: string;
   readonly assembledPos: readonly [number, number, number];
   readonly explodeOffset: readonly [number, number, number];
+  readonly integratedExplodeOffset?: readonly [number, number, number];
   readonly edgeOpacity: number;
+  readonly lensSection?: 1 | 2 | 3;
+  readonly fabVolume?: 0 | 1 | 2 | 3 | 4;
+  readonly standaloneOnly?: boolean;
   readonly title: string;
   readonly subtitle: string;
   readonly category: string;
@@ -33,6 +37,9 @@ export interface UnitMeta {
   readonly nameJa: string;
   readonly nameEn: string;
   readonly declaredPartCount: number;
+  /** Optional explicit Solid draw-call ceiling with rationale for ultra-large composite units */
+  readonly maxDrawCallsBudget?: number;
+  readonly budgetRationale?: string;
   readonly parts: readonly UnitPartMeta[];
 }
 
@@ -47,6 +54,10 @@ export interface UnitBuildOptions {
   clippingPlanes?: THREE.Plane[];
   /** Disable async frame yields (useful for deterministic headless verification). */
   synchronous?: boolean;
+  /** Initial active sub-view index (e.g. lensSection 1|2|3 or sensorFabVolume 0..4). */
+  subView?: number;
+  /** Build in integrated camera layout mode (uses integratedExplodeOffset). */
+  integratedMode?: boolean;
 }
 
 export interface RaycastInstancedBinding {
@@ -117,7 +128,7 @@ export interface UnitBuildResult {
 
 /**
  * Unified V2 Optimized Unit Contract.
- * Every experimental V2 unit MUST strictly adhere to this interface so core/ never needs unit-specific edits.
+ * Every V2 unit MUST strictly adhere to this interface so core/ never needs unit-specific edits.
  */
 export interface OptimizedUnit {
   readonly unitId: string;
@@ -139,8 +150,21 @@ export interface OptimizedUnit {
     isolatedId: string | null,
     renderMode: RenderMode
   ): void;
-  /** Optional zero-allocation physics overlay step */
-  updatePhysics?(elapsed: number, explodeFactor: number, active: boolean): void;
+  /** Optional sub-view filter hook (e.g. lensSection 1|2|3 or sensorFabVolume 0..4) */
+  setSubView?(subView: number): void;
+  /** Optional active-parts accessor filtered by current sub-view (defaults to all parts) */
+  getActiveParts?(): CadPart[];
+  /** Optional predicate telling raycaster whether a part is culled by the active sub-view */
+  isPartCulledBySubView?(partId: string): boolean;
+  /** Optional zero-allocation physics & dynamic rig step. Returns true if scene changed & needs render. */
+  updatePhysics?(
+    elapsed: number,
+    explodeFactor: number,
+    active: boolean,
+    delta?: number
+  ): boolean | void;
+  /** Optional predicate indicating continuous animation is active (e.g. LensOpticsStudio open) */
+  needsContinuousAnimation?(physicsActive: boolean): boolean;
   /** Optional physics visibility toggle */
   setPhysicsVisible?(visible: boolean): void;
   /** Optional explode trajectory guides update */

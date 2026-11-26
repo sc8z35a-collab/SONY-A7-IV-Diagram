@@ -410,12 +410,12 @@ window.addEventListener('keydown', (e) => {
     setQuality(next);
   } else if (
     (e.key === 'p' || e.key === 'P') &&
-    viewport.getMode() === 'mishoe' &&
+    viewport.isV2Mode() &&
     !e.ctrlKey &&
     !e.metaKey &&
     !e.altKey
   ) {
-    viewport.getMiShoeV2Runtime().togglePerfHud();
+    viewport.getV2Runtime().togglePerfHud();
   } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
     if (viewport.getSelectedPart()) viewport.stepSelectedPart(1);
   } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -436,6 +436,13 @@ if (qualityParam === 'standard' || qualityParam === 'std') {
   controls.syncQuality(viewport.getQuality());
 }
 
+const v2InspectApi = {
+  getDiagnostics: () => viewport.getV2Runtime().getDiagnostics(),
+  togglePerfHud: () => viewport.getV2Runtime().togglePerfHud(),
+  setPerfHudVisible: (visible: boolean) => viewport.getV2Runtime().setPerfHudVisible(visible),
+  isV2Mode: () => viewport.isV2Mode(),
+};
+
 // Expose lightweight inspection hooks on window
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
@@ -443,12 +450,9 @@ if (qualityParam === 'standard' || qualityParam === 'std') {
   opticsStudio,
   toggleFullscreen,
   setQuality,
-  mishoeV2: {
-    getDiagnostics: () => viewport.getMiShoeV2Runtime().getDiagnostics(),
-    togglePerfHud: () => viewport.getMiShoeV2Runtime().togglePerfHud(),
-    setPerfHudVisible: (visible: boolean) =>
-      viewport.getMiShoeV2Runtime().setPerfHudVisible(visible),
-  },
+  v2: v2InspectApi,
+  /** Backward-compatible alias for MI Shoe V2 inspection scripts */
+  mishoeV2: v2InspectApi,
 };
 
 syncRail();

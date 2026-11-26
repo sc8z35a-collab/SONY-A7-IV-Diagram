@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { smoothCreaseNormals } from './FastCadGeometry';
 import { GPU_PROFILE } from './GpuOptimizer';
+import {
+  getActiveGeometryScale,
+  scaleBevelSegmentsForQuality,
+  scaleCurveSegmentsForQuality,
+  scaleRadialSegmentsForQuality,
+} from '../core/geometry_quality';
 
 /**
  * Mark a BufferGeometry to preserve its full watchmaker tessellation during GpuMegaBatch compilation.
@@ -23,10 +29,20 @@ export function extrudeHiRes(
   bevelSegments = 2,
   curveSegments = 24
 ): THREE.ExtrudeGeometry {
-  const effCurve = GPU_PROFILE.isMobile ? Math.max(8, Math.round(curveSegments * 0.5)) : curveSegments;
-  const effBevelSegs = bevelSize > 0.005 && bevelThickness > 0.005
-    ? (GPU_PROFILE.isMobile ? Math.max(1, bevelSegments - 1) : bevelSegments)
-    : 0;
+  const qScale = getActiveGeometryScale();
+  const effCurve = qScale
+    ? scaleCurveSegmentsForQuality(curveSegments, 4)
+    : GPU_PROFILE.isMobile
+      ? Math.max(8, Math.round(curveSegments * 0.5))
+      : curveSegments;
+  const effBevelSegs =
+    bevelSize > 0.005 && bevelThickness > 0.005
+      ? qScale
+        ? scaleBevelSegmentsForQuality(bevelSegments)
+        : GPU_PROFILE.isMobile
+          ? Math.max(1, bevelSegments - 1)
+          : bevelSegments
+      : 0;
   const hasBevel = effBevelSegs > 0;
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
 
@@ -186,7 +202,12 @@ export function hiResCyl(
   thetaStart = 0,
   thetaLength = Math.PI * 2
 ): THREE.CylinderGeometry {
-  const segs = GPU_PROFILE.isMobile ? Math.max(8, Math.round(radialSegments * 0.5)) : radialSegments;
+  const qScale = getActiveGeometryScale();
+  const segs = qScale
+    ? scaleRadialSegmentsForQuality(radialSegments, 6)
+    : GPU_PROFILE.isMobile
+      ? Math.max(8, Math.round(radialSegments * 0.5))
+      : radialSegments;
   return markHiRes(new THREE.CylinderGeometry(rTop, rBot, height, segs, 1, openEnded, thetaStart, thetaLength));
 }
 
@@ -202,8 +223,17 @@ export function hiResSphere(
   thetaStart = 0,
   thetaLen = Math.PI
 ): THREE.SphereGeometry {
-  const ew = GPU_PROFILE.isMobile ? Math.max(6, Math.round(wSegs * 0.5)) : wSegs;
-  const eh = GPU_PROFILE.isMobile ? Math.max(5, Math.round(hSegs * 0.5)) : hSegs;
+  const qScale = getActiveGeometryScale();
+  const ew = qScale
+    ? scaleRadialSegmentsForQuality(wSegs, 6)
+    : GPU_PROFILE.isMobile
+      ? Math.max(6, Math.round(wSegs * 0.5))
+      : wSegs;
+  const eh = qScale
+    ? scaleRadialSegmentsForQuality(hSegs, 5)
+    : GPU_PROFILE.isMobile
+      ? Math.max(5, Math.round(hSegs * 0.5))
+      : hSegs;
   return markHiRes(new THREE.SphereGeometry(radius, ew, eh, phiStart, phiLen, thetaStart, thetaLen));
 }
 
@@ -217,8 +247,17 @@ export function hiResTorus(
   tubSegs = 32,
   arc = Math.PI * 2
 ): THREE.TorusGeometry {
-  const er = GPU_PROFILE.isMobile ? Math.max(5, Math.round(radSegs * 0.52)) : radSegs;
-  const et = GPU_PROFILE.isMobile ? Math.max(10, Math.round(tubSegs * 0.5)) : tubSegs;
+  const qScale = getActiveGeometryScale();
+  const er = qScale
+    ? scaleRadialSegmentsForQuality(radSegs, 5)
+    : GPU_PROFILE.isMobile
+      ? Math.max(5, Math.round(radSegs * 0.52))
+      : radSegs;
+  const et = qScale
+    ? scaleRadialSegmentsForQuality(tubSegs, 8)
+    : GPU_PROFILE.isMobile
+      ? Math.max(10, Math.round(tubSegs * 0.5))
+      : tubSegs;
   return markHiRes(new THREE.TorusGeometry(radius, tube, er, et, arc));
 }
 

@@ -5,7 +5,7 @@ import { UnitRaycastIndex } from './unit_contract';
 const _boxHitPt = new THREE.Vector3();
 const _hitScratch: THREE.Intersection[] = [];
 const _candidatePartIds = new Set<string>();
-const _candidateBindingMarks = new Uint8Array(256);
+const _candidateBindingMarks = new Uint8Array(1024);
 
 export interface HoverRaycastResult {
   readonly skipped: boolean;
