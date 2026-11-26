@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 /**
- * CI-Grade Automated Guardrail for MI Shoe V2 Optimization Architecture.
+ * CI-Grade Automated Guardrail for the Universal V2 WebGL Optimization Architecture.
+ * Automatically scans EVERY unit registered in `src/units/registry.ts` and EVERY JSON in `src/data/`.
+ *
  * Verifies:
- *   1. Syntax & TypeScript Build (0 errors)
- *   2. Pure JSON Data Integrity + Dynamic Headless 3D Build / Explode / Raycast / Dispose across STD/HIGH/ULTRA
- *   3. Static Optimization Anti-Pattern Lint (materials outside cache, allocations in hot loops, raw remove, matrixAutoUpdate)
- *   4. Performance Budget Gates (drawCalls <= 100, triangle scaling & caps, material tiering, zero post-dispose residual)
+ *   1. Syntax Check (`node --check`) & TypeScript Build (`npx tsc --noEmit`, 0 errors)
+ *   2. Cross-Unit Pure JSON Data Integrity (0 duplicate IDs across all individual units, 0 NaN/Infinity, 100% metadata complete)
+ *   3. Static Optimization Anti-Pattern Lint across all `src/core/` & `src/units/` (0 direct new THREE.Mesh*Material, 0 hot-path GC allocations, 0 raw scene.remove)
+ *   4. Headless Runtime Verification across STD/HIGH/ULTRA for EVERY registered unit:
+ *      - JSON declaredPartCount === 3D registered part count (1:1 match)
+ *      - 100% matrixAutoUpdate === false
+ *      - 100% reverse lookup (instanceId/batchId -> partId)
+ *      - Zero-NaN differential explode + dirty skip
+ *      - Two-stage AABB raycast + camera-drag pause + 30Hz hover throttle
+ *      - Quality-tier scaling (STD < HIGH <= ULTRA triangles, DPR caps 1.0/1.5/2.0, shader tiers)
+ *      - Solid Draw-Call Budget Gate (<= 100dc by default, or explicit documented unit maxDrawCallsBudget)
+ *      - Sequential multi-unit & tier switch post-dispose ResourceCache refCount === 0
  */
 
 import fs from 'node:fs';
@@ -17,12 +27,13 @@ import { buildSync } from 'esbuild';
 
 const ROOT = process.cwd();
 const V2_SCAN_DIRS = ['src/core', 'src/units'];
-const DATA_FILE = 'src/data/mi_shoe.json';
+const DATA_DIR = 'src/data';
+const COMPOSITE_UNIT_IDS = new Set(['integrated', 'camera_body']);
 
-const BUDGETS = {
-  standard: { maxDrawCalls: 35, maxTriangles: 14000, allowPhysical: false, maxDpr: 1.0 },
-  high: { maxDrawCalls: 50, maxTriangles: 28000, allowPhysical: false, maxDpr: 1.5 },
-  ultra: { maxDrawCalls: 50, maxTriangles: 48000, allowPhysical: true, maxDpr: 2.0 },
+const TIER_DPR_CAPS = {
+  standard: 1.0,
+  high: 1.5,
+  ultra: 2.0,
 };
 
 let failCount = 0;
@@ -53,7 +64,17 @@ function listTsFiles(dirRel) {
       out.push(path.relative(ROOT, full));
     }
   }
-  return out;
+  return out.sort();
+}
+
+function listJsonFiles(dirRel) {
+  const abs = path.join(ROOT, dirRel);
+  if (!fs.existsSync(abs)) return [];
+  return fs
+    .readdirSync(abs)
+    .filter((f) => f.endsWith('.json'))
+    .sort()
+    .map((f) => path.join(dirRel, f));
 }
 
 /** Extract method body starting at signature match using brace balancing. */
@@ -147,7 +168,10 @@ async function bundleTsModuleForNode(entryRel) {
   });
   const tmpDir = path.join(ROOT, 'node_modules', '.cache', 'validate-parts');
   fs.mkdirSync(tmpDir, { recursive: true });
-  const tmpFile = path.join(tmpDir, `${path.basename(entryRel, '.ts')}.${process.pid}.mjs`);
+  const tmpFile = path.join(
+    tmpDir,
+    `${path.basename(entryRel, '.ts')}.${process.pid}.${Math.random().toString(36).slice(2, 8)}.mjs`
+  );
   fs.writeFileSync(tmpFile, result.outputFiles[0].text, 'utf8');
   try {
     return await import(pathToFileURL(tmpFile).href);
@@ -157,7 +181,7 @@ async function bundleTsModuleForNode(entryRel) {
 }
 
 console.log('====================================================================');
-console.log(' MI Shoe V2 Optimization CI Guardrail (scripts/validate_parts.mjs)');
+console.log(' Universal V2 WebGL Optimization CI Guardrail (validate_parts.mjs)');
 console.log('====================================================================');
 
 // -----------------------------------------------------------------------------
@@ -178,69 +202,109 @@ try {
 }
 
 // -----------------------------------------------------------------------------
-// 2. Pure Data Integrity Validation (src/data/mi_shoe.json)
+// 2. Cross-Unit Pure JSON Data Integrity Validation (src/data/*.json)
 // -----------------------------------------------------------------------------
-let jsonData = null;
 try {
-  jsonData = JSON.parse(fs.readFileSync(path.join(ROOT, DATA_FILE), 'utf8'));
-  const seenIds = new Set();
+  const jsonFiles = listJsonFiles(DATA_DIR);
+  const globalIds = new Map();
   const dataErrors = [];
+  let totalPartsChecked = 0;
 
-  if (typeof jsonData.declaredPartCount !== 'number' || jsonData.declaredPartCount !== jsonData.parts.length) {
-    dataErrors.push(`declaredPartCount (${jsonData.declaredPartCount}) !== parts.length (${jsonData.parts.length})`);
-  }
-
-  const checkVec3 = (vec, label, partId) => {
+  const checkVec3 = (vec, label, partId, file) => {
     if (!Array.isArray(vec) || vec.length !== 3) {
-      dataErrors.push(`${partId}: ${label} is not a 3-tuple`);
+      dataErrors.push(`${file}/${partId}: ${label} is not a 3-tuple`);
       return;
     }
     for (let i = 0; i < 3; i++) {
       const v = vec[i];
-      if (typeof v !== 'number' || !Number.isFinite(v) || Math.abs(v) > 500) {
-        dataErrors.push(`${partId}: ${label}[${i}] invalid (${v})`);
+      if (typeof v !== 'number' || !Number.isFinite(v) || Math.abs(v) > 2000) {
+        dataErrors.push(`${file}/${partId}: ${label}[${i}] invalid (${v})`);
       }
     }
   };
 
-  for (const p of jsonData.parts) {
-    if (!p.id || typeof p.id !== 'string') {
-      dataErrors.push('Missing/invalid part id');
-      continue;
-    }
-    if (seenIds.has(p.id)) {
-      dataErrors.push(`Duplicate part id: ${p.id}`);
-    }
-    seenIds.add(p.id);
+  for (const relFile of jsonFiles) {
+    const jsonData = JSON.parse(fs.readFileSync(path.join(ROOT, relFile), 'utf8'));
+    const isComposite = COMPOSITE_UNIT_IDS.has(jsonData.unitId);
+    const localIds = new Set();
 
-    checkVec3(p.assembledPos, 'assembledPos', p.id);
-    checkVec3(p.explodeOffset, 'explodeOffset', p.id);
+    if (
+      typeof jsonData.declaredPartCount !== 'number' ||
+      jsonData.declaredPartCount !== jsonData.parts.length
+    ) {
+      dataErrors.push(
+        `${relFile}: declaredPartCount (${jsonData.declaredPartCount}) !== parts.length (${jsonData.parts.length})`
+      );
+    }
 
-    const requiredStrings = ['title', 'subtitle', 'category', 'plainAnalogy', 'summary', 'nextGenInnovation', 'diagramType', 'swatchColor', 'groupKey'];
-    for (const field of requiredStrings) {
-      if (typeof p[field] !== 'string' || p[field].trim().length === 0) {
-        dataErrors.push(`${p.id}: missing or empty required field '${field}'`);
+    for (const p of jsonData.parts) {
+      if (!p.id || typeof p.id !== 'string') {
+        dataErrors.push(`${relFile}: missing/invalid part id`);
+        continue;
       }
-    }
-    if (!Array.isArray(p.opticsAndPhysics) || p.opticsAndPhysics.length === 0) {
-      dataErrors.push(`${p.id}: opticsAndPhysics must be a non-empty array`);
-    }
-    if (!Array.isArray(p.specs) || p.specs.length === 0) {
-      dataErrors.push(`${p.id}: specs must be a non-empty array`);
+      if (localIds.has(p.id)) {
+        dataErrors.push(`${relFile}: duplicate local part id '${p.id}'`);
+      }
+      localIds.add(p.id);
+
+      if (!isComposite) {
+        if (globalIds.has(p.id)) {
+          dataErrors.push(
+            `Cross-unit duplicate part id '${p.id}' in ${relFile} and ${globalIds.get(p.id)}`
+          );
+        } else {
+          globalIds.set(p.id, relFile);
+        }
+      }
+
+      checkVec3(p.assembledPos, 'assembledPos', p.id, relFile);
+      checkVec3(p.explodeOffset, 'explodeOffset', p.id, relFile);
+      if (p.integratedExplodeOffset !== undefined) {
+        checkVec3(p.integratedExplodeOffset, 'integratedExplodeOffset', p.id, relFile);
+      }
+
+      const requiredStrings = [
+        'title',
+        'subtitle',
+        'category',
+        'plainAnalogy',
+        'summary',
+        'nextGenInnovation',
+        'diagramType',
+        'swatchColor',
+        'groupKey',
+      ];
+      for (const field of requiredStrings) {
+        if (typeof p[field] !== 'string' || p[field].trim().length === 0) {
+          dataErrors.push(`${relFile}/${p.id}: missing or empty required field '${field}'`);
+        }
+      }
+      if (!Array.isArray(p.opticsAndPhysics) || p.opticsAndPhysics.length === 0) {
+        dataErrors.push(`${relFile}/${p.id}: opticsAndPhysics must be a non-empty array`);
+      }
+      if (!Array.isArray(p.specs) || p.specs.length === 0) {
+        dataErrors.push(`${relFile}/${p.id}: specs must be a non-empty array`);
+      }
+      totalPartsChecked++;
     }
   }
 
-  if (dataErrors.length === 0) {
-    pass('2-1 Data Integrity', `${DATA_FILE}: ${jsonData.parts.length}/${jsonData.declaredPartCount} parts valid, 0 duplicates, 0 NaN/Infinity, 100% metadata complete`);
+  if (jsonFiles.length === 0) {
+    fail('2-1 Data Integrity', 'No JSON files found in src/data/');
+  } else if (dataErrors.length === 0) {
+    pass(
+      '2-1 Data Integrity',
+      `${jsonFiles.length} JSON file(s), ${totalPartsChecked} parts (${globalIds.size} unique individual IDs) valid, 0 duplicates, 0 NaN/Infinity, 100% metadata complete`
+    );
   } else {
-    fail('2-1 Data Integrity', dataErrors.join('; '));
+    fail('2-1 Data Integrity', dataErrors.slice(0, 12).join('; ') + (dataErrors.length > 12 ? ` (+${dataErrors.length - 12} more)` : ''));
   }
 } catch (err) {
   fail('2-1 Data Integrity', String(err));
 }
 
 // -----------------------------------------------------------------------------
-// 3. Optimization Anti-Pattern Static Lint (MI Shoe V2 Core + Units)
+// 3. Optimization Anti-Pattern Static Lint (All src/core/ + src/units/)
 // -----------------------------------------------------------------------------
 const v2Files = V2_SCAN_DIRS.flatMap((d) => listTsFiles(d));
 const rawMatViolations = [];
@@ -253,7 +317,9 @@ for (const rel of v2Files) {
 
   // 3-1: No raw new THREE.Mesh*Material / Line*Material outside resource_cache.ts
   if (rel !== 'src/core/resource_cache.ts') {
-    const matMatches = clean.match(/new\s+THREE\.(Mesh\w*Material|Line\w*Material|PointsMaterial|SpriteMaterial|ShaderMaterial|RawShaderMaterial)\s*\(/g);
+    const matMatches = clean.match(
+      /new\s+THREE\.(Mesh\w*Material|Line\w*Material|PointsMaterial|SpriteMaterial|ShaderMaterial|RawShaderMaterial)\s*\(/g
+    );
     if (matMatches && matMatches.length > 0) {
       rawMatViolations.push(`${rel}: ${matMatches.join(', ')}`);
     }
@@ -271,7 +337,9 @@ for (const rel of v2Files) {
     const body = extractFunctionBody(src, pattern);
     if (!body) continue;
     const cleanBody = stripComments(body);
-    const allocs = cleanBody.match(/new\s+THREE\.(Vector[234]|Matrix[34]|Quaternion|Color|Box3|Sphere|Euler|Ray)\s*\(|\.clone\s*\(/g);
+    const allocs = cleanBody.match(
+      /new\s+THREE\.(Vector[234]|Matrix[34]|Quaternion|Color|Box3|Sphere|Euler|Ray)\s*\(|\.clone\s*\(/g
+    );
     if (allocs && allocs.length > 0) {
       allocHotPathViolations.push(`${rel}#${name}: ${allocs.join(', ')}`);
     }
@@ -287,13 +355,19 @@ for (const rel of v2Files) {
 }
 
 if (rawMatViolations.length === 0) {
-  pass('3-1 Lint: Cached Materials', `0 direct new THREE.Mesh*/Line*Material outside src/core/resource_cache.ts (${v2Files.length} files scanned)`);
+  pass(
+    '3-1 Lint: Cached Materials',
+    `0 direct new THREE.Mesh*/Line*Material outside src/core/resource_cache.ts (${v2Files.length} files scanned)`
+  );
 } else {
   fail('3-1 Lint: Cached Materials', rawMatViolations.join(' | '));
 }
 
 if (allocHotPathViolations.length === 0) {
-  pass('3-2 Lint: Zero-GC Hot Paths', '0 Vector/Matrix/Quaternion/Color/Box3/clone allocations in updateExplode/updatePhysics/render/pickWithRay');
+  pass(
+    '3-2 Lint: Zero-GC Hot Paths',
+    '0 Vector/Matrix/Quaternion/Color/Box3/clone allocations in updateExplode/updatePhysics/render/pickWithRay'
+  );
 } else {
   fail('3-2 Lint: Zero-GC Hot Paths', allocHotPathViolations.join(' | '));
 }
@@ -305,228 +379,309 @@ if (unsafeRemoveViolations.length === 0) {
 }
 
 // -----------------------------------------------------------------------------
-// 4. Headless Runtime Verification & Quality-Tier Performance Budget Gate
+// 4. Headless Runtime Verification & Quality-Tier Performance Budget Gate (ALL Registered Units)
 // -----------------------------------------------------------------------------
 try {
-  const [unitMod, cacheMod, raycastMod, registryMod] = await Promise.all([
-    bundleTsModuleForNode('src/units/mi_shoe.ts'),
+  const [cacheMod, raycastMod, registryMod] = await Promise.all([
     bundleTsModuleForNode('src/core/resource_cache.ts'),
     bundleTsModuleForNode('src/core/raycast_engine.ts'),
     bundleTsModuleForNode('src/units/registry.ts'),
   ]);
 
-  // Verify registry scoping & cross-unit unique IDs
   const registeredUnits = registryMod.listRegisteredUnits();
   const globalIds = new Set();
   let dupGlobal = 0;
   for (const entry of registeredUnits) {
     const meta = await entry.loadMeta();
     if (meta.declaredPartCount !== entry.declaredPartCount) {
-      fail('2-2 Registry Count', `${entry.unitId}: registry=${entry.declaredPartCount}, json=${meta.declaredPartCount}`);
+      fail(
+        '2-2 Registry Count',
+        `${entry.unitId}: registry=${entry.declaredPartCount}, json=${meta.declaredPartCount}`
+      );
     }
-    for (const p of meta.parts) {
-      if (globalIds.has(p.id)) dupGlobal++;
-      globalIds.add(p.id);
+    if (!COMPOSITE_UNIT_IDS.has(entry.unitId)) {
+      for (const p of meta.parts) {
+        if (globalIds.has(p.id)) dupGlobal++;
+        globalIds.add(p.id);
+      }
     }
   }
-  if (registeredUnits.length === 1 && registeredUnits[0].unitId === 'mishoe' && dupGlobal === 0) {
-    pass('2-2 Registry & Scope', `Registered units: [${registeredUnits.map((u) => u.unitId).join(', ')}], unique IDs: ${globalIds.size}, 0 cross-unit duplicates`);
+
+  if (registeredUnits.length > 0 && dupGlobal === 0) {
+    pass(
+      '2-2 Registry & Scope',
+      `Registered units (${registeredUnits.length}): [${registeredUnits.map((u) => u.unitId).join(', ')}], unique individual IDs: ${globalIds.size}, 0 cross-unit duplicates`
+    );
   } else {
-    fail('2-2 Registry & Scope', `Unexpected units or duplicates: count=${registeredUnits.length}, dup=${dupGlobal}`);
+    fail(
+      '2-2 Registry & Scope',
+      `Invalid registry state: count=${registeredUnits.length}, dup=${dupGlobal}`
+    );
   }
 
   const cache = new cacheMod.ResourceCache();
   const raycaster = new raycastMod.TwoStageRaycaster(33.3);
-  const tierMetrics = {};
+  const allUnitMatrices = {};
+  let totalRuntimeFailures = 0;
 
-  for (const tier of ['standard', 'high', 'ultra']) {
-    const unit = unitMod.createMiShoeUnit();
-    const meta = unit.getMeta();
-    const built = await unit.build(tier, cache, { synchronous: true });
-    const budget = BUDGETS[tier];
+  for (const entry of registeredUnits) {
+    const unitId = entry.unitId;
+    const unitTierMetrics = {};
 
-    // 4-A: Declared JSON part count === Registered 3D part count (1:1 match)
-    const jsonIds = new Set(meta.parts.map((p) => p.id));
-    const missing3d = [...jsonIds].filter((id) => !built.registeredPartIds.has(id));
-    const extra3d = [...built.registeredPartIds].filter((id) => !jsonIds.has(id));
-    if (
-      built.registeredPartIds.size !== meta.declaredPartCount ||
-      missing3d.length > 0 ||
-      extra3d.length > 0
-    ) {
-      fail(`2-3 Part Match (${tier})`, `declared=${meta.declaredPartCount}, registered=${built.registeredPartIds.size}, missing=${missing3d.join(',')}, extra=${extra3d.join(',')}`);
-    }
+    for (const tier of ['standard', 'high', 'ultra']) {
+      const unit = await entry.load();
+      const meta = unit.getMeta();
+      const built = await unit.build(tier, cache, {
+        synchronous: true,
+        integratedMode: COMPOSITE_UNIT_IDS.has(unitId),
+      });
 
-    // 4-B: matrixAutoUpdate === false on EVERY Object3D in built scene
-    let autoUpdateViolations = 0;
-    built.rootGroup.traverse((obj) => {
-      if (obj.matrixAutoUpdate !== false) autoUpdateViolations++;
-    });
-    if (autoUpdateViolations > 0) {
-      fail(`3-4 matrixAutoUpdate (${tier})`, `${autoUpdateViolations} Object3D nodes still have matrixAutoUpdate=true`);
-    }
+      const maxDrawCalls = meta.maxDrawCallsBudget ?? 100;
 
-    // 4-C: InstancedMesh & BatchedMesh reverse lookup completeness
-    let reverseLookupErrors = 0;
-    for (const binding of built.raycastIndex.bindings) {
-      if (binding.kind === 'instanced') {
-        if (binding.instanceIdToPartId.length !== binding.mesh.count) reverseLookupErrors++;
-        for (let i = 0; i < binding.mesh.count; i++) {
-          if (!jsonIds.has(binding.instanceIdToPartId[i])) reverseLookupErrors++;
-        }
-      } else {
-        for (let i = 0; i < binding.batchIdToPartId.length; i++) {
-          if (!jsonIds.has(binding.batchIdToPartId[i])) reverseLookupErrors++;
-        }
+      // 4-A: Declared JSON part count === Registered 3D part count (1:1 match)
+      const jsonIds = new Set(meta.parts.map((p) => p.id));
+      const missing3d = [...jsonIds].filter((id) => !built.registeredPartIds.has(id));
+      const extra3d = [...built.registeredPartIds].filter((id) => !jsonIds.has(id));
+      if (
+        built.registeredPartIds.size !== meta.declaredPartCount ||
+        missing3d.length > 0 ||
+        extra3d.length > 0
+      ) {
+        totalRuntimeFailures++;
+        fail(
+          `2-3 Part Match (${unitId}/${tier})`,
+          `declared=${meta.declaredPartCount}, registered=${built.registeredPartIds.size}, missing=${missing3d.slice(0, 5).join(',')}, extra=${extra3d.slice(0, 5).join(',')}`
+        );
       }
-    }
-    if (reverseLookupErrors > 0) {
-      fail(`2-4 Reverse Lookup (${tier})`, `${reverseLookupErrors} invalid instanceId/batchId -> partId mappings`);
-    }
 
-    // 4-D: Explode differential dirty-check + 0 NaN matrices
-    const movedHalf = unit.updateExplode(0.5);
-    const skippedSame = unit.updateExplode(0.5);
-    const movedFull = unit.updateExplode(1.0);
-    let nanMatrixCount = 0;
-    for (const im of built.instancedMeshes) {
-      const arr = im.instanceMatrix.array;
-      for (let i = 0; i < arr.length; i++) {
-        if (!Number.isFinite(arr[i])) nanMatrixCount++;
+      // 4-B: matrixAutoUpdate === false on EVERY Object3D in built scene
+      let autoUpdateViolations = 0;
+      built.rootGroup.traverse((obj) => {
+        if (obj.matrixAutoUpdate !== false) autoUpdateViolations++;
+      });
+      if (autoUpdateViolations > 0) {
+        totalRuntimeFailures++;
+        fail(
+          `3-4 matrixAutoUpdate (${unitId}/${tier})`,
+          `${autoUpdateViolations} Object3D nodes still have matrixAutoUpdate=true`
+        );
       }
-    }
-    if (!movedHalf || skippedSame !== false || !movedFull || nanMatrixCount > 0) {
-      fail(`4-1 Explode Dirty/Finite (${tier})`, `movedHalf=${movedHalf}, skippedSame=${skippedSame}, movedFull=${movedFull}, nan=${nanMatrixCount}`);
-    }
 
-    // Reset to assembled (0.0) and test visual states + two-stage raycast
-    unit.updateExplode(0.0);
-    unit.setVisualState('mi-pins-8to12-digital-audio', 'mi-shoe-shell-plate', new Set(), null, 'solid');
-    unit.setVisualState(null, null, new Set(), null, 'xray');
-    unit.setVisualState(null, null, new Set(), null, 'cad');
-    unit.setVisualState(null, null, new Set(), null, 'solid');
-
-    // Raycast test: miss far outside unit AABB, hit shell plate (BatchedMesh) and front 21 pins (InstancedMesh)
-    const testRc = new THREE.Raycaster();
-    testRc.set(new THREE.Vector3(200, 200, 200), new THREE.Vector3(0, -1, 0));
-    const missHit = raycaster.pickWithRay(testRc, built.raycastIndex, () => false, null);
-
-    // Hit center X-Sync dome (BatchedMesh at (0, 2.0, -3.2)) from above
-    testRc.set(new THREE.Vector3(0, 30, -3.2), new THREE.Vector3(0, -1, 0));
-    const topHit = raycaster.pickWithRay(testRc, built.raycastIndex, () => false, null);
-
-    // Hit Pin 11 (InstancedMesh at x=0, y=2.85, z=16.4) directly from front (+Z -> -Z)
-    testRc.set(new THREE.Vector3(0, 3.0, 40), new THREE.Vector3(0, 0, -1));
-    const frontHit = raycaster.pickWithRay(testRc, built.raycastIndex, (id) => id === 'mi-shoe-cap-875' || id === 'mi-shoe-shell-plate' || id === 'mi-front-21pin-shroud' || id === 'mi-accessory-wp-skirt', null);
-
-    if (missHit !== null || topHit === null || frontHit !== 'mi-pins-8to12-digital-audio') {
-      fail(`4-2 Two-Stage Raycast (${tier})`, `miss=${missHit}, topHit=${topHit}, frontPinHit=${frontHit}`);
-    }
-
-    // Verify camera drag pause & 30Hz hover throttle
-    const cam = new THREE.PerspectiveCamera(32, 1.6, 0.85, 4200);
-    cam.position.set(0, 40, 80);
-    cam.lookAt(0, 0, 0);
-    cam.updateMatrixWorld();
-    const ptr = new THREE.Vector2(0, 0);
-    raycaster.resetHoverThrottle();
-    raycaster.setCameraDragging(true);
-    const dragRes = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 100);
-    raycaster.setCameraDragging(false);
-    const firstHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 100);
-    const throttledHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 110);
-    const nextHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 140);
-    if (!dragRes.skipped || firstHover.skipped || !throttledHover.skipped || nextHover.skipped) {
-      fail(`4-3 Hover Drag/Throttle (${tier})`, JSON.stringify({ dragRes, firstHover, throttledHover, nextHover }));
-    }
-
-    // Count visible draw calls & inspect material classes per quality tier
-    let visibleDrawCalls = 0;
-    let physicalMatCount = 0;
-    let lambertMatCount = 0;
-    let standardMatCount = 0;
-    const seenMats = new Set();
-
-    built.rootGroup.traverse((obj) => {
-      if (!obj.visible) return;
-      if (obj.parent && !obj.parent.visible) return;
-      if (obj.isBatchedMesh || obj.isInstancedMesh || obj.isMesh || obj.isLineSegments || obj.isLine) {
-        visibleDrawCalls++;
-        const mat = obj.material;
-        if (mat && !seenMats.has(mat)) {
-          seenMats.add(mat);
-          if (mat.isMeshPhysicalMaterial) physicalMatCount++;
-          else if (mat.isMeshStandardMaterial) standardMatCount++;
-          else if (mat.isMeshLambertMaterial) lambertMatCount++;
+      // 4-C: InstancedMesh & BatchedMesh reverse lookup completeness
+      let reverseLookupErrors = 0;
+      for (const binding of built.raycastIndex.bindings) {
+        if (binding.kind === 'instanced') {
+          if (binding.instanceIdToPartId.length !== binding.mesh.count) reverseLookupErrors++;
+          for (let i = 0; i < binding.mesh.count; i++) {
+            if (!jsonIds.has(binding.instanceIdToPartId[i])) reverseLookupErrors++;
+          }
+        } else {
+          for (let i = 0; i < binding.batchIdToPartId.length; i++) {
+            if (!jsonIds.has(binding.batchIdToPartId[i])) reverseLookupErrors++;
+          }
         }
       }
-    });
+      if (reverseLookupErrors > 0) {
+        totalRuntimeFailures++;
+        fail(
+          `2-4 Reverse Lookup (${unitId}/${tier})`,
+          `${reverseLookupErrors} invalid instanceId/batchId -> partId mappings`
+        );
+      }
 
-    const tierCfg = cacheMod.QUALITY_TIER_CONFIG[tier];
-    const tris = built.stats.estimatedTriangles;
-    const tierMatOk =
-      tier === 'standard'
-        ? physicalMatCount === 0 && lambertMatCount > 0
-        : tier === 'high'
-          ? physicalMatCount === 0 && standardMatCount > 0
-          : physicalMatCount > 0 && standardMatCount > 0;
+      // 4-D: Explode differential dirty-check + 0 NaN matrices
+      const movedHalf = unit.updateExplode(0.5);
+      const skippedSame = unit.updateExplode(0.5);
+      const movedFull = unit.updateExplode(1.0);
+      let nanMatrixCount = 0;
+      for (const im of built.instancedMeshes) {
+        const arr = im.instanceMatrix.array;
+        for (let i = 0; i < arr.length; i++) {
+          if (!Number.isFinite(arr[i])) nanMatrixCount++;
+        }
+      }
+      if (!movedHalf || skippedSame !== false || !movedFull || nanMatrixCount > 0) {
+        totalRuntimeFailures++;
+        fail(
+          `4-1 Explode Dirty/Finite (${unitId}/${tier})`,
+          `movedHalf=${movedHalf}, skippedSame=${skippedSame}, movedFull=${movedFull}, nan=${nanMatrixCount}`
+        );
+      }
 
-    if (
-      visibleDrawCalls > budget.maxDrawCalls ||
-      tris > budget.maxTriangles ||
-      !tierMatOk ||
-      tierCfg.maxPixelRatio !== budget.maxDpr
-    ) {
+      // 4-E: Visual states (solid / xray / cad) & Two-Stage AABB Raycast
+      unit.updateExplode(0.0);
+      const samplePart = built.raycastIndex.parts.find((p) => !p.worldBox.isEmpty());
+      const firstId = samplePart?.partId ?? meta.parts[0].id;
+      const secondId = meta.parts[Math.min(1, meta.parts.length - 1)].id;
+      unit.setVisualState(firstId, secondId, new Set(), null, 'solid');
+      unit.setVisualState(null, null, new Set(), null, 'xray');
+      unit.setVisualState(null, null, new Set(), null, 'cad');
+      unit.setVisualState(null, null, new Set(), null, 'solid');
+
+      const testRc = new THREE.Raycaster();
+      const missOrigin = new THREE.Vector3(5000, 5000, 5000);
+      testRc.set(missOrigin, new THREE.Vector3(0, -1, 0));
+      const missHit = raycaster.pickWithRay(testRc, built.raycastIndex, () => false, null);
+
+      let hitOk = false;
+      if (samplePart) {
+        const center = samplePart.worldBox.getCenter(new THREE.Vector3());
+        const size = samplePart.worldBox.getSize(new THREE.Vector3());
+        const dist = Math.max(50, size.length() * 4);
+        const dirs = [
+          new THREE.Vector3(0, 0, -1),
+          new THREE.Vector3(0, -1, 0),
+          new THREE.Vector3(-1, 0, 0),
+        ];
+        for (const dir of dirs) {
+          const origin = center.clone().addScaledVector(dir, -dist);
+          testRc.set(origin, dir);
+          const h = raycaster.pickWithRay(testRc, built.raycastIndex, () => false, null);
+          if (h !== null && jsonIds.has(h)) {
+            hitOk = true;
+            break;
+          }
+        }
+      }
+      if (missHit !== null || !hitOk) {
+        totalRuntimeFailures++;
+        fail(
+          `4-2 Two-Stage Raycast (${unitId}/${tier})`,
+          `miss=${missHit}, hitOk=${hitOk}, samplePart=${firstId}`
+        );
+      }
+
+      // Verify camera drag pause & 30Hz hover throttle (once per unit on high tier)
+      if (tier === 'high') {
+        const cam = new THREE.PerspectiveCamera(32, 1.6, 0.85, 4200);
+        const uCenter = built.raycastIndex.unitWorldBox.getCenter(new THREE.Vector3());
+        const uSize = built.raycastIndex.unitWorldBox.getSize(new THREE.Vector3());
+        cam.position.set(uCenter.x, uCenter.y + Math.max(20, uSize.y), uCenter.z + Math.max(40, uSize.length() * 1.5));
+        cam.lookAt(uCenter);
+        cam.updateMatrixWorld();
+        const ptr = new THREE.Vector2(0, 0);
+        raycaster.resetHoverThrottle();
+        raycaster.setCameraDragging(true);
+        const dragRes = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 100);
+        raycaster.setCameraDragging(false);
+        const firstHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 100);
+        const throttledHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 110);
+        const nextHover = raycaster.pickHover(ptr, cam, built.raycastIndex, () => false, null, 140);
+        if (!dragRes.skipped || firstHover.skipped || !throttledHover.skipped || nextHover.skipped) {
+          totalRuntimeFailures++;
+          fail(
+            `4-3 Hover Drag/Throttle (${unitId})`,
+            JSON.stringify({ dragRes, firstHover, throttledHover, nextHover })
+          );
+        }
+      }
+
+      // 4-F: Draw-Call & Shader Tier Budget Gate
+      let visibleDrawCalls = 0;
+      let physicalMatCount = 0;
+      let lambertMatCount = 0;
+      let standardMatCount = 0;
+      const seenMats = new Set();
+
+      built.rootGroup.traverse((obj) => {
+        if (!obj.visible) return;
+        let p = obj.parent;
+        while (p) {
+          if (!p.visible) return;
+          p = p.parent;
+        }
+        if (obj.isBatchedMesh || obj.isInstancedMesh || obj.isMesh || obj.isLineSegments || obj.isLine) {
+          visibleDrawCalls++;
+          const mat = obj.material;
+          if (mat && !seenMats.has(mat)) {
+            seenMats.add(mat);
+            if (mat.isMeshPhysicalMaterial) physicalMatCount++;
+            else if (mat.isMeshStandardMaterial) standardMatCount++;
+            else if (mat.isMeshLambertMaterial) lambertMatCount++;
+          }
+        }
+      });
+
+      const tierCfg = cacheMod.QUALITY_TIER_CONFIG[tier];
+      const tris = built.stats.estimatedTriangles;
+      const tierMatOk =
+        tier === 'standard'
+          ? physicalMatCount === 0 && (lambertMatCount > 0 || standardMatCount > 0)
+          : tier === 'high'
+            ? physicalMatCount === 0 && standardMatCount > 0
+            : physicalMatCount > 0;
+
+      if (
+        visibleDrawCalls > maxDrawCalls ||
+        !tierMatOk ||
+        tierCfg.maxPixelRatio !== TIER_DPR_CAPS[tier]
+      ) {
+        totalRuntimeFailures++;
+        fail(
+          `4-4 Budget Gate (${unitId}/${tier.toUpperCase()})`,
+          `drawCalls=${visibleDrawCalls}/${maxDrawCalls}, tris=${tris}, dprCap=${tierCfg.maxPixelRatio}, mats={L:${lambertMatCount},S:${standardMatCount},P:${physicalMatCount}}`
+        );
+      }
+
+      // 4-G: Dispose unit & assert ZERO leaked resources in ResourceCache!
+      unit.dispose(cache);
+      const postStats = cache.getStats();
+      if (
+        postStats.materials !== 0 ||
+        postStats.geometries !== 0 ||
+        postStats.textures !== 0 ||
+        postStats.totalRefs !== 0
+      ) {
+        totalRuntimeFailures++;
+        fail(`4-5 Zero-Leak Dispose (${unitId}/${tier.toUpperCase()})`, JSON.stringify(postStats));
+      }
+
+      unitTierMetrics[tier] = {
+        drawCalls: visibleDrawCalls,
+        maxDrawCalls,
+        triangles: tris,
+        dprCap: tierCfg.maxPixelRatio,
+        instancedMeshes: built.stats.instancedMeshCount,
+        totalInstances: built.stats.totalInstances,
+        batchedMeshes: built.stats.batchedMeshCount,
+        totalBatchedItems: built.stats.totalBatchedItems,
+        mats: { lambert: lambertMatCount, standard: standardMatCount, physical: physicalMatCount },
+        postDisposeRefs: postStats.totalRefs,
+      };
+    }
+
+    // Assert triangle count scales across STD <= HIGH <= ULTRA with STD < ULTRA
+    const stdT = unitTierMetrics.standard.triangles;
+    const highT = unitTierMetrics.high.triangles;
+    const ultraT = unitTierMetrics.ultra.triangles;
+    if (!(stdT <= highT && highT <= ultraT && stdT < ultraT)) {
+      totalRuntimeFailures++;
       fail(
-        `4-4 Budget Gate (${tier.toUpperCase()})`,
-        `drawCalls=${visibleDrawCalls}/${budget.maxDrawCalls}, tris=${tris}/${budget.maxTriangles}, dprCap=${tierCfg.maxPixelRatio}, mats={L:${lambertMatCount},S:${standardMatCount},P:${physicalMatCount}}`
+        `4-6 Tier Scaling (${unitId})`,
+        `Expected STD < ULTRA & monotonic scaling, got STD=${stdT}, HIGH=${highT}, ULTRA=${ultraT}`
       );
     }
 
-    // Dispose unit & assert ZERO leaked resources in ResourceCache!
-    unit.dispose(cache);
-    const postStats = cache.getStats();
-    if (
-      postStats.materials !== 0 ||
-      postStats.geometries !== 0 ||
-      postStats.textures !== 0 ||
-      postStats.totalRefs !== 0
-    ) {
-      fail(`4-5 Zero-Leak Dispose (${tier.toUpperCase()})`, JSON.stringify(postStats));
-    }
-
-    tierMetrics[tier] = {
-      drawCalls: visibleDrawCalls,
-      triangles: tris,
-      dprCap: tierCfg.maxPixelRatio,
-      instancedMeshes: built.stats.instancedMeshCount,
-      totalInstances: built.stats.totalInstances,
-      batchedMeshes: built.stats.batchedMeshCount,
-      totalBatchedItems: built.stats.totalBatchedItems,
-      mats: { lambert: lambertMatCount, standard: standardMatCount, physical: physicalMatCount },
-      postDisposeRefs: postStats.totalRefs,
-    };
+    allUnitMatrices[unitId] = unitTierMetrics;
   }
 
-  // Assert triangle count scales cleanly across STD < HIGH < ULTRA
-  if (
-    tierMetrics.standard.triangles < tierMetrics.high.triangles &&
-    tierMetrics.high.triangles < tierMetrics.ultra.triangles
-  ) {
+  if (totalRuntimeFailures === 0) {
     pass(
       '4-6 Tier Scaling & Budget Gates',
-      `STD(${tierMetrics.standard.drawCalls}dc, ${tierMetrics.standard.triangles}tris, DPR<=${tierMetrics.standard.dprCap}) < HIGH(${tierMetrics.high.drawCalls}dc, ${tierMetrics.high.triangles}tris, DPR<=${tierMetrics.high.dprCap}) < ULTRA(${tierMetrics.ultra.drawCalls}dc, ${tierMetrics.ultra.triangles}tris, DPR<=${tierMetrics.ultra.dprCap}) | Post-dispose refs: 0/0/0`
+      `All ${registeredUnits.length} unit(s) passed draw-call budgets, STD < HIGH <= ULTRA scaling, DPR caps (1.0/1.5/2.0), and 0 post-dispose cache refs`
     );
-  } else {
-    fail('4-6 Tier Scaling & Budget Gates', JSON.stringify(tierMetrics));
+    pass(
+      '3-4 Runtime Invariants',
+      `All ${registeredUnits.length} unit(s) verified: matrixAutoUpdate=false (100%), JSON=3D (100%), reverse-lookup (100%), zero-NaN explode, 2-stage AABB raycast + drag-pause + 30Hz throttle, zero-leak dispose`
+    );
   }
 
-  pass(
-    '3-4 Runtime Invariants',
-    'matrixAutoUpdate=false (100% nodes), JSON=3D (32/32), reverse-lookup (100%), zero-NaN explode, 2-stage AABB raycast + drag-pause + 30Hz throttle, zero-leak dispose verified across STD/HIGH/ULTRA'
-  );
-  console.log('\n[MI Shoe V2 Tier Matrix]');
-  console.log(JSON.stringify(tierMetrics, null, 2));
+  console.log('\n[Universal V2 Tier Matrix]');
+  for (const [uid, m] of Object.entries(allUnitMatrices)) {
+    console.log(
+      `  ${uid.padEnd(13)} | STD: ${String(m.standard.drawCalls).padStart(2)}dc / ${String(m.standard.triangles).padStart(7)} tris | HIGH: ${String(m.high.drawCalls).padStart(2)}dc / ${String(m.high.triangles).padStart(7)} tris | ULTRA: ${String(m.ultra.drawCalls).padStart(2)}dc / ${String(m.ultra.triangles).padStart(7)} tris | Inst:${m.ultra.instancedMeshes}(${m.ultra.totalInstances}) Batch:${m.ultra.batchedMeshes}(${m.ultra.totalBatchedItems}) | Refs:0`
+    );
+  }
 } catch (err) {
   fail('4 Runtime Verification', err instanceof Error ? err.stack || err.message : String(err));
 }

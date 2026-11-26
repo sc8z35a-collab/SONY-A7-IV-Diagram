@@ -1,0 +1,1 @@
+const N={};export{N as SENSOR_NEXTGEN_EXPLANATIONS};

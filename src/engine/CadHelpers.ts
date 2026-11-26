@@ -1,6 +1,11 @@
 import * as THREE from 'three';
 import { GPU_PROFILE, scaleSegments } from './GpuOptimizer';
 import { resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
+import {
+  getActiveGeometryScale,
+  scaleCurveSegmentsForQuality,
+  scaleRadialSegmentsForQuality,
+} from '../core/geometry_quality';
 
 /**
  * Create a 2D rounded rectangle Shape centered at (0, 0).
@@ -81,14 +86,19 @@ export function extrudeCentered(
   bevelThickness = 0.08,
   curveSegments = 18
 ): THREE.ExtrudeGeometry {
+  const qScale = getActiveGeometryScale();
   // Keep crisp macro CNC chamfers on thick housings while skipping sub-pixel (<0.24mm) micro-bevels
   const hasBevel =
+    (qScale ? qScale.allowMicroBevels : true) &&
     bevelSize > 0 &&
     bevelThickness > 0 &&
     ((depth >= 3.2 && bevelSize >= 0.22) || bevelSize >= 0.28);
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
-  const sagittaTol = GPU_PROFILE.isMobile ? 0.40 : 0.32;
-  const maxCircleSegs = scaleSegments(Math.min(curveSegments, 16), 5);
+  const baseSagitta = GPU_PROFILE.isMobile ? 0.40 : 0.32;
+  const sagittaTol = qScale ? baseSagitta * qScale.sagittaMultiplier : baseSagitta;
+  const maxCircleSegs = qScale
+    ? scaleCurveSegmentsForQuality(Math.min(curveSegments, 20), 4)
+    : scaleSegments(Math.min(curveSegments, 16), 5);
   const adaptedShape = resampleShapeSagitta(shape, sagittaTol, maxCircleSegs);
 
   const geo = new THREE.ExtrudeGeometry(adaptedShape, {
@@ -217,7 +227,6 @@ export function createTorsionSpringGeometry(
   return new THREE.TubeGeometry(curve, steps + 4, wireRadius, wireSides, false);
 }
 
-const screwSlotMatCache = new WeakMap<THREE.Material, THREE.MeshStandardMaterial>();
 const screwGeoPool = new Map<string, THREE.BufferGeometry>();
 
 function getPooledScrewHead(headRadius: number, headHeight: number): THREE.BufferGeometry {
@@ -286,19 +295,9 @@ export function createPrecisionScrew(
   head.userData.noEdges = true;
   group.add(head);
 
-  let slotMat = screwSlotMatCache.get(material);
-  if (!slotMat) {
-    slotMat = new THREE.MeshStandardMaterial({
-      color: 0x1a1d22,
-      metalness: 0.6,
-      roughness: 0.5,
-      clippingPlanes: (material as THREE.MeshStandardMaterial).clippingPlanes ?? undefined,
-    });
-    screwSlotMatCache.set(material, slotMat);
-  }
   const crossSlot = new THREE.Mesh(
     getPooledScrewCrossSlot(headRadius * 1.15, headRadius * 0.24),
-    slotMat
+    material
   );
   crossSlot.position.z = headHeight + 0.015;
   crossSlot.userData.noEdges = true;
@@ -372,8 +371,13 @@ export function createOpticalLensGeometry(
   profileSteps = 26,
   radialSegments = 56
 ): THREE.BufferGeometry {
-  const effSteps = Math.max(6, Math.min(GPU_PROFILE.isMobile ? 6 : 8, Math.round(profileSteps * 0.35)));
-  const effRadial = Math.max(16, Math.min(GPU_PROFILE.isMobile ? 20 : 26, Math.round(radialSegments * 0.48)));
+  const qScale = getActiveGeometryScale();
+  const effSteps = qScale
+    ? scaleCurveSegmentsForQuality(Math.max(8, Math.round(profileSteps * 0.48)), 4)
+    : Math.max(6, Math.min(GPU_PROFILE.isMobile ? 6 : 8, Math.round(profileSteps * 0.35)));
+  const effRadial = qScale
+    ? scaleRadialSegmentsForQuality(Math.max(14, Math.round(radialSegments * 0.6)), 10)
+    : Math.max(16, Math.min(GPU_PROFILE.isMobile ? 20 : 26, Math.round(radialSegments * 0.48)));
   const halfEdge = edgeThickness * 0.5;
   const pts: THREE.Vector2[] = [];
 
@@ -420,7 +424,11 @@ export function createSpannerRingGroup(
   s.holes.push(hole);
   grp.add(new THREE.Mesh(extrudeCentered(s, depth, 0.08, 0.08, 22), ringMat));
 
-  const ringTub = GPU_PROFILE.isMobile ? 16 : 22;
+  const ringTub = getActiveGeometryScale()
+    ? scaleRadialSegmentsForQuality(26, 8)
+    : GPU_PROFILE.isMobile
+      ? 16
+      : 22;
   for (const tz of [-depth * 0.25, depth * 0.25]) {
     const groove = new THREE.Mesh(new THREE.TorusGeometry(outerR + 0.05, 0.09, 4, ringTub), notchMat);
     groove.position.z = tz;

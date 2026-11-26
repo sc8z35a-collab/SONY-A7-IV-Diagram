@@ -7,6 +7,10 @@ import { buildMicroPixelUltraParts } from './microPixelUltraParts';
 import { buildMicroUltraAuditParts } from './sensorMicroUltraAuditParts';
 import { buildMicroPixelDeepAuditParts } from './microPixelDeepAuditParts';
 import { buildMicroPixelNextGenParts } from './microPixelNextGenParts';
+import {
+  scaleCurveSegmentsForQuality,
+  scaleRadialSegmentsForQuality,
+} from '../../core/geometry_quality';
 
 function finalizeMicroPart(
   id: string,
@@ -92,7 +96,7 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
       return geo;
     };
 
-    const domeGeo = buildGaplessLensGeo(P - 0.14, 3.8, 12);
+    const domeGeo = buildGaplessLensGeo(P - 0.14, 3.8, scaleCurveSegmentsForQuality(12, 5));
 
     for (const pc of pixelCenters) {
       const lens = new THREE.Mesh(domeGeo, mats.microlensGlass);
@@ -141,7 +145,12 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
     // 4 sub-wavelength porous-silica AR conformal interference rim rings (λ/4 n≈1.25)
     for (const pc of pixelCenters) {
       const arRim = new THREE.Mesh(
-        new THREE.TorusGeometry(4.4, 0.16, 8, 28),
+        new THREE.TorusGeometry(
+          4.4,
+          0.16,
+          scaleRadialSegmentsForQuality(8, 5),
+          scaleRadialSegmentsForQuality(28, 10)
+        ),
         mats.evfMlaGlass
       );
       arRim.position.set(pc.x, pc.y, 0.56);
@@ -150,7 +159,9 @@ export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[] {
 
       // Optical focal-plane leveling indicator dot at each pixel center
       const spot = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.4, 1.4, 0.14, 18).rotateX(Math.PI / 2),
+        new THREE.CylinderGeometry(1.4, 1.4, 0.14, scaleRadialSegmentsForQuality(18, 6)).rotateX(
+          Math.PI / 2
+        ),
         mats.sswfGlass
       );
       spot.position.set(pc.x, pc.y, 0.52);

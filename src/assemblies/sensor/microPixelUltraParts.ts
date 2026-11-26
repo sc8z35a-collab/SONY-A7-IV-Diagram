@@ -3,6 +3,7 @@ import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { attachCadEdges, createFrameShape, extrudeCentered, tagPartMeshes } from '../../engine/CadHelpers';
 import { lazyExplanationStub } from '../lazyExplanations';
+import { scaleRadialSegmentsForQuality } from '../../core/geometry_quality';
 
 function finalizeUltraMicroPixelPart(
   id: string,
@@ -59,7 +60,15 @@ export function buildMicroPixelUltraParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     // 2x1 horizontal shared cylindrical/elliptical PDAF bridge lens spanning top pixel pair
     const sharedBridge = new THREE.Mesh(
-      new THREE.SphereGeometry(5.0, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.5).rotateX(Math.PI / 2),
+      new THREE.SphereGeometry(
+        5.0,
+        scaleRadialSegmentsForQuality(24, 8),
+        scaleRadialSegmentsForQuality(16, 6),
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI * 0.5
+      ).rotateX(Math.PI / 2),
       mats.evfMlaGlass
     );
     sharedBridge.scale.set(1.94, 0.92, 0.36);

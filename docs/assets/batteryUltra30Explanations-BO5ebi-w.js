@@ -1,0 +1,1 @@
+const A={};export{A as BATTERY_ULTRA30_EXPLANATIONS};

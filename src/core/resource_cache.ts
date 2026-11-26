@@ -3,6 +3,7 @@ import { RenderMode } from '../assemblies/types';
 import { QualityTier } from './unit_contract';
 
 export type MaterialBucketKey =
+  // Original MI Shoe & Core Metallic / Structural Buckets (12)
   | 'metal_hero'
   | 'matte_chassis'
   | 'elastomer_rubber'
@@ -14,7 +15,78 @@ export type MaterialBucketKey =
   | 'matte_black_anodized'
   | 'pin_carrier_gloss'
   | 'copper_coil'
-  | 'torus_seal';
+  | 'torus_seal'
+  // Expanded Shared Metallic & Thermal Buckets (7)
+  | 'copper_thermal'
+  | 'brass_precision'
+  | 'titanium_machined'
+  | 'magnesium_cast'
+  | 'iron_magnetic'
+  | 'solder_silver'
+  | 'emi_shield_metal'
+  // Shared Optical Glass, AR Coating & Translucent Buckets (6)
+  | 'optical_glass_clear'
+  | 'optical_glass_ed'
+  | 'optical_ar_iridescent'
+  | 'optical_dichroic'
+  | 'glass_clear_housing'
+  | 'membrane_translucent'
+  // Shared Silicon, Semiconductor & Nanoscale Buckets (5)
+  | 'silicon_wafer_dark'
+  | 'silicon_photodiode'
+  | 'silicon_dielectric'
+  | 'cucu_hybrid_copper'
+  | 'cfa_gloss_filter'
+  // Shared Electronics, Structural, Composite & Emissive Buckets (8)
+  | 'abf_substrate'
+  | 'ic_epoxy_dark'
+  | 'polyimide_fpc'
+  | 'ceramic_alumina'
+  | 'carbon_fiber'
+  | 'leatherette_grip'
+  | 'foam_felt_matte'
+  | 'emissive_glow';
+
+export const ALL_MATERIAL_BUCKETS: readonly MaterialBucketKey[] = [
+  'metal_hero',
+  'matte_chassis',
+  'elastomer_rubber',
+  'pcb_textured',
+  'silicon_hero',
+  'gold_plating',
+  'becu_spring',
+  'stainless_machined',
+  'matte_black_anodized',
+  'pin_carrier_gloss',
+  'copper_coil',
+  'torus_seal',
+  'copper_thermal',
+  'brass_precision',
+  'titanium_machined',
+  'magnesium_cast',
+  'iron_magnetic',
+  'solder_silver',
+  'emi_shield_metal',
+  'optical_glass_clear',
+  'optical_glass_ed',
+  'optical_ar_iridescent',
+  'optical_dichroic',
+  'glass_clear_housing',
+  'membrane_translucent',
+  'silicon_wafer_dark',
+  'silicon_photodiode',
+  'silicon_dielectric',
+  'cucu_hybrid_copper',
+  'cfa_gloss_filter',
+  'abf_substrate',
+  'ic_epoxy_dark',
+  'polyimide_fpc',
+  'ceramic_alumina',
+  'carbon_fiber',
+  'leatherette_grip',
+  'foam_felt_matte',
+  'emissive_glow',
+];
 
 interface RefEntry<T> {
   resource: T;
@@ -42,6 +114,7 @@ export interface QualityTierConfig {
   readonly postProcessEnabled: boolean;
   readonly enableStudioEnv: boolean;
   readonly showSolidStructuralEdges: boolean;
+  readonly maxHeroTextureDim: number;
 }
 
 export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
@@ -55,6 +128,7 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     postProcessEnabled: false,
     enableStudioEnv: false,
     showSolidStructuralEdges: false,
+    maxHeroTextureDim: 256,
   },
   high: {
     maxPixelRatio: 1.5,
@@ -66,6 +140,7 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     postProcessEnabled: false,
     enableStudioEnv: true,
     showSolidStructuralEdges: true,
+    maxHeroTextureDim: 512,
   },
   ultra: {
     maxPixelRatio: 2.0,
@@ -77,10 +152,11 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     postProcessEnabled: false,
     enableStudioEnv: true,
     showSolidStructuralEdges: true,
+    maxHeroTextureDim: 1024,
   },
 };
 
-interface MaterialSpec {
+export interface MaterialSpec {
   readonly color: number;
   readonly metalness: number;
   readonly roughness: number;
@@ -90,6 +166,8 @@ interface MaterialSpec {
     readonly clearcoatRoughness: number;
     readonly iridescence?: number;
     readonly iridescenceIOR?: number;
+    readonly ior?: number;
+    readonly reflectivity?: number;
   };
   /** Use MeshLambertMaterial in STD when non-metallic/matte for lowest ALU cost */
   readonly stdLambert?: boolean;
@@ -98,6 +176,9 @@ interface MaterialSpec {
   readonly bumpScale?: number;
   readonly emissive?: number;
   readonly emissiveIntensity?: number;
+  readonly transparent?: boolean;
+  readonly opacity?: number;
+  readonly depthWrite?: boolean;
 }
 
 export type ProceduralTextureKey =
@@ -106,10 +187,41 @@ export type ProceduralTextureKey =
   | 'mg_grain'
   | 'hdi_pcb'
   | 'silicon_die'
-  | 'copper_coil';
+  | 'copper_coil'
+  | 'carbon_weave'
+  | 'leather_grain'
+  | 'wafer_grid'
+  | 'optical_diffraction'
+  | 'ceramic_grain'
+  | 'mesh_grid';
 
-const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
-  // Hero metallic BatchedMesh bucket (white base so per-instance setColorAt preserves exact stainless/copper/silver/titanium/brass hues!)
+export type HeroCanvasPainter = (
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number
+) => void;
+
+export interface HeroMaterialSpec {
+  readonly bucket: MaterialBucketKey;
+  readonly width: number;
+  readonly height: number;
+  readonly painter: HeroCanvasPainter;
+  readonly baseColor?: number;
+  readonly metalness?: number;
+  readonly roughness?: number;
+  readonly transparent?: boolean;
+  readonly opacity?: number;
+  readonly depthWrite?: boolean;
+  readonly emissive?: number;
+  readonly emissiveIntensity?: number;
+  readonly repeatX?: number;
+  readonly repeatY?: number;
+  readonly wrapRepeat?: boolean;
+  readonly fallbackColor?: number;
+}
+
+export const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
+  // --- Original 12 MI Shoe / Core Buckets (verbatim specs for 0 regression) ---
   metal_hero: {
     color: 0xffffff,
     metalness: 0.90,
@@ -118,7 +230,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpScale: 0.016,
     ultraPhysical: { clearcoat: 0.32, clearcoatRoughness: 0.14 },
   },
-  // Matte structural & dielectric BatchedMesh bucket (white base for per-instance setColorAt)
   matte_chassis: {
     color: 0xffffff,
     metalness: 0.26,
@@ -127,7 +238,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpTextureKey: 'mg_grain',
     bumpScale: 0.025,
   },
-  // Elastomer / EPDM / butyl / conductive foam BatchedMesh bucket
   elastomer_rubber: {
     color: 0xffffff,
     metalness: 0.05,
@@ -136,7 +246,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpTextureKey: 'mg_grain',
     bumpScale: 0.04,
   },
-  // HDI Mainboard PCB slices with procedural dark-teal PCB trace texture
   pcb_textured: {
     color: 0xffffff,
     metalness: 0.22,
@@ -146,7 +255,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpTextureKey: 'hdi_pcb',
     bumpScale: 0.028,
   },
-  // Hero polyimide FPC / silicon die / optical-accent BatchedMesh bucket (Physical clearcoat/iridescence in ULTRA)
   silicon_hero: {
     color: 0xffffff,
     metalness: 0.42,
@@ -158,14 +266,12 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
       iridescenceIOR: 1.65,
     },
   },
-  // Gold plating for InstancedMesh pins, cantilever tips, traces, ZIF leads
   gold_plating: {
     color: 0xffffff,
     metalness: 0.94,
     roughness: 0.18,
     ultraPhysical: { clearcoat: 0.36, clearcoatRoughness: 0.12 },
   },
-  // Phosphor-bronze / BeCu spring beams
   becu_spring: {
     color: 0xffffff,
     metalness: 0.89,
@@ -174,7 +280,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpScale: 0.02,
     ultraPhysical: { clearcoat: 0.24, clearcoatRoughness: 0.16 },
   },
-  // Precision machined stainless / screw heads & shanks
   stainless_machined: {
     color: 0xffffff,
     metalness: 0.90,
@@ -183,14 +288,12 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpScale: 0.015,
     ultraPhysical: { clearcoat: 0.30, clearcoatRoughness: 0.14 },
   },
-  // Matte black LCP comb teeth / dark screws / housings
   matte_black_anodized: {
     color: 0xffffff,
     metalness: 0.48,
     roughness: 0.46,
     stdLambert: true,
   },
-  // Glossy color-coded functional pin carriers (MI12–MI20)
   pin_carrier_gloss: {
     color: 0xffffff,
     metalness: 0.14,
@@ -198,7 +301,6 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     stdLambert: true,
     ultraPhysical: { clearcoat: 0.58, clearcoatRoughness: 0.14 },
   },
-  // Copper EMI choke windings
   copper_coil: {
     color: 0xffffff,
     metalness: 0.88,
@@ -208,12 +310,265 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
     bumpScale: 0.03,
     ultraPhysical: { clearcoat: 0.22, clearcoatRoughness: 0.18 },
   },
-  // Lock rings & waterproof O-ring torus seals
   torus_seal: {
     color: 0xffffff,
     metalness: 0.36,
     roughness: 0.52,
     stdLambert: true,
+  },
+
+  // --- Expanded Shared Metallic & Thermal Buckets (7) ---
+  copper_thermal: {
+    color: 0xffffff,
+    metalness: 0.90,
+    roughness: 0.24,
+    bumpTextureKey: 'cnc_brushed',
+    bumpScale: 0.018,
+    ultraPhysical: { clearcoat: 0.26, clearcoatRoughness: 0.18 },
+  },
+  brass_precision: {
+    color: 0xffffff,
+    metalness: 0.91,
+    roughness: 0.22,
+    bumpTextureKey: 'cnc_brushed',
+    bumpScale: 0.016,
+    ultraPhysical: { clearcoat: 0.28, clearcoatRoughness: 0.15 },
+  },
+  titanium_machined: {
+    color: 0xffffff,
+    metalness: 0.86,
+    roughness: 0.27,
+    bumpTextureKey: 'cnc_brushed',
+    bumpScale: 0.018,
+    ultraPhysical: { clearcoat: 0.25, clearcoatRoughness: 0.18 },
+  },
+  magnesium_cast: {
+    color: 0xffffff,
+    metalness: 0.62,
+    roughness: 0.44,
+    stdLambert: true,
+    bumpTextureKey: 'mg_grain',
+    bumpScale: 0.032,
+  },
+  iron_magnetic: {
+    color: 0xffffff,
+    metalness: 0.84,
+    roughness: 0.30,
+    bumpTextureKey: 'cnc_brushed',
+    bumpScale: 0.018,
+  },
+  solder_silver: {
+    color: 0xffffff,
+    metalness: 0.93,
+    roughness: 0.16,
+    ultraPhysical: { clearcoat: 0.35, clearcoatRoughness: 0.12 },
+  },
+  emi_shield_metal: {
+    color: 0xffffff,
+    metalness: 0.84,
+    roughness: 0.28,
+    bumpTextureKey: 'mesh_grid',
+    bumpScale: 0.022,
+  },
+
+  // --- Shared Optical Glass, AR Coating & Translucent Buckets (6) ---
+  optical_glass_clear: {
+    color: 0xffffff,
+    metalness: 0.04,
+    roughness: 0.06,
+    transparent: true,
+    opacity: 0.34,
+    depthWrite: false,
+    ultraPhysical: {
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      iridescence: 0.28,
+      iridescenceIOR: 1.48,
+      ior: 1.52,
+      reflectivity: 0.9,
+    },
+  },
+  optical_glass_ed: {
+    color: 0xffffff,
+    metalness: 0.05,
+    roughness: 0.05,
+    transparent: true,
+    opacity: 0.42,
+    depthWrite: false,
+    ultraPhysical: {
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      iridescence: 0.42,
+      iridescenceIOR: 1.58,
+      ior: 1.56,
+      reflectivity: 0.92,
+    },
+  },
+  optical_ar_iridescent: {
+    color: 0xffffff,
+    metalness: 0.10,
+    roughness: 0.07,
+    transparent: true,
+    opacity: 0.46,
+    depthWrite: false,
+    ultraPhysical: {
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      iridescence: 0.88,
+      iridescenceIOR: 1.72,
+      ior: 1.62,
+      reflectivity: 0.95,
+    },
+  },
+  optical_dichroic: {
+    color: 0xffffff,
+    metalness: 0.22,
+    roughness: 0.08,
+    transparent: true,
+    opacity: 0.54,
+    depthWrite: false,
+    ultraPhysical: {
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.05,
+      iridescence: 0.95,
+      iridescenceIOR: 1.85,
+    },
+  },
+  glass_clear_housing: {
+    color: 0xffffff,
+    metalness: 0.05,
+    roughness: 0.08,
+    transparent: true,
+    opacity: 0.24,
+    depthWrite: false,
+    ultraPhysical: { clearcoat: 0.92, clearcoatRoughness: 0.06 },
+  },
+  membrane_translucent: {
+    color: 0xffffff,
+    metalness: 0.08,
+    roughness: 0.24,
+    transparent: true,
+    opacity: 0.68,
+    depthWrite: false,
+    ultraPhysical: { clearcoat: 0.45, clearcoatRoughness: 0.18 },
+  },
+
+  // --- Shared Silicon, Semiconductor & Nanoscale Buckets (5) ---
+  silicon_wafer_dark: {
+    color: 0xffffff,
+    metalness: 0.52,
+    roughness: 0.16,
+    mapTextureKey: 'wafer_grid',
+    bumpTextureKey: 'wafer_grid',
+    bumpScale: 0.018,
+    ultraPhysical: {
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.08,
+      iridescence: 0.65,
+      iridescenceIOR: 1.78,
+    },
+  },
+  silicon_photodiode: {
+    color: 0xffffff,
+    metalness: 0.36,
+    roughness: 0.18,
+    mapTextureKey: 'optical_diffraction',
+    ultraPhysical: {
+      clearcoat: 0.78,
+      clearcoatRoughness: 0.10,
+      iridescence: 0.72,
+      iridescenceIOR: 1.68,
+    },
+  },
+  silicon_dielectric: {
+    color: 0xffffff,
+    metalness: 0.12,
+    roughness: 0.28,
+    transparent: true,
+    opacity: 0.56,
+    depthWrite: false,
+    ultraPhysical: { clearcoat: 0.62, clearcoatRoughness: 0.14 },
+  },
+  cucu_hybrid_copper: {
+    color: 0xffffff,
+    metalness: 0.92,
+    roughness: 0.17,
+    bumpTextureKey: 'wafer_grid',
+    bumpScale: 0.02,
+    ultraPhysical: { clearcoat: 0.34, clearcoatRoughness: 0.12 },
+  },
+  cfa_gloss_filter: {
+    color: 0xffffff,
+    metalness: 0.08,
+    roughness: 0.14,
+    transparent: true,
+    opacity: 0.78,
+    depthWrite: false,
+    ultraPhysical: { clearcoat: 0.90, clearcoatRoughness: 0.08 },
+  },
+
+  // --- Shared Electronics, Structural, Composite & Emissive Buckets (8) ---
+  abf_substrate: {
+    color: 0xffffff,
+    metalness: 0.18,
+    roughness: 0.38,
+    stdLambert: true,
+    bumpTextureKey: 'hdi_pcb',
+    bumpScale: 0.02,
+  },
+  ic_epoxy_dark: {
+    color: 0xffffff,
+    metalness: 0.14,
+    roughness: 0.44,
+    stdLambert: true,
+    bumpTextureKey: 'ceramic_grain',
+    bumpScale: 0.015,
+  },
+  polyimide_fpc: {
+    color: 0xffffff,
+    metalness: 0.24,
+    roughness: 0.28,
+    ultraPhysical: { clearcoat: 0.55, clearcoatRoughness: 0.16 },
+  },
+  ceramic_alumina: {
+    color: 0xffffff,
+    metalness: 0.06,
+    roughness: 0.58,
+    stdLambert: true,
+    bumpTextureKey: 'ceramic_grain',
+    bumpScale: 0.022,
+  },
+  carbon_fiber: {
+    color: 0xffffff,
+    metalness: 0.34,
+    roughness: 0.34,
+    mapTextureKey: 'carbon_weave',
+    bumpTextureKey: 'carbon_weave',
+    bumpScale: 0.028,
+    ultraPhysical: { clearcoat: 0.42, clearcoatRoughness: 0.20 },
+  },
+  leatherette_grip: {
+    color: 0xffffff,
+    metalness: 0.04,
+    roughness: 0.84,
+    stdLambert: true,
+    bumpTextureKey: 'leather_grain',
+    bumpScale: 0.045,
+  },
+  foam_felt_matte: {
+    color: 0xffffff,
+    metalness: 0.02,
+    roughness: 0.94,
+    stdLambert: true,
+    bumpTextureKey: 'ceramic_grain',
+    bumpScale: 0.038,
+  },
+  emissive_glow: {
+    color: 0xffffff,
+    metalness: 0.08,
+    roughness: 0.24,
+    emissive: 0x3b82f6,
+    emissiveIntensity: 0.55,
   },
 };
 
@@ -222,12 +577,11 @@ const MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> = {
  */
 function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTexture {
   if (key === 'studio_env') {
-    // 128x64 equirectangular softbox studio HDR-like environment for crisp bright white studio reflections
     const w = 128;
     const h = 64;
     const data = new Uint8Array(w * h * 4);
     for (let y = 0; y < h; y++) {
-      const v = y / (h - 1); // 0 = bottom, 1 = top
+      const v = y / (h - 1);
       const theta = (1 - v) * Math.PI;
       const sinT = Math.sin(theta);
       const cosT = Math.cos(theta);
@@ -238,15 +592,11 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         const dy = cosT;
         const dz = sinT * Math.sin(phi);
 
-        // Bright studio cyclorama base + overhead softbox + key/rim highlights
         let lum = 0.62 + Math.max(0, dy) * 0.26;
-        // Key softbox (-0.52, 0.72, 0.46)
         const keyDot = Math.max(0, dx * -0.517 + dy * 0.716 + dz * 0.458);
         lum += Math.pow(keyDot, 6) * 0.55;
-        // Rim softbox (0.65, 0.36, -0.67)
         const rimDot = Math.max(0, dx * 0.648 + dy * 0.365 + dz * -0.669);
         lum += Math.pow(rimDot, 8) * 0.45;
-        // Dark horizon studio strip for crisp metallic contrast
         const band = Math.exp(-Math.pow((dy + 0.08) * 7.5, 2));
         lum *= 1.0 - band * 0.42;
 
@@ -276,7 +626,7 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const idx = (y * size + x) * 4;
-      const hash = ((Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1 + 1) % 1;
+      const hash = (((Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1) + 1) % 1;
       if (key === 'cnc_brushed') {
         const streak = Math.sin(y * 1.35) * 14 + (hash - 0.5) * 18;
         const v = Math.min(255, Math.max(0, Math.round(128 + streak)));
@@ -291,7 +641,6 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         data[idx + 2] = v;
         data[idx + 3] = 255;
       } else if (key === 'hdi_pcb') {
-        // Dark emerald-teal HDI solder mask with fine copper micro-traces & gold vias
         const isTrace = x % 8 === 0 || y % 12 === 0;
         const isVia = x % 16 === 4 && y % 16 === 4;
         if (isVia) {
@@ -314,6 +663,57 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
         data[idx + 1] = Math.round(88 + wave * 42);
         data[idx + 2] = Math.round(42 + wave * 24);
         data[idx + 3] = 255;
+      } else if (key === 'carbon_weave') {
+        const cell = ((x >> 2) + (y >> 2)) & 1;
+        const fiber = cell === 0 ? Math.sin((x & 3) * 1.2) : Math.sin((y & 3) * 1.2);
+        const v = Math.min(255, Math.max(0, Math.round(42 + cell * 28 + fiber * 14)));
+        data[idx] = v;
+        data[idx + 1] = v + 2;
+        data[idx + 2] = v + 6;
+        data[idx + 3] = 255;
+      } else if (key === 'leather_grain') {
+        const pebble =
+          Math.sin(x * 0.9 + Math.cos(y * 0.85) * 1.4) * Math.cos(y * 0.95) * 32;
+        const v = Math.min(255, Math.max(0, Math.round(124 + pebble + (hash - 0.5) * 26)));
+        data[idx] = v;
+        data[idx + 1] = v;
+        data[idx + 2] = v;
+        data[idx + 3] = 255;
+      } else if (key === 'wafer_grid') {
+        const scribe = x % 16 === 0 || y % 16 === 0;
+        const fine = x % 4 === 0 || y % 4 === 0;
+        if (scribe) {
+          data[idx] = 164;
+          data[idx + 1] = 188;
+          data[idx + 2] = 224;
+        } else if (fine) {
+          data[idx] = 74;
+          data[idx + 1] = 98;
+          data[idx + 2] = 140;
+        } else {
+          data[idx] = 44;
+          data[idx + 1] = 62;
+          data[idx + 2] = 96;
+        }
+        data[idx + 3] = 255;
+      } else if (key === 'optical_diffraction') {
+        const phase = ((x + y * 0.7) / size) * Math.PI * 4;
+        data[idx] = Math.round(92 + 54 * Math.sin(phase));
+        data[idx + 1] = Math.round(138 + 68 * Math.sin(phase + 2.1));
+        data[idx + 2] = Math.round(184 + 62 * Math.sin(phase + 4.2));
+        data[idx + 3] = 255;
+      } else if (key === 'ceramic_grain') {
+        const v = Math.min(255, Math.max(0, Math.round(120 + (hash - 0.5) * 44)));
+        data[idx] = v;
+        data[idx + 1] = v;
+        data[idx + 2] = v;
+        data[idx + 3] = 255;
+      } else if (key === 'mesh_grid') {
+        const wire = x % 6 === 0 || y % 6 === 0 ? 192 : 96;
+        data[idx] = wire;
+        data[idx + 1] = wire;
+        data[idx + 2] = wire;
+        data[idx + 3] = 255;
       } else {
         // silicon_die subtle grid
         const grid = x % 8 === 0 || y % 8 === 0 ? 18 : 0;
@@ -328,7 +728,14 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
   const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
-  if (key === 'hdi_pcb' || key === 'copper_coil' || key === 'silicon_die') {
+  if (
+    key === 'hdi_pcb' ||
+    key === 'copper_coil' ||
+    key === 'silicon_die' ||
+    key === 'carbon_weave' ||
+    key === 'wafer_grid' ||
+    key === 'optical_diffraction'
+  ) {
     tex.colorSpace = THREE.SRGBColorSpace;
   }
   tex.minFilter = THREE.LinearFilter;
@@ -339,9 +746,32 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
   return tex;
 }
 
+function buildFallbackHeroDataTexture(cacheKey: string, fallbackColor = 0x8899aa): THREE.DataTexture {
+  const size = 8;
+  const data = new Uint8Array(size * size * 4);
+  const r0 = (fallbackColor >> 16) & 255;
+  const g0 = (fallbackColor >> 8) & 255;
+  const b0 = fallbackColor & 255;
+  for (let i = 0; i < size * size; i++) {
+    const o = i * 4;
+    data[o] = r0;
+    data[o + 1] = g0;
+    data[o + 2] = b0;
+    data[o + 3] = 255;
+  }
+  const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
+  tex.needsUpdate = true;
+  tex.userData.__cacheKey = cacheKey;
+  return tex;
+}
+
 /**
- * Reference-counted shared cache for all MI Shoe V2 materials, textures, and geometries.
- * Guarantees zero duplicate GPU material/geometry allocations and deterministic disposal at refCount === 0.
+ * Reference-counted shared cache for ALL V2 unit materials, textures (procedural + lazy hero),
+ * and geometries. Guarantees zero duplicate GPU allocations and deterministic disposal at refCount === 0.
  */
 export class ResourceCache {
   private readonly materials = new Map<string, RefEntry<THREE.Material>>();
@@ -356,6 +786,63 @@ export class ResourceCache {
     }
     const tex = buildProceduralDataTexture(key);
     this.textures.set(key, { resource: tex, refCount: 1 });
+    return tex;
+  }
+
+  /**
+   * Lazily acquire a reference-counted 2D Canvas hero texture scaled to the active quality tier.
+   * Automatically falls back to a deterministic DOM-free DataTexture in headless Node.js CI.
+   */
+  public acquireHeroTexture(
+    heroKey: string,
+    spec: HeroMaterialSpec,
+    quality: QualityTier
+  ): THREE.Texture {
+    const texKey = `herotex:${heroKey}:${quality}`;
+    const existing = this.textures.get(texKey);
+    if (existing) {
+      existing.refCount++;
+      return existing.resource;
+    }
+
+    let tex: THREE.Texture;
+    if (typeof document !== 'undefined') {
+      const maxDim = QUALITY_TIER_CONFIG[quality].maxHeroTextureDim;
+      const scale = Math.min(1, maxDim / Math.max(1, spec.width, spec.height));
+      const cw = Math.max(32, Math.round(spec.width * scale));
+      const ch = Math.max(32, Math.round(spec.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = cw;
+      canvas.height = ch;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.save();
+        ctx.scale(cw / spec.width, ch / spec.height);
+        spec.painter(ctx, spec.width, spec.height);
+        ctx.restore();
+        const cTex = new THREE.CanvasTexture(canvas);
+        cTex.colorSpace = THREE.SRGBColorSpace;
+        cTex.minFilter = THREE.LinearMipmapLinearFilter;
+        cTex.magFilter = THREE.LinearFilter;
+        cTex.anisotropy = quality === 'ultra' ? 4 : quality === 'high' ? 2 : 1;
+        if (spec.wrapRepeat) {
+          cTex.wrapS = THREE.RepeatWrapping;
+          cTex.wrapT = THREE.RepeatWrapping;
+        }
+        if (spec.repeatX || spec.repeatY) {
+          cTex.repeat.set(spec.repeatX ?? 1, spec.repeatY ?? 1);
+        }
+        cTex.needsUpdate = true;
+        tex = cTex;
+      } else {
+        tex = buildFallbackHeroDataTexture(texKey, spec.fallbackColor ?? spec.baseColor ?? 0x8899aa);
+      }
+    } else {
+      tex = buildFallbackHeroDataTexture(texKey, spec.fallbackColor ?? spec.baseColor ?? 0x8899aa);
+    }
+
+    tex.userData.__cacheKey = texKey;
+    this.textures.set(texKey, { resource: tex, refCount: 1 });
     return tex;
   }
 
@@ -400,9 +887,9 @@ export class ResourceCache {
 
   /**
    * Acquire a quality-tiered shared material.
-   * - STD   : MeshLambertMaterial for matte/dielectric buckets, lightweight MeshStandardMaterial for metallic buckets (no bump/clearcoat).
+   * - STD   : MeshLambertMaterial for matte/dielectric buckets, lightweight MeshStandardMaterial for metallic/optical buckets.
    * - HIGH  : MeshStandardMaterial PBR with procedural bump/albedo DataTextures.
-   * - ULTRA : Selective MeshPhysicalMaterial (clearcoat/iridescence) ONLY for hero metallic/optical/silicon buckets; MeshStandardMaterial for others.
+   * - ULTRA : Selective MeshPhysicalMaterial (clearcoat/iridescence) ONLY for hero metallic/optical/silicon buckets.
    */
   public acquireMaterial(
     bucket: MaterialBucketKey,
@@ -437,14 +924,24 @@ export class ResourceCache {
       }
     }
 
+    const isTransparent = isXray || Boolean(spec.transparent && !isCad);
+    const opacity = isXray
+      ? 0.24
+      : isCad
+        ? spec.transparent
+          ? Math.max(0.42, spec.opacity ?? 0.5)
+          : 1.0
+        : (spec.opacity ?? 1.0);
+    const depthWrite = isXray ? false : isCad ? !spec.transparent : (spec.depthWrite ?? !isTransparent);
+
     const commonProps = {
       color: isCad ? 0xf4f6fa : isXray ? 0xdbeafe : spec.color,
       clippingPlanes,
       clipShadows: false,
       side: THREE.DoubleSide as THREE.Side,
-      transparent: isXray,
-      opacity: isXray ? 0.24 : 1.0,
-      depthWrite: !isXray,
+      transparent: isTransparent || (isCad && Boolean(spec.transparent)),
+      opacity,
+      depthWrite,
     };
 
     let mat: THREE.Material;
@@ -462,10 +959,12 @@ export class ResourceCache {
         polygonOffsetUnits: 1,
       });
     } else if (quality === 'standard') {
-      if (spec.stdLambert) {
+      if (spec.stdLambert && !spec.transparent) {
         mat = new THREE.MeshLambertMaterial({
           ...commonProps,
           map: mapTex,
+          emissive: spec.emissive ?? 0x000000,
+          emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
       } else {
         mat = new THREE.MeshStandardMaterial({
@@ -473,6 +972,8 @@ export class ResourceCache {
           map: mapTex,
           metalness: spec.metalness * 0.85,
           roughness: Math.min(1, spec.roughness + 0.08),
+          emissive: spec.emissive ?? 0x000000,
+          emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
       }
     } else if (quality === 'ultra' && spec.ultraPhysical) {
@@ -487,6 +988,8 @@ export class ResourceCache {
         clearcoatRoughness: spec.ultraPhysical.clearcoatRoughness,
         iridescence: spec.ultraPhysical.iridescence ?? 0,
         iridescenceIOR: spec.ultraPhysical.iridescenceIOR ?? 1.3,
+        ior: spec.ultraPhysical.ior ?? 1.5,
+        reflectivity: spec.ultraPhysical.reflectivity ?? 0.5,
         envMapIntensity: 1.05,
         emissive: spec.emissive ?? 0x000000,
         emissiveIntensity: spec.emissiveIntensity ?? 0,
@@ -511,6 +1014,89 @@ export class ResourceCache {
     return mat;
   }
 
+  /**
+   * Acquire a ref-counted bespoke hero-textured material for a specific unit (lazy CanvasTexture + auto-dispose).
+   */
+  public acquireHeroMaterial(
+    heroKey: string,
+    spec: HeroMaterialSpec,
+    quality: QualityTier,
+    renderMode: RenderMode = 'solid',
+    clippingPlanes: THREE.Plane[] = []
+  ): THREE.Material {
+    if (renderMode !== 'solid') {
+      return this.acquireMaterial(spec.bucket, quality, renderMode, clippingPlanes);
+    }
+
+    const cacheKey = `hero:${heroKey}:${quality}:${renderMode}`;
+    const existing = this.materials.get(cacheKey);
+    if (existing) {
+      existing.refCount++;
+      existing.resource.clippingPlanes = clippingPlanes;
+      return existing.resource;
+    }
+
+    const bucketSpec = MATERIAL_SPECS[spec.bucket];
+    const texKey = `herotex:${heroKey}:${quality}`;
+    const mapTex = this.acquireHeroTexture(heroKey, spec, quality);
+    const depTextures = [texKey];
+
+    const metalness = spec.metalness ?? bucketSpec.metalness;
+    const roughness = spec.roughness ?? bucketSpec.roughness;
+    const transparent = spec.transparent ?? Boolean(bucketSpec.transparent);
+    const opacity = spec.opacity ?? (bucketSpec.opacity ?? 1.0);
+    const depthWrite = spec.depthWrite ?? !transparent;
+
+    const commonProps = {
+      color: spec.baseColor ?? 0xffffff,
+      map: mapTex,
+      clippingPlanes,
+      clipShadows: false,
+      side: THREE.DoubleSide as THREE.Side,
+      transparent,
+      opacity,
+      depthWrite,
+      emissive: spec.emissive ?? bucketSpec.emissive ?? 0x000000,
+      emissiveIntensity: spec.emissiveIntensity ?? bucketSpec.emissiveIntensity ?? 0,
+    };
+
+    let mat: THREE.Material;
+    if (quality === 'standard') {
+      mat =
+        bucketSpec.stdLambert && !transparent
+          ? new THREE.MeshLambertMaterial(commonProps)
+          : new THREE.MeshStandardMaterial({
+              ...commonProps,
+              metalness: metalness * 0.85,
+              roughness: Math.min(1, roughness + 0.08),
+            });
+    } else if (quality === 'ultra' && bucketSpec.ultraPhysical) {
+      mat = new THREE.MeshPhysicalMaterial({
+        ...commonProps,
+        metalness,
+        roughness,
+        clearcoat: bucketSpec.ultraPhysical.clearcoat,
+        clearcoatRoughness: bucketSpec.ultraPhysical.clearcoatRoughness,
+        iridescence: bucketSpec.ultraPhysical.iridescence ?? 0,
+        iridescenceIOR: bucketSpec.ultraPhysical.iridescenceIOR ?? 1.3,
+        envMapIntensity: 1.05,
+      });
+    } else {
+      mat = new THREE.MeshStandardMaterial({
+        ...commonProps,
+        metalness,
+        roughness,
+        envMapIntensity: 0.95,
+      });
+    }
+
+    mat.userData.__cacheKey = cacheKey;
+    mat.userData.__materialBucket = spec.bucket;
+    mat.userData.__heroKey = heroKey;
+    this.materials.set(cacheKey, { resource: mat, refCount: 1, depTextures });
+    return mat;
+  }
+
   public acquireLineMaterial(
     key: string,
     params: {
@@ -519,6 +1105,7 @@ export class ResourceCache {
       dashed?: boolean;
       dashSize?: number;
       gapSize?: number;
+      vertexColors?: boolean;
       clippingPlanes?: THREE.Plane[];
     }
   ): THREE.LineBasicMaterial | THREE.LineDashedMaterial {
@@ -537,12 +1124,14 @@ export class ResourceCache {
           gapSize: params.gapSize ?? 0.9,
           transparent: true,
           opacity: params.opacity,
+          vertexColors: params.vertexColors ?? false,
           clippingPlanes: params.clippingPlanes ?? [],
         })
       : new THREE.LineBasicMaterial({
           color: params.color,
           transparent: true,
           opacity: params.opacity,
+          vertexColors: params.vertexColors ?? false,
           clippingPlanes: params.clippingPlanes ?? [],
         });
     mat.userData.__cacheKey = cacheKey;
@@ -556,6 +1145,8 @@ export class ResourceCache {
       color: number;
       transparent?: boolean;
       opacity?: number;
+      side?: THREE.Side;
+      depthWrite?: boolean;
       clippingPlanes?: THREE.Plane[];
     }
   ): THREE.MeshBasicMaterial {
@@ -571,6 +1162,40 @@ export class ResourceCache {
       color: params.color,
       transparent: params.transparent ?? false,
       opacity: params.opacity ?? 1.0,
+      side: params.side ?? THREE.FrontSide,
+      depthWrite: params.depthWrite ?? !(params.transparent ?? false),
+      clippingPlanes: params.clippingPlanes ?? [],
+    });
+    mat.userData.__cacheKey = cacheKey;
+    this.materials.set(cacheKey, { resource: mat, refCount: 1 });
+    return mat;
+  }
+
+  public acquirePointsMaterial(
+    key: string,
+    params: {
+      color: number;
+      size: number;
+      transparent?: boolean;
+      opacity?: number;
+      vertexColors?: boolean;
+      clippingPlanes?: THREE.Plane[];
+    }
+  ): THREE.PointsMaterial {
+    const cacheKey = `points:${key}`;
+    const existing = this.materials.get(cacheKey);
+    if (existing) {
+      existing.refCount++;
+      existing.resource.clippingPlanes = params.clippingPlanes ?? [];
+      return existing.resource as THREE.PointsMaterial;
+    }
+
+    const mat = new THREE.PointsMaterial({
+      color: params.color,
+      size: params.size,
+      transparent: params.transparent ?? true,
+      opacity: params.opacity ?? 0.9,
+      vertexColors: params.vertexColors ?? false,
       clippingPlanes: params.clippingPlanes ?? [],
     });
     mat.userData.__cacheKey = cacheKey;
