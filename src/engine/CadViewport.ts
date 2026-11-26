@@ -48,6 +48,7 @@ import { createBionzAssembly } from '../assemblies/bionz';
 import { createBionzV2Assembly } from '../assemblies/bionz/bionzV2Index';
 import { createMicroPixelV2Assembly } from '../assemblies/sensor/microPixelV2Index';
 import { createMiShoeAssembly } from '../assemblies/mishoe';
+import { MiShoeV2Runtime } from '../core/mishoe_v2_runtime';
 import { createMicAssembly } from '../assemblies/mic';
 import { createSensorFabAssembly } from '../assemblies/sensorFab';
 import { createDryboxAssembly } from '../assemblies/drybox';
@@ -169,6 +170,7 @@ export class CadViewport {
   private bionzAssembly: AssemblyController;
   private bionzV2Assembly: AssemblyController;
   private mishoeAssembly: AssemblyController;
+  private mishoeV2Runtime: MiShoeV2Runtime;
   private micAssembly: AssemblyController;
   private sensorFabAssembly: AssemblyController;
   private dryboxAssembly: AssemblyController;
@@ -507,9 +509,44 @@ export class CadViewport {
       this.macroBatch.transparentPartSlots,
       MAX_PARTS_CAPACITY
     );
+    this.mishoeV2Runtime = new MiShoeV2Runtime(
+      this.renderer,
+      this.container,
+      this.clippingPlane,
+      {
+        onBuildComplete: (builtParts) => {
+          for (let i = 0; i < builtParts.length; i++) {
+            this.partById.set(builtParts[i].id, builtParts[i]);
+          }
+          this.mishoeAssembly.deferredStandaloneCount = 0;
+          this.callbacks.onVisibilityChanged();
+          if (
+            this.mode === 'mishoe' &&
+            this.pendingSelectAfterHydrate &&
+            this.partById.has(this.pendingSelectAfterHydrate.partId)
+          ) {
+            const pending = this.pendingSelectAfterHydrate;
+            this.pendingSelectAfterHydrate = null;
+            this.selectPart(pending.partId, pending.focusCamera);
+          }
+        },
+        onRequestRender: () => {
+          this.markDirty(2);
+        },
+        onQualityFallback: (fallbackQuality) => {
+          this.quality = fallbackQuality;
+          this.callbacks.onQualityChanged?.(fallbackQuality);
+        },
+      }
+    );
+
     this.setCameraPreset('iso', true);
     this.bindEvents();
     this.wakeLoop();
+  }
+
+  public getMiShoeV2Runtime(): MiShoeV2Runtime {
+    return this.mishoeV2Runtime;
   }
 
   private readonly subsystemHydrateInflight = new Map<SubsystemKey, Promise<void>>();
@@ -874,6 +911,9 @@ export class CadViewport {
   }
 
   public getPartsForCurrentMode(): CadPart[] {
+    if (this.mode === 'mishoe') {
+      return this.mishoeV2Runtime.getParts();
+    }
     const subOrder: Record<CadPart['subsystem'], number> = {
       lens: 0,
       mount: 1,
@@ -1007,13 +1047,24 @@ export class CadViewport {
 
   public setMode(nextMode: ScaleMode, immediateCamera = false): void {
     if (this.mode === nextMode) return;
+    const prevMode = this.mode;
     this.mode = nextMode;
     if (nextMode === 'lens') {
       this.lensSection = 1;
     }
 
+    // Leaving MI Shoe V2 mode: recursively dispose all MI Shoe GPU/cache resources & verify 0 VRAM leak!
+    if (prevMode === 'mishoe') {
+      const oldMiParts = this.mishoeV2Runtime.getParts();
+      for (let i = 0; i < oldMiParts.length; i++) {
+        this.partById.delete(oldMiParts[i].id);
+      }
+      this.mishoeV2Runtime.deactivate();
+      this.mishoeAssembly.deferredStandaloneCount = 32;
+    }
+
     // Lazily hydrate standalone micro-parts on first visit to any standalone or micro subsystem!
-    if (nextMode !== 'integrated' && nextMode !== 'camera_body') {
+    if (nextMode !== 'integrated' && nextMode !== 'camera_body' && nextMode !== 'mishoe') {
       this.hydrateSubsystemIfNeeded(nextMode);
     }
 
@@ -1030,6 +1081,16 @@ export class CadViewport {
     this.renderer.renderLists.dispose();
     this.updateClippingPlane();
     this.setCameraPreset('iso', immediateCamera);
+
+    // Entering MI Shoe V2 mode: lazy-load unit via registry, time-sliced build, shader pre-compile!
+    if (nextMode === 'mishoe') {
+      void this.mishoeV2Runtime.activate(this.quality, this.camera, {
+        explode: this.currentExplode,
+        renderMode: this.renderMode,
+        physicsActive: this.physicsActive,
+        sectionActive: this.sectionAxis !== 'off',
+      });
+    }
 
     this.callbacks.onSelectPart(null);
     this.callbacks.onHoverPart(null);
@@ -1071,6 +1132,12 @@ export class CadViewport {
   public setQuality(quality: GraphicsQuality): void {
     if (this.quality === quality) return;
     this.quality = quality;
+    if (this.mode === 'mishoe') {
+      void this.mishoeV2Runtime.setQuality(quality, this.camera, this.sectionAxis !== 'off');
+      this.callbacks.onQualityChanged?.(quality);
+      this.markDirty(2);
+      return;
+    }
     if (GPU_PROFILE.isMobile) {
       const targetMax = quality === 'ultra' ? 1.6 : 1.5;
       if (this.contextLossCount === 0) {
@@ -1097,6 +1164,9 @@ export class CadViewport {
   public setPhysicsActive(active: boolean): void {
     this.physicsActive = active;
     this.kinematicsDirty = true;
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.syncPhysicsActive(active);
+    }
     this.syncAssemblyVisibility();
     this.markDirty();
   }
@@ -1107,7 +1177,10 @@ export class CadViewport {
     } else {
       const candidate = this.partById.get(partId);
       if (!candidate) {
-        if (this.subsystemHydrateInflight.size > 0) {
+        if (
+          this.subsystemHydrateInflight.size > 0 ||
+          (this.mode === 'mishoe' && !this.mishoeV2Runtime.isReady())
+        ) {
           this.pendingSelectAfterHydrate = { partId, focusCamera };
         }
         return;
@@ -1534,11 +1607,15 @@ export class CadViewport {
   }
 
   private focusOnPart(part: CadPart): void {
-    const rec = this.pickRecordByPartId.get(part.id);
-    if (rec) {
-      computePartWorldBox(rec, _focusBox);
+    if (this.mode === 'mishoe' && this.mishoeV2Runtime.getPartWorldBox(part.id, _focusBox)) {
+      // Cached world AABB directly from MI Shoe V2 two-stage raycast index (0 allocations)
     } else {
-      _focusBox.setFromObject(part.group);
+      const rec = this.pickRecordByPartId.get(part.id);
+      if (rec) {
+        computePartWorldBox(rec, _focusBox);
+      } else {
+        _focusBox.setFromObject(part.group);
+      }
     }
     _focusBox.getCenter(_focusCenter);
 
@@ -1635,8 +1712,12 @@ export class CadViewport {
     const h = Math.max(1, this.container.clientHeight);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.currentMaxPixelRatio));
-    this.renderer.setSize(w, h);
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.handleResize();
+    } else {
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, this.currentMaxPixelRatio));
+      this.renderer.setSize(w, h);
+    }
     this.cachedDomRect = this.renderer.domElement.getBoundingClientRect();
     this.markDirty();
   }
@@ -1647,6 +1728,9 @@ export class CadViewport {
     if (this.sectionAxis === 'off') {
       this.clippingPlane.normal.set(-1, 0, 0);
       this.clippingPlane.constant = 10000;
+      if (this.mode === 'mishoe') {
+        this.mishoeV2Runtime.syncSectionPlane(false);
+      }
       this.matRegistry.syncClippingPlane();
       this.matRegistry.setSectionCutActive(false);
       if (prevActive) {
@@ -1773,6 +1857,9 @@ export class CadViewport {
     } else {
       this.clippingPlane.normal.set(0, -1, 0);
       this.clippingPlane.constant = coord;
+    }
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.syncSectionPlane(true);
     }
     this.matRegistry.syncClippingPlane();
     this.matRegistry.setSectionCutActive(true);
@@ -2289,6 +2376,17 @@ export class CadViewport {
 
   /** OMEGA-12: O(1) Hover / Select Style Delta — updates ONLY 1..2 parts instead of looping over 652! */
   private applyHoverOrSelectDelta(prevId: string | null, nextId: string | null): void {
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.syncVisualState(
+        this.selectedPartId,
+        this.hoveredPartId,
+        this.hiddenPartIds,
+        this.isolatedPartId,
+        this.renderMode
+      );
+      this.markDirty(2);
+      return;
+    }
     const isWholeCameraMode = this.mode === 'integrated' || this.mode === 'camera_body';
     if (prevId) {
       const p = this.partById.get(prevId);
@@ -2307,6 +2405,17 @@ export class CadViewport {
   }
 
   private applyVisibilityAndStyles(): void {
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.syncVisualState(
+        this.selectedPartId,
+        this.hoveredPartId,
+        this.hiddenPartIds,
+        this.isolatedPartId,
+        this.renderMode
+      );
+      this.markDirty(2);
+      return;
+    }
     const isWholeCameraMode = this.mode === 'integrated' || this.mode === 'camera_body';
 
     for (let i = 0; i < this.allParts.length; i++) {
@@ -2328,7 +2437,16 @@ export class CadViewport {
     this.cachedDomRect = dom.getBoundingClientRect();
 
     this.controls.addEventListener('start', () => {
+      if (this.mode === 'mishoe') {
+        this.mishoeV2Runtime.setCameraDragging(true);
+      }
       this.wakeLoop();
+    });
+
+    this.controls.addEventListener('end', () => {
+      if (this.mode === 'mishoe') {
+        this.mishoeV2Runtime.setCameraDragging(false);
+      }
     });
 
     dom.addEventListener('pointerdown', (e) => {
@@ -2394,10 +2512,26 @@ export class CadViewport {
     event.preventDefault();
     this.contextLost = true;
     this.contextLossCount++;
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.handleContextLost();
+    }
     this.recoveryOverlay.classList.add('is-visible');
   }
 
   private handleContextRestored(): void {
+    if (this.mode === 'mishoe') {
+      this.contextLost = false;
+      this.recoveryOverlay.classList.remove('is-visible');
+      this.cachedDomRect = this.renderer.domElement.getBoundingClientRect();
+      this.partStateBuf.refreshAfterContextRestore();
+      this.matRegistry.uniforms.uPartStateTex.value = this.partStateBuf.texture;
+      this.matRegistry.refreshAfterContextRestore();
+      this.overlayBatcher.refreshAfterContextRestore();
+      this.ultraPipeline.handleContextRestored();
+      void this.mishoeV2Runtime.handleContextRestored(this.camera, this.sectionAxis !== 'off');
+      this.markDirty(2);
+      return;
+    }
     this.currentMaxPixelRatio = Math.max(1.0, Number((this.currentMaxPixelRatio * 0.85).toFixed(2)));
     // Auto-step quality down on WebGL context loss so memory-constrained mobile devices never loop into a blank screen!
     if (this.quality === 'ultra') {
@@ -2444,6 +2578,11 @@ export class CadViewport {
   }
 
   private renderFrame(): void {
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.render(this.camera);
+      return;
+    }
+
     const useEnhanced =
       this.renderMode === 'solid' &&
       this.quality !== 'standard' &&
@@ -2511,6 +2650,7 @@ export class CadViewport {
     for (let i = 0; i < this.allChunks.length; i++) {
       boneCount += this.allChunks[i].bones.length;
     }
+    const miDiag = this.mode === 'mishoe' ? this.mishoeV2Runtime.getDiagnostics() : null;
     return {
       profile: GPU_PROFILE,
       quality: this.quality,
@@ -2518,13 +2658,13 @@ export class CadViewport {
       pixelRatio: this.renderer.getPixelRatio(),
       contextLost: this.contextLost,
       contextLossCount: this.contextLossCount,
-      calls: info.render.calls,
-      triangles: info.render.triangles,
+      calls: miDiag ? miDiag.drawCalls : info.render.calls,
+      triangles: miDiag ? miDiag.triangles : info.render.triangles,
       lines: info.render.lines,
       geometries: info.memory.geometries,
       textures: info.memory.textures,
       programs: info.programs ? info.programs.length : 0,
-      hydratedParts: this.allParts.length,
+      hydratedParts: this.allParts.length + (miDiag && miDiag.ready ? this.mishoeV2Runtime.getParts().length : 0),
       totalParts: this.getTotalPartCount(),
       megaBatches: this.allChunks.length,
       kinematicBones: boneCount,
@@ -2532,6 +2672,14 @@ export class CadViewport {
   }
 
   private pickPartAtPointer(): string | null {
+    if (this.mode === 'mishoe') {
+      return this.mishoeV2Runtime.pickClick(
+        this.pointer,
+        this.camera,
+        (partId) => this.isPartHidden(partId),
+        this.sectionAxis !== 'off' ? this.clippingPlane : null
+      );
+    }
     this.raycaster.setFromCamera(this.pointer, this.camera);
     return pickPartTwoPhase(
       this.raycaster,
@@ -2542,7 +2690,19 @@ export class CadViewport {
   }
 
   private updateHoverFromRaycast(): void {
-    const hitId = this.pickPartAtPointer();
+    let hitId: string | null;
+    if (this.mode === 'mishoe') {
+      const hoverRes = this.mishoeV2Runtime.pickHover(
+        this.pointer,
+        this.camera,
+        (partId) => this.isPartHidden(partId),
+        this.sectionAxis !== 'off' ? this.clippingPlane : null
+      );
+      if (hoverRes.skipped) return;
+      hitId = hoverRes.partId;
+    } else {
+      hitId = this.pickPartAtPointer();
+    }
     if (hitId !== this.hoveredPartId) {
       const prev = this.hoveredPartId;
       this.hoveredPartId = hitId;
@@ -2553,6 +2713,17 @@ export class CadViewport {
   }
 
   private stepActiveAssemblies(elapsed: number, delta: number): void {
+    if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.syncExplode(this.currentExplode);
+      if (this.physicsActive) {
+        this.mishoeV2Runtime.stepPhysics(elapsed);
+      }
+      this.lastSyncedExplode = this.currentExplode;
+      this.lastSyncedPhysics = this.physicsActive;
+      this.kinematicsDirty = false;
+      return;
+    }
+
     const integrated = this.mode === 'integrated' || this.mode === 'camera_body';
     const liveDynamic = this.physicsActive || sharedLensOpticalSim.studioOpen;
 
@@ -2689,7 +2860,7 @@ export class CadViewport {
       this.idleFrameStreak = 0;
       const needsGuideUpdate = explodeMoved;
       this.stepActiveAssemblies(elapsed, delta);
-      if (needsGuideUpdate) {
+      if (needsGuideUpdate && this.mode !== 'mishoe') {
         this.updateActiveExplodeGuides();
       }
       this.renderFrame();
@@ -2698,6 +2869,7 @@ export class CadViewport {
       this.idleFrameStreak++;
     }
 
+    const idleLimit = this.mode === 'mishoe' ? 1 : 12;
     if (
       active ||
       this.hoverRaycastPending ||
@@ -2705,9 +2877,11 @@ export class CadViewport {
       sharedLensOpticalSim.studioOpen ||
       this.camAnimActive ||
       this.dirtyFrames > 0 ||
-      this.idleFrameStreak < 12
+      this.idleFrameStreak < idleLimit
     ) {
       this.rafId = requestAnimationFrame(this.animate);
+    } else if (this.mode === 'mishoe') {
+      this.mishoeV2Runtime.markIdle();
     }
   };
 
@@ -2727,6 +2901,7 @@ export class CadViewport {
     window.removeEventListener('resize', this.boundHandleResize);
     document.removeEventListener('fullscreenchange', this.boundHandleResize);
     this.resizeObserver?.disconnect();
+    this.mishoeV2Runtime.dispose();
     this.ultraPipeline.dispose();
     this.partStateBuf.dispose();
     this.matRegistry.dispose();
