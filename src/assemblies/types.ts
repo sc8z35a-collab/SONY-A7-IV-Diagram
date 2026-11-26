@@ -18,7 +18,9 @@ export type ScaleMode =
   | 'bionz'
   | 'bionz_v2'
   | 'mishoe'
-  | 'mic';
+  | 'mic'
+  | 'sensor_fab';
+export type SensorFabStage = 'overview' | 'phases' | 'litho' | 'variants';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1184,6 +1186,39 @@ export interface PartExplanation {
     | 'xv2_si_baw_clock_resonator'
     | 'xv2_sidechannel_ecc_guard'
     | 'xv2_coupe_35d_interposer'
+    // Phase 30: Sensor Manufacturing Process Vol.0 — Master Process Map & 2,110-Step Cleanroom 3D Anatomy (32 Parts: F0-01–F0-32)
+    | 'fab0_hero_city_sensor'
+    | 'fab0_wafer_300mm_stitch'
+    | 'fab0_timeline_gantry'
+    | 'fab0_p01_raw_wafer'
+    | 'fab0_p02_design_photomask'
+    | 'fab0_p03_pixel_feol'
+    | 'fab0_p04_pixel_beol'
+    | 'fab0_p05_logic_wafer'
+    | 'fab0_p06_cucu_bond_bsi'
+    | 'fab0_p07_cfa_microlens'
+    | 'fab0_p08_wafer_cp_test'
+    | 'fab0_p09_dicing_package'
+    | 'fab0_p10_final_test_ft'
+    | 'fab0_p11_sensor_unit_ibis'
+    | 'fab0_p12_camera_integration'
+    | 'fab0_l01_preclean'
+    | 'fab0_l02_hmds_barc'
+    | 'fab0_l03_resist_coat'
+    | 'fab0_l04_softbake_pab'
+    | 'fab0_l05_exposure_align'
+    | 'fab0_l06_peb'
+    | 'fab0_l07_develop'
+    | 'fab0_l08_adi_metrology'
+    | 'fab0_l09_etch_implant'
+    | 'fab0_l10_ashing_strip'
+    | 'fab0_l11_postclean'
+    | 'fab0_l12_aei_defect'
+    | 'fab0_var_fsi'
+    | 'fab0_var_bsi'
+    | 'fab0_var_partial_stack'
+    | 'fab0_var_full_2stack'
+    | 'fab0_var_3stack_2layertr'
     // Phase 29: CFexpress Sub-Nanometer Quantum, Metallurgy, SerDes & 2026 Next-Gen Frontier (+30: C101–C130 -> 130 total!)
     | 'cfe_besonos_tunnel_oxide'
     | 'cfe_highk_al2o3_blocking'
@@ -1326,7 +1361,8 @@ export interface CadPart {
     | 'bionz'
     | 'bionz_v2'
     | 'mishoe'
-    | 'mic';
+    | 'mic'
+    | 'sensor_fab';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */

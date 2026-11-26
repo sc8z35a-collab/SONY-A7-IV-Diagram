@@ -217,6 +217,9 @@ controls = new ZeroTextControls(appRoot, {
     viewport.setLensSection(section);
     syncRail();
   },
+  onSensorFabStageChange: (stage) => {
+    viewport.focusSensorFabStage(stage, false);
+  },
   onExplodeChange: (val) => {
     viewport.setExplode(val);
   },
@@ -1426,6 +1429,63 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('xv2-gaa-si-nanosheets', false);
+  syncRail();
+} else if (preset === 'sensor_fab_assembled') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_exploded') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.92, true);
+  controls.setExplodeValue(0.92);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'sensor_fab_drawer') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0.45, true);
+  controls.setExplodeValue(0.45);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('fab0-p06-cucu-bond-bsi', false);
+  syncRail();
+} else if (preset === 'sensor_fab_litho') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  controls.syncFabStage('litho');
+  viewport.setExplode(0.55, true);
+  controls.setExplodeValue(0.55);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.focusSensorFabStage('litho', true);
+  syncRail();
+} else if (preset === 'sensor_fab_variants') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  controls.syncFabStage('variants');
+  viewport.setExplode(0.42, true);
+  controls.setExplodeValue(0.42);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.focusSensorFabStage('variants', true);
+  syncRail();
+} else if (preset === 'sensor_fab_section') {
+  viewport.setMode('sensor_fab', true);
+  controls.syncMode('sensor_fab');
+  viewport.setExplode(0, true);
+  currentSectionAxis = 'x';
+  viewport.setSection('x', 0.52);
+  controls.syncSectionAxis('x', 0.52);
+  viewport.setCameraPreset('iso', true);
   syncRail();
 }
 

@@ -6,11 +6,13 @@ import {
   RenderMode,
   ScaleMode,
   SectionAxis,
+  SensorFabStage,
 } from '../assemblies/types';
 
 export interface ZeroTextUIHandlers {
   onModeChange: (mode: ScaleMode) => void;
   onLensSectionChange: (section: LensSection) => void;
+  onSensorFabStageChange: (stage: SensorFabStage) => void;
   onExplodeChange: (value: number) => void;
   onSectionAxisChange: (axis: SectionAxis) => void;
   onSectionValueChange: (value: number) => void;
@@ -121,6 +123,10 @@ const ICONS = {
   micModule:
     '<rect x="9" y="5" width="6" height="9.5" rx="3"/><path d="M6.5 11.5a5.5 5.5 0 0 0 11 0"/><line x1="12" y1="17" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/><path d="M4.2 7.5a5.2 5.2 0 0 0 0 6.2" opacity="0.72"/><path d="M19.8 7.5a5.2 5.2 0 0 1 0 6.2" opacity="0.72"/>',
 
+  // Sensor Manufacturing Process (300mm Silicon Wafer + Full-Frame Reticle Die Grid + V-Notch)
+  sensorFab:
+    '<circle cx="12" cy="12" r="8.6"/><line x1="6.4" y1="9.2" x2="17.6" y2="9.2"/><line x1="6.4" y1="14.8" x2="17.6" y2="14.8"/><line x1="9.2" y1="6.2" x2="9.2" y2="17.8"/><line x1="14.8" y1="6.2" x2="14.8" y2="17.8"/><rect x="9.8" y="9.8" width="4.4" height="4.4" rx="0.5" fill="currentColor" stroke="none"/><path d="M10.8 20.5 L12 18.8 L13.2 20.5" fill="currentColor" stroke="none"/>',
+
   // Assembled compact stack
   assembled:
     '<polygon points="12 5 20 9.5 12 14 4 9.5 12 5"/><polyline points="4 13 12 17.5 20 13"/>',
@@ -213,6 +219,7 @@ export class ZeroTextControls {
   private bionzBtn: HTMLButtonElement;
   private mishoeBtn: HTMLButtonElement;
   private micBtn: HTMLButtonElement;
+  private sensorFabBtn: HTMLButtonElement;
 
   private lensSectionBar: HTMLElement;
   private lensSec1Btn: HTMLButtonElement;
@@ -222,6 +229,9 @@ export class ZeroTextControls {
   private v2PhaseBar: HTMLElement;
   private v1PhaseBtn: HTMLButtonElement;
   private v2PhaseBtn: HTMLButtonElement;
+
+  private fabStageBar: HTMLElement;
+  private fabStageBtns: Record<SensorFabStage, HTMLButtonElement>;
 
   private qualityStdBtn: HTMLButtonElement;
   private qualityHighBtn: HTMLButtonElement;
@@ -253,6 +263,7 @@ export class ZeroTextControls {
 
   private currentMode: ScaleMode = 'integrated';
   private currentLensSection: LensSection = 1;
+  private currentFabStage: SensorFabStage = 'overview';
   private currentSectionAxis: SectionAxis = 'off';
   private currentRenderMode: RenderMode = 'solid';
   private currentQuality: GraphicsQuality = 'ultra';
@@ -379,6 +390,42 @@ export class ZeroTextControls {
     this.root.appendChild(this.v2PhaseBar);
 
     // -----------------------------------------------------------------------
+    // 1D. Top-Center Sensor Manufacturing Process Vol.0 Stage Navigator Pill
+    //     Visible ONLY in standalone 'sensor_fab' mode!
+    // -----------------------------------------------------------------------
+    this.fabStageBar = document.createElement('div');
+    this.fabStageBar.className = 'fab-stage-bar is-hidden';
+    this.fabStageBar.setAttribute('role', 'group');
+    this.fabStageBar.setAttribute('aria-label', 'センサー製造工程 第0巻 ステージ切替');
+
+    const makeFabStageBtn = (stage: SensorFabStage, label: string): HTMLButtonElement => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = stage === 'overview' ? 'fab-stage-btn is-active' : 'fab-stage-btn';
+      btn.dataset.fabStage = stage;
+      const span = document.createElement('span');
+      span.textContent = label;
+      btn.appendChild(span);
+      btn.addEventListener('click', () => this.setFabStage(stage));
+      return btn;
+    };
+
+    this.fabStageBtns = {
+      overview: makeFabStageBtn('overview', '第0巻 全工程'),
+      phases: makeFabStageBtn('phases', 'P1–P12'),
+      litho: makeFabStageBtn('litho', 'L01–L12'),
+      variants: makeFabStageBtn('variants', '5方式比較'),
+    };
+
+    this.fabStageBar.append(
+      this.fabStageBtns.overview,
+      this.fabStageBtns.phases,
+      this.fabStageBtns.litho,
+      this.fabStageBtns.variants
+    );
+    this.root.appendChild(this.fabStageBar);
+
+    // -----------------------------------------------------------------------
     // 2. Left Vertical Layer Dissection Strip (Single Event Delegation — 0 per-row closures!)
     // -----------------------------------------------------------------------
     this.layerRail = document.createElement('div');
@@ -419,10 +466,11 @@ export class ZeroTextControls {
     const dock = document.createElement('div');
     dock.className = 'cad-dock';
 
-    // Group A: 16-Mode Architecture Switch
+    // Group A: 17-Mode Architecture Switch
     // Primary 3 Views: [Complete Camera | Body All Only | Lens Standalone]
     // 7 Camera Subsystems: [Mount | Shutter | Sensor | Mainboard | EVF | LCD | Body Shell]
     // 6 Ultra-Dissection Standalone Views: [Micro Pixel | Battery Pack | CFexpress 4.0 | BIONZ XR Package | MI Shoe | Internal Mic]
+    // Manufacturing Process Anatomy: [センサー製造工程 (Sensor Fab Vol.0 — 2,110-Step 3D CAD Map)]
     const scaleGroup = document.createElement('div');
     scaleGroup.className = 'cad-dock-group';
 
@@ -469,6 +517,20 @@ export class ZeroTextControls {
     this.micBtn.dataset.mode = 'mic';
     this.micBtn.setAttribute('aria-label', '内蔵マイク超解剖');
 
+    const fabSep = document.createElement('div');
+    fabSep.className = 'cad-sub-divider';
+
+    this.sensorFabBtn = document.createElement('button');
+    this.sensorFabBtn.type = 'button';
+    this.sensorFabBtn.className = 'icon-btn is-fab-pill';
+    this.sensorFabBtn.dataset.mode = 'sensor_fab';
+    this.sensorFabBtn.setAttribute('aria-label', 'センサー製造工程');
+    this.sensorFabBtn.title = 'センサー製造工程（第0巻：全2,110工程 3D CAD解剖図）';
+    this.sensorFabBtn.appendChild(svgIcon(ICONS.sensorFab));
+    const fabLabel = document.createElement('span');
+    fabLabel.textContent = 'センサー製造工程';
+    this.sensorFabBtn.appendChild(fabLabel);
+
     this.integratedBtn.addEventListener('click', () => this.setMode('integrated'));
     this.cameraBodyBtn.addEventListener('click', () => this.setMode('camera_body'));
     this.lensBtn.addEventListener('click', () => this.setMode('lens'));
@@ -485,6 +547,7 @@ export class ZeroTextControls {
     this.bionzBtn.addEventListener('click', () => this.setMode('bionz'));
     this.mishoeBtn.addEventListener('click', () => this.setMode('mishoe'));
     this.micBtn.addEventListener('click', () => this.setMode('mic'));
+    this.sensorFabBtn.addEventListener('click', () => this.setMode('sensor_fab'));
     scaleGroup.append(
       this.integratedBtn,
       this.cameraBodyBtn,
@@ -503,7 +566,9 @@ export class ZeroTextControls {
       this.cfexpressBtn,
       this.bionzBtn,
       this.mishoeBtn,
-      this.micBtn
+      this.micBtn,
+      fabSep,
+      this.sensorFabBtn
     );
 
     // Group B: Exploded View Dissection Slider
@@ -653,7 +718,9 @@ export class ZeroTextControls {
     this.bionzBtn.classList.toggle('is-active', mode === 'bionz' || mode === 'bionz_v2');
     this.mishoeBtn.classList.toggle('is-active', mode === 'mishoe');
     this.micBtn.classList.toggle('is-active', mode === 'mic');
+    this.sensorFabBtn.classList.toggle('is-active', mode === 'sensor_fab');
     this.lensSectionBar.classList.toggle('is-hidden', mode !== 'lens');
+    this.fabStageBar.classList.toggle('is-hidden', mode !== 'sensor_fab');
 
     const showV2Bar = this.isV2CapableMode(mode);
     this.v2PhaseBar.classList.toggle('is-hidden', !showV2Bar);
@@ -672,6 +739,23 @@ export class ZeroTextControls {
         isMicroFamily ? 'V2 ピクセル原子・量子極超解剖図' : 'V2 BIONZ XR 2nm GAA極超解剖図'
       );
     }
+  }
+
+  private applyFabStageButtons(stage: SensorFabStage): void {
+    (Object.keys(this.fabStageBtns) as SensorFabStage[]).forEach((key) => {
+      this.fabStageBtns[key].classList.toggle('is-active', key === stage);
+    });
+  }
+
+  private setFabStage(stage: SensorFabStage): void {
+    this.currentFabStage = stage;
+    this.applyFabStageButtons(stage);
+    this.handlers.onSensorFabStageChange(stage);
+  }
+
+  public syncFabStage(stage: SensorFabStage): void {
+    this.currentFabStage = stage;
+    this.applyFabStageButtons(stage);
   }
 
   private applyLensSectionButtons(section: LensSection): void {
@@ -699,6 +783,9 @@ export class ZeroTextControls {
       // Entering standalone lens always starts on Section 1 (Rear-most 1/3 block)
       this.currentLensSection = 1;
       this.applyLensSectionButtons(1);
+    } else if (mode === 'sensor_fab') {
+      this.currentFabStage = 'overview';
+      this.applyFabStageButtons('overview');
     }
     this.applyModeButtons(mode);
     this.handlers.onModeChange(mode);
@@ -757,6 +844,9 @@ export class ZeroTextControls {
     this.currentMode = mode;
     if (mode === 'lens') {
       this.applyLensSectionButtons(this.currentLensSection);
+    } else if (mode === 'sensor_fab') {
+      this.applyFabStageButtons(this.currentFabStage);
+      this.sensorFabBtn.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
     }
     this.applyModeButtons(mode);
   }
@@ -782,6 +872,7 @@ export class ZeroTextControls {
     this.opticsStudioBtn.classList.toggle('is-active', active);
     this.lensSectionBar.classList.toggle('is-hidden', active || this.currentMode !== 'lens');
     this.v2PhaseBar.classList.toggle('is-hidden', active || !this.isV2CapableMode(this.currentMode));
+    this.fabStageBar.classList.toggle('is-hidden', active || this.currentMode !== 'sensor_fab');
   }
 
   public syncFullscreen(active: boolean): void {
@@ -857,7 +948,10 @@ export class ZeroTextControls {
       const isStandaloneOnly = Boolean(part.standaloneOnly);
       if (
         (prevSubsystem && prevSubsystem !== part.subsystem) ||
-        (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly)
+        (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly) ||
+        (prevSubsystem === 'sensor_fab' &&
+          part.subsystem === 'sensor_fab' &&
+          (part.order === 4 || part.order === 16 || part.order === 28))
       ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
@@ -1710,6 +1804,33 @@ export class ZeroTextControls {
                 part.order === 49 ||
                 part.order === 51 ||
                 part.order === 53
+              ? 25
+              : 19;
+      } else if (part.subsystem === 'sensor_fab') {
+        // Sensor Manufacturing Process Vol.0 (32 parts: Deck 0 F0-01–03, Deck 1 P1–P12, Deck 2 L01–L12, Deck 3 V01–V05)
+        widthPx =
+          part.order === 1 ||
+          part.order === 3 ||
+          part.order === 6 ||
+          part.order === 8 ||
+          part.order === 9 ||
+          part.order === 14 ||
+          part.order === 15 ||
+          part.order === 20 ||
+          part.order === 23 ||
+          part.order === 24 ||
+          part.order === 31 ||
+          part.order === 32
+            ? 32
+            : part.order === 2 ||
+                part.order === 4 ||
+                part.order === 5 ||
+                part.order === 7 ||
+                part.order === 10 ||
+                part.order === 12 ||
+                part.order === 27 ||
+                part.order === 29 ||
+                part.order === 30
               ? 25
               : 19;
       } else {
