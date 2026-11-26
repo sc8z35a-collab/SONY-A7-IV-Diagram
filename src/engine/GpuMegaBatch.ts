@@ -1539,9 +1539,9 @@ void main() {
 
 const HI_TEX_W = NATIVE_HI_TEX_W;
 const HI_TEX_H = NATIVE_HI_TEX_H;
-const HI_TEX_MAX_LAYERS = 140;
+const HI_TEX_MAX_LAYERS = 156;
 const TILE_TEX_SIZE = NATIVE_TILE_TEX_SIZE;
-const TILE_TEX_MAX_LAYERS = 84;
+const TILE_TEX_MAX_LAYERS = 92;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {

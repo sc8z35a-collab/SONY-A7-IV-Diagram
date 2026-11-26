@@ -1041,7 +1041,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '動的電圧制御', value: 'DVFS連動 マイクロ秒応答アダプティブ電圧スケーリング' },
       { label: 'バルク容量', value: '低ESR ポリマー・タンタルキャパシタ ＋ 0201 MLCC配列' },
     ],
-    diagramType: 'xr_esicap_mlcc_decaps',
+    diagramType: 'xr_pmic_vrm_rails',
   },
 
   'xr-tcxo-24mhz-clock': {
@@ -1068,7 +1068,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '周波数安定度', value: '±1.5 ppm（−20℃〜＋85℃ 全撮影温度域）' },
       { label: 'RMSジッタ', value: '< 150 fs（12 kHz 〜 20 MHz 積分帯域）' },
     ],
-    diagramType: 'xr_pll_clock_dvfs_ring',
+    diagramType: 'xr_tcxo_24mhz_clock',
   },
 
   'xr-qspi-boot-nor-rom': {
@@ -1095,7 +1095,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'パッケージ', value: 'SOIC-8 / WSON-8 極薄面実装パッケージ' },
       { label: 'データ保持', value: '20年以上（10万回書換耐性・A/Bフェイルセーフ構成）' },
     ],
-    diagramType: 'xr_c2pa_crypto_enclave',
+    diagramType: 'xr_qspi_boot_nor_rom',
   },
 
   'xr-sigma-graphite-clamp': {
@@ -1122,7 +1122,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '固定機構', value: 'ステンレスばね圧着クリップ ×2（一定面圧維持）' },
       { label: '効果', value: '4K60p/8K連続動画記録時の熱シャットダウン耐性を大幅向上' },
     ],
-    diagramType: 'xr_nickel_cu_ihs',
+    diagramType: 'xr_sigma_graphite_clamp',
   },
 
   'xr-slvs-ec-microcoax-bus': {
@@ -1149,7 +1149,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '直列結合素子', value: '0201超小型 低ESL AC結合MLCC × 16個（各レーンP/N対）' },
       { label: '実効スループット', value: '最大 約 38 〜 40 Gbps（センサー⇔SoC直結）' },
     ],
-    diagramType: 'xr_slvsec_rx_phy',
+    diagramType: 'xr_slvs_ec_microcoax_bus',
   },
 
   'xr-hdmi21-retimer-esd': {
@@ -1176,7 +1176,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '静電気保護', value: 'IEC 61000-4-2 ±15 kV 気中 / ±8 kV 接触（DFN-10 超低容量TVS）' },
       { label: '寄生容量', value: '< 0.25 pF / ライン（高周波アイパターン劣化を極小化）' },
     ],
-    diagramType: 'xr_display_evf_hdmi_tx',
+    diagramType: 'xr_hdmi21_retimer_esd',
   },
 
   'xr-ddr5-vddq-pmic-sub': {
@@ -1203,7 +1203,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'インダクタ', value: '超低背 0.24 μH メタルコンポジット高周波インダクタ ×2' },
       { label: 'シーケンス制御', value: 'JEDEC LPDDR5X準拠 厳密電源立上げ／立下げ制御内蔵' },
     ],
-    diagramType: 'xr_ddr_mem_controller',
+    diagramType: 'xr_ddr5_vddq_pmic_sub',
   },
 
   'xr-die-thermal-diode-ring': {
@@ -1230,7 +1230,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '計測精度・周期', value: '±0.5 ℃（0〜125 ℃）・サンプリング周期 < 1 ms' },
       { label: '連動制御', value: 'DVFS動的クロック制御 ＆ 熱警告・自動保護シャットダウン' },
     ],
-    diagramType: 'xr_pll_clock_dvfs_ring',
+    diagramType: 'xr_die_thermal_diode_ring',
   },
 
   'xr-bga-corner-underfill': {
@@ -1257,7 +1257,7 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: '耐衝撃効果', value: 'JEDEC落下試験（1,500 G）でのはんだボール破断寿命を大幅延長' },
       { label: '整備性', value: '全面充填と異なり局所加熱によるBGAリワーク性を確保' },
     ],
-    diagramType: 'xr_capillary_underfill',
+    diagramType: 'xr_bga_corner_underfill',
   },
 
   'xr-jtag-swd-debug-header': {
@@ -1284,6 +1284,6 @@ export const BIONZ_EXPLANATIONS: Record<string, PartExplanation> = {
       { label: 'セキュリティ封印', value: 'OTP（One-Time Programmable）eFuse 出荷時デバッグ永久ロック' },
       { label: '構成部品', value: '16テストパッド ＋ ブートストラップ0201抵抗アレイ ＋ eFuseセル' },
     ],
-    diagramType: 'xr_c2pa_crypto_enclave',
+    diagramType: 'xr_jtag_swd_debug_header',
   },
 };

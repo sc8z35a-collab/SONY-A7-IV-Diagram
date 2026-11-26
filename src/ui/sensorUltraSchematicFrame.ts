@@ -60,7 +60,7 @@ export function sensorFrame(opts: SensorFrameOptions): string {
   const tagX = 352 - tagW;
   const tagCx = tagX + tagW / 2;
 
-  return `<svg viewBox="0 0 360 176" xmlns="http://www.w3.org/2000/svg" style="font-family: ${FONT_SANS};">
+  return `<svg viewBox="0 0 360 176" data-sensor-hd="1" xmlns="http://www.w3.org/2000/svg" style="font-family: ${FONT_SANS};">
   <defs>
     ${mk('blue', '#2563eb')}
     ${mk('cyan', '#0284c7')}
