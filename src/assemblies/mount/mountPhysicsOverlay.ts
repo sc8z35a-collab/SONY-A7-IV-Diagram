@@ -259,7 +259,7 @@ export function createMountPhysicsOverlay(
     accentGuideMat
   );
   explodeGuides.add(contactGuide);
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 72);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 120);
   explodeGuides.add(radialGuides.group);
 
   const samplePolyline = (pts: THREE.Vector3[], t: number, out: THREE.Vector3) => {
