@@ -154,12 +154,14 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./cfexpress/cfexpressUltra27Explanations'),
         import('./cfexpress/cfexpressUltra28Explanations'),
         import('./cfexpress/cfexpressUltra29Explanations'),
-      ]).then(([mBase, mU27, mU28, mU29]) =>
+        import('./cfexpress/cfexpressUltra35Explanations'),
+      ]).then(([mBase, mU27, mU28, mU29, mU35]) =>
         finish({
           ...mBase.CFEXPRESS_EXPLANATIONS,
           ...mU27.CFEXPRESS_ULTRA27_EXPLANATIONS,
           ...mU28.CFEXPRESS_ULTRA28_EXPLANATIONS,
           ...mU29.CFEXPRESS_ULTRA29_EXPLANATIONS,
+          ...mU35.CFEXPRESS_ULTRA35_EXPLANATIONS,
         })
       );
       break;
@@ -193,11 +195,13 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./mic/micExplanations'),
         import('./mic/micUltra30Explanations'),
         import('./mic/micUltra31Explanations'),
-      ]).then(([mBase, mU30, mU31]) =>
+        import('./mic/micUltra36Explanations'),
+      ]).then(([mBase, mU30, mU31, mU36]) =>
         finish({
           ...mBase.MIC_EXPLANATIONS,
           ...mU30.MIC_ULTRA30_EXPLANATIONS,
           ...mU31.MIC_ULTRA31_EXPLANATIONS,
+          ...mU36.MIC_ULTRA36_EXPLANATIONS,
         })
       );
       break;

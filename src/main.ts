@@ -1362,6 +1362,16 @@ if (preset === 'complete_assembled') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('cfe-fenand-hzo-igzo-2026', false);
   syncRail();
+} else if (preset === 'cfexpress_ultra170') {
+  viewport.setMode('cfexpress', true);
+  controls.syncMode('cfexpress');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('cfe-bwwpc-wafer-power-grid', false);
+  syncRail();
 } else if (preset === 'bionz_assembled') {
   viewport.setMode('bionz', true);
   controls.syncMode('bionz');
@@ -1459,6 +1469,16 @@ if (preset === 'complete_assembled') {
   controls.syncPhysics(true);
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('mc-graphene-2d-membrane-2026', false);
+  syncRail();
+} else if (preset === 'mic_ultra150') {
+  viewport.setMode('mic', true);
+  controls.syncMode('mic');
+  viewport.setExplode(0.95, true);
+  controls.setExplodeValue(0.95);
+  viewport.setPhysicsActive(true);
+  controls.syncPhysics(true);
+  viewport.setCameraPreset('iso', true);
+  viewport.selectPart('mc-jk1028-audio-jack-flex', false);
   syncRail();
 } else if (preset === 'micro_v2_assembled') {
   viewport.setMode('micro_v2', true);

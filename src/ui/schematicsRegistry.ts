@@ -27,6 +27,7 @@ import { renderPhase27BatteryUltraSchematicSvg } from './phase27BatteryUltraSche
 import { renderPhase27CfexpressUltraSchematicSvg } from './phase27CfexpressUltraSchematics';
 import { renderPhase28CfexpressUltraSchematicSvg } from './phase28CfexpressUltraSchematics';
 import { renderPhase29CfexpressUltraSchematicSvg } from './phase29CfexpressUltraSchematics';
+import { renderPhase35CfexpressUltraSchematicSvg } from './phase35CfexpressUltraSchematics';
 import { renderPhase28PixelV2SchematicSvg } from './phase28PixelV2Schematics';
 import { renderPhase28BionzV2SchematicSvg } from './phase28BionzV2Schematics';
 import { renderPhase29PixelV2DeepSchematicSvg } from './phase29PixelV2DeepSchematics';
@@ -35,6 +36,7 @@ import { renderPhase30BatteryUltraSchematicSvg } from './phase30BatteryUltraSche
 import { renderPhase30MicUltraSchematicSvg } from './phase30MicUltraSchematics';
 import { renderPhase31BatteryUltraSchematicSvg } from './phase31BatteryUltraSchematics';
 import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
+import { renderPhase36MicUltraSchematicSvg } from './phase36MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
@@ -167,6 +169,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
   const phase29CfexpressUltraSvg = renderPhase29CfexpressUltraSchematicSvg(type);
   if (phase29CfexpressUltraSvg) return phase29CfexpressUltraSvg;
 
+  const phase35CfexpressUltraSvg = renderPhase35CfexpressUltraSchematicSvg(type);
+  if (phase35CfexpressUltraSvg) return phase35CfexpressUltraSvg;
+
   const phase28PixelV2Svg = renderPhase28PixelV2SchematicSvg(type);
   if (phase28PixelV2Svg) return phase28PixelV2Svg;
 
@@ -190,6 +195,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase31MicUltraSvg = renderPhase31MicUltraSchematicSvg(type);
   if (phase31MicUltraSvg) return phase31MicUltraSvg;
+
+  const phase36MicUltraSvg = renderPhase36MicUltraSchematicSvg(type);
+  if (phase36MicUltraSvg) return phase36MicUltraSvg;
 
   const phase30SensorFabSvg = renderPhase30SensorFabSchematicSvg(type);
   if (phase30SensorFabSvg) return phase30SensorFabSvg;

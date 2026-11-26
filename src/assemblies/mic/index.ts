@@ -5,8 +5,9 @@ import { createMicPhysicsOverlay } from './micPhysicsOverlay';
 
 /**
  * Assemble the lazy-hydrated standalone Internal Stereo / 3-Capsule MEMS & ECM
- * Microphone Ultra-Dissection subsystem (110 parts: MC01–MC110, incl. 2026 2D Graphene,
- * Fabry-Perot Optical MEMS, Spiral Helmholtz Metamaterial, AI Dereverb & 3D HRTF Binaural).
+ * Microphone Ultra-Dissection subsystem (150 parts: MC01–MC150, incl. Sony ILCE-7M4 OEM
+ * JK-1028 / MIS-2006 / SP901 hardware, MEMS/ECM micro-packaging, SY-1122 audio AFE,
+ * ECM-M1 / XLR-K3M / XLR-A4 / ECM-W3, HDMI ACR, USB-C UAC 2.0 & 2026 Photonics/Graphene).
  * Strictly visible ONLY in standalone 'mic' mode (zero startup cost!).
  */
 export function createMicAssembly(mats: MaterialLibrary): AssemblyController {
@@ -21,7 +22,7 @@ export function createMicAssembly(mats: MaterialLibrary): AssemblyController {
   const controller: AssemblyController = {
     rootGroup,
     parts,
-    deferredStandaloneCount: 110,
+    deferredStandaloneCount: 150,
     hydrateStandalone: async () => {
       if (hydrated) return [];
       hydrated = true;
