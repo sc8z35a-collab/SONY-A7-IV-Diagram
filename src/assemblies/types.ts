@@ -18,7 +18,19 @@ export type ScaleMode =
   | 'bionz'
   | 'bionz_v2'
   | 'mishoe'
-  | 'mic';
+  | 'mic'
+  | 'sensor_fab';
+export type SensorFabVolume = 0 | 1;
+export type SensorFabStage =
+  | 'overview'
+  | 'phases'
+  | 'litho'
+  | 'variants'
+  | 'v1_overview'
+  | 'v1_photonics'
+  | 'v1_archs'
+  | 'v1_duel'
+  | 'v1_wall';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1184,6 +1196,39 @@ export interface PartExplanation {
     | 'xv2_si_baw_clock_resonator'
     | 'xv2_sidechannel_ecc_guard'
     | 'xv2_coupe_35d_interposer'
+    // Phase 30: Sensor Manufacturing Process Vol.0 — Master Process Map & 2,110-Step Cleanroom 3D Anatomy (32 Parts: F0-01–F0-32)
+    | 'fab0_hero_city_sensor'
+    | 'fab0_wafer_300mm_stitch'
+    | 'fab0_timeline_gantry'
+    | 'fab0_p01_raw_wafer'
+    | 'fab0_p02_design_photomask'
+    | 'fab0_p03_pixel_feol'
+    | 'fab0_p04_pixel_beol'
+    | 'fab0_p05_logic_wafer'
+    | 'fab0_p06_cucu_bond_bsi'
+    | 'fab0_p07_cfa_microlens'
+    | 'fab0_p08_wafer_cp_test'
+    | 'fab0_p09_dicing_package'
+    | 'fab0_p10_final_test_ft'
+    | 'fab0_p11_sensor_unit_ibis'
+    | 'fab0_p12_camera_integration'
+    | 'fab0_l01_preclean'
+    | 'fab0_l02_hmds_barc'
+    | 'fab0_l03_resist_coat'
+    | 'fab0_l04_softbake_pab'
+    | 'fab0_l05_exposure_align'
+    | 'fab0_l06_peb'
+    | 'fab0_l07_develop'
+    | 'fab0_l08_adi_metrology'
+    | 'fab0_l09_etch_implant'
+    | 'fab0_l10_ashing_strip'
+    | 'fab0_l11_postclean'
+    | 'fab0_l12_aei_defect'
+    | 'fab0_var_fsi'
+    | 'fab0_var_bsi'
+    | 'fab0_var_partial_stack'
+    | 'fab0_var_full_2stack'
+    | 'fab0_var_3stack_2layertr'
     // Phase 29: CFexpress Sub-Nanometer Quantum, Metallurgy, SerDes & 2026 Next-Gen Frontier (+30: C101–C130 -> 130 total!)
     | 'cfe_besonos_tunnel_oxide'
     | 'cfe_highk_al2o3_blocking'
@@ -1366,7 +1411,40 @@ export interface PartExplanation {
     | 'mc_dc_servo_subsonic_integrator'
     | 'mc_pdm_tdm_clk_spread_spectrum'
     | 'mc_headphone_sidetone_eq_monitor'
-    | 'mc_anechoic_3d_hrtf_binaural_2026';
+    | 'mc_anechoic_3d_hrtf_binaural_2026'
+    // Phase 31: Sensor Manufacturing Process Vol.1 — 超入門：センサーのしくみと2026年最新アーキテクチャ (32 Parts: F1-01–F1-32)
+    | 'fab1_hero_optics_photonics'
+    | 'fab1_base_exhibition_deck'
+    | 'fab1_step1_pd_bucket_fwc'
+    | 'fab1_step3_tg_sluice_gate'
+    | 'fab1_step4_fd_dcg_cups'
+    | 'fab1_step5_rst_sf_sel_cds'
+    | 'fab1_column_14bit_adc'
+    | 'fab1_pixel_parallel_adc'
+    | 'fab1_ccd_vs_cmos_arena'
+    | 'fab1_arch1_fsi_r6m3'
+    | 'fab1_arch2_bsi_a7iv'
+    | 'fab1_arch3_partial_stack_a7v'
+    | 'fab1_arch4_full_stack_a7rvi'
+    | 'fab1_arch4b_3layer_dram'
+    | 'fab1_arch5_gs_stacked_a9iii'
+    | 'fab1_arch6_2layer_tr_lytia'
+    | 'fab1_canon_dpaf_standard'
+    | 'fab1_canon_r1_crosstype_af'
+    | 'fab1_sony_pdaf_mask_ocl'
+    | 'fab1_gs_rolling_vs_global'
+    | 'fab1_gs_charge_domain'
+    | 'fab1_gs_voltage_domain_a9iii'
+    | 'fab1_gs_pixel_adc_isscc2025'
+    | 'fab1_wall_field_overflow'
+    | 'fab1_canon_fpa6300esw'
+    | 'fab1_canon_fpa5550ix'
+    | 'fab1_stitching_exposure'
+    | 'fab1_wafer_smartphone_640'
+    | 'fab1_wafer_apsc_134'
+    | 'fab1_wafer_fullframe_48'
+    | 'fab1_wafer_mediumformat_26'
+    | 'fab1_stacked_yield_multiply';
 }
 
 export interface CadPart {
@@ -1388,7 +1466,8 @@ export interface CadPart {
     | 'bionz'
     | 'bionz_v2'
     | 'mishoe'
-    | 'mic';
+    | 'mic'
+    | 'sensor_fab';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
@@ -1408,6 +1487,8 @@ export interface CadPart {
   standaloneOnly?: boolean;
   /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
   lensSection?: LensSection;
+  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0 (Master Map), 1 = Vol.1 (Physics & 2026 Architectures) */
+  fabVolume?: SensorFabVolume;
 }
 
 export interface AssemblyController {
@@ -1417,6 +1498,8 @@ export interface AssemblyController {
   deferredStandaloneCount?: number;
   /** Lazily build & attach standalone-only micro-parts on first standalone visit (returns newly built parts) */
   hydrateStandalone?: () => CadPart[] | Promise<CadPart[]>;
+  /** Optional active volume setter for multi-volume standalone encyclopedias (sensor_fab) */
+  setActiveVolume?: (vol: SensorFabVolume) => void;
   updateAnimation: (
     elapsed: number,
     delta: number,

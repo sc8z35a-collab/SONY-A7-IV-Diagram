@@ -42,7 +42,7 @@ import {
  */
 
 export const MAX_PARTS_CAPACITY = 2048;
-export const MAX_MATERIALS_CAPACITY = 256;
+export const MAX_MATERIALS_CAPACITY = 512;
 export const MAX_FAST_SOLID_MATS = 96; // 96 * 2 = 192 vec4s (strictly within WebGL2 ES3 min 256 VS uniform vectors!)
 
 const EMPTY_GEOMETRY = new THREE.BufferGeometry();
@@ -940,9 +940,9 @@ void main() {
       vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
-      vec4 texCol = lut4.x < 99.5
+      vec4 texCol = lut4.x < 199.5
         ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
-        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 100.0));
+        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 200.0));
       albedo *= texCol.rgb;
       ${isGlassPass ? 'alpha *= texCol.a;' : ''}
       texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
@@ -950,9 +950,9 @@ void main() {
         emissive = texCol.rgb * lut2.rgb;
       }
       if (lut4.y >= -0.5) {
-        float rSamp = lut4.y < 99.5
+        float rSamp = lut4.y < 199.5
           ? texture(uTexArrayHi, vec3(sampleUv, lut4.y)).g
-          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 100.0)).g;
+          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 200.0)).g;
         rough = clamp(rough * rSamp, 0.04, 1.0);
       }
     }
@@ -1273,14 +1273,14 @@ void main() {
       vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
-      vec4 texCol = lut4.x < 99.5
+      vec4 texCol = lut4.x < 199.5
         ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
-        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 100.0));
+        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 200.0));
       float texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
       if (lut4.y >= -0.5) {
-        float rSamp = lut4.y < 99.5
+        float rSamp = lut4.y < 199.5
           ? texture(uTexArrayHi, vec3(sampleUv, lut4.y)).g
-          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 100.0)).g;
+          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 200.0)).g;
         rough = clamp(rough * rSamp, 0.04, 1.0);
       }
       if (bumpStr > 0.004) {
@@ -1539,9 +1539,9 @@ void main() {
 
 const HI_TEX_W = NATIVE_HI_TEX_W;
 const HI_TEX_H = NATIVE_HI_TEX_H;
-const HI_TEX_MAX_LAYERS = 60;
+const HI_TEX_MAX_LAYERS = 140;
 const TILE_TEX_SIZE = NATIVE_TILE_TEX_SIZE;
-const TILE_TEX_MAX_LAYERS = 46;
+const TILE_TEX_MAX_LAYERS = 84;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {
@@ -1643,7 +1643,7 @@ class DualTierTextureArrayPacker {
       }
       this.tileArray.addLayerUpdate(layer);
       this.tileArray.needsUpdate = true;
-      const encoded = 100 + layer;
+      const encoded = 200 + layer;
       this.texToLayer.set(tex, encoded);
       tex.dispose();
       return encoded;
@@ -1730,7 +1730,7 @@ class DualTierTextureArrayPacker {
 
     this.tileArray.addLayerUpdate(layer);
     this.tileArray.needsUpdate = true;
-    const encoded = 100 + layer;
+    const encoded = 200 + layer;
     this.texToLayer.set(tex, encoded);
     reclaimSourceCanvasTexture(tex);
     return encoded;

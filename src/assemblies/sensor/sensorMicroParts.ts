@@ -2,13 +2,23 @@ import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import {
+  addCircleHoles,
   attachCadEdges,
   createFrameShape,
   createPrecisionScrew,
   createRoundedRectShape,
-  extrudeCentered,
   tagPartMeshes,
 } from '../../engine/CadHelpers';
+import {
+  applyBoxUVs,
+  applyPlanarUVs,
+  createChamferedBoxGeo,
+  extrudeHiRes,
+  hiResCyl,
+  hiResSphere,
+  hiResTorus,
+  markHiRes,
+} from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 
 function finalizeStandaloneSensorMicroPart(
@@ -48,6 +58,112 @@ function finalizeStandaloneSensorMicroPart(
 }
 
 /**
+ * Helper: build a smooth extruded flat-ribbon curve in the YZ or XY plane (authentic FPC / CuBe2 leaf!).
+ */
+function buildFlatRibbonExtrude(
+  points2D: Array<[number, number]>,
+  thickness: number,
+  width: number,
+  plane: 'xz' | 'yz' | 'xy'
+): THREE.ExtrudeGeometry {
+  const curve = new THREE.SplineCurve(points2D.map(([a, b]) => new THREE.Vector2(a, b)));
+  const samples = curve.getPoints(32);
+  const upper: THREE.Vector2[] = [];
+  const lower: THREE.Vector2[] = [];
+  for (let i = 0; i < samples.length; i++) {
+    const prev = samples[Math.max(0, i - 1)];
+    const next = samples[Math.min(samples.length - 1, i + 1)];
+    const tang = new THREE.Vector2().subVectors(next, prev).normalize();
+    const norm = new THREE.Vector2(-tang.y, tang.x);
+    upper.push(samples[i].clone().addScaledVector(norm, thickness * 0.5));
+    lower.push(samples[i].clone().addScaledVector(norm, -thickness * 0.5));
+  }
+  const shape = new THREE.Shape();
+  shape.moveTo(upper[0].x, upper[0].y);
+  for (let i = 1; i < upper.length; i++) shape.lineTo(upper[i].x, upper[i].y);
+  for (let i = lower.length - 1; i >= 0; i--) shape.lineTo(lower[i].x, lower[i].y);
+  shape.closePath();
+
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: width, bevelEnabled: false, steps: 1 });
+  geo.translate(0, 0, -width * 0.5);
+  if (plane === 'xz') {
+    geo.rotateX(Math.PI / 2);
+  } else if (plane === 'yz') {
+    geo.rotateY(-Math.PI / 2);
+  }
+  geo.computeVertexNormals();
+  return markHiRes(geo);
+}
+
+/**
+ * Helper: build a Sony OEM M1.7x2.5 NEW TRUSTER P2 tri-lobular (rounded 3-lobe Reuleaux) thread-rolling screw.
+ */
+function buildTrilobularNewTrusterScrew(
+  headR: number,
+  headH: number,
+  shankR: number,
+  shankL: number,
+  headMat: THREE.Material,
+  slotMat: THREE.Material,
+  threadMat: THREE.Material
+): THREE.Group {
+  const g = new THREE.Group();
+
+  // Washer-faced pan head
+  const flange = new THREE.Mesh(hiResCyl(headR * 1.15, headR * 1.15, headH * 0.25, 20), headMat);
+  flange.position.y = -headH * 0.125;
+  const dome = new THREE.Mesh(hiResCyl(headR * 0.85, headR * 1.02, headH * 0.78, 20), headMat);
+  dome.position.y = -headH * 0.62;
+  g.add(flange, dome);
+
+  // Crisp Phillips #0 cross recess on top of pan head (-Y)
+  for (const rotY of [0, Math.PI / 2]) {
+    const slot = new THREE.Mesh(
+      new THREE.BoxGeometry(headR * 1.15, headH * 0.28, headR * 0.24),
+      slotMat
+    );
+    slot.position.y = -headH * 0.94;
+    slot.rotation.y = rotY;
+    slot.userData.noEdges = true;
+    g.add(slot);
+  }
+
+  // Authentic tri-lobular (TAPTITE / NEW TRUSTER) 3-lobe rounded triangular cross-section shank!
+  const triShape = new THREE.Shape();
+  const segs = 36;
+  for (let i = 0; i <= segs; i++) {
+    const a = (i / segs) * Math.PI * 2;
+    const r = shankR * (0.94 + 0.11 * Math.cos(a * 3));
+    const x = Math.cos(a) * r;
+    const y = Math.sin(a) * r;
+    if (i === 0) triShape.moveTo(x, y);
+    else triShape.lineTo(x, y);
+  }
+  const shankGeo = extrudeHiRes(triShape, shankL, 0.04, 0.04, 1, 18);
+  shankGeo.rotateX(Math.PI / 2);
+  const shank = new THREE.Mesh(shankGeo, headMat);
+  shank.position.y = shankL * 0.5;
+  g.add(shank);
+
+  // Rolled self-tapping helical thread rings along tri-lobular shank
+  const turns = 6;
+  for (let i = 0; i < turns; i++) {
+    const ty = 0.35 + (i / (turns - 1)) * (shankL - 0.65);
+    const ring = new THREE.Mesh(
+      hiResTorus(shankR * 1.03, shankR * 0.12, 6, 18).rotateX(Math.PI / 2),
+      threadMat
+    );
+    ring.position.y = ty;
+    ring.userData.noEdges = true;
+    g.add(ring);
+  }
+
+  // Rotate so head sits at +Z and shank extends into -Z (matching createPrecisionScrew convention)
+  g.rotation.x = -Math.PI / 2;
+  return g;
+}
+
+/**
  * Phase 14: 24 Standalone-Only Full-Frame Sensor & 5-Axis IBIS OEM Micro-Parts (S41–S64).
  * Omitted completely in whole-camera views ('integrated' / 'camera_body'); rendered ONLY in standalone 'sensor' view.
  */
@@ -62,36 +178,61 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     const frameShape = createFrameShape(42.4, 30.8, 2.0, 36.8, 24.8, 0.8);
     const plate = new THREE.Mesh(
-      extrudeCentered(frameShape, 0.28, 0.04, 0.04, 20),
+      extrudeHiRes(frameShape, 0.28, 0.04, 0.04, 2, 24),
       mats.matteBlackAnodized
     );
     g.add(plate);
 
-    // 4 raised leaf-spring pressure tongues pressing evenly onto optical filter corners
-    for (const [sx, sy] of [
-      [-19.5, 13.8],
-      [19.5, 13.8],
-      [-19.5, -13.8],
-      [19.5, -13.8],
-    ] as Array<[number, number]>) {
-      const springTab = new THREE.Mesh(
-        new THREE.BoxGeometry(4.2, 1.5, 0.48),
-        mats.mountSpringSteel
+    // Stamped longitudinal stiffening bead embossings along top/bottom retainer edges + gold assembly index dots
+    for (const sy of [-14.2, 14.2]) {
+      const bead = new THREE.Mesh(
+        createChamferedBoxGeo(26.0, 0.65, 0.16, 0.2, 0.03, 'z'),
+        mats.matteBlackAnodized
       );
+      bead.position.set(0, sy, 0.16);
+      bead.userData.noEdges = true;
+      g.add(bead);
+    }
+    const idxDot = new THREE.Mesh(hiResCyl(0.45, 0.45, 0.12, 10).rotateX(Math.PI / 2), mats.goldPlating);
+    idxDot.position.set(17.5, 14.2, 0.17);
+    idxDot.userData.noEdges = true;
+    g.add(idxDot);
+
+    // 4 arched cold-rolled SUS301-CSP leaf-spring pressure tongues with curved contact dimples & relief notches
+    for (const [sx, sy] of [
+      [-19.2, 13.6],
+      [19.2, 13.6],
+      [-19.2, -13.6],
+      [19.2, -13.6],
+    ] as Array<[number, number]>) {
+      const tabGeo = createChamferedBoxGeo(4.4, 1.55, 0.36, 0.22, 0.04, 'z');
+      applyBoxUVs(tabGeo, 8.0);
+      const springTab = new THREE.Mesh(tabGeo, mats.ultra.sensorSusSpringSteel);
       springTab.position.set(sx, sy, -0.22);
       springTab.rotation.z = sx * sy > 0 ? -0.35 : 0.35;
-      g.add(springTab);
+      springTab.rotation.y = Math.sign(sx) * 0.12;
+      const dimple = new THREE.Mesh(hiResSphere(0.36, 10, 8), mats.stainlessMachined);
+      dimple.scale.set(1.2, 0.9, 0.55);
+      dimple.position.set(sx - Math.sign(sx) * 1.1, sy - Math.sign(sy) * 0.4, -0.44);
+      dimple.userData.noEdges = true;
+      g.add(springTab, dimple);
     }
 
-    // 4 side snap-engagement claws hooking onto filter holder ears
+    // 4 side snap-engagement claws with true inward brushed-SUS barbed retention hooks
     for (const sx of [-21.35, 21.35]) {
+      const dir = Math.sign(sx);
       for (const sy of [-8.0, 8.0]) {
         const claw = new THREE.Mesh(
-          new THREE.BoxGeometry(0.42, 3.2, 1.65),
+          createChamferedBoxGeo(0.42, 3.2, 1.65, 0.08, 0.03, 'z'),
           mats.matteBlackAnodized
         );
         claw.position.set(sx, sy, -0.78);
-        g.add(claw);
+        const barbGeo = createChamferedBoxGeo(0.75, 2.4, 0.36, 0.06, 0.02, 'z');
+        applyBoxUVs(barbGeo, 6.0);
+        const barb = new THREE.Mesh(barbGeo, mats.ultra.sensorSusSpringSteel);
+        barb.position.set(sx - dir * 0.36, sy, -1.48);
+        barb.userData.noEdges = true;
+        g.add(claw, barb);
       }
     }
 
@@ -115,28 +256,46 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const maskShape = createFrameShape(40.8, 29.2, 1.5, 36.2, 24.2, 0.45);
-    const maskMesh = new THREE.Mesh(
-      extrudeCentered(maskShape, 0.14, 0.02, 0.02, 20),
-      mats.velvetFlockTrap
-    );
+    addCircleHoles(maskShape, [
+      [-19.4, 12.6, 0.55],
+      [19.4, -12.6, 0.55],
+    ]);
+    const maskGeo = extrudeHiRes(maskShape, 0.14, 0.02, 0.02, 1, 22);
+    applyBoxUVs(maskGeo, 14.0);
+    const maskMesh = new THREE.Mesh(maskGeo, mats.ultra.sensorVelvetBaffle);
     g.add(maskMesh);
 
-    // Micro-beveled inner light-trap edge frame strips along all 4 sides
-    for (const sy of [-12.25, 12.25]) {
-      const lip = new THREE.Mesh(new THREE.BoxGeometry(36.6, 0.38, 0.2), mats.matteBlackAnodized);
-      lip.position.set(0, sy, 0.03);
-      g.add(lip);
-    }
-    for (const sx of [-18.25, 18.25]) {
-      const lip = new THREE.Mesh(new THREE.BoxGeometry(0.38, 24.6, 0.2), mats.matteBlackAnodized);
-      lip.position.set(sx, 0, 0.03);
-      g.add(lip);
+    // Gold precision locator collar rings around the 2 asymmetric registration pin holes
+    for (const [hx, hy] of [
+      [-19.4, 12.6],
+      [19.4, -12.6],
+    ] as Array<[number, number]>) {
+      const collar = new THREE.Mesh(hiResTorus(0.76, 0.14, 6, 16), mats.goldPlating);
+      collar.position.set(hx, hy, 0.08);
+      collar.userData.noEdges = true;
+      g.add(collar);
     }
 
-    // 2 factory orientation datum notches (asymmetric poke-yoke key)
-    const notch = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.85, 0.16), mats.goldPlating);
-    notch.position.set(17.4, 14.0, 0.02);
-    g.add(notch);
+    // 2-tier stepped knife-edge anti-glare bevel strips around inner 36.2x24.2mm aperture
+    const innerStep = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(37.4, 25.4, 0.55, 36.0, 24.0, 0.4), 0.22, 0.03, 0.04, 2, 18),
+      mats.matteBlackAnodized
+    );
+    innerStep.position.z = 0.04;
+    g.add(innerStep);
+
+    // 2 asymmetric factory poke-yoke orientation datum keys (gold top-right + notched bottom-left)
+    const notch1 = new THREE.Mesh(
+      createChamferedBoxGeo(2.4, 0.85, 0.18, 0.12, 0.02, 'z'),
+      mats.goldPlating
+    );
+    notch1.position.set(17.4, 14.0, 0.02);
+    const notch2 = new THREE.Mesh(
+      createChamferedBoxGeo(1.4, 0.72, 0.18, 0.1, 0.02, 'z'),
+      mats.goldPlating
+    );
+    notch2.position.set(-18.2, -13.9, 0.02);
+    g.add(notch1, notch2);
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -157,31 +316,69 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Black aluminum trough carrier bar at chamber bottom
+    // Extruded matte-black aluminum U-channel trough carrier with raised containment side lips & end mounting ears
     const trough = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(39.0, 3.0, 0.5), 1.0, 0.06, 0.06, 12),
+      extrudeHiRes(createRoundedRectShape(39.0, 3.0, 0.5), 0.72, 0.06, 0.06, 2, 16),
       mats.matteBlackAnodized
     );
     g.add(trough);
 
-    // Translucent non-outgassing tacky silicone dust-catcher gel strip
+    for (const dy of [-1.32, 1.32]) {
+      const wall = new THREE.Mesh(
+        createChamferedBoxGeo(38.4, 0.36, 0.85, 0.1, 0.03, 'z'),
+        mats.matteBlackAnodized
+      );
+      wall.position.set(0, dy, 0.45);
+      g.add(wall);
+    }
+
+    // End snap-retention mounting ears with stainless locating micro-rivet pins
+    for (const ex of [-20.2, 20.2]) {
+      const ear = new THREE.Mesh(
+        createChamferedBoxGeo(2.2, 2.2, 0.52, 0.35, 0.04, 'z'),
+        mats.ultra.sensorSusSpringSteel
+      );
+      ear.position.set(ex, 0, -0.05);
+      const pin = new THREE.Mesh(
+        hiResCyl(0.42, 0.42, 0.72, 10).rotateX(Math.PI / 2),
+        mats.titaniumRivet
+      );
+      pin.position.set(ex, 0, 0.06);
+      pin.userData.noEdges = true;
+      g.add(ear, pin);
+    }
+
+    // Translucent non-outgassing tacky optical silicone gel strip with glossy concave meniscus rim
     const stickyGel = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(36.8, 2.0, 0.3), 0.55, 0.05, 0.05, 12),
+      extrudeHiRes(createRoundedRectShape(36.8, 2.05, 0.35), 0.56, 0.06, 0.06, 2, 14),
       mats.dustCatcherGel
     );
-    stickyGel.position.set(0, 0.15, 0.55);
-    g.add(stickyGel);
+    stickyGel.position.set(0, 0.05, 0.52);
+    const gelMeniscus = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(37.2, 2.25, 0.4, 36.2, 1.55, 0.28), 0.16, 0.03, 0.03, 1, 14),
+      mats.opticalCementClear
+    );
+    gelMeniscus.position.set(0, 0.05, 0.78);
+    gelMeniscus.userData.noEdges = true;
+    g.add(stickyGel, gelMeniscus);
 
-    // Subtle captured microscopic dust specks visualized inside gel trough
-    for (const [dx, dy] of [
-      [-11.2, 0.2],
-      [-4.8, -0.15],
-      [2.6, 0.25],
-      [9.4, -0.1],
-      [14.1, 0.15],
-    ] as Array<[number, number]>) {
-      const speck = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), mats.ceramicAlumina);
-      speck.position.set(dx, dy, 0.84);
+    // Realistic captured microscopic dust, fiber & pollen particulates of varied sizes embedded in gel!
+    const dustSpecs: Array<[number, number, number, number]> = [
+      [-14.2, 0.25, 0.22, 1.0],
+      [-11.2, -0.22, 0.16, 1.8],
+      [-7.4, 0.32, 0.12, 1.0],
+      [-4.8, -0.15, 0.24, 1.2],
+      [-1.1, 0.18, 0.14, 2.4],
+      [2.6, 0.28, 0.20, 1.0],
+      [6.2, -0.28, 0.15, 1.5],
+      [9.4, -0.10, 0.23, 1.0],
+      [14.1, 0.16, 0.17, 1.9],
+    ];
+    for (const [dx, dy, r, stretch] of dustSpecs) {
+      const speck = new THREE.Mesh(hiResSphere(r, 8, 6), mats.ceramicAlumina);
+      speck.scale.set(stretch, 0.9, 0.65);
+      speck.rotation.z = dx * 0.4;
+      speck.position.set(dx, dy, 0.82);
       speck.userData.noEdges = true;
       g.add(speck);
     }
@@ -205,23 +402,43 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 3 thin crystal-clear index-matched (n≈1.52) optical bond films between OLPF / QWP / IR-cut
-    for (const dz of [-0.62, 0.0, 0.62]) {
+    // 3 crystal-clear index-matched (n≈1.52) UV-cured OCA optical films with perimeter meniscus rims & staggered alignment tabs
+    const layers: Array<[number, number]> = [
+      [-0.62, -14.5],
+      [0.0, 0.0],
+      [0.62, 14.5],
+    ];
+    for (let li = 0; li < layers.length; li++) {
+      const [dz, tabX] = layers[li];
+      const ocaGeo = extrudeHiRes(createRoundedRectShape(38.6, 26.8, 0.6), 0.12, 0.02, 0.02, 1, 14);
+      if (li === 2) applyPlanarUVs(ocaGeo, 38.6, 26.8, 'xy');
       const ocaFilm = new THREE.Mesh(
-        new THREE.BoxGeometry(38.6, 26.8, 0.12),
-        mats.opticalCementClear
+        ocaGeo,
+        li === 2 ? mats.ultra.sensorOpticalFilterCoating : mats.opticalCementClear
       );
       ocaFilm.position.z = dz;
       g.add(ocaFilm);
 
-      // Thin meniscus perimeter bead highlighting zero-bubble vacuum optical bond
-      const beadShape = createFrameShape(39.0, 27.2, 0.8, 38.2, 26.4, 0.5);
+      // Zero-bubble vacuum-bond glossy perimeter meniscus bead
+      const beadShape = createFrameShape(39.05, 27.25, 0.8, 38.2, 26.4, 0.5);
       const bead = new THREE.Mesh(
-        extrudeCentered(beadShape, 0.16, 0.02, 0.02, 14),
+        extrudeHiRes(beadShape, 0.16, 0.02, 0.02, 1, 16),
         mats.sswfGlass
       );
       bead.position.z = dz;
       g.add(bead);
+
+      // Optical registration alignment tab with gold laser-registration dot on top edge
+      const tab = new THREE.Mesh(
+        createChamferedBoxGeo(3.2, 1.1, 0.14, 0.2, 0.02, 'z'),
+        mats.fluorineCoatCyan
+      );
+      tab.position.set(tabX, 13.85, dz);
+      tab.userData.noEdges = true;
+      const tabDot = new THREE.Mesh(hiResCyl(0.28, 0.28, 0.18, 10).rotateX(Math.PI / 2), mats.goldPlating);
+      tabDot.position.set(tabX, 13.85, dz);
+      tabDot.userData.noEdges = true;
+      g.add(tab, tabDot);
     }
 
     parts.push(
@@ -244,19 +461,49 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const spacerShape = createFrameShape(41.8, 30.2, 1.8, 36.8, 24.8, 0.7);
-    const spacer = new THREE.Mesh(
-      extrudeCentered(spacerShape, 0.36, 0.03, 0.03, 20),
-      mats.butylDamperRubber
-    );
+    addCircleHoles(spacerShape, [
+      [-19.5, 13.5, 0.65],
+      [19.5, 13.5, 0.65],
+      [-19.5, -13.5, 0.65],
+      [19.5, -13.5, 0.65],
+    ]);
+    const spacerGeo = extrudeHiRes(spacerShape, 0.36, 0.04, 0.04, 2, 22);
+    applyBoxUVs(spacerGeo, 14.0);
+    const spacer = new THREE.Mesh(spacerGeo, mats.ultra.sensorVelvetBaffle);
     g.add(spacer);
 
-    // Double-sided micro-seal gasket ridge running 360° around the inner border
-    const lipShape = createFrameShape(39.8, 28.2, 1.1, 38.2, 26.6, 0.8);
-    const lip = new THREE.Mesh(
-      extrudeCentered(lipShape, 0.46, 0.03, 0.03, 18),
-      mats.epdmGasket
-    );
-    g.add(lip);
+    // 4 precision stainless alignment bushing collars lining corner bores
+    for (const [bx, by] of [
+      [-19.5, 13.5],
+      [19.5, 13.5],
+      [-19.5, -13.5],
+      [19.5, -13.5],
+    ] as Array<[number, number]>) {
+      const bush = new THREE.Mesh(hiResTorus(0.86, 0.16, 6, 16), mats.stainlessMachined);
+      bush.position.set(bx, by, 0.18);
+      bush.userData.noEdges = true;
+      g.add(bush);
+    }
+
+    // Dual concentric 360-deg raised compression sealing ribs (inner + outer dual-barrier)
+    for (const [ow, oh, iw, ih] of [
+      [40.6, 29.0, 39.6, 28.0],
+      [38.6, 27.0, 37.6, 26.0],
+    ] as Array<[number, number, number, number]>) {
+      const lip = new THREE.Mesh(
+        extrudeHiRes(createFrameShape(ow, oh, 1.2, iw, ih, 0.9), 0.48, 0.03, 0.03, 1, 18),
+        mats.epdmGasket
+      );
+      g.add(lip);
+    }
+
+    // Micro barometric Gore ePTFE breather labyrinth relief tab on lower border
+    const ventGeo = createChamferedBoxGeo(3.2, 0.72, 0.42, 0.1, 0.02, 'z');
+    applyPlanarUVs(ventGeo, 3.2, 0.72, 'xy');
+    const ventTab = new THREE.Mesh(ventGeo, mats.ultra.sensorEptfeVent);
+    ventTab.position.set(0, -14.1, 0);
+    ventTab.userData.noEdges = true;
+    g.add(ventTab);
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -277,26 +524,56 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // L-shaped slender amber polyimide ribbon routing from PZT bar end to rear board
-    const mainStrip = new THREE.Mesh(new THREE.BoxGeometry(9.6, 2.6, 0.18), mats.polyimideFpc);
-    mainStrip.position.set(2.2, 0, 0);
-    g.add(mainStrip);
+    // Graceful continuous Z-bend flat polyimide ribbon routing from PZT electrode end to mainboard ZIF
+    const ribbonGeo = buildFlatRibbonExtrude(
+      [
+        [-2.6, 0.0],
+        [4.8, 0.0],
+        [6.6, -0.5],
+        [7.0, -2.6],
+        [6.8, -5.8],
+      ],
+      0.22,
+      2.65,
+      'xz'
+    );
+    g.add(new THREE.Mesh(ribbonGeo, mats.polyimideFpc));
 
-    // Two parallel high-voltage silver/gold solder lands contacting PZT bar electrodes
-    for (const dy of [-0.6, 0.6]) {
-      const trace = new THREE.Mesh(new THREE.BoxGeometry(8.8, 0.48, 0.22), mats.goldPlating);
-      trace.position.set(2.2, dy, 0.02);
-      g.add(trace);
+    // Black FR-4 solder-zone strain-relief stiffener backing the PZT landing head
+    const headStiff = new THREE.Mesh(
+      createChamferedBoxGeo(3.4, 2.8, 0.18, 0.2, 0.02, 'z'),
+      mats.matteBlackAnodized
+    );
+    headStiff.position.set(-1.2, 0, -0.18);
+    headStiff.userData.noEdges = true;
+    g.add(headStiff);
+
+    // Widened high-voltage gold PZT solder contact pads + silver solder fillets + parallel HV traces
+    for (const dy of [-0.65, 0.65]) {
+      const trace = new THREE.Mesh(
+        createChamferedBoxGeo(7.6, 0.48, 0.08, 0.08, 0.02, 'z'),
+        mats.goldPlating
+      );
+      trace.position.set(1.6, dy, 0.13);
+      const solder = new THREE.Mesh(hiResSphere(0.32, 8, 6), mats.solderBallSilver);
+      solder.scale.set(1.6, 1.0, 0.45);
+      solder.position.set(-1.8, dy, 0.18);
+      solder.userData.noEdges = true;
+      g.add(trace, solder);
     }
 
-    // Rearward Z-bend flex leg with stress-relief meander loop
-    const bendLeg = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.6, 6.2), mats.polyimideFpc);
-    bendLeg.position.set(6.8, 0, -3.0);
-    g.add(bendLeg);
-
-    // 2-pin micro ZIF gold contact tail
-    const tail = new THREE.Mesh(new THREE.BoxGeometry(2.6, 3.8, 0.32), mats.zifIvoryPlastic);
+    // 2-pin micro ZIF ivory stiffener with locating retention ears + exposed dual gold insertion fingers
+    const tail = new THREE.Mesh(
+      createChamferedBoxGeo(3.4, 3.8, 0.34, 0.25, 0.04, 'z'),
+      mats.zifIvoryPlastic
+    );
     tail.position.set(6.8, -1.2, -6.1);
+    for (const dx of [-0.6, 0.6]) {
+      const finger = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.8, 0.12), mats.goldPlating);
+      finger.position.set(6.8 + dx, -2.2, -5.88);
+      finger.userData.noEdges = true;
+      g.add(finger);
+    }
     g.add(tail);
 
     parts.push(
@@ -318,21 +595,41 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Low-temp glass-frit hermetic seal bead bonding cover glass to ceramic cavity rim
+    // Low-temp vitreous glass-frit continuous hermetic seal meniscus bonding cover glass to HTCC rim
     const fritShape = createFrameShape(42.0, 30.0, 1.6, 39.2, 27.2, 1.0);
-    const fritRing = new THREE.Mesh(
-      extrudeCentered(fritShape, 0.48, 0.05, 0.05, 22),
-      mats.kovarSeal
-    );
+    const fritGeo = extrudeHiRes(fritShape, 0.48, 0.08, 0.08, 2, 24);
+    applyBoxUVs(fritGeo, 14.0);
+    const fritRing = new THREE.Mesh(fritGeo, mats.ultra.sensorSoftIronYoke);
     g.add(fritRing);
 
-    // Subtle translucent dry-nitrogen (N2) sealed micro-chamber volume indicator
+    // Inner reflow glass-frit solder fillet bead
+    const innerFillet = new THREE.Mesh(
+      extrudeHiRes(createFrameShape(39.6, 27.6, 1.1, 38.8, 26.8, 0.9), 0.34, 0.05, 0.05, 2, 18),
+      mats.goldPlating
+    );
+    innerFillet.position.z = -0.04;
+    innerFillet.userData.noEdges = true;
+    g.add(innerFillet);
+
+    // Subtle translucent dry-nitrogen (N2) sealed micro-chamber gas volume shimmer
     const n2Volume = new THREE.Mesh(
-      new THREE.BoxGeometry(38.6, 26.6, 0.34),
+      extrudeHiRes(createRoundedRectShape(38.6, 26.6, 0.8), 0.34, 0.04, 0.04, 1, 14),
       mats.opticalCementClear
     );
     n2Volume.userData.noEdges = true;
     g.add(n2Volume);
+
+    // Miniature brazed gold-alloy dry-N2 hermetic backfill / helium-leak-test pinch boss with laser-weld dimple
+    const pinchBoss = new THREE.Mesh(
+      hiResCyl(0.75, 0.92, 0.56, 14).rotateX(Math.PI / 2),
+      mats.goldPlating
+    );
+    pinchBoss.position.set(-20.4, 13.8, 0.06);
+    const weldDimple = new THREE.Mesh(hiResSphere(0.36, 10, 8), mats.solderBallSilver);
+    weldDimple.scale.set(1.0, 1.0, 0.5);
+    weldDimple.position.set(-20.4, 13.8, 0.35);
+    weldDimple.userData.noEdges = true;
+    g.add(pinchBoss, weldDimple);
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -353,18 +650,40 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Opaque tungsten/aluminum OB light-shield border frame right around the 35.9×24.0 active area
-    const obShape = createFrameShape(37.6, 25.6, 0.3, 35.6, 23.6, 0.15);
+    // Dual-tier opaque W/Al Optical Black (OB) light-shield border frame (wider top VOB & left HOB calibration strips!)
+    const obShape = createFrameShape(38.0, 26.0, 0.3, 35.6, 23.6, 0.15);
     const obFrame = new THREE.Mesh(
-      extrudeCentered(obShape, 0.12, 0.01, 0.01, 16),
+      extrudeHiRes(obShape, 0.12, 0.02, 0.02, 1, 16),
       mats.tungstenLightShield
     );
     g.add(obFrame);
 
-    // Inner gold dummy isolation guard ring separating OB pixels from active imaging pixels
-    const guardShape = createFrameShape(35.8, 23.8, 0.18, 35.4, 23.4, 0.14);
+    // Wider Vertical-OB (VOB) top calibration strip & Horizontal-OB (HOB) left black-level clamp strip
+    const vobStrip = new THREE.Mesh(new THREE.BoxGeometry(36.2, 1.05, 0.16), mats.tungstenGrid);
+    vobStrip.position.set(0, 12.65, 0.03);
+    const hobStrip = new THREE.Mesh(new THREE.BoxGeometry(1.15, 24.4, 0.16), mats.tungstenGrid);
+    hobStrip.position.set(-18.6, 0, 0.03);
+    g.add(vobStrip, hobStrip);
+
+    // 4-Corner ASML photolithography overlay reticle micro-tiles flanking OB border
+    const fidGeo = createChamferedBoxGeo(1.15, 1.15, 0.08, 0.05, 0.01, 'z');
+    applyPlanarUVs(fidGeo, 1.15, 1.15, 'xy');
+    for (const [fx, fy] of [
+      [-18.3, 12.3],
+      [18.3, 12.3],
+      [-18.3, -12.3],
+      [18.3, -12.3],
+    ] as Array<[number, number]>) {
+      const fid = new THREE.Mesh(fidGeo, mats.ultra.sensorFiducialTarget);
+      fid.position.set(fx, fy, 0.12);
+      fid.userData.noEdges = true;
+      g.add(fid);
+    }
+
+    // Inner gold dummy-pixel isolation guard ring preventing blooming cross-talk from active pixels into OB
+    const guardShape = createFrameShape(35.85, 23.85, 0.18, 35.4, 23.4, 0.14);
     const guardRing = new THREE.Mesh(
-      extrudeCentered(guardShape, 0.14, 0.01, 0.01, 16),
+      extrudeHiRes(guardShape, 0.15, 0.015, 0.015, 1, 16),
       mats.goldPlating
     );
     g.add(guardRing);
@@ -388,8 +707,18 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Instanced SAC305 lead-free solder balls around dual-row ceramic LGA perimeter
-    const ballGeo = new THREE.SphereGeometry(0.32, 10, 8);
+
+    // Recessed dark-alumina HTCC LGA land-grid carrier plane displaying ENIG pad matrix & Pin-1 chevron
+    const lgaPlaneGeo = createChamferedBoxGeo(44.4, 32.0, 0.08, 0.8, 0.02, 'z');
+    applyPlanarUVs(lgaPlaneGeo, 44.4, 32.0, 'xy');
+    const lgaCarrier = new THREE.Mesh(lgaPlaneGeo, mats.ultra.sensorLgaBallGrid);
+    lgaCarrier.position.z = 0.28;
+    lgaCarrier.userData.noEdges = true;
+    g.add(lgaCarrier);
+
+    // Instanced SAC305 lead-free solder balls + ENIG gold landing pad collars around dual-row perimeter
+    const ballGeo = hiResSphere(0.32, 10, 8);
+    const padGeo = hiResCyl(0.38, 0.38, 0.08, 10).rotateX(Math.PI / 2);
     const coords: Array<[number, number]> = [];
     for (let ix = -11; ix <= 11; ix++) {
       for (const ry of [-15.2, -13.8, 13.8, 15.2]) {
@@ -402,33 +731,53 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
       }
     }
     const balls = new THREE.InstancedMesh(ballGeo, mats.solderBallSilver, coords.length);
+    const pads = new THREE.InstancedMesh(padGeo, mats.goldPlating, coords.length);
     const dummy = new THREE.Object3D();
     coords.forEach(([bx, by], i) => {
       dummy.position.set(bx, by, 0);
       dummy.updateMatrix();
       balls.setMatrixAt(i, dummy.matrix);
+      dummy.position.set(bx, by, 0.24);
+      dummy.updateMatrix();
+      pads.setMatrixAt(i, dummy.matrix);
     });
     balls.instanceMatrix.needsUpdate = true;
+    pads.instanceMatrix.needsUpdate = true;
     balls.userData.noEdges = true;
-    g.add(balls);
+    pads.userData.noEdges = true;
+    g.add(balls, pads);
 
-    // Central wide solder thermal pad coupling CuW slug to sensor PCB
-    const thermalPad = new THREE.Mesh(
-      new THREE.BoxGeometry(28.0, 18.0, 0.24),
-      mats.sinteredSilver
-    );
-    g.add(thermalPad);
+    // Central segmented 4x3 thermal solder pad matrix (outgassing channels eliminate reflow solder voiding!)
+    const segGeo = createChamferedBoxGeo(6.4, 5.4, 0.26, 0.4, 0.04, 'z');
+    const thermalSegs = new THREE.InstancedMesh(segGeo, mats.sinteredSilver, 12);
+    let si = 0;
+    for (let ix = 0; ix < 4; ix++) {
+      for (let iy = 0; iy < 3; iy++) {
+        dummy.position.set(-10.5 + ix * 7.0, -6.0 + iy * 6.0, 0);
+        dummy.updateMatrix();
+        thermalSegs.setMatrixAt(si++, dummy.matrix);
+      }
+    }
+    thermalSegs.instanceMatrix.needsUpdate = true;
+    thermalSegs.userData.noEdges = true;
+    g.add(thermalSegs);
 
-    // 4 Corner Epoxy Underfill L-brackets protecting solder balls from IBIS & drop shock
+    // 4 Corner Glossy Black Epoxy Underfill L-fillets protecting corner LGA balls from IBIS G-shock
     for (const [cx, cy] of [
       [-21.8, 15.6],
       [21.8, 15.6],
       [-21.8, -15.6],
       [21.8, -15.6],
     ] as Array<[number, number]>) {
-      const uf1 = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.4, 0.55), mats.icEpoxy);
+      const uf1 = new THREE.Mesh(
+        createChamferedBoxGeo(4.8, 1.45, 0.56, 0.35, 0.12, 'z'),
+        mats.icEpoxy
+      );
       uf1.position.set(cx - Math.sign(cx) * 1.6, cy, 0);
-      const uf2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 4.6, 0.55), mats.icEpoxy);
+      const uf2 = new THREE.Mesh(
+        createChamferedBoxGeo(1.45, 4.8, 0.56, 0.35, 0.12, 'z'),
+        mats.icEpoxy
+      );
       uf2.position.set(cx, cy - Math.sign(cy) * 1.6, 0);
       g.add(uf1, uf2);
     }
@@ -452,9 +801,9 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Subtle solder-mask carrier frame showing exact backside MLCC cavity layout
-    const mlccGeo = new THREE.BoxGeometry(1.4, 0.75, 0.65);
-    const termGeo = new THREE.BoxGeometry(0.32, 0.78, 0.68);
+    // 48 authentic two-tone chamfered BaTiO3 ceramic MLCCs with wrapped Ni-Sn end-caps & solder fillets
+    const mlccGeo = createChamferedBoxGeo(0.92, 0.72, 0.62, 0.08, 0.04, 'z');
+    const termGeo = createChamferedBoxGeo(0.34, 0.78, 0.68, 0.08, 0.04, 'z');
     const positions: Array<[number, number]> = [];
     for (let ix = -5; ix <= 5; ix++) {
       for (const py of [-9.5, -5.5, 5.5, 9.5]) {
@@ -473,10 +822,10 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
       d.position.set(mx, my, 0);
       d.updateMatrix();
       bodies.setMatrixAt(idx, d.matrix);
-      d.position.set(mx - 0.58, my, 0);
+      d.position.set(mx - 0.56, my, 0);
       d.updateMatrix();
       terms.setMatrixAt(idx * 2, d.matrix);
-      d.position.set(mx + 0.58, my, 0);
+      d.position.set(mx + 0.56, my, 0);
       d.updateMatrix();
       terms.setMatrixAt(idx * 2 + 1, d.matrix);
     });
@@ -486,13 +835,34 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
     terms.userData.noEdges = true;
     g.add(bodies, terms);
 
-    // Copper star-bus rail connecting MLCC ground terminals
+    // Copper star-ground bus frame + inner horizontal VDD/GND distribution rails & ENIG micro-via pins
     const bus = new THREE.Mesh(
-      extrudeCentered(createFrameShape(32.0, 22.0, 1.2, 29.8, 19.8, 0.8), 0.14, 0.02, 0.02, 16),
-      mats.copperCoil
+      extrudeHiRes(createFrameShape(32.0, 22.0, 1.2, 29.8, 19.8, 0.8), 0.14, 0.02, 0.02, 1, 18),
+      mats.copperHeatSpreader
     );
     bus.position.z = 0.34;
     g.add(bus);
+    for (const ry of [-7.5, 0.0, 7.5]) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(29.8, 0.65, 0.12), mats.goldPlating);
+      rail.position.set(0, ry, 0.35);
+      rail.userData.noEdges = true;
+      g.add(rail);
+    }
+
+    // 18 ENIG plated through-via micro-pins stitching VDD/GND rails to low-inductance plane
+    const mViaGeo = hiResCyl(0.26, 0.26, 0.22, 8).rotateX(Math.PI / 2);
+    const mVias = new THREE.InstancedMesh(mViaGeo, mats.goldPlating, 18);
+    let vi = 0;
+    for (const ry of [-7.5, 0.0, 7.5]) {
+      for (let k = 0; k < 6; k++) {
+        d.position.set(-12.5 + k * 5.0, ry, 0.36);
+        d.updateMatrix();
+        mVias.setMatrixAt(vi++, d.matrix);
+      }
+    }
+    mVias.instanceMatrix.needsUpdate = true;
+    mVias.userData.noEdges = true;
+    g.add(mVias);
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -513,37 +883,63 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Graceful low-stiffness S-curve polyimide ribbon isolated on left flank (-X)
-    const curvePts = [
-      new THREE.Vector3(0, 8.0, 0.6),
-      new THREE.Vector3(-4.5, 4.0, 0.2),
-      new THREE.Vector3(-7.2, -1.5, -1.6),
-      new THREE.Vector3(-5.8, -8.5, -3.4),
-      new THREE.Vector3(-1.5, -13.0, -4.6),
-    ];
-    const curve = new THREE.CatmullRomCurve3(curvePts);
-    const tube = new THREE.Mesh(
-      new THREE.TubeGeometry(curve, 24, 0.55, 6, false),
-      mats.polyimideFpc
+    // Authentic S-curve flat polyimide flexible ribbon isolated on left flank (-X)
+    const sCurveGeo = buildFlatRibbonExtrude(
+      [
+        [8.0, 0.6],
+        [4.0, 0.2],
+        [-1.5, -1.6],
+        [-8.5, -3.4],
+        [-13.0, -4.6],
+      ],
+      0.24,
+      5.2,
+      'yz'
     );
-    tube.scale.set(1.0, 1.0, 0.28);
-    g.add(tube);
+    const sRibbon = new THREE.Mesh(sCurveGeo, mats.polyimideFpc);
+    sRibbon.position.x = -3.8;
+    g.add(sRibbon);
 
-    // Shielded flat branch pad + gold differential Hall sense connector fingers
-    const sensePad = new THREE.Mesh(new THREE.BoxGeometry(5.8, 16.0, 0.24), mats.polyimideFpc);
+    // Shielded flat branch pad with Sony ISL-2009 (1-982-424-11) silkscreen & FR-4 reinforcement stiffener!
+    const senseGeo = createChamferedBoxGeo(5.8, 16.0, 0.24, 0.5, 0.03, 'z');
+    applyPlanarUVs(senseGeo, 5.8, 16.0, 'xy');
+    const sensePad = new THREE.Mesh(senseGeo, mats.ultra.sensorOemFlexIsl);
     sensePad.position.set(-4.6, 1.0, -0.5);
-    g.add(sensePad);
+    const senseBack = new THREE.Mesh(
+      createChamferedBoxGeo(5.6, 15.2, 0.16, 0.4, 0.02, 'z'),
+      mats.matteBlackAnodized
+    );
+    senseBack.position.set(-4.6, 1.0, -0.68);
+    senseBack.userData.noEdges = true;
+    g.add(sensePad, senseBack);
 
-    const emiCoat = new THREE.Mesh(new THREE.BoxGeometry(4.8, 13.2, 0.28), mats.emiShieldFilm);
-    emiCoat.position.set(-4.6, 1.0, -0.5);
-    g.add(emiCoat);
+    // Dual Sony service-manual boss alignment locating brass grommets ("remove ISL-2009 from two bosses")
+    for (const by of [-4.5, 6.2]) {
+      const bossRing = new THREE.Mesh(hiResTorus(0.78, 0.20, 8, 16), mats.brassGear);
+      bossRing.position.set(-4.6, by, -0.35);
+      bossRing.userData.noEdges = true;
+      const bore = new THREE.Mesh(
+        hiResCyl(0.54, 0.54, 0.48, 12).rotateX(Math.PI / 2),
+        mats.matteBlackAnodized
+      );
+      bore.position.set(-4.6, by, -0.48);
+      bore.userData.noEdges = true;
+      g.add(bossRing, bore);
+    }
 
-    // 10-pin gold ZIF terminal & blue FR-4 stiffener
-    const stiffener = new THREE.Mesh(new THREE.BoxGeometry(6.2, 3.6, 0.42), mats.mountShimBlue);
+    // Blue FR-4 ZIF stiffener + 10 individual ENIG gold ZIF insertion fingers
+    const stiffener = new THREE.Mesh(
+      createChamferedBoxGeo(6.4, 3.6, 0.42, 0.35, 0.04, 'z'),
+      mats.mountShimBlue
+    );
     stiffener.position.set(-1.5, -13.0, -4.6);
-    const goldFingers = new THREE.Mesh(new THREE.BoxGeometry(5.0, 1.8, 0.46), mats.goldPlating);
-    goldFingers.position.set(-1.5, -13.8, -4.6);
-    g.add(stiffener, goldFingers);
+    g.add(stiffener);
+    for (let k = 0; k < 10; k++) {
+      const fg = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.9, 0.12), mats.goldPlating);
+      fg.position.set(-3.75 + k * 0.5, -13.8, -4.35);
+      fg.userData.noEdges = true;
+      g.add(fg);
+    }
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -564,33 +960,66 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Thick-copper power ribbon on right flank (+X) physically separated from ISL-2009
-    const driveSpine = new THREE.Mesh(new THREE.BoxGeometry(7.2, 18.5, 0.32), mats.polyimideFpc);
+    // Thick-copper VCM power flex with Sony OEM (1-009-994-11) silkscreen & FR-4 stiffener + 3 wide rolled copper bus traces
+    const spineGeo = createChamferedBoxGeo(7.2, 18.5, 0.30, 0.5, 0.03, 'z');
+    applyPlanarUVs(spineGeo, 7.2, 18.5, 'xy');
+    const driveSpine = new THREE.Mesh(spineGeo, mats.ultra.sensorOemFlexIsl);
     driveSpine.position.set(4.8, 0, -0.8);
-    g.add(driveSpine);
+    const spineStiff = new THREE.Mesh(
+      createChamferedBoxGeo(7.0, 17.6, 0.18, 0.4, 0.02, 'z'),
+      mats.matteBlackAnodized
+    );
+    spineStiff.position.set(4.8, 0, -1.02);
+    spineStiff.userData.noEdges = true;
+    g.add(driveSpine, spineStiff);
 
-    // 3 heavy copper power bus bars feeding Y1 / Y2 / X1 voice coils
+    // 3 heavy rolled-copper power traces + gold VCM coil-solder termination lands & SAC305 fillets
     for (const dx of [2.6, 4.8, 7.0]) {
-      const cuTrace = new THREE.Mesh(new THREE.BoxGeometry(1.15, 16.5, 0.36), mats.copperCoil);
+      const cuTrace = new THREE.Mesh(
+        createChamferedBoxGeo(1.15, 16.5, 0.36, 0.15, 0.02, 'z'),
+        mats.copperHeatSpreader
+      );
       cuTrace.position.set(dx, 0, -0.8);
-      g.add(cuTrace);
+      const land = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.5, 0.14), mats.goldPlating);
+      land.position.set(dx, 8.2, -0.58);
+      land.userData.noEdges = true;
+      const bead = new THREE.Mesh(hiResSphere(0.32, 8, 6), mats.solderBallSilver);
+      bead.scale.set(1.2, 1.2, 0.48);
+      bead.position.set(dx, 8.2, -0.48);
+      bead.userData.noEdges = true;
+      g.add(cuTrace, land, bead);
     }
 
-    // Zero-tension U-bend loop bridging movable carrier to fixed chassis
-    const uLoop = new THREE.Mesh(
-      new THREE.TorusGeometry(3.4, 0.45, 8, 22, Math.PI),
-      mats.polyimideFpc
+    // Authentic zero-tension flat-ribbon U-bend loop bridging carrier to chassis
+    const uLoopGeo = buildFlatRibbonExtrude(
+      [
+        [-8.8, -0.8],
+        [-12.6, -1.0],
+        [-13.8, -2.6],
+        [-12.6, -4.2],
+        [-13.4, -4.4],
+      ],
+      0.28,
+      6.4,
+      'yz'
     );
-    uLoop.rotation.y = Math.PI / 2;
-    uLoop.position.set(4.8, -10.0, -2.8);
+    const uLoop = new THREE.Mesh(uLoopGeo, mats.polyimideFpc);
+    uLoop.position.x = 4.8;
     g.add(uLoop);
 
-    // High-current gold-plated 6-pin ZIF drive tail
-    const tail = new THREE.Mesh(new THREE.BoxGeometry(7.4, 3.8, 0.45), mats.zifIvoryPlastic);
+    // High-current ivory ZIF stiffener with locating ears + 6 wide ENIG gold power fingers
+    const tail = new THREE.Mesh(
+      createChamferedBoxGeo(7.8, 3.8, 0.45, 0.35, 0.05, 'z'),
+      mats.zifIvoryPlastic
+    );
     tail.position.set(4.8, -13.4, -4.4);
-    const pins = new THREE.Mesh(new THREE.BoxGeometry(6.0, 1.8, 0.5), mats.goldPlating);
-    pins.position.set(4.8, -14.2, -4.4);
-    g.add(tail, pins);
+    g.add(tail);
+    for (let k = 0; k < 6; k++) {
+      const pin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 1.9, 0.14), mats.goldPlating);
+      pin.position.set(2.3 + k * 1.0, -14.2, -4.14);
+      pin.userData.noEdges = true;
+      g.add(pin);
+    }
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -612,31 +1041,78 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const coreShape = createFrameShape(62.0, 47.0, 4.2, 41.0, 29.0, 2.2);
-    const coreFrame = new THREE.Mesh(
-      extrudeCentered(coreShape, 1.8, 0.14, 0.14, 24),
-      mats.magnesiumCast
-    );
+    const coreGeo = extrudeHiRes(coreShape, 1.8, 0.14, 0.14, 2, 26);
+    applyPlanarUVs(coreGeo, 62.0, 47.0, 'xy-back');
+    const coreFrame = new THREE.Mesh(coreGeo, mats.ultra.sensorMgDieCast);
     g.add(coreFrame);
 
-    // 3 precision magnetic-yoke pocket surrounds + 3 datum mounting ears
+    // Molded stiffening web ribs & inner aperture strengthening lip
+    const flangeGeo = extrudeHiRes(createFrameShape(44.2, 32.2, 2.4, 41.0, 29.0, 2.2), 0.55, 0.06, 0.06, 2, 18);
+    applyBoxUVs(flangeGeo, 16.0);
+    const innerFlange = new THREE.Mesh(flangeGeo, mats.ultra.sensorMgDieCast);
+    innerFlange.position.z = 1.05;
+    g.add(innerFlange);
+
+    // 4 Cast diagonal stiffening gusset ribs + 4 die-casting ejector-pin boss rings on rear face (-Z)
+    for (const [rx, ry, rot] of [
+      [-24.2, 14.2, -0.52],
+      [24.2, 14.2, 0.52],
+      [-24.2, -14.2, 0.52],
+      [24.2, -14.2, -0.52],
+    ] as Array<[number, number, number]>) {
+      const gusGeo = createChamferedBoxGeo(8.4, 1.35, 0.46, 0.25, 0.05, 'z');
+      applyBoxUVs(gusGeo, 12.0);
+      const gus = new THREE.Mesh(gusGeo, mats.ultra.sensorMgDieCast);
+      gus.position.set(rx, ry, -1.04);
+      gus.rotation.z = rot;
+      g.add(gus);
+
+      const ej = new THREE.Mesh(hiResTorus(0.92, 0.15, 6, 14), mats.titaniumRivet);
+      ej.position.set(rx * 1.05, ry * 0.65, -0.96);
+      ej.userData.noEdges = true;
+      g.add(ej);
+    }
+
+    // 3 CNC stainless tripod datum mounting bushings with hollow alignment bores & gold contact rims
     for (const [ex, ey] of [
       [-28.5, 21.0],
       [28.5, 21.0],
       [0, -24.0],
     ] as Array<[number, number]>) {
       const ear = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.4, 3.6, 2.2, 20).rotateX(Math.PI / 2),
+        hiResCyl(3.4, 3.6, 2.2, 22).rotateX(Math.PI / 2),
         mats.stainlessMachined
       );
       ear.position.set(ex, ey, 0);
-      g.add(ear);
+      const bore = new THREE.Mesh(
+        hiResCyl(1.75, 1.75, 2.3, 16).rotateX(Math.PI / 2),
+        mats.matteBlackAnodized
+      );
+      bore.position.set(ex, ey, 0);
+      bore.userData.noEdges = true;
+      const datumRim = new THREE.Mesh(hiResTorus(2.65, 0.16, 6, 18), mats.goldPlating);
+      datumRim.position.set(ex, ey, 1.12);
+      datumRim.userData.noEdges = true;
+      g.add(ear, bore, datumRim);
     }
 
-    // Precision black LCP cable-routing guide clips molded around perimeter
+    // Molded black GF-PPS cable-routing retention clips with snap-in hook arms
     for (const sx of [-31.4, 31.4]) {
-      const clip = new THREE.Mesh(new THREE.BoxGeometry(1.4, 14.0, 2.1), mats.mountPpsInsulator);
-      clip.position.set(sx, 0, 0.1);
-      g.add(clip);
+      const dir = Math.sign(sx);
+      const clipBody = new THREE.Mesh(
+        createChamferedBoxGeo(1.4, 14.0, 2.1, 0.25, 0.06, 'z'),
+        mats.mountPpsInsulator
+      );
+      clipBody.position.set(sx, 0, 0.1);
+      for (const cy of [-4.5, 4.5]) {
+        const hook = new THREE.Mesh(
+          createChamferedBoxGeo(1.6, 2.2, 0.45, 0.15, 0.03, 'z'),
+          mats.mountPpsInsulator
+        );
+        hook.position.set(sx + dir * 0.65, cy, 0.95);
+        g.add(hook);
+      }
+      g.add(clipBody);
     }
 
     parts.push(
@@ -658,31 +1134,48 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 3 non-reusable stepped precision datum guide shafts arranged in kinematic triangle
+    // 3 non-reusable centerless-ground SUS stepped datum guide shafts with micro-knurled press-fit & blue threadlocker bands
     for (const [sx, sy] of [
       [-24.2, 17.5],
       [24.2, 17.5],
       [0, -19.2],
     ] as Array<[number, number]>) {
-      const shaftBody = new THREE.Mesh(
-        new THREE.CylinderGeometry(1.35, 1.35, 5.4, 18).rotateX(Math.PI / 2),
-        mats.stainlessMachined
-      );
+      const shaftGeo = hiResCyl(1.35, 1.35, 5.4, 20).rotateX(Math.PI / 2);
+      applyBoxUVs(shaftGeo, 6.0);
+      const shaftBody = new THREE.Mesh(shaftGeo, mats.ultra.sensorSusSpringSteel);
       shaftBody.position.set(sx, sy, 0);
 
+      // Stepped titanium thrust flange collar + undercut relief groove
       const stepCollar = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.35, 2.35, 1.15, 20).rotateX(Math.PI / 2),
+        hiResCyl(2.4, 2.4, 1.15, 22).rotateX(Math.PI / 2),
         mats.titaniumRivet
       );
       stepCollar.position.set(sx, sy, -0.6);
 
+      // Blue single-use factory threadlocker / epoxy retention band identifying non-reusable Ref.501 shaft!
+      const lockBand = new THREE.Mesh(
+        hiResCyl(1.42, 1.42, 0.68, 18).rotateX(Math.PI / 2),
+        mats.mountThreadLockBlue
+      );
+      lockBand.position.set(sx, sy, 1.35);
+      lockBand.userData.noEdges = true;
+
+      // Micro-knurled single-use press-fit interference band (3 ribbed rings)
+      for (const kz of [-2.1, -1.7, -1.3]) {
+        const knurl = new THREE.Mesh(hiResTorus(1.38, 0.11, 6, 18), mats.pureIronArmature);
+        knurl.position.set(sx, sy, kz);
+        knurl.userData.noEdges = true;
+        g.add(knurl);
+      }
+
+      // Bullet-nose chamfered pilot lead-in tip
       const tipChamfer = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.85, 1.35, 0.9, 18).rotateX(Math.PI / 2),
+        hiResCyl(0.75, 1.35, 0.95, 20).rotateX(Math.PI / 2),
         mats.pureIronArmature
       );
       tipChamfer.position.set(sx, sy, 3.15);
 
-      g.add(shaftBody, stepCollar, tipChamfer);
+      g.add(shaftBody, stepCollar, lockBand, tipChamfer);
     }
 
     parts.push(
@@ -704,32 +1197,48 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Thin white/ivory self-lubricating POM retainer ring plate connecting 3 ceramic ball pockets
+    // Self-lubricating ivory POM retainer cage with weight-relief cutouts & 3 ball pockets
     const cageShape = createFrameShape(54.0, 41.0, 3.5, 45.0, 32.0, 2.4);
+    const reliefHoles: Array<[number, number, number]> = [
+      [-12.0, 18.2, 1.35],
+      [12.0, 18.2, 1.35],
+      [0.0, -18.2, 1.35],
+      [-24.8, 0.0, 1.35],
+      [24.8, 0.0, 1.35],
+    ];
+    addCircleHoles(cageShape, reliefHoles);
     const cagePlate = new THREE.Mesh(
-      extrudeCentered(cageShape, 0.55, 0.05, 0.05, 22),
+      extrudeHiRes(cageShape, 0.55, 0.05, 0.05, 2, 24),
       mats.pomGear
     );
     g.add(cagePlate);
 
-    // 3 precision ball-holding pocket collars with fluorinated grease micro-grooves
+    // Molded stiffening rim collars around weight-relief cutouts
+    for (const [rx, ry, rr] of reliefHoles) {
+      const rim = new THREE.Mesh(hiResTorus(rr + 0.22, 0.14, 6, 16), mats.pomGear);
+      rim.position.set(rx, ry, 0.28);
+      rim.userData.noEdges = true;
+      g.add(rim);
+    }
+
+    // 3 chamfered ball-holding pocket collars with inner stainless wear liners & dual PFPE grease micro-reservoirs
     for (const [bx, by] of [
       [-23.0, 17.0],
       [23.0, 17.0],
       [-23.0, -17.0],
     ] as Array<[number, number]>) {
-      const pocket = new THREE.Mesh(
-        new THREE.TorusGeometry(2.3, 0.45, 10, 24),
-        mats.pomGear
-      );
+      const pocket = new THREE.Mesh(hiResTorus(2.35, 0.46, 10, 26), mats.pomGear);
       pocket.position.set(bx, by, 0);
-      const greaseRing = new THREE.Mesh(
-        new THREE.TorusGeometry(1.75, 0.16, 8, 20),
-        mats.opticalCementClear
-      );
-      greaseRing.position.set(bx, by, 0.12);
-      greaseRing.userData.noEdges = true;
-      g.add(pocket, greaseRing);
+      const wearLiner = new THREE.Mesh(hiResTorus(1.88, 0.12, 6, 22), mats.stainlessMachined);
+      wearLiner.position.set(bx, by, 0);
+      wearLiner.userData.noEdges = true;
+      const greaseFront = new THREE.Mesh(hiResTorus(1.72, 0.16, 8, 22), mats.opticalCementClear);
+      greaseFront.position.set(bx, by, 0.18);
+      greaseFront.userData.noEdges = true;
+      const greaseRear = new THREE.Mesh(hiResTorus(1.72, 0.16, 8, 22), mats.opticalCementClear);
+      greaseRear.position.set(bx, by, -0.18);
+      greaseRear.userData.noEdges = true;
+      g.add(pocket, wearLiner, greaseFront, greaseRear);
     }
 
     parts.push(
@@ -751,26 +1260,53 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 3 bobbin frames matching Y1 (bottom-left), Y2 (bottom-right), and X1 (right vertical) coils
     const bobbins: Array<{ x: number; y: number; w: number; h: number }> = [
       { x: -16.5, y: -20.5, w: 15.2, h: 6.4 },
       { x: 16.5, y: -20.5, w: 15.2, h: 6.4 },
       { x: 27.6, y: 4.5, w: 6.4, h: 16.2 },
     ];
     for (const b of bobbins) {
-      const bShape = createFrameShape(b.w, b.h, 1.4, b.w - 3.6, b.h - 2.4, 0.6);
-      const frame = new THREE.Mesh(
-        extrudeCentered(bShape, 1.35, 0.06, 0.06, 18),
+      // Inner winding barrel core
+      const coreShape = createFrameShape(b.w - 1.2, b.h - 1.2, 1.0, b.w - 3.6, b.h - 2.4, 0.6);
+      const barrel = new THREE.Mesh(
+        extrudeHiRes(coreShape, 1.35, 0.04, 0.04, 1, 18),
         mats.mountPpsInsulator
       );
-      frame.position.set(b.x, b.y, 0);
-      g.add(frame);
+      barrel.position.set(b.x, b.y, 0);
+      g.add(barrel);
 
-      // Pair of gold-plated lead-out solder termination pins per bobbin
+      // Orthocyclic copper start-wrap collar wound tightly around bobbin barrel
+      const wrapShape = createFrameShape(b.w - 0.55, b.h - 0.55, 1.15, b.w - 1.35, b.h - 1.35, 0.95);
+      const wrapGeo = extrudeHiRes(wrapShape, 0.92, 0.03, 0.03, 1, 16);
+      applyBoxUVs(wrapGeo, 8.0);
+      const startWrap = new THREE.Mesh(wrapGeo, mats.ultra.sensorVcmCopperWinding);
+      startWrap.position.set(b.x, b.y, 0);
+      startWrap.userData.noEdges = true;
+      g.add(startWrap);
+
+      // Front & rear overhanging bobbin winding-retaining flanges!
+      const flangeShape = createFrameShape(b.w + 0.5, b.h + 0.5, 1.4, b.w - 3.4, b.h - 2.2, 0.6);
+      const flangeGeo = extrudeHiRes(flangeShape, 0.20, 0.03, 0.03, 1, 18);
+      for (const fz of [-0.62, 0.62]) {
+        const fl = new THREE.Mesh(flangeGeo, mats.matteBlackAnodized);
+        fl.position.set(b.x, b.y, fz);
+        g.add(fl);
+      }
+
+      // Pair of gold-plated phosphor-bronze wire-wrap solder terminal posts with copper coil wrap collars
       for (const offset of [-1.4, 1.4]) {
-        const pin = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.95, 1.6), mats.goldPlating);
+        const pin = new THREE.Mesh(
+          createChamferedBoxGeo(0.95, 0.95, 1.75, 0.14, 0.04, 'z'),
+          mats.goldPlating
+        );
         pin.position.set(b.x + offset, b.y + b.h / 2 + 0.55, -0.1);
-        g.add(pin);
+        const wrap = new THREE.Mesh(
+          hiResCyl(0.62, 0.62, 0.42, 12).rotateX(Math.PI / 2),
+          mats.ultra.sensorVcmCopperWinding
+        );
+        wrap.position.set(b.x + offset, b.y + b.h / 2 + 0.55, -0.45);
+        wrap.userData.noEdges = true;
+        g.add(pin, wrap);
       }
     }
 
@@ -793,7 +1329,6 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 3 paired N/S sensing target bars + Permalloy U-baffles guarding each Hall sensor
     const targets: Array<{ x: number; y: number; rotZ: number }> = [
       { x: -16.5, y: -15.8, rotZ: 0 },
       { x: 16.5, y: -15.8, rotZ: 0 },
@@ -804,16 +1339,43 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
       sub.position.set(t.x, t.y, 0);
       sub.rotation.z = t.rotZ;
 
-      const poleN = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.8, 0.95), mats.neodymiumMagnet);
-      poleN.position.x = -1.65;
-      const poleS = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.8, 0.95), mats.pureIronArmature);
-      poleS.position.x = 1.65;
+      // Chamfered dual-pole N/S linear-gradient sensing blocks + crisp gold zero-crossing datum seam + N/S laser ticks
+      const poleN = new THREE.Mesh(
+        createChamferedBoxGeo(3.1, 1.8, 0.95, 0.25, 0.08, 'z'),
+        mats.neodymiumMagnet
+      );
+      poleN.position.x = -1.68;
+      const nDot = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.36, 0.08), mats.mountRedIndexDot);
+      nDot.position.set(-1.68, 0.55, 0.49);
+      nDot.userData.noEdges = true;
 
-      // Permalloy cross-talk baffle shielding VCM drive flux away from Hall chip
-      const baffle = new THREE.Mesh(new THREE.BoxGeometry(7.6, 0.42, 1.45), mats.lensPermalloyShield);
-      baffle.position.set(0, -1.25, 0);
+      const poleS = new THREE.Mesh(
+        createChamferedBoxGeo(3.1, 1.8, 0.95, 0.25, 0.08, 'z'),
+        mats.pureIronArmature
+      );
+      poleS.position.x = 1.68;
+      const sDot = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.36, 0.08), mats.mountThreadLockBlue);
+      sDot.position.set(1.68, 0.55, 0.49);
+      sDot.userData.noEdges = true;
 
-      sub.add(poleN, poleS, baffle);
+      const zeroCross = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.75, 0.14), mats.goldPlating);
+      zeroCross.position.set(0, 0, 0.46);
+      zeroCross.userData.noEdges = true;
+
+      // 3-sided U-channel brushed Permalloy cross-talk shielding trough isolating VCM drive flux!
+      const bBackGeo = createChamferedBoxGeo(7.8, 0.42, 1.55, 0.12, 0.04, 'z');
+      applyBoxUVs(bBackGeo, 10.0);
+      const baffleBack = new THREE.Mesh(bBackGeo, mats.ultra.sensorSoftIronYoke);
+      baffleBack.position.set(0, -1.25, 0);
+      for (const sx of [-3.7, 3.7]) {
+        const wingGeo = createChamferedBoxGeo(0.42, 2.2, 1.55, 0.1, 0.04, 'z');
+        applyBoxUVs(wingGeo, 10.0);
+        const wing = new THREE.Mesh(wingGeo, mats.ultra.sensorSoftIronYoke);
+        wing.position.set(sx, -0.35, 0);
+        sub.add(wing);
+      }
+
+      sub.add(poleN, nDot, poleS, sDot, zeroCross, baffleBack);
       g.add(sub);
     }
 
@@ -836,19 +1398,46 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
+    // Anisotropic basal-plane PGS pyrolytic graphite sheet with screw-clearance holes & copper grounding eyelets
     const sheetShape = createRoundedRectShape(48.0, 34.0, 3.0);
-    const sheet = new THREE.Mesh(
-      extrudeCentered(sheetShape, 0.22, 0.02, 0.02, 20),
-      mats.pyroGraphite
+    const holePts: Array<[number, number]> = [
+      [-20.5, 13.5],
+      [20.5, 13.5],
+      [-20.5, -13.5],
+      [20.5, -13.5],
+    ];
+    addCircleHoles(
+      sheetShape,
+      holePts.map(([x, y]) => [x, y, 1.4])
     );
+    const sheetGeo = extrudeHiRes(sheetShape, 0.22, 0.02, 0.02, 1, 22);
+    applyBoxUVs(sheetGeo, 16.0);
+    const sheet = new THREE.Mesh(sheetGeo, mats.ultra.sensorPyroGraphite);
     g.add(sheet);
+
+    for (const [hx, hy] of holePts) {
+      const eyelet = new THREE.Mesh(hiResTorus(1.72, 0.26, 6, 18), mats.copperHeatSpreader);
+      eyelet.position.set(hx, hy, -0.10);
+      eyelet.userData.noEdges = true;
+      g.add(eyelet);
+    }
 
     // Translucent PET dielectric insulation border laminating graphite sheet
     const petFrame = new THREE.Mesh(
-      extrudeCentered(createFrameShape(49.2, 35.2, 3.2, 46.8, 32.8, 2.6), 0.26, 0.02, 0.02, 18),
+      extrudeHiRes(createFrameShape(49.2, 35.2, 3.2, 46.8, 32.8, 2.6), 0.26, 0.02, 0.02, 1, 20),
       mats.mylarInsulatorFilm
     );
     g.add(petFrame);
+
+    // Dual exposed copper-foil thermal-grounding contact strips
+    for (const sy of [-12.5, 12.5]) {
+      const cuTab = new THREE.Mesh(
+        createChamferedBoxGeo(16.0, 2.2, 0.28, 0.3, 0.02, 'z'),
+        mats.copperHeatSpreader
+      );
+      cuTab.position.set(0, sy, -0.04);
+      g.add(cuTab);
+    }
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -869,15 +1458,52 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // L-bent flexible graphite thermal bridge wrapping side flank of anti-shake unit
-    const flankWall = new THREE.Mesh(new THREE.BoxGeometry(0.28, 26.0, 8.2), mats.pyroGraphite);
-    flankWall.position.set(0, 0, 0);
-    const rearTab = new THREE.Mesh(new THREE.BoxGeometry(9.5, 22.0, 0.26), mats.pyroGraphite);
-    rearTab.position.set(-4.6, 0, -4.0);
-    // Copper-foil thermal-contact patch bonding to main magnesium frame
-    const cuPatch = new THREE.Mesh(new THREE.BoxGeometry(0.32, 18.0, 5.6), mats.thermalTransferTape);
-    cuPatch.position.set(0.12, 0, 0.5);
-    g.add(flankWall, rearTab, cuPatch);
+    // Smooth radiused L-bent anisotropic PGS graphite thermal bridge
+    const bendGeo = buildFlatRibbonExtrude(
+      [
+        [0.0, 4.1],
+        [0.0, -2.8],
+        [-0.8, -3.9],
+        [-2.2, -4.0],
+        [-9.4, -4.0],
+      ],
+      0.26,
+      25.6,
+      'xz'
+    );
+    applyBoxUVs(bendGeo, 14.0);
+    g.add(new THREE.Mesh(bendGeo, mats.ultra.sensorPyroGraphite));
+
+    // Laminated PET dielectric edge-sealing strips along top & bottom edges of L-bent bridge
+    for (const sy of [-12.9, 12.9]) {
+      const petEdge = new THREE.Mesh(
+        createChamferedBoxGeo(9.4, 0.45, 0.34, 0.08, 0.02, 'z'),
+        mats.mylarInsulatorFilm
+      );
+      petEdge.position.set(-4.7, sy, -4.0);
+      petEdge.userData.noEdges = true;
+      g.add(petEdge);
+    }
+
+    // Flex-relief transverse stress slits along bend radius + stepped copper-foil contact patch with gold eyelets
+    for (const sy of [-7.0, 0.0, 7.0]) {
+      const slit = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.45, 0.55), mats.matteBlackAnodized);
+      slit.position.set(-0.6, sy, -3.7);
+      slit.userData.noEdges = true;
+      g.add(slit);
+    }
+    const cuPatch = new THREE.Mesh(
+      createChamferedBoxGeo(0.32, 18.0, 5.6, 0.3, 0.02, 'z'),
+      mats.copperHeatSpreader
+    );
+    cuPatch.position.set(0.18, 0, 0.8);
+    g.add(cuPatch);
+    for (const ey of [-6.5, 6.5]) {
+      const eye = new THREE.Mesh(hiResTorus(0.75, 0.16, 6, 14).rotateY(Math.PI / 2), mats.goldPlating);
+      eye.position.set(0.36, ey, 0.8);
+      eye.userData.noEdges = true;
+      g.add(eye);
+    }
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -898,26 +1524,47 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // 1. Aluminum top heat plate (Ref.453)
-    const alPlate = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(46.0, 9.6, 1.8), 0.9, 0.08, 0.08, 16).rotateX(Math.PI / 2),
-      mats.stainlessMachined
-    );
+    // 1. Stamped brushed steel/aluminum top heat plate (Ref.453) with mounting ears, stiffening bead & M1.4 screws
+    const alShape = createRoundedRectShape(46.0, 9.6, 1.8);
+    addCircleHoles(alShape, [
+      [-19.8, 0, 1.1],
+      [19.8, 0, 1.1],
+    ]);
+    const alGeo = extrudeHiRes(alShape, 0.9, 0.08, 0.08, 2, 18).rotateX(Math.PI / 2);
+    applyBoxUVs(alGeo, 14.0);
+    const alPlate = new THREE.Mesh(alGeo, mats.ultra.sensorSusSpringSteel);
     g.add(alPlate);
 
-    // 2. Top graphite spreading sheet bonded to upper surface (Ref.454)
-    const topGraphite = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(43.5, 8.2, 1.2), 0.24, 0.02, 0.02, 14).rotateX(Math.PI / 2),
-      mats.pyroGraphite
+    const stiffBead = new THREE.Mesh(
+      createChamferedBoxGeo(30.0, 0.26, 1.4, 0.3, 0.04, 'z'),
+      mats.stainlessMachined
     );
-    topGraphite.position.y = 0.62;
+    stiffBead.position.set(0, 0.56, 3.6);
+    stiffBead.userData.noEdges = true;
+    g.add(stiffBead);
+
+    for (const sx of [-19.8, 19.8]) {
+      const sc = createPrecisionScrew(1.35, 0.42, 1.4, mats.stainlessMachined);
+      sc.rotation.x = Math.PI / 2;
+      sc.position.set(sx, 0.56, 0);
+      g.add(sc);
+    }
+
+    // 2. Top anisotropic PGS graphite spreading sheet bonded to upper surface (Ref.454)
+    const grGeo = extrudeHiRes(createRoundedRectShape(34.5, 8.2, 1.2), 0.24, 0.02, 0.02, 1, 16).rotateX(
+      Math.PI / 2
+    );
+    applyBoxUVs(grGeo, 14.0);
+    const topGraphite = new THREE.Mesh(grGeo, mats.ultra.sensorPyroGraphite);
+    topGraphite.position.y = 0.60;
     g.add(topGraphite);
 
-    // 3. Precision clearance spacer strip underneath (Ref.470)
-    const topSpacer = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(38.0, 6.0, 0.8), 0.55, 0.04, 0.04, 12).rotateX(Math.PI / 2),
-      mats.thermalPadBlue
+    // 3. Precision diamond-waffle embossed thermal clearance gap-pad spacer underneath (Ref.470)
+    const spacerGeo = extrudeHiRes(createRoundedRectShape(36.0, 6.0, 0.8), 0.55, 0.05, 0.05, 2, 14).rotateX(
+      Math.PI / 2
     );
+    applyBoxUVs(spacerGeo, 10.0);
+    const topSpacer = new THREE.Mesh(spacerGeo, mats.ultra.sensorTimSiliconeWaffle);
     topSpacer.position.y = -0.74;
     g.add(topSpacer);
 
@@ -948,10 +1595,31 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
       [-26.5, -19.5],
       [26.5, -19.5],
     ] as Array<[number, number]>) {
-      const scr = createPrecisionScrew(1.35, 0.52, 2.6, mats.stainlessMachined);
+      // Authentic tri-lobular Reuleaux thread-rolling shank + washer-faced pan head + Phillips #0 recess + blue nylon lock patch
+      const scr = buildTrilobularNewTrusterScrew(
+        1.42,
+        0.56,
+        0.85,
+        2.6,
+        mats.stainlessMachined,
+        mats.matteBlackAnodized,
+        mats.titaniumRivet
+      );
       scr.position.set(sx, sy, 0);
-      scr.rotation.x = Math.PI; // Rearward insertion into anti-shake plate
-      g.add(scr);
+      scr.rotation.x += Math.PI; // Rearward insertion into anti-shake plate
+
+      const lockPatch = new THREE.Mesh(
+        hiResCyl(0.92, 0.92, 0.65, 12).rotateX(Math.PI / 2),
+        mats.mountThreadLockBlue
+      );
+      lockPatch.position.set(sx, sy, 1.55);
+      lockPatch.userData.noEdges = true;
+
+      const serrationRing = new THREE.Mesh(hiResTorus(1.48, 0.14, 6, 16), mats.titaniumRivet);
+      serrationRing.position.set(sx, sy, -0.05);
+      serrationRing.userData.noEdges = true;
+
+      g.add(scr, lockPatch, serrationRing);
     }
 
     parts.push(
@@ -973,33 +1641,53 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Whisper-soft S-folded gold-plated CuBe2 grounding leaf bridging ceramic-isolated stage to GND
-    const pts = [
-      new THREE.Vector3(0, 0, 1.4),
-      new THREE.Vector3(-2.6, 2.2, 0.5),
-      new THREE.Vector3(1.2, 4.6, -0.4),
-      new THREE.Vector3(-2.2, 7.2, -1.2),
-      new THREE.Vector3(0.4, 9.6, -2.0),
-    ];
-    const leafCurve = new THREE.CatmullRomCurve3(pts);
-    const leafMesh = new THREE.Mesh(
-      new THREE.TubeGeometry(leafCurve, 28, 0.38, 6, false),
-      mats.beCuSpring
+    // True flat rectangular-ribbon S-folded gold-plated CuBe2 grounding leaf spring!
+    const leafGeo = buildFlatRibbonExtrude(
+      [
+        [0.0, 0.0],
+        [-2.6, 2.2],
+        [1.2, 4.6],
+        [-2.2, 7.2],
+        [0.4, 9.6],
+      ],
+      0.24,
+      1.85,
+      'xy'
     );
-    leafMesh.scale.set(1.8, 1.0, 0.25);
+    const leafMesh = new THREE.Mesh(leafGeo, mats.beCuSpring);
+    leafMesh.rotation.y = 0.24;
+    leafMesh.position.z = -0.3;
     g.add(leafMesh);
 
-    // End mounting eyelets with gold contact pads
-    for (const [ex, ey, ez] of [
-      [0, 0, 1.4],
-      [0.4, 9.6, -2.0],
+    // Twin raised gold ESD contact dimple domes stamped into S-fold crowns
+    for (const [dx, dy, dz] of [
+      [-1.8, 2.3, 0.15],
+      [0.8, 4.7, -0.55],
     ] as Array<[number, number, number]>) {
-      const eye = new THREE.Mesh(
-        new THREE.TorusGeometry(1.1, 0.32, 8, 18),
-        mats.goldPlating
-      );
+      const dome = new THREE.Mesh(hiResSphere(0.38, 10, 8), mats.goldPlating);
+      dome.scale.set(1.0, 1.0, 0.55);
+      dome.position.set(dx, dy, dz);
+      dome.userData.noEdges = true;
+      g.add(dome);
+    }
+
+    // Stamped gold mounting eyelets with flanged micro-rivets & star grounding lock washers at both terminals
+    for (const [ex, ey, ez] of [
+      [0, 0, 1.1],
+      [0.4, 9.6, -1.7],
+    ] as Array<[number, number, number]>) {
+      const eye = new THREE.Mesh(hiResTorus(1.1, 0.32, 8, 20), mats.goldPlating);
       eye.position.set(ex, ey, ez);
-      g.add(eye);
+      const starWsh = new THREE.Mesh(hiResTorus(1.42, 0.14, 6, 12), mats.stainlessMachined);
+      starWsh.position.set(ex, ey, ez - 0.18);
+      starWsh.userData.noEdges = true;
+      const rivet = new THREE.Mesh(
+        hiResCyl(0.58, 0.58, 0.45, 14).rotateX(Math.PI / 2),
+        mats.titaniumRivet
+      );
+      rivet.position.set(ex, ey, ez);
+      rivet.userData.noEdges = true;
+      g.add(eye, starWsh, rivet);
     }
 
     parts.push(
@@ -1021,34 +1709,59 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Laser-etched aluminum/polyimide calibration tag carrier
-    const plate = new THREE.Mesh(
-      extrudeCentered(createRoundedRectShape(8.4, 8.4, 0.7), 0.32, 0.04, 0.04, 12),
-      mats.ceramicAlumina
-    );
+    // Chamfered laser-etched ceramic/anodized calibration plate with brushed stainless perimeter bezel & 2 micro-rivets!
+    const plateGeo = extrudeHiRes(createRoundedRectShape(11.4, 7.6, 0.65), 0.34, 0.04, 0.04, 2, 16);
+    const plate = new THREE.Mesh(plateGeo, mats.matteBlackAnodized);
     g.add(plate);
 
-    // Crisp 2D DataMatrix / QR finder-pattern tiles in matte black
-    const qrCells: Array<[number, number, number, number]> = [
-      [-2.4, 2.4, 1.8, 1.8],
-      [2.4, 2.4, 1.8, 1.8],
-      [-2.4, -2.4, 1.8, 1.8],
-      [0.0, 2.4, 0.9, 0.9],
-      [-0.8, 0.0, 0.9, 1.8],
-      [1.0, 0.4, 1.6, 0.9],
-      [0.6, -1.6, 0.9, 1.8],
-      [2.4, -1.8, 1.2, 1.2],
-      [-2.2, 0.2, 1.1, 0.9],
-    ];
-    for (const [qx, qy, qw, qh] of qrCells) {
-      const cell = new THREE.Mesh(
-        new THREE.BoxGeometry(qw, qh, 0.08),
-        mats.matteBlackAnodized
+    const bezelGeo = extrudeHiRes(
+      createFrameShape(11.8, 8.0, 0.72, 10.8, 7.0, 0.52),
+      0.38,
+      0.03,
+      0.03,
+      2,
+      16
+    );
+    applyBoxUVs(bezelGeo, 10.0);
+    const retainerBezel = new THREE.Mesh(bezelGeo, mats.ultra.sensorSusSpringSteel);
+    g.add(retainerBezel);
+
+    for (const [rx, ry] of [
+      [-5.1, 3.2],
+      [5.1, -3.2],
+    ] as Array<[number, number]>) {
+      const mRiv = new THREE.Mesh(
+        hiResCyl(0.32, 0.32, 0.46, 10).rotateX(Math.PI / 2),
+        mats.titaniumRivet
       );
-      cell.position.set(qx, qy, -0.18);
-      cell.userData.noEdges = true;
-      g.add(cell);
+      mRiv.position.set(rx, ry, 0);
+      mRiv.userData.noEdges = true;
+      g.add(mRiv);
     }
+
+    // High-DPI laser-etched DataMatrix & serial decal (P/N: A-5039-877-A · ILCE-7M4 33M) on both rear (-Z) and front (+Z) faces
+    const rearLabelGeo = markHiRes(new THREE.PlaneGeometry(10.6, 6.8));
+    applyPlanarUVs(rearLabelGeo, 10.6, 6.8, 'xy');
+    const rearLabel = new THREE.Mesh(rearLabelGeo, mats.ultra.sensorDraQrPlate);
+    rearLabel.rotation.y = Math.PI;
+    rearLabel.position.z = -0.20;
+    rearLabel.userData.noEdges = true;
+
+    const frontLabelGeo = markHiRes(new THREE.PlaneGeometry(10.6, 6.8));
+    applyPlanarUVs(frontLabelGeo, 10.6, 6.8, 'xy');
+    const frontLabel = new THREE.Mesh(frontLabelGeo, mats.ultra.sensorDraQrPlate);
+    frontLabel.position.z = 0.20;
+    frontLabel.userData.noEdges = true;
+
+    // Micro PSA acrylic adhesive mounting strip peeking cleanly at edge
+    const psaBacking = new THREE.Mesh(
+      createChamferedBoxGeo(11.0, 7.2, 0.08, 0.5, 0.02, 'z'),
+      mats.mylarInsulatorFilm
+    );
+    psaBacking.position.z = 0.14;
+    psaBacking.userData.noEdges = true;
+
+    g.add(rearLabel, frontLabel, psaBacking);
 
     parts.push(
       finalizeStandaloneSensorMicroPart(
@@ -1069,28 +1782,76 @@ export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[] {
   // =========================================================================
   {
     const g = new THREE.Group();
-    // Non-magnetic nickel-silver RF shield lid covering SLVS-EC serializer & PLL on sensor PCB rear
-    const canOuter = createRoundedRectShape(34.0, 22.0, 2.0);
-    const lid = new THREE.Mesh(
-      extrudeCentered(canOuter, 0.24, 0.04, 0.04, 18),
-      mats.emiShieldCan
-    );
+    // Stamped C7521 nickel-silver 2-piece RF shield lid with bespoke Sony part markings, micro-vents & embossed X-ribs
+    const lidShape = createRoundedRectShape(34.0, 22.0, 2.0);
+    addCircleHoles(lidShape, [
+      [-11.5, 6.8, 0.95],
+      [11.5, 6.8, 0.95],
+      [-11.5, -6.8, 0.95],
+      [11.5, -6.8, 0.95],
+    ]);
+    const lidGeo = extrudeHiRes(lidShape, 0.24, 0.04, 0.04, 2, 20);
+    applyPlanarUVs(lidGeo, 34.0, 22.0, 'xy-back');
+    const lid = new THREE.Mesh(lidGeo, mats.ultra.sensorEmiShieldNickel);
     lid.position.z = -0.55;
     g.add(lid);
 
-    // Raised perimeter skirt wall with EMI clip notches
+    // Embossed solid brushed-metal diagonal stiffening X-ribs on lid exterior (-Z, staggered 0.02mm to avoid center Z-fighting)
+    const xRibSpecs: Array<[number, number]> = [
+      [0.54, -0.70],
+      [-0.54, -0.72],
+    ];
+    for (const [ang, rz] of xRibSpecs) {
+      const ribGeo = createChamferedBoxGeo(22.0, 1.35, 0.16, 0.3, 0.03, 'z');
+      applyBoxUVs(ribGeo, 14.0);
+      const xRib = new THREE.Mesh(ribGeo, mats.ultra.sensorSusSpringSteel);
+      xRib.position.z = rz;
+      xRib.rotation.z = ang;
+      xRib.userData.noEdges = true;
+      g.add(xRib);
+    }
+
+    // Raised perimeter skirt wall with snap-in EMI clip detent dimples & 12 bent perimeter grounding spring fingers
     const skirtShape = createFrameShape(34.0, 22.0, 2.0, 32.8, 20.8, 1.4);
-    const skirt = new THREE.Mesh(
-      extrudeCentered(skirtShape, 1.1, 0.04, 0.04, 18),
-      mats.emiShieldCan
-    );
+    const skirtGeo = extrudeHiRes(skirtShape, 1.1, 0.04, 0.04, 2, 20);
+    applyBoxUVs(skirtGeo, 18.0);
+    const skirt = new THREE.Mesh(skirtGeo, mats.ultra.sensorSusSpringSteel);
     g.add(skirt);
 
-    // Conductive sponge grounding gasket around bottom perimeter
+    for (const dx of [-10.0, 0.0, 10.0]) {
+      for (const sy of [-11.02, 11.02]) {
+        const detent = new THREE.Mesh(hiResSphere(0.32, 8, 6), mats.stainlessMachined);
+        detent.scale.set(1.6, 0.5, 1.0);
+        detent.position.set(dx, sy, 0.12);
+        detent.userData.noEdges = true;
+        const finger = new THREE.Mesh(
+          createChamferedBoxGeo(1.8, 0.28, 0.58, 0.08, 0.02, 'z'),
+          mats.ultra.sensorSusSpringSteel
+        );
+        finger.position.set(dx + 3.2, sy + Math.sign(sy) * 0.12, 0.42);
+        finger.rotation.x = -Math.sign(sy) * 0.28;
+        finger.userData.noEdges = true;
+        g.add(detent, finger);
+      }
+    }
+    for (const dy of [-5.2, 5.2]) {
+      for (const sx of [-17.02, 17.02]) {
+        const sideFinger = new THREE.Mesh(
+          createChamferedBoxGeo(0.28, 1.8, 0.58, 0.08, 0.02, 'z'),
+          mats.ultra.sensorSusSpringSteel
+        );
+        sideFinger.position.set(sx + Math.sign(sx) * 0.12, dy, 0.42);
+        sideFinger.rotation.y = Math.sign(sx) * 0.28;
+        sideFinger.userData.noEdges = true;
+        g.add(sideFinger);
+      }
+    }
+
+    // Conductive Ni-Cu fabric-over-foam grounding gasket around bottom perimeter
     const gasketShape = createFrameShape(33.4, 21.4, 1.6, 32.0, 20.0, 1.2);
     const gasket = new THREE.Mesh(
-      extrudeCentered(gasketShape, 0.35, 0.03, 0.03, 16),
-      mats.emiShieldFilm
+      extrudeHiRes(gasketShape, 0.38, 0.04, 0.04, 1, 18),
+      mats.conductiveNiCuFoam
     );
     gasket.position.z = 0.65;
     g.add(gasket);
