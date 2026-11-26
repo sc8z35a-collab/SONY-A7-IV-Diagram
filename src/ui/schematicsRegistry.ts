@@ -33,6 +33,8 @@ import { renderPhase29PixelV2DeepSchematicSvg } from './phase29PixelV2DeepSchema
 import { renderPhase29BionzV2DeepSchematicSvg } from './phase29BionzV2DeepSchematics';
 import { renderPhase30BatteryUltraSchematicSvg } from './phase30BatteryUltraSchematics';
 import { renderPhase30MicUltraSchematicSvg } from './phase30MicUltraSchematics';
+import { renderPhase31BatteryUltraSchematicSvg } from './phase31BatteryUltraSchematics';
+import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
@@ -145,6 +147,12 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const phase30MicUltraSvg = renderPhase30MicUltraSchematicSvg(type);
   if (phase30MicUltraSvg) return phase30MicUltraSvg;
+
+  const phase31BatteryUltraSvg = renderPhase31BatteryUltraSchematicSvg(type);
+  if (phase31BatteryUltraSvg) return phase31BatteryUltraSvg;
+
+  const phase31MicUltraSvg = renderPhase31MicUltraSchematicSvg(type);
+  if (phase31MicUltraSvg) return phase31MicUltraSvg;
 
   const phase30SensorFabSvg = renderPhase30SensorFabSchematicSvg(type);
   if (phase30SensorFabSvg) return phase30SensorFabSvg;

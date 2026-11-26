@@ -1229,8 +1229,8 @@ export class CadViewport {
       d = 168 + e * 475;
       target = new THREE.Vector3(10.0 * e, -2.0, -4.0 - e * 46.0);
     } else if (this.mode === 'battery') {
-      d = 104 + e * 412;
-      target = new THREE.Vector3(e * 4.0, e * 4.0, e * 3.0);
+      d = 104 + e * 492;
+      target = new THREE.Vector3(e * 4.0, e * -16.0, e * 2.0);
     } else if (this.mode === 'cfexpress') {
       d = 136 + e * 475;
       target = new THREE.Vector3(0.0, -0.8 + e * 1.5, e * 4.0);
@@ -1247,8 +1247,8 @@ export class CadViewport {
       d = 114 + e * 165;
       target = new THREE.Vector3(0, -1.5 - e * 2.5, 2.5 + e * 4.0);
     } else if (this.mode === 'mic') {
-      d = 94 + e * 235;
-      target = new THREE.Vector3(0, 1.5 - e * 2.0, 0.5 + e * 2.0);
+      d = 94 + e * 278;
+      target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
       if (this.sensorFabVolume === 2) {
         d = 228 + e * 228;

@@ -1,15 +1,15 @@
 # Next-Gen Flagship Full-Frame Mirrorless Camera — Complete 3D CAD Technical Anatomy
 
 Interactive photorealistic PBR 3D CAD disassembly and optical/electromechanical/semiconductor anatomy viewer built with Three.js, TypeScript, and Vite.
-Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,310 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
+Pure solid white (`#FFFFFF`) background with a clean SVG icon HUD plus a dedicated 「センサー製造工程」 mode button; beginner-friendly technical explanations ("やさしい解説"), physics equations, and 1,370 bespoke technical SVG schematics appear exclusively inside the part inspection drawer.
 
 Live GitHub Pages: https://sc8z35a-collab.github.io/SONY-A7-IV-Diagram/
 
-## Complete Camera Assembly (1,310 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 1,005 Standalone-Only Micro/Ultra/Fab)
+## Complete Camera Assembly (1,370 Dissectible CAD Sub-Assemblies across 17 Modes: 305 Macro + 1,065 Standalone-Only Micro/Ultra/Fab)
 
-### Phase 32 — 「センサー製造工程」 Vol.2: フェーズ1 砂（珪石）から超純度エピタキシャルウェーハまで (+36 Parts → 1,310 Total across 17 Modes!)
+### Phase 32 — 「センサー製造工程」 Vol.2: フェーズ1 砂（珪石）から超純度エピタキシャルウェーハまで (+36 Parts → 1,370 Total across 17 Modes!)
 Based exhaustively on **第2巻：フェーズ1 ── 砂（珪石）から超純度エピタキシャルウェーハまで（P01-001〜060）** (`02_フェーズ01_砂から超純度エピタキシャルウェーハまで.md`), extending the multi-volume GPU-isolated `sensor_fab` architecture (`fabVolume: 0 | 1 | 2`) with a unified top-center Volume + Stage switcher (`第0巻 総目次` / `第1巻 超入門` / `第2巻 砂→ウェーハ` + 5 Vol.2 stage focus presets):
-- **4 Bespoke Vol.2 Procedural PBR Textures (`UltraRealisticTextures.ts` & `GpuMegaBatch.ts`)**: 7-Block Industrial & Cleanroom Plant Deck (`fab2Phase1PlantDeck`), MCZ `V/G` Defect-Free Crystal Ingot Striation Map (`fab2IngotVgCrystalMap`), KLA Surfscan SP `19–30 nm` LPD Defect Map (`fab2LpdDefectMap`), and KLA WaferSight Fizeau Nanotopography + FTIR Epi Map (`fab2NanotopoMap`), with WebGL2 `Texture2DArray` atlas expanded to `HI_TEX_MAX_LAYERS: 136`, `TILE_TEX_MAX_LAYERS: 72`.
+- **4 Bespoke Vol.2 Procedural PBR Textures (`UltraRealisticTextures.ts` & `GpuMegaBatch.ts`)**: 7-Block Industrial & Cleanroom Plant Deck (`fab2Phase1PlantDeck`), MCZ `V/G` Defect-Free Crystal Ingot Striation Map (`fab2IngotVgCrystalMap`), KLA Surfscan SP `19–30 nm` LPD Defect Map (`fab2LpdDefectMap`), and KLA WaferSight Fizeau Nanotopography + FTIR Epi Map (`fab2NanotopoMap`), with WebGL2 `Texture2DArray` atlas expanded to `HI_TEX_MAX_LAYERS: 152`, `TILE_TEX_MAX_LAYERS: 84`.
 - **36 Museum-Grade 3D CAD Sculptures covering 100% of All 60 Steps (`P01-001`–`P01-060`, `F2-01`–`F2-36`)**:
   - **Hero & Master Deck (`F2-01`–`F2-02`)**: `11N` Purity (`99.999999999%`, Tokyo Dome ×4 analogy) & `Ra < 0.1 nm` (Japan 3,000km vs. 1mm coin) Hero Mirror Monument + 7-Block S-Curve Plant Floor & Lower Metrology Bay.
   - **Block 1-A (`F2-03`–`F2-06`, `P01-001`–`008`)**: High-Purity Quartzite Mining & Magnetic Beneficiation (`SiO₂ ≥ 99%`), Low-Ash Carbon Reductant Blending (`11–13 MWh/t`), `2,000 °C` 3-Phase Submerged Arc Furnace (`SiO₂ + 2C → Si + 2CO↑`), and `1,500 °C` MG-Si Tapping, Ladle Refining (`98.5–99.2%`) & `50–500 µm` Grinding.
