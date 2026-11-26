@@ -119,7 +119,7 @@ export const LCD_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   'lcd-swivel-hinge': {
-    title: 'D05. 横開き176°／回転270° バリアングル2軸フリクションヒンジ＆同軸配線',
+    title: 'D07. 横開き176°／回転270° バリアングル2軸フリクションヒンジ＆同軸配線',
     subtitle: 'Dual-Axis 176° Open / 270° Swivel Friction Hinge & Coiled Display FPC',
     category: 'バリアングル2軸関節 / Swivel Hinge',
     plainAnalogy:
@@ -137,7 +137,7 @@ export const LCD_EXPLANATIONS: Record<string, PartExplanation> = {
         '多板皿ばね摩擦ヒンジの保持トルク条件。モニター自重モーメントと加速度振動に対して余裕ある静止摩擦を確保します。',
     },
     nextGenInnovation:
-      '従来のバリアングル機は左側I/Oケーブル（HDMI/USB-C）と画面が干渉する弱点がありましたが、次のD06「4軸チルトクレードル」と組み合わせることでケーブル干渉を完全に回避できます。',
+      '従来のバリアングル機は左側I/Oケーブル（HDMI/USB-C）と画面が干渉する弱点がありましたが、D14「4軸チルトクレードル」と組み合わせることでケーブル干渉を完全に回避できます。',
     specs: [
       { label: '可動範囲', value: '横開き 176° ／ 上下回転 270°（対面自撮り可）' },
       { label: 'トルク制御', value: '多板ステンレス皿ばねフリクション機構' },
@@ -148,7 +148,7 @@ export const LCD_EXPLANATIONS: Record<string, PartExplanation> = {
   },
 
   'lcd-4axis-tilt-frame': {
-    title: 'D06. 4軸マルチアングル 光軸チルトクレードル＆ダブルリンク機構',
+    title: 'D14. 4軸マルチアングル 光軸チルトクレードル＆ダブルリンク機構',
     subtitle: '4-Axis Multi-Angle Optical-Axis Dual-Link Tilt Cradle Frame',
     category: '4軸チルト基盤 / 4-Axis Tilt Cradle',
     plainAnalogy:

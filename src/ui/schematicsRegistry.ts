@@ -44,6 +44,7 @@ import { renderPhase33SensorFabVol3SchematicSvg } from './fabVol3HdSchematics';
 import { renderPhase34SensorFabVol4SchematicSvg } from './fabVol4HdSchematics';
 import { renderPhase35SensorFabVol5SchematicSvg } from './fabVol5HdSchematics';
 import { renderEvfHdSchematicSvg } from './evfHdSchematics';
+import { renderLcdHdSchematicSvg } from './lcdHdSchematics';
 import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchematicsA';
 import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
 import { renderPhase32SensorUltraSchematicC } from './phase32SensorUltraSchematicsC';
@@ -69,6 +70,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const evfHdSvg = renderEvfHdSchematicSvg(type);
   if (evfHdSvg) return evfHdSvg;
+
+  const lcdHdSvg = renderLcdHdSchematicSvg(type);
+  if (lcdHdSvg) return lcdHdSvg;
 
   const phase33SensorFabVol3Svg = renderPhase33SensorFabVol3SchematicSvg(type);
   if (phase33SensorFabVol3Svg) return phase33SensorFabVol3Svg;

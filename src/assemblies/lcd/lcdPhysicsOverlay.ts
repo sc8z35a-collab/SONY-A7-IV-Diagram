@@ -157,7 +157,7 @@ export function createLcdPhysicsOverlay(
     explodeGuides.add(line);
     guideLines.push(line);
   }
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 60);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 192);
   explodeGuides.add(radialGuides.group);
 
   let cachedPartsLen = -1;
