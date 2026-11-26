@@ -1,6 +1,6 @@
 /**
  * Ultra-HD 720x470 Museum-Poster Vector Infographic Framework
- * for all 44 2026 Flagship Electronic Camera Dry Cabinet parts (DB01–DB44).
+ * for all 90 2026 Flagship Electronic Camera Dry Cabinet parts (DB01–DB90).
  *
  * Emits `class="evf-hd-svg" data-drybox-hd="1"` so ExplanationDrawer automatically upgrades
  * styling (.is-hd-schematic) and enables click-to-zoom Fullscreen Vector Lightbox!
@@ -14,7 +14,7 @@ export interface DryboxHdCard {
 }
 
 export interface DryboxHdSpec {
-  /** Badge e.g. 'DB01'..'DB44' (also unique <defs> ID prefix) */
+  /** Badge e.g. 'DB01'..'DB90' (also unique <defs> ID prefix) */
   badge: string;
   /** Top-right tag pill, e.g. '2026年最新仕様 / A6063-T5' */
   stepTag: string;

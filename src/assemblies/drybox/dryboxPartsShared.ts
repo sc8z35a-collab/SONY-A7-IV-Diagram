@@ -63,6 +63,18 @@ export interface DryboxPalette {
   carbonPelletDark: THREE.MeshStandardMaterial;
   hepaWhitePleat: THREE.MeshStandardMaterial;
   whiteTeleLens: THREE.MeshPhysicalMaterial;
+  pa66ThermalBreak: THREE.MeshStandardMaterial;
+  glazingEpdmMatte: THREE.MeshStandardMaterial;
+  brassPrecision: THREE.MeshPhysicalMaterial;
+  sintered316L: THREE.MeshStandardMaterial;
+  butylCldFoil: THREE.MeshPhysicalMaterial;
+  ptfeCleanWhite: THREE.MeshStandardMaterial;
+  kaptonAmberFilm: THREE.MeshPhysicalMaterial;
+  aluminaCeramic: THREE.MeshStandardMaterial;
+  copperIonTeal: THREE.MeshStandardMaterial;
+  rubyThermalFuse: THREE.MeshPhysicalMaterial;
+  pcbEmeraldDark: THREE.MeshStandardMaterial;
+  ferritic430Steel: THREE.MeshPhysicalMaterial;
 }
 
 export function createDryboxPalette(cp: THREE.Plane[]): DryboxPalette {
@@ -216,6 +228,85 @@ export function createDryboxPalette(cp: THREE.Plane[]): DryboxPalette {
       metalness: 0.14,
       roughness: 0.32,
       clearcoat: 0.45,
+      clippingPlanes: cp,
+    }),
+    pa66ThermalBreak: new THREE.MeshStandardMaterial({
+      color: 0x475569,
+      metalness: 0.06,
+      roughness: 0.72,
+      clippingPlanes: cp,
+    }),
+    glazingEpdmMatte: new THREE.MeshStandardMaterial({
+      color: 0x111827,
+      metalness: 0.03,
+      roughness: 0.85,
+      clippingPlanes: cp,
+    }),
+    brassPrecision: new THREE.MeshPhysicalMaterial({
+      color: 0xd4a137,
+      metalness: 0.88,
+      roughness: 0.24,
+      clearcoat: 0.25,
+      clippingPlanes: cp,
+    }),
+    sintered316L: new THREE.MeshStandardMaterial({
+      color: 0x9ca3af,
+      metalness: 0.72,
+      roughness: 0.68,
+      clippingPlanes: cp,
+    }),
+    butylCldFoil: new THREE.MeshPhysicalMaterial({
+      color: 0xcbd5e1,
+      metalness: 0.86,
+      roughness: 0.32,
+      clearcoat: 0.2,
+      clippingPlanes: cp,
+    }),
+    ptfeCleanWhite: new THREE.MeshStandardMaterial({
+      color: 0xf8fafc,
+      metalness: 0.02,
+      roughness: 0.36,
+      clippingPlanes: cp,
+    }),
+    kaptonAmberFilm: new THREE.MeshPhysicalMaterial({
+      color: 0xd97706,
+      metalness: 0.14,
+      roughness: 0.22,
+      transparent: true,
+      opacity: 0.84,
+      clearcoat: 0.7,
+      clippingPlanes: cp,
+    }),
+    aluminaCeramic: new THREE.MeshStandardMaterial({
+      color: 0xf3f0e8,
+      metalness: 0.04,
+      roughness: 0.58,
+      clippingPlanes: cp,
+    }),
+    copperIonTeal: new THREE.MeshStandardMaterial({
+      color: 0x0f766e,
+      metalness: 0.14,
+      roughness: 0.78,
+      clippingPlanes: cp,
+    }),
+    rubyThermalFuse: new THREE.MeshPhysicalMaterial({
+      color: 0xe11d48,
+      metalness: 0.18,
+      roughness: 0.28,
+      clearcoat: 0.55,
+      clippingPlanes: cp,
+    }),
+    pcbEmeraldDark: new THREE.MeshStandardMaterial({
+      color: 0x065f46,
+      metalness: 0.12,
+      roughness: 0.42,
+      clippingPlanes: cp,
+    }),
+    ferritic430Steel: new THREE.MeshPhysicalMaterial({
+      color: 0xa8b2be,
+      metalness: 0.88,
+      roughness: 0.28,
+      clearcoat: 0.2,
       clippingPlanes: cp,
     }),
   };
