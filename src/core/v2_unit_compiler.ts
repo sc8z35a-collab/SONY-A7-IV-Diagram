@@ -4,7 +4,9 @@ import { CadPart, PartExplanation, RenderMode } from '../assemblies/types';
 import { disposeObject3D } from './dispose';
 import { setActiveBuildQuality } from './geometry_quality';
 import {
+  getCadTintLuma,
   HeroMaterialSpec,
+  liftDarkCadTint,
   MaterialBucketKey,
   QUALITY_TIER_CONFIG,
   ResourceCache,
@@ -103,6 +105,7 @@ interface BatchedEdgePartSpan {
   readonly vertexOffset: number;
   readonly vertexCount: number;
   readonly edgeOpacity: number;
+  readonly darkBase: boolean;
 }
 
 interface BatchedEdgeBundle {
@@ -357,12 +360,12 @@ function classifyMaterialFallback(mat: THREE.Material | null | undefined): {
   if (tag) {
     return {
       bucket: tag.bucket,
-      tint: tag.tint,
+      tint: tag.heroKey ? tag.tint : liftDarkCadTint(tag.tint),
       heroKey: tag.heroKey,
       heroSpec: tag.heroSpec,
     };
   }
-  const tint = extractColorFromMaterial(mat);
+  const tint = liftDarkCadTint(extractColorFromMaterial(mat));
   if (mat && mat.transparent) {
     return { bucket: 'optical_glass_clear', tint };
   }
@@ -1022,14 +1025,22 @@ export class CompiledV2Unit implements OptimizedUnit {
       }
     >();
 
-    // Track per-part merged geometries for BatchedEdgeLines extraction
-    const partEdgeSourceGeos: Array<{ partIndex: number; partId: string; geos: THREE.BufferGeometry[]; edgeOpacity: number }> =
-      partStates.map((st) => ({
-        partIndex: st.index,
-        partId: st.id,
-        geos: [],
-        edgeOpacity: st.meta.edgeOpacity,
-      }));
+    // Track per-part merged geometries & average luminance for brightness-adaptive BatchedEdgeLines
+    const partEdgeSourceGeos: Array<{
+      partIndex: number;
+      partId: string;
+      geos: THREE.BufferGeometry[];
+      edgeOpacity: number;
+      lumaSum: number;
+      lumaCount: number;
+    }> = partStates.map((st) => ({
+      partIndex: st.index,
+      partId: st.id,
+      geos: [],
+      edgeOpacity: st.meta.edgeOpacity,
+      lumaSum: 0,
+      lumaCount: 0,
+    }));
 
     const dynNodeIds = new WeakMap<THREE.Object3D, number>();
     let nextDynNodeId = 1;
@@ -1089,11 +1100,11 @@ export class CompiledV2Unit implements OptimizedUnit {
         sub.edgeOpacity = Math.max(sub.edgeOpacity, cap.edgeOpacity);
         // Only collect edges for static part-level geometries (non-child-animated) so BatchedEdgeLines stays exact
         if (!cap.dynamicNode || cap.dynamicNode === pst.partGroup) {
-          partEdgeSourceGeos[cap.partIndex].geos.push(normGeo);
-          partEdgeSourceGeos[cap.partIndex].edgeOpacity = Math.max(
-            partEdgeSourceGeos[cap.partIndex].edgeOpacity,
-            cap.edgeOpacity
-          );
+          const holder = partEdgeSourceGeos[cap.partIndex];
+          holder.geos.push(normGeo);
+          holder.edgeOpacity = Math.max(holder.edgeOpacity, cap.edgeOpacity);
+          holder.lumaSum += getCadTintLuma(cap.tint);
+          holder.lumaCount += 1;
         }
       }
     }
@@ -1249,12 +1260,12 @@ export class CompiledV2Unit implements OptimizedUnit {
       throw new Error(`${this.unitId} build aborted`);
     }
 
-    // Step 5: Build Tier-3 Single-Draw-Call BatchedEdgeLines (1 dc in HIGH/ULTRA/CAD/XRAY, 0 dc in STD Solid)
+    // Step 5: Build Tier-3 Single-Draw-Call BatchedEdgeLines (1 dc across STD/HIGH/ULTRA/CAD/XRAY)
     const edgeSpans: BatchedEdgePartSpan[] = [];
     const edgeChunks: Float32Array[] = [];
     let totalEdgeVerts = 0;
     const maxEdgeVerts = MAX_TOTAL_EDGE_SEGMENTS * 2;
-    const edgeAngle = quality === 'ultra' ? 30 : quality === 'high' ? 34 : 38;
+    const edgeAngle = quality === 'ultra' ? 30 : quality === 'high' ? 32 : 33;
 
     for (let pi = 0; pi < partEdgeSourceGeos.length; pi++) {
       const holder = partEdgeSourceGeos[pi];
@@ -1284,12 +1295,14 @@ export class CompiledV2Unit implements OptimizedUnit {
         eGeo.dispose();
       }
       if (totalEdgeVerts > partStartVert) {
+        const avgLuma = holder.lumaCount > 0 ? holder.lumaSum / holder.lumaCount : 0.5;
         edgeSpans.push({
           partIndex: holder.partIndex,
           partId: holder.partId,
           vertexOffset: partStartVert,
           vertexCount: totalEdgeVerts - partStartVert,
           edgeOpacity: holder.edgeOpacity,
+          darkBase: avgLuma < 0.36,
         });
       }
     }
@@ -1329,7 +1342,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         cursor += edgeChunks[c].length;
       }
 
-      // Initialize livePositions to assembled positions & default subtle dark CAD ink color
+      // Initialize livePositions to assembled positions & brightness-adaptive CAD contour colors
       for (let s = 0; s < edgeSpans.length; s++) {
         const sp = edgeSpans[s];
         const pst = partStates[sp.partIndex];
@@ -1342,10 +1355,13 @@ export class CompiledV2Unit implements OptimizedUnit {
             livePositions[k + 2] = basePositions[k + 2] + pst.curZ;
           }
         }
+        const cr = sp.darkBase ? 0.46 : 0.11;
+        const cg = sp.darkBase ? 0.52 : 0.14;
+        const cb = sp.darkBase ? 0.60 : 0.19;
         for (let k = start; k < end; k += 3) {
-          liveColors[k] = 0.09;
-          liveColors[k + 1] = 0.11;
-          liveColors[k + 2] = 0.14;
+          liveColors[k] = cr;
+          liveColors[k + 1] = cg;
+          liveColors[k + 2] = cb;
         }
       }
 
@@ -1362,7 +1378,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       const xrayMatKey = `${this.unitId}-v2-edges-xray`;
       const edgeMat = cache.acquireLineMaterial(solidMatKey, {
         color: 0xffffff,
-        opacity: 0.24,
+        opacity: 0.28,
         vertexColors: true,
         clippingPlanes: this.clippingPlanes,
       });
@@ -1744,7 +1760,7 @@ export class CompiledV2Unit implements OptimizedUnit {
             : renderMode === 'xray'
               ? eb.xrayMatKey
               : eb.solidMatKey;
-        const nextOp = renderMode === 'cad' ? 0.62 : renderMode === 'xray' ? 0.34 : 0.24;
+        const nextOp = renderMode === 'cad' ? 0.62 : renderMode === 'xray' ? 0.34 : 0.28;
         const nextMat = cache.acquireLineMaterial(nextKey, {
           color: 0xffffff,
           opacity: nextOp,
@@ -1827,9 +1843,9 @@ export class CompiledV2Unit implements OptimizedUnit {
       const spans = eb.spans;
       for (let s = 0; s < spans.length; s++) {
         const sp = spans[s];
-        let cr = 0.09;
-        let cg = 0.11;
-        let cb = 0.14;
+        let cr = sp.darkBase ? 0.46 : 0.11;
+        let cg = sp.darkBase ? 0.52 : 0.14;
+        let cb = sp.darkBase ? 0.60 : 0.19;
         if (sp.partId === selectedId) {
           cr = 0.05;
           cg = 0.36;

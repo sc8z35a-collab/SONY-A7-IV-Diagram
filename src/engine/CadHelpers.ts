@@ -97,8 +97,8 @@ export function extrudeCentered(
   const baseSagitta = GPU_PROFILE.isMobile ? 0.40 : 0.32;
   const sagittaTol = qScale ? baseSagitta * qScale.sagittaMultiplier : baseSagitta;
   const maxCircleSegs = qScale
-    ? scaleCurveSegmentsForQuality(Math.min(curveSegments, 20), 4)
-    : scaleSegments(Math.min(curveSegments, 16), 5);
+    ? scaleCurveSegmentsForQuality(Math.min(curveSegments, 44), 4)
+    : scaleSegments(Math.min(curveSegments, 24), 5);
   const adaptedShape = resampleShapeSagitta(shape, sagittaTol, maxCircleSegs);
 
   const geo = new THREE.ExtrudeGeometry(adaptedShape, {

@@ -1,0 +1,22 @@
+mode	kind	parts	slug_prefix	code_min	code_max	next_code	unit_file	data_file	l1_file	l2_file
+mishoe	individual	32	mi-	MI01	MI32	MI33	src/units/mi_shoe.ts	src/data/mi_shoe.json	catalog/names/mishoe.txt	catalog/spatial/mishoe.tsv
+battery	individual	130	bat-	P01	P130	P131	src/units/battery.ts	src/data/battery.json	catalog/names/battery.txt	catalog/spatial/battery.tsv
+cfexpress	individual	170	cfe-	C01	C170	C171	src/units/cfexpress.ts	src/data/cfexpress.json	catalog/names/cfexpress.txt	catalog/spatial/cfexpress.tsv
+mic	individual	150	mc-	MC01	MC150	MC151	src/units/mic.ts	src/data/mic.json	catalog/names/mic.txt	catalog/spatial/mic.tsv
+drybox	individual	150	db-	DB01	DB150	DB151	src/units/drybox.ts	src/data/drybox.json	catalog/names/drybox.txt	catalog/spatial/drybox.tsv
+mount	individual	100	mount-	M22	M100	M101	src/units/mount.ts	src/data/mount.json	catalog/names/mount.txt	catalog/spatial/mount.tsv
+shutter	individual	180	shutter-	SH34	SH180	SH181	src/units/shutter.ts	src/data/shutter.json	catalog/names/shutter.txt	catalog/spatial/shutter.tsv
+body	individual	116	body-	B01	B116	B117	src/units/body.ts	src/data/body.json	catalog/names/body.txt	catalog/spatial/body.tsv
+evf	individual	55	evf-	E26	E55	E56	src/units/evf.ts	src/data/evf.json	catalog/names/evf.txt	catalog/spatial/evf.tsv
+lcd	individual	150	lcd-	D01	D150	D151	src/units/lcd.ts	src/data/lcd.json	catalog/names/lcd.txt	catalog/spatial/lcd.tsv
+lens	individual	128	lens-	L01	L128	L129	src/units/lens.ts	src/data/lens.json	catalog/names/lens.txt	catalog/spatial/lens.tsv
+mainboard	individual	60	mb-	M17	M60	M61	src/units/mainboard.ts	src/data/mainboard.json	catalog/names/mainboard.txt	catalog/spatial/mainboard.tsv
+bionz	individual	70	xr-	XR01	XR70	XR71	src/units/bionz.ts	src/data/bionz.json	catalog/names/bionz.txt	catalog/spatial/bionz.tsv
+bionz_v2	individual	55	xv2-	X2-01	X2-55	X2-56	src/units/bionz_v2.ts	src/data/bionz_v2.json	catalog/names/bionz_v2.txt	catalog/spatial/bionz_v2.tsv
+sensor	individual	90	sensor-	S35	S90	S91	src/units/sensor.ts	src/data/sensor.json	catalog/names/sensor.txt	catalog/spatial/sensor.tsv
+micro	individual	75	micro-	M12	M75	M76	src/units/micro.ts	src/data/micro.json	catalog/names/micro.txt	catalog/spatial/micro.tsv
+micro_v2	individual	55	pv2-	P2-01	P2-55	P2-56	src/units/micro_v2.ts	src/data/micro_v2.json	catalog/names/micro_v2.txt	catalog/spatial/micro_v2.tsv
+sensor_fab	individual	235	fab5-	F0-01	F5-38	F5-39	src/units/sensor_fab.ts	src/data/sensor_fab.json	catalog/names/sensor_fab.txt	catalog/spatial/sensor_fab.tsv
+integrated	composite	305	-	-	-	-	src/units/integrated.ts	src/data/integrated.json	catalog/names/integrated.txt	catalog/spatial/integrated.tsv
+camera_body	composite	231	-	-	-	-	src/units/camera_body.ts	src/data/camera_body.json	catalog/names/camera_body.txt	catalog/spatial/camera_body.tsv
+# total_individual_modes=18	total_individual_parts=2001	total_modes=20

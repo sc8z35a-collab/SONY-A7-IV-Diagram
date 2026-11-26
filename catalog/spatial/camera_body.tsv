@@ -1,0 +1,232 @@
+id	code	name	group	pos	size	exp	mat
+mount-flange-ring	#01	CNC削り出し 55mm大口径	mount	0,0,30.6	70,70,2.94	0,0,72	stainless_machined
+mount-bolts-6x	#02	6点高張力ステンレス締結ボルト	mount	0,0,32	66.5,58.71,6.94	0,0,90	stainless_machined
+mount-weather-gasket	#03	二重リップ高弾性EPDM 防塵防滴マウン	mount	0,0,29	71.22,71.22,1.69	0,0,58	magnesium_cast
+mount-esd-ground-clips	#04	360° ベリリウム銅 EMI/ESD	mount	0,0,28.55	65.45,65.52,1.12	0,0,48	becu_spring
+mount-leaf-springs	#05	4枚爪 予圧バヨネット板バネ	mount	0,0,28	60.39,60.59,1.12	0,0,38	becu_spring
+mount-bayonet-stop-block	#06	硬化ステンレス 60°回転終端ストッパー	mount	0,0,28.2	7.39,7.85,5.45	-24,14,46	stainless_machined
+mount-calib-shims	#07	サブミクロン・フランジバック調整用	mount	0,0,27.1	67,69.14,1.1	0,0,28	brass_precision
+mount-lock-pin	#08	硬化鋼レンズロックピン・真鍮ガイドブッシ	mount	0,0,27.2	4.4,4.4,14.22	18,-4,44	stainless_machined
+mount-release-actuator	#09	前面レンズ取り外しプッシュボタン	mount	0,0,27.2	16.7,10,8.36	36,-8,56	stainless_machined
+mount-lens-detect-switch	#10	機械式バヨネット完全ロック検知マイクロス	mount	0,0,27	6.08,12.03,2.4	26,-18,24	gold_plating
+mount-contact-pins	#11	12ピン金めっきスプリング式ポゴ接点ブロ	mount	0,0,26.4	39.67,9.23,6.59	0,-18,36	matte_chassis
+mount-pogo-springs-core	#12	12連 ベリリウム銅・ポゴピン内蔵マイク	mount	0,0,25.1	29.71,5.74,3.09	0,-25,24	matte_chassis
+mount-contact-pcb	#13	マウント電子接点インターフェース基板	mount	0,0,23.2	34.18,14.54,14.9	0,-32,12	gold_plating
+mount-dust-trap-ring	#14	マウント内周上部 迷光防止段差リッジ	mount	0,0,26.5	50.61,19.88,3.05	0,18,32	foam_felt_matte
+mount-anti-refl-baffle	#15	多段ナイフエッジ内面遮光バッフル	mount	0,0,23.8	54.99,55.11,6.95	0,0,10	foam_felt_matte
+mount-clipin-filter-seat	#16	マウント内リア・クリップインフィルター装	mount	0,0,21.6	44.3,32.25,1.4	-26,-14,4	matte_black_anodized
+mount-rect-flare-mask	#17	36×24mm フルサイズ矩形フレアカッ	mount	0,0,20.2	56.41,56.61,2.2	0,0,-12	foam_felt_matte
+mount-helicoil-inserts	#18	6点 高張力ステンレス・ヘリサート強化め	mount	0,0,24.8	66.93,58.61,5.24	0,0,18	titanium_machined
+mount-mg-throat	#19	高剛性チクソモールディング マグネシウム	mount	0,0,23.4	85.66,70,7.4	0,0,-2	magnesium_cast
+mount-af-assist-module	#20	前面 AF補助光フレネルレンズ	mount	0,0,27	7,12.45,6.43	-32,22,26	matte_chassis
+mount-chassis-interface	#21	フロント骨格結合フランジ・三脚荷重伝達ガ	mount	0,0,18.6	78,67.8,6.2	0,0,-24	magnesium_cast
+mount-upper-ridge	M22	マウントボックス上部ステンレス剛性尾根	mount	0,0,24.4	46,9.8,7.02	0,36,12	stainless_machined
+mount-mag-filter-plate	M23	マウント内径磁気ドロップイン・クリップフ	mount	0,0,22.4	53.6,52.79,0.58	28,16,6	matte_black_anodized
+mount-backing-nut-plate	M24	モノリシック一体ステンレス背面バヨネット	mount	0,0,19.6	70.4,70.4,2.83	0,0,-18	stainless_machined
+mount-ptfe-wear-pad	M25	バヨネット爪摺動面・低摩擦PTFE	mount	0,0,29.5	57.98,56.95,0.72	0,0,34	ic_epoxy_dark
+mount-contact-ferrite	M26	12ピン高速レンズ通信バス用 コモンモー	mount	0,0,22.8	25.8,6.4,5.3	0,-34,-8	becu_spring
+body-battery-pack	B01	7.2V 高出力デュアルセル リチウムイ	body	-54.5,-6,1.5	22.6,51.5,36.8	-64,-56,20	magnesium_cast
+body-battery-chamber	B02	防水バッテリー室・金メッキ多極スプリング	body	-54.5,-6,1.5	26.4,58.5,41.2	-34,-22,4	magnesium_cast
+body-ergo-grip	B03	エルゴノミクス深型右手グリップ	body	-56,-2,6	29.7,78.48,69.67	-76,8,48	leatherette_grip
+body-shutter-dials	B04	2段金属ドームシャッターボタン	body	-54.5,31,9	26.82,18.75,84.23	-34,48,22	stainless_machined
+body-top-dials	B05	ロック機構付きモード／ドライブダイヤル	body	0,38.8,-2	94.85,11.3,32.85	0,62,0	stainless_machined
+body-mi-hotshoe	B06	21ピン デジタルオーディオ対応マルチイ	body	0,57.6,-7.5	22.4,6.3,23	0,72,-4	stainless_machined
+body-mg-front-shell	B07	チクソモールドAZ91D マグネシウム合	body	-3,0,27.6	118.5,77.11,62.95	0,0,56	magnesium_cast
+body-top-deck	B08	マグネシウム合金トップデッキ	body	0,36.8,0	123.2,22.75,63.4	0,38,0	magnesium_cast
+body-rear-controls	B09	背面マグネシウム外装・親指グリップ	body	-6,0,-33	124.9,91.3,9.15	0,0,-54	magnesium_cast
+body-card-door	B10	防塵防滴デュアルCFexpress	body	-70.8,-5,-13.5	5.66,46.7,25.15	-62,0,-18	magnesium_cast
+body-io-doors	B11	分割式防塵防滴 I/O ポートカバー	body	56.5,-2,-7	4.37,52,27.55	56,0,-8	magnesium_cast
+body-baseplate-tripod	B12	マグネシウム底板	body	-6,-37.2,-1	124.9,4.02,71.9	0,-48,0	magnesium_cast
+body-battery-ejector	B13	バッテリー脱落防止スライド爪・トーション	body	-54.5,-31.8,1.5	16.49,6.91,22	-68,-32,-22	stainless_machined
+body-battery-terminals	B14	6A大電流対応 金メッキ二股リン青銅スプ	body	-54.5,19.6,1.5	31,10.65,34	-54,20,18	matte_chassis
+body-shutter-switch	B15	2段ステンレス・スナップドーム式シャッタ	body	-54.5,31.8,20.5	14.8,8.54,18.54	-34,28,42	pcb_textured
+body-command-encoders	B16	前後コマンドダイヤル 光学スリットエンコ	body	-54.5,25.8,5.5	18.3,12.07,64.8	-68,40,12	matte_black_anodized
+body-mode-lock-ratchet	B17	センターロック式モードダイヤル	body	0,32.8,-6.5	90.06,10.22,27.06	0,48,-16	stainless_machined
+body-top-switch-fpc	B18	トップデッキU字型リジッドフレキ制御基板	body	-6,34,4	105.5,1.55,42.85	-6,22,16	pcb_textured
+body-hotshoe-springs	B19	ホットシュー ステンレス板バネ接地圧着プ	body	0,57.2,-7.5	21.4,11.5,24.7	0,56,-4	magnesium_cast
+body-card-ejectors	B20	デュアルCFexpress／SD	body	-59.5,-5,-14.5	15.8,36.4,14	-42,-6,-34	magnesium_cast
+body-card-door-latch	B21	カード扉2アクション・スライドロックカム	body	-67.8,-5,-13.5	6.7,36,17.9	-56,22,-26	stainless_machined
+body-joystick-gimbal	B22	8方向AFマルチセレクター 4軸ジンバル	body	-44,7.5,-30	13.6,19.6,3.63	-34,16,-38	pcb_textured
+body-rear-wheel-encoder	B23	背面コントロールホイール 中空リング光学	body	-48,-13,-30	23.1,23.1,3.18	-36,-16,-38	magnesium_cast
+body-strap-anchors	B24	左右高荷重ネックストラップ吊り金具	body	0,22.5,0	108.1,17.5,19.4	0,26,-34	stainless_machined
+body-acoustic-breather	B25	防水ステレオMEMSマイク音響室	body	0,33,17.5	66,4.15,11.2	0,26,36	elastomer_rubber
+body-chassis-gaskets	B26	全周3D一体成型シリコーン防塵防滴ガスケ	body	-6,0,-2	118,73.5,57.35	0,-26,-30	magnesium_cast
+body-top-sub-lcd	B27	肩部反射型ステータスサブOLEDモジュー	body	-35,38.6,6	25,2.83,20.1	-36,56,22	magnesium_cast
+body-vgrip-contacts	B28	縦位置バッテリーグリップ用 12ピン金メ	body	-28,-34.2,-14	19.6,11.6,9.2	-28,-62,-16	magnesium_cast
+body-rear-button-pcb	B29	背面パネル全域メンブレンFPCスイッチ基	body	-6,0,-30.6	109.5,67.5,1.43	0,0,-38	polyimide_fpc
+body-front-custom-pod	B30	前面カスタムC5スイッチポッド	body	-3,0,27.6	8.2,46.3,8.22	-28,12,74	pcb_textured
+body-speaker-chamber	B31	密閉型ネオジム再生用マイクロスピーカ音響	body	38.5,-26,-26.5	16.4,11.2,6.15	44,-36,-34	magnesium_cast
+body-pc-sync-terminal	B32	ネジロック式PCフラッシュシンクロ同軸端	body	54.2,18,14.5	9.4,10.4,9.9	68,20,24	pcb_textured
+body-cooling-duct	B33	内部パッシブ放熱サーマル煙突ダクト	body	-4,-2,-29.8	64,44.6,2.3	0,-14,-46	matte_black_anodized
+body-port-reinforce	B34	左側面I/Oポート群ステンレス張力補強枠	body	52.4,-2,-7	3.2,52,28	42,0,-6	stainless_machined
+body-tripod-block	B35	内部高荷重ステンレス三脚座ロードスプレッ	body	0,-37.2,0	34,7.47,26	0,-32,10	stainless_machined
+body-batt-door-hinge	B36	縦位置グリップ対応・クイック脱着式バッテ	body	-54.5,-35.6,-18.5	24.5,3.73,6.57	-52,-52,-32	stainless_machined
+body-perimeter-screws	B37	ボディ外装24本色別・緩み止め付JIS精	body	0,0,0	128.08,71.99,65.08	0,0,-68	stainless_machined
+body-evf-tie-bracket	B38	ペンタ部内部鍛造ロールケージ骨格	body	0,47.6,-7.5	48.4,19.9,27.91	0,46,-24	stainless_machined
+evf-eyecup	#65	エルゴノミック遮光アイカップ	evf	0,39.5,-37.2	39.24,32.04,11.21	0,0,-56	ic_epoxy_dark
+evf-eyecup-latch	#66	アイカップ クイックリリース・ステンレス	evf	0,39.5,-34.6	32.66,23.8,2.34	-6,-24,-48	stainless_machined
+evf-antifog-window	#67	防曇密閉ダブルガラス接眼保護窓	evf	0,39.5,-32.2	29.66,23.86,3.5	0,0,-44	matte_black_anodized
+evf-eye-sensor	#68	ToF赤外線アイセンサー	evf	0,28.4,-30.6	16.72,10.31,4.2	0,-15,-34	matte_black_anodized
+evf-ir-leds	#69	視線入力AF用 850nm赤外線リングL	evf	0,39.5,-28	28.2,26.01,2.69	0,0,-30	ic_epoxy_dark
+evf-dichroic-mirror	#70	45° ダイクロイック・ホットミラー	evf	0,39.5,-22.2	28.95,19.64,19.64	0,0,-16	matte_black_anodized
+evf-gaze-camera	#71	視線入力AF 30.7万画素 赤外CMO	evf	0,25.4,-22.2	16.98,3.52,16.29	0,-18,-16	ic_epoxy_dark
+evf-lens-rear	#72	後群 大口径両面非球面 接眼レンズ	evf	0,39.5,-15.4	27.3,27.3,6.7	0,0,-2	magnesium_cast
+evf-lens-ed-doublet	#73	視度補正可動群：ED低分散＋高屈折ランタ	evf	0,39.5,-9.2	31.9,24.28,7.18	0,0,12	matte_chassis
+evf-diopter-rails	#74	視度可動レンズ 2軸センタレス研磨ガイド	evf	0,39.5,-9.2	27.4,19.03,21.6	-28,-14,12	stainless_machined
+evf-diopter-helicoid	#75	スパイラルカム溝ヘリコイド鏡筒スリーブ	evf	0,39.5,-9.2	30.65,27.45,11.56	30,8,12	stainless_machined
+evf-diopter-mech	#76	精密ヘリコイド視度調整ダイヤル	evf	15,39.5,-9.2	11.45,14.91,20.44	16,-24,12	magnesium_cast
+evf-lens-field	#77	前群 非球面フィールドフラットナー集光レ	evf	0,39.5,-2.4	23.68,22.68,5.19	0,0,26	matte_black_anodized
+evf-oled-panel	#78	0.64型 944万ドット 2層タンデム	evf	0,39.5,3.6	29.4,19.86,2.28	0,0,44	gold_plating
+evf-oled-alignment	#79	マイクロOLED 3点μm光軸チルト調整	evf	0,39.5,5.2	25.64,20.77,3.19	28,0,50	stainless_machined
+evf-tcon-pcb	#80	240Hz MIPI-DSI タイミング	evf	0,39.5,6.8	24.98,30.69,2.39	0,0,58	ic_epoxy_dark
+evf-thermal-sink	#81	マイクロOLED背面 銅/アルミ複合ヒー	evf	0,39.5,10.2	33.4,20.04,4.85	0,0,72	copper_thermal
+evf-magnesium-housing	#82	防塵防滴マグネシウム合金EVF鏡筒	evf	0,39.5,-12.5	37.99,30.78,45.57	0,29,4	magnesium_cast
+evf-eyepiece-shutter	#83	内蔵アイピース遮光シャッター幕	evf	0,39.5,-30	30.48,21,3.7	-26,8,-38	matte_black_anodized
+evf-gaze-ir-optics	#84	視線入力AF 850nm 狭帯域バンドパ	evf	0,26.5,-22.2	11.8,5.35,11.8	18,-16,-16	ic_epoxy_dark
+evf-diopter-lock-clutch	#85	プッシュロック式 視度調整ダイヤル	evf	19.6,39.5,-15.6	5.22,9.29,7.98	34,-24,12	stainless_machined
+evf-polarizer-qwp	#86	直線偏光板 ＋ λ/4 波長板	evf	0,39.5,0.65	21.46,21.46,1.52	0,0,35	matte_black_anodized
+evf-oled-mla-stack	#87	Micro-OLED オンチップ六角マイ	evf	0,39.5,2.55	16.88,13.08,0.66	-24,0,41	solder_silver
+evf-tcon-emi-shield	#88	240Hz MIPI-DSI TCON	evf	0,39.5,8.2	25.16,19.56,1.86	26,16,62	becu_spring
+evf-baffle-seal-kit	#89	EVF光学室 密閉防曇Oリングキット	evf	0,39.5,-12.5	33.14,29.93,36.55	-28,22,-6	stainless_machined
+evf-cavity-clamp	E26	EVF底面キャビティFPC抜け止めステン	evf	0,25.9,5.5	28.09,2.25,7.92	0,-28,36	stainless_machined
+evf-eyecup-subframe	E27	大型ディープアイカップ着脱用 4点ねじス	evf	0,39.5,-35.8	32.28,27.18,3.34	0,0,-68	stainless_machined
+evf-eyeaf-shims	E28	視線入力IRカメラ光軸±5μm校正マイク	evf	0,26.9,-22.2	18.03,3.2,14.66	24,-30,-24	brass_precision
+evf-desiccant-breather	E29	密閉光学室モレキュラーシーブ防曇乾燥剤カ	evf	14.8,45.7,-5.5	7.8,14.32,4.6	38,22,8	stainless_machined
+evf-ambient-photodiode	E30	EVF自動輝度・色温度適応 周囲光RGB	evf	-12.5,50.9,-26.5	7.52,14.06,2.57	-34,34,-36	ic_epoxy_dark
+evf-diopter-detent	E31	視度調整ダイヤル 0.1dptクリックデ	evf	16.2,38,-18.5	2.48,11.34,13.22	44,-8,-16	stainless_machined
+shutter-front-cover	#96	フロント保護カバー板	shutter	0,0,17.6	74,54,1.6	0,0,56	matte_black_anodized
+shutter-dust-shield	#97	電源OFF時・独立センサー保護シールドカ	shutter	0,0,16.6	44.9,39.5,0.62	0,0,46	emi_shield_metal
+shutter-shield-actuator	#98	ダストシールド専用 マイクロ駆動ステッパ	shutter	0,0,16.4	10.95,11.5,5.5	28,24,42	copper_coil
+shutter-curtain-1	#99	先幕カーボンファイバー羽根群 × 4枚	shutter	0,0,15.3	41.2,16.3,0.85	0,0,34	carbon_fiber
+shutter-curtain1-guide	#100	先幕専用 低摩擦POMアンチフラッターガ	shutter	0,0,15.2	23,42,1.2	-26,0,30	magnesium_cast
+shutter-link-1	#101	先幕用・平行4節リンクアーム	shutter	0,0,14.8	14.7,10.05,1	0,0,24	stainless_machined
+shutter-pivot-jewels	#102	リンク機構 DLC硬質支点スピンドル	shutter	0,0,14.4	2.74,12.16,4.27	26,10,18	stainless_machined
+shutter-mid-plate	#103	中間遮光仕切り板	shutter	0,0,14	66,48,0.42	0,0,12	stainless_machined
+shutter-curtain-2	#104	後幕カーボン	shutter	0,0,12.9	41.2,14.88,0.85	0,0,2	carbon_fiber
+shutter-curtain2-guide	#105	後幕専用 精密スリット平行度レール	shutter	0,0,12.8	40.4,40,1.17	-26,0,-4	magnesium_cast
+shutter-link-2	#106	後幕用・平行4節リンクアーム	shutter	0,0,12.4	14.74,11.22,1	0,0,-10	stainless_machined
+shutter-tension-drums	#107	先幕・後幕独立 高張力トーションスプリン	shutter	0,0,13	10.19,16.49,4.32	22,10,-12	stainless_machined
+shutter-dual-drive	#108	デュアル駆動アクチュエータ	shutter	0,0,13	8.28,9.6,3.88	38,2,-14	iron_magnetic
+shutter-counterweight	#109	逆位相タングステン銅慣性カウンターウェイ	shutter	0,0,13.2	4.8,13.87,1.9	28,-12,-6	stainless_machined
+shutter-magnets	#110	マイクロ秒制御・先幕	shutter	0,0,12.5	16.8,7.32,3.34	24,22,-22	iron_magnetic
+shutter-armature-levers	#111	10マイクロ秒 幕保持アーマチュア掛け金	shutter	0,0,12.5	17.05,4.88,2	38,22,-18	stainless_machined
+shutter-charge-gears	#112	4段POM・真鍮遊星減速ギアトレイン	shutter	0,0,12.2	15.93,17.45,3.45	24,-18,-26	magnesium_cast
+shutter-charge-motor	#113	50万回耐久コアレスDCチャージモーター	shutter	0,0,12.2	8.71,19.2,8.8	44,-14,-28	stainless_machined
+shutter-cocking-cam	#114	ハート形偏心チャージカム	shutter	0,0,12.2	6.67,11.77,2.2	16,-26,-20	stainless_machined
+shutter-cam-switch	#115	チャージ完了検知 カム位置リーフスイッチ	shutter	0,0,11.9	10.3,7.2,1.4	34,-28,-22	gold_plating
+shutter-optical-sensor	#116	幕速自己診断・赤外線フォトインタラプタ光	shutter	0,0,11.6	4.8,25,2.2	12,4,-34	ic_epoxy_dark
+shutter-blade-brakes	#117	上下デュアル 高減衰エラストマー跳ね返り	shutter	0,0,11.4	22,34.2,2.7	0,0,-24	elastomer_rubber
+shutter-shock-piston	#118	リンク終端 キネティック・シリコンエアダ	shutter	0,0,11.4	3.41,23.6,3.5	42,12,-28	stainless_machined
+shutter-fpc-driver	#119	シャッター専用 大電流電磁駆動	shutter	0,0,11.2	14.8,44.4,1.12	32,28,-36	polyimide_fpc
+shutter-floating-grommets	#120	4点フローティング粘弾性シリコン防振ブッ	shutter	0,0,10.8	75.4,55.4,2.65	0,0,-40	elastomer_rubber
+shutter-base-damper	#121	高剛性ベース基板	shutter	0,0,10.8	76,56,4.97	0,0,-48	magnesium_cast
+shutter-drive-bay-cover	#122	駆動ベイ 遮音・防塵ステンレス密閉カバー	shutter	0,0,18.35	22.2,43.8,1.55	28,0,66	matte_black_anodized
+shutter-blade-rivets	#123	16連 超軽量チタン中空マイクロリベット	shutter	0,0,14.2	3.95,20.8,3.47	-26,14,26	ic_epoxy_dark
+shutter-pocket-lighttrap	#124	上下シャッター羽根格納ポケット	shutter	0,0,14.1	40.8,40.4,3.2	0,28,20	foam_felt_matte
+shutter-curtain-hooks	#125	先幕・後幕 ステンレス巻上げキャッチフッ	shutter	0,0,12.7	9.82,8.66,3.96	30,-34,-10	stainless_machined
+shutter-coil-heat-bridge	#126	1/400s 電磁ブーストコイル	shutter	0,0,12.6	18.14,16.5,4.09	46,28,-6	elastomer_rubber
+shutter-x-sync-contact	#127	1/400s ストロボ X接点	shutter	0,0,12	45.2,8.3,3.57	-28,-24,-18	polyimide_fpc
+shutter-rear-mask-gasket	#128	シャッター背面 36×24mm	shutter	0,0,9.85	50.2,38.2,1.21	0,0,-58	foam_felt_matte
+shutter-no-nc-switch	SH34	常開／常閉電磁石切替ロックレバー	shutter	0,0,13	13.65,6.4,2.87	44,38,4	stainless_machined
+shutter-sensor-shield	SH35	電源OFFセンサー保護シャッター閉鎖イン	shutter	0,0,11.4	14.3,7.41,4.56	-42,26,-24	stainless_machined
+shutter-diff-cock-cam	SH36	先幕／後幕 位相差ディファレンシャル	shutter	0,0,12.4	11.9,12.86,4.4	46,-8,-16	stainless_machined
+shutter-rebound-governor	SH37	高速幕バウンド吸収ブレーキレバー	shutter	0,0,13.6	11.89,8.39,1.5	-42,-12,14	stainless_machined
+shutter-slit-baffle-wall	SH38	傾斜マットブラック迷光遮断アパーチャーバ	shutter	0,0,15.05	42.12,29.34,2.18	0,-28,32	foam_felt_matte
+shutter-cycle-hall	SH39	幕速自己診断リアルタイム・ホール効果セン	shutter	0,0,11.8	10.2,9.2,1.81	36,-40,-26	pcb_textured
+aperture-mask	#135	センサー遮光マスク	sensor	0,0,7.8	50,40,2.09	0,0,82	foam_felt_matte
+sswf-piezo	#136	超音波ダストリダクション振動ガラス板	sensor	0,0,6.2	44.08,31.33,0.92	0,0,72	optical_glass_ed
+sensor-sswf-holder	#137	SSWF 超音波防振サスペンションホルダ	sensor	0,0,5.75	46.2,34.78,1.16	0,0,62	elastomer_rubber
+sensor-pzt-bar	#138	積層圧電セラミック超音波アクチュエータ	sensor	0,-14.1,6.88	43.05,5.18,3.61	0,-24,72	solder_silver
+olpf-16pt	#139	前面・人工水晶複屈折光学ローパスフィルタ	sensor	0,0,4.95	40.85,29.07,0.7	0,0,52	optical_glass_ed
+sensor-qwp-plate	#140	1/4波長位相差板	sensor	0,0,4.3	40.9,29.12,0.66	0,0,42	optical_glass_ed
+ir-cut-filter	#141	ハイブリッド赤外線吸収ガラス	sensor	0,0,3.25	42.2,30.2,0.86	0,0,32	matte_chassis
+cover-glass	#142	低α線光学カバーガラス	sensor	0,0,2.05	47.4,36.8,0.74	0,0,22	iron_magnetic
+cmos-die	#143	第1ウェハー：フルサイズ・グローバルシャ	sensor	0,0,0.97	40.5,28.5,0.33	0,0,12	silicon_hero
+sensor-cucu-layer	#144	Cu-Cu バンプレス直接ハイブリッド接	sensor	0,0,0.76	40.2,28.2,0.21	0,0,4	cucu_hybrid_copper
+sensor-logic-dram	#145	第2・第3ウェハー：高速列並列ADCロジ	sensor	0,0,0.46	40.4,28.4,0.55	0,0,-3	gold_plating
+sensor-dram-wafer	#146	第3ウェハー：3層積層・超広帯域	sensor	0,0,0.06	40.4,28.4,0.48	0,0,-11	silicon_hero
+wire-bonds	#147	超高密度 99.99% 純金 低ループ	sensor	0,0,0.55	44.08,32.28,1.15	0,0,-19	gold_plating
+ceramic-package	#148	高剛性アルミナ12層 HTCC	sensor	0,0,-0.55	49.72,39.2,3.26	0,0,-27	gold_plating
+sensor-cuw-slug	#149	タングステン銅 熱膨張整合ヒートスラッグ	sensor	0,0,-1.1	37.6,25.6,1.31	0,0,-35	solder_silver
+sensor-pcb	#150	高多層センサーリジッド基板	sensor	0,0,-2.45	56,45,2.57	0,0,-44	ic_epoxy_dark
+slvs-fpc	#151	SLVS-EC v3 超高速シールド	sensor	0,0,-2.45	76.04,19.56,7.81	0,0,-52	polyimide_fpc
+sensor-temp-ntc-board	#152	高精度 NTC センサー温度計測サブ基板	sensor	0,0,-2.55	14.51,6.32,1.62	-36,14,-44	pcb_textured
+ibis-carrier	#153	5軸IBIS可動マグネシウム合金ステージ	sensor	0,0,-4.3	76,62,2.89	0,0,-60	silicon_hero
+sensor-front-yoke-plate	#154	IBIS 磁気回路・前面軟鉄フラックス閉	sensor	0,0,-3.35	68.41,49.6,4.46	0,0,-68	titanium_machined
+sensor-vcm-coils	#155	3軸独立・空芯平面銅ボイスコイルモーター	sensor	0,0,-5.08	62.59,44.54,1.76	0,0,-76	copper_coil
+sensor-hall-pcb	#156	3軸サブミクロン・ホール効果位置センサー	sensor	0,0,-5.05	54.4,54.99,1.27	0,30,-76	ic_epoxy_dark
+ceramic-balls	#157	3点窒化ケイ素セラミックボール	sensor	0,0,-5.7	64.86,51.81,3.32	0,0,-86	becu_spring
+sensor-preload-plates	#158	磁気プリロード強磁性吸引プレート	sensor	0,0,-4.75	67.92,40.42,1.77	0,-32,-86	stainless_machined
+sensor-ibis-stopper-bumper	#159	IBIS 4隅プログレッシブ・エラストマ	sensor	0,0,-5.85	81.12,56.12,3.69	34,-22,-86	elastomer_rubber
+sensor-ibis-lock	#160	電源OFF時メカニカルIBISロック機構	sensor	-30.5,21.5,-6.1	15.42,13.25,6.31	-28,24,-96	stainless_machined
+sensor-n52-magnets	N52	2極ネオジム永久磁石アレイ	sensor	0,0,-6.05	65.5,47.45,1.92	0,0,-98	iron_magnetic
+ibis-base-magnets	#162	IBIS固定マグネシウム・ベースシャーシ	sensor	0,0,-7.4	82,69.2,2.69	0,0,-109	stainless_machined
+sensor-tilt-springs	#163	3点フランジバック	sensor	0,0,-7.4	79.21,66.9,7.99	0,0,-120	stainless_machined
+sensor-tim-pad	#164	高熱伝導シリコーン放熱界面パッド	sensor	0,0,-3.75	30.66,20,1.24	0,0,-131	silicon_hero
+sigma-graphite	#165	Σ字型・異方性人工グラファイトフレキシブ	sensor	0,0,-7.3	27.05,17.89,6.67	0,0,-142	optical_ar_iridescent
+sensor-heat-transfer-tapes	#166	センサー周囲 銅箔ラミネート・グラファイ	sensor	0,0,-8.65	73.95,59.11,1.86	36,18,-148	carbon_fiber
+sensor-b2b-rf-bracket	#167	SLVS-EC B2Bコネクタ固定クラン	sensor	0,0,-11.35	67.03,28.23,2.4	-36,-16,-150	ic_epoxy_dark
+sensor-copper-sink	#168	背面・純銅マイクロフィンヒートシンク	sensor	0,0,-10.85	48,36,2.15	0,0,-156	copper_thermal
+sensor-wrap-fpc-bracket	S35	センサー背面回り込みSLVS-ECフレキ	sensor	0,0,-12.2	54.76,16.76,4.97	0,-26,-162	becu_spring
+sensor-torx-spring-cal	S36	工場レーザー干渉計3点フランジバック傾き	sensor	0,0,-8.2	81.07,68.8,2.48	38,28,-124	matte_black_anodized
+sensor-perimeter-graphite	S37	IBIS可動ステージ追従型・25μm極薄	sensor	0,0,-2.2	76.66,39.24,2.12	-42,24,-46	carbon_fiber
+sensor-analog-ldo-rail	S38	センサー基板直載・超低ノイズアナログLD	sensor	0,0,-1.65	42.1,6.79,1.02	40,-18,-32	ic_epoxy_dark
+sensor-antistatic-ring	S39	撮像室前面ITO導電帯電防止ダストリペラ	sensor	0,0,7.1	51.63,35.8,1.09	0,32,74	becu_spring
+sensor-ibis-optical-ref	S40	IBIS原点絶対位置検証用 光学フォトイ	sensor	0,0,-6.4	10.62,8.32,6.08	-38,-28,-98	pcb_textured
+mb-evf-cavity-bracket	M30	EVFキャビティ内FPC押さえクランプ	mainboard	0,0,-16.4	34,6.1,1.66	0,32,24	stainless_machined
+mb-perimeter-ribbons	M29	メイン基板外周12系統	mainboard	0,0,-17.8	96.83,77.14,6.28	0,26,14	gold_plating
+mb-power-inductor-bank	M28	基板前面大電流6相モールド合金パワーイン	mainboard	0,0,-18	26.58,24.34,1.32	-18,-18,10	copper_coil
+mb-cfx-heat-plate	M27	CFexpress 4.0専用	mainboard	0,0,-25.4	27.8,31.4,1.12	-28,6,-34	copper_thermal
+mb-motor-driver-soc	M26	6chフルブリッジ統合モータードライバー	mainboard	0,0,-20.8	10.72,7.86,1.04	8,-24,-14	solder_silver
+mb-rtc-coin-cell	M25	内蔵ML414充電式RTCバックアップボ	mainboard	0,0,-20.8	10.33,10.32,1.57	14,-18,-16	becu_spring
+mb-nor-flash-eeprom	M24	512Mb Octal-SPI	mainboard	0,0,-20.8	12.7,7.17,0.9	-16,14,-18	ic_epoxy_dark
+mb-usb-pd-ctrl	M23	USB-PD 3.1電力制御IC	mainboard	0,0,-20.8	10.5,10,0.81	20,-6,-16	ic_epoxy_dark
+mb-nfc-coil	M22	13.56 MHz NFC平面銅コイルア	mainboard	0,0,-23.8	0.67,26.9,16	-30,-14,-30	polyimide_fpc
+mb-wifi-mimo-antennas	M21	Wi-Fi 6E/7セラミックパッチアン	mainboard	0,0,-21.4	27.3,9.8,1.77	22,26,-24	gold_plating
+mb-audio-jack-board	M20	独立3.5mm音声ジャック	mainboard	0,0,-22.2	16.75,13.8,5.48	28,-18,-22	pcb_textured
+mb-hdmi-daughterboard	M19	モジュラー独立HDMI 2.1ドーターボ	mainboard	0,0,-22.2	20.4,18.8,5.13	28,12,-24	emi_shield_metal
+mb-rf-shield-bracket	M18	背面RFシールド構造ブラケット	mainboard	0,0,-28.8	84,54,1.35	0,0,-64	stainless_machined
+mb-vapor-wick-core	M17	ベイパーチャンバー内蔵・焼結多孔質銅毛細	mainboard	0,0,-26.6	48.9,26.2,0.96	0,0,-48	ic_epoxy_dark
+mb-chassis-frame	#189	前面熱分離マグネシウム構造フレーム	mainboard	0,0,-15.6	95,68.3,8.4	0,0,26.5	magnesium_cast
+mb-b2b-connectors	#190	高密度ボード間コネクタ	mainboard	0,0,-17.6	77,65.7,4.08	0,0,15	ic_epoxy_dark
+mb-hdi-pcb	#191	12層エニーレイヤーHDIメインマザーボ	mainboard	0,0,-19.2	92,64,1.94	0,0,4.5	pcb_textured
+mb-rf-wifi	#192	Wi-Fi 6E / Wi-Fi 7	mainboard	0,0,-21	19.86,13.45,1.96	6,7,-13	copper_thermal
+mb-io-ports	#193	プロフェッショナル高速I/Oポート群	mainboard	0,0,-22.2	17.5,37.7,7.6	12.5,0,-12	ic_epoxy_dark
+mb-security-clock	#194	C2PA暗号署名セキュリティチップ	mainboard	0,0,-20.8	11.6,6.55,1.29	3.5,-3,-9.5	ic_epoxy_dark
+mb-imu-mcu	#195	6軸水晶MEMSジャイロ/加速度IMU	mainboard	0,0,-20.8	12.9,7.95,1.41	-3.5,-6.5,-9.5	ic_epoxy_dark
+mb-cfexpress	#196	デュアル CFexpress 4.0	mainboard	0,0,-22.8	24.2,49.4,5.27	-12.5,0,-15	emi_shield_metal
+mb-pmic-vrm	#197	多相同期整流PMIC	mainboard	0,0,-21.2	27.31,8.71,1.85	0,-6.5,-10.5	solder_silver
+mb-lpddr5x	#198	クワッドチャネル LPDDR5X	mainboard	0,0,-21	12.1,31.9,1.55	-4.5,0,-11.5	ic_epoxy_dark
+mb-ai-npu	#199	専用AIプロセッシングユニット /	mainboard	0,0,-21.2	15.27,15.27,1.82	5.5,2.5,-18	silicon_hero
+mb-isp-interposer	#200	フリップチップBGA 有機サブストレート	mainboard	0,0,-20.8	20.5,20.5,1.85	0,0,-9	ic_epoxy_dark
+mb-isp-die	#201	次世代4nm メイン撮像処理エンジン	mainboard	0,0,-22.2	20.79,20.79,0.78	0,0,-18.5	silicon_hero
+mb-isp-ihs	#202	ISPメインエンジン・ニッケルメッキ銅ヒ	mainboard	0,0,-23.4	19.2,19.2,1.43	0,0,-29	stainless_machined
+mb-emi-shield	#203	マルチ区画EMI高周波シールド缶	mainboard	0,0,-24.6	54.1,48.12,2.41	0,0,-40.5	emi_shield_metal
+mb-vapor-chamber	#204	超薄型ベイパーチャンバー	mainboard	0,0,-27.4	67.8,55.24,2.22	0,0,-54	copper_thermal
+lcd-rear-bezel-glass	D01	OCA光学接着カバーガラス	lcd	6,-7,-35.8	74.15,50.41,0.98	0,0,-78	stainless_machined
+lcd-ips-panel	D02	3.2型 210万ドット広視野角IPS液	lcd	6,-7,-34.4	69.6,47.17,1.34	0,0,-50	silicon_wafer_dark
+lcd-backlight-stack	D03	デュアルBEFプリズムシート	lcd	6,-7,-33.2	70.2,47.14,0.78	0,0,-38	optical_glass_clear
+lcd-chassis-shell	D04	CNCアルミ／マグネシウム薄型モニター外	lcd	6,-7,-31.5	75.9,52.27,7.55	0,0,-14	magnesium_cast
+lcd-orientation-hall	D05	2軸磁気ホール開閉・180°反転自動検知	lcd	6,-7,-30.9	63.33,29.75,2.07	-26,-22,-8	iron_magnetic
+lcd-swivel-clutch	D06	270°水平軸 多板ステンレス皿ばね定ト	lcd	44.8,-7,-30.4	11.99,7.12,7.08	30,18,-10	stainless_machined
+lcd-swivel-hinge	D07	横開き176°／回転270° バリアング	lcd	44.8,-7,-30.4	8.49,23.25,7.56	36,0,4	stainless_machined
+lcd-detent-stops	D08	0°・90°・180° 鋼球クリックディ	lcd	44.8,-7,-30.4	14.26,3.2,8.81	30,-18,-4	stainless_machined
+lcd-coaxial-fpc	D09	中空ヒンジ軸挿通 らせんトーション逃がし	lcd	44.8,-7,-30.4	16.09,13.76,5.38	52,0,12	polyimide_fpc
+lcd-pantograph-links	D10	左右対称CNCステンレス 4軸チルト	lcd	6,-7,-29.4	72,46,2.53	0,0,4	stainless_machined
+lcd-tilt-torque-cams	D11	光軸チルト専用 ツイスト摩擦ドラムブレー	lcd	6,-7,-29.2	57.92,8.38,9.47	0,28,16	stainless_machined
+lcd-tilt-slide-rails	D12	下方チルト用 精密スライドガイド溝	lcd	6,-7,-29	69.14,30.2,2.79	0,-28,16	stainless_machined
+lcd-cradle-locks	D13	磁気フラット収納ロックキャッチ	lcd	6,-7,-28.9	69.77,46.01,2.07	-26,24,22	foam_felt_matte
+lcd-4axis-tilt-frame	D14	4軸マルチアングル 光軸チルトクレードル	lcd	6,-7,-28.8	76.4,52.2,4.7	0,0,34	magnesium_cast
+lcd-touch-controller	D15	240Hz PCAP 静電容量タッチコン	lcd	6,-7,-33.6	20.4,7.8,1.24	24,-26,-64	polyimide_fpc
+lcd-polarizer-stack	D16	直交 0°/90° 広視野角偏光板	lcd	6,-7,-34.24	70.27,46.27,0.68	0,0,-64	optical_dichroic
+lcd-lgp-led-bar	D17	高演色10連サイドエッジ白色LEDバー	lcd	6,-7,-32.45	68.8,44.94,1	0,0,-26	optical_glass_clear
+lcd-emi-thermal-shield	D18	極薄ステンレスEMI遮蔽バックプレート	lcd	6,-7,-31.95	72.77,46,0.79	-26,20,-20	stainless_machined
+lcd-pullin-cam-spring	D19	自閉吸い込みカムヒンジ	lcd	44.8,-7,-30.4	14.7,16.8,7.04	44,24,4	stainless_machined
+lcd-hinge-weather-boots	D20	蛇腹式 EPDM ヒンジ防塵防滴シールブ	lcd	43.6,-7,-29.2	11.8,25.2,9.82	46,-24,14	magnesium_cast
+lcd-bulkhead-b2b-pcb	D21	ボディ側バルクヘッド MIPI-DSI	lcd	6,-7,-27.4	24.4,18.82,4.38	0,0,48	pcb_textured
+lcd-rear-stiffener	D22	モニター背面カーボン／ステンレス反り防止	lcd	6,-7,-32.2	69.6,45.6,0.78	0,0,-24	stainless_machined
+lcd-torque-washers	D23	4軸ヒンジ皿ばねフリクショントルク積層ス	lcd	44.8,-7,-30.5	9.65,15.89,9.59	56,22,-16	stainless_machined
+lcd-ambient-color-sensor	D24	背面ベゼル内蔵・屋外晴天ブースト用RGB	lcd	6,-7,-33.75	20.97,4.5,1.51	0,-34,-64	pcb_textured
+lcd-flip-reed-magnets	D25	180°自撮り上下反転	lcd	6,-7,-33.2	64.49,39.54,1.46	-42,26,-34	iron_magnetic
+lcd-hinge-grommet	D26	らせんFPC中空ヒンジ軸貫通部	lcd	44.8,-7,-30.4	7.12,23.73,7.12	62,-6,-4	magnesium_cast
+lcd-dock-bumper-pads	D27	背面モニター収納ポケット 4隅マイクロセ	lcd	6,-7,-29.2	70.48,47.55,1.92	0,-30,32	foam_felt_matte

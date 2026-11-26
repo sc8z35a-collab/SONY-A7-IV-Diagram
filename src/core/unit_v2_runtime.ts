@@ -188,22 +188,22 @@ export class UnitV2Runtime {
 
     const cfg = QUALITY_TIER_CONFIG[quality];
 
-    const hemi = new THREE.HemisphereLight(0xf8fbff, 0xdce3ee, quality === 'standard' ? 1.18 : 0.94);
+    const hemi = new THREE.HemisphereLight(0xfafcff, 0xedf2fa, quality === 'standard' ? 1.24 : 1.08);
     hemi.position.set(0, 60, 0);
     hemi.matrixAutoUpdate = false;
     hemi.updateMatrix();
 
-    const key = new THREE.DirectionalLight(0xffffff, quality === 'standard' ? 1.48 : 1.78);
+    const key = new THREE.DirectionalLight(0xffffff, quality === 'standard' ? 1.56 : 1.78);
     key.position.set(-62, 86, 55);
     key.matrixAutoUpdate = false;
     key.updateMatrix();
 
-    const fill = new THREE.DirectionalLight(0xf1f5ff, quality === 'standard' ? 0.58 : 0.74);
-    fill.position.set(65, 68, 75);
+    const fill = new THREE.DirectionalLight(0xf3f7ff, quality === 'standard' ? 0.88 : 0.92);
+    fill.position.set(66, 24, 86);
     fill.matrixAutoUpdate = false;
     fill.updateMatrix();
 
-    const rim = new THREE.DirectionalLight(0xeef6ff, quality === 'standard' ? 0.48 : 0.96);
+    const rim = new THREE.DirectionalLight(0xeef6ff, quality === 'standard' ? 0.84 : 1.02);
     rim.position.set(78, 44, -80);
     rim.matrixAutoUpdate = false;
     rim.updateMatrix();
