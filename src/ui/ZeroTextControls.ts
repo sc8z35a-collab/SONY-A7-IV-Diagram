@@ -1977,7 +1977,7 @@ export class ZeroTextControls {
               ? 25
               : 19;
       } else if (part.subsystem === 'bionz') {
-        // BIONZ XR / XR2 Package Internal Ultra-Dissection (XR01–XR36)
+        // BIONZ XR / XR2 Package & SY-1122 Companion Ultra-Dissection (XR01–XR70)
         widthPx =
           part.order === 1 ||
           part.order === 2 ||
@@ -1986,7 +1986,14 @@ export class ZeroTextControls {
           part.order === 14 ||
           part.order === 28 ||
           part.order === 33 ||
-          part.order === 36
+          part.order === 36 ||
+          part.order === 50 ||
+          part.order === 51 ||
+          part.order === 53 ||
+          part.order === 54 ||
+          part.order === 55 ||
+          part.order === 63 ||
+          part.order === 64
             ? 32
             : part.order === 5 ||
                 part.order === 7 ||
@@ -1999,7 +2006,19 @@ export class ZeroTextControls {
                 part.order === 26 ||
                 part.order === 27 ||
                 part.order === 30 ||
-                part.order === 34
+                part.order === 34 ||
+                part.order === 37 ||
+                part.order === 40 ||
+                part.order === 41 ||
+                part.order === 42 ||
+                part.order === 49 ||
+                part.order === 52 ||
+                part.order === 56 ||
+                part.order === 57 ||
+                part.order === 58 ||
+                part.order === 59 ||
+                part.order === 65 ||
+                part.order === 66
               ? 25
               : 18;
       } else if (part.subsystem === 'mishoe') {
