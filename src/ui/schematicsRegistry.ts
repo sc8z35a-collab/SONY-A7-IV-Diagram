@@ -38,6 +38,7 @@ import { renderPhase31MicUltraSchematicSvg } from './phase31MicUltraSchematics';
 import { renderPhase30SensorFabSchematicSvg } from './phase30SensorFabSchematics';
 import { renderPhase31SensorFabVol1SchematicSvg } from './phase31SensorFabVol1Schematics';
 import { renderPhase32SensorFabVol2SchematicSvg } from './phase32SensorFabVol2Schematics';
+import { renderPhase33SensorFabVol3SchematicSvg } from './fabVol3HdSchematics';
 import { renderEvfHdSchematicSvg } from './evfHdSchematics';
 import { renderPhase32SensorUltraSchematicA } from './phase32SensorUltraSchematicsA';
 import { renderPhase32SensorUltraSchematicB } from './phase32SensorUltraSchematicsB';
@@ -55,6 +56,9 @@ export function renderSchematicSvg(type: PartExplanation['diagramType']): string
 
   const evfHdSvg = renderEvfHdSchematicSvg(type);
   if (evfHdSvg) return evfHdSvg;
+
+  const phase33SensorFabVol3Svg = renderPhase33SensorFabVol3SchematicSvg(type);
+  if (phase33SensorFabVol3Svg) return phase33SensorFabVol3Svg;
 
   const wrap = (body: string) =>
     `<svg viewBox="0 0 320 118" xmlns="http://www.w3.org/2000/svg" style="font-family: ui-monospace, monospace;">${body}</svg>`;

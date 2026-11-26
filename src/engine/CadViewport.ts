@@ -1250,7 +1250,10 @@ export class CadViewport {
       d = 94 + e * 278;
       target = new THREE.Vector3(0, 1.5 - e * 2.5, 0.5 + e * 1.5);
     } else if (this.mode === 'sensor_fab') {
-      if (this.sensorFabVolume === 2) {
+      if (this.sensorFabVolume === 3) {
+        d = 248 + e * 238;
+        target = new THREE.Vector3(0, -1.5 + e * 1.5, 6.5);
+      } else if (this.sensorFabVolume === 2) {
         d = 228 + e * 228;
         target = new THREE.Vector3(0, 2.0 + e * 1.5, 0.5);
       } else {
@@ -1380,10 +1383,15 @@ export class CadViewport {
     }
   }
 
-  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1 & Vol.2) */
+  /** Smoothly frame thematic sculptural zones inside Sensor Manufacturing Process (Vol.0, Vol.1, Vol.2 & Vol.3) */
   public focusSensorFabStage(stage: SensorFabStage, immediate = false): void {
     if (this.mode !== 'sensor_fab') return;
-    if (stage === 'overview' || stage === 'v1_overview' || stage === 'v2_overview') {
+    if (
+      stage === 'overview' ||
+      stage === 'v1_overview' ||
+      stage === 'v2_overview' ||
+      stage === 'v3_overview'
+    ) {
       this.setCameraPreset('iso', immediate);
       return;
     }
@@ -1441,11 +1449,31 @@ export class CadViewport {
       const d = (138 + e * 110) * aspectScale;
       target = new THREE.Vector3(-4.0 - e * 4.0, 3.2 + e * 10.0, 10.0 + e * 8.0);
       offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
-    } else {
-      // v2_epi_ship — Vol.2 Block 1-F & 1-G: Molecular Ion Implanter + 2026 SUMCO 5nm CI Gettering + Epi + Surfscan/FOSB
+    } else if (stage === 'v2_epi_ship') {
+      // Vol.2 Block 1-F & 1-G: Molecular Ion Implanter + 2026 SUMCO 5nm CI Gettering + Epi + Surfscan/FOSB
       const d = (150 + e * 120) * aspectScale;
       target = new THREE.Vector3(14.0 + e * 5.0, -4.5 - e * 4.0, 14.0 + e * 12.0);
       offset = new THREE.Vector3(d * 0.16, d * 0.32, d * 0.93);
+    } else if (stage === 'v3_tcad') {
+      // Vol.3 Block 2-A (Upper Row 1): Product Spec -> TCAD -> Optical FDTD -> CRA -> PDAF -> TEG
+      const d = (136 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 3.5 + e * 14.0, -29.0 - e * 16.0);
+      offset = new THREE.Vector3(d * 0.14, d * 0.36, d * 0.92);
+    } else if (stage === 'v3_layout') {
+      // Vol.3 Block 2-B (Upper Row 2): 14-bit ADC -> AFE/DCG -> SLVS-EC -> 3D Cu-Cu -> Partial Stack -> OASIS
+      const d = (140 + e * 108) * aspectScale;
+      target = new THREE.Vector3(0, 3.0 + e * 11.0, -12.0 - e * 3.0);
+      offset = new THREE.Vector3(d * 0.15, d * 0.38, d * 0.91);
+    } else if (stage === 'v3_opc') {
+      // Vol.3 Block 2-C (Upper Row 3): DRC/LVS/3D Mirror -> Single-Shot vs Stitching -> OPC Serifs -> 96-Layer Tape-Out
+      const d = (136 + e * 105) * aspectScale;
+      target = new THREE.Vector3(0, 3.2 + e * 8.0, 5.0 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.16, d * 0.36, d * 0.92);
+    } else {
+      // v3_maskfab — Vol.3 Lower Stepped Cleanroom Terrace (Blocks 2-D & 2-E): Quartz -> 260k Multi-Beam EB -> MeRiT -> 0.8µm Pellicle -> 96-Mask Stocker
+      const d = (158 + e * 128) * aspectScale;
+      target = new THREE.Vector3(0, -6.2 - e * 18.0, 33.5 + e * 14.0);
+      offset = new THREE.Vector3(d * 0.18, d * 0.34, d * 0.92);
     }
 
     const pos = target.clone().add(offset);

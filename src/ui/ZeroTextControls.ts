@@ -420,9 +420,10 @@ export class ZeroTextControls {
     this.fabVolBtns = {
       0: makeFabVolBtn(0, '第0巻 総目次'),
       1: makeFabVolBtn(1, '第1巻 超入門'),
-      2: makeFabVolBtn(2, '第2巻 砂→ウェーハ'),
+      2: makeFabVolBtn(2, '第2巻 砂→Wafer'),
+      3: makeFabVolBtn(3, '第3巻 設計・マスク'),
     };
-    volGroup.append(this.fabVolBtns[0], this.fabVolBtns[1], this.fabVolBtns[2]);
+    volGroup.append(this.fabVolBtns[0], this.fabVolBtns[1], this.fabVolBtns[2], this.fabVolBtns[3]);
 
     const barDivider = document.createElement('div');
     barDivider.className = 'fab-stage-divider';
@@ -431,7 +432,10 @@ export class ZeroTextControls {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className =
-        stage === 'overview' || stage === 'v1_overview' || stage === 'v2_overview'
+        stage === 'overview' ||
+        stage === 'v1_overview' ||
+        stage === 'v2_overview' ||
+        stage === 'v3_overview'
           ? 'fab-stage-btn is-active'
           : 'fab-stage-btn';
       btn.dataset.fabStage = stage;
@@ -457,6 +461,11 @@ export class ZeroTextControls {
       v2_mcz: makeFabStageBtn('v2_mcz', '1C MCZ単結晶'),
       v2_wafer: makeFabStageBtn('v2_wafer', '1D-E 切断・CMP'),
       v2_epi_ship: makeFabStageBtn('v2_epi_ship', '1F-G ゲッタ・出荷'),
+      v3_overview: makeFabStageBtn('v3_overview', '全体'),
+      v3_tcad: makeFabStageBtn('v3_tcad', '2A TCAD/光学'),
+      v3_layout: makeFabStageBtn('v3_layout', '2B 回路・配置'),
+      v3_opc: makeFabStageBtn('v3_opc', '2C OPC・分割'),
+      v3_maskfab: makeFabStageBtn('v3_maskfab', '2D-E マスク製造'),
     };
 
     const vol0StageGroup = document.createElement('div');
@@ -488,13 +497,31 @@ export class ZeroTextControls {
       this.fabStageBtns.v2_epi_ship
     );
 
+    const vol3StageGroup = document.createElement('div');
+    vol3StageGroup.className = 'fab-stage-group is-hidden';
+    vol3StageGroup.append(
+      this.fabStageBtns.v3_overview,
+      this.fabStageBtns.v3_tcad,
+      this.fabStageBtns.v3_layout,
+      this.fabStageBtns.v3_opc,
+      this.fabStageBtns.v3_maskfab
+    );
+
     this.fabStageGroups = {
       0: vol0StageGroup,
       1: vol1StageGroup,
       2: vol2StageGroup,
+      3: vol3StageGroup,
     };
 
-    this.fabStageBar.append(volGroup, barDivider, vol0StageGroup, vol1StageGroup, vol2StageGroup);
+    this.fabStageBar.append(
+      volGroup,
+      barDivider,
+      vol0StageGroup,
+      vol1StageGroup,
+      vol2StageGroup,
+      vol3StageGroup
+    );
     this.root.appendChild(this.fabStageBar);
 
     // -----------------------------------------------------------------------
@@ -814,7 +841,7 @@ export class ZeroTextControls {
   }
 
   private applyFabVolumeButtons(vol: SensorFabVolume): void {
-    ([0, 1, 2] as SensorFabVolume[]).forEach((v) => {
+    ([0, 1, 2, 3] as SensorFabVolume[]).forEach((v) => {
       this.fabVolBtns[v].classList.toggle('is-active', v === vol);
       this.fabStageGroups[v].classList.toggle('is-hidden', v !== vol);
     });
@@ -829,7 +856,8 @@ export class ZeroTextControls {
   private setFabVolume(vol: SensorFabVolume): void {
     const changed = this.currentFabVolume !== vol;
     this.currentFabVolume = vol;
-    this.currentFabStage = vol === 0 ? 'overview' : vol === 1 ? 'v1_overview' : 'v2_overview';
+    this.currentFabStage =
+      vol === 0 ? 'overview' : vol === 1 ? 'v1_overview' : vol === 2 ? 'v2_overview' : 'v3_overview';
     this.applyFabVolumeButtons(vol);
     this.applyFabStageButtons(this.currentFabStage);
     if (changed || this.currentMode === 'sensor_fab') {
@@ -884,7 +912,9 @@ export class ZeroTextControls {
           ? 'overview'
           : this.currentFabVolume === 1
             ? 'v1_overview'
-            : 'v2_overview';
+            : this.currentFabVolume === 2
+              ? 'v2_overview'
+              : 'v3_overview';
       this.applyFabVolumeButtons(this.currentFabVolume);
       this.applyFabStageButtons(this.currentFabStage);
     }
@@ -1053,17 +1083,23 @@ export class ZeroTextControls {
         (prevSubsystem === part.subsystem && !prevStandaloneOnly && isStandaloneOnly) ||
         (prevSubsystem === 'sensor_fab' &&
           part.subsystem === 'sensor_fab' &&
-          ((part.fabVolume ?? 0) === 2
+          ((part.fabVolume ?? 0) === 3
             ? part.order === 3 ||
-              part.order === 7 ||
-              part.order === 12 ||
-              part.order === 18 ||
-              part.order === 22 ||
-              part.order === 27 ||
-              part.order === 32
-            : (part.fabVolume ?? 0) === 1
-              ? part.order === 3 || part.order === 10 || part.order === 17 || part.order === 24
-              : part.order === 4 || part.order === 16 || part.order === 28))
+              part.order === 13 ||
+              part.order === 25 ||
+              part.order === 35 ||
+              part.order === 45
+            : (part.fabVolume ?? 0) === 2
+              ? part.order === 3 ||
+                part.order === 7 ||
+                part.order === 12 ||
+                part.order === 18 ||
+                part.order === 22 ||
+                part.order === 27 ||
+                part.order === 32
+              : (part.fabVolume ?? 0) === 1
+                ? part.order === 3 || part.order === 10 || part.order === 17 || part.order === 24
+                : part.order === 4 || part.order === 16 || part.order === 28))
       ) {
         const sep = document.createElement('div');
         sep.className = 'layer-sep';
@@ -1971,7 +2007,49 @@ export class ZeroTextControls {
               ? 25
               : 19;
       } else if (part.subsystem === 'sensor_fab') {
-        if ((part.fabVolume ?? 0) === 2) {
+        if ((part.fabVolume ?? 0) === 3) {
+          // Sensor Manufacturing Process Vol.3 (52 parts: F3-01–F3-52, Phase 2 Design & Photomask Fab)
+          widthPx =
+            part.order === 1 ||
+            part.order === 6 ||
+            part.order === 9 ||
+            part.order === 16 ||
+            part.order === 18 ||
+            part.order === 22 ||
+            part.order === 24 ||
+            part.order === 29 ||
+            part.order === 30 ||
+            part.order === 33 ||
+            part.order === 36 ||
+            part.order === 38 ||
+            part.order === 43 ||
+            part.order === 46 ||
+            part.order === 47 ||
+            part.order === 49 ||
+            part.order === 52
+              ? 32
+              : part.order === 2 ||
+                  part.order === 3 ||
+                  part.order === 4 ||
+                  part.order === 8 ||
+                  part.order === 10 ||
+                  part.order === 12 ||
+                  part.order === 13 ||
+                  part.order === 14 ||
+                  part.order === 19 ||
+                  part.order === 21 ||
+                  part.order === 25 ||
+                  part.order === 28 ||
+                  part.order === 31 ||
+                  part.order === 35 ||
+                  part.order === 40 ||
+                  part.order === 44 ||
+                  part.order === 45 ||
+                  part.order === 50 ||
+                  part.order === 51
+                ? 25
+                : 19;
+        } else if ((part.fabVolume ?? 0) === 2) {
           // Sensor Manufacturing Process Vol.2 (36 parts: F2-01–F2-36, Phase 1 Sand-to-Epi-Wafer)
           widthPx =
             part.order === 1 ||
