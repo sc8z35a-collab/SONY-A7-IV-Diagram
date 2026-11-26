@@ -2044,10 +2044,17 @@ export function buildShutterParts(
 }
 
 export async function buildShutterStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
-  // Phase 13 (18) + Phase 17 (20) = 38 standalone-only mechanical shutter micro-parts (SH40–SH77)
-  const [mMicro, mUltra] = await Promise.all([
+  // Phase 13 (18) + Phase 17 (20) + Phase 34 (53) = 91 standalone-only mechanical shutter micro-parts (SH40–SH130 -> 130 total)
+  const [mMicro, mUltra, mU34A, mU34B] = await Promise.all([
     import('./shutterMicroParts'),
     import('./shutterUltraAuditParts'),
+    import('./shutterUltra34PartsA'),
+    import('./shutterUltra34PartsB'),
   ]);
-  return [...mMicro.buildShutterMicroParts(mats), ...mUltra.buildShutterUltraAuditParts(mats)];
+  return [
+    ...mMicro.buildShutterMicroParts(mats),
+    ...mUltra.buildShutterUltraAuditParts(mats),
+    ...mU34A.buildShutterUltra34PartsA(mats),
+    ...mU34B.buildShutterUltra34PartsB(mats),
+  ];
 }

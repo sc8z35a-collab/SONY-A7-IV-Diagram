@@ -1463,15 +1463,19 @@ export function buildMountParts(
 }
 
 export async function buildMountStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]> {
-  // Phase 13 (16) + Phase 18B (6) + Phase 20B (12) = 34 standalone-only lens-mount micro-parts (M27–M60)
-  const [mMicro, mUltra, mDeep] = await Promise.all([
+  // Phase 13 (16) + Phase 18B (6) + Phase 20B (12) + Phase 34 (40) = 74 standalone-only mount parts (M27–M100 -> 100 total!)
+  const [mMicro, mUltra, mDeep, mU34A, mU34B] = await Promise.all([
     import('./mountMicroParts'),
     import('./mountUltraAuditParts'),
     import('./mountDeepAuditParts'),
+    import('./mountUltra34PartsA'),
+    import('./mountUltra34PartsB'),
   ]);
   return [
     ...mMicro.buildMountMicroParts(mats),
     ...mUltra.buildMountUltraAuditParts(mats),
     ...mDeep.buildMountDeepAuditParts(mats),
+    ...mU34A.buildMountUltra34PartsA(mats),
+    ...mU34B.buildMountUltra34PartsB(mats),
   ];
 }

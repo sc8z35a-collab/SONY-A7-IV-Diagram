@@ -382,6 +382,8 @@ export class ExplanationDrawer {
       svg.includes('data-fab-hd="1"') ||
       svg.includes('data-bionz-diagram=') ||
       svg.includes('data-sensor-hd="1"') ||
+      svg.includes('data-mount-hd="1"') ||
+      svg.includes('data-shutter-hd="1"') ||
       svg.includes('data-drybox-hd="1"');
     const isSyncHd = isHdDiagram(syncSvg);
 
