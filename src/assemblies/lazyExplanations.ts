@@ -200,13 +200,15 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./sensorFab/sensorFabVol2Explanations'),
         import('./sensorFab/sensorFabVol3Explanations'),
         import('./sensorFab/sensorFabVol4Explanations'),
-      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4]) =>
+        import('./sensorFab/sensorFabVol5Explanations'),
+      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4, mVol5]) =>
         finish({
           ...mVol0.SENSOR_FAB_EXPLANATIONS,
           ...mVol1.SENSOR_FAB_VOL1_EXPLANATIONS,
           ...mVol2.SENSOR_FAB_VOL2_EXPLANATIONS,
           ...mVol3.SENSOR_FAB_VOL3_EXPLANATIONS,
           ...mVol4.SENSOR_FAB_VOL4_EXPLANATIONS,
+          ...mVol5.SENSOR_FAB_VOL5_EXPLANATIONS,
         })
       );
       break;
