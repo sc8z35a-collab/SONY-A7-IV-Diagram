@@ -157,6 +157,13 @@ export interface UltraRealisticMaterials {
   fab2IngotVgCrystalMap: THREE.MeshPhysicalMaterial;
   fab2LpdDefectMap: THREE.MeshPhysicalMaterial;
   fab2NanotopoMap: THREE.MeshPhysicalMaterial;
+  // Phase 33: Sensor Manufacturing Process (Fab Vol.3) Design Studio & Photomask Fab PBR Materials
+  fab3Phase2StudioDeck: THREE.MeshPhysicalMaterial;
+  fab3OpcSerifMask: THREE.MeshPhysicalMaterial;
+  fab3StitchVsSingleReticle: THREE.MeshPhysicalMaterial;
+  fab3ChipLayoutOasis: THREE.MeshPhysicalMaterial;
+  fab3MaskCdMap: THREE.MeshPhysicalMaterial;
+  fab3BossungWindowMap: THREE.MeshPhysicalMaterial;
   // List for pre-packing & GPU optimization
   list: THREE.Material[];
 }
@@ -7551,6 +7558,478 @@ function createFab2NanotopoMapTexture(): THREE.CanvasTexture {
 }
 
 // =============================================================================
+// PHASE 33: SENSOR FAB VOL.3 — DESIGN STUDIO & PHOTOMASK FAB PBR TEXTURES
+// =============================================================================
+
+function createFab3Phase2StudioDeckTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#0f172a');
+  bg.addColorStop(0.5, '#131d33');
+  bg.addColorStop(1, '#0b1324');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Cleanroom & EDA precision drafting grid
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.10)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= w; x += 24) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= h; y += 24) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+
+  // Three horizontal EDA lane strips (2-A TCAD, 2-B Layout, 2-C OPC/Verify)
+  const lanes: Array<{ y: number; h: number; color: string; title: string; sub: string }> = [
+    { y: 54, h: 196, color: '#8b5cf6', title: '2-A  TCAD / OPTICAL FDTD / CRA', sub: 'P02-001 -> P02-010' },
+    { y: 286, h: 196, color: '#3b82f6', title: '2-B  ADC / SERDES / 3D Cu-Cu / OASIS', sub: 'P02-011 -> P02-022' },
+    { y: 518, h: 196, color: '#f59e0b', title: '2-C  DRC / SINGLE vs STITCH / OPC / 96-LAYER TAPE-OUT', sub: 'P02-023 -> P02-032' },
+  ];
+  for (const lane of lanes) {
+    ctx.fillStyle = `${lane.color}18`;
+    ctx.fillRect(28, lane.y, w - 56, lane.h);
+    ctx.strokeStyle = `${lane.color}aa`;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(28, lane.y, w - 56, lane.h);
+
+    ctx.fillStyle = lane.color;
+    ctx.fillRect(28, lane.y, w - 56, 8);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText(lane.title, 42, lane.y + 30);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText(lane.sub, w - 210, lane.y + 30);
+
+    // Subtle directional process chevrons
+    ctx.strokeStyle = `${lane.color}66`;
+    ctx.lineWidth = 2;
+    for (let x = 90; x < w - 80; x += 68) {
+      const cy = lane.y + lane.h - 18;
+      ctx.beginPath();
+      ctx.moveTo(x - 10, cy - 6);
+      ctx.lineTo(x, cy);
+      ctx.lineTo(x - 10, cy + 6);
+      ctx.stroke();
+    }
+  }
+
+  // Top & bottom reticle ruler strip
+  ctx.fillStyle = '#0ea5e9';
+  ctx.font = 'bold 15px monospace';
+  ctx.fillText('PHASE 2: SENSOR DESIGN & 6-INCH SYNTHETIC QUARTZ RETICLE FAB (50 STEPS / ~96 MASKS)', 30, 34);
+  ctx.fillStyle = '#10b981';
+  ctx.fillText('LOWER DECK: 2-D QUARTZ BLANKS & 260K MULTI-BEAM EB  |  2-E NANO REPAIR / 0.8um PELLICLE / STOCKER', 30, 748);
+
+  return toHiTex(canvas);
+}
+
+function createFab3OpcSerifMaskTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // Synthetic quartz transparent deep-blue/teal illuminated background
+  const bg = ctx.createLinearGradient(0, 0, w, h);
+  bg.addColorStop(0, '#071c2c');
+  bg.addColorStop(0.5, '#0c2a3e');
+  bg.addColorStop(1, '#081b29');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Sub-nm grid
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.14)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= w; i += 32) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(w, i);
+    ctx.stroke();
+  }
+
+  // Repeating MoSi/Cr OPC hammerhead & dog-ear serif geometries
+  const drawOpcCell = (ox: number, oy: number) => {
+    // Sub-resolution assist features (SRAF scattering bars)
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(ox + 12, oy + 46, 10, 144);
+    ctx.fillRect(ox + 214, oy + 46, 10, 144);
+    ctx.fillRect(ox + 46, oy + 12, 144, 10);
+
+    // Main L-shaped + gate OPC polygon (distorted with dog-ear serifs & jogs)
+    ctx.fillStyle = '#cbd5e1';
+    ctx.strokeStyle = '#f8fafc';
+    ctx.lineWidth = 2;
+    // Vertical trunk
+    ctx.fillRect(ox + 56, oy + 52, 42, 134);
+    // Horizontal bar
+    ctx.fillRect(ox + 56, oy + 144, 128, 42);
+    // Corner dog-ear serifs (outward ears at outer corners)
+    const ears: Array<[number, number, number, number]> = [
+      [ox + 42, oy + 38, 22, 22],
+      [ox + 90, oy + 38, 22, 22],
+      [ox + 42, oy + 178, 22, 22],
+      [ox + 176, oy + 130, 22, 22],
+      [ox + 176, oy + 178, 22, 22],
+    ];
+    ctx.fillStyle = '#f59e0b';
+    for (const [ex, ey, ew, eh] of ears) {
+      ctx.fillRect(ex, ey, ew, eh);
+    }
+    // Inner corner anti-serif notch cut
+    ctx.fillStyle = '#0c2a3e';
+    ctx.fillRect(ox + 92, oy + 138, 16, 16);
+
+    // Target printed wafer contour (crisp rounded rectangle in luminous cyan)
+    ctx.strokeStyle = '#22d3ee';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(ox + 62, oy + 58);
+    ctx.lineTo(ox + 92, oy + 58);
+    ctx.lineTo(ox + 92, oy + 150);
+    ctx.lineTo(ox + 178, oy + 150);
+    ctx.lineTo(ox + 178, oy + 180);
+    ctx.lineTo(ox + 62, oy + 180);
+    ctx.closePath();
+    ctx.stroke();
+
+    // Isolated square contact with 4 hammerhead serifs
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillRect(ox + 132, oy + 62, 46, 46);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(ox + 122, oy + 52, 18, 18);
+    ctx.fillRect(ox + 170, oy + 52, 18, 18);
+    ctx.fillRect(ox + 122, oy + 100, 18, 18);
+    ctx.fillRect(ox + 170, oy + 100, 18, 18);
+    ctx.strokeStyle = '#22d3ee';
+    ctx.strokeRect(ox + 137, oy + 67, 36, 36);
+  };
+
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      drawOpcCell(24 + c * 244, 24 + r * 244);
+    }
+  }
+
+  return toHiTex(canvas);
+}
+
+function createFab3StitchVsSingleReticleTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#0b1120';
+  ctx.fillRect(0, 0, w, h);
+
+  // Outer chrome light-shield border
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 18;
+  ctx.strokeRect(18, 18, w - 36, h - 36);
+
+  // Left half: Single-Shot Full-Frame Reticle (36x24mm seamless)
+  ctx.fillStyle = '#0c2742';
+  ctx.fillRect(46, 78, 316, 610);
+  ctx.strokeStyle = '#38bdf8';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(46, 78, 316, 610);
+
+  // Seamless pixel grid inside single-shot
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.28)';
+  ctx.lineWidth = 1;
+  for (let x = 66; x < 358; x += 20) {
+    ctx.beginPath();
+    ctx.moveTo(x, 128);
+    ctx.lineTo(x, 646);
+    ctx.stroke();
+  }
+  for (let y = 128; y < 646; y += 20) {
+    ctx.beginPath();
+    ctx.moveTo(58, y);
+    ctx.lineTo(352, y);
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#e0f2fe';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('SINGLE-SHOT (1x)', 74, 112);
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = 'bold 15px monospace';
+  ctx.fillText('36x24mm SEAMLESS', 86, 672);
+
+  // Right half: 3-Shot Stitching Reticle (LEFT | CENTER | RIGHT + overlap seam bands)
+  ctx.fillStyle = '#24180b';
+  ctx.fillRect(406, 78, 316, 610);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(406, 78, 316, 610);
+
+  const blocks = [
+    { y: 128, bh: 158, col: 'rgba(245, 158, 11, 0.22)', lbl: 'SHOT A: LEFT BLOCK' },
+    { y: 304, bh: 158, col: 'rgba(251, 146, 60, 0.24)', lbl: 'SHOT B: CENTER PIXELS' },
+    { y: 480, bh: 158, col: 'rgba(234, 88, 12, 0.22)', lbl: 'SHOT C: RIGHT BLOCK' },
+  ];
+  for (const b of blocks) {
+    ctx.fillStyle = b.col;
+    ctx.fillRect(422, b.y, 284, b.bh);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(422, b.y, 284, b.bh);
+    ctx.fillStyle = '#fef3c7';
+    ctx.font = 'bold 15px monospace';
+    ctx.fillText(b.lbl, 444, b.y + 84);
+  }
+  // Highlight two glowing stitching overlap dose-gradient seams
+  for (const sy of [295, 471]) {
+    ctx.fillStyle = '#f43f5e';
+    ctx.fillRect(418, sy - 6, 292, 12);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText('OVERLAP DOSE GRADIENT SEAM', 456, sy + 4);
+  }
+  ctx.fillStyle = '#fef3c7';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('STITCHING (2-3x)', 432, 112);
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 15px monospace';
+  ctx.fillText('26x33mm FIELD SPLIT', 442, 672);
+
+  // Corner fiducial alignment crosses
+  ctx.strokeStyle = '#22d3ee';
+  ctx.lineWidth = 3;
+  for (const [fx, fy] of [
+    [46, 48],
+    [722, 48],
+    [46, 720],
+    [722, 720],
+  ]) {
+    ctx.beginPath();
+    ctx.moveTo(fx - 12, fy);
+    ctx.lineTo(fx + 12, fy);
+    ctx.moveTo(fx, fy - 12);
+    ctx.lineTo(fx, fy + 12);
+    ctx.stroke();
+  }
+
+  return toHiTex(canvas);
+}
+
+function createFab3ChipLayoutOasisTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#090f1d';
+  ctx.fillRect(0, 0, w, h);
+
+  // Copper seal / guard ring wall
+  ctx.strokeStyle = '#d97706';
+  ctx.lineWidth = 14;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+  ctx.strokeStyle = '#f59e0b';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(40, 40, w - 80, h - 80);
+
+  // Peripheral bonding pads & SLVS-EC SerDes macros (top & bottom)
+  for (let x = 76; x <= w - 92; x += 26) {
+    ctx.fillStyle = '#facc15';
+    ctx.fillRect(x, 54, 16, 22);
+    ctx.fillRect(x, h - 76, 16, 22);
+  }
+
+  // Dual-edge Column-Parallel ADC & Logic bands
+  ctx.fillStyle = '#1e3a8a';
+  ctx.fillRect(58, 92, w - 116, 62);
+  ctx.fillRect(58, h - 154, w - 116, 62);
+  ctx.strokeStyle = '#60a5fa';
+  ctx.lineWidth = 1.5;
+  for (let x = 66; x < w - 66; x += 14) {
+    ctx.beginPath();
+    ctx.moveTo(x, 94);
+    ctx.lineTo(x, 152);
+    ctx.moveTo(x, h - 152);
+    ctx.lineTo(x, h - 94);
+    ctx.stroke();
+  }
+
+  // Left/Right Row Driver & Timing Gen vertical macros
+  ctx.fillStyle = '#312e81';
+  ctx.fillRect(58, 166, 56, h - 332);
+  ctx.fillRect(w - 114, 166, 56, h - 332);
+
+  // Optical Black (OB) + Dummy Pixel dark shield frame around 36x24mm active area
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(126, 166, w - 252, h - 332);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(126, 166, w - 252, h - 332);
+
+  // Central Active Full-Frame Pixel Array (36x24mm Bayer iridescent mosaic)
+  const ax = 158;
+  const ay = 198;
+  const aw = w - 316;
+  const ah = h - 396;
+  const grad = ctx.createLinearGradient(ax, ay, ax + aw, ay + ah);
+  grad.addColorStop(0, '#0ea5e9');
+  grad.addColorStop(0.35, '#10b981');
+  grad.addColorStop(0.7, '#6366f1');
+  grad.addColorStop(1, '#ec4899');
+  ctx.fillStyle = grad;
+  ctx.fillRect(ax, ay, aw, ah);
+
+  // Micro Bayer pixel cells
+  ctx.strokeStyle = 'rgba(15, 23, 42, 0.45)';
+  ctx.lineWidth = 1;
+  for (let x = ax; x <= ax + aw; x += 16) {
+    ctx.beginPath();
+    ctx.moveTo(x, ay);
+    ctx.lineTo(x, ay + ah);
+    ctx.stroke();
+  }
+  for (let y = ay; y <= ay + ah; y += 16) {
+    ctx.beginPath();
+    ctx.moveTo(ax, y);
+    ctx.lineTo(ax + aw, y);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('FULL-FRAME 36x24mm PIXEL ARRAY', 202, 392);
+  ctx.font = 'bold 14px monospace';
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillText('OB + DUMMY BORDER', 310, 187);
+  ctx.fillText('14-BIT COLUMN ADC / SLVS-EC 12.5Gbps', 236, 128);
+  ctx.fillText('3D Cu-Cu HYBRID BOND PAD MATRIX', 252, h - 118);
+
+  return toHiTex(canvas);
+}
+
+function createFab3MaskCdMapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  // 6-inch synthetic quartz chrome border
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 14;
+  ctx.strokeRect(24, 24, w - 48, h - 48);
+
+  // CD-SEM 2D uniformity contour grid (CDU 1-3nm 3-sigma)
+  const gx = 76;
+  const gy = 76;
+  const cell = 38;
+  const cols = 16;
+  const rows = 16;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const dx = (c - 7.5) / 7.5;
+      const dy = (r - 7.5) / 7.5;
+      const val = Math.sin(dx * 2.1) * 0.35 + Math.cos(dy * 2.3) * 0.35 + (dx * dx + dy * dy) * 0.25;
+      const hue = Math.max(130, Math.min(220, 178 - val * 42));
+      ctx.fillStyle = `hsl(${hue}, 78%, 42%)`;
+      ctx.fillRect(gx + c * cell + 2, gy + r * cell + 2, cell - 4, cell - 4);
+
+      // KLA IPRO registration tiny vector arrow per site
+      const cx = gx + c * cell + cell * 0.5;
+      const cy = gy + r * cell + cell * 0.5;
+      const vx = dx * 8 + Math.sin(r) * 2;
+      const vy = dy * 8 + Math.cos(c) * 2;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + vx, cy + vy);
+      ctx.stroke();
+    }
+  }
+
+  // Mask barcode & telemetry header
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = 'bold 17px monospace';
+  ctx.fillText('6" RETICLE CD-SEM & IPRO MAP  |  CDU 1.4nm (3s)  |  REG < 2.0nm', 52, 58);
+  for (let i = 0; i < 34; i++) {
+    ctx.fillStyle = i % 3 === 0 ? '#f8fafc' : '#94a3b8';
+    ctx.fillRect(84 + i * 18, 704, i % 2 === 0 ? 10 : 5, 24);
+  }
+
+  return toHiTex(canvas);
+}
+
+function createFab3BossungWindowMapTexture(): THREE.CanvasTexture {
+  const { canvas, ctx, w, h } = makeHiCanvas(768, 768);
+  ctx.fillStyle = '#09111f';
+  ctx.fillRect(0, 0, w, h);
+
+  // Coordinate axes (Focus vs CD & Dose)
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+  ctx.lineWidth = 1.2;
+  for (let x = 84; x <= 684; x += 60) {
+    ctx.beginPath();
+    ctx.moveTo(x, 84);
+    ctx.lineTo(x, 664);
+    ctx.stroke();
+  }
+  for (let y = 84; y <= 664; y += 58) {
+    ctx.beginPath();
+    ctx.moveTo(84, y);
+    ctx.lineTo(684, y);
+    ctx.stroke();
+  }
+
+  // Safe target CD tolerance band (±10%)
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+  ctx.fillRect(84, 270, 600, 196);
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([10, 6]);
+  ctx.beginPath();
+  ctx.moveTo(84, 270);
+  ctx.lineTo(684, 270);
+  ctx.moveTo(84, 466);
+  ctx.lineTo(684, 466);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Bossung Smile Curves across 7 exposure doses
+  const colors = ['#f43f5e', '#fb923c', '#facc15', '#38bdf8', '#22d3ee', '#818cf8', '#c084fc'];
+  for (let d = 0; d < 7; d++) {
+    const k = (d - 3) * 0.48;
+    const baseY = 368 + (d - 3) * 42;
+    ctx.strokeStyle = colors[d];
+    ctx.lineWidth = d === 3 ? 4.5 : 3;
+    ctx.beginPath();
+    for (let i = 0; i <= 60; i++) {
+      const t = (i / 60) * 2 - 1; // -1..+1 focus
+      const x = 84 + i * 10;
+      const y = baseY - k * t * t * 115;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Inscribed Process Window (DOF x EL) green rectangle
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+  ctx.fillRect(244, 286, 280, 164);
+  ctx.strokeStyle = '#34d399';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(244, 286, 280, 164);
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText('LRC BOSSUNG PROCESS WINDOW (FOCUS vs DOSE +/-5%)', 86, 56);
+  ctx.fillStyle = '#34d399';
+  ctx.font = 'bold 18px monospace';
+  ctx.fillText('SAFE PROCESS WINDOW (DOF / EL)', 256, 374);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = 'bold 16px monospace';
+  ctx.fillText('DEFOCUS (-nm)   <----   BEST FOCUS   ---->   DEFOCUS (+nm)', 116, 712);
+
+  return toHiTex(canvas);
+}
+
+// =============================================================================
 // FACTORY: CREATE ALL BESPOKE ULTRA-REALISTIC MATERIALS
 // =============================================================================
 
@@ -9286,6 +9765,87 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     0.07
   );
 
+  // --- Phase 33: Sensor Fab Vol.3 (Design Studio & 6" Photomask Fab) ---
+  const fab3Phase2StudioDeck = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3Phase2StudioDeckTexture(),
+      metalness: 0.34,
+      roughness: 0.32,
+      clearcoat: 0.42,
+    }),
+    0.05
+  );
+
+  const fab3OpcSerifMask = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3OpcSerifMaskTexture(),
+      metalness: 0.62,
+      roughness: 0.16,
+      clearcoat: 0.92,
+      iridescence: 0.65,
+      iridescenceIOR: 1.65,
+    }),
+    0.10
+  );
+
+  const fab3StitchVsSingleReticle = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3StitchVsSingleReticleTexture(),
+      metalness: 0.58,
+      roughness: 0.18,
+      clearcoat: 0.90,
+      iridescence: 0.55,
+      iridescenceIOR: 1.58,
+    }),
+    0.09
+  );
+
+  const fab3ChipLayoutOasis = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3ChipLayoutOasisTexture(),
+      metalness: 0.52,
+      roughness: 0.15,
+      clearcoat: 0.94,
+      iridescence: 0.86,
+      iridescenceIOR: 1.78,
+    }),
+    0.08
+  );
+
+  const fab3MaskCdMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3MaskCdMapTexture(),
+      metalness: 0.48,
+      roughness: 0.16,
+      clearcoat: 0.88,
+      iridescence: 0.62,
+      iridescenceIOR: 1.66,
+    }),
+    0.07
+  );
+
+  const fab3BossungWindowMap = tagBump(
+    new THREE.MeshPhysicalMaterial({
+      ...common,
+      color: 0xffffff,
+      map: createFab3BossungWindowMapTexture(),
+      metalness: 0.30,
+      roughness: 0.22,
+      clearcoat: 0.78,
+    }),
+    0.06
+  );
+
   const list: THREE.Material[] = [
     bionzEmiLid,
     bionzPopDramTop,
@@ -9421,6 +9981,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab2IngotVgCrystalMap,
     fab2LpdDefectMap,
     fab2NanotopoMap,
+    fab3Phase2StudioDeck,
+    fab3OpcSerifMask,
+    fab3StitchVsSingleReticle,
+    fab3ChipLayoutOasis,
+    fab3MaskCdMap,
+    fab3BossungWindowMap,
   ];
 
   return {
@@ -9558,6 +10124,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
     fab2IngotVgCrystalMap,
     fab2LpdDefectMap,
     fab2NanotopoMap,
+    fab3Phase2StudioDeck,
+    fab3OpcSerifMask,
+    fab3StitchVsSingleReticle,
+    fab3ChipLayoutOasis,
+    fab3MaskCdMap,
+    fab3BossungWindowMap,
     list,
   };
 }

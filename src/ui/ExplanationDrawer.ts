@@ -343,10 +343,15 @@ export class ExplanationDrawer {
                 targetVol: 2,
                 label: '第2巻：フェーズ1 砂から超純度エピタキシャルウェーハまで（全60工程）へ進む',
               }
-            : {
-                targetVol: 0,
-                label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
-              }
+            : (part.fabVolume ?? 0) === 2
+              ? {
+                  targetVol: 3,
+                  label: '第3巻：フェーズ2 センサー設計とフォトマスク製造（全50工程・96枚）へ進む',
+                }
+              : {
+                  targetVol: 0,
+                  label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
+                }
         : null;
 
     const fabVolBtnHtml = fabVolSwitchConfig
@@ -362,7 +367,9 @@ export class ExplanationDrawer {
 
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
     const isHdDiagram = (svg: string) =>
-      svg.includes('data-evf-hd="1"') || svg.includes('data-bionz-diagram=');
+      svg.includes('data-evf-hd="1"') ||
+      svg.includes('data-fab-hd="1"') ||
+      svg.includes('data-bionz-diagram=');
     const isSyncHd = isHdDiagram(syncSvg);
 
     this.bodyEl.innerHTML = `

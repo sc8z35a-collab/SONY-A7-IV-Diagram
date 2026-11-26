@@ -20,7 +20,7 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab';
-export type SensorFabVolume = 0 | 1 | 2;
+export type SensorFabVolume = 0 | 1 | 2 | 3;
 export type SensorFabStage =
   | 'overview'
   | 'phases'
@@ -35,7 +35,12 @@ export type SensorFabStage =
   | 'v2_refine'
   | 'v2_mcz'
   | 'v2_wafer'
-  | 'v2_epi_ship';
+  | 'v2_epi_ship'
+  | 'v3_overview'
+  | 'v3_tcad'
+  | 'v3_layout'
+  | 'v3_opc'
+  | 'v3_maskfab';
 export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
@@ -1496,7 +1501,65 @@ export interface PartExplanation {
     | 'fab2_wafersight_epi_mapping'
     | 'fab2_vpd_icpms_edge_check'
     | 'fab2_fosb_25wafer_clean_load'
-    | 'fab2_controlled_logistics_fab_bridge';
+    | 'fab2_controlled_logistics_fab_bridge'
+    // Phase 33: Sensor Manufacturing Process Vol.3 — フェーズ2：センサー設計とフォトマスク製造 (52 Parts: F3-01–F3-52, 1-to-1 P02-001–050)
+    | 'fab3_hero_reticle_96set_monument'
+    | 'fab3_phase2_design_mask_deck'
+    // Block 2-A (P02-001–010)
+    | 'fab3_p01_product_spec'
+    | 'fab3_p02_pixel_arch_select'
+    | 'fab3_p03_process_tcad_3d'
+    | 'fab3_p04_device_tcad_potential'
+    | 'fab3_p05_dark_current_blooming'
+    | 'fab3_p06_optical_fdtd_3d'
+    | 'fab3_p07_cra_angle_shift'
+    | 'fab3_p08_pdaf_pupil_response'
+    | 'fab3_p09_thermal_stress_sim'
+    | 'fab3_p10_pixel_teg_validation'
+    // Block 2-B (P02-011–022)
+    | 'fab3_p11_adc_circuit_design'
+    | 'fab3_p12_afe_cds_dcg_design'
+    | 'fab3_p13_row_driver_tg'
+    | 'fab3_p14_serdes_slvsec_design'
+    | 'fab3_p15_on_sensor_isp_sram'
+    | 'fab3_p16_cucu_3d_floorplan'
+    | 'fab3_p17_pixel_array_layout'
+    | 'fab3_p18_ob_dummy_border'
+    | 'fab3_p19_logic_place_route'
+    | 'fab3_p20_partial_stack_chiplet'
+    | 'fab3_p21_cmp_dummy_alignment'
+    | 'fab3_p22_fullchip_oasis_guard'
+    // Block 2-C (P02-023–032)
+    | 'fab3_p23_drc_geometry_check'
+    | 'fab3_p24_lvs_netlist_match'
+    | 'fab3_p25_erc_antenna_esd'
+    | 'fab3_p26_3d_mirror_stack_verify'
+    | 'fab3_p27_single_vs_stitch_split'
+    | 'fab3_p28_opc_serif_correction'
+    | 'fab3_p29_lrc_bossung_window'
+    | 'fab3_p30_mdp_fracture_pec'
+    | 'fab3_p31_tapeout_96layers'
+    | 'fab3_p32_mask_set_scheduling'
+    // Block 2-D (P02-033–042)
+    | 'fab3_p33_synthetic_quartz_sub'
+    | 'fab3_p34_cr_mosi_psm_sputter'
+    | 'fab3_p35_eb_resist_coat_bake'
+    | 'fab3_p36_multibeam_eb_writer'
+    | 'fab3_p37_mask_peb_develop'
+    | 'fab3_p38_mask_icp_dry_etch'
+    | 'fab3_p39_mask_strip_spm_clean'
+    | 'fab3_p40_second_level_border'
+    | 'fab3_p41_mask_cd_sem_metrology'
+    | 'fab3_p42_registration_ipro'
+    // Block 2-E (P02-043–050)
+    | 'fab3_p43_die_to_db_inspection'
+    | 'fab3_p44_nano_defect_repair'
+    | 'fab3_p45_aims_aerial_image'
+    | 'fab3_p46_final_haze_ultraclean'
+    | 'fab3_p47_pellicle_08um_mount'
+    | 'fab3_p48_starlight_post_pellicle'
+    | 'fab3_p49_reticle_smif_pod'
+    | 'fab3_p50_stocker_96set_bridge';
 }
 
 export interface CadPart {
@@ -1539,7 +1602,7 @@ export interface CadPart {
   standaloneOnly?: boolean;
   /** For 50mm F1.2 GM standalone 3-section lightweight dissection: 1 = Rear (default), 2 = Middle, 3 = Front */
   lensSection?: LensSection;
-  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0, 1 = Vol.1, 2 = Vol.2 (Phase 1 Sand-to-Epi-Wafer) */
+  /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0, 1 = Vol.1, 2 = Vol.2 (Phase 1), 3 = Vol.3 (Phase 2 Design & Mask) */
   fabVolume?: SensorFabVolume;
 }
 
