@@ -64,7 +64,17 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       );
       break;
     case 'shutter':
-      inflight = import('./shutter/shutterExplanations').then((m) => finish(m.SHUTTER_EXPLANATIONS));
+      inflight = Promise.all([
+        import('./shutter/shutterExplanations'),
+        import('./shutter/shutterUltra34ExplanationsA'),
+        import('./shutter/shutterUltra34ExplanationsB'),
+      ]).then(([mBase, mU34A, mU34B]) =>
+        finish({
+          ...mBase.SHUTTER_EXPLANATIONS,
+          ...mU34A.SHUTTER_ULTRA34_EXPLANATIONS_A,
+          ...mU34B.SHUTTER_ULTRA34_EXPLANATIONS_B,
+        })
+      );
       break;
     case 'sensor':
       inflight = Promise.all([
@@ -189,12 +199,25 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./sensorFab/sensorFabVol1Explanations'),
         import('./sensorFab/sensorFabVol2Explanations'),
         import('./sensorFab/sensorFabVol3Explanations'),
-      ]).then(([mVol0, mVol1, mVol2, mVol3]) =>
+        import('./sensorFab/sensorFabVol4Explanations'),
+      ]).then(([mVol0, mVol1, mVol2, mVol3, mVol4]) =>
         finish({
           ...mVol0.SENSOR_FAB_EXPLANATIONS,
           ...mVol1.SENSOR_FAB_VOL1_EXPLANATIONS,
           ...mVol2.SENSOR_FAB_VOL2_EXPLANATIONS,
           ...mVol3.SENSOR_FAB_VOL3_EXPLANATIONS,
+          ...mVol4.SENSOR_FAB_VOL4_EXPLANATIONS,
+        })
+      );
+      break;
+    case 'drybox':
+      inflight = Promise.all([
+        import('./drybox/dryboxExplanationsA'),
+        import('./drybox/dryboxExplanationsB'),
+      ]).then(([mA, mB]) =>
+        finish({
+          ...mA.DRYBOX_EXPLANATIONS_A,
+          ...mB.DRYBOX_EXPLANATIONS_B,
         })
       );
       break;

@@ -940,9 +940,9 @@ void main() {
       vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
-      vec4 texCol = lut4.x < 199.5
+      vec4 texCol = lut4.x < 255.5
         ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
-        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 200.0));
+        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 256.0));
       albedo *= texCol.rgb;
       ${isGlassPass ? 'alpha *= texCol.a;' : ''}
       texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
@@ -950,9 +950,9 @@ void main() {
         emissive = texCol.rgb * lut2.rgb;
       }
       if (lut4.y >= -0.5) {
-        float rSamp = lut4.y < 199.5
+        float rSamp = lut4.y < 255.5
           ? texture(uTexArrayHi, vec3(sampleUv, lut4.y)).g
-          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 200.0)).g;
+          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 256.0)).g;
         rough = clamp(rough * rSamp, 0.04, 1.0);
       }
     }
@@ -1273,14 +1273,14 @@ void main() {
       vec2 sampleUv = (lut4.z <= 1.001 && lut4.w <= 1.001)
         ? clamp(tiledUv, vec2(0.002), vec2(0.998))
         : tiledUv;
-      vec4 texCol = lut4.x < 199.5
+      vec4 texCol = lut4.x < 255.5
         ? texture(uTexArrayHi, vec3(sampleUv, lut4.x))
-        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 200.0));
+        : texture(uTexArrayTile, vec3(sampleUv, lut4.x - 256.0));
       float texLuma = dot(texCol.rgb, vec3(0.299, 0.587, 0.114));
       if (lut4.y >= -0.5) {
-        float rSamp = lut4.y < 199.5
+        float rSamp = lut4.y < 255.5
           ? texture(uTexArrayHi, vec3(sampleUv, lut4.y)).g
-          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 200.0)).g;
+          : texture(uTexArrayTile, vec3(sampleUv, lut4.y - 256.0)).g;
         rough = clamp(rough * rSamp, 0.04, 1.0);
       }
       if (bumpStr > 0.004) {
@@ -1539,9 +1539,10 @@ void main() {
 
 const HI_TEX_W = NATIVE_HI_TEX_W;
 const HI_TEX_H = NATIVE_HI_TEX_H;
-const HI_TEX_MAX_LAYERS = 168;
+const HI_TEX_MAX_LAYERS = 208;
 const TILE_TEX_SIZE = NATIVE_TILE_TEX_SIZE;
-const TILE_TEX_MAX_LAYERS = 92;
+const TILE_TEX_MAX_LAYERS = 104;
+const TILE_LAYER_OFFSET = 256;
 
 const LINEAR_TO_SRGB_U8 = new Uint8Array(256);
 for (let i = 0; i < 256; i++) {
@@ -1643,7 +1644,7 @@ class DualTierTextureArrayPacker {
       }
       this.tileArray.addLayerUpdate(layer);
       this.tileArray.needsUpdate = true;
-      const encoded = 200 + layer;
+      const encoded = TILE_LAYER_OFFSET + layer;
       this.texToLayer.set(tex, encoded);
       tex.dispose();
       return encoded;
@@ -1730,7 +1731,7 @@ class DualTierTextureArrayPacker {
 
     this.tileArray.addLayerUpdate(layer);
     this.tileArray.needsUpdate = true;
-    const encoded = 200 + layer;
+    const encoded = TILE_LAYER_OFFSET + layer;
     this.texToLayer.set(tex, encoded);
     reclaimSourceCanvasTexture(tex);
     return encoded;
