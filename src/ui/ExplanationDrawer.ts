@@ -336,10 +336,15 @@ export class ExplanationDrawer {
               targetVol: 1,
               label: '第1巻：超入門・センサーのしくみと2026年最新アーキテクチャへ進む',
             }
-          : {
-              targetVol: 0,
-              label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ移動',
-            }
+          : (part.fabVolume ?? 0) === 1
+            ? {
+                targetVol: 2,
+                label: '第2巻：フェーズ1 砂から超純度エピタキシャルウェーハまで（全60工程）へ進む',
+              }
+            : {
+                targetVol: 0,
+                label: '第0巻：全2,110工程マップ（P1–P12・L01–L12）へ戻る',
+              }
         : null;
 
     const fabVolBtnHtml = fabVolSwitchConfig

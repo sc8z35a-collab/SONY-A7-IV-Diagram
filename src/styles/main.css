@@ -547,12 +547,19 @@ body,
   align-items: center;
   gap: 3px;
   padding: 4px;
+  max-width: calc(100vw - 410px);
+  overflow-x: auto;
+  scrollbar-width: none;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(18, 20, 26, 0.11);
   border-radius: 13px;
   box-shadow: 0 8px 28px rgba(15, 20, 30, 0.08), 0 1px 2px rgba(15, 20, 30, 0.04);
   contain: layout style paint;
   transition: left 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease, transform 0.24s ease;
+}
+
+.fab-stage-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .fab-stage-bar.is-hidden {
@@ -562,7 +569,9 @@ body,
 }
 
 #app.has-drawer .fab-stage-bar {
-  left: calc(50% - 215px);
+  top: 68px;
+  left: calc(50% - 190px);
+  max-width: calc(100vw - 550px);
 }
 
 .fab-stage-btn {
@@ -570,7 +579,7 @@ body,
   border: none;
   background: transparent;
   height: 29px;
-  padding: 0 10px;
+  padding: 0 9px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
@@ -1725,7 +1734,9 @@ body,
   #app.has-drawer .v2-phase-bar,
   #app.has-drawer .lens-section-bar,
   #app.has-drawer .fab-stage-bar {
+    top: 56px;
     left: 50%;
+    max-width: calc(100vw - 20px);
   }
   .v2-phase-btn,
   .fab-vol-btn,
