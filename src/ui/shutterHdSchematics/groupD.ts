@@ -121,7 +121,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="276" y="108" text-anchor="middle" font-size="7.6" font-weight="700" fill="#2563eb" style="font-family:${FONT_MONO};">w_slit = 1.82 mm</text>
           ${pill(276, 130, 126, 13, 'Xシンクロ 1/250 s 実用化', '#f0fdfa', '#0d9488', '#115e59', 6.6)}
         `,
-        caption: '極薄チタン板をハニカム状にハーフエッチングし、遮光性を保ったまま3.3 ms超高速走破を実現',
+        caption: 'チタン板をハニカム状にハーフエッチングし、遮光性と3.3 ms超高速走破を両立',
       });
 
     case 'shutter_5blade_split':
@@ -158,7 +158,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="267" y="115" text-anchor="middle" font-size="6.8" font-weight="700" fill="#1e293b" style="font-family:${FONT_MONO};">w_slit(1/12000s) = 1.11 mm</text>
           ${pill(267, 133, 142, 13, 'X同調 1/300〜1/400 s 領域へ', '#fef2f2', '#ef4444', '#991b1b', 6.6)}
         `,
-        caption: '羽根を5枚へ細分化し1枚幅と慣性を縮小、1.8 ms（秒速13.3 m）の超高速走破を実現',
+        caption: '羽根を5枚へ細分化して慣性を縮小、1.8 ms（秒速13.3 m）の超高速走破を実現',
       });
 
     case 'shutter_pi_superelastic':
@@ -353,7 +353,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <circle cx="276" cy="110" r="4.5" fill="#0d9488"/>
           ${pill(276, 134, 126, 12, 'IBISアクチュエータ空間を確保', '#eff6ff', '#3b82f6', '#1e40af', 6.5)}
         `,
-        caption: '先幕と後幕のアーム支点を1本の共通ジャーナル軸へ同軸集約し、横幅を約3.2 mm省スペース化',
+        caption: '先幕・後幕のアーム支点を共通軸へ同軸集約し、横幅を約3.2 mm省スペース化',
       });
 
     case 'shutter_drive_pin_roller_cap':
@@ -469,7 +469,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="304" y="97" text-anchor="middle" font-size="6.5" font-weight="700" fill="#6d28d9">安全に弾き返す</text>
           ${pill(267, 134, 144, 12, 'US9241433B2 逆光コントラスト向上', '#ede9fe', '#7c3aed', '#4c1d95', 6.5)}
         `,
-        caption: '開口縁を鋭利なナイフエッジ(5H)と傾斜遮光壁(5j)に成形し、逆光迷光をレンズ側へ偏向除去',
+        caption: '開口縁をナイフエッジ(5H)と傾斜壁(5j)に成形し、逆光迷光をレンズ側へ偏向除去',
       });
 
     case 'shutter_insert_molded_bushes':
@@ -504,7 +504,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="276" y="109" text-anchor="middle" font-size="6.3" fill="#065f46">50万回打撃でも傾き・緩みゼロ</text>
           ${pill(276, 132, 128, 12, '金型内で鋼軸を直接インサート固定', '#f1f5f9', '#64748b', '#1e293b', 6.4)}
         `,
-        caption: '抜け止めアンカー溝付きステンレス支軸をPPS樹脂地板へインサート成形し、±5 μm精度を永久維持',
+        caption: 'アンカー溝付SUS支軸をPPS地板へインサート成形し、±5 μm精度を永久維持',
       });
 
     case 'shutter_midplate_lancing_tabs':
@@ -542,7 +542,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・衝撃共振による羽根擦れを防止</text>
           ${pill(276, 132, 128, 13, '切り起こし片持ち板ばね一体造形', '#f0fdfa', '#0d9488', '#115e59', 6.5)}
         `,
-        caption: '0.15 mm中間仕切り板にプレス切り起こし舌片を設け、Z方向ガタと高速衝撃ビビり音を防止',
+        caption: '0.15 mm中間板に切り起こし舌片を設け、Z方向ガタと高速衝撃ビビり音を防止',
       });
 
     case 'shutter_heat_stake_bayonet_clips':
@@ -613,7 +613,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="276" y="109" text-anchor="middle" font-size="6.5" fill="#334155">・ガイドリブがピン傾きを抑制</text>
           ${pill(276, 131, 128, 13, 'PPS樹脂地板の疲労クラック防止', '#f0f9ff', '#0ea5e9', '#0c4a6e', 6.5)}
         `,
-        caption: '駆動ピンが往復する円弧長穴の終端に大R逃がしノッチを設け、50万回打撃の応力集中を40%軽減',
+        caption: '円弧長穴の終端に大R逃がしノッチを設け、50万回打撃の応力集中を40%軽減',
       });
 
     case 'shutter_perimeter_light_seal_foam':
@@ -656,7 +656,7 @@ export function renderShutterHdGroupD(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.5" fill="#334155">・シャッター振動の副次減衰も兼用</text>
           ${pill(276, 132, 128, 13, '全周切れ目ない一体型暗箱シール', '#f8fafc', '#475569', '#0f172a', 6.5)}
         `,
-        caption: 'ユニット全周を独立気泡モルトで30〜50%圧縮密封し、光学濃度OD>7の完全暗箱と防塵を確保',
+        caption: '全周を独立気泡モルトで30〜50%圧縮密封し、OD&gt;7の完全暗箱と防塵を確保',
       });
 
     default:

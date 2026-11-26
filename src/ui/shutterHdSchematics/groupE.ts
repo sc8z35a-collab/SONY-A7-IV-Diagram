@@ -42,7 +42,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.5" fill="#334155">・乾燥した厳冬地でも幕速安定</text>
           ${pill(276, 132, 128, 13, 'センサー静電ゴミ吸引も同時低減', '#ecfeff', '#0891b2', '#164e63', 6.5)}
         `,
-        caption: 'CNT/黒鉛を配合した導電性PPSスペーサーで摩擦帯電を10 μsで逃がし、羽根癒着とゴミ吸引を防止',
+        caption: '導電性PPSスペーサーで摩擦帯電を10 μsで除電し、羽根癒着とゴミ吸引を防止',
       });
 
     case 'shutter_aperture_serrated_grooves':
@@ -76,7 +76,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・内面反射フレア・ゴーストを根絶</text>
           ${pill(276, 132, 128, 13, 'JPO 2H081 遮光迷路の高精度化', '#f5f3ff', '#7c3aed', '#4c1d95', 6.5)}
         `,
-        caption: '開口フレーム内周に60°マイクロ鋸歯状溝を刻み、3重反射吸収で斜光反射を2.7×10⁻⁵へ低減',
+        caption: '開口内周の60°マイクロ鋸歯状溝で3重反射吸収し、斜光反射を2.7×10⁻⁵へ低減',
       });
 
     case 'shutter_internal_nd_shield_bay':
@@ -115,7 +115,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.5" fill="#334155">・レンズ交換時の防塵シャッター協調</text>
           ${pill(276, 132, 128, 13, 'ハイブリッド機/シネマ機へ発展', '#f0f9ff', '#0ea5e9', '#0c4a6e', 6.5)}
         `,
-        caption: 'シャッター直後の防塵ガイドレールで内蔵NDを安全挿抜し、保護幕インターロックと光路補償を協調',
+        caption: 'シャッター直後の防塵レールで内蔵NDを挿抜し、保護幕連動と光路補償を協調',
       });
 
     case 'shutter_antistick_nonmag_shim':
@@ -155,7 +155,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="119" text-anchor="middle" font-size="6.2" fill="#475569" style="font-family:${FONT_MONO};">F_rem ∝ B_r²/(1+μ_r·δ/l)²</text>
           ${pill(276, 134, 126, 12, '1/8000 s 露出ジッタを極小化', '#fef2f2', '#ef4444', '#991b1b', 6.5)}
         `,
-        caption: '電磁石吸着面に50 μm非磁性シムを挟み、通電OFF直後の残留磁気張り付き遅延を60%以上削減',
+        caption: '吸着面に50 μm非磁性シムを挟み、通電OFF後の残留磁気張り付きを60%以上削減',
       });
 
     case 'shutter_smco_bias_shunt_screw':
@@ -196,7 +196,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・シャントねじで個体差を0点調整</text>
           ${pill(276, 132, 128, 13, '微小逆電流パルスで即座に解除', '#f5f3ff', '#7c3aed', '#4c1d95', 6.5)}
         `,
-        caption: '温度安定なSmCo磁石と磁束シャント微調ねじで、極寒〜真夏まで個体差ゼロの解除タイミングを維持',
+        caption: 'SmCo磁石と磁束シャント微調ねじで、極寒〜真夏まで個体差ゼロの解除精度を維持',
       });
 
     case 'shutter_self_bonding_coil_bobbin':
@@ -234,7 +234,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="104" text-anchor="middle" font-size="6.3" fill="#475569">巻始め端線をフランジ溝で安全保護</text>
           ${pill(276, 130, 128, 13, '低抵抗・高速立ち上がり電磁石', '#fffbeb', '#f59e0b', '#92400e', 6.5)}
         `,
-        caption: '熱風融着エナメル線の最密整列巻きとフランジ引出スリットで、高占積率と50万回耐振断線防止を両立',
+        caption: '熱風融着線の最密整列巻きと引出スリットで、高占積率と50万回耐振断線防止を両立',
       });
 
     case 'shutter_rotary_pm_direct_actuator':
@@ -273,7 +273,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="271" y="111" text-anchor="middle" font-size="6.5" fill="#334155">・極めて静かで省電力なダイレクト駆動</text>
           ${pill(271, 132, 136, 13, '保護シールド幕・補助制御に最適', '#eff6ff', '#2563eb', '#1e40af', 6.5)}
         `,
-        caption: '径方向着磁PMローターと開放ステータにより、正逆パルス駆動＋無通電終端保持をギアレスで実現',
+        caption: '径方向着磁PMローターと開放ステータで、正逆駆動＋無通電保持をギアレス実現',
       });
 
     case 'shutter_intermittent_clutch_gear':
@@ -347,7 +347,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・静音連写時のギア逆転戻り防止</text>
           ${pill(276, 132, 128, 13, 'JPO 2H081 BB28 / CC14 逆止機構', '#f0fdfa', '#0d9488', '#115e59', 6.5)}
         `,
-        caption: '角線コイルの指数摩擦締め付けで正転瞬間ロック・逆転無音空転を実現し、遊び0.5°未満で逆転阻止',
+        caption: '角線コイルの指数摩擦締付けで正転ロック・逆転無音空転し、遊び0.5°未満で逆止',
       });
 
     case 'shutter_cam_deadpoint_detent':
@@ -380,7 +380,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="271" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・復帰動作をレリーズ補助爪に再利用</text>
           ${pill(271, 132, 136, 13, 'JPO 2H081 CC15–CC16 死点機構', '#eef2ff', '#6366f1', '#312e81', 6.5)}
         `,
-        caption: 'チャージカム頂上に微小な死点ディテントを設け、無電力で安定待機しつつ復帰動作をレリーズ補助',
+        caption: 'カム頂上の死点ディテントで無電力待機し、復帰ストロークをレリーズ補助に活用',
       });
 
     case 'shutter_motor_pinion_sapphire_thrust':
@@ -421,7 +421,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・SUS弾性クランプで熱膨張吸収</text>
           ${pill(276, 132, 128, 13, '12,000 rpm 高速チャージ耐久', '#f0f9ff', '#0ea5e9', '#0c4a6e', 6.5)}
         `,
-        caption: '静音ヘリカルピニオンの軸方向推力をサファイア球の点接触で受け、摩擦トルクとギヤ唸り音を低減',
+        caption: 'ヘリカルピニオンの軸推力をサファイア球点接触で受け、摩擦とギヤ唸り音を低減',
       });
 
     case 'shutter_uv_sealed_tension_port':
@@ -459,7 +459,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・50万回振動でも絶対緩まない</text>
           ${pill(276, 132, 128, 13, '防塵封止と緩み止めを同時達成', '#f5f3ff', '#7c3aed', '#4c1d95', 6.5)}
         `,
-        caption: '工場で先幕・後幕の張力ウォームを0.05 ms精度へ校正後、調整窓ごとUV硬化樹脂で永久封印',
+        caption: '先幕・後幕張力を0.05 ms精度へ工場校正後、調整窓ごとUV硬化樹脂で永久封印',
       });
 
     case 'shutter_blackout_2stage_prep_cam':
@@ -503,7 +503,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="180" y="119" text-anchor="middle" font-size="6.9" font-weight="700" fill="#0f172a" style="font-family:${FONT_MONO};">t_blackout = t_total − t_overlap(Prep1 ∥ LV_AF)</text>
           ${pill(180, 134, 290, 13, '独立第2駆動レバーで待機中に準備を先取りしEVF暗転を大幅圧縮', '#e0f2fe', '#0284c7', '#075985', 6.5)}
         `,
-        caption: 'ライブビューAF中に第1段準備を先行完了させる2段階カムで、ミラーレス連写暗転を25〜35%短縮',
+        caption: 'LV/AF中に第1段準備を先行完了する2段階カムで、連写ブラックアウトを約30%短縮',
       });
 
     case 'shutter_eddy_current_self_brake':
@@ -584,7 +584,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・チャージ時に逆押しで軽く解除</text>
           ${pill(276, 132, 128, 13, '画面端バウンド露光ムラを根絶', '#fff7ed', '#f97316', '#9a3412', 6.5)}
         `,
-        caption: 'くさび角12°（tan θ < μ）の自己食い込み摩擦で、終端衝突時のリバウンド跳ね返りを完全封殺',
+        caption: 'くさび角12°(tan θ&lt;μ)の自己食い込み摩擦で、終端リバウンドを完全封殺',
       });
 
     case 'shutter_multileaf_coulomb_damper':
@@ -623,7 +623,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="119" text-anchor="middle" font-size="6.2" fill="#475569" style="font-family:${FONT_MONO};">ΔE = Σ 2·μ·N_i·Δs_i</text>
           ${pill(276, 134, 128, 12, '極寒でも硬化しない金属ダンパー', '#ecfeff', '#06b6d4', '#164e63', 6.5)}
         `,
-        caption: '4枚の薄板ばねを重ねて層間クーロン摩擦を発生させ、低温でも劣化せず衝撃エネルギーの約50%を吸収',
+        caption: '4層重ね板ばねの層間クーロン摩擦で低温劣化なく衝撃エネルギーの約50%を吸収',
       });
 
     case 'shutter_squeeze_film_air_pocket':
@@ -660,7 +660,7 @@ export function renderShutterHdGroupE(type: PartExplanation['diagramType']): str
           <text x="276" y="112" text-anchor="middle" font-size="6.5" fill="#334155">・衝突直前 0.1 mm で急峻エア制動</text>
           ${pill(276, 132, 128, 13, 'JPO 2H081 流体空圧ダンパー', '#eff6ff', '#2563eb', '#1e40af', 6.5)}
         `,
-        caption: '羽根室終端の極狭ポケット＋排気オリフィスで1/h³に急増するスクイーズ空気膜ブレーキを形成',
+        caption: '終端の極狭ポケット＋排気オリフィスで1/h³に急増する圧縮空気膜ブレーキを形成',
       });
 
     default:

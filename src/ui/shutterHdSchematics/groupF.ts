@@ -42,7 +42,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="278" y="120" text-anchor="middle" font-size="6.2" fill="#475569">スリット閉鎖点 δ</text>
           ${pill(271, 134, 136, 12, '低騒音着地＋フル衝撃受止め両立', '#fff7ed', '#f97316', '#9a3412', 6.5)}
         `,
-        caption: 'U字スリットが先に柔らかく潰れ、閉鎖後に4倍剛性へ移行する2段階バンパーで衝撃音と底付きを両抑止',
+        caption: 'U字スリットが軟着地し閉鎖後に4倍剛性化する2段階バンパーで衝撃音と底付き抑止',
       });
 
     case 'shutter_zener_active_flyback':
@@ -88,7 +88,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="267" y="119" text-anchor="middle" font-size="6.4" font-weight="700" fill="#1e293b" style="font-family:${FONT_MONO};">t_decay ≈ L·I₀ / (V_Z + V_F)</text>
           ${pill(267, 134, 144, 12, '10 μs 級シャッター幕離脱精度を実現', '#fef2f2', '#ef4444', '#991b1b', 6.5)}
         `,
-        caption: '逆起電力を0.7 V環流ではなく28 Vツェナーでアクティブクランプし、コイル電流を約40倍速く遮断',
+        caption: '逆起電力を28 Vツェナーでアクティブクランプし、コイル電流を約40倍速く遮断',
       });
 
     case 'shutter_pwm_bulb_hold_chopper':
@@ -120,7 +120,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="110" text-anchor="middle" font-size="6.4" fill="#334155">（アンプグロー）を根本遮断</text>
           ${pill(281, 132, 118, 12, 'バッテリー消費も1/4へ節電', '#ecfdf5', '#10b981', '#065f46', 6.5)}
         `,
-        caption: '吸着後ただちにPWMで電流を1/4へ絞るピーク＆ホールド制御で、BULB時の発熱を93.8%削減',
+        caption: '吸着後にPWMで電流を1/4へ絞るピーク＆ホールド制御で、BULB発熱を93.8%削減',
       });
 
     case 'shutter_motor_dynamic_brake_fet':
@@ -164,7 +164,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・異物噛み込み時に即時保護停止</text>
           ${pill(276, 132, 128, 13, '10fps高速連写の正確なカム停止', '#eff6ff', '#2563eb', '#1e40af', 6.5)}
         `,
-        caption: 'HブリッジのローサイドFET同時ONでモーター逆起電力を短絡し、カム死点オーバーランを瞬時制動',
+        caption: 'Hブリッジ下段FET同時ONで逆起電力を短絡し、カム死点オーバーランを瞬時制動',
       });
 
     case 'shutter_4ch_start_end_optical':
@@ -204,7 +204,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="271" y="111" text-anchor="middle" font-size="6.4" fill="#334155">経年ドリフトを次ショットへ即補正</text>
           ${pill(271, 132, 136, 13, '自己診断エラー検知＆学習データ源', '#f5f3ff', '#7c3aed', '#4c1d95', 6.5)}
         `,
-        caption: '先幕・後幕それぞれの開始端と終了端を遮光フード付4ch光電センサーで毎ショット実測し幕速を自律管理',
+        caption: '先幕・後幕の開始/終了端を遮光フード付4ch光電センサーで毎ショット実測管理',
       });
 
     case 'shutter_fpc_staggered_zif_tearstop':
@@ -244,7 +244,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="109" text-anchor="middle" font-size="6.4" fill="#334155">・曲げ隅の裂け伝播を停止</text>
           ${pill(281, 132, 118, 12, '50万回振動・低温結露でも導通維持', '#fffbeb', '#d97706', '#78350f', 6.2)}
         `,
-        caption: '0.3 mm千鳥2列金接点・両耳ZIFロックノッチ・ティアストップ補強銅箔で振動抜けとFPC裂けを防止',
+        caption: '0.3 mm千鳥2列金接点・両耳ノッチ・補強銅箔で振動抜けとFPC裂けを防止',
       });
 
     case 'shutter_hss_fp_50khz_sync':
@@ -281,7 +281,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・日中F1.2開放ストロボ撮影を実現</text>
           ${pill(281, 132, 118, 12, 'MIシュー経由でμs精密同期', '#f0f9ff', '#0ea5e9', '#0c4a6e', 6.5)}
         `,
-        caption: '狭スリット走行中ずっと50 kHz（約175発）の連続パルス閃光を同期照射し、1/8000 sストロボ撮影を実現',
+        caption: '50 kHz連続パルス閃光をスリット通過と同期し1/8000 sストロボ撮影を実現',
       });
 
     case 'shutter_hf_antiflicker_gate':
@@ -313,7 +313,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="110" text-anchor="middle" font-size="6.4" fill="#334155">  μs分解能の電磁放出ゲート</text>
           ${pill(281, 132, 118, 12, 'α7 IV/α1 搭載高周波フリッカーレス', '#f5f3ff', '#7c3aed', '#4c1d95', 6.2)}
         `,
-        caption: 'LED点滅周期を検出して1/50.1 s等の小数刻みへシャッター放出を精密同期し、横縞バンディングを相殺',
+        caption: 'LED周期を検出し1/50.1 s等へ小数刻み放出同期して横縞バンディングを相殺',
       });
 
     case 'shutter_powerfail_safety_cap':
@@ -348,13 +348,13 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・センサーへの太陽光直撃も防護</text>
           ${pill(281, 132, 118, 12, '信頼性フェイルセーフ設計', '#ecfdf5', '#10b981', '#065f46', 6.5)}
         `,
-        caption: 'スーパーキャパシタの緊急蓄電で、露光中の電池瞬断時にも羽根を安全終端へ退避させロック破損を防止',
+        caption: 'EDLC蓄電で露光中の電池瞬断時も羽根を安全終端へ退避しロック破損を防止',
       });
 
     case 'shutter_oem_mag_cut_plate':
       return shutterFrame({
         code: 'SH174',
-        title: 'Sony OEM 磁気シールド遮断板 (Ref.352)',
+        title: 'Sony OEM 磁気シールド板 (Ref.352)',
         viewTag: 'Sony OEM',
         accent: '#475569',
         headerBg: '#f1f5f9',
@@ -387,13 +387,13 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="281" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・手ブレ補正駆動と幕精度の共存</text>
           ${pill(281, 132, 118, 12, 'Ref.352: 502789501 (891)', '#f1f5f9', '#475569', '#0f172a', 6.4)}
         `,
-        caption: 'Sony純正磁気遮断板(Ref.352)がIBIS用強ネオジム磁束をバイパスし、シャッター電磁石の干渉を防止',
+        caption: 'Sony純正磁気遮断板(Ref.352)がIBIS強磁束を遮蔽し電磁石の干渉を防止',
       });
 
     case 'shutter_oem_im_fix_shaft':
       return shutterFrame({
         code: 'SH175',
-        title: 'Sony OEM 光軸基準固定シャフト (Ref.501)',
+        title: 'Sony OEM 光軸固定シャフト (Ref.501)',
         viewTag: 'Sony OEM',
         accent: '#0284c7',
         headerBg: '#f0f9ff',
@@ -423,13 +423,13 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="276" y="111" text-anchor="middle" font-size="6.4" fill="#334155">・シャッター幕〜センサー距離 d_s 保持</text>
           ${pill(276, 132, 128, 13, 'Ref.501: 459775001 (ILCE-7M4)', '#f0f9ff', '#0ea5e9', '#0c4a6e', 6.4)}
         `,
-        caption: 'Sony純正非再使用固定シャフト(Ref.501)と選別シムが、シャッターとセンサーの平行度を10 μm以内へ規定',
+        caption: 'Sony純正固定軸(Ref.501)とシムでシャッター・センサー平行度10 μm規定',
       });
 
     case 'shutter_oem_im_mask_retainer':
       return shutterFrame({
         code: 'SH176',
-        title: 'Sony OEM センサー直前 遮光マスク板 (Ref.502)',
+        title: 'Sony OEM センサー遮光マスク (Ref.502)',
         viewTag: 'Sony OEM',
         accent: '#1e293b',
         headerBg: '#f1f5f9',
@@ -454,7 +454,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           ${pill(276, 106, 124, 16, 'Ref.503 リテーナー保持枠', '#eff6ff', '#3b82f6', '#1e40af', 6.5)}
           ${pill(276, 132, 128, 13, '夜間点光源の周辺ゴースト根絶', '#f1f5f9', '#475569', '#0f172a', 6.5)}
         `,
-        caption: 'Sony純正マスク板＆防塵シート(Ref.502/503/505)がセンサー周辺の金属パッド反射を撮像直前で遮蔽',
+        caption: 'Sony純正マスク板(Ref.502等)がセンサー周辺パッド反射を撮像直前で遮蔽',
       });
 
     case 'shutter_oem_rl_2stage_switch':
@@ -495,7 +495,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="271" y="115" text-anchor="middle" font-size="6.4" fill="#334155">・50万回押下耐久のステンレスドーム</text>
           ${pill(271, 134, 136, 12, '決定的瞬間を逃さない超低遅延起動', '#fef2f2', '#ef4444', '#991b1b', 6.5)}
         `,
-        caption: 'Sony純正2段ドームスイッチ(RL88100)とRL-1071フレキが低チャタリングで電磁石解放を瞬時トリガー',
+        caption: 'Sony純正2段スイッチ(RL88100)と起動フレキで低遅延・電磁解放トリガー',
       });
 
     case 'shutter_oem_rear_muffle_cushions':
@@ -538,7 +538,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="276" y="119" text-anchor="middle" font-size="6.2" fill="#475569">周波数 1.5–6 kHz 帯域</text>
           ${pill(276, 134, 128, 12, 'メイン基板側への共鳴伝達も遮断', '#f0fdfa', '#0d9488', '#115e59', 6.4)}
         `,
-        caption: 'Sony純正背面吸音クッションA/B(Ref.59/76)が1.5–6 kHzの不快な金属ピーク音を4〜7 dB減衰',
+        caption: 'Sony純正背面吸音クッション(Ref.59/76)で1.5–6 kHzピーク音を4〜7 dB減衰',
       });
 
     case 'shutter_fram_adaptive_wear_log':
@@ -568,7 +568,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="294" y="119" text-anchor="middle" font-size="6.2" fill="#475569">1/8000 s 新品同等</text>
           ${pill(180, 134, 306, 13, 't_rear = t_exp + (Δt₁−Δt₂)_learned + Δt_rel(I, T_NTC)', '#e0e7ff', '#6366f1', '#312e81', 6.6)}
         `,
-        caption: '高耐久FRAMが毎ショットの幕速ドリフトと温度特性を自動学習し、50万回後も新品同等の1/8000 s精度を維持',
+        caption: 'FRAMが幕速ドリフトと温度特性を自動学習し、50万回後も新品同等の精度を維持',
       });
 
     case 'shutter_acoustic_laser_qc_rig':
@@ -606,7 +606,7 @@ export function renderShutterHdGroupF(type: PartExplanation['diagramType']): str
           <text x="267" y="119" text-anchor="middle" font-size="6.3" fill="#475569">羽根擦れ・ギア傷・バネ異音を音で即発見</text>
           ${pill(267, 134, 142, 12, '100%合格品のみカメラ本体へ搭載', '#dcfce7', '#16a34a', '#166534', 6.5)}
         `,
-        caption: '工場出荷時にJIS B 7091 3点レーザー幕速計測と音響FFT診断を全数実施し、0.1 μs精度を保証',
+        caption: '出荷時にJIS B 7091 3点レーザー＆音響FFT全数診断で0.1 μs精度を保証',
       });
 
     default:

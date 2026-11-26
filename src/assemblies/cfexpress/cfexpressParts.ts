@@ -24,6 +24,7 @@ import { lazyExplanationStub } from '../lazyExplanations';
 import { buildCfexpressUltra27Parts } from './cfexpressUltra27Parts';
 import { buildCfexpressUltra28Parts } from './cfexpressUltra28Parts';
 import { buildCfexpressUltra29Parts } from './cfexpressUltra29Parts';
+import { buildCfexpressUltra35Parts } from './cfexpressUltra35Parts';
 
 function finalizeCfexpressPart(
   id: string,
@@ -2658,5 +2659,6 @@ export function buildCfexpressParts(mats: MaterialLibrary): CadPart[] {
   parts.push(...buildCfexpressUltra27Parts(mats));
   parts.push(...buildCfexpressUltra28Parts(mats));
   parts.push(...buildCfexpressUltra29Parts(mats));
+  parts.push(...buildCfexpressUltra35Parts(mats));
   return parts;
 }

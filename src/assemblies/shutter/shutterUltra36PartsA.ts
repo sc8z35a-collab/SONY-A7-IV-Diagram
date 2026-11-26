@@ -323,7 +323,7 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
         133,
         '#94a3b8',
         g,
-        new THREE.Vector3(0.0, 15.8, 16.4),
+        new THREE.Vector3(0.0, 17.2, 16.4),
         new THREE.Vector3(-136, 20, 76),
         cp
       )
@@ -379,7 +379,7 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
         134,
         '#334155',
         g,
-        new THREE.Vector3(0.0, -16.4, 16.0),
+        new THREE.Vector3(0.0, -18.2, 16.0),
         new THREE.Vector3(-124, -14, 82),
         cp
       )
@@ -531,7 +531,7 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
         137,
         '#0284c7',
         g,
-        new THREE.Vector3(-23.0, 10.2, 16.5),
+        new THREE.Vector3(-21.5, 17.8, 16.5),
         new THREE.Vector3(-24, 112, 86),
         cp
       )
@@ -600,8 +600,8 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
       createChamferedBoxGeo(9.4, 2.5, 0.45, 0.5, 0.05, 'z'),
       mats.linkArmSteel
     );
-    frontArmHub.position.set(3.4, 1.4, -0.75);
-    frontArmHub.rotation.z = 0.36;
+    frontArmHub.position.set(-3.4, 1.4, -0.75);
+    frontArmHub.rotation.z = -0.36;
 
     // Middle bronze thrust separator ring isolating front & rear arm rotation
     const midThrust = new THREE.Mesh(
@@ -614,8 +614,8 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
       createChamferedBoxGeo(9.4, 2.5, 0.45, 0.5, 0.05, 'z'),
       mats.midPlateSteel
     );
-    rearArmHub.position.set(3.4, -1.4, 0.78);
-    rearArmHub.rotation.z = -0.36;
+    rearArmHub.position.set(-3.4, -1.4, 0.78);
+    rearArmHub.rotation.z = 0.36;
 
     // Top retention E-clip
     const eClip = new THREE.Mesh(hiResTorus(1.38, 0.18, 10, 22), mats.titaniumRivet);
@@ -628,7 +628,7 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
         139,
         '#b45309',
         g,
-        new THREE.Vector3(-21.8, -5.5, 15.2),
+        new THREE.Vector3(-23.2, -16.8, 15.2),
         new THREE.Vector3(-128, 34, 106),
         cp
       )
@@ -680,7 +680,7 @@ export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[] {
         140,
         '#eab308',
         g,
-        new THREE.Vector3(-21.2, 7.2, 17.5),
+        new THREE.Vector3(-23.5, 16.4, 17.5),
         new THREE.Vector3(-86, 86, 110),
         cp
       )
