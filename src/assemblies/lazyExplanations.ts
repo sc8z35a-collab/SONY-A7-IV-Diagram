@@ -187,11 +187,13 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         import('./mic/micExplanations'),
         import('./mic/micUltra30Explanations'),
         import('./mic/micUltra31Explanations'),
-      ]).then(([mBase, mU30, mU31]) =>
+        import('./mic/micUltra36Explanations'),
+      ]).then(([mBase, mU30, mU31, mU36]) =>
         finish({
           ...mBase.MIC_EXPLANATIONS,
           ...mU30.MIC_ULTRA30_EXPLANATIONS,
           ...mU31.MIC_ULTRA31_EXPLANATIONS,
+          ...mU36.MIC_ULTRA36_EXPLANATIONS,
         })
       );
       break;

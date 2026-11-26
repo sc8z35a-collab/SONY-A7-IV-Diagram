@@ -6,8 +6,11 @@ import {
   NATIVE_TILE_TEX_SIZE,
 } from './GpuOptimizer';
 import { BionzHeroMaterials, createBionzHeroMaterials } from './BionzHeroTextures';
+import { MicUltra36Materials, createMicUltra36Materials } from './MicUltra36Textures';
 
-export interface UltraRealisticMaterials extends Omit<BionzHeroMaterials, 'heroList'> {
+export interface UltraRealisticMaterials
+  extends Omit<BionzHeroMaterials, 'heroList'>,
+    Omit<MicUltra36Materials, 'micUltra36List'> {
   // BIONZ XR / XR2 bespoke materials
   bionzEmiLid: THREE.MeshPhysicalMaterial;
   bionzPopDramTop: THREE.MeshPhysicalMaterial;
@@ -14197,8 +14200,12 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
 
   const bionzHero = createBionzHeroMaterials(clippingPlanes);
   const { heroList: bionzHeroList, ...bionzHeroMap } = bionzHero;
+  const micUltra36 = createMicUltra36Materials(clippingPlanes);
+  const { micUltra36List, ...micUltra36Map } = micUltra36;
+
   const list: THREE.Material[] = [
     ...bionzHeroList,
+    ...micUltra36List,
     bionzEmiLid,
     bionzPopDramTop,
     bionzDieFloorplan,
@@ -14390,6 +14397,7 @@ export function createUltraRealisticMaterials(clippingPlanes: THREE.Plane[]): Ul
 
   return {
     ...bionzHeroMap,
+    ...micUltra36Map,
     bionzEmiLid,
     bionzPopDramTop,
     bionzDieFloorplan,
