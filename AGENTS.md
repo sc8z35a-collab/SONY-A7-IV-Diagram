@@ -52,6 +52,16 @@ npm run pp -- --batch=jobs.json --out=./captures --manifest
 - 複数ショットを撮る時は単発実行を繰り返さず、`--modes=...` / `--preset=...` / `--batch=...` で **1つのウォームChromeセッション＆スマートグルーピング** を活用して最速化すること。
 - リポジトリルート直下に一時キャプチャ画像を残してコミットしないこと（`--out=/tmp/pp_out` や専用アーティファクト領域へ出力すること）。
 
-## 2. パーツカタログ・V2品質規約
+## 2. 空間マップ生成・事前衝突シミュレーションには必ず `sp` を使うこと（必須）
+パーツ追加・配置調整・4 品質ティア横断干渉検査・爆発軌道貫通検査・光学/RF 視界コーン検証には、独自スクリプトを書かず **`0.001 mm` 厳密空間解析エンジン `sp`** を使用すること（詳細: `scripts/SPATIAL_SIM_GUIDE.md`）：
+```bash
+npm run sp -- selftest
+npm run sp -- map --unit=welcome --group=optical_plinth --frame=local --res=0.5
+npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai
+npm run sp -- ray --unit=welcome --preset=welcome-tof,welcome-lux,welcome-rf --ai
+npm run sp -- thermal-cog --unit=welcome --ai
+```
+
+## 3. パーツカタログ・V2品質規約
 - 並列パーツ追加・編集時は必ず `catalog/WORKER_RULE.md` を遵守すること。
 - 完了前には `npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build` の全ゲート（10/10 PASS）を確認すること。
