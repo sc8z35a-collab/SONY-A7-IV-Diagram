@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-27T07:39:33.601Z",
+  "generatedAt": "2026-11-27T09:49:59.502Z",
   "verdict": "MANUFACTURABLE_100_PERCENT_PASS",
   "passCount": 5,
   "totalEngines": 5,
@@ -25,7 +25,7 @@
       "drc_warnings": 6,
       "unconnected_pads": 0,
       "gerber_files_exported": 18,
-      "drc_report_excerpt": "** Drc report for /home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/verification/wlk220/wlk220_mainboard.kicad_pcb **\n** Created on 2026-11-27 07:39:30 **\n\n** Found 6 DRC violations **\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(138.5000 mm, 106.0000 mm): Footprint J_BUS\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(126.0000 mm, 106.0000 mm): Footprint R1\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(131.5000 mm, 106.0000 mm): Footprint U6\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(118.0000 mm, 106.0000 mm): Footprint U4\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(110.5000 mm, 106.0000 mm): Footprint C1\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(104.5000 mm, 106.0000 mm): Footprint U2\n\n** Found 0 unconnected pads **\n\n** Found 0 Footprint errors **\n\n** End of Report **"
+      "drc_report_excerpt": "** Drc report for /home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/verification/wlk220/wlk220_mainboard.kicad_pcb **\n** Created on 2026-11-27 09:49:56 **\n\n** Found 6 DRC violations **\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(131.5000 mm, 106.0000 mm): Footprint U6\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(118.0000 mm, 106.0000 mm): Footprint U4\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(110.5000 mm, 106.0000 mm): Footprint C1\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(138.5000 mm, 106.0000 mm): Footprint J_BUS\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(104.5000 mm, 106.0000 mm): Footprint U2\n[lib_footprint_issues]: The current configuration does not include the library ''.\n    Local override; Severity: warning\n    @(126.0000 mm, 106.0000 mm): Footprint R1\n\n** Found 0 unconnected pads **\n\n** Found 0 Footprint errors **\n\n** End of Report **"
     }
   },
   "ngspice": {

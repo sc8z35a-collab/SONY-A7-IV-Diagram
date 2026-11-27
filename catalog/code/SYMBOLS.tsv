@@ -1,0 +1,1271 @@
+file	symbol	kind	start	end	signature
+src/assemblies/battery/batteryExplanations.ts	BATTERY_EXPLANATIONS	const	6	6	BATTERY_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/battery/batteryParts.ts	buildBatteryParts	func	68	1483	export function buildBatteryParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/battery/batteryPhysicsOverlay.ts	BatteryPhysicsOverlayController	interface	5	11	export interface BatteryPhysicsOverlayController
+src/assemblies/battery/batteryPhysicsOverlay.ts	createBatteryPhysicsOverlay	func	18	152	export function createBatteryPhysicsOverlay( clippingPlanes: THREE.Plane[] ): BatteryPhysicsOverlayController
+src/assemblies/battery/batteryUltra27Explanations.ts	BATTERY_ULTRA27_EXPLANATIONS	const	4	4	BATTERY_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/battery/batteryUltra27Parts.ts	buildBatteryUltra27Parts	func	62	1487	export function buildBatteryUltra27Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/battery/batteryUltra30Explanations.ts	BATTERY_ULTRA30_EXPLANATIONS	const	4	4	BATTERY_ULTRA30_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/battery/batteryUltra30Parts.ts	buildBatteryUltra30Parts	func	61	1303	export function buildBatteryUltra30Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/battery/batteryUltra31Explanations.ts	BATTERY_ULTRA31_EXPLANATIONS	const	4	4	BATTERY_ULTRA31_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/battery/batteryUltra31Parts.ts	buildBatteryUltra31Parts	func	68	1277	export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz/bionzExplanations.ts	BIONZ_EXPLANATIONS	const	6	6	BIONZ_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/bionz/bionzExtraExplanations.ts	BIONZ_EXTRA_EXPLANATIONS	const	2	2	BIONZ_EXTRA_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/bionz/bionzExtraParts.ts	buildBionzExtraParts	func	234	1552	export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz/bionzParts.ts	buildBionzParts	func	454	4707	export function buildBionzParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz/bionzPhysicsOverlay.ts	BionzPhysicsOverlayController	interface	5	11	export interface BionzPhysicsOverlayController
+src/assemblies/bionz/bionzPhysicsOverlay.ts	createBionzPhysicsOverlay	func	24	245	export function createBionzPhysicsOverlay( clippingPlanes: THREE.Plane[] ): BionzPhysicsOverlayController
+src/assemblies/bionz/bionzV2DeepExplanations.ts	BIONZ_V2_DEEP_EXPLANATIONS	const	4	4	BIONZ_V2_DEEP_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/bionz/bionzV2DeepParts.ts	buildBionzV2DeepParts	func	102	2112	export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz/bionzV2Explanations.ts	BIONZ_V2_EXPLANATIONS	const	6	6	BIONZ_V2_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/bionz/bionzV2Parts.ts	buildBionzV2Parts	func	106	1823	export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz/bionzV2PhysicsOverlay.ts	BionzV2PhysicsOverlayController	interface	5	11	export interface BionzV2PhysicsOverlayController
+src/assemblies/bionz/bionzV2PhysicsOverlay.ts	createBionzV2PhysicsOverlay	func	25	243	export function createBionzV2PhysicsOverlay( clippingPlanes: THREE.Plane[] ): BionzV2PhysicsOverlayController
+src/assemblies/bionz_v2/bionzV2UltraParts.ts	buildBionzV2UltraParts	func	118	2290	export function buildBionzV2UltraParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz_v2/bionzV2Wave3Parts.ts	buildBionzV2Wave3Parts	func	13	15	export function buildBionzV2Wave3Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	finalizeWave3Part	func	20	47	export function finalizeWave3Part( id: string, order: number, swatchColor: string, group: THREE.Group, assemb…
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	makeBondStrut	func	50	64	export function makeBondStrut( a: THREE.Vector3, b: THREE.Vector3, radius: number, mat: THREE.Material, segs …
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	addVectorArrow	func	67	94	export function addVectorArrow( g: THREE.Group, a: THREE.Vector3, b: THREE.Vector3, shaftR: number, headR: nu…
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	createHexShape	func	97	108	export function createHexShape(radius: number): THREE.Shape
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	createTrapezoidShape	func	111	119	export function createTrapezoidShape(topW: number, botW: number, h: number): THREE.Shape
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	addMetrologyPedestal	func	125	202	export function addMetrologyPedestal( g: THREE.Group, w: number, d: number, yCenter: number, bodyMat: THREE.M…
+src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts	buildBionzV2Wave3PartsA	func	210	1394	export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[]
+src/assemblies/bionz_v2/bionzV2Wave3PartsB.ts	buildBionzV2Wave3PartsB	func	38	1619	export function buildBionzV2Wave3PartsB(mats: MaterialLibrary): CadPart[]
+src/assemblies/body/bodyExplanations.ts	BODY_EXPLANATIONS	const	6	6	BODY_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/body/bodyMicroExplanations.ts	BODY_MICRO_EXPLANATIONS	const	4	4	BODY_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/body/bodyMicroParts.ts	buildBodyMicroParts	func	50	1068	export function buildBodyMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/body/bodyNextGenExplanations.ts	BODY_NEXTGEN_EXPLANATIONS	const	4	4	BODY_NEXTGEN_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/body/bodyNextGenParts.ts	buildBodyNextGenParts	func	49	1264	export function buildBodyNextGenParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/body/bodyParts.ts	BodyDynamicRig	interface	19	25	export interface BodyDynamicRig
+src/assemblies/body/bodyParts.ts	buildBodyParts	func	98	2789	export function buildBodyParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/body/bodyParts.ts	buildBodyStandaloneParts	func	2791	2805	export async function buildBodyStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/body/bodyPhysicsOverlay.ts	BodyPhysicsOverlayController	interface	5	11	export interface BodyPhysicsOverlayController
+src/assemblies/body/bodyPhysicsOverlay.ts	createBodyPhysicsOverlay	func	20	166	export function createBodyPhysicsOverlay( clippingPlanes: THREE.Plane[] ): BodyPhysicsOverlayController
+src/assemblies/body/bodyUltra25Explanations.ts	BODY_ULTRA25_EXPLANATIONS	const	4	4	BODY_ULTRA25_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/body/bodyUltra25Parts.ts	buildBodyUltra25Parts	func	50	653	export function buildBodyUltra25Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/body/bodyUltraAuditExplanations.ts	BODY_ULTRA_AUDIT_EXPLANATIONS	const	4	4	BODY_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/body/bodyUltraAuditParts.ts	buildBodyUltraAuditParts	func	50	848	export function buildBodyUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/cfexpress/cfexpressExplanations.ts	CFEXPRESS_EXPLANATIONS	const	6	6	CFEXPRESS_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/cfexpress/cfexpressParts.ts	buildCfexpressParts	func	143	2664	export function buildCfexpressParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/cfexpress/cfexpressPhysicsOverlay.ts	CfexpressPhysicsOverlayController	interface	5	11	export interface CfexpressPhysicsOverlayController
+src/assemblies/cfexpress/cfexpressPhysicsOverlay.ts	createCfexpressPhysicsOverlay	func	17	157	export function createCfexpressPhysicsOverlay( clippingPlanes: THREE.Plane[] ): CfexpressPhysicsOverlayContro…
+src/assemblies/cfexpress/cfexpressUltra27Explanations.ts	CFEXPRESS_ULTRA27_EXPLANATIONS	const	4	4	CFEXPRESS_ULTRA27_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/cfexpress/cfexpressUltra27Parts.ts	buildCfexpressUltra27Parts	func	59	2536	export function buildCfexpressUltra27Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/cfexpress/cfexpressUltra28Explanations.ts	CFEXPRESS_ULTRA28_EXPLANATIONS	const	4	4	CFEXPRESS_ULTRA28_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/cfexpress/cfexpressUltra28Parts.ts	buildCfexpressUltra28Parts	func	57	1970	export function buildCfexpressUltra28Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/cfexpress/cfexpressUltra29Explanations.ts	CFEXPRESS_ULTRA29_EXPLANATIONS	const	4	4	CFEXPRESS_ULTRA29_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/cfexpress/cfexpressUltra29Parts.ts	buildCfexpressUltra29Parts	func	59	1819	export function buildCfexpressUltra29Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/cfexpress/cfexpressUltra35Explanations.ts	CFEXPRESS_ULTRA35_EXPLANATIONS	const	2	2	CFEXPRESS_ULTRA35_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/cfexpress/cfexpressUltra35Parts.ts	buildCfexpressUltra35Parts	func	69	1896	export function buildCfexpressUltra35Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/drybox/dryboxExplanationsA.ts	DRYBOX_EXPLANATIONS_A	const	6	6	DRYBOX_EXPLANATIONS_A: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/drybox/dryboxExplanationsB.ts	DRYBOX_EXPLANATIONS_B	const	4	4	DRYBOX_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExplanationsC.ts	DRYBOX_EXPLANATIONS_C	const	4	4	DRYBOX_EXPLANATIONS_C: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExplanationsD.ts	DRYBOX_EXPLANATIONS_D	const	4	4	DRYBOX_EXPLANATIONS_D: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExplanationsE.ts	DRYBOX_EXPLANATIONS_E	const	2	2	DRYBOX_EXPLANATIONS_E: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExplanationsF.ts	DRYBOX_EXPLANATIONS_F	const	2	2	DRYBOX_EXPLANATIONS_F: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExplanationsG.ts	DRYBOX_EXPLANATIONS_G	const	2	2	DRYBOX_EXPLANATIONS_G: Record<string, PartExplanation> =
+src/assemblies/drybox/dryboxExteriorParts.ts	buildDryboxExteriorParts	func	22	844	export function buildDryboxExteriorParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxFrontier2026Parts.ts	buildDryboxFrontier2026Parts	func	30	687	export function buildDryboxFrontier2026Parts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxInteriorCoreParts.ts	buildDryboxInteriorCoreParts	func	23	1162	export function buildDryboxInteriorCoreParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxMicroCoreElectricsParts.ts	buildDryboxMicroCoreElectricsParts	func	29	982	export function buildDryboxMicroCoreElectricsParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxMicroDoorChassisParts.ts	buildDryboxMicroDoorChassisParts	func	25	817	export function buildDryboxMicroDoorChassisParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxPartsShared.ts	DB_DIM	const	16	35	DB_DIM =
+src/assemblies/drybox/dryboxPartsShared.ts	DryboxPalette	interface	37	85	export interface DryboxPalette
+src/assemblies/drybox/dryboxPartsShared.ts	finalizeDryboxPart	func	87	113	export function finalizeDryboxPart(
+src/assemblies/drybox/dryboxPartsShared.ts	makeHorizBoxPlate	func	116	128	export function makeHorizBoxPlate( w: number, d: number, thickness: number, radius: number, mat: THREE.Materi…
+src/assemblies/drybox/dryboxPartsShared.ts	makeCabinetBolt	func	131	140	export function makeCabinetBolt( radius: number, height: number, mat: THREE.Material ): THREE.Mesh
+src/assemblies/drybox/dryboxPartsShared.ts	DryboxPartBuilderCtx	type	142	146	export type DryboxPartBuilderCtx = {
+src/assemblies/drybox/dryboxPhysicsOverlay.ts	DryboxPhysicsOverlayController	interface	5	11	export interface DryboxPhysicsOverlayController
+src/assemblies/drybox/dryboxPhysicsOverlay.ts	createDryboxPhysicsOverlay	func	28	385	export function createDryboxPhysicsOverlay( clippingPlanes: THREE.Plane[] ): DryboxPhysicsOverlayController
+src/assemblies/drybox/dryboxPrecisionMechParts.ts	buildDryboxPrecisionMechParts	func	28	798	export function buildDryboxPrecisionMechParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxPrecisionSystemsParts.ts	buildDryboxPrecisionSystemsParts	func	28	747	export function buildDryboxPrecisionSystemsParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxUltraConservationParts.ts	buildDryboxUltraConservationParts	func	28	884	export function buildDryboxUltraConservationParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/drybox/dryboxUltraSafetyUtilityParts.ts	buildDryboxUltraSafetyUtilityParts	func	28	797	export function buildDryboxUltraSafetyUtilityParts(ctx: DryboxPartBuilderCtx): CadPart[]
+src/assemblies/evf/evfDetailHelpers.ts	createDin6799EClipGeo	func	22	41	export function createDin6799EClipGeo( grooveR: number, outerR: number, depth: number ): THREE.BufferGeometry
+src/assemblies/evf/evfDetailHelpers.ts	createTrueWaveSpringGeo	func	46	93	export function createTrueWaveSpringGeo( midR: number, radialW: number, axialT: number, waveAmp: number, wave…
+src/assemblies/evf/evfDetailHelpers.ts	createKnurledCollarGeo	func	98	122	export function createKnurledCollarGeo( rInner: number, rRoot: number, rCrest: number, depth: number, teeth =…
+src/assemblies/evf/evfDetailHelpers.ts	createThreadedRingLatheGeo	func	127	159	export function createThreadedRingLatheGeo( innerR: number, outerRootR: number, outerCrestR: number, depth: n…
+src/assemblies/evf/evfDetailHelpers.ts	createSplitScarfRingGeo	func	164	176	export function createSplitScarfRingGeo( innerR: number, outerR: number, depth: number, gapHalfAng = 0.09, se…
+src/assemblies/evf/evfDetailHelpers.ts	addOrientedPhillipsScrew	func	182	220	export function addOrientedPhillipsScrew(
+src/assemblies/evf/evfDetailHelpers.ts	addFlushPhillipsCapHead	func	226	266	export function addFlushPhillipsCapHead(
+src/assemblies/evf/evfDetailHelpers.ts	addEnigViaArray	func	272	294	export function addEnigViaArray( g: THREE.Group, coords: Array<[number, number]>, z: number, thickness: numbe…
+src/assemblies/evf/evfDetailHelpers.ts	addCopperTraceRuns	func	299	320	export function addCopperTraceRuns( g: THREE.Group, segments: Array<[number, number, number, number]>, width:…
+src/assemblies/evf/evfDetailHelpers.ts	addOpticalFiducial	func	325	347	export function addOpticalFiducial( g: THREE.Group, x: number, y: number, z: number, radius: number, thicknes…
+src/assemblies/evf/evfDetailHelpers.ts	addSilkscreenCourtyard	func	352	383	export function addSilkscreenCourtyard( g: THREE.Group, cx: number, cy: number, w: number, h: number, z: numb…
+src/assemblies/evf/evfDetailHelpers.ts	addSmdPassiveWithFillets	func	388	415	export function addSmdPassiveWithFillets(
+src/assemblies/evf/evfDetailHelpers.ts	addRichHdiBackside	func	421	492	export function addRichHdiBackside( g: THREE.Group, w: number, h: number, mats: MaterialLibrary, variant: 0 |…
+src/assemblies/evf/evfExplanations.ts	EVF_EXPLANATIONS	const	6	6	EVF_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE01Eyecup	func	35	84	export function enrichE01Eyecup(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE02Latch	func	87	132	export function enrichE02Latch(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE03AntifogWindow	func	135	180	export function enrichE03AntifogWindow(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE04EyeSensor	func	183	246	export function enrichE04EyeSensor(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE05IrLeds	func	249	293	export function enrichE05IrLeds(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE06DichroicMirror	func	296	338	export function enrichE06DichroicMirror(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE07GazeCamera	func	341	414	export function enrichE07GazeCamera(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE08RearLens	func	417	467	export function enrichE08RearLens(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE09EdDoublet	func	470	521	export function enrichE09EdDoublet(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE10DiopterRails	func	524	550	export function enrichE10DiopterRails(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE11Helicoid	func	553	583	export function enrichE11Helicoid(helicoidSleeveGroup: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE12Diopter	func	586	646	export function enrichE12Diopter( diopterGroup: THREE.Group, leadScrewGroup: THREE.Group, diopterDialGroup: T…
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE13FieldLens	func	649	692	export function enrichE13FieldLens(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE14OledPanel	func	695	740	export function enrichE14OledPanel(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE15OledAlign	func	743	789	export function enrichE15OledAlign(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE16TconPcb	func	792	862	export function enrichE16TconPcb(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE17Heatsink	func	865	909	export function enrichE17Heatsink(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE18Housing	func	912	987	export function enrichE18Housing(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE19BlindShutter	func	990	1028	export function enrichE19BlindShutter(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE20GazeIrOptics	func	1031	1059	export function enrichE20GazeIrOptics(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE21DiopterLock	func	1062	1093	export function enrichE21DiopterLock( diopterLockGroup: THREE.Group, diopterLockClutchGroup: THREE.Group, mat…
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE22PolarizerQwp	func	1096	1126	export function enrichE22PolarizerQwp(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE23MlaStack	func	1129	1173	export function enrichE23MlaStack(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE24TconEmiShield	func	1176	1229	export function enrichE24TconEmiShield(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE25BaffleSealKit	func	1232	1278	export function enrichE25BaffleSealKit(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE26CavityClamp	func	1281	1311	export function enrichE26CavityClamp(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE27EyecupSubframe	func	1314	1353	export function enrichE27EyecupSubframe(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE28EyeAfShims	func	1356	1396	export function enrichE28EyeAfShims(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE29DesiccantBreather	func	1399	1445	export function enrichE29DesiccantBreather(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE30AmbientPd	func	1448	1511	export function enrichE30AmbientPd(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE31DiopterDetent	func	1514	1553	export function enrichE31DiopterDetent(g: THREE.Group, mats: MaterialLibrary): void
+src/assemblies/evf/evfMicroExplanations.ts	EVF_MICRO_EXPLANATIONS	const	4	4	EVF_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/evf/evfMicroParts.ts	buildEvfMicroParts	func	269	3446	export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfParts.ts	EVF_OPTICAL_Y	const	67	67	EVF_OPTICAL_Y = 39.5
+src/assemblies/evf/evfParts.ts	EvfDynamicRig	interface	69	76	export interface EvfDynamicRig
+src/assemblies/evf/evfParts.ts	buildEvfParts	func	311	3658	export function buildEvfParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/evf/evfParts.ts	buildEvfStandaloneParts	func	3660	3672	export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/evf/evfPhysicsOverlay.ts	EvfPhysicsOverlayController	interface	10	16	export interface EvfPhysicsOverlayController
+src/assemblies/evf/evfPhysicsOverlay.ts	createEvfPhysicsOverlay	func	34	470	export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysicsOverlayController
+src/assemblies/evf/evfPrecisionParts.ts	buildEvfPrecisionParts	func	108	2694	export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfUltraMechParts.ts	buildEvfUltraMechParts	func	167	2008	export function buildEvfUltraMechParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfUltraParts.ts	buildEvfUltraParts	func	18	20	export function buildEvfUltraParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfUltraSemiParts.ts	finalizeStandaloneEvfUltraPart	func	28	56	export function finalizeStandaloneEvfUltraPart(
+src/assemblies/evf/evfUltraSemiParts.ts	createUltraRingGeo	func	58	71	export function createUltraRingGeo( innerR: number, outerR: number, depth: number, bevel = 0.03, segs = 40 ):…
+src/assemblies/evf/evfUltraSemiParts.ts	buildEvfUltraSemiParts	func	77	1914	export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/lazyExplanations.ts	lazyExplanationStub	func	23	25	export function lazyExplanationStub(_partId?: string): PartExplanation
+src/assemblies/lazyExplanations.ts	isLazyExplanationStub	func	27	29	export function isLazyExplanationStub(exp: PartExplanation | undefined | null): boolean
+src/assemblies/lazyExplanations.ts	resolvePartExplanation	func	274	285	export async function resolvePartExplanation(part: CadPart): Promise<PartExplanation>
+src/assemblies/lcd/lcdExplanations.ts	LCD_EXPLANATIONS	const	5	6	LCD_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(lcdJson)
+src/assemblies/lcd/lcdMicroExplanations.ts	LCD_MICRO_EXPLANATIONS	const	4	4	LCD_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lcd/lcdMicroParts.ts	buildLcdMicroParts	func	61	1213	export function buildLcdMicroParts( mats: MaterialLibrary ):
+src/assemblies/lcd/lcdParts.ts	LCD_CENTER_X	const	27	27	LCD_CENTER_X = 6.0
+src/assemblies/lcd/lcdParts.ts	LCD_CENTER_Y	const	28	28	LCD_CENTER_Y = -7.0
+src/assemblies/lcd/lcdParts.ts	LCD_WIDTH	const	29	29	LCD_WIDTH = 74.0
+src/assemblies/lcd/lcdParts.ts	LCD_HEIGHT	const	30	30	LCD_HEIGHT = 50.0
+src/assemblies/lcd/lcdParts.ts	LcdDynamicRig	interface	32	41	export interface LcdDynamicRig
+src/assemblies/lcd/lcdParts.ts	buildLcdParts	func	78	1659	export function buildLcdParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/lcd/lcdPhysicsOverlay.ts	LcdPhysicsOverlayController	interface	6	12	export interface LcdPhysicsOverlayController
+src/assemblies/lcd/lcdPhysicsOverlay.ts	createLcdPhysicsOverlay	func	20	235	export function createLcdPhysicsOverlay( clippingPlanes: THREE.Plane[] ): LcdPhysicsOverlayController
+src/assemblies/lcd/lcdUltraDeepExplanations.ts	LCD_ULTRA_DEEP_EXPLANATIONS	const	2	2	LCD_ULTRA_DEEP_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lcd/lcdUltraDeepParts.ts	buildLcdUltraDeepParts	func	61	1605	export function buildLcdUltraDeepParts( mats: MaterialLibrary ):
+src/assemblies/lcd/lcdUltraOemExplanations.ts	LCD_ULTRA_OEM_EXPLANATIONS	const	2	2	LCD_ULTRA_OEM_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lcd/lcdUltraOemParts.ts	buildLcdUltraOemParts	func	57	1395	export function buildLcdUltraOemParts( mats: MaterialLibrary ):
+src/assemblies/lcd/lcdUltraTechExplanations.ts	LCD_ULTRA_TECH_EXPLANATIONS	const	2	2	LCD_ULTRA_TECH_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lcd/lcdUltraTechParts.ts	buildLcdUltraTechParts	func	61	1339	export function buildLcdUltraTechParts( mats: MaterialLibrary ):
+src/assemblies/lens/lensExplanations.ts	LENS_EXPLANATIONS	const	6	6	LENS_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/lens/lensMicroExplanations.ts	LENS_MICRO_EXPLANATIONS	const	4	4	LENS_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lens/lensMicroParts.ts	buildLensMicroParts	func	72	937	export function buildLensMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/lens/lensOpticalSim.ts	OpticalScenarioId	type	16	21	export type OpticalScenarioId =
+src/assemblies/lens/lensOpticalSim.ts	OpticalGlassKind	type	23	23	export type OpticalGlassKind = 'xa' | 'ed' | 'flint' | 'lanthanum' | 'crown';
+src/assemblies/lens/lensOpticalSim.ts	OpticalElementSpec	interface	25	55	export interface OpticalElementSpec
+src/assemblies/lens/lensOpticalSim.ts	OpticalPoint	interface	57	60	export interface OpticalPoint
+src/assemblies/lens/lensOpticalSim.ts	TracedRay	interface	62	75	export interface TracedRay
+src/assemblies/lens/lensOpticalSim.ts	FloatingStrokes	interface	77	81	export interface FloatingStrokes
+src/assemblies/lens/lensOpticalSim.ts	IrisMetrics	interface	83	95	export interface IrisMetrics
+src/assemblies/lens/lensOpticalSim.ts	ScenarioDescriptor	interface	97	108	export interface ScenarioDescriptor
+src/assemblies/lens/lensOpticalSim.ts	IRIS_Z	const	110	110	IRIS_Z = 82.0
+src/assemblies/lens/lensOpticalSim.ts	SENSOR_Z	const	111	111	SENSOR_Z = 0.0
+src/assemblies/lens/lensOpticalSim.ts	EFFECTIVE_FOCAL_LENGTH_MM	const	112	112	EFFECTIVE_FOCAL_LENGTH_MM = 50.07
+src/assemblies/lens/lensOpticalSim.ts	OPTICAL_ELEMENTS	const	124	447	OPTICAL_ELEMENTS: OpticalElementSpec[] = [
+src/assemblies/lens/lensOpticalSim.ts	OPTICAL_SCENARIOS	const	449	527	OPTICAL_SCENARIOS: ScenarioDescriptor[] = [
+src/assemblies/lens/lensOpticalSim.ts	evalSurfaceZ	func	533	538	export function evalSurfaceZ(y: number, zVertex: number, R: number, a4 = 0, a6 = 0): number
+src/assemblies/lens/lensOpticalSim.ts	computeFloatingStrokes	func	623	630	export function computeFloatingStrokes(focusT: number): FloatingStrokes
+src/assemblies/lens/lensOpticalSim.ts	computeIrisMetrics	func	635	650	export function computeIrisMetrics(fNumber: number, focusT: number): IrisMetrics
+src/assemblies/lens/lensOpticalSim.ts	traceSingleOpticalRay	func	656	766	export function traceSingleOpticalRay(opts:
+src/assemblies/lens/lensOpticalSim.ts	findChiefEntryY	func	772	820	export function findChiefEntryY( angleDeg: number, dzA: number, dzB: number, zStart = 136 ): number
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim	class	826	1305	export class LensOpticalSim
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.subscribe	method	860	863	public subscribe(fn: () => void): () => void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.notify	method	865	867	public notify(): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setStudioOpen	method	869	876	public setStudioOpen(open: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setScenario	method	878	884	public setScenario(id: OpticalScenarioId): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.applyScenarioDefaults	method	886	929	private applyScenarioDefaults(id: OpticalScenarioId): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualAperture	method	931	935	public setManualAperture(f: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFocusT	method	937	941	public setManualFocusT(t: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFieldAngle	method	943	947	public setManualFieldAngle(deg: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.toggleComparison	method	949	959	public toggleComparison(): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setAutoPlay	method	961	964	public setAutoPlay(playing: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setHoveredElement	method	966	970	public setHoveredElement(partId: string | null): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.step	method	975	1052	public step(elapsed: number, delta: number, physicsActive: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFloatingStrokes	method	1054	1056	public getFloatingStrokes(): FloatingStrokes
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getIrisMetrics	method	1058	1060	public getIrisMetrics(): IrisMetrics
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFocusDistanceLabel	method	1062	1067	public getFocusDistanceLabel(): string
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getScenarioDescriptor	method	1069	1071	public getScenarioDescriptor(): ScenarioDescriptor
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.traceActiveBundle	method	1080	1304	public traceActiveBundle(zStart = 136): TracedRay[]
+src/assemblies/lens/lensOpticalSim.ts	sharedLensOpticalSim	const	1307	1307	sharedLensOpticalSim = new LensOpticalSim()
+src/assemblies/lens/lensParts.ts	LensDynamicRig	interface	19	37	export interface LensDynamicRig
+src/assemblies/lens/lensParts.ts	buildLensParts	func	148	3617	export function buildLensParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/lens/lensParts.ts	buildLensStandaloneParts	func	3619	3630	export async function buildLensStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/lens/lensPhysicsOverlay.ts	LensPhysicsOverlayController	interface	11	23	export interface LensPhysicsOverlayController
+src/assemblies/lens/lensPhysicsOverlay.ts	createLensPhysicsOverlay	func	45	488	export function createLensPhysicsOverlay( clippingPlanes: THREE.Plane[] ): LensPhysicsOverlayController
+src/assemblies/lens/lensSectionMap.ts	LensSectionMeta	interface	3	9	export interface LensSectionMeta
+src/assemblies/lens/lensSectionMap.ts	LENS_SECTION_META	const	11	33	LENS_SECTION_META: Record<LensSection, LensSectionMeta> =
+src/assemblies/lens/lensSectionMap.ts	LENS_SECTION_BY_ID	const	42	191	LENS_SECTION_BY_ID: Record<string, LensSection> =
+src/assemblies/lens/lensSectionMap.ts	getLensSectionForPart	func	193	195	export function getLensSectionForPart(id: string): LensSection
+src/assemblies/lens/lensUltraExplanations.ts	LENS_ULTRA_EXPLANATIONS	const	4	4	LENS_ULTRA_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lens/lensUltraSplitExplanations.ts	LENS_ULTRA_SPLIT_EXPLANATIONS	const	4	4	LENS_ULTRA_SPLIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/lens/lensUltraSplitParts.ts	buildLensUltraSplitParts	func	77	1197	export function buildLensUltraSplitParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mainboard/mainboardExplanations.ts	MAINBOARD_EXPLANATIONS	const	6	6	MAINBOARD_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/mainboard/mainboardMicroExplanations.ts	MAINBOARD_MICRO_EXPLANATIONS	const	4	4	MAINBOARD_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mainboard/mainboardMicroParts.ts	buildMainboardMicroParts	func	57	1186	export function buildMainboardMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mainboard/mainboardParts.ts	MainboardDynamicRig	interface	15	20	export interface MainboardDynamicRig
+src/assemblies/mainboard/mainboardParts.ts	buildMainboardParts	func	91	2038	export function buildMainboardParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/mainboard/mainboardParts.ts	buildMainboardStandaloneParts	func	2040	2047	export async function buildMainboardStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/mainboard/mainboardPhysicsOverlay.ts	MainboardPhysicsOverlayController	interface	5	11	export interface MainboardPhysicsOverlayController
+src/assemblies/mainboard/mainboardPhysicsOverlay.ts	createMainboardPhysicsOverlay	func	24	268	export function createMainboardPhysicsOverlay( clippingPlanes: THREE.Plane[] ): MainboardPhysicsOverlayContro…
+src/assemblies/mainboard/mainboardUltraAuditExplanations.ts	MAINBOARD_ULTRA_AUDIT_EXPLANATIONS	const	4	4	MAINBOARD_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mainboard/mainboardUltraAuditParts.ts	buildMainboardUltraAuditParts	func	59	268	export function buildMainboardUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micExplanations.ts	MIC_EXPLANATIONS	const	6	6	MIC_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/mic/micParts.ts	buildMicParts	func	122	3990	export function buildMicParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micPhysicsOverlay.ts	MicPhysicsOverlayController	interface	5	11	export interface MicPhysicsOverlayController
+src/assemblies/mic/micPhysicsOverlay.ts	createMicPhysicsOverlay	func	24	306	export function createMicPhysicsOverlay( clippingPlanes: THREE.Plane[] ): MicPhysicsOverlayController
+src/assemblies/mic/micUltra30Explanations.ts	MIC_ULTRA30_EXPLANATIONS	const	4	4	MIC_ULTRA30_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mic/micUltra30Parts.ts	buildMicUltra30Parts	func	80	2599	export function buildMicUltra30Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micUltra31Explanations.ts	MIC_ULTRA31_EXPLANATIONS	const	4	4	MIC_ULTRA31_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mic/micUltra31Parts.ts	buildMicUltra31Parts	func	80	1845	export function buildMicUltra31Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micUltra36Explanations.ts	MIC_ULTRA36_EXPLANATIONS	const	2	2	MIC_ULTRA36_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mic/micUltra36ExplanationsA.ts	MIC_ULTRA36_EXPLANATIONS_A	const	2	2	MIC_ULTRA36_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/mic/micUltra36ExplanationsB.ts	MIC_ULTRA36_EXPLANATIONS_B	const	2	2	MIC_ULTRA36_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/mic/micUltra36Parts.ts	finalizeMicUltra36Part	func	14	42	export function finalizeMicUltra36Part(
+src/assemblies/mic/micUltra36Parts.ts	makeTexturedHorizRect36	func	44	56	export function makeTexturedHorizRect36( w: number, d: number, h: number, r: number, mat: THREE.Material, bev…
+src/assemblies/mic/micUltra36Parts.ts	buildMicUltra36Parts	func	69	71	export function buildMicUltra36Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micUltra36PartsA.ts	buildMicUltra36PartsA	func	24	993	export function buildMicUltra36PartsA(mats: MaterialLibrary): CadPart[]
+src/assemblies/mic/micUltra36PartsB.ts	buildMicUltra36PartsB	func	22	811	export function buildMicUltra36PartsB(mats: MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh01Parts.ts	buildMiraiFh01Parts	func	37	1028	export function buildMiraiFh01Parts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh02Parts.ts	buildMiraiFh02Parts	func	37	884	export function buildMiraiFh02Parts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh08Parts.ts	buildMiraiFh08Parts	func	43	1049	export function buildMiraiFh08Parts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh17Parts.ts	buildMiraiFh17Parts	func	29	873	export function buildMiraiFh17Parts( mats: V2MaterialLibrary, clippingPlanes?: THREE.Plane[] ): CadPart[]
+src/assemblies/mirai2028/miraiFh20Parts.ts	buildMiraiFh20Parts	func	28	798	export function buildMiraiFh20Parts( mats: V2MaterialLibrary, clippingPlanes?: THREE.Plane[] ): CadPart[]
+src/assemblies/mirai2028/miraiFh25Parts.ts	buildMiraiFh25Parts	func	42	988	export function buildMiraiFh25Parts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh32Parts.ts	buildMiraiFh32Parts	func	43	910	export function buildMiraiFh32Parts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/mirai2028/miraiFh48Parts.ts	buildMiraiFh48Parts	func	42	987	export function buildMiraiFh48Parts( mats: V2MaterialLibrary, clippingPlanes?: THREE.Plane[] ): CadPart[]
+src/assemblies/mirai2028/miraiShared.ts	finalizeMiraiPart	func	33	60	export function finalizeMiraiPart(
+src/assemblies/mirai2028/miraiShared.ts	InstanceTransform	interface	62	66	export interface InstanceTransform
+src/assemblies/mirai2028/miraiShared.ts	makeMiraiInstanced	func	72	95	export function makeMiraiInstanced( geo: THREE.BufferGeometry, mat: THREE.Material, transforms: readonly Inst…
+src/assemblies/mirai2028/miraiShared.ts	makeHorizCncPlate	func	101	136	export function makeHorizCncPlate( shape: THREE.Shape, thickness: number, mat: THREE.Material, opts?:
+src/assemblies/mirai2028/miraiShared.ts	createTerracedWaferShape	func	142	184	export function createTerracedWaferShape( w: number, h: number, r: number, cutX?: number, cutZ?: number ): TH…
+src/assemblies/mirai2028/miraiShared.ts	buildCurvedFpcRibbon	func	189	221	export function buildCurvedFpcRibbon( ptsXY: ReadonlyArray<readonly [number, number]>, thickness: number, wid…
+src/assemblies/mirai2028/miraiShared.ts	createGoldWirebondArchGeo	func	227	239	export function createGoldWirebondArchGeo(span: number, archHeight: number, dropY: number): THREE.TubeGeometry
+src/assemblies/mirai2028/miraiShared.ts	addTorxBolts	func	244	263	export function addTorxBolts( parent: THREE.Group, positions: ReadonlyArray<readonly [number, number, number]…
+src/assemblies/mirai2028/miraiShared.ts	buildMicroCoolingFins	func	268	286	export function buildMicroCoolingFins( count: number, spanX: number, finThickness: number, finHeight: number,…
+src/assemblies/mirai2028/miraiShared.ts	createRingShape	func	291	300	export function createRingShape(outerR: number, innerR: number): THREE.Shape
+src/assemblies/mirai2028/miraiShared.ts	createArcRingShape	func	305	316	export function createArcRingShape( outerR: number, innerR: number, startRad: number, endRad: number ): THREE…
+src/assemblies/mirai2028/miraiShared.ts	makeZAxisCncRing	func	321	349	export function makeZAxisCncRing( outerR: number, innerR: number, depth: number, mat: THREE.Material, opts?:
+src/assemblies/mirai2028/miraiShared.ts	buildMeniscusLensGeo	func	356	396	export function buildMeniscusLensGeo( diameter: number, edgeThickness: number, sagFront: number, sagRear: num…
+src/assemblies/mirai2028/miraiShared.ts	addKnurledRingToGroup	func	402	433	export function addKnurledRingToGroup(
+src/assemblies/mirai2028/miraiShared.ts	buildCurvedIrisBladeGeo	func	439	454	export function buildCurvedIrisBladeGeo( innerR: number, outerR: number, thickness = 0.18 ): THREE.ExtrudeGeo…
+src/assemblies/mirai2028/miraiShared.ts	addZAxisBolts	func	459	479	export function addZAxisBolts( parent: THREE.Group, positions: ReadonlyArray<readonly [number, number, number…
+src/assemblies/mirai2028/miraiShared.ts	MIRAI_HERO_SPECS	const	499	1655	MIRAI_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> =
+src/assemblies/mishoe/miShoeExplanations.ts	MISHOE_EXPLANATIONS	const	8	31	MISHOE_EXPLANATIONS: Record<string, PartExplanation> = Object.fromEntries( miShoeJson.parts.map((p) => [ p.id,
+src/assemblies/mishoe/miShoeExtendedBuilder.ts	MiShoeInstPoolName	type	6	24	type MiShoeInstPoolName = union(18 members)
+src/assemblies/mishoe/miShoeExtendedBuilder.ts	MiShoeExtendedBuildCtx	interface	26	72	export interface MiShoeExtendedBuildCtx
+src/assemblies/mishoe/miShoeExtendedBuilder.ts	buildMiShoeExtendedChunks	func	86	587	export function buildMiShoeExtendedChunks(ctx: MiShoeExtendedBuildCtx): Array<() => void>
+src/assemblies/mishoe/miShoeExtraBuilders.ts	MiShoeInstPoolKey	type	6	24	type MiShoeInstPoolKey = union(18 members)
+src/assemblies/mishoe/miShoeExtraBuilders.ts	MiShoeExtraBuildContext	interface	26	82	export interface MiShoeExtraBuildContext
+src/assemblies/mishoe/miShoeExtraBuilders.ts	MISHOE_EXTRA_HERO_EDGE_PARTS	const	96	103	MISHOE_EXTRA_HERO_EDGE_PARTS: readonly string[] = [ 'mi-mating-metal-foot-frame', 'mi-21pin-metal-shield-cage…
+src/assemblies/mishoe/miShoeExtraBuilders.ts	createMiShoeExtraBuildChunks	func	109	689	export function createMiShoeExtraBuildChunks(ctx: MiShoeExtraBuildContext): Array<() => void>
+src/assemblies/mishoe/miShoeUltraParts.ts	MISHOE_ULTRA_HERO_EDGE_PARTS	const	17	21	MISHOE_ULTRA_HERO_EDGE_PARTS: readonly string[] = [ 'mi-mic-elastomer-shock-isolator', 'mi-zif-dual-beam-cam-…
+src/assemblies/mishoe/miShoeUltraParts.ts	createMiShoeUltraBuildChunks	func	27	334	export function createMiShoeUltraBuildChunks(ctx: MiShoeExtraBuildContext): Array<() => void>
+src/assemblies/mount/mountDeepAuditExplanations.ts	MOUNT_DEEP_AUDIT_EXPLANATIONS	const	4	4	MOUNT_DEEP_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mount/mountDeepAuditParts.ts	buildMountDeepAuditParts	func	70	549	export function buildMountDeepAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mount/mountExplanations.ts	MOUNT_EXPLANATIONS	const	6	6	MOUNT_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/mount/mountMicroExplanations.ts	MOUNT_MICRO_EXPLANATIONS	const	4	4	MOUNT_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mount/mountMicroParts.ts	buildMountMicroParts	func	70	803	export function buildMountMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/mount/mountParts.ts	MountDynamicRig	interface	17	22	export interface MountDynamicRig
+src/assemblies/mount/mountParts.ts	buildMountParts	func	91	1463	export function buildMountParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/mount/mountParts.ts	buildMountStandaloneParts	func	1465	1481	export async function buildMountStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/mount/mountPhysicsOverlay.ts	MountPhysicsOverlayController	interface	9	15	export interface MountPhysicsOverlayController
+src/assemblies/mount/mountPhysicsOverlay.ts	createMountPhysicsOverlay	func	32	404	export function createMountPhysicsOverlay( clippingPlanes: THREE.Plane[] ): MountPhysicsOverlayController
+src/assemblies/mount/mountUltra34ExplanationsA.ts	MOUNT_ULTRA34_EXPLANATIONS_A	const	4	4	MOUNT_ULTRA34_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/mount/mountUltra34ExplanationsB.ts	MOUNT_ULTRA34_EXPLANATIONS_B	const	4	4	MOUNT_ULTRA34_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/mount/mountUltra34PartsA.ts	finalizeMountUltra34Part	func	52	80	export function finalizeMountUltra34Part(
+src/assemblies/mount/mountUltra34PartsA.ts	buildMountUltra34PartsA	func	88	1479	export function buildMountUltra34PartsA(mats: MaterialLibrary): CadPart[]
+src/assemblies/mount/mountUltra34PartsB.ts	buildMountUltra34PartsB	func	56	1425	export function buildMountUltra34PartsB(mats: MaterialLibrary): CadPart[]
+src/assemblies/mount/mountUltraAuditExplanations.ts	MOUNT_ULTRA_AUDIT_EXPLANATIONS	const	4	4	MOUNT_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/mount/mountUltraAuditParts.ts	buildMountUltraAuditParts	func	59	274	export function buildMountUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/explanations.ts	MACRO_EXPLANATIONS	const	6	7	MACRO_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(sensorJson)
+src/assemblies/sensor/explanations.ts	MICRO_EXPLANATIONS	const	9	10	MICRO_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(microJson)
+src/assemblies/sensor/macroParts.ts	buildMacroSensorParts	func	71	3878	export function buildMacroSensorParts(mats: MaterialLibrary, _includeStandalone = true): CadPart[]
+src/assemblies/sensor/macroParts.ts	buildSensorStandaloneParts	func	3880	3892	export async function buildSensorStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/sensor/microPixelDeepAuditExplanations.ts	MICRO_DEEP_AUDIT_EXPLANATIONS	const	4	4	MICRO_DEEP_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/microPixelDeepAuditParts.ts	buildMicroPixelDeepAuditParts	func	48	654	export function buildMicroPixelDeepAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelNextGenExplanations.ts	MICRO_NEXTGEN_EXPLANATIONS	const	4	4	MICRO_NEXTGEN_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/microPixelNextGenParts.ts	buildMicroPixelNextGenParts	func	48	1153	export function buildMicroPixelNextGenParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelParts.ts	buildMicroPixelParts	func	57	929	export function buildMicroPixelParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelUltraParts.ts	buildMicroPixelUltraParts	func	42	556	export function buildMicroPixelUltraParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelV2DeepExplanations.ts	MICRO_V2_DEEP_EXPLANATIONS	const	4	4	MICRO_V2_DEEP_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/microPixelV2DeepParts.ts	buildMicroPixelV2DeepParts	func	84	2209	export function buildMicroPixelV2DeepParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelV2Explanations.ts	MICRO_V2_EXPLANATIONS	const	5	6	MICRO_V2_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(microV2Json)
+src/assemblies/sensor/microPixelV2Parts.ts	buildMicroPixelV2Parts	func	129	1928	export function buildMicroPixelV2Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/microPixelV2PhysicsOverlay.ts	MicroPixelV2PhysicsOverlayController	interface	5	11	export interface MicroPixelV2PhysicsOverlayController
+src/assemblies/sensor/microPixelV2PhysicsOverlay.ts	createMicroPixelV2PhysicsOverlay	func	24	232	export function createMicroPixelV2PhysicsOverlay( clippingPlanes: THREE.Plane[] ): MicroPixelV2PhysicsOverlay…
+src/assemblies/sensor/physicsOverlay.ts	PhysicsOverlayController	interface	5	27	export interface PhysicsOverlayController
+src/assemblies/sensor/physicsOverlay.ts	createPhysicsOverlay	func	47	618	export function createPhysicsOverlay(clippingPlanes: THREE.Plane[]): PhysicsOverlayController
+src/assemblies/sensor/sensorMicroExplanations.ts	SENSOR_MICRO_EXPLANATIONS	const	4	4	SENSOR_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/sensorMicroExplanations.ts	MICRO_PIXEL_ULTRA_EXPLANATIONS	const	7	7	MICRO_PIXEL_ULTRA_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/sensorMicroParts.ts	buildSensorMicroParts	func	170	1874	export function buildSensorMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/sensorMicroUltraAuditExplanations.ts	SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS	const	4	4	SENSOR_MICRO_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/sensorMicroUltraAuditParts.ts	buildSensorUltraAuditParts	func	88	497	export function buildSensorUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/sensorMicroUltraAuditParts.ts	buildMicroUltraAuditParts	func	504	773	export function buildMicroUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/sensorNextGenExplanations.ts	SENSOR_NEXTGEN_EXPLANATIONS	const	4	4	SENSOR_NEXTGEN_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensor/sensorNextGenParts.ts	buildSensorNextGenParts	func	172	1800	export function buildSensorNextGenParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensor/sensorUltraPrecisionParts.ts	buildSensorUltraPrecisionParts	func	129	1884	export function buildSensorUltraPrecisionParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabExplanations.ts	SENSOR_FAB_EXPLANATIONS	const	5	6	SENSOR_FAB_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(sensorFabJson)
+src/assemblies/sensorFab/sensorFabParts.ts	buildSensorFabParts	func	210	2249	export function buildSensorFabParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabPhysicsOverlay.ts	SensorFabPhysicsOverlayController	interface	5	11	export interface SensorFabPhysicsOverlayController
+src/assemblies/sensorFab/sensorFabPhysicsOverlay.ts	createSensorFabPhysicsOverlay	func	28	241	export function createSensorFabPhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabPhysicsOverlayContro…
+src/assemblies/sensorFab/sensorFabVol1Explanations.ts	SENSOR_FAB_VOL1_EXPLANATIONS	const	4	4	SENSOR_FAB_VOL1_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol1Parts.ts	buildSensorFabVol1Parts	func	189	2079	export function buildSensorFabVol1Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol1PhysicsOverlay.ts	SensorFabVol1PhysicsOverlayController	interface	5	11	export interface SensorFabVol1PhysicsOverlayController
+src/assemblies/sensorFab/sensorFabVol1PhysicsOverlay.ts	createSensorFabVol1PhysicsOverlay	func	28	221	export function createSensorFabVol1PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol1PhysicsOverl…
+src/assemblies/sensorFab/sensorFabVol2Explanations.ts	SENSOR_FAB_VOL2_EXPLANATIONS	const	4	4	SENSOR_FAB_VOL2_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol2Parts.ts	buildSensorFabVol2Parts	func	166	2268	export function buildSensorFabVol2Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol2PhysicsOverlay.ts	SensorFabVol2PhysicsOverlayController	interface	5	11	export interface SensorFabVol2PhysicsOverlayController
+src/assemblies/sensorFab/sensorFabVol2PhysicsOverlay.ts	createSensorFabVol2PhysicsOverlay	func	31	240	export function createSensorFabVol2PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol2PhysicsOverl…
+src/assemblies/sensorFab/sensorFabVol3DesignParts.ts	buildSensorFabVol3DesignParts	func	22	1503	export function buildSensorFabVol3DesignParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol3Explanations.ts	SENSOR_FAB_VOL3_EXPLANATIONS	const	4	4	SENSOR_FAB_VOL3_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol3ExplanationsA.ts	SENSOR_FAB_VOL3_EXPLANATIONS_A	const	4	4	SENSOR_FAB_VOL3_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol3ExplanationsB.ts	SENSOR_FAB_VOL3_EXPLANATIONS_B	const	4	4	SENSOR_FAB_VOL3_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol3MaskParts.ts	buildSensorFabVol3MaskParts	func	19	784	export function buildSensorFabVol3MaskParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol3Parts.ts	buildSensorFabVol3Parts	func	16	21	export function buildSensorFabVol3Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol3PhysicsOverlay.ts	SensorFabVol3PhysicsOverlayController	interface	5	11	export interface SensorFabVol3PhysicsOverlayController
+src/assemblies/sensorFab/sensorFabVol3PhysicsOverlay.ts	createSensorFabVol3PhysicsOverlay	func	30	290	export function createSensorFabVol3PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol3PhysicsOverl…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	createVol3BoxGeo	func	21	47	export function createVol3BoxGeo( w: number, h: number, d: number, cornerR = 0.14, bevel = 0.08, axis: 'y' | …
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	finalizeVol3Part	func	49	77	export function finalizeVol3Part( id: string, order: number, swatchColor: string, group: THREE.Group, assembl…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	makeVol3Plinth	func	80	113	export function makeVol3Plinth( w: number, d: number, h: number, mats: MaterialLibrary, accentMat: THREE.Mate…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	makeEdaConsole	func	116	156	export function makeEdaConsole( w: number, h: number, screenMat: THREE.Material, accentMat: THREE.Material, m…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	makeSixInchReticlePlate	func	159	241	export function makeSixInchReticlePlate( size: number, thick: number, patternMat: THREE.Material, mats: Mater…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	makePrecisionGantry	func	244	273	export function makePrecisionGantry( spanW: number, height: number, mats: MaterialLibrary, accentMat: THREE.M…
+src/assemblies/sensorFab/sensorFabVol3Shared.ts	makeBeamCone	func	276	285	export function makeBeamCone( rTop: number, rBot: number, h: number, mat: THREE.Material ): THREE.Mesh
+src/assemblies/sensorFab/sensorFabVol4Explanations.ts	SENSOR_FAB_VOL4_EXPLANATIONS	const	4	4	SENSOR_FAB_VOL4_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol4ExplanationsA.ts	SENSOR_FAB_VOL4_EXPLANATIONS_A	const	4	4	SENSOR_FAB_VOL4_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol4ExplanationsB.ts	SENSOR_FAB_VOL4_EXPLANATIONS_B	const	4	4	SENSOR_FAB_VOL4_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol4LowerParts.ts	buildSensorFabVol4LowerParts	func	18	329	export function buildSensorFabVol4LowerParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol4Parts.ts	buildSensorFabVol4Parts	func	17	22	export function buildSensorFabVol4Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol4PhysicsOverlay.ts	SensorFabVol4PhysicsOverlayController	interface	5	11	export interface SensorFabVol4PhysicsOverlayController
+src/assemblies/sensorFab/sensorFabVol4PhysicsOverlay.ts	createSensorFabVol4PhysicsOverlay	func	30	300	export function createSensorFabVol4PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol4PhysicsOverl…
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	createVol4BoxGeo	func	20	46	export function createVol4BoxGeo( w: number, h: number, d: number, cornerR = 0.14, bevel = 0.08, axis: 'y' | …
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	finalizeVol4Part	func	48	76	export function finalizeVol4Part( id: string, order: number, swatchColor: string, group: THREE.Group, assembl…
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	makeVol4Plinth	func	79	112	export function makeVol4Plinth( w: number, d: number, h: number, mats: MaterialLibrary, accentMat: THREE.Mate…
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	makeIonImplantCannon	func	115	142	export function makeIonImplantCannon( beamMat: THREE.Material, mats: MaterialLibrary, tiltZ = 0, height = 4.6…
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	makeFurnaceTower	func	145	168	export function makeFurnaceTower( radius: number, height: number, glowMat: THREE.Material, mats: MaterialLibr…
+src/assemblies/sensorFab/sensorFabVol4Shared.ts	makeVol4Beam	func	171	180	export function makeVol4Beam( rTop: number, rBot: number, h: number, mat: THREE.Material ): THREE.Mesh
+src/assemblies/sensorFab/sensorFabVol4UpperParts.ts	buildSensorFabVol4UpperParts	func	23	853	export function buildSensorFabVol4UpperParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol5Explanations.ts	SENSOR_FAB_VOL5_EXPLANATIONS	const	2	2	SENSOR_FAB_VOL5_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol5ExplanationsA.ts	SENSOR_FAB_VOL5_EXPLANATIONS_A	const	2	2	SENSOR_FAB_VOL5_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol5ExplanationsB.ts	SENSOR_FAB_VOL5_EXPLANATIONS_B	const	2	2	SENSOR_FAB_VOL5_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/sensorFab/sensorFabVol5LowerParts.ts	buildSensorFabVol5LowerParts	func	25	193	export function buildSensorFabVol5LowerParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol5Parts.ts	buildSensorFabVol5Parts	func	12	14	export function buildSensorFabVol5Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol5PhysicsOverlay.ts	SensorFabVol5PhysicsOverlayController	interface	5	11	export interface SensorFabVol5PhysicsOverlayController
+src/assemblies/sensorFab/sensorFabVol5PhysicsOverlay.ts	createSensorFabVol5PhysicsOverlay	func	29	269	export function createSensorFabVol5PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol5PhysicsOverl…
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	createVol5BoxGeo	func	21	51	export function createVol5BoxGeo( w: number, h: number, d: number, cornerR = 0.22, bevel = 0.08, uvAxis: 'x' …
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	finalizeVol5Part	func	53	80	export function finalizeVol5Part( id: string, order: number, swatchColor: string, group: THREE.Group, assembl…
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeVol5Plinth	func	83	98	export function makeVol5Plinth( w: number, d: number, h: number, mats: MaterialLibrary, trimMat: THREE.Materi…
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeVol5Beam	func	101	110	export function makeVol5Beam( rTop: number, rBot: number, h: number, mat: THREE.Material ): THREE.Mesh
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeCmpHead	func	113	130	export function makeCmpHead( padRadius: number, mats: MaterialLibrary, accentMat: THREE.Material, yPos = 4.3 …
+src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeEcdTank	func	133	148	export function makeEcdTank( w: number, d: number, h: number, mats: MaterialLibrary ): THREE.Group
+src/assemblies/sensorFab/sensorFabVol5UpperParts.ts	buildSensorFabVol5UpperParts	func	22	700	export function buildSensorFabVol5UpperParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterExplanations.ts	SHUTTER_EXPLANATIONS	const	6	6	SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
+src/assemblies/shutter/shutterMicroExplanations.ts	SHUTTER_MICRO_EXPLANATIONS	const	4	4	SHUTTER_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterMicroParts.ts	buildShutterMicroParts	func	51	824	export function buildShutterMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterParts.ts	ShutterDynamicRig	interface	18	44	export interface ShutterDynamicRig
+src/assemblies/shutter/shutterParts.ts	buildShutterParts	func	106	2044	export function buildShutterParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/shutter/shutterParts.ts	buildShutterStandaloneParts	func	2046	2064	export async function buildShutterStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/shutter/shutterPhysicsOverlay.ts	ShutterPhysicsOverlayController	interface	6	18	export interface ShutterPhysicsOverlayController
+src/assemblies/shutter/shutterPhysicsOverlay.ts	createShutterPhysicsOverlay	func	38	391	export function createShutterPhysicsOverlay( clippingPlanes: THREE.Plane[] ): ShutterPhysicsOverlayController
+src/assemblies/shutter/shutterUltra34ExplanationsA.ts	SHUTTER_ULTRA34_EXPLANATIONS_A	const	4	4	SHUTTER_ULTRA34_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterUltra34ExplanationsB.ts	SHUTTER_ULTRA34_EXPLANATIONS_B	const	4	4	SHUTTER_ULTRA34_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterUltra34PartsA.ts	buildShutterUltra34PartsA	func	142	1710	export function buildShutterUltra34PartsA(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterUltra34PartsB.ts	buildShutterUltra34PartsB	func	64	1536	export function buildShutterUltra34PartsB(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterUltra36ExplanationsA.ts	SHUTTER_ULTRA36_EXPLANATIONS_A	const	2	2	SHUTTER_ULTRA36_EXPLANATIONS_A: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterUltra36ExplanationsB.ts	SHUTTER_ULTRA36_EXPLANATIONS_B	const	2	2	SHUTTER_ULTRA36_EXPLANATIONS_B: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterUltra36PartsA.ts	buildShutterUltra36PartsA	func	141	1422	export function buildShutterUltra36PartsA(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterUltra36PartsB.ts	buildShutterUltra36PartsB	func	134	1443	export function buildShutterUltra36PartsB(mats: MaterialLibrary): CadPart[]
+src/assemblies/shutter/shutterUltraAuditExplanations.ts	SHUTTER_ULTRA_AUDIT_EXPLANATIONS	const	4	4	SHUTTER_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
+src/assemblies/shutter/shutterUltraAuditParts.ts	buildShutterUltraAuditParts	func	48	940	export function buildShutterUltraAuditParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/types.ts	ScaleMode	type	3	25	type ScaleMode = union(22 members)
+src/assemblies/types.ts	MiraiStructureId	type	26	26	export type MiraiStructureId = 'fh01' | 'fh02' | 'fh08' | 'fh32' | 'fh25' | 'fh20' | 'fh17' | 'fh48';
+src/assemblies/types.ts	SensorFabVolume	type	27	27	export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
+src/assemblies/types.ts	SensorFabStage	type	28	57	type SensorFabStage = union(29 members)
+src/assemblies/types.ts	RenderMode	type	58	58	export type RenderMode = 'solid' | 'xray' | 'cad';
+src/assemblies/types.ts	GraphicsQuality	type	59	59	export type GraphicsQuality = 'standard_lite' | 'standard' | 'high' | 'ultra';
+src/assemblies/types.ts	SectionAxis	type	60	60	export type SectionAxis = 'off' | 'x' | 'y';
+src/assemblies/types.ts	CameraPreset	type	61	61	export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
+src/assemblies/types.ts	LensSection	type	62	62	export type LensSection = 1 | 2 | 3;
+src/assemblies/types.ts	ExplanationSpec	interface	64	67	export interface ExplanationSpec
+src/assemblies/types.ts	MiraiExplanationExtension	interface	69	89	export interface MiraiExplanationExtension
+src/assemblies/types.ts	PartExplanation	interface	91	2425	export interface PartExplanation [diagramType:2199 members]
+src/assemblies/types.ts	CadPart	interface	2427	2474	export interface CadPart
+src/assemblies/types.ts	AssemblyController	interface	2476	2494	export interface AssemblyController
+src/assemblies/welcome/welcomeGeometry.ts	StrokePt	interface	10	13	export interface StrokePt
+src/assemblies/welcome/welcomeGeometry.ts	CX_YO	const	18	18	CX_YO = -66
+src/assemblies/welcome/welcomeGeometry.ts	CX_U	const	19	19	CX_U = -21
+src/assemblies/welcome/welcomeGeometry.ts	CX_KO	const	20	20	CX_KO = 23
+src/assemblies/welcome/welcomeGeometry.ts	CX_SO	const	21	21	CX_SO = 67
+src/assemblies/welcome/welcomeGeometry.ts	YO_STEM	const	23	28	YO_STEM: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	YO_BAR	const	29	33	YO_BAR: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	YO_LOOP	const	34	42	YO_LOOP: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	U_CREST	const	44	48	U_CREST: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	U_ARC	const	49	57	U_ARC: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	KO_TOP	const	59	63	KO_TOP: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	KO_TOP_HOOK	const	64	67	KO_TOP_HOOK: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	KO_BOT	const	68	73	KO_BOT: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	SO_Z1	const	75	78	SO_Z1: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	SO_Z2	const	79	82	SO_Z2: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	SO_Z3	const	83	86	SO_Z3: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	SO_BOWL	const	87	94	SO_BOWL: readonly StrokePt[] = [
+src/assemblies/welcome/welcomeGeometry.ts	StrokeId	type	96	108	type StrokeId = union(12 members)
+src/assemblies/welcome/welcomeGeometry.ts	STROKE_MAP	const	110	123	STROKE_MAP: Readonly<Record<StrokeId, readonly StrokePt[]>> =
+src/assemblies/welcome/welcomeGeometry.ts	SampledStroke	interface	125	130	export interface SampledStroke
+src/assemblies/welcome/welcomeGeometry.ts	sampleStroke	func	132	161	export function sampleStroke(pts: readonly StrokePt[], samples: number): SampledStroke
+src/assemblies/welcome/welcomeGeometry.ts	qualityLevel	func	226	232	export function qualityLevel(): 0 | 1 | 2 | 3
+src/assemblies/welcome/welcomeGeometry.ts	extrudeRibbonGeo	func	234	267	export function extrudeRibbonGeo( pts: readonly StrokePt[], halfWidth: number, depth: number, zCenter: number…
+src/assemblies/welcome/welcomeGeometry.ts	buildHollowCncChassis	func	272	318	export function buildHollowCncChassis( pts: readonly StrokePt[], halfW: number, depth: number, zCenter: numbe…
+src/assemblies/welcome/welcomeGeometry.ts	buildFinnedBackplate	func	323	351	export function buildFinnedBackplate( pts: readonly StrokePt[], halfW: number, zCenter: number, mat: THREE.Ma…
+src/assemblies/welcome/welcomeGeometry.ts	buildSteppedOpticalLens	func	356	379	export function buildSteppedOpticalLens( pts: readonly StrokePt[], halfW: number, zCenter: number, mat: THREE…
+src/assemblies/welcome/welcomeGeometry.ts	buildLgpWaveguide	func	384	409	export function buildLgpWaveguide( pts: readonly StrokePt[], halfW: number, zCenter: number, mat: THREE.Mater…
+src/assemblies/welcome/welcomeGeometry.ts	buildHollowPerimeterRing	func	414	431	export function buildHollowPerimeterRing( pts: readonly StrokePt[], outerHalfW: number, wallWidth: number, de…
+src/assemblies/welcome/welcomeGeometry.ts	buildLedArrayOnMcpcb	func	437	492	export function buildLedArrayOnMcpcb( pts: readonly StrokePt[], halfW: number, zCenter: number, mats: V2Mater…
+src/assemblies/welcome/welcomeGeometry.ts	buildHexSocketBolts	func	497	546	export function buildHexSocketBolts( positions: ReadonlyArray<readonly [number, number, number]>, radius: num…
+src/assemblies/welcome/welcomeGeometry.ts	buildDowelPins	func	551	569	export function buildDowelPins( positions: ReadonlyArray<readonly [number, number, number]>, radius: number, …
+src/assemblies/welcome/welcomeGeometry.ts	buildMiniPcbBoard	func	574	604	export function buildMiniPcbBoard( w: number, h: number, t: number, cx: number, cy: number, cz: number, mats:…
+src/assemblies/welcome/welcomeGeometry.ts	buildQfnIcPackage	func	606	642	export function buildQfnIcPackage( w: number, h: number, t: number, cx: number, cy: number, cz: number, mats:…
+src/assemblies/welcome/welcomeGeometry.ts	buildDcDcInductorModule	func	644	671	export function buildDcDcInductorModule( cx: number, cy: number, cz: number, mats: V2MaterialLibrary ): THREE…
+src/assemblies/welcome/welcomeGeometry.ts	buildMlccPtcBank	func	673	704	export function buildMlccPtcBank( cx: number, cy: number, cz: number, count: number, mats: V2MaterialLibrary …
+src/assemblies/welcome/welcomeGeometry.ts	buildZifConnectorAndFpc	func	706	758	export function buildZifConnectorAndFpc( x1: number, y1: number, z1: number, x2: number, y2: number, z2: numb…
+src/assemblies/welcome/welcomeGeometry.ts	buildPogoPinBlock	func	763	793	export function buildPogoPinBlock( cx: number, cy: number, cz: number, mats: V2MaterialLibrary, isReceptacle …
+src/assemblies/welcome/welcomeGeometry.ts	buildDovetailMount	func	798	831	export function buildDovetailMount( cx: number, cy: number, cz: number, w: number, h: number, d: number, mats…
+src/assemblies/welcome/welcomeGeometry.ts	buildQuartzColumnPart	func	836	894	export function buildQuartzColumnPart( x1: number, y1: number, x2: number, y2: number, z: number, radius: num…
+src/assemblies/welcome/welcomeGeometry.ts	buildOpticalCornerPrism	func	899	926	export function buildOpticalCornerPrism( cx: number, cy: number, cz: number, size: number, rotZ: number, mat:…
+src/assemblies/welcome/welcomeGeometry.ts	buildEmiShieldCan	func	931	955	export function buildEmiShieldCan( w: number, h: number, d: number, cx: number, cy: number, cz: number, mat: …
+src/assemblies/welcome/welcomeGeometry.ts	buildPlinthRoundedSlab	func	960	999	export function buildPlinthRoundedSlab( w: number, h: number, d: number, r: number, cx: number, cy: number, c…
+src/assemblies/welcome/welcomeGeometry.ts	buildUsbCPdReceptacle	func	1001	1024	export function buildUsbCPdReceptacle(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.Gro…
+src/assemblies/welcome/welcomeGeometry.ts	buildWelcomeSpeakerUnit	func	1026	1044	export function buildWelcomeSpeakerUnit(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.G…
+src/assemblies/welcome/welcomeGeometry.ts	buildKnurledRotaryDial	func	1046	1069	export function buildKnurledRotaryDial(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.Gr…
+src/assemblies/welcome/welcomePartEnrichment.ts	WelcomeDiagramType	type	3	11	export type WelcomeDiagramType =
+src/assemblies/welcome/welcomePartEnrichment.ts	EnrichableWelcomeDef	interface	295	313	export interface EnrichableWelcomeDef
+src/assemblies/welcome/welcomePartEnrichment.ts	enrichWelcomeDef	func	319	355	export function enrichWelcomeDef<T extends EnrichableWelcomeDef>(def: T, index: number): T
+src/assemblies/welcome/welcomeParts.ts	WelcomePartDef	interface	39	58	export interface WelcomePartDef
+src/assemblies/welcome/welcomeParts.ts	WELCOME_PART_DEFS	const	2804	2804	WELCOME_PART_DEFS: readonly WelcomePartDef[] = buildAllWelcome216Defs()
+src/assemblies/welcome/welcomeParts.ts	buildWelcomeParts	func	2826	2852	export function buildWelcomeParts(mats: V2MaterialLibrary): CadPart[]
+src/core/capture_bridge.ts	CaptureMode	type	3	3	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
+src/core/capture_bridge.ts	CaptureCustomOptions	interface	5	26	export interface CaptureCustomOptions
+src/core/capture_bridge.ts	CapturePrepareResult	interface	28	35	export interface CapturePrepareResult
+src/core/capture_bridge.ts	CaptureHostAdapter	interface	37	60	export interface CaptureHostAdapter
+src/core/capture_bridge.ts	ArtifactCaptureBridge	class	84	300	export class ArtifactCaptureBridge
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitUnitReady	method	91	97	private async waitUnitReady(timeoutMs = 15000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitSchematicHydrated	method	99	107	private async waitSchematicHydrated(timeoutMs = 8000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.captureDirectCanvasDataUrl	method	113	124	public async captureDirectCanvasDataUrl( format: 'png' | 'webp' | 'jpeg' = 'png', quality = 0.92 ): Promise<s…
+src/core/capture_bridge.ts	ArtifactCaptureBridge.measureClip	method	126	143	private measureClip(selector: string | null):
+src/core/capture_bridge.ts	ArtifactCaptureBridge.reset	method	145	156	public reset(): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.prepare	method	158	299	public async prepare( mode: CaptureMode, options: CaptureCustomOptions =
+src/core/dispose.ts	DisposeReport	interface	20	29	export interface DisposeReport
+src/core/dispose.ts	disposeObject3D	func	90	215	export function disposeObject3D( root: THREE.Object3D, cache: ResourceCache | null = null, detachRootFromPare…
+src/core/dispose.ts	VramSnapshot	interface	217	221	export interface VramSnapshot
+src/core/dispose.ts	VramLeakVerification	interface	223	231	export interface VramLeakVerification
+src/core/dispose.ts	VramLeakMonitor	class	236	320	export class VramLeakMonitor
+src/core/dispose.ts	VramLeakMonitor.captureBaseline	method	242	251	public captureBaseline(renderer: THREE.WebGLRenderer): VramSnapshot
+src/core/dispose.ts	VramLeakMonitor.recordActivePeak	method	253	267	public recordActivePeak(renderer: THREE.WebGLRenderer): VramSnapshot
+src/core/dispose.ts	VramLeakMonitor.verifyAfterDispose	method	269	311	public verifyAfterDispose( renderer: THREE.WebGLRenderer, cache: ResourceCache ): VramLeakVerification
+src/core/dispose.ts	VramLeakMonitor.getLastVerification	method	313	315	public getLastVerification(): VramLeakVerification | null
+src/core/dispose.ts	VramLeakMonitor.getSwitchCount	method	317	319	public getSwitchCount(): number
+src/core/fast_proxy_builder.ts	FastProxyBundle	class	50	182	export class FastProxyBundle
+src/core/fast_proxy_builder.ts	FastProxyBundle.updateExplode	method	89	99	public updateExplode(t: number): void
+src/core/fast_proxy_builder.ts	FastProxyBundle.setVisualState	method	101	139	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
+src/core/fast_proxy_builder.ts	FastProxyBundle.applyKineCulling	method	141	160	public applyKineCulling(culledMask: Uint8Array | null): void
+src/core/fast_proxy_builder.ts	FastProxyBundle.setClippingPlanes	method	162	172	public setClippingPlanes(planes: THREE.Plane[]): void
+src/core/fast_proxy_builder.ts	FastProxyBundle.dispose	method	174	181	public dispose(cache: ResourceCache): void
+src/core/fast_proxy_builder.ts	buildFastProxyFromLiteResult	func	285	487	export function buildFastProxyFromLiteResult( unitId: string, liteResult: UnitBuildResult, cache: ResourceCac…
+src/core/geometry_quality.ts	GeometryQualityScale	interface	7	16	export interface GeometryQualityScale
+src/core/geometry_quality.ts	setActiveBuildQuality	func	63	65	export function setActiveBuildQuality(quality: QualityTier | null): void
+src/core/geometry_quality.ts	getActiveBuildQuality	func	67	69	export function getActiveBuildQuality(): QualityTier | null
+src/core/geometry_quality.ts	getActiveGeometryScale	func	71	73	export function getActiveGeometryScale(): GeometryQualityScale | null
+src/core/geometry_quality.ts	scaleCurveSegmentsForQuality	func	75	80	export function scaleCurveSegmentsForQuality(requested: number, minSegs = 4): number
+src/core/geometry_quality.ts	scaleRadialSegmentsForQuality	func	82	87	export function scaleRadialSegmentsForQuality(requested: number, minSegs = 5): number
+src/core/geometry_quality.ts	scaleBevelSegmentsForQuality	func	89	94	export function scaleBevelSegmentsForQuality(requested: number): number
+src/core/geometry_quality.ts	withQualityGeometry	func	96	104	export function withQualityGeometry<T>(quality: QualityTier, fn: () => T): T
+src/core/kine_culling_engine.ts	KineCullingEngine	class	49	474	export class KineCullingEngine
+src/core/kine_culling_engine.ts	KineCullingEngine.isEnabled	method	79	81	public isEnabled(): boolean
+src/core/kine_culling_engine.ts	KineCullingEngine.setEnabled	method	83	88	public setEnabled(enabled: boolean): boolean
+src/core/kine_culling_engine.ts	KineCullingEngine.invalidate	method	90	94	public invalidate(): void
+src/core/kine_culling_engine.ts	KineCullingEngine.getStats	method	96	98	public getStats(): KineCullingStats
+src/core/kine_culling_engine.ts	KineCullingEngine.getMask	method	100	102	public getMask(): Uint8Array | null
+src/core/kine_culling_engine.ts	KineCullingEngine.evaluate	method	108	473	public evaluate( camera: THREE.PerspectiveCamera, raycastIndex: UnitRaycastIndex | null, occluders: readonly …
+src/core/perf_hud.ts	PerfHudSnapshot	interface	4	24	export interface PerfHudSnapshot
+src/core/perf_hud.ts	UnitPerfHud	class	31	179	export class UnitPerfHud
+src/core/perf_hud.ts	UnitPerfHud.setModeVisible	method	93	96	public setModeVisible(visible: boolean): void
+src/core/perf_hud.ts	UnitPerfHud.toggle	method	98	102	public toggle(): boolean
+src/core/perf_hud.ts	UnitPerfHud.setExpanded	method	104	107	public setExpanded(expanded: boolean): void
+src/core/perf_hud.ts	UnitPerfHud.isExpanded	method	109	111	public isExpanded(): boolean
+src/core/perf_hud.ts	UnitPerfHud.update	method	113	174	public update(snap: PerfHudSnapshot, force = false): void
+src/core/perf_hud.ts	UnitPerfHud.dispose	method	176	178	public dispose(): void
+src/core/perf_hud.ts	MiShoePerfHud	const	182	182	MiShoePerfHud = UnitPerfHud
+src/core/raycast_engine.ts	HoverRaycastResult	interface	639	642	export interface HoverRaycastResult
+src/core/raycast_engine.ts	TwoStageRaycaster	class	654	1097	export class TwoStageRaycaster
+src/core/raycast_engine.ts	TwoStageRaycaster.setCameraDragging	method	667	669	public setCameraDragging(dragging: boolean): void
+src/core/raycast_engine.ts	TwoStageRaycaster.isCameraDragging	method	671	673	public isCameraDragging(): boolean
+src/core/raycast_engine.ts	TwoStageRaycaster.resetHoverThrottle	method	675	677	public resetHoverThrottle(): void
+src/core/raycast_engine.ts	TwoStageRaycaster.getDiagnostics	method	679	684	public getDiagnostics():
+src/core/raycast_engine.ts	TwoStageRaycaster.pickHover	method	689	711	public pickHover(
+src/core/raycast_engine.ts	TwoStageRaycaster.pickClick	method	716	726	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, index: UnitRaycastIndex | null, isPartHidd…
+src/core/raycast_engine.ts	TwoStageRaycaster.pickWithRay	method	731	1096	public pickWithRay( raycaster: THREE.Raycaster, index: UnitRaycastIndex, isPartHidden: (partId: string) => bo…
+src/core/resource_cache.ts	MaterialBucketKey	type	5	48	type MaterialBucketKey = union(38 members)
+src/core/resource_cache.ts	ALL_MATERIAL_BUCKETS	const	50	89	ALL_MATERIAL_BUCKETS: readonly MaterialBucketKey[] = [ 'metal_hero', 'matte_chassis', 'elastomer_rubber', 'pc…
+src/core/resource_cache.ts	ResourceCacheStats	interface	97	105	export interface ResourceCacheStats
+src/core/resource_cache.ts	QualityTierConfig	interface	107	118	export interface QualityTierConfig
+src/core/resource_cache.ts	QUALITY_TIER_CONFIG	const	120	169	QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> =
+src/core/resource_cache.ts	liftDarkCadTint	func	177	195	export function liftDarkCadTint(hex: number): number
+src/core/resource_cache.ts	getCadTintLuma	func	197	202	export function getCadTintLuma(hex: number): number
+src/core/resource_cache.ts	CAD_SELECT_SENTINEL	const	211	211	CAD_SELECT_SENTINEL: readonly [number, number, number] = [0.02, 0.35, 2.45]
+src/core/resource_cache.ts	CAD_HOVER_SENTINEL	const	212	212	CAD_HOVER_SENTINEL: readonly [number, number, number] = [0.16, 0.56, 1.62]
+src/core/resource_cache.ts	PG_ERROR_SELECT_SENTINEL	const	213	213	PG_ERROR_SELECT_SENTINEL: readonly [number, number, number] = [2.5, 0.0, 2.45]
+src/core/resource_cache.ts	PG_WARN_SELECT_SENTINEL	const	214	214	PG_WARN_SELECT_SENTINEL: readonly [number, number, number] = [0.0, 2.5, 2.45]
+src/core/resource_cache.ts	MaterialSpec	interface	216	239	export interface MaterialSpec
+src/core/resource_cache.ts	ProceduralTextureKey	type	241	258	type ProceduralTextureKey = union(17 members)
+src/core/resource_cache.ts	LiteMatcapUniforms	interface	260	265	export interface LiteMatcapUniforms
+src/core/resource_cache.ts	HeroCanvasPainter	type	267	271	export type HeroCanvasPainter = (
+src/core/resource_cache.ts	HeroMaterialSpec	interface	273	290	export interface HeroMaterialSpec
+src/core/resource_cache.ts	MATERIAL_SPECS	const	292	639	MATERIAL_SPECS: Record<MaterialBucketKey, MaterialSpec> =
+src/core/resource_cache.ts	ResourceCache	class	1143	2523	export class ResourceCache
+src/core/resource_cache.ts	ResourceCache.acquireTexture	method	1148	1157	public acquireTexture(key: ProceduralTextureKey): THREE.Texture
+src/core/resource_cache.ts	ResourceCache.acquireHeroTexture	method	1163	1214	public acquireHeroTexture( heroKey: string, spec: HeroMaterialSpec, quality: QualityTier ): THREE.Texture
+src/core/resource_cache.ts	ResourceCache.releaseTexture	method	1216	1226	public releaseTexture(key: string): boolean
+src/core/resource_cache.ts	ResourceCache.acquireGeometry	method	1228	1241	public acquireGeometry( hashKey: string, factory: () => THREE.BufferGeometry ): THREE.BufferGeometry
+src/core/resource_cache.ts	ResourceCache.releaseGeometry	method	1243	1253	public releaseGeometry(hashKey: string): boolean
+src/core/resource_cache.ts	ResourceCache.computeStdPhongProps	method	1255	1273	private static computeStdPhongProps( metalness: number, roughness: number, transparent: boolean ):
+src/core/resource_cache.ts	ResourceCache.acquireMaterial	method	1282	1461	public acquireMaterial( bucket: MaterialBucketKey, quality: QualityTier, renderMode: RenderMode = 'solid', cl…
+src/core/resource_cache.ts	ResourceCache.patchStandardSelectionAndAA	method	1469	1544	public static patchStandardSelectionAndAA( mat: THREE.Material, opts:
+src/core/resource_cache.ts	ResourceCache.patchLiteMatcapMaterial	method	1553	1735	public static patchLiteMatcapMaterial( mat: THREE.MeshMatcapMaterial, dummyExplodeTex: THREE.DataTexture, opt…
+src/core/resource_cache.ts	ResourceCache.acquireFastProxyMaterial	method	1742	1898	public acquireFastProxyMaterial( clippingPlanes: THREE.Plane[] = [], poolSlot = 0, playgroundMode = false ): …
+src/core/resource_cache.ts	ResourceCache.acquirePlaygroundMatcapMaterial	method	1904	1956	public acquirePlaygroundMatcapMaterial( mode: 'solid_opaque' | 'solid_glass' | 'xray' | 'wireframe' ): THREE.…
+src/core/resource_cache.ts	ResourceCache.acquirePostProcessMaterial	method	1962	2169	public acquirePostProcessMaterial( kind: 'ultra_accum' | 'ultra_bokeh' | 'ultra_resolve' | 'fast_blit' ): THR…
+src/core/resource_cache.ts	ResourceCache.acquireHeroMaterial	method	2174	2293	public acquireHeroMaterial( heroKey: string, spec: HeroMaterialSpec, quality: QualityTier, renderMode: Render…
+src/core/resource_cache.ts	ResourceCache.acquireLineMaterial	method	2295	2335	public acquireLineMaterial( key: string, params:
+src/core/resource_cache.ts	ResourceCache.acquireBasicMaterial	method	2337	2367	public acquireBasicMaterial( key: string, params:
+src/core/resource_cache.ts	ResourceCache.acquireShadowMaterial	method	2369	2391	public acquireShadowMaterial( key: string, params:
+src/core/resource_cache.ts	ResourceCache.acquirePointsMaterial	method	2393	2423	public acquirePointsMaterial( key: string, params:
+src/core/resource_cache.ts	ResourceCache.releaseMaterial	method	2425	2440	public releaseMaterial(cacheKey: string): boolean
+src/core/resource_cache.ts	ResourceCache.releaseMaterialInstance	method	2442	2448	public releaseMaterialInstance(mat: THREE.Material): boolean
+src/core/resource_cache.ts	ResourceCache.releaseGeometryInstance	method	2450	2456	public releaseGeometryInstance(geo: THREE.BufferGeometry): boolean
+src/core/resource_cache.ts	ResourceCache.hasMaterial	method	2458	2460	public hasMaterial(cacheKey: string): boolean
+src/core/resource_cache.ts	ResourceCache.hasGeometry	method	2462	2464	public hasGeometry(cacheKey: string): boolean
+src/core/resource_cache.ts	ResourceCache.updateClippingPlanes	method	2466	2476	public updateClippingPlanes(planes: THREE.Plane[]): void
+src/core/resource_cache.ts	ResourceCache.warmupShaders	method	2481	2490	public warmupShaders( renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera ): number
+src/core/resource_cache.ts	ResourceCache.getStats	method	2492	2506	public getStats(): ResourceCacheStats
+src/core/resource_cache.ts	ResourceCache.disposeAll	method	2509	2522	public disposeAll(): void
+src/core/ultra_post_pipeline.ts	OpticalBokehMode	type	5	5	export type OpticalBokehMode = 'auto' | 'on' | 'off';
+src/core/ultra_post_pipeline.ts	OpticalBokehStatus	type	6	6	export type OpticalBokehStatus = 'active' | 'bypassed_swgl' | 'bypassed_load' | 'disabled';
+src/core/ultra_post_pipeline.ts	UltraPostPipeline	class	36	560	export class UltraPostPipeline
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.isEnabled	method	112	114	public isEnabled(): boolean
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.setEnabled	method	116	119	public setEnabled(enabled: boolean): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.setOpticalBokehMode	method	121	126	public setOpticalBokehMode(mode: OpticalBokehMode): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getOpticalBokehMode	method	128	130	public getOpticalBokehMode(): OpticalBokehMode
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getOpticalBokehStatus	method	132	134	public getOpticalBokehStatus(): OpticalBokehStatus
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getLastBokehMs	method	136	138	public getLastBokehMs(): number
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getLastSceneDrawCalls	method	140	142	public getLastSceneDrawCalls(): number
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getLastSceneTriangles	method	144	146	public getLastSceneTriangles(): number
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.getSampleProgress	method	148	154	public getSampleProgress():
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.needsMoreStationarySamples	method	156	164	public needsMoreStationarySamples(): boolean
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.resetAccumulation	method	166	170	public resetAccumulation(): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.updateBokehStatus	method	172	184	private updateBokehStatus(): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.ensurePostQuad	method	186	206	private ensurePostQuad(cache: ResourceCache): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.ensureResources	method	208	294	private ensureResources(cache: ResourceCache, cssW: number, cssH: number): boolean
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.ensureFastTarget	method	296	320	private ensureFastTarget(cache: ResourceCache, cssW: number, cssH: number): boolean
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.renderUltraStationary	method	327	457	public renderUltraStationary( scene: THREE.Scene, camera: THREE.PerspectiveCamera, cache: ResourceCache, cssW…
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.renderFastHalfResBlit	method	463	497	public renderFastHalfResBlit( scene: THREE.Scene, camera: THREE.Camera, cache: ResourceCache, cssW: number, c…
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.disposeRenderTargetsOnly	method	499	523	private disposeRenderTargetsOnly(): void
+src/core/ultra_post_pipeline.ts	UltraPostPipeline.dispose	method	526	559	public dispose(cache: ResourceCache): void
+src/core/unit_contract.ts	QualityTier	type	11	11	export type QualityTier = GraphicsQuality;
+src/core/unit_contract.ts	UnitPartMeta	interface	13	41	export interface UnitPartMeta
+src/core/unit_contract.ts	UnitMeta	interface	43	53	export interface UnitMeta
+src/core/unit_contract.ts	UnitBuildOptions	interface	55	72	export interface UnitBuildOptions
+src/core/unit_contract.ts	RaycastInstancedBinding	interface	74	83	export interface RaycastInstancedBinding
+src/core/unit_contract.ts	RaycastBatchedBinding	interface	85	94	export interface RaycastBatchedBinding
+src/core/unit_contract.ts	RaycastMeshBinding	type	96	96	export type RaycastMeshBinding = RaycastInstancedBinding | RaycastBatchedBinding;
+src/core/unit_contract.ts	RaycastPartBounds	interface	98	107	export interface RaycastPartBounds
+src/core/unit_contract.ts	RaycastGroupBounds	interface	109	113	export interface RaycastGroupBounds
+src/core/unit_contract.ts	UnitRaycastIndex	interface	115	137	export interface UnitRaycastIndex
+src/core/unit_contract.ts	UnitBuildStats	interface	139	152	export interface UnitBuildStats
+src/core/unit_contract.ts	MotionStage	type	154	154	export type MotionStage = 'ultra' | 'lite' | 'fast';
+src/core/unit_contract.ts	KineOccluderSpec	interface	160	169	export interface KineOccluderSpec
+src/core/unit_contract.ts	KineCullingStats	interface	171	180	export interface KineCullingStats
+src/core/unit_contract.ts	UnitBuildResult	interface	182	192	export interface UnitBuildResult
+src/core/unit_contract.ts	OptimizedUnit	interface	198	245	export interface OptimizedUnit
+src/core/unit_explanations.ts	explanationsFromUnitJson	func	21	43	export function explanationsFromUnitJson(data:
+src/core/unit_v2_runtime.ts	UnitV2RuntimeCallbacks	interface	21	25	export interface UnitV2RuntimeCallbacks
+src/core/unit_v2_runtime.ts	UnitV2Diagnostics	interface	27	58	export interface UnitV2Diagnostics
+src/core/unit_v2_runtime.ts	UnitV2Runtime	class	98	1286	export class UnitV2Runtime
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isActive	method	192	194	public isActive(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isReady	method	196	198	public isReady(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getActiveUnitId	method	200	202	public getActiveUnitId(): string | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getQuality	method	204	206	public getQuality(): QualityTier
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getMotionStage	method	208	210	public getMotionStage(): MotionStage
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isKineMode	method	212	214	public isKineMode(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setKineMode	method	216	228	public setKineMode(enabled: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getKineStats	method	230	232	public getKineStats(): KineCullingStats
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setOpticalBokehMode	method	234	238	public setOpticalBokehMode(mode: OpticalBokehMode): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getOpticalBokehState	method	240	250	public getOpticalBokehState():
+src/core/unit_v2_runtime.ts	UnitV2Runtime.needsStationaryRefinement	method	252	260	public needsStationaryRefinement(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getParts	method	262	268	public getParts(): CadPart[]
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getAllBuiltParts	method	270	272	public getAllBuiltParts(): CadPart[]
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartById	method	274	276	public getPartById(partId: string): CadPart | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isPartCulledBySubView	method	278	280	public isPartCulledBySubView(partId: string): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.needsContinuousAnimation	method	282	285	public needsContinuousAnimation(_physicsActive: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isUltraMotionProxyActive	method	287	289	public isUltraMotionProxyActive(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setMotionStage	method	296	378	public setMotionStage(requested: MotionStage): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setUltraMotionProxyActive	method	384	387	public setUltraMotionProxyActive(moving: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getRaycastIndex	method	389	391	public getRaycastIndex(): UnitRaycastIndex | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartWorldBox	method	393	401	public getPartWorldBox(partId: string, out: THREE.Box3): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setupStudioLighting	method	403	515	private setupStudioLighting(quality: QualityTier): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.fitUltraShadowRig	method	521	560	private fitUltraShadowRig(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.teardownStudioLighting	method	562	577	private teardownStudioLighting(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.applyQualityRendererCaps	method	579	599	private applyQualityRendererCaps(quality: QualityTier): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.disposeActiveUnitResources	method	601	625	private disposeActiveUnitResources(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.activate	method	634	815	public async activate( unitId: string, quality: QualityTier, camera: THREE.Camera, initialState:
+src/core/unit_v2_runtime.ts	UnitV2Runtime.deactivate	method	824	839	public deactivate(): VramLeakVerification | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setQuality	method	841	913	public async setQuality( quality: QualityTier, camera: THREE.Camera, sectionActive: boolean ): Promise<void>
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setSubView	method	915	929	public setSubView(subView: number): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncExplode	method	931	953	public syncExplode(t: number, force = false): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncVisualState	method	955	993	public syncVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, …
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncSectionPlane	method	995	1011	public syncSectionPlane(active: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncPhysicsActive	method	1013	1021	public syncPhysicsActive(active: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.stepPhysics	method	1023	1026	public stepPhysics(_elapsed: number, _delta = 0.016): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleResize	method	1028	1033	public handleResize(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setCameraDragging	method	1035	1037	public setCameraDragging(dragging: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.pickHover	method	1039	1052	public pickHover( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
+src/core/unit_v2_runtime.ts	UnitV2Runtime.pickClick	method	1054	1067	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
+src/core/unit_v2_runtime.ts	UnitV2Runtime.render	method	1072	1176	public render(camera: THREE.Camera, focusTarget?: THREE.Vector3): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.markIdle	method	1178	1182	public markIdle(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextLost	method	1184	1186	public handleContextLost(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextRestored	method	1191	1206	public async handleContextRestored(camera: THREE.Camera, sectionActive: boolean): Promise<void>
+src/core/unit_v2_runtime.ts	UnitV2Runtime.togglePerfHud	method	1208	1212	public togglePerfHud(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setPerfHudVisible	method	1214	1217	public setPerfHudVisible(expanded: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getDiagnostics	method	1219	1253	public getDiagnostics(): UnitV2Diagnostics
+src/core/unit_v2_runtime.ts	UnitV2Runtime.refreshHud	method	1255	1279	private refreshHud(force: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.dispose	method	1281	1285	public dispose(): void
+src/core/unit_v2_runtime.ts	MiShoeV2Runtime	type	1289	1289	export type MiShoeV2Runtime = UnitV2Runtime;
+src/core/unit_v2_runtime.ts	MiShoeV2Diagnostics	type	1290	1290	export type MiShoeV2Diagnostics = UnitV2Diagnostics;
+src/core/unit_v2_runtime.ts	MiShoeV2RuntimeCallbacks	type	1291	1291	export type MiShoeV2RuntimeCallbacks = UnitV2RuntimeCallbacks;
+src/core/v2_material_catalog.ts	V2MaterialLibrary	type	7	7	export type V2MaterialLibrary = any;
+src/core/v2_material_catalog.ts	MaterialBindingSpec	interface	9	13	export interface MaterialBindingSpec
+src/core/v2_material_catalog.ts	V2MaterialTag	interface	15	20	export interface V2MaterialTag
+src/core/v2_material_catalog.ts	CORE_MATERIAL_CATALOG	const	22	218	CORE_MATERIAL_CATALOG: Readonly<Record<string, MaterialBindingSpec>> =
+src/core/v2_material_catalog.ts	ULTRA_MATERIAL_CATALOG	const	220	515	ULTRA_MATERIAL_CATALOG: Readonly<Record<string, MaterialBindingSpec>> =
+src/core/v2_material_catalog.ts	V2MaterialProxyHandle	interface	521	525	export interface V2MaterialProxyHandle
+src/core/v2_material_catalog.ts	getV2MaterialTag	func	527	541	export function getV2MaterialTag(mat: THREE.Material | null | undefined): V2MaterialTag | null
+src/core/v2_material_catalog.ts	createV2MaterialProxy	func	543	645	export function createV2MaterialProxy( cache: ResourceCache, quality: QualityTier, renderMode: RenderMode, cl…
+src/core/v2_unit_compiler.ts	CompiledUnitRawBuild	interface	228	255	export interface CompiledUnitRawBuild
+src/core/v2_unit_compiler.ts	CompiledV2UnitConfig	interface	257	277	export interface CompiledV2UnitConfig
+src/core/v2_unit_compiler.ts	quantizeGeometryPositionInPlace	func	928	976	export function quantizeGeometryPositionInPlace(geo: THREE.BufferGeometry):
+src/core/v2_unit_compiler.ts	decimateMergedGeometryRGBA	func	983	1214	export function decimateMergedGeometryRGBA( src: THREE.BufferGeometry, gridCells: number, preserveNormalBucke…
+src/core/v2_unit_compiler.ts	createGpuExplodeDataTexture	func	1219	1241	export function createGpuExplodeDataTexture( offsetsXYZ: Float32Array, count: number ):
+src/core/v2_unit_compiler.ts	bindGpuExplodeToMaterial	func	1243	1263	export function bindGpuExplodeToMaterial( mat: THREE.Material, tex: THREE.DataTexture | null, texW: number, e…
+src/core/v2_unit_compiler.ts	buildFlatPartBvh	func	1271	1376	export function buildFlatPartBvh(parts: readonly RaycastPartBounds[]):
+src/core/v2_unit_compiler.ts	adoptOverlaySubtreeToCache	func	1444	1518	export function adoptOverlaySubtreeToCache( root: THREE.Object3D, cache: ResourceCache, unitId: string, clipp…
+src/core/v2_unit_compiler.ts	CompiledV2Unit	class	1587	3986	export class CompiledV2Unit implements OptimizedUnit
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getMeta	method	1647	1649	public getMeta(): UnitMeta
+src/core/v2_unit_compiler.ts	CompiledV2Unit.build	method	1651	3082	public async build( quality: QualityTier, cache: ResourceCache, options: UnitBuildOptions =
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setSubView	method	3084	3102	public setSubView(subView: number): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getActiveParts	method	3104	3117	public getActiveParts(): CadPart[]
+src/core/v2_unit_compiler.ts	CompiledV2Unit.isPartCulledBySubView	method	3119	3122	public isPartCulledBySubView(partId: string): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.writeBatchEntryMatrix	method	3124	3150	private writeBatchEntryMatrix( mesh: THREE.BatchedMesh, e: CompiledBatchedEntry, tx: number, ty: number, tz: …
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplode	method	3156	3306	public updateExplode(t: number, force = false): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncBatchedEdgePositions	method	3308	3348	private syncBatchedEdgePositions(forceAll = true): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.refreshRaycastBounds	method	3350	3381	private refreshRaycastBounds(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setVisualState	method	3383	3731	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getKineOccluders	method	3733	3735	public getKineOccluders(): readonly KineOccluderSpec[]
+src/core/v2_unit_compiler.ts	CompiledV2Unit.applyKineCulling	method	3742	3820	public applyKineCulling(culledMask: Uint8Array | null): number
+src/core/v2_unit_compiler.ts	CompiledV2Unit.needsContinuousAnimation	method	3822	3825	public needsContinuousAnimation(physicsActive: boolean): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setPhysicsVisible	method	3827	3837	public setPhysicsVisible(visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplodeGuides	method	3839	3854	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updatePhysics	method	3856	3886	public updatePhysics( elapsed: number, explodeFactor: number, active: boolean, delta = 0.016 ): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncDynamicRigMatrices	method	3888	3930	private syncDynamicRigMatrices(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setClippingPlanes	method	3932	3935	public setClippingPlanes(planes: THREE.Plane[]): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.dispose	method	3937	3985	public dispose(cache: ResourceCache): void
+src/engine/CadHelpers.ts	createRoundedRectShape	func	13	30	export function createRoundedRectShape(width: number, height: number, radius: number): THREE.Shape
+src/engine/CadHelpers.ts	createFrameShape	func	35	63	export function createFrameShape( outerW: number, outerH: number, outerR: number, innerW: number, innerH: num…
+src/engine/CadHelpers.ts	addCircleHoles	func	68	74	export function addCircleHoles(shape: THREE.Shape, positions: Array<[number, number, number]>): void
+src/engine/CadHelpers.ts	extrudeCentered	func	82	118	export function extrudeCentered( shape: THREE.Shape, depth: number, bevelSize = 0.08, bevelThickness = 0.08, …
+src/engine/CadHelpers.ts	createVoiceCoilGeometry	func	123	135	export function createVoiceCoilGeometry( outerW: number, outerH: number, windingWidth: number, thickness: num…
+src/engine/CadHelpers.ts	createSpurGearGeometry	func	140	179	export function createSpurGearGeometry( teeth: number, pitchRadius: number, thickness: number, boreRadius = 1…
+src/engine/CadHelpers.ts	createHelicalSpringGeometry	func	184	202	export function createHelicalSpringGeometry( coilRadius: number, length: number, turns: number, wireRadius: n…
+src/engine/CadHelpers.ts	createTorsionSpringGeometry	func	207	228	export function createTorsionSpringGeometry( coilRadius: number, length: number, turns: number, wireRadius: n…
+src/engine/CadHelpers.ts	getPooledScrewHead	func	232	242	function getPooledScrewHead(headRadius: number, headHeight: number): THREE.BufferGeometry
+src/engine/CadHelpers.ts	getPooledScrewCrossSlot	func	244	267	function getPooledScrewCrossSlot(span: number, width: number): THREE.BufferGeometry
+src/engine/CadHelpers.ts	getPooledScrewShaft	func	269	279	function getPooledScrewShaft(r: number, len: number): THREE.BufferGeometry
+src/engine/CadHelpers.ts	createPrecisionScrew	func	285	314	export function createPrecisionScrew( headRadius: number, headHeight: number, shaftLength: number, material: …
+src/engine/CadHelpers.ts	attachCadEdges	func	322	349	export function attachCadEdges( root: THREE.Object3D, _clippingPlanes: THREE.Plane[], thresholdAngle = 26, ba…
+src/engine/CadHelpers.ts	tagPartMeshes	func	354	358	export function tagPartMeshes(group: THREE.Object3D, partId: string): void
+src/engine/CadHelpers.ts	createOpticalLensGeometry	func	364	404	export function createOpticalLensGeometry( radius: number, edgeThickness: number, sagFront: number, sagRear: …
+src/engine/CadHelpers.ts	createSpannerRingGroup	func	410	463	export function createSpannerRingGroup( innerR: number, outerR: number, depth: number, ringMat: THREE.Materia…
+src/engine/CadHelpers.ts	createEmiFingerRingGroup	func	468	503	export function createEmiFingerRingGroup( innerR: number, outerR: number, fingerCount: number, mat: THREE.Mat…
+src/engine/CadHelpers.ts	RadialTrajectoryGuides	interface	511	523	export interface RadialTrajectoryGuides
+src/engine/CadHelpers.ts	createRadialTrajectoryGuides	func	528	637	export function createRadialTrajectoryGuides( clippingPlanes: THREE.Plane[], color = 0x64748b, maxLines = 48 …
+src/engine/CadHelpers.ts	updateLinePointsInPlace	func	642	664	export function updateLinePointsInPlace( line: THREE.Line, pts: ReadonlyArray<THREE.Vector3>, computeDistance…
+src/engine/CadHelpers.ts	updateLine2PtsInPlace	func	669	693	export function updateLine2PtsInPlace( line: THREE.Line, ax: number, ay: number, az: number, bx: number, by: …
+src/engine/CadViewport.ts	ViewportCallbacks	interface	19	24	export interface ViewportCallbacks
+src/engine/CadViewport.ts	CadViewport	class	43	1690	export class CadViewport
+src/engine/CadViewport.ts	CadViewport.activateCurrentMode	method	213	224	private activateCurrentMode(): void
+src/engine/CadViewport.ts	CadViewport.isV2Mode	method	226	228	public isV2Mode(mode: ScaleMode = this.mode): boolean
+src/engine/CadViewport.ts	CadViewport.getV2Runtime	method	230	232	public getV2Runtime(): UnitV2Runtime
+src/engine/CadViewport.ts	CadViewport.getMiShoeV2Runtime	method	235	237	public getMiShoeV2Runtime(): UnitV2Runtime
+src/engine/CadViewport.ts	CadViewport.getActiveSubViewForMode	method	239	244	private getActiveSubViewForMode(mode: ScaleMode): number
+src/engine/CadViewport.ts	CadViewport.getTotalPartCount	method	247	255	public getTotalPartCount(): number
+src/engine/CadViewport.ts	CadViewport.ensureAllHydrated	method	257	259	public async ensureAllHydrated(): Promise<number>
+src/engine/CadViewport.ts	CadViewport.getPartsForCurrentMode	method	261	263	public getPartsForCurrentMode(): CadPart[]
+src/engine/CadViewport.ts	CadViewport.getSelectedPart	method	265	268	public getSelectedPart(): CadPart | null
+src/engine/CadViewport.ts	CadViewport.isPartHidden	method	270	273	public isPartHidden(partId: string): boolean
+src/engine/CadViewport.ts	CadViewport.isIsolated	method	275	277	public isIsolated(): boolean
+src/engine/CadViewport.ts	CadViewport.hasAnyHidden	method	279	281	public hasAnyHidden(): boolean
+src/engine/CadViewport.ts	CadViewport.getMode	method	283	285	public getMode(): ScaleMode
+src/engine/CadViewport.ts	CadViewport.getLensSection	method	287	289	public getLensSection(): LensSection
+src/engine/CadViewport.ts	CadViewport.refreshVisibility	method	291	302	public refreshVisibility(): void
+src/engine/CadViewport.ts	CadViewport.setLensSection	method	304	323	public setLensSection(section: LensSection, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.getSensorFabVolume	method	325	327	public getSensorFabVolume(): SensorFabVolume
+src/engine/CadViewport.ts	CadViewport.setSensorFabVolume	method	329	348	public setSensorFabVolume(vol: SensorFabVolume, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.getMiraiSubView	method	350	352	public getMiraiSubView(): number
+src/engine/CadViewport.ts	CadViewport.setMiraiSubView	method	354	374	public setMiraiSubView(subView: number, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setMode	method	376	396	public setMode(nextMode: ScaleMode, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setExplode	method	398	406	public setExplode(value: number, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.getExplode	method	408	410	public getExplode(): number
+src/engine/CadViewport.ts	CadViewport.setKineMode	method	412	416	public setKineMode(enabled: boolean): boolean
+src/engine/CadViewport.ts	CadViewport.isKineMode	method	418	420	public isKineMode(): boolean
+src/engine/CadViewport.ts	CadViewport.getKineStats	method	422	424	public getKineStats()
+src/engine/CadViewport.ts	CadViewport.getCameraZoomBounds	method	426	440	public getCameraZoomBounds():
+src/engine/CadViewport.ts	CadViewport.setRenderMode	method	442	445	public setRenderMode(mode: RenderMode): void
+src/engine/CadViewport.ts	CadViewport.setQuality	method	447	455	public setQuality(quality: GraphicsQuality): void
+src/engine/CadViewport.ts	CadViewport.getQuality	method	457	459	public getQuality(): GraphicsQuality
+src/engine/CadViewport.ts	CadViewport.setSection	method	461	467	public setSection(axis: SectionAxis, normalizedValue?: number): void
+src/engine/CadViewport.ts	CadViewport.setPhysicsActive	method	469	472	public setPhysicsActive(active: boolean): void
+src/engine/CadViewport.ts	CadViewport.selectPart	method	474	504	public selectPart(partId: string | null, _focusCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setHoveredPartFromUI	method	506	510	public setHoveredPartFromUI(partId: string | null): void
+src/engine/CadViewport.ts	CadViewport.togglePartHidden	method	512	532	public togglePartHidden(partId: string): void
+src/engine/CadViewport.ts	CadViewport.toggleIsolateSelected	method	534	544	public toggleIsolateSelected(): void
+src/engine/CadViewport.ts	CadViewport.resetAllVisibility	method	546	551	public resetAllVisibility(): void
+src/engine/CadViewport.ts	CadViewport.stepSelectedPart	method	553	560	public stepSelectedPart(delta: -1 | 1): void
+src/engine/CadViewport.ts	CadViewport.updateTightMaxDistance	method	562	573	private updateTightMaxDistance(heroDistOverride?: number): void
+src/engine/CadViewport.ts	CadViewport.updateDynamicClipPlanes	method	575	586	private updateDynamicClipPlanes(): void
+src/engine/CadViewport.ts	CadViewport.setCameraPreset	method	588	894	public setCameraPreset(preset: CameraPreset, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.focusSensorFabStage	method	897	1021	public focusSensorFabStage(stage: SensorFabStage, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.focusOnPart	method	1023	1070	public focusOnPart(part: CadPart): void
+src/engine/CadViewport.ts	CadViewport.wakeLoop	method	1072	1078	private wakeLoop(): void
+src/engine/CadViewport.ts	CadViewport.animateCameraTo	method	1080	1088	private animateCameraTo(pos: THREE.Vector3, target: THREE.Vector3): void
+src/engine/CadViewport.ts	CadViewport.markDirty	method	1090	1093	private markDirty(frames = 3): void
+src/engine/CadViewport.ts	CadViewport.requestRenderFrame	method	1095	1097	public requestRenderFrame(): void
+src/engine/CadViewport.ts	CadViewport.frameLensForOpticsStudio	method	1099	1112	public frameLensForOpticsStudio(immediate = false): void
+src/engine/CadViewport.ts	CadViewport.handleResize	method	1114	1122	public handleResize(): void
+src/engine/CadViewport.ts	CadViewport.updateClippingPlane	method	1124	1306	private updateClippingPlane(): void
+src/engine/CadViewport.ts	CadViewport.applyVisibilityAndStyles	method	1308	1317	private applyVisibilityAndStyles(): void
+src/engine/CadViewport.ts	CadViewport.bindEvents	method	1319	1411	private bindEvents(): void
+src/engine/CadViewport.ts	CadViewport.getRenderer	method	1413	1415	public getRenderer(): THREE.WebGLRenderer
+src/engine/CadViewport.ts	CadViewport.getContainer	method	1417	1419	public getContainer(): HTMLElement
+src/engine/CadViewport.ts	CadViewport.setCustomSceneRenderer	method	1421	1444	public setCustomSceneRenderer( fn: ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void) | null ): …
+src/engine/CadViewport.ts	CadViewport.handleContextLost	method	1446	1452	private handleContextLost(event: Event): void
+src/engine/CadViewport.ts	CadViewport.handleContextRestored	method	1454	1460	private handleContextRestored(): void
+src/engine/CadViewport.ts	CadViewport.handleVisibilityChange	method	1462	1468	private handleVisibilityChange(): void
+src/engine/CadViewport.ts	CadViewport.getGpuStats	method	1470	1508	public getGpuStats():
+src/engine/CadViewport.ts	CadViewport.updateHoverFromRaycast	method	1510	1525	private updateHoverFromRaycast(): void
+src/engine/CadViewport.ts	CadViewport.dispose	method	1672	1689	public dispose(): void
+src/engine/FastCadGeometry.ts	QUANT_POS_INV_SCALE	const	16	16	QUANT_POS_INV_SCALE = 64.0
+src/engine/FastCadGeometry.ts	QUANT_POS_SCALE	const	17	17	QUANT_POS_SCALE = 1.0 / QUANT_POS_INV_SCALE
+src/engine/FastCadGeometry.ts	MESH_I16_STRIDE	const	18	18	MESH_I16_STRIDE = 8
+src/engine/FastCadGeometry.ts	EDGE_I16_STRIDE	const	19	19	EDGE_I16_STRIDE = 4
+src/engine/FastCadGeometry.ts	sagittaSegmentsForArc	func	26	41	function sagittaSegmentsForArc( radius: number, angleSpan: number, toleranceMm: number, minSegs: number, maxS…
+src/engine/FastCadGeometry.ts	resampleCurvePathPoints	func	43	108	function resampleCurvePathPoints( curves: THREE.Curve<THREE.Vector2>[], toleranceMm: number, maxCircleSegs: n…
+src/engine/FastCadGeometry.ts	resampleShapeSagitta	func	110	153	export function resampleShapeSagitta( shape: THREE.Shape, toleranceMm: number, maxCircleSegs: number ): THREE…
+src/engine/FastCadGeometry.ts	nextPow2	func	159	163	function nextPow2(n: number): number
+src/engine/FastCadGeometry.ts	ensureEdgeVertScratch	func	189	203	function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void
+src/engine/FastCadGeometry.ts	ensureEdgeHashScratch	func	205	219	function ensureEdgeHashScratch(eTableSize: number): void
+src/engine/FastCadGeometry.ts	extractPooledCadEdgesArray	func	225	437	export function extractPooledCadEdgesArray( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLe…
+src/engine/FastCadGeometry.ts	extractFastCadEdges	func	439	448	export function extractFastCadEdges( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLengthMm …
+src/engine/FastCadGeometry.ts	qKey	func	456	458	function qKey(n: number): string
+src/engine/FastCadGeometry.ts	maxRadialAtAxisExtreme	func	460	488	function maxRadialAtAxisExtreme( posAttr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, axis: 'x'…
+src/engine/FastCadGeometry.ts	retessellatePrimitiveSagitta	func	490	1133	export function retessellatePrimitiveSagitta( geo: THREE.BufferGeometry, toleranceMm: number ): THREE.BufferG…
+src/engine/FastCadGeometry.ts	isGeometryLikelyOpen	func	1139	1173	export function isGeometryLikelyOpen(geo: THREE.BufferGeometry): boolean
+src/engine/FastCadGeometry.ts	encodeOctahedralNormal16	func	1179	1197	export function encodeOctahedralNormal16( nx: number, ny: number, nz: number, out: Int16Array, offset: number…
+src/engine/FastCadGeometry.ts	smoothCreaseNormals	func	1212	1305	export function smoothCreaseNormals(geo: THREE.BufferGeometry, creaseAngleDeg = 38): void
+src/engine/FastCadGeometry.ts	CompactEntryInput	interface	1311	1319	export interface CompactEntryInput
+src/engine/FastCadGeometry.ts	WeldedPageEntrySpan	interface	1321	1325	export interface WeldedPageEntrySpan
+src/engine/FastCadGeometry.ts	CompactWeldedPage	interface	1327	1332	export interface CompactWeldedPage
+src/engine/FastCadGeometry.ts	clampI16	func	1334	1336	function clampI16(v: number): number
+src/engine/FastCadGeometry.ts	weldEntriesRangeToPage	func	1338	1531	function weldEntriesRangeToPage( entries: ReadonlyArray<CompactEntryInput>, startEntry: number, endEntry: num…
+src/engine/FastCadGeometry.ts	buildCompactWeldedPagesFromEntries	func	1537	1561	export function buildCompactWeldedPagesFromEntries( entries: ReadonlyArray<CompactEntryInput>, omitUv = false…
+src/engine/FastCadGeometry.ts	RawEdgeChunk	interface	1567	1572	export interface RawEdgeChunk
+src/engine/FastCadGeometry.ts	IndexedEdgeBuildResult	interface	1574	1578	export interface IndexedEdgeBuildResult
+src/engine/FastCadGeometry.ts	buildIndexedEdgeGeometry	func	1580	1704	export function buildIndexedEdgeGeometry( chunks: ReadonlyArray<RawEdgeChunk> ): IndexedEdgeBuildResult | null
+src/engine/GpuOptimizer.ts	GpuProfile	interface	3	22	export interface GpuProfile
+src/engine/GpuOptimizer.ts	GPU_PROFILE	const	79	79	GPU_PROFILE: GpuProfile = detectGpuProfile()
+src/engine/GpuOptimizer.ts	NATIVE_HI_TEX_W	const	83	83	NATIVE_HI_TEX_W = 512
+src/engine/GpuOptimizer.ts	NATIVE_HI_TEX_H	const	84	84	NATIVE_HI_TEX_H = 512
+src/engine/GpuOptimizer.ts	NATIVE_TILE_TEX_SIZE	const	85	85	NATIVE_TILE_TEX_SIZE = GPU_PROFILE.isMobile ? 128 : 256
+src/engine/GpuOptimizer.ts	scaleSegments	func	88	91	export function scaleSegments(segments: number, minSegments = 6): number
+src/engine/GpuOptimizer.ts	optimizeMaterialsForGpu	func	97	155	export function optimizeMaterialsForGpu( allMaterials: THREE.Material[], heroOpticalMaterials: Set<THREE.Mate…
+src/engine/GpuOptimizer.ts	refreshMaterialsAfterContextRestore	func	161	184	export function refreshMaterialsAfterContextRestore(allMaterials: THREE.Material[]): void
+src/engine/UltraDetailBuilders.ts	markHiRes	func	15	18	export function markHiRes<T extends THREE.BufferGeometry>(geo: T): T
+src/engine/UltraDetailBuilders.ts	extrudeHiRes	func	25	85	export function extrudeHiRes( shape: THREE.Shape, depth: number, bevelSize = 0.14, bevelThickness = 0.14, bev…
+src/engine/UltraDetailBuilders.ts	makeHiResHorizPlate	func	90	101	export function makeHiResHorizPlate( shape: THREE.Shape, thickness: number, mat: THREE.Material, bevel = 0.12…
+src/engine/UltraDetailBuilders.ts	applyPlanarUVs	func	113	152	export function applyPlanarUVs( geo: THREE.BufferGeometry, width: number, height: number, axis: 'xy' | 'xy-ba…
+src/engine/UltraDetailBuilders.ts	applyBoxUVs	func	158	215	export function applyBoxUVs( geo: THREE.BufferGeometry, tileWorldSize = 18.0 ): THREE.BufferGeometry
+src/engine/UltraDetailBuilders.ts	hiResCyl	func	220	236	export function hiResCyl( rTop: number, rBot: number, height: number, radialSegments = 28, openEnded = false,…
+src/engine/UltraDetailBuilders.ts	hiResSphere	func	241	262	export function hiResSphere( radius: number, wSegs = 16, hSegs = 12, phiStart = 0, phiLen = Math.PI * 2, thet…
+src/engine/UltraDetailBuilders.ts	hiResTorus	func	267	286	export function hiResTorus( radius: number, tube: number, radSegs = 12, tubSegs = 32, arc = Math.PI * 2 ): TH…
+src/engine/UltraDetailBuilders.ts	createChamferedBoxGeo	func	291	343	export function createChamferedBoxGeo( w: number, h: number, d: number, cornerR = 0.12, bevel = 0.08, axis: '…
+src/engine/UltraDetailBuilders.ts	ChipPackageOptions	interface	354	366	export interface ChipPackageOptions
+src/engine/UltraDetailBuilders.ts	buildChipPackage	func	368	509	export function buildChipPackage(opts: ChipPackageOptions): THREE.Group
+src/engine/UltraDetailBuilders.ts	buildSmdPassive	func	515	561	export function buildSmdPassive( length: number, width: number, height: number, bodyMat: THREE.Material, term…
+src/engine/UltraDetailBuilders.ts	buildShieldedInductor	func	567	607	export function buildShieldedInductor( size: number, height: number, coreMat: THREE.Material, termMat: THREE.…
+src/engine/UltraDetailBuilders.ts	buildTantalumCap	func	613	655	export function buildTantalumCap( length: number, width: number, height: number, bodyMat: THREE.Material, pol…
+src/engine/UltraDetailBuilders.ts	buildSpiralJellyRollGeometry	func	661	777	export function buildSpiralJellyRollGeometry( rStart: number, rEnd: number, turns: number, height: number, wa…
+src/engine/UltraDetailBuilders.ts	buildCrimpedSteelCanGeometry	func	783	822	export function buildCrimpedSteelCanGeometry( radius: number, height: number, phiStart = 0, phiLength = Math.…
+src/engine/UltraDetailBuilders.ts	buildPhillipsScrew	func	828	893	export function buildPhillipsScrew( headR: number, headH: number, shankR: number, shankL: number, headMat: TH…
+src/engine/UltraDetailBuilders.ts	buildGoldWirebondLoop	func	899	954	export function buildGoldWirebondLoop( start: THREE.Vector3, end: THREE.Vector3, apexHeight: number, radius: …
+src/engine/UltraDetailBuilders.ts	buildSpotWeldNuggets	func	959	984	export function buildSpotWeldNuggets( positions: Array<[number, number, number]>, radius: number, axis: 'x' |…
+src/playground/CadPlaygroundStudio.ts	PlaygroundHostBridge	interface	31	39	export interface PlaygroundHostBridge
+src/playground/CadPlaygroundStudio.ts	PlaygroundTemplateId	type	41	41	export type PlaygroundTemplateId = 'a7iv' | 'zve1' | 'fx3' | 'wlk220' | 'empty';
+src/playground/CadPlaygroundStudio.ts	PlaygroundCameraView	type	42	42	export type PlaygroundCameraView = 'iso' | 'front' | 'side' | 'top' | 'back';
+src/playground/CadPlaygroundStudio.ts	PlaygroundShadingMode	type	43	43	export type PlaygroundShadingMode = 'solid' | 'xray' | 'wireframe';
+src/playground/CadPlaygroundStudio.ts	PlaygroundMotionStage	type	44	44	export type PlaygroundMotionStage = 'sharp' | 'lite' | 'fast';
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio	class	300	3721	export class CadPlaygroundStudio
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.markSceneDirty	method	594	596	private markSceneDirty(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.scheduleDeferredRender	method	598	606	private scheduleDeferredRender(delayMs = 12): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.pushOverlaySeg	method	611	640	private pushOverlaySeg( x0: number, y0: number, z0: number, x1: number, y1: number, z1: number, r: number, g:…
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.pushOverlayBox	method	642	660	private pushOverlayBox(box: THREE.Box3, r: number, g: number, b: number): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.rebuildStaticOverlayPrefix	method	662	744	private rebuildStaticOverlayPrefix(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.rebuildOverlayLines	method	746	823	private rebuildOverlayLines(forceStatic = false): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.disposeMegaBatches	method	828	853	private disposeMegaBatches(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.getCurrentBatchMaterial	method	855	860	private getCurrentBatchMaterial(isGlass: boolean): THREE.Material
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.syncInstanceMatrix	method	862	886	private syncInstanceMatrix(inst: PlacedInstance): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.syncInstanceVisibility	method	888	896	private syncInstanceVisibility(inst: PlacedInstance): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.rebuildMegaBatches	method	898	1015	private rebuildMegaBatches(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.attachInstanceToMegaBatches	method	1018	1089	private attachInstanceToMegaBatches(inst: PlacedInstance): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.buildDom	method	1091	1454	private buildDom(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.initVirtualCatalog	method	1456	1517	private initVirtualCatalog(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.isOpen	method	1519	1521	public isOpen(): boolean
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.getPlaygroundMotionStage	method	1523	1525	public getPlaygroundMotionStage(): PlaygroundMotionStage
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.getCameraZoomBounds	method	1527	1533	public getCameraZoomBounds():
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setPlaygroundMotionStage	method	1535	1553	public setPlaygroundMotionStage(stage: PlaygroundMotionStage): boolean
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.ensurePgFastBlitResources	method	1555	1595	private ensurePgFastBlitResources(cssW: number, cssH: number): boolean
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.disposePgFastBlitResources	method	1597	1615	private disposePgFastBlitResources(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.updatePgDynamicClipPlanes	method	1617	1624	private updatePgDynamicClipPlanes(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.open	method	1626	1738	public async open(): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.close	method	1740	1776	public close(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.handleResize	method	1778	1785	private handleResize(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setDesignProfile	method	1787	1796	public setDesignProfile(profile: CameraDesignProfile): CameraEngineeringReport
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setShadingMode	method	1798	1805	public setShadingMode(mode: PlaygroundShadingMode): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.applyAllVisualMaterials	method	1813	1863	private applyAllVisualMaterials(forceColor = false): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.computeWorkspaceBounds	method	1865	1879	private computeWorkspaceBounds(outBox: THREE.Box3): THREE.Box3
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setCameraView	method	1881	1906	public setCameraView(view: PlaygroundCameraView): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.populateUnitFilter	method	1908	1923	private populateUnitFilter( units: readonly
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderCatalogList	method	1928	1970	private renderCatalogList(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderVisibleCatalogRows	method	1972	2010	private renderVisibleCatalogRows(overrideScrollTop?: number): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.showToast	method	2012	2019	private showToast(msg: string): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setLoading	method	2021	2023	private setLoading(loading: boolean): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.createPlacedInstanceSync	method	2025	2080	private createPlacedInstanceSync(
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.spawnPart	method	2082	2122	public async spawnPart(
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.loadTemplate	method	2124	2283	public async loadTemplate(templateId: PlaygroundTemplateId): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.loadStarterCameraKit	method	2285	2287	public async loadStarterCameraKit(): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.syncTransformAttachment	method	2289	2302	private syncTransformAttachment(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.clearAllPartsInternal	method	2304	2317	private clearAllPartsInternal(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.clearAllParts	method	2319	2331	public clearAllParts(recordHistory = true): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.getSelectedInstance	method	2333	2339	private getSelectedInstance(): PlacedInstance | null
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.selectInstance	method	2341	2350	public selectInstance(uid: string | null): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.toggleHidePart	method	2352	2364	private toggleHidePart(uid: string): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.toggleLockPart	method	2366	2376	private toggleLockPart(uid: string): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.autoAlignOpticalChain	method	2379	2423	private autoAlignOpticalChain(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.snapSelectedAdjacent	method	2426	2486	private snapSelectedAdjacent(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.setTransformMode	method	2488	2494	private setTransformMode(mode: 'translate' | 'rotate' | 'scale'): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.toggleSpace	method	2496	2501	private toggleSpace(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderLiveTelemetryStrip	method	2503	2543	private renderLiveTelemetryStrip(r: CameraEngineeringReport): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.syncPlacedSelection	method	2545	2554	private syncPlacedSelection(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderPlacedList	method	2556	2621	private renderPlacedList(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderInspector	method	2623	2824	private renderInspector(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.refreshInspectorValues	method	2826	2841	private refreshInspectorValues(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.duplicateSelected	method	2843	2854	private async duplicateSelected(): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.deleteSelected	method	2856	2876	private deleteSelected(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.focusOnInstance	method	2878	2893	private focusOnInstance(inst: PlacedInstance): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.fitCameraToWorkspace	method	2895	2897	public fitCameraToWorkspace(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.buildSnapshots	method	2902	2926	private buildSnapshots(): PlacedPartSnapshot[]
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.estimateSceneTriangles	method	2928	2934	private estimateSceneTriangles(): number
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.getPlacedSummary	method	2936	2943	public getPlacedSummary(): Array<
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.movePartByUid	method	2945	2955	public movePartByUid(uid: string, x: number, y: number, z: number): boolean
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.runEngineeringEvaluation	method	2957	3043	public runEngineeringEvaluation(force = false, deferRender = false): CameraEngineeringReport
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.runPlyaPipeline	method	3045	3057	public runPlyaPipeline(openModal = true): PlyaPipelineReport
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.refreshLiveBadge	method	3059	3062	private refreshLiveBadge(openModal: boolean, deferRender = false): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.openEvaluationReport	method	3064	3066	public openEvaluationReport(): CameraEngineeringReport
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.closeEvaluationReport	method	3068	3071	public closeEvaluationReport(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.renderReportModal	method	3073	3223	private renderReportModal( r: CameraEngineeringReport, plya: PlyaPipelineReport | null = this.lastPlyaReport …
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.serializeWorkspace	method	3228	3243	private serializeWorkspace(): SerializedPartState[]
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.pushHistorySnapshot	method	3245	3251	private pushHistorySnapshot(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.syncUndoRedoButtons	method	3253	3256	private syncUndoRedoButtons(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.findMissingBlueprintKeys	method	3258	3266	private findMissingBlueprintKeys(state: SerializedPartState[]): string[]
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.restoreSnapshotSync	method	3268	3401	private restoreSnapshotSync(state: SerializedPartState[], deferRender = false): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.restoreSnapshot	method	3403	3409	private async restoreSnapshot(state: SerializedPartState[]): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.undo	method	3411	3424	public async undo(): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.redo	method	3426	3438	public async redo(): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.downloadTextFile	method	3440	3448	private downloadTextFile(filename: string, content: string, mime = 'text/plain;charset=utf-8'): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.exportBlueprintJson	method	3450	3465	private exportBlueprintJson(): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.importBlueprintFile	method	3467	3486	private async importBlueprintFile(file: File): Promise<void>
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.onCanvasPointerDown	method	3491	3493	private onCanvasPointerDown(e: PointerEvent): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.onCanvasPointerUp	method	3495	3651	private onCanvasPointerUp(e: PointerEvent): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.onKeyDown	method	3653	3708	private onKeyDown(e: KeyboardEvent): void
+src/playground/CadPlaygroundStudio.ts	CadPlaygroundStudio.dispose	method	3710	3720	public dispose(): void
+src/playground/CameraEngineeringGrader.ts	CameraDesignProfile	type	4	10	export type CameraDesignProfile =
+src/playground/CameraEngineeringGrader.ts	CAMERA_PROFILE_LABELS	const	12	19	CAMERA_PROFILE_LABELS: Record<CameraDesignProfile, string> =
+src/playground/CameraEngineeringGrader.ts	PlacedPartSnapshot	interface	21	30	export interface PlacedPartSnapshot
+src/playground/CameraEngineeringGrader.ts	GraderCategoryResult	interface	32	41	export interface GraderCategoryResult
+src/playground/CameraEngineeringGrader.ts	PartDiagnosticFlag	interface	43	47	export interface PartDiagnosticFlag
+src/playground/CameraEngineeringGrader.ts	CameraPhysicalTelemetry	interface	49	57	export interface CameraPhysicalTelemetry
+src/playground/CameraEngineeringGrader.ts	CameraEngineeringReport	interface	59	88	export interface CameraEngineeringReport
+src/playground/CameraEngineeringGrader.ts	evaluateCustomCamera	func	172	959	export function evaluateCustomCamera( parts: readonly PlacedPartSnapshot[], requestedProfile: CameraDesignPro…
+src/playground/CameraEngineeringGrader.ts	renderEngineeringRadarSvg	func	965	1019	export function renderEngineeringRadarSvg(report: CameraEngineeringReport): string
+src/playground/PartGeometryExtractor.ts	EngineeringRole	type	30	46	type EngineeringRole = union(16 members)
+src/playground/PartGeometryExtractor.ts	PG_ROLE_CHIP_BITS	const	48	60	PG_ROLE_CHIP_BITS =
+src/playground/PartGeometryExtractor.ts	CatalogPartEntry	interface	62	73	export interface CatalogPartEntry
+src/playground/PartGeometryExtractor.ts	CatalogUnitSummary	interface	75	80	export interface CatalogUnitSummary
+src/playground/PartGeometryExtractor.ts	QuantizedGeoPack	interface	82	90	export interface QuantizedGeoPack
+src/playground/PartGeometryExtractor.ts	ExtractedPartBlueprint	interface	92	100	export interface ExtractedPartBlueprint
+src/playground/PartGeometryExtractor.ts	classifyEngineeringRole	func	123	175	export function classifyEngineeringRole(unitId: string, part: UnitPartMeta): EngineeringRole
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor	class	392	859	export class PartGeometryExtractor
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.ensureCatalogLoaded	method	407	512	public async ensureCatalogLoaded(): Promise<
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getEntry	method	514	516	public getEntry(key: string): CatalogPartEntry | undefined
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getAllEntries	method	518	520	public getAllEntries(): readonly CatalogPartEntry[]
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getUnitSummaries	method	522	524	public getUnitSummaries(): readonly CatalogUnitSummary[]
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getUnitIndex	method	526	528	public getUnitIndex(unitId: string): number
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getBlueprintSync	method	530	532	public getBlueprintSync(key: string): ExtractedPartBlueprint | null
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.decodeBase64Bytes	method	547	559	private static decodeBase64Bytes(b64: string): Uint8Array
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.decodeQuantizedPack	method	561	601	private static decodeQuantizedPack(raw:
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.ensurePrebakedLoaded	method	603	617	private ensurePrebakedLoaded(): Promise<void>
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.extractPartsBatch	method	626	690	public async extractPartsBatch(keys: readonly string[], bypassPrebaked = false): Promise<void>
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.extractUnitSubset	method	692	843	private async extractUnitSubset(unitId: string, onlyPartIds: ReadonlySet<string>): Promise<void>
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.getBlueprint	method	845	850	public async getBlueprint(key: string): Promise<ExtractedPartBlueprint | null>
+src/playground/PartGeometryExtractor.ts	PartGeometryExtractor.dispose	method	852	858	public dispose(): void
+src/playground/PlyaVerificationPipeline.ts	PlyaToolId	type	10	18	export type PlyaToolId =
+src/playground/PlyaVerificationPipeline.ts	PlyaToolResult	interface	20	37	export interface PlyaToolResult
+src/playground/PlyaVerificationPipeline.ts	PlyaWebContext	interface	39	43	export interface PlyaWebContext
+src/playground/PlyaVerificationPipeline.ts	PlyaIndustrialMetrics	interface	45	53	export interface PlyaIndustrialMetrics
+src/playground/PlyaVerificationPipeline.ts	PlyaPipelineReport	interface	55	72	export interface PlyaPipelineReport
+src/playground/PlyaVerificationPipeline.ts	runPlyaVerificationPipeline	func	226	1215	export function runPlyaVerificationPipeline( parts: readonly PlacedPartSnapshot[], profile: CameraDesignProfi…
+src/playground/PlyaVerificationPipeline.ts	generatePlaygroundKiCadSchematic	func	1221	1331	export function generatePlaygroundKiCadSchematic( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
+src/playground/PlyaVerificationPipeline.ts	generatePlaygroundNgspiceNetlist	func	1337	1382	export function generatePlaygroundNgspiceNetlist( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
+src/ui/ExplanationDrawer.ts	DrawerViewTab	type	5	5	export type DrawerViewTab = 'all' | 'diagram' | 'explanation';
+src/ui/ExplanationDrawer.ts	ExplanationDrawerHandlers	interface	7	19	export interface ExplanationDrawerHandlers
+src/ui/ExplanationDrawer.ts	ExplanationDrawer	class	200	1108	export class ExplanationDrawer
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.bindLightboxGestures	method	420	494	private bindLightboxGestures(): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.stepLightboxZoom	method	496	503	private stepLightboxZoom(delta: number): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.resetLightboxTransform	method	505	510	private resetLightboxTransform(): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.applyLightboxTransform	method	512	521	private applyLightboxTransform(): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.getViewTab	method	523	525	public getViewTab(): DrawerViewTab
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.setViewTab	method	527	535	public setViewTab(tab: DrawerViewTab): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.setLightboxOpen	method	537	545	public setLightboxOpen(open: boolean, rotated = false): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.openLightbox	method	547	563	private openLightbox(title: string, svgMarkup: string, startRotated = false): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.closeLightbox	method	565	570	private closeLightbox(): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.renderPopulatedPart	method	572	1054	private renderPopulatedPart(part: CadPart, exp: PartExplanation, seq: number): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.getMiraiEdition	method	1056	1058	public getMiraiEdition(): 'beginner' | 'expert'
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.setMiraiEdition	method	1060	1073	public setMiraiEdition(edition: 'beginner' | 'expert', notify = false): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.show	method	1075	1091	public show(part: CadPart, isIsolated: boolean): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.setIsolatedState	method	1093	1095	public setIsolatedState(isIsolated: boolean): void
+src/ui/ExplanationDrawer.ts	ExplanationDrawer.hide	method	1097	1107	public hide(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudioHandlers	interface	13	18	export interface LensOpticsStudioHandlers
+src/ui/LensOpticsStudio.ts	LensOpticsStudio	class	37	1407	export class LensOpticsStudio
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.getIsOpen	method	95	97	public getIsOpen(): boolean
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.open	method	99	119	public open(scenario?: OpticalScenarioId, highlightPartId?: string): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.close	method	121	146	public close(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.toggle	method	148	151	public toggle(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.toggleExpanded	method	153	160	private toggleExpanded(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.buildDom	method	162	357	private buildDom(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.bindBenchInteractions	method	359	422	private bindBenchInteractions(canvas: HTMLCanvasElement): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.applyDragFromCanvasPos	method	424	438	private applyDragFromCanvasPos(x: number, y: number): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.hitTestElement	method	440	447	private hitTestElement(x: number, y: number): OpticalElementSpec | null
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.syncControlsUi	method	449	481	private syncControlsUi(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.updateLiveReadouts	method	483	553	private updateLiveReadouts(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.startLoop	method	555	570	private startLoop(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.renderOpticalBench	method	575	989	private renderOpticalBench(): void
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.renderBenchScientificInset	method	995	1208	private renderBenchScientificInset( ctx: CanvasRenderingContext2D, w: number, h: number, tracedRays: ReturnTy…
+src/ui/LensOpticsStudio.ts	LensOpticsStudio.renderBokehAndIrisSimulator	method	1213	1406	private renderBokehAndIrisSimulator(): void
+src/ui/MiraiLibraryStudio.ts	MiraiStudioTab	type	3	3	export type MiraiStudioTab = 'reports' | 'matrix' | 'glossary';
+src/ui/MiraiLibraryStudio.ts	MiraiEdition	type	4	4	export type MiraiEdition = 'beginner' | 'expert';
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudioCallbacks	interface	6	10	export interface MiraiLibraryStudioCallbacks
+src/ui/MiraiLibraryStudio.ts	loadSavedMiraiEdition	func	144	152	export function loadSavedMiraiEdition(): MiraiEdition
+src/ui/MiraiLibraryStudio.ts	saveMiraiEdition	func	154	160	export function saveMiraiEdition(ed: MiraiEdition): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio	class	166	758	export class MiraiLibraryStudio
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.isOpen	method	199	201	public isOpen(): boolean
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.getEdition	method	203	205	public getEdition(): MiraiEdition
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.setEdition	method	207	212	public setEdition(ed: MiraiEdition, notify = true): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.open	method	214	244	public async open(opts?:
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.close	method	246	253	public close(): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.ensureMounted	method	255	268	private ensureMounted(): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.ensureMatrix	method	270	278	private async ensureMatrix(): Promise<MatrixPayload>
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.ensureGlossary	method	280	288	private async ensureGlossary(): Promise<GlossaryPayload>
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.ensureVolume	method	290	297	private async ensureVolume(vol: number): Promise<VolumePayload>
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.ensureDataForCurrentTab	method	299	307	private async ensureDataForCurrentTab(): Promise<void>
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.scrollToFocusedTarget	method	309	325	private scrollToFocusedTarget(): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.render	method	327	364	private render(): void
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.renderReportsTab	method	366	520	private renderReportsTab(): string
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.renderMatrixTab	method	522	593	private renderMatrixTab(): string
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.renderGlossaryTab	method	595	651	private renderGlossaryTab(): string
+src/ui/MiraiLibraryStudio.ts	MiraiLibraryStudio.bindEvents	method	653	757	private bindEvents(): void
+src/ui/ZeroTextControls.ts	ZeroTextUIHandlers	interface	13	35	export interface ZeroTextUIHandlers
+src/ui/ZeroTextControls.ts	ZeroTextControls	class	209	836	export class ZeroTextControls
+src/ui/ZeroTextControls.ts	ZeroTextControls.setPaletteOpen	method	675	681	private setPaletteOpen(open: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.rebuildFabStages	method	683	700	private rebuildFabStages(vol: SensorFabVolume): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncFabVolume	method	702	708	public syncFabVolume(vol: SensorFabVolume): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncFabStage	method	710	714	public syncFabStage(stage: SensorFabStage): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncLensSection	method	716	720	public syncLensSection(section: LensSection): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncMiraiSubView	method	722	729	public syncMiraiSubView(subView: number): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.scrollActiveMiraiBtnIntoView	method	731	741	private scrollActiveMiraiBtnIntoView(active: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncQuality	method	743	747	public syncQuality(quality: GraphicsQuality): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncKineMode	method	749	753	public syncKineMode(enabled: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.setExplodeValue	method	755	759	public setExplodeValue(v: number): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncMode	method	761	790	public syncMode(mode: ScaleMode): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncSectionAxis	method	792	798	public syncSectionAxis(axis: SectionAxis, value = 0.5): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncPhysics	method	800	802	public syncPhysics(_active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncOpticsStudio	method	804	806	public syncOpticsStudio(_active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncPlaygroundActive	method	808	810	public syncPlaygroundActive(active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncFullscreen	method	812	814	public syncFullscreen(_active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.renderLayerRail	method	821	831	public renderLayerRail( parts: CadPart[], _selectedId: string | null, _hoveredId: string | null, _isHidden: (…
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncHighlight	method	833	835	public syncHighlight(_selectedId: string | null, _hoveredId: string | null): void
+src/ui/bionzSchematicsExtra.ts	renderBionzExtraSvg	func	8	1223	export function renderBionzExtraSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/bionzSchematicsLower.ts	renderBionzLowerSvg	func	13	1120	export function renderBionzLowerSvg(type: PartExplanation['diagramType']): string | null
+src/ui/bionzSchematicsMid.ts	renderBionzMidSvg	func	12	1190	export function renderBionzMidSvg(type: PartExplanation['diagramType']): string | null
+src/ui/bionzSchematicsShared.ts	BionzDiagramSpec	interface	11	40	export interface BionzDiagramSpec
+src/ui/bionzSchematicsShared.ts	escXml	func	42	48	export function escXml(s: string): string
+src/ui/bionzSchematicsShared.ts	stepBadge	func	51	56	export function stepBadge(cx: number, cy: number, num: string, fill: string): string
+src/ui/bionzSchematicsShared.ts	comparePill	func	59	74	export function comparePill( x: number, y: number, w: number, ok: boolean, label: string ): string
+src/ui/bionzSchematicsShared.ts	loupeRing	func	93	102	export function loupeRing(cx: number, cy: number, r: number, title: string, accent: string): string
+src/ui/bionzSchematicsShared.ts	renderBionzDiagram	func	119	311	export function renderBionzDiagram(spec: BionzDiagramSpec): string
+src/ui/bionzSchematicsUpper.ts	renderBionzUpperSvg	func	12	1118	export function renderBionzUpperSvg(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupA.ts	renderBionzV2GroupA	func	18	905	export function renderBionzV2GroupA(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupB.ts	renderBionzV2GroupB	func	17	895	export function renderBionzV2GroupB(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupC.ts	renderBionzV2GroupC	func	17	747	export function renderBionzV2GroupC(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupD.ts	renderBionzV2GroupD	func	16	684	export function renderBionzV2GroupD(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupE.ts	renderBionzV2GroupE	func	21	947	export function renderBionzV2GroupE(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupF.ts	renderBionzV2GroupF	func	22	1044	export function renderBionzV2GroupF(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupG.ts	renderBionzV2GroupG	func	48	1194	export function renderBionzV2GroupG(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/groupH.ts	renderBionzV2GroupH	func	47	1127	export function renderBionzV2GroupH(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/index.ts	renderBionzV2HdSchematicSvg	func	26	37	export function renderBionzV2HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/bionzV2HdSchematics/shared.ts	BionzV2StackZone	type	10	10	export type BionzV2StackZone = 'pkg35d' | 'beol' | 'feol' | 'isp_mem' | 'bspdn_cool';
+src/ui/bionzV2HdSchematics/shared.ts	BionzV2HdCard	interface	12	17	export interface BionzV2HdCard
+src/ui/bionzV2HdSchematics/shared.ts	BionzV2HdSpec	interface	19	44	export interface BionzV2HdSpec
+src/ui/bionzV2HdSchematics/shared.ts	escV2	func	50	56	export function escV2(s: string): string
+src/ui/bionzV2HdSchematics/shared.ts	nanoPin	func	112	137	export function nanoPin( tx: number, ty: number, lx: number, ly: number, num: number | string, title: string,…
+src/ui/bionzV2HdSchematics/shared.ts	scaleBar	func	140	149	export function scaleBar(x: number, y: number, pxLen: number, label: string, color = '#334155'): string
+src/ui/bionzV2HdSchematics/shared.ts	kpiCard	func	152	173	export function kpiCard( x: number, y: number, w: number, h: number, label: string, value: string, sub: strin…
+src/ui/bionzV2HdSchematics/shared.ts	cmpBanner	func	176	187	export function cmpBanner(x: number, y: number, w: number, text: string, ok: boolean): string
+src/ui/bionzV2HdSchematics/shared.ts	dimArrow	func	190	215	export function dimArrow( x1: number, y1: number, x2: number, y2: number, label: string, color = '#475569' ):…
+src/ui/bionzV2HdSchematics/shared.ts	loupeFrame	func	218	227	export function loupeFrame(cx: number, cy: number, r: number, label: string, accent: string): string
+src/ui/bionzV2HdSchematics/shared.ts	renderBionzV2Hd	func	230	408	export function renderBionzV2Hd(spec: BionzV2HdSpec): string
+src/ui/dryboxHdSchematics/groupA.ts	renderDryboxGroupASvg	func	7	646	export function renderDryboxGroupASvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupB.ts	renderDryboxGroupBSvg	func	8	601	export function renderDryboxGroupBSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupC.ts	renderDryboxGroupCSvg	func	9	649	export function renderDryboxGroupCSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupD.ts	renderDryboxGroupDSvg	func	9	616	export function renderDryboxGroupDSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupE.ts	renderDryboxGroupESvg	func	7	730	export function renderDryboxGroupESvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupF.ts	renderDryboxGroupFSvg	func	8	690	export function renderDryboxGroupFSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupG.ts	renderDryboxGroupGSvg	func	8	636	export function renderDryboxGroupGSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupH.ts	renderDryboxGroupHSvg	func	9	601	export function renderDryboxGroupHSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupI.ts	renderDryboxGroupISvg	func	9	560	export function renderDryboxGroupISvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupJ.ts	renderDryboxGroupJSvg	func	10	594	export function renderDryboxGroupJSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupK.ts	renderDryboxGroupKSvg	func	11	586	export function renderDryboxGroupKSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupL.ts	renderDryboxGroupLSvg	func	11	581	export function renderDryboxGroupLSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupM.ts	renderDryboxGroupMSvg	func	10	572	export function renderDryboxGroupMSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/groupN.ts	renderDryboxGroupNSvg	func	11	580	export function renderDryboxGroupNSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/index.ts	renderDryboxHdSchematicSvg	func	20	38	export function renderDryboxHdSchematicSvg(diagramType: string): string | null
+src/ui/dryboxHdSchematics/shared.ts	DryboxHdCard	interface	9	14	export interface DryboxHdCard
+src/ui/dryboxHdSchematics/shared.ts	DryboxHdSpec	interface	16	35	export interface DryboxHdSpec
+src/ui/dryboxHdSchematics/shared.ts	wrapDryboxHdSvg	func	40	149	export function wrapDryboxHdSvg(spec: DryboxHdSpec): string
+src/ui/dryboxHdSchematics/shared.ts	drawPin	func	151	174	export function drawPin( tx: number, ty: number, lx: number, ly: number, num: number, title: string, sub = ''…
+src/ui/dryboxHdSchematics/shared.ts	drawPill	func	176	186	export function drawPill(x: number, y: number, w: number, text: string, ok: boolean): string
+src/ui/dryboxHdSchematics/shared.ts	drawKpiBox	func	188	207	export function drawKpiBox( x: number, y: number, w: number, h: number, label: string, value: string, sub: st…
+src/ui/dryboxHdSchematics/shared.ts	drawCompareFrame	func	209	225	export function drawCompareFrame( x: number, y: number, w: number, h: number, title: string, border: string, …
+src/ui/evfHdSchematics/evfHdGroup1.ts	renderEvfHdGroup1	func	15	1196	export function renderEvfHdGroup1(type: PartExplanation['diagramType']): string | null
+src/ui/evfHdSchematics/evfHdGroup2.ts	renderEvfHdGroup2	func	13	1139	export function renderEvfHdGroup2(type: PartExplanation['diagramType']): string | null
+src/ui/evfHdSchematics/evfHdGroup3.ts	renderEvfHdGroup3	func	12	1278	export function renderEvfHdGroup3(type: PartExplanation['diagramType']): string | null
+src/ui/evfHdSchematics/index.ts	renderEvfHdSchematicSvg	func	10	14	export function renderEvfHdSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/evfHdSchematics/shared.ts	EvfHdCard	interface	16	21	export interface EvfHdCard
+src/ui/evfHdSchematics/shared.ts	EvfHdSpec	interface	23	40	export interface EvfHdSpec
+src/ui/evfHdSchematics/shared.ts	wrapEvfHdSvg	func	48	204	export function wrapEvfHdSvg(spec: EvfHdSpec): string
+src/ui/evfHdSchematics/shared.ts	drawHumanEye	func	210	242	export function drawHumanEye( cx: number, cy: number, scale = 1, facingRight = true, label = '撮影者の目' ): string
+src/ui/evfHdSchematics/shared.ts	drawCallout	func	247	274	export function drawCallout( targetX: number, targetY: number, labelX: number, labelY: number, num: number, t…
+src/ui/evfHdSchematics/shared.ts	drawStatusPill	func	279	295	export function drawStatusPill( x: number, y: number, w: number, text: string, ok: boolean ): string
+src/ui/evfHdSchematics/shared.ts	drawRaindrop	func	300	306	export function drawRaindrop(cx: number, cy: number, scale = 1, fill = '#38bdf8'): string
+src/ui/evfHdSchematics/shared.ts	drawSunIcon	func	311	326	export function drawSunIcon(cx: number, cy: number, r = 11): string
+src/ui/evfHdSchematics/shared.ts	drawLoupe	func	331	354	export function drawLoupe( cx: number, cy: number, r: number, title: string, innerSvg: string, accent = '#028…
+src/ui/fabVol3HdSchematics/groupA.ts	renderVol3GroupASvg	func	7	674	export function renderVol3GroupASvg(diagramType: string): string | null
+src/ui/fabVol3HdSchematics/groupB.ts	renderVol3GroupBSvg	func	9	560	export function renderVol3GroupBSvg(diagramType: string): string | null
+src/ui/fabVol3HdSchematics/groupC.ts	renderVol3GroupCSvg	func	9	506	export function renderVol3GroupCSvg(diagramType: string): string | null
+src/ui/fabVol3HdSchematics/groupD.ts	renderVol3GroupDSvg	func	9	479	export function renderVol3GroupDSvg(diagramType: string): string | null
+src/ui/fabVol3HdSchematics/groupE.ts	renderVol3GroupESvg	func	9	398	export function renderVol3GroupESvg(diagramType: string): string | null
+src/ui/fabVol3HdSchematics/index.ts	renderPhase33SensorFabVol3SchematicSvg	func	12	22	export function renderPhase33SensorFabVol3SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/fabVol3HdSchematics/shared.ts	Fab3HdCard	interface	9	14	export interface Fab3HdCard
+src/ui/fabVol3HdSchematics/shared.ts	Fab3HdSpec	interface	16	35	export interface Fab3HdSpec
+src/ui/fabVol3HdSchematics/shared.ts	wrapFab3HdSvg	func	40	154	export function wrapFab3HdSvg(spec: Fab3HdSpec): string
+src/ui/fabVol3HdSchematics/shared.ts	drawPin	func	157	180	export function drawPin( tx: number, ty: number, lx: number, ly: number, num: number, title: string, sub = ''…
+src/ui/fabVol3HdSchematics/shared.ts	drawPill	func	183	193	export function drawPill(x: number, y: number, w: number, text: string, ok: boolean): string
+src/ui/fabVol3HdSchematics/shared.ts	drawKpiBox	func	196	215	export function drawKpiBox( x: number, y: number, w: number, h: number, label: string, value: string, sub: st…
+src/ui/fabVol3HdSchematics/shared.ts	drawCompareFrame	func	218	234	export function drawCompareFrame( x: number, y: number, w: number, h: number, title: string, border: string, …
+src/ui/fabVol4HdSchematics/groupA.ts	FAB4_HD_GROUP_A	const	7	736	FAB4_HD_GROUP_A: Record<string, () => string> =
+src/ui/fabVol4HdSchematics/groupB.ts	FAB4_HD_GROUP_B	const	7	619	FAB4_HD_GROUP_B: Record<string, () => string> =
+src/ui/fabVol4HdSchematics/groupC.ts	FAB4_HD_GROUP_C	const	7	276	FAB4_HD_GROUP_C: Record<string, () => string> =
+src/ui/fabVol4HdSchematics/groupD.ts	FAB4_HD_GROUP_D	const	8	334	FAB4_HD_GROUP_D: Record<string, () => string> =
+src/ui/fabVol4HdSchematics/groupE.ts	FAB4_HD_GROUP_E	const	8	272	FAB4_HD_GROUP_E: Record<string, () => string> =
+src/ui/fabVol4HdSchematics/index.ts	renderPhase34SensorFabVol4SchematicSvg	func	20	25	export function renderPhase34SensorFabVol4SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/fabVol5HdSchematics/groupA.ts	FAB5_HD_GROUP_A	const	8	565	FAB5_HD_GROUP_A: Record<string, () => string> =
+src/ui/fabVol5HdSchematics/groupB.ts	FAB5_HD_GROUP_B	const	7	465	FAB5_HD_GROUP_B: Record<string, () => string> =
+src/ui/fabVol5HdSchematics/groupC.ts	FAB5_HD_GROUP_C	const	7	266	FAB5_HD_GROUP_C: Record<string, () => string> =
+src/ui/fabVol5HdSchematics/groupD.ts	FAB5_HD_GROUP_D	const	9	281	FAB5_HD_GROUP_D: Record<string, () => string> =
+src/ui/fabVol5HdSchematics/index.ts	renderPhase35SensorFabVol5SchematicSvg	func	18	23	export function renderPhase35SensorFabVol5SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/lcdHdSchematics/groupA.ts	renderLcdHdGroupA	func	14	781	export function renderLcdHdGroupA(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/groupB.ts	renderLcdHdGroupB	func	14	898	export function renderLcdHdGroupB(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/groupC.ts	renderLcdHdGroupC	func	16	931	export function renderLcdHdGroupC(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/groupD.ts	renderLcdHdGroupD	func	16	1114	export function renderLcdHdGroupD(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/groupE.ts	renderLcdHdGroupE	func	16	1057	export function renderLcdHdGroupE(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/index.ts	renderLcdHdSchematicSvg	func	12	20	export function renderLcdHdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/lcdHdSchematics/shared.ts	LcdHdCard	interface	9	14	export interface LcdHdCard
+src/ui/lcdHdSchematics/shared.ts	LcdHdSpec	interface	16	33	export interface LcdHdSpec
+src/ui/lcdHdSchematics/shared.ts	wrapLcdHdSvg	func	45	162	export function wrapLcdHdSvg(spec: LcdHdSpec): string
+src/ui/lcdHdSchematics/shared.ts	drawCallout	func	164	187	export function drawCallout( targetX: number, targetY: number, labelX: number, labelY: number, num: number, t…
+src/ui/lcdHdSchematics/shared.ts	drawStatusPill	func	189	199	export function drawStatusPill(x: number, y: number, w: number, text: string, ok: boolean): string
+src/ui/lcdHdSchematics/shared.ts	drawRaindrop	func	201	207	export function drawRaindrop(cx: number, cy: number, scale = 1, fill = '#38bdf8'): string
+src/ui/lcdHdSchematics/shared.ts	drawSunIcon	func	209	222	export function drawSunIcon(cx: number, cy: number, r = 11): string
+src/ui/lcdHdSchematics/shared.ts	drawPanelBox	func	224	240	export function drawPanelBox( x: number, y: number, w: number, h: number, title: string, accent = '#0284c7', …
+src/ui/lensUltraSchematics.ts	renderUltraLensSchematicSvg	func	6	376	export function renderUltraLensSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) => st…
+src/ui/miraiHdSchematics/fh01Schematics.ts	renderFh01HdSchematicSvg	func	590	593	export function renderFh01HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh02Schematics.ts	renderFh02HdSchematicSvg	func	593	596	export function renderFh02HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh08Schematics.ts	renderFh08HdSchematicSvg	func	585	588	export function renderFh08HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh17Schematics.ts	renderFh17HdSchematicSvg	func	465	468	export function renderFh17HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh20Schematics.ts	renderFh20HdSchematicSvg	func	490	493	export function renderFh20HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh25Schematics.ts	renderFh25HdSchematicSvg	func	546	549	export function renderFh25HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh32Schematics.ts	renderFh32HdSchematicSvg	func	556	559	export function renderFh32HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/fh48Schematics.ts	renderFh48HdSchematicSvg	func	465	468	export function renderFh48HdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/index.ts	renderMiraiHdSchematicSvg	func	22	33	export function renderMiraiHdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/miraiHdSchematics/shared.ts	MiraiStackZone	type	7	7	export type MiraiStackZone = 'optic' | 'active' | 'link' | 'pkg' | 'cool';
+src/ui/miraiHdSchematics/shared.ts	MiraiHdCard	interface	9	14	export interface MiraiHdCard
+src/ui/miraiHdSchematics/shared.ts	MiraiHdSpec	interface	16	28	export interface MiraiHdSpec
+src/ui/miraiHdSchematics/shared.ts	escM	func	34	40	export function escM(s: string): string
+src/ui/miraiHdSchematics/shared.ts	miraiPin	func	89	114	export function miraiPin( tx: number, ty: number, lx: number, ly: number, num: number | string, title: string…
+src/ui/miraiHdSchematics/shared.ts	miraiKpi	func	116	137	export function miraiKpi( x: number, y: number, w: number, h: number, label: string, value: string, sub: stri…
+src/ui/miraiHdSchematics/shared.ts	miraiComparePill	func	139	150	export function miraiComparePill(x: number, y: number, w: number, text: string, future: boolean): string
+src/ui/miraiHdSchematics/shared.ts	renderMiraiMonographSvg	func	152	291	export function renderMiraiMonographSvg(spec: MiraiHdSpec): string
+src/ui/mountUltra34Schematics/groupA.ts	renderMountUltra34SchematicGroupA	func	7	755	export function renderMountUltra34SchematicGroupA( type: PartExplanation['diagramType'] ): string | null
+src/ui/mountUltra34Schematics/groupB.ts	renderMountUltra34SchematicGroupB	func	7	699	export function renderMountUltra34SchematicGroupB( type: PartExplanation['diagramType'] ): string | null
+src/ui/mountUltra34Schematics/index.ts	renderPhase34MountUltraSchematicSvg	func	8	12	export function renderPhase34MountUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/mountUltra34Schematics/shared.ts	FONT_SANS	const	11	12	FONT_SANS = "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif"
+src/ui/mountUltra34Schematics/shared.ts	FONT_MONO	const	14	14	FONT_MONO = "ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace"
+src/ui/mountUltra34Schematics/shared.ts	MountHdFrameOptions	interface	16	33	export interface MountHdFrameOptions
+src/ui/mountUltra34Schematics/shared.ts	mountHdFrame	func	39	89	export function mountHdFrame(opts: MountHdFrameOptions): string
+src/ui/mountUltra34Schematics/shared.ts	pill	func	92	107	export function pill( cx: number, cy: number, w: number, h: number, label: string, fill: string, stroke: stri…
+src/ui/phase11BodySchematics.ts	renderPhase11BodySchematicSvg	func	10	490	export function renderPhase11BodySchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) => …
+src/ui/phase11OpticsSchematics.ts	renderPhase11OpticsSchematicSvg	func	9	376	export function renderPhase11OpticsSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) =…
+src/ui/phase12MainBodySchematics.ts	renderPhase12MainBodySchematicSvg	func	8	493	export function renderPhase12MainBodySchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string)…
+src/ui/phase12SubsystemsSchematics.ts	renderPhase12SubsystemsSchematicSvg	func	13	654	export function renderPhase12SubsystemsSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: strin…
+src/ui/phase13BodySchematics.ts	renderPhase13BodySchematicSvg	func	7	355	export function renderPhase13BodySchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) => …
+src/ui/phase13MountShutterSchematics.ts	renderPhase13MountShutterSchematicSvg	func	8	553	export function renderPhase13MountShutterSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: str…
+src/ui/phase14SensorSchematics.ts	renderPhase14SensorSchematicSvg	func	8	675	export function renderPhase14SensorSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) =…
+src/ui/phase15LcdSchematics.ts	renderPhase15LcdSchematicSvg	func	7	482	export function renderPhase15LcdSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) => s…
+src/ui/phase16BodyAuditSchematics.ts	renderPhase16BodyAuditSchematicSvg	func	7	293	export function renderPhase16BodyAuditSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string…
+src/ui/phase16EvfSchematics.ts	renderPhase16EvfSchematicSvg	func	7	450	export function renderPhase16EvfSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string) => s…
+src/ui/phase16MainboardSchematics.ts	renderPhase16MainboardSchematicSvg	func	7	454	export function renderPhase16MainboardSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string…
+src/ui/phase17ShutterAuditSchematics.ts	renderPhase17ShutterAuditSchematicSvg	func	8	397	export function renderPhase17ShutterAuditSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: str…
+src/ui/phase18LensMountSchematics.ts	renderPhase18LensMountSchematicSvg	func	8	568	export function renderPhase18LensMountSchematicSvg( type: PartExplanation['diagramType'], wrap: (body: string…
+src/ui/phase19UltraAnatomySchematics.ts	renderPhase19UltraAnatomySchematicSvg	func	10	972	export function renderPhase19UltraAnatomySchematicSvg( type: PartExplanation['diagramType'], wrap: (body: str…
+src/ui/phase20MicroMountSchematics.ts	renderPhase20MicroMountSchematicSvg	func	13	497	export function renderPhase20MicroMountSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase23MicroNextGenSchematics.ts	renderPhase23MicroNextGenSchematicSvg	func	12	515	export function renderPhase23MicroNextGenSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase24BodyNextGenSchematics.ts	renderPhase24BodyNextGenSchematicSvg	func	12	482	export function renderPhase24BodyNextGenSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase25BionzSchematics.ts	renderPhase25BionzSchematicSvg	func	13	22	export function renderPhase25BionzSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase25MiShoeSchematics.ts	renderPhase25MiShoeSchematicSvg	func	11	539	export function renderPhase25MiShoeSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase25MicSchematics.ts	renderPhase25MicSchematicSvg	func	11	523	export function renderPhase25MicSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase25SensorBodySchematics.ts	renderPhase25SensorBodySchematicSvg	func	13	657	export function renderPhase25SensorBodySchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase26BatterySchematics.ts	renderPhase26BatterySchematicSvg	func	12	535	export function renderPhase26BatterySchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase26CfexpressSchematics.ts	renderPhase26CfexpressSchematicSvg	func	12	542	export function renderPhase26CfexpressSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase27BatteryUltraSchematics.ts	renderPhase27BatteryUltraSchematicSvg	func	12	550	export function renderPhase27BatteryUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase27CfexpressUltraSchematics.ts	renderPhase27CfexpressUltraSchematicSvg	func	12	572	export function renderPhase27CfexpressUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase28BionzV2Schematics.ts	renderPhase28BionzV2SchematicSvg	func	12	535	export function renderPhase28BionzV2SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase28CfexpressUltraSchematics.ts	renderPhase28CfexpressUltraSchematicSvg	func	13	813	export function renderPhase28CfexpressUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase28PixelV2Schematics.ts	renderPhase28PixelV2SchematicSvg	func	12	528	export function renderPhase28PixelV2SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase29BionzV2DeepSchematics.ts	renderPhase29BionzV2DeepSchematicSvg	func	7	390	export function renderPhase29BionzV2DeepSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase29CfexpressUltraSchematics.ts	renderPhase29CfexpressUltraSchematicSvg	func	13	655	export function renderPhase29CfexpressUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase29PixelV2DeepSchematics.ts	renderPhase29PixelV2DeepSchematicSvg	func	7	414	export function renderPhase29PixelV2DeepSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase30BatteryUltraSchematics.ts	renderPhase30BatteryUltraSchematicSvg	func	13	876	export function renderPhase30BatteryUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase30MicUltraSchematics.ts	renderPhase30MicUltraSchematicSvg	func	7	832	export function renderPhase30MicUltraSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/ui/phase30SensorFabSchematics.ts	renderPhase30SensorFabSchematicSvg	func	12	586	export function renderPhase30SensorFabSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase31BatteryUltraSchematics.ts	renderPhase31BatteryUltraSchematicSvg	func	12	950	export function renderPhase31BatteryUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase31MicUltraSchematics.ts	renderPhase31MicUltraSchematicSvg	func	24	859	export function renderPhase31MicUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase31SensorFabVol1Schematics.ts	renderPhase31SensorFabVol1SchematicSvg	func	7	640	export function renderPhase31SensorFabVol1SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase32SensorFabVol2Schematics.ts	renderPhase32SensorFabVol2SchematicSvg	func	7	678	export function renderPhase32SensorFabVol2SchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase32SensorUltraSchematicsA.ts	renderPhase32SensorUltraSchematicA	func	8	1495	export function renderPhase32SensorUltraSchematicA( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase32SensorUltraSchematicsB.ts	renderPhase32SensorUltraSchematicB	func	8	1251	export function renderPhase32SensorUltraSchematicB( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase32SensorUltraSchematicsC.ts	renderPhase32SensorUltraSchematicC	func	8	1381	export function renderPhase32SensorUltraSchematicC( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase35CfexpressUltraSchematics.ts	renderPhase35CfexpressUltraSchematicSvg	func	13	901	export function renderPhase35CfexpressUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase36MicUltraSchematics.ts	renderPhase36MicUltraSchematicSvg	func	8	12	export function renderPhase36MicUltraSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase36MicUltraSchematicsA.ts	renderPhase36MicUltraSchematicSvgA	func	10	363	export function renderPhase36MicUltraSchematicSvgA( type: PartExplanation['diagramType'] ): string | null
+src/ui/phase36MicUltraSchematicsB.ts	renderPhase36MicUltraSchematicSvgB	func	10	391	export function renderPhase36MicUltraSchematicSvgB( type: PartExplanation['diagramType'] ): string | null
+src/ui/schematicsRegistry.ts	renderSchematicSvg	func	61	3839	export function renderSchematicSvg(type: PartExplanation['diagramType']): string
+src/ui/sensorUltraSchematicFrame.ts	FONT_SANS	const	11	12	FONT_SANS = "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif"
+src/ui/sensorUltraSchematicFrame.ts	FONT_MONO	const	14	14	FONT_MONO = "ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace"
+src/ui/sensorUltraSchematicFrame.ts	SensorFrameOptions	interface	16	33	export interface SensorFrameOptions
+src/ui/sensorUltraSchematicFrame.ts	sensorFrame	func	39	86	export function sensorFrame(opts: SensorFrameOptions): string
+src/ui/sensorUltraSchematicFrame.ts	pill	func	89	104	export function pill( cx: number, cy: number, w: number, h: number, label: string, fill: string, stroke: stri…
+src/ui/shutterHdSchematics/groupA.ts	renderShutterHdGroupA	func	7	597	export function renderShutterHdGroupA(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/groupB.ts	renderShutterHdGroupB	func	7	598	export function renderShutterHdGroupB(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/groupC.ts	renderShutterHdGroupC	func	7	567	export function renderShutterHdGroupC(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/groupD.ts	renderShutterHdGroupD	func	8	665	export function renderShutterHdGroupD(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/groupE.ts	renderShutterHdGroupE	func	8	669	export function renderShutterHdGroupE(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/groupF.ts	renderShutterHdGroupF	func	8	615	export function renderShutterHdGroupF(type: PartExplanation['diagramType']): string | null
+src/ui/shutterHdSchematics/index.ts	renderPhase34ShutterHdSchematicSvg	func	13	24	export function renderPhase34ShutterHdSchematicSvg( type: PartExplanation['diagramType'] ): string | null
+src/ui/shutterHdSchematics/shared.ts	FONT_SANS	const	11	12	FONT_SANS = "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif"
+src/ui/shutterHdSchematics/shared.ts	FONT_MONO	const	14	14	FONT_MONO = "ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace"
+src/ui/shutterHdSchematics/shared.ts	ShutterFrameOptions	interface	16	33	export interface ShutterFrameOptions
+src/ui/shutterHdSchematics/shared.ts	shutterFrame	func	35	85	export function shutterFrame(opts: ShutterFrameOptions): string
+src/ui/shutterHdSchematics/shared.ts	pill	func	87	102	export function pill( cx: number, cy: number, w: number, h: number, label: string, fill: string, stroke: stri…
+src/ui/welcomeHdSchematics.ts	renderWelcomeHdSchematicSvg	func	130	969	export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']): string | null
+src/units/battery.ts	createBatteryUnit	func	59	83	export function createBatteryUnit(): OptimizedUnit
+src/units/bionz.ts	createBionzUnit	func	63	87	export function createBionzUnit(): OptimizedUnit
+src/units/bionz_v2.ts	createBionzV2Unit	func	19	47	export function createBionzV2Unit(): OptimizedUnit
+src/units/body.ts	createBodyUnit	func	45	81	export function createBodyUnit(): OptimizedUnit
+src/units/camera_body.ts	createCameraBodyUnit	func	15	24	export function createCameraBodyUnit(): OptimizedUnit
+src/units/camera_macro_shared.ts	CAMERA_MACRO_HERO_SPECS	const	29	186	CAMERA_MACRO_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> =
+src/units/camera_macro_shared.ts	buildCameraMacroRaw	func	209	458	export async function buildCameraMacroRaw( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[], includeLen…
+src/units/cfexpress.ts	createCfexpressUnit	func	59	83	export function createCfexpressUnit(): OptimizedUnit
+src/units/drybox.ts	createDryboxUnit	func	25	65	export function createDryboxUnit(): OptimizedUnit
+src/units/evf.ts	createEvfUnit	func	49	85	export function createEvfUnit(): OptimizedUnit
+src/units/integrated.ts	createIntegratedUnit	func	15	24	export function createIntegratedUnit(): OptimizedUnit
+src/units/lcd.ts	createLcdUnit	func	60	103	export function createLcdUnit(): OptimizedUnit
+src/units/lens.ts	createLensUnit	func	18	73	export function createLensUnit(): OptimizedUnit
+src/units/mainboard.ts	createMainboardUnit	func	61	96	export function createMainboardUnit(): OptimizedUnit
+src/units/mi_shoe.ts	MiShoeUnit	class	409	2882	export class MiShoeUnit implements OptimizedUnit
+src/units/mi_shoe.ts	MiShoeUnit.getMeta	method	464	466	public getMeta(): UnitMeta
+src/units/mi_shoe.ts	MiShoeUnit.build	method	468	1972	public async build( quality: QualityTier, cache: ResourceCache, options: UnitBuildOptions =
+src/units/mi_shoe.ts	MiShoeUnit.buildPhysicsOverlay	method	1974	2260	private buildPhysicsOverlay( cache: ResourceCache, sphereSegs: number ): PhysicsOverlayState
+src/units/mi_shoe.ts	MiShoeUnit.isPartHiddenInternal	method	2262	2265	private isPartHiddenInternal(partId: string): boolean
+src/units/mi_shoe.ts	MiShoeUnit.syncWorldMatricesOnce	method	2267	2270	private syncWorldMatricesOnce(): void
+src/units/mi_shoe.ts	MiShoeUnit.refreshMiShoeRaycastBounds	method	2272	2313	private refreshMiShoeRaycastBounds(): void
+src/units/mi_shoe.ts	MiShoeUnit.updateExplode	method	2319	2452	public updateExplode(t: number, force = false): boolean
+src/units/mi_shoe.ts	MiShoeUnit.setVisualState	method	2458	2641	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
+src/units/mi_shoe.ts	MiShoeUnit.getKineOccluders	method	2643	2645	public getKineOccluders(): readonly KineOccluderSpec[]
+src/units/mi_shoe.ts	MiShoeUnit.applyKineCulling	method	2647	2706	public applyKineCulling(culledMask: Uint8Array | null): number
+src/units/mi_shoe.ts	MiShoeUnit.setClippingPlanes	method	2708	2713	public setClippingPlanes(planes: THREE.Plane[]): void
+src/units/mi_shoe.ts	MiShoeUnit.setPhysicsVisible	method	2715	2718	public setPhysicsVisible(visible: boolean): void
+src/units/mi_shoe.ts	MiShoeUnit.updateExplodeGuides	method	2723	2785	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
+src/units/mi_shoe.ts	MiShoeUnit.updatePhysics	method	2790	2849	public updatePhysics(elapsed: number, _explodeFactor: number, active: boolean): void
+src/units/mi_shoe.ts	MiShoeUnit.dispose	method	2854	2881	public dispose(cache: ResourceCache): void
+src/units/mi_shoe.ts	createMiShoeUnit	func	2884	2886	export function createMiShoeUnit(): OptimizedUnit
+src/units/mic.ts	createMicUnit	func	16	39	export function createMicUnit(): OptimizedUnit
+src/units/micro.ts	createMicroUnit	func	34	64	export function createMicroUnit(): OptimizedUnit
+src/units/micro_v2.ts	createMicroV2Unit	func	17	40	export function createMicroV2Unit(): OptimizedUnit
+src/units/mirai_2028.ts	createMirai2028Unit	func	39	60	export function createMirai2028Unit(): OptimizedUnit
+src/units/mount.ts	createMountUnit	func	17	51	export function createMountUnit(): OptimizedUnit
+src/units/registry.ts	RegisteredUnitEntry	interface	3	10	export interface RegisteredUnitEntry
+src/units/registry.ts	hasRegisteredUnit	func	193	195	export function hasRegisteredUnit(unitId: string): boolean
+src/units/registry.ts	listRegisteredUnits	func	197	199	export function listRegisteredUnits(): readonly RegisteredUnitEntry[]
+src/units/registry.ts	loadRegisteredUnitMeta	func	201	204	export async function loadRegisteredUnitMeta(unitId: string): Promise<UnitMeta | null>
+src/units/registry.ts	loadRegisteredUnit	func	206	212	export async function loadRegisteredUnit(unitId: string): Promise<OptimizedUnit>
+src/units/sensor.ts	createSensorUnit	func	82	133	export function createSensorUnit(): OptimizedUnit
+src/units/sensor_fab.ts	createSensorFabUnit	func	86	173	export function createSensorFabUnit(): OptimizedUnit
+src/units/shutter.ts	createShutterUnit	func	17	63	export function createShutterUnit(): OptimizedUnit
+src/units/welcome.ts	createWelcomeUnit	func	15	25	export function createWelcomeUnit(): OptimizedUnit

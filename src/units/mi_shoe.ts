@@ -5,19 +5,26 @@ import { CadPart, PartExplanation, RenderMode } from '../assemblies/types';
 import { createFrameShape, createRoundedRectShape } from '../engine/CadHelpers';
 import { disposeObject3D } from '../core/dispose';
 import {
+  CAD_HOVER_SENTINEL,
+  CAD_SELECT_SENTINEL,
   getCadTintLuma,
   liftDarkCadTint,
+  LiteMatcapUniforms,
   MATERIAL_SPECS,
   MaterialBucketKey,
   QUALITY_TIER_CONFIG,
   ResourceCache,
 } from '../core/resource_cache';
+import {
+  bindGpuExplodeToMaterial,
+  buildFlatPartBvh,
+  createGpuExplodeDataTexture,
+  quantizeGeometryPositionInPlace,
+} from '../core/v2_unit_compiler';
 
-function resolveMiShoeLiteBucket(bucket: MaterialBucketKey): MaterialBucketKey {
+function resolveMiShoeLiteFinishBit(bucket: MaterialBucketKey): number {
   const spec = MATERIAL_SPECS[bucket];
-  if (spec.transparent) return 'optical_glass_clear';
-  if (spec.stdLambert) return 'matte_chassis';
-  return 'metal_hero';
+  return spec.stdLambert && !spec.transparent ? 0 : 255;
 }
 import {
   createMiShoeExtraBuildChunks,
@@ -33,6 +40,7 @@ import {
   MiShoeInstPoolName,
 } from '../assemblies/mishoe/miShoeExtendedBuilder';
 import {
+  KineOccluderSpec,
   OptimizedUnit,
   QualityTier,
   RaycastBatchedBinding,
@@ -56,8 +64,7 @@ const _tmpScale = new THREE.Vector3();
 const _tmpMat4 = new THREE.Matrix4();
 const _tmpColor = new THREE.Color();
 const _zeroScale = new THREE.Vector3(0, 0, 0);
-const _selTint = new THREE.Color(0x2563eb);
-const _hovTint = new THREE.Color(0x60a5fa);
+const _zeroMat4 = new THREE.Matrix4().makeScale(0, 0, 0);
 const _cadTint = new THREE.Color(0xf8fafc);
 const _xrayTint = new THREE.Color(0xcbd5e1);
 const _defVec = new THREE.Vector3();
@@ -143,12 +150,17 @@ interface BatchedPieceSpec {
 
 interface BatchedPoolState {
   readonly bucket: MaterialBucketKey;
+  readonly usesVertexColors: boolean;
   readonly mesh: THREE.BatchedMesh;
   readonly count: number;
   readonly batchIds: Int32Array;
   readonly partIndices: Int32Array;
   readonly batchIdToPartId: string[];
   readonly baseColors: Uint32Array;
+  readonly quantCenter: Float32Array;
+  readonly quantScale: Float32Array;
+  gpuExplodeTex: THREE.DataTexture | null;
+  gpuExplodeTexW: number;
 }
 
 interface EdgeLineRecord {
@@ -205,6 +217,105 @@ function normalizeForBatchMerge(src: THREE.BufferGeometry): THREE.BufferGeometry
   }
   geo.clearGroups();
   return geo;
+}
+
+const _miPackNormMat = new THREE.Matrix3();
+function packMiShoeLiteGeo(
+  src: THREE.BufferGeometry,
+  bakeMat: THREE.Matrix4 | null,
+  liftedHex: number,
+  finishBit: number
+): THREE.BufferGeometry | null {
+  const posAttr = src.getAttribute('position');
+  if (!posAttr || posAttr.count < 3) return null;
+  let normAttr = src.getAttribute('normal');
+  let tempGeo: THREE.BufferGeometry | null = null;
+  if (!normAttr) {
+    tempGeo = src.clone();
+    tempGeo.computeVertexNormals();
+    normAttr = tempGeo.getAttribute('normal');
+  }
+
+  const vCount = posAttr.count;
+  const posOut = new Float32Array(vCount * 3);
+  const normI8 = new Int8Array(vCount * 3);
+
+  if (bakeMat) {
+    const me = bakeMat.elements;
+    _miPackNormMat.getNormalMatrix(bakeMat);
+    const ne = _miPackNormMat.elements;
+    for (let i = 0; i < vCount; i++) {
+      const rx = posAttr.getX(i), ry = posAttr.getY(i), rz = posAttr.getZ(i);
+      const o = i * 3;
+      posOut[o] = me[0] * rx + me[4] * ry + me[8] * rz + me[12];
+      posOut[o + 1] = me[1] * rx + me[5] * ry + me[9] * rz + me[13];
+      posOut[o + 2] = me[2] * rx + me[6] * ry + me[10] * rz + me[14];
+      const rnx = normAttr ? normAttr.getX(i) : 0;
+      const rny = normAttr ? normAttr.getY(i) : 1;
+      const rnz = normAttr ? normAttr.getZ(i) : 0;
+      const nx = ne[0] * rnx + ne[3] * rny + ne[6] * rnz;
+      const ny = ne[1] * rnx + ne[4] * rny + ne[7] * rnz;
+      const nz = ne[2] * rnx + ne[5] * rny + ne[8] * rnz;
+      const len = Math.hypot(nx, ny, nz) || 1;
+      normI8[o] = Math.max(-127, Math.min(127, Math.round((nx / len) * 127)));
+      normI8[o + 1] = Math.max(-127, Math.min(127, Math.round((ny / len) * 127)));
+      normI8[o + 2] = Math.max(-127, Math.min(127, Math.round((nz / len) * 127)));
+    }
+  } else {
+    for (let i = 0; i < vCount; i++) {
+      const o = i * 3;
+      posOut[o] = posAttr.getX(i);
+      posOut[o + 1] = posAttr.getY(i);
+      posOut[o + 2] = posAttr.getZ(i);
+      const nx = normAttr ? normAttr.getX(i) : 0;
+      const ny = normAttr ? normAttr.getY(i) : 1;
+      const nz = normAttr ? normAttr.getZ(i) : 0;
+      normI8[o] = Math.max(-127, Math.min(127, Math.round(nx * 127)));
+      normI8[o + 1] = Math.max(-127, Math.min(127, Math.round(ny * 127)));
+      normI8[o + 2] = Math.max(-127, Math.min(127, Math.round(nz * 127)));
+    }
+  }
+
+  _tmpColor.setHex(liftedHex);
+  const r8 = Math.min(255, Math.max(0, Math.round(_tmpColor.r * 255)));
+  const g8 = Math.min(255, Math.max(0, Math.round(_tmpColor.g * 255)));
+  const b8 = Math.min(255, Math.max(0, Math.round(_tmpColor.b * 255)));
+  const a8 = finishBit & 0xff;
+  const colArr = new Uint8Array(vCount * 4);
+  for (let i = 0; i < colArr.length; i += 4) {
+    colArr[i] = r8;
+    colArr[i + 1] = g8;
+    colArr[i + 2] = b8;
+    colArr[i + 3] = a8;
+  }
+
+  const rawIdx = src.getIndex();
+  const idxCount = rawIdx ? Math.floor(rawIdx.count / 3) * 3 : Math.floor(vCount / 3) * 3;
+  if (tempGeo) tempGeo.dispose();
+  if (idxCount < 3) return null;
+
+  const out = new THREE.BufferGeometry();
+  out.setAttribute('position', new THREE.BufferAttribute(posOut, 3));
+  out.setAttribute('normal', new THREE.BufferAttribute(normI8, 3, true));
+  out.setAttribute('color', new THREE.BufferAttribute(colArr, 4, true));
+  if (vCount <= 65535) {
+    const idx16 = new Uint16Array(idxCount);
+    if (rawIdx) {
+      for (let i = 0; i < idxCount; i++) idx16[i] = rawIdx.array[i];
+    } else {
+      for (let i = 0; i < idxCount; i++) idx16[i] = i;
+    }
+    out.setIndex(new THREE.BufferAttribute(idx16, 1));
+  } else {
+    const idx32 = new Uint32Array(idxCount);
+    if (rawIdx) {
+      for (let i = 0; i < idxCount; i++) idx32[i] = rawIdx.array[i];
+    } else {
+      for (let i = 0; i < idxCount; i++) idx32[i] = i;
+    }
+    out.setIndex(new THREE.BufferAttribute(idx32, 1));
+  }
+  return out;
 }
 
 function makeTransformedGeo(
@@ -292,7 +403,7 @@ function toPartExplanation(meta: UnitPartMeta): PartExplanation {
 }
 
 // =============================================================================
-// MiShoeUnit — Experimental V2 Fully Optimized Standalone Unit (MI01–MI32)
+// MiShoeUnit — Experimental V2 Fully Optimized Standalone Unit (MI01–MI99)
 // =============================================================================
 
 export class MiShoeUnit implements OptimizedUnit {
@@ -314,6 +425,9 @@ export class MiShoeUnit implements OptimizedUnit {
   private edgeLines: EdgeLineRecord[] = [];
   private physicsState: PhysicsOverlayState | null = null;
   private raycastIndex: UnitBuildResult['raycastIndex'] | null = null;
+  private allPoolsGpuExplode = false;
+  private gpuExplodeBindings: RaycastMeshBinding[] = [];
+  private boundsDirty = false;
 
   private lastExplodeT = -1;
   private selectedId: string | null = null;
@@ -321,6 +435,31 @@ export class MiShoeUnit implements OptimizedUnit {
   private hiddenIds: ReadonlySet<string> = new Set();
   private isolatedId: string | null = null;
   private cachedCacheRef: ResourceCache | null = null;
+  private kineCulledParts = new Uint8Array(0);
+  private kineOccluders: KineOccluderSpec[] = [];
+
+  private readonly syncLazyBounds = (): void => {
+    if (!this.boundsDirty && !this.raycastIndex?.boundsDirty) return;
+    const clamped = this.lastExplodeT < 0 ? 0 : this.lastExplodeT;
+    const partCount = this.parts.length;
+    const assem = this.assembledPosFlat;
+    const exp = this.explodeOffsetFlat;
+    const cur = this.currentPosFlat;
+    for (let i = 0; i < partCount; i++) {
+      const o = i * 3;
+      const px = assem[o] + exp[o] * clamped;
+      const py = assem[o + 1] + exp[o + 1] * clamped;
+      const pz = assem[o + 2] + exp[o + 2] * clamped;
+      cur[o] = px;
+      cur[o + 1] = py;
+      cur[o + 2] = pz;
+      const grp = this.parts[i].group;
+      grp.position.set(px, py, pz);
+      grp.updateMatrix();
+    }
+    this.boundsDirty = false;
+    this.refreshMiShoeRaycastBounds();
+  };
 
   public getMeta(): UnitMeta {
     return MI_SHOE_META;
@@ -344,6 +483,9 @@ export class MiShoeUnit implements OptimizedUnit {
     this.renderMode = 'solid';
     this.clippingPlanes = options.clippingPlanes ?? [];
     this.cachedCacheRef = cache;
+    this.allPoolsGpuExplode = false;
+    this.gpuExplodeBindings = [];
+    this.boundsDirty = false;
 
     const cfg = QUALITY_TIER_CONFIG[quality];
     const partMetas = MI_SHOE_META.parts;
@@ -1282,176 +1424,378 @@ export class MiShoeUnit implements OptimizedUnit {
     const commitStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
     const bindings: RaycastMeshBinding[] = [];
     const registeredPartIds = new Set<string>();
+    const onlyPartIds = options.onlyPartIds;
     let estimatedTriangles = 0;
     let totalInstances = 0;
     let totalBatchedItems = 0;
 
-    // Build all Tier-1 InstancedMeshes with instanceId -> partId reverse lookup
     const isStdLite = quality === 'standard_lite';
     const isUltra = quality === 'ultra';
     this.instancedPools = [];
-    for (const [poolId, draft] of Object.entries(instPoolsDraft)) {
-      const count = draft.records.length;
-      if (count === 0) continue;
-
-      const resolvedBucket = isStdLite ? resolveMiShoeLiteBucket(draft.bucket) : draft.bucket;
-      const geo = cache.acquireGeometry(draft.geoKey, draft.geoFactory);
-      const mat = cache.acquireMaterial(resolvedBucket, quality, 'solid', this.clippingPlanes);
-      const mesh = new THREE.InstancedMesh(geo, mat, count);
-      mesh.name = `mishoe-inst-${poolId}`;
-      mesh.frustumCulled = false;
-      mesh.boundingBox = new THREE.Box3();
-      mesh.boundingSphere = new THREE.Sphere();
-      if (isUltra) {
-        const opaque = !mat.transparent;
-        mesh.castShadow = opaque;
-        mesh.receiveShadow = opaque;
-      }
-      setNodeStaticMatrix(mesh);
-
-      const partIndices = new Int32Array(count);
-      const instanceIdToPartId = new Array<string>(count);
-      const localPos = new Float32Array(count * 3);
-      const localQuat = new Float32Array(count * 4);
-      const localScale = new Float32Array(count * 3);
-      const baseColors = new Uint32Array(count);
-
-      const bindingIndex = bindings.length;
-      const eulerScratch = new THREE.Euler();
-
-      for (let i = 0; i < count; i++) {
-        const r = draft.records[i];
-        partIndices[i] = r.partIdx;
-        instanceIdToPartId[i] = r.partId;
-        registeredPartIds.add(r.partId);
-        partBindingIndexSets[r.partIdx].add(bindingIndex);
-
-        const p3 = i * 3;
-        localPos[p3] = r.localPos[0];
-        localPos[p3 + 1] = r.localPos[1];
-        localPos[p3 + 2] = r.localPos[2];
-
-        eulerScratch.set(r.localRot[0], r.localRot[1], r.localRot[2]);
-        _tmpQuat.setFromEuler(eulerScratch);
-        const q4 = i * 4;
-        localQuat[q4] = _tmpQuat.x;
-        localQuat[q4 + 1] = _tmpQuat.y;
-        localQuat[q4 + 2] = _tmpQuat.z;
-        localQuat[q4 + 3] = _tmpQuat.w;
-
-        localScale[p3] = r.localScale[0];
-        localScale[p3 + 1] = r.localScale[1];
-        localScale[p3 + 2] = r.localScale[2];
-
-        const liftedHex = liftDarkCadTint(r.colorHex);
-        baseColors[i] = liftedHex;
-        _tmpColor.setHex(liftedHex);
-        mesh.setColorAt(i, _tmpColor);
-      }
-      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-
-      rootGroup.add(mesh);
-      const binding: RaycastInstancedBinding = {
-        kind: 'instanced',
-        mesh,
-        instanceIdToPartId,
-      };
-      bindings.push(binding);
-
-      this.instancedPools.push({
-        id: poolId,
-        bucket: resolvedBucket,
-        mesh,
-        count,
-        partIndices,
-        instanceIdToPartId,
-        localPos,
-        localQuat,
-        localScale,
-        baseColors,
-      });
-
-      totalInstances += count;
-      estimatedTriangles += countGeometryTriangles(geo) * count;
-    }
-
-    // Build all Tier-2 BatchedMeshes grouped by material bucket (fused to 3 Mega-Buckets in STD LITE!)
-    const piecesByBucket = new Map<MaterialBucketKey, BatchedPieceSpec[]>();
+    this.batchedPools = [];
     const partLumaSum = new Float32Array(partCount);
     const partLumaCnt = new Uint16Array(partCount);
-    for (let i = 0; i < batchedPieces.length; i++) {
-      const bp = batchedPieces[i];
-      const targetBucket = isStdLite ? resolveMiShoeLiteBucket(bp.bucket) : bp.bucket;
-      let arr = piecesByBucket.get(targetBucket);
-      if (!arr) {
-        arr = [];
-        piecesByBucket.set(targetBucket, arr);
-      }
-      arr.push(bp);
-    }
 
-    this.batchedPools = [];
-    for (const [bucket, list] of piecesByBucket.entries()) {
-      let totalVerts = 0;
-      for (let i = 0; i < list.length; i++) {
-        totalVerts += list[i].geometry.getAttribute('position').count;
-      }
-      const mat = cache.acquireMaterial(bucket, quality, 'solid', this.clippingPlanes);
-      const batchedMesh = new THREE.BatchedMesh(list.length, totalVerts, 0, mat);
-      batchedMesh.name = `mishoe-batch-${bucket}`;
-      batchedMesh.frustumCulled = false;
-      batchedMesh.boundingBox = new THREE.Box3();
-      batchedMesh.boundingSphere = new THREE.Sphere();
-      if (isUltra) {
-        const opaque = !mat.transparent;
-        batchedMesh.castShadow = opaque;
-        batchedMesh.receiveShadow = opaque;
-      }
-      setNodeStaticMatrix(batchedMesh);
-
-      const batchIds = new Int32Array(list.length);
-      const partIndices = new Int32Array(list.length);
-      const batchIdToPartId = new Array<string>(list.length);
-      const baseColors = new Uint32Array(list.length);
-      const bindingIndex = bindings.length;
-
-      for (let i = 0; i < list.length; i++) {
-        const bp = list[i];
-        const geoId = batchedMesh.addGeometry(bp.geometry);
-        const instId = batchedMesh.addInstance(geoId);
-        const liftedHex = liftDarkCadTint(bp.colorHex);
-        batchIds[i] = instId;
-        partIndices[i] = bp.partIdx;
-        batchIdToPartId[instId] = bp.partId;
-        baseColors[i] = liftedHex;
-        partLumaSum[bp.partIdx] += getCadTintLuma(liftedHex);
-        partLumaCnt[bp.partIdx] += 1;
-        registeredPartIds.add(bp.partId);
-        partBindingIndexSets[bp.partIdx].add(bindingIndex);
-
-        _tmpColor.setHex(liftedHex);
-        batchedMesh.setColorAt(instId, _tmpColor);
-        estimatedTriangles += Math.floor(bp.geometry.getAttribute('position').count / 3);
-      }
-
-      rootGroup.add(batchedMesh);
-      const binding: RaycastBatchedBinding = {
-        kind: 'batched',
-        mesh: batchedMesh,
-        batchIdToPartId,
+    if (isStdLite) {
+      // STD LITE v2 Hyper-Fusion: fold ALL 18 instanced pools + ALL batched pieces into ONE
+      // Dual-Atlas Opaque BatchedMesh (1 draw call for all 99 parts, Int16 pos + Int8 norm + RGBA8 + Uint16 IBO!)
+      const partGeos = new Map<number, THREE.BufferGeometry[]>();
+      const pushLiteGeo = (partIdx: number, partId: string, g: THREE.BufferGeometry | null): void => {
+        if (!g) return;
+        registeredPartIds.add(partId);
+        let arr = partGeos.get(partIdx);
+        if (!arr) {
+          arr = [];
+          partGeos.set(partIdx, arr);
+        }
+        arr.push(g);
       };
-      bindings.push(binding);
 
-      this.batchedPools.push({
-        bucket,
-        mesh: batchedMesh,
-        count: list.length,
-        batchIds,
-        partIndices,
-        batchIdToPartId,
-        baseColors,
-      });
-      totalBatchedItems += list.length;
+      const eulerScratch = new THREE.Euler();
+      for (const draft of Object.values(instPoolsDraft)) {
+        if (draft.records.length === 0) continue;
+        const finishBit = resolveMiShoeLiteFinishBit(draft.bucket);
+        const protoGeo = draft.geoFactory();
+        for (let i = 0; i < draft.records.length; i++) {
+          const r = draft.records[i];
+          if (onlyPartIds && !onlyPartIds.has(r.partId)) continue;
+          _tmpPos.set(r.localPos[0], r.localPos[1], r.localPos[2]);
+          eulerScratch.set(r.localRot[0], r.localRot[1], r.localRot[2]);
+          _tmpQuat.setFromEuler(eulerScratch);
+          _tmpScale.set(r.localScale[0], r.localScale[1], r.localScale[2]);
+          _tmpMat4.compose(_tmpPos, _tmpQuat, _tmpScale);
+          const liftedHex = liftDarkCadTint(r.colorHex);
+          const packed = packMiShoeLiteGeo(protoGeo, _tmpMat4, liftedHex, finishBit);
+          pushLiteGeo(r.partIdx, r.partId, packed);
+        }
+        protoGeo.dispose();
+      }
+
+      for (let i = 0; i < batchedPieces.length; i++) {
+        const bp = batchedPieces[i];
+        if (onlyPartIds && !onlyPartIds.has(bp.partId)) continue;
+        const liftedHex = liftDarkCadTint(bp.colorHex);
+        const finishBit = resolveMiShoeLiteFinishBit(bp.bucket);
+        const packed = packMiShoeLiteGeo(bp.geometry, null, liftedHex, finishBit);
+        pushLiteGeo(bp.partIdx, bp.partId, packed);
+      }
+
+      interface LiteMergedPart {
+        partIdx: number;
+        partId: string;
+        geo: THREE.BufferGeometry;
+        vCount: number;
+        iCount: number;
+      }
+      const mergedList: LiteMergedPart[] = [];
+      for (const [pi, gList] of partGeos.entries()) {
+        if (gList.length === 0) continue;
+        const merged = gList.length === 1 ? gList[0] : mergeGeometries(gList, false);
+        if (gList.length > 1) {
+          for (let g = 0; g < gList.length; g++) gList[g].dispose();
+        }
+        if (!merged) continue;
+        const vCount = merged.getAttribute('position')?.count ?? 0;
+        const iCount = merged.index ? merged.index.count : vCount;
+        if (vCount < 3 || iCount < 3) {
+          merged.dispose();
+          continue;
+        }
+        mergedList.push({ partIdx: pi, partId: partMetas[pi].id, geo: merged, vCount, iCount });
+      }
+
+      // Chunk at 65,000 verts to guarantee 16-bit Uint16Array IBOs
+      const chunks: LiteMergedPart[][] = [];
+      let curChunk: LiteMergedPart[] = [];
+      let curVerts = 0;
+      for (let i = 0; i < mergedList.length; i++) {
+        const it = mergedList[i];
+        if (curChunk.length > 0 && curVerts + it.vCount > 65000) {
+          chunks.push(curChunk);
+          curChunk = [];
+          curVerts = 0;
+        }
+        curChunk.push(it);
+        curVerts += it.vCount;
+      }
+      if (curChunk.length > 0) chunks.push(curChunk);
+
+      const quantizePos = !onlyPartIds;
+      for (let ci = 0; ci < chunks.length; ci++) {
+        const chunk = chunks[ci];
+        let totalVerts = 0;
+        let totalIndices = 0;
+        for (let i = 0; i < chunk.length; i++) {
+          totalVerts += chunk[i].vCount;
+          totalIndices += chunk[i].iCount;
+        }
+        const mat = cache.acquireMaterial('metal_hero', quality, 'solid', this.clippingPlanes, true, ci);
+        const batchedMesh = new THREE.BatchedMesh(
+          chunk.length,
+          Math.max(64, totalVerts + 32),
+          Math.max(64, totalIndices + 32),
+          mat
+        );
+        batchedMesh.name = `mishoe-batch-lite-dual-${ci}`;
+        batchedMesh.frustumCulled = false;
+        batchedMesh.perObjectFrustumCulled = false;
+        batchedMesh.boundingBox = new THREE.Box3();
+        batchedMesh.boundingSphere = new THREE.Sphere();
+        setNodeStaticMatrix(batchedMesh);
+
+        const batchIds = new Int32Array(chunk.length);
+        const partIndices = new Int32Array(chunk.length);
+        const batchIdToPartId = new Array<string>(chunk.length);
+        const baseColors = new Uint32Array(chunk.length);
+        const quantCenter = new Float32Array(chunk.length * 3);
+        const quantScale = new Float32Array(chunk.length);
+        const bindingIndex = bindings.length;
+
+        for (let i = 0; i < chunk.length; i++) {
+          const it = chunk[i];
+          if (quantizePos) {
+            const q = quantizeGeometryPositionInPlace(it.geo);
+            quantCenter[i * 3] = q.cx;
+            quantCenter[i * 3 + 1] = q.cy;
+            quantCenter[i * 3 + 2] = q.cz;
+            quantScale[i] = q.scale;
+          } else {
+            quantScale[i] = 1;
+          }
+          const geoId = batchedMesh.addGeometry(it.geo);
+          it.geo.dispose();
+          const instId = batchedMesh.addInstance(geoId);
+          batchIds[i] = instId;
+          partIndices[i] = it.partIdx;
+          batchIdToPartId[instId] = it.partId;
+          baseColors[i] = 0xffffff;
+          partBindingIndexSets[it.partIdx].add(bindingIndex);
+          _tmpColor.setHex(0xffffff);
+          batchedMesh.setColorAt(instId, _tmpColor);
+          estimatedTriangles += Math.floor(it.iCount / 3);
+        }
+
+        rootGroup.add(batchedMesh);
+        const binding: RaycastBatchedBinding = {
+          kind: 'batched',
+          mesh: batchedMesh,
+          batchIdToPartId,
+        };
+        bindings.push(binding);
+
+        let gpuTex: THREE.DataTexture | null = null;
+        let gpuTexW = 1;
+        if (!onlyPartIds && mat.userData?.__liteUniforms) {
+          let maxBid = 0;
+          for (let i = 0; i < chunk.length; i++) {
+            if (batchIds[i] + 1 > maxBid) maxBid = batchIds[i] + 1;
+          }
+          const offsets = new Float32Array(Math.max(1, maxBid) * 3);
+          for (let i = 0; i < chunk.length; i++) {
+            const po = partIndices[i] * 3;
+            const bo = batchIds[i] * 3;
+            offsets[bo] = this.explodeOffsetFlat[po];
+            offsets[bo + 1] = this.explodeOffsetFlat[po + 1];
+            offsets[bo + 2] = this.explodeOffsetFlat[po + 2];
+          }
+          const builtTex = createGpuExplodeDataTexture(offsets, maxBid);
+          gpuTex = builtTex.tex;
+          gpuTexW = builtTex.texW;
+          bindGpuExplodeToMaterial(mat, gpuTex, gpuTexW, 0);
+          binding.gpuExplodeOffsets = offsets;
+          binding.gpuExplodeFactor = 0;
+          this.gpuExplodeBindings.push(binding);
+          this.allPoolsGpuExplode = true;
+        }
+
+        this.batchedPools.push({
+          bucket: 'metal_hero',
+          usesVertexColors: true,
+          mesh: batchedMesh,
+          count: chunk.length,
+          batchIds,
+          partIndices,
+          batchIdToPartId,
+          baseColors,
+          quantCenter,
+          quantScale,
+          gpuExplodeTex: gpuTex,
+          gpuExplodeTexW: gpuTexW,
+        });
+        totalBatchedItems += chunk.length;
+      }
+    } else {
+      // Build all Tier-1 InstancedMeshes with instanceId -> partId reverse lookup
+      for (const [poolId, draft] of Object.entries(instPoolsDraft)) {
+        const records = onlyPartIds
+          ? draft.records.filter((r) => onlyPartIds.has(r.partId))
+          : draft.records;
+        const count = records.length;
+        if (count === 0) continue;
+
+        const resolvedBucket = draft.bucket;
+        const geo = cache.acquireGeometry(draft.geoKey, draft.geoFactory);
+        const mat = cache.acquireMaterial(resolvedBucket, quality, 'solid', this.clippingPlanes);
+        const mesh = new THREE.InstancedMesh(geo, mat, count);
+        mesh.name = `mishoe-inst-${poolId}`;
+        mesh.frustumCulled = false;
+        mesh.boundingBox = new THREE.Box3();
+        mesh.boundingSphere = new THREE.Sphere();
+        if (isUltra) {
+          const opaque = !mat.transparent;
+          mesh.castShadow = opaque;
+          mesh.receiveShadow = opaque;
+        }
+        setNodeStaticMatrix(mesh);
+
+        const partIndices = new Int32Array(count);
+        const instanceIdToPartId = new Array<string>(count);
+        const localPos = new Float32Array(count * 3);
+        const localQuat = new Float32Array(count * 4);
+        const localScale = new Float32Array(count * 3);
+        const baseColors = new Uint32Array(count);
+
+        const bindingIndex = bindings.length;
+        const eulerScratch = new THREE.Euler();
+
+        for (let i = 0; i < count; i++) {
+          const r = records[i];
+          partIndices[i] = r.partIdx;
+          instanceIdToPartId[i] = r.partId;
+          registeredPartIds.add(r.partId);
+          partBindingIndexSets[r.partIdx].add(bindingIndex);
+
+          const p3 = i * 3;
+          localPos[p3] = r.localPos[0];
+          localPos[p3 + 1] = r.localPos[1];
+          localPos[p3 + 2] = r.localPos[2];
+
+          eulerScratch.set(r.localRot[0], r.localRot[1], r.localRot[2]);
+          _tmpQuat.setFromEuler(eulerScratch);
+          const q4 = i * 4;
+          localQuat[q4] = _tmpQuat.x;
+          localQuat[q4 + 1] = _tmpQuat.y;
+          localQuat[q4 + 2] = _tmpQuat.z;
+          localQuat[q4 + 3] = _tmpQuat.w;
+
+          localScale[p3] = r.localScale[0];
+          localScale[p3 + 1] = r.localScale[1];
+          localScale[p3 + 2] = r.localScale[2];
+
+          const liftedHex = liftDarkCadTint(r.colorHex);
+          baseColors[i] = liftedHex;
+          _tmpColor.setHex(liftedHex);
+          mesh.setColorAt(i, _tmpColor);
+        }
+        if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+
+        rootGroup.add(mesh);
+        const binding: RaycastInstancedBinding = {
+          kind: 'instanced',
+          mesh,
+          instanceIdToPartId,
+        };
+        bindings.push(binding);
+
+        this.instancedPools.push({
+          id: poolId,
+          bucket: resolvedBucket,
+          mesh,
+          count,
+          partIndices,
+          instanceIdToPartId,
+          localPos,
+          localQuat,
+          localScale,
+          baseColors,
+        });
+
+        totalInstances += count;
+        estimatedTriangles += countGeometryTriangles(geo) * count;
+      }
+
+      // Build all Tier-2 BatchedMeshes grouped by material bucket
+      const piecesByBucket = new Map<MaterialBucketKey, BatchedPieceSpec[]>();
+      for (let i = 0; i < batchedPieces.length; i++) {
+        const bp = batchedPieces[i];
+        if (onlyPartIds && !onlyPartIds.has(bp.partId)) continue;
+        let arr = piecesByBucket.get(bp.bucket);
+        if (!arr) {
+          arr = [];
+          piecesByBucket.set(bp.bucket, arr);
+        }
+        arr.push(bp);
+      }
+
+      for (const [bucket, list] of piecesByBucket.entries()) {
+        let totalVerts = 0;
+        for (let i = 0; i < list.length; i++) {
+          totalVerts += list[i].geometry.getAttribute('position').count;
+        }
+        const mat = cache.acquireMaterial(bucket, quality, 'solid', this.clippingPlanes);
+        const batchedMesh = new THREE.BatchedMesh(list.length, totalVerts, 0, mat);
+        batchedMesh.name = `mishoe-batch-${bucket}`;
+        batchedMesh.frustumCulled = false;
+        batchedMesh.boundingBox = new THREE.Box3();
+        batchedMesh.boundingSphere = new THREE.Sphere();
+        if (isUltra) {
+          const opaque = !mat.transparent;
+          batchedMesh.castShadow = opaque;
+          batchedMesh.receiveShadow = opaque;
+        }
+        setNodeStaticMatrix(batchedMesh);
+
+        const batchIds = new Int32Array(list.length);
+        const partIndices = new Int32Array(list.length);
+        const batchIdToPartId = new Array<string>(list.length);
+        const baseColors = new Uint32Array(list.length);
+        const quantCenter = new Float32Array(list.length * 3);
+        const quantScale = new Float32Array(list.length).fill(1);
+        const bindingIndex = bindings.length;
+
+        for (let i = 0; i < list.length; i++) {
+          const bp = list[i];
+          const geoId = batchedMesh.addGeometry(bp.geometry);
+          const instId = batchedMesh.addInstance(geoId);
+          const liftedHex = liftDarkCadTint(bp.colorHex);
+          batchIds[i] = instId;
+          partIndices[i] = bp.partIdx;
+          batchIdToPartId[instId] = bp.partId;
+          baseColors[i] = liftedHex;
+          partLumaSum[bp.partIdx] += getCadTintLuma(liftedHex);
+          partLumaCnt[bp.partIdx] += 1;
+          registeredPartIds.add(bp.partId);
+          partBindingIndexSets[bp.partIdx].add(bindingIndex);
+
+          _tmpColor.setHex(liftedHex);
+          batchedMesh.setColorAt(instId, _tmpColor);
+          estimatedTriangles += Math.floor(bp.geometry.getAttribute('position').count / 3);
+        }
+
+        rootGroup.add(batchedMesh);
+        const binding: RaycastBatchedBinding = {
+          kind: 'batched',
+          mesh: batchedMesh,
+          batchIdToPartId,
+        };
+        bindings.push(binding);
+
+        this.batchedPools.push({
+          bucket,
+          usesVertexColors: false,
+          mesh: batchedMesh,
+          count: list.length,
+          batchIds,
+          partIndices,
+          batchIdToPartId,
+          baseColors,
+          quantCenter,
+          quantScale,
+          gpuExplodeTex: null,
+          gpuExplodeTexW: 1,
+        });
+        totalBatchedItems += list.length;
+      }
     }
 
     const commitNow = typeof performance !== 'undefined' ? performance.now() : Date.now();
@@ -1463,64 +1807,65 @@ export class MiShoeUnit implements OptimizedUnit {
     }
 
     // =========================================================================
-    // Commit Chunk B: Build Cached CAD Edges + V2 Instanced Physics Overlay
+    // Commit Chunk B: Build Cached CAD Edges (skipped in STD LITE v2!) + V2 Physics Overlay
     // =========================================================================
     const finalStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
 
     this.edgeLines = [];
-    const edgeGroup = new THREE.Group();
-    edgeGroup.name = 'mishoe-v2-edges';
-    setNodeStaticMatrix(edgeGroup);
+    if (!isStdLite && !onlyPartIds) {
+      const edgeGroup = new THREE.Group();
+      edgeGroup.name = 'mishoe-v2-edges';
+      setNodeStaticMatrix(edgeGroup);
 
-    const thresholdAngle =
-      quality === 'standard_lite' ? 40 : quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
-    for (let pi = 0; pi < partCount; pi++) {
-      const srcGeos = edgeSourceByPart.get(pi);
-      if (!srcGeos || srcGeos.length === 0) continue;
+      const thresholdAngle = quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
+      for (let pi = 0; pi < partCount; pi++) {
+        const srcGeos = edgeSourceByPart.get(pi);
+        if (!srcGeos || srcGeos.length === 0) continue;
 
-      const partId = partMetas[pi].id;
-      const edgeGeoKey = `mi:edge:${partId}:${quality}`;
-      const edgeGeo = cache.acquireGeometry(edgeGeoKey, () => {
-        const mergedSrc = srcGeos.length === 1 ? srcGeos[0] : mergeGeometries(srcGeos, false)!;
-        const edges = new THREE.EdgesGeometry(mergedSrc, thresholdAngle);
-        if (srcGeos.length > 1) mergedSrc.dispose();
-        return edges;
-      });
+        const partId = partMetas[pi].id;
+        const edgeGeoKey = `mi:edge:${partId}:${quality}`;
+        const edgeGeo = cache.acquireGeometry(edgeGeoKey, () => {
+          const mergedSrc = srcGeos.length === 1 ? srcGeos[0] : mergeGeometries(srcGeos, false)!;
+          const edges = new THREE.EdgesGeometry(mergedSrc, thresholdAngle);
+          if (srcGeos.length > 1) mergedSrc.dispose();
+          return edges;
+        });
 
-      const avgLuma = partLumaCnt[pi] > 0 ? partLumaSum[pi] / partLumaCnt[pi] : 0.5;
-      const isDark = avgLuma < 0.36;
-      const matRef = cache.acquireLineMaterial(isDark ? 'mishoe-edge-solid-dark' : 'mishoe-edge-solid', {
-        color: isDark ? 0x7a889e : 0x181c24,
-        opacity: isDark ? 0.32 : 0.26,
-        clippingPlanes: this.clippingPlanes,
-      });
-      const line = new THREE.LineSegments(edgeGeo, matRef);
-      line.name = `mishoe-edge-${partId}`;
-      line.position.set(
-        this.assembledPosFlat[pi * 3],
-        this.assembledPosFlat[pi * 3 + 1],
-        this.assembledPosFlat[pi * 3 + 2]
-      );
-      const isHero = HERO_EDGE_PARTS.has(partId);
-      line.visible = cfg.showSolidStructuralEdges && isHero;
-      setNodeStaticMatrix(line);
-      edgeGroup.add(line);
-      this.edgeLines.push({ partIdx: pi, partId, line, isHero, isDark });
+        const avgLuma = partLumaCnt[pi] > 0 ? partLumaSum[pi] / partLumaCnt[pi] : 0.5;
+        const isDark = avgLuma < 0.36;
+        const matRef = cache.acquireLineMaterial(isDark ? 'mishoe-edge-solid-dark' : 'mishoe-edge-solid', {
+          color: isDark ? 0x7a889e : 0x181c24,
+          opacity: isDark ? 0.32 : 0.26,
+          clippingPlanes: this.clippingPlanes,
+        });
+        const line = new THREE.LineSegments(edgeGeo, matRef);
+        line.name = `mishoe-edge-${partId}`;
+        line.position.set(
+          this.assembledPosFlat[pi * 3],
+          this.assembledPosFlat[pi * 3 + 1],
+          this.assembledPosFlat[pi * 3 + 2]
+        );
+        const isHero = HERO_EDGE_PARTS.has(partId);
+        line.visible = cfg.showSolidStructuralEdges && isHero;
+        setNodeStaticMatrix(line);
+        edgeGroup.add(line);
+        this.edgeLines.push({ partIdx: pi, partId, line, isHero, isDark });
 
-      const edgeNow = typeof performance !== 'undefined' ? performance.now() : Date.now();
-      if (!synchronous && edgeNow - sliceStart >= frameBudgetMs) {
-        if (edgeNow - finalStart > maxChunkMs) maxChunkMs = Math.min(maxChunkMs, edgeNow - sliceStart);
-        await yieldNextFrame();
-        sliceStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
-        if (isAborted()) {
-          for (let i = 0; i < batchedPieces.length; i++) batchedPieces[i].geometry.dispose();
-          rootGroup.add(edgeGroup);
-          this.dispose(cache);
-          throw new Error('MiShoeUnit build aborted');
+        const edgeNow = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        if (!synchronous && edgeNow - sliceStart >= frameBudgetMs) {
+          if (edgeNow - finalStart > maxChunkMs) maxChunkMs = Math.min(maxChunkMs, edgeNow - sliceStart);
+          await yieldNextFrame();
+          sliceStart = typeof performance !== 'undefined' ? performance.now() : Date.now();
+          if (isAborted()) {
+            for (let i = 0; i < batchedPieces.length; i++) batchedPieces[i].geometry.dispose();
+            rootGroup.add(edgeGroup);
+            this.dispose(cache);
+            throw new Error('MiShoeUnit build aborted');
+          }
         }
       }
+      rootGroup.add(edgeGroup);
     }
-    rootGroup.add(edgeGroup);
 
     // Dispose all staging temporary geometries now that BatchedMeshes & EdgesGeometries have copied them!
     for (let i = 0; i < batchedPieces.length; i++) {
@@ -1528,10 +1873,12 @@ export class MiShoeUnit implements OptimizedUnit {
     }
 
     // Build V2 Instanced Physics Overlay & Explode Guides
-    this.physicsState = this.buildPhysicsOverlay(cache, cfg.sphereSegments);
-    rootGroup.add(this.physicsState.overlayGroup, this.physicsState.explodeGuidesGroup);
+    if (!onlyPartIds) {
+      this.physicsState = this.buildPhysicsOverlay(cache, cfg.sphereSegments);
+      rootGroup.add(this.physicsState.overlayGroup, this.physicsState.explodeGuidesGroup);
+    }
 
-    // Build 2-stage Raycast AABB Index (Unit -> 8 Groups -> 32 Parts -> Bindings)
+    // Build Flat TypedArray Binary AABB-BVH + 2-stage Raycast AABB Index
     const partBounds: RaycastPartBounds[] = [];
     const partBoundsById = new Map<string, RaycastPartBounds>();
     const groupPartIndicesMap = new Map<string, number[]>();
@@ -1542,11 +1889,15 @@ export class MiShoeUnit implements OptimizedUnit {
       if (lb.isEmpty()) {
         lb.set(new THREE.Vector3(-1, -1, -1), new THREE.Vector3(1, 1, 1));
       }
+      const wb = new THREE.Box3();
+      const po = i * 3;
+      wb.min.set(lb.min.x + this.assembledPosFlat[po], lb.min.y + this.assembledPosFlat[po + 1], lb.min.z + this.assembledPosFlat[po + 2]);
+      wb.max.set(lb.max.x + this.assembledPosFlat[po], lb.max.y + this.assembledPosFlat[po + 1], lb.max.z + this.assembledPosFlat[po + 2]);
       const pb: RaycastPartBounds = {
         partId: pm.id,
         groupKey: pm.groupKey,
         localBox: lb,
-        worldBox: new THREE.Box3(),
+        worldBox: wb,
         bindingIndices: Array.from(partBindingIndexSets[i]),
       };
       partBounds.push(pb);
@@ -1569,12 +1920,20 @@ export class MiShoeUnit implements OptimizedUnit {
       });
     }
 
+    const bvh = buildFlatPartBvh(partBounds);
     this.raycastIndex = {
       unitWorldBox: new THREE.Box3(),
       bindings,
       parts: partBounds,
       groups,
       partBoundsById,
+      fastLiteRaycast: isStdLite,
+      bvhNodes: bvh.nodes,
+      bvhPartOrder: bvh.order,
+      bvhNodeCount: bvh.nodeCount,
+      bvhDirty: false,
+      boundsDirty: false,
+      syncBounds: this.syncLazyBounds,
     };
 
     // Initial placement at explode = 0.0 (updates all InstancedMesh, BatchedMesh & AABB bounds once!)
@@ -1910,10 +2269,52 @@ export class MiShoeUnit implements OptimizedUnit {
     this.rootGroup.updateMatrixWorld(true);
   }
 
+  private refreshMiShoeRaycastBounds(): void {
+    const idx = this.raycastIndex;
+    if (!idx) return;
+    const cur = this.currentPosFlat;
+    const unitBox = idx.unitWorldBox;
+    unitBox.makeEmpty();
+    const pBounds = idx.parts;
+    for (let i = 0; i < pBounds.length; i++) {
+      const pb = pBounds[i];
+      const po = i * 3;
+      const px = cur[po];
+      const py = cur[po + 1];
+      const pz = cur[po + 2];
+      pb.worldBox.min.set(pb.localBox.min.x + px, pb.localBox.min.y + py, pb.localBox.min.z + pz);
+      pb.worldBox.max.set(pb.localBox.max.x + px, pb.localBox.max.y + py, pb.localBox.max.z + pz);
+      unitBox.union(pb.worldBox);
+    }
+
+    const groups = idx.groups;
+    for (let gi = 0; gi < groups.length; gi++) {
+      const g = groups[gi];
+      g.worldBox.makeEmpty();
+      const indices = g.partIndices;
+      for (let k = 0; k < indices.length; k++) {
+        g.worldBox.union(pBounds[indices[k]].worldBox);
+      }
+    }
+
+    _unitBoxScratch.copy(unitBox);
+    for (let pi = 0; pi < this.instancedPools.length; pi++) {
+      const m = this.instancedPools[pi].mesh;
+      if (m.boundingBox) m.boundingBox.copy(_unitBoxScratch);
+      if (m.boundingSphere) _unitBoxScratch.getBoundingSphere(m.boundingSphere);
+    }
+    for (let bi = 0; bi < this.batchedPools.length; bi++) {
+      const m = this.batchedPools[bi].mesh;
+      if (m.boundingBox) m.boundingBox.copy(_unitBoxScratch);
+      if (m.boundingSphere) _unitBoxScratch.getBoundingSphere(m.boundingSphere);
+    }
+    idx.boundsDirty = false;
+    idx.bvhDirty = true;
+  }
+
   /**
    * Zero-allocation differential explode update (`0.0..1.0`).
-   * Strictly reuses module-scoped scratch objects and sets `instanceMatrix.needsUpdate = true`
-   * ONLY when `t` actually changed (or `force` is true after visibility changes).
+   * In STD LITE v2, updates ONLY 1 float GPU uniform (`uExplode`) in O(1) (~0.004ms) with lazy BVH sync!
    */
   public updateExplode(t: number, force = false): boolean {
     const clamped = t < 0 ? 0 : t > 1 ? 1 : t;
@@ -1921,6 +2322,27 @@ export class MiShoeUnit implements OptimizedUnit {
       return false;
     }
     this.lastExplodeT = clamped;
+
+    // O(1) Hardware GPU Vertex-Shader Kinematic Explode Fast Path!
+    if (this.allPoolsGpuExplode && !force && this.edgeLines.length === 0) {
+      for (let bi = 0; bi < this.batchedPools.length; bi++) {
+        const u = (this.batchedPools[bi].mesh.material as THREE.Material).userData
+          ?.__liteUniforms as LiteMatcapUniforms | undefined;
+        if (u) u.uExplode.value = clamped;
+      }
+      for (let b = 0; b < this.gpuExplodeBindings.length; b++) {
+        this.gpuExplodeBindings[b].gpuExplodeFactor = clamped;
+      }
+      this.boundsDirty = true;
+      if (this.raycastIndex) {
+        this.raycastIndex.boundsDirty = true;
+        this.raycastIndex.bvhDirty = true;
+      }
+      if (clamped === 0) {
+        this.syncLazyBounds();
+      }
+      return true;
+    }
 
     const partCount = this.parts.length;
     const assem = this.assembledPosFlat;
@@ -1973,25 +2395,45 @@ export class MiShoeUnit implements OptimizedUnit {
     }
 
     // 3. Update all Tier-2 BatchedMesh matrices & visibility flags (zero allocations!)
-    _tmpQuat.identity();
-    _tmpScale.set(1, 1, 1);
     for (let bi = 0; bi < this.batchedPools.length; bi++) {
       const pool = this.batchedPools[bi];
+      const useGpu = Boolean(pool.gpuExplodeTex);
+      if (useGpu) {
+        const u = (pool.mesh.material as THREE.Material).userData?.__liteUniforms as
+          | LiteMatcapUniforms
+          | undefined;
+        if (u) u.uExplode.value = clamped;
+      }
       const count = pool.count;
       const bIds = pool.batchIds;
       const pIdxArr = pool.partIndices;
+      const qC = pool.quantCenter;
+      const qS = pool.quantScale;
+      const srcPos = useGpu ? assem : cur;
+      const me = _tmpMat4.elements;
 
       for (let i = 0; i < count; i++) {
         const bId = bIds[i];
         const partIdx = pIdxArr[i];
         const po = partIdx * 3;
+        const qo = i * 3;
+        const s = qS[i];
         const hidden = this.isPartHiddenInternal(pool.batchIdToPartId[bId]);
 
-        _tmpPos.set(cur[po], cur[po + 1], cur[po + 2]);
-        _tmpMat4.compose(_tmpPos, _tmpQuat, _tmpScale);
+        me[0] = s; me[1] = 0; me[2] = 0; me[3] = 0;
+        me[4] = 0; me[5] = s; me[6] = 0; me[7] = 0;
+        me[8] = 0; me[9] = 0; me[10] = s; me[11] = 0;
+        me[12] = srcPos[po] + qC[qo];
+        me[13] = srcPos[po + 1] + qC[qo + 1];
+        me[14] = srcPos[po + 2] + qC[qo + 2];
+        me[15] = 1;
         pool.mesh.setMatrixAt(bId, _tmpMat4);
         pool.mesh.setVisibleAt(bId, !hidden);
       }
+    }
+
+    for (let b = 0; b < this.gpuExplodeBindings.length; b++) {
+      this.gpuExplodeBindings[b].gpuExplodeFactor = clamped;
     }
 
     // 4. Update cached CAD edge line manual matrices
@@ -2003,46 +2445,9 @@ export class MiShoeUnit implements OptimizedUnit {
       rec.line.updateMatrixWorld(false);
     }
 
-    // 5. Refresh cached 2-stage raycast AABBs (Unit -> 8 Groups -> 32 Parts) with zero allocations!
-    if (this.raycastIndex) {
-      const unitBox = this.raycastIndex.unitWorldBox;
-      unitBox.makeEmpty();
-      const pBounds = this.raycastIndex.parts;
-      for (let i = 0; i < pBounds.length; i++) {
-        const pb = pBounds[i];
-        const po = i * 3;
-        const px = cur[po];
-        const py = cur[po + 1];
-        const pz = cur[po + 2];
-        pb.worldBox.min.set(pb.localBox.min.x + px, pb.localBox.min.y + py, pb.localBox.min.z + pz);
-        pb.worldBox.max.set(pb.localBox.max.x + px, pb.localBox.max.y + py, pb.localBox.max.z + pz);
-        unitBox.union(pb.worldBox);
-      }
-
-      const groups = this.raycastIndex.groups;
-      for (let gi = 0; gi < groups.length; gi++) {
-        const g = groups[gi];
-        g.worldBox.makeEmpty();
-        const indices = g.partIndices;
-        for (let k = 0; k < indices.length; k++) {
-          g.worldBox.union(pBounds[indices[k]].worldBox);
-        }
-      }
-
-      // Sync InstancedMesh & BatchedMesh bounding volumes from unitWorldBox (zero allocations!)
-      _unitBoxScratch.copy(unitBox);
-      for (let pi = 0; pi < this.instancedPools.length; pi++) {
-        const m = this.instancedPools[pi].mesh;
-        if (m.boundingBox) m.boundingBox.copy(_unitBoxScratch);
-        if (m.boundingSphere) _unitBoxScratch.getBoundingSphere(m.boundingSphere);
-      }
-      for (let bi = 0; bi < this.batchedPools.length; bi++) {
-        const m = this.batchedPools[bi].mesh;
-        if (m.boundingBox) m.boundingBox.copy(_unitBoxScratch);
-        if (m.boundingSphere) _unitBoxScratch.getBoundingSphere(m.boundingSphere);
-      }
-    }
-
+    // 5. Refresh cached 2-stage raycast AABBs & mark Flat BVH dirty (zero allocations!)
+    this.boundsDirty = false;
+    this.refreshMiShoeRaycastBounds();
     return true;
   }
 
@@ -2078,6 +2483,7 @@ export class MiShoeUnit implements OptimizedUnit {
     if (modeChanged && this.cachedCacheRef) {
       const cache = this.cachedCacheRef;
       const isUltra = this.quality === 'ultra';
+      const curT = this.lastExplodeT < 0 ? 0 : this.lastExplodeT;
       for (let pi = 0; pi < this.instancedPools.length; pi++) {
         const pool = this.instancedPools[pi];
         const prevMat = pool.mesh.material as THREE.Material;
@@ -2093,8 +2499,19 @@ export class MiShoeUnit implements OptimizedUnit {
       for (let bi = 0; bi < this.batchedPools.length; bi++) {
         const pool = this.batchedPools[bi];
         const prevMat = pool.mesh.material as THREE.Material;
-        const nextMat = cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes);
+        if (pool.gpuExplodeTex) bindGpuExplodeToMaterial(prevMat, null, 1, 0);
+        const nextMat = cache.acquireMaterial(
+          pool.bucket,
+          this.quality,
+          renderMode,
+          this.clippingPlanes,
+          pool.usesVertexColors,
+          this.quality === 'standard_lite' ? bi : 0
+        );
         pool.mesh.material = nextMat;
+        if (pool.gpuExplodeTex && nextMat.userData?.__liteUniforms) {
+          bindGpuExplodeToMaterial(nextMat, pool.gpuExplodeTex, pool.gpuExplodeTexW, curT);
+        }
         if (isUltra) {
           const shadowOk = renderMode === 'solid' && !nextMat.transparent;
           pool.mesh.castShadow = shadowOk;
@@ -2105,7 +2522,27 @@ export class MiShoeUnit implements OptimizedUnit {
     }
 
     // Update per-instance & per-batch highlight colors via setColorAt (zero allocations!)
-    const applyTint = (baseHex: number, partId: string): void => {
+    const applyTint = (baseHex: number, partId: string, usesVC = false): void => {
+      if (partId === this.selectedId) {
+        _tmpColor.setRGB(
+          CAD_SELECT_SENTINEL[0],
+          CAD_SELECT_SENTINEL[1],
+          CAD_SELECT_SENTINEL[2]
+        );
+        return;
+      }
+      if (partId === this.hoveredId) {
+        _tmpColor.setRGB(
+          CAD_HOVER_SENTINEL[0],
+          CAD_HOVER_SENTINEL[1],
+          CAD_HOVER_SENTINEL[2]
+        );
+        return;
+      }
+      if (usesVC && renderMode === 'solid') {
+        _tmpColor.setHex(0xffffff);
+        return;
+      }
       if (renderMode === 'cad') {
         _tmpColor.copy(_cadTint);
       } else if (renderMode === 'xray') {
@@ -2113,17 +2550,12 @@ export class MiShoeUnit implements OptimizedUnit {
       } else {
         _tmpColor.setHex(baseHex);
       }
-      if (partId === this.selectedId) {
-        _tmpColor.lerp(_selTint, 0.56);
-      } else if (partId === this.hoveredId) {
-        _tmpColor.lerp(_hovTint, 0.34);
-      }
     };
 
     for (let pi = 0; pi < this.instancedPools.length; pi++) {
       const pool = this.instancedPools[pi];
       for (let i = 0; i < pool.count; i++) {
-        applyTint(pool.baseColors[i], pool.instanceIdToPartId[i]);
+        applyTint(pool.baseColors[i], pool.instanceIdToPartId[i], false);
         pool.mesh.setColorAt(i, _tmpColor);
       }
       if (pool.mesh.instanceColor) pool.mesh.instanceColor.needsUpdate = true;
@@ -2133,7 +2565,7 @@ export class MiShoeUnit implements OptimizedUnit {
       const pool = this.batchedPools[bi];
       for (let i = 0; i < pool.count; i++) {
         const bId = pool.batchIds[i];
-        applyTint(pool.baseColors[i], pool.batchIdToPartId[bId]);
+        applyTint(pool.baseColors[i], pool.batchIdToPartId[bId], pool.usesVertexColors);
         pool.mesh.setColorAt(bId, _tmpColor);
       }
     }
@@ -2170,7 +2602,7 @@ export class MiShoeUnit implements OptimizedUnit {
         if (prevMat.userData?.__cacheKey !== `line:${targetKey}`) {
           const nextMat = cache.acquireLineMaterial(targetKey, {
             color: isSel
-              ? 0x0d5bd9
+              ? 0x007aff
               : isHov
                 ? 0x2563eb
                 : renderMode === 'cad'
@@ -2181,16 +2613,16 @@ export class MiShoeUnit implements OptimizedUnit {
                       ? 0x7a889e
                       : 0x181c24,
             opacity: isSel
-              ? 0.92
+              ? 0.96
               : isHov
-                ? 0.72
+                ? 0.76
                 : renderMode === 'cad'
                   ? 0.72
                   : renderMode === 'xray'
                     ? 0.36
                     : rec.isDark
-                      ? 0.32
-                      : 0.26,
+                      ? 0.24
+                      : 0.18,
             clippingPlanes: this.clippingPlanes,
           });
           rec.line.material = nextMat;
@@ -2206,6 +2638,71 @@ export class MiShoeUnit implements OptimizedUnit {
     if (visibilityChanged) {
       this.updateExplode(this.lastExplodeT < 0 ? 0 : this.lastExplodeT, true);
     }
+  }
+
+  public getKineOccluders(): readonly KineOccluderSpec[] {
+    return this.kineOccluders;
+  }
+
+  public applyKineCulling(culledMask: Uint8Array | null): number {
+    const n = this.parts.length;
+    if (n === 0) return 0;
+    if (this.kineCulledParts.length !== n) {
+      this.kineCulledParts = new Uint8Array(n);
+    }
+    let changed = 0;
+    for (let i = 0; i < n; i++) {
+      const next = culledMask !== null && i < culledMask.length ? (culledMask[i] ? 1 : 0) : 0;
+      if (this.kineCulledParts[i] !== next) {
+        this.kineCulledParts[i] = next;
+        changed++;
+      }
+    }
+    if (changed === 0) return 0;
+
+    for (let bi = 0; bi < this.batchedPools.length; bi++) {
+      const pool = this.batchedPools[bi];
+      for (let i = 0; i < pool.count; i++) {
+        const pIdx = pool.partIndices[i];
+        const bId = pool.batchIds[i];
+        const hidden = this.isPartHiddenInternal(pool.batchIdToPartId[bId]) || this.kineCulledParts[pIdx] !== 0;
+        pool.mesh.setVisibleAt(bId, !hidden);
+      }
+    }
+
+    const cur = this.currentPosFlat;
+    for (let pi = 0; pi < this.instancedPools.length; pi++) {
+      const pool = this.instancedPools[pi];
+      let touched = false;
+      for (let i = 0; i < pool.count; i++) {
+        const pIdx = pool.partIndices[i];
+        const hidden = this.isPartHiddenInternal(pool.instanceIdToPartId[i]) || this.kineCulledParts[pIdx] !== 0;
+        if (hidden) {
+          pool.mesh.setMatrixAt(i, _zeroMat4);
+          touched = true;
+        } else {
+          const po = pIdx * 3;
+          const lo = i * 3;
+          const qo = i * 4;
+          _tmpPos.set(cur[po] + pool.localPos[lo], cur[po + 1] + pool.localPos[lo + 1], cur[po + 2] + pool.localPos[lo + 2]);
+          _tmpQuat.set(pool.localQuat[qo], pool.localQuat[qo + 1], pool.localQuat[qo + 2], pool.localQuat[qo + 3]);
+          _tmpScale.set(pool.localScale[lo], pool.localScale[lo + 1], pool.localScale[lo + 2]);
+          _tmpMat4.compose(_tmpPos, _tmpQuat, _tmpScale);
+          pool.mesh.setMatrixAt(i, _tmpMat4);
+          touched = true;
+        }
+      }
+      if (touched) pool.mesh.instanceMatrix.needsUpdate = true;
+    }
+
+    for (let ei = 0; ei < this.edgeLines.length; ei++) {
+      const rec = this.edgeLines[ei];
+      const pIdx = this.partIdToIdx.get(rec.partId) ?? -1;
+      if (pIdx >= 0 && this.kineCulledParts[pIdx] !== 0) {
+        rec.line.visible = false;
+      }
+    }
+    return changed;
   }
 
   public setClippingPlanes(planes: THREE.Plane[]): void {
@@ -2355,6 +2852,14 @@ export class MiShoeUnit implements OptimizedUnit {
    * Complete deterministic GPU disposal & shared ResourceCache reference-count release.
    */
   public dispose(cache: ResourceCache): void {
+    for (let bi = 0; bi < this.batchedPools.length; bi++) {
+      const pool = this.batchedPools[bi];
+      if (pool.gpuExplodeTex) {
+        bindGpuExplodeToMaterial(pool.mesh.material as THREE.Material, null, 1, 0);
+        pool.gpuExplodeTex.dispose();
+        pool.gpuExplodeTex = null;
+      }
+    }
     if (this.rootGroup) {
       disposeObject3D(this.rootGroup, cache, true);
       this.rootGroup = null;
@@ -2368,6 +2873,11 @@ export class MiShoeUnit implements OptimizedUnit {
     this.partIdToIdx.clear();
     this.lastExplodeT = -1;
     this.cachedCacheRef = null;
+    this.allPoolsGpuExplode = false;
+    this.gpuExplodeBindings = [];
+    this.boundsDirty = false;
+    this.kineCulledParts = new Uint8Array(0);
+    this.kineOccluders = [];
   }
 }
 

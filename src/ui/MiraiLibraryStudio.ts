@@ -135,6 +135,9 @@ function get3dSubViewForFh(fhId: string): number | null {
   if (fhId === 'FH08') return 3;
   if (fhId === 'FH32') return 4;
   if (fhId === 'FH25') return 5;
+  if (fhId === 'FH20') return 6;
+  if (fhId === 'FH17') return 7;
+  if (fhId === 'FH48') return 8;
   return null;
 }
 

@@ -4,6 +4,9 @@ import { buildMiraiFh02Parts } from '../assemblies/mirai2028/miraiFh02Parts';
 import { buildMiraiFh08Parts } from '../assemblies/mirai2028/miraiFh08Parts';
 import { buildMiraiFh32Parts } from '../assemblies/mirai2028/miraiFh32Parts';
 import { buildMiraiFh25Parts } from '../assemblies/mirai2028/miraiFh25Parts';
+import { buildMiraiFh20Parts } from '../assemblies/mirai2028/miraiFh20Parts';
+import { buildMiraiFh17Parts } from '../assemblies/mirai2028/miraiFh17Parts';
+import { buildMiraiFh48Parts } from '../assemblies/mirai2028/miraiFh48Parts';
 import { MIRAI_HERO_SPECS } from '../assemblies/mirai2028/miraiShared';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
 import { CompiledV2Unit } from '../core/v2_unit_compiler';
@@ -18,12 +21,15 @@ const MIRAI_2028_META: UnitMeta = {
 };
 
 /**
- * Future History MIRAI 2028 (`mirai_2028`) V2 Optimized Unit — 5 Watchmaker-Grade 3D CAD Assemblies (86 Parts):
+ * Future History MIRAI 2028 (`mirai_2028`) V2 Optimized Unit — 8 Watchmaker-Grade 3D CAD Assemblies (140 Parts):
  *   - subView = 1: FH01 Full-Frame Single-Photon SPAD / QIS 3D Stacked Sensor (16 parts)
  *   - subView = 2: FH02 Filterless Perovskite / OPF 3-Layer Vertical RGB Sensor (16 parts)
  *   - subView = 3: FH08 ASI Inverse-Design 28mm · 180g 50mm F1.4 Freeform Meta-Optics Pancake Lens (18 parts)
  *   - subView = 4: FH32 IP68 Hermetically Isolated Ultrasonic MEMS Solid-State Air-Cooling Module (18 parts)
  *   - subView = 5: FH25 30,000-nit · 240Hz True-RGB Tandem Micro-OLED / MicroLED Pancake EVF Unit (18 parts)
+ *   - subView = 6: FH20 2nm/A16 GAA + BSPDN Heterogeneous Chiplet 1,000 TOPS Camera AI Brain SoC (18 parts)
+ *   - subView = 7: FH17 Earth-Rotation (15.04"/s) + Magnetic-Levitation CIPA 10–11 Stop IBIS & ±2° Tilt (18 parts)
+ *   - subView = 8: FH48 Dec 2028 Endpoint ~800g · 10–15W Post-Camera Integrated Flagship Machine (18 parts)
  *
  * Strictly adheres to:
  *   - 4-tier quality scaling (LITE / STD / HIGH / ULTRA) via ResourceCache & geometry_quality
@@ -44,6 +50,9 @@ export function createMirai2028Unit(): OptimizedUnit {
         ...buildMiraiFh08Parts(mats),
         ...buildMiraiFh32Parts(mats),
         ...buildMiraiFh25Parts(mats),
+        ...buildMiraiFh20Parts(mats),
+        ...buildMiraiFh17Parts(mats),
+        ...buildMiraiFh48Parts(mats),
       ].sort((a, b) => a.order - b.order);
       return { parts: allParts };
     },

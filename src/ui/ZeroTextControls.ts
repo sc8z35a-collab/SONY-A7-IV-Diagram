@@ -20,6 +20,7 @@ export interface ZeroTextUIHandlers {
   onSectionValueChange: (value: number) => void;
   onRenderModeChange: (mode: RenderMode) => void;
   onQualityChange: (quality: GraphicsQuality) => void;
+  onKineToggle?: (enabled: boolean) => void;
   onPhysicsToggle: (active: boolean) => void;
   onOpticsStudioToggle: () => void;
   onOpenPlayground?: () => void;
@@ -209,7 +210,7 @@ export class ZeroTextControls {
   private readonly handlers: ZeroTextUIHandlers;
   private currentMode: ScaleMode = 'welcome';
   private currentFabVol: SensorFabVolume = 0;
-  private physicsActive = false;
+  private currentMiraiSubView: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 = 1;
   private paletteOpen = false;
 
   // Top Bar Elements
@@ -232,22 +233,19 @@ export class ZeroTextControls {
   private fabStageRow: HTMLElement;
   private fabStageBtns = new Map<SensorFabStage, HTMLButtonElement>();
   private miraiSubBar: HTMLElement;
-  private miraiSubBtns: Record<1 | 2 | 3 | 4 | 5, HTMLButtonElement>;
+  private miraiSubBtns: Record<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, HTMLButtonElement>;
 
-  private qualityBtns: Record<GraphicsQuality, HTMLButtonElement>;
-  private camPresetBtns: Record<CameraPreset, HTMLButtonElement>;
+  private qualityBtns: Partial<Record<GraphicsQuality, HTMLButtonElement>>;
+  private kineToggleBtn: HTMLButtonElement;
+  private kineEnabled = true;
 
   // Bottom Workbench Dock Elements
   private explodeSlider: HTMLInputElement;
   private explodePctEl: HTMLElement;
-  private renderModeBtns: Record<RenderMode, HTMLButtonElement>;
   private sectionAxisBtns: Record<SectionAxis, HTMLButtonElement>;
   private sectionSliderWrap: HTMLElement;
   private sectionSlider: HTMLInputElement;
-  private physicsBtn: HTMLButtonElement;
-  private opticsBtn: HTMLButtonElement;
   private resetVisBtn: HTMLButtonElement;
-  private fullscreenBtn: HTMLButtonElement;
 
   constructor(root: HTMLElement, handlers: ZeroTextUIHandlers) {
     this.handlers = handlers;
@@ -339,7 +337,7 @@ export class ZeroTextControls {
     this.playgroundBtn.append(svgIcon(ICONS.playground));
     const pgTxt = document.createElement('span');
     pgTxt.textContent = 'Play Ground';
-    this.playgroundBtn.append(pgTxt);
+    this.playgroundBtn.appendChild(pgTxt);
     this.playgroundBtn.addEventListener('click', () => {
       this.setPaletteOpen(false);
       this.handlers.onOpenPlayground?.();
@@ -453,13 +451,20 @@ export class ZeroTextControls {
     this.fabSubBar.append(fabVolRow, this.fabStageRow);
     this.rebuildFabStages(0);
 
-    // Future History MIRAI 2028 contextual sub-bar (5 Watchmaker 3D Structures + Library Studio launchers)
+    // Future History MIRAI 2028 contextual sub-bar (8 Watchmaker 3D Structures + Library Studio launchers)
     this.miraiSubBar = document.createElement('div');
     this.miraiSubBar.className = 'studio-subbar mirai-subbar is-hidden';
-    const makeMiraiSub = (sv: 1 | 2 | 3 | 4 | 5, label: string, tip: string) => {
+    const miraiStructRail = document.createElement('div');
+    miraiStructRail.className = 'mirai-struct-rail';
+    const makeMiraiSub = (
+      sv: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8,
+      label: string,
+      tip: string,
+      extraClass = ''
+    ) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = `studio-sub-btn mirai-sub-struct${sv === 1 ? ' is-active' : ''}`;
+      b.className = `studio-sub-btn mirai-sub-struct${extraClass ? ` ${extraClass}` : ''}${sv === 1 ? ' is-active' : ''}`;
       b.textContent = label;
       b.title = tip;
       b.addEventListener('click', () => {
@@ -471,12 +476,32 @@ export class ZeroTextControls {
     this.miraiSubBtns = {
       1: makeMiraiSub(1, 'FH01 SPAD', 'FH01 フルサイズ単一光子SPAD/QIS 3D積層センサー（16パーツ）'),
       2: makeMiraiSub(2, 'FH02 3層RGB', 'FH02 ペロブスカイト/OPF 3層垂直RGBセンサー（16パーツ）'),
-      3: makeMiraiSub(3, 'FH08 メタ50/1.4', 'FH08 ASI逆設計 28mm・180g 50mm F1.4 自由曲面メタ光学レンズ（18パーツ）'),
+      3: makeMiraiSub(3, 'FH08 メタ50', 'FH08 ASI逆設計 28mm・180g 50mm F1.4 自由曲面メタ光学レンズ（18パーツ）'),
       4: makeMiraiSub(4, 'FH32 MEMS空冷', 'FH32 IP68水密隔離・超音波MEMSソリッドステート空冷モジュール（18パーツ）'),
-      5: makeMiraiSub(5, 'FH25 3万nit EVF', 'FH25 30,000ニット・240Hz True-RGBタンデム パンケーキEVF（18パーツ）'),
+      5: makeMiraiSub(5, 'FH25 3万nit', 'FH25 30,000ニット・240Hz True-RGBタンデム パンケーキEVF（18パーツ）'),
+      6: makeMiraiSub(6, 'FH20 2nm頭脳', 'FH20 2nm/A16 GAA＋BSPDN 1,000 TOPS チップレットSoC（18パーツ）'),
+      7: makeMiraiSub(7, 'FH17 磁気IBIS', 'FH17 地球自転補正(15.04"/s)＋磁気浮上10–11段IBIS＆±2°チルト（18パーツ）'),
+      8: makeMiraiSub(
+        8,
+        'FH48 2028統合機',
+        'FH48 2028年12月到達点 約800g・持続10–15W ポスト・カメラ統合機（18パーツ）',
+        'mirai-sub-flagship'
+      ),
     };
+    miraiStructRail.append(
+      this.miraiSubBtns[1],
+      this.miraiSubBtns[2],
+      this.miraiSubBtns[3],
+      this.miraiSubBtns[4],
+      this.miraiSubBtns[5],
+      this.miraiSubBtns[6],
+      this.miraiSubBtns[7],
+      this.miraiSubBtns[8]
+    );
     const miraiSep = document.createElement('span');
     miraiSep.className = 'mirai-subbar-sep';
+    const miraiLibGroup = document.createElement('div');
+    miraiLibGroup.className = 'mirai-lib-group';
     const makeMiraiLib = (tab: 'reports' | 'matrix' | 'glossary', label: string) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -485,23 +510,37 @@ export class ZeroTextControls {
       b.addEventListener('click', () => handlers.onOpenMiraiStudio?.(tab));
       return b;
     };
-    this.miraiSubBar.append(
-      this.miraiSubBtns[1],
-      this.miraiSubBtns[2],
-      this.miraiSubBtns[3],
-      this.miraiSubBtns[4],
-      this.miraiSubBtns[5],
-      miraiSep,
+    miraiLibGroup.append(
       makeMiraiLib('reports', 'レポート'),
       makeMiraiLib('matrix', '48技術'),
       makeMiraiLib('glossary', '用語113')
     );
+    this.miraiSubBar.append(miraiStructRail, miraiSep, miraiLibGroup);
 
     this.subViewHost.append(this.lensSubBar, this.v2SubBar, this.fabSubBar, this.miraiSubBar);
 
-    // --- RIGHT: 4-Tier Quality Switcher (LITE | STD | HIGH | ULTRA) + Camera Angle Pill ---
+    // --- RIGHT: Minimalist 2-Tier Quality Switcher (LITE | ULTRA) ---
+    // (STD & HIGH remain fully intact in the rendering engine & URL ?quality= API; buttons removed per UX design)
     const topRight = document.createElement('div');
     topRight.className = 'studio-topbar-right';
+
+    // Standalone KINE Mode ON/OFF Toggle Pill (sibling of .quality-pill so quality buttons remain strictly LITE | ULTRA)
+    this.kineToggleBtn = document.createElement('button');
+    this.kineToggleBtn.type = 'button';
+    this.kineToggleBtn.className = 'kine-toggle-pill is-active';
+    this.kineToggleBtn.setAttribute('aria-pressed', 'true');
+    this.kineToggleBtn.title =
+      'KINEモード ON/OFF — カメラ視界外・完全遮蔽の不可視パーツを非表示にしてさらに軽量化（選択・ホバー・X-Ray・断面は常時保護）';
+    const kineDot = document.createElement('span');
+    kineDot.className = 'kine-toggle-dot';
+    const kineLbl = document.createElement('span');
+    kineLbl.textContent = 'KINE';
+    this.kineToggleBtn.append(kineDot, kineLbl);
+    this.kineToggleBtn.addEventListener('click', () => {
+      this.kineEnabled = !this.kineEnabled;
+      this.syncKineMode(this.kineEnabled);
+      this.handlers.onKineToggle?.(this.kineEnabled);
+    });
 
     const qualityGroup = document.createElement('div');
     qualityGroup.className = 'studio-seg-pill quality-pill';
@@ -521,69 +560,31 @@ export class ZeroTextControls {
       return b;
     };
     this.qualityBtns = {
-      standard_lite: makeQual('standard_lite', 'LITE', 'STD LITE — 品質100%維持＆処理負荷2倍以上低減（MatCap LUT＋頂点カラー統合）'),
-      standard: makeQual('standard', 'STD', 'STANDARD — 軽量シェーダー＆高コントラスト4灯スタジオ'),
-      high: makeQual('high', 'HIGH', 'HIGH — PBR質感＆PMREMスタジオ環境光'),
-      ultra: makeQual('ultra', 'ULTRA', 'ULTRA — 商業ソフトボックス反射＆2048pxリアルタイム影＋クリアコート'),
+      standard_lite: makeQual(
+        'standard_lite',
+        'LITE',
+        'STD LITE v2 — 超軽量Dual-Atlas MatCap＋GPU分解（激しい移動時はFASTへ自動切替）'
+      ),
+      ultra: makeQual(
+        'ultra',
+        'ULTRA',
+        'ULTRA V3 — 多段階自動切替（静止ULTRA無ジャギーAA＋F1.2ボケ / 移動LITE / 激動FAST）'
+      ),
     };
-    qualityGroup.append(
-      this.qualityBtns.standard_lite,
-      this.qualityBtns.standard,
-      this.qualityBtns.high,
-      this.qualityBtns.ultra
-    );
+    qualityGroup.append(this.qualityBtns.standard_lite!, this.qualityBtns.ultra!);
 
-    const camGroup = document.createElement('div');
-    camGroup.className = 'studio-seg-pill cam-pill';
-    camGroup.setAttribute('role', 'group');
-    camGroup.setAttribute('aria-label', 'カメラ視点');
-    const makeCam = (preset: CameraPreset, label: string) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = `studio-seg-item${preset === 'iso' ? ' is-active' : ''}`;
-      b.textContent = label;
-      b.addEventListener('click', () => {
-        (['iso', 'front', 'side', 'back'] as const).forEach((p) => {
-          this.camPresetBtns[p].classList.toggle('is-active', p === preset);
-        });
-        handlers.onCameraPreset(preset);
-      });
-      return b;
-    };
-    this.camPresetBtns = {
-      iso: makeCam('iso', 'ISO'),
-      front: makeCam('front', '前'),
-      side: makeCam('side', '側'),
-      back: makeCam('back', '背'),
-    };
-    camGroup.append(
-      this.camPresetBtns.iso,
-      this.camPresetBtns.front,
-      this.camPresetBtns.side,
-      this.camPresetBtns.back
-    );
-
-    topRight.append(qualityGroup, camGroup);
+    topRight.append(this.kineToggleBtn, qualityGroup);
     topBar.append(topLeft, this.subViewHost, topRight);
 
     // =========================================================================
-    // BOTTOM FLOATING WORKBENCH DOCK (Streamlined, Uncluttered)
+    // BOTTOM FLOATING WORKBENCH DOCK (Minimalist: Explode + Section Cut + Reset Vis)
     // =========================================================================
     const bottomDock = document.createElement('footer');
     bottomDock.className = 'studio-bottom-dock';
 
-    // 1. Explode slider + live % badge
+    // 1. Explode slider + live % badge (flanking shape buttons removed per minimalist UX)
     const explodeCluster = document.createElement('div');
     explodeCluster.className = 'dock-cluster dock-explode';
-    const minExpBtn = document.createElement('button');
-    minExpBtn.type = 'button';
-    minExpBtn.className = 'dock-mini-ic';
-    minExpBtn.title = '組立状態 (0%)';
-    minExpBtn.appendChild(svgIcon(ICONS.assembled));
-    minExpBtn.addEventListener('click', () => {
-      this.setExplodeValue(0);
-      handlers.onExplodeChange(0);
-    });
 
     this.explodeSlider = document.createElement('input');
     this.explodeSlider.type = 'range';
@@ -602,42 +603,9 @@ export class ZeroTextControls {
     this.explodePctEl = document.createElement('span');
     this.explodePctEl.className = 'dock-pct-badge';
     this.explodePctEl.textContent = '0%';
+    explodeCluster.append(this.explodeSlider, this.explodePctEl);
 
-    const maxExpBtn = document.createElement('button');
-    maxExpBtn.type = 'button';
-    maxExpBtn.className = 'dock-mini-ic';
-    maxExpBtn.title = '最大分解 (100%)';
-    maxExpBtn.appendChild(svgIcon(ICONS.exploded));
-    maxExpBtn.addEventListener('click', () => {
-      this.setExplodeValue(1);
-      handlers.onExplodeChange(1);
-    });
-    explodeCluster.append(minExpBtn, this.explodeSlider, this.explodePctEl, maxExpBtn);
-
-    // 2. Render Mode Pill (Solid | X-Ray | CAD)
-    const renderCluster = document.createElement('div');
-    renderCluster.className = 'studio-seg-pill dock-seg';
-    const makeRm = (rm: RenderMode, label: string) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = `studio-seg-item${rm === 'solid' ? ' is-active' : ''}`;
-      b.textContent = label;
-      b.addEventListener('click', () => {
-        (['solid', 'xray', 'cad'] as const).forEach((m) =>
-          this.renderModeBtns[m].classList.toggle('is-active', m === rm)
-        );
-        handlers.onRenderModeChange(rm);
-      });
-      return b;
-    };
-    this.renderModeBtns = {
-      solid: makeRm('solid', 'Solid'),
-      xray: makeRm('xray', 'X-Ray'),
-      cad: makeRm('cad', 'CAD'),
-    };
-    renderCluster.append(this.renderModeBtns.solid, this.renderModeBtns.xray, this.renderModeBtns.cad);
-
-    // 3. Section Cut Cluster (OFF | X | Y + auto-expanding slider)
+    // 2. Section Cut Cluster (OFF | X | Y + auto-expanding slider)
     const secCluster = document.createElement('div');
     secCluster.className = 'dock-cluster dock-section';
     const secSeg = document.createElement('div');
@@ -676,40 +644,17 @@ export class ZeroTextControls {
     this.sectionSliderWrap.appendChild(this.sectionSlider);
     secCluster.append(secSeg, this.sectionSliderWrap);
 
-    // 4. Utility Action Icons
-    const actionCluster = document.createElement('div');
-    actionCluster.className = 'dock-cluster dock-actions';
-
-    const makeDockBtn = (icon: string, title: string, extraClass = '') => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = `dock-icon-btn ${extraClass}`.trim();
-      b.title = title;
-      b.setAttribute('aria-label', title);
-      b.appendChild(svgIcon(icon));
-      return b;
-    };
-
-    this.physicsBtn = makeDockBtn(ICONS.physics, '物理シミュレーション・動作表示');
-    this.physicsBtn.addEventListener('click', () => {
-      this.physicsActive = !this.physicsActive;
-      this.physicsBtn.classList.toggle('is-active', this.physicsActive);
-      handlers.onPhysicsToggle(this.physicsActive);
-    });
-
-    this.opticsBtn = makeDockBtn(ICONS.optics, '光学モーションスタジオ（レンズ光路）');
-    this.opticsBtn.addEventListener('click', () => handlers.onOpticsStudioToggle());
-
-    this.resetVisBtn = makeDockBtn(ICONS.resetVis, '非表示パーツをすべて再表示', 'is-hidden-btn');
+    // 3. Reset Visibility icon button (only visible when parts are hidden/isolated)
+    this.resetVisBtn = document.createElement('button');
+    this.resetVisBtn.type = 'button';
+    this.resetVisBtn.className = 'dock-icon-btn is-hidden-btn';
+    this.resetVisBtn.title = '非表示パーツをすべて再表示';
+    this.resetVisBtn.setAttribute('aria-label', '非表示パーツをすべて再表示');
+    this.resetVisBtn.appendChild(svgIcon(ICONS.resetVis));
     this.resetVisBtn.disabled = true;
     this.resetVisBtn.addEventListener('click', () => handlers.onResetVisibility());
 
-    this.fullscreenBtn = makeDockBtn(ICONS.fullscreenEnter, '全画面表示切替 (F)');
-    this.fullscreenBtn.addEventListener('click', () => handlers.onFullscreenToggle());
-
-    actionCluster.append(this.physicsBtn, this.opticsBtn, this.resetVisBtn, this.fullscreenBtn);
-
-    bottomDock.append(explodeCluster, renderCluster, secCluster, actionCluster);
+    bottomDock.append(explodeCluster, secCluster, this.resetVisBtn);
 
     // Close assembly palette on outside click or Escape
     document.addEventListener('click', (e) => {
@@ -775,16 +720,36 @@ export class ZeroTextControls {
   }
 
   public syncMiraiSubView(subView: number): void {
-    const active = Math.max(1, Math.min(5, Math.round(subView || 1)));
-    ([1, 2, 3, 4, 5] as const).forEach((sv) => {
+    const active = Math.max(1, Math.min(8, Math.round(subView || 1))) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+    this.currentMiraiSubView = active;
+    ([1, 2, 3, 4, 5, 6, 7, 8] as const).forEach((sv) => {
       this.miraiSubBtns[sv].classList.toggle('is-active', active === sv);
+    });
+    this.scrollActiveMiraiBtnIntoView(active);
+  }
+
+  private scrollActiveMiraiBtnIntoView(active: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8): void {
+    const btn = this.miraiSubBtns[active];
+    const rail = btn?.parentElement;
+    if (!btn || !rail) return;
+    requestAnimationFrame(() => {
+      if (rail.scrollWidth > rail.clientWidth + 2) {
+        const targetLeft = btn.offsetLeft - (rail.clientWidth - btn.offsetWidth) * 0.5;
+        rail.scrollLeft = Math.max(0, Math.min(rail.scrollWidth - rail.clientWidth, targetLeft));
+      }
     });
   }
 
   public syncQuality(quality: GraphicsQuality): void {
     (['standard_lite', 'standard', 'high', 'ultra'] as const).forEach((q) => {
-      this.qualityBtns[q].classList.toggle('is-active', q === quality);
+      this.qualityBtns[q]?.classList.toggle('is-active', q === quality);
     });
+  }
+
+  public syncKineMode(enabled: boolean): void {
+    this.kineEnabled = enabled;
+    this.kineToggleBtn.classList.toggle('is-active', enabled);
+    this.kineToggleBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
   }
 
   public setExplodeValue(v: number): void {
@@ -819,13 +784,9 @@ export class ZeroTextControls {
     }
     this.miraiSubBar.classList.toggle('is-hidden', mode !== 'mirai_2028');
     this.miraiCtaBtn.classList.toggle('is-active', mode === 'mirai_2028');
-    // Strictly no dynamic physics ray animations in FH MIRAI 2028
-    this.physicsBtn.classList.toggle('is-hidden-btn', mode === 'mirai_2028');
-
-    // Reset active camera pill highlight to ISO on unit change
-    (['iso', 'front', 'side', 'back'] as const).forEach((p) => {
-      this.camPresetBtns[p].classList.toggle('is-active', p === 'iso');
-    });
+    if (mode === 'mirai_2028') {
+      this.scrollActiveMiraiBtnIntoView(this.currentMiraiSubView);
+    }
   }
 
   public syncSectionAxis(axis: SectionAxis, value = 0.5): void {
@@ -836,24 +797,20 @@ export class ZeroTextControls {
     this.sectionSlider.value = String(Math.round(Math.max(0, Math.min(1, value)) * 100));
   }
 
-  public syncPhysics(active: boolean): void {
-    this.physicsActive = active;
-    this.physicsBtn.classList.toggle('is-active', active);
+  public syncPhysics(_active: boolean): void {
+    // Physics button intentionally removed from HUD; API retained for compatibility.
   }
 
-  public syncOpticsStudio(active: boolean): void {
-    this.opticsBtn.classList.toggle('is-active', active);
+  public syncOpticsStudio(_active: boolean): void {
+    // Optics studio button intentionally removed from HUD; API retained for compatibility.
   }
 
   public syncPlaygroundActive(active: boolean): void {
     this.playgroundBtn.classList.toggle('is-active', active);
   }
 
-  public syncFullscreen(active: boolean): void {
-    this.fullscreenBtn.classList.toggle('is-active', active);
-    this.fullscreenBtn.replaceChildren(
-      svgIcon(active ? ICONS.fullscreenExit : ICONS.fullscreenEnter)
-    );
+  public syncFullscreen(_active: boolean): void {
+    // Fullscreen button intentionally removed from HUD (auto-fullscreen on tap); API retained.
   }
 
   /**

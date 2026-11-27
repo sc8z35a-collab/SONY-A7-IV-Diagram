@@ -58,7 +58,7 @@ export class CadViewport {
   private sensorFabVolume: SensorFabVolume = 0;
   private miraiSubView = 1;
   private renderMode: RenderMode = 'solid';
-  private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'standard' : 'high';
+  private quality: GraphicsQuality = 'ultra';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
   private targetExplode = 0;
@@ -73,13 +73,20 @@ export class CadViewport {
 
   private initialActivated = false;
 
-  // Smooth camera transition
+  // Smooth camera transition & Multi-Stage Adaptive FAST <-> LITE <-> ULTRA tracking
   private camAnimActive = false;
   private camStartPos = new THREE.Vector3();
   private camEndPos = new THREE.Vector3();
   private camStartTarget = new THREE.Vector3();
   private camEndTarget = new THREE.Vector3();
   private camAnimT = 0;
+  private wheelMotionFrames = 0;
+  private prevCamPos = new THREE.Vector3();
+  private prevCamQuat = new THREE.Quaternion();
+  private prevCamInitialized = false;
+  private emaRenderMs = 12;
+  private fastStageCooldown = 0;
+  private baseHeroDist = 228;
 
   private resizeObserver: ResizeObserver | null = null;
   private boundHandleResize = () => this.handleResize();
@@ -99,7 +106,9 @@ export class CadViewport {
   private idleFrameStreak = 0;
   private disposed = false;
   private cachedDomRect: DOMRect | null = null;
-  private customSceneRenderer: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null = null;
+  private customSceneRenderer:
+    | ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void)
+    | null = null;
 
   constructor(container: HTMLElement, callbacks: ViewportCallbacks) {
     this.container = container;
@@ -132,13 +141,15 @@ export class CadViewport {
     container.appendChild(this.recoveryOverlay);
 
     const aspect = Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.85, 4200);
+    this.camera = new THREE.PerspectiveCamera(32, aspect, 0.25, 2400);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.065;
-    this.controls.minDistance = 7;
-    this.controls.maxDistance = 2600;
+    // 16x deeper & finer macro zoom (7 / 16 = 0.4375mm) + tighter unit-aware maxDistance!
+    this.controls.minDistance = 0.4375;
+    this.controls.maxDistance = 480;
+    this.controls.zoomSpeed = 0.56;
     this.controls.addEventListener('change', () => {
       this.markDirty(2);
     });
@@ -193,7 +204,7 @@ export class CadViewport {
     // Defer initial activation by one microtask so synchronous URL ?quality= / ?preset= setup
     // in main.ts applies before the first dynamic chunk import & GPU compile begins!
     queueMicrotask(() => {
-      if (!this.disposed && !this.initialActivated) {
+      if (!this.disposed && !this.initialActivated && !this.customSceneRenderer) {
         this.activateCurrentMode();
       }
     });
@@ -341,7 +352,7 @@ export class CadViewport {
   }
 
   public setMiraiSubView(subView: number, immediateCamera = false): void {
-    const clamped = Math.max(1, Math.min(5, Math.round(subView || 1)));
+    const clamped = Math.max(1, Math.min(8, Math.round(subView || 1)));
     const changed = this.miraiSubView !== clamped;
     this.miraiSubView = clamped;
     if (this.mode !== 'mirai_2028') return;
@@ -390,11 +401,42 @@ export class CadViewport {
       this.currentExplode = this.targetExplode;
       this.v2Runtime.syncExplode(this.currentExplode);
     }
+    this.updateTightMaxDistance();
     this.markDirty();
   }
 
   public getExplode(): number {
     return this.targetExplode;
+  }
+
+  public setKineMode(enabled: boolean): boolean {
+    const changed = this.v2Runtime.setKineMode(enabled);
+    if (changed) this.markDirty(2);
+    return changed;
+  }
+
+  public isKineMode(): boolean {
+    return this.v2Runtime.isKineMode();
+  }
+
+  public getKineStats() {
+    return this.v2Runtime.getKineStats();
+  }
+
+  public getCameraZoomBounds(): {
+    minDistance: number;
+    maxDistance: number;
+    distance: number;
+    near: number;
+    far: number;
+  } {
+    return {
+      minDistance: this.controls.minDistance,
+      maxDistance: this.controls.maxDistance,
+      distance: this.camera.position.distanceTo(this.controls.target),
+      near: this.camera.near,
+      far: this.camera.far,
+    };
   }
 
   public setRenderMode(mode: RenderMode): void {
@@ -427,17 +469,16 @@ export class CadViewport {
   public setPhysicsActive(active: boolean): void {
     this.physicsActive = active;
     this.v2Runtime.syncPhysicsActive(active);
-    this.markDirty();
   }
 
-  public selectPart(partId: string | null, focusCamera = true): void {
+  public selectPart(partId: string | null, _focusCamera = false): void {
     if (partId === null) {
       this.pendingSelectAfterHydrate = null;
     } else {
       const candidate = this.v2Runtime.getPartById(partId);
       if (!candidate) {
         if (!this.v2Runtime.isReady()) {
-          this.pendingSelectAfterHydrate = { partId, focusCamera };
+          this.pendingSelectAfterHydrate = { partId, focusCamera: false };
         }
         return;
       }
@@ -456,9 +497,8 @@ export class CadViewport {
 
     this.applyVisibilityAndStyles();
     const part = this.getSelectedPart();
-    if (part && focusCamera) {
-      this.focusOnPart(part);
-    }
+    // Strict camera lock: opening/switching part details NEVER moves, pans, zooms, or rotates the camera!
+    void _focusCamera;
     this.callbacks.onSelectPart(part);
     this.callbacks.onVisibilityChanged();
   }
@@ -515,7 +555,34 @@ export class CadViewport {
     if (list.length === 0) return;
     const idx = list.findIndex((p) => p.id === this.selectedPartId);
     const nextIdx = idx < 0 ? 0 : (idx + delta + list.length) % list.length;
-    this.selectPart(list[nextIdx].id, true);
+    // Strict zero camera movement when stepping through parts / opening details!
+    this.selectPart(list[nextIdx].id, false);
+  }
+
+  private updateTightMaxDistance(heroDistOverride?: number): void {
+    if (typeof heroDistOverride === 'number' && heroDistOverride > 0) {
+      this.baseHeroDist = heroDistOverride;
+    }
+    const e = Math.max(this.targetExplode, this.currentExplode);
+    // Tighter max zoom-out envelope: ~1.88x of current unit hero distance (assembled ~165-540mm, exploded <= 1450mm)
+    const explodeBoost = 1 + e * (this.mode === 'integrated' || this.mode === 'lens' ? 1.8 : 0.95);
+    const estDist =
+      typeof heroDistOverride === 'number' ? heroDistOverride : this.baseHeroDist * explodeBoost;
+    this.controls.maxDistance = THREE.MathUtils.clamp(estDist * 1.88, 165, 1450);
+    this.updateDynamicClipPlanes();
+  }
+
+  private updateDynamicClipPlanes(): void {
+    const dist = Math.max(this.controls.minDistance, this.camera.position.distanceTo(this.controls.target));
+    const targetNear = THREE.MathUtils.clamp(dist * 0.015, 0.025, 2.0);
+    const targetFar = Math.max(dist * 14.0, this.controls.maxDistance * 2.8, 1200);
+    const nearRel = Math.abs(targetNear - this.camera.near) / Math.max(0.01, this.camera.near);
+    const farRel = Math.abs(targetFar - this.camera.far) / Math.max(1, this.camera.far);
+    if (nearRel > 0.03 || farRel > 0.05) {
+      this.camera.near = targetNear;
+      this.camera.far = targetFar;
+      this.camera.updateProjectionMatrix();
+    }
   }
 
   public setCameraPreset(preset: CameraPreset, immediate = false): void {
@@ -592,6 +659,18 @@ export class CadViewport {
         // FH25: 48x38x46mm 30,000-nit True-RGB Tandem Pancake EVF (optical axis Z, right cutaway)
         d = 158 + e * 195;
         target = new THREE.Vector3(0, e * 3.0, 1.5 - e * 3.0);
+      } else if (this.miraiSubView === 6) {
+        // FH20: 42x42x6.4mm 2nm/A16 GAA + BSPDN 1,000 TOPS Heterogeneous Chiplet SoC (explodes along Y + optical fibers)
+        d = 132 + e * 145;
+        target = new THREE.Vector3(-1.5 + e * 2.0, 0.5 + e * 6.5, 0);
+      } else if (this.miraiSubView === 7) {
+        // FH17: 76x64x15.5mm Earth-Rotation + MagLev 10–11 Stop IBIS & ±2° Micro-Tilt (explodes along Z + IMU/Hall flanks)
+        d = 215 + e * 185;
+        target = new THREE.Vector3(-3.5, -1.5 * e, 0);
+      } else if (this.miraiSubView === 8) {
+        // FH48: 128x90x58mm Dec 2028 ~800g · 10–15W Post-Camera Integrated Flagship Machine
+        d = 304 + e * 250;
+        target = new THREE.Vector3(0, 6.0 + e * 4.0, 2.0);
       } else {
         d = 166 + e * 185;
         target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
@@ -758,6 +837,21 @@ export class CadViewport {
               const isoY = 0.30 - e * 0.06;
               const isoZ = 0.66 - e * 0.16;
               offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else if (this.miraiSubView === 6) {
+              // FH20 2nm Chiplet SoC: overhead front-right 3/4 peering directly into cutaway IHS (NPU, BSPDN, HBM & optical fibers!)
+              offset = new THREE.Vector3(d * 0.58, d * 0.44, d * 0.68);
+            } else if (this.miraiSubView === 7) {
+              // FH17 MagLev IBIS: front 3/4 when assembled, swinging wider along X when exploded to showcase full Z gimbal stack
+              const isoX = 0.54 + e * 0.24;
+              const isoY = 0.26 - e * 0.04;
+              const isoZ = 0.80 - e * 0.22;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else if (this.miraiSubView === 8) {
+              // FH48 Post-Camera Flagship: classic mirrorless front-right 3/4 showcasing contactless mount, lattice cutaway, EVF & grip
+              const isoX = 0.55 + e * 0.16;
+              const isoY = 0.30 - e * 0.04;
+              const isoZ = 0.78 - e * 0.14;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
             } else {
               offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
             }
@@ -779,12 +873,20 @@ export class CadViewport {
     }
 
     const pos = target.clone().add(offset);
+    this.updateTightMaxDistance(d);
 
     if (immediate) {
       this.camAnimActive = false;
       this.camera.position.copy(pos);
       this.controls.target.copy(target);
       this.controls.update();
+      this.updateDynamicClipPlanes();
+      this.prevCamPos.copy(this.camera.position);
+      this.prevCamQuat.copy(this.camera.quaternion);
+      this.prevCamInitialized = true;
+      this.wheelMotionFrames = 0;
+      this.fastStageCooldown = 0;
+      this.v2Runtime.setMotionStage(this.quality === 'standard_lite' ? 'lite' : 'ultra');
       this.markDirty();
     } else {
       this.animateCameraTo(pos, target);
@@ -918,7 +1020,7 @@ export class CadViewport {
     }
   }
 
-  private focusOnPart(part: CadPart): void {
+  public focusOnPart(part: CadPart): void {
     if (!this.v2Runtime.getPartWorldBox(part.id, _focusBox)) {
       _focusBox.setFromObject(part.group);
     }
@@ -1075,6 +1177,30 @@ export class CadViewport {
           minCoord = -22;
           maxCoord = 22;
         }
+      } else if (this.miraiSubView === 6) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -34;
+          maxCoord = 34;
+        } else {
+          minCoord = -10;
+          maxCoord = 12;
+        }
+      } else if (this.miraiSubView === 7) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -52;
+          maxCoord = 46;
+        } else {
+          minCoord = -38;
+          maxCoord = 38;
+        }
+      } else if (this.miraiSubView === 8) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -68;
+          maxCoord = 68;
+        } else {
+          minCoord = -46;
+          maxCoord = 62;
+        }
       } else if (this.sectionAxis === 'x') {
         minCoord = -46;
         maxCoord = 46;
@@ -1201,6 +1327,7 @@ export class CadViewport {
 
     this.controls.addEventListener('end', () => {
       this.v2Runtime.setCameraDragging(false);
+      this.markDirty(2);
     });
 
     dom.addEventListener('pointerdown', (e) => {
@@ -1249,13 +1376,26 @@ export class CadViewport {
         this.sectionAxis !== 'off' ? this.clippingPlane : null
       );
       if (hitPartId) {
-        this.selectPart(hitPartId, true);
+        // Strict zero camera movement when selecting a part / opening its detail view!
+        this.selectPart(hitPartId, false);
       } else if (this.selectedPartId) {
         this.selectPart(null, false);
       }
     });
 
-    dom.addEventListener('wheel', () => this.wakeLoop(), { passive: true });
+    dom.addEventListener(
+      'wheel',
+      () => {
+        if (!this.customSceneRenderer) {
+          this.wheelMotionFrames = 2;
+          if (this.quality === 'ultra' && this.v2Runtime.getMotionStage() === 'ultra') {
+            this.v2Runtime.setMotionStage('lite');
+          }
+        }
+        this.markDirty(2);
+      },
+      { passive: true }
+    );
     dom.addEventListener('touchstart', () => this.wakeLoop(), { passive: true });
 
     dom.addEventListener('webglcontextlost', this.boundContextLost, false);
@@ -1279,12 +1419,27 @@ export class CadViewport {
   }
 
   public setCustomSceneRenderer(
-    fn: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null
+    fn: ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void) | null
   ): void {
     this.customSceneRenderer = fn;
     this.controls.enabled = fn === null;
     this.hoverRaycastPending = false;
     this.container.classList.remove('is-hovering');
+    if (fn !== null) {
+      if (this.v2Runtime.isActive() && !this.v2Runtime.isReady()) {
+        this.v2Runtime.deactivate();
+        this.initialActivated = false;
+      }
+    } else {
+      this.prevCamPos.copy(this.camera.position);
+      this.prevCamQuat.copy(this.camera.quaternion);
+      this.prevCamInitialized = true;
+      this.fastStageCooldown = 0;
+      this.v2Runtime.setMotionStage(this.quality === 'standard_lite' ? 'lite' : 'ultra');
+      if (!this.v2Runtime.isActive()) {
+        this.activateCurrentMode();
+      }
+    }
     this.markDirty(3);
   }
 
@@ -1373,12 +1528,16 @@ export class CadViewport {
     this.rafId = 0;
     if (this.disposed || this.contextLost || this.pageHidden) return;
 
-    const delta = Math.min(this.clock.getDelta(), 0.05);
+    const rawDelta = this.clock.getDelta();
+    const delta = Math.min(rawDelta, 0.05);
 
+    // Demand-Driven Zero-Load Play Ground Loop: sleeps at 0.0 draws/s when orbit damping settles!
     if (this.customSceneRenderer) {
-      this.customSceneRenderer(this.renderer, delta);
+      const keepAlive = this.customSceneRenderer(this.renderer, delta) === true;
       if (this.dirtyFrames > 0) this.dirtyFrames--;
-      this.rafId = requestAnimationFrame(this.animate);
+      if (keepAlive || this.dirtyFrames > 0) {
+        this.rafId = requestAnimationFrame(this.animate);
+      }
       return;
     }
 
@@ -1387,22 +1546,22 @@ export class CadViewport {
       this.updateHoverFromRaycast();
     }
 
-    const elapsed = this.clock.getElapsedTime();
+    let active = this.dirtyFrames > 0;
 
-    const continuousAnim = this.v2Runtime.needsContinuousAnimation(this.physicsActive);
-    let active = continuousAnim || this.dirtyFrames > 0;
-
+    // Explode slider transition (NOTE: NEVER triggers ULTRA->LITE/FAST motion proxy — maintains ULTRA!)
     const diff = this.targetExplode - this.currentExplode;
     if (Math.abs(diff) > 0.0005) {
       this.currentExplode += diff * Math.min(1, delta * 10.0);
+      this.updateTightMaxDistance();
       active = true;
     } else if (this.currentExplode !== this.targetExplode) {
       this.currentExplode = this.targetExplode;
+      this.updateTightMaxDistance();
       active = true;
     }
 
     if (this.camAnimActive) {
-      this.camAnimT = Math.min(1, this.camAnimT + delta * 2.8);
+      this.camAnimT = Math.min(1, this.camAnimT + Math.min(rawDelta, 0.16) * 2.8);
       const ease = 1 - Math.pow(1 - this.camAnimT, 3);
       this.camera.position.lerpVectors(this.camStartPos, this.camEndPos, ease);
       this.controls.target.lerpVectors(this.camStartTarget, this.camEndTarget, ease);
@@ -1417,22 +1576,89 @@ export class CadViewport {
       active = true;
     }
 
+    // Multi-Stage Adaptive Rendering Ladder: FAST (5x-15x lighter) <-> STD LITE v2 <-> ULTRA
+    // Computes exact angular + distance-normalized linear camera velocity + EMA frame load
+    let cameraMoved = false;
+    let motionScore = 0;
+    if (this.prevCamInitialized) {
+      const posDelta = this.camera.position.distanceTo(this.prevCamPos);
+      const camDist = Math.max(0.5, this.camera.position.distanceTo(this.controls.target));
+      const clampedDot = Math.min(1, Math.abs(this.camera.quaternion.dot(this.prevCamQuat)));
+      const angDelta = 2 * Math.acos(clampedDot);
+      cameraMoved = posDelta > 1e-3 || angDelta > 1e-4;
+      if (cameraMoved) {
+        const dtSafe = Math.max(0.008, delta);
+        const angSpeed = angDelta / dtSafe;
+        const linSpeed = posDelta / camDist / dtSafe;
+        motionScore = Math.max(angSpeed / 1.45, linSpeed / 1.15);
+      }
+    } else {
+      this.prevCamInitialized = true;
+    }
+    this.prevCamPos.copy(this.camera.position);
+    this.prevCamQuat.copy(this.camera.quaternion);
+
+    const wheelActive = this.wheelMotionFrames > 0;
+    if (wheelActive) this.wheelMotionFrames--;
+
+    // Trigger strictly on actual camera viewpoint motion (drag, wheel, pinch, camera anim),
+    // never on motionless clicks and never on Explode slider!
+    const cameraInMotion = this.camAnimActive || cameraMoved || wheelActive;
+
+    if (cameraInMotion) {
+      this.updateDynamicClipPlanes();
+      const violentMotion =
+        motionScore >= 1.45 || (motionScore >= 0.72 && this.emaRenderMs > 28.0);
+      const calmedToLite = motionScore < 0.75 && this.emaRenderMs < 30.0;
+      const curStage = this.v2Runtime.getMotionStage();
+
+      if (violentMotion) {
+        this.v2Runtime.setMotionStage('fast');
+        this.fastStageCooldown = 3;
+      } else if (curStage === 'fast') {
+        if (this.fastStageCooldown > 0) {
+          this.fastStageCooldown--;
+        } else if (calmedToLite) {
+          this.v2Runtime.setMotionStage('lite');
+        }
+      } else if (this.quality === 'ultra') {
+        this.v2Runtime.setMotionStage('lite');
+      }
+      active = true;
+    } else {
+      this.fastStageCooldown = 0;
+      const settledStage = this.quality === 'standard_lite' ? 'lite' : 'ultra';
+      if (this.v2Runtime.getMotionStage() !== settledStage) {
+        // Camera viewpoint stopped -> immediately restore full settled quality (ULTRA or LITE)!
+        this.v2Runtime.setMotionStage(settledStage);
+        active = true;
+      } else if (this.v2Runtime.needsStationaryRefinement()) {
+        // Progressive Halton(2,3) 8x SSAA accumulation for zero-jaggy stationary ULTRA (auto-stops -> 0% idle!)
+        active = true;
+      }
+    }
+
     if (active) {
       this.idleFrameStreak = 0;
       this.v2Runtime.syncExplode(this.currentExplode);
-      if (this.physicsActive || continuousAnim) {
-        this.v2Runtime.stepPhysics(elapsed, delta);
-      }
-      this.v2Runtime.render(this.camera);
+      const r0 = typeof performance !== 'undefined' ? performance.now() : 0;
+      this.v2Runtime.render(this.camera, this.controls.target);
+      const r1 = typeof performance !== 'undefined' ? performance.now() : 0;
+      const renderMs = r1 - r0;
+      this.emaRenderMs = this.emaRenderMs * 0.78 + renderMs * 0.22;
       if (this.dirtyFrames > 0) this.dirtyFrames--;
     } else {
       this.idleFrameStreak++;
     }
 
+    const needMoreRefine = !cameraInMotion && this.v2Runtime.needsStationaryRefinement();
+    const settledStageAfter = this.quality === 'standard_lite' ? 'lite' : 'ultra';
     if (
       active ||
+      cameraInMotion ||
+      needMoreRefine ||
+      this.v2Runtime.getMotionStage() !== settledStageAfter ||
       this.hoverRaycastPending ||
-      continuousAnim ||
       this.camAnimActive ||
       this.dirtyFrames > 0 ||
       this.idleFrameStreak < 1

@@ -1,4 +1,4 @@
-import { QualityTier, UnitBuildStats } from './unit_contract';
+import { KineCullingStats, MotionStage, QualityTier, UnitBuildStats } from './unit_contract';
 import { VramLeakVerification } from './dispose';
 
 export interface PerfHudSnapshot {
@@ -11,24 +11,25 @@ export interface PerfHudSnapshot {
   frameTimeMs: number;
   avgFrameTimeMs: number;
   quality: QualityTier;
+  motionStage?: MotionStage;
   pixelRatio: number;
   idle: boolean;
   shaderWarmupMs: number;
   buildStats: UnitBuildStats | null;
   vramCheck: VramLeakVerification | null;
   vramSwitchCount: number;
+  kineStats?: KineCullingStats | null;
+  bokehStatus?: string;
+  bokehMs?: number;
 }
-
-const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /**
  * Toggleable Developer Performance HUD mounted for ALL V2-optimized units.
- * Displays active unitId, real-time drawCalls, triangles, geometries, textures, frameTime(ms),
- * quality tier, DPR, idle GPU status, batching counts, and VRAM leak verification.
+ * Toggle button removed from UI per minimalist HUD redesign; accessible via `P` key,
+ * `?perfhud=1` URL parameter, or `window.__cad.v2.togglePerfHud()`.
  */
 export class UnitPerfHud {
   private readonly host: HTMLElement;
-  private readonly toggleBtn: HTMLButtonElement;
   private readonly panelEl: HTMLElement;
   private readonly fields: Record<string, HTMLElement> = {};
   private mounted = false;
@@ -38,22 +39,6 @@ export class UnitPerfHud {
   constructor(host: HTMLElement, initialExpanded = false) {
     this.host = host;
     this.expanded = initialExpanded;
-
-    this.toggleBtn = document.createElement('button');
-    this.toggleBtn.type = 'button';
-    this.toggleBtn.className = 'unit-v2-perf-toggle mishoe-v2-perf-toggle is-hidden';
-    this.toggleBtn.setAttribute('aria-label', 'V2 パフォーマンスHUD切替 (P)');
-    this.toggleBtn.setAttribute('title', 'V2 Perf HUD (P)');
-
-    const icon = document.createElementNS(SVG_NS, 'svg');
-    icon.setAttribute('viewBox', '0 0 24 24');
-    icon.setAttribute('aria-hidden', 'true');
-    icon.innerHTML =
-      '<path d="M4.5 16.5a8.5 8.5 0 1 1 15 0"/><line x1="12" y1="13" x2="16.2" y2="8.8"/><circle cx="12" cy="13.5" r="1.4" fill="currentColor" stroke="none"/>';
-    const label = document.createElement('span');
-    label.textContent = 'V2 HUD';
-    this.toggleBtn.append(icon, label);
-    this.toggleBtn.addEventListener('click', () => this.toggle());
 
     this.panelEl = document.createElement('div');
     this.panelEl.className = 'unit-v2-perf-panel mishoe-v2-perf-panel is-hidden';
@@ -72,7 +57,9 @@ export class UnitPerfHud {
       ['geometries', 'Geometries'],
       ['textures', 'Textures'],
       ['frameTime', 'Frame Time'],
-      ['quality', 'Tier / DPR'],
+      ['quality', 'Tier / Stage'],
+      ['kine', 'KINE Culling'],
+      ['bokeh', 'F1.2 Bokeh'],
       ['batches', 'Batching'],
       ['parts', 'Parts (JSON=3D)'],
       ['build', 'Build / Warmup'],
@@ -100,26 +87,22 @@ export class UnitPerfHud {
     this.fields.loopState = header.querySelector('[data-field="loopState"]') as HTMLElement;
     this.panelEl.appendChild(grid);
 
-    this.host.append(this.toggleBtn, this.panelEl);
+    this.host.append(this.panelEl);
   }
 
   public setModeVisible(visible: boolean): void {
     this.mounted = visible;
-    this.toggleBtn.classList.toggle('is-hidden', !visible);
-    this.toggleBtn.classList.toggle('is-active', visible && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !visible || !this.expanded);
   }
 
   public toggle(): boolean {
     this.expanded = !this.expanded;
-    this.toggleBtn.classList.toggle('is-active', this.mounted && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !this.mounted || !this.expanded);
     return this.expanded;
   }
 
   public setExpanded(expanded: boolean): void {
     this.expanded = expanded;
-    this.toggleBtn.classList.toggle('is-active', this.mounted && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !this.mounted || !this.expanded);
   }
 
@@ -133,7 +116,7 @@ export class UnitPerfHud {
     if (!force && now - this.lastDomUpdateMs < 90) return;
     this.lastDomUpdateMs = now;
 
-    this.fields.unitTitle.textContent = `${snap.unitId.toUpperCase()} · V2 OPT`;
+    this.fields.unitTitle.textContent = `${snap.unitId.toUpperCase()} · V3 OPT`;
 
     const dc = snap.drawCalls;
     const budget = snap.maxDrawCallsBudget ?? 100;
@@ -145,7 +128,24 @@ export class UnitPerfHud {
     this.fields.geometries.textContent = String(snap.geometries);
     this.fields.textures.textContent = String(snap.textures);
     this.fields.frameTime.textContent = `${snap.frameTimeMs.toFixed(2)} ms (avg ${snap.avgFrameTimeMs.toFixed(2)})`;
-    this.fields.quality.textContent = `${snap.quality.toUpperCase()} · DPR ${snap.pixelRatio.toFixed(2)}`;
+    const stageStr = snap.motionStage ? snap.motionStage.toUpperCase() : snap.quality.toUpperCase();
+    this.fields.quality.textContent = `${snap.quality.toUpperCase()} → ${stageStr} · DPR ${snap.pixelRatio.toFixed(2)}`;
+
+    if (snap.kineStats) {
+      const k = snap.kineStats;
+      this.fields.kine.textContent = k.enabled
+        ? `ON · -${k.totalCulled}/${k.totalParts} (F:${k.frustumCulled} S:${k.subpixelCulled} O:${k.occlusionCulled}) ${k.evalMs.toFixed(2)}ms`
+        : 'OFF';
+      this.fields.kine.className = k.enabled ? 'unit-v2-perf-val is-ok' : 'unit-v2-perf-val';
+    } else {
+      this.fields.kine.textContent = 'OFF';
+    }
+
+    const bk = snap.bokehStatus ?? 'disabled';
+    this.fields.bokeh.textContent =
+      bk === 'active'
+        ? `F1.2 ON (${(snap.bokehMs ?? 0).toFixed(1)}ms)`
+        : bk.toUpperCase();
 
     if (snap.buildStats) {
       const s = snap.buildStats;
@@ -167,14 +167,13 @@ export class UnitPerfHud {
       this.fields.vram.className = 'unit-v2-perf-val';
     }
 
-    this.fields.loopState.textContent = snap.idle ? 'IDLE 0% GPU' : 'ACTIVE';
+    this.fields.loopState.textContent = snap.idle ? 'IDLE 0% GPU' : stageStr;
     this.fields.loopState.className = snap.idle
       ? 'unit-v2-perf-state is-idle'
       : 'unit-v2-perf-state is-active';
   }
 
   public dispose(): void {
-    this.toggleBtn.remove();
     this.panelEl.remove();
   }
 }
