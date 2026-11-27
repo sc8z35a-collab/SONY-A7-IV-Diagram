@@ -1,5 +1,5 @@
 mode	kind	parts	slug_prefix	code_min	code_max	next_code	unit_file	data_file	l1_file	l2_file
-welcome	individual	220	welcome-	W01	W220	W221	src/units/welcome.ts	src/data/welcome.json	catalog/names/welcome.txt	catalog/spatial/welcome.tsv
+welcome	individual	360	welcome-	W01	W360	W361	src/units/welcome.ts	src/data/welcome.json	catalog/names/welcome.txt	catalog/spatial/welcome.tsv
 mishoe	individual	99	mi-	MI01	MI99	MI100	src/units/mi_shoe.ts	src/data/mi_shoe.json	catalog/names/mishoe.txt	catalog/spatial/mishoe.tsv
 battery	individual	130	bat-	P01	P130	P131	src/units/battery.ts	src/data/battery.json	catalog/names/battery.txt	catalog/spatial/battery.tsv
 cfexpress	individual	170	cfe-	C01	C170	C171	src/units/cfexpress.ts	src/data/cfexpress.json	catalog/names/cfexpress.txt	catalog/spatial/cfexpress.tsv
@@ -21,4 +21,4 @@ sensor_fab	individual	235	fab5-	F0-01	F5-38	F5-39	src/units/sensor_fab.ts	src/da
 mirai_2028	individual	140	mirai-	FH01-01	FH48-18	FH48-19	src/units/mirai_2028.ts	src/data/mirai_2028.json	catalog/names/mirai_2028.txt	catalog/spatial/mirai_2028.tsv
 integrated	composite	305	-	-	-	-	src/units/integrated.ts	src/data/integrated.json	catalog/names/integrated.txt	catalog/spatial/integrated.tsv
 camera_body	composite	231	-	-	-	-	src/units/camera_body.ts	src/data/camera_body.json	catalog/names/camera_body.txt	catalog/spatial/camera_body.tsv
-# total_individual_modes=20	total_individual_parts=2594	total_modes=22
+# total_individual_modes=20	total_individual_parts=2734	total_modes=22
