@@ -42,15 +42,19 @@ export interface UnitV2Diagnostics {
   renderFrameCount: number;
 }
 
+// Module-scoped zero-GC scratch objects for ULTRA tight-frustum shadow fitting
+const _shadowCenter = new THREE.Vector3();
+const _shadowSize = new THREE.Vector3();
+
 /**
  * Universal V2 Rendering Core for ANY unit registered in `src/units/registry.ts`.
  * Unifies:
- * - Dynamic lazy loading & 8ms time-sliced chunked build with abort cancellation
- * - Explicit PMREM studio lighting bake + immediate pmrem.dispose() (0 WebGLCubeUVMaps leak!)
- * - Quality-tier DPR capping (STD <=1.0, HIGH <=1.5, ULTRA <=2.0) & shader warmup
+ * - Dynamic lazy loading & time-sliced chunked build with abort cancellation
+ * - 4-Tier Pipeline: STD LITE (Zero-Light MatCap + Mega-Bucket Fusion), STD (Lambert+Phong),
+ *   HIGH (PBR + PMREM), ULTRA (512x256 Softbox Cyclorama + PCFSoftShadowMap + Ground Contact Shadow)
+ * - Quality-tier DPR capping (LITE/STD <=1.0, HIGH <=1.5, ULTRA <=2.0) & shader warmup
  * - Dirty-flag on-demand rendering (0% idle GPU)
- * - Two-stage zero-GC AABB raycasting (camera-drag hover pause + 30Hz throttle)
- * - Sub-view switching (lensSection / sensorFabVolume) & dynamic kinematic rig stepping
+ * - Front-to-back two-stage zero-GC AABB raycasting (camera-drag hover pause + 30Hz throttle)
  * - Automatic STD fallback recovery upon webglcontextlost / webglcontextrestored
  * - Automatic VRAM leak verification (Δg=0, Δt=0, cacheRemainingRefs=0)
  */
@@ -75,6 +79,8 @@ export class UnitV2Runtime {
   private buildResult: UnitBuildResult | null = null;
   private partById = new Map<string, CadPart>();
   private studioEnvRenderTarget: THREE.WebGLRenderTarget | null = null;
+  private ultraKeyLight: THREE.DirectionalLight | null = null;
+  private ultraShadowCatcher: THREE.Mesh | null = null;
   private savedExternalPixelRatio = 1.0;
 
   private quality: QualityTier = 'high';
@@ -188,37 +194,95 @@ export class UnitV2Runtime {
 
     const cfg = QUALITY_TIER_CONFIG[quality];
 
-    const hemi = new THREE.HemisphereLight(0xfafcff, 0xedf2fa, quality === 'standard' ? 1.24 : 1.08);
-    hemi.position.set(0, 60, 0);
+    // STD LITE uses pre-integrated Studio MatCap shaders -> ZERO dynamic scene lights needed!
+    if (quality === 'standard_lite') {
+      this.scene.environment = null;
+      this.studioEnvRenderTarget = null;
+      return;
+    }
+
+    const isStd = quality === 'standard';
+    const isUltra = quality === 'ultra';
+
+    // Physically-based Three.js r174 light units (useLegacyLights=false):
+    // - STD has no PMREM IBL, so boost omnidirectional hemisphere & 3-point lights to match HIGH brightness (0% crushed blacks)
+    // - ULTRA pairs crisp directional key shadow + architectural rim separation with our 512x256 softbox cyclorama
+    const hemi = new THREE.HemisphereLight(
+      0xffffff,
+      isStd ? 0xeef3fa : isUltra ? 0xe8eef8 : 0xedf2fa,
+      isStd ? 2.85 : isUltra ? 0.96 : 1.08
+    );
+    hemi.position.set(0, 80, 0);
     hemi.matrixAutoUpdate = false;
     hemi.updateMatrix();
 
-    const key = new THREE.DirectionalLight(0xffffff, quality === 'standard' ? 1.56 : 1.78);
-    key.position.set(-62, 86, 55);
+    const key = new THREE.DirectionalLight(
+      isUltra ? 0xfffdf9 : 0xffffff,
+      isStd ? 2.05 : isUltra ? 2.15 : 1.78
+    );
+    key.position.set(-72, 112, 68);
     key.matrixAutoUpdate = false;
     key.updateMatrix();
+    key.target.matrixAutoUpdate = false;
+    key.target.updateMatrix();
 
-    const fill = new THREE.DirectionalLight(0xf3f7ff, quality === 'standard' ? 0.88 : 0.92);
+    if (isUltra && cfg.shadowsEnabled) {
+      key.castShadow = true;
+      key.shadow.mapSize.set(2048, 2048);
+      key.shadow.bias = -0.00035;
+      key.shadow.normalBias = 0.08;
+      key.shadow.radius = 3.0;
+      this.ultraKeyLight = key;
+
+      // Subtle grounded studio contact-shadow catcher plane (cached & auto-disposed, zero leak!)
+      const planeGeo = this.cache.acquireGeometry('ultra:shadow-catcher-plane', () => {
+        const g = new THREE.PlaneGeometry(1, 1);
+        g.rotateX(-Math.PI / 2);
+        return g;
+      });
+      const shadowMat = this.cache.acquireShadowMaterial('ultra-ground', {
+        color: 0x0f172a,
+        opacity: 0.16,
+      });
+      const catcher = new THREE.Mesh(planeGeo, shadowMat);
+      catcher.name = 'ultra-studio-shadow-catcher';
+      catcher.receiveShadow = true;
+      catcher.castShadow = false;
+      catcher.matrixAutoUpdate = false;
+      catcher.updateMatrix();
+      catcher.visible = this.renderMode === 'solid';
+      this.ultraShadowCatcher = catcher;
+      this.lightGroup.add(catcher);
+    }
+
+    const fill = new THREE.DirectionalLight(
+      0xf4f8ff,
+      isStd ? 1.45 : isUltra ? 0.86 : 0.92
+    );
     fill.position.set(66, 24, 86);
     fill.matrixAutoUpdate = false;
     fill.updateMatrix();
 
-    const rim = new THREE.DirectionalLight(0xeef6ff, quality === 'standard' ? 0.84 : 1.02);
-    rim.position.set(78, 44, -80);
+    const rim = new THREE.DirectionalLight(
+      isUltra ? 0xe0f2fe : 0xeef6ff,
+      isStd ? 1.35 : isUltra ? 1.32 : 1.02
+    );
+    rim.position.set(82, 48, -84);
     rim.matrixAutoUpdate = false;
     rim.updateMatrix();
 
-    this.lightGroup.add(hemi, key, fill, rim);
+    this.lightGroup.add(hemi, key, key.target, fill, rim);
     this.lightGroup.updateMatrixWorld(true);
 
     if (cfg.enableStudioEnv) {
       // Explicit PMREM bake + immediate pmrem.dispose() prevents Three.js WebGLCubeUVMaps
       // from retaining 8 internal LOD plane geometries + 1 pingPong texture permanently!
-      const rawEnvTex = this.cache.acquireTexture('studio_env');
+      const envKey = isUltra ? 'studio_env_ultra' : 'studio_env';
+      const rawEnvTex = this.cache.acquireTexture(envKey);
       const pmrem = new THREE.PMREMGenerator(this.renderer);
       const envRt = pmrem.fromEquirectangular(rawEnvTex);
       pmrem.dispose();
-      this.cache.releaseTexture('studio_env');
+      this.cache.releaseTexture(envKey);
       this.studioEnvRenderTarget = envRt;
       this.scene.environment = envRt.texture;
     } else {
@@ -227,7 +291,58 @@ export class UnitV2Runtime {
     }
   }
 
+  /**
+   * Tightly fit ULTRA's 2048x2048 PCFSoftShadowMap frustum & studio contact-shadow floor
+   * to the active unit's exact world bounding box (razor-sharp mechanical shadows + 0 wasted texels!).
+   */
+  private fitUltraShadowRig(): void {
+    if (this.quality !== 'ultra' || !this.ultraKeyLight) return;
+    const box = this.buildResult?.raycastIndex.unitWorldBox;
+    if (!box || box.isEmpty()) return;
+
+    box.getCenter(_shadowCenter);
+    box.getSize(_shadowSize);
+    const radius = Math.max(12, Math.hypot(_shadowSize.x, _shadowSize.y, _shadowSize.z) * 0.56);
+
+    const key = this.ultraKeyLight;
+    key.target.position.copy(_shadowCenter);
+    key.target.updateMatrix();
+    key.position.set(
+      _shadowCenter.x - radius * 1.15,
+      _shadowCenter.y + radius * 1.85,
+      _shadowCenter.z + radius * 1.05
+    );
+    key.updateMatrix();
+
+    const sc = key.shadow.camera;
+    const extent = radius * 1.28;
+    sc.left = -extent;
+    sc.right = extent;
+    sc.top = extent;
+    sc.bottom = -extent;
+    sc.near = Math.max(1, radius * 0.25);
+    sc.far = radius * 5.2;
+    sc.updateProjectionMatrix();
+
+    if (this.ultraShadowCatcher) {
+      const floorSize = Math.max(60, radius * 4.8);
+      this.ultraShadowCatcher.position.set(_shadowCenter.x, box.min.y - 0.18, _shadowCenter.z);
+      this.ultraShadowCatcher.scale.set(floorSize, 1, floorSize);
+      this.ultraShadowCatcher.visible = this.renderMode === 'solid';
+      this.ultraShadowCatcher.updateMatrix();
+    }
+
+    this.lightGroup.updateMatrixWorld(true);
+    this.renderer.shadowMap.needsUpdate = true;
+  }
+
   private teardownStudioLighting(): void {
+    if (this.ultraKeyLight?.shadow?.map) {
+      this.ultraKeyLight.shadow.map.dispose();
+      this.ultraKeyLight.shadow.map = null;
+    }
+    this.ultraKeyLight = null;
+    this.ultraShadowCatcher = null;
     if (this.lightGroup.children.length > 0) {
       disposeObject3D(this.lightGroup, this.cache, false);
     }
@@ -241,6 +356,14 @@ export class UnitV2Runtime {
   private applyQualityRendererCaps(quality: QualityTier): void {
     const cfg = QUALITY_TIER_CONFIG[quality];
     this.renderer.shadowMap.enabled = cfg.shadowsEnabled;
+    if (cfg.shadowsEnabled) {
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      // On-demand shadow baking: bake shadows only when geometry/explode/subView changes (0% orbit overhead!)
+      this.renderer.shadowMap.autoUpdate = false;
+      this.renderer.shadowMap.needsUpdate = true;
+    } else {
+      this.renderer.shadowMap.autoUpdate = false;
+    }
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
     const targetDpr = Math.min(dpr, cfg.maxPixelRatio);
     this.renderer.setPixelRatio(targetDpr);
@@ -320,7 +443,7 @@ export class UnitV2Runtime {
 
       const planes = initialState.sectionActive ? [this.clippingPlane] : [];
       const built = await unit.build(quality, this.cache, {
-        frameBudgetMs: 8.0,
+        frameBudgetMs: 14.0,
         clippingPlanes: planes,
         subView: this.subView,
         integratedMode: this.integratedMode,
@@ -355,6 +478,8 @@ export class UnitV2Runtime {
       if (this.physicsActive || unit.needsContinuousAnimation?.(this.physicsActive)) {
         unit.updatePhysics?.(0, this.explodeFactor, this.physicsActive, 0);
       }
+
+      this.fitUltraShadowRig();
 
       // Pre-compile all active V2 shader programs BEFORE first visible frame (0 Shader Hitch!)
       if (!this.contextLost) {
@@ -442,6 +567,7 @@ export class UnitV2Runtime {
       );
       this.activeUnit.updateExplode(this.explodeFactor, true);
       this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+      this.fitUltraShadowRig();
       this.callbacks.onRequestRender();
       this.refreshHud(true);
     }
@@ -452,6 +578,7 @@ export class UnitV2Runtime {
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setSubView?.(subView);
     this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+    this.fitUltraShadowRig();
     this.callbacks.onRequestRender();
     this.refreshHud(true);
   }
@@ -462,6 +589,7 @@ export class UnitV2Runtime {
     const changed = this.activeUnit.updateExplode(t, force);
     if (changed) {
       this.activeUnit.updateExplodeGuides?.(t, true);
+      this.fitUltraShadowRig();
     }
     return changed;
   }
@@ -473,6 +601,12 @@ export class UnitV2Runtime {
     isolatedId: string | null,
     renderMode: RenderMode
   ): void {
+    const guidesNeedSync =
+      this.isolatedId !== isolatedId ||
+      this.renderMode !== renderMode ||
+      this.hiddenIds.size !== hiddenIds.size ||
+      this.hiddenIds !== hiddenIds;
+
     this.selectedId = selectedId;
     this.hoveredId = hoveredId;
     this.hiddenIds = hiddenIds;
@@ -480,24 +614,41 @@ export class UnitV2Runtime {
     this.renderMode = renderMode;
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setVisualState(selectedId, hoveredId, hiddenIds, isolatedId, renderMode);
-    this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+    if (guidesNeedSync) {
+      if (this.explodeFactor >= 0.02) {
+        this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+      }
+      if (this.quality === 'ultra') {
+        this.fitUltraShadowRig();
+      }
+    }
   }
 
   public syncSectionPlane(active: boolean): void {
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setClippingPlanes?.(active ? [this.clippingPlane] : []);
+    if (this.quality === 'ultra') {
+      this.renderer.shadowMap.needsUpdate = true;
+    }
   }
 
   public syncPhysicsActive(active: boolean): void {
     this.physicsActive = active;
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setPhysicsVisible?.(active);
+    if (this.quality === 'ultra') {
+      this.renderer.shadowMap.needsUpdate = true;
+    }
   }
 
   public stepPhysics(elapsed: number, delta = 0.016): boolean {
     if (!this.activeUnit || !this.ready) return false;
     const res = this.activeUnit.updatePhysics?.(elapsed, this.explodeFactor, this.physicsActive, delta);
-    return res !== false && (this.physicsActive || Boolean(res));
+    const activeMoved = res !== false && (this.physicsActive || Boolean(res));
+    if (activeMoved && this.quality === 'ultra') {
+      this.renderer.shadowMap.needsUpdate = true;
+    }
+    return activeMoved;
   }
 
   public handleResize(): void {

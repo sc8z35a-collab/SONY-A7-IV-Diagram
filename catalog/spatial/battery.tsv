@@ -1,131 +1,131 @@
 id	code	name	group	pos	size	exp	mat
-bat-outer-shell-front	P01	難燃UL94 V-0 ポリカーボネート前	#001-030	0,0,5.4	39.54,52.54,11.84	0,0,58	magnesium_cast
-bat-outer-shell-rear	P02	難燃背面シェル	#001-030	0,0,-5.4	39.54,52.54,11.93	0,0,-58	magnesium_cast
-bat-hologram-label	P03	偽造防止ホログラム認証ラベル	#001-030	0,-2,11.62	31.68,34.08,0.42	-42,14,78	pin_carrier_gloss
-bat-terminal-block-4pin	P04	4ピン凹型ショート防止・金メッキ端子ブロ	#001-030	0,23.6,0	22.64,6.69,6.2	0,52,18	matte_chassis
-bat-terminal-guide-ribs	P05	端子間絶縁隔壁フィン	#001-030	0,24.4,0	24.84,6.27,7.39	0,62,-16	magnesium_cast
-bat-bms-pcb	P06	多層BMS保護・制御メイン基板	#001-030	0,20.6,0	33.96,1.47,13.76	0,44,0	pcb_textured
-bat-infolithium-fuelgauge	P07	InfoLITHIUM高精度残量計測	#001-030	-4.5,21.6,2	5.78,1.13,7.61	-34,62,34	ic_epoxy_dark
-bat-auth-crypto-ic	P08	純正認証・暗号化マイクロコントローラ	#001-030	4.5,21.6,2	4.98,1.14,4.98	34,62,34	ic_epoxy_dark
-bat-protection-mosfet	P09	充放電デュアル保護MOSFETスイッチ	#001-030	-9.2,21.6,-2.6	9.04,1.09,5.49	-54,54,-26	ic_epoxy_dark
-bat-shunt-resistor	P10	超低抵抗・高精度電流検出シャント抵抗	#001-030	0,21.5,-3.4	5.96,0.92,3.16	0,54,-42	copper_thermal
-bat-cell-balancer-ic	P11	2直列セル電圧監視	#001-030	9.4,21.6,-2.4	6.91,1.01,5.89	54,54,-26	solder_silver
-bat-ntc-thermistor	P12	セル密着型NTCサーミスタ温度センサー	#001-030	0,8.5,4.2	5.46,25.28,2.44	0,26,44	copper_coil
-bat-thermal-fuse-ptc	P13	パック側リセット可能PTC	#001-030	0,19.3,-2.2	12.16,1.32,3.83	-44,34,-48	solder_silver
-bat-nickel-busbar-weld	P14	純ニッケルスポット溶接タブ	#001-030	0,0,0	24.72,44.45,11.16	0,-48,-28	stainless_machined
-bat-cell-holder-frame	P15	衝撃吸収ツイン円筒セル固定インナーホルダ	#001-030	0,0,0	36.68,44.88,18.08	0,-34,34	matte_chassis
-bat-kapton-barley-paper	P16	青色フィッシュペーパー	#001-030	0,0,0	36.52,1.69,17.46	-48,36,20	pin_carrier_gloss
-bat-18500-steel-can	P17	18500円筒セル・ニッケルめっき冷間圧	#001-030	0,0,0	36.72,40.2,17.76	-44,-6,0	stainless_machined
+bat-outer-shell-front	P01	難燃UL94 V-0 ポリカーボネート前	#001-030	0,0,5.4	39.18,52.29,11.84	0,0,58	magnesium_cast
+bat-outer-shell-rear	P02	難燃背面シェル	#001-030	0,0,-5.4	39.18,52.18,11.93	0,0,-58	magnesium_cast
+bat-hologram-label	P03	偽造防止ホログラム認証ラベル	#001-030	0,-2,11.62	31.6,34,0.42	-42,14,78	pin_carrier_gloss
+bat-terminal-block-4pin	P04	4ピン凹型ショート防止・金メッキ端子ブロ	#001-030	0,23.6,0	22.4,6.63,6.2	0,52,18	matte_chassis
+bat-terminal-guide-ribs	P05	端子間絶縁隔壁フィン	#001-030	0,24.4,0	24.6,6.27,7.35	0,62,-16	magnesium_cast
+bat-bms-pcb	P06	多層BMS保護・制御メイン基板	#001-030	0,20.6,0	33.8,1.47,13.6	0,44,0	pcb_textured
+bat-infolithium-fuelgauge	P07	InfoLITHIUM高精度残量計測	#001-030	-4.5,21.6,2	5.78,1.09,7.52	-34,62,34	ic_epoxy_dark
+bat-auth-crypto-ic	P08	純正認証・暗号化マイクロコントローラ	#001-030	4.5,21.6,2	4.98,1.14,4.98	34,62,34	solder_silver
+bat-protection-mosfet	P09	充放電デュアル保護MOSFETスイッチ	#001-030	-9.2,21.6,-2.6	8.8,1.07,5.45	-54,54,-26	ic_epoxy_dark
+bat-shunt-resistor	P10	超低抵抗・高精度電流検出シャント抵抗	#001-030	0,21.5,-3.4	5.8,0.92,3	0,54,-42	copper_thermal
+bat-cell-balancer-ic	P11	2直列セル電圧監視	#001-030	9.4,21.6,-2.4	6.75,0.99,5.81	54,54,-26	solder_silver
+bat-ntc-thermistor	P12	セル密着型NTCサーミスタ温度センサー	#001-030	0,8.5,4.2	5.4,25.25,2.44	0,26,44	copper_coil
+bat-thermal-fuse-ptc	P13	パック側リセット可能PTC	#001-030	0,19.3,-2.2	12,1.32,3.6	-44,34,-48	solder_silver
+bat-nickel-busbar-weld	P14	純ニッケルスポット溶接タブ	#001-030	0,0,0	24.6,44.41,11.1	0,-48,-28	stainless_machined
+bat-cell-holder-frame	P15	衝撃吸収ツイン円筒セル固定インナーホルダ	#001-030	0,0,0	36.68,44.87,18.08	0,-34,34	matte_chassis
+bat-kapton-barley-paper	P16	青色フィッシュペーパー	#001-030	0,0,0	36.09,1.69,17.26	-48,36,20	pin_carrier_gloss
+bat-18500-steel-can	P17	18500円筒セル・ニッケルめっき冷間圧	#001-030	0,0,0	36.73,40.2,17.76	-44,-6,0	stainless_machined
 bat-cell-pvc-sleeve	P18	熱収縮PET/PVC絶縁スリーブ被覆	#001-030	0,0,0	37.17,39.59,18.18	-68,-6,20	pin_carrier_gloss
 bat-cid-pressure-disc	P19	セル内蔵CID	#001-030	9.5,16.4,0	12.65,1.5,12.7	46,36,24	stainless_machined
-bat-cell-ptc-ring	P20	セル頭部内蔵ドーナツ型PTCサーミスタ環	#001-030	9.5,17.3,0	13.3,1,13.3	62,46,8	solder_silver
+bat-cell-ptc-ring	P20	セル頭部内蔵ドーナツ型PTCサーミスタ環	#001-030	9.5,17.3,0	12.8,1,13	62,46,8	solder_silver
 bat-safety-vent-gasket	P21	防爆安全弁＆ポリプロピレン気密クリンプ	#001-030	9.5,18,0	16.96,2.39,16.96	76,56,-12	membrane_translucent
-bat-cathode-nmc-al	P22	正極：高ニッケルNMC/NCA活物質	#001-030	9.5,-2.8,0	14.65,36.67,15.36	46,12,16	solder_silver
-bat-anode-siox-cu	P23	負極：次世代シリコン・カーボン複合	#001-030	9.5,-2.8,0	13.25,36.17,13.91	68,4,26	copper_thermal
-bat-ceramic-separator	P24	セラミック耐熱コート微多孔セパレーター膜	#001-030	9.5,-2.8,0	13.77,37.4,14.38	88,-4,14	ic_epoxy_dark
+bat-cathode-nmc-al	P22	正極：高ニッケルNMC/NCA活物質	#001-030	9.5,-2.8,0	14.68,36.67,15.36	46,12,16	solder_silver
+bat-anode-siox-cu	P23	負極：次世代シリコン・カーボン複合	#001-030	9.5,-2.8,0	13.24,36.17,13.89	68,4,26	copper_thermal
+bat-ceramic-separator	P24	セラミック耐熱コート微多孔セパレーター膜	#001-030	9.5,-2.8,0	13.45,37.4,14.07	88,-4,14	ic_epoxy_dark
 bat-electrolyte-sei	P25	有機カーボネート電解液	#001-030	9.5,-2.8,0	9.89,34.2,9.43	106,-12,0	matte_chassis
 bat-center-mandrel-pin	P26	ジェリーロール中心・中空ステンレス	#001-030	9.5,-2.8,0	3.52,37.08,3.58	86,-24,-22	stainless_machined
-bat-electrode-tabs-weld	P27	セル内部アルミ正極タブ	#001-030	9.5,-1.5,0	4.36,41.98,4.79	64,-34,-32	solder_silver
-bat-usbc-pd-charger-ic	P28	次世代直結USB-C急速充電ポート	#001-030	16.2,12,0	9.76,11,9.76	78,28,38	pcb_textured
-bat-touch-4led-gauge	P29	タッチ式4段階LED残量チェッカー	#001-030	0,19.6,11.42	19,4.6,0.84	44,28,72	stainless_machined
-bat-thermal-graphite-wrap	P30	セル外周・高熱伝導グラファイト均熱シート	#001-030	0,-2.2,0	35.12,38.62,1.16	-42,-24,-46	carbon_fiber
-bat-terminal-contact-springs	P31	リン青銅・二股U字バネ接点フィンガー	#031-060	0,23.3,0	13.6,3.28,1.75	-22,72,16	gold_plating
-bat-latch-catch-pocket	P32	本体ロック爪キャッチ凹部	#031-060	-17.8,-18,-4.4	3.33,10.88,4.2	-74,-44,-22	magnesium_cast
-bat-usbc-silicone-dustplug	P33	USB-C充電ポート用防塵防滴シリコーン	#031-060	18.6,12,0	2.07,6.95,9.74	98,42,46	ic_epoxy_dark
-bat-laser-datamatrix-lot	P34	レーザー刻印製造ロット番号	#031-060	0,-10.5,-11.46	27.66,17.26,0.25	-26,-34,-76	matte_black_anodized
-bat-swelling-foam-bumper	P35	衝撃吸収PORONウレタン緩衝パッド	#031-060	0,-24.1,0	37.12,27.66,16.92	-24,-64,24	ic_epoxy_dark
-bat-secondary-ovp-ic	P36	独立ハードウェア・セカンダリ過電圧保護I	#031-060	-12.6,21.5,2.2	3.54,0.9,3.68	-62,74,34	ic_epoxy_dark
-bat-esd-tvs-diode-pack	P37	端子静電気保護TVSダイオードアレイ	#031-060	0,21.5,3.8	10.06,0.66,0.99	0,74,48	solder_silver
-bat-ldo-reference-vreg	P38	超低消費LDO安定化電源	#031-060	12.4,21.5,2.2	4.64,0.85,2.29	62,74,34	ic_epoxy_dark
-bat-eeprom-cal-memory	P39	不揮発性DataFlash /	#031-060	-6.4,21.5,-4	3.74,0.83,3.93	-34,74,-38	ic_epoxy_dark
-bat-precharge-shipmode-fet	P40	プリチャージ	#031-060	6.4,21.5,-4	4.91,0.81,2.45	34,74,-38	ic_epoxy_dark
-bat-usbc-pd-cc-inductor	P41	USB-C PD通信CCコントローラ	#031-060	13.2,18.2,2.2	8.24,2.08,6.35	86,62,32	solder_silver
-bat-comm-pullup-rc-filter	P42	InfoLITHIUM通信線RCノイズフ	#031-060	-2,21.4,-0.4	6.06,0.56,1.78	-18,76,-12	solder_silver
-bat-bms-test-calib-pads	P43	工場自動校正用金メッキテストパッド	#031-060	0,19.75,0.4	18.24,0.28,2.54	22,76,-12	pcb_textured
-bat-second-ntc-pcb-sensor	P44	基板側セカンドNTC温度センサー	#031-060	-11.4,21.5,-0.5	2.74,0.76,1.89	-78,60,-10	gold_plating
-bat-nfc-health-telemetry	P45	次世代NFC非接触バッテリー健康診断タグ	#031-060	0,4,-10.1	20.28,15.28,0.56	28,18,-76	carbon_fiber
-bat-aerogel-mica-barrier	P46	シリカエアロゲル	#031-060	0,-2.5,0	1.13,42.76,16.76	0,-68,-4	ic_epoxy_dark
+bat-electrode-tabs-weld	P27	セル内部アルミ正極タブ	#001-030	9.5,-1.5,0	4.3,41.9,4.79	64,-34,-32	solder_silver
+bat-usbc-pd-charger-ic	P28	次世代直結USB-C急速充電ポート	#001-030	16.2,12,0	9.76,11,9.6	78,28,38	pcb_textured
+bat-touch-4led-gauge	P29	タッチ式4段階LED残量チェッカー	#001-030	0,19.6,11.42	18.8,4.4,0.84	44,28,72	stainless_machined
+bat-thermal-graphite-wrap	P30	セル外周・高熱伝導グラファイト均熱シート	#001-030	0,-2.2,0	35,38.5,1.16	-42,-24,-46	carbon_fiber
+bat-terminal-contact-springs	P31	リン青銅・二股U字バネ接点フィンガー	#031-060	0,23.3,0	13.52,3.25,1.74	-22,72,16	gold_plating
+bat-latch-catch-pocket	P32	本体ロック爪キャッチ凹部	#031-060	-17.8,-18,-4.4	3.28,10.88,4.2	-74,-44,-22	magnesium_cast
+bat-usbc-silicone-dustplug	P33	USB-C充電ポート用防塵防滴シリコーン	#031-060	18.6,12,0	2.07,6.75,9.5	98,42,46	ic_epoxy_dark
+bat-laser-datamatrix-lot	P34	レーザー刻印製造ロット番号	#031-060	0,-10.5,-11.46	27.6,17.2,0.25	-26,-34,-76	matte_black_anodized
+bat-swelling-foam-bumper	P35	衝撃吸収PORONウレタン緩衝パッド	#031-060	0,-24.1,0	36.92,27.66,16.6	-24,-64,24	ic_epoxy_dark
+bat-secondary-ovp-ic	P36	独立ハードウェア・セカンダリ過電圧保護I	#031-060	-12.6,21.5,2.2	3.3,0.9,3.68	-62,74,34	solder_silver
+bat-esd-tvs-diode-pack	P37	端子静電気保護TVSダイオードアレイ	#031-060	0,21.5,3.8	9.95,0.66,0.88	0,74,48	solder_silver
+bat-ldo-reference-vreg	P38	超低消費LDO安定化電源	#031-060	12.4,21.5,2.2	4.47,0.85,2.29	62,74,34	ic_epoxy_dark
+bat-eeprom-cal-memory	P39	不揮発性DataFlash /	#031-060	-6.4,21.5,-4	3.5,0.83,3.93	-34,74,-38	solder_silver
+bat-precharge-shipmode-fet	P40	プリチャージ	#031-060	6.4,21.5,-4	4.73,0.81,2.45	34,74,-38	ic_epoxy_dark
+bat-usbc-pd-cc-inductor	P41	USB-C PD通信CCコントローラ	#031-060	13.2,18.2,2.2	8.23,2.08,6.08	86,62,32	solder_silver
+bat-comm-pullup-rc-filter	P42	InfoLITHIUM通信線RCノイズフ	#031-060	-2,21.4,-0.4	5.98,0.56,1.69	-18,76,-12	solder_silver
+bat-bms-test-calib-pads	P43	工場自動校正用金メッキテストパッド	#031-060	0,19.75,0.4	18.2,0.28,2.5	22,76,-12	pcb_textured
+bat-second-ntc-pcb-sensor	P44	基板側セカンドNTC温度センサー	#031-060	-11.4,21.5,-0.5	2.7,0.76,1.85	-78,60,-10	gold_plating
+bat-nfc-health-telemetry	P45	次世代NFC非接触バッテリー健康診断タグ	#031-060	0,4,-10.1	20.2,15.2,0.56	28,18,-76	carbon_fiber
+bat-aerogel-mica-barrier	P46	シリカエアロゲル	#031-060	0,-2.5,0	1.08,42.6,16.6	0,-68,-4	ic_epoxy_dark
 bat-cold-polyimide-heater	P47	極寒対応ポリイミド薄膜自己加熱ヒーター	#031-060	-9.5,-2.5,0	22.59,28,20.09	-84,18,36	copper_thermal
 bat-moisture-lci-breather	P48	水没検知インジケータ	#031-060	-18.2,10.5,-2.2	0.42,9.99,5.25	-86,36,-34	ic_epoxy_dark
-bat-conformal-pcb-coat	P49	BMS基板防湿・防結露コンフォーマルコー	#031-060	0,21.8,0	34.08,0.24,10.68	0,56,62	matte_chassis
-bat-cell-top-insulator-ring	P50	セル上部PBT絶縁ワッシャー	#031-060	-9.5,17.9,0	17.34,3.15,17.34	-74,48,16	matte_chassis
-bat-cell-bottom-insulator	P51	セル底部絶縁ディスク	#031-060	9.5,-23.3,0	16.94,0.42,16.94	44,-66,16	ic_epoxy_dark
+bat-conformal-pcb-coat	P49	BMS基板防湿・防結露コンフォーマルコー	#031-060	0,21.8,0	34,0.24,10.6	0,56,62	matte_chassis
+bat-cell-top-insulator-ring	P50	セル上部PBT絶縁ワッシャー	#031-060	-9.5,17.9,0	16.89,3.14,17.06	-74,48,16	matte_chassis
+bat-cell-bottom-insulator	P51	セル底部絶縁ディスク	#031-060	9.5,-23.3,0	16.84,0.42,16.02	44,-66,16	ic_epoxy_dark
 bat-cell-crimp-bead-groove	P52	鋼缶ネッキング圧着溝	#031-060	-9.5,15.6,0	18.54,3.32,18.54	-92,16,-6	stainless_machined
 bat-positive-cap-button	P53	正極トップキャップ	#031-060	9.5,18.6,0	15.05,1.7,15.1	88,66,-24	solder_silver
-bat-bottom-neg-spotweld	P54	セル底面・負極タブ抵抗スポット溶接ナゲッ	#031-060	9.5,-23.9,0	3.33,0.3,8.88	24,-70,-34	stainless_machined
+bat-bottom-neg-spotweld	P54	セル底面・負極タブ抵抗スポット溶接ナゲッ	#031-060	9.5,-23.9,0	3.25,0.3,8.8	24,-70,-34	stainless_machined
 bat-jellyroll-end-tape	P55	ジェリーロール外周止め耐熱PPテープ	#031-060	9.5,-2.8,0	7.12,34,7.47	114,16,20	cfa_gloss_filter
-bat-tabless-collector-disc	P56	次世代タブレス花弁状集電ディスク	#031-060	9.5,14.8,0	16,0.76,16	96,36,-34	copper_thermal
+bat-tabless-collector-disc	P56	次世代タブレス花弁状集電ディスク	#031-060	9.5,14.8,0	15.9,0.76,15.12	96,36,-34	copper_thermal
 bat-al-cu-current-foils	P57	12μm高純度アルミ正極集電箔	#031-060	9.5,-2.8,0	15.03,37.5,6.53	116,-30,18	solder_silver
 bat-binder-conductive-cnt	P58	電極バインダー	#031-060	9.5,-2.8,0	13.66,34,10.88	112,-46,-12	silicon_photodiode
 bat-semisolid-gel-matrix	P59	次世代半固体ゲルポリマー電解質マトリクス	#031-060	9.5,-2.8,0	11.46,35,11.09	72,-32,46	matte_chassis
 bat-can-bottom-vent-valve	P60	セル底面レーザー刻印セル型番	#031-060	-9.5,-24.2,0	17.04,0.64,17.04	-64,-64,-46	stainless_machined
-bat-bimetal-al-ni-strip	P61	超音波接合 バイメタル遷移タブ	#061-090	9.5,19.25,0	10.28,0.46,4.48	62,68,22	solder_silver
-bat-bms-copper-shunt-bus	P62	3oz厚銅 BMS大電流バスバー	#061-090	0,20.1,-1.6	26.7,0.55,5.67	0,82,-24	gold_plating
-bat-ultrasonic-seal-gasket	P63	超音波シェアジョイント防滴勘合リップ	#061-090	0,0,0	38.26,51.26,6.92	-48,12,54	ic_epoxy_dark
+bat-bimetal-al-ni-strip	P61	超音波接合 バイメタル遷移タブ	#061-090	9.5,19.25,0	10.2,0.46,4.4	62,68,22	solder_silver
+bat-bms-copper-shunt-bus	P62	3oz厚銅 BMS大電流バスバー	#061-090	0,20.1,-1.6	26.7,0.55,5.65	0,82,-24	gold_plating
+bat-ultrasonic-seal-gasket	P63	超音波シェアジョイント防滴勘合リップ	#061-090	0,0,0	38.1,51.1,6.8	-48,12,54	ic_epoxy_dark
 bat-cell-electrolyte-fill-ball	P64	真空電解液注入口	#061-090	-9.5,18.7,3.2	3.49,2.3,3.5	-56,72,34	stainless_machined
-bat-camera-pogo-mating-pins	P65	カメラ側 バッテリー室4極金めっきブレー	#061-090	0,26.15,0	25.96,4,5.4	0,86,18	matte_chassis
-bat-cell-matching-divider	P66	2S直列中間電位保護直列抵抗	#061-090	0,21.45,-5.2	6.23,0.8,1.71	24,72,-52	solder_silver
+bat-camera-pogo-mating-pins	P65	カメラ側 バッテリー室4極金めっきブレー	#061-090	0,26.15,0	25.86,3.94,5.2	0,86,18	matte_chassis
+bat-cell-matching-divider	P66	2S直列中間電位保護直列抵抗	#061-090	0,21.45,-5.2	6.07,0.8,1.55	24,72,-52	solder_silver
 bat-cell-insulation-collar	P67	高耐熱ノーメックスセル底面絶縁カップ	#061-090	0,-23.15,0	37.62,4.73,18.62	-24,-76,18	ic_epoxy_dark
-bat-bms-crystal-osc	P68	超低消費電力 32.768 kHz	#061-090	-10.6,21.45,2.2	3.63,0.82,2.82	-52,74,44	ic_epoxy_dark
-bat-bms-current-comparator	P69	ハードウェア超高速 短絡検出コンパレータ	#061-090	-4.6,21.45,-3.2	3.59,0.91,3.75	-32,76,-48	solder_silver
-bat-pc-flame-retardant-ribs	P70	内壁UL94 V-0 衝撃吸収クラッシュ	#061-090	0,-2.2,0	36.44,39.2,17.65	56,-24,58	magnesium_cast
-bat-cvd-sic-porous-scaffold	P71	CVD気相成長シリコン・カーボン多孔質ナ	#061-090	9.5,6.2,2.6	5.92,7.32,1.15	128,42,42	ic_epoxy_dark
-bat-single-crystal-nmc-ald	P72	単結晶ハイニッケルNMC811正極粒子	#061-090	9.5,1.5,2.6	5.7,6.9,6.04	146,22,22	matte_chassis
-bat-sacrificial-lfo-prelith	P73	犠牲正極プレリチウム化剤 Li₅FeO₄	#061-090	9.5,-3.5,2.6	5.7,6.5,1.82	154,0,40	matte_chassis
-bat-bilayer-lif-sei-film	P74	FEC/LiFSI誘導・無機LiF内層	#061-090	9.5,-8.5,2.6	6.1,6.5,1.49	148,-22,24	carbon_fiber
-bat-cathode-cei-passivation	P75	高電圧CEI正極界面保護膜	#061-090	9.5,-13.5,2.6	5.9,6.3,1.65	132,-46,36	matte_chassis
-bat-dry-ptfe-fibril-electrode	P76	無溶剤ドライ電極PTFEフィブリル蜘蛛の	#061-090	9.5,6.2,-2.6	5.88,6.48,1.39	126,48,-28	matte_chassis
-bat-trilayer-pp-pe-pp-shutdown	P77	3層PP/PE/PP 130℃サーマルシ	#061-090	9.5,1.5,-2.6	5.88,6.68,1.28	148,22,-40	membrane_translucent
-bat-llzo-mgo-dendrite-shield	P78	MgO繊維強化LLZOガーネット固体電解	#061-090	9.5,-3.5,-2.6	5.92,6.72,1.92	158,-4,-30	cfa_gloss_filter
-bat-calendered-porosity-gradient	P79	多段カレンダー圧延・二重気孔率勾配電極	#061-090	9.5,-8.5,-2.6	5.88,6.48,1.24	148,-28,-42	matte_chassis
-bat-hf-scavenger-electrolyte	P80	電解液水分捕獲・フッ化水素スカベンジャー	#061-090	9.5,-13.5,-2.6	5.72,6.32,1.09	128,-54,-26	matte_chassis
+bat-bms-crystal-osc	P68	超低消費電力 32.768 kHz	#061-090	-10.6,21.45,2.2	3.55,0.82,2.74	-52,74,44	ic_epoxy_dark
+bat-bms-current-comparator	P69	ハードウェア超高速 短絡検出コンパレータ	#061-090	-4.6,21.45,-3.2	3.5,0.91,3.7	-32,76,-48	solder_silver
+bat-pc-flame-retardant-ribs	P70	内壁UL94 V-0 衝撃吸収クラッシュ	#061-090	0,-2.2,0	36.32,39.2,17.65	56,-24,58	magnesium_cast
+bat-cvd-sic-porous-scaffold	P71	CVD気相成長シリコン・カーボン多孔質ナ	#061-090	9.5,6.2,2.6	5.8,7.2,1.15	128,42,42	ic_epoxy_dark
+bat-single-crystal-nmc-ald	P72	単結晶ハイニッケルNMC811正極粒子	#061-090	9.5,1.5,2.6	5.67,6.8,6.04	146,22,22	matte_chassis
+bat-sacrificial-lfo-prelith	P73	犠牲正極プレリチウム化剤 Li₅FeO₄	#061-090	9.5,-3.5,2.6	5.6,6.4,1.82	154,0,40	matte_chassis
+bat-bilayer-lif-sei-film	P74	FEC/LiFSI誘導・無機LiF内層	#061-090	9.5,-8.5,2.6	6,6.4,1.49	148,-22,24	carbon_fiber
+bat-cathode-cei-passivation	P75	高電圧CEI正極界面保護膜	#061-090	9.5,-13.5,2.6	5.8,6.2,1.65	132,-46,36	matte_chassis
+bat-dry-ptfe-fibril-electrode	P76	無溶剤ドライ電極PTFEフィブリル蜘蛛の	#061-090	9.5,6.2,-2.6	5.8,6.4,1.39	126,48,-28	matte_chassis
+bat-trilayer-pp-pe-pp-shutdown	P77	3層PP/PE/PP 130℃サーマルシ	#061-090	9.5,1.5,-2.6	5.8,6.6,1.28	148,22,-40	membrane_translucent
+bat-llzo-mgo-dendrite-shield	P78	MgO繊維強化LLZOガーネット固体電解	#061-090	9.5,-3.5,-2.6	5.8,6.6,1.92	158,-4,-30	cfa_gloss_filter
+bat-calendered-porosity-gradient	P79	多段カレンダー圧延・二重気孔率勾配電極	#061-090	9.5,-8.5,-2.6	5.8,6.4,1.24	148,-28,-42	matte_chassis
+bat-hf-scavenger-electrolyte	P80	電解液水分捕獲・フッ化水素スカベンジャー	#061-090	9.5,-13.5,-2.6	5.6,6.2,1.09	128,-54,-26	matte_chassis
 bat-anode-overhang-margin	P81	負極 1.0 mm オーバーハング余白	#061-090	9.5,13.8,0	14.01,4.9,12.56	116,62,-10	copper_thermal
-bat-laser-notched-foil-edge	P82	タブレス用レーザー微細スリット切欠き集電	#061-090	9.5,15.2,0	14.04,0.63,14.06	106,78,22	copper_thermal
+bat-laser-notched-foil-edge	P82	タブレス用レーザー微細スリット切欠き集電	#061-090	9.5,15.2,0	13.98,0.62,14	106,78,22	copper_thermal
 bat-electrolyte-capillary-wick	P83	ゼリーロール真空注液・毛細管ウェッティン	#061-090	9.5,-2.5,0	10.28,22.81,10.25	96,-72,42	matte_chassis
-bat-al-foil-carbon-primer	P84	アルミ集電箔 1 μm 導電カーボンコー	#061-090	-9.5,6,2.2	5.88,7.08,0.8	-124,34,34	solder_silver
-bat-cu-foil-nodule-anchor	P85	電解銅箔 マイクロ粗化ノジュール	#061-090	-9.5,-2.5,2.2	5.88,7.08,1.13	-136,-4,34	gold_plating
-bat-cid-pbt-insulator-ring	P86	CID内部 PBT二重絶縁スペーサーリン	#061-090	-9.5,16.4,0	12.92,1.13,12.88	-116,56,4	ic_epoxy_dark
+bat-al-foil-carbon-primer	P84	アルミ集電箔 1 μm 導電カーボンコー	#061-090	-9.5,6,2.2	5.8,7,0.8	-124,34,34	solder_silver
+bat-cu-foil-nodule-anchor	P85	電解銅箔 マイクロ粗化ノジュール	#061-090	-9.5,-2.5,2.2	5.8,7,1.13	-136,-4,34	gold_plating
+bat-cid-pbt-insulator-ring	P86	CID内部 PBT二重絶縁スペーサーリン	#061-090	-9.5,16.4,0	12.52,1.13,12.61	-116,56,4	ic_epoxy_dark
 bat-can-ni-gradient-plating	P87	18500鋼缶 内面ニッケル拡散めっき	#061-090	-9.5,-10.5,0	13.2,10.6,4.8	-136,-34,-22	stainless_machined
 bat-double-seam-crimp-gasket	P88	セル缶トップ二重巻締め圧縮PP	#061-090	-9.5,17.2,0	22.06,2.32,22.06	-122,22,-38	ic_epoxy_dark
-bat-ultrasonic-imc-weld-zone	P89	超音波溶接 Al-Cu / Al-Ni	#061-090	-9.5,-22.2,0	5.68,1.13,4.48	-110,-68,22	copper_thermal
-bat-busbar-strain-relief-omega	P90	熱膨張・落下衝撃吸収 Ω字型ニッケルバス	#061-090	0,-22.2,3.6	19.68,3.08,3.08	-4,-96,46	stainless_machined
+bat-ultrasonic-imc-weld-zone	P89	超音波溶接 Al-Cu / Al-Ni	#061-090	-9.5,-22.2,0	5.6,1.13,4.4	-110,-68,22	copper_thermal
+bat-busbar-strain-relief-omega	P90	熱膨張・落下衝撃吸収 Ω字型ニッケルバス	#061-090	0,-22.2,3.6	19.6,3.08,3	-4,-96,46	stainless_machined
 bat-eis-impedance-engine	P91	オンラインEIS電気化学インピーダンス分	#091-120	-4.2,18.8,0.2	5.28,2.39,5.28	-82,76,52	gold_plating
-bat-usb-pd32-spr-avs-ctrl	P92	USB PD 3.2 SPR AVS急速	#091-120	9.8,18.8,1.8	5.08,2.02,6.1	88,76,54	solder_silver
-bat-gan-sync-buckboost-stage	P93	次世代GaN窒化ガリウム内蔵・高効率2	#091-120	9.6,18.6,-2.6	8.41,1.68,3.75	112,68,12	copper_thermal
-bat-active-switched-cap-bal	P94	無損失スイッチドキャパシタ・アクティブ2	#091-120	4.4,18.8,-2.6	8.01,1.02,3.68	56,84,-46	solder_silver
+bat-usb-pd32-spr-avs-ctrl	P92	USB PD 3.2 SPR AVS急速	#091-120	9.8,18.8,1.8	5.08,2.02,6.05	88,76,54	solder_silver
+bat-gan-sync-buckboost-stage	P93	次世代GaN窒化ガリウム内蔵・高効率2	#091-120	9.6,18.6,-2.6	8.25,1.68,3.75	112,68,12	copper_thermal
+bat-active-switched-cap-bal	P94	無損失スイッチドキャパシタ・アクティブ2	#091-120	4.4,18.8,-2.6	7.96,1.02,3.68	56,84,-46	solder_silver
 bat-pqc-eui-passport-se	P95	EUバッテリーパスポート2026–202	#091-120	2.8,18.9,2.4	4.98,1.22,4.98	36,82,62	gold_plating
-bat-inrush-softstart-precharge	P96	カメラ装着時スパーク防止・突入電流ソフト	#091-120	-9.6,18.8,2.8	7.88,0.85,2.9	-108,68,16	ic_epoxy_dark
-bat-mosfet-chargepump-driver	P97	ハイサイドN-MOSFET駆動用チャージ	#091-120	-8,18.8,-0.8	4.26,0.89,5.41	-96,76,-36	ic_epoxy_dark
-bat-low-power-wake-comparator	P98	超低消費電力長期保管ディープスリープ	#091-120	7.4,18.8,0.2	5.85,0.83,3.4	98,76,-34	solder_silver
-bat-zero-ohm-thermal-via-array	P99	BMS基板 4層重銅サーマルビア	#091-120	-5.8,18.4,-2	7.66,1.38,4.86	-48,84,-52	copper_thermal
-bat-blackbox-fault-logger	P100	異常イベント・ブラックボックス記録FRA	#091-120	0,18.8,-1	4.64,0.99,6.53	-24,88,24	gold_plating
-bat-argyrodite-li6ps5cl-2026	P101	硫化物アルジロダイト全固体電解質格子	#091-120	8.8,10.5,2.2	5.72,6.92,1.05	175.2,45.5,33.8	ic_epoxy_dark
-bat-ag-c-anodefree-interlayer	P102	アノードフリー全固体用 銀-カーボン親リ	#091-120	9.4,6,2.6	5.88,6.48,1.27	180.6,22,53.4	solder_silver
-bat-lhce-fluorinated-ether	P103	局所高濃度フッ素化エーテル難燃電解液	#091-120	10,0.5,2	5.72,6.32,0.74	182,-0.5,20	cfa_gloss_filter
-bat-supramolecular-selfheal-binder	P104	超分子・自己修復ダイナミック架橋シリコン	#091-120	9.4,-5.2,2.4	5.7,6.3,1.3	178.6,-22.8,51.6	elastomer_rubber
-bat-gb-dendrite-grain-passiv	P105	MIT 2026発見・固体電解質結晶粒界	#091-120	8.5,-10.8,2.1	5.51,6.38,1.26	169.5,-47.2,19.9	ic_epoxy_dark
-bat-na-li-hybrid-cold-cell	P106	2026極寒仕様 ナトリウム・リチウムハ	#091-120	8.8,10.2,-2.4	5.88,6.4,1.17	173.2,41.8,-23.6	cfa_gloss_filter
-bat-swcnt-mwcnt-3d-web	P107	単層・多層カーボンナノチューブ3D立体導	#091-120	9.5,4.8,-2.8	5.68,6.28,1.07	180.5,17.2,-53.2	carbon_fiber
-bat-solvation-sheath-tunnel	P108	Li⁺ 溶媒和シェル脱離ゲート	#091-120	9.8,-1.5,-2	5.68,4.59,2.2	182.2,-10.5,-14	ic_epoxy_dark
+bat-inrush-softstart-precharge	P96	カメラ装着時スパーク防止・突入電流ソフト	#091-120	-9.6,18.8,2.8	7.75,0.85,2.9	-108,68,16	ic_epoxy_dark
+bat-mosfet-chargepump-driver	P97	ハイサイドN-MOSFET駆動用チャージ	#091-120	-8,18.8,-0.8	4.07,0.89,5.27	-96,76,-36	ic_epoxy_dark
+bat-low-power-wake-comparator	P98	超低消費電力長期保管ディープスリープ	#091-120	7.4,18.8,0.2	5.75,0.83,3.4	98,76,-34	solder_silver
+bat-zero-ohm-thermal-via-array	P99	BMS基板 4層重銅サーマルビア	#091-120	-5.8,18.4,-2	7.6,1.38,4.8	-48,84,-52	copper_thermal
+bat-blackbox-fault-logger	P100	異常イベント・ブラックボックス記録FRA	#091-120	0,18.8,-1	4.4,0.97,6.43	-24,88,24	gold_plating
+bat-argyrodite-li6ps5cl-2026	P101	硫化物アルジロダイト全固体電解質格子	#091-120	8.8,10.5,2.2	5.6,6.8,1.05	175.2,45.5,33.8	ic_epoxy_dark
+bat-ag-c-anodefree-interlayer	P102	アノードフリー全固体用 銀-カーボン親リ	#091-120	9.4,6,2.6	5.8,6.4,1.27	180.6,22,53.4	solder_silver
+bat-lhce-fluorinated-ether	P103	局所高濃度フッ素化エーテル難燃電解液	#091-120	10,0.5,2	5.6,6.2,0.74	182,-0.5,20	cfa_gloss_filter
+bat-supramolecular-selfheal-binder	P104	超分子・自己修復ダイナミック架橋シリコン	#091-120	9.4,-5.2,2.4	5.6,6.2,1.3	178.6,-22.8,51.6	elastomer_rubber
+bat-gb-dendrite-grain-passiv	P105	MIT 2026発見・固体電解質結晶粒界	#091-120	8.5,-10.8,2.1	5.39,6.3,1.26	169.5,-47.2,19.9	ic_epoxy_dark
+bat-na-li-hybrid-cold-cell	P106	2026極寒仕様 ナトリウム・リチウムハ	#091-120	8.8,10.2,-2.4	5.8,6.3,1.17	173.2,41.8,-23.6	cfa_gloss_filter
+bat-swcnt-mwcnt-3d-web	P107	単層・多層カーボンナノチューブ3D立体導	#091-120	9.5,4.8,-2.8	5.6,6.2,1.07	180.5,17.2,-53.2	carbon_fiber
+bat-solvation-sheath-tunnel	P108	Li⁺ 溶媒和シェル脱離ゲート	#091-120	9.8,-1.5,-2	5.6,4.59,2.2	182.2,-10.5,-14	ic_epoxy_dark
 bat-hv-45v-cobalt-surface-spinel	P109	4.5 V 高電圧正極 表面スピネル再構	#091-120	9,-7.8,-2.6	5.02,4.77,4.79	177,-34.2,-53.4	gold_plating
-bat-solid-polymer-peo-bridge	P110	セラミック・PEO複合 柔軟ハイブリッド	#091-120	8.2,-13.5,-2.2	5.9,6.3,0.95	165.8,-60.5,-15.8	polyimide_fpc
-bat-fbg-optical-fiber-sensor	P111	セル内蔵 0.125 mm 光ファイバー	#091-120	-9,10.5,2.2	5.9,6.59,1.12	-159,51.5,39.8	ic_epoxy_dark
-bat-ultrasonic-phased-ct-2026	P112	超音波フェーズドアレイバッテリーCT内部	#091-120	-9.6,5.2,2.6	6.1,5.9,1.06	-168.4,24.8,53.4	ic_epoxy_dark
+bat-solid-polymer-peo-bridge	P110	セラミック・PEO複合 柔軟ハイブリッド	#091-120	8.2,-13.5,-2.2	5.8,6.2,0.95	165.8,-60.5,-15.8	polyimide_fpc
+bat-fbg-optical-fiber-sensor	P111	セル内蔵 0.125 mm 光ファイバー	#091-120	-9,10.5,2.2	5.8,6.5,1.12	-159,51.5,39.8	ic_epoxy_dark
+bat-ultrasonic-phased-ct-2026	P112	超音波フェーズドアレイバッテリーCT内部	#091-120	-9.6,5.2,2.6	6,5.8,1.06	-168.4,24.8,53.4	ic_epoxy_dark
 bat-acoustic-emission-crack-mic	P113	アコースティック・エミッション電極微細ク	#091-120	-10,-0.5,2	4.68,4.66,2.18	-172,-1.5,14	ic_epoxy_dark
-bat-h2-co-voc-offgas-mems	P114	GB 38031-2025準拠 水素	#091-120	-9.5,-6,2.4	5.48,1.04,5.48	-168.5,-28,51.6	ic_epoxy_dark
-bat-ac-pulse-selfheat-core	P115	高周波ACパルス内部自己発熱ウォームアッ	#091-120	-8.8,-12,2.2	5.88,5.88,1.32	-157.2,-56,31.8	pcb_textured
-bat-hybrid-supercap-pulse-buf	P116	-40°C対応 ハイブリッド・スーパーキ	#091-120	-9,10,-2.4	5.68,6.35,2.33	-159,48,-29.6	ic_epoxy_dark
-bat-hall-magnetic-flux-shunt	P117	非接触・ゼロ損失 TMR / ホール磁気	#091-120	-9.5,4.5,-2.8	5.88,4.95,4.37	-168.5,19.5,-53.2	iron_magnetic
+bat-h2-co-voc-offgas-mems	P114	GB 38031-2025準拠 水素	#091-120	-9.5,-6,2.4	5.48,1.04,5.48	-168.5,-28,51.6	gold_plating
+bat-ac-pulse-selfheat-core	P115	高周波ACパルス内部自己発熱ウォームアッ	#091-120	-8.8,-12,2.2	5.8,5.8,1.32	-157.2,-56,31.8	pcb_textured
+bat-hybrid-supercap-pulse-buf	P116	-40°C対応 ハイブリッド・スーパーキ	#091-120	-9,10,-2.4	5.6,6.31,2.33	-159,48,-29.6	ic_epoxy_dark
+bat-hall-magnetic-flux-shunt	P117	非接触・ゼロ損失 TMR / ホール磁気	#091-120	-9.5,4.5,-2.8	5.8,4.92,4.37	-168.5,19.5,-53.2	iron_magnetic
 bat-laser-tabless-petal-weld	P118	タブレス花びらクラウン 360°全周リン	#091-120	-9.8,-1.8,-2	4.9,4.9,0.85	-172.2,-10.2,-16	copper_thermal
 bat-jellyroll-axial-spring-pad	P119	ジェリーロール軸方向呼吸膨張吸収ウェーブ	#091-120	-9.2,-7.8,-2.6	4.6,4.6,1.23	-166.8,-38.2,-51.4	becu_spring
 bat-ceramic-arc-quench-vent	P120	多孔質セラミック＋ステンレス消炎スパーク	#091-120	-8.4,-13.6,-2.2	4.78,4.76,0.85	-153.6,-64.4,-29.8	stainless_machined
 bat-kalman-ekf-soc-dsp	P121	拡張カルマンフィルタ	#121-130	-6.2,15.8,1.8	5.88,3.2,5.88	-109.8,-127.8,50.2	silicon_hero
-bat-ai-cloud-soh-telemetry	P122	2026 エッジAI 劣化余命予測	#121-130	-3,16.4,2	5.88,5.28,1.04	-71,-134.4,60	pcb_textured
-bat-dual-redundant-afe-adc	P123	ISO機能安全 16-bit 二重冗長Δ	#121-130	0.2,16.2,1.8	6.08,4.88,0.99	-34.2,-138.2,20.2	pcb_textured
-bat-active-emi-cm-choke	P124	USB-C / 2 MHz GaN	#121-130	3.4,16,2	5.09,5.08,2.32	28.6,-138,60	copper_coil
-bat-gold-wiper-selfclean-slot	P125	NP-FZ100 4ピン自動クリーニング	#121-130	6.4,16.8,1.2	6.5,2.83,1.73	67.6,-134.8,52.8	matte_chassis
-bat-potting-phase-change-pcm	P126	潜熱パラフィン相変化材料サーマルスポンジ	#121-130	7.2,-16.8,1.8	5.96,5.76,1.29	108.8,-91.2,36.2	elastomer_rubber
-bat-hydrophobic-pcb-nano-coat	P127	プラズマ重合フッ素ポリマー 超撥水PCB	#121-130	-5.8,15.8,-2.2	5.88,5.28,1.63	-86.2,-127.8,-43.8	pcb_textured
-bat-second-source-id-puf	P128	シリコンPUF原子指紋アンチコピー認証I	#121-130	-1.8,16,-2.4	5.48,5.49,0.9	-40.2,-136,-53.6	silicon_hero
-bat-recycle-direct-cathode-tag	P129	2026 ダイレクト正極リサイクル対応レ	#121-130	2.8,-16.8,-2.2	5.88,5.68,0.77	39.2,-103.2,-53.8	pin_carrier_gloss
-bat-un383-crush-mandrel-guard	P130	UN38.3 航空輸送 圧壊・低圧	#121-130	6.8,-16.5,-2	5.96,6.36,2.27	89.2,-93.5,-46	stainless_machined
+bat-ai-cloud-soh-telemetry	P122	2026 エッジAI 劣化余命予測	#121-130	-3,16.4,2	5.8,5.2,0.99	-71,-134.4,60	pcb_textured
+bat-dual-redundant-afe-adc	P123	ISO機能安全 16-bit 二重冗長Δ	#121-130	0.2,16.2,1.8	6,4.8,0.99	-34.2,-138.2,20.2	pcb_textured
+bat-active-emi-cm-choke	P124	USB-C / 2 MHz GaN	#121-130	3.4,16,2	5.09,4.8,2.32	28.6,-138,60	copper_coil
+bat-gold-wiper-selfclean-slot	P125	NP-FZ100 4ピン自動クリーニング	#121-130	6.4,16.8,1.2	6.4,2.77,1.73	67.6,-134.8,52.8	matte_chassis
+bat-potting-phase-change-pcm	P126	潜熱パラフィン相変化材料サーマルスポンジ	#121-130	7.2,-16.8,1.8	5.8,5.6,1.29	108.8,-91.2,36.2	elastomer_rubber
+bat-hydrophobic-pcb-nano-coat	P127	プラズマ重合フッ素ポリマー 超撥水PCB	#121-130	-5.8,15.8,-2.2	5.8,5.2,1.63	-86.2,-127.8,-43.8	pcb_textured
+bat-second-source-id-puf	P128	シリコンPUF原子指紋アンチコピー認証I	#121-130	-1.8,16,-2.4	5.4,5.4,0.9	-40.2,-136,-53.6	silicon_hero
+bat-recycle-direct-cathode-tag	P129	2026 ダイレクト正極リサイクル対応レ	#121-130	2.8,-16.8,-2.2	5.8,5.6,0.77	39.2,-103.2,-53.8	pin_carrier_gloss
+bat-un383-crush-mandrel-guard	P130	UN38.3 航空輸送 圧壊・低圧	#121-130	6.8,-16.5,-2	5.8,6.2,2.27	89.2,-93.5,-46	stainless_machined

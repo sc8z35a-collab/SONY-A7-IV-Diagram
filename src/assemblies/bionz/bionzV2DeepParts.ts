@@ -205,8 +205,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         31,
         '#0ea5e9',
         g,
-        new THREE.Vector3(-18.6, 2.6, 4.4),
-        new THREE.Vector3(-54.0, 10.0, 14.0),
+        new THREE.Vector3(-20, 0.6, 0),
+        new THREE.Vector3(-58, 2, 0),
         cp,
         0.24
       )
@@ -295,8 +295,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         32,
         '#7c3aed',
         g,
-        new THREE.Vector3(19.2, 3.8, -4.8),
-        new THREE.Vector3(54.0, 14.0, -16.0),
+        new THREE.Vector3(20, 0.6, -10.5),
+        new THREE.Vector3(56, 2, -30),
         cp,
         0.24
       )
@@ -397,8 +397,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         33,
         '#a855f7',
         g,
-        new THREE.Vector3(19.6, 1.0, 4.2),
-        new THREE.Vector3(56.0, 4.0, 18.0),
+        new THREE.Vector3(20, 0.6, 0),
+        new THREE.Vector3(58, 2, 0),
         cp,
         0.22
       )
@@ -458,8 +458,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         34,
         '#22d3ee',
         g,
-        new THREE.Vector3(0, 3.0, -18.6),
-        new THREE.Vector3(0, 12.0, -54.0),
+        new THREE.Vector3(-6.9, 0.8, -20),
+        new THREE.Vector3(-21, 2.5, -56),
         cp,
         0.22
       )
@@ -551,8 +551,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         35,
         '#f59e0b',
         g,
-        new THREE.Vector3(-18.6, 0.2, -5.8),
-        new THREE.Vector3(-54.0, 2.0, -22.0),
+        new THREE.Vector3(-20, 0.6, -10.5),
+        new THREE.Vector3(-56, 2, -30),
         cp,
         0.24
       )
@@ -605,8 +605,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         36,
         '#14b8a6',
         g,
-        new THREE.Vector3(18.6, -2.6, -5.8),
-        new THREE.Vector3(54.0, -10.0, -22.0),
+        new THREE.Vector3(20, 0.6, 10.5),
+        new THREE.Vector3(56, 2, 30),
         cp,
         0.24
       )
@@ -694,8 +694,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         37,
         '#6366f1',
         g,
-        new THREE.Vector3(0, 0.4, 18.6),
-        new THREE.Vector3(0, 2.0, 54.0),
+        new THREE.Vector3(6.9, 0.8, -20),
+        new THREE.Vector3(21, 2.5, -56),
         cp,
         0.24
       )
@@ -775,8 +775,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         38,
         '#f97316',
         g,
-        new THREE.Vector3(-18.6, -3.2, 5.4),
-        new THREE.Vector3(-54.0, -12.0, 18.0),
+        new THREE.Vector3(-20, 0.6, 10.5),
+        new THREE.Vector3(-56, 2, 30),
         cp,
         0.24
       )
@@ -843,8 +843,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         39,
         '#cbd5e1',
         g,
-        new THREE.Vector3(-18.6, 7.6, -2.4),
-        new THREE.Vector3(-54.0, 26.0, -8.0),
+        new THREE.Vector3(-20, 9, -6.9),
+        new THREE.Vector3(-56, 31, -21),
         cp,
         0.24
       )
@@ -923,8 +923,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         40,
         '#8b5cf6',
         g,
-        new THREE.Vector3(18.6, 7.6, -2.4),
-        new THREE.Vector3(54.0, 26.0, -8.0),
+        new THREE.Vector3(20, 8.8, -6.9),
+        new THREE.Vector3(56, 30, -21),
         cp,
         0.22
       )
@@ -990,8 +990,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         41,
         '#d97736',
         g,
-        new THREE.Vector3(0, 7.6, -18.6),
-        new THREE.Vector3(0, 26.0, -54.0),
+        new THREE.Vector3(0, 8.2, -20),
+        new THREE.Vector3(0, 28, -58),
         cp,
         0.24
       )
@@ -1060,8 +1060,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         42,
         '#ef4444',
         g,
-        new THREE.Vector3(-18.6, 6.6, 8.4),
-        new THREE.Vector3(-54.0, 22.0, 28.0),
+        new THREE.Vector3(-20, 7.8, 6.9),
+        new THREE.Vector3(-56, 26, 21),
         cp,
         0.24
       )
@@ -1129,8 +1129,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         43,
         '#b45309',
         g,
-        new THREE.Vector3(18.6, -7.8, 4.8),
-        new THREE.Vector3(54.0, -30.0, 16.0),
+        new THREE.Vector3(20, -14.2, 0),
+        new THREE.Vector3(58, -46, 0),
         cp,
         0.24
       )
@@ -1223,8 +1223,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         44,
         '#3b82f6',
         g,
-        new THREE.Vector3(-18.6, -5.8, -5.8),
-        new THREE.Vector3(-54.0, -22.0, -22.0),
+        new THREE.Vector3(-20, -6.4, -10.5),
+        new THREE.Vector3(-56, -24, -30),
         cp,
         0.24
       )
@@ -1309,8 +1309,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         45,
         '#8b5cf6',
         g,
-        new THREE.Vector3(18.6, -5.2, -10.8),
-        new THREE.Vector3(54.0, -20.0, -36.0),
+        new THREE.Vector3(20, -6.4, -10.5),
+        new THREE.Vector3(56, -24, -30),
         cp,
         0.22
       )
@@ -1376,8 +1376,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         46,
         '#10b981',
         g,
-        new THREE.Vector3(-18.6, -8.4, 0.4),
-        new THREE.Vector3(-54.0, -34.0, 2.0),
+        new THREE.Vector3(-20, -6.4, 0),
+        new THREE.Vector3(-58, -24, 0),
         cp,
         0.24
       )
@@ -1442,8 +1442,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         47,
         '#ec4899',
         g,
-        new THREE.Vector3(18.6, -4.4, 11.4),
-        new THREE.Vector3(54.0, -16.0, 38.0),
+        new THREE.Vector3(20, -6.4, 10.5),
+        new THREE.Vector3(56, -24, 30),
         cp,
         0.22
       )
@@ -1519,8 +1519,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         48,
         '#eab308',
         g,
-        new THREE.Vector3(0, -7.8, -18.6),
-        new THREE.Vector3(0, -30.0, -54.0),
+        new THREE.Vector3(0, -16, -20),
+        new THREE.Vector3(0, -58, -58),
         cp,
         0.24
       )
@@ -1585,8 +1585,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         49,
         '#0284c7',
         g,
-        new THREE.Vector3(18.6, 11.6, 6.6),
-        new THREE.Vector3(54.0, 42.0, 22.0),
+        new THREE.Vector3(20, 14.8, 6.9),
+        new THREE.Vector3(56, 56, 21),
         cp,
         0.24
       )
@@ -1652,8 +1652,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         50,
         '#2563eb',
         g,
-        new THREE.Vector3(-18.6, 11.6, 6.6),
-        new THREE.Vector3(-54.0, 42.0, 22.0),
+        new THREE.Vector3(-20, 14.8, 6.9),
+        new THREE.Vector3(-56, 56, 21),
         cp,
         0.24
       )
@@ -1729,8 +1729,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         51,
         '#f43f5e',
         g,
-        new THREE.Vector3(-18.6, 11.2, -9.2),
-        new THREE.Vector3(-54.0, 40.0, -30.0),
+        new THREE.Vector3(-20, 12.2, -6.9),
+        new THREE.Vector3(-56, 46, -21),
         cp,
         0.24
       )
@@ -1740,18 +1740,18 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
   // X2-52. Direct-to-Silicon 3D IC Microfluidic Micro-Channel Liquid Cooler (imec IEDM 2025 17-3, 140.7°C -> 70.8°C)
   {
     const g = new THREE.Group();
-    const coolerGeo = extrudeHiRes(createRoundedRectShape(32.8, 32.8, 2.2), 0.96, 0.1, 0.1, 2, 18);
+    const coolerGeo = extrudeHiRes(createRoundedRectShape(42.0, 37.0, 2.2), 0.96, 0.1, 0.1, 2, 18);
     coolerGeo.rotateX(-Math.PI / 2);
-    applyPlanarUVs(coolerGeo, 32.8, 32.8, 'xz');
+    applyPlanarUVs(coolerGeo, 42.0, 37.0, 'xz');
     const baseManifold = new THREE.Mesh(coolerGeo, u.v2BionzMicrofluidicGrid);
     g.add(baseManifold);
 
-    // 10 deep-RIE sculpted parallel silicon micro-channel fins + staggered rows of 3D micro-pin-fin turbulators!
+    // 12 deep-RIE sculpted parallel silicon micro-channel fins + staggered rows of 3D micro-pin-fin turbulators!
     const pinGeo = hiResCyl(0.28, 0.28, 0.64, 6);
-    for (let i = -4.5; i <= 4.5; i += 1) {
+    for (let i = -5.5; i <= 5.5; i += 1) {
       const rz = i * 2.65;
       const finWall = new THREE.Mesh(
-        createChamferedBoxGeo(26.4, 0.62, 0.52, 0.05, 0.02, 'y'),
+        createChamferedBoxGeo(34.6, 0.62, 0.52, 0.05, 0.02, 'y'),
         mats.siliconBulk
       );
       finWall.position.set(0, 0.72, rz);
@@ -1759,14 +1759,14 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
       g.add(finWall);
 
       // Staggered micro-pin-fin turbulators inside each coolant channel transitioning cold cyan -> warm amber!
-      if (i < 4.5) {
+      if (i < 5.5) {
         const chZ = rz + 1.325;
-        for (let px = -10.0; px <= 10.0; px += 4.0) {
+        for (let px = -14.0; px <= 14.0; px += 4.0) {
           const pin = new THREE.Mesh(
             pinGeo,
-            px < -2 ? mats.vcWorkingFluidCyan : px < 4 ? mats.fluorineCoatCyan : mats.copperHeatSpreader
+            px < -4 ? mats.vcWorkingFluidCyan : px < 4 ? mats.fluorineCoatCyan : mats.copperHeatSpreader
           );
-          pin.position.set(px + (Math.round(i + 4.5) % 2 === 0 ? 1.0 : -1.0), 0.72, chZ);
+          pin.position.set(px + (Math.round(i + 5.5) % 2 === 0 ? 1.0 : -1.0), 0.72, chZ);
           pin.userData.noEdges = true;
           g.add(pin);
         }
@@ -1775,7 +1775,7 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
 
     // Bonded borosilicate glass manifold cutaway bezel frame + 4 corner O-ring micro-gasket bosses!
     const glassLidFrame = makeHiResHorizPlate(
-      createFrameShape(32.2, 32.2, 2.0, 27.6, 27.6, 1.4),
+      createFrameShape(41.4, 36.4, 2.0, 36.4, 31.4, 1.4),
       0.28,
       mats.quartzOlpf,
       0.04,
@@ -1785,10 +1785,10 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
     glassLidFrame.position.y = 1.12;
     g.add(glassLidFrame);
     for (const [ox, oz] of [
-      [-14.8, -14.8],
-      [14.8, -14.8],
-      [-14.8, 14.8],
-      [14.8, 14.8],
+      [-19.2, -16.8],
+      [19.2, -16.8],
+      [-19.2, 16.8],
+      [19.2, 16.8],
     ]) {
       const boss = new THREE.Mesh(hiResTorus(0.86, 0.14, 7, 14), mats.bodyRecRed);
       boss.rotation.x = Math.PI / 2;
@@ -1799,20 +1799,20 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
 
     // Left Cold-Inlet (cyan) & Right Hot-Outlet (copper) manifold distribution plenums + flanged quick-seal nozzles!
     const inletHeader = new THREE.Mesh(
-      createChamferedBoxGeo(2.4, 1.42, 27.8, 0.22, 0.06, 'y'),
+      createChamferedBoxGeo(2.4, 1.42, 31.4, 0.22, 0.06, 'y'),
       mats.vcWorkingFluidCyan
     );
-    inletHeader.position.set(-14.6, 0.48, 0);
+    inletHeader.position.set(-18.8, 0.48, 0);
     const outletHeader = new THREE.Mesh(
-      createChamferedBoxGeo(2.4, 1.42, 27.8, 0.22, 0.06, 'y'),
+      createChamferedBoxGeo(2.4, 1.42, 31.4, 0.22, 0.06, 'y'),
       mats.copperHeatSpreader
     );
-    outletHeader.position.set(14.6, 0.48, 0);
+    outletHeader.position.set(18.8, 0.48, 0);
     for (const [px, pmat, fmat] of [
-      [-16.9, mats.silverElectrode, mats.vcWorkingFluidCyan],
-      [16.9, mats.copperHybridBond, mats.goldPlating],
+      [-21.2, mats.silverElectrode, mats.vcWorkingFluidCyan],
+      [21.2, mats.copperHybridBond, mats.goldPlating],
     ] as const) {
-      const pipe = new THREE.Mesh(hiResCyl(1.05, 1.05, 2.5, 14), pmat);
+      const pipe = new THREE.Mesh(hiResCyl(1.05, 1.05, 2.4, 14), pmat);
       pipe.rotation.z = Math.PI / 2;
       pipe.position.set(px, 0.48, 0);
       const flange = new THREE.Mesh(hiResTorus(1.26, 0.16, 8, 16), fmat);
@@ -1829,8 +1829,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         52,
         '#06b6d4',
         g,
-        new THREE.Vector3(0, -15.2, 0),
-        new THREE.Vector3(0, -68.0, 0),
+        new THREE.Vector3(0, -22.99, 0),
+        new THREE.Vector3(0, -80, 0),
         cp,
         0.22
       )
@@ -1903,8 +1903,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         53,
         '#eab308',
         g,
-        new THREE.Vector3(0, -8.8, 18.6),
-        new THREE.Vector3(0, -34.0, 54.0),
+        new THREE.Vector3(0, -15, 20),
+        new THREE.Vector3(0, -52, 58),
         cp,
         0.24
       )
@@ -1972,8 +1972,8 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         54,
         '#0d9488',
         g,
-        new THREE.Vector3(18.6, -9.8, -1.6),
-        new THREE.Vector3(54.0, -38.0, -6.0),
+        new THREE.Vector3(20, -6.4, 0),
+        new THREE.Vector3(58, -24, 0),
         cp,
         0.24
       )
@@ -1985,7 +1985,7 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     // Lower Silicon Photonics (PIC) optical waveguide ring + 8 WDM micro-ring resonators + 4 EIC driver chiplets on 4.5um SoIC!
     const picRing = makeHiResHorizPlate(
-      createFrameShape(34.8, 34.8, 2.4, 29.8, 29.8, 1.8),
+      createFrameShape(47.4, 42.4, 2.2, 42.2, 37.2, 1.7),
       0.78,
       mats.quartzOlpf,
       0.08,
@@ -1993,7 +1993,7 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
       20
     );
     const opticalWaveBus = makeHiResHorizPlate(
-      createFrameShape(33.2, 33.2, 2.1, 31.6, 31.6, 1.6),
+      createFrameShape(45.8, 40.8, 2.0, 44.0, 39.0, 1.6),
       0.28,
       mats.evfDichroicMirror,
       0.04,
@@ -2005,29 +2005,29 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
 
     // 4 perimeter Electronic IC (EIC) N6 driver chiplets stacked via 4.5um SoIC-X Cu micro-columns directly on PIC!
     for (const [ex, ez, rot] of [
-      [0, -16.2, 0],
-      [0, 16.2, 0],
-      [-16.2, 0, Math.PI / 2],
-      [16.2, 0, Math.PI / 2],
+      [0, -19.9, 0],
+      [0, 19.9, 0],
+      [-22.4, 0, Math.PI / 2],
+      [22.4, 0, Math.PI / 2],
     ]) {
       const eicGroup = new THREE.Group();
       eicGroup.position.set(ex, 0.72, ez);
       eicGroup.rotation.y = rot;
       const eicDie = new THREE.Mesh(
-        createChamferedBoxGeo(8.2, 0.52, 2.1, 0.14, 0.04, 'y'),
+        createChamferedBoxGeo(9.2, 0.52, 2.0, 0.14, 0.04, 'y'),
         mats.ispSiliconDie
       );
       eicDie.position.y = 0.34;
       eicGroup.add(eicDie);
       // 4.5um-pitch SoIC copper hybrid-bond micro-columns beneath each EIC driver!
-      for (let bx = -3.0; bx <= 3.0; bx += 1.5) {
+      for (let bx = -3.6; bx <= 3.6; bx += 1.8) {
         const col = new THREE.Mesh(hiResCyl(0.18, 0.18, 0.36, 8), mats.copperHybridBond);
         col.position.set(bx, -0.06, 0);
         col.userData.noEdges = true;
         eicGroup.add(col);
       }
       // Twin WDM optical micro-ring resonators flanking each EIC driver!
-      for (const rx of [-5.4, 5.4]) {
+      for (const rx of [-6.4, 6.4]) {
         const wdm = new THREE.Mesh(hiResTorus(0.66, 0.09, 7, 16), mats.bodyRecRed);
         wdm.rotation.x = Math.PI / 2;
         wdm.position.set(rx, -0.06, 0);
@@ -2037,38 +2037,38 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
       g.add(eicGroup);
     }
 
-    // 4 Corner KOH-Etched V-Groove 3-Channel Fiber-Array Blocks with spherical micro-lenses & gold strain ferrules!
+    // 4 Corner KOH-Etched V-Groove 3-Channel Fiber-Array Blocks mating directly into X2-79 MT-Ferrule Docks!
     for (const [cx, cz, rot] of [
-      [-15.8, -15.8, Math.PI / 4],
-      [15.8, -15.8, -Math.PI / 4],
-      [-15.8, 15.8, (3 * Math.PI) / 4],
-      [15.8, 15.8, -(3 * Math.PI) / 4],
+      [-21.4, -18.9, Math.PI / 4],
+      [21.4, -18.9, -Math.PI / 4],
+      [-21.4, 18.9, (3 * Math.PI) / 4],
+      [21.4, 18.9, -(3 * Math.PI) / 4],
     ]) {
       const dock = new THREE.Group();
       dock.position.set(cx, 0.44, cz);
       dock.rotation.y = rot;
       const vGroove = new THREE.Mesh(
-        createChamferedBoxGeo(3.4, 0.92, 2.8, 0.12, 0.04, 'y'),
+        createChamferedBoxGeo(3.0, 0.92, 2.5, 0.12, 0.04, 'y'),
         mats.silverElectrode
       );
       const ferrule = new THREE.Mesh(
-        createChamferedBoxGeo(0.76, 1.04, 2.95, 0.08, 0.03, 'y'),
+        createChamferedBoxGeo(0.72, 1.04, 2.65, 0.08, 0.03, 'y'),
         mats.goldPlating
       );
-      ferrule.position.set(1.25, 0.14, 0);
+      ferrule.position.set(1.1, 0.14, 0);
       dock.add(vGroove, ferrule);
 
       for (const [fz, fmat] of [
-        [-0.78, mats.vcWorkingFluidCyan],
+        [-0.72, mats.vcWorkingFluidCyan],
         [0, mats.goldPlating],
-        [0.78, mats.bodyRecRed],
+        [0.72, mats.bodyRecRed],
       ] as const) {
-        const fiber = new THREE.Mesh(hiResCyl(0.2, 0.2, 3.9, 10), fmat);
+        const fiber = new THREE.Mesh(hiResCyl(0.18, 0.18, 3.4, 10), fmat);
         fiber.rotation.z = Math.PI / 2;
-        fiber.position.set(0.1, 0.56, fz);
+        fiber.position.set(0.05, 0.56, fz);
         fiber.userData.noEdges = true;
-        const mLens = new THREE.Mesh(hiResSphere(0.32, 9, 7), mats.lensXaGlass);
-        mLens.position.set(-1.82, 0.56, fz);
+        const mLens = new THREE.Mesh(hiResSphere(0.3, 9, 7), mats.lensXaGlass);
+        mLens.position.set(-1.62, 0.56, fz);
         mLens.userData.noEdges = true;
         dock.add(fiber, mLens);
       }
@@ -2081,16 +2081,26 @@ export function buildBionzV2DeepParts(mats: MaterialLibrary): CadPart[] {
         55,
         '#ec4899',
         g,
-        new THREE.Vector3(0, 16.8, 0),
-        new THREE.Vector3(0, 68.0, 0),
+        new THREE.Vector3(0, 17.68, 0),
+        new THREE.Vector3(0, 84, 0),
         cp,
         0.22
       )
     );
   }
 
-  // Preserve full electron-microscope micro-tessellation on every sculpted geometry
+  // Harmonize outlier vertical heights (X2-39/40 M0 tracks & X2-45 FeFET CiM) for tight, zero-gap architectural stacking
+  // and preserve full electron-microscope micro-tessellation on every sculpted geometry
   for (const part of parts) {
+    if (part.order === 39 || part.order === 40 || part.order === 45) {
+      const sy = part.order === 45 ? 0.78 : 0.7;
+      const scaledHolder = new THREE.Group();
+      scaledHolder.scale.set(1.0, sy, 1.0);
+      while (part.group.children.length > 0) {
+        scaledHolder.add(part.group.children[0]);
+      }
+      part.group.add(scaledHolder);
+    }
     part.group.traverse((obj) => {
       if (obj instanceof THREE.Mesh && obj.geometry) {
         markHiRes(obj.geometry);

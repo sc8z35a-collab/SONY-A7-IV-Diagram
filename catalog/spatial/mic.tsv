@@ -1,151 +1,151 @@
 id	code	name	group	pos	size	exp	mat
-mc-deadcat-windscreen	MC01	外付けモフモフ防風ウインドスクリーン	#001-030	0,16.2,4.2	47.26,13.38,24.53	0,42.5,2	ic_epoxy_dark
-mc-top-grille-holes	MC02	ボディ天面 左右ステレオL/R	#001-030	0,13,-1.5	55.49,18.19,34.74	0,32,0	ic_epoxy_dark
-mc-stainless-micro-mesh	MC03	極細ステンレス製 音響マイクロメッシュ	#001-030	0,11.4,0	39.34,0.45,25.4	0,16.5,0	stainless_machined
-mc-eptfe-waterproof-membrane	MC04	撥水多孔質 ePTFE 防水音響ベント膜	#001-030	0,10.3,0	41.02,0.53,26.01	0,13.8,0	ic_epoxy_dark
-mc-acoustic-drain-labyrinth	MC05	オフセット音響ラビリンス	#001-030	0,8.8,0	42.04,2.09,11.84	0,11.2,2.5	ic_epoxy_dark
+mc-deadcat-windscreen	MC01	外付けモフモフ防風ウインドスクリーン	#001-030	0,16.2,4.2	47.12,13.23,23.92	0,42.5,2	ic_epoxy_dark
+mc-top-grille-holes	MC02	ボディ天面 左右ステレオL/R	#001-030	0,13,-1.5	55.47,18.11,34.65	0,32,0	ic_epoxy_dark
+mc-stainless-micro-mesh	MC03	極細ステンレス製 音響マイクロメッシュ	#001-030	0,11.4,0	39.28,0.45,25.3	0,16.5,0	stainless_machined
+mc-eptfe-waterproof-membrane	MC04	撥水多孔質 ePTFE 防水音響ベント膜	#001-030	0,10.3,0	40.96,0.53,25.96	0,13.8,0	ic_epoxy_dark
+mc-acoustic-drain-labyrinth	MC05	オフセット音響ラビリンス	#001-030	0,8.8,0	41.8,2.09,11.6	0,11.2,2.5	ic_epoxy_dark
 mc-helmholtz-front-chamber	MC06	ヘルムホルツ前室音響共鳴キャビティ	#001-030	0,7.1,0	40.97,2.29,28.21	0,8.6,4	ic_epoxy_dark
-mc-silicone-acoustic-gasket	MC07	エラストマー音響カップリングガスケット	#001-030	0,5.6,0	39.65,1.67,25.94	0,6.2,5.5	elastomer_rubber
-mc-oem-rubber-boot	MC08	純正 マイクロホン防振ラバーブーツ	#001-030	0,1.5,0	45.95,7,19.92	0,4.5,11.5	elastomer_rubber
-mc-oem-mic-holder	MC09	純正 マイクホルダー固定ブラケット	#001-030	0,0.2,0	45.05,8.05,12.54	0,-2.5,-13	matte_chassis
-mc-oem-btite-screw	MC10	純正 マイクホルダー締結 Bタイト精密ネ	#001-030	0,-2.4,3.2	4.53,16.35,4.53	0,-9.5,-15.5	ic_epoxy_dark
-mc-oem-631s-sealing-tape	MC11	純正 遮音・遮光・EMI保護ブラックテー	#001-030	0,3.8,0	38.46,5.05,6.48	0,7.5,-18	ic_epoxy_dark
-mc-chassis-vib-absorber	MC12	高減衰マイクロセル・ウレタン防振吸音フォ	#001-030	0,-4.4,-1.5	44.48,2.73,24.48	0,-8.5,-5	ic_epoxy_dark
-mc-mems-faraday-lid	MC13	金属ファラデーケージ蓋	#001-030	-14.2,2,4.2	10.72,5.11,8.32	-12.5,9.2,5.5	gold_plating
+mc-silicone-acoustic-gasket	MC07	エラストマー音響カップリングガスケット	#001-030	0,5.6,0	39.55,1.67,25.94	0,6.2,5.5	elastomer_rubber
+mc-oem-rubber-boot	MC08	純正 マイクロホン防振ラバーブーツ	#001-030	0,1.5,0	45.83,7,19.92	0,4.5,11.5	elastomer_rubber
+mc-oem-mic-holder	MC09	純正 マイクホルダー固定ブラケット	#001-030	0,0.2,0	44.85,8.04,12.38	0,-2.5,-13	matte_chassis
+mc-oem-btite-screw	MC10	純正 マイクホルダー締結 Bタイト精密ネ	#001-030	0,-2.4,3.2	4.31,16.35,4.53	0,-9.5,-15.5	ic_epoxy_dark
+mc-oem-631s-sealing-tape	MC11	純正 遮音・遮光・EMI保護ブラックテー	#001-030	0,3.8,0	38.4,5.05,6.45	0,7.5,-18	ic_epoxy_dark
+mc-chassis-vib-absorber	MC12	高減衰マイクロセル・ウレタン防振吸音フォ	#001-030	0,-4.4,-1.5	44.2,2.68,24.2	0,-8.5,-5	ic_epoxy_dark
+mc-mems-faraday-lid	MC13	金属ファラデーケージ蓋	#001-030	-14.2,2,4.2	10.71,5.11,8.27	-12.5,9.2,5.5	gold_plating
 mc-mems-si-diaphragm	MC14	厚さ 0.8 μm コルゲート	#001-030	-16,3.05,4.2	5.98,0.43,5.98	-15.5,6.4,8.5	silicon_hero
 mc-mems-antistiction-gap	MC15	2 μm 極微エアギャップ	#001-030	-16,2.55,4.2	5.7,0.39,5.7	-17,4,10.5	silicon_hero
-mc-mems-perforated-backplate	MC16	微細貫通孔付き 高剛性シリコン	#001-030	-16,2,4.2	5.68,0.67,5.52	-17.5,1.5,10	gold_plating
-mc-mems-sdm-vacuum-cell	MC17	次世代 SDM低圧チャンバー	#001-030	-16,1.25,4.2	5.56,1.24,5.56	-16.5,-1.2,9	silicon_hero
-mc-mems-drie-back-volume	MC18	DRIE深掘りエッチング シリコン背面音	#001-030	-16,0.15,4.2	5.97,1.78,5.97	-14.5,-4,6	silicon_hero
-mc-mems-readout-asic	MC19	12V昇圧チャージポンプ	#001-030	-11.6,0.55,4.2	3.35,1.42,4.55	-6.5,2.2,10.5	silicon_hero
-mc-mems-gold-wirebonds	MC20	φ20 μm 純金ワイヤーボンド	#001-030	-14.2,-0.65,4.2	10.72,4.15,8.32	-12,-5.8,4.5	gold_plating
+mc-mems-perforated-backplate	MC16	微細貫通孔付き 高剛性シリコン	#001-030	-16,2,4.2	5.63,0.67,5.48	-17.5,1.5,10	gold_plating
+mc-mems-sdm-vacuum-cell	MC17	次世代 SDM低圧チャンバー	#001-030	-16,1.25,4.2	5.56,1.24,5.56	-16.5,-1.2,9	gold_plating
+mc-mems-drie-back-volume	MC18	DRIE深掘りエッチング シリコン背面音	#001-030	-16,0.15,4.2	5.86,1.78,5.86	-14.5,-4,6	silicon_hero
+mc-mems-readout-asic	MC19	12V昇圧チャージポンプ	#001-030	-11.6,0.55,4.2	3.25,1.42,4.45	-6.5,2.2,10.5	silicon_hero
+mc-mems-gold-wirebonds	MC20	φ20 μm 純金ワイヤーボンド	#001-030	-14.2,-0.65,4.2	10.6,4.05,8.2	-12,-5.8,4.5	gold_plating
 mc-ecm-aluminum-case	MC21	円筒アルミかしめシールドケース	#001-030	14.2,1.8,4.2	15.09,5.65,15.07	12.5,8.8,5.5	ic_epoxy_dark
-mc-ecm-electret-diaphragm	MC22	金蒸着PET/FEP 永久分極エレクトレ	#001-030	14.2,3.35,4.2	10.26,0.91,10.26	16,5.6,8.5	brass_precision
-mc-ecm-ptfe-spacer-backplate	MC23	25 μm PTFEスペーサーリング	#001-030	14.2,2.2,4.2	10,0.98,9.74	17.2,2,10	ic_epoxy_dark
+mc-ecm-electret-diaphragm	MC22	金蒸着PET/FEP 永久分極エレクトレ	#001-030	14.2,3.35,4.2	10.24,0.91,10.24	16,5.6,8.5	brass_precision
+mc-ecm-ptfe-spacer-backplate	MC23	25 μm PTFEスペーサーリング	#001-030	14.2,2.2,4.2	9.98,0.98,9.74	17.2,2,10	ic_epoxy_dark
 mc-ecm-insulator-cu-ring	MC24	絶縁プラスチックカップ	#001-030	14.2,0.85,4.2	9.66,1.56,8.65	16.2,-1.8,8.8	ic_epoxy_dark
 mc-ecm-jfet-pcb	MC25	内蔵超低雑音JFETインピーダンス変換基	#001-030	14.2,-0.55,4.2	9.9,2.15,9.9	12.5,-5.8,4.5	pcb_textured
-mc-rear-3rd-voicememo-capsule	MC26	第3の専用カプセル：インテリジェント3カ	#001-030	0,1.6,-12.5	11.92,4.97,12.25	0,4,-21	ic_epoxy_dark
-mc-sh1035-diff-flex	MC27	純正 SH-1035 トップデッキ差動シ	#001-030	0,-6.2,0	37.48,6.32,22.37	0,-12,0	polyimide_fpc
-mc-rf-ferrite-esd-filter	MC28	高周波RFフェライトビーズ	#001-030	-12.2,-9.2,4.2	17.72,2.05,11.32	-14.5,-17,6.5	solder_silver
-mc-audio-codec-adc-pga	MC29	24-bit / 48 kHz	#001-030	12.2,-9.2,4.2	17.72,2.21,11.32	14.5,-17,6.5	ic_epoxy_dark
-mc-windcut-hpf-circuit	MC30	リアルタイム風音低減デジタル・ハイパスフ	#001-030	-12.2,-9.2,-9.5	16.72,3.45,10.72	-14.5,-20.5,-10.5	pcb_textured
-mc-beamforming-phase-dsp	MC31	マルチカプセル位相差ビームフォーミング	#031-060	12.2,-9.2,-9.5	16.72,4.04,10.72	14.5,-20.5,-10.5	ic_epoxy_dark
-mc-ai-noise-cut-agc	MC32	BIONZ XR2 内蔵AIオーディオノ	#031-060	0,-12.2,-2.5	26.36,3.46,14.36	0,-26.5,-3	solder_silver
-mc-zif-10pin-connector	MC33	メイン基板 10ピン 0.4 mmピッチ	#031-060	0,-11.4,7.25	13.52,3.25,6.32	0,-19,15.5	ic_epoxy_dark
-mc-35mm-trs-mic-jack	MC34	外部マイク用 3.5 mmステレオTRS	#031-060	-23.2,4.6,2.8	9.5,6.63,6	-36,2,8.5	matte_black_anodized
-mc-mi-shoe-digital-bridge	MC35	マルチインターフェースシュー 24bit	#031-060	24.8,-4.8,-3	11.08,2.03,22.08	34,-4.5,-10	polyimide_fpc
-mc-rear-helmholtz-baffle	MC36	リアカプセル背面音響バッフル室	#031-060	0,-1.6,-12.5	13.88,5.79,10.9	0,-10,-28	ic_epoxy_dark
-mc-headphone-monitor-amp	MC37	3.5 mm ゼロ遅延ヘッドホン監視アン	#031-060	-23.2,4.6,-5	9.5,6.97,6	-36,-3.5,-10.5	ic_epoxy_dark
-mc-micbias-lownoise-ldo	MC38	超低ノイズ 2.8 V MICBIAS基	#031-060	0,-9.2,4.2	6.3,1.67,10.7	0,-17.5,11.5	pcb_textured
-mc-esd-tvs-rail-guard	MC39	5チャネル音声入力 ±15 kV	#031-060	-24.2,-9.2,4.2	5.7,1.56,8.9	-32,-18.5,11	pcb_textured
-mc-ibis-motor-notch-ref	MC40	5軸IBIS VCM	#031-060	25.2,-9.2,-9.5	8.5,1.72,10.3	34,-21.5,-14	pcb_textured
+mc-rear-3rd-voicememo-capsule	MC26	第3の専用カプセル：インテリジェント3カ	#001-030	0,1.6,-12.5	11.92,4.97,12.2	0,4,-21	ic_epoxy_dark
+mc-sh1035-diff-flex	MC27	純正 SH-1035 トップデッキ差動シ	#001-030	0,-6.2,0	37.4,6.29,22.37	0,-12,0	polyimide_fpc
+mc-rf-ferrite-esd-filter	MC28	高周波RFフェライトビーズ	#001-030	-12.2,-9.2,4.2	17.6,2.06,11.2	-14.5,-17,6.5	solder_silver
+mc-audio-codec-adc-pga	MC29	24-bit / 48 kHz	#001-030	12.2,-9.2,4.2	17.6,2.16,11.2	14.5,-17,6.5	ic_epoxy_dark
+mc-windcut-hpf-circuit	MC30	リアルタイム風音低減デジタル・ハイパスフ	#001-030	-12.2,-9.2,-9.5	16.6,3.45,10.6	-14.5,-20.5,-10.5	pcb_textured
+mc-beamforming-phase-dsp	MC31	マルチカプセル位相差ビームフォーミング	#031-060	12.2,-9.2,-9.5	16.6,4.04,10.6	14.5,-20.5,-10.5	ic_epoxy_dark
+mc-ai-noise-cut-agc	MC32	BIONZ XR2 内蔵AIオーディオノ	#031-060	0,-12.2,-2.5	26.2,3.46,14.2	0,-26.5,-3	solder_silver
+mc-zif-10pin-connector	MC33	メイン基板 10ピン 0.4 mmピッチ	#031-060	0,-11.4,7.25	13.52,3.25,6.32	0,-19,15.5	stainless_machined
+mc-35mm-trs-mic-jack	MC34	外部マイク用 3.5 mmステレオTRS	#031-060	-23.2,4.6,2.8	9.4,6.63,5.8	-36,2,8.5	matte_black_anodized
+mc-mi-shoe-digital-bridge	MC35	マルチインターフェースシュー 24bit	#031-060	24.8,-4.8,-3	11,2.03,22	34,-4.5,-10	polyimide_fpc
+mc-rear-helmholtz-baffle	MC36	リアカプセル背面音響バッフル室	#031-060	0,-1.6,-12.5	13.88,5.79,10.87	0,-10,-28	ic_epoxy_dark
+mc-headphone-monitor-amp	MC37	3.5 mm ゼロ遅延ヘッドホン監視アン	#031-060	-23.2,4.6,-5	9.4,6.96,5.8	-36,-3.5,-10.5	ic_epoxy_dark
+mc-micbias-lownoise-ldo	MC38	超低ノイズ 2.8 V MICBIAS基	#031-060	0,-9.2,4.2	6.2,1.67,10.6	0,-17.5,11.5	pcb_textured
+mc-esd-tvs-rail-guard	MC39	5チャネル音声入力 ±15 kV	#031-060	-24.2,-9.2,4.2	5.6,1.56,8.8	-32,-18.5,11	pcb_textured
+mc-ibis-motor-notch-ref	MC40	5軸IBIS VCM	#031-060	25.2,-9.2,-9.5	8.4,1.7,10.2	34,-21.5,-14	pcb_textured
 mc-cap-solder-strain-relief	MC41	音響アイソレーション極細銅編組リード線ブ	#031-060	0,-4.3,4.2	32.08,4.1,3.68	0,-8.5,12.5	brass_precision
-mc-topdeck-waterproof-o-ring	MC42	トップデッキ天板‐シャーシ間 一体成形E	#031-060	0,12.05,-1.5	52.64,1.09,32.64	0,18.2,-3.5	elastomer_rubber
+mc-topdeck-waterproof-o-ring	MC42	トップデッキ天板‐シャーシ間 一体成形E	#031-060	0,12.05,-1.5	52.4,1.09,32.4	0,18.2,-3.5	elastomer_rubber
 mc-mems-fdts-sam-coat	MC43	FDTS超撥水・自己組織化単分子膜	#031-060	-16,3.2,4.2	5.18,1.69,5.18	-22,24.8,11.8	matte_chassis
-mc-mems-barometric-vent-hole	MC44	直径 2 μm 気圧平衡マイクロベント孔	#031-060	-16,2.8,4.2	5.08,1.55,5.06	-34,19.2,9.8	silicon_hero
+mc-mems-barometric-vent-hole	MC44	直径 2 μm 気圧平衡マイクロベント孔	#031-060	-16,2.8,4.2	5,1.55,5	-34,19.2,9.8	silicon_hero
 mc-mems-squeeze-film-zone	MC45	スクイーズフィルム粘性空気ダンピング層	#031-060	-16,2.3,4.2	5.06,0.79,5.06	-22,13.7,21.8	matte_chassis
-mc-mems-stress-relief-springs	MC46	残留応力補償ポリシリコン蛇行スプリング懸	#031-060	-16,3,4.2	5.28,0.54,5.28	-36,9,19.8	silicon_hero
-mc-mems-dual-backplate-diff	MC47	デュアルバックプレート差動プッシュプル静	#031-060	-16,1.7,4.2	5.46,1.79,4.79	-20,2.3,27.8	gold_plating
-mc-mems-guard-ring-parasitic	MC48	アクティブ寄生容量ガードリング	#031-060	-15,1.1,4.2	5.08,1.1,4.68	-35,-3.1,25.8	pcb_textured
-mc-mems-die-attach-silicone	MC49	超低弾性シリコーン・ダイボンディング層	#031-060	-15,-0.3,4.2	5.16,1.24,5.16	-29,-9.7,17.8	elastomer_rubber
-mc-mems-dickson-chargepump	MC50	ASIC内蔵 12 V 多段ディクソン	#031-060	-11.6,0.9,4.2	5.28,0.99,3.88	-22.4,-14.9,27.8	silicon_hero
-mc-mems-pseudoresistor-100gohm	MC51	100 GΩバック・トゥ・バックMOS擬	#031-060	-11.6,1.4,4.2	4.88,0.95,3.68	-36.4,24.6,-10.2	silicon_hero
-mc-mems-chopper-lna-1f	MC52	チョッパー安定化・超低雑音初段アンプ	#031-060	-11.6,0.3,4.2	5.08,1.83,4.08	-24.4,17.7,-16.2	silicon_hero
-mc-mems-companding-sdm-2026	MC53	399 μW / 114.3 dB DR	#031-060	-11.6,-0.1,4.2	5.5,0.92,4.3	-36.4,10.1,-22.2	silicon_hero
-mc-mems-cic-decimation-fir	MC54	PDM→PCM カスケード積分櫛形デシメ	#031-060	-11.6,-0.5,4.2	5.5,1.36,4.1	-24.4,-5.5,-22.2	ic_epoxy_dark
-mc-optical-mems-vcsel-2026	MC55	光MEMSマイク：VCSELレーザー回折	#031-060	-6.5,2.2,4.2	6.52,2.94,5.52	-9.5,23.8,23.8	ic_epoxy_dark
+mc-mems-stress-relief-springs	MC46	残留応力補償ポリシリコン蛇行スプリング懸	#031-060	-16,3,4.2	5.2,0.54,5.2	-36,9,19.8	silicon_hero
+mc-mems-dual-backplate-diff	MC47	デュアルバックプレート差動プッシュプル静	#031-060	-16,1.7,4.2	5.41,1.79,4.49	-20,2.3,27.8	gold_plating
+mc-mems-guard-ring-parasitic	MC48	アクティブ寄生容量ガードリング	#031-060	-15,1.1,4.2	5,1.05,4.6	-35,-3.1,25.8	pcb_textured
+mc-mems-die-attach-silicone	MC49	超低弾性シリコーン・ダイボンディング層	#031-060	-15,-0.3,4.2	5.1,1.24,5.1	-29,-9.7,17.8	elastomer_rubber
+mc-mems-dickson-chargepump	MC50	ASIC内蔵 12 V 多段ディクソン	#031-060	-11.6,0.9,4.2	5.2,0.99,3.8	-22.4,-14.9,27.8	silicon_hero
+mc-mems-pseudoresistor-100gohm	MC51	100 GΩバック・トゥ・バックMOS擬	#031-060	-11.6,1.4,4.2	4.8,0.94,3.6	-36.4,24.6,-10.2	silicon_hero
+mc-mems-chopper-lna-1f	MC52	チョッパー安定化・超低雑音初段アンプ	#031-060	-11.6,0.3,4.2	5,1.83,4	-24.4,17.7,-16.2	silicon_hero
+mc-mems-companding-sdm-2026	MC53	399 μW / 114.3 dB DR	#031-060	-11.6,-0.1,4.2	5.4,0.92,4.2	-36.4,10.1,-22.2	silicon_hero
+mc-mems-cic-decimation-fir	MC54	PDM→PCM カスケード積分櫛形デシメ	#031-060	-11.6,-0.5,4.2	5.4,1.36,4	-24.4,-5.5,-22.2	ic_epoxy_dark
+mc-optical-mems-vcsel-2026	MC55	光MEMSマイク：VCSELレーザー回折	#031-060	-6.5,2.2,4.2	6.4,2.94,5.4	-9.5,23.8,23.8	ic_epoxy_dark
 mc-piezo-scaln-cantilever-2026	MC56	ScAlN回転セクター圧電MEMSカンチ	#031-060	6.5,2.2,4.2	6.02,0.78,6.02	9.5,23.8,23.8	silicon_hero
-mc-vpu-bone-conduction-2026	MC57	風切り音ゼロ！骨伝導／筐体振動ピックアッ	#031-060	0,2.2,7.5	5.72,1.63,4.92	0,13.8,26.5	copper_coil
-mc-32bit-float-dual-adc-2026	MC58	内蔵 32-bit Float	#031-060	-6,-9.2,1	6.92,1.71,5.32	-12,-12.8,31	ic_epoxy_dark
-mc-dual-stage-pga-stitch	MC59	デュアルパス超低雑音プリアンプ	#031-060	6,-9.2,1	6.3,1.16,4.9	12,-12.8,31	ic_epoxy_dark
-mc-8capsule-beamform-array	MC60	Sony ECM-B1M / ECM	#031-060	0,5.2,4.2	11.98,1.97,4.6	0,26.8,17.8	ic_epoxy_dark
-mc-mvdr-adaptive-null-dsp	MC61	適応MVDRビームフォーマー	#061-090	6,-9.2,-5.5	6.3,1.48,5.1	16,-22.8,27.5	silicon_hero
-mc-tinyml-transformer-sep-2026	MC62	カメラ内 TinyML Transfor	#061-090	-6,-9.2,-5.5	6.52,1.62,5.32	-16,-22.8,27.5	silicon_hero
+mc-vpu-bone-conduction-2026	MC57	風切り音ゼロ！骨伝導／筐体振動ピックアッ	#031-060	0,2.2,7.5	5.6,1.62,4.8	0,13.8,26.5	titanium_machined
+mc-32bit-float-dual-adc-2026	MC58	内蔵 32-bit Float	#031-060	-6,-9.2,1	6.8,1.7,5.2	-12,-12.8,31	ic_epoxy_dark
+mc-dual-stage-pga-stitch	MC59	デュアルパス超低雑音プリアンプ	#031-060	6,-9.2,1	6.2,1.16,4.8	12,-12.8,31	ic_epoxy_dark
+mc-8capsule-beamform-array	MC60	Sony ECM-B1M / ECM	#031-060	0,5.2,4.2	11.88,1.97,4.4	0,26.8,17.8	ic_epoxy_dark
+mc-mvdr-adaptive-null-dsp	MC61	適応MVDRビームフォーマー	#061-090	6,-9.2,-5.5	6.2,1.48,5	16,-22.8,27.5	silicon_hero
+mc-tinyml-transformer-sep-2026	MC62	カメラ内 TinyML Transfor	#061-090	-6,-9.2,-5.5	6.4,1.62,5.2	-16,-22.8,27.5	silicon_hero
 mc-ecm-corona-fep-dipole	MC63	ECM コロナ放電帯電FEP永久空間電荷	#061-090	14.2,3,4.2	5.28,1.04,5.28	23.8,25,11.8	brass_precision
 mc-ecm-back-electret-weld	MC64	バックエレクトレット 2.5 μm	#061-090	14.2,2.6,4.2	5.36,0.62,5.36	35.8,17.4,9.8	copper_coil
 mc-ecm-1gohm-gate-diode	MC65	ECM内蔵 JFET集積 1 GΩ	#061-090	14.2,-0.1,4.2	4.91,1.36,4.92	23.8,14.1,21.8	pcb_textured
 mc-ecm-rf-tdma-bypass-caps	MC66	カプセル内蔵 デュアル共振 10 pF	#061-090	14.2,-0.4,4.2	4.63,1.11,4.64	37.8,8.4,17.8	copper_coil
-mc-cardioid-rear-delay-mesh	MC67	単一指向性背面音響位相遅延・精密絹織抵抗	#061-090	14.2,1.4,4.2	5.66,0.58,5.6	23.8,0.6,27.8	brass_precision
+mc-cardioid-rear-delay-mesh	MC67	単一指向性背面音響位相遅延・精密絹織抵抗	#061-090	14.2,1.4,4.2	5.64,0.58,5.58	23.8,0.6,27.8	brass_precision
 mc-vent-tube-lfe-bass-port	MC68	背面音響キャビティ低域チューニング	#061-090	0,0.2,-12.5	5.17,1.57,3.64	48,-6.2,36.5	brass_precision
 mc-lens-af-stepper-vib-trap	MC69	2段シリコーン慣性質量‐ばね防振トラップ	#061-090	14.2,0.4,-3	4.98,2.2,4.98	29.8,23.6,-5	ic_epoxy_dark
-mc-thermal-drift-ntc-comp	MC70	−10℃〜＋50℃ 音響感度温度ドリフト	#061-090	11,-3.2,-2	5.26,1.05,3.26	39,15.2,-14	polyimide_fpc
-mc-star-ground-audio-island	MC71	オーディオ専用スターグラウンド銅アイラン	#061-090	0,-7.8,-1.5	6.28,0.7,5.3	40,-6.2,19.5	pcb_textured
-mc-zero-cross-pop-mute-fet	MC72	クリックレス・ゼロクロス防ポップ雑音ミュ	#061-090	8,-7.8,3.5	5.28,0.93,4.08	34,-10.2,-7.5	pcb_textured
-mc-pip-28v-current-limit	MC73	外部 3.5 mm プラグインパワー	#061-090	-16,-2,2	5.68,1.28,4.28	-24,-16,-30	matte_black_anodized
-mc-35mm-plug-detect-switch	MC74	3.5 mm ジャック物理挿入検知	#061-090	-18,2.5,2.8	5.36,2.16,3.76	-26,-0.5,-30.8	ic_epoxy_dark
-mc-xlr-k3m-48v-phantom-if	MC75	MIシュー 4ch 24-bit	#061-090	16.5,-1,-3	6.5,1.3,4.7	21.5,3,-27	copper_coil
-mc-24576mhz-audio-pll-jitter	MC76	1ピコ秒未満 超低ジッター 24.576	#061-090	-6,-10.8,-8.5	5.9,1.15,4.5	-14,-23.2,-25.5	ic_epoxy_dark
-mc-timecode-ltc-audio-sync	MC77	SMPTE LTC タイムコード音声トラ	#061-090	6,-10.8,-8.5	5.9,1.37,4.5	14,-23.2,-25.5	silicon_hero
-mc-spatial-ambisonics-matrix	MC78	3D空間オーディオ / 1次アンビソニッ	#061-090	0,3,-6.5	6.1,2.97,5.3	0,17,-27.5	ic_epoxy_dark
-mc-true-peak-lookahead-limiter	MC79	5 ms 先読みトゥルーピーク	#061-090	-10,-10.8,-2.5	6.1,1.27,4.7	-8,-31.2,-13.5	silicon_hero
-mc-factory-anechoic-cal-otp	MC80	工場無響室 1 kHz / 94 dB	#061-090	10,-10.8,-2.5	6.1,1.68,4.7	8,-31.2,-13.5	pcb_textured
+mc-thermal-drift-ntc-comp	MC70	−10℃〜＋50℃ 音響感度温度ドリフト	#061-090	11,-3.2,-2	5.2,1.05,3.2	39,15.2,-14	polyimide_fpc
+mc-star-ground-audio-island	MC71	オーディオ専用スターグラウンド銅アイラン	#061-090	0,-7.8,-1.5	6.2,0.7,5.24	40,-6.2,19.5	pcb_textured
+mc-zero-cross-pop-mute-fet	MC72	クリックレス・ゼロクロス防ポップ雑音ミュ	#061-090	8,-7.8,3.5	5.2,0.93,4	34,-10.2,-7.5	pcb_textured
+mc-pip-28v-current-limit	MC73	外部 3.5 mm プラグインパワー	#061-090	-16,-2,2	5.6,1.28,4.2	-24,-16,-30	matte_black_anodized
+mc-35mm-plug-detect-switch	MC74	3.5 mm ジャック物理挿入検知	#061-090	-18,2.5,2.8	5.2,2.16,3.6	-26,-0.5,-30.8	ic_epoxy_dark
+mc-xlr-k3m-48v-phantom-if	MC75	MIシュー 4ch 24-bit	#061-090	16.5,-1,-3	6.4,1.3,4.6	21.5,3,-27	copper_coil
+mc-24576mhz-audio-pll-jitter	MC76	1ピコ秒未満 超低ジッター 24.576	#061-090	-6,-10.8,-8.5	5.8,1.15,4.4	-14,-23.2,-25.5	ic_epoxy_dark
+mc-timecode-ltc-audio-sync	MC77	SMPTE LTC タイムコード音声トラ	#061-090	6,-10.8,-8.5	5.8,1.37,4.4	14,-23.2,-25.5	silicon_hero
+mc-spatial-ambisonics-matrix	MC78	3D空間オーディオ / 1次アンビソニッ	#061-090	0,3,-6.5	6,2.97,5.2	0,17,-27.5	ic_epoxy_dark
+mc-true-peak-lookahead-limiter	MC79	5 ms 先読みトゥルーピーク	#061-090	-10,-10.8,-2.5	6,1.27,4.6	-8,-31.2,-13.5	gold_plating
+mc-factory-anechoic-cal-otp	MC80	工場無響室 1 kHz / 94 dB	#061-090	10,-10.8,-2.5	6,1.68,4.6	8,-31.2,-13.5	pcb_textured
 mc-graphene-2d-membrane-2026	MC81	2026 原子数層 2Dグラフェン超極薄	#061-090	-13.8,4.4,3.8	4.98,0.65,4.98	-50.2,29.6,20.2	ic_epoxy_dark
 mc-fabry-perot-fiber-cavity	MC82	2026 ファブリー・ペロー光微小共振器	#061-090	-14.6,2.8,4.4	4.1,2.75,4.12	-53.4,15.2,29.6	ic_epoxy_dark
-mc-silicon-photonics-waveguide	MC83	2026 シリコンフォトニクス マッハ	#061-090	-13.2,1.2,5	4.88,0.77,3.88	-52.8,0.8,35	silicon_hero
-mc-3d-tsv-mems-cmos-stack	MC84	2026 ウェハレベル 3D-TSV	#061-090	-14.2,-1.8,4.2	4.48,2.24,4.48	-53.8,-12.2,29.8	silicon_hero
+mc-silicon-photonics-waveguide	MC83	2026 シリコンフォトニクス マッハ	#061-090	-13.2,1.2,5	4.8,0.77,3.8	-52.8,0.8,35	silicon_hero
+mc-3d-tsv-mems-cmos-stack	MC84	2026 ウェハレベル 3D-TSV	#061-090	-14.2,-1.8,4.2	4.4,2.24,4.4	-53.8,-12.2,29.8	silicon_hero
 mc-wake-on-sound-5ua-aad	MC85	2026 超低消費 5 μA 常時待機ウ	#061-090	-13.4,-4.6,3.6	4.88,0.93,4.48	-56.6,-25.4,28.4	gold_plating
-mc-pmut-ultrasonic-range-2026	MC86	2026 PMUT 圧電マイクロ超音波室	#061-090	-12.2,4.2,-3.5	4.48,1.18,4.48	-51.8,29.8,-12.5	silicon_hero
+mc-pmut-ultrasonic-range-2026	MC86	2026 PMUT 圧電マイクロ超音波室	#061-090	-12.2,4.2,-3.5	4.4,1.17,4.4	-51.8,29.8,-12.5	silicon_hero
 mc-corrugated-poly-si-rings	MC87	同心円コルゲートポリシリコン振動膜	#061-090	-13.8,1.8,-5.2	4.82,0.37,4.82	-54.2,14.2,-22.8	silicon_hero
-mc-sio2-sacrificial-etch-stops	MC88	気相フッ酸SiO₂ 犠牲層エッチング解放	#061-090	-12.6,-0.8,-6.5	4.48,1.29,4.48	-53.4,-1.2,-29.5	silicon_hero
+mc-sio2-sacrificial-etch-stops	MC88	気相フッ酸SiO₂ 犠牲層エッチング解放	#061-090	-12.6,-0.8,-6.5	4.4,1.29,4.4	-53.4,-1.2,-29.5	silicon_hero
 mc-drie-bosch-scallop-wall	MC89	ボッシュDRIE垂直深掘りシリコン	#061-090	-11.4,-3.6,-7.2	5.57,2.23,5.56	-52.6,-16.4,-26.8	silicon_hero
-mc-metal-lid-solder-ring-seal	MC90	LGA金属リッド 360°全周はんだリン	#061-090	-10.4,-6.2,-5.6	4.96,1.21,4.36	-49.6,-31.8,-16.4	ic_epoxy_dark
-mc-spiral-helmholtz-metamaterial	MC91	2026 渦巻きネック空間折畳みヘルムホ	#091-120	13.8,4.4,3.8	4.88,0.89,4.88	50.2,29.6,20.2	ic_epoxy_dark
+mc-metal-lid-solder-ring-seal	MC90	LGA金属リッド 360°全周はんだリン	#061-090	-10.4,-6.2,-5.6	4.9,1.21,4.3	-49.6,-31.8,-16.4	abf_substrate
+mc-spiral-helmholtz-metamaterial	MC91	2026 渦巻きネック空間折畳みヘルムホ	#091-120	13.8,4.4,3.8	4.8,0.89,4.8	50.2,29.6,20.2	ic_epoxy_dark
 mc-tubular-front-cavity-wind	MC92	2026 チューブラ前面音響キャビティ	#091-120	14.4,2.8,4.4	4.32,1.97,4.32	53.6,15.2,29.6	stainless_machined
-mc-lowfreq-metamaterial-booster	MC93	2026 低域音響メタマテリアル	#091-120	13.2,1.2,5	4.68,1.21,4.68	52.8,0.8,35	ic_epoxy_dark
-mc-acoustic-edge-diffraction-chamfer	MC94	天面マイクロ面取り音響ホーン	#091-120	14,-1.8,4.2	4.88,0.85,4.28	54,-12.2,29.8	ic_epoxy_dark
-mc-dual-layer-wind-boundary-mesh	MC95	2段ピッチ音響インピーダンス整合	#091-120	13.2,-4.4,3.6	4.71,1.14,4.31	48.8,-23.6,18.4	ic_epoxy_dark
-mc-hydrophobic-oleophobic-mesh	MC96	撥水＋撥油ハイブリッド防汚ナノ音響ポート	#091-120	12.2,4.2,-3.5	4.9,1.15,4.72	51.8,29.8,-12.5	matte_black_anodized
-mc-proximity-effect-eq-baffle	MC97	近接効果自動バランス圧力傾度EQ音道バッ	#091-120	13.8,1.8,-5.2	4.88,0.96,4.28	54.2,14.2,-22.8	ic_epoxy_dark
-mc-acoustic-crosstalk-barrier	MC98	左・右・後部3カプセル内部キャビティ	#091-120	12.6,-0.8,-6.5	4.88,1.82,4.28	53.4,-1.2,-29.5	elastomer_rubber
-mc-high-spl-membrane-vent-flap	MC99	148 dB 爆音・突風衝撃波リリーフ	#091-120	11.4,-3.6,-7.2	4.54,0.93,4.54	52.6,-16.4,-26.8	ic_epoxy_dark
-mc-sibilance-acoustic-diffuser	MC100	6–9 kHz 歯擦音ピーク緩和	#091-120	10.4,-6.2,-5.6	4.54,1.06,4.54	57.6,-35.8,-26.4	stainless_machined
+mc-lowfreq-metamaterial-booster	MC93	2026 低域音響メタマテリアル	#091-120	13.2,1.2,5	4.6,1.21,4.6	52.8,0.8,35	ic_epoxy_dark
+mc-acoustic-edge-diffraction-chamfer	MC94	天面マイクロ面取り音響ホーン	#091-120	14,-1.8,4.2	4.8,0.85,4.2	54,-12.2,29.8	ic_epoxy_dark
+mc-dual-layer-wind-boundary-mesh	MC95	2段ピッチ音響インピーダンス整合	#091-120	13.2,-4.4,3.6	4.7,1.14,4.3	48.8,-23.6,18.4	ic_epoxy_dark
+mc-hydrophobic-oleophobic-mesh	MC96	撥水＋撥油ハイブリッド防汚ナノ音響ポート	#091-120	12.2,4.2,-3.5	4.88,1.15,4.72	51.8,29.8,-12.5	matte_black_anodized
+mc-proximity-effect-eq-baffle	MC97	近接効果自動バランス圧力傾度EQ音道バッ	#091-120	13.8,1.8,-5.2	4.8,0.96,4.2	54.2,14.2,-22.8	ic_epoxy_dark
+mc-acoustic-crosstalk-barrier	MC98	左・右・後部3カプセル内部キャビティ	#091-120	12.6,-0.8,-6.5	4.8,1.82,4.2	53.4,-1.2,-29.5	elastomer_rubber
+mc-high-spl-membrane-vent-flap	MC99	148 dB 爆音・突風衝撃波リリーフ	#091-120	11.4,-3.6,-7.2	4.54,0.92,4.54	52.6,-16.4,-26.8	ic_epoxy_dark
+mc-sibilance-acoustic-diffuser	MC100	6–9 kHz 歯擦音ピーク緩和	#091-120	10.4,-6.2,-5.6	4.54,1.06,4.54	57.6,-35.8,-26.4	brass_precision
 mc-ai-dereverb-room-cancel-2026	MC101	2026 リアルタイムAI残響除去	#091-120	-6.2,-5.8,4.2	5.28,1.09,4.88	-25.8,47.8,29.8	ic_epoxy_dark
-mc-speaker-diarization-track-2026	MC102	2026 リアルタイム多話者声紋分離	#091-120	-2.4,-6.2,4.8	4.88,0.88,4.28	-7.6,50.2,33.2	pcb_textured
+mc-speaker-diarization-track-2026	MC102	2026 リアルタイム多話者声紋分離	#091-120	-2.4,-6.2,4.8	4.8,0.88,4.2	-7.6,50.2,33.2	pcb_textured
 mc-uwb-24g-lossless-rx-2026	MC103	2026 超低遅延 <2 ms ロスレス	#091-120	2.4,-6.2,4.8	4.96,1.01,4.16	9.6,50.2,33.2	ic_epoxy_dark
-mc-safety-track-minus20db-mux	MC104	Sony ECM-M1思想 4chセーフ	#091-120	6.2,-5.8,4.2	4.88,0.89,4.28	25.8,47.8,29.8	ic_epoxy_dark
+mc-safety-track-minus20db-mux	MC104	Sony ECM-M1思想 4chセーフ	#091-120	6.2,-5.8,4.2	4.8,0.89,4.2	25.8,47.8,29.8	ic_epoxy_dark
 mc-lufs-broadcast-loudness-dsp	MC105	放送・YouTube基準K特性ラウドネス	#091-120	0,-7.2,3.6	5.08,1.5,4.68	0,-30.8,36.4	gold_plating
-mc-ultrasonic-shutter-vcm-filter	MC106	30–100 kHz IBIS	#091-120	-7.6,-7.2,1.4	4.88,0.83,3.88	-30.4,-38.8,18.6	copper_coil
-mc-dc-servo-subsonic-integrator	MC107	0.5 Hz未満 超低域DCオフセット自	#091-120	7.6,-7.2,1.4	4.68,1.13,3.88	30.4,-38.8,18.6	pcb_textured
+mc-ultrasonic-shutter-vcm-filter	MC106	30–100 kHz IBIS	#091-120	-7.6,-7.2,1.4	4.8,0.83,3.8	-30.4,-38.8,18.6	copper_coil
+mc-dc-servo-subsonic-integrator	MC107	0.5 Hz未満 超低域DCオフセット自	#091-120	7.6,-7.2,1.4	4.6,1.13,3.8	30.4,-38.8,18.6	pcb_textured
 mc-pdm-tdm-clk-spread-spectrum	MC108	スペクトラム拡散PDM/TDM音声クロッ	#091-120	-5.8,-5.2,-7.8	4.53,1.25,3.52	-18.2,41.2,-32.2	ic_epoxy_dark
-mc-headphone-sidetone-eq-monitor	MC109	リアルタイム音声異常アラート	#091-120	5.8,-5.2,-7.8	4.88,1.23,3.88	18.2,41.2,-32.2	silicon_hero
-mc-anechoic-3d-hrtf-binaural-2026	MC110	2026 リアルタイムHRTF3D立体バ	#091-120	0,-6.6,-8.4	4.88,3.05,4.48	0,-43.4,-27.6	ic_epoxy_dark
-mc-jk1028-audio-jack-flex	MC111	純正 JK-1028 音声入出力デュアル	#091-120	-15.2,-5.2,-7.2	4.19,1.11,3.36	-72.8,47.2,27.2	polyimide_fpc
-mc-jk-holder-89100	MC112	純正 JK HOLDER 音声ジャック耐	#091-120	-15,-3.4,-7.2	4.2,1.31,3.1	-73,25.4,27.2	ic_epoxy_dark
-mc-jack-plate-89100	MC113	純正 JACK PLATE 側面ステンレ	#091-120	-15,-1.4,-7.2	4.06,0.76,2.81	-73,3.4,27.2	ic_epoxy_dark
-mc-mb-jack-shield-block	MC114	純正 MB JACK SHIELD	#091-120	-14.6,0.8,-7.2	4.06,1.5,2.91	-73.4,-18.8,27.2	emi_shield_metal
-mc-magnetic-field-cut-plate	MC115	純正 MAGNETIC FIELD	#091-120	-12.5,-6.2,-5	4.28,1.65,3.28	-75.5,-31.8,25	iron_magnetic
-mc-mis2006-shoe-contact-fpc	MC116	純正 MIS-2006 21ピン	#091-120	-4.5,4.8,-8.5	4.55,0.6,2.61	-83.5,37.2,-11.5	gold_plating
-mc-mi-shoe-shell-spring-cap	MC117	純正 MIシュー・シェルプレート /	#091-120	0,5.4,-8.5	4.26,1.31,3.76	-88,16.6,-11.5	ic_epoxy_dark
-mc-side-jack-cover-door	MC118	純正 側面キャビネット 3重リップ防滴	#091-120	-16.2,-3.2,-5	4.32,0.93,3.96	-71.8,5.2,-15	ic_epoxy_dark
-mc-sp901-monitor-speaker-gnd	MC119	純正 SP901 1.0 cm	#091-120	-11,-7.8,-8.2	3.92,1.55,4	-77,-10.2,-11.8	magnesium_cast
-mc-rear-muffle-cushion-insul	MC120	純正 REAR MUFFLE CUSHI	#091-120	-6,-7.2,-9.2	4.25,1.54,2.95	-82,-30.8,-10.8	ic_epoxy_dark
-mc-bottom-port-solder-ring-nsmd	MC121	MEMS底面音孔 360°環状SAC30	#121-150	-12.2,-1.6,3.2	4.18,0.74,4.18	100.2,43.6,16.8	solder_silver
-mc-pcb-stress-relief-slots	MC122	MEMS実装部 U字型ミルドPCB応力緩	#121-150	-12.2,-3.4,3.2	4.28,0.95,4.08	100.2,25.4,16.8	pcb_textured
-mc-asic-black-globtop-lightshield	MC123	MEMS内蔵ASIC 遮光ブラックエポキ	#121-150	-12.2,0.6,5.2	4.18,1.55,3.38	100.2,1.4,14.8	abf_substrate
-mc-sdm-ausn-getter-vacuum-seal	MC124	SDM密閉二重膜 AuSn共晶気密シール	#121-150	-12.2,2.4,3.2	4.08,1.12,4.08	100.2,-20.4,16.8	titanium_machined
-mc-mems-ubm-passivation-stack	MC125	MEMSダイ Si₃N₄パッシベーション	#121-150	-10,2.2,5.2	4.08,1.08,3.88	98,-40.2,14.8	silicon_wafer_dark
-mc-mems-bist-electrostatic-test	MC126	MEMS内蔵セルフテスト静電加振	#121-150	-10,-1.8,5.2	4.18,0.99,3.68	98,43.8,-25.2	silicon_hero
-mc-pdm-lr-edge-mux-tristate	MC127	PDMステレオ L/Rセレクト	#121-150	-4,2.2,5.4	4.38,0.69,3.08	92,19.8,-25.4	ic_epoxy_dark
-mc-3m-9495le-diecut-psa-ring	MC128	レーザー型抜き 3M 9495LE音響気	#121-150	0,4.8,4.2	4.68,1.14,3.82	88,-2.8,-24.2	ic_epoxy_dark
+mc-headphone-sidetone-eq-monitor	MC109	リアルタイム音声異常アラート	#091-120	5.8,-5.2,-7.8	4.8,1.23,3.8	18.2,41.2,-32.2	silicon_hero
+mc-anechoic-3d-hrtf-binaural-2026	MC110	2026 リアルタイムHRTF3D立体バ	#091-120	0,-6.6,-8.4	4.8,3.05,4.4	0,-43.4,-27.6	ic_epoxy_dark
+mc-jk1028-audio-jack-flex	MC111	純正 JK-1028 音声入出力デュアル	#091-120	-15.2,-5.2,-7.2	4.11,1.11,3.3	-72.8,47.2,27.2	polyimide_fpc
+mc-jk-holder-89100	MC112	純正 JK HOLDER 音声ジャック耐	#091-120	-15,-3.4,-7.2	4.1,1.31,3	-73,25.4,27.2	ic_epoxy_dark
+mc-jack-plate-89100	MC113	純正 JACK PLATE 側面ステンレ	#091-120	-15,-1.4,-7.2	4,0.76,2.75	-73,3.4,27.2	ic_epoxy_dark
+mc-mb-jack-shield-block	MC114	純正 MB JACK SHIELD	#091-120	-14.6,0.8,-7.2	3.94,1.5,2.84	-73.4,-18.8,27.2	emi_shield_metal
+mc-magnetic-field-cut-plate	MC115	純正 MAGNETIC FIELD	#091-120	-12.5,-6.2,-5	4.2,1.65,3.2	-75.5,-31.8,25	iron_magnetic
+mc-mis2006-shoe-contact-fpc	MC116	純正 MIS-2006 21ピン	#091-120	-4.5,4.8,-8.5	4.45,0.59,2.55	-83.5,37.2,-11.5	polyimide_fpc
+mc-mi-shoe-shell-spring-cap	MC117	純正 MIシュー・シェルプレート /	#091-120	0,5.4,-8.5	4.1,1.31,3.6	-88,16.6,-11.5	ic_epoxy_dark
+mc-side-jack-cover-door	MC118	純正 側面キャビネット 3重リップ防滴	#091-120	-16.2,-3.2,-5	4.2,0.93,3.8	-71.8,5.2,-15	ic_epoxy_dark
+mc-sp901-monitor-speaker-gnd	MC119	純正 SP901 1.0 cm	#091-120	-11,-7.8,-8.2	3.85,1.55,3.94	-77,-10.2,-11.8	magnesium_cast
+mc-rear-muffle-cushion-insul	MC120	純正 REAR MUFFLE CUSHI	#091-120	-6,-7.2,-9.2	4.1,1.54,2.8	-82,-30.8,-10.8	ic_epoxy_dark
+mc-bottom-port-solder-ring-nsmd	MC121	MEMS底面音孔 360°環状SAC30	#121-150	-12.2,-1.6,3.2	4.1,0.74,4.1	100.2,43.6,16.8	solder_silver
+mc-pcb-stress-relief-slots	MC122	MEMS実装部 U字型ミルドPCB応力緩	#121-150	-12.2,-3.4,3.2	4.2,0.95,4	100.2,25.4,16.8	pcb_textured
+mc-asic-black-globtop-lightshield	MC123	MEMS内蔵ASIC 遮光ブラックエポキ	#121-150	-12.2,0.6,5.2	4.1,1.55,3.3	100.2,1.4,14.8	abf_substrate
+mc-sdm-ausn-getter-vacuum-seal	MC124	SDM密閉二重膜 AuSn共晶気密シール	#121-150	-12.2,2.4,3.2	4,1.12,4	100.2,-20.4,16.8	titanium_machined
+mc-mems-ubm-passivation-stack	MC125	MEMSダイ Si₃N₄パッシベーション	#121-150	-10,2.2,5.2	4,1.08,3.8	98,-40.2,14.8	silicon_wafer_dark
+mc-mems-bist-electrostatic-test	MC126	MEMS内蔵セルフテスト静電加振	#121-150	-10,-1.8,5.2	4.1,0.99,3.6	98,43.8,-25.2	silicon_hero
+mc-pdm-lr-edge-mux-tristate	MC127	PDMステレオ L/Rセレクト	#121-150	-4,2.2,5.4	4.3,0.69,3	92,19.8,-25.4	pcb_textured
+mc-3m-9495le-diecut-psa-ring	MC128	レーザー型抜き 3M 9495LE音響気	#121-150	0,4.8,4.2	4.58,1.14,3.7	88,-2.8,-24.2	ic_epoxy_dark
 mc-ecm-front-acoustic-cloth-crimp	MC129	ECMカプセル前面 黒色不織布音響抵抗ク	#121-150	14.2,1.2,4.2	3.84,1.43,3.84	73.8,-19.2,-24.2	ic_epoxy_dark
 mc-ecm-solderless-contact-parylene	MC130	ECM無はんだ金めっき圧縮コンタクトリン	#121-150	14.2,-1.2,4.2	3.64,1.28,3.64	73.8,-36.8,-24.2	pcb_textured
-mc-c0g-antimicrophonic-coupling-cap	MC131	ノンマイクロフォニック C0G/NP0	#121-150	-8.2,-5.8,3.4	4.28,1.18,3.08	-39.8,-58.2,24.6	pcb_textured
-mc-thinfilm-005pct-gain-network	MC132	超低電流雑音 Susumu RG	#121-150	-4.2,-5.8,3.4	4.28,0.61,3.28	-19.8,-58.2,24.6	pcb_textured
-mc-capless-hp-chargepump-rail	MC133	AK4954A / AK4951	#121-150	0,-5.8,3.4	4.18,0.87,3.28	0,-58.2,24.6	pcb_textured
-mc-vcom-vref-bandgap-bypass	MC134	超低雑音 VREF / VCOM	#121-150	4.2,-5.8,3.4	4.12,1.03,3.28	19.8,-58.2,24.6	pcb_textured
-mc-avdd-dvdd-ferrite-powertree	MC135	4系統オーディオ電源分離ツリー	#121-150	8.2,-5.8,3.4	4.38,0.72,3.38	39.8,-58.2,24.6	pin_carrier_gloss
-mc-c7701-audio-emi-shield-can	MC136	SY-1122 オーディオ島専用	#121-150	-8.2,-5.8,-3.6	4.3,1.31,3.5	-39.8,-60.2,-24.4	emi_shield_metal
-mc-i2s-33ohm-series-termination	MC137	I²S / TDM8 シリアル音声バス	#121-150	-4.2,-5.8,-3.6	4.38,0.61,3.08	-19.8,-60.2,-24.4	pcb_textured
-mc-dlw21-jack-cm-choke	MC138	3.5 mm外部マイク端子直結	#121-150	0,-5.8,-3.6	4.08,1.16,3.08	0,-60.2,-24.4	copper_coil
-mc-mic-line-attenuator-cmos-mux	MC139	ハードウェア 0 / −10 / −20	#121-150	4.2,-5.8,-3.6	4.28,0.65,3.28	19.8,-60.2,-24.4	pcb_textured
-mc-05db-r2r-volume-headphone-stage	MC140	0.5 dBステップ デジタル制御アナロ	#121-150	8.2,-5.8,-3.6	4.28,0.68,3.28	39.8,-60.2,-24.4	gold_plating
-mc-ecmm1-4cap-diamond-array	MC141	Sony ECM-M1 4カプセル	#121-150	-8,5.2,4.2	4.22,1.02,3.72	-40,58.8,27.8	ic_epoxy_dark
-mc-ecmm1-8mode-dial-switches	MC142	Sony ECM-M1 ロック機構付き8	#121-150	-4,5.2,4.2	4.36,1.09,3.36	-20,58.8,27.8	matte_black_anodized
-mc-ecmm1-shock-suspension-cradle	MC143	Sony ECM-M1 / ECM	#121-150	0,5.2,1.5	3.76,1.91,3.36	0,58.8,30.5	elastomer_rubber
-mc-xlrk3m-phantom48v-681k-pair	MC144	Sony XLR-K3M / XLR	#121-150	4,5.2,4.2	4.28,1.26,3.48	20,58.8,27.8	matte_black_anodized
-mc-xlra4-2026-32bit-96k-bridge	MC145	Sony XLR-A4 4ch 32	#121-150	8,5.2,4.2	4.4,1.04,3.64	40,58.8,27.8	matte_black_anodized
-mc-ecmw3-bt53-lc3plus-rf	MC146	Sony ECM-W3 Bluetoot	#121-150	-8,5.2,-5.2	4.28,0.72,3.28	-40,58.8,-26.8	ic_epoxy_dark
-mc-hdmi-acr-n6144-lpcm-tx	MC147	フルサイズHDMI Type-A 4ch	#121-150	-4,5.2,-5.2	4.28,0.93,3.28	-20,58.8,-26.8	pcb_textured
-mc-uac2-usb-c-async-bridge	MC148	USB-C UAC 2.0 非同期アイソ	#121-150	0,5.2,-5.2	4.28,0.84,3.28	0,58.8,-26.8	pcb_textured
-mc-xavc-audio-dma-ringbuffer	MC149	XAVC-S / XAVC-HS	#121-150	4,5.2,-5.2	4.28,0.75,3.48	20,58.8,-26.8	pcb_textured
-mc-shutter-click-transient-inpainter	MC150	メカシャッター幕・レンズ絞り羽根トリガー	#121-150	8,5.2,-5.2	4.28,1.12,3.48	40,58.8,-26.8	pcb_textured
+mc-c0g-antimicrophonic-coupling-cap	MC131	ノンマイクロフォニック C0G/NP0	#121-150	-8.2,-5.8,3.4	4.2,1.18,3	-39.8,-58.2,24.6	pcb_textured
+mc-thinfilm-005pct-gain-network	MC132	超低電流雑音 Susumu RG	#121-150	-4.2,-5.8,3.4	4.2,0.61,3.2	-19.8,-58.2,24.6	pcb_textured
+mc-capless-hp-chargepump-rail	MC133	AK4954A / AK4951	#121-150	0,-5.8,3.4	4.1,0.87,3.2	0,-58.2,24.6	pcb_textured
+mc-vcom-vref-bandgap-bypass	MC134	超低雑音 VREF / VCOM	#121-150	4.2,-5.8,3.4	4.08,1.03,3.2	19.8,-58.2,24.6	pcb_textured
+mc-avdd-dvdd-ferrite-powertree	MC135	4系統オーディオ電源分離ツリー	#121-150	8.2,-5.8,3.4	4.3,0.72,3.3	39.8,-58.2,24.6	pin_carrier_gloss
+mc-c7701-audio-emi-shield-can	MC136	SY-1122 オーディオ島専用	#121-150	-8.2,-5.8,-3.6	4.22,1.31,3.5	-39.8,-60.2,-24.4	emi_shield_metal
+mc-i2s-33ohm-series-termination	MC137	I²S / TDM8 シリアル音声バス	#121-150	-4.2,-5.8,-3.6	4.3,0.61,3	-19.8,-60.2,-24.4	pcb_textured
+mc-dlw21-jack-cm-choke	MC138	3.5 mm外部マイク端子直結	#121-150	0,-5.8,-3.6	4,1.16,3	0,-60.2,-24.4	copper_coil
+mc-mic-line-attenuator-cmos-mux	MC139	ハードウェア 0 / −10 / −20	#121-150	4.2,-5.8,-3.6	4.2,0.65,3.2	19.8,-60.2,-24.4	pcb_textured
+mc-05db-r2r-volume-headphone-stage	MC140	0.5 dBステップ デジタル制御アナロ	#121-150	8.2,-5.8,-3.6	4.2,0.68,3.2	39.8,-60.2,-24.4	pcb_textured
+mc-ecmm1-4cap-diamond-array	MC141	Sony ECM-M1 4カプセル	#121-150	-8,5.2,4.2	4.1,1.02,3.6	-40,58.8,27.8	ic_epoxy_dark
+mc-ecmm1-8mode-dial-switches	MC142	Sony ECM-M1 ロック機構付き8	#121-150	-4,5.2,4.2	4.2,1.09,3.2	-20,58.8,27.8	matte_black_anodized
+mc-ecmm1-shock-suspension-cradle	MC143	Sony ECM-M1 / ECM	#121-150	0,5.2,1.5	3.6,1.91,3.2	0,58.8,30.5	elastomer_rubber
+mc-xlrk3m-phantom48v-681k-pair	MC144	Sony XLR-K3M / XLR	#121-150	4,5.2,4.2	4.2,1.26,3.4	20,58.8,27.8	matte_black_anodized
+mc-xlra4-2026-32bit-96k-bridge	MC145	Sony XLR-A4 4ch 32	#121-150	8,5.2,4.2	4.3,1.04,3.51	40,58.8,27.8	matte_black_anodized
+mc-ecmw3-bt53-lc3plus-rf	MC146	Sony ECM-W3 Bluetoot	#121-150	-8,5.2,-5.2	4.2,0.72,3.2	-40,58.8,-26.8	ic_epoxy_dark
+mc-hdmi-acr-n6144-lpcm-tx	MC147	フルサイズHDMI Type-A 4ch	#121-150	-4,5.2,-5.2	4.2,0.93,3.2	-20,58.8,-26.8	pcb_textured
+mc-uac2-usb-c-async-bridge	MC148	USB-C UAC 2.0 非同期アイソ	#121-150	0,5.2,-5.2	4.2,0.84,3.2	0,58.8,-26.8	pcb_textured
+mc-xavc-audio-dma-ringbuffer	MC149	XAVC-S / XAVC-HS	#121-150	4,5.2,-5.2	4.2,0.75,3.4	20,58.8,-26.8	pcb_textured
+mc-shutter-click-transient-inpainter	MC150	メカシャッター幕・レンズ絞り羽根トリガー	#121-150	8,5.2,-5.2	4.2,1.12,3.4	40,58.8,-26.8	pcb_textured

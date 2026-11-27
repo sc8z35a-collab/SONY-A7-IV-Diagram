@@ -6,6 +6,8 @@ import { buildDryboxMicroCoreElectricsParts } from '../assemblies/drybox/dryboxM
 import { buildDryboxUltraConservationParts } from '../assemblies/drybox/dryboxUltraConservationParts';
 import { buildDryboxUltraSafetyUtilityParts } from '../assemblies/drybox/dryboxUltraSafetyUtilityParts';
 import { buildDryboxFrontier2026Parts } from '../assemblies/drybox/dryboxFrontier2026Parts';
+import { buildDryboxPrecisionMechParts } from '../assemblies/drybox/dryboxPrecisionMechParts';
+import { buildDryboxPrecisionSystemsParts } from '../assemblies/drybox/dryboxPrecisionSystemsParts';
 import type { DryboxPalette } from '../assemblies/drybox/dryboxPartsShared';
 import { createDryboxPhysicsOverlay } from '../assemblies/drybox/dryboxPhysicsOverlay';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
@@ -40,6 +42,8 @@ export function createDryboxUnit(): OptimizedUnit {
         ...buildDryboxUltraConservationParts(ctx),
         ...buildDryboxUltraSafetyUtilityParts(ctx),
         ...buildDryboxFrontier2026Parts(ctx),
+        ...buildDryboxPrecisionMechParts(ctx),
+        ...buildDryboxPrecisionSystemsParts(ctx),
       ].sort((a, b) => a.order - b.order);
 
       const overlay = createDryboxPhysicsOverlay(clippingPlanes);

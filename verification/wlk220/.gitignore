@@ -1,0 +1,11 @@
+# CalculiX temporary solver outputs & generated KiCad runtime caches
+*.12d
+*.cvg
+*.sta
+*.frd
+*.dat
+*.kicad_prl
+*.kicad_pro
+spooles.out
+gerbers/
+sch_svg/

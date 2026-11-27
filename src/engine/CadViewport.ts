@@ -53,11 +53,11 @@ export class CadViewport {
   private pointerDownPos = new THREE.Vector2();
   private hoverRaycastPending = false;
 
-  private mode: ScaleMode = 'integrated';
+  private mode: ScaleMode = 'welcome';
   private lensSection: LensSection = 1;
   private sensorFabVolume: SensorFabVolume = 0;
   private renderMode: RenderMode = 'solid';
-  private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'high' : 'ultra';
+  private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'standard' : 'high';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
   private targetExplode = 0;
@@ -98,6 +98,7 @@ export class CadViewport {
   private idleFrameStreak = 0;
   private disposed = false;
   private cachedDomRect: DOMRect | null = null;
+  private customSceneRenderer: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null = null;
 
   constructor(container: HTMLElement, callbacks: ViewportCallbacks) {
     this.container = container;
@@ -494,7 +495,10 @@ export class CadViewport {
     let d: number;
     let target: THREE.Vector3;
 
-    if (this.mode === 'lens') {
+    if (this.mode === 'welcome') {
+      d = 228 + e * 142;
+      target = new THREE.Vector3(0, 1.5, 0);
+    } else if (this.mode === 'lens') {
       if (sharedLensOpticalSim.studioOpen) {
         d = 266 + e * 1080;
         target = new THREE.Vector3(0 + e * 124.0, -2.0 * (1 - e), 80.0 + e * 160.0);
@@ -545,8 +549,8 @@ export class CadViewport {
       d = 122 + e * 245;
       target = new THREE.Vector3(0, -1.0 + e * 1.0, 0);
     } else if (this.mode === 'bionz_v2') {
-      d = 124 + e * 282;
-      target = new THREE.Vector3(0, 0.2 - e * 1.2, 0);
+      d = 142 + e * 320;
+      target = new THREE.Vector3(0, -2.6 + e * 1.2, 0);
     } else if (this.mode === 'micro_v2') {
       d = 114 + e * 270;
       target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);
@@ -581,12 +585,34 @@ export class CadViewport {
       target = new THREE.Vector3(20.0 * e, 1.5 * e, -3.0 - e * 16.0);
     }
 
+    // Closer hero zoom-in on assembled startup (~0.70x) blending cleanly toward ~0.86x when fully exploded
+    if (this.mode !== 'welcome') {
+      d *= THREE.MathUtils.lerp(0.70, 0.86, e);
+    }
+
     if (this.camera.aspect < 1.0) {
-      d *= Math.min(2.05, 1.04 / Math.max(this.camera.aspect, 0.48));
+      const portraitCap = this.mode === 'welcome' ? 2.72 : 1.88;
+      d *= Math.min(portraitCap, (this.mode === 'welcome' ? 1.24 : 0.92) / Math.max(this.camera.aspect, 0.44));
     }
 
     let offset: THREE.Vector3;
-    if (this.mode === 'evf') {
+    if (this.mode === 'welcome') {
+      switch (preset) {
+        case 'front':
+          offset = new THREE.Vector3(0, 2, d);
+          break;
+        case 'side':
+          offset = new THREE.Vector3(-d * 0.96, d * 0.08, d * 0.24);
+          break;
+        case 'back':
+          offset = new THREE.Vector3(d * 0.16, d * 0.12, -d * 0.98);
+          break;
+        case 'iso':
+        default:
+          offset = new THREE.Vector3(-d * 0.16, d * 0.13, d * 0.98);
+          break;
+      }
+    } else if (this.mode === 'evf') {
       const isoX = e > 0.25 ? -0.88 : -0.78;
       const isoY = e > 0.25 ? 0.17 : 0.24;
       const isoZ = e > 0.25 ? -0.44 : -0.58;
@@ -958,11 +984,11 @@ export class CadViewport {
       }
     } else if (this.mode === 'bionz_v2') {
       if (this.sectionAxis === 'x') {
-        minCoord = -20;
-        maxCoord = 20;
+        minCoord = -24;
+        maxCoord = 24;
       } else {
-        minCoord = -16;
-        maxCoord = 18;
+        minCoord = -26;
+        maxCoord = 22;
       }
     } else if (this.mode === 'mishoe') {
       if (this.sectionAxis === 'x') {
@@ -1086,12 +1112,14 @@ export class CadViewport {
     });
 
     dom.addEventListener('pointerdown', (e) => {
+      if (this.customSceneRenderer) return;
       this.pointerDownPos.set(e.clientX, e.clientY);
       this.camAnimActive = false;
       this.markDirty();
     });
 
     dom.addEventListener('pointermove', (e) => {
+      if (this.customSceneRenderer) return;
       if (e.pointerType === 'touch') return;
       const rect = this.cachedDomRect ?? (this.cachedDomRect = dom.getBoundingClientRect());
       if (rect.width <= 0 || rect.height <= 0) return;
@@ -1102,6 +1130,7 @@ export class CadViewport {
     });
 
     dom.addEventListener('pointerleave', () => {
+      if (this.customSceneRenderer) return;
       this.hoverRaycastPending = false;
       if (this.hoveredPartId !== null) {
         this.hoveredPartId = null;
@@ -1112,6 +1141,7 @@ export class CadViewport {
     });
 
     dom.addEventListener('pointerup', (e) => {
+      if (this.customSceneRenderer) return;
       const dist = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
       if (dist > 5) return;
 
@@ -1146,6 +1176,24 @@ export class CadViewport {
       this.resizeObserver = new ResizeObserver(this.boundHandleResize);
       this.resizeObserver.observe(this.container);
     }
+  }
+
+  public getRenderer(): THREE.WebGLRenderer {
+    return this.renderer;
+  }
+
+  public getContainer(): HTMLElement {
+    return this.container;
+  }
+
+  public setCustomSceneRenderer(
+    fn: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null
+  ): void {
+    this.customSceneRenderer = fn;
+    this.controls.enabled = fn === null;
+    this.hoverRaycastPending = false;
+    this.container.classList.remove('is-hovering');
+    this.markDirty(3);
   }
 
   private handleContextLost(event: Event): void {
@@ -1233,12 +1281,20 @@ export class CadViewport {
     this.rafId = 0;
     if (this.disposed || this.contextLost || this.pageHidden) return;
 
+    const delta = Math.min(this.clock.getDelta(), 0.05);
+
+    if (this.customSceneRenderer) {
+      this.customSceneRenderer(this.renderer, delta);
+      if (this.dirtyFrames > 0) this.dirtyFrames--;
+      this.rafId = requestAnimationFrame(this.animate);
+      return;
+    }
+
     if (this.hoverRaycastPending) {
       this.hoverRaycastPending = false;
       this.updateHoverFromRaycast();
     }
 
-    const delta = Math.min(this.clock.getDelta(), 0.05);
     const elapsed = this.clock.getElapsedTime();
 
     const continuousAnim = this.v2Runtime.needsContinuousAnimation(this.physicsActive);

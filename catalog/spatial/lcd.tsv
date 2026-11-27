@@ -1,151 +1,151 @@
 id	code	name	group	pos	size	exp	mat
-lcd-rear-bezel-glass	D01	OCA光学接着カバーガラス	#001-030	6,-7,-35.8	74.15,50.41,0.98	0,0,-78	stainless_machined
-lcd-ips-panel	D02	3.2型 210万ドット広視野角IPS液	#001-030	6,-7,-34.4	69.6,47.17,1.34	0,0,-50	silicon_wafer_dark
-lcd-backlight-stack	D03	デュアルBEFプリズムシート	#001-030	6,-7,-33.2	70.2,47.14,0.78	0,0,-38	optical_glass_clear
-lcd-chassis-shell	D04	CNCアルミ／マグネシウム薄型モニター外	#001-030	6,-7,-31.5	75.9,52.27,7.55	0,0,-14	magnesium_cast
-lcd-orientation-hall	D05	2軸磁気ホール開閉・180°反転自動検知	#001-030	6,-7,-30.9	63.33,29.75,2.07	-26,-22,-8	iron_magnetic
+lcd-rear-bezel-glass	D01	OCA光学接着カバーガラス	#001-030	6,-7,-35.8	74.15,50.38,0.98	0,0,-78	stainless_machined
+lcd-ips-panel	D02	3.2型 210万ドット広視野角IPS液	#001-030	6,-7,-34.4	69.6,47.15,1.34	0,0,-50	silicon_wafer_dark
+lcd-backlight-stack	D03	デュアルBEFプリズムシート	#001-030	6,-7,-33.2	70.2,47.1,0.78	0,0,-38	optical_glass_clear
+lcd-chassis-shell	D04	CNCアルミ／マグネシウム薄型モニター外	#001-030	6,-7,-31.5	75.9,52.15,7.55	0,0,-14	magnesium_cast
+lcd-orientation-hall	D05	2軸磁気ホール開閉・180°反転自動検知	#001-030	6,-7,-30.9	63.28,29.72,2.07	-26,-22,-8	iron_magnetic
 lcd-swivel-clutch	D06	270°水平軸 多板ステンレス皿ばね定ト	#001-030	44.8,-7,-30.4	11.99,7.12,7.08	30,18,-10	stainless_machined
 lcd-swivel-hinge	D07	横開き176°／回転270° バリアング	#001-030	44.8,-7,-30.4	8.49,23.25,7.56	36,0,4	stainless_machined
-lcd-detent-stops	D08	0°・90°・180° 鋼球クリックディ	#001-030	44.8,-7,-30.4	14.26,3.2,8.81	30,-18,-4	stainless_machined
-lcd-coaxial-fpc	D09	中空ヒンジ軸挿通 らせんトーション逃がし	#001-030	44.8,-7,-30.4	16.09,13.76,5.38	52,0,12	polyimide_fpc
+lcd-detent-stops	D08	0°・90°・180° 鋼球クリックディ	#001-030	44.8,-7,-30.4	14.23,3.2,8.78	30,-18,-4	stainless_machined
+lcd-coaxial-fpc	D09	中空ヒンジ軸挿通 らせんトーション逃がし	#001-030	44.8,-7,-30.4	16.08,13.7,5.41	52,0,12	polyimide_fpc
 lcd-pantograph-links	D10	左右対称CNCステンレス 4軸チルト	#001-030	6,-7,-29.4	72,46,2.53	0,0,4	stainless_machined
-lcd-tilt-torque-cams	D11	光軸チルト専用 ツイスト摩擦ドラムブレー	#001-030	6,-7,-29.2	57.92,8.38,9.47	0,28,16	stainless_machined
+lcd-tilt-torque-cams	D11	光軸チルト専用 ツイスト摩擦ドラムブレー	#001-030	6,-7,-29.2	57.92,8.33,7.44	0,28,16	stainless_machined
 lcd-tilt-slide-rails	D12	下方チルト用 精密スライドガイド溝	#001-030	6,-7,-29	69.14,30.2,2.79	0,-28,16	stainless_machined
-lcd-cradle-locks	D13	磁気フラット収納ロックキャッチ	#001-030	6,-7,-28.9	69.77,46.01,2.07	-26,24,22	foam_felt_matte
+lcd-cradle-locks	D13	磁気フラット収納ロックキャッチ	#001-030	6,-7,-28.9	69.77,45.95,2.07	-26,24,22	foam_felt_matte
 lcd-4axis-tilt-frame	D14	4軸マルチアングル 光軸チルトクレードル	#001-030	6,-7,-28.8	76.4,52.2,4.7	0,0,34	magnesium_cast
-lcd-touch-controller	D15	240Hz PCAP 静電容量タッチコン	#001-030	6,-7,-33.6	20.4,7.8,1.24	24,-26,-64	polyimide_fpc
-lcd-polarizer-stack	D16	直交 0°/90° 広視野角偏光板	#001-030	6,-7,-34.24	70.27,46.27,0.68	0,0,-64	optical_dichroic
-lcd-lgp-led-bar	D17	高演色10連サイドエッジ白色LEDバー	#001-030	6,-7,-32.45	68.8,44.94,1	0,0,-26	optical_glass_clear
-lcd-emi-thermal-shield	D18	極薄ステンレスEMI遮蔽バックプレート	#001-030	6,-7,-31.95	72.77,46,0.79	-26,20,-20	stainless_machined
+lcd-touch-controller	D15	240Hz PCAP 静電容量タッチコン	#001-030	6,-7,-33.6	20.4,7.8,1.21	24,-26,-64	polyimide_fpc
+lcd-polarizer-stack	D16	直交 0°/90° 広視野角偏光板	#001-030	6,-7,-34.24	70.25,46.25,0.68	0,0,-64	optical_dichroic
+lcd-lgp-led-bar	D17	高演色10連サイドエッジ白色LEDバー	#001-030	6,-7,-32.45	68.8,44.9,1	0,0,-26	optical_glass_clear
+lcd-emi-thermal-shield	D18	極薄ステンレスEMI遮蔽バックプレート	#001-030	6,-7,-31.95	72.74,46,0.79	-26,20,-20	stainless_machined
 lcd-pullin-cam-spring	D19	自閉吸い込みカムヒンジ	#001-030	44.8,-7,-30.4	14.7,16.8,7.04	44,24,4	stainless_machined
 lcd-hinge-weather-boots	D20	蛇腹式 EPDM ヒンジ防塵防滴シールブ	#001-030	43.6,-7,-29.2	11.8,25.2,9.82	46,-24,14	magnesium_cast
-lcd-bulkhead-b2b-pcb	D21	ボディ側バルクヘッド MIPI-DSI	#001-030	6,-7,-27.4	24.4,18.82,4.38	0,0,48	pcb_textured
+lcd-bulkhead-b2b-pcb	D21	ボディ側バルクヘッド MIPI-DSI	#001-030	6,-7,-27.4	24.4,18.8,4.38	0,0,48	pcb_textured
 lcd-rear-stiffener	D22	モニター背面カーボン／ステンレス反り防止	#001-030	6,-7,-32.2	69.6,45.6,0.78	0,0,-24	stainless_machined
 lcd-torque-washers	D23	4軸ヒンジ皿ばねフリクショントルク積層ス	#001-030	44.8,-7,-30.5	9.65,15.89,9.59	56,22,-16	stainless_machined
-lcd-ambient-color-sensor	D24	背面ベゼル内蔵・屋外晴天ブースト用RGB	#001-030	6,-7,-33.75	20.97,4.5,1.51	0,-34,-64	pcb_textured
-lcd-flip-reed-magnets	D25	180°自撮り上下反転	#001-030	6,-7,-33.2	64.49,39.54,1.46	-42,26,-34	iron_magnetic
+lcd-ambient-color-sensor	D24	背面ベゼル内蔵・屋外晴天ブースト用RGB	#001-030	6,-7,-33.75	20.9,4.4,1.5	0,-34,-64	pcb_textured
+lcd-flip-reed-magnets	D25	180°自撮り上下反転	#001-030	6,-7,-33.2	64.4,39.45,1.46	-42,26,-34	iron_magnetic
 lcd-hinge-grommet	D26	らせんFPC中空ヒンジ軸貫通部	#001-030	44.8,-7,-30.4	7.12,23.73,7.12	62,-6,-4	magnesium_cast
-lcd-dock-bumper-pads	D27	背面モニター収納ポケット 4隅マイクロセ	#001-030	6,-7,-29.2	70.48,47.55,1.92	0,-30,32	foam_felt_matte
+lcd-dock-bumper-pads	D27	背面モニター収納ポケット 4隅マイクロセ	#001-030	6,-7,-29.2	70.44,47.45,1.92	0,-30,32	foam_felt_matte
 lcd-ar-af-hardcoat	D28	カバーガラス最表面 3層機能コート	#001-030	6,-7,-34.36	72.8,48.8,0.95	0,0,-90	matte_chassis
-lcd-oca-bonding-film	D29	ゼロエアギャップ全画面透明光学接着フィル	#001-030	6,-7,-34.34	70.8,48.52,0.2	0,0,-71	matte_chassis
+lcd-oca-bonding-film	D29	ゼロエアギャップ全画面透明光学接着フィル	#001-030	6,-7,-34.34	70.8,48.5,0.2	0,0,-71	matte_chassis
 lcd-bezel-wp-psa-tape	D30	モニター外周・防塵防滴ダイカット両面シー	#001-030	6,-7,-34.35	73.2,49.2,0.32	0,36,-72	foam_felt_matte
 lcd-ito-touch-bridge	D31	静電容量タッチ透明電極	#031-060	6,-7,-34.32	69.6,45.6,0.26	-48,0,-70	optical_ar_iridescent
-lcd-front-rear-pol-psa	D32	背面90°入射側偏光板	#031-060	6,-7,-33.85	70.62,45.5,0.43	0,0,-44	silicon_dielectric
+lcd-front-rear-pol-psa	D32	背面90°入射側偏光板	#031-060	6,-7,-33.85	70.6,45.5,0.43	0,0,-44	silicon_dielectric
 lcd-cf-black-matrix	D33	液晶セル内部：DCI-P3広色域RGBカ	#031-060	6,-7,-34.28	69.2,45.2,0.34	-52,22,-52	cfa_gloss_filter
-lcd-lc-photo-spacers	D34	ネマチック液晶分子層・3.2μmフォトス	#031-060	6,-7,-34.2	68.8,45.03,0.38	-54,-18,-50	matte_black_anodized
+lcd-lc-photo-spacers	D34	ネマチック液晶分子層・3.2μmフォトス	#031-060	6,-7,-34.2	68.8,44.99,0.38	-54,-18,-50	matte_black_anodized
 lcd-pi-alignment-films	D35	上下ポリイミド光配向極薄膜	#031-060	6,-7,-34.22	67,43,0.38	0,38,-50	polyimide_fpc
 lcd-ltps-tft-comb-array	D36	LTPS低温ポリシリコンTFT画素スイッ	#031-060	6,-7,-34.16	68.8,44.8,0.28	48,28,-48	silicon_wafer_dark
-lcd-acf-cog-ddic	D37	異方性導電フィルム	#031-060	6,-7,-33.75	32.46,3.06,0.99	-26,-38,-52	gold_plating
-lcd-dbef-reflective-pol	D38	DBEF反射型偏光リサイクルフィルム	#031-060	6,-7,-33.55	68.8,46.22,0.26	48,0,-40	optical_dichroic
-lcd-bottom-diffuser-sheet	D39	光学マイクロビーズ拡散シート	#031-060	6,-7,-32.85	68.8,46.22,0.22	0,0,-32	membrane_translucent
-lcd-blu-mold-frame-tape	D40	白色高反射ポリカーボネート中枠	#031-060	6,-7,-32.7	71.2,48.88,1.26	0,38,-30	membrane_translucent
-lcd-ksf-led-phosphor-sink	D41	DCI-P3広色域KSF赤色蛍光体サイド	#031-060	6,-7,-32.45	67.21,2.88,1.03	32,-38,-28	copper_thermal
+lcd-acf-cog-ddic	D37	異方性導電フィルム	#031-060	6,-7,-33.75	32.4,3,0.99	-26,-38,-52	gold_plating
+lcd-dbef-reflective-pol	D38	DBEF反射型偏光リサイクルフィルム	#031-060	6,-7,-33.55	68.8,46.2,0.26	48,0,-40	optical_dichroic
+lcd-bottom-diffuser-sheet	D39	光学マイクロビーズ拡散シート	#031-060	6,-7,-32.85	68.8,46.2,0.22	0,0,-32	membrane_translucent
+lcd-blu-mold-frame-tape	D40	白色高反射ポリカーボネート中枠	#031-060	6,-7,-32.7	71.2,48.8,1.26	0,38,-30	membrane_translucent
+lcd-ksf-led-phosphor-sink	D41	DCI-P3広色域KSF赤色蛍光体サイド	#031-060	6,-7,-32.45	67.15,2.8,1.03	32,-38,-28	copper_thermal
 lcd-pd1072-driver-board	D42	モニター内蔵・LED昇圧	#031-060	6,-7,-31.78	26.4,12.2,1.77	-48,-4,-22	pcb_textured
-lcd-fine-coaxial-bundle	D43	36芯極細同軸ケーブル束 FINE	#031-060	44.8,-7,-30.4	14.69,16.22,4.52	74,14,14	gold_plating
-lcd-lc1058-tilt-flex	D44	4軸チルト〜横開き中継フレキ基板 LC	#031-060	6,-7,-29	25.48,28.71,2.46	-48,-14,16	polyimide_fpc
-lcd-gasket-s-emi-foam	D45	コネクタ導電EMI	#031-060	6,-7,-31.7	13.94,11.84,1.5	-48,-28,-22	emi_shield_metal
+lcd-fine-coaxial-bundle	D43	36芯極細同軸ケーブル束 FINE	#031-060	44.8,-7,-30.4	14.57,16.1,4.48	74,14,14	gold_plating
+lcd-lc1058-tilt-flex	D44	4軸チルト〜横開き中継フレキ基板 LC	#031-060	6,-7,-29	25.4,28.66,2.46	-48,-14,16	polyimide_fpc
+lcd-gasket-s-emi-foam	D45	コネクタ導電EMI	#031-060	6,-7,-31.7	13.9,11.8,1.5	-48,-28,-22	emi_shield_metal
 lcd-cab-r-potting-seal	D46	背面カバー防水ポッティング封止層	#031-060	6,-7,-31.15	73,49,4.13	0,0,-6	foam_felt_matte
 lcd-sv-hinge-covers	D47	ヒンジ前後二分割アーマーカバー SV	#031-060	44.8,-7,-30.4	10.57,23.6,10.28	76,-18,0	stainless_machined
-lcd-ma-hinge-back-mold	D48	4軸マルチアングル関節・背面モールド保護	#031-060	6,-7,-28.4	66.92,38,1.45	0,0,20	magnesium_cast
+lcd-ma-hinge-back-mold	D48	4軸マルチアングル関節・背面モールド保護	#031-060	6,-7,-28.4	66.8,38,1.45	0,0,20	magnesium_cast
 lcd-sv-hinge-adhesive	D49	ヒンジ防滴シール	#031-060	44,-7,-30.1	16.1,24,0.41	64,-30,24	foam_felt_matte
-lcd-dual-axis-interlock-cam	D50	2軸同時回転防止インターロックカム	#031-060	44.8,-7,-30.4	10.64,4.99,8.9	64,34,-4	stainless_machined
-lcd-pantograph-sync-gears	D51	4軸チルト左右同期セクターギア	#031-060	6,-7,-29.3	62.53,9.27,7.69	0,42,6	brass_precision
-lcd-pck-lg3-protector	D52	Sony PCK-LG3 光学ハードガラ	#031-060	6,-7,-34.38	72.96,51.1,0.46	0,0,-104	matte_chassis
-lcd-ma-hinge-back-mg-a	D53	MA HINGE BACK MO A	#031-060	6,-7,-28.25	71.8,47.4,1.28	0,0,62	magnesium_cast
-lcd-ma-hinge-mold-b-plate	D54	MA HINGE BACK MOLD B	#031-060	6,-7,-28.05	64.08,38.08,0.71	0,48,48	stainless_machined
-lcd-ma-hinge-front-plate	D55	MA HINGE FRONT PLATE	#031-060	6,-7,-29.65	67.3,42.3,0.87	-52,46,26	magnesium_cast
+lcd-dual-axis-interlock-cam	D50	2軸同時回転防止インターロックカム	#031-060	44.8,-7,-30.4	10.58,4.95,8.9	64,34,-4	stainless_machined
+lcd-pantograph-sync-gears	D51	4軸チルト左右同期セクターギア	#031-060	6,-7,-29.3	62.53,9.25,7.69	0,42,6	brass_precision
+lcd-pck-lg3-protector	D52	Sony PCK-LG3 光学ハードガラ	#031-060	6,-7,-34.38	72.8,51,0.46	0,0,-104	matte_chassis
+lcd-ma-hinge-back-mg-a	D53	MA HINGE BACK MO A	#031-060	6,-7,-28.25	71.6,47.2,1.28	0,0,62	magnesium_cast
+lcd-ma-hinge-mold-b-plate	D54	MA HINGE BACK MOLD B	#031-060	6,-7,-28.05	64,38,0.71	0,48,48	stainless_machined
+lcd-ma-hinge-front-plate	D55	MA HINGE FRONT PLATE	#031-060	6,-7,-29.65	67.2,42.2,0.87	-52,46,26	magnesium_cast
 lcd-ma-hinge-cover-ul	D56	4軸専用 MAヒンジ・アッパー	#031-060	44.8,-7,-30.4	8.84,35.6,8.16	96,36,4	magnesium_cast
 lcd-ma-hinge-cover-fr	D57	4軸専用 MAヒンジ・フロント	#031-060	44.8,-7,-30.4	10.64,23,11.4	98,-2,8	magnesium_cast
-lcd-ma-fpc-retainer-insul	D58	MA HINGE FPC保持ステンレスプ	#031-060	40.8,-7,-29.5	17.32,11.14,1.92	94,-36,16	stainless_machined
-lcd-ma-wp-cable-bushing	D59	MA/SVヒンジ 防滴二重リップ	#031-060	43.3,-7,-29	9.06,12.86,5.4	96,16,28	magnesium_cast
-lcd-ma-wp-cushion-fpc-mr	D60	MAヒンジ防滴スポンジクッション群	#031-060	41.3,-7,-29.2	14.96,21.39,1.4	96,-24,34	foam_felt_matte
-lcd-rear-lc-cover-cushions	D61	カメラ背面モニター収納ポケット	#061-090	6,-7,-27.05	72.16,48.16,1.48	0,0,78	magnesium_cast
-lcd-rear-mg-bay-plate	D62	背面マグネシウム受けプレート・衝撃緩衝ク	#061-090	6,-7,-26.75	69.36,44.96,1.16	0,0,94	foam_felt_matte
-lcd-magnetic-cut-plate	D63	IBIS磁界干渉遮断プレート	#061-090	6,-7,-27.45	26.32,18.92,3.22	-68,24,52	stainless_machined
-lcd-front-cab-bezel-frame	D64	液晶モジュール前面キャビネット外枠	#061-090	6,-7,-35.15	75.12,51.94,1.47	0,56,-84	magnesium_cast
-lcd-ion-exchange-layer	D65	化学強化イオン交換圧縮応力層	#061-090	6,-7,-34.26	72.44,48.44,0.69	-76,48,-90	matte_chassis
-lcd-qwp-sunglass-film	D66	広帯域1/4波長位相差フィルム	#061-090	6,-7,-34.28	70.43,46.43,0.25	78,48,-78	matte_chassis
-lcd-rear-ito-emi-shield	D67	タッチ層裏面・透明ITOノイズシールド層	#061-090	6,-7,-34.3	70.44,48.29,0.28	-92,0,-82	solder_silver
-lcd-silver-bezel-bus	D68	外周ファインライン銀ペースト引き回し配線	#061-090	6,-7,-34.33	72.44,48.44,0.32	-92,-38,-82	solder_silver
-lcd-zif-fliplock-stiffener	D69	0.35mmピッチ ZIFフリップロック	#061-090	6,-26.5,-31.8	19.83,12.15,1.72	58,-50,-76	ic_epoxy_dark
-lcd-cf-eagle-xg-glass	D70	上部カラーフィルタ側 無アルカリ	#061-090	6,-7,-34.22	69.66,45.66,0.28	-96,38,-62	matte_chassis
-lcd-tft-eagle-xg-glass	D71	下部TFTアレイ側 無アルカリガラス基板	#061-090	6,-7,-34.04	69.66,48.66,0.35	-96,-42,-56	gold_plating
-lcd-cf-acrylic-overcoat	D72	カラーフィルタ平坦化アクリルオーバーコー	#061-090	6,-7,-34.18	68.44,44.44,0.2	-98,12,-58	matte_chassis
-lcd-tft-gate-gi-stack	D73	TFTゲート金属配線	#061-090	6,-7,-34.15	67.64,43.64,0.26	96,36,-56	silicon_dielectric
-lcd-ltps-active-sd-metal	D74	LTPS多結晶シリコン半導体チャネル	#061-090	6,-7,-34.12	67.44,43.44,0.25	98,8,-54	silicon_wafer_dark
-lcd-passivation-pln-vias	D75	SiNx無機パッシベーション保護膜	#061-090	6,-7,-34.09	67.24,43.24,0.24	98,-22,-52	polyimide_fpc
-lcd-ag-common-odf-seal	D76	上下基板間 銀ペースト共通電極トランスフ	#061-090	6,-7,-34.14	69.06,45.32,0.48	0,-60,-58	pin_carrier_gloss
-lcd-upper-diffuser-film	D77	上部光学拡散保護シート	#061-090	6,-7,-33.66	68.84,46.74,0.22	96,-50,-44	membrane_translucent
-lcd-v-bef-prism-film	D78	垂直軸マイクロプリズム集光フィルム	#061-090	6,-7,-33.36	68.44,46.24,0.7	-96,44,-34	optical_glass_clear
-lcd-h-bef-prism-film	D79	水平軸直交マイクロプリズム集光フィルム	#061-090	6,-7,-33.12	68.44,46.24,0.56	-96,-18,-32	optical_glass_clear
-lcd-lgp-vgroove-edge-tape	D80	導光板入光端マイクロV溝カップリング	#061-090	6,-7,-32.55	70.91,47.56,1.04	0,-64,-30	matte_chassis
-lcd-blu-metal-back-bezel	D81	プレス成形ステンレスBLUバックシャーシ	#061-090	6,-7,-32.32	70.68,47.86,1.38	94,48,-32	stainless_machined
-lcd-led-mcpcb-ntc	D82	サイドビューLEDバー高熱伝導アルミMC	#061-090	6,-29.8,-32.45	65.9,2.5,1.21	34,-64,-22	stainless_machined
-lcd-boost-schottky-rset	D83	28V LED昇圧コンバータ40V	#061-090	-6,-17,-31.65	16.12,10.52,2.42	-78,-56,-28	solder_silver
-lcd-tft-bias-pmic	D84	TFT液晶多系統バイアス電源PMIC	#061-090	-16,-3,-31.65	17.62,11.32,1.86	-92,-36,-12	pcb_textured
-lcd-vcom-calibrator-dac	D85	デジタルVCOM共通電圧キャリブレーター	#061-090	14,-19,-31.65	11.7,8.3,1.46	-46,-64,-18	pcb_textured
-lcd-gamma-lut-eeprom	D86	工場個別キャリブレーション済 10	#061-090	24,-19,-31.65	11.5,8.1,1.68	-16,-66,-12	pcb_textured
-lcd-mipi-cmc-choke	D87	MIPI-DSI 90Ω差動コモンモード	#061-090	28,-5,-31.65	16.9,7.7,1.57	66,-60,-14	copper_coil
-lcd-ddic-silicon-arch	D88	COGディスプレイ駆動IC内部シリコン機	#061-090	6,-28.8,-33.7	28.12,5.92,0.78	-46,-62,-48	silicon_hero
-lcd-micro-coax-4layer	D89	AWG44–46 極細同軸線4層同心構造	#061-090	44.8,-7,-30.4	15.28,19.39,1.42	108,-14,-18	stainless_machined
-lcd-esd-tvs-pi-filter	D90	静電気保護±15kV TVSダイオードア	#061-090	0,-23,-31.65	13.6,7.7,1.48	-82,-62,4	pcb_textured
-lcd-cabc-pwm-dimmer	D91	20kHz以上超高周波ハイブリッドDC	#091-120	10,-11,-31.65	13.3,8.7,1.42	44,-64,6	pcb_textured
+lcd-ma-fpc-retainer-insul	D58	MA HINGE FPC保持ステンレスプ	#031-060	40.8,-7,-29.5	17.2,11.1,1.92	94,-36,16	stainless_machined
+lcd-ma-wp-cable-bushing	D59	MA/SVヒンジ 防滴二重リップ	#031-060	43.3,-7,-29	8.9,12.7,5.4	96,16,28	magnesium_cast
+lcd-ma-wp-cushion-fpc-mr	D60	MAヒンジ防滴スポンジクッション群	#031-060	41.3,-7,-29.2	14.8,21.2,1.4	96,-24,34	foam_felt_matte
+lcd-rear-lc-cover-cushions	D61	カメラ背面モニター収納ポケット	#061-090	6,-7,-27.05	72,48,1.49	0,0,78	magnesium_cast
+lcd-rear-mg-bay-plate	D62	背面マグネシウム受けプレート・衝撃緩衝ク	#061-090	6,-7,-26.75	69.2,44.8,1.16	0,0,94	foam_felt_matte
+lcd-magnetic-cut-plate	D63	IBIS磁界干渉遮断プレート	#061-090	6,-7,-27.45	26.2,18.8,3.23	-68,24,52	stainless_machined
+lcd-front-cab-bezel-frame	D64	液晶モジュール前面キャビネット外枠	#061-090	6,-7,-35.15	74.8,51.7,1.47	0,56,-84	magnesium_cast
+lcd-ion-exchange-layer	D65	化学強化イオン交換圧縮応力層	#061-090	6,-7,-34.26	72.4,48.4,0.69	-76,48,-90	matte_chassis
+lcd-qwp-sunglass-film	D66	広帯域1/4波長位相差フィルム	#061-090	6,-7,-34.28	70.4,46.4,0.25	78,48,-78	matte_chassis
+lcd-rear-ito-emi-shield	D67	タッチ層裏面・透明ITOノイズシールド層	#061-090	6,-7,-34.3	70.4,48.25,0.28	-92,0,-82	solder_silver
+lcd-silver-bezel-bus	D68	外周ファインライン銀ペースト引き回し配線	#061-090	6,-7,-34.33	72.4,48.4,0.32	-92,-38,-82	solder_silver
+lcd-zif-fliplock-stiffener	D69	0.35mmピッチ ZIFフリップロック	#061-090	6,-26.5,-31.8	19.75,12.13,1.71	58,-50,-76	ic_epoxy_dark
+lcd-cf-eagle-xg-glass	D70	上部カラーフィルタ側 無アルカリ	#061-090	6,-7,-34.22	69.6,45.6,0.28	-96,38,-62	optical_glass_ed
+lcd-tft-eagle-xg-glass	D71	下部TFTアレイ側 無アルカリガラス基板	#061-090	6,-7,-34.04	69.6,48.6,0.35	-96,-42,-56	gold_plating
+lcd-cf-acrylic-overcoat	D72	カラーフィルタ平坦化アクリルオーバーコー	#061-090	6,-7,-34.18	68.4,44.4,0.2	-98,12,-58	matte_chassis
+lcd-tft-gate-gi-stack	D73	TFTゲート金属配線	#061-090	6,-7,-34.15	67.6,43.6,0.26	96,36,-56	silicon_dielectric
+lcd-ltps-active-sd-metal	D74	LTPS多結晶シリコン半導体チャネル	#061-090	6,-7,-34.12	67.4,43.4,0.25	98,8,-54	silicon_wafer_dark
+lcd-passivation-pln-vias	D75	SiNx無機パッシベーション保護膜	#061-090	6,-7,-34.09	67.2,43.2,0.24	98,-22,-52	polyimide_fpc
+lcd-ag-common-odf-seal	D76	上下基板間 銀ペースト共通電極トランスフ	#061-090	6,-7,-34.14	69,45.24,0.48	0,-60,-58	pin_carrier_gloss
+lcd-upper-diffuser-film	D77	上部光学拡散保護シート	#061-090	6,-7,-33.66	68.8,46.7,0.22	96,-50,-44	membrane_translucent
+lcd-v-bef-prism-film	D78	垂直軸マイクロプリズム集光フィルム	#061-090	6,-7,-33.36	68.4,46.2,0.7	-96,44,-34	optical_glass_clear
+lcd-h-bef-prism-film	D79	水平軸直交マイクロプリズム集光フィルム	#061-090	6,-7,-33.12	68.4,46.2,0.56	-96,-18,-32	optical_glass_clear
+lcd-lgp-vgroove-edge-tape	D80	導光板入光端マイクロV溝カップリング	#061-090	6,-7,-32.55	70.85,47.54,1.04	0,-64,-30	matte_chassis
+lcd-blu-metal-back-bezel	D81	プレス成形ステンレスBLUバックシャーシ	#061-090	6,-7,-32.32	70.6,47.8,1.38	94,48,-32	stainless_machined
+lcd-led-mcpcb-ntc	D82	サイドビューLEDバー高熱伝導アルミMC	#061-090	6,-29.8,-32.45	65.8,2.4,1.22	34,-64,-22	stainless_machined
+lcd-boost-schottky-rset	D83	28V LED昇圧コンバータ40V	#061-090	-6,-17,-31.65	16,10.4,2.42	-78,-56,-28	solder_silver
+lcd-tft-bias-pmic	D84	TFT液晶多系統バイアス電源PMIC	#061-090	-16,-3,-31.65	17.5,11.2,1.86	-92,-36,-12	pcb_textured
+lcd-vcom-calibrator-dac	D85	デジタルVCOM共通電圧キャリブレーター	#061-090	14,-19,-31.65	11.6,8.2,1.46	-46,-64,-18	pcb_textured
+lcd-gamma-lut-eeprom	D86	工場個別キャリブレーション済 10	#061-090	24,-19,-31.65	11.4,8,1.68	-16,-66,-12	pcb_textured
+lcd-mipi-cmc-choke	D87	MIPI-DSI 90Ω差動コモンモード	#061-090	28,-5,-31.65	16.8,7.6,1.57	66,-60,-14	copper_coil
+lcd-ddic-silicon-arch	D88	COGディスプレイ駆動IC内部シリコン機	#061-090	6,-28.8,-33.7	28,5.8,0.78	-46,-62,-48	silicon_hero
+lcd-micro-coax-4layer	D89	AWG44–46 極細同軸線4層同心構造	#061-090	44.8,-7,-30.4	15.2,19.35,1.42	108,-14,-18	stainless_machined
+lcd-esd-tvs-pi-filter	D90	静電気保護±15kV TVSダイオードア	#061-090	0,-23,-31.65	13.5,7.6,1.48	-82,-62,4	pcb_textured
+lcd-cabc-pwm-dimmer	D91	20kHz以上超高周波ハイブリッドDC	#091-120	10,-11,-31.65	13.2,8.6,1.42	44,-64,6	pcb_textured
 lcd-dcut-hollow-shaft	D92	中空鍛造ステンレスDカット回り止めトルク	#091-120	44.8,-7,-30.4	9.25,6.42,6.44	108,30,-20	stainless_machined
 lcd-sintered-bronze-bush	D93	含油焼結青銅すべり軸受ブッシュ	#091-120	44.8,-7,-30.4	9.72,17.9,8.84	108,52,0	brass_precision
 lcd-pfpe-dimple-grease	D94	レーザーマイクロディンプル油溜まり摩擦板	#091-120	44.8,-7,-30.45	7.9,9.2,9.16	82,56,-16	matte_black_anodized
 lcd-stepped-rivet-washers	D95	段付き精密ステンレスリベットピボットピン	#091-120	6,-7,-29.35	61.58,35.97,5.1	42,56,20	stainless_machined
-lcd-rain-drain-labyrinth	D96	背面モニター収納ポケット雨水排出ドレン溝	#091-120	6,-7,-27.2	70.2,42.57,2.51	0,-56,58	becu_spring
-lcd-micro-screw-threadlock	D97	M1.4 / M1.7 精密十字皿小ねじ	#091-120	6,-7,-28.6	70.22,45.22,5.76	-56,-48,36	stainless_machined
-lcd-tally-rec-lightpipe	D98	録画中赤枠強調表示連動	#091-120	6,13.6,-33.9	70.06,4.46,1.39	0,26,-108	pin_carrier_gloss
-lcd-imu-vertical-link	D99	6軸MEMS姿勢IMU縦位置自動回転リン	#091-120	-14,3,-27.25	12.52,9.32,1.55	-68,-16,48	pcb_textured
-lcd-rear-bezel-shock-rib	D100	マグネシウム殻内部ハニカム耐衝撃リブ	#091-120	6,-7,-31.35	72.68,48.48,1	-92,24,-8	foam_felt_matte
-lcd-nano-texture-glass	D101	2026次世代 ナノテクスチャ微細エッチ	#091-120	6,-7,-34	72.12,48.12,0.7	-124,96,-56	matte_chassis
-lcd-qdef-quantum-dot	D102	カドミウムフリー InP量子ドット波長変	#091-120	6,-7,-33	69.46,45.46,0.3	-62,98,-56	matte_chassis
-lcd-miniled-fald-matrix	D103	2Dローカルディミング Mini	#091-120	6,-7,-32.5	68.9,44.9,1.06	0,100,-56	emissive_glow
-lcd-miniled-white-cavity	D104	Mini-LED高反射マイクロ光学リフレ	#091-120	6,-7,-32.62	68.24,44.24,1.36	62,98,-56	membrane_translucent
-lcd-tandem-oled-stack	D105	2026フラッグシップ タンデム2層積層	#091-120	6,-7,-33.9	69.66,45.66,0.76	124,96,-56	solder_silver
-lcd-tandem-cgl-layer	D106	タンデムOLED超低損失チャージ生成層	#091-120	6,-7,-33.86	68.44,44.44,1.22	-124,96,16	silicon_dielectric
-lcd-ltpo-igzo-vrr	D107	LTPOハイブリッド酸化物可変リフレッシ	#091-120	6,-7,-33.8	68.66,44.66,0.31	-62,98,16	silicon_wafer_dark
-lcd-utvc-vapor-chamber	D108	0.3mm超薄型 焼結銅メッシュウィック	#091-120	6,-7,-31.85	68.26,45.47,0.42	0,100,16	copper_thermal
-lcd-pcm-thermal-buffer	D109	潜熱蓄熱フェーズチェンジ材料	#091-120	6,-7,-31.22	66.48,42.48,0.67	62,98,16	stainless_machined
-lcd-hdr-waveform-tcon	D110	10-bit HDRハードウェア	#091-120	6,-25,-31.62	16.52,11.72,1.46	124,96,16	silicon_hero
-lcd-pva-iodine-core	D111	延伸ヨウ素染色PVA二色性偏光コア層	#091-120	6,-7,-34.16	67.41,43.26,0.52	-142,64,-102	optical_dichroic
-lcd-tac-uv-psa-barrier	D112	両面保護TACフィルム	#091-120	6,-7,-34.12	68.24,46.24,2.02	-142,24,-104	matte_chassis
-lcd-ips-ac-comp-film	D113	IPS広視野角 +A/+C 二軸光学補償	#091-120	6,-7,-34.08	67.06,43.06,0.77	-142,-16,-104	optical_dichroic
-lcd-im-ito-matching	D114	屈折率整合 IM-ITO タッチ不可視化	#091-120	6,-7,-34.04	66.84,42.84,0.63	-142,-56,-102	matte_chassis
-lcd-chevron-ips-slit	D115	デュアルドメイン・シェブロンIPS	#091-120	6,-7,-33.76	66.26,42.26,0.43	142,56,-102	cfa_gloss_filter
-lcd-neg-nematic-lc	D116	負誘電率異方性フッ素系ネマティック液晶混	#091-120	6,-7,-33.66	65.28,41.28,0.73	142,16,-104	cfa_gloss_filter
-lcd-anti-newton-spacer	D117	アンチニュートンリング微細シリカビーズ光	#091-120	6,-7,-33.98	67.04,43.04,0.86	142,-24,-104	optical_glass_clear
-lcd-cog-tuffy-resin	D118	COGガラス張り出し部 UV硬化シリコー	#091-120	6,-26.4,-33.48	63.28,5.48,0.93	-146,76,-60	gold_plating
-lcd-dummy-pixel-ring	D119	パネル外周ダミー画素ガードリング	#091-120	6,-7,-33.58	66.66,42.66,2.02	-146,16,-60	silicon_wafer_dark
-lcd-laser-repair-ring	D120	工場歩留まり救済 レーザーリペア冗長バス	#091-120	6,-7,-33.52	67.84,43.84,2.02	-146,-24,-60	gold_plating
-lcd-side-led-anatomy	D121	0.4 mm超薄サイドビュー白色LED内	#121-150	6,-27.5,-32.75	19.08,5.4,4.3	146,-60,-64	solder_silver
-lcd-lgp-dot-gradient	D122	導光板底面 レーザー微細ドット密度勾配パ	#121-150	6,-7,-32.68	67.46,43.46,0.47	166,58,-42	optical_glass_clear
-lcd-lgp-matte-esd	D123	導光板上面 パウダーブラスト微細マット処	#121-150	6,-7,-32.86	67.44,45.54,2.02	146,8,-32	emi_shield_metal
-lcd-lcm-shading-tape	D124	液晶セル〜BLU間 黒色全周遮光両面テー	#121-150	6,-7,-33.24	68.64,46.24,2.22	146,-32,-32	foam_felt_matte
+lcd-rain-drain-labyrinth	D96	背面モニター収納ポケット雨水排出ドレン溝	#091-120	6,-7,-27.2	70,42.5,2.51	0,-56,58	becu_spring
+lcd-micro-screw-threadlock	D97	M1.4 / M1.7 精密十字皿小ねじ	#091-120	6,-7,-28.6	70.07,45.22,5.76	-56,-48,36	stainless_machined
+lcd-tally-rec-lightpipe	D98	録画中赤枠強調表示連動	#091-120	6,13.6,-33.9	70,4.4,1.39	0,26,-108	pin_carrier_gloss
+lcd-imu-vertical-link	D99	6軸MEMS姿勢IMU縦位置自動回転リン	#091-120	-14,3,-27.25	12.4,9.2,1.55	-68,-16,48	pcb_textured
+lcd-rear-bezel-shock-rib	D100	マグネシウム殻内部ハニカム耐衝撃リブ	#091-120	6,-7,-31.35	72.4,48.2,1	-92,24,-8	foam_felt_matte
+lcd-nano-texture-glass	D101	2026次世代 ナノテクスチャ微細エッチ	#091-120	6,-7,-34	72,48,0.7	-124,96,-56	matte_chassis
+lcd-qdef-quantum-dot	D102	カドミウムフリー InP量子ドット波長変	#091-120	6,-7,-33	69.4,45.4,0.3	-62,98,-56	matte_chassis
+lcd-miniled-fald-matrix	D103	2Dローカルディミング Mini	#091-120	6,-7,-32.5	68.8,44.8,1.06	0,100,-56	emissive_glow
+lcd-miniled-white-cavity	D104	Mini-LED高反射マイクロ光学リフレ	#091-120	6,-7,-32.62	68.2,44.2,1.36	62,98,-56	membrane_translucent
+lcd-tandem-oled-stack	D105	2026フラッグシップ タンデム2層積層	#091-120	6,-7,-33.9	69.6,45.6,0.76	124,96,-56	solder_silver
+lcd-tandem-cgl-layer	D106	タンデムOLED超低損失チャージ生成層	#091-120	6,-7,-33.86	68.4,44.4,1.22	-124,96,16	silicon_dielectric
+lcd-ltpo-igzo-vrr	D107	LTPOハイブリッド酸化物可変リフレッシ	#091-120	6,-7,-33.8	68.6,44.6,0.31	-62,98,16	silicon_wafer_dark
+lcd-utvc-vapor-chamber	D108	0.3mm超薄型 焼結銅メッシュウィック	#091-120	6,-7,-31.85	68.2,45.4,0.42	0,100,16	copper_thermal
+lcd-pcm-thermal-buffer	D109	潜熱蓄熱フェーズチェンジ材料	#091-120	6,-7,-31.22	66.4,42.4,0.67	62,98,16	stainless_machined
+lcd-hdr-waveform-tcon	D110	10-bit HDRハードウェア	#091-120	6,-25,-31.62	16.4,11.6,1.46	124,96,16	silicon_hero
+lcd-pva-iodine-core	D111	延伸ヨウ素染色PVA二色性偏光コア層	#091-120	6,-7,-34.16	67.35,43.2,0.52	-142,64,-102	optical_dichroic
+lcd-tac-uv-psa-barrier	D112	両面保護TACフィルム	#091-120	6,-7,-34.12	68.2,46.2,0.99	-142,24,-104	matte_chassis
+lcd-ips-ac-comp-film	D113	IPS広視野角 +A/+C 二軸光学補償	#091-120	6,-7,-34.08	67,43,0.77	-142,-16,-104	optical_dichroic
+lcd-im-ito-matching	D114	屈折率整合 IM-ITO タッチ不可視化	#091-120	6,-7,-34.04	66.8,42.8,0.63	-142,-56,-102	matte_chassis
+lcd-chevron-ips-slit	D115	デュアルドメイン・シェブロンIPS	#091-120	6,-7,-33.76	66.2,42.2,0.43	142,56,-102	cfa_gloss_filter
+lcd-neg-nematic-lc	D116	負誘電率異方性フッ素系ネマティック液晶混	#091-120	6,-7,-33.66	65.2,41.2,0.73	142,16,-104	cfa_gloss_filter
+lcd-anti-newton-spacer	D117	アンチニュートンリング微細シリカビーズ光	#091-120	6,-7,-33.98	67,43,0.86	142,-24,-104	optical_glass_clear
+lcd-cog-tuffy-resin	D118	COGガラス張り出し部 UV硬化シリコー	#091-120	6,-26.4,-33.48	63.2,5.4,0.93	-146,76,-60	gold_plating
+lcd-dummy-pixel-ring	D119	パネル外周ダミー画素ガードリング	#091-120	6,-7,-33.58	66.6,42.6,0.41	-146,16,-60	silicon_wafer_dark
+lcd-laser-repair-ring	D120	工場歩留まり救済 レーザーリペア冗長バス	#091-120	6,-7,-33.52	67.8,43.8,0.52	-146,-24,-60	gold_plating
+lcd-side-led-anatomy	D121	0.4 mm超薄サイドビュー白色LED内	#121-150	6,-27.5,-32.75	19,5.3,4.3	146,-60,-64	solder_silver
+lcd-lgp-dot-gradient	D122	導光板底面 レーザー微細ドット密度勾配パ	#121-150	6,-7,-32.68	67.4,43.4,0.47	166,58,-42	optical_glass_clear
+lcd-lgp-matte-esd	D123	導光板上面 パウダーブラスト微細マット処	#121-150	6,-7,-32.86	67.4,45.5,0.26	146,8,-32	emi_shield_metal
+lcd-lcm-shading-tape	D124	液晶セル〜BLU間 黒色全周遮光両面テー	#121-150	6,-7,-33.24	68.6,46.2,0.42	146,-32,-32	foam_felt_matte
 lcd-lcm-qr-fiducial	D125	LCM背面ステンレスシャーシ 工場トレー	#121-150	-2,-1,-31.82	24.07,15.25,0.26	-146,-64,-26	matte_black_anodized
-lcd-a1m2-hinge-rev2	D126	Sony α1 II 強化型4軸ヒンジコ	#121-150	42.2,-7,-29.2	5.48,24.74,3.97	146,56,22	magnesium_cast
-lcd-rs1029-rear-board	D127	Sony α9 III / α1 II	#121-150	24,-3,-25.4	18.28,14.66,2.17	146,16,28	pcb_textured
+lcd-a1m2-hinge-rev2	D126	Sony α1 II 強化型4軸ヒンジコ	#121-150	42.2,-7,-29.2	5.3,24.5,3.97	146,56,22	magnesium_cast
+lcd-rs1029-rear-board	D127	Sony α9 III / α1 II	#121-150	24,-3,-25.4	18.2,14.6,2.17	146,16,28	pcb_textured
 lcd-torsion-assist-spring	D128	4軸チルト自重キャンセル・カムフォロワ補	#121-150	42,-7,-28.8	6.63,16.34,3.46	146,-24,28	becu_spring
 lcd-torque-preload-shims	D129	ヒンジ軸方向プリロード微調整シムワッシャ	#121-150	42.2,-8,-29.6	4.4,14.2,4.42	146,-60,22	stainless_machined
-lcd-pantograph-end-dampers	D130	4軸パンタグラフ終端 静音シリコーンラバ	#121-150	6,-7,-27.2	41.68,31.08,2.31	146,42,66	foam_felt_matte
+lcd-pantograph-end-dampers	D130	4軸パンタグラフ終端 静音シリコーンラバ	#121-150	6,-7,-27.2	41.6,31,2.31	146,42,66	foam_felt_matte
 lcd-coax-strain-sleeve	D131	ヒンジ出口 細線同軸アンチキンクシリコー	#121-150	40.2,-13,-28.4	8.9,4.33,4.35	146,0,68	foam_felt_matte
 lcd-rear-bay-eptfe-vent	D132	背面ベイ防水透湿 ePTFE 圧力平衡ベ	#121-150	-12,-19,-24.8	11.16,11.12,1.38	0,32,118	magnesium_cast
-lcd-magnetic-glare-loupe	D133	マグネット着脱式 3.2型屋外サンシェー	#121-150	6,-7,-34.26	75.6,51.64,2.91	0,0,-138	magnesium_cast
-lcd-hybrid-wet-touch-afe	D134	相互容量＋自己容量ハイブリッド 濡れ指	#121-150	18,-19,-32.18	16.1,11.1,1.49	-126,-102,-38	pcb_textured
-lcd-efuse-ovp-ocp-switch	D135	メイン基板側 表示電源スマート	#121-150	-4,-15,-25.2	15.1,10.6,1.79	-84,-102,22	pcb_textured
-lcd-mipi-redriver-eq	D136	2.5 Gbps MIPI D-PHY	#121-150	12,-15,-25.6	16.6,10.6,1.46	-42,-102,-18	pcb_textured
-lcd-sre-sunlight-engine	D137	リアルタイム太陽光視認性強化局所トーンマ	#121-150	6,-18,-32.14	15.6,11.1,1.18	0,-102,-38	pcb_textured
-lcd-psr-frame-buffer	D138	パネルセルフリフレッシュ内蔵SRAMフレ	#121-150	-4,-19,-32.12	16.1,10.6,1.98	42,-102,-18	pcb_textured
-lcd-cold-od-thermal-lut	D139	多点NTC温度センサ網	#121-150	20,-13,-32.1	18.06,9.56,1.16	84,-102,22	polyimide_fpc
-lcd-edid-color-handshake	D140	パネル個体識別EDID／工場3×3色校正	#121-150	-10,-13,-32.08	15.1,10.1,1.42	126,-102,-38	pcb_textured
-lcd-coe-polless-oled	D141	偏光板レスOLED COE	#121-150	6,-7,-33.36	66.08,42.86,2.02	-124,144,-56	foam_felt_matte
-lcd-tfe-ald-barrier	D142	OLED多層薄膜封止 TFE	#121-150	6,-7,-33.32	65.68,41.68,2.02	-62,146,-56	silicon_dielectric
-lcd-mla-dome-extractor	D143	OLED マイクロレンズアレイ MLA	#121-150	6,-7,-33.3	65.26,41.26,1.18	0,148,-56	matte_chassis
-lcd-blue-pholed-hf	D144	青色燐光 PHOLED／MR-TADF	#121-150	6,-7,-33.28	64.86,40.86,1.44	62,146,-56	emissive_glow
-lcd-microled-gan-array	D145	無機 GaN RGB MicroLED	#121-150	6,-7,-33.26	65.28,41.28,0.66	124,144,-56	cfa_gloss_filter
-lcd-microled-cucu-bond	D146	MicroLED画素直結 Cu-Cu	#121-150	6,-7,-33.22	64.68,40.68,0.75	-124,144,16	cucu_hybrid_copper
-lcd-cop-folded-bezel	D147	COP180°折返しポリイミド極狭ベゼル	#121-150	6,-25.1,-32.9	63.24,9.19,1.97	-62,146,16	polyimide_fpc
-lcd-yocta-toe-mesh	D148	封止上直描 Y-OCTA / TOE	#121-150	6,-7,-33.34	65.04,41.04,0.33	0,148,16	emi_shield_metal
-lcd-piezo-local-haptics	D149	画面裏 圧電局所ハプティクス触覚アクチュ	#121-150	6,-7,-31.94	61.28,37.28,1.17	62,146,16	stainless_machined
-lcd-switchable-privacy-lc	D150	電子視野角切替液晶ルーバーシャッター層	#121-150	6,-7,-33.92	68.95,41.66,0.53	124,144,16	matte_black_anodized
+lcd-magnetic-glare-loupe	D133	マグネット着脱式 3.2型屋外サンシェー	#121-150	6,-7,-34.26	75.5,51.5,2.27	0,0,-138	magnesium_cast
+lcd-hybrid-wet-touch-afe	D134	相互容量＋自己容量ハイブリッド 濡れ指	#121-150	18,-19,-32.18	16,11,1.49	-126,-102,-38	pcb_textured
+lcd-efuse-ovp-ocp-switch	D135	メイン基板側 表示電源スマート	#121-150	-4,-15,-25.2	15,10.5,1.79	-84,-102,22	pcb_textured
+lcd-mipi-redriver-eq	D136	2.5 Gbps MIPI D-PHY	#121-150	12,-15,-25.6	16.5,10.5,1.46	-42,-102,-18	pcb_textured
+lcd-sre-sunlight-engine	D137	リアルタイム太陽光視認性強化局所トーンマ	#121-150	6,-18,-32.14	15.5,11,1.18	0,-102,-38	pcb_textured
+lcd-psr-frame-buffer	D138	パネルセルフリフレッシュ内蔵SRAMフレ	#121-150	-4,-19,-32.12	16,10.5,1.97	42,-102,-18	pcb_textured
+lcd-cold-od-thermal-lut	D139	多点NTC温度センサ網	#121-150	20,-13,-32.1	18,9.5,1.16	84,-102,22	polyimide_fpc
+lcd-edid-color-handshake	D140	パネル個体識別EDID／工場3×3色校正	#121-150	-10,-13,-32.08	15,10,1.42	126,-102,-38	pcb_textured
+lcd-coe-polless-oled	D141	偏光板レスOLED COE	#121-150	6,-7,-33.36	66,42.8,0.46	-124,144,-56	foam_felt_matte
+lcd-tfe-ald-barrier	D142	OLED多層薄膜封止 TFE	#121-150	6,-7,-33.32	65.6,41.6,0.72	-62,146,-56	silicon_dielectric
+lcd-mla-dome-extractor	D143	OLED マイクロレンズアレイ MLA	#121-150	6,-7,-33.3	65.2,41.2,1.18	0,148,-56	matte_chassis
+lcd-blue-pholed-hf	D144	青色燐光 PHOLED／MR-TADF	#121-150	6,-7,-33.28	64.8,40.8,1.44	62,146,-56	emissive_glow
+lcd-microled-gan-array	D145	無機 GaN RGB MicroLED	#121-150	6,-7,-33.26	65.2,41.2,0.66	124,144,-56	cfa_gloss_filter
+lcd-microled-cucu-bond	D146	MicroLED画素直結 Cu-Cu	#121-150	6,-7,-33.22	64.6,40.6,0.75	-124,144,16	cucu_hybrid_copper
+lcd-cop-folded-bezel	D147	COP180°折返しポリイミド極狭ベゼル	#121-150	6,-25.1,-32.9	63.2,9.17,1.97	-62,146,16	polyimide_fpc
+lcd-yocta-toe-mesh	D148	封止上直描 Y-OCTA / TOE	#121-150	6,-7,-33.34	65,41,0.33	0,148,16	emi_shield_metal
+lcd-piezo-local-haptics	D149	画面裏 圧電局所ハプティクス触覚アクチュ	#121-150	6,-7,-31.94	61.2,37.2,1.17	62,146,16	stainless_machined
+lcd-switchable-privacy-lc	D150	電子視野角切替液晶ルーバーシャッター層	#121-150	6,-7,-33.92	68.9,41.6,0.53	124,144,16	matte_black_anodized

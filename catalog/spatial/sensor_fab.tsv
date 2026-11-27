@@ -1,236 +1,236 @@
 id	code	name	group	pos	size	exp	mat
-fab0-hero-city-sensor	F0-01	切手サイズの超巨大ハイテク都市フルサイズ	Vol.0	2,20.5,-24	25.12,6.72,17.92	2,36,-10	cucu_hybrid_copper
+fab0-hero-city-sensor	F0-01	切手サイズの超巨大ハイテク都市フルサイズ	Vol.0	2,20.5,-24	24.8,6.72,17.6	2,36,-10	cucu_hybrid_copper
 fab0-wafer-300mm-stitch	F0-02	300mmウェーハ・フルサイズダイ配列	Vol.0	-38.5,19,-22.5	20.32,5.32,19.82	-32,34,-20	silicon_hero
-fab0-timeline-gantry	F0-03	砂から出荷まで約6か月間T1〜T5時間軸	Vol.0	0,-2.8,0	108.48,26.93,54.48	0,-14,0	stainless_machined
-fab0-p01-raw-wafer	P1	原材料とウェーハ製造	Vol.0	-46,1,0.5	10.76,10.26,9.68	-34,10,2	stainless_machined
-fab0-p02-design-photomask	P2	設計とフォトマスク製作	Vol.0	-31,3.2,-16	10.28,8.76,8.88	-20,22,-18	matte_chassis
-fab0-p03-pixel-feol	P3	画素ウェーハ前工程 FEOL	Vol.0	-31,1,-5.2	10.28,8.4,9.08	-20,12,-10	stainless_machined
-fab0-p04-pixel-beol	P4	画素ウェーハ配線工程 BEOL	Vol.0	-16.5,1,-5.2	10.28,8.86,9.08	-10,12,-10	stainless_machined
-fab0-p05-logic-wafer	P5	ロジックウェーハ製造	Vol.0	-23.5,1,9.8	13.48,7.31,10.08	-16,12,18	stainless_machined
-fab0-p06-cucu-bond-bsi	P6	Cu-Cuハイブリッド接合・極限裏面薄化	Vol.0	-2,1.6,1	11.68,9.71,10.88	-1,18,2	cucu_hybrid_copper
-fab0-p07-cfa-microlens	P7	カラーフィルター・マイクロレンズ形成	Vol.0	11,1,1	10.08,6.87,9.28	9,12,2	cfa_gloss_filter
-fab0-p08-wafer-cp-test	P8	ウェーハテスト CP 光学・電気全数検査	Vol.0	23,1,1	10.08,8.86,9.28	18,12,2	stainless_machined
-fab0-p09-dicing-package	P9	後工程 ダイシング・セラミックパッケージ	Vol.0	35,1,1	10.48,5.86,9.28	28,12,2	stainless_machined
-fab0-p10-final-test-ft	P10	最終検査 FT・環境信頼性試験・出荷梱包	Vol.0	46.5,1,1	10.08,5.96,9.28	38,12,2	matte_black_anodized
-fab0-p11-sensor-unit-ibis	P11	センサーユニット組立	Vol.0	37.5,1,14.5	11.08,8.34,9.68	30,12,22	stainless_machined
-fab0-p12-camera-integration	P12	カメラボディ統合・工場校正・最終検査	Vol.0	21.5,1.4,15	11.88,9.08,9.88	18,14,24	stainless_machined
-fab0-l01-preclean	L-01	前洗浄・乾燥— リソグラフィ単位ループ第	Vol.0	-35.51,-13.5,-9.25	6.88,4.92,6.08	-17.04,-26,-5.73	stainless_machined
-fab0-l02-hmds-barc	L-02	密着促進・反射防止膜塗布— 下地プライマ	Vol.0	-41,-13.5,0	6.88,5.61,6.08	-19.68,-26,0	matte_black_anodized
-fab0-l03-resist-coat	L-03	フォトレジスト塗布— 遠心力で広げる極薄	Vol.0	-35.51,-13.5,9.25	6.88,5.01,6.08	-17.04,-26,5.74	matte_black_anodized
-fab0-l04-softbake-pab	L-04	プリベーク / ソフトベーク—	Vol.0	-20.5,-13.5,16.02	6.88,4.96,6.08	-9.84,-26,9.93	stainless_machined
-fab0-l05-exposure-align	L-05	精密アライメント	Vol.0	0,-13.5,18.5	6.88,8.78,6.08	0,-26,11.47	matte_black_anodized
-fab0-l06-peb	L-06	露光後ベーク— 0.1℃単位で輪郭を研ぎ	Vol.0	20.5,-13.5,16.02	6.88,2.74,6.08	9.84,-26,9.93	matte_black_anodized
-fab0-l07-develop	L-07	現像・リンス・乾燥— フィルム写真と同じ	Vol.0	35.51,-13.5,9.25	6.88,4.08,6.08	17.04,-26,5.74	stainless_machined
-fab0-l08-adi-metrology	L-08	現像後計測 ADI— リワークできる最後	Vol.0	41,-13.5,0	6.88,6.16,6.08	19.68,-26,0	matte_black_anodized
-fab0-l09-etch-implant	L-09	本加工：エッチング または イオン注入	Vol.0	35.51,-13.5,-9.25	6.91,6.21,6.08	17.04,-26,-5.73	matte_black_anodized
-fab0-l10-ashing-strip	L-10	レジスト剥離・アッシング— 役目を終えた	Vol.0	20.5,-13.5,-16.02	6.88,5.39,6.08	9.84,-26,-9.93	stainless_machined
-fab0-l11-postclean	L-11	加工後ウェット洗浄— 金属原子数個すら許	Vol.0	0,-13.5,-18.5	6.88,4.5,6.08	0,-26,-11.47	stainless_machined
-fab0-l12-aei-defect	L-12	加工後計測・欠陥検査 AEI—	Vol.0	-20.5,-13.5,-16.02	6.88,5.46,6.08	-9.84,-26,-9.93	matte_black_anodized
-fab0-var-fsi	V-01	非積層・表面照射型アーキテクチャ	Vol.0	-14,1.6,-24	9.68,5.75,7.88	-16,18,-24	optical_glass_ed
-fab0-var-bsi	V-02	非積層・裏面照射型アーキテクチャ	Vol.0	-2,1.6,-24	9.68,5.99,7.88	-4,18,-24	optical_glass_ed
-fab0-var-partial-stack	V-03	部分積層型アーキテクチャ	Vol.0	10,1.6,-24	9.68,5.31,7.88	8,18,-24	silicon_hero
-fab0-var-full-2stack	V-04	2層フル積層 BSI 型アーキテクチャ【	Vol.0	22,1.6,-24	9.68,5.77,7.88	20,18,-24	optical_glass_ed
-fab0-var-3stack-2layertr	V-05	3層積層／2層トランジスタ画素積層型	Vol.0	34,1.6,-24	9.68,6.91,7.88	32,18,-24	silicon_hero
-fab1-hero-optics-photonics	F1-01	波長別光電効果プリズム	Vol.1	0,21.5,-22.5	23.88,10.48,16.03	0,36,-10	ic_epoxy_dark
-fab1-base-exhibition-deck	F1-02	第1巻 4章アーキテクチャ展示基盤	Vol.1	0,-2.8,0	112.44,15.81,54.44	0,-14,0	matte_chassis
-fab1-step1-pd-bucket-fwc	F1-03	ステップ①② フォトダイオード	Vol.1	-44,1,12	9.04,7.46,8.44	-46,12,22	matte_chassis
-fab1-step3-tg-sluice-gate	F1-04	ステップ③ 転送ゲート	Vol.1	-33,1,12	9.04,7.43,8.44	-34,14,24	membrane_translucent
-fab1-step4-fd-dcg-cups	F1-05	ステップ④ FD	Vol.1	-22,1,12	9.04,6.7,8.44	-22,16,24	gold_plating
-fab1-step5-rst-sf-sel-cds	F1-06	リセット / 増幅 / 選択 3トランジ	Vol.1	-11,1,12	9.04,5.8,8.44	-11,14,24	pin_carrier_gloss
-fab1-column-14bit-adc	F1-07	ステップ⑤ 列並列 14-bit カラム	Vol.1	0,1,12	9.04,6.84,8.44	0,12,24	silicon_hero
-fab1-pixel-parallel-adc	F1-08	次世代進化：画素並列 14-bit	Vol.1	11,1,12	9.04,6.2,8.44	11,14,24	stainless_machined
-fab1-ccd-vs-cmos-arena	F1-09	CCD vs CMOS構造比較	Vol.1	-44,1,-3	9.64,4.65,8.64	-48,12,-4	stainless_machined
-fab1-arch1-fsi-r6m3	F1-10	構造① 表面照射型	Vol.1	-34,1,-20	9.86,5.7,7.86	-38,16,-24	optical_glass_ed
-fab1-arch2-bsi-a7iv	F1-11	構造② 裏面照射型	Vol.1	-22,1,-20	9.86,5.74,7.86	-24,17,-25	optical_glass_ed
-fab1-arch3-partial-stack-a7v	F1-12	構造③ 部分積層型	Vol.1	-10,1,-20	9.86,5.72,7.86	-10,19,-26	optical_glass_ed
-fab1-arch4-full-stack-a7rvi	F1-13	構造④ 2層フル積層型	Vol.1	2,1,-20	9.86,5.58,7.86	2,21,-27	optical_glass_ed
-fab1-arch4b-3layer-dram	F1-14	第4世代A：3層積層 DRAM 内蔵型	Vol.1	14,1,-20	9.86,6.14,7.86	16,19,-26	silicon_hero
-fab1-arch5-gs-stacked-a9iii	F1-15	構造⑤ グローバルシャッター積層型	Vol.1	26,1,-20	9.86,6.4,7.86	28,18,-25	optical_glass_ed
-fab1-arch6-2layer-tr-lytia	F1-16	構造⑥ 2層トランジスタ画素積層型	Vol.1	38,1,-20	9.86,6.52,7.86	42,17,-24	optical_glass_ed
-fab1-canon-dpaf-standard	F1-17	キヤノン：デュアルピクセル CMOS	Vol.1	-30,1,-3	9.64,8,8.64	-32,15,-4	pin_carrier_gloss
-fab1-canon-r1-crosstype-af	F1-18	キヤノン EOS R1：世界初クロスタイ	Vol.1	-17,1,-3	9.64,6.07,8.64	-18,17,-5	gold_plating
-fab1-sony-pdaf-mask-ocl	F1-19	ソニー：像面位相差 AF	Vol.1	-4,1,-3	9.64,4.6,8.64	-4,17,-5	matte_chassis
-fab1-gs-rolling-vs-global	F1-20	ローリングシャッター歪み vs	Vol.1	10,1,-3	10.04,6.89,8.64	10,16,-4	stainless_machined
-fab1-gs-charge-domain	F1-21	GS方式① 電荷ドメイン型	Vol.1	23,1,12	9.04,5.11,8.44	24,13,22	titanium_machined
-fab1-gs-voltage-domain-a9iii	F1-22	GS方式② 電圧ドメイン型	Vol.1	34,1,12	9.04,6.09,8.44	36,15,22	matte_black_anodized
-fab1-gs-pixel-adc-isscc2025	F1-23	GS方式③ 画素並列 ADC 型	Vol.1	45,1,12	9.04,6.07,8.44	48,17,22	cfa_gloss_filter
-fab1-wall-field-overflow	F1-24	フルサイズだけの壁①：標準露光画角をはみ	Vol.1	24,1,-3	10.24,4.32,8.84	26,14,-4	stainless_machined
-fab1-canon-fpa6300esw	F1-25	突破法①-A キヤノン FPA	Vol.1	36,1,-3	10.04,6.96,8.84	40,16,-5	stainless_machined
-fab1-canon-fpa5550ix	F1-26	突破法①-B キヤノン FPA	Vol.1	47,1,-3	9.64,6.87,8.84	52,16,-5	stainless_machined
-fab1-stitching-exposure	F1-27	突破法② スティッチング露光	Vol.1	-35,-13.5,8	10.04,4.23,8.64	-42,-24,16	pin_carrier_gloss
-fab1-wafer-smartphone-640	F1-28	300mmウェーハ比較① スマホ用 1	Vol.1	-20,-13.5,13	11.04,6.09,10.04	-24,-26,24	pin_carrier_gloss
-fab1-wafer-apsc-134	F1-29	300mmウェーハ比較② APS-C	Vol.1	-4,-13.5,15	11.04,6,10.04	-6,-27,28	stainless_machined
-fab1-wafer-fullframe-48	F1-30	300mmウェーハ比較③ フルサイズ一眼	Vol.1	12,-13.5,15	11.04,6,10.04	12,-27,28	stainless_machined
-fab1-wafer-mediumformat-26	F1-31	300mmウェーハ比較④ 中判	Vol.1	28,-13.5,13	11.04,6,10.04	30,-26,24	pin_carrier_gloss
-fab1-stacked-yield-multiply	F1-32	積層歩留まりの掛け算の罠	Vol.1	43,-13.5,6	11.04,5.74,9.84	50,-24,14	silicon_wafer_dark
-fab2-hero-purity-mirror-monument	#65	11N純度＆Ra＜0.1nm 超平坦鏡の	Vol.2	0,18.2,-2	24.06,5.47,17.48	0,14,0	matte_chassis
-fab2-phase1-plant-deck	#66	フェーズ1 全60工程・7ブロック立体製	Vol.2	0,-1.6,0	112.44,14.31,60.44	0,-12,0	matte_chassis
-fab2-quartzite-mine-crusher	#67	高純度珪石の採掘	Vol.2	-48,0.5,-21.5	9.69,6.71,9.42	-12,8,-14	stainless_machined
-fab2-carbon-reductant-blender	#68	還元用低灰分炭材の調合	Vol.2	-36,0.5,-21.5	9.62,9.22,9.42	-8,9,-14	matte_black_anodized
-fab2-submerged-arc-furnace	#69	サブマージドアーク炉・2・000℃炭素熱	Vol.2	-24,0.5,-21.5	9.82,11.41,9.62	-4,11,-14	stainless_machined
-fab2-ladle-refining-grinding	#70	溶融金属シリコン出湯・取鍋精錬	Vol.2	-12,0.5,-21.5	9.62,8.81,9.42	-1,8,-14	matte_black_anodized
-fab2-tcs-fluidized-cyclone	#71	流動床トリクロロシラン合成	Vol.2	0,0.5,-21.5	9.62,9.17,9.42	2,9,-14	stainless_machined
-fab2-multistage-distillation	#72	多段精密蒸留塔群	Vol.2	12,0.5,-21.5	9.62,13.77,9.42	4,12,-14	matte_chassis
-fab2-h2-purifier-slimrods	#73	7N超高純度水素精製	Vol.2	24,0.5,-21.5	9.62,7.78,9.42	6,9,-14	matte_chassis
-fab2-siemens-cvd-reactor	#74	シーメンス法CVD析出	Vol.2	36,0.5,-21.5	9.82,10.32,9.62	9,11,-14	stainless_machined
-fab2-nonmetal-crush-acid-pack	#75	非金属破砕・フッ硝酸エッチング洗浄	Vol.2	48,0.5,-21.5	9.62,6.11,9.42	12,8,-14	matte_chassis
-fab2-spruce-pine-crucible	#76	スプルースパイン産32インチ使い捨て高純	Vol.2	-49.5,0.5,-2	9.22,6.68,9.86	-14,9,-2	matte_chassis
-fab2-poly-boron-dopant-load	#77	11N多結晶300〜450kg	Vol.2	-38.5,0.5,-2	9.22,7.74,9.82	-10,8,-2	stainless_machined
-fab2-mcz-superconducting-magnet	#78	メルトダウン1・420℃	Vol.2	-27.5,0.5,-2	9.42,11.61,10.02	-6,11,-2	stainless_machined
-fab2-seed-dash-necking	#79	<100>種付け	Vol.2	-16.5,0.5,-2	9.22,11.91,9.82	-3,12,-2	stainless_machined
-fab2-mcz-body-pulling-vg	#80	300mm直胴部引き上げ	Vol.2	-5.5,0.5,-2	9.22,13.46,9.82	0,14,-2	matte_chassis
-fab2-tail-detachment-unloading	#81	テール絞り込み切り離し	Vol.2	5.5,0.5,-2	9.22,11.23,9.82	3,10,-2	stainless_machined
-fab2-crop-od-grinding	#82	トップ＆テール切断＆外周円筒研削300.	Vol.2	16.5,0.5,-2	9.22,8.71,9.82	6,9,-2	stainless_machined
-fab2-xray-notch-grinding	#83	X線結晶方位測定	Vol.2	27.5,0.5,-2	9.22,7.37,9.82	9,10,-2	stainless_machined
-fab2-multiwire-saw-slicing	#84	マルチワイヤーソースライス	Vol.2	38.5,0.5,-2	9.42,8.36,10.02	12,12,-2	stainless_machined
-fab2-debond-laser-id	#85	ビーム剥離・予備洗浄	Vol.2	49.5,0.5,-2	9.22,8.31,9.82	14,9,-2	matte_chassis
-fab2-edge-bevel-grinding	#86	エッジ面取り加工	Vol.2	-49.5,0.5,18	9.22,8.61,9.82	-14,8,12	stainless_machined
-fab2-chem-etch-donor-killer	#87	両面化学エッチング	Vol.2	-38.5,0.5,18	9.22,9.01,9.82	-10,9,12	matte_black_anodized
-fab2-edge-mirror-dsp	#88	端面鏡面研磨	Vol.2	-27.5,0.5,18	9.42,8.76,10.02	-6,11,12	stainless_machined
-fab2-final-finish-cmp	#89	片面仕上げ超鏡面研磨	Vol.2	-16.5,0.5,18	9.22,7.5,9.82	-3,12,12	matte_chassis
-fab2-rca-megasonic-pw-check	#90	ポストCMP多段RCA洗浄	Vol.2	-5.5,0.5,18	9.22,6.81,9.82	0,9,12	matte_chassis
-fab2-backside-seal-preclean	#91	裏面封止膜＆注入後希フッ酸洗浄	Vol.2	5.5,0.5,18	9.22,5.48,9.82	3,8,12	stainless_machined
-fab2-molecular-ion-implanter	#92	CIS専用 分子イオン注入装置	Vol.2	16.5,0.5,18	9.42,7.51,10.02	6,11,12	pin_carrier_gloss
-fab2-ci-complex-gettering-cutaway	#93	2026年10月SUMCO最新知見：5n	Vol.2	27.5,0.5,18	9.62,8.54,10.02	9,14,14	matte_chassis
-fab2-single-wafer-epi-reactor	#94	枚葉式エピ炉・水素ベーク	Vol.2	38.5,0.5,18	9.42,8.04,10.02	12,12,12	matte_chassis
-fab2-double-epi-post-clean	#95	二重エピ／P+エッチストップ	Vol.2	49.5,0.5,18	9.22,6.28,9.82	14,9,12	matte_chassis
-fab2-surfscan-lpd-inspection	#96	レーザー表面微小欠陥全数検査	Vol.2	-40,-12.5,10	14.22,7.8,12.22	-12,-10,12	pin_carrier_gloss
-fab2-wafersight-epi-mapping	#97	ナノトポグラフィ	Vol.2	-20,-12.5,10	14.22,8.49,12.22	-6,-12,12	matte_chassis
-fab2-vpd-icpms-edge-check	#98	VPD-ICP-MS重金属分析・μ	Vol.2	0,-12.5,10	14.22,7.31,12.22	0,-14,12	pin_carrier_gloss
-fab2-fosb-25wafer-clean-load	#99	ISOクラス1〜2 ロボット収納	Vol.2	20,-12.5,10	14.22,8.35,12.22	6,-12,12	matte_chassis
-fab2-controlled-logistics-fab-bridge	#100	防振・温湿度管理輸送とセンサー工場受入	Vol.2	40,-12.5,10	14.22,8.12,12.22	12,-10,12	stainless_machined
-fab3-hero-reticle-96set-monument	F3-01	6インチ合成石英フォトマスク	Vol.3	0,18.2,-9.5	23.2,10.6,22.28	0,34,-8	matte_chassis
-fab3-phase2-design-mask-deck	F3-02	フェーズ2 2層段差式・設計スタジオ	Vol.3	0,-1.6,0	122.48,10.83,90.56	0,-26,0	matte_chassis
-fab3-p01-product-spec	F3-03	[P02-001] センサー製品企画	Vol.3	-51.75,0.4,-29	9.38,6.95,8.98	-20,14,-22	ic_epoxy_dark
-fab3-p02-pixel-arch-select	F3-04	[P02-002] 画素アーキテクチャ選	Vol.3	-40.25,0.4,-29	9.38,5.77,8.98	-15,16,-22	stainless_machined
-fab3-p03-process-tcad-3d	F3-05	[P02-003] 3次元プロセスTCA	Vol.3	-28.75,0.4,-29	9.38,7.97,8.98	-11,18,-22	ic_epoxy_dark
-fab3-p04-device-tcad-potential	F3-06	[P02-004] 3次元デバイスTCA	Vol.3	-17.25,0.4,-29	9.38,7.09,8.98	-7,20,-22	matte_chassis
-fab3-p05-dark-current-blooming	F3-07	[P02-005] 暗電流・白キズ	Vol.3	-5.75,0.4,-29	9.38,7.22,8.98	-2,22,-22	ic_epoxy_dark
-fab3-p06-optical-fdtd-3d	F3-08	[P02-006] 3次元電磁界光学シミ	Vol.3	5.75,0.4,-29	9.38,7.97,8.98	2,22,-22	stainless_machined
-fab3-p07-cra-angle-shift	F3-09	[P02-007] CRA光学マッチング	Vol.3	17.25,0.4,-29	9.38,7.09,8.98	7,20,-22	optical_glass_ed
-fab3-p08-pdaf-pupil-response	F3-10	[P02-008] 像面位相差AF光学応	Vol.3	28.75,0.4,-29	9.38,6.96,8.98	11,18,-22	optical_glass_ed
-fab3-p09-thermal-stress-sim	F3-11	[P02-009] 熱・応力マルチフィジ	Vol.3	40.25,0.4,-29	9.38,6.49,8.98	15,16,-22	stainless_machined
-fab3-p10-pixel-teg-validation	F3-12	[P02-010] 画素テストチップ設計	Vol.3	51.75,0.4,-29	9.38,5.45,8.98	20,14,-22	stainless_machined
-fab3-p11-adc-circuit-design	F3-13	[P02-011] 列並列ADC /	Vol.3	-55,0.4,-12	8.38,5.56,8.78	-22,10,-4	matte_chassis
-fab3-p12-afe-cds-dcg-design	F3-14	[P02-012] アナログフロントエン	Vol.3	-45,0.4,-12	8.38,5.95,8.78	-18,11,-4	matte_chassis
-fab3-p13-row-driver-tg	F3-15	[P02-013] 行ドライバ	Vol.3	-35,0.4,-12	8.38,6.25,8.78	-14,12,-4	matte_black_anodized
-fab3-p14-serdes-slvsec-design	F3-16	[P02-014] 高速シリアル出力イン	Vol.3	-25,0.4,-12	8.38,6.06,8.78	-10,13,-4	matte_chassis
-fab3-p15-on-sensor-isp-sram	F3-17	[P02-015] ロジック側ISP前処	Vol.3	-15,0.4,-12	8.38,5.37,8.78	-6,14,-4	silicon_hero
-fab3-p16-cucu-3d-floorplan	F3-18	[P02-016] 3D積層インタコネク	Vol.3	-5,0.4,-12	8.38,5.09,8.78	-2,15,-4	copper_coil
-fab3-p17-pixel-array-layout	F3-19	[P02-017] 画素アレイ	Vol.3	5,0.4,-12	8.38,3.16,8.78	2,15,-4	stainless_machined
-fab3-p18-ob-dummy-border	F3-20	[P02-018] オプティカルブラック	Vol.3	15,0.4,-12	8.38,3.29,8.78	6,14,-4	matte_black_anodized
-fab3-p19-logic-place-route	F3-21	[P02-019] ロジックウェーハ自動	Vol.3	25,0.4,-12	8.38,5.23,8.78	10,13,-4	stainless_machined
-fab3-p20-partial-stack-chiplet	F3-22	[P02-020] 部分積層型向けチップ	Vol.3	35,0.4,-12	8.38,3.37,8.78	14,12,-4	stainless_machined
-fab3-p21-cmp-dummy-alignment	F3-23	[P02-021] CMPダミーメタル	Vol.3	45,0.4,-12	8.38,4.66,8.78	18,11,-4	stainless_machined
-fab3-p22-fullchip-oasis-guard	F3-24	[P02-022] チップ全体のトップレ	Vol.3	55,0.4,-12	8.38,6.38,8.78	22,10,-4	matte_chassis
-fab3-p23-drc-geometry-check	F3-25	[P02-023] DRC	Vol.3	-51.75,0.4,5	9.38,6.42,8.98	-20,6,18	cfa_gloss_filter
-fab3-p24-lvs-netlist-match	F3-26	[P02-024] LVS	Vol.3	-40.25,0.4,5	9.38,5.87,8.98	-15,7,18	cfa_gloss_filter
-fab3-p25-erc-antenna-esd	F3-27	[P02-025] ERC /	Vol.3	-28.75,0.4,5	9.38,6.77,8.98	-11,8,18	optical_glass_ed
-fab3-p26-3d-mirror-stack-verify	F3-28	[P02-026] 3D上下チップ整合性	Vol.3	-17.25,0.4,5	9.38,5.82,8.98	-7,9,18	stainless_machined
-fab3-p27-single-vs-stitch-split	F3-29	[P02-027] フルサイズ露光方式の	Vol.3	-5.75,0.4,5	9.98,6.1,9.38	-2,11,20	gold_plating
-fab3-p28-opc-serif-correction	F3-30	[P02-028] OPC	Vol.3	5.75,0.4,5	9.98,6.45,9.38	2,11,20	matte_chassis
-fab3-p29-lrc-bossung-window	F3-31	[P02-029] リソグラフィ	Vol.3	17.25,0.4,5	9.38,6.56,8.98	7,9,18	cfa_gloss_filter
-fab3-p30-mdp-fracture-pec	F3-32	[P02-030] マスクデータ変換	Vol.3	28.75,0.4,5	9.38,3.97,8.98	11,8,18	matte_chassis
-fab3-p31-tapeout-96layers	F3-33	[P02-031] テープアウト	Vol.3	40.25,0.4,5	9.38,8.91,8.98	15,7,18	matte_chassis
-fab3-p32-mask-set-scheduling	F3-34	[P02-032] マスクセット生産計画	Vol.3	51.75,0.4,5	9.38,5.47,8.98	20,6,18	stainless_machined
-fab3-p33-synthetic-quartz-sub	F3-35	[P02-033] 超高純度合成石英ガラ	Vol.3	-51.75,-8.8,24.5	9.38,6.87,8.98	-20,-9,10	matte_chassis
-fab3-p34-cr-mosi-psm-sputter	F3-36	[P02-034] 遮光膜スパッタ成膜	Vol.3	-40.25,-8.8,24.5	9.38,7.37,9.62	-15,-9,10	stainless_machined
-fab3-p35-eb-resist-coat-bake	F3-37	[P02-035] マスク用電子線レジス	Vol.3	-28.75,-8.8,24.5	9.38,5.97,8.98	-11,-9,10	stainless_machined
-fab3-p36-multibeam-eb-writer	F3-38	[P02-036] マルチビーム電子線描	Vol.3	-17.25,-8.8,24.5	9.98,12.12,9.38	-7,-10,12	matte_chassis
-fab3-p37-mask-peb-develop	F3-39	[P02-037] 描画後ベーク・現像	Vol.3	-5.75,-8.8,24.5	9.38,4.65,8.98	-2,-9,10	stainless_machined
-fab3-p38-mask-icp-dry-etch	F3-40	[P02-038] 遮光膜・位相シフト膜	Vol.3	5.75,-8.8,24.5	9.38,6.82,8.98	2,-9,10	copper_coil
-fab3-p39-mask-strip-spm-clean	F3-41	[P02-039] レジスト剥離	Vol.3	17.25,-8.8,24.5	9.38,6.99,8.98	7,-9,10	matte_chassis
-fab3-p40-second-level-border	F3-42	[P02-040] 第2パターニング	Vol.3	28.75,-8.8,24.5	9.38,6.34,8.98	11,-9,10	matte_black_anodized
-fab3-p41-mask-cd-sem-metrology	F3-43	[P02-041] マスク線幅全画面精密	Vol.3	40.25,-8.8,24.5	9.38,6.59,8.98	15,-9,10	stainless_machined
-fab3-p42-registration-ipro	F3-44	[P02-042] マスク座標位置精度計	Vol.3	51.75,-8.8,24.5	9.38,6.57,8.98	20,-9,10	matte_chassis
-fab3-p43-die-to-db-inspection	F3-45	[P02-043] ダイ・トゥ	Vol.3	-49,-8.8,42.5	11.78,7.19,9.78	-22,-12,20	matte_chassis
-fab3-p44-nano-defect-repair	F3-46	[P02-044] ナノ欠陥修正	Vol.3	-35,-8.8,42.5	11.78,8.77,9.78	-15,-12,20	stainless_machined
-fab3-p45-aims-aerial-image	F3-47	[P02-045] AIMS	Vol.3	-21,-8.8,42.5	11.78,9.02,9.78	-9,-12,20	matte_chassis
-fab3-p46-final-haze-ultraclean	F3-48	[P02-046] 最終精密洗浄	Vol.3	-7,-8.8,42.5	11.78,7.37,9.78	-3,-12,20	matte_chassis
-fab3-p47-pellicle-08um-mount	F3-49	[P02-047] ペリクル貼付	Vol.3	7,-8.8,42.5	11.78,6.44,9.78	3,-13,22	matte_chassis
-fab3-p48-starlight-post-pellicle	F3-50	[P02-048] ペリクル貼付後	Vol.3	21,-8.8,42.5	11.78,8.52,9.78	9,-12,20	matte_chassis
-fab3-p49-reticle-smif-pod	F3-51	[P02-049] レチクルポッド収納	Vol.3	35,-8.8,42.5	11.78,6,9.78	15,-12,20	matte_chassis
-fab3-p50-stocker-96set-bridge	F3-52	[P02-050] 全96枚マスクセット	Vol.3	49,-8.8,42.5	11.98,14.49,9.78	22,-13,22	gold_plating
-fab4-hero-feol-pixel-heart	F4-01	完成4T-PPD画素の心臓部・超高精細3	Vol.4	0,18.8,-10.5	26,11.08,23.44	0,34,-8	matte_chassis
-fab4-phase3-feol-terrace-deck	F4-02	フェーズ3 2層段差式・画素FEOLクリ	Vol.4	0,-1.6,0	126.48,10.83,90.56	0,-26,0	stainless_machined
-fab4-p001-incoming-rca-clean	F4-03	ロット受入・レーザーID読取	Vol.4	-56.1,0.4,-29	8.76,5.15,8.76	-22,14,-22	matte_chassis
-fab4-p004-initial-pad-oxide	F4-04	初期パッド熱酸化	Vol.4	-45.9,0.4,-29	8.76,6.5,8.76	-18,15,-22	stainless_machined
-fab4-m01-zero-layer-align	F4-05	ゼロ層・基準アライメントマーク形成	Vol.4	-35.7,0.4,-29	8.76,6.67,8.76	-14,16,-22	stainless_machined
-fab4-p019-sti-pad-sin-lpcvd	F4-06	STI用パッド酸化＋窒化ケイ素LPCVD	Vol.4	-25.5,0.4,-29	8.76,4.47,8.76	-10,17,-22	matte_chassis
-fab4-m02-sti-trench-etch	F4-07	STI浅い素子分離溝エッチング	Vol.4	-15.3,0.4,-29	8.76,6.37,8.76	-6,18,-22	matte_chassis
-fab4-p037-sti-liner-hdp-fill	F4-08	STIライナー熱酸化	Vol.4	-5.1,0.4,-29	8.76,5.65,8.76	-2,19,-22	matte_chassis
-fab4-m03-sti-reverse-etch	F4-09	STI逆トーン・リバースエッチング	Vol.4	5.1,0.4,-29	8.76,4.57,8.76	2,19,-22	matte_chassis
-fab4-p053-sti-cmp-sin-strip	F4-10	STI-CMP平坦化 → 熱リン酸SiN	Vol.4	15.3,0.4,-29	8.76,5.39,8.76	6,18,-22	stainless_machined
-fab4-p059-dti-hardmask-dep	F4-11	フロントDTI用ハードマスク成膜	Vol.4	25.5,0.4,-29	8.76,5.05,8.76	10,17,-22	stainless_machined
-fab4-m04-front-dti-deep-etch	F4-12	フロントDTI高アスペクト比ディープエッ	Vol.4	35.7,0.4,-29	8.96,7.67,8.96	14,18,-22	ic_epoxy_dark
-fab4-p073-dti-sidewall-passiv	F4-13	DTI側壁ダメージ修復	Vol.4	45.9,0.4,-29	8.76,7.47,8.76	18,16,-22	ic_epoxy_dark
-fab4-p079-dti-fill-optic-mirror	F4-14	DTI酸化膜/ポリSi充填・光学的全反射	Vol.4	56.1,0.4,-29	8.76,5.7,8.76	22,15,-22	stainless_machined
-fab4-m05-deep-pwell-floor	F4-15	ディープPウェル注入	Vol.4	-56.4,0.4,-12	7.96,7.4,8.36	-24,10,-4	ic_epoxy_dark
-fab4-m06-pixel-iso-pbarrier	F4-16	画素分離P型電気障壁注入	Vol.4	-47,0.4,-12	7.96,7.2,8.36	-20,11,-4	ic_epoxy_dark
-fab4-m07-periph-nwell	F4-17	周辺Nウェル / 画素Nウェル高エネルギ	Vol.4	-37.6,0.4,-12	7.96,7.1,8.36	-16,12,-4	matte_chassis
-fab4-m08-pixel-pwell-nmos	F4-18	画素Pウェル注入	Vol.4	-28.2,0.4,-12	7.96,7.1,8.36	-12,13,-4	ic_epoxy_dark
-fab4-m09-pixel-vt-lownoise	F4-19	画素トランジスタ閾値調整	Vol.4	-18.8,0.4,-12	7.96,6.9,8.36	-8,14,-4	cfa_gloss_filter
-fab4-m10-periph-vt-adjust	F4-20	周辺回路Vt調整注入	Vol.4	-9.4,0.4,-12	7.96,6.9,8.36	-4,15,-4	matte_chassis
-fab4-m11-pd-deep-red-mev	F4-21	PD第1段：最深部N型MeV級超高エネル	Vol.4	0,0.4,-12	8.16,8.5,8.76	0,17,-4	optical_glass_ed
-fab4-m12-pd-mid-green-n	F4-22	PD第2段：中深部N型高エネルギー注入	Vol.4	9.4,0.4,-12	7.96,7.5,8.36	4,16,-4	cfa_gloss_filter
-fab4-m13-pd-shallow-blue-tilt	F4-23	PD第3段：浅部	Vol.4	18.8,0.4,-12	7.96,7.39,8.36	8,15,-4	matte_chassis
-fab4-m14-dualpixel-pd-split	F4-24	PD内部電位勾配	Vol.4	28.2,0.4,-12	8.16,6.97,8.76	12,15,-4	gold_plating
-fab4-m15-antibloom-overflow	F4-25	アンチブルーミング	Vol.4	37.6,0.4,-12	7.96,4.22,8.36	16,13,-4	stainless_machined
-fab4-m16-gs-mem-dcg-implant	F4-26	機能画素注入	Vol.4	47,0.4,-12	7.96,7.1,8.36	20,12,-4	gold_plating
-fab4-p229-pd-recovery-anneal	F4-27	注入ダメージ回復アニール・スクリーン酸化	Vol.4	56.4,0.4,-12	7.96,7.52,8.36	24,11,-4	stainless_machined
-fab4-m17-vtg-straw-trench	F4-28	垂直転送ゲートトレンチ彫り	Vol.4	-47.5,0.4,5	14.96,7.56,9.56	-20,10,16	stainless_machined
-fab4-p261-thick-gate-ox-33v	F4-29	第1ゲート熱酸化	Vol.4	-28.5,0.4,5	14.96,7.1,9.56	-12,11,16	matte_chassis
-fab4-m18-dual-gate-ox-etch	F4-30	デュアルゲート酸化膜の選択除去	Vol.4	-9.5,0.4,5	14.96,5.87,9.56	-4,12,16	matte_chassis
-fab4-p277-thin-gate-polysilicon	F4-31	第2ゲート酸化	Vol.4	9.5,0.4,5	14.96,7.84,9.56	4,12,16	gold_plating
-fab4-m19-poly-gate-etch	F4-32	ポリシリコンゲート電極の高精度エッチング	Vol.4	28.5,0.4,5	14.96,7.47,9.56	12,13,16	ic_epoxy_dark
-fab4-p295-gate-reox-cdsem	F4-33	ゲート再酸化	Vol.4	47.5,0.4,5	14.96,7.37,9.56	20,11,16	stainless_machined
-fab4-p297-offset-spacer	F4-34	オフセットスペーサー極薄成膜・前洗浄	Vol.4	-49.5,-8.8,24.5	13.36,5.6,9.36	-22,-9,10	matte_chassis
-fab4-m20-pixel-nldd-fd	F4-35	画素側NLDD	Vol.4	-33,-8.8,24.5	13.36,7.5,9.36	-15,-9,10	matte_chassis
-fab4-m21-periph-ldd	F4-36	周辺回路NLDD / PLDD注入	Vol.4	-16.5,-8.8,24.5	13.36,7.5,9.36	-8,-9,10	ic_epoxy_dark
-fab4-p323-sidewall-spacer	F4-37	サイドウォール・スペーサー成膜	Vol.4	0,-8.8,24.5	13.36,5.7,9.36	0,-9,10	gold_plating
-fab4-m22-surface-pinning-ppd	F4-38	表面ピンニングP+層注入	Vol.4	16.5,-8.8,24.5	13.76,8.9,9.76	8,-10,12	optical_glass_ed
-fab4-m23-nplus-sd-contact	F4-39	N+ソース/ドレイン	Vol.4	33,-8.8,24.5	13.36,7.7,9.36	15,-9,10	matte_chassis
-fab4-m24-pplus-sd-welltap	F4-40	P+ソース/ドレイン	Vol.4	49.5,-8.8,24.5	13.36,7.7,9.36	22,-9,10	ic_epoxy_dark
-fab4-p365-spike-rta-flash	F4-41	スパイクRTA活性化アニール	Vol.4	-45,-8.8,42.5	18.16,8.17,9.76	-22,-12,20	optical_glass_ed
-fab4-m25-salicide-block-sab	F4-42	シリサイドブロック	Vol.4	-22.5,-8.8,42.5	18.16,8.67,9.76	-11,-13,22	stainless_machined
-fab4-p379-salicide-cosi-nisi	F4-43	自己整合シリサイド形成	Vol.4	0,-8.8,42.5	18.16,7.35,9.76	0,-12,20	stainless_machined
-fab4-p380-h2-sinter-feol-wat	F4-44	水素シンタリング	Vol.4	22.5,-8.8,42.5	18.16,6.68,10.02	11,-12,20	matte_chassis
-fab4-feol-380-to-vol5-beol	F4-45	累計490工程達成ポータル → 第5巻	Vol.4	45,-8.8,42.5	18.36,13.15,9.76	22,-13,22	gold_plating
-fab5-hero-beol-5floor-highway	F5-01	5階建て銅の立体高速道路	Vol.5	0,19.2,-10.5	26.2,9.34,23.84	0,34,-8	stainless_machined
-fab5-phase4-beol-terrace-deck	F5-02	フェーズ4 2層段差式・BEOL銅立体配	Vol.5	0,-1.6,0	126.48,10.9,82.52	0,-26,0	matte_chassis
-fab5-p001-cesl-sin-stopper	F5-03	コンタクトエッチストップ膜成膜	Vol.5	-55,0.4,-29	9.76,4.28,8.96	-22,14,-22	ic_epoxy_dark
-fab5-p002-pmd-bpsg-cmp	F5-04	PMD層間絶縁膜成膜・緻密化・CMP平坦	Vol.5	-44,0.4,-29	9.76,7.23,8.96	-18,15,-22	matte_chassis
-fab5-p005-pmd-clean-metro	F5-05	PMDポストCMP超洗浄	Vol.5	-33,0.4,-29	9.76,6,8.96	-14,16,-22	matte_chassis
-fab5-m26-contact-hole-etch	F5-06	コンタクトホール80〜120nm	Vol.5	-22,0.4,-29	9.76,6.5,8.96	-10,17,-22	matte_chassis
-fab5-p019-titin-w-cvd-nail	F5-07	Ti/TiN密着・バリア鎧＋タングステン	Vol.5	-11,0.4,-29	9.76,4.38,8.96	-6,18,-22	stainless_machined
-fab5-p021-w-cmp-inspect	F5-08	タングステンCMP研磨・ポスト洗浄	Vol.5	0,0.4,-29	9.76,6.93,8.96	-2,19,-22	stainless_machined
-fab5-p023-m1-sicn-lowk	F5-09	M1用エッチストップ＋Low-k層間絶縁	Vol.5	11,0.4,-29	9.76,4,8.96	2,19,-22	matte_chassis
-fab5-m27-m1-single-damascene	F5-10	M1第1銅配線トレンチ露光・エッチング	Vol.5	22,0.4,-29	9.76,3.9,8.96	6,18,-22	stainless_machined
-fab5-p038-tantal-barrier-seed	F5-11	TaN/Ta銅毒バリア	Vol.5	33,0.4,-29	9.76,6.8,8.96	10,17,-22	ic_epoxy_dark
-fab5-p040-cu-ecd-superfill	F5-12	銅電解めっき	Vol.5	44,0.4,-29	9.76,4.5,8.96	14,16,-22	copper_coil
-fab5-p042-cu-2stage-cmp-bta	F5-13	2段階銅CMP研磨・BTA防錆洗浄	Vol.5	55,0.4,-29	9.76,6.83,8.96	18,15,-22	stainless_machined
-fab5-p045-m2-sicn-lowk	F5-14	SiCN銅封止キャップ＋V1/M2一体化	Vol.5	-55.55,0.4,-12	8.96,4.05,8.76	-22,11,-4	matte_chassis
-fab5-m28-via1-pattern	F5-15	ビア1露光＆エレベーター縦穴エッチング	Vol.5	-45.45,0.4,-12	8.96,5.6,8.76	-18,13,-4	matte_chassis
-fab5-m29-m2-row-drive	F5-16	第2銅配線：横36mm行方向・画素駆動ラ	Vol.5	-35.35,0.4,-12	8.96,3.32,8.76	-14,15,-4	stainless_machined
-fab5-p072-m2-dual-fill-cmp	F5-17	V1＋M2デュアルダマシン銅めっき	Vol.5	-25.25,0.4,-12	8.96,6.68,8.76	-10,13,-4	stainless_machined
-fab5-p075-m3-sicn-lowk	F5-18	SiCN銅封止キャップ＋V2/M3一体化	Vol.5	-15.15,0.4,-12	8.96,4.33,8.76	-6,11,-4	matte_chassis
-fab5-m30-via2-pattern	F5-19	ビア2露光＆縦穴エッチング	Vol.5	-5.05,0.4,-12	8.96,5.6,8.76	-2,13,-4	matte_chassis
-fab5-m31-m3-vsl-shield	F5-20	第3銅配線：列方向VSL信号線	Vol.5	5.05,0.4,-12	8.96,6.35,8.76	2,15,-4	stainless_machined
-fab5-p102-m3-dual-fill-cmp	F5-21	V2＋M3デュアルダマシン銅めっき	Vol.5	15.15,0.4,-12	8.96,6.68,8.76	6,13,-4	stainless_machined
-fab5-p105-m4-sicn-imd	F5-22	SiCN銅封止キャップ＋V3/M4用絶縁	Vol.5	25.25,0.4,-12	8.96,4.61,8.76	10,11,-4	matte_chassis
-fab5-m32-via3-pattern	F5-23	ビア3露光＆縦穴エッチング	Vol.5	35.35,0.4,-12	8.96,5.6,8.76	14,13,-4	matte_chassis
-fab5-m33-m4-power-mesh	F5-24	第4銅配線：VDD/VSS強化パワーメッ	Vol.5	45.45,0.4,-12	8.96,3.73,8.76	18,15,-4	stainless_machined
-fab5-p132-m4-dual-fill-cmp	F5-25	V3＋M4銅めっき	Vol.5	55.55,0.4,-12	8.96,6.68,8.76	22,13,-4	stainless_machined
-fab5-p135-m5-thick-imd	F5-26	M5用SiCNキャップ＋厚膜絶縁膜成膜	Vol.5	-50.4,0.4,5	13.76,5,9.36	-20,10,14	matte_chassis
-fab5-m34-via4-heavy	F5-27	ビア4大電流用太めビア群エッチング	Vol.5	-33.6,0.4,5	13.76,4.36,9.36	-13,11,14	stainless_machined
-fab5-m35-m5-top-trunk	F5-28	第5銅配線：最上層厚膜・太い幹線電源	Vol.5	-16.8,0.4,5	13.76,4.53,9.36	-6,12,14	copper_coil
-fab5-p161-m5-fill-cmp	F5-29	M5厚膜Cuスーパーフィリング	Vol.5	0,0.4,5	13.76,7.03,9.36	0,12,14	stainless_machined
-fab5-p163-alcu-pad-sputter	F5-30	層間膜＋アルミ合金スパッタ成膜	Vol.5	16.8,0.4,5	13.76,6.13,9.36	6,12,14	stainless_machined
-fab5-m36-al-pad-ir-mark	F5-31	Al再配線／外部パッド	Vol.5	33.6,0.4,5	13.76,3.64,9.36	13,11,14	stainless_machined
-fab5-p177-prebond-wat-gate	F5-32	層間平坦化保護	Vol.5	50.4,0.4,5	13.76,6.21,9.36	20,10,14	cfa_gloss_filter
-fab5-p179-hb-sicn-dielectric	F5-33	ハイブリッド接合専用絶縁膜成膜・緻密化	Vol.5	-48,-8.8,29	15.76,5.11,10.76	-22,-10,14	matte_chassis
-fab5-m37-hb-via-pattern	F5-34	ハイブリッド接合ビア露光・エッチング	Vol.5	-28.8,-8.8,29	15.76,5.03,10.76	-13,-10,14	stainless_machined
-fab5-m38-hb-cu-pad-50m	F5-35	ハイブリッド接合Cuパッド	Vol.5	-9.6,-8.8,29	15.76,3.71,10.76	-4,-10,14	stainless_machined
-fab5-p206-hb-recess-cmp	F5-36	ハイブリッド接合専用・超精密CMP	Vol.5	9.6,-8.8,29	16.16,7.79,10.96	4,-10,14	stainless_machined
-fab5-p209-afm-surfscan-zero	F5-37	接合前AFMリセス実測	Vol.5	28.8,-8.8,29	15.76,5.54,10.76	13,-10,14	stainless_machined
-fab5-beol-700-to-vol6-logic	F5-38	累計700工程・画素ウェーハ完全完成ポー	Vol.5	48,-8.8,29	16.16,10.72,10.96	22,-10,14	gold_plating
+fab0-timeline-gantry	F0-03	砂から出荷まで約6か月間T1〜T5時間軸	Vol.0	0,-2.8,0	108,26.93,54	0,-14,0	stainless_machined
+fab0-p01-raw-wafer	P1	原材料とウェーハ製造	Vol.0	-46,1,0.5	10.62,10.26,9.4	-34,10,2	stainless_machined
+fab0-p02-design-photomask	P2	設計とフォトマスク製作	Vol.0	-31,3.2,-16	10,8.76,8.6	-20,22,-18	matte_chassis
+fab0-p03-pixel-feol	P3	画素ウェーハ前工程 FEOL	Vol.0	-31,1,-5.2	10,8.4,8.8	-20,12,-10	stainless_machined
+fab0-p04-pixel-beol	P4	画素ウェーハ配線工程 BEOL	Vol.0	-16.5,1,-5.2	10,8.86,8.8	-10,12,-10	stainless_machined
+fab0-p05-logic-wafer	P5	ロジックウェーハ製造	Vol.0	-23.5,1,9.8	13.2,7.31,9.8	-16,12,18	stainless_machined
+fab0-p06-cucu-bond-bsi	P6	Cu-Cuハイブリッド接合・極限裏面薄化	Vol.0	-2,1.6,1	11.4,9.71,10.6	-1,18,2	cucu_hybrid_copper
+fab0-p07-cfa-microlens	P7	カラーフィルター・マイクロレンズ形成	Vol.0	11,1,1	9.8,6.87,9	9,12,2	cfa_gloss_filter
+fab0-p08-wafer-cp-test	P8	ウェーハテスト CP 光学・電気全数検査	Vol.0	23,1,1	9.8,8.86,9	18,12,2	stainless_machined
+fab0-p09-dicing-package	P9	後工程 ダイシング・セラミックパッケージ	Vol.0	35,1,1	10.2,5.86,9	28,12,2	stainless_machined
+fab0-p10-final-test-ft	P10	最終検査 FT・環境信頼性試験・出荷梱包	Vol.0	46.5,1,1	9.8,5.96,9	38,12,2	matte_black_anodized
+fab0-p11-sensor-unit-ibis	P11	センサーユニット組立	Vol.0	37.5,1,14.5	10.8,8.26,9.4	30,12,22	stainless_machined
+fab0-p12-camera-integration	P12	カメラボディ統合・工場校正・最終検査	Vol.0	21.5,1.4,15	11.6,9.08,9.6	18,14,24	stainless_machined
+fab0-l01-preclean	L-01	前洗浄・乾燥— リソグラフィ単位ループ第	Vol.0	-35.51,-13.5,-9.25	6.6,4.92,5.8	-17.04,-26,-5.73	matte_black_anodized
+fab0-l02-hmds-barc	L-02	密着促進・反射防止膜塗布— 下地プライマ	Vol.0	-41,-13.5,0	6.6,5.61,5.8	-19.68,-26,0	matte_black_anodized
+fab0-l03-resist-coat	L-03	フォトレジスト塗布— 遠心力で広げる極薄	Vol.0	-35.51,-13.5,9.25	6.6,5.01,5.8	-17.04,-26,5.74	matte_black_anodized
+fab0-l04-softbake-pab	L-04	プリベーク / ソフトベーク—	Vol.0	-20.5,-13.5,16.02	6.6,4.96,5.8	-9.84,-26,9.93	stainless_machined
+fab0-l05-exposure-align	L-05	精密アライメント	Vol.0	0,-13.5,18.5	6.6,8.78,5.8	0,-26,11.47	matte_black_anodized
+fab0-l06-peb	L-06	露光後ベーク— 0.1℃単位で輪郭を研ぎ	Vol.0	20.5,-13.5,16.02	6.6,2.74,5.8	9.84,-26,9.93	matte_black_anodized
+fab0-l07-develop	L-07	現像・リンス・乾燥— フィルム写真と同じ	Vol.0	35.51,-13.5,9.25	6.6,4.08,5.8	17.04,-26,5.74	stainless_machined
+fab0-l08-adi-metrology	L-08	現像後計測 ADI— リワークできる最後	Vol.0	41,-13.5,0	6.6,6.16,5.8	19.68,-26,0	matte_black_anodized
+fab0-l09-etch-implant	L-09	本加工：エッチング または イオン注入	Vol.0	35.51,-13.5,-9.25	6.77,6.21,5.8	17.04,-26,-5.73	matte_black_anodized
+fab0-l10-ashing-strip	L-10	レジスト剥離・アッシング— 役目を終えた	Vol.0	20.5,-13.5,-16.02	6.6,5.39,5.8	9.84,-26,-9.93	stainless_machined
+fab0-l11-postclean	L-11	加工後ウェット洗浄— 金属原子数個すら許	Vol.0	0,-13.5,-18.5	6.6,4.5,5.8	0,-26,-11.47	stainless_machined
+fab0-l12-aei-defect	L-12	加工後計測・欠陥検査 AEI—	Vol.0	-20.5,-13.5,-16.02	6.6,5.46,5.8	-9.84,-26,-9.93	matte_black_anodized
+fab0-var-fsi	V-01	非積層・表面照射型アーキテクチャ	Vol.0	-14,1.6,-24	9.4,5.75,7.6	-16,18,-24	optical_glass_ed
+fab0-var-bsi	V-02	非積層・裏面照射型アーキテクチャ	Vol.0	-2,1.6,-24	9.4,5.99,7.6	-4,18,-24	optical_glass_ed
+fab0-var-partial-stack	V-03	部分積層型アーキテクチャ	Vol.0	10,1.6,-24	9.4,5.31,7.6	8,18,-24	silicon_hero
+fab0-var-full-2stack	V-04	2層フル積層 BSI 型アーキテクチャ【	Vol.0	22,1.6,-24	9.4,5.77,7.6	20,18,-24	optical_glass_ed
+fab0-var-3stack-2layertr	V-05	3層積層／2層トランジスタ画素積層型	Vol.0	34,1.6,-24	9.4,6.91,7.6	32,18,-24	silicon_hero
+fab1-hero-optics-photonics	F1-01	波長別光電効果プリズム	Vol.1	0,21.5,-22.5	23.6,10.48,16.03	0,36,-10	ic_epoxy_dark
+fab1-base-exhibition-deck	F1-02	第1巻 4章アーキテクチャ展示基盤	Vol.1	0,-2.8,0	112,15.81,54	0,-14,0	matte_chassis
+fab1-step1-pd-bucket-fwc	F1-03	ステップ①② フォトダイオード	Vol.1	-44,1,12	8.8,7.46,8.2	-46,12,22	matte_chassis
+fab1-step3-tg-sluice-gate	F1-04	ステップ③ 転送ゲート	Vol.1	-33,1,12	8.8,7.43,8.2	-34,14,24	membrane_translucent
+fab1-step4-fd-dcg-cups	F1-05	ステップ④ FD	Vol.1	-22,1,12	8.8,6.7,8.2	-22,16,24	gold_plating
+fab1-step5-rst-sf-sel-cds	F1-06	リセット / 増幅 / 選択 3トランジ	Vol.1	-11,1,12	8.8,5.8,8.2	-11,14,24	pin_carrier_gloss
+fab1-column-14bit-adc	F1-07	ステップ⑤ 列並列 14-bit カラム	Vol.1	0,1,12	8.8,6.84,8.2	0,12,24	silicon_hero
+fab1-pixel-parallel-adc	F1-08	次世代進化：画素並列 14-bit	Vol.1	11,1,12	8.8,6.2,8.2	11,14,24	stainless_machined
+fab1-ccd-vs-cmos-arena	F1-09	CCD vs CMOS構造比較	Vol.1	-44,1,-3	9.4,4.65,8.4	-48,12,-4	stainless_machined
+fab1-arch1-fsi-r6m3	F1-10	構造① 表面照射型	Vol.1	-34,1,-20	9.6,5.7,7.6	-38,16,-24	optical_glass_ed
+fab1-arch2-bsi-a7iv	F1-11	構造② 裏面照射型	Vol.1	-22,1,-20	9.6,5.74,7.6	-24,17,-25	optical_glass_ed
+fab1-arch3-partial-stack-a7v	F1-12	構造③ 部分積層型	Vol.1	-10,1,-20	9.6,5.72,7.6	-10,19,-26	optical_glass_ed
+fab1-arch4-full-stack-a7rvi	F1-13	構造④ 2層フル積層型	Vol.1	2,1,-20	9.6,5.58,7.6	2,21,-27	optical_glass_ed
+fab1-arch4b-3layer-dram	F1-14	第4世代A：3層積層 DRAM 内蔵型	Vol.1	14,1,-20	9.6,6.14,7.6	16,19,-26	silicon_hero
+fab1-arch5-gs-stacked-a9iii	F1-15	構造⑤ グローバルシャッター積層型	Vol.1	26,1,-20	9.6,6.4,7.6	28,18,-25	optical_glass_ed
+fab1-arch6-2layer-tr-lytia	F1-16	構造⑥ 2層トランジスタ画素積層型	Vol.1	38,1,-20	9.6,6.52,7.6	42,17,-24	optical_glass_ed
+fab1-canon-dpaf-standard	F1-17	キヤノン：デュアルピクセル CMOS	Vol.1	-30,1,-3	9.4,8,8.4	-32,15,-4	pin_carrier_gloss
+fab1-canon-r1-crosstype-af	F1-18	キヤノン EOS R1：世界初クロスタイ	Vol.1	-17,1,-3	9.4,6.07,8.4	-18,17,-5	gold_plating
+fab1-sony-pdaf-mask-ocl	F1-19	ソニー：像面位相差 AF	Vol.1	-4,1,-3	9.4,4.6,8.4	-4,17,-5	matte_chassis
+fab1-gs-rolling-vs-global	F1-20	ローリングシャッター歪み vs	Vol.1	10,1,-3	9.8,6.89,8.4	10,16,-4	stainless_machined
+fab1-gs-charge-domain	F1-21	GS方式① 電荷ドメイン型	Vol.1	23,1,12	8.8,5.11,8.2	24,13,22	titanium_machined
+fab1-gs-voltage-domain-a9iii	F1-22	GS方式② 電圧ドメイン型	Vol.1	34,1,12	8.8,6.09,8.2	36,15,22	matte_black_anodized
+fab1-gs-pixel-adc-isscc2025	F1-23	GS方式③ 画素並列 ADC 型	Vol.1	45,1,12	8.8,6.07,8.2	48,17,22	cfa_gloss_filter
+fab1-wall-field-overflow	F1-24	フルサイズだけの壁①：標準露光画角をはみ	Vol.1	24,1,-3	10,4.32,8.6	26,14,-4	stainless_machined
+fab1-canon-fpa6300esw	F1-25	突破法①-A キヤノン FPA	Vol.1	36,1,-3	9.8,6.96,8.6	40,16,-5	stainless_machined
+fab1-canon-fpa5550ix	F1-26	突破法①-B キヤノン FPA	Vol.1	47,1,-3	9.4,6.87,8.6	52,16,-5	stainless_machined
+fab1-stitching-exposure	F1-27	突破法② スティッチング露光	Vol.1	-35,-13.5,8	9.8,4.23,8.4	-42,-24,16	pin_carrier_gloss
+fab1-wafer-smartphone-640	F1-28	300mmウェーハ比較① スマホ用 1	Vol.1	-20,-13.5,13	10.8,6.09,9.8	-24,-26,24	pin_carrier_gloss
+fab1-wafer-apsc-134	F1-29	300mmウェーハ比較② APS-C	Vol.1	-4,-13.5,15	10.8,6,9.8	-6,-27,28	stainless_machined
+fab1-wafer-fullframe-48	F1-30	300mmウェーハ比較③ フルサイズ一眼	Vol.1	12,-13.5,15	10.8,6,9.8	12,-27,28	stainless_machined
+fab1-wafer-mediumformat-26	F1-31	300mmウェーハ比較④ 中判	Vol.1	28,-13.5,13	10.8,6,9.8	30,-26,24	pin_carrier_gloss
+fab1-stacked-yield-multiply	F1-32	積層歩留まりの掛け算の罠	Vol.1	43,-13.5,6	10.8,5.74,9.6	50,-24,14	silicon_wafer_dark
+fab2-hero-purity-mirror-monument	#65	11N純度＆Ra＜0.1nm 超平坦鏡の	Vol.2	0,18.2,-2	23.98,5.47,17.48	0,14,0	matte_chassis
+fab2-phase1-plant-deck	#66	フェーズ1 全60工程・7ブロック立体製	Vol.2	0,-1.6,0	112,14.31,60	0,-12,0	matte_chassis
+fab2-quartzite-mine-crusher	#67	高純度珪石の採掘	Vol.2	-48,0.5,-21.5	9.58,6.71,9.2	-12,8,-14	matte_black_anodized
+fab2-carbon-reductant-blender	#68	還元用低灰分炭材の調合	Vol.2	-36,0.5,-21.5	9.4,9.22,9.2	-8,9,-14	matte_black_anodized
+fab2-submerged-arc-furnace	#69	サブマージドアーク炉・2・000℃炭素熱	Vol.2	-24,0.5,-21.5	9.6,11.41,9.4	-4,11,-14	stainless_machined
+fab2-ladle-refining-grinding	#70	溶融金属シリコン出湯・取鍋精錬	Vol.2	-12,0.5,-21.5	9.4,8.81,9.2	-1,8,-14	matte_black_anodized
+fab2-tcs-fluidized-cyclone	#71	流動床トリクロロシラン合成	Vol.2	0,0.5,-21.5	9.4,9.17,9.2	2,9,-14	stainless_machined
+fab2-multistage-distillation	#72	多段精密蒸留塔群	Vol.2	12,0.5,-21.5	9.4,13.77,9.2	4,12,-14	matte_chassis
+fab2-h2-purifier-slimrods	#73	7N超高純度水素精製	Vol.2	24,0.5,-21.5	9.4,7.78,9.2	6,9,-14	matte_chassis
+fab2-siemens-cvd-reactor	#74	シーメンス法CVD析出	Vol.2	36,0.5,-21.5	9.6,10.32,9.4	9,11,-14	stainless_machined
+fab2-nonmetal-crush-acid-pack	#75	非金属破砕・フッ硝酸エッチング洗浄	Vol.2	48,0.5,-21.5	9.4,6.11,9.2	12,8,-14	matte_chassis
+fab2-spruce-pine-crucible	#76	スプルースパイン産32インチ使い捨て高純	Vol.2	-49.5,0.5,-2	9,6.68,9.75	-14,9,-2	matte_chassis
+fab2-poly-boron-dopant-load	#77	11N多結晶300〜450kg	Vol.2	-38.5,0.5,-2	9,7.74,9.6	-10,8,-2	stainless_machined
+fab2-mcz-superconducting-magnet	#78	メルトダウン1・420℃	Vol.2	-27.5,0.5,-2	9.2,11.61,9.8	-6,11,-2	stainless_machined
+fab2-seed-dash-necking	#79	<100>種付け	Vol.2	-16.5,0.5,-2	9,11.91,9.6	-3,12,-2	stainless_machined
+fab2-mcz-body-pulling-vg	#80	300mm直胴部引き上げ	Vol.2	-5.5,0.5,-2	9,13.46,9.6	0,14,-2	matte_chassis
+fab2-tail-detachment-unloading	#81	テール絞り込み切り離し	Vol.2	5.5,0.5,-2	9,11.23,9.6	3,10,-2	stainless_machined
+fab2-crop-od-grinding	#82	トップ＆テール切断＆外周円筒研削300.	Vol.2	16.5,0.5,-2	9,8.71,9.6	6,9,-2	stainless_machined
+fab2-xray-notch-grinding	#83	X線結晶方位測定	Vol.2	27.5,0.5,-2	9,7.37,9.6	9,10,-2	stainless_machined
+fab2-multiwire-saw-slicing	#84	マルチワイヤーソースライス	Vol.2	38.5,0.5,-2	9.2,8.36,9.8	12,12,-2	stainless_machined
+fab2-debond-laser-id	#85	ビーム剥離・予備洗浄	Vol.2	49.5,0.5,-2	9,8.31,9.6	14,9,-2	matte_chassis
+fab2-edge-bevel-grinding	#86	エッジ面取り加工	Vol.2	-49.5,0.5,18	9,8.61,9.6	-14,8,12	stainless_machined
+fab2-chem-etch-donor-killer	#87	両面化学エッチング	Vol.2	-38.5,0.5,18	9,9.01,9.6	-10,9,12	matte_black_anodized
+fab2-edge-mirror-dsp	#88	端面鏡面研磨	Vol.2	-27.5,0.5,18	9.2,8.76,9.8	-6,11,12	stainless_machined
+fab2-final-finish-cmp	#89	片面仕上げ超鏡面研磨	Vol.2	-16.5,0.5,18	9,7.49,9.6	-3,12,12	matte_chassis
+fab2-rca-megasonic-pw-check	#90	ポストCMP多段RCA洗浄	Vol.2	-5.5,0.5,18	9,6.81,9.6	0,9,12	matte_chassis
+fab2-backside-seal-preclean	#91	裏面封止膜＆注入後希フッ酸洗浄	Vol.2	5.5,0.5,18	9,5.48,9.6	3,8,12	stainless_machined
+fab2-molecular-ion-implanter	#92	CIS専用 分子イオン注入装置	Vol.2	16.5,0.5,18	9.23,7.51,9.8	6,11,12	pin_carrier_gloss
+fab2-ci-complex-gettering-cutaway	#93	2026年10月SUMCO最新知見：5n	Vol.2	27.5,0.5,18	9.4,8.54,9.8	9,14,14	matte_chassis
+fab2-single-wafer-epi-reactor	#94	枚葉式エピ炉・水素ベーク	Vol.2	38.5,0.5,18	9.2,8.04,9.8	12,12,12	matte_chassis
+fab2-double-epi-post-clean	#95	二重エピ／P+エッチストップ	Vol.2	49.5,0.5,18	9,6.28,9.6	14,9,12	matte_chassis
+fab2-surfscan-lpd-inspection	#96	レーザー表面微小欠陥全数検査	Vol.2	-40,-12.5,10	14,7.8,12	-12,-10,12	pin_carrier_gloss
+fab2-wafersight-epi-mapping	#97	ナノトポグラフィ	Vol.2	-20,-12.5,10	14,8.49,12	-6,-12,12	matte_chassis
+fab2-vpd-icpms-edge-check	#98	VPD-ICP-MS重金属分析・μ	Vol.2	0,-12.5,10	14,7.31,12	0,-14,12	pin_carrier_gloss
+fab2-fosb-25wafer-clean-load	#99	ISOクラス1〜2 ロボット収納	Vol.2	20,-12.5,10	14,8.35,12	6,-12,12	matte_chassis
+fab2-controlled-logistics-fab-bridge	#100	防振・温湿度管理輸送とセンサー工場受入	Vol.2	40,-12.5,10	14,8.12,12	12,-10,12	stainless_machined
+fab3-hero-reticle-96set-monument	F3-01	6インチ合成石英フォトマスク	Vol.3	0,18.2,-9.5	23.14,10.6,22.28	0,34,-8	matte_chassis
+fab3-phase2-design-mask-deck	F3-02	フェーズ2 2層段差式・設計スタジオ	Vol.3	0,-1.6,0	122.4,10.83,90.32	0,-26,0	matte_chassis
+fab3-p01-product-spec	F3-03	[P02-001] センサー製品企画	Vol.3	-51.75,0.4,-29	9.2,6.95,8.8	-20,14,-22	ic_epoxy_dark
+fab3-p02-pixel-arch-select	F3-04	[P02-002] 画素アーキテクチャ選	Vol.3	-40.25,0.4,-29	9.2,5.77,8.8	-15,16,-22	stainless_machined
+fab3-p03-process-tcad-3d	F3-05	[P02-003] 3次元プロセスTCA	Vol.3	-28.75,0.4,-29	9.2,7.97,8.8	-11,18,-22	ic_epoxy_dark
+fab3-p04-device-tcad-potential	F3-06	[P02-004] 3次元デバイスTCA	Vol.3	-17.25,0.4,-29	9.2,7.09,8.8	-7,20,-22	matte_chassis
+fab3-p05-dark-current-blooming	F3-07	[P02-005] 暗電流・白キズ	Vol.3	-5.75,0.4,-29	9.2,7.22,8.8	-2,22,-22	ic_epoxy_dark
+fab3-p06-optical-fdtd-3d	F3-08	[P02-006] 3次元電磁界光学シミ	Vol.3	5.75,0.4,-29	9.2,7.97,8.8	2,22,-22	stainless_machined
+fab3-p07-cra-angle-shift	F3-09	[P02-007] CRA光学マッチング	Vol.3	17.25,0.4,-29	9.2,7.09,8.8	7,20,-22	optical_glass_ed
+fab3-p08-pdaf-pupil-response	F3-10	[P02-008] 像面位相差AF光学応	Vol.3	28.75,0.4,-29	9.2,6.96,8.8	11,18,-22	optical_glass_ed
+fab3-p09-thermal-stress-sim	F3-11	[P02-009] 熱・応力マルチフィジ	Vol.3	40.25,0.4,-29	9.2,6.49,8.8	15,16,-22	stainless_machined
+fab3-p10-pixel-teg-validation	F3-12	[P02-010] 画素テストチップ設計	Vol.3	51.75,0.4,-29	9.2,5.45,8.8	20,14,-22	stainless_machined
+fab3-p11-adc-circuit-design	F3-13	[P02-011] 列並列ADC /	Vol.3	-55,0.4,-12	8.2,5.56,8.6	-22,10,-4	matte_chassis
+fab3-p12-afe-cds-dcg-design	F3-14	[P02-012] アナログフロントエン	Vol.3	-45,0.4,-12	8.2,5.95,8.6	-18,11,-4	matte_chassis
+fab3-p13-row-driver-tg	F3-15	[P02-013] 行ドライバ	Vol.3	-35,0.4,-12	8.2,6.25,8.6	-14,12,-4	matte_black_anodized
+fab3-p14-serdes-slvsec-design	F3-16	[P02-014] 高速シリアル出力イン	Vol.3	-25,0.4,-12	8.2,6.06,8.6	-10,13,-4	matte_chassis
+fab3-p15-on-sensor-isp-sram	F3-17	[P02-015] ロジック側ISP前処	Vol.3	-15,0.4,-12	8.2,5.37,8.6	-6,14,-4	silicon_hero
+fab3-p16-cucu-3d-floorplan	F3-18	[P02-016] 3D積層インタコネク	Vol.3	-5,0.4,-12	8.2,5.1,8.6	-2,15,-4	copper_coil
+fab3-p17-pixel-array-layout	F3-19	[P02-017] 画素アレイ	Vol.3	5,0.4,-12	8.2,3.16,8.6	2,15,-4	stainless_machined
+fab3-p18-ob-dummy-border	F3-20	[P02-018] オプティカルブラック	Vol.3	15,0.4,-12	8.2,3.29,8.6	6,14,-4	matte_black_anodized
+fab3-p19-logic-place-route	F3-21	[P02-019] ロジックウェーハ自動	Vol.3	25,0.4,-12	8.2,5.23,8.6	10,13,-4	stainless_machined
+fab3-p20-partial-stack-chiplet	F3-22	[P02-020] 部分積層型向けチップ	Vol.3	35,0.4,-12	8.2,3.37,8.6	14,12,-4	stainless_machined
+fab3-p21-cmp-dummy-alignment	F3-23	[P02-021] CMPダミーメタル	Vol.3	45,0.4,-12	8.2,4.66,8.6	18,11,-4	stainless_machined
+fab3-p22-fullchip-oasis-guard	F3-24	[P02-022] チップ全体のトップレ	Vol.3	55,0.4,-12	8.2,6.34,8.6	22,10,-4	matte_chassis
+fab3-p23-drc-geometry-check	F3-25	[P02-023] DRC	Vol.3	-51.75,0.4,5	9.2,6.42,8.8	-20,6,18	cfa_gloss_filter
+fab3-p24-lvs-netlist-match	F3-26	[P02-024] LVS	Vol.3	-40.25,0.4,5	9.2,5.87,8.8	-15,7,18	cfa_gloss_filter
+fab3-p25-erc-antenna-esd	F3-27	[P02-025] ERC /	Vol.3	-28.75,0.4,5	9.2,6.77,8.8	-11,8,18	optical_glass_ed
+fab3-p26-3d-mirror-stack-verify	F3-28	[P02-026] 3D上下チップ整合性	Vol.3	-17.25,0.4,5	9.2,5.82,8.8	-7,9,18	stainless_machined
+fab3-p27-single-vs-stitch-split	F3-29	[P02-027] フルサイズ露光方式の	Vol.3	-5.75,0.4,5	9.8,6.09,9.2	-2,11,20	gold_plating
+fab3-p28-opc-serif-correction	F3-30	[P02-028] OPC	Vol.3	5.75,0.4,5	9.8,6.45,9.2	2,11,20	matte_chassis
+fab3-p29-lrc-bossung-window	F3-31	[P02-029] リソグラフィ	Vol.3	17.25,0.4,5	9.2,6.56,8.8	7,9,18	cfa_gloss_filter
+fab3-p30-mdp-fracture-pec	F3-32	[P02-030] マスクデータ変換	Vol.3	28.75,0.4,5	9.2,3.97,8.8	11,8,18	matte_chassis
+fab3-p31-tapeout-96layers	F3-33	[P02-031] テープアウト	Vol.3	40.25,0.4,5	9.2,8.91,8.8	15,7,18	matte_chassis
+fab3-p32-mask-set-scheduling	F3-34	[P02-032] マスクセット生産計画	Vol.3	51.75,0.4,5	9.2,5.47,8.8	20,6,18	stainless_machined
+fab3-p33-synthetic-quartz-sub	F3-35	[P02-033] 超高純度合成石英ガラ	Vol.3	-51.75,-8.8,24.5	9.2,6.87,8.8	-20,-9,10	matte_chassis
+fab3-p34-cr-mosi-psm-sputter	F3-36	[P02-034] 遮光膜スパッタ成膜	Vol.3	-40.25,-8.8,24.5	9.2,7.37,9.5	-15,-9,10	stainless_machined
+fab3-p35-eb-resist-coat-bake	F3-37	[P02-035] マスク用電子線レジス	Vol.3	-28.75,-8.8,24.5	9.2,5.97,8.8	-11,-9,10	stainless_machined
+fab3-p36-multibeam-eb-writer	F3-38	[P02-036] マルチビーム電子線描	Vol.3	-17.25,-8.8,24.5	9.8,12.12,9.2	-7,-10,12	matte_chassis
+fab3-p37-mask-peb-develop	F3-39	[P02-037] 描画後ベーク・現像	Vol.3	-5.75,-8.8,24.5	9.2,4.65,8.8	-2,-9,10	stainless_machined
+fab3-p38-mask-icp-dry-etch	F3-40	[P02-038] 遮光膜・位相シフト膜	Vol.3	5.75,-8.8,24.5	9.2,6.82,8.8	2,-9,10	copper_coil
+fab3-p39-mask-strip-spm-clean	F3-41	[P02-039] レジスト剥離	Vol.3	17.25,-8.8,24.5	9.2,6.99,8.8	7,-9,10	matte_chassis
+fab3-p40-second-level-border	F3-42	[P02-040] 第2パターニング	Vol.3	28.75,-8.8,24.5	9.2,6.34,8.8	11,-9,10	matte_black_anodized
+fab3-p41-mask-cd-sem-metrology	F3-43	[P02-041] マスク線幅全画面精密	Vol.3	40.25,-8.8,24.5	9.2,6.59,8.8	15,-9,10	stainless_machined
+fab3-p42-registration-ipro	F3-44	[P02-042] マスク座標位置精度計	Vol.3	51.75,-8.8,24.5	9.2,6.57,8.8	20,-9,10	matte_chassis
+fab3-p43-die-to-db-inspection	F3-45	[P02-043] ダイ・トゥ	Vol.3	-49,-8.8,42.5	11.6,7.19,9.6	-22,-12,20	matte_chassis
+fab3-p44-nano-defect-repair	F3-46	[P02-044] ナノ欠陥修正	Vol.3	-35,-8.8,42.5	11.6,8.77,9.6	-15,-12,20	stainless_machined
+fab3-p45-aims-aerial-image	F3-47	[P02-045] AIMS	Vol.3	-21,-8.8,42.5	11.6,9.02,9.6	-9,-12,20	matte_chassis
+fab3-p46-final-haze-ultraclean	F3-48	[P02-046] 最終精密洗浄	Vol.3	-7,-8.8,42.5	11.6,7.37,9.6	-3,-12,20	matte_chassis
+fab3-p47-pellicle-08um-mount	F3-49	[P02-047] ペリクル貼付	Vol.3	7,-8.8,42.5	11.6,6.44,9.6	3,-13,22	matte_chassis
+fab3-p48-starlight-post-pellicle	F3-50	[P02-048] ペリクル貼付後	Vol.3	21,-8.8,42.5	11.6,8.52,9.6	9,-12,20	matte_chassis
+fab3-p49-reticle-smif-pod	F3-51	[P02-049] レチクルポッド収納	Vol.3	35,-8.8,42.5	11.6,6,9.6	15,-12,20	matte_chassis
+fab3-p50-stocker-96set-bridge	F3-52	[P02-050] 全96枚マスクセット	Vol.3	49,-8.8,42.5	11.8,14.49,9.6	22,-13,22	gold_plating
+fab4-hero-feol-pixel-heart	F4-01	完成4T-PPD画素の心臓部・超高精細3	Vol.4	0,18.8,-10.5	25.95,11.08,23.44	0,34,-8	matte_chassis
+fab4-phase3-feol-terrace-deck	F4-02	フェーズ3 2層段差式・画素FEOLクリ	Vol.4	0,-1.6,0	126.4,10.83,90.32	0,-26,0	stainless_machined
+fab4-p001-incoming-rca-clean	F4-03	ロット受入・レーザーID読取	Vol.4	-56.1,0.4,-29	8.6,5.15,8.6	-22,14,-22	matte_chassis
+fab4-p004-initial-pad-oxide	F4-04	初期パッド熱酸化	Vol.4	-45.9,0.4,-29	8.6,6.5,8.6	-18,15,-22	stainless_machined
+fab4-m01-zero-layer-align	F4-05	ゼロ層・基準アライメントマーク形成	Vol.4	-35.7,0.4,-29	8.6,6.67,8.6	-14,16,-22	stainless_machined
+fab4-p019-sti-pad-sin-lpcvd	F4-06	STI用パッド酸化＋窒化ケイ素LPCVD	Vol.4	-25.5,0.4,-29	8.6,4.47,8.6	-10,17,-22	matte_chassis
+fab4-m02-sti-trench-etch	F4-07	STI浅い素子分離溝エッチング	Vol.4	-15.3,0.4,-29	8.6,6.37,8.6	-6,18,-22	matte_chassis
+fab4-p037-sti-liner-hdp-fill	F4-08	STIライナー熱酸化	Vol.4	-5.1,0.4,-29	8.6,5.65,8.6	-2,19,-22	matte_chassis
+fab4-m03-sti-reverse-etch	F4-09	STI逆トーン・リバースエッチング	Vol.4	5.1,0.4,-29	8.6,4.57,8.6	2,19,-22	matte_chassis
+fab4-p053-sti-cmp-sin-strip	F4-10	STI-CMP平坦化 → 熱リン酸SiN	Vol.4	15.3,0.4,-29	8.6,5.39,8.6	6,18,-22	stainless_machined
+fab4-p059-dti-hardmask-dep	F4-11	フロントDTI用ハードマスク成膜	Vol.4	25.5,0.4,-29	8.6,5.05,8.6	10,17,-22	stainless_machined
+fab4-m04-front-dti-deep-etch	F4-12	フロントDTI高アスペクト比ディープエッ	Vol.4	35.7,0.4,-29	8.8,7.67,8.8	14,18,-22	ic_epoxy_dark
+fab4-p073-dti-sidewall-passiv	F4-13	DTI側壁ダメージ修復	Vol.4	45.9,0.4,-29	8.6,7.47,8.6	18,16,-22	ic_epoxy_dark
+fab4-p079-dti-fill-optic-mirror	F4-14	DTI酸化膜/ポリSi充填・光学的全反射	Vol.4	56.1,0.4,-29	8.6,5.7,8.6	22,15,-22	stainless_machined
+fab4-m05-deep-pwell-floor	F4-15	ディープPウェル注入	Vol.4	-56.4,0.4,-12	7.8,7.4,8.2	-24,10,-4	ic_epoxy_dark
+fab4-m06-pixel-iso-pbarrier	F4-16	画素分離P型電気障壁注入	Vol.4	-47,0.4,-12	7.8,7.2,8.2	-20,11,-4	ic_epoxy_dark
+fab4-m07-periph-nwell	F4-17	周辺Nウェル / 画素Nウェル高エネルギ	Vol.4	-37.6,0.4,-12	7.8,7.1,8.2	-16,12,-4	matte_chassis
+fab4-m08-pixel-pwell-nmos	F4-18	画素Pウェル注入	Vol.4	-28.2,0.4,-12	7.8,7.1,8.2	-12,13,-4	ic_epoxy_dark
+fab4-m09-pixel-vt-lownoise	F4-19	画素トランジスタ閾値調整	Vol.4	-18.8,0.4,-12	7.8,6.9,8.2	-8,14,-4	cfa_gloss_filter
+fab4-m10-periph-vt-adjust	F4-20	周辺回路Vt調整注入	Vol.4	-9.4,0.4,-12	7.8,6.9,8.2	-4,15,-4	matte_chassis
+fab4-m11-pd-deep-red-mev	F4-21	PD第1段：最深部N型MeV級超高エネル	Vol.4	0,0.4,-12	8,8.5,8.6	0,17,-4	optical_glass_ed
+fab4-m12-pd-mid-green-n	F4-22	PD第2段：中深部N型高エネルギー注入	Vol.4	9.4,0.4,-12	7.8,7.5,8.2	4,16,-4	cfa_gloss_filter
+fab4-m13-pd-shallow-blue-tilt	F4-23	PD第3段：浅部	Vol.4	18.8,0.4,-12	7.8,7.39,8.2	8,15,-4	matte_chassis
+fab4-m14-dualpixel-pd-split	F4-24	PD内部電位勾配	Vol.4	28.2,0.4,-12	8,6.97,8.6	12,15,-4	gold_plating
+fab4-m15-antibloom-overflow	F4-25	アンチブルーミング	Vol.4	37.6,0.4,-12	7.8,4.22,8.2	16,13,-4	stainless_machined
+fab4-m16-gs-mem-dcg-implant	F4-26	機能画素注入	Vol.4	47,0.4,-12	7.8,7.1,8.2	20,12,-4	gold_plating
+fab4-p229-pd-recovery-anneal	F4-27	注入ダメージ回復アニール・スクリーン酸化	Vol.4	56.4,0.4,-12	7.8,7.52,8.2	24,11,-4	stainless_machined
+fab4-m17-vtg-straw-trench	F4-28	垂直転送ゲートトレンチ彫り	Vol.4	-47.5,0.4,5	14.8,7.56,9.4	-20,10,16	stainless_machined
+fab4-p261-thick-gate-ox-33v	F4-29	第1ゲート熱酸化	Vol.4	-28.5,0.4,5	14.8,7.1,9.4	-12,11,16	matte_chassis
+fab4-m18-dual-gate-ox-etch	F4-30	デュアルゲート酸化膜の選択除去	Vol.4	-9.5,0.4,5	14.8,5.87,9.4	-4,12,16	matte_chassis
+fab4-p277-thin-gate-polysilicon	F4-31	第2ゲート酸化	Vol.4	9.5,0.4,5	14.8,7.84,9.4	4,12,16	gold_plating
+fab4-m19-poly-gate-etch	F4-32	ポリシリコンゲート電極の高精度エッチング	Vol.4	28.5,0.4,5	14.8,7.47,9.4	12,13,16	ic_epoxy_dark
+fab4-p295-gate-reox-cdsem	F4-33	ゲート再酸化	Vol.4	47.5,0.4,5	14.8,7.37,9.4	20,11,16	stainless_machined
+fab4-p297-offset-spacer	F4-34	オフセットスペーサー極薄成膜・前洗浄	Vol.4	-49.5,-8.8,24.5	13.2,5.6,9.2	-22,-9,10	matte_chassis
+fab4-m20-pixel-nldd-fd	F4-35	画素側NLDD	Vol.4	-33,-8.8,24.5	13.2,7.5,9.2	-15,-9,10	matte_chassis
+fab4-m21-periph-ldd	F4-36	周辺回路NLDD / PLDD注入	Vol.4	-16.5,-8.8,24.5	13.2,7.5,9.2	-8,-9,10	ic_epoxy_dark
+fab4-p323-sidewall-spacer	F4-37	サイドウォール・スペーサー成膜	Vol.4	0,-8.8,24.5	13.2,5.7,9.2	0,-9,10	gold_plating
+fab4-m22-surface-pinning-ppd	F4-38	表面ピンニングP+層注入	Vol.4	16.5,-8.8,24.5	13.6,8.9,9.6	8,-10,12	optical_glass_ed
+fab4-m23-nplus-sd-contact	F4-39	N+ソース/ドレイン	Vol.4	33,-8.8,24.5	13.2,7.7,9.2	15,-9,10	matte_chassis
+fab4-m24-pplus-sd-welltap	F4-40	P+ソース/ドレイン	Vol.4	49.5,-8.8,24.5	13.2,7.7,9.2	22,-9,10	ic_epoxy_dark
+fab4-p365-spike-rta-flash	F4-41	スパイクRTA活性化アニール	Vol.4	-45,-8.8,42.5	18,8.17,9.6	-22,-12,20	optical_glass_ed
+fab4-m25-salicide-block-sab	F4-42	シリサイドブロック	Vol.4	-22.5,-8.8,42.5	18,8.67,9.6	-11,-13,22	stainless_machined
+fab4-p379-salicide-cosi-nisi	F4-43	自己整合シリサイド形成	Vol.4	0,-8.8,42.5	18,7.35,9.6	0,-12,20	stainless_machined
+fab4-p380-h2-sinter-feol-wat	F4-44	水素シンタリング	Vol.4	22.5,-8.8,42.5	18,6.68,9.94	11,-12,20	matte_chassis
+fab4-feol-380-to-vol5-beol	F4-45	累計490工程達成ポータル → 第5巻	Vol.4	45,-8.8,42.5	18.2,13.15,9.6	22,-13,22	gold_plating
+fab5-hero-beol-5floor-highway	F5-01	5階建て銅の立体高速道路	Vol.5	0,19.2,-10.5	26.15,9.34,23.84	0,34,-8	stainless_machined
+fab5-phase4-beol-terrace-deck	F5-02	フェーズ4 2層段差式・BEOL銅立体配	Vol.5	0,-1.6,0	126,10.9,82.28	0,-26,0	matte_chassis
+fab5-p001-cesl-sin-stopper	F5-03	コンタクトエッチストップ膜成膜	Vol.5	-55,0.4,-29	9.6,4.28,8.8	-22,14,-22	ic_epoxy_dark
+fab5-p002-pmd-bpsg-cmp	F5-04	PMD層間絶縁膜成膜・緻密化・CMP平坦	Vol.5	-44,0.4,-29	9.6,7.23,8.8	-18,15,-22	matte_chassis
+fab5-p005-pmd-clean-metro	F5-05	PMDポストCMP超洗浄	Vol.5	-33,0.4,-29	9.6,6,8.8	-14,16,-22	matte_chassis
+fab5-m26-contact-hole-etch	F5-06	コンタクトホール80〜120nm	Vol.5	-22,0.4,-29	9.6,6.5,8.8	-10,17,-22	matte_chassis
+fab5-p019-titin-w-cvd-nail	F5-07	Ti/TiN密着・バリア鎧＋タングステン	Vol.5	-11,0.4,-29	9.6,4.38,8.8	-6,18,-22	stainless_machined
+fab5-p021-w-cmp-inspect	F5-08	タングステンCMP研磨・ポスト洗浄	Vol.5	0,0.4,-29	9.6,6.93,8.8	-2,19,-22	stainless_machined
+fab5-p023-m1-sicn-lowk	F5-09	M1用エッチストップ＋Low-k層間絶縁	Vol.5	11,0.4,-29	9.6,4,8.8	2,19,-22	matte_chassis
+fab5-m27-m1-single-damascene	F5-10	M1第1銅配線トレンチ露光・エッチング	Vol.5	22,0.4,-29	9.6,3.9,8.8	6,18,-22	stainless_machined
+fab5-p038-tantal-barrier-seed	F5-11	TaN/Ta銅毒バリア	Vol.5	33,0.4,-29	9.6,6.8,8.8	10,17,-22	ic_epoxy_dark
+fab5-p040-cu-ecd-superfill	F5-12	銅電解めっき	Vol.5	44,0.4,-29	9.6,4.5,8.8	14,16,-22	copper_coil
+fab5-p042-cu-2stage-cmp-bta	F5-13	2段階銅CMP研磨・BTA防錆洗浄	Vol.5	55,0.4,-29	9.6,6.83,8.8	18,15,-22	stainless_machined
+fab5-p045-m2-sicn-lowk	F5-14	SiCN銅封止キャップ＋V1/M2一体化	Vol.5	-55.55,0.4,-12	8.8,4.05,8.6	-22,11,-4	matte_chassis
+fab5-m28-via1-pattern	F5-15	ビア1露光＆エレベーター縦穴エッチング	Vol.5	-45.45,0.4,-12	8.8,5.6,8.6	-18,13,-4	matte_chassis
+fab5-m29-m2-row-drive	F5-16	第2銅配線：横36mm行方向・画素駆動ラ	Vol.5	-35.35,0.4,-12	8.8,3.32,8.6	-14,15,-4	stainless_machined
+fab5-p072-m2-dual-fill-cmp	F5-17	V1＋M2デュアルダマシン銅めっき	Vol.5	-25.25,0.4,-12	8.8,6.68,8.6	-10,13,-4	stainless_machined
+fab5-p075-m3-sicn-lowk	F5-18	SiCN銅封止キャップ＋V2/M3一体化	Vol.5	-15.15,0.4,-12	8.8,4.33,8.6	-6,11,-4	matte_chassis
+fab5-m30-via2-pattern	F5-19	ビア2露光＆縦穴エッチング	Vol.5	-5.05,0.4,-12	8.8,5.6,8.6	-2,13,-4	matte_chassis
+fab5-m31-m3-vsl-shield	F5-20	第3銅配線：列方向VSL信号線	Vol.5	5.05,0.4,-12	8.8,6.35,8.6	2,15,-4	stainless_machined
+fab5-p102-m3-dual-fill-cmp	F5-21	V2＋M3デュアルダマシン銅めっき	Vol.5	15.15,0.4,-12	8.8,6.68,8.6	6,13,-4	stainless_machined
+fab5-p105-m4-sicn-imd	F5-22	SiCN銅封止キャップ＋V3/M4用絶縁	Vol.5	25.25,0.4,-12	8.8,4.61,8.6	10,11,-4	matte_chassis
+fab5-m32-via3-pattern	F5-23	ビア3露光＆縦穴エッチング	Vol.5	35.35,0.4,-12	8.8,5.6,8.6	14,13,-4	matte_chassis
+fab5-m33-m4-power-mesh	F5-24	第4銅配線：VDD/VSS強化パワーメッ	Vol.5	45.45,0.4,-12	8.8,3.73,8.6	18,15,-4	stainless_machined
+fab5-p132-m4-dual-fill-cmp	F5-25	V3＋M4銅めっき	Vol.5	55.55,0.4,-12	8.8,6.68,8.6	22,13,-4	stainless_machined
+fab5-p135-m5-thick-imd	F5-26	M5用SiCNキャップ＋厚膜絶縁膜成膜	Vol.5	-50.4,0.4,5	13.6,5,9.2	-20,10,14	matte_chassis
+fab5-m34-via4-heavy	F5-27	ビア4大電流用太めビア群エッチング	Vol.5	-33.6,0.4,5	13.6,4.36,9.2	-13,11,14	stainless_machined
+fab5-m35-m5-top-trunk	F5-28	第5銅配線：最上層厚膜・太い幹線電源	Vol.5	-16.8,0.4,5	13.6,4.53,9.2	-6,12,14	copper_coil
+fab5-p161-m5-fill-cmp	F5-29	M5厚膜Cuスーパーフィリング	Vol.5	0,0.4,5	13.6,7.03,9.2	0,12,14	stainless_machined
+fab5-p163-alcu-pad-sputter	F5-30	層間膜＋アルミ合金スパッタ成膜	Vol.5	16.8,0.4,5	13.6,6.13,9.2	6,12,14	stainless_machined
+fab5-m36-al-pad-ir-mark	F5-31	Al再配線／外部パッド	Vol.5	33.6,0.4,5	13.6,3.64,9.2	13,11,14	stainless_machined
+fab5-p177-prebond-wat-gate	F5-32	層間平坦化保護	Vol.5	50.4,0.4,5	13.6,6.21,9.2	20,10,14	cfa_gloss_filter
+fab5-p179-hb-sicn-dielectric	F5-33	ハイブリッド接合専用絶縁膜成膜・緻密化	Vol.5	-48,-8.8,29	15.6,5.11,10.6	-22,-10,14	matte_chassis
+fab5-m37-hb-via-pattern	F5-34	ハイブリッド接合ビア露光・エッチング	Vol.5	-28.8,-8.8,29	15.6,5.03,10.6	-13,-10,14	stainless_machined
+fab5-m38-hb-cu-pad-50m	F5-35	ハイブリッド接合Cuパッド	Vol.5	-9.6,-8.8,29	15.6,3.71,10.6	-4,-10,14	stainless_machined
+fab5-p206-hb-recess-cmp	F5-36	ハイブリッド接合専用・超精密CMP	Vol.5	9.6,-8.8,29	16,7.75,10.8	4,-10,14	stainless_machined
+fab5-p209-afm-surfscan-zero	F5-37	接合前AFMリセス実測	Vol.5	28.8,-8.8,29	15.6,5.54,10.6	13,-10,14	stainless_machined
+fab5-beol-700-to-vol6-logic	F5-38	累計700工程・画素ウェーハ完全完成ポー	Vol.5	48,-8.8,29	16,10.72,10.8	22,-10,14	gold_plating

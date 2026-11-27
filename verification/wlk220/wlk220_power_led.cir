@@ -1,0 +1,122 @@
+* WLK-220 REAL NGSPICE-42 MIXED-DOMAIN POWER, 0ms UPS FAILOVER, 32kHz PWM & ELECTRO-THERMAL CIRCUIT
+* Verifies:
+*   1. USB-C PD 20V -> 5A Polyfuse (25mR) -> OVP MOSFET (12mR) -> 12.0V PMIC Regulated Bus
+*   2. C1020 Copper Busbar (1.2mR/hop) + 4x Gold Pogo Docks (18mR supply + 18mR GND) IR Voltage Drop
+*   3. Sudden USB-C PD Unplug @ t=4.0ms -> 0ms Ideal-Diode Seamless Failover to 2S LiFePO4 6.4V Boost UPS
+*   4. 32.0 kHz PWM Switching Ripple on +12V_BUS and 3.3V STM32H743 LDO Brownout Immunity (V_3v3 > 3.25V)
+*   5. Coupled Analog RC Thermal Network (1V = 1 degC, 1A = 1 W, T_amb = 25 degC) at 9.2W Continuous Showcase Load
+
+.options method=gear reltol=1e-4
+
+* --- 1. USB-C PD 20V -> PMIC 12.0V Regulated Rail (Drops out at t=4.0ms to test 0ms UPS failover!) ---
+* Normal USB-C PD regulated output at 12.02V, switches off at t=4.0ms (50us fall time)
+V_PMIC_PD pmic_pd_src 0 PULSE(12.02 0.0 4.0m 50u 50u 20m 50m)
+R_PMIC_PD pmic_pd_src pmic_pd_out 0.015
+* Ideal-Diode OR-ing MOSFET (low-Vf Schottky/ideal diode model: Vf ~ 25mV at 1A)
+D_OR_PD pmic_pd_out v12_bus D_IDEAL
+
+* --- 2. 2S1P LiFePO4 (6.4V, 160mAh, 20C) -> Synchronous Boost UPS Rail (11.88V standby takeover) ---
+* 2S LiFePO4 cell ESR=75mR reflected through 1.86x boost (~18mR regulated output impedance)
+V_UPS_BOOST ups_src 0 DC 11.88
+R_UPS_OUT ups_src ups_out 0.022
+D_OR_UPS ups_out v12_bus D_IDEAL
+
+.model D_IDEAL D(Is=1e-3 N=0.05 Rs=0.010)
+
+* --- 3. Solid Polymer Bulk Capacitor Bank (4 x 180uF = 720uF, ESR = 10mR) + 44uF MLCC ---
+C_BULK v12_bus c_bulk_esr 720u IC=12.0
+R_BULK_ESR c_bulk_esr 0 0.010
+C_MLCC v12_bus 0 44u IC=12.0
+
+* --- 4. C1020 OFHC Copper Busbar Distribution Spine (1.2mR per glyph tap) + 4x Pogo Docks (36mR roundtrip) ---
+R_BUS_YO  v12_bus bus_yo  0.0012
+R_POGO_YO bus_yo  v_yo    0.036
+
+R_BUS_U   bus_yo  bus_u   0.0012
+R_POGO_U  bus_u   v_u     0.036
+
+R_BUS_KO  bus_u   bus_ko  0.0012
+R_POGO_KO bus_ko  v_ko    0.036
+
+R_BUS_SO  bus_ko  bus_so  0.0012
+R_POGO_SO bus_so  v_so    0.036
+
+* --- 5. Four Glyph Local Buck Converters + 32.0 kHz PWM LED Array Loads (Total 6.7W LED / 9.2W Sys) ---
+* Local glyph ceramic input decoupling (22uF per glyph) + 32.0 kHz phase-shifted PWM current ripple
+C_YO v_yo 0 22u IC=12.0
+I_YO v_yo 0 PULSE(0.115 0.195 0u   1u 1u 15.625u 31.25u)
+
+C_U  v_u  0 22u IC=12.0
+I_U  v_u  0 PULSE(0.110 0.185 7.8u 1u 1u 15.625u 31.25u)
+
+C_KO v_ko 0 22u IC=12.0
+I_KO v_ko 0 PULSE(0.105 0.175 15.6u 1u 1u 15.625u 31.25u)
+
+C_SO v_so 0 22u IC=12.0
+I_SO v_so 0 PULSE(0.115 0.195 23.4u 1u 1u 15.625u 31.25u)
+
+* --- 6. Plinth 5V Audio + 3.3V Ultra-Low-Noise LDO for STM32H743 & VL53L5CX (2.5W Logic/Sensor Load) ---
+I_LOGIC v12_bus 0 DC 0.210
+* Behavioral 3.3V LDO with dropout model: tracks 3.300V while v12_bus > 4.2V, with 100uF local decoupling
+B_LDO ldo_int 0 V = min(3.300, max(0, v(v12_bus) - 0.8))
+R_LDO ldo_int v_3v3 0.04
+C_LDO v_3v3 0 100u IC=3.30
+R_MCU v_3v3 0 11.0
+
+* --- 7. Coupled Steady-State Electro-Thermal Network (1V = 1 degC, 1A = 1 W) ---
+* Ambient temperature reference T_amb = 25.0 degC
+V_TAMB t_amb 0 DC 25.0
+
+* Worst-case Glyph ('yo' / 'so' = 1.75W optical heat + 0.15W buck loss = 1.90W thermal)
+* LED Junction -> MCPCB (1.8 K/W) -> CNC A6061 Chassis (2.4 K/W) -> Finned AZ91D Rear to Ambient (8.5 K/W)
+I_Q_GLYPH 0 tj_led DC 1.90
+R_TH_JB tj_led t_mcpcb 1.8
+R_TH_MC t_mcpcb t_glyph_surf 2.4
+R_TH_GA t_glyph_surf t_amb 8.5
+
+* Plinth PMIC + STM32H743 Electronics (2.50W steady thermal)
+* PMIC Junction -> PCB/Thermal Pad (4.2 K/W) -> Plinth AZ91D Chassis (3.5 K/W) -> Ambient (5.8 K/W)
+I_Q_PLINTH 0 tj_pmic DC 2.50
+R_TH_PMIC tj_pmic t_plinth_surf 4.2
+R_TH_PA t_plinth_surf t_amb 5.8
+* Thermal coupling between Glyph Chassis and Plinth Top Plate via Dovetail (12 K/W)
+R_TH_DOCK t_glyph_surf t_plinth_surf 12.0
+
+.control
+set noaskquit
+op
+tran 2u 8m uic
+
+* Steady USB-C PD operating point (t=1.0ms..3.5ms)
+meas tran v_yo_avg AVG v(v_yo) FROM=1.0m TO=3.5m
+meas tran v_so_avg AVG v(v_so) FROM=1.0m TO=3.5m
+meas tran v_bus_pd_avg AVG v(v12_bus) FROM=1.0m TO=3.5m
+meas tran v_bus_pd_max MAX v(v12_bus) FROM=2.0m TO=3.0m
+meas tran v_bus_pd_min MIN v(v12_bus) FROM=2.0m TO=3.0m
+
+* 0ms UPS Failover Transient (t=3.9ms..7.5ms)
+meas tran v_bus_ups_min MIN v(v12_bus) FROM=3.9m TO=7.5m
+meas tran v_bus_ups_steady AVG v(v12_bus) FROM=6.0m TO=7.5m
+meas tran v_3v3_min MIN v(v_3v3) FROM=0.5m TO=7.5m
+
+* Electro-Thermal Steady-State Temperatures (degC)
+meas tran tj_led_c AVG v(tj_led) FROM=6.0m TO=7.5m
+meas tran t_glyph_surf_c AVG v(t_glyph_surf) FROM=6.0m TO=7.5m
+meas tran tj_pmic_c AVG v(tj_pmic) FROM=6.0m TO=7.5m
+meas tran t_plinth_surf_c AVG v(t_plinth_surf) FROM=6.0m TO=7.5m
+
+let v_ripple_mv = (v_bus_pd_max - v_bus_pd_min) * 1000
+echo "RESULT_V_BUS_PD=$&v_bus_pd_avg"
+echo "RESULT_V_YO=$&v_yo_avg"
+echo "RESULT_V_SO=$&v_so_avg"
+echo "RESULT_V_RIPPLE_MV=$&v_ripple_mv"
+echo "RESULT_V_BUS_UPS_MIN=$&v_bus_ups_min"
+echo "RESULT_V_BUS_UPS_STEADY=$&v_bus_ups_steady"
+echo "RESULT_V_3V3_MIN=$&v_3v3_min"
+echo "RESULT_TJ_LED_C=$&tj_led_c"
+echo "RESULT_T_GLYPH_SURF_C=$&t_glyph_surf_c"
+echo "RESULT_TJ_PMIC_C=$&tj_pmic_c"
+echo "RESULT_T_PLINTH_SURF_C=$&t_plinth_surf_c"
+quit
+.endc
+.end

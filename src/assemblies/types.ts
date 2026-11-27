@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export type ScaleMode =
+  | 'welcome'
   | 'integrated'
   | 'camera_body'
   | 'lens'
@@ -53,7 +54,7 @@ export type SensorFabStage =
   | 'v5_m5_wat'
   | 'v5_hb_cmp';
 export type RenderMode = 'solid' | 'xray' | 'cad';
-export type GraphicsQuality = 'standard' | 'high' | 'ultra';
+export type GraphicsQuality = 'standard_lite' | 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
 export type LensSection = 1 | 2 | 3;
@@ -77,6 +78,8 @@ export interface PartExplanation {
   };
   nextGenInnovation: string;
   specs: ExplanationSpec[];
+  /** Authentic engineering standards, datasheets, and technical literature citations */
+  references?: string[];
   diagramType:
     // Sensor Macro Super-Dissection (34: 26 existing + 8 Phase 11 watchmaker parts)
     | 'baffle'
@@ -1353,6 +1356,58 @@ export interface PartExplanation {
     | 'xv2_si_baw_clock_resonator'
     | 'xv2_sidechannel_ecc_guard'
     | 'xv2_coupe_35d_interposer'
+    // BIONZ XR / XR2 V2 Ultra-Detail Expansion (+30 Parts: X2-56–X2-85 -> 85 Total, 100% Dedicated HD Schematics)
+    | 'xv2_a14_nanoflex_pro_boost'
+    | 'xv2_14a_ribbonfet2_powerdirect'
+    | 'xv2_outer_wall_forksheet_fet'
+    | 'xv2_full_bdi_subfin_stopper'
+    | 'xv2_sdb_sagc_cell_isolation'
+    | 'xv2_gaa_active_backside_esd'
+    | 'xv2_ald_mon_linerless_mo_via'
+    | 'xv2_self_aligned_sac_v0_cap'
+    | 'xv2_bspdn_sige_etch_stop_thinning'
+    | 'xv2_die_crackstop_mob_seal_ring'
+    | 'xv2_dti_mixed_signal_guard_ring'
+    | 'xv2_m3d_si_igo_hybrid_sram'
+    | 'xv2_sub100fs_adpll_dtcloop'
+    | 'xv2_droop_adaptive_clock_fll'
+    | 'xv2_2nm_clock_edge_lowpower'
+    | 'xv2_curvature_comp_bgr_ref'
+    | 'xv2_350mv_sram_assist_otp'
+    | 'xv2_ieee1838_3dic_dft_slm'
+    | 'xv2_sub500nm_sicn_hybrid_bond'
+    | 'xv2_emib_t_silicon_bridge_tsv'
+    | 'xv2_embedded_stc_package_decap'
+    | 'xv2_bga_micro_c4_imc_underfill'
+    | 'xv2_stim_cu_diamond_thermal_lid'
+    | 'xv2_35d_stiffener_mt_ferrule_frame'
+    | 'xv2_pdaf_759_pose_af_engine'
+    | 'xv2_16stop_dual_gain_hdr_fusion'
+    | 'xv2_xavc_hs_10bit_422_codec'
+    | 'xv2_3d_lut_breathing_warp_isp'
+    | 'xv2_precapture_ring_dma_cfe'
+    | 'xv2_blackoutfree_evf_hdmi_disp'
+    // BIONZ XR / XR2 V2 Wave-3 Ultra-Detail Expansion (+20 Parts: X2-86–X2-105 -> 105 Total, 100% Dedicated HD Schematics)
+    | 'xv2_2d_tmd_sb_bi_vdw_contact'
+    | 'xv2_mwald_hfalo_gate_dielectric'
+    | 'xv2_odometer_fmax_aging_rtn_sensor'
+    | 'xv2_nbp_topological_semimetal_line'
+    | 'xv2_rual_intermetallic_supervia'
+    | 'xv2_isscc26_ca_hybrid_dldo'
+    | 'xv2_tdc_supply_noise_oscilloscope'
+    | 'xv2_cozrta_magnetic_fivr_inductor'
+    | 'xv2_sic_single_crystal_interposer'
+    | 'xv2_tsmc_copos_panel_packaging'
+    | 'xv2_tfln_400g_pockels_modulator'
+    | 'xv2_inp_on_si_cwdfb_laser_pic'
+    | 'xv2_4f2_vct_cop_3d_dram'
+    | 'xv2_ectc26_cow_angle_d_hb_wave'
+    | 'xv2_pqc_mlkem_mldsa_clatch_trng'
+    | 'xv2_lfi_optical_bulk_current_mesh'
+    | 'xv2_xr2_dynamic_active_framing_eis'
+    | 'xv2_xr2_var_shutter_lossless_raw'
+    | 'xv2_aln_phonon_thermal_dielectric'
+    | 'xv2_twophase_evaporative_pinfin_jet'
     // Phase 30: Sensor Manufacturing Process Vol.0 — Master Process Map & 2,110-Step Cleanroom 3D Anatomy (32 Parts: F0-01–F0-32)
     | 'fab0_hero_city_sensor'
     | 'fab0_wafer_300mm_stitch'
@@ -2184,13 +2239,22 @@ export interface PartExplanation {
     | 'mount_optical_mmwave_link'
     | 'mount_strain_gauge_bridge'
     | 'mount_active_piezo_lock'
-    | 'mount_ti_invar_thermal_flange';
+    | 'mount_ti_invar_thermal_flange'
+    | 'welcome_glyph_layer'
+    | 'welcome_led_thermal'
+    | 'welcome_driver_canfd'
+    | 'welcome_quartz_bridge'
+    | 'welcome_dock_pogo'
+    | 'welcome_power_lifepo4'
+    | 'welcome_tof_audio_hmi'
+    | 'welcome_optical_plinth';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
   subsystem:
+    | 'welcome'
     | 'lens'
     | 'mount'
     | 'sensor'

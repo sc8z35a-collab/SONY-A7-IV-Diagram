@@ -1,22 +1,22 @@
 id	code	name	group	pos	size	exp	mat
 mount-flange-ring	#01	CNC削り出し 55mm大口径	#001-030	0,0,30.6	70,70,2.94	0,0,72	stainless_machined
 mount-bolts-6x	#02	6点高張力ステンレス締結ボルト	#001-030	0,0,32	66.5,58.71,6.94	0,0,90	stainless_machined
-mount-weather-gasket	#03	二重リップ高弾性EPDM 防塵防滴マウン	#001-030	0,0,29	71.22,71.22,1.69	0,0,58	magnesium_cast
+mount-weather-gasket	#03	二重リップ高弾性EPDM 防塵防滴マウン	#001-030	0,0,29	71.21,71.2,1.69	0,0,58	magnesium_cast
 mount-esd-ground-clips	#04	360° ベリリウム銅 EMI/ESD	#001-030	0,0,28.55	65.45,65.52,1.12	0,0,48	becu_spring
-mount-leaf-springs	#05	4枚爪 予圧バヨネット板バネ	#001-030	0,0,28	60.39,60.59,1.12	0,0,38	becu_spring
+mount-leaf-springs	#05	4枚爪 予圧バヨネット板バネ	#001-030	0,0,28	60.39,60.59,1.98	0,0,38	becu_spring
 mount-bayonet-stop-block	#06	硬化ステンレス 60°回転終端ストッパー	#001-030	0,0,28.2	7.39,7.85,5.45	-24,14,46	stainless_machined
 mount-calib-shims	#07	サブミクロン・フランジバック調整用	#001-030	0,0,27.1	67,69.14,1.1	0,0,28	brass_precision
 mount-lock-pin	#08	硬化鋼レンズロックピン・真鍮ガイドブッシ	#001-030	0,0,27.2	4.4,4.4,14.22	18,-4,44	stainless_machined
 mount-release-actuator	#09	前面レンズ取り外しプッシュボタン	#001-030	0,0,27.2	16.7,10,8.36	36,-8,56	stainless_machined
 mount-lens-detect-switch	#10	機械式バヨネット完全ロック検知マイクロス	#001-030	0,0,27	6.08,12.03,2.4	26,-18,24	gold_plating
-mount-contact-pins	#11	12ピン金めっきスプリング式ポゴ接点ブロ	#001-030	0,0,26.4	39.67,9.23,6.59	0,-18,36	gold_plating
-mount-pogo-springs-core	#12	12連 ベリリウム銅・ポゴピン内蔵マイク	#001-030	0,0,25.1	29.71,5.74,3.09	0,-25,24	matte_chassis
-mount-contact-pcb	#13	マウント電子接点インターフェース基板	#001-030	0,0,23.2	34.18,14.54,14.9	0,-32,12	pcb_textured
+mount-contact-pins	#11	12ピン金めっきスプリング式ポゴ接点ブロ	#001-030	0,0,26.4	39.11,9.23,6.61	0,-18,36	gold_plating
+mount-pogo-springs-core	#12	12連 ベリリウム銅・ポゴピン内蔵マイク	#001-030	0,0,25.1	29.71,5.75,3.07	0,-25,24	matte_chassis
+mount-contact-pcb	#13	マウント電子接点インターフェース基板	#001-030	0,0,23.2	34.18,14.54,14.9	0,-32,12	gold_plating
 mount-dust-trap-ring	#14	マウント内周上部 迷光防止段差リッジ	#001-030	0,0,26.5	50.61,19.88,3.05	0,18,32	foam_felt_matte
 mount-anti-refl-baffle	#15	多段ナイフエッジ内面遮光バッフル	#001-030	0,0,23.8	54.99,55.11,6.95	0,0,10	foam_felt_matte
 mount-clipin-filter-seat	#16	マウント内リア・クリップインフィルター装	#001-030	0,0,21.6	44.3,32.25,1.4	-26,-14,4	matte_black_anodized
 mount-rect-flare-mask	#17	36×24mm フルサイズ矩形フレアカッ	#001-030	0,0,20.2	56.41,56.61,2.2	0,0,-12	foam_felt_matte
-mount-helicoil-inserts	#18	6点 高張力ステンレス・ヘリサート強化め	#001-030	0,0,24.8	66.93,58.61,5.24	0,0,18	titanium_machined
+mount-helicoil-inserts	#18	6点 高張力ステンレス・ヘリサート強化め	#001-030	0,0,24.8	67,58.61,5.2	0,0,18	titanium_machined
 mount-mg-throat	#19	高剛性チクソモールディング マグネシウム	#001-030	0,0,23.4	85.66,70,7.4	0,0,-2	magnesium_cast
 mount-af-assist-module	#20	前面 AF補助光フレネルレンズ	#001-030	0,0,27	7,12.45,6.43	-32,22,26	matte_chassis
 mount-chassis-interface	#21	フロント骨格結合フランジ・三脚荷重伝達ガ	#001-030	0,0,18.6	78,67.8,6.2	0,0,-24	magnesium_cast
@@ -26,76 +26,76 @@ mount-backing-nut-plate	M24	モノリシック一体ステンレス背面バヨ�
 mount-ptfe-wear-pad	M25	バヨネット爪摺動面・低摩擦PTFE	#001-030	0,0,29.5	57.98,56.95,0.72	0,0,34	ic_epoxy_dark
 mount-contact-ferrite	M26	12ピン高速レンズ通信バス用 コモンモー	#001-030	0,0,22.8	25.8,6.4,5.3	0,-34,-8	becu_spring
 mount-cinnabar-ring	M27	シナバー化粧ベゼルリング	#001-030	0,0,30.9	73.8,73.8,2.47	0,0,82	matte_black_anodized
-mount-index-inlay	M28	白色セラミック樹脂マウント装着指標インレ	#001-030	0,0,31.85	10.5,3.95,3.07	-28,34,80	stainless_machined
+mount-index-inlay	M28	白色セラミック樹脂マウント装着指標インレ	#001-030	0,0,31.85	10.17,3.95,3.01	-28,34,80	stainless_machined
 mount-split-leaf-sp2	M29	補助分割板バネ MB N PLATE	#001-030	0,0,27.8	60.72,26.12,1.48	-38,-2,38	becu_spring
-mount-locating-pin-h	M30	高精度光学芯出しノックピン MB N	#001-030	0,0,26.8	4.7,36.44,8.3	-38,-24,28	iron_magnetic
+mount-locating-pin-h	M30	高精度光学芯出しノックピン MB N	#001-030	0,0,26.8	4.2,36.44,8.3	-38,-24,28	iron_magnetic
 mount-contact-holder-ab	M31	接点ブロック上下噛合樹脂ホルダー MB	#031-060	0,0,25.8	33.36,9.24,4.1	-26,-34,34	magnesium_cast
-mount-contact-screws	M32	接点ブロック専用固定小ねじ M1.7×4	#031-060	0,0,24.6	37.83,8.74,4.57	24,-36,26	stainless_machined
-mount-ll-button-spring	M33	レンズ解除ボタン独立復帰コイルバネ MB	#031-060	0,0,27.2	6.53,6.6,6	46,8,52	magnesium_cast
-mount-lock-eclip-retainer	M34	ロックピン脱落防止Eリング	#031-060	0,0,25.6	4.9,5.3,5.26	44,-22,38	becu_spring
+mount-contact-screws	M32	接点ブロック専用固定小ねじ M1.7×4	#031-060	0,0,24.6	37.83,8.51,4.57	24,-36,26	becu_spring
+mount-ll-button-spring	M33	レンズ解除ボタン独立復帰コイルバネ MB	#031-060	0,0,27.2	6.6,6.6,6.02	46,8,52	magnesium_cast
+mount-lock-eclip-retainer	M34	ロックピン脱落防止Eリング	#031-060	0,0,25.6	4.9,5.3,5.29	44,-22,38	becu_spring
 mount-jack-shield-block	M35	マウント側面電磁遮蔽ブロック MB	#031-060	0,0,22.2	13.61,34,12.35	46,4,-8	emi_shield_metal
 mount-mask-sheet-tape	M36	マウント背面遮光マスクシート MB	#031-060	0,0,19.1	70.5,55.2,0.43	-40,14,-18	matte_black_anodized
-mount-bl-fpc-adhesive	M37	マウント通信BLフレキ絶縁補強シート	#031-060	0,0,22	33.49,14.76,10.63	-24,-40,6	matte_black_anodized
+mount-bl-fpc-adhesive	M37	マウント通信BLフレキ絶縁補強シート	#031-060	0,0,22	33.49,14.76,10.59	-24,-40,6	matte_black_anodized
 mount-bayonet-drain-channel	M38	マウント外周ラビリンス排水溝リング	#031-060	0,0,29.3	72,72,1.98	0,38,58	magnesium_cast
 mount-im-adjust-washer	M39	マウント〜撮像骨格間 フランジバック微調	#031-060	0,0,18	64.2,55.35,1.6	0,0,-34	pin_carrier_gloss
-mount-optical-black-coating	M40	マウント内筒 植毛静電遮光ライナー	#031-060	0,0,24.6	54.34,54.34,6.2	-42,30,10	foam_felt_matte
+mount-optical-black-coating	M40	マウント内筒 植毛静電遮光ライナー	#031-060	0,0,24.6	54.32,54.3,6.2	-42,30,10	foam_felt_matte
 mount-contact-dust-lip	M41	接点ブロック外周 防塵シリコーンリップパ	#031-060	0,0,26.8	35.22,10.08,1.35	22,-40,44	magnesium_cast
-mount-body-cap-interface	M42	防塵バヨネット・ボディキャップ	#031-060	0,0,34.4	72.9,72.4,7.21	0,0,106	magnesium_cast
+mount-body-cap-interface	M42	防塵バヨネット・ボディキャップ	#031-060	0,0,34.4	72.9,72.4,7.25	0,0,106	magnesium_cast
 mount-bayonet-leadin-dlc	M43	バヨネット爪・12°導入マイクロ面取りス	#031-060	0,0,32.1	51.07,51.77,0.72	0,22,118	titanium_machined
 mount-power-load-switch	M44	レンズ給電ライン過電流保護ロードスイッチ	#031-060	0,0,23.8	29.36,7.14,1.47	36,-54,-22	pcb_textured
-mount-flange-datum-pads	M45	マウント座面・3点CNCレーザー干渉フラ	#031-060	0,0,27.6	60.99,53.73,0.77	0,48,36	stainless_machined
-mount-release-wp-boot	M46	レンズ着脱ボタン・蛇腹式防水シリコーンブ	#031-060	0,0,27.6	8.1,8.02,3.15	56,-34,64	magnesium_cast
+mount-flange-datum-pads	M45	マウント座面・3点CNCレーザー干渉フラ	#031-060	0,0,27.6	60.7,53.56,0.74	0,48,36	pin_carrier_gloss
+mount-release-wp-boot	M46	レンズ着脱ボタン・蛇腹式防水シリコーンブ	#031-060	0,0,27.6	8.05,8,3.17	56,-34,64	magnesium_cast
 mount-overtravel-bumper	M47	60°装着終端・衝撃吸収エラストマースト	#031-060	0,0,28.8	4.88,5.73,2.2	46,52,72	elastomer_rubber
 mount-thermal-emi-fingers	M48	マウント内周・レンズ高周波ノイズ	#031-060	0,0,25.4	54.66,54.67,1.45	-48,36,14	becu_spring
-mount-screw-orange-orings	M49	ソニー純正マウント前面6本ねじ専用赤オレ	#031-060	0,0,32.8	65.72,57.33,0.65	0,32,134	matte_black_anodized
+mount-screw-orange-orings	M49	ソニー純正マウント前面6本ねじ専用赤オレ	#031-060	0,0,32.8	65.72,56.92,0.59	0,32,134	matte_black_anodized
 mount-sh1035-shield-board	M50	ソニー純正 SH-1035/SH	#031-060	0,0,21.8	16.21,48.29,0.91	-68,22,-44	polyimide_fpc
 mount-sw1041-front-subboard	M51	ソニー純正 SW-1041 マウント側フ	#031-060	0,0,25.2	20.19,37.61,1.88	68,-42,26	optical_ar_iridescent
 mount-sandwich-inner-collar	M52	Eマウント多層サンドイッチ強化GF	#031-060	0,0,29.6	67.2,67.2,1.85	0,0,88	matte_chassis
 mount-3point-sensor-pillars	M53	撮像ユニット直結表裏一体・3点基準ピラー	#031-060	0,0,17.6	63.9,56.4,9.2	0,-18,-76	magnesium_cast
 mount-self-tap-bosses	M54	マグネシウム専用M1.6×0.65mm	#031-060	0,0,25.8	74.6,65.23,5.4	0,46,-14	magnesium_cast
 mount-pin1-pin10-short-loop	M55	EマウントPin 1–Pin 10	#031-060	0,0,24.6	25.2,6.37,0.64	-42,-56,-8	gold_plating
-mount-snap-ground-wire	M56	マウント金属環〜メイン基板直結ワンタッチ	#031-060	0,0,23	11.4,15.87,16.51	-62,54,-36	pin_carrier_gloss
+mount-snap-ground-wire	M56	マウント金属環〜メイン基板直結ワンタッチ	#031-060	0,0,23	11.33,15.87,16.49	-62,54,-36	pin_carrier_gloss
 mount-rocker-pivot-shaft	M57	レンズ着脱ボタン連動ステンレス支点シャフ	#031-060	0,0,26.2	7.27,9.6,4.34	74,-22,46	magnesium_cast
 mount-631s-lightseal-tape	M58	ソニー純正7-500-004-93極薄マ	#031-060	0,0,21	42.14,57.6,1.38	14,52,-30	foam_felt_matte
 mount-bayonet-anti-galvanic	M59	異種金属電食防止ステンレス〜マグネシウム	#031-060	0,0,28.4	69.6,69.6,0.5	-46,-34,54	membrane_translucent
 mount-baffle-clip-tabs	M60	内面遮光バッフル固定スナップ係止フック爪	#031-060	0,0,22.4	46.1,34.5,4.12	24,34,-22	matte_chassis
-mount-sp755-contact-clip	M61	Sony純正 MB SP ・ N	#061-090	0,0,25.4	27.62,6.17,1.11	-76,-54,48	becu_spring
-mount-plate-a-5300-ring	M62	Sony純正 MB N PLATE A	#061-090	0,0,29.1	67.74,67.74,1.25	-118,42,68	stainless_machined
-mount-lens-lock-holder-3000	M63	Sony純正 HOLDER・ LENS	#061-090	0,0,26.8	11.2,15.4,6.52	52,-8,108	magnesium_cast
-mount-cushion-sheet-5400	M64	Sony純正 MB CUSHION	#061-090	0,0,28.6	84.85,68.8,0.97	-118,38,18	foam_felt_matte
-mount-graphite-heat-top	M65	Sony純正 MB GRAPHITE	#061-090	0,0,24.8	50.1,5.5,12.73	-42,74,24	carbon_fiber
+mount-sp755-contact-clip	M61	Sony純正 MB SP ・ N	#061-090	0,0,25.4	27.51,5.69,1.1	-76,-54,48	becu_spring
+mount-plate-a-5300-ring	M62	Sony純正 MB N PLATE A	#061-090	0,0,29.1	67.6,67.6,1.26	-118,42,68	stainless_machined
+mount-lens-lock-holder-3000	M63	Sony純正 HOLDER・ LENS	#061-090	0,0,26.8	11.1,15.19,6.52	52,-8,108	magnesium_cast
+mount-cushion-sheet-5400	M64	Sony純正 MB CUSHION	#061-090	0,0,28.6	84.74,68.8,0.97	-118,38,18	foam_felt_matte
+mount-graphite-heat-top	M65	Sony純正 MB GRAPHITE	#061-090	0,0,24.8	50,5.4,12.73	-42,74,24	carbon_fiber
 mount-ch-floating-shaft	M66	Sony純正 MB CH FLOATIN	#061-090	0,0,20.6	6.72,25.63,9.2	36,46,-46	stainless_machined
 mount-imager-fix-shafts	M67	Sony純正 IM IMAGER FIX	#061-090	0,0,16.4	61.49,54.6,10.7	0,-18,-112	stainless_machined
-mount-mag-field-cut-plate	M68	Sony純正 MAGNETIC	#061-090	0,0,17.4	74.08,52.15,6.7	-84,-10,-78	iron_magnetic
-mount-hdmi-light-shield	M69	Sony純正 HDMI LIGHT	#061-090	0,0,20.4	19.83,42.77,11.2	-48,8,-36	foam_felt_matte
-mount-cabinet-potting-seal	M70	Sony純正 CABINET F	#061-090	0,0,31.3	84.5,76.48,2.66	-118,-38,96	magnesium_cast
-mount-vl-ir-awb-sensor	M71	前面 可視光＋赤外線ホワイトバランス	#061-090	0,0,27.6	7.88,12.47,5.13	-38,46,56	matte_black_anodized
-mount-front-c5-button	M72	マウント右側面 C5スピードブースト	#061-090	0,0,27.4	9.75,10.72,6.64	34,48,56	stainless_machined
-mount-ir-remote-window	M73	前面マウント横 940 nm 赤外線ワイ	#061-090	0,0,27.2	6.92,10.38,4.88	38,56,44	magnesium_cast
-mount-focal-plane-datum	M74	像面基準マーク連動データムブリッジ	#061-090	0,0,21.2	8.4,7.45,17.14	12,68,-14	titanium_machined
-mount-cine-support-bosses	M75	超望遠・シネマ用 フロントマウント両翼補	#061-090	0,0,24	89.6,20.48,8.24	0,-94,-116	stainless_machined
-mount-mbb-contact-metallurgy	M76	10/12ピン段差 Make-Befor	#061-090	0,0,26.8	32.3,7.19,3.37	-36,-86,58	matte_chassis
-mount-lens-power-pmic	M77	Pin 2 LENS_POWER昇降圧P	#061-090	0,0,22.2	13.76,8.36,3.23	44,-92,20	pcb_textured
-mount-vd-sync-uart-phy	M78	Pin 4 BODY_VD_LENS	#061-090	0,0,22	14.36,8.36,1.86	-48,-94,22	pcb_textured
-mount-xdetect-bridge	M79	Pin 10 LENS_XDETECT抵	#061-090	0,0,22.6	10.48,9.56,1.62	48,-62,34	polyimide_fpc
-mount-zif-mainboard-conn	M80	メイン基板側 16ピン 0.3	#061-090	0,0,15.8	15.08,3.58,6.3	0,-78,-54	ic_epoxy_dark
-mount-mlcc-flyback-bank	M81	4基XDモーター逆起電力吸収 100	#061-090	0,0,22.6	22.12,4.52,2.53	0,-98,-14	ic_epoxy_dark
+mount-mag-field-cut-plate	M68	Sony純正 MAGNETIC	#061-090	0,0,17.4	74,52.11,6.7	-84,-10,-78	iron_magnetic
+mount-hdmi-light-shield	M69	Sony純正 HDMI LIGHT	#061-090	0,0,20.4	19.79,42.71,11.2	-48,8,-36	foam_felt_matte
+mount-cabinet-potting-seal	M70	Sony純正 CABINET F	#061-090	0,0,31.3	84.38,76.48,2.66	-118,-38,96	magnesium_cast
+mount-vl-ir-awb-sensor	M71	前面 可視光＋赤外線ホワイトバランス	#061-090	0,0,27.6	7.88,12.44,5.13	-38,46,56	matte_black_anodized
+mount-front-c5-button	M72	マウント右側面 C5スピードブースト	#061-090	0,0,27.4	9.75,10.6,6.64	34,48,56	stainless_machined
+mount-ir-remote-window	M73	前面マウント横 940 nm 赤外線ワイ	#061-090	0,0,27.2	6.8,10.3,4.88	38,56,44	magnesium_cast
+mount-focal-plane-datum	M74	像面基準マーク連動データムブリッジ	#061-090	0,0,21.2	8.2,7.45,17.04	12,68,-14	titanium_machined
+mount-cine-support-bosses	M75	超望遠・シネマ用 フロントマウント両翼補	#061-090	0,0,24	89.6,20.36,8.24	0,-94,-116	stainless_machined
+mount-mbb-contact-metallurgy	M76	10/12ピン段差 Make-Befor	#061-090	0,0,26.8	32.16,6.74,3.37	-36,-86,58	matte_chassis
+mount-lens-power-pmic	M77	Pin 2 LENS_POWER昇降圧P	#061-090	0,0,22.2	13.6,8.2,3.23	44,-92,20	pcb_textured
+mount-vd-sync-uart-phy	M78	Pin 4 BODY_VD_LENS	#061-090	0,0,22	14.2,8.2,1.84	-48,-94,22	pcb_textured
+mount-xdetect-bridge	M79	Pin 10 LENS_XDETECT抵	#061-090	0,0,22.6	10.32,9.4,1.62	48,-62,34	polyimide_fpc
+mount-zif-mainboard-conn	M80	メイン基板側 16ピン 0.3	#061-090	0,0,15.8	15,3.56,6.3	0,-78,-54	ic_epoxy_dark
+mount-mlcc-flyback-bank	M81	4基XDモーター逆起電力吸収 100	#061-090	0,0,22.6	22,4.42,2.53	0,-98,-14	ic_epoxy_dark
 mount-pilot-spigot-bore	M82	ラジアル心出しパイロット・スピゴット内径	#061-090	0,0,30.1	56.34,56.34,3.69	118,46,84	stainless_machined
 mount-asymmetric-lug-keying	M83	非対称幅バヨネット爪・誤装着防止キーイン	#061-090	0,0,30.3	55.64,55.64,2.17	118,-28,116	becu_spring
-mount-lockpin-ramp-dflat	M84	ロックピン自動退避 35°円錐リードラン	#061-090	0,0,29	8.34,8.34,6.21	56,-42,128	brass_precision
-mount-breakaway-shear-bolts	M85	落下衝撃保護・制御破断シャーネックボルト	#061-090	0,0,31.6	70.76,70.76,4.63	54,78,128	elastomer_rubber
-mount-eptfe-breather-vent	M86	マウント室 撥水微多孔 ePTFE気圧平	#061-090	0,0,23.6	4.65,9.16,10	-42,-22,16	matte_black_anodized
-mount-protective-dust-curtain	M87	レンズ交換時自動閉鎖・専用メカニカル防塵	#061-090	0,0,19.3	50.68,32.16,4.4	78,0,-64	matte_black_anodized
-mount-cryo-datamatrix-metrology	M88	サブゼロ深冷処理マルテンサイト安定化リン	#061-090	0,0,29.8	39.34,9.18,1.51	-48,84,96	titanium_machined
-mount-contact-stray-labyrinth	M89	接点ブロック両翼 迷光遮断ラビリンス隔壁	#061-090	0,0,26	44.89,10.75,3.95	-84,-68,22	foam_felt_matte
-mount-cinema-arc-tilt-shims	M90	プロシネマ用 3分割120°アーチ型チル	#061-090	0,0,27.4	71.49,68.04,0.5	118,42,18	pin_carrier_gloss
-mount-cine-lever-lock-collar	M91	Cinema Line レバーロック回転	#091-100	0,0,32.3	86.67,81.64,5.93	0,0,178	matte_black_anodized
-mount-breech-cam-rollers	M92	レバーロック内蔵 高精度ステンレス球面カ	#091-100	0,0,31.1	72.88,72.56,4.76	118,-30,62	stainless_machined
-mount-electronic-variable-nd	M93	マウント内蔵 電子式可変液晶NDフィルタ	#091-100	0,0,21	48.82,36.2,4.8	-118,-28,-46	titanium_machined
-mount-opl-compensator-glass	M94	光路長焦点シフト補償用クリア光学ガラス	#091-100	0,0,20.5	42.54,30.54,1.18	-118,-28,-88.5	matte_chassis
+mount-lockpin-ramp-dflat	M84	ロックピン自動退避 35°円錐リードラン	#061-090	0,0,29	8.19,8.19,6.21	56,-42,128	brass_precision
+mount-breakaway-shear-bolts	M85	落下衝撃保護・制御破断シャーネックボルト	#061-090	0,0,31.6	70.6,70.6,4.63	54,78,128	elastomer_rubber
+mount-eptfe-breather-vent	M86	マウント室 撥水微多孔 ePTFE気圧平	#061-090	0,0,23.6	4.59,9.16,10	-42,-22,16	matte_black_anodized
+mount-protective-dust-curtain	M87	レンズ交換時自動閉鎖・専用メカニカル防塵	#061-090	0,0,19.3	50.5,32,4.4	78,0,-64	matte_black_anodized
+mount-cryo-datamatrix-metrology	M88	サブゼロ深冷処理マルテンサイト安定化リン	#061-090	0,0,29.8	39.14,9.04,1.51	-48,84,96	titanium_machined
+mount-contact-stray-labyrinth	M89	接点ブロック両翼 迷光遮断ラビリンス隔壁	#061-090	0,0,26	44.73,10.08,3.95	-84,-68,22	foam_felt_matte
+mount-cinema-arc-tilt-shims	M90	プロシネマ用 3分割120°アーチ型チル	#061-090	0,0,27.4	71.45,67.34,0.5	118,42,18	pin_carrier_gloss
+mount-cine-lever-lock-collar	M91	Cinema Line レバーロック回転	#091-100	0,0,32.3	86.67,81.47,5.93	0,0,178	matte_black_anodized
+mount-breech-cam-rollers	M92	レバーロック内蔵 高精度ステンレス球面カ	#091-100	0,0,31.1	72.8,72.4,4.76	118,-30,62	stainless_machined
+mount-electronic-variable-nd	M93	マウント内蔵 電子式可変液晶NDフィルタ	#091-100	0,0,21	48.74,36.1,4.8	-118,-28,-46	titanium_machined
+mount-opl-compensator-glass	M94	光路長焦点シフト補償用クリア光学ガラス	#091-100	0,0,20.5	42.4,30.4,1.18	-118,-28,-88.5	matte_chassis
 mount-pl-modular-adapter-ring	M95	着脱式シネマ PL-to-E モジュラー	#091-100	0,0,33.1	75.12,75.12,5.9	0,0,211	stainless_machined
-mount-cine-metadata-pod	M96	シネマレンズメタデータ接点ポッド	#091-100	0,0,28.4	22.59,10.97,4.3	4,96,62	matte_chassis
-mount-optical-mmwave-link	M97	次世代 光／60 GHzミリ波	#091-100	0,0,28.9	14.83,13.54,4.05	76,86,86	ic_epoxy_dark
-mount-strain-gauge-bridge	M98	3軸ピエゾ抵抗マウント歪みゲージ	#091-100	0,0,24.4	72.64,74.04,1.39	-118,42,-32	polyimide_fpc
-mount-active-piezo-lock	M99	アクティブ圧電マイクロ楔・ゼロガタ電磁ク	#091-100	0,0,28.3	66.36,66.36,2.31	118,-30,12	titanium_machined
-mount-ti-invar-thermal-flange	M100	低熱膨張 チタン／インバー複合フランジ	#091-100	0,0,30.8	69.6,69.6,2.65	118,42,-57	titanium_machined
+mount-cine-metadata-pod	M96	シネマレンズメタデータ接点ポッド	#091-100	0,0,28.4	22.33,10.8,4.3	4,96,62	matte_chassis
+mount-optical-mmwave-link	M97	次世代 光／60 GHzミリ波	#091-100	0,0,28.9	14.56,13.27,4.05	76,86,86	ic_epoxy_dark
+mount-strain-gauge-bridge	M98	3軸ピエゾ抵抗マウント歪みゲージ	#091-100	0,0,24.4	72.6,74,1.39	-118,42,-32	polyimide_fpc
+mount-active-piezo-lock	M99	アクティブ圧電マイクロ楔・ゼロガタ電磁ク	#091-100	0,0,28.3	66.2,66.2,2.31	118,-30,12	titanium_machined
+mount-ti-invar-thermal-flange	M100	低熱膨張 チタン／インバー複合フランジ	#091-100	0,0,30.8	69.4,69.4,2.65	118,42,-57	titanium_machined

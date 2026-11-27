@@ -50,9 +50,15 @@ function makeLazyJsonMetaLoader(
  * are dynamically imported on demand via `await import()` into independent code-split chunks!
  */
 const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
+  welcome: {
+    unitId: 'welcome',
+    declaredPartCount: 220,
+    loadMeta: makeLazyJsonMetaLoader('welcome', () => import('../data/welcome.json')),
+    load: async () => (await import('./welcome')).createWelcomeUnit(),
+  },
   mishoe: {
     unitId: 'mishoe',
-    declaredPartCount: 32,
+    declaredPartCount: 99,
     loadMeta: makeLazyJsonMetaLoader('mishoe', () => import('../data/mi_shoe.json')),
     load: async () => (await import('./mi_shoe')).createMiShoeUnit(),
   },
@@ -77,7 +83,7 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   },
   drybox: {
     unitId: 'drybox',
-    declaredPartCount: 150,
+    declaredPartCount: 186,
     loadMeta: makeLazyJsonMetaLoader('drybox', () => import('../data/drybox.json')),
     load: async () => (await import('./drybox')).createDryboxUnit(),
   },
@@ -133,14 +139,14 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   },
   bionz_v2: {
     unitId: 'bionz_v2',
-    declaredPartCount: 55,
+    declaredPartCount: 105,
     loadMeta: makeLazyJsonMetaLoader('bionz_v2', () => import('../data/bionz_v2.json')),
     load: async () => (await import('./bionz_v2')).createBionzV2Unit(),
   },
   // --- Phase B Batch 4: Full-Frame Sensor, Micro Pixel (V1 / V2) & 6-Volume Semiconductor Fab ---
   sensor: {
     unitId: 'sensor',
-    declaredPartCount: 90,
+    declaredPartCount: 120,
     loadMeta: makeLazyJsonMetaLoader('sensor', () => import('../data/sensor.json')),
     load: async () => (await import('./sensor')).createSensorUnit(),
   },

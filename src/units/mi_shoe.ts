@@ -7,10 +7,31 @@ import { disposeObject3D } from '../core/dispose';
 import {
   getCadTintLuma,
   liftDarkCadTint,
+  MATERIAL_SPECS,
   MaterialBucketKey,
   QUALITY_TIER_CONFIG,
   ResourceCache,
 } from '../core/resource_cache';
+
+function resolveMiShoeLiteBucket(bucket: MaterialBucketKey): MaterialBucketKey {
+  const spec = MATERIAL_SPECS[bucket];
+  if (spec.transparent) return 'optical_glass_clear';
+  if (spec.stdLambert) return 'matte_chassis';
+  return 'metal_hero';
+}
+import {
+  createMiShoeExtraBuildChunks,
+  MISHOE_EXTRA_HERO_EDGE_PARTS,
+  MiShoeInstPoolKey,
+} from '../assemblies/mishoe/miShoeExtraBuilders';
+import {
+  createMiShoeUltraBuildChunks,
+  MISHOE_ULTRA_HERO_EDGE_PARTS,
+} from '../assemblies/mishoe/miShoeUltraParts';
+import {
+  buildMiShoeExtendedChunks,
+  MiShoeInstPoolName,
+} from '../assemblies/mishoe/miShoeExtendedBuilder';
 import {
   OptimizedUnit,
   QualityTier,
@@ -81,6 +102,8 @@ const HERO_EDGE_PARTS = new Set<string>([
   'mi-top-deck-boss-seat',
   'mi-shoe-fix-plate',
   'mi-mainboard-zif-connector',
+  ...MISHOE_EXTRA_HERO_EDGE_PARTS,
+  ...MISHOE_ULTRA_HERO_EDGE_PARTS,
 ]);
 
 // =============================================================================
@@ -243,11 +266,6 @@ function setNodeStaticMatrix(obj: THREE.Object3D): void {
 }
 
 function yieldNextFrame(): Promise<void> {
-  if (typeof requestAnimationFrame === 'function') {
-    return new Promise((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-  }
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
@@ -500,6 +518,24 @@ export class MiShoeUnit implements OptimizedUnit {
         },
         records: [],
       },
+      solder_fillets: {
+        bucket: 'solder_silver',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      ic_chips: {
+        bucket: 'ic_epoxy_dark',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      ceramic_caps: {
+        bucket: 'ceramic_alumina',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
     };
 
     const pIdx = (id: string): number => {
@@ -550,7 +586,7 @@ export class MiShoeUnit implements OptimizedUnit {
     };
 
     const addInst = (
-      poolName: keyof typeof instPoolsDraft,
+      poolName: MiShoeInstPoolKey,
       partId: string,
       localPos: [number, number, number],
       localRot: [number, number, number],
@@ -1156,6 +1192,58 @@ export class MiShoeUnit implements OptimizedUnit {
           addInst('smd_blocks', 'mi-mainboard-zif-connector', [sx, 1.1, 0], [0, 0, 0], [1.6, 1.2, 4.4], 0xd9e0e8, [0.85, 0.65, 2.25]);
         }
       },
+
+      // Chunks 9–17: MI33–MI71 (+39 Ultra-Dissection Precision Parts)
+      ...(() => {
+        const extraCtx = {
+          curveSegments: cfg.curveSegments,
+          radialSegments: cfg.radialSegments,
+          sphereSegments: cfg.sphereSegments,
+          pinPitch: PIN_PITCH,
+          pinX,
+          makeTransformedGeo,
+          makeHorizPlateGeo,
+          addBatchedPiece,
+          addInst,
+          pushPrecisionScrewInstances,
+        };
+        return [
+          ...createMiShoeExtraBuildChunks(extraCtx),
+          ...createMiShoeUltraBuildChunks(extraCtx),
+          ...buildMiShoeExtendedChunks({
+            outerW: OUTER_W,
+            innerW: INNER_W,
+            throatW: THROAT_W,
+            railL: RAIL_L,
+            pinPitch: PIN_PITCH,
+            curveSegments: cfg.curveSegments,
+            radialSegments: cfg.radialSegments,
+            pinX,
+            makeTransformedGeo,
+            makeHorizPlateGeo,
+            addBatchedPiece: (partId, bucket, colorHex, geo, includeInEdges) => {
+              // Skip the 2 IDs already built by PR #42 (MI43 & MI54) and free geometry cleanly
+              if (partId === 'mi-xsync-plunger-spring' || partId === 'mi-top-connect-plate-l') {
+                geo.dispose();
+                return;
+              }
+              addBatchedPiece(partId, bucket, colorHex, geo, includeInEdges);
+            },
+            addInst: (poolName: MiShoeInstPoolName, partId, localPos, localRot, localScale, colorHex, halfExtents) => {
+              if (partId === 'mi-xsync-plunger-spring' || partId === 'mi-top-connect-plate-l') return;
+              const mappedPool: MiShoeInstPoolKey =
+                poolName === 'solder_pads'
+                  ? 'solder_fillets'
+                  : poolName === 'ic_packages'
+                    ? 'ic_chips'
+                    : poolName === 'brass_contacts'
+                      ? 'smd_blocks'
+                      : poolName;
+              addInst(mappedPool, partId, localPos, localRot, localScale, colorHex, halfExtents);
+            },
+          }),
+        ];
+      })(),
     ];
 
     // Execute all geometry build chunks within an 8ms per-frame time slice budget!
@@ -1199,18 +1287,26 @@ export class MiShoeUnit implements OptimizedUnit {
     let totalBatchedItems = 0;
 
     // Build all Tier-1 InstancedMeshes with instanceId -> partId reverse lookup
+    const isStdLite = quality === 'standard_lite';
+    const isUltra = quality === 'ultra';
     this.instancedPools = [];
     for (const [poolId, draft] of Object.entries(instPoolsDraft)) {
       const count = draft.records.length;
       if (count === 0) continue;
 
+      const resolvedBucket = isStdLite ? resolveMiShoeLiteBucket(draft.bucket) : draft.bucket;
       const geo = cache.acquireGeometry(draft.geoKey, draft.geoFactory);
-      const mat = cache.acquireMaterial(draft.bucket, quality, 'solid', this.clippingPlanes);
+      const mat = cache.acquireMaterial(resolvedBucket, quality, 'solid', this.clippingPlanes);
       const mesh = new THREE.InstancedMesh(geo, mat, count);
       mesh.name = `mishoe-inst-${poolId}`;
       mesh.frustumCulled = false;
       mesh.boundingBox = new THREE.Box3();
       mesh.boundingSphere = new THREE.Sphere();
+      if (isUltra) {
+        const opaque = !mat.transparent;
+        mesh.castShadow = opaque;
+        mesh.receiveShadow = opaque;
+      }
       setNodeStaticMatrix(mesh);
 
       const partIndices = new Int32Array(count);
@@ -1264,7 +1360,7 @@ export class MiShoeUnit implements OptimizedUnit {
 
       this.instancedPools.push({
         id: poolId,
-        bucket: draft.bucket,
+        bucket: resolvedBucket,
         mesh,
         count,
         partIndices,
@@ -1279,16 +1375,17 @@ export class MiShoeUnit implements OptimizedUnit {
       estimatedTriangles += countGeometryTriangles(geo) * count;
     }
 
-    // Build all Tier-2 BatchedMeshes grouped by material bucket
+    // Build all Tier-2 BatchedMeshes grouped by material bucket (fused to 3 Mega-Buckets in STD LITE!)
     const piecesByBucket = new Map<MaterialBucketKey, BatchedPieceSpec[]>();
     const partLumaSum = new Float32Array(partCount);
     const partLumaCnt = new Uint16Array(partCount);
     for (let i = 0; i < batchedPieces.length; i++) {
       const bp = batchedPieces[i];
-      let arr = piecesByBucket.get(bp.bucket);
+      const targetBucket = isStdLite ? resolveMiShoeLiteBucket(bp.bucket) : bp.bucket;
+      let arr = piecesByBucket.get(targetBucket);
       if (!arr) {
         arr = [];
-        piecesByBucket.set(bp.bucket, arr);
+        piecesByBucket.set(targetBucket, arr);
       }
       arr.push(bp);
     }
@@ -1305,6 +1402,11 @@ export class MiShoeUnit implements OptimizedUnit {
       batchedMesh.frustumCulled = false;
       batchedMesh.boundingBox = new THREE.Box3();
       batchedMesh.boundingSphere = new THREE.Sphere();
+      if (isUltra) {
+        const opaque = !mat.transparent;
+        batchedMesh.castShadow = opaque;
+        batchedMesh.receiveShadow = opaque;
+      }
       setNodeStaticMatrix(batchedMesh);
 
       const batchIds = new Int32Array(list.length);
@@ -1370,7 +1472,8 @@ export class MiShoeUnit implements OptimizedUnit {
     edgeGroup.name = 'mishoe-v2-edges';
     setNodeStaticMatrix(edgeGroup);
 
-    const thresholdAngle = quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
+    const thresholdAngle =
+      quality === 'standard_lite' ? 40 : quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
     for (let pi = 0; pi < partCount; pi++) {
       const srcGeos = edgeSourceByPart.get(pi);
       if (!srcGeos || srcGeos.length === 0) continue;
@@ -1665,6 +1768,66 @@ export class MiShoeUnit implements OptimizedUnit {
         toPartIdx: idxOf('mi-pins-18to20-ttl-flash'),
         toOffset: [13.5, 0, 0],
       },
+      {
+        colorHex: 0xf97316,
+        speed: 1.18,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-unreg-mosfet-load-switch'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-chip-fuse-16a-decouple'),
+        toOffset: [0, 1.1, 0],
+      },
+      {
+        colorHex: 0x3b82f6,
+        speed: 1.05,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-logic-vdd-315v-ldo'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-audio-mux-emi-choke'),
+        toOffset: [2.0, 1.0, 0],
+      },
+      {
+        colorHex: 0x0ea5e9,
+        speed: 1.4,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-digital-audio-pll-damping'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-pins-8to12-digital-audio'),
+        toOffset: [0, 0, 0],
+      },
+      {
+        colorHex: 0xf43f5e,
+        speed: 1.3,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-flash-bus-level-shifter'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-xsync-igbt-isolator'),
+        toOffset: [0, 1.0, 0],
+      },
+      {
+        colorHex: 0x22c55e,
+        speed: 1.12,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-id-rc-debounce-gvif-mux'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-id-resistor-adc-net'),
+        toOffset: [0, 0.9, 0],
+      },
+      {
+        colorHex: 0x38bdf8,
+        speed: 1.28,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-fpc-ra-copper-hatched-gnd'),
+        fromOffset: [0, -3.5, 0],
+        toPartIdx: idxOf('mi-zif-dual-beam-cam-latch'),
+        toOffset: [0, 0.4, -1.2],
+      },
     ];
 
     const flowLines: THREE.Line[] = [];
@@ -1914,11 +2077,17 @@ export class MiShoeUnit implements OptimizedUnit {
     // Swap cached materials when renderMode changes (ref-counted release + acquire!)
     if (modeChanged && this.cachedCacheRef) {
       const cache = this.cachedCacheRef;
+      const isUltra = this.quality === 'ultra';
       for (let pi = 0; pi < this.instancedPools.length; pi++) {
         const pool = this.instancedPools[pi];
         const prevMat = pool.mesh.material as THREE.Material;
         const nextMat = cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes);
         pool.mesh.material = nextMat;
+        if (isUltra) {
+          const shadowOk = renderMode === 'solid' && !nextMat.transparent;
+          pool.mesh.castShadow = shadowOk;
+          pool.mesh.receiveShadow = shadowOk;
+        }
         cache.releaseMaterialInstance(prevMat);
       }
       for (let bi = 0; bi < this.batchedPools.length; bi++) {
@@ -1926,6 +2095,11 @@ export class MiShoeUnit implements OptimizedUnit {
         const prevMat = pool.mesh.material as THREE.Material;
         const nextMat = cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes);
         pool.mesh.material = nextMat;
+        if (isUltra) {
+          const shadowOk = renderMode === 'solid' && !nextMat.transparent;
+          pool.mesh.castShadow = shadowOk;
+          pool.mesh.receiveShadow = shadowOk;
+        }
         cache.releaseMaterialInstance(prevMat);
       }
     }

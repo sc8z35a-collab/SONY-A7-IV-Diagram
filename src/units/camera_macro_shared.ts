@@ -206,19 +206,28 @@ function disposeUnusedGroup(group: THREE.Object3D): void {
  * Shared composite macro camera builder for both `'integrated'` (8 subsystems / 305 parts)
  * and `'camera_body'` (7 subsystems / 231 parts without lens).
  */
-export function buildCameraMacroRaw(
+export async function buildCameraMacroRaw(
   mats: V2MaterialLibrary,
   clippingPlanes: THREE.Plane[],
-  includeLens: boolean
-): CompiledUnitRawBuild {
+  includeLens: boolean,
+  yieldChunk?: () => Promise<void>
+): Promise<CompiledUnitRawBuild> {
   const lensBuilt = includeLens ? buildLensParts(mats, false) : null;
+  if (yieldChunk) await yieldChunk();
   const mountBuilt = buildMountParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const bodyBuilt = buildBodyParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const evfBuilt = buildEvfParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const shutterBuilt = buildShutterParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const sensorPartsRaw = buildMacroSensorParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const mainboardBuilt = buildMainboardParts(mats, false);
+  if (yieldChunk) await yieldChunk();
   const lcdBuilt = buildLcdParts(mats, false);
+  if (yieldChunk) await yieldChunk();
 
   // Match canonical part-rail ordering (mainboard reversed in integrated/camera_body)
   const mainboardOrdered = [...mainboardBuilt.parts].sort((a, b) => b.order - a.order);
@@ -244,6 +253,7 @@ export function buildCameraMacroRaw(
   disposeUnusedGroup(sensorOv.microExplodeGuides);
   const mainboardOv = createMainboardPhysicsOverlay(clippingPlanes);
   const lcdOv = createLcdPhysicsOverlay(clippingPlanes);
+  if (yieldChunk) await yieldChunk();
 
   const overlayRoot = new THREE.Group();
   overlayRoot.name = includeLens ? 'integrated-overlays' : 'camera-body-overlays';

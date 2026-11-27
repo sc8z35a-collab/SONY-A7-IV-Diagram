@@ -18,7 +18,7 @@ export function createCameraBodyUnit(): OptimizedUnit {
     subsystem: 'body',
     meta: CAMERA_BODY_META,
     heroSpecs: CAMERA_MACRO_HERO_SPECS,
-    buildRaw: (mats, _quality, { clippingPlanes }) =>
-      buildCameraMacroRaw(mats, clippingPlanes, false),
+    buildRaw: (mats, _quality, { clippingPlanes, yieldChunk }) =>
+      buildCameraMacroRaw(mats, clippingPlanes, false, yieldChunk),
   });
 }

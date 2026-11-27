@@ -12,12 +12,12 @@
       "groupKey": "xr-emi",
       "assembledPos": [
         0,
-        9.8,
+        8.99,
         0
       ],
       "explodeOffset": [
         0,
-        56,
+        59,
         0
       ],
       "standaloneOnly": true,
@@ -59,12 +59,12 @@
       "groupKey": "xr-nickel",
       "assembledPos": [
         0,
-        8.6,
+        8.31,
         0
       ],
       "explodeOffset": [
         0,
-        48,
+        51,
         0
       ],
       "standaloneOnly": true,
@@ -106,12 +106,12 @@
       "groupKey": "xr-tim1",
       "assembledPos": [
         0,
-        7.3,
+        6.69,
         0
       ],
       "explodeOffset": [
         0,
-        41.5,
+        44.5,
         0
       ],
       "standaloneOnly": true,
@@ -153,12 +153,12 @@
       "groupKey": "xr-pop",
       "assembledPos": [
         0,
-        6.1,
+        5.32,
         0
       ],
       "explodeOffset": [
         0,
-        35,
+        38,
         0
       ],
       "standaloneOnly": true,
@@ -200,12 +200,12 @@
       "groupKey": "xr-pop",
       "assembledPos": [
         0,
-        5.9,
+        5.05,
         0
       ],
       "explodeOffset": [
         0,
-        29,
+        32,
         0
       ],
       "standaloneOnly": true,
@@ -247,12 +247,12 @@
       "groupKey": "xr-pop",
       "assembledPos": [
         0,
-        4.8,
+        4.02,
         0
       ],
       "explodeOffset": [
         0,
-        23,
+        26.2,
         0
       ],
       "standaloneOnly": true,
@@ -294,12 +294,12 @@
       "groupKey": "xr-tmv",
       "assembledPos": [
         0,
-        3.3,
+        0.665,
         0
       ],
       "explodeOffset": [
         0,
-        17.5,
+        19.2,
         0
       ],
       "standaloneOnly": true,
@@ -341,7 +341,7 @@
       "groupKey": "xr-emc",
       "assembledPos": [
         0,
-        1.7,
+        2,
         0
       ],
       "explodeOffset": [
@@ -388,7 +388,7 @@
       "groupKey": "xr-die",
       "assembledPos": [
         0,
-        1.65,
+        3.02,
         0
       ],
       "explodeOffset": [
@@ -435,7 +435,7 @@
       "groupKey": "xr-slvsec",
       "assembledPos": [
         -6.9,
-        1.1,
+        1.3,
         -6.9
       ],
       "explodeOffset": [
@@ -482,7 +482,7 @@
       "groupKey": "xr-raw",
       "assembledPos": [
         -2.3,
-        1.1,
+        1.3,
         -6.9
       ],
       "explodeOffset": [
@@ -529,7 +529,7 @@
       "groupKey": "xr-nr",
       "assembledPos": [
         2.3,
-        1.1,
+        1.3,
         -6.9
       ],
       "explodeOffset": [
@@ -576,7 +576,7 @@
       "groupKey": "xr-color",
       "assembledPos": [
         6.9,
-        1.1,
+        1.3,
         -6.9
       ],
       "explodeOffset": [
@@ -623,7 +623,7 @@
       "groupKey": "xr-ai",
       "assembledPos": [
         -6.9,
-        1.1,
+        1.3,
         -2.3
       ],
       "explodeOffset": [
@@ -670,7 +670,7 @@
       "groupKey": "xr-arm",
       "assembledPos": [
         -2.3,
-        1.1,
+        1.3,
         -2.3
       ],
       "explodeOffset": [
@@ -717,7 +717,7 @@
       "groupKey": "xr-sa",
       "assembledPos": [
         2.3,
-        1.1,
+        1.3,
         -2.3
       ],
       "explodeOffset": [
@@ -764,7 +764,7 @@
       "groupKey": "xr-video",
       "assembledPos": [
         6.9,
-        1.1,
+        1.3,
         -2.3
       ],
       "explodeOffset": [
@@ -811,7 +811,7 @@
       "groupKey": "xr-audio",
       "assembledPos": [
         -6.9,
-        1.1,
+        1.3,
         2.3
       ],
       "explodeOffset": [
@@ -858,7 +858,7 @@
       "groupKey": "xr-sram",
       "assembledPos": [
         -2.3,
-        1.1,
+        1.3,
         2.3
       ],
       "explodeOffset": [
@@ -905,7 +905,7 @@
       "groupKey": "xr-ddr",
       "assembledPos": [
         2.3,
-        1.1,
+        1.3,
         2.3
       ],
       "explodeOffset": [
@@ -952,7 +952,7 @@
       "groupKey": "xr-c2pa",
       "assembledPos": [
         6.9,
-        1.1,
+        1.3,
         2.3
       ],
       "explodeOffset": [
@@ -999,7 +999,7 @@
       "groupKey": "xr-pcie",
       "assembledPos": [
         -6.9,
-        1.1,
+        1.3,
         6.9
       ],
       "explodeOffset": [
@@ -1046,7 +1046,7 @@
       "groupKey": "xr-display",
       "assembledPos": [
         -2.3,
-        1.1,
+        1.3,
         6.9
       ],
       "explodeOffset": [
@@ -1093,7 +1093,7 @@
       "groupKey": "xr-usb",
       "assembledPos": [
         2.3,
-        1.1,
+        1.3,
         6.9
       ],
       "explodeOffset": [
@@ -1140,7 +1140,7 @@
       "groupKey": "xr-pll",
       "assembledPos": [
         6.9,
-        1.1,
+        1.3,
         6.9
       ],
       "explodeOffset": [
@@ -1187,7 +1187,7 @@
       "groupKey": "xr-feol",
       "assembledPos": [
         0,
-        0.35,
+        0.32,
         0
       ],
       "explodeOffset": [
@@ -1280,8 +1280,8 @@
       "swatchColor": "#7c3aed",
       "groupKey": "xr-secondary",
       "assembledPos": [
-        13.2,
-        0.8,
+        13.55,
+        -0.18,
         0
       ],
       "explodeOffset": [
@@ -1328,7 +1328,7 @@
       "groupKey": "xr-silicon",
       "assembledPos": [
         0,
-        -1.3,
+        -1.2,
         0
       ],
       "explodeOffset": [
@@ -1375,7 +1375,7 @@
       "groupKey": "xr-c4",
       "assembledPos": [
         0,
-        -2.1,
+        -1.91,
         0
       ],
       "explodeOffset": [
@@ -1422,7 +1422,7 @@
       "groupKey": "xr-capillary",
       "assembledPos": [
         0,
-        -2.3,
+        -1.99,
         0
       ],
       "explodeOffset": [
@@ -1469,11 +1469,11 @@
       "groupKey": "xr-esicap",
       "assembledPos": [
         0,
-        -7.8,
+        -7.3,
         0
       ],
       "explodeOffset": [
-        14,
+        24,
         -49,
         0
       ],
@@ -1516,7 +1516,7 @@
       "groupKey": "xr-abf",
       "assembledPos": [
         0,
-        -3.4,
+        -2.99,
         0
       ],
       "explodeOffset": [
@@ -1563,7 +1563,7 @@
       "groupKey": "xr-bt",
       "assembledPos": [
         0,
-        -4.9,
+        -4.59,
         0
       ],
       "explodeOffset": [
@@ -1610,7 +1610,7 @@
       "groupKey": "xr-abf",
       "assembledPos": [
         0,
-        -6.4,
+        -6.32,
         0
       ],
       "explodeOffset": [
@@ -1657,7 +1657,7 @@
       "groupKey": "xr-sac305",
       "assembledPos": [
         0,
-        -7.65,
+        -7.66,
         0
       ],
       "explodeOffset": [
@@ -1703,8 +1703,8 @@
       "swatchColor": "#f59e0b",
       "groupKey": "xr-pmic",
       "assembledPos": [
-        -23.2,
-        -5.2,
+        -24.4,
+        -7.9,
         0
       ],
       "explodeOffset": [
@@ -1750,9 +1750,9 @@
       "swatchColor": "#eab308",
       "groupKey": "xr-tcxo",
       "assembledPos": [
-        19.8,
-        -5.2,
-        12.2
+        22.8,
+        -8.05,
+        13
       ],
       "explodeOffset": [
         28,
@@ -1796,9 +1796,9 @@
       "swatchColor": "#8b5cf6",
       "groupKey": "xr-qspi",
       "assembledPos": [
-        20.6,
-        -5.2,
-        -10.8
+        23.6,
+        -8.04,
+        -11.4
       ],
       "explodeOffset": [
         30,
@@ -1843,12 +1843,12 @@
       "groupKey": "xr-sigma",
       "assembledPos": [
         0,
-        10.15,
-        0
+        9.65,
+        -2.3
       ],
       "explodeOffset": [
         0,
-        62,
+        66,
         -24
       ],
       "standaloneOnly": true,
@@ -1889,8 +1889,8 @@
       "groupKey": "xr-slvs",
       "assembledPos": [
         -4.2,
-        -5.2,
-        21.8
+        -7.97,
+        23.3
       ],
       "explodeOffset": [
         -10,
@@ -1934,8 +1934,8 @@
       "swatchColor": "#0284c7",
       "groupKey": "xr-hdmi21",
       "assembledPos": [
-        22.4,
-        -5.2,
+        24,
+        -7.99,
         1.4
       ],
       "explodeOffset": [
@@ -1980,9 +1980,9 @@
       "swatchColor": "#6366f1",
       "groupKey": "xr-ddr5",
       "assembledPos": [
-        -22.8,
-        -5.2,
-        -19.2
+        -24.4,
+        -7.99,
+        -20
       ],
       "explodeOffset": [
         -38,
@@ -2027,13 +2027,13 @@
       "groupKey": "xr-die",
       "assembledPos": [
         0,
-        1.62,
+        2.28,
         0
       ],
       "explodeOffset": [
         0,
-        11.2,
-        19
+        14.5,
+        26
       ],
       "standaloneOnly": true,
       "title": "XR44. オンダイ多点ジャンクション温度センス・ダイオード群 ＆ 熱テレメトリリング",
@@ -2073,7 +2073,7 @@
       "groupKey": "xr-bga",
       "assembledPos": [
         0,
-        -6.15,
+        -7.145,
         0
       ],
       "explodeOffset": [
@@ -2119,8 +2119,8 @@
       "groupKey": "xr-jtag",
       "assembledPos": [
         10.6,
-        -5.2,
-        -21.2
+        -8.02,
+        -22.4
       ],
       "explodeOffset": [
         18,
@@ -2165,13 +2165,13 @@
       "groupKey": "xr-die",
       "assembledPos": [
         0,
-        1.38,
+        1.34,
         0
       ],
       "explodeOffset": [
         0,
-        5.2,
-        -22
+        8.8,
+        -26
       ],
       "standaloneOnly": true,
       "title": "XR47. ダイ外周 HBM/CDM 静電気保護（ESD）クランプダイオード ＆ I/Oパッドリング",
@@ -2212,7 +2212,7 @@
       "groupKey": "xr-mtcmos",
       "assembledPos": [
         0,
-        0.88,
+        0.97,
         0
       ],
       "explodeOffset": [
@@ -2258,8 +2258,8 @@
       "swatchColor": "#64748b",
       "groupKey": "xr-mbist",
       "assembledPos": [
-        -13.2,
-        0.8,
+        -13.55,
+        0.25,
         0
       ],
       "explodeOffset": [
@@ -2306,12 +2306,12 @@
       "groupKey": "xr-mg",
       "assembledPos": [
         0,
-        12.25,
+        11.05,
         0
       ],
       "explodeOffset": [
         0,
-        74,
+        76,
         0
       ],
       "standaloneOnly": true,
@@ -2400,7 +2400,7 @@
       "groupKey": "xr-backside",
       "assembledPos": [
         0,
-        -11.4,
+        -10.74,
         0
       ],
       "explodeOffset": [
@@ -2447,7 +2447,7 @@
       "groupKey": "xr-dedicated",
       "assembledPos": [
         -37.2,
-        -5.2,
+        -7.97,
         -16.5
       ],
       "explodeOffset": [
@@ -2494,7 +2494,7 @@
       "groupKey": "xr-wifi6e",
       "assembledPos": [
         36.4,
-        -5.2,
+        -7.97,
         -16.2
       ],
       "explodeOffset": [
@@ -2541,7 +2541,7 @@
       "groupKey": "xr-usbc",
       "assembledPos": [
         36.4,
-        -5.2,
+        -7.97,
         0.4
       ],
       "explodeOffset": [
@@ -2588,7 +2588,7 @@
       "groupKey": "xr-usbc",
       "assembledPos": [
         -37.2,
-        -5.2,
+        -7.95,
         0.6
       ],
       "explodeOffset": [
@@ -2635,7 +2635,7 @@
       "groupKey": "xr-pcie",
       "assembledPos": [
         36.4,
-        -5.2,
+        -7.97,
         14.6
       ],
       "explodeOffset": [
@@ -2682,8 +2682,8 @@
       "groupKey": "xr-mipi",
       "assembledPos": [
         16.8,
-        -5.2,
-        22.6
+        -7.97,
+        23.4
       ],
       "explodeOffset": [
         26,
@@ -2728,8 +2728,8 @@
       "swatchColor": "#a855f7",
       "groupKey": "xr-akm",
       "assembledPos": [
-        -24.2,
-        -5.2,
+        -24.6,
+        -7.97,
         20.6
       ],
       "explodeOffset": [
@@ -2776,7 +2776,7 @@
       "groupKey": "xr-mishoe",
       "assembledPos": [
         -37.6,
-        -5.2,
+        -7.97,
         13.8
       ],
       "explodeOffset": [
@@ -2823,7 +2823,7 @@
       "groupKey": "xr-emount",
       "assembledPos": [
         -10.8,
-        -5.2,
+        -7.97,
         32.4
       ],
       "explodeOffset": [
@@ -2870,7 +2870,7 @@
       "groupKey": "xr-genlock",
       "assembledPos": [
         2.8,
-        -5.2,
+        -7.97,
         32.4
       ],
       "explodeOffset": [
@@ -2917,8 +2917,8 @@
       "groupKey": "xr-ibis",
       "assembledPos": [
         -8,
-        -5.2,
-        -22.4
+        -7.97,
+        -22.8
       ],
       "explodeOffset": [
         -12,
@@ -2964,7 +2964,7 @@
       "groupKey": "xr-epson",
       "assembledPos": [
         16.6,
-        -5.2,
+        -7.97,
         -32
       ],
       "explodeOffset": [
@@ -3011,7 +3011,7 @@
       "groupKey": "xr-shutter",
       "assembledPos": [
         2.2,
-        -5.2,
+        -7.97,
         -32
       ],
       "explodeOffset": [
@@ -3058,7 +3058,7 @@
       "groupKey": "xr-rtc",
       "assembledPos": [
         -12.4,
-        -5.2,
+        -7.97,
         -32
       ],
       "explodeOffset": [
@@ -3105,7 +3105,7 @@
       "groupKey": "xr-battery",
       "assembledPos": [
         -37.6,
-        -5.2,
+        -7.97,
         26.4
       ],
       "explodeOffset": [
@@ -3152,7 +3152,7 @@
       "groupKey": "xr-thermal",
       "assembledPos": [
         -27,
-        -5.2,
+        -7.97,
         -32
       ],
       "explodeOffset": [
@@ -3199,7 +3199,7 @@
       "groupKey": "xr-watchdog",
       "assembledPos": [
         30.8,
-        -5.2,
+        -7.97,
         -32
       ],
       "explodeOffset": [
@@ -3246,7 +3246,7 @@
       "groupKey": "xr-active",
       "assembledPos": [
         22.2,
-        -5.2,
+        -7.9,
         32.6
       ],
       "explodeOffset": [

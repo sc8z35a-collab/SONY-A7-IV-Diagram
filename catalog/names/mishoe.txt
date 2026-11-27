@@ -1,9 +1,9 @@
-# mishoe (32p | slug: mi-* | next: MI33 | unit: src/units/mi_shoe.ts | data: src/data/mi_shoe.json)
-[top_protection] MI01:純正シューキャップ, MI02:アクセサリー側 防塵防滴シリ
-[shell_rails] MI03:MIシュー シェルプレート, MI04:3点ロックピン嵌合穴, MI05:MIシュー スクリューカバー, MI07:MIシュー スプリングプレー
-[fasteners] MI06:M1.4極小カバー固定ネジ, MI08:MIシュー4点締結, MI26:裏側アース＆筐体結合精密ネジ
-[iso518_contacts] MI09:ISO 518 左右フレーム, MI10:中央 ISO 518 X
-[front_21pin_array] MI11:前方 21極インターフェース, MI12:Pin 1・2・3：アクセサ, MI13:Pin 4・5・6：アナログ, MI14:Pin 7 ＆ Pin, MI15:Pin 8〜12：デジタルオ, MI16:Pin 13：安定化, MI17:Pin 14, MI18:Pin 17：大電流バッテリ, MI19:Pin 18・19, MI20:Pin 21：大電流パワーグ, MI21:21連りん青銅カンチレバー金
-[flex_sealing] MI22:純正 MIS-2006, MI23:MIシュー FPC防塵防滴シ
-[deck_chassis] MI24:マグネシウム天面カバー, MI25:裏側 MIシュー フィックス, MI31:MIシュー直下 銅箔EMIシ
-[electronics_zif] MI27:21極全レーン 超低容量ES, MI28:中央X-Sync 高耐圧IG, MI29:アクセサリーID判別, MI30:EXT_LINE_SEL, MI32:メイン基板直結 24極ファイ
+# mishoe (99p | slug: mi-* | next: MI100 | unit: src/units/mi_shoe.ts | data: src/data/mi_shoe.json)
+[top_protection] MI01:純正シューキャップ, MI02:アクセサリー側 防塵防滴シリ, MI33:シューキャップ裏面, MI34:強化金属MIフット嵌合基準面, MI35:クイックロック昇降ピン, MI36:防塵防滴シリコーンスカート, MI63:マイク側 振動減衰エラストマ, MI72:純正シューキャップ内面, MI73:天面カバー外周 防塵防滴スカ
+[shell_rails] MI03:MIシュー シェルプレート, MI04:3点ロックピン嵌合穴, MI05:MIシュー スクリューカバー, MI07:MIシュー スプリングプレー, MI37:ISO 518 レール導入テ, MI38:スクリューカバー前方係止爪, MI39:板バネ過屈曲防止ストッパー, MI64:前方左右 2点補助ロックピン, MI74:MIシュー 絶縁樹脂ベースキ, MI75:ISO 518:2006, MI76:スクリューカバー前方アンダー, MI77:スプリングプレート過圧縮リミ
+[fasteners] MI06:M1.4極小カバー固定ネジ, MI08:MIシュー4点締結, MI26:裏側アース＆筐体結合精密ネジ, MI40:4点締結 M1.7, MI41:ネジ緩み止めマイクロカプセル, MI42:M1.4 極小カバーネジ受け, MI78:M1.7 4点締結ネジ, MI79:フィックスプレート一体バーリ, MI80:M1.4 ユーロネジ受側イン
+[iso518_contacts] MI09:ISO 518 左右フレーム, MI10:中央 ISO 518 X, MI43:中央X接点 内部リン青銅コイ, MI44:中央X接点 高耐圧LCP絶縁, MI45:左右フレームGND, MI81:X-Sync 高耐圧沿面距離, MI82:ISO 518 フレームグラ
+[front_21pin_array] MI11:前方 21極インターフェース, MI12:Pin 1・2・3：アクセサ, MI13:Pin 4・5・6：アナログ, MI14:Pin 7 ＆ Pin, MI15:Pin 8〜12：デジタルオ, MI16:Pin 13：安定化, MI17:Pin 14, MI18:Pin 17：大電流バッテリ, MI19:Pin 18・19, MI20:Pin 21：大電流パワーグ, MI21:21連りん青銅カンチレバー金, MI46:21極コネクタ外周, MI47:前方21極コネクタ, MI48:21極ファインピッチ, MI49:21極接点 摺動多層めっき構, MI65:21極ホットプラグ保護, MI83:21極コネクタ 高耐熱LCP, MI84:21極コネクタ 0.8mmピ, MI85:21極コネクタ背面, MI86:21極コネクタ外周, MI87:21連カンチレバー接点
+[flex_sealing] MI22:純正 MIS-2006, MI23:MIシュー FPC防塵防滴シ, MI50:MIS-2006 コネクタ裏, MI51:MIS-2006 黒色ポリイ, MI52:MIS-2006 終端, MI53:純正ブラック絶縁固定テープ, MI66:MIS-2006 圧延焼鈍銅, MI88:MIシュー FPC防水シート, MI89:MIシュー FPC防水シート, MI90:MIS-2006 両面ハッチ, MI91:MIS-2006 終端, MI92:MIS-2006 屈曲部保護
+[deck_chassis] MI24:マグネシウム天面カバー, MI25:裏側 MIシュー フィックス, MI31:MIシュー直下 銅箔EMIシ, MI54:トップコネクトプレート L, MI55:MIシュー直下 EVFプロテ, MI56:メイン基板上部 磁気遮断プレ, MI67:天面防塵防滴フォームクッショ, MI68:EVF／MIシュー境界, MI93:メイン基板上面 難燃PET絶, MI94:メイン基板直上 磁気シールド, MI95:天面台座ボス周縁 キャピラリ
+[electronics_zif] MI27:21極全レーン 超低容量ES, MI28:中央X-Sync 高耐圧IG, MI29:アクセサリーID判別, MI30:EXT_LINE_SEL, MI32:メイン基板直結 24極ファイ, MI57:Pin 17 UNREG, MI58:Sony純正 1.6 A /, MI59:Pin 13 LOGIC_V, MI60:48 kHz / 24, MI61:アナログマイク プラグインパ, MI62:フラッシュ高速通信双方向レベ, MI69:24極 0.4 mm, MI70:ID1〜ID3 RCチャタリ, MI71:SY-1122 メイン基板, MI96:Pin 17 大電流, MI97:Pin 13 安定化, MI98:デジタルオーディオ I2S, MI99:ADI / P-TTL /

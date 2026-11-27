@@ -1,10 +1,10 @@
 id	code	name	group	pos	size	exp	mat
 aperture-mask	#01	センサー遮光マスク	#001-030	0,0,7.8	50,40,2.09	0,0,82	foam_felt_matte
-sswf-piezo	#02	超音波ダストリダクション振動ガラス板	#001-030	0,0,6.2	44.08,31.33,0.92	0,0,72	optical_glass_ed
-sensor-sswf-holder	#03	SSWF 超音波防振サスペンションホルダ	#001-030	0,0,5.75	46.2,34.78,1.16	0,0,62	elastomer_rubber
-sensor-pzt-bar	#04	積層圧電セラミック超音波アクチュエータ	#001-030	0,-14.1,6.88	43.05,5.18,3.61	0,-24,72	solder_silver
-olpf-16pt	#05	前面・人工水晶複屈折光学ローパスフィルタ	#001-030	0,0,4.95	40.85,29.07,0.7	0,0,52	optical_glass_ed
-sensor-qwp-plate	#06	1/4波長位相差板	#001-030	0,0,4.3	40.9,29.12,0.66	0,0,42	optical_glass_ed
+sswf-piezo	#02	超音波ダストリダクション振動ガラス板	#001-030	0,0,6.2	44,31.25,0.92	0,0,72	optical_glass_ed
+sensor-sswf-holder	#03	SSWF 超音波防振サスペンションホルダ	#001-030	0,0,5.75	46.2,34.73,1.16	0,0,62	elastomer_rubber
+sensor-pzt-bar	#04	積層圧電セラミック超音波アクチュエータ	#001-030	0,-14.1,6.88	42.9,5.05,3.61	0,-24,72	solder_silver
+olpf-16pt	#05	前面・人工水晶複屈折光学ローパスフィルタ	#001-030	0,0,4.95	40.85,29.04,0.7	0,0,52	optical_glass_ed
+sensor-qwp-plate	#06	1/4波長位相差板	#001-030	0,0,4.3	40.9,29.09,0.66	0,0,42	optical_glass_ed
 ir-cut-filter	#07	ハイブリッド赤外線吸収ガラス	#001-030	0,0,3.25	42.2,30.2,0.86	0,0,32	matte_chassis
 cover-glass	#08	低α線光学カバーガラス	#001-030	0,0,2.05	47.4,36.8,0.74	0,0,22	iron_magnetic
 cmos-die	#09	第1ウェハー：フルサイズ・グローバルシャ	#001-030	0,0,0.97	40.5,28.5,0.33	0,0,12	silicon_hero
@@ -15,77 +15,107 @@ wire-bonds	#13	超高密度 99.99% 純金 低ループ	#001-030	0,0,0.55	44.08,3
 ceramic-package	#14	高剛性アルミナ12層 HTCC	#001-030	0,0,-0.55	49.72,39.2,3.26	0,0,-27	gold_plating
 sensor-cuw-slug	#15	タングステン銅 熱膨張整合ヒートスラッグ	#001-030	0,0,-1.1	37.6,25.6,1.31	0,0,-35	gold_plating
 sensor-pcb	#16	高多層センサーリジッド基板	#001-030	0,0,-2.45	56,45,2.57	0,0,-44	ic_epoxy_dark
-slvs-fpc	#17	SLVS-EC v3 超高速シールド	#001-030	0,0,-2.45	76.04,19.56,7.81	0,0,-52	polyimide_fpc
-sensor-temp-ntc-board	#18	高精度 NTC センサー温度計測サブ基板	#001-030	0,0,-2.55	14.51,6.32,1.62	-36,14,-44	pcb_textured
+slvs-fpc	#17	SLVS-EC v3 超高速シールド	#001-030	0,0,-2.45	76.04,19.4,7.81	0,0,-52	polyimide_fpc
+sensor-temp-ntc-board	#18	高精度 NTC センサー温度計測サブ基板	#001-030	0,0,-2.55	14.4,6.2,1.61	-36,14,-44	pcb_textured
 ibis-carrier	#19	5軸IBIS可動マグネシウム合金ステージ	#001-030	0,0,-4.3	76,62,2.89	0,0,-60	silicon_hero
 sensor-front-yoke-plate	#20	IBIS 磁気回路・前面軟鉄フラックス閉	#001-030	0,0,-3.35	68.41,49.6,4.46	0,0,-68	titanium_machined
-sensor-vcm-coils	#21	3軸独立・空芯平面銅ボイスコイルモーター	#001-030	0,0,-5.08	62.59,44.54,1.76	0,0,-76	copper_coil
-sensor-hall-pcb	#22	3軸サブミクロン・ホール効果位置センサー	#001-030	0,0,-5.05	54.4,54.99,1.27	0,30,-76	ic_epoxy_dark
+sensor-vcm-coils	#21	3軸独立・空芯平面銅ボイスコイルモーター	#001-030	0,0,-5.08	62.56,44.51,1.76	0,0,-76	copper_coil
+sensor-hall-pcb	#22	3軸サブミクロン・ホール効果位置センサー	#001-030	0,0,-5.05	54.36,54.96,1.25	0,30,-76	ic_epoxy_dark
 ceramic-balls	#23	3点窒化ケイ素セラミックボール	#001-030	0,0,-5.7	64.86,51.81,3.32	0,0,-86	becu_spring
-sensor-preload-plates	#24	磁気プリロード強磁性吸引プレート	#001-030	0,0,-4.75	67.92,40.42,1.77	0,-32,-86	stainless_machined
+sensor-preload-plates	#24	磁気プリロード強磁性吸引プレート	#001-030	0,0,-4.75	67.75,40.2,1.77	0,-32,-86	stainless_machined
 sensor-ibis-stopper-bumper	#25	IBIS 4隅プログレッシブ・エラストマ	#001-030	0,0,-5.85	81.12,56.12,3.69	34,-22,-86	elastomer_rubber
-sensor-ibis-lock	#26	電源OFF時メカニカルIBISロック機構	#001-030	-30.5,21.5,-6.1	15.42,13.25,6.31	-28,24,-96	stainless_machined
-sensor-n52-magnets	#27	2極ネオジム永久磁石アレイ	#001-030	0,0,-6.05	65.5,47.45,1.92	0,0,-98	iron_magnetic
+sensor-ibis-lock	#26	電源OFF時メカニカルIBISロック機構	#001-030	-30.5,21.5,-6.1	15.2,13.16,6.31	-28,24,-96	stainless_machined
+sensor-n52-magnets	#27	2極ネオジム永久磁石アレイ	#001-030	0,0,-6.05	65.3,47.25,1.92	0,0,-98	iron_magnetic
 ibis-base-magnets	#28	IBIS固定マグネシウム・ベースシャーシ	#001-030	0,0,-7.4	82,69.2,2.69	0,0,-109	stainless_machined
-sensor-tilt-springs	#29	3点フランジバック	#001-030	0,0,-7.4	79.21,66.9,7.99	0,0,-120	stainless_machined
-sensor-tim-pad	#30	高熱伝導シリコーン放熱界面パッド	#001-030	0,0,-3.75	30.66,20,1.24	0,0,-131	silicon_hero
+sensor-tilt-springs	#29	3点フランジバック	#001-030	0,0,-7.4	79.21,66.9,8.04	0,0,-120	stainless_machined
+sensor-tim-pad	#30	高熱伝導シリコーン放熱界面パッド	#001-030	0,0,-3.75	30.6,20,1.24	0,0,-131	silicon_hero
 sigma-graphite	#31	Σ字型・異方性人工グラファイトフレキシブ	#031-060	0,0,-7.3	27.05,17.89,6.67	0,0,-142	optical_ar_iridescent
-sensor-heat-transfer-tapes	#32	センサー周囲 銅箔ラミネート・グラファイ	#031-060	0,0,-8.65	73.95,59.11,1.86	36,18,-148	carbon_fiber
-sensor-b2b-rf-bracket	#33	SLVS-EC B2Bコネクタ固定クラン	#031-060	0,0,-11.35	67.03,28.23,2.4	-36,-16,-150	ic_epoxy_dark
+sensor-heat-transfer-tapes	#32	センサー周囲 銅箔ラミネート・グラファイ	#031-060	0,0,-8.65	73.89,59.05,1.84	36,18,-148	carbon_fiber
+sensor-b2b-rf-bracket	#33	SLVS-EC B2Bコネクタ固定クラン	#031-060	0,0,-11.35	66.95,28.1,2.4	-36,-16,-150	ic_epoxy_dark
 sensor-copper-sink	#34	背面・純銅マイクロフィンヒートシンク	#031-060	0,0,-10.85	48,36,2.15	0,0,-156	copper_thermal
-sensor-wrap-fpc-bracket	S35	センサー背面回り込みSLVS-ECフレキ	#031-060	0,0,-12.2	54.76,16.76,4.97	0,-26,-162	becu_spring
+sensor-wrap-fpc-bracket	S35	センサー背面回り込みSLVS-ECフレキ	#031-060	0,0,-12.2	54.6,16.76,4.97	0,-26,-162	becu_spring
 sensor-torx-spring-cal	S36	工場レーザー干渉計3点フランジバック傾き	#031-060	0,0,-8.2	81.07,68.8,2.48	38,28,-124	brass_precision
-sensor-perimeter-graphite	S37	IBIS可動ステージ追従型・25μm極薄	#031-060	0,0,-2.2	76.66,39.24,2.12	-42,24,-46	carbon_fiber
-sensor-analog-ldo-rail	S38	センサー基板直載・超低ノイズアナログLD	#031-060	0,0,-1.65	42.1,6.79,1.02	40,-18,-32	ic_epoxy_dark
+sensor-perimeter-graphite	S37	IBIS可動ステージ追従型・25μm極薄	#031-060	0,0,-2.2	76.6,39.2,2.1	-42,24,-46	carbon_fiber
+sensor-analog-ldo-rail	S38	センサー基板直載・超低ノイズアナログLD	#031-060	0,0,-1.65	42,6.74,1.02	40,-18,-32	ic_epoxy_dark
 sensor-antistatic-ring	S39	撮像室前面ITO導電帯電防止ダストリペラ	#031-060	0,0,7.1	51.63,35.8,1.09	0,32,74	becu_spring
-sensor-ibis-optical-ref	S40	IBIS原点絶対位置検証用 光学フォトイ	#031-060	0,0,-6.4	10.62,8.32,6.08	-38,-28,-98	pcb_textured
-sensor-glass-retainer-plate	S41	光学フィルター押さえバネ板 IM	#031-060	0,0,6.55	43.18,30.88,1.9	44,18,78	matte_black_anodized
-sensor-im-mask-plate	S42	撮像室・超薄黒色遮光マスク板 IM	#031-060	0,0,5.45	40.84,29.24,0.28	-44,16,66	foam_felt_matte
-sensor-dust-catcher-tape	S43	超音波落下ホコリ捕獲・粘着ダストキャッチ	#031-060	0,-17.2,6.5	42.68,3.12,1.31	-32,-32,72	becu_spring
-sensor-optical-cement-layers	S44	光学フィルター積層・屈折率整合UV光学接	#031-060	0,0,4.1	39.09,28.07,1.42	46,-14,46	matte_chassis
-sensor-filter-spacer-sheet	S45	フィルター〜カバーガラス間・防塵ギャップ	#031-060	0,0,2.65	41.88,30.28,0.57	-46,-16,30	foam_felt_matte
-sensor-piezo-drive-fpc	S46	超音波PZT圧電バー専用・高電圧フレキシ	#031-060	15.5,-14.2,6.4	11.46,4.56,6.57	34,-32,64	gold_plating
-sensor-hermetic-frit-n2	S47	カバーガラス気密低融点ガラスフリット封止	#031-060	0,0,1.52	42.39,30.16,0.74	46,22,18	iron_magnetic
-sensor-ob-shield-border	S48	撮像ダイ外周・オプティカルブラック完全遮	#031-060	0,0,1.06	38.2,26.2,0.24	-46,22,10	titanium_machined
-sensor-lga-solder-underfill	S49	セラミックパッケージ底面 320ピンLG	#031-060	0,0,-1.55	45.44,33.04,0.6	-48,-14,-22	solder_silver
-sensor-mlcc-decoupling-bank	S50	センサー基板裏・超低ESL積層セラミック	#031-060	0,0,-2.95	32.04,22.04,0.81	46,20,-34	solder_silver
-sensor-isl-fpc	S51	IBIS位置検知・ホール制御専用フレキ	#031-060	-22,2,-4.4	9.27,23.89,21.04	-54,4,-64	polyimide_fpc
-sensor-isd-fpc	S52	IBIS大電流ボイスコイル駆動専用フレキ	#031-060	22.5,-2,-4.6	7.9,24.63,13.59	54,4,-64	polyimide_fpc
-sensor-tex-module	S53	IBIS手ブレ補正統合モジュール骨格	#031-060	0,0,-6.5	65.76,52.2,2.6	0,44,-92	stainless_machined
+sensor-ibis-optical-ref	S40	IBIS原点絶対位置検証用 光学フォトイ	#031-060	0,0,-6.4	10.5,8.2,6.08	-38,-28,-98	pcb_textured
+sensor-glass-retainer-plate	S41	光学フィルター押さえバネ板 IM	#031-060	0,0,6.55	43.12,30.8,1.9	44,18,78	matte_black_anodized
+sensor-im-mask-plate	S42	撮像室・超薄黒色遮光マスク板 IM	#031-060	0,0,5.45	40.8,29.2,0.28	-44,16,66	foam_felt_matte
+sensor-dust-catcher-tape	S43	超音波落下ホコリ捕獲・粘着ダストキャッチ	#031-060	0,-17.2,6.5	42.6,3,1.31	-32,-32,72	becu_spring
+sensor-optical-cement-layers	S44	光学フィルター積層・屈折率整合UV光学接	#031-060	0,0,4.1	39.05,28.03,1.42	46,-14,46	matte_chassis
+sensor-filter-spacer-sheet	S45	フィルター〜カバーガラス間・防塵ギャップ	#031-060	0,0,2.65	41.8,30.2,0.57	-46,-16,30	foam_felt_matte
+sensor-piezo-drive-fpc	S46	超音波PZT圧電バー専用・高電圧フレキシ	#031-060	15.5,-14.2,6.4	11.4,4.5,6.57	34,-32,64	gold_plating
+sensor-hermetic-frit-n2	S47	カバーガラス気密低融点ガラスフリット封止	#031-060	0,0,1.52	42.31,30,0.74	46,22,18	iron_magnetic
+sensor-ob-shield-border	S48	撮像ダイ外周・オプティカルブラック完全遮	#031-060	0,0,1.06	38.17,26.17,0.24	-46,22,10	titanium_machined
+sensor-lga-solder-underfill	S49	セラミックパッケージ底面 320ピンLG	#031-060	0,0,-1.55	45.2,32.8,0.6	-48,-14,-22	solder_silver
+sensor-mlcc-decoupling-bank	S50	センサー基板裏・超低ESL積層セラミック	#031-060	0,0,-2.95	32,22,0.81	46,20,-34	solder_silver
+sensor-isl-fpc	S51	IBIS位置検知・ホール制御専用フレキ	#031-060	-22,2,-4.4	9.2,23.8,21.04	-54,4,-64	polyimide_fpc
+sensor-isd-fpc	S52	IBIS大電流ボイスコイル駆動専用フレキ	#031-060	22.5,-2,-4.6	7.8,24.55,13.59	54,4,-64	polyimide_fpc
+sensor-tex-module	S53	IBIS手ブレ補正統合モジュール骨格	#031-060	0,0,-6.5	65.7,52.2,2.6	0,44,-92	stainless_machined
 sensor-imager-fix-shafts	S54	センサー芯出し・非再利用段付き固定ガイド	#031-060	0,0,-4.2	53.08,41.5,6.33	-50,26,-68	iron_magnetic
-sensor-ball-retainer-cage	S55	セラミック球脱落防止・低摩擦POMボール	#031-060	0,0,-5.7	54.1,41.1,0.81	48,-10,-84	magnesium_cast
-sensor-vcm-coil-bobbins	S56	ボイスコイル巻線ボビン	#031-060	0,0,-5.08	55.46,37.69,1.75	50,26,-74	matte_black_anodized
-sensor-hall-bias-magnets	S57	ホールセンサー専用・直線磁場発生サブマグ	#031-060	0,0,-5.4	44.95,25.75,1.55	-44,34,-84	iron_magnetic
-sensor-im-radiation-sheet-b	S58	センサー背面・主放熱グラファイトシート	#031-060	0,0,-9.4	49.24,35.24,0.49	0,38,-138	optical_ar_iridescent
-sensor-im-radiation-sheet-d	S59	センサー側面・補助放熱ブリッジシート	#031-060	28.5,0,-7.8	9.93,26.3,8.27	54,-22,-124	carbon_fiber
-sensor-as-heat-plate-top	S60	IBIS上部・アルミ放熱プレート AS	#031-060	0,25.4,-6.2	46.16,2.97,9.76	0,52,-118	becu_spring
+sensor-ball-retainer-cage	S55	セラミック球脱落防止・低摩擦POMボール	#031-060	0,0,-5.7	54,41,0.81	48,-10,-84	magnesium_cast
+sensor-vcm-coil-bobbins	S56	ボイスコイル巻線ボビン	#031-060	0,0,-5.08	55.4,37.66,1.75	50,26,-74	matte_black_anodized
+sensor-hall-bias-magnets	S57	ホールセンサー専用・直線磁場発生サブマグ	#031-060	0,0,-5.4	44.87,25.67,1.55	-44,34,-84	iron_magnetic
+sensor-im-radiation-sheet-b	S58	センサー背面・主放熱グラファイトシート	#031-060	0,0,-9.4	49.2,35.2,0.49	0,38,-138	optical_ar_iridescent
+sensor-im-radiation-sheet-d	S59	センサー側面・補助放熱ブリッジシート	#031-060	28.5,0,-7.8	9.91,26.25,8.27	54,-22,-124	carbon_fiber
+sensor-as-heat-plate-top	S60	IBIS上部・アルミ放熱プレート AS	#031-060	0,25.4,-6.2	46,2.97,9.6	0,52,-118	becu_spring
 sensor-new-truster-screws	S61	センサー固定専用・緩み止め特殊小ねじ	#061-090	0,0,-8.4	56.27,42.27,3.2	-52,-2,-118	stainless_machined
 sensor-esd-ground-leaf	S62	IBIS可動ステージ〜固定シャーシ間	#061-090	-28,-14,-5.8	4.82,12.72,3.42	-52,-30,-112	gold_plating
-sensor-dra-qr-plate	S63	工場個体校正QR識別プレート	#061-090	18,-15.5,-11.4	11.86,8.06,0.46	48,-32,-156	becu_spring
-sensor-pcb-emi-shield-can	S64	センサー基板裏面・極薄ニッケル銀EMIシ	#061-090	0,0,-3.15	34.75,22.75,1.64	-46,-34,-52	ic_epoxy_dark
-sensor-birefringent-olpf	S65	2軸複屈折水晶ローパスフィルター	#061-090	0,0,4.1	37.89,26.05,1.43	-42,34,82	matte_chassis
-sensor-cm500-dichroic-ir	S66	ハイブリッドIRカット層：青色リン酸銅吸	#061-090	0,0,3.05	38.14,26.32,0.62	44,32,68	matte_chassis
-sensor-pzt-electrode-bond	S67	超音波ダスト除去PZT圧電素子	#061-090	0,0,5.25	3.01,25.62,0.99	-56,-26,92	solder_silver
+sensor-dra-qr-plate	S63	工場個体校正QR識別プレート	#061-090	18,-15.5,-11.4	11.8,8,0.46	48,-32,-156	becu_spring
+sensor-pcb-emi-shield-can	S64	センサー基板裏面・極薄ニッケル銀EMIシ	#061-090	0,0,-3.15	34.71,22.71,1.64	-46,-34,-52	ic_epoxy_dark
+sensor-birefringent-olpf	S65	2軸複屈折水晶ローパスフィルター	#061-090	0,0,4.1	37.85,26.03,1.43	-42,34,82	matte_chassis
+sensor-cm500-dichroic-ir	S66	ハイブリッドIRカット層：青色リン酸銅吸	#061-090	0,0,3.05	38.1,26.28,0.62	44,32,68	matte_chassis
+sensor-pzt-electrode-bond	S67	超音波ダスト除去PZT圧電素子	#061-090	0,0,5.25	2.95,25.57,0.99	-56,-26,92	solder_silver
 sensor-sus440c-ball-races	S68	焼入れSUS440C／ジルコニア製	#061-090	0,0,-6.2	54.12,42.16,3.27	56,-34,-56	titanium_machined
-sensor-rear-flux-shunt	S69	IBIS可動ステージ背面・低渦電流スリッ	#061-090	0,0,-8.4	50.06,38.06,0.89	-54,42,-96	iron_magnetic
-sensor-cavity-breather-desiccant	S70	センサー光学室・極小撥水ePTFE気圧調	#061-090	0,0,2.2	31.71,29.93,0.61	56,-42,54	becu_spring
-sensor-electronic-vnd	S71	液晶電子可変NDフィルターセル	#061-090	0,0,8.8	49.2,33.15,1.05	0,56,114	matte_chassis
-sensor-partially-stacked-strips	S72	部分積層上下高速読出ロジック帯	#061-090	0,0,-0.35	37.7,32.7,0.83	76,46,18	cucu_hybrid_copper
-sensor-curved-substrate	S73	湾曲フルサイズCMOSシリコン基板	#061-090	0,0,-0.95	42.06,29.5,4.69	-82,46,12	ic_epoxy_dark
-sensor-im-adjust-washers	S74	純正フランジバック選択シムワッシャーIM	#061-090	0,0,-8.9	73.01,54.56,1.06	-88,-32,-158	brass_precision
-sensor-mechanical-dust-shield	S75	電源OFF自動開閉独立メカニカル	#061-090	0,0,10.2	47.96,34.56,2.55	0,-58,128	magnesium_cast
-sensor-double-roll-halbach	S76	2倍ロール広ストロークIBIS	#061-090	0,0,-7.2	72.46,39.05,2.67	92,-36,-112	iron_magnetic
-sensor-pixelshift-submicron-scale	S77	ピクセルシフトマルチ撮影専用サブミクロン	#061-090	0,0,-5.6	48.16,38.36,2.03	-90,56,-72	ic_epoxy_dark
-sensor-filter-edge-sumi	S78	光学フィルター端面墨塗り	#061-090	0,0,3.55	39.72,27.72,1.99	-84,-46,56	foam_felt_matte
-sensor-sswf-fluorine-ar	S79	SSWF最表面・超撥水フッ素＋帯電防止マ	#061-090	0,0,7.35	41.06,29.06,0.32	82,46,98	gold_plating
-sensor-wirebond-dam-baffle	S80	金ワイヤーボンディング黒色ダム	#061-090	0,0,0.55	44.08,32.08,1.3	-82,10,34	ic_epoxy_dark
-sensor-tcxo-clock-tree	S81	センサー基板直載・超低ジッター温度補償水	#061-090	-12.5,16.2,-3.35	12.3,5.9,1.6	-64,72,-34	ic_epoxy_dark
-sensor-cross-roller-guide	S82	超高剛性クロスローラー	#061-090	0,0,-6	36.1,52.42,2.77	88,60,-86	becu_spring
-sensor-peltier-tec-cooler	S83	ペルチェ素子能動冷却モジュール	#061-090	0,0,-12.2	40.66,28.63,4.11	0,-68,-182	copper_thermal
-sensor-die-fiducial-targets	S84	ウェハー端面アライメント基準マーク	#061-090	0,0,0.18	41.88,29.88,0.68	82,-14,24	metal_hero
-sensor-carrier-piezo-accel	S85	IBIS可動ステージ直載・超小型MEMS	#061-090	19.5,14.8,-4.9	9.68,13.06,1.69	74,64,-56	gold_plating
-sensor-dual-edge-slvs16	S86	16レーン両端並列 SLVS-EC	#061-090	0,0,-2.85	55.9,25.1,1.51	96,12,-32	copper_coil
-sensor-thermal-via-dieattach	S87	セラミック基板貫通銅サーマルビアアレイ	#061-090	0,0,-1.35	38.08,26.08,1.57	-92,-16,-24	copper_thermal
-sensor-freefall-ibis-brake	S88	電源OFF磁気ディテント	#061-090	0,0,-7.9	78.5,10.75,3.3	-96,-54,-120	elastomer_rubber
-sensor-low-alpha-mold	S89	低α線超高純度カバーガラス	#061-090	0,0,1.75	42.91,30.9,1.34	88,-42,42	matte_black_anodized
-sensor-chamber-labyrinth-felt	S90	撮像室周囲・遮光植毛ラビリンス枠	#061-090	0,0,9.4	49.6,37,1.98	-76,62,118	matte_black_anodized
+sensor-rear-flux-shunt	S69	IBIS可動ステージ背面・低渦電流スリッ	#061-090	0,0,-8.4	50,38,0.89	-54,42,-96	iron_magnetic
+sensor-cavity-breather-desiccant	S70	センサー光学室・極小撥水ePTFE気圧調	#061-090	0,0,2.2	31.68,29.89,0.61	56,-42,54	becu_spring
+sensor-electronic-vnd	S71	液晶電子可変NDフィルターセル	#061-090	0,0,8.8	49.1,33.05,1.05	0,56,114	matte_chassis
+sensor-partially-stacked-strips	S72	部分積層上下高速読出ロジック帯	#061-090	0,0,-0.35	37.6,32.6,0.83	76,46,18	cucu_hybrid_copper
+sensor-curved-substrate	S73	湾曲フルサイズCMOSシリコン基板	#061-090	0,0,-0.95	41.95,29.39,4.69	-82,46,12	ic_epoxy_dark
+sensor-im-adjust-washers	S74	純正フランジバック選択シムワッシャーIM	#061-090	0,0,-8.9	72.95,54.5,1.06	-88,-32,-158	brass_precision
+sensor-mechanical-dust-shield	S75	電源OFF自動開閉独立メカニカル	#061-090	0,0,10.2	47.8,34.4,2.55	0,-58,128	magnesium_cast
+sensor-double-roll-halbach	S76	2倍ロール広ストロークIBIS	#061-090	0,0,-7.2	72.3,38.97,2.67	92,-36,-112	iron_magnetic
+sensor-pixelshift-submicron-scale	S77	ピクセルシフトマルチ撮影専用サブミクロン	#061-090	0,0,-5.6	48.1,38.3,2.03	-90,56,-72	ic_epoxy_dark
+sensor-filter-edge-sumi	S78	光学フィルター端面墨塗り	#061-090	0,0,3.55	39.4,27.4,1.99	-84,-46,56	foam_felt_matte
+sensor-sswf-fluorine-ar	S79	SSWF最表面・超撥水フッ素＋帯電防止マ	#061-090	0,0,7.35	41,29,0.32	82,46,98	gold_plating
+sensor-wirebond-dam-baffle	S80	金ワイヤーボンディング黒色ダム	#061-090	0,0,0.55	43.8,31.8,1.29	-82,10,34	ic_epoxy_dark
+sensor-tcxo-clock-tree	S81	センサー基板直載・超低ジッター温度補償水	#061-090	-12.5,16.2,-3.35	12.2,5.8,1.6	-64,72,-34	ic_epoxy_dark
+sensor-cross-roller-guide	S82	超高剛性クロスローラー	#061-090	0,0,-6	36.3,52.3,2.71	88,60,-86	becu_spring
+sensor-peltier-tec-cooler	S83	ペルチェ素子能動冷却モジュール	#061-090	0,0,-12.2	40.5,28.5,4.11	0,-68,-182	copper_thermal
+sensor-die-fiducial-targets	S84	ウェハー端面アライメント基準マーク	#061-090	0,0,0.18	41.8,29.8,0.68	82,-14,24	metal_hero
+sensor-carrier-piezo-accel	S85	IBIS可動ステージ直載・超小型MEMS	#061-090	19.5,14.8,-4.9	9.6,13,1.7	74,64,-56	gold_plating
+sensor-dual-edge-slvs16	S86	16レーン両端並列 SLVS-EC	#061-090	0,0,-2.85	55.8,25,1.51	96,12,-32	copper_coil
+sensor-thermal-via-dieattach	S87	セラミック基板貫通銅サーマルビアアレイ	#061-090	0,0,-1.35	38,26,1.57	-92,-16,-24	copper_thermal
+sensor-freefall-ibis-brake	S88	電源OFF磁気ディテント	#061-090	0,0,-7.9	78.4,10.68,3.3	-96,-54,-120	elastomer_rubber
+sensor-low-alpha-mold	S89	低α線超高純度カバーガラス	#061-090	0,0,1.75	42.9,30.9,1.34	88,-42,42	matte_black_anodized
+sensor-chamber-labyrinth-felt	S90	撮像室周囲・遮光植毛ラビリンス枠	#061-090	0,0,9.4	49.4,36.8,1.98	-76,62,118	matte_black_anodized
+sensor-ofb-frame-housing	S91	光学フィルターブロック精密成形LCP樹脂	#091-120	0,0,5.15	46,35.6,2.9	64,-26,76	matte_chassis
+sensor-sswf-nodal-dampers	S92	SSWF超音波振動・節支持シリコーン緩衝	#091-120	0,0,5.95	44.9,32.3,0.86	-68,28,86	elastomer_rubber
+sensor-pzt-countermass-bar	S93	超音波PZT圧電バー背面・高比重真鍮反作	#091-120	0,-14.1,7.62	41.8,3.6,1.22	44,-56,94	brass_precision
+sensor-ofb-clip-screws	S94	光学フィルター押さえバネ板固定	#091-120	0,0,7.05	45.67,33.84,1.93	56,68,110	ic_epoxy_dark
+sensor-ir-leak-light-seal	S95	撮像室側壁・極薄カーボンブラック発泡遮光	#091-120	0,0,3.65	46.6,34.4,2.98	-68,-28,64	elastomer_rubber
+sensor-ceramic-bond-shelf	S96	HTCCセラミックパッケージ内部	#091-120	0,0,0.28	46.2,35,0.89	80,26,20	ic_epoxy_dark
+sensor-kovar-seal-ring	S97	セラミックパッケージ上面・コバールメタラ	#091-120	0,0,1.32	47.6,36.8,0.61	-68,36,28	solder_silver
+sensor-pkg-cavity-mlcc	S98	セラミックパッケージ外周段部直載	#091-120	0,0,0.82	46.8,35.8,0.46	86,-42,8	gold_plating
+sensor-coverglass-chamfer-ar	S99	低α線カバーガラス外周・C0.15精密ベ	#091-120	0,0,2.32	47.2,36.6,0.61	-62,-36,42	optical_glass_ed
+sensor-ceramic-castellations	S100	セラミックパッケージ外周側面・ハーフビア	#091-120	0,0,-0.52	51.08,40.42,2.7	-72,-12,-10	gold_plating
+sensor-b2b-mezzanine-conn	S101	センサー基板直載・0.2mm〜0.35m	#091-120	0,-14.8,-3.45	22.7,5.15,1.08	68,-46,-42	solder_silver
+sensor-calib-eeprom-ic	S102	センサー基板直載・個体校正データ専用シリ	#091-120	14.5,16,-3.28	8.2,5.4,0.99	74,48,-30	pcb_textured
+sensor-power-ferrite-pi	S103	センサー基板アナログ／デジタル電源分離	#091-120	0,-10.5,-3.25	32,5.2,1.37	-92,46,-48	pcb_textured
+sensor-esd-tvs-diode-array	S104	SLVS-EC制御	#091-120	-18.5,-13.5,-3.25	11.4,4.8,0.89	-78,-36,-38	pcb_textured
+sensor-pcb-test-pads	S105	センサー基板裏面・工場インサーキット検査	#091-120	0,11.2,-3.28	26.4,5.4,0.41	58,66,-44	ic_epoxy_dark
+sensor-fpc-stiffener-reinforce	S106	SLVS-EC／ISL／ISDフレキシブ	#091-120	0,0,-3.65	50.9,27.88,0.57	104,-14,-56	stainless_machined
+sensor-vcm-driver-ic	S107	IBIS 3チャネル大電流バイポーラVC	#091-120	25.5,-15,-5.2	13.6,10.4,1.47	92,-52,-74	pcb_textured
+sensor-hall-amp-adc-ic	S108	3軸ホール素子微小出力差動計装オペアンプ	#091-120	-25.5,13.5,-5.2	13.2,9.6,1.36	-94,42,-72	pcb_textured
+sensor-coil-lead-terminals	S109	ボイスコイル巻線末端・応力解放S字リード	#091-120	0,0,-5.18	50.6,39.9,2.21	76,32,-78	matte_chassis
+sensor-magnet-yoke-spacers	S110	磁気回路エアギャップ厳密規定・非磁性SU	#091-120	0,0,-5.05	68.89,49.75,2.9	-84,-18,-76	stainless_machined
+sensor-hall-temp-comp-thermistor	S111	ホール素子＆N52磁石温度ドリフト補償用	#091-120	16.5,-21.5,-5.35	7.6,4.2,0.95	68,-62,-88	polyimide_fpc
+sensor-pfpe-ball-grease-film	S112	セラミック球転走面・極低蒸気圧パーフルオ	#091-120	0,0,-5.72	59.32,51.32,1.18	82,-8,-100	ic_epoxy_dark
+sensor-pps-mount-ears	S113	センサー〜IBIS可動枠結合用	#091-120	0,0,-3.55	72.58,58.59,1.74	-104,14,-64	matte_chassis
+sensor-datum-dowel-bushings	S114	IBISベース〜メインフレーム間・光軸X	#091-120	0,0,-7.55	81.43,46.46,5.12	-104,-22,-116	becu_spring
+sensor-screw-lock-adhesive	S115	3点フランジバック調整ねじ工場校正後	#091-120	0,0,-8.55	76.21,59.84,1.17	82,48,-124	pin_carrier_gloss
+sensor-mb-cushion-sheet	S116	シャッター機構〜IBISユニット間	#091-120	0,0,8.35	54.6,43.4,0.95	-54,78,122	elastomer_rubber
+sensor-as-heat-plt-spacer-top	S117	IBIS上部アルミ放熱プレート直下	#091-120	0,23.6,-6.15	43.2,2.96,5.4	42,74,-116	stainless_machined
+sensor-top-graphite-bridge	S118	IBIS上部〜ボディ前筐体熱結合	#091-120	0,27.6,-5.85	49.6,47.6,7.28	-44,78,-128	carbon_fiber
+sensor-ibis-permalloy-shield	S119	IBIS磁石背面・漏洩磁束遮蔽パーマロイ	#091-120	0,0,-9.95	71.6,49.4,0.56	-76,-54,-144	optical_ar_iridescent
+sensor-chassis-emi-gasket	S120	センサーモジュール外周〜カメラ骨格接地	#091-120	0,0,-10.35	58.88,44.68,1.84	86,-58,-176	ic_epoxy_dark

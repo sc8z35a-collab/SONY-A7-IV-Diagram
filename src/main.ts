@@ -4,8 +4,10 @@ import { sharedLensOpticalSim } from './assemblies/lens/lensOpticalSim';
 import { CadViewport } from './engine/CadViewport';
 import { ZeroTextControls } from './ui/ZeroTextControls';
 import { ExplanationDrawer } from './ui/ExplanationDrawer';
+import { ArtifactCaptureBridge } from './core/capture_bridge';
 import type { LensOpticsStudio } from './ui/LensOpticsStudio';
 import type { OpticalScenarioId } from './assemblies/lens/lensOpticalSim';
+import type { CadPlaygroundStudio } from './playground/CadPlaygroundStudio';
 
 const appRoot = document.getElementById('app')!;
 const viewportEl = document.getElementById('viewport')!;
@@ -20,6 +22,8 @@ let viewport!: CadViewport;
 let realOpticsStudio: LensOpticsStudio | null = null;
 let opticsStudioLoadPromise: Promise<LensOpticsStudio> | null = null;
 let pendingOpticsOpen = false;
+let realPlayground: CadPlaygroundStudio | null = null;
+let playgroundLoadPromise: Promise<CadPlaygroundStudio> | null = null;
 
 const handleOpticsOpenChange = (open: boolean) => {
   controls.syncOpticsStudio(open);
@@ -260,6 +264,9 @@ controls = new ZeroTextControls(appRoot, {
   onOpticsStudioToggle: () => {
     opticsStudio.toggle();
   },
+  onOpenPlayground: () => {
+    void playgroundApi.open();
+  },
   onResetVisibility: () => {
     viewport.resetAllVisibility();
   },
@@ -287,6 +294,62 @@ controls = new ZeroTextControls(appRoot, {
     viewport.togglePartHidden(partId);
   },
 });
+
+const ensurePlayground = (): Promise<CadPlaygroundStudio> => {
+  if (realPlayground) return Promise.resolve(realPlayground);
+  if (!playgroundLoadPromise) {
+    playgroundLoadPromise = import('./playground/CadPlaygroundStudio').then((mod) => {
+      realPlayground = new mod.CadPlaygroundStudio(appRoot, {
+        renderer: viewport.getRenderer(),
+        container: viewport.getContainer(),
+        setCustomSceneRenderer: (fn) => viewport.setCustomSceneRenderer(fn),
+        requestRender: () => viewport.requestRenderFrame(),
+        onClosePlayground: () => {
+          appRoot.classList.remove('is-playground');
+          controls.syncPlaygroundActive(false);
+          viewport.handleResize();
+        },
+      });
+      return realPlayground;
+    });
+  }
+  return playgroundLoadPromise;
+};
+
+const playgroundApi = {
+  isOpen: () => realPlayground?.isOpen() ?? false,
+  open: async (showReport = false): Promise<void> => {
+    if (opticsStudio.getIsOpen()) opticsStudio.close();
+    viewport.selectPart(null, false);
+    const pg = await ensurePlayground();
+    appRoot.classList.add('is-playground');
+    controls.syncPlaygroundActive(true);
+    await pg.open();
+    if (showReport) {
+      pg.openEvaluationReport();
+    }
+  },
+  close: (): void => {
+    realPlayground?.close();
+    appRoot.classList.remove('is-playground');
+    controls.syncPlaygroundActive(false);
+  },
+  evaluate: () => realPlayground?.openEvaluationReport() ?? null,
+  runPlya: (openModal = true) => realPlayground?.runPlyaPipeline(openModal) ?? null,
+  getPlaced: () => realPlayground?.getPlacedSummary() ?? [],
+  movePart: (uid: string, x: number, y: number, z: number) =>
+    realPlayground?.movePartByUid(uid, x, y, z) ?? false,
+  setProfile: (profile: 'auto' | 'mirrorless' | 'compact' | 'cinema' | 'action' | 'custom') =>
+    realPlayground?.setDesignProfile(profile) ?? null,
+  loadTemplate: async (tpl: 'a7iv' | 'zve1' | 'fx3' | 'empty') => {
+    const pg = await ensurePlayground();
+    await pg.loadTemplate(tpl);
+  },
+  setCameraView: (view: 'iso' | 'front' | 'side' | 'top' | 'back') =>
+    realPlayground?.setCameraView(view),
+  setShadingMode: (mode: 'solid' | 'xray' | 'wireframe') =>
+    realPlayground?.setShadingMode(mode),
+};
 
 drawer = new ExplanationDrawer(appRoot, {
   onClose: () => viewport.selectPart(null, false),
@@ -347,6 +410,7 @@ const setQuality = (q: GraphicsQuality): void => {
 };
 
 window.addEventListener('keydown', (e) => {
+  if (playgroundApi.isOpen()) return;
   if (e.key === 'Escape') {
     if (zenFullscreen) {
       zenFullscreen = false;
@@ -406,7 +470,14 @@ window.addEventListener('keydown', (e) => {
     !e.altKey
   ) {
     const cur = viewport.getQuality();
-    const next: GraphicsQuality = cur === 'standard' ? 'high' : cur === 'high' ? 'ultra' : 'standard';
+    const next: GraphicsQuality =
+      cur === 'standard_lite'
+        ? 'standard'
+        : cur === 'standard'
+          ? 'high'
+          : cur === 'high'
+            ? 'ultra'
+            : 'standard_lite';
     setQuality(next);
   } else if (
     (e.key === 'p' || e.key === 'P') &&
@@ -423,10 +494,12 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Sync initial quality pill with GPU_PROFILE default (ULTRA on desktop, HIGH on mobile) and optional ?quality= param
+// Sync initial quality pill with GPU_PROFILE default and optional ?quality= param
 const urlParams = new URLSearchParams(window.location.search);
 const qualityParam = urlParams.get('quality')?.toLowerCase();
-if (qualityParam === 'standard' || qualityParam === 'std') {
+if (qualityParam === 'standard_lite' || qualityParam === 'lite' || qualityParam === 'std_lite') {
+  setQuality('standard_lite');
+} else if (qualityParam === 'standard' || qualityParam === 'std') {
   setQuality('standard');
 } else if (qualityParam === 'high') {
   setQuality('high');
@@ -443,11 +516,43 @@ const v2InspectApi = {
   isV2Mode: () => viewport.isV2Mode(),
 };
 
-// Expose lightweight inspection hooks on window
+const captureBridge = new ArtifactCaptureBridge({
+  appRoot,
+  setMode: (mode, immediate) => {
+    viewport.setMode(mode, immediate);
+    controls.syncMode(mode);
+    syncRail();
+  },
+  getMode: () => viewport.getMode(),
+  setQuality: (q) => setQuality(q),
+  getQuality: () => viewport.getQuality(),
+  setRenderMode: (rm) => viewport.setRenderMode(rm),
+  setExplode: (val, immediate) => {
+    viewport.setExplode(val, immediate);
+    controls.setExplodeValue(val);
+  },
+  setCameraPreset: (p, immediate) => viewport.setCameraPreset(p, immediate),
+  selectPart: (partId, focusCamera) => viewport.selectPart(partId, focusCamera),
+  getFirstPartId: () => viewport.getPartsForCurrentMode()[0]?.id ?? null,
+  getSelectedPartId: () => viewport.getSelectedPart()?.id ?? null,
+  isUnitReady: () => viewport.getV2Runtime().isReady(),
+  setPerfHudVisible: (v) => viewport.getV2Runtime().setPerfHudVisible(v),
+  setDrawerViewTab: (tab) => drawer.setViewTab(tab),
+  setLightboxOpen: (open, rotated) => drawer.setLightboxOpen(open, rotated),
+  openPlayground: (showReport) => playgroundApi.open(showReport),
+  closePlayground: () => playgroundApi.close(),
+  requestRenderFrame: () => viewport.requestRenderFrame(),
+});
+
+// Expose lightweight inspection, Play Ground 1.1, and High-Speed Capture Engine (`pp`) hooks on window
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
+  drawer,
   opticsStudio,
+  playground: playgroundApi,
+  pp: captureBridge,
+  capture: captureBridge,
   toggleFullscreen,
   setQuality,
   v2: v2InspectApi,
@@ -457,9 +562,18 @@ const v2InspectApi = {
 
 syncRail();
 
-// Optional URL preset for reproducible views (default startup has no params and zero text in Complete 160-part Camera mode)
+// Optional URL preset for reproducible views (default startup shows the 50-part 3D Japanese "ようこそ" welcome view!)
 const preset = urlParams.get('preset');
-if (preset === 'complete_assembled') {
+if (preset === 'welcome') {
+  viewport.setMode('welcome', true);
+  controls.syncMode('welcome');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'playground') {
+  void playgroundApi.open(false);
+} else if (preset === 'complete_assembled') {
   viewport.setMode('integrated', true);
   controls.syncMode('integrated');
   viewport.setExplode(0, true);
