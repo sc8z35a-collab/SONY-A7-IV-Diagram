@@ -59,6 +59,8 @@ export interface UnitBuildOptions {
   subView?: number;
   /** Build in integrated camera layout mode (uses integratedExplodeOffset). */
   integratedMode?: boolean;
+  /** Optional selective compilation filter (Play Ground hyper-extractor): compile ONLY these part IDs! */
+  onlyPartIds?: ReadonlySet<string>;
 }
 
 export interface RaycastInstancedBinding {
@@ -66,6 +68,10 @@ export interface RaycastInstancedBinding {
   readonly mesh: THREE.InstancedMesh;
   /** O(1) instanceId -> partId reverse lookup table */
   readonly instanceIdToPartId: readonly string[];
+  /** Optional flat per-instance explode offset [dx,dy,dz,...] when GPU vertex-shader explode is active */
+  gpuExplodeOffsets?: Float32Array;
+  /** Current GPU vertex-shader explode factor [0..1] synced by updateExplode() */
+  gpuExplodeFactor?: number;
 }
 
 export interface RaycastBatchedBinding {
@@ -73,6 +79,10 @@ export interface RaycastBatchedBinding {
   readonly mesh: THREE.BatchedMesh;
   /** O(1) batchId (instanceId in BatchedMesh) -> partId reverse lookup table */
   readonly batchIdToPartId: readonly string[];
+  /** Optional flat per-batchId explode offset [dx,dy,dz,...] when GPU vertex-shader explode is active */
+  gpuExplodeOffsets?: Float32Array;
+  /** Current GPU vertex-shader explode factor [0..1] synced by updateExplode() */
+  gpuExplodeFactor?: number;
 }
 
 export type RaycastMeshBinding = RaycastInstancedBinding | RaycastBatchedBinding;
@@ -102,6 +112,20 @@ export interface UnitRaycastIndex {
   readonly partBoundsById: ReadonlyMap<string, RaycastPartBounds>;
   /** Enable zero-GC inline Möller-Trumbore scalar triangle picking fast-path (STD LITE) */
   readonly fastLiteRaycast?: boolean;
+  /** Current GPU vertex-shader explode factor [0..1] when hardware GPU explode is active */
+  gpuExplodeFactor?: number;
+  /** Flat TypedArray binary AABB-BVH over parts for O(log N) zero-GC raycast broad-phase:
+   *  stride = 8 floats per node: [minX, minY, minZ, maxX, maxY, maxZ, leftOrFirst, countOrRight]
+   *  countOrRight > 0 => leaf (bvhPartOrder[leftOrFirst .. leftOrFirst + countOrRight])
+   *  countOrRight <= 0 => internal (left = leftOrFirst, right = -countOrRight)
+   */
+  bvhNodes?: Float32Array;
+  bvhPartOrder?: Int32Array;
+  bvhNodeCount?: number;
+  bvhDirty?: boolean;
+  /** True when GPU explode updated uExplode without eagerly shifting CPU AABBs; syncBounds() flushes on demand */
+  boundsDirty?: boolean;
+  syncBounds?: () => void;
 }
 
 export interface UnitBuildStats {

@@ -341,7 +341,7 @@ const playgroundApi = {
     realPlayground?.movePartByUid(uid, x, y, z) ?? false,
   setProfile: (profile: 'auto' | 'mirrorless' | 'compact' | 'cinema' | 'action' | 'custom') =>
     realPlayground?.setDesignProfile(profile) ?? null,
-  loadTemplate: async (tpl: 'a7iv' | 'zve1' | 'fx3' | 'empty') => {
+  loadTemplate: async (tpl: 'a7iv' | 'zve1' | 'fx3' | 'wlk220' | 'empty') => {
     const pg = await ensurePlayground();
     await pg.loadTemplate(tpl);
   },
@@ -403,6 +403,36 @@ document.addEventListener('webkitfullscreenchange', () => {
   if (!isNativeFullscreen()) zenFullscreen = false;
   syncFullscreenState();
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+
+// Auto-enter native fullscreen on screen tap whenever NOT currently in fullscreen (A3 confirmed).
+// Gracefully skips form inputs/selects, capture mode, and unsupported/denied environments.
+const ensureAutoFullscreenOnTap = (e: PointerEvent): void => {
+  if (!e.isTrusted || isNativeFullscreen()) return;
+  if (document.fullscreenEnabled === false) return;
+  if (urlParams.has('pp') || (window as unknown as { __PP_CAPTURE__?: boolean }).__PP_CAPTURE__) return;
+  const target = e.target as HTMLElement | null;
+  const tag = target?.tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'OPTION') return;
+
+  const rootEl = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+  };
+  try {
+    const req = rootEl.requestFullscreen
+      ? rootEl.requestFullscreen()
+      : rootEl.webkitRequestFullscreen?.();
+    if (req && typeof (req as Promise<void>).catch === 'function') {
+      (req as Promise<void>).catch(() => {
+        // Ignore browser rejection without toggling fallback chrome
+      });
+    }
+  } catch {
+    // Ignore unsupported fullscreen environments
+  }
+};
+window.addEventListener('pointerdown', ensureAutoFullscreenOnTap, { capture: true, passive: true });
 
 const setQuality = (q: GraphicsQuality): void => {
   viewport.setQuality(q);
@@ -470,14 +500,7 @@ window.addEventListener('keydown', (e) => {
     !e.altKey
   ) {
     const cur = viewport.getQuality();
-    const next: GraphicsQuality =
-      cur === 'standard_lite'
-        ? 'standard'
-        : cur === 'standard'
-          ? 'high'
-          : cur === 'high'
-            ? 'ultra'
-            : 'standard_lite';
+    const next: GraphicsQuality = cur === 'ultra' ? 'standard_lite' : 'ultra';
     setQuality(next);
   } else if (
     (e.key === 'p' || e.key === 'P') &&
@@ -494,8 +517,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Sync initial quality pill with GPU_PROFILE default and optional ?quality= param
-const urlParams = new URLSearchParams(window.location.search);
+// Sync initial quality pill with default ('ultra') and optional ?quality= param (all 4 tiers supported)
 const qualityParam = urlParams.get('quality')?.toLowerCase();
 if (qualityParam === 'standard_lite' || qualityParam === 'lite' || qualityParam === 'std_lite') {
   setQuality('standard_lite');

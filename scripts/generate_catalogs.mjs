@@ -416,6 +416,60 @@ async function extractSpatialAndMaterialInfo(entries) {
   return byMode;
 }
 
+function classifyPlaygroundRole(unitId, part) {
+  const hay = `${part.id} ${part.title} ${part.subtitle} ${part.category}`.toLowerCase();
+  if (unitId === 'welcome') return 'sculpture';
+  if (unitId === 'lens') return 'lens';
+  if (unitId === 'mount') return 'mount';
+  if (unitId === 'shutter') return 'shutter';
+  if (unitId === 'sensor' || unitId === 'micro' || unitId === 'micro_v2' || unitId === 'sensor_fab') {
+    if (hay.includes('graphite') || hay.includes('copper') || hay.includes('sink') || hay.includes('tim') || hay.includes('放熱')) {
+      return 'thermal_emi';
+    }
+    return 'sensor';
+  }
+  if (unitId === 'bionz' || unitId === 'bionz_v2') return 'bionz';
+  if (unitId === 'mainboard') {
+    if (hay.includes('vapor') || hay.includes('emi') || hay.includes('shield') || hay.includes('放熱') || hay.includes('シールド')) {
+      return 'thermal_emi';
+    }
+    if (hay.includes('isp') || hay.includes('bionz') || hay.includes('npu') || hay.includes('die')) {
+      return 'bionz';
+    }
+    if (hay.includes('cfexpress') || hay.includes('io') || hay.includes('slot') || hay.includes('port')) {
+      return 'storage';
+    }
+    if (hay.includes('pmic') || hay.includes('power') || hay.includes('電源')) {
+      return 'battery';
+    }
+    return 'mainboard';
+  }
+  if (unitId === 'battery') return 'battery';
+  if (unitId === 'cfexpress') return 'storage';
+  if (unitId === 'evf') return 'evf';
+  if (unitId === 'lcd') return 'lcd';
+  if (unitId === 'mic') return 'audio';
+  if (unitId === 'mishoe') return 'mishoe';
+  if (unitId === 'body') {
+    const pid = String(part.id || '').toLowerCase();
+    if (
+      pid.includes('gasket') ||
+      pid.includes('seal') ||
+      pid.includes('heat') ||
+      pid.includes('graphite') ||
+      pid.includes('thermal') ||
+      pid.includes('shield') ||
+      pid.includes('emi')
+    ) {
+      return 'thermal_emi';
+    }
+    if (pid.includes('mic') || pid.includes('speaker')) return 'audio';
+    if (pid.includes('card') || pid.includes('usb') || pid.includes('hdmi') || pid.includes('slot')) return 'storage';
+    return 'body';
+  }
+  return 'accessory';
+}
+
 // -----------------------------------------------------------------------------
 // Main Generation Pipeline
 // -----------------------------------------------------------------------------
@@ -437,6 +491,8 @@ async function main() {
     'mode\tkind\tparts\tslug_prefix\tcode_min\tcode_max\tnext_code\tunit_file\tdata_file\tl1_file\tl2_file',
   ];
   const allIndividualL1Chunks = [];
+  const pgUnits = [];
+  const pgParts = [];
 
   let totalJsonBytesAll = 0;
   let totalJsonBytesIndiv = 0;
@@ -454,6 +510,24 @@ async function main() {
 
     totalJsonBytesAll += jsonBytes;
     if (e.kind === 'individual') {
+      const uIdx = pgUnits.length;
+      pgUnits.push([e.mode, jsonData.nameJa || e.mode, jsonData.nameEn || e.mode, parts.length]);
+      for (let i = 0; i < parts.length; i++) {
+        const p = parts[i];
+        const ap = Array.isArray(p.assembledPos) ? p.assembledPos : [0, 0, 0];
+        pgParts.push([
+          uIdx,
+          p.id,
+          p.title || p.id,
+          p.subtitle || '',
+          p.category || '',
+          p.swatchColor || '#64748b',
+          Math.round((ap[0] || 0) * 100) / 100,
+          Math.round((ap[1] || 0) * 100) / 100,
+          Math.round((ap[2] || 0) * 100) / 100,
+          classifyPlaygroundRole(e.mode, p),
+        ]);
+      }
       totalJsonBytesIndiv += jsonBytes;
       totalIndivParts += parts.length;
       totalIndivModes++;
@@ -566,12 +640,117 @@ async function main() {
   const allNamesContent = `# ALL INDIVIDUAL ASSEMBLIES (${totalIndivModes} modes | ${totalIndivParts} unique parts)\n\n${allIndividualL1Chunks.join('\n\n')}\n`;
   fs.writeFileSync(path.join(CATALOG_DIR, 'ALL_NAMES.txt'), allNamesContent, 'utf8');
 
+  // Compact columnar Play Ground catalog index (stored outside src/data/ to preserve validate_parts 2-1!)
+  const pgIndexPath = path.join(ROOT, 'src', 'playground', 'playground_index.json');
+  const pgIndexJson = JSON.stringify({ v: 2, units: pgUnits, parts: pgParts });
+  fs.writeFileSync(pgIndexPath, pgIndexJson, 'utf8');
+  const pgIndexBytes = Buffer.byteLength(pgIndexJson, 'utf8');
+
+  // Pre-bake quantized SNORM16/SNORM8/RGBA8/Uint16 blueprints for all 42 Play Ground starter template parts
+  // (`a7iv`, `zve1`, `fx3`, `wlk220`) -> cold Play Ground launch skips compiling 12 camera units (>300x faster!)
+  const pgTplPath = path.join(ROOT, 'src', 'playground', 'playground_templates.json');
+  let pgTplBytes = 0;
+  let pgTplCount = 0;
+  {
+    // Ensure placeholder exists before bundling PartGeometryExtractor (which imports playground_templates.json)
+    if (!fs.existsSync(pgTplPath)) {
+      fs.writeFileSync(pgTplPath, '{"v":1,"parts":{}}', 'utf8');
+    }
+    const extMod = await bundleTsModuleForNode('src/playground/PartGeometryExtractor.ts');
+    const extractor = new extMod.PartGeometryExtractor();
+    await extractor.ensureCatalogLoaded();
+    const allEntries = extractor.getAllEntries();
+    const pickKey = (unitId, hints) => {
+      const list = allEntries.filter((e) => e.unitId === unitId);
+      for (const h of hints) {
+        const found = list.find((e) => `${e.partId} ${e.title}`.toLowerCase().includes(h.toLowerCase()));
+        if (found) return found.key;
+      }
+      return list[0]?.key;
+    };
+    const byIdKey = (unitId, id, hints) => {
+      const exact = allEntries.find((e) => e.unitId === unitId && e.partId === id);
+      return exact ? exact.key : pickKey(unitId, hints);
+    };
+    const wIds = [
+      'welcome-plinth-mg-chassis', 'welcome-plinth-top-datum-plate', 'welcome-plinth-bottom-weight',
+      'welcome-plinth-usbc-pd-port', 'welcome-plinth-pmic-3rail-board', 'welcome-plinth-lifepo4-battery',
+      'welcome-plinth-mainboard', 'welcome-plinth-cortex-m7-mcu', 'welcome-plinth-tof-presence-sensor',
+      'welcome-plinth-ambient-lux-sensor', 'welcome-plinth-cinnabar-status-bar', 'welcome-plinth-welcome-speaker',
+      'welcome-yo-cnc-chassis', 'welcome-yo-sapphire-diffuser-lens',
+      'welcome-u-cnc-chassis', 'welcome-u-sapphire-diffuser-lens', 'welcome-u-crest-cnc-frame', 'welcome-u-quartz-support-post',
+      'welcome-ko-cnc-chassis', 'welcome-ko-sapphire-diffuser-lens', 'welcome-ko-top-cnc-frame', 'welcome-ko-quartz-col-left', 'welcome-ko-quartz-col-right',
+      'welcome-so-cnc-chassis', 'welcome-so-sapphire-diffuser-lens',
+    ];
+    const templateKeys = [
+      byIdKey('body', 'body-mg-front-shell', ['mg-front', 'chassis']),
+      byIdKey('body', 'body-top-deck', ['top-deck', 'トップ']),
+      byIdKey('mount', 'mount-flange-ring', ['flange', 'bayonet']),
+      byIdKey('lens', 'lens-front-cell-mount', ['front-cell', 'barrel']),
+      byIdKey('lens', 'lens-front-xa', ['front-xa', '前玉']),
+      byIdKey('shutter', 'shutter-curtain-1', ['curtain', '幕']),
+      pickKey('sensor', ['stacked', 'cmos', 'photodiode']),
+      byIdKey('mainboard', 'mb-vapor-chamber', ['vapor', 'graphite']),
+      byIdKey('mainboard', 'mb-sigma-graphite', ['sigma', 'graphite', 'sheet']),
+      pickKey('mainboard', ['hdi', 'pcb', 'substrate']),
+      byIdKey('bionz', 'xr-nickel-cu-ihs', ['ihs', 'package']),
+      byIdKey('battery', 'bat-outer-shell-front', ['outer-shell', 'cell']),
+      byIdKey('cfexpress', 'cfe-top-metal-armor', ['top-metal', 'armor']),
+      byIdKey('evf', 'evf-eyecup', ['eyecup', 'oled']),
+      byIdKey('lcd', 'lcd-ips-panel', ['ips-panel', 'panel']),
+      byIdKey('mishoe', 'mi-shoe-shell-plate', ['shell-plate', 'rail']),
+      byIdKey('mic', 'mc-top-grille-holes', ['grille', 'capsule']),
+      ...wIds.map((wid) => byIdKey('welcome', wid, [wid])),
+    ].filter(Boolean);
+
+    await extractor.extractPartsBatch(templateKeys, true);
+    const encArr = (arr) => Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('base64');
+    const encPack = (pk) => {
+      if (!pk) return undefined;
+      const g = pk.geometry;
+      const idx = g.getIndex();
+      return {
+        cx: +pk.cx.toFixed(4),
+        cy: +pk.cy.toFixed(4),
+        cz: +pk.cz.toFixed(4),
+        s: +pk.scale.toFixed(5),
+        vc: pk.vertCount,
+        ic: pk.indexCount,
+        p: encArr(g.getAttribute('position').array),
+        n: encArr(g.getAttribute('normal').array),
+        c: encArr(g.getAttribute('color').array),
+        i: encArr(idx.array),
+        ...(idx.array instanceof Uint32Array ? { u32: 1 } : {}),
+      };
+    };
+    const packedParts = {};
+    for (const key of templateKeys) {
+      const bp = extractor.getBlueprintSync(key);
+      if (!bp) continue;
+      packedParts[key] = {
+        ns: [+bp.naturalSize.x.toFixed(3), +bp.naturalSize.y.toFixed(3), +bp.naturalSize.z.toFixed(3)],
+        nc: [+bp.naturalCenter.x.toFixed(3), +bp.naturalCenter.y.toFixed(3), +bp.naturalCenter.z.toFixed(3)],
+        he: [+bp.halfExtents.x.toFixed(3), +bp.halfExtents.y.toFixed(3), +bp.halfExtents.z.toFixed(3)],
+        t: bp.triCount,
+        ...(bp.opaque ? { o: encPack(bp.opaque) } : {}),
+        ...(bp.glass ? { g: encPack(bp.glass) } : {}),
+      };
+      pgTplCount++;
+    }
+    extractor.dispose();
+    const pgTplJson = JSON.stringify({ v: 1, parts: packedParts });
+    fs.writeFileSync(pgTplPath, pgTplJson, 'utf8');
+    pgTplBytes = Buffer.byteLength(pgTplJson, 'utf8');
+  }
+
   const indexBytes = Buffer.byteLength(indexContent, 'utf8');
   const allNamesBytes = Buffer.byteLength(allNamesContent, 'utf8');
   const elapsedMs = Date.now() - t0;
 
-  console.log(`\n[CATALOG] Generated L0/L1/L2 for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks).`);
+  console.log(`\n[CATALOG] Generated L0/L1/L2 + Play Ground Index & Templates for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks).`);
   console.log(`  L0 catalog/INDEX.tsv     : ${(indexBytes / 1024).toFixed(2)} kB`);
+  console.log(`  PG src/playground/playground_index.json     : ${(pgIndexBytes / 1024).toFixed(2)} kB (${pgParts.length} parts, -${(100 * (1 - pgIndexBytes / totalJsonBytesIndiv)).toFixed(1)}% vs indiv JSONs)`);
+  console.log(`  PG src/playground/playground_templates.json : ${(pgTplBytes / 1024).toFixed(2)} kB (${pgTplCount} pre-baked SNORM16/SNORM8 template blueprints)`);
   console.log(
     `  L1 catalog/ALL_NAMES.txt : ${(allNamesBytes / 1024).toFixed(2)} kB (vs ${(totalJsonBytesIndiv / 1024).toFixed(1)} kB indiv JSONs -> ${(100 * (1 - allNamesBytes / totalJsonBytesIndiv)).toFixed(2)}% reduction)`
   );

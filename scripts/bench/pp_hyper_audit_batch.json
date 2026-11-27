@@ -1,0 +1,66 @@
+[
+  {
+    "name": "01_welcome_ultra_minimal_hud_desktop",
+    "mode": "full",
+    "viewport": [1366, 820],
+    "options": { "unit": "welcome", "quality": "ultra", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "02_welcome_ultra_exploded_cad",
+    "mode": "cad",
+    "viewport": [1366, 820],
+    "options": { "unit": "welcome", "quality": "ultra", "explode": 0.65, "preset": "iso" }
+  },
+  {
+    "name": "03_integrated_std_lite_v2_cad",
+    "mode": "cad",
+    "viewport": [1366, 820],
+    "options": { "unit": "integrated", "quality": "standard_lite", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "04_integrated_ultra_25x_cad",
+    "mode": "cad",
+    "viewport": [1366, 820],
+    "options": { "unit": "integrated", "quality": "ultra", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "05_mishoe_std_lite_v2_cad",
+    "mode": "cad",
+    "viewport": [1366, 820],
+    "options": { "unit": "mishoe", "quality": "standard_lite", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "06_mic_std_lite_v2_cad",
+    "mode": "cad",
+    "viewport": [1366, 820],
+    "options": { "unit": "mic", "quality": "standard_lite", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "07_mobile_welcome_ultra_minimal_hud",
+    "mode": "full",
+    "viewport": [390, 844],
+    "dpr": 2,
+    "mobile": true,
+    "options": { "unit": "welcome", "quality": "ultra", "explode": 0, "preset": "iso" }
+  },
+  {
+    "name": "08_mobile_diagram_90deg_lightbox",
+    "mode": "diagram",
+    "viewport": [390, 844],
+    "dpr": 2,
+    "mobile": true,
+    "options": { "unit": "integrated", "quality": "standard_lite", "partId": "lens-front-xa", "showLightbox": true, "lightboxRotate": true }
+  },
+  {
+    "name": "09_playground_11_hyper_studio",
+    "mode": "custom",
+    "viewport": [1366, 820],
+    "options": { "playground": true, "playgroundReport": false, "showCad": true, "showUi": true }
+  },
+  {
+    "name": "10_playground_11_plya_report",
+    "mode": "custom",
+    "viewport": [1366, 820],
+    "options": { "playground": true, "playgroundReport": true, "showCad": true, "showUi": true }
+  }
+]

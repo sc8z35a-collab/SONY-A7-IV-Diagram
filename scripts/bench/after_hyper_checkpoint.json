@@ -1,0 +1,181 @@
+{
+  "timestamp": "2026-11-27T09:51:45.452Z",
+  "playgroundMetrics": {
+    "pgColdOpenAndTemplateMs": 744.3,
+    "pgWlk220LoadMs": 9,
+    "pgDrawCalls": 5,
+    "pgTriangles": 10631,
+    "pgMeshCount": 4,
+    "pgUniqueMaterials": 4,
+    "pgVboMB": 0.384,
+    "pgActiveGpuMs": 86.8,
+    "pgIdleDrawsPerSec": 0,
+    "pgIdleCpuMsPerSec": 0,
+    "pgPickRaycastMs": 0.42,
+    "pgPlyaDirtyMs": 0.662,
+    "pgPlyaSteadyMs": 0.033,
+    "pgUndoRedoMs": 34.85,
+    "pgSearchFilterMs": 7.98,
+    "pgA7ivScore": 973,
+    "pgA7ivPartCount": 17
+  },
+  "stdLiteResults": {
+    "integrated": {
+      "trueGpuMs": 734.5,
+      "drawCalls": 8,
+      "triangles": 93810,
+      "batchItems": 352,
+      "vboMB": 2.537,
+      "buildMs": 1509.6,
+      "explodeMs": 0.3433,
+      "raycastMs": 0.8767,
+      "meanLuma": 83.5,
+      "p05Luma": 49.9,
+      "crushPct": 0
+    },
+    "mic": {
+      "trueGpuMs": 558.8,
+      "drawCalls": 4,
+      "triangles": 73573,
+      "batchItems": 166,
+      "vboMB": 1.68,
+      "buildMs": 729.1,
+      "explodeMs": 0.11,
+      "raycastMs": 0.3033,
+      "meanLuma": 71,
+      "p05Luma": 51.7,
+      "crushPct": 0
+    },
+    "cfexpress": {
+      "trueGpuMs": 727.2,
+      "drawCalls": 4,
+      "triangles": 55444,
+      "batchItems": 231,
+      "vboMB": 1.579,
+      "buildMs": 655.6,
+      "explodeMs": 0.0567,
+      "raycastMs": 0.0167,
+      "meanLuma": 50,
+      "p05Luma": 24.8,
+      "crushPct": 0
+    },
+    "bionz": {
+      "trueGpuMs": 608.4,
+      "drawCalls": 6,
+      "triangles": 72212,
+      "batchItems": 80,
+      "vboMB": 1.958,
+      "buildMs": 475.7,
+      "explodeMs": 0.0167,
+      "raycastMs": 0.0867,
+      "meanLuma": 108.2,
+      "p05Luma": 55.9,
+      "crushPct": 0
+    },
+    "welcome": {
+      "trueGpuMs": 125,
+      "drawCalls": 2,
+      "triangles": 14372,
+      "batchItems": 230,
+      "vboMB": 0.422,
+      "buildMs": 130.6,
+      "explodeMs": 0.0033,
+      "raycastMs": 0.05,
+      "meanLuma": 106.5,
+      "p05Luma": 60.2,
+      "crushPct": 0
+    },
+    "mishoe": {
+      "trueGpuMs": 805.8,
+      "drawCalls": 2,
+      "triangles": 39828,
+      "batchItems": 99,
+      "vboMB": 1.432,
+      "buildMs": 170.1,
+      "explodeMs": 0.1633,
+      "raycastMs": 0.1133,
+      "meanLuma": 116.3,
+      "p05Luma": 51.9,
+      "crushPct": 0
+    }
+  },
+  "errors": [],
+  "comparison": {
+    "pgRatios": {
+      "pgColdOpenAndTemplateMs": {
+        "before": 30713.3,
+        "after": 744.3,
+        "speedupX": 41.26
+      },
+      "pgWlk220LoadMs": {
+        "before": 664.7,
+        "after": 9,
+        "speedupX": 73.86
+      },
+      "pgDrawCalls": {
+        "before": 246,
+        "after": 5,
+        "speedupX": 49.2
+      },
+      "pgTriangles": {
+        "before": 34240,
+        "after": 10631,
+        "speedupX": 3.22
+      },
+      "pgVboMB": {
+        "before": 1.566,
+        "after": 0.384,
+        "speedupX": 4.08
+      },
+      "pgActiveGpuMs": {
+        "before": 216.8,
+        "after": 86.8,
+        "speedupX": 2.5
+      },
+      "pgPickRaycastMs": {
+        "before": 5.003,
+        "after": 0.42,
+        "speedupX": 11.91
+      },
+      "pgPlyaDirtyMs": {
+        "before": 1.225,
+        "after": 0.662,
+        "speedupX": 1.85
+      },
+      "pgPlyaSteadyMs": {
+        "before": 1.517,
+        "after": 0.033,
+        "speedupX": 45.97
+      },
+      "pgUndoRedoMs": {
+        "before": 548.075,
+        "after": 34.85,
+        "speedupX": 15.73
+      },
+      "pgSearchFilterMs": {
+        "before": 41.535,
+        "after": 7.98,
+        "speedupX": 5.2
+      },
+      "pgIdleDrawsPerSec": {
+        "before": 8.9,
+        "after": 0,
+        "speedupX": null
+      }
+    },
+    "pgArithMeanX": 23.16,
+    "pgGeoMeanX": 11.36,
+    "litePerMetric": {
+      "trueGpuMs": 1.65,
+      "drawCalls": 7.63,
+      "triangles": 1.7,
+      "batchItems": 1.53,
+      "vboMB": 2.32,
+      "buildMs": 1.19,
+      "explodeMs": 16.87,
+      "raycastMs": 1.8
+    },
+    "liteArithMeanX": 4.34,
+    "liteGeoMeanX": 2.69
+  }
+}

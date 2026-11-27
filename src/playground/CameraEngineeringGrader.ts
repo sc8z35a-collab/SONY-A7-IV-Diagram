@@ -91,29 +91,6 @@ function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
 
-function shrinkBox(box: THREE.Box3, factor: number): THREE.Box3 {
-  const c = box.getCenter(new THREE.Vector3());
-  const half = box.getSize(new THREE.Vector3()).multiplyScalar(0.5 * factor);
-  return new THREE.Box3(c.clone().sub(half), c.clone().add(half));
-}
-
-function boxOverlapVolume(a: THREE.Box3, b: THREE.Box3): number {
-  const ox = Math.min(a.max.x, b.max.x) - Math.max(a.min.x, b.min.x);
-  if (ox <= 0.6) return 0;
-  const oy = Math.min(a.max.y, b.max.y) - Math.max(a.min.y, b.min.y);
-  if (oy <= 0.6) return 0;
-  const oz = Math.min(a.max.z, b.max.z) - Math.max(a.min.z, b.min.z);
-  if (oz <= 0.6) return 0;
-  return ox * oy * oz;
-}
-
-function boxVolume(b: THREE.Box3): number {
-  const sx = Math.max(0.2, b.max.x - b.min.x);
-  const sy = Math.max(0.2, b.max.y - b.min.y);
-  const sz = Math.max(0.2, b.max.z - b.min.z);
-  return sx * sy * sz;
-}
-
 function boxDistance(a: THREE.Box3, b: THREE.Box3): number {
   const dx = Math.max(0, Math.max(a.min.x - b.max.x, b.min.x - a.max.x));
   const dy = Math.max(0, Math.max(a.min.y - b.max.y, b.min.y - a.max.y));
@@ -307,27 +284,36 @@ export function evaluateCustomCamera(
     const zStart = sensorC.z + 2.5;
     const zEnd = (lensC ? lensC.z : mountC!.z) - 2.0;
     if (zEnd > zStart + 1.5) {
-      const opaqueNonOptical = parts.filter(
-        (p) =>
-          p.entry.role === 'battery' ||
-          p.entry.role === 'mainboard' ||
-          p.entry.role === 'bionz' ||
-          p.entry.role === 'lcd' ||
-          p.entry.role === 'storage' ||
-          p.entry.role === 'audio'
-      );
-      for (const p of opaqueNonOptical) {
-        const core = shrinkBox(p.worldBox, 0.86);
-        const zLo = Math.max(core.min.z, zStart);
-        const zHi = Math.min(core.max.z, zEnd);
+      for (let i = 0; i < parts.length; i++) {
+        const p = parts[i];
+        const r = p.entry.role;
+        if (
+          r !== 'battery' &&
+          r !== 'mainboard' &&
+          r !== 'bionz' &&
+          r !== 'lcd' &&
+          r !== 'storage' &&
+          r !== 'audio'
+        ) {
+          continue;
+        }
+        const wb = p.worldBox;
+        const bcx = 0.5 * (wb.min.x + wb.max.x);
+        const bcy = 0.5 * (wb.min.y + wb.max.y);
+        const bcz = 0.5 * (wb.min.z + wb.max.z);
+        const bhx = 0.43 * (wb.max.x - wb.min.x);
+        const bhy = 0.43 * (wb.max.y - wb.min.y);
+        const bhz = 0.43 * (wb.max.z - wb.min.z);
+        const zLo = Math.max(bcz - bhz, zStart);
+        const zHi = Math.min(bcz + bhz, zEnd);
         if (zHi <= zLo) continue;
         const zMid = 0.5 * (zLo + zHi);
         const t = clamp((zMid - sensorC.z) / Math.max(1, zEnd - sensorC.z), 0, 1);
         // Frustum radius tapers from 36x24mm sensor half-diagonal (16mm effective) to E-mount/lens aperture (22mm)
         const coneR = 16.0 + t * 6.5;
         // Closest point in XY box to optical axis
-        const cx = clamp(axisRef.x, core.min.x, core.max.x);
-        const cy = clamp(axisRef.y, core.min.y, core.max.y);
+        const cx = clamp(axisRef.x, bcx - bhx, bcx + bhx);
+        const cy = clamp(axisRef.y, bcy - bhy, bcy + bhy);
         const distToAxis = Math.hypot(cx - axisRef.x, cy - axisRef.y);
         if (distToAxis < coneR) {
           const intrusion = clamp((coneR - distToAxis) / coneR, 0, 1);
@@ -667,14 +653,40 @@ export function evaluateCustomCamera(
   // =========================================================================
   let severeCollisionCount = 0;
   const collidingPairs: string[] = [];
-  const coreBoxes = parts.map((p) => shrinkBox(p.worldBox, 0.78));
+  const nParts = parts.length;
+  const coreCoords = new Float32Array(nParts * 6);
+  const coreVols = new Float32Array(nParts);
+  for (let i = 0; i < nParts; i++) {
+    const wb = parts[i].worldBox;
+    const cx = 0.5 * (wb.min.x + wb.max.x);
+    const cy = 0.5 * (wb.min.y + wb.max.y);
+    const cz = 0.5 * (wb.min.z + wb.max.z);
+    const hx = 0.39 * (wb.max.x - wb.min.x); // 0.5 * 0.78
+    const hy = 0.39 * (wb.max.y - wb.min.y);
+    const hz = 0.39 * (wb.max.z - wb.min.z);
+    const o = i * 6;
+    coreCoords[o] = cx - hx;
+    coreCoords[o + 1] = cy - hy;
+    coreCoords[o + 2] = cz - hz;
+    coreCoords[o + 3] = cx + hx;
+    coreCoords[o + 4] = cy + hy;
+    coreCoords[o + 5] = cz + hz;
+    coreVols[i] = Math.max(0.2, 2 * hx) * Math.max(0.2, 2 * hy) * Math.max(0.2, 2 * hz);
+  }
 
   // Build adjacency graph (surface-to-surface gap <= 28mm OR enclosed inside body shell)
-  const adj: number[][] = Array.from({ length: parts.length }, () => []);
+  const adj: number[][] = Array.from({ length: nParts }, () => []);
 
-  for (let i = 0; i < parts.length; i++) {
+  for (let i = 0; i < nParts; i++) {
     const a = parts[i];
-    for (let j = i + 1; j < parts.length; j++) {
+    const oa = i * 6;
+    const ax0 = coreCoords[oa], ay0 = coreCoords[oa + 1], az0 = coreCoords[oa + 2];
+    const ax1 = coreCoords[oa + 3], ay1 = coreCoords[oa + 4], az1 = coreCoords[oa + 5];
+    const volA = coreVols[i];
+    const aRole = a.entry.role;
+    const aIsBody = aRole === 'body';
+
+    for (let j = i + 1; j < nParts; j++) {
       const b = parts[j];
       const d = boxDistance(a.worldBox, b.worldBox);
       if (d <= 28) {
@@ -683,22 +695,31 @@ export function evaluateCustomCamera(
       }
 
       // Skip housing enclosure pairs & concentric optical pairs (lens-mount-shutter) & same-unit sub-parts
-      const isHousingPair = a.entry.role === 'body' || b.entry.role === 'body';
+      const bRole = b.entry.role;
+      const isHousingPair = aIsBody || bRole === 'body';
       const isSameUnit = a.entry.unitId === b.entry.unitId;
       const isOpticalRingPair =
-        (a.entry.role === 'lens' && b.entry.role === 'mount') ||
-        (a.entry.role === 'mount' && b.entry.role === 'lens');
+        (aRole === 'lens' && bRole === 'mount') ||
+        (aRole === 'mount' && bRole === 'lens');
 
       if (!isHousingPair && !isSameUnit && !isOpticalRingPair) {
-        const ov = boxOverlapVolume(coreBoxes[i], coreBoxes[j]);
-        if (ov > 0) {
-          const minVol = Math.min(boxVolume(coreBoxes[i]), boxVolume(coreBoxes[j]));
-          const ratio = ov / Math.max(1, minVol);
-          if (ratio > 0.24) {
-            severeCollisionCount++;
-            collidingPairs.push(`${a.entry.partId} ✕ ${b.entry.partId}`);
-            markPart(a.uid, 'error', `3Dコア干渉: ${b.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
-            markPart(b.uid, 'error', `3Dコア干渉: ${a.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
+        const ob = j * 6;
+        const ox = Math.min(ax1, coreCoords[ob + 3]) - Math.max(ax0, coreCoords[ob]);
+        if (ox > 0.6) {
+          const oy = Math.min(ay1, coreCoords[ob + 4]) - Math.max(ay0, coreCoords[ob + 1]);
+          if (oy > 0.6) {
+            const oz = Math.min(az1, coreCoords[ob + 5]) - Math.max(az0, coreCoords[ob + 2]);
+            if (oz > 0.6) {
+              const ov = ox * oy * oz;
+              const minVol = volA < coreVols[j] ? volA : coreVols[j];
+              const ratio = ov / Math.max(1, minVol);
+              if (ratio > 0.24) {
+                severeCollisionCount++;
+                collidingPairs.push(`${a.entry.partId} ✕ ${b.entry.partId}`);
+                markPart(a.uid, 'error', `3Dコア干渉: ${b.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
+                markPart(b.uid, 'error', `3Dコア干渉: ${a.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
+              }
+            }
           }
         }
       }
@@ -706,20 +727,25 @@ export function evaluateCustomCamera(
   }
 
   // BFS Connected Components to find truly floating/disconnected sub-assemblies!
-  const visited = new Uint8Array(parts.length);
+  const visited = new Uint8Array(nParts);
+  const bfsQueue = new Int32Array(nParts);
   const clusters: number[][] = [];
-  for (let i = 0; i < parts.length; i++) {
+  for (let i = 0; i < nParts; i++) {
     if (visited[i]) continue;
     const comp: number[] = [];
-    const queue = [i];
+    let qHead = 0;
+    let qTail = 0;
+    bfsQueue[qTail++] = i;
     visited[i] = 1;
-    while (queue.length > 0) {
-      const u = queue.shift()!;
+    while (qHead < qTail) {
+      const u = bfsQueue[qHead++];
       comp.push(u);
-      for (const v of adj[u]) {
+      const neighbors = adj[u];
+      for (let k = 0; k < neighbors.length; k++) {
+        const v = neighbors[k];
         if (!visited[v]) {
           visited[v] = 1;
-          queue.push(v);
+          bfsQueue[qTail++] = v;
         }
       }
     }
