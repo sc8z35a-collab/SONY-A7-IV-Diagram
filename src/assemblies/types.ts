@@ -23,7 +23,7 @@ export type ScaleMode =
   | 'sensor_fab'
   | 'drybox'
   | 'mirai_2028';
-export type MiraiStructureId = 'fh01' | 'fh02';
+export type MiraiStructureId = 'fh01' | 'fh02' | 'fh08' | 'fh32' | 'fh25';
 export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
 export type SensorFabStage =
   | 'overview'
@@ -2307,7 +2307,64 @@ export interface PartExplanation {
     | 'mirai_fh02_hermetic_ceramic_carrier'
     | 'mirai_fh02_desiccant_getter_ring'
     | 'mirai_fh02_highspeed_fpc_array'
-    | 'mirai_fh02_thermal_chassis_plate';
+    | 'mirai_fh02_thermal_chassis_plate'
+    // FH MIRAI 2028 Structure #3 (FH08 ASI Inverse-Design 28mm 50mm F1.4 Meta-Optics Pancake Lens — 18 Parts)
+    | 'mirai_fh08_front_filter_bezel'
+    | 'mirai_fh08_front_gasket_collar'
+    | 'mirai_fh08_freeform_front_glass'
+    | 'mirai_fh08_tio2_meta_doe_plate'
+    | 'mirai_fh08_optical_spacer_baffle'
+    | 'mirai_fh08_ed_doublet_group'
+    | 'mirai_fh08_iris_blade_array'
+    | 'mirai_fh08_iris_stepper_motor'
+    | 'mirai_fh08_focus_freeform_cell'
+    | 'mirai_fh08_linear_voicecoil_pair'
+    | 'mirai_fh08_magnetic_encoder'
+    | 'mirai_fh08_rear_corrector_lens'
+    | 'mirai_fh08_outer_focus_ring'
+    | 'mirai_fh08_inner_mg_barrel'
+    | 'mirai_fh08_curved_mcu_pcb'
+    | 'mirai_fh08_rear_dust_baffle'
+    | 'mirai_fh08_emount_contacts'
+    | 'mirai_fh08_stainless_bayonet'
+    // FH MIRAI 2028 Structure #4 (FH32 IP68 Hermetically Isolated Ultrasonic MEMS Air-Cooling Module — 18 Parts)
+    | 'mirai_fh32_intake_grille'
+    | 'mirai_fh32_eptfe_water_mesh'
+    | 'mirai_fh32_upper_acoustic_plenum'
+    | 'mirai_fh32_mems_jet_chip_a'
+    | 'mirai_fh32_mems_jet_chip_b'
+    | 'mirai_fh32_pzt_wirebond_bridge'
+    | 'mirai_fh32_nozzle_impingement'
+    | 'mirai_fh32_ip68_isolation_wall'
+    | 'mirai_fh32_exhaust_duct_manifold'
+    | 'mirai_fh32_perimeter_oring'
+    | 'mirai_fh32_vc_top_copper'
+    | 'mirai_fh32_vc_sintered_wick'
+    | 'mirai_fh32_vc_bottom_plate'
+    | 'mirai_fh32_piezo_driver_pcb'
+    | 'mirai_fh32_control_fpc'
+    | 'mirai_fh32_thermal_tim_pads'
+    | 'mirai_fh32_mg_carrier_chassis'
+    | 'mirai_fh32_seal_torx_bolts'
+    // FH MIRAI 2028 Structure #5 (FH25 30,000-nit 240Hz True-RGB Tandem Pancake EVF Unit — 18 Parts)
+    | 'mirai_fh25_ergonomic_eyecup'
+    | 'mirai_fh25_antifog_coverglass'
+    | 'mirai_fh25_gaze_ir_ring'
+    | 'mirai_fh25_dichroic_mirror'
+    | 'mirai_fh25_gaze_nir_sensor'
+    | 'mirai_fh25_ed_eyepiece_lens'
+    | 'mirai_fh25_pancake_pbs_film'
+    | 'mirai_fh25_pancake_halfmirror'
+    | 'mirai_fh25_diopter_helicoid'
+    | 'mirai_fh25_mla_extraction_dome'
+    | 'mirai_fh25_true_rgb_tandem'
+    | 'mirai_fh25_cmos_backplane'
+    | 'mirai_fh25_ceramic_alignment'
+    | 'mirai_fh25_tcon_driver_pcb'
+    | 'mirai_fh25_mipi_fpc_tail'
+    | 'mirai_fh25_copper_heatsink'
+    | 'mirai_fh25_mg_optical_housing'
+    | 'mirai_fh25_mount_bolts_bracket';
 }
 
 export interface CadPart {

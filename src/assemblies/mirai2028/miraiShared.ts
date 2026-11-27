@@ -285,6 +285,199 @@ export function buildMicroCoolingFins(
   return makeMiraiInstanced(finGeo, mat, transforms);
 }
 
+/**
+ * Create a closed circular annulus 2D shape (outerR with innerR circular bore).
+ */
+export function createRingShape(outerR: number, innerR: number): THREE.Shape {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, outerR, 0, Math.PI * 2, false);
+  if (innerR > 0.05) {
+    const hole = new THREE.Path();
+    hole.absarc(0, 0, innerR, 0, Math.PI * 2, true);
+    s.holes.push(hole);
+  }
+  return s;
+}
+
+/**
+ * Create a partial-arc cutaway ring 2D shape from startRad to endRad (for cutaway barrels & housings).
+ */
+export function createArcRingShape(
+  outerR: number,
+  innerR: number,
+  startRad: number,
+  endRad: number
+): THREE.Shape {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, outerR, startRad, endRad, false);
+  s.absarc(0, 0, innerR, endRad, startRad, true);
+  s.closePath();
+  return s;
+}
+
+/**
+ * Create a Z-axis CNC-beveled annular ring (extruded along Z, centered at Z=0) with clean UVs.
+ */
+export function makeZAxisCncRing(
+  outerR: number,
+  innerR: number,
+  depth: number,
+  mat: THREE.Material,
+  opts?: {
+    bevel?: number;
+    bevelSegs?: number;
+    curveSegs?: number;
+    planarUvDiameter?: number;
+    boxUvTile?: number;
+  }
+): THREE.Mesh {
+  const bevel = opts?.bevel ?? 0.1;
+  const geo = extrudeHiRes(
+    createRingShape(outerR, innerR),
+    depth,
+    bevel,
+    bevel,
+    opts?.bevelSegs ?? 2,
+    opts?.curveSegs ?? 32
+  );
+  if (opts?.planarUvDiameter) {
+    applyPlanarUVs(geo, opts.planarUvDiameter, opts.planarUvDiameter, 'xy');
+  } else {
+    applyBoxUVs(geo, opts?.boxUvTile ?? 14.0);
+  }
+  return new THREE.Mesh(geo, mat);
+}
+
+/**
+ * Build a precision rotationally symmetric curved optical meniscus / aspheric / ED lens element
+ * centered along the Z axis using LatheGeometry, with automatic 4-tier quality scaling and
+ * chamfered rim edges.
+ */
+export function buildMeniscusLensGeo(
+  diameter: number,
+  edgeThickness: number,
+  sagFront: number,
+  sagRear: number,
+  asphericFront = 0,
+  asphericRear = 0,
+  radialSegments = 52
+): THREE.BufferGeometry {
+  const radius = diameter * 0.5;
+  const effSteps = scaleCurveSegmentsForQuality(14, 5);
+  const effRadial = scaleRadialSegmentsForQuality(radialSegments, 16);
+  const halfEdge = Math.max(0.18, edgeThickness * 0.5);
+  const chamfer = Math.min(0.28, halfEdge * 0.35, radius * 0.04);
+  const pts: THREE.Vector2[] = [];
+
+  // Front (+Z) optical surface from optical axis (r=0) out to rim edge
+  for (let i = 0; i <= effSteps; i++) {
+    const u = i / effSteps;
+    const r = Math.max(0.0005, u * (radius - chamfer));
+    const r2 = u * u;
+    const zF = halfEdge + sagFront * (1 - r2) + asphericFront * r2 * (1 - r2);
+    pts.push(new THREE.Vector2(r, zF));
+  }
+  // Crisp chamfered cylindrical edge land
+  pts.push(new THREE.Vector2(radius, halfEdge - chamfer));
+  pts.push(new THREE.Vector2(radius, -halfEdge + chamfer));
+  // Rear (-Z) optical surface from rim back to optical axis
+  for (let i = effSteps; i >= 0; i--) {
+    const u = i / effSteps;
+    const r = Math.max(0.0005, u * (radius - chamfer));
+    const r2 = u * u;
+    const zR = -halfEdge - sagRear * (1 - r2) - asphericRear * r2 * (1 - r2);
+    pts.push(new THREE.Vector2(r, zR));
+  }
+
+  const geo = new THREE.LatheGeometry(pts, effRadial);
+  geo.rotateX(Math.PI / 2);
+  geo.computeVertexNormals();
+  return markHiRes(geo);
+}
+
+/**
+ * Build a CNC knurled control/diopter ring along the Z axis:
+ * base beveled annulus + InstancedMesh circumferential machined knurl ribs.
+ */
+export function addKnurledRingToGroup(
+  parent: THREE.Group,
+  outerR: number,
+  innerR: number,
+  depthZ: number,
+  teethCount: number,
+  bodyMat: THREE.Material,
+  knurlMat: THREE.Material,
+  knurlWidthZ?: number,
+  knurlOffsetZ = 0
+): void {
+  const ring = makeZAxisCncRing(outerR, innerR, depthZ, bodyMat, {
+    bevel: 0.16,
+    bevelSegs: 2,
+    curveSegs: 40,
+  });
+  parent.add(ring);
+
+  const toothLenZ = knurlWidthZ ?? depthZ * 0.72;
+  const toothThick = Math.max(0.32, (Math.PI * 2 * outerR) / (teethCount * 2.4));
+  const toothProtrude = Math.min(0.46, Math.max(0.24, outerR * 0.013));
+  const toothGeo = markHiRes(new THREE.BoxGeometry(toothThick, toothProtrude * 2, toothLenZ));
+  const transforms: InstanceTransform[] = [];
+  for (let i = 0; i < teethCount; i++) {
+    const a = (i / teethCount) * Math.PI * 2;
+    transforms.push({
+      pos: [Math.cos(a) * outerR, Math.sin(a) * outerR, knurlOffsetZ],
+      rot: [0, 0, a - Math.PI / 2],
+    });
+  }
+  parent.add(makeMiraiInstanced(toothGeo, knurlMat, transforms, true));
+}
+
+/**
+ * Build a single authentic curved crescent metallic iris aperture blade (centered in XY, extruded in Z)
+ * ready for 9-blade circular diaphragm InstancedMesh placement.
+ */
+export function buildCurvedIrisBladeGeo(
+  innerR: number,
+  outerR: number,
+  thickness = 0.18
+): THREE.ExtrudeGeometry {
+  const midR = (innerR + outerR) * 0.52;
+  const s = new THREE.Shape();
+  s.moveTo(outerR * 0.96, -1.6);
+  s.quadraticCurveTo(midR + 3.4, outerR * 0.56, innerR * 0.48, outerR * 0.78);
+  s.quadraticCurveTo(innerR * 0.16, innerR * 0.95, innerR * 0.05, innerR * 0.72);
+  s.quadraticCurveTo(innerR * 0.94, innerR * 0.42, outerR * 0.76, -1.5);
+  s.closePath();
+  const geo = extrudeHiRes(s, thickness, 0.02, 0.02, 1, 14);
+  applyBoxUVs(geo, 10.0);
+  return geo;
+}
+
+/**
+ * Place precision M1.4-M1.6 stainless Torx/countersunk bolts oriented along +Z or -Z (for lens & EVF flanges).
+ */
+export function addZAxisBolts(
+  parent: THREE.Group,
+  positions: ReadonlyArray<readonly [number, number, number]>,
+  mats: V2MaterialLibrary,
+  headRadius = 1.15,
+  shankLen = 2.4,
+  dirZ: 1 | -1 = 1
+): void {
+  for (const [x, y, z] of positions) {
+    const bolt = createPrecisionScrew(headRadius, headRadius * 0.56, shankLen, mats.stainlessMachined);
+    if (dirZ === -1) bolt.rotation.y = Math.PI;
+    bolt.position.set(x, y, z);
+    parent.add(bolt);
+
+    const washer = new THREE.Mesh(hiResCyl(headRadius * 1.26, headRadius * 1.30, 0.22, 14), mats.titaniumRivet);
+    washer.rotation.x = Math.PI / 2;
+    washer.position.set(x, y, z - dirZ * 0.12);
+    washer.userData.noEdges = true;
+    parent.add(washer);
+  }
+}
+
 // ============================================================================
 // Procedural High-DPI HeroMaterialSpec Painters (512px LITE/STD/HIGH, 1024px ULTRA)
 // ============================================================================
@@ -704,6 +897,438 @@ export const MIRAI_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> = {
           ctx.fillRect(x + bw - 8, y + 3, 5, 5);
         }
       }
+    },
+  },
+
+  /** FH08 Core: TiO2 Sub-Wavelength Nanopillar Meta-DOE Iridescent Phase Compensation Plate */
+  fh08MetaDoeMap: {
+    bucket: 'silicon_photodiode',
+    width: 1024,
+    height: 1024,
+    baseColor: 0xffffff,
+    metalness: 0.58,
+    roughness: 0.14,
+    fallbackColor: 0x0f766e,
+    painter: (ctx, w, h) => {
+      const cx = w * 0.5;
+      const cy = h * 0.5;
+      const maxR = w * 0.495;
+
+      // Deep optical sapphire-indigo fused silica substrate
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+      bg.addColorStop(0, '#0c2747');
+      bg.addColorStop(0.28, '#0f5d6e');
+      bg.addColorStop(0.54, '#1d4ed8');
+      bg.addColorStop(0.76, '#6d28d9');
+      bg.addColorStop(0.92, '#047857');
+      bg.addColorStop(1, '#111827');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Concentric Fresnel-like TiO2 nanopillar phase-stepped chromatic dispersion zones
+      const spectrum = [
+        'rgba(56, 189, 248, 0.55)',
+        'rgba(52, 211, 153, 0.52)',
+        'rgba(129, 140, 248, 0.52)',
+        'rgba(244, 114, 182, 0.40)',
+        'rgba(45, 212, 191, 0.54)',
+      ];
+      for (let ring = 1; ring <= 34; ring++) {
+        const t = ring / 34;
+        const r = Math.pow(t, 0.72) * maxR * 0.90;
+        ctx.strokeStyle = spectrum[ring % spectrum.length];
+        ctx.lineWidth = Math.max(1.2, (1.1 - t * 0.65) * 4.2);
+        ctx.beginPath();
+        // Subtle 4-fold freeform harmonic modulation symbolizing ASI non-axisymmetric phase design!
+        for (let step = 0; step <= 144; step++) {
+          const ang = (step / 144) * Math.PI * 2;
+          const freeformMod = 1 + 0.018 * t * Math.cos(4 * ang + ring * 0.14);
+          const px = cx + Math.cos(ang) * r * freeformMod;
+          const py = cy + Math.sin(ang) * r * freeformMod;
+          if (step === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      // Sub-wavelength TiO2 nanopillar radial micro-dot lattice hints
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.34)';
+      for (let aIdx = 0; aIdx < 48; aIdx++) {
+        const ang = (aIdx / 48) * Math.PI * 2;
+        for (let rIdx = 2; rIdx <= 18; rIdx++) {
+          const rr = (rIdx / 19) * maxR * 0.88;
+          ctx.fillRect(cx + Math.cos(ang) * rr - 1.2, cy + Math.sin(ang) * rr - 1.2, 2.4, 2.4);
+        }
+      }
+
+      // Precision entrance-pupil golden gauge ring (Ø35.7mm reference) & 4 cardinal alignment crosshairs
+      ctx.strokeStyle = 'rgba(234, 179, 8, 0.85)';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, maxR * 0.89, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(248, 250, 252, 0.45)';
+      ctx.lineWidth = 1.6;
+      for (let k = 0; k < 4; k++) {
+        const ang = (k * Math.PI) / 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(ang) * maxR * 0.80, cy + Math.sin(ang) * maxR * 0.80);
+        ctx.lineTo(cx + Math.cos(ang) * maxR * 0.95, cy + Math.sin(ang) * maxR * 0.95);
+        ctx.stroke();
+      }
+      drawMicroFiducial(ctx, cx, cy, 12, 'rgba(248, 250, 252, 0.55)');
+    },
+  },
+
+  /** FH08 Barrel Nameplate: Precision Laser-Engraved Lens Spec & Focus Distance Scale Band */
+  fh08FocusScaleMap: {
+    bucket: 'metal_hero',
+    width: 2048,
+    height: 256,
+    baseColor: 0xffffff,
+    metalness: 0.62,
+    roughness: 0.28,
+    fallbackColor: 0x262d38,
+    painter: (ctx, w, h) => {
+      // Deep CNC satin gunmetal anodized barrel ring
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, '#1a212c');
+      bg.addColorStop(0.5, '#2a3444');
+      bg.addColorStop(1, '#181e28');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Signature emerald-gold MIRAI 2028 top/bottom precision bevel pinstripes
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(0, 10, w, 14);
+      ctx.fillStyle = '#e5b94c';
+      ctx.fillRect(0, h - 22, w, 10);
+
+      // Fine metric vernier ticks along upper band
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.78)';
+      for (let i = 0; i < 128; i++) {
+        const x = (i / 128) * w;
+        const major = i % 8 === 0;
+        ctx.lineWidth = major ? 3.2 : 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, 30);
+        ctx.lineTo(x, major ? 66 : 48);
+        ctx.stroke();
+      }
+
+      // 4 crisp repeating quadrants around circumference so every viewing angle shows crystal-clear engraving
+      const drawEngraving = (cx: number) => {
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 54px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+        ctx.fillText('FE 50/1.4 META', cx, 134);
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = '800 34px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+        ctx.fillText('28mm ASI · Ø35.7mm · 180g', cx, 184);
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '800 26px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+        ctx.fillText('0.25m   0.5m   1m   3m   ∞', cx, 224);
+      };
+      for (let q = 0; q < 4; q++) {
+        drawEngraving(w * (0.125 + q * 0.25));
+      }
+    },
+  },
+
+  /** FH32 Core: Ultrasonic Piezo-Silicon MEMS Solid-State Air-Cooling Jet Chip (xMEMS / AirJet Class) */
+  fh32MemsChipMap: {
+    bucket: 'silicon_photodiode',
+    width: 1024,
+    height: 682,
+    baseColor: 0xffffff,
+    metalness: 0.74,
+    roughness: 0.18,
+    fallbackColor: 0x163858,
+    painter: (ctx, w, h) => {
+      // Deep DRIE single-crystal silicon MEMS substrate
+      const bg = ctx.createLinearGradient(0, 0, w, h);
+      bg.addColorStop(0, '#0f2540');
+      bg.addColorStop(0.5, '#174469');
+      bg.addColorStop(1, '#0d2038');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Gold perimeter high-voltage piezo guard bus & bond pads
+      ctx.strokeStyle = '#e5b94c';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(24, 24, w - 48, h - 48);
+
+      ctx.fillStyle = '#facc15';
+      for (let i = 0; i < 16; i++) {
+        const px = 64 + ((w - 128) * i) / 15;
+        ctx.fillRect(px - 10, 8, 20, 14);
+        ctx.fillRect(px - 10, h - 22, 20, 14);
+      }
+
+      // 4 x 2 array of ultrasonic piezo-actuated silicon resonance membranes
+      const cols = 4;
+      const rows = 2;
+      const mx = 58;
+      const my = 56;
+      const cw = (w - mx * 2) / cols;
+      const ch = (h - my * 2) / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = mx + c * cw + 12;
+          const y = my + r * ch + 12;
+          const bw = cw - 24;
+          const bh = ch - 24;
+
+          // Active piezo PZT actuator ring
+          ctx.fillStyle = '#1e3a5f';
+          ctx.fillRect(x, y, bw, bh);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 3.2;
+          ctx.strokeRect(x, y, bw, bh);
+
+          // Inner oscillating silicon cantilever membrane & golden electrode traces
+          ctx.fillStyle = '#0ea5e9';
+          ctx.globalAlpha = 0.28;
+          ctx.fillRect(x + 16, y + 16, bw - 32, bh - 32);
+          ctx.globalAlpha = 1;
+
+          ctx.strokeStyle = '#e5b94c';
+          ctx.lineWidth = 2.4;
+          ctx.strokeRect(x + 18, y + 18, bw - 36, bh - 36);
+
+          // Central ultrasonic micro-jet suction/discharge slit louver bank
+          ctx.fillStyle = '#091526';
+          for (let s = 0; s < 5; s++) {
+            const sy = y + 36 + s * ((bh - 72) / 4);
+            ctx.fillRect(x + 30, sy - 4, bw - 60, 8);
+          }
+          // Bright metallic air-slot lips
+          ctx.strokeStyle = 'rgba(186, 230, 253, 0.72)';
+          ctx.lineWidth = 1.2;
+          for (let s = 0; s < 5; s++) {
+            const sy = y + 36 + s * ((bh - 72) / 4);
+            ctx.strokeRect(x + 30, sy - 4, bw - 60, 8);
+          }
+        }
+      }
+
+      // Corner optical/DRIE alignment marks
+      drawMicroFiducial(ctx, 42, 42, 11, '#f8fafc');
+      drawMicroFiducial(ctx, w - 42, 42, 11, '#f8fafc');
+      drawMicroFiducial(ctx, 42, h - 42, 11, '#f8fafc');
+      drawMicroFiducial(ctx, w - 42, h - 42, 11, '#f8fafc');
+    },
+  },
+
+  /** FH32 Core: Sintered Porous Copper Micro-Vapor Chamber Capillary Wick & Arterial Channels */
+  fh32CopperWickMap: {
+    bucket: 'copper_thermal',
+    width: 1024,
+    height: 682,
+    baseColor: 0xffffff,
+    metalness: 0.78,
+    roughness: 0.34,
+    fallbackColor: 0xc26635,
+    painter: (ctx, w, h) => {
+      // Rich metallic copper base
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#9a441a');
+      grad.addColorStop(0.45, '#c86832');
+      grad.addColorStop(0.85, '#b45320');
+      grad.addColorStop(1, '#7c3211');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Recessed dark-bronze vapor-flow arterial micro-channels (two hot-zone hubs: Sensor left, SoC right)
+      ctx.strokeStyle = 'rgba(56, 20, 5, 0.65)';
+      ctx.lineWidth = 10;
+      for (let i = 0; i < 14; i++) {
+        const y = 42 + ((h - 84) * i) / 13;
+        ctx.beginPath();
+        ctx.moveTo(36, y);
+        ctx.lineTo(w - 36, y);
+        ctx.stroke();
+      }
+      // Cross arterial distribution grooves connecting Sensor hub (30%) and SoC hub (70%)
+      ctx.strokeStyle = 'rgba(253, 186, 116, 0.45)';
+      ctx.lineWidth = 4;
+      for (const hubX of [w * 0.28, w * 0.72]) {
+        for (let r = 36; r <= 190; r += 34) {
+          ctx.beginPath();
+          ctx.arc(hubX, h * 0.5, r, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Deterministic sintered copper micro-sphere grain bed texture
+      let seed = 791923;
+      const rand = () => {
+        seed = (seed * 16807) % 2147483647;
+        return seed / 2147483647;
+      };
+      for (let i = 0; i < 3200; i++) {
+        const px = rand() * w;
+        const py = rand() * h;
+        const pr = 1.6 + rand() * 3.8;
+        ctx.fillStyle =
+          rand() > 0.45
+            ? `rgba(251, 191, 128, ${(0.18 + rand() * 0.34).toFixed(2)})`
+            : `rgba(82, 31, 9, ${(0.22 + rand() * 0.30).toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(px, py, pr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Brazed perimeter copper sealing land
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(12, 12, w - 24, h - 24);
+    },
+  },
+
+  /** FH25 Core: 30,000-nit 240Hz Filterless True-RGB Tandem Micro-OLED / MicroLED Subpixel Emitter Die */
+  fh25TandemOledMap: {
+    bucket: 'silicon_photodiode',
+    width: 1024,
+    height: 768,
+    baseColor: 0xffffff,
+    metalness: 0.42,
+    roughness: 0.14,
+    fallbackColor: 0x0f172a,
+    painter: (ctx, w, h) => {
+      // Deep obsidian optical black micro-cavity background
+      ctx.fillStyle = '#070b14';
+      ctx.fillRect(0, 0, w, h);
+
+      // Gold perimeter cathode bus ring
+      ctx.strokeStyle = '#e5b94c';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(18, 18, w - 36, h - 36);
+
+      // Active 4:3 / 3:2 microdisplay active aperture filled with crisp True-RGB vertical stripe emitters
+      const ax = 48;
+      const ay = 44;
+      const aw = w - 96;
+      const ah = h - 88;
+      ctx.fillStyle = '#0b1220';
+      ctx.fillRect(ax, ay, aw, ah);
+
+      // High-purity Color-Filterless Direct RGB Tandem Micro-Subpixels
+      const cols = 42;
+      const rows = 28;
+      const cw = aw / cols;
+      const ch = ah / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = ax + c * cw + 1.5;
+          const y = ay + r * ch + 2;
+          const sw = (cw - 4) / 3;
+          const sh = ch - 4;
+          // Radial vignette glow peaking in center like an active 30,000-nit studio HDR scene
+          const dx = (c + 0.5) / cols - 0.5;
+          const dy = (r + 0.5) / rows - 0.5;
+          const lum = 0.68 + 0.32 * Math.max(0, 1 - Math.hypot(dx, dy) * 1.45);
+
+          ctx.fillStyle = `rgba(244, 63, 94, ${lum.toFixed(2)})`;
+          ctx.fillRect(x, y, sw - 0.8, sh);
+          ctx.fillStyle = `rgba(16, 185, 129, ${lum.toFixed(2)})`;
+          ctx.fillRect(x + sw, y, sw - 0.8, sh);
+          ctx.fillStyle = `rgba(56, 189, 248, ${lum.toFixed(2)})`;
+          ctx.fillRect(x + sw * 2, y, sw - 0.8, sh);
+        }
+      }
+
+      // Precision viewfinder AF bracket & HDR framing reticle overlay (studio-crisp white/gold)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+      ctx.lineWidth = 3;
+      const fx = ax + aw * 0.14;
+      const fy = ay + ah * 0.16;
+      const fw = aw * 0.72;
+      const fh = ah * 0.68;
+      const corner = 34;
+      // 4 framing corner brackets
+      ctx.beginPath();
+      ctx.moveTo(fx, fy + corner); ctx.lineTo(fx, fy); ctx.lineTo(fx + corner, fy);
+      ctx.moveTo(fx + fw - corner, fy); ctx.lineTo(fx + fw, fy); ctx.lineTo(fx + fw, fy + corner);
+      ctx.moveTo(fx, fy + fh - corner); ctx.lineTo(fx, fy + fh); ctx.lineTo(fx + corner, fy + fh);
+      ctx.moveTo(fx + fw - corner, fy + fh); ctx.lineTo(fx + fw, fy + fh); ctx.lineTo(fx + fw, fy + fh - corner);
+      ctx.stroke();
+
+      // Central Eye-AF green lock reticle
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(w * 0.5 - 42, h * 0.5 - 42, 84, 84);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.76)';
+      ctx.fillRect(ax + 12, ay + ah - 42, aw - 24, 34);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '800 20px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('TRUE-RGB TANDEM  ·  30,000 nit  ·  240Hz BFI  ·  30M DOTS', w * 0.5, ay + ah - 18);
+    },
+  },
+
+  /** FH25 Core: 12-inch Wafer 30M-Dot 240Hz BFI Si-CMOS EVF Driver Backplane */
+  fh25EvfReticleMap: {
+    bucket: 'silicon_hero',
+    width: 1024,
+    height: 768,
+    baseColor: 0xffffff,
+    metalness: 0.78,
+    roughness: 0.2,
+    fallbackColor: 0x1e334d,
+    painter: (ctx, w, h) => {
+      ctx.fillStyle = '#142234';
+      ctx.fillRect(0, 0, w, h);
+
+      // Perimeter high-speed 240Hz column DACs (top & bottom) and row scan drivers (left & right)
+      ctx.fillStyle = '#254266';
+      ctx.fillRect(88, 28, w - 176, 74);
+      ctx.fillRect(88, h - 102, w - 176, 74);
+      ctx.fillStyle = '#1d4f5a';
+      ctx.fillRect(28, 118, 52, h - 236);
+      ctx.fillRect(w - 80, 118, 52, h - 236);
+
+      // Gold column busbars & fine source driver blocks
+      for (let i = 0; i < 32; i++) {
+        const x = 96 + ((w - 192) * i) / 32;
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(245, 158, 11, 0.58)' : 'rgba(56, 189, 248, 0.45)';
+        ctx.fillRect(x, 36, (w - 192) / 32 - 3, 58);
+        ctx.fillRect(x, h - 94, (w - 192) / 32 - 3, 58);
+      }
+
+      // Central 30M-dot LTPO/Si-CMOS pixel current-driver matrix with copper Mura-correction grid
+      const cx0 = 96;
+      const cy0 = 118;
+      const cw0 = w - 192;
+      const ch0 = h - 236;
+      ctx.fillStyle = '#1b314b';
+      ctx.fillRect(cx0, cy0, cw0, ch0);
+      ctx.strokeStyle = '#d98a42';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(cx0, cy0, cw0, ch0);
+
+      for (let r = 0; r < 14; r++) {
+        for (let c = 0; c < 18; c++) {
+          const x = cx0 + (c * cw0) / 18 + 3;
+          const y = cy0 + (r * ch0) / 14 + 3;
+          const bw = cw0 / 18 - 6;
+          const bh = ch0 / 14 - 6;
+          ctx.fillStyle = (r + c) % 2 === 0 ? 'rgba(56, 189, 248, 0.16)' : 'rgba(16, 185, 129, 0.14)';
+          ctx.fillRect(x, y, bw, bh);
+          ctx.strokeStyle = 'rgba(226, 232, 240, 0.22)';
+          ctx.lineWidth = 0.8;
+          ctx.strokeRect(x, y, bw, bh);
+        }
+      }
+
+      drawMicroFiducial(ctx, 54, 65, 14, '#e5b94c');
+      drawMicroFiducial(ctx, w - 54, 65, 14, '#e5b94c');
+      drawMicroFiducial(ctx, 54, h - 65, 14, '#e5b94c');
+      drawMicroFiducial(ctx, w - 54, h - 65, 14, '#e5b94c');
     },
   },
 };

@@ -1,33 +1,87 @@
 id	code	name	group	pos	size	exp	mat
-mirai-fh01-baffle-frame	FH01-01	CNCナイフエッジ迷光遮光バッフル枠	fh01_optics	0,6.15,0	58.4,1.54,46.4	0,38,0	matte_black_anodized
-mirai-fh01-ar-coverglass	FH01-02	超低反射マルチAR封止カバーガラス	fh01_optics	0,4.95,0	52.2,0.97,40.2	0,31.5,0	stainless_machined
-mirai-fh01-ocl-microlens-array	FH01-03	ギャップレス・オンチップマイクロレンズ配	fh01_optics	0,2.86,0	35.8,0.46,23.8	0,25,0	optical_glass_clear
-mirai-fh01-spad-top-die	FH01-04	第1積層ウェーハ：36×24mm 3D	fh01_silicon	0,2.38,0	36,0.66,24	0,19,0	silicon_hero
-mirai-fh01-dti-guard-grid	FH01-05	メタル充填F-DTI光学遮蔽	fh01_silicon	0,1.68,0	35.6,0.49,23.6	0,13.5,0	titanium_machined
-mirai-fh01-cucu-microbumps	FH01-06	Cu-Cuハイブリッド接合 3D銅マイク	fh01_silicon	0,0.85,0	35.6,0.96,23.6	0,8.2,0	cucu_hybrid_copper
-mirai-fh01-quench-tdc-wafer	FH01-07	第2積層ウェーハ：画素並列クエンチ	fh01_silicon	0,0.05,0	36.2,0.7,24.2	0,3,0	silicon_hero
-mirai-fh01-dram-ring-die	FH01-08	第3積層ウェーハ：超高速サブフレーム積算	fh01_silicon	0,-0.95,0	36.4,0.78,24.4	0,-2.5,0	silicon_hero
-mirai-fh01-hv-chargepump-ring	FH01-09	20〜28V 高耐圧バイアス昇圧チャージ	fh01_electronics	0,1.45,0	47,1.41,35	0,11,16	solder_silver
-mirai-fh01-htcc-ceramic-pkg	FH01-10	多層段付きHTCCアルミナセラミック気密	fh01_package	0,-1.1,0	56.78,7.7,44	0,-9.5,0	gold_plating
-mirai-fh01-gold-wirebond-frame	FH01-11	コバール気密溶接枠	fh01_package	0,2.7,0	54.8,3.44,42.8	0,16.5,0	gold_plating
-mirai-fh01-mlcc-decoupling-bank	FH01-12	パッケージ内蔵・超低ESL MLCCデカ	fh01_electronics	0,2.15,0	53.4,0.73,35.6	16,6.5,0	ic_epoxy_dark
-mirai-fh01-slvs-fpc-harness	FH01-13	SLVS-EC 16レーン超高速S字フレ	fh01_io	32.5,-1.6,0	24.5,4.39,29	24,-5,0	gold_plating
-mirai-fh01-cuw-slug-spreader	FH01-14	銅タングステン低膨張ヒートスラグ	fh01_thermal	0,-3.72,0	49.6,1.34,33.6	0,-16.5,0	copper_thermal
-mirai-fh01-graphite-thermal-pad	FH01-15	熱分解グラファイトシート	fh01_thermal	0,-4.65,0	53.6,0.82,41.6	0,-23.5,0	carbon_fiber
-mirai-fh01-precision-mount-base	FH01-16	CNC 3点基準マウントベースプレート	fh01_thermal	0,-5.8,0	62.8,2.98,50.8	0,-31,0	magnesium_cast
-mirai-fh02-optical-hood-bezel	FH02-01	CNC光学フードベゼル	fh02_encapsulation	0,6.15,0	58.4,1.77,46.4	0,39.5,0	titanium_machined
-mirai-fh02-ald-tfe-barrier	FH02-02	多層ALD/TFE超防湿バリア封止ガラス	fh02_encapsulation	0,4.95,0	52.4,0.87,40.4	0,33,0	stainless_machined
-mirai-fh02-top-ito-electrode	FH02-03	最上層・極薄透明ITO共通電極	fh02_rgb_stack	0,3.6,0	35,0.22,23	0,27,0	optical_glass_clear
-mirai-fh02-blue-perovskite-layer	FH02-04	第1受光層：コバルト青広バンドギャップ	fh02_rgb_stack	0,3.06,0	35.2,0.54,23.2	0,21.5,0	silicon_photodiode
-mirai-fh02-etl-htl-interlayer-1	FH02-05	電荷輸送層＆第1透明光学絶縁スペーサ	fh02_rgb_stack	0,2.52,0	35.58,0.29,23.4	0,16.5,0	optical_glass_clear
-mirai-fh02-green-perovskite-layer	FH02-06	第2受光層：エメラルド緑ペロブスカイト	fh02_rgb_stack	0,1.96,0	35.6,0.54,23.6	0,11.5,0	silicon_photodiode
-mirai-fh02-etl-htl-interlayer-2	FH02-07	第2層間ETL/HTL	fh02_rgb_stack	0,1.4,0	35.8,0.3,23.8	0,6.5,0	optical_glass_clear
-mirai-fh02-red-perovskite-layer	FH02-08	第3受光層：ルビー赤狭バンドギャップ	fh02_rgb_stack	0,0.82,0	36,0.54,24	0,1.8,0	silicon_photodiode
-mirai-fh02-vertical-via-pillars	FH02-09	3段階スタッガード垂直RGBマイクロビア	fh02_rgb_stack	0,0.02,0	33.59,3.24,21.04	22,12,14	copper_thermal
-mirai-fh02-passivation-darkblock	FH02-10	粒界パッシベーション	fh02_roic	0,0.26,0	36.2,0.25,24.2	0,-3.5,0	gold_plating
-mirai-fh02-cmos-roic-wafer	FH02-11	300mm互換 3チャンネル同時RGB	fh02_roic	0,-0.3,0	36.4,0.68,24.4	0,-8.5,0	silicon_hero
-mirai-fh02-color-matrix-dsp	FH02-12	分光クロストーク補正カラーマトリクスDS	fh02_roic	0,-1.1,0	33.2,0.75,21.8	0,-14,0	silicon_hero
-mirai-fh02-hermetic-ceramic-carrier	FH02-13	N₂パージ完全気密セラミックキャリア	fh02_encapsulation	0,-1.1,0	56,7.95,44	0,-19.5,0	ic_epoxy_dark
-mirai-fh02-desiccant-getter-ring	FH02-14	内周モート薄膜・水分／酸素ゲッターリング	fh02_encapsulation	0,2.65,0	47.6,1.16,35.6	-20,13,0	titanium_machined
-mirai-fh02-highspeed-fpc-array	FH02-15	左右対称3倍帯域デュアルS字FPC	fh02_io	0,-1.65,0	100.4,4.58,26.6	0,-12,22	ic_epoxy_dark
-mirai-fh02-thermal-chassis-plate	FH02-16	純銅インレイ・マグネシウム冷却土台	fh02_thermal	0,-5.75,0	62.8,2.98,51.8	0,-29,0	copper_thermal
+mirai-fh01-baffle-frame	FH01-01	CNCナイフエッジ迷光遮光バッフル枠	#001-030	0,6.15,0	58.4,1.54,46.4	0,38,0	matte_black_anodized
+mirai-fh01-ar-coverglass	FH01-02	超低反射マルチAR封止カバーガラス	#001-030	0,4.95,0	52.2,0.97,40.2	0,31.5,0	stainless_machined
+mirai-fh01-ocl-microlens-array	FH01-03	ギャップレス・オンチップマイクロレンズ配	#001-030	0,2.86,0	35.8,0.46,23.8	0,25,0	optical_glass_clear
+mirai-fh01-spad-top-die	FH01-04	第1積層ウェーハ：36×24mm 3D	#001-030	0,2.38,0	36,0.66,24	0,19,0	silicon_hero
+mirai-fh01-dti-guard-grid	FH01-05	メタル充填F-DTI光学遮蔽	#001-030	0,1.68,0	35.6,0.49,23.6	0,13.5,0	titanium_machined
+mirai-fh01-cucu-microbumps	FH01-06	Cu-Cuハイブリッド接合 3D銅マイク	#001-030	0,0.85,0	35.6,0.96,23.6	0,8.2,0	cucu_hybrid_copper
+mirai-fh01-quench-tdc-wafer	FH01-07	第2積層ウェーハ：画素並列クエンチ	#001-030	0,0.05,0	36.2,0.7,24.2	0,3,0	silicon_hero
+mirai-fh01-dram-ring-die	FH01-08	第3積層ウェーハ：超高速サブフレーム積算	#001-030	0,-0.95,0	36.4,0.78,24.4	0,-2.5,0	silicon_hero
+mirai-fh01-hv-chargepump-ring	FH01-09	20〜28V 高耐圧バイアス昇圧チャージ	#001-030	0,1.45,0	47,1.41,35	0,11,16	solder_silver
+mirai-fh01-htcc-ceramic-pkg	FH01-10	多層段付きHTCCアルミナセラミック気密	#001-030	0,-1.1,0	56.78,7.7,44	0,-9.5,0	gold_plating
+mirai-fh01-gold-wirebond-frame	FH01-11	コバール気密溶接枠	#001-030	0,2.7,0	54.8,3.44,42.8	0,16.5,0	gold_plating
+mirai-fh01-mlcc-decoupling-bank	FH01-12	パッケージ内蔵・超低ESL MLCCデカ	#001-030	0,2.15,0	53.4,0.73,35.6	16,6.5,0	ic_epoxy_dark
+mirai-fh01-slvs-fpc-harness	FH01-13	SLVS-EC 16レーン超高速S字フレ	#001-030	32.5,-1.6,0	24.5,4.39,29	24,-5,0	polyimide_fpc
+mirai-fh01-cuw-slug-spreader	FH01-14	銅タングステン低膨張ヒートスラグ	#001-030	0,-3.72,0	49.6,1.34,33.6	0,-16.5,0	copper_thermal
+mirai-fh01-graphite-thermal-pad	FH01-15	熱分解グラファイトシート	#001-030	0,-4.65,0	53.6,0.82,41.6	0,-23.5,0	carbon_fiber
+mirai-fh01-precision-mount-base	FH01-16	CNC 3点基準マウントベースプレート	#001-030	0,-5.8,0	62.8,2.98,50.8	0,-31,0	magnesium_cast
+mirai-fh02-optical-hood-bezel	FH02-01	CNC光学フードベゼル	#001-030	0,6.15,0	58.4,1.77,46.4	0,39.5,0	titanium_machined
+mirai-fh02-ald-tfe-barrier	FH02-02	多層ALD/TFE超防湿バリア封止ガラス	#001-030	0,4.95,0	52.4,0.87,40.4	0,33,0	stainless_machined
+mirai-fh02-top-ito-electrode	FH02-03	最上層・極薄透明ITO共通電極	#001-030	0,3.6,0	35,0.22,23	0,27,0	optical_glass_clear
+mirai-fh02-blue-perovskite-layer	FH02-04	第1受光層：コバルト青広バンドギャップ	#001-030	0,3.06,0	35.2,0.54,23.2	0,21.5,0	silicon_photodiode
+mirai-fh02-etl-htl-interlayer-1	FH02-05	電荷輸送層＆第1透明光学絶縁スペーサ	#001-030	0,2.52,0	35.58,0.29,23.4	0,16.5,0	optical_glass_clear
+mirai-fh02-green-perovskite-layer	FH02-06	第2受光層：エメラルド緑ペロブスカイト	#001-030	0,1.96,0	35.6,0.54,23.6	0,11.5,0	silicon_photodiode
+mirai-fh02-etl-htl-interlayer-2	FH02-07	第2層間ETL/HTL	#001-030	0,1.4,0	35.8,0.3,23.8	0,6.5,0	optical_glass_clear
+mirai-fh02-red-perovskite-layer	FH02-08	第3受光層：ルビー赤狭バンドギャップ	#001-030	0,0.82,0	36,0.54,24	0,1.8,0	silicon_photodiode
+mirai-fh02-vertical-via-pillars	FH02-09	3段階スタッガード垂直RGBマイクロビア	#001-030	0,0.02,0	33.59,3.24,21.04	22,12,14	copper_thermal
+mirai-fh02-passivation-darkblock	FH02-10	粒界パッシベーション	#001-030	0,0.26,0	36.2,0.25,24.2	0,-3.5,0	gold_plating
+mirai-fh02-cmos-roic-wafer	FH02-11	300mm互換 3チャンネル同時RGB	#001-030	0,-0.3,0	36.4,0.68,24.4	0,-8.5,0	silicon_hero
+mirai-fh02-color-matrix-dsp	FH02-12	分光クロストーク補正カラーマトリクスDS	#001-030	0,-1.1,0	33.2,0.75,21.8	0,-14,0	silicon_hero
+mirai-fh02-hermetic-ceramic-carrier	FH02-13	N₂パージ完全気密セラミックキャリア	#001-030	0,-1.1,0	56,7.95,44	0,-19.5,0	ic_epoxy_dark
+mirai-fh02-desiccant-getter-ring	FH02-14	内周モート薄膜・水分／酸素ゲッターリング	#001-030	0,2.65,0	47.6,1.16,35.6	-20,13,0	titanium_machined
+mirai-fh02-highspeed-fpc-array	FH02-15	左右対称3倍帯域デュアルS字FPC	#031-060	0,-1.65,0	100.4,4.58,26.6	0,-12,22	ic_epoxy_dark
+mirai-fh02-thermal-chassis-plate	FH02-16	純銅インレイ・マグネシウム冷却土台	#031-060	0,-5.75,0	62.8,2.98,51.8	0,-29,0	magnesium_cast
+mirai-fh08-front-filter-bezel	FH08-01	CNCチタン前枠	#031-060	0,0,12.6	66.89,66.89,3.17	0,0,62	matte_black_anodized
+mirai-fh08-front-gasket-collar	FH08-02	防塵防滴EPDM前群シール	#031-060	0,0,11.45	59.19,59.4,0.95	0,0,53	magnesium_cast
+mirai-fh08-freeform-front-glass	FH08-03	第1群：ASI逆設計・大口径自由曲面メニ	#031-060	0,0,8.8	48.78,48.99,4.85	0,0,44	titanium_machined
+mirai-fh08-tiO2-meta-doe-plate	FH08-04	核心：TiO₂ナノピラー・メタDOE色収	#031-060	0,0,5.4	49.8,46.2,1.15	0,0,35	brass_precision
+mirai-fh08-optical-spacer-baffle	FH08-05	群間3段ナイフエッジ遮光スペーサ	#031-060	0,0,3.6	47.99,48.19,1.45	0,0,27	matte_black_anodized
+mirai-fh08-ed-doublet-group	FH08-06	第2群：低分散ED＋高屈折フリント接合ダ	#031-060	0,0,1.8	44.02,44.21,4.15	0,0,19	matte_black_anodized
+mirai-fh08-iris-blade-array	FH08-07	9枚円形絞り羽根アレイ	#031-060	0,0,-0.4	47.19,47.4,1.36	0,0,11	brass_precision
+mirai-fh08-iris-stepper-motor	FH08-08	超薄型アーク状ステッピング絞りアクチュエ	#031-060	0,0,-0.4	20.4,23.99,2.45	24,14,11	iron_magnetic
+mirai-fh08-focus-freeform-cell	FH08-09	第3群：軽量フローティング自由曲面フォー	#031-060	0,0,-3.2	52.13,40.69,3.7	0,0,2	magnesium_cast
+mirai-fh08-linear-voicecoil-pair	FH08-10	デュアル対向・高推力リニアアクチュエータ	#031-060	0,0,-3.2	55.4,22.4,11.4	0,24,-5	iron_magnetic
+mirai-fh08-magnetic-encoder	FH08-11	磁気リニアエンコーダスケール	#031-060	0,0,-3.2	4.45,4.6,11.2	-24,-14,-5	titanium_machined
+mirai-fh08-rear-corrector-lens	FH08-12	第4群：像面湾曲補正・大口径リア非球面レ	#031-060	0,0,-7.2	45.21,45.41,3.22	0,0,-16	matte_black_anodized
+mirai-fh08-outer-focus-ring	FH08-13	CNCアルミ72山ローレット手動制御リン	#031-060	0,0,5.6	68.48,68.48,10.72	0,32,20	matte_black_anodized
+mirai-fh08-inner-mg-barrel	FH08-14	一体切削マグネシウム主鏡筒	#031-060	0,0,-3.6	67.3,66.1,19.7	0,-24,-12	matte_black_anodized
+mirai-fh08-curved-mcu-pcb	FH08-15	環状リジッドフレックス制御基板	#031-060	0,0,-8.8	58,58.2,2.06	0,0,-28	ic_epoxy_dark
+mirai-fh08-rear-dust-baffle	FH08-16	矩形36×24mm後端迷光遮光バッフル	#031-060	0,0,-10.6	45.6,45.6,2.18	0,0,-38	foam_felt_matte
+mirai-fh08-emount-contacts	FH08-17	10ピン金めっきEマウント電子接点ブロッ	#031-060	0,0,-11.8	30.34,9.5,2.64	0,-16,-47	matte_chassis
+mirai-fh08-stainless-bayonet	FH08-18	SUS304高剛性Eマウント3爪バヨネッ	#031-060	0,0,-13	62.4,62.4,3.61	0,0,-56	stainless_machined
+mirai-fh32-intake-grille	FH32-01	CNC防滴吸気プレナムカバー	#031-060	0,4.35,0	64.4,1.29,46.4	0,46,0	matte_chassis
+mirai-fh32-eptfe-water-mesh	FH32-02	開放チャネル疎水SUS防塵・排水フィルタ	#031-060	0,3.45,0	53.6,0.46,35.6	0,39,0	foam_felt_matte
+mirai-fh32-upper-acoustic-plenum	FH32-03	上部ヘルムホルツ共鳴静音チャンバー	#031-060	0,2.75,0	64.2,3.25,46.2	0,32,0	matte_chassis
+mirai-fh32-mems-jet-chip-a	FH32-04	核心：超音波圧電シリコンMEMSジェット	#031-060	-13.2,1.85,0.5	24.8,1.05,18.8	-14,25,0	gold_plating
+mirai-fh32-mems-jet-chip-b	FH32-05	核心：逆位相デュアル並列MEMSジェット	#031-060	13.2,1.85,0.5	24.8,1.05,18.8	14,25,0	gold_plating
+mirai-fh32-pzt-wirebond-bridge	FH32-06	圧電駆動用・32本アーチ金リード	#031-060	0,2.15,0.5	52,1.46,23.8	0,28.5,16	gold_plating
+mirai-fh32-nozzle-impingement	FH32-07	96孔レーザー加工・銅マイクロジェット衝	#031-060	0,0.88,0.5	55.4,1.01,34.6	0,17.5,0	cucu_hybrid_copper
+mirai-fh32-ip68-isolation-wall	FH32-08	核心：IP68完全水密ステンレス隔離隔壁	#031-060	0,0.12,0	64.8,0.73,46.8	0,10.5,0	stainless_machined
+mirai-fh32-exhaust-duct-manifold	FH32-09	側方ラビリンス防水排気マニホールド	#031-060	0,2.15,-24.2	54.32,3.48,6.76	0,18,-28	matte_black_anodized
+mirai-fh32-perimeter-oring	FH32-10	IP68二重リップ・フルオロシリコーン水	#031-060	0,0.45,0	62.4,0.78,44.4	0,14,16	pin_carrier_gloss
+mirai-fh32-vc-top-copper	FH32-11	極薄銅マイクロ・ベイパーチャンバー天板	#061-086	0,-0.58,0	61.7,1.46,40	0,2.5,0	copper_thermal
+mirai-fh32-vc-sintered-wick	FH32-12	焼結銅多孔質ウィック	#061-086	0,-1.18,0	55.4,0.84,37.4	0,-4.5,0	copper_thermal
+mirai-fh32-vc-bottom-plate	FH32-13	ベイパーチャンバー底板	#061-086	0,-1.92,0	58,1.01,40	0,-11.5,0	copper_thermal
+mirai-fh32-piezo-driver-pcb	FH32-14	超音波圧電高圧ドライバHDI基板	#061-086	0,-2.85,0	60,1.94,42	0,-19.5,0	ic_epoxy_dark
+mirai-fh32-control-fpc	FH32-15	I²C温度制御	#061-086	27.5,-2.6,8	16.6,3.1,13.6	26,-19.5,12	polyimide_fpc
+mirai-fh32-thermal-tim-pads	FH32-16	高熱伝導デュアルゾーンTIMパッド	#061-086	0,-3.55,0	49.4,0.62,23.2	0,-27.5,0	elastomer_rubber
+mirai-fh32-mg-carrier-chassis	FH32-17	CNCマグネシウム水密カプセル主骨格シャ	#061-086	0,-4.2,0	66,1.72,48	0,-35.5,0	magnesium_cast
+mirai-fh32-seal-torx-bolts	FH32-18	防水Oリング付 M1.4 精密トルクス締	#061-086	0,4.9,0	62.81,10.01,44.98	0,54,0	stainless_machined
+mirai-fh25-ergonomic-eyecup	FH25-01	軟質フルオロエラストマー遮光アイカップ	#061-086	0,0,20.5	46.5,36.5,8.9	0,0,58	elastomer_rubber
+mirai-fh25-antifog-coverglass	FH25-02	親水防曇・撥油マルチAR接眼保護ガラス	#061-086	0,0,15.2	29.8,23.8,1.29	0,0,48	stainless_machined
+mirai-fh25-gaze-ir-ring	FH25-03	240Hz視線追尾・8灯940nm近赤外	#061-086	0,0,13	30.4,29.64,1.28	0,0,40	polyimide_fpc
+mirai-fh25-dichroic-mirror	FH25-04	45°ダイクロイック視線追跡ホットミラー	#061-086	0,0,8.4	11.35,19.4,11.35	0,18,30	titanium_machined
+mirai-fh25-gaze-nir-sensor	FH25-05	240Hzグローバルシャッター視線追尾N	#061-086	-19.5,0,8.2	9.8,12,12	-34,10,22	matte_black_anodized
+mirai-fh25-ed-eyepiece-lens	FH25-06	第1接眼群：大口径ED低分散メニスカスレ	#061-086	0,0,2.2	31.2,30.42,4.35	0,0,18	matte_black_anodized
+mirai-fh25-pancake-pbs-film	FH25-07	パンケーキ光学：反射偏光板	#061-086	0,0,-1.6	30.4,29.64,0.92	0,0,9	brass_precision
+mirai-fh25-pancake-halfmirror	FH25-08	パンケーキ光学：曲面ハーフミラー凹面レン	#061-086	0,0,-5	30.4,29.64,3.67	0,0,0	carbon_fiber
+mirai-fh25-diopter-helicoid	FH25-09	−4〜+3D 視度調整ヘリコイド	#061-086	0,0,-2	10.37,29.59,18.94	34,26,8	titanium_machined
+mirai-fh25-mla-extraction-dome	FH25-10	384個ギャップレスMLA光抽出マイクロ	#061-086	0,0,-9.8	19.6,15,0.47	0,0,-14	optical_glass_clear
+mirai-fh25-true-rgb-tandem	FH25-11	核心：30・000ニット True	#061-086	0,0,-11.4	19.8,15.2,0.77	0,0,-24	gold_plating
+mirai-fh25-cmos-backplane	FH25-12	12インチ互換 3・000万ドット	#061-086	0,0,-12.6	22,17.2,0.87	0,0,-34	silicon_hero
+mirai-fh25-ceramic-alignment	FH25-13	セラミック位置決めキャリア	#061-086	0,0,-14.2	26.98,22.4,1.62	0,0,-44	brass_precision
+mirai-fh25-tcon-driver-pcb	FH25-14	240Hz超低遅延T-CON・BFI制御	#061-086	0,0,-16.2	30.4,24.4,2.17	0,0,-54	ic_epoxy_dark
+mirai-fh25-mipi-fpc-tail	FH25-15	240Hz高速シールドMIPI-DSI	#061-086	0,-16.5,-16.2	16.8,14.65,5.44	0,-30,-54	polyimide_fpc
+mirai-fh25-copper-heatsink	FH25-16	30・000ニット高輝度放熱・純銅ヒート	#061-086	0,0,-19.8	32,25.4,5.66	0,0,-65	copper_thermal
+mirai-fh25-mg-optical-housing	FH25-17	防塵防滴CNCマグネシウム光学主鏡筒	#061-086	0,0,1.5	36.4,32.37,30.04	0,44,0	matte_black_anodized
+mirai-fh25-mount-bolts-bracket	FH25-18	カメラ軍艦部3点基準ブラケット	#061-086	0,-15.6,0.5	42,3.33,32	0,-24,0	titanium_machined

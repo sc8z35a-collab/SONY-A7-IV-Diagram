@@ -341,7 +341,7 @@ export class CadViewport {
   }
 
   public setMiraiSubView(subView: number, immediateCamera = false): void {
-    const clamped = subView === 2 ? 2 : 1;
+    const clamped = Math.max(1, Math.min(5, Math.round(subView || 1)));
     const changed = this.miraiSubView !== clamped;
     this.miraiSubView = clamped;
     if (this.mode !== 'mirai_2028') return;
@@ -580,8 +580,22 @@ export class CadViewport {
       d = 142 + e * 320;
       target = new THREE.Vector3(0, -2.6 + e * 1.2, 0);
     } else if (this.mode === 'mirai_2028') {
-      d = 166 + e * 185;
-      target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
+      if (this.miraiSubView === 3) {
+        // FH08: Cylindrical Ø68x28mm 50mm F1.4 Meta-Optics Pancake Lens (explodes along Z + Y)
+        d = 202 + e * 136;
+        target = new THREE.Vector3(0, e * 2.0, e * 2.0);
+      } else if (this.miraiSubView === 4) {
+        // FH32: Horizontal 66x48x9.6mm IP68 Ultrasonic MEMS Cooler (explodes along Y + rear duct)
+        d = 148 + e * 168;
+        target = new THREE.Vector3(e * 2.0, 0.2 + e * 5.0, -1.0 - e * 2.5);
+      } else if (this.miraiSubView === 5) {
+        // FH25: 48x38x46mm 30,000-nit True-RGB Tandem Pancake EVF (optical axis Z, right cutaway)
+        d = 158 + e * 195;
+        target = new THREE.Vector3(0, e * 3.0, 1.5 - e * 3.0);
+      } else {
+        d = 166 + e * 185;
+        target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
+      }
     } else if (this.mode === 'micro_v2') {
       d = 114 + e * 270;
       target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);
@@ -729,7 +743,24 @@ export class CadViewport {
           } else if (this.mode === 'bionz_v2') {
             offset = new THREE.Vector3(d * 0.62, d * 0.36, d * 0.68);
           } else if (this.mode === 'mirai_2028') {
-            offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
+            if (this.miraiSubView === 3) {
+              // FH08 Lens: front-right 3/4 view when assembled, swinging wider along X when exploded to showcase full Z-axis stack
+              const isoX = 0.56 + e * 0.28;
+              const isoY = 0.32 - e * 0.08;
+              const isoZ = 0.76 - e * 0.26;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else if (this.miraiSubView === 4) {
+              // FH32 MEMS Cooler: crisp overhead 3/4 view revealing louvers, cutaway MEMS chip, copper impingement & isolation wall
+              offset = new THREE.Vector3(d * 0.58, d * 0.42, d * 0.69);
+            } else if (this.miraiSubView === 5) {
+              // FH25 Pancake EVF: wider +X 3/4 angle peering directly into right cutaway (45° mirror, pancake optics & True-RGB die!)
+              const isoX = 0.68 + e * 0.14;
+              const isoY = 0.30 - e * 0.06;
+              const isoZ = 0.66 - e * 0.16;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else {
+              offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
+            }
           } else if (this.mode === 'micro_v2') {
             offset = new THREE.Vector3(d * 0.64, d * 0.34, d * 0.68);
           } else if (this.mode === 'mishoe') {
@@ -1025,7 +1056,26 @@ export class CadViewport {
         maxCoord = 22;
       }
     } else if (this.mode === 'mirai_2028') {
-      if (this.sectionAxis === 'x') {
+      if (this.miraiSubView === 3) {
+        minCoord = -38;
+        maxCoord = 38;
+      } else if (this.miraiSubView === 4) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -38;
+          maxCoord = 38;
+        } else {
+          minCoord = -10;
+          maxCoord = 12;
+        }
+      } else if (this.miraiSubView === 5) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -28;
+          maxCoord = 28;
+        } else {
+          minCoord = -22;
+          maxCoord = 22;
+        }
+      } else if (this.sectionAxis === 'x') {
         minCoord = -46;
         maxCoord = 46;
       } else {
