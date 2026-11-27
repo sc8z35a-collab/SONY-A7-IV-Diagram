@@ -27,6 +27,7 @@ import {
   readCacheJson,
   writeCacheJson,
 } from './lib/hyper_cache.mjs';
+import { buildCodeAtlas } from './dx/atlas_builder.mjs';
 
 const ROOT = process.cwd();
 const REGISTRY_REL = 'src/units/registry.ts';
@@ -34,6 +35,7 @@ const COMPOSITE_MODES = new Set(['integrated', 'camera_body']);
 const SYNC_REGISTRY = process.argv.includes('--sync-registry');
 const FORCE_FULL = process.argv.includes('--full') || process.argv.includes('--no-cache');
 const OUT_DIR_ARG = process.argv.find((a) => a.startsWith('--out-dir='))?.slice(10) || null;
+const AI_MODE = process.argv.includes('--ai');
 
 const OUT_ROOT = OUT_DIR_ARG ? path.resolve(OUT_DIR_ARG) : ROOT;
 const CATALOG_DIR = path.join(OUT_ROOT, 'catalog');
@@ -427,7 +429,9 @@ async function main() {
   fs.mkdirSync(SPATIAL_DIR, { recursive: true });
   fs.mkdirSync(PG_OUT_DIR, { recursive: true });
 
-  console.log(`[CATALOG] Extracting exact Box3 sizes & PBR buckets for ${entries.length} modes (STD headless)...`);
+  if (!AI_MODE) {
+    console.log(`[CATALOG] Extracting exact Box3 sizes & PBR buckets for ${entries.length} modes (STD headless)...`);
+  }
 
   // Read all 22 JSONs in parallel while spatial workers run!
   const [spatialRes, jsonLoaded] = await Promise.all([
@@ -685,15 +689,24 @@ async function main() {
   }
 
   await Promise.all(writePromises);
+  const atlasStats = buildCodeAtlas({ root: OUT_ROOT });
 
   const indexBytes = Buffer.byteLength(indexContent, 'utf8');
   const allNamesBytes = Buffer.byteLength(allNamesContent, 'utf8');
   const elapsedMs = Date.now() - t0;
 
+  if (AI_MODE) {
+    console.log(
+      `[catalog] OK modes=${entries.length} indivParts=${totalIndivParts} atlas={sym:${atlasStats.symbols},graph:${atlasStats.graphNodes},mat:${atlasStats.matKeys},schem:${atlasStats.mappedSchematics}/${atlasStats.schematics},css:${atlasStats.cssRules}} ${(elapsedMs / 1000).toFixed(2)}s leaks=0`
+    );
+    return;
+  }
+
   console.log(
-    `\n[CATALOG] Generated L0/L1/L2 + Play Ground Index & Templates for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks | spatial: ${spatialRes.rebuiltCount} built, ${spatialRes.cachedCount} SHA-256 cached).`
+    `\n[CATALOG] Generated L0/L1/L2 + Code Atlas + Play Ground Index & Templates for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks | spatial: ${spatialRes.rebuiltCount} built, ${spatialRes.cachedCount} SHA-256 cached).`
   );
   console.log(`  L0 catalog/INDEX.tsv     : ${(indexBytes / 1024).toFixed(2)} kB`);
+  console.log(`  Code catalog/code/*.tsv  : ${(atlasStats.totalBytes / 1024).toFixed(2)} kB (${atlasStats.symbols} symbols, ${atlasStats.graphNodes} graph nodes, ${atlasStats.matKeys} mats/${atlasStats.buckets} buckets, ${atlasStats.mappedSchematics}/${atlasStats.schematics} schematics, ${atlasStats.cssRules} CSS rules in ${atlasStats.elapsedMs}ms)`);
   console.log(`  PG src/playground/playground_index.json     : ${(pgIndexBytes / 1024).toFixed(2)} kB (${pgParts.length} parts, -${(100 * (1 - pgIndexBytes / totalJsonBytesIndiv)).toFixed(1)}% vs indiv JSONs)`);
   console.log(`  PG src/playground/playground_templates.json : ${(pgTplBytes / 1024).toFixed(2)} kB (${pgTplCount} pre-baked SNORM16/SNORM8 template blueprints)`);
   console.log(

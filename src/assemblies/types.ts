@@ -23,7 +23,7 @@ export type ScaleMode =
   | 'sensor_fab'
   | 'drybox'
   | 'mirai_2028';
-export type MiraiStructureId = 'fh01' | 'fh02' | 'fh08' | 'fh32' | 'fh25';
+export type MiraiStructureId = 'fh01' | 'fh02' | 'fh08' | 'fh32' | 'fh25' | 'fh20' | 'fh17' | 'fh48';
 export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
 export type SensorFabStage =
   | 'overview'
@@ -2374,7 +2374,64 @@ export interface PartExplanation {
     | 'mirai_fh25_mipi_fpc_tail'
     | 'mirai_fh25_copper_heatsink'
     | 'mirai_fh25_mg_optical_housing'
-    | 'mirai_fh25_mount_bolts_bracket';
+    | 'mirai_fh25_mount_bolts_bracket'
+    // FH MIRAI 2028 Structure #6 (FH20 2nm/A16 GAA + BSPDN 1,000 TOPS Heterogeneous Chiplet SoC — 18 Parts)
+    | 'mirai_fh20_cutaway_ihs_lid'
+    | 'mirai_fh20_liquid_metal_tim'
+    | 'mirai_fh20_gaa_npu_die'
+    | 'mirai_fh20_bspdn_power_rails'
+    | 'mirai_fh20_vwm_ternary_tile'
+    | 'mirai_fh20_isp_video_chiplet'
+    | 'mirai_fh20_pqc_puf_enclave'
+    | 'mirai_fh20_hbm_memory_stack_a'
+    | 'mirai_fh20_hbm_memory_stack_b'
+    | 'mirai_fh20_ucie_silicon_bridges'
+    | 'mirai_fh20_optical_io_chiplet'
+    | 'mirai_fh20_cowos_interposer'
+    | 'mirai_fh20_microbump_tsv_array'
+    | 'mirai_fh20_abf_organic_substrate'
+    | 'mirai_fh20_mlcc_decoupling_ring'
+    | 'mirai_fh20_stiffener_ring'
+    | 'mirai_fh20_bga_solder_array'
+    | 'mirai_fh20_vapor_coldplate_base'
+    // FH MIRAI 2028 Structure #7 (FH17 Earth-Rotation 15.04"/s + MagLev 10–11 Stop IBIS & ±2° Tilt — 18 Parts)
+    | 'mirai_fh17_dust_shield_bezel'
+    | 'mirai_fh17_ff_sensor_die'
+    | 'mirai_fh17_ti_floating_cradle'
+    | 'mirai_fh17_front_halbach_yoke'
+    | 'mirai_fh17_xy_levitation_coils'
+    | 'mirai_fh17_z_maglev_coils'
+    | 'mirai_fh17_piezo_tilt_triad'
+    | 'mirai_fh17_ceramic_landing_pads'
+    | 'mirai_fh17_hall_optical_encoders'
+    | 'mirai_fh17_earth_rotation_imu'
+    | 'mirai_fh17_dual_floating_fpc'
+    | 'mirai_fh17_rear_halbach_yoke'
+    | 'mirai_fh17_flexible_graphite_strap'
+    | 'mirai_fh17_servo_driver_pcb'
+    | 'mirai_fh17_copper_heat_backplate'
+    | 'mirai_fh17_mg_outer_chassis'
+    | 'mirai_fh17_tilt_calibration_shims'
+    | 'mirai_fh17_titanium_mount_bolts'
+    // FH MIRAI 2028 Structure #8 (FH48 Dec 2028 ~800g · 10–15W Post-Camera Integrated Machine — 18 Parts)
+    | 'mirai_fh48_contactless_mount'
+    | 'mirai_fh48_meta_lens_collar'
+    | 'mirai_fh48_cfrp_front_shell'
+    | 'mirai_fh48_ti_lattice_skeleton'
+    | 'mirai_fh48_sensor_maglev_core'
+    | 'mirai_fh48_2nm_soc_mainboard'
+    | 'mirai_fh48_mems_cooling_spine'
+    | 'mirai_fh48_pancake_evf_hump'
+    | 'mirai_fh48_contactless_mishoe'
+    | 'mirai_fh48_piezo_haptic_dials'
+    | 'mirai_fh48_assb_battery_pack'
+    | 'mirai_fh48_cfexpress_mram_bay'
+    | 'mirai_fh48_wifi8_ntn_antenna'
+    | 'mirai_fh48_spatial_mic_array'
+    | 'mirai_fh48_io_usb4_optical_port'
+    | 'mirai_fh48_rear_3d_display'
+    | 'mirai_fh48_rear_cfrp_shell'
+    | 'mirai_fh48_titanium_baseplate';
 }
 
 export interface CadPart {

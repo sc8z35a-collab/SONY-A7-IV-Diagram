@@ -16,3 +16,12 @@ npm run pp -- --daemon=stop
 npm run sokutei -- --all --out=/tmp/sokutei.json --md=/tmp/sokutei.md
 npm run sokutei -- --target=v2_unit,pp,sim_app --compare=/tmp/sokutei_before.json
 ```
+
+```bash
+# Zero-Token AI開発パイプライン (dx) — 探索・外科読込・事前検証・1枚視覚シート
+node scripts/dx.mjs brief --unit=evf --policy=worker
+node scripts/dx.mjs find "evf-eyecup" && node scripts/dx.mjs read --head src/assemblies/types.ts
+node scripts/dx.mjs preflight --unit=evf --ai && node scripts/dx.mjs check --changed --ai
+node scripts/pp.mjs --preset=audit --fast --sheet --audit-metrics --ai --out=/tmp/pp_audit
+```
+

@@ -1,0 +1,12 @@
+# Passive Zero-Deletion Token Firewall for ignore-aware search tools (rg / fd / ag)
+docs/
+dist/
+android/
+package-lock.json
+src/playground/playground_index.json
+src/playground/playground_templates.json
+catalog/ALL_NAMES.txt
+catalog/code/
+catalog/spatial/integrated.tsv
+catalog/spatial/camera_body.tsv
+verification/

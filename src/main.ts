@@ -261,6 +261,10 @@ controls = new ZeroTextControls(appRoot, {
   onQualityChange: (quality) => {
     viewport.setQuality(quality);
   },
+  onKineToggle: (enabled) => {
+    viewport.setKineMode(enabled);
+    controls.syncKineMode(viewport.isKineMode());
+  },
   onPhysicsToggle: (active) => {
     viewport.setPhysicsActive(active);
   },
@@ -292,7 +296,8 @@ controls = new ZeroTextControls(appRoot, {
     if (currentId === partId) {
       viewport.selectPart(null, false);
     } else {
-      viewport.selectPart(partId, !opticsStudio.getIsOpen());
+      // Strict zero camera movement when selecting part / opening details!
+      viewport.selectPart(partId, false);
     }
   },
   onHoverPart: (partId) => {
@@ -350,6 +355,11 @@ const playgroundApi = {
   getPlaced: () => realPlayground?.getPlacedSummary() ?? [],
   movePart: (uid: string, x: number, y: number, z: number) =>
     realPlayground?.movePartByUid(uid, x, y, z) ?? false,
+  selectInstance: (uid: string | null) => realPlayground?.selectInstance(uid),
+  getMotionStage: () => realPlayground?.getPlaygroundMotionStage() ?? 'sharp',
+  setMotionStage: (stage: 'sharp' | 'lite' | 'fast') =>
+    realPlayground?.setPlaygroundMotionStage(stage) ?? false,
+  getCameraZoomBounds: () => realPlayground?.getCameraZoomBounds() ?? null,
   setProfile: (profile: 'auto' | 'mirrorless' | 'compact' | 'cinema' | 'action' | 'custom') =>
     realPlayground?.setDesignProfile(profile) ?? null,
   loadTemplate: async (tpl: 'a7iv' | 'zve1' | 'fx3' | 'wlk220' | 'empty') => {
@@ -537,7 +547,14 @@ window.addEventListener('keydown', (e) => {
     controls.syncLensSection(sec);
     syncRail();
   } else if (
-    (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4' || e.key === '5') &&
+    (e.key === '1' ||
+      e.key === '2' ||
+      e.key === '3' ||
+      e.key === '4' ||
+      e.key === '5' ||
+      e.key === '6' ||
+      e.key === '7' ||
+      e.key === '8') &&
     viewport.getMode() === 'mirai_2028' &&
     !e.ctrlKey &&
     !e.metaKey &&
@@ -587,6 +604,15 @@ window.addEventListener('keydown', (e) => {
     const next: GraphicsQuality = cur === 'ultra' ? 'standard_lite' : 'ultra';
     setQuality(next);
   } else if (
+    (e.key === 'k' || e.key === 'K') &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    const next = !viewport.isKineMode();
+    viewport.setKineMode(next);
+    controls.syncKineMode(viewport.isKineMode());
+  } else if (
     (e.key === 'p' || e.key === 'P') &&
     viewport.isV2Mode() &&
     !e.ctrlKey &&
@@ -614,12 +640,30 @@ if (qualityParam === 'standard_lite' || qualityParam === 'lite' || qualityParam 
 } else {
   controls.syncQuality(viewport.getQuality());
 }
+controls.syncKineMode(viewport.isKineMode());
 
 const v2InspectApi = {
   getDiagnostics: () => viewport.getV2Runtime().getDiagnostics(),
   togglePerfHud: () => viewport.getV2Runtime().togglePerfHud(),
   setPerfHudVisible: (visible: boolean) => viewport.getV2Runtime().setPerfHudVisible(visible),
   isV2Mode: () => viewport.isV2Mode(),
+  setKineMode: (enabled: boolean) => {
+    const changed = viewport.setKineMode(enabled);
+    controls.syncKineMode(viewport.isKineMode());
+    return changed;
+  },
+  isKineMode: () => viewport.isKineMode(),
+  getKineStats: () => viewport.getKineStats(),
+  setOpticalBokehMode: (mode: 'auto' | 'on' | 'off') =>
+    viewport.getV2Runtime().setOpticalBokehMode(mode),
+  getOpticalBokehState: () => viewport.getV2Runtime().getOpticalBokehState(),
+  getMotionStage: () => viewport.getV2Runtime().getMotionStage(),
+  setMotionStage: (stage: 'ultra' | 'lite' | 'fast') => {
+    const changed = viewport.getV2Runtime().setMotionStage(stage);
+    viewport.requestRenderFrame();
+    return changed;
+  },
+  getCameraZoomBounds: () => viewport.getCameraZoomBounds(),
 };
 
 const captureBridge = new ArtifactCaptureBridge({
@@ -2438,6 +2482,60 @@ if (preset === 'welcome') {
   viewport.setMode('mirai_2028', true);
   controls.syncMode('mirai_2028');
   controls.syncMiraiSubView(5);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh20') {
+  viewport.setMiraiSubView(6, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(6);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh20_exploded') {
+  viewport.setMiraiSubView(6, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(6);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh17') {
+  viewport.setMiraiSubView(7, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(7);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh17_exploded') {
+  viewport.setMiraiSubView(7, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(7);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh48') {
+  viewport.setMiraiSubView(8, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(8);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh48_exploded') {
+  viewport.setMiraiSubView(8, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(8);
   viewport.setExplode(0.72, true);
   controls.setExplodeValue(0.72);
   viewport.setCameraPreset('iso', true);

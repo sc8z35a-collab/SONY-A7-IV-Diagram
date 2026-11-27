@@ -13,6 +13,8 @@ import {
   setActiveBuildQuality,
 } from './geometry_quality';
 import {
+  CAD_HOVER_SENTINEL,
+  CAD_SELECT_SENTINEL,
   getCadTintLuma,
   HeroMaterialSpec,
   liftDarkCadTint,
@@ -23,6 +25,7 @@ import {
   ResourceCache,
 } from './resource_cache';
 import {
+  KineOccluderSpec,
   OptimizedUnit,
   QualityTier,
   RaycastGroupBounds,
@@ -244,6 +247,7 @@ interface CompiledPartState {
   curZ: number;
   visible: boolean;
   culledBySubView: boolean;
+  kineCulled: boolean;
 }
 
 export interface CompiledUnitRawBuild {
@@ -746,13 +750,13 @@ function normalizeGeometry(
   // keeping 90° CAD corners and silhouettes razor-sharp!
   const triCount = Math.floor(idxCount / 3);
   let didDecimate = false;
-  if (decimateLite && dropUv && triCount > 24) {
+  if (decimateLite && dropUv && triCount > 1100) {
     const ex = maxX - minX;
     const ey = maxY - minY;
     const ez = maxZ - minZ;
     const maxDim = Math.max(ex, ey, ez);
     if (maxDim > 1e-4) {
-      const gridCells = Math.max(5, Math.min(11, Math.round(Math.sqrt(triCount) * 0.36)));
+      const gridCells = Math.max(22, Math.min(34, Math.round(Math.sqrt(triCount) * 0.55)));
       const invCell = gridCells / maxDim;
       let cap = 64;
       const minCap = vCount * 2;
@@ -1230,6 +1234,244 @@ export function quantizeGeometryPositionInPlace(geo: THREE.BufferGeometry): {
 }
 
 /**
+ * Crease-preserving 3D spatial-grid vertex-clustering decimator for already-merged geometries
+ * (supports Float32/Int16 positions, Float32/Int8 normals, optional Uint8x4 RGBA vertex colors, Uint16/32 indices).
+ * Reused across STD LITE v2 dense parts (e.g. 16.7k BGA/copper bump arrays), FAST 1-DC proxies, and Play Ground prebake!
+ */
+export function decimateMergedGeometryRGBA(
+  src: THREE.BufferGeometry,
+  gridCells: number,
+  preserveNormalBuckets = true
+): THREE.BufferGeometry {
+  const posAttr = src.getAttribute('position');
+  if (!posAttr || posAttr.count < 12) return src;
+  const vCount = posAttr.count;
+  const idxAttr = src.getIndex();
+  const idxCount = idxAttr ? idxAttr.count : vCount;
+  if (idxCount < 36) return src;
+
+  const normAttr = src.getAttribute('normal');
+  const colAttr = src.getAttribute('color');
+  const hasColor = Boolean(colAttr);
+  const colItemSize = colAttr ? colAttr.itemSize : 4;
+  const posArr = posAttr.array as Float32Array | Int16Array;
+  const posNormScale = posAttr.normalized && posArr instanceof Int16Array ? 1 / 32767 : 1;
+
+  let minX = Infinity, minY = Infinity, minZ = Infinity;
+  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+  for (let i = 0; i < vCount; i++) {
+    const o = i * 3;
+    const x = posArr[o] * posNormScale;
+    const y = posArr[o + 1] * posNormScale;
+    const z = posArr[o + 2] * posNormScale;
+    if (x < minX) minX = x;
+    if (y < minY) minY = y;
+    if (z < minZ) minZ = z;
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
+    if (z > maxZ) maxZ = z;
+  }
+
+  const maxDim = Math.max(maxX - minX, maxY - minY, maxZ - minZ);
+  if (maxDim <= 1e-4) return src;
+
+  const invCell = Math.max(2, gridCells) / maxDim;
+  let cap = 64;
+  const minCap = vCount * 2;
+  while (cap < minCap) cap <<= 1;
+  const mask = cap - 1;
+  ensureWeldScratch(cap, vCount, false);
+  const slots = _weldSlots;
+  const keys = _weldKeys;
+  const remap = _weldRemap;
+  const uPos = _weldPos;
+  const uNorm = _weldNorm;
+  const counts = _weldCounts;
+
+  const uColR = hasColor ? new Float32Array(vCount) : null;
+  const uColG = hasColor ? new Float32Array(vCount) : null;
+  const uColB = hasColor ? new Float32Array(vCount) : null;
+  const uColA = hasColor ? new Float32Array(vCount) : null;
+
+  const normArr = normAttr ? (normAttr.array as Float32Array | Int8Array) : null;
+  const normScale = normAttr && normAttr.normalized && normArr instanceof Int8Array ? 1 / 127 : 1;
+  const colArr = colAttr ? (colAttr.array as Uint8Array | Float32Array) : null;
+  const colIsU8 = Boolean(colAttr && colAttr.normalized && colArr instanceof Uint8Array);
+
+  let uniqueCount = 0;
+  for (let i = 0; i < vCount; i++) {
+    const po = i * 3;
+    const px = posArr[po] * posNormScale;
+    const py = posArr[po + 1] * posNormScale;
+    const pz = posArr[po + 2] * posNormScale;
+    const qx = Math.floor((px - minX) * invCell) | 0;
+    const qy = Math.floor((py - minY) * invCell) | 0;
+    const qz = Math.floor((pz - minZ) * invCell) | 0;
+
+    const rnx = normArr ? normArr[po] * normScale : 0;
+    const rny = normArr ? normArr[po + 1] * normScale : 1;
+    const rnz = normArr ? normArr[po + 2] * normScale : 0;
+    let nBucket = 0;
+    if (preserveNormalBuckets && normArr) {
+      const ax = Math.abs(rnx);
+      const ay = Math.abs(rny);
+      const az = Math.abs(rnz);
+      nBucket =
+        ax >= ay && ax >= az
+          ? rnx >= 0 ? 0 : 1
+          : ay >= ax && ay >= az
+            ? rny >= 0 ? 2 : 3
+            : rnz >= 0 ? 4 : 5;
+    }
+
+    const h =
+      Math.imul(qx, 73856093) ^
+      Math.imul(qy, 19349663) ^
+      Math.imul(qz, 83492791) ^
+      Math.imul(nBucket, 2654435761);
+    let s = h & mask;
+    let found = -1;
+    while (true) {
+      const entry = slots[s];
+      if (entry === 0) break;
+      const uIdx = entry - 1;
+      const ko = uIdx * 6;
+      if (keys[ko] === qx && keys[ko + 1] === qy && keys[ko + 2] === qz && keys[ko + 3] === nBucket) {
+        found = uIdx;
+        break;
+      }
+      s = (s + 1) & mask;
+    }
+
+    let cr = 255, cg = 255, cb = 255, ca = 255;
+    if (hasColor && colArr) {
+      const co = i * colItemSize;
+      if (colIsU8) {
+        cr = colArr[co];
+        cg = colArr[co + 1];
+        cb = colArr[co + 2];
+        ca = colItemSize >= 4 ? colArr[co + 3] : 255;
+      } else {
+        cr = colArr[co] * 255;
+        cg = colArr[co + 1] * 255;
+        cb = colArr[co + 2] * 255;
+        ca = colItemSize >= 4 ? colArr[co + 3] * 255 : 255;
+      }
+    }
+
+    if (found === -1) {
+      found = uniqueCount++;
+      slots[s] = found + 1;
+      const ko = found * 6;
+      keys[ko] = qx;
+      keys[ko + 1] = qy;
+      keys[ko + 2] = qz;
+      keys[ko + 3] = nBucket;
+      const uo = found * 3;
+      uPos[uo] = px;
+      uPos[uo + 1] = py;
+      uPos[uo + 2] = pz;
+      uNorm[uo] = rnx;
+      uNorm[uo + 1] = rny;
+      uNorm[uo + 2] = rnz;
+      if (uColR && uColG && uColB && uColA) {
+        uColR[found] = cr;
+        uColG[found] = cg;
+        uColB[found] = cb;
+        uColA[found] = ca;
+      }
+      counts[found] = 1;
+    } else {
+      const uo = found * 3;
+      uPos[uo] += px;
+      uPos[uo + 1] += py;
+      uPos[uo + 2] += pz;
+      uNorm[uo] += rnx;
+      uNorm[uo + 1] += rny;
+      uNorm[uo + 2] += rnz;
+      if (uColR && uColG && uColB && uColA) {
+        uColR[found] += cr;
+        uColG[found] += cg;
+        uColB[found] += cb;
+        uColA[found] += ca;
+      }
+      counts[found]++;
+    }
+    remap[i] = found;
+  }
+
+  const srcIdxArr = idxAttr ? (idxAttr.array as Uint16Array | Uint32Array) : null;
+  let keptIdxCount = 0;
+  for (let t = 0; t + 2 < idxCount; t += 3) {
+    const a = remap[srcIdxArr ? srcIdxArr[t] : t];
+    const b = remap[srcIdxArr ? srcIdxArr[t + 1] : t + 1];
+    const c = remap[srcIdxArr ? srcIdxArr[t + 2] : t + 2];
+    if (a !== b && b !== c && c !== a) {
+      keptIdxCount += 3;
+    }
+  }
+  if (keptIdxCount < 12 || keptIdxCount >= idxCount * 0.92) return src;
+
+  const outPos = new Float32Array(uniqueCount * 3);
+  const outNorm = new Int8Array(uniqueCount * 3);
+  const outCol = hasColor ? new Uint8Array(uniqueCount * colItemSize) : null;
+  for (let u = 0; u < uniqueCount; u++) {
+    const invC = 1 / counts[u];
+    const uo = u * 3;
+    outPos[uo] = uPos[uo] * invC;
+    outPos[uo + 1] = uPos[uo + 1] * invC;
+    outPos[uo + 2] = uPos[uo + 2] * invC;
+    const nx = uNorm[uo];
+    const ny = uNorm[uo + 1];
+    const nz = uNorm[uo + 2];
+    const nl = Math.hypot(nx, ny, nz);
+    if (nl > 1e-6) {
+      outNorm[uo] = Math.max(-127, Math.min(127, Math.round((nx / nl) * 127)));
+      outNorm[uo + 1] = Math.max(-127, Math.min(127, Math.round((ny / nl) * 127)));
+      outNorm[uo + 2] = Math.max(-127, Math.min(127, Math.round((nz / nl) * 127)));
+    } else {
+      outNorm[uo] = 0;
+      outNorm[uo + 1] = 127;
+      outNorm[uo + 2] = 0;
+    }
+    if (outCol && uColR && uColG && uColB && uColA) {
+      const co = u * colItemSize;
+      outCol[co] = Math.min(255, Math.max(0, Math.round(uColR[u] * invC)));
+      outCol[co + 1] = Math.min(255, Math.max(0, Math.round(uColG[u] * invC)));
+      outCol[co + 2] = Math.min(255, Math.max(0, Math.round(uColB[u] * invC)));
+      if (colItemSize >= 4) {
+        outCol[co + 3] = Math.min(255, Math.max(0, Math.round(uColA[u] * invC)));
+      }
+    }
+  }
+
+  const outIdx =
+    uniqueCount <= 65535 ? new Uint16Array(keptIdxCount) : new Uint32Array(keptIdxCount);
+  let cur = 0;
+  for (let t = 0; t + 2 < idxCount; t += 3) {
+    const a = remap[srcIdxArr ? srcIdxArr[t] : t];
+    const b = remap[srcIdxArr ? srcIdxArr[t + 1] : t + 1];
+    const c = remap[srcIdxArr ? srcIdxArr[t + 2] : t + 2];
+    if (a !== b && b !== c && c !== a) {
+      outIdx[cur++] = a;
+      outIdx[cur++] = b;
+      outIdx[cur++] = c;
+    }
+  }
+
+  const out = new THREE.BufferGeometry();
+  out.setAttribute('position', new THREE.BufferAttribute(outPos, 3));
+  out.setAttribute('normal', new THREE.BufferAttribute(outNorm, 3, true));
+  if (outCol) {
+    out.setAttribute('color', new THREE.BufferAttribute(outCol, colItemSize, true));
+  }
+  out.setIndex(new THREE.BufferAttribute(outIdx, 1));
+  out.computeBoundingBox();
+  out.computeBoundingSphere();
+  return out;
+}
+
+/**
  * Create a tiny RGBA32F GPU Kinematic Explode DataTexture storing per-batchId/instanceId (ex, ey, ez, 0).
  */
 export function createGpuExplodeDataTexture(
@@ -1629,6 +1871,7 @@ export class CompiledV2Unit implements OptimizedUnit {
   private hasAnyGpuExplode = false;
   private gpuExplodeBindings: RaycastMeshBinding[] = [];
   private boundsDirty = false;
+  private kineOccluders: KineOccluderSpec[] = [];
 
   private lastExplodeT = -1;
   private selectedId: string | null = null;
@@ -1819,6 +2062,7 @@ export class CompiledV2Unit implements OptimizedUnit {
     // Step 1: Capture every mesh across all raw parts (in time-sliced chunks)
     const captures: RawMeshCapture[] = [];
     const partStates: CompiledPartState[] = [];
+    const occluderCandidates: KineOccluderSpec[] = [];
     const animatedNodes = rawBuild.animatedNodes;
     this.hasDynamicRig = Boolean(rawBuild.stepRigAndOverlay);
 
@@ -1971,6 +2215,60 @@ export class CompiledV2Unit implements OptimizedUnit {
               _scratchBox.max.z - _scratchBox.min.z
             );
             if (capDiag > maxCapDiag) maxCapDiag = capDiag;
+
+            // KINE Tier-3 Conservative Solid Inner Occluder extraction:
+            // ONLY solid opaque BoxGeometry & closed CylinderGeometry (never hollow rings/tubes/glass/extrudes!)
+            // Shrunk strictly inside the solid primitive so 0% false occlusion through holes or mount openings!
+            const rawGeo = mesh.geometry;
+            const rawBucketSpec = MATERIAL_SPECS[matInfo.bucket];
+            const isOpaqueSolid = !rawBucketSpec?.transparent && !matInfo.heroSpec?.transparent;
+            if (isOpaqueSolid && !onlyPartIds) {
+              const gType = rawGeo.type;
+              let isBox = gType === 'BoxGeometry';
+              let isSolidCyl = false;
+              if (gType === 'CylinderGeometry') {
+                const params = (rawGeo as THREE.CylinderGeometry).parameters;
+                const openEnded = Boolean(params?.openEnded);
+                const thetaLen = params?.thetaLength ?? Math.PI * 2;
+                const rTop = params?.radiusTop ?? 1;
+                const rBot = params?.radiusBottom ?? 1;
+                if (!openEnded && thetaLen >= 6.1 && rTop > 0.25 && rBot > 0.25) {
+                  isSolidCyl = true;
+                }
+              }
+              if (isBox || isSolidCyl) {
+                const sx = _scratchBox.max.x - _scratchBox.min.x;
+                const sy = _scratchBox.max.y - _scratchBox.min.y;
+                const sz = _scratchBox.max.z - _scratchBox.min.z;
+                const vol = sx * sy * sz;
+                if (vol >= 48 && Math.min(sx, sy, sz) >= 1.2) {
+                  // Conservative inward shrink: 10% on boxes, 28% on cylinders (inscribed inside circular cross-section!)
+                  const shrink = isSolidCyl ? 0.28 : 0.10;
+                  const dx = sx * shrink;
+                  const dy = sy * shrink;
+                  const dz = sz * shrink;
+                  const iMinX = _scratchBox.min.x + dx;
+                  const iMaxX = _scratchBox.max.x - dx;
+                  const iMinY = _scratchBox.min.y + dy;
+                  const iMaxY = _scratchBox.max.y - dy;
+                  const iMinZ = _scratchBox.min.z + dz;
+                  const iMaxZ = _scratchBox.max.z - dz;
+                  const iVol = (iMaxX - iMinX) * (iMaxY - iMinY) * (iMaxZ - iMinZ);
+                  if (iVol >= 24) {
+                    occluderCandidates.push({
+                      partIndex: idx,
+                      minX: iMinX,
+                      minY: iMinY,
+                      minZ: iMinZ,
+                      maxX: iMaxX,
+                      maxY: iMaxY,
+                      maxZ: iMaxZ,
+                      volume: iVol,
+                    });
+                  }
+                }
+              }
+            }
           }
           partTotalTris += triEst;
           partCaptures.push({
@@ -2074,6 +2372,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         curZ: assembledPos.z,
         visible: !culledBySubView,
         culledBySubView,
+        kineCulled: false,
       };
       partStates.push(st);
       this.partById.set(meta.id, st);
@@ -2088,6 +2387,14 @@ export class CompiledV2Unit implements OptimizedUnit {
         }
       }
     }
+
+    if (occluderCandidates.length > 32) {
+      occluderCandidates.sort((a, b) => b.volume - a.volume);
+      occluderCandidates.length = 32;
+    } else {
+      occluderCandidates.sort((a, b) => b.volume - a.volume);
+    }
+    this.kineOccluders = occluderCandidates;
 
     this.partsState = partStates;
     this.partInstRefs = partStates.map(() => []);
@@ -2493,10 +2800,29 @@ export class CompiledV2Unit implements OptimizedUnit {
           }
           sub.geos = [merged];
         }
-        const vCount = merged.getAttribute('position')?.count ?? 0;
-        const iCount = merged.index ? merged.index.count : vCount;
+        let finalMerged = merged;
+        if (isStdLite && !onlyPartIds && !mb.heroKey) {
+          const preIdxCount = finalMerged.index
+            ? finalMerged.index.count
+            : (finalMerged.getAttribute('position')?.count ?? 0);
+          const preTris = Math.floor(preIdxCount / 3);
+          const isMacroShell = /lens|barrel|hood|grip|chassis|shell|mount|ring|dial|eyecup|body-/i.test(
+            sub.partId
+          );
+          if (preTris > 2400 && !isMacroShell) {
+            const cells = preTris > 8000 ? 20 : 26;
+            const dec = decimateMergedGeometryRGBA(finalMerged, cells, true);
+            if (dec !== finalMerged) {
+              finalMerged.dispose();
+              finalMerged = dec;
+              sub.geos = [finalMerged];
+            }
+          }
+        }
+        const vCount = finalMerged.getAttribute('position')?.count ?? 0;
+        const iCount = finalMerged.index ? finalMerged.index.count : vCount;
         if (vCount < 3 || iCount < 3) {
-          merged.dispose();
+          finalMerged.dispose();
           sub.geos = [];
           continue;
         }
@@ -2505,7 +2831,7 @@ export class CompiledV2Unit implements OptimizedUnit {
           partId: sub.partId,
           tint: sub.tint,
           dynamicNode: sub.dynamicNode,
-          mergedGeo: merged,
+          mergedGeo: finalMerged,
           vertCount: vCount,
           indexCount: iCount,
           noEdges: sub.noEdges,
@@ -2868,7 +3194,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       const xrayMatKey = `${this.unitId}-v2-edges-xray`;
       const edgeMat = cache.acquireLineMaterial(solidMatKey, {
         color: 0xffffff,
-        opacity: 0.28,
+        opacity: quality === 'ultra' ? 0.16 : 0.28,
         vertexColors: true,
         clippingPlanes: this.clippingPlanes,
       });
@@ -2899,38 +3225,45 @@ export class CompiledV2Unit implements OptimizedUnit {
       };
     }
 
-    // Step 6: Adopt optional physics overlay & explode guides onto ResourceCache
+    // Step 6: Adopt optional physics overlay & explode guides onto ResourceCache.
+    // In STD LITE v2 (runtime dynamic physics disabled & non-part decorative overlays unused),
+    // cleanly dispose non-part overlay meshes/lines instead of attaching 100+ Float32 VBO meshes!
     if (rawBuild.overlayGroup || rawBuild.explodeGuides) {
-      const ovRoot = new THREE.Group();
-      ovRoot.name = `${this.unitId}-v2-overlays`;
-      ovRoot.matrixAutoUpdate = false;
-      ovRoot.updateMatrix();
-      if (rawBuild.overlayGroup) {
-        adoptOverlaySubtreeToCache(
-          rawBuild.overlayGroup,
-          cache,
-          `${this.unitId}-ov`,
-          this.clippingPlanes,
-          false
-        );
-        ovRoot.add(rawBuild.overlayGroup);
+      if (isStdLite) {
+        if (rawBuild.overlayGroup) disposeObject3D(rawBuild.overlayGroup, null, true);
+        if (rawBuild.explodeGuides) disposeObject3D(rawBuild.explodeGuides, null, true);
+      } else {
+        const ovRoot = new THREE.Group();
+        ovRoot.name = `${this.unitId}-v2-overlays`;
+        ovRoot.matrixAutoUpdate = false;
+        ovRoot.updateMatrix();
+        if (rawBuild.overlayGroup) {
+          adoptOverlaySubtreeToCache(
+            rawBuild.overlayGroup,
+            cache,
+            `${this.unitId}-ov`,
+            this.clippingPlanes,
+            false
+          );
+          ovRoot.add(rawBuild.overlayGroup);
+        }
+        if (rawBuild.explodeGuides) {
+          adoptOverlaySubtreeToCache(
+            rawBuild.explodeGuides,
+            cache,
+            `${this.unitId}-gd`,
+            this.clippingPlanes,
+            false
+          );
+          ovRoot.add(rawBuild.explodeGuides);
+        }
+        rootGroup.add(ovRoot);
       }
-      if (rawBuild.explodeGuides) {
-        adoptOverlaySubtreeToCache(
-          rawBuild.explodeGuides,
-          cache,
-          `${this.unitId}-gd`,
-          this.clippingPlanes,
-          false
-        );
-        ovRoot.add(rawBuild.explodeGuides);
-      }
-      rootGroup.add(ovRoot);
     }
 
     // Step 7: Dispose all raw build geometries & temporary proxy material refs (zero VRAM bloat!)
     if (!retainSharedRaw) {
-      disposeTemporaryRawTree(rawParts, this.hasDynamicRig);
+      disposeTemporaryRawTree(rawParts, this.hasDynamicRig && !isStdLite);
     }
     this.retainedSharedRaw = retainSharedRaw;
     proxy.releaseAll();
@@ -3028,6 +3361,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       batchedMeshes,
       raycastIndex: this.raycastIndex,
       stats,
+      kineOccluders: this.kineOccluders,
     };
   }
 
@@ -3111,7 +3445,8 @@ export class CompiledV2Unit implements OptimizedUnit {
     this.lastExplodeT = clamped;
 
     // O(1) Hardware GPU Vertex-Shader Kinematic Explode Fast Path!
-    if (this.allPoolsGpuExplode && !force && !this.hasDynamicRig) {
+    // In standard_lite (runtime dynamic physics disabled), ALL pools run purely on GPU uniform (~0.003ms)!
+    if (this.allPoolsGpuExplode && !force && (this.quality === 'standard_lite' || !this.hasDynamicRig)) {
       for (let p = 0; p < this.instancedPools.length; p++) {
         const u = (this.instancedPools[p].mesh.material as THREE.Material).userData
           ?.__liteUniforms as LiteMatcapUniforms | undefined;
@@ -3181,7 +3516,7 @@ export class CompiledV2Unit implements OptimizedUnit {
           continue;
         }
         poolTouched = true;
-        if (!st.visible) {
+        if (!st.visible || st.kineCulled) {
           pool.mesh.setMatrixAt(i, _zeroMatrix);
         } else {
           _scratchMat.copy(e.baseLocalMatrix);
@@ -3288,7 +3623,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       touched = true;
       const start = sp.vertexOffset * 3;
       const end = (sp.vertexOffset + sp.vertexCount) * 3;
-      if (!st.visible) {
+      if (!st.visible || st.kineCulled) {
         for (let k = start; k < end; k++) live[k] = 0;
       } else {
         const ox = st.curX;
@@ -3378,29 +3713,27 @@ export class CompiledV2Unit implements OptimizedUnit {
       baseB: number,
       usesVertexColors = false
     ): void => {
-      if (usesVertexColors && renderMode === 'solid') {
-        if (partId === selectedId) {
-          _scratchColor.setRGB(0.55, 0.95, 1.65);
-        } else if (partId === hoveredId) {
-          _scratchColor.setRGB(0.76, 1.06, 1.45);
-        } else {
-          _scratchColor.setRGB(1, 1, 1);
-        }
-        return;
-      }
       if (partId === selectedId) {
         _scratchColor.setRGB(
-          baseR * 0.48 + 0.102 * 0.52,
-          baseG * 0.48 + 0.451 * 0.52,
-          baseB * 0.48 + 0.910 * 0.52
+          CAD_SELECT_SENTINEL[0],
+          CAD_SELECT_SENTINEL[1],
+          CAD_SELECT_SENTINEL[2]
         );
-      } else if (partId === hoveredId) {
+        return;
+      }
+      if (partId === hoveredId) {
         _scratchColor.setRGB(
-          baseR * 0.62 + 0.231 * 0.38,
-          baseG * 0.62 + 0.510 * 0.38,
-          baseB * 0.62 + 0.965 * 0.38
+          CAD_HOVER_SENTINEL[0],
+          CAD_HOVER_SENTINEL[1],
+          CAD_HOVER_SENTINEL[2]
         );
-      } else if (renderMode === 'cad') {
+        return;
+      }
+      if (usesVertexColors && renderMode === 'solid') {
+        _scratchColor.setRGB(1, 1, 1);
+        return;
+      }
+      if (renderMode === 'cad') {
         _scratchColor.setRGB(COL_CAD_R, COL_CAD_G, COL_CAD_B);
       } else if (renderMode === 'xray') {
         _scratchColor.setRGB(COL_XRAY_R, COL_XRAY_G, COL_XRAY_B);
@@ -3414,13 +3747,13 @@ export class CompiledV2Unit implements OptimizedUnit {
       let cg = sp.darkBase ? 0.52 : 0.14;
       let cb = sp.darkBase ? 0.60 : 0.19;
       if (sp.partId === selectedId) {
-        cr = 0.05;
-        cg = 0.36;
-        cb = 0.85;
+        cr = 0.0;
+        cg = 0.48;
+        cb = 1.0;
       } else if (sp.partId === hoveredId) {
-        cr = 0.15;
-        cg = 0.39;
-        cb = 0.92;
+        cr = 0.14;
+        cg = 0.54;
+        cb = 1.0;
       } else if (renderMode === 'xray') {
         cr = 0.23;
         cg = 0.32;
@@ -3641,7 +3974,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         pool.mesh.setColorAt(i, _scratchColor);
         if (visChanged) {
           const st = states[e.partIndex];
-          if (!st.visible) {
+          if (!st.visible || st.kineCulled) {
             pool.mesh.setMatrixAt(i, _zeroMatrix);
           } else {
             _scratchMat.copy(e.baseLocalMatrix);
@@ -3662,8 +3995,9 @@ export class CompiledV2Unit implements OptimizedUnit {
       const useVC = pool.usesVertexColors;
       for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
+        const st = states[e.partIndex];
         if (visChanged) {
-          pool.mesh.setVisibleAt(e.batchId, states[e.partIndex].visible);
+          pool.mesh.setVisibleAt(e.batchId, st.visible && !st.kineCulled);
         }
         computeHighlightColor(e.partId, e.baseR, e.baseG, e.baseB, useVC);
         pool.mesh.setColorAt(e.batchId, _scratchColor);
@@ -3743,6 +4077,95 @@ export class CompiledV2Unit implements OptimizedUnit {
     }
   }
 
+  public getKineOccluders(): readonly KineOccluderSpec[] {
+    return this.kineOccluders;
+  }
+
+  /**
+   * Zero-GC differential KINE Mode culling application.
+   * Orthogonal to user hide/isolate/subView: mutates ONLY parts whose `kineCulled` bit actually flipped!
+   * Excluded BatchedMesh items are physically omitted from WebGL2 MultiDraw lists (0 verts / 0 tris!).
+   */
+  public applyKineCulling(culledMask: Uint8Array | null): number {
+    const states = this.partsState;
+    const n = states.length;
+    if (n === 0) return 0;
+
+    let changedCount = 0;
+    let edgeDirty = false;
+    const useGpuPos = this.allPoolsGpuExplode;
+    const eb = this.edgeBundle;
+
+    for (let i = 0; i < n; i++) {
+      const st = states[i];
+      const nextCulled = culledMask !== null && i < culledMask.length ? culledMask[i] !== 0 : false;
+      if (st.kineCulled === nextCulled) continue;
+      st.kineCulled = nextCulled;
+      changedCount++;
+
+      const effVis = st.visible && !nextCulled;
+
+      const batchRefs = this.partBatchRefs[i];
+      if (batchRefs) {
+        for (let r = 0; r < batchRefs.length; r++) {
+          const ref = batchRefs[r];
+          const pool = this.batchedPools[ref.poolIdx];
+          pool.mesh.setVisibleAt(pool.entries[ref.entryIdx].batchId, effVis);
+        }
+      }
+
+      const instRefs = this.partInstRefs[i];
+      if (instRefs) {
+        for (let r = 0; r < instRefs.length; r++) {
+          const ref = instRefs[r];
+          const pool = this.instancedPools[ref.poolIdx];
+          const e = pool.entries[ref.entryIdx];
+          if (!effVis) {
+            pool.mesh.setMatrixAt(ref.entryIdx, _zeroMatrix);
+          } else {
+            _scratchMat.copy(e.baseLocalMatrix);
+            _scratchMat.elements[12] += useGpuPos && pool.gpuExplodeTex ? st.assembledPos.x : st.curX;
+            _scratchMat.elements[13] += useGpuPos && pool.gpuExplodeTex ? st.assembledPos.y : st.curY;
+            _scratchMat.elements[14] += useGpuPos && pool.gpuExplodeTex ? st.assembledPos.z : st.curZ;
+            pool.mesh.setMatrixAt(ref.entryIdx, _scratchMat);
+          }
+          pool.mesh.instanceMatrix.needsUpdate = true;
+        }
+      }
+
+      if (eb && eb.lines.visible) {
+        const spanIdx = this.partEdgeSpanIdx[i];
+        if (spanIdx >= 0) {
+          const sp = eb.spans[spanIdx];
+          const start = sp.vertexOffset * 3;
+          const end = (sp.vertexOffset + sp.vertexCount) * 3;
+          const live = eb.livePositions;
+          if (!effVis) {
+            for (let k = start; k < end; k++) live[k] = 0;
+          } else {
+            const base = eb.basePositions;
+            const ox = st.curX;
+            const oy = st.curY;
+            const oz = st.curZ;
+            for (let k = start; k < end; k += 3) {
+              live[k] = base[k] + ox;
+              live[k + 1] = base[k + 1] + oy;
+              live[k + 2] = base[k + 2] + oz;
+            }
+          }
+          edgeDirty = true;
+        }
+      } else if (eb) {
+        this.edgePositionsDirty = true;
+      }
+    }
+
+    if (eb && edgeDirty) {
+      eb.posAttr.needsUpdate = true;
+    }
+    return changedCount;
+  }
+
   public needsContinuousAnimation(physicsActive: boolean): boolean {
     if (physicsActive) return true;
     return this.rawBuild?.needsContinuousAnimation?.(physicsActive) ?? false;
@@ -3750,6 +4173,7 @@ export class CompiledV2Unit implements OptimizedUnit {
 
   public setPhysicsVisible(visible: boolean): void {
     this.physicsVisible = visible;
+    if (this.quality === 'standard_lite') return;
     this.rawBuild?.setOverlayVisible?.(visible);
     if (this.rawBuild?.overlayGroup) {
       this.rawBuild.overlayGroup.visible = visible;
@@ -3760,7 +4184,7 @@ export class CompiledV2Unit implements OptimizedUnit {
   }
 
   public updateExplodeGuides(explodeFactor: number, visible: boolean): void {
-    if (!this.rawBuild?.updateGuides) return;
+    if (this.quality === 'standard_lite' || !this.rawBuild?.updateGuides) return;
     const effectivelyVisible = visible && explodeFactor >= 0.02;
     if (!effectivelyVisible && !this.guidesWereVisible) {
       return;
@@ -3929,6 +4353,7 @@ export class CompiledV2Unit implements OptimizedUnit {
     this.hasAnyGpuExplode = false;
     this.gpuExplodeBindings = [];
     this.boundsDirty = false;
+    this.kineOccluders = [];
   }
 }
 

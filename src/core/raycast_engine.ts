@@ -229,15 +229,17 @@ function intersectAabbSlab(
   return tmin > 0 ? tmin : 0;
 }
 
-const TRI_CHUNK_INDICES = 192; // 64 triangles per chunk AABB
-const SUPER_CHUNK_FANOUT = 16; // 16 chunks = 1,024 triangles per level-1 super-chunk AABB
-interface ChunkHierarchy {
-  readonly chunkBoxes: Float32Array;
-  readonly superBoxes: Float32Array | null;
-  readonly numChunks: number;
-  readonly numSuper: number;
+const TRI_CHUNK_INDICES = 60; // 20 triangles per leaf chunk AABB (3.2x tighter than 64-tri!)
+const SUPER_CHUNK_LEAVES = 8; // 8 leaf chunks = 160 triangles per super-chunk AABB
+interface ChunkHierarchyCache {
+  readonly leaves: Float32Array; // numLeaves * 6
+  readonly supers: Float32Array; // numSupers * 6
+  readonly numLeaves: number;
+  readonly numSupers: number;
 }
-const _geoChunkCache = new WeakMap<THREE.BufferGeometry, Map<number, ChunkHierarchy>>();
+const _geoChunkCache = new WeakMap<THREE.BufferGeometry, Map<number, ChunkHierarchyCache>>();
+const _chunkHitOrder = new Int32Array(256);
+const _chunkHitDist = new Float64Array(256);
 
 function getOrBuildChunkHierarchy(
   geo: THREE.BufferGeometry,
@@ -245,20 +247,20 @@ function getOrBuildChunkHierarchy(
   drawCount: number,
   posArr: Int16Array | Float32Array,
   idxArr: Uint16Array | Uint32Array | null
-): ChunkHierarchy {
+): ChunkHierarchyCache {
   let map = _geoChunkCache.get(geo);
   if (!map) {
-    map = new Map<number, ChunkHierarchy>();
+    map = new Map<number, ChunkHierarchyCache>();
     _geoChunkCache.set(geo, map);
   }
-  let hier = map.get(drawStart);
-  if (hier) return hier;
+  let entry = map.get(drawStart);
+  if (entry) return entry;
 
   const end = drawStart + drawCount;
-  const numChunks = Math.ceil(drawCount / TRI_CHUNK_INDICES);
-  const chunkBoxes = new Float32Array(numChunks * 6);
+  const numLeaves = Math.ceil(drawCount / TRI_CHUNK_INDICES);
+  const leaves = new Float32Array(numLeaves * 6);
 
-  for (let c = 0; c < numChunks; c++) {
+  for (let c = 0; c < numLeaves; c++) {
     const cStart = drawStart + c * TRI_CHUNK_INDICES;
     const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
     let mnX = Infinity, mnY = Infinity, mnZ = Infinity;
@@ -291,46 +293,42 @@ function getOrBuildChunkHierarchy(
       }
     }
     const o = c * 6;
-    chunkBoxes[o] = mnX;
-    chunkBoxes[o + 1] = mnY;
-    chunkBoxes[o + 2] = mnZ;
-    chunkBoxes[o + 3] = mxX;
-    chunkBoxes[o + 4] = mxY;
-    chunkBoxes[o + 5] = mxZ;
+    leaves[o] = mnX;
+    leaves[o + 1] = mnY;
+    leaves[o + 2] = mnZ;
+    leaves[o + 3] = mxX;
+    leaves[o + 4] = mxY;
+    leaves[o + 5] = mxZ;
   }
 
-  let superBoxes: Float32Array | null = null;
-  let numSuper = 0;
-  if (numChunks > SUPER_CHUNK_FANOUT) {
-    numSuper = Math.ceil(numChunks / SUPER_CHUNK_FANOUT);
-    superBoxes = new Float32Array(numSuper * 6);
-    for (let s = 0; s < numSuper; s++) {
-      const c0 = s * SUPER_CHUNK_FANOUT;
-      const c1 = c0 + SUPER_CHUNK_FANOUT < numChunks ? c0 + SUPER_CHUNK_FANOUT : numChunks;
-      let mnX = Infinity, mnY = Infinity, mnZ = Infinity;
-      let mxX = -Infinity, mxY = -Infinity, mxZ = -Infinity;
-      for (let c = c0; c < c1; c++) {
-        const co = c * 6;
-        if (chunkBoxes[co] < mnX) mnX = chunkBoxes[co];
-        if (chunkBoxes[co + 1] < mnY) mnY = chunkBoxes[co + 1];
-        if (chunkBoxes[co + 2] < mnZ) mnZ = chunkBoxes[co + 2];
-        if (chunkBoxes[co + 3] > mxX) mxX = chunkBoxes[co + 3];
-        if (chunkBoxes[co + 4] > mxY) mxY = chunkBoxes[co + 4];
-        if (chunkBoxes[co + 5] > mxZ) mxZ = chunkBoxes[co + 5];
-      }
-      const so = s * 6;
-      superBoxes[so] = mnX;
-      superBoxes[so + 1] = mnY;
-      superBoxes[so + 2] = mnZ;
-      superBoxes[so + 3] = mxX;
-      superBoxes[so + 4] = mxY;
-      superBoxes[so + 5] = mxZ;
+  const numSupers = Math.ceil(numLeaves / SUPER_CHUNK_LEAVES);
+  const supers = new Float32Array(numSupers * 6);
+  for (let s = 0; s < numSupers; s++) {
+    const lStart = s * SUPER_CHUNK_LEAVES;
+    const lEnd = Math.min(numLeaves, lStart + SUPER_CHUNK_LEAVES);
+    let mnX = Infinity, mnY = Infinity, mnZ = Infinity;
+    let mxX = -Infinity, mxY = -Infinity, mxZ = -Infinity;
+    for (let c = lStart; c < lEnd; c++) {
+      const o = c * 6;
+      if (leaves[o] < mnX) mnX = leaves[o];
+      if (leaves[o + 1] < mnY) mnY = leaves[o + 1];
+      if (leaves[o + 2] < mnZ) mnZ = leaves[o + 2];
+      if (leaves[o + 3] > mxX) mxX = leaves[o + 3];
+      if (leaves[o + 4] > mxY) mxY = leaves[o + 4];
+      if (leaves[o + 5] > mxZ) mxZ = leaves[o + 5];
     }
+    const so = s * 6;
+    supers[so] = mnX;
+    supers[so + 1] = mnY;
+    supers[so + 2] = mnZ;
+    supers[so + 3] = mxX;
+    supers[so + 4] = mxY;
+    supers[so + 5] = mxZ;
   }
 
-  hier = { chunkBoxes, superBoxes, numChunks, numSuper };
-  map.set(drawStart, hier);
-  return hier;
+  entry = { leaves, supers, numLeaves, numSupers };
+  map.set(drawStart, entry);
+  return entry;
 }
 
 /**
@@ -607,10 +605,10 @@ function scanTrianglesGeneric(
 }
 
 /**
- * Universal Zero-GC 2-Level Hierarchical Chunk-AABB Scalar Möller-Trumbore Intersector (ALL 4 tiers!).
- * Transforms the world ray unnormalized into raw Int16/Float32 buffer space ONCE so:
- *  - `t` IS ALREADY EXACT WORLD DISTANCE (ZERO Math.hypot / ZERO per-hit matrix multiply!)
- *  - Dense parts (>64 tris) skip ~95%-99% of triangles via cached 2-level (1024-tri -> 64-tri) Chunk AABBs!
+ * Universal Zero-GC 2-Level Chunk-AABB Accelerated Scalar Möller-Trumbore Intersector (ALL 4 tiers!).
+ * - O(1) diagonal-affine fast inverse for unrotated BatchedMesh items (zero 4x4 cofactor inversion!)
+ * - 2-level 160-tri super-chunk + 20-tri leaf chunk AABB hierarchy with front-to-back early-break!
+ * - Monomorphic typed triangle kernels (Int16/U16, F32/U32, F32/U16, generic) so `t` stays exact world distance!
  */
 function intersectTrianglesScalarFast(
   geo: THREE.BufferGeometry,
@@ -625,8 +623,7 @@ function intersectTrianglesScalarFast(
   maxWorldDist: number,
   clippingPlane: THREE.Plane | null
 ): number {
-  _invWorldMat.copy(matrixWorld).invert();
-  const m = _invWorldMat.elements;
+  const me = matrixWorld.elements;
   const wox = worldRay.origin.x;
   const woy = worldRay.origin.y;
   const woz = worldRay.origin.z;
@@ -634,12 +631,40 @@ function intersectTrianglesScalarFast(
   const wdy = worldRay.direction.y;
   const wdz = worldRay.direction.z;
 
-  const lox = m[0] * wox + m[4] * woy + m[8] * woz + m[12];
-  const loy = m[1] * wox + m[5] * woy + m[9] * woz + m[13];
-  const loz = m[2] * wox + m[6] * woy + m[10] * woz + m[14];
-  const ldx = m[0] * wdx + m[4] * wdy + m[8] * wdz;
-  const ldy = m[1] * wdx + m[5] * wdy + m[9] * wdz;
-  const ldz = m[2] * wdx + m[6] * wdy + m[10] * wdz;
+  let lox: number, loy: number, loz: number;
+  let ldx: number, ldy: number, ldz: number;
+
+  // Fast-path O(1) inverse for pure scale + translation matrices (99.9% of V2 BatchedMesh items!)
+  if (
+    me[1] === 0 &&
+    me[2] === 0 &&
+    me[4] === 0 &&
+    me[6] === 0 &&
+    me[8] === 0 &&
+    me[9] === 0 &&
+    me[0] !== 0 &&
+    me[5] !== 0 &&
+    me[10] !== 0
+  ) {
+    const ix = 1.0 / me[0];
+    const iy = 1.0 / me[5];
+    const iz = 1.0 / me[10];
+    lox = (wox - me[12]) * ix;
+    loy = (woy - me[13]) * iy;
+    loz = (woz - me[14]) * iz;
+    ldx = wdx * ix;
+    ldy = wdy * iy;
+    ldz = wdz * iz;
+  } else {
+    _invWorldMat.copy(matrixWorld).invert();
+    const m = _invWorldMat.elements;
+    lox = m[0] * wox + m[4] * woy + m[8] * woz + m[12];
+    loy = m[1] * wox + m[5] * woy + m[9] * woz + m[13];
+    loz = m[2] * wox + m[6] * woy + m[10] * woz + m[14];
+    ldx = m[0] * wdx + m[4] * wdy + m[8] * wdz;
+    ldy = m[1] * wdx + m[5] * wdy + m[9] * wdz;
+    ldz = m[2] * wdx + m[6] * wdy + m[10] * wdz;
+  }
 
   const invLdx = ldx !== 0 ? 1.0 / ldx : 1e30;
   const invLdy = ldy !== 0 ? 1.0 / ldy : 1e30;
@@ -698,50 +723,68 @@ function intersectTrianglesScalarFast(
     }
   };
 
-  if (drawCount > TRI_CHUNK_INDICES * 2) {
+  if (drawCount > TRI_CHUNK_INDICES * 3) {
     const hier = getOrBuildChunkHierarchy(geo, drawStart, drawCount, posArr, idxArr);
-    const { chunkBoxes, superBoxes, numChunks, numSuper } = hier;
     const invDx = dx !== 0 ? 1.0 / dx : 1e30;
     const invDy = dy !== 0 ? 1.0 / dy : 1e30;
     const invDz = dz !== 0 ? 1.0 / dz : 1e30;
+    const supers = hier.supers;
+    const leaves = hier.leaves;
+    const numSupers = hier.numSupers;
+    const numLeaves = hier.numLeaves;
 
-    if (superBoxes) {
-      for (let s = 0; s < numSuper; s++) {
-        const so = s * 6;
-        const st = intersectAabbSlab(
+    let hitChunkCount = 0;
+    const maxHits = _chunkHitOrder.length;
+    for (let s = 0; s < numSupers; s++) {
+      const so = s * 6;
+      const st = intersectAabbSlab(
+        ox, oy, oz, invDx, invDy, invDz,
+        supers[so], supers[so + 1], supers[so + 2],
+        supers[so + 3], supers[so + 4], supers[so + 5]
+      );
+      if (st < 0 || st >= bestDist) continue;
+      const lStart = s * SUPER_CHUNK_LEAVES;
+      const lEnd = lStart + SUPER_CHUNK_LEAVES < numLeaves ? lStart + SUPER_CHUNK_LEAVES : numLeaves;
+      for (let c = lStart; c < lEnd; c++) {
+        const o = c * 6;
+        const ct = intersectAabbSlab(
           ox, oy, oz, invDx, invDy, invDz,
-          superBoxes[so], superBoxes[so + 1], superBoxes[so + 2],
-          superBoxes[so + 3], superBoxes[so + 4], superBoxes[so + 5]
+          leaves[o], leaves[o + 1], leaves[o + 2],
+          leaves[o + 3], leaves[o + 4], leaves[o + 5]
         );
-        if (st < 0 || st >= bestDist) continue;
-        const c0 = s * SUPER_CHUNK_FANOUT;
-        const c1 = c0 + SUPER_CHUNK_FANOUT < numChunks ? c0 + SUPER_CHUNK_FANOUT : numChunks;
-        for (let c = c0; c < c1; c++) {
-          const o = c * 6;
-          const ct = intersectAabbSlab(
-            ox, oy, oz, invDx, invDy, invDz,
-            chunkBoxes[o], chunkBoxes[o + 1], chunkBoxes[o + 2],
-            chunkBoxes[o + 3], chunkBoxes[o + 4], chunkBoxes[o + 5]
-          );
-          if (ct < 0 || ct >= bestDist) continue;
+        if (ct < 0 || ct >= bestDist) continue;
+        if (hitChunkCount < maxHits) {
+          _chunkHitOrder[hitChunkCount] = c;
+          _chunkHitDist[hitChunkCount] = ct;
+          hitChunkCount++;
+        } else {
           const cStart = drawStart + c * TRI_CHUNK_INDICES;
           const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
           scanRange(cStart, cEnd);
         }
       }
-    } else {
-      for (let c = 0; c < numChunks; c++) {
-        const o = c * 6;
-        const ct = intersectAabbSlab(
-          ox, oy, oz, invDx, invDy, invDz,
-          chunkBoxes[o], chunkBoxes[o + 1], chunkBoxes[o + 2],
-          chunkBoxes[o + 3], chunkBoxes[o + 4], chunkBoxes[o + 5]
-        );
-        if (ct < 0 || ct >= bestDist) continue;
-        const cStart = drawStart + c * TRI_CHUNK_INDICES;
-        const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
-        scanRange(cStart, cEnd);
+    }
+
+    // Insertion-sort hit leaf chunks front-to-back for immediate occluded-chunk early break!
+    for (let i = 1; i < hitChunkCount; i++) {
+      const kC = _chunkHitOrder[i];
+      const kD = _chunkHitDist[i];
+      let j = i - 1;
+      while (j >= 0 && _chunkHitDist[j] > kD) {
+        _chunkHitOrder[j + 1] = _chunkHitOrder[j];
+        _chunkHitDist[j + 1] = _chunkHitDist[j];
+        j--;
       }
+      _chunkHitOrder[j + 1] = kC;
+      _chunkHitDist[j + 1] = kD;
+    }
+
+    for (let i = 0; i < hitChunkCount; i++) {
+      if (_chunkHitDist[i] >= bestDist) break;
+      const c = _chunkHitOrder[i];
+      const cStart = drawStart + c * TRI_CHUNK_INDICES;
+      const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
+      scanRange(cStart, cEnd);
     }
   } else {
     scanRange(drawStart, end);

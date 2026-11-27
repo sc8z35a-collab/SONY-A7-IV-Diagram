@@ -430,8 +430,12 @@ export class ArtifactCaptureBridge {
     const root = this.host.appRoot;
     this.lastPreparedRenderCount = 0;
 
+    const isHeadlessPp =
+      typeof window !== 'undefined' && window.location.search.includes('pp=1');
+
     // 1. Freeze rAF loop so zero speculative SwiftShader frames fire during state mutations
     this.host.setCaptureControlled?.(true);
+    try {
     this.resetCaptureDomOnly();
 
     const needs3d =
@@ -763,5 +767,10 @@ export class ArtifactCaptureBridge {
       gpuStats: this.host.getGpuStatsSummary ? this.host.getGpuStatsSummary() : null,
       readyMs: Math.round(performance.now() - t0),
     };
+    } finally {
+      if (!isHeadlessPp) {
+        this.host.setCaptureControlled?.(false);
+      }
+    }
   }
 }

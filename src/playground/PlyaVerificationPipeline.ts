@@ -234,7 +234,54 @@ export function runPlyaVerificationPipeline(
   const base = evaluateCustomCamera(parts, profile);
   const visualFlags = new Map<string, PartDiagnosticFlag>();
 
-  const sculptures = parts.filter((p) => p.entry.unitId === 'welcome' || p.entry.role === 'sculpture');
+  const sculptures: PlacedPartSnapshot[] = [];
+  const lenses: PlacedPartSnapshot[] = [];
+  const mounts: PlacedPartSnapshot[] = [];
+  const sensors: PlacedPartSnapshot[] = [];
+  const mainboards: PlacedPartSnapshot[] = [];
+  const bionzs: PlacedPartSnapshot[] = [];
+  const batteries: PlacedPartSnapshot[] = [];
+  const storages: PlacedPartSnapshot[] = [];
+  const bodies: PlacedPartSnapshot[] = [];
+  const thermals: PlacedPartSnapshot[] = [];
+  const evfs: PlacedPartSnapshot[] = [];
+  const lcds: PlacedPartSnapshot[] = [];
+  const mishoes: PlacedPartSnapshot[] = [];
+  const procList: PlacedPartSnapshot[] = [];
+
+  let uMinX = Infinity, uMinY = Infinity, uMinZ = Infinity;
+  let uMaxX = -Infinity, uMaxY = -Infinity, uMaxZ = -Infinity;
+
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    const role = p.entry.role;
+    if (p.entry.unitId === 'welcome' || role === 'sculpture') sculptures.push(p);
+    if (role === 'lens') lenses.push(p);
+    else if (role === 'mount') mounts.push(p);
+    else if (role === 'sensor') sensors.push(p);
+    else if (role === 'mainboard') {
+      mainboards.push(p);
+      procList.push(p);
+    } else if (role === 'bionz') {
+      bionzs.push(p);
+      procList.push(p);
+    } else if (role === 'battery') batteries.push(p);
+    else if (role === 'storage') storages.push(p);
+    else if (role === 'body') bodies.push(p);
+    else if (role === 'thermal_emi') thermals.push(p);
+    else if (role === 'evf') evfs.push(p);
+    else if (role === 'lcd') lcds.push(p);
+    else if (role === 'mishoe') mishoes.push(p);
+
+    const wb = p.worldBox;
+    if (wb.min.x < uMinX) uMinX = wb.min.x;
+    if (wb.min.y < uMinY) uMinY = wb.min.y;
+    if (wb.min.z < uMinZ) uMinZ = wb.min.z;
+    if (wb.max.x > uMaxX) uMaxX = wb.max.x;
+    if (wb.max.y > uMaxY) uMaxY = wb.max.y;
+    if (wb.max.z > uMaxZ) uMaxZ = wb.max.z;
+  }
+
   const isWelcomeMode = sculptures.length > 0 && sculptures.length >= parts.length * 0.5;
 
   if (!isWelcomeMode) {
@@ -248,47 +295,6 @@ export function runPlyaVerificationPipeline(
       visualFlags.set(uid, { uid, severity, reason });
     }
   };
-
-  const lenses: PlacedPartSnapshot[] = [];
-  const mounts: PlacedPartSnapshot[] = [];
-  const sensors: PlacedPartSnapshot[] = [];
-  const mainboards: PlacedPartSnapshot[] = [];
-  const bionzs: PlacedPartSnapshot[] = [];
-  const batteries: PlacedPartSnapshot[] = [];
-  const storages: PlacedPartSnapshot[] = [];
-  const bodies: PlacedPartSnapshot[] = [];
-  const thermals: PlacedPartSnapshot[] = [];
-  const evfs: PlacedPartSnapshot[] = [];
-  const lcds: PlacedPartSnapshot[] = [];
-  const mishoes: PlacedPartSnapshot[] = [];
-
-  let minX = Infinity, minY = Infinity, minZ = Infinity;
-  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
-  for (let i = 0; i < parts.length; i++) {
-    const p = parts[i];
-    const wb = p.worldBox;
-    if (wb.min.x < minX) minX = wb.min.x;
-    if (wb.min.y < minY) minY = wb.min.y;
-    if (wb.min.z < minZ) minZ = wb.min.z;
-    if (wb.max.x > maxX) maxX = wb.max.x;
-    if (wb.max.y > maxY) maxY = wb.max.y;
-    if (wb.max.z > maxZ) maxZ = wb.max.z;
-    switch (p.entry.role) {
-      case 'lens': lenses.push(p); break;
-      case 'mount': mounts.push(p); break;
-      case 'sensor': sensors.push(p); break;
-      case 'mainboard': mainboards.push(p); break;
-      case 'bionz': bionzs.push(p); break;
-      case 'battery': batteries.push(p); break;
-      case 'storage': storages.push(p); break;
-      case 'body': bodies.push(p); break;
-      case 'thermal_emi': thermals.push(p); break;
-      case 'evf': evfs.push(p); break;
-      case 'lcd': lcds.push(p); break;
-      case 'mishoe': mishoes.push(p); break;
-    }
-  }
-  const procList = mainboards.length === 0 ? bionzs : bionzs.length === 0 ? mainboards : [...mainboards, ...bionzs];
 
   const centerOf = (list: readonly PlacedPartSnapshot[]): THREE.Vector3 | null => {
     const len = list.length;
@@ -305,10 +311,11 @@ export function runPlyaVerificationPipeline(
   };
 
   // Compute total bounding box surface area (cm²) for coupled thermal convection solver
+  const ux = parts.length > 0 ? Math.max(0, uMaxX - uMinX) : 0;
+  const uy = parts.length > 0 ? Math.max(0, uMaxY - uMinY) : 0;
+  const uz = parts.length > 0 ? Math.max(0, uMaxZ - uMinZ) : 0;
   const surfaceAreaCm2 =
-    parts.length > 0 && Number.isFinite(minX)
-      ? (2 * ((maxX - minX) * (maxY - minY) + (maxY - minY) * (maxZ - minZ) + (maxZ - minZ) * (maxX - minX))) / 100
-      : 0;
+    parts.length > 0 ? (2 * (ux * uy + uy * uz + uz * ux)) / 100 : 0;
 
   // =========================================================================
   // BRANCH A: NATIVE WLK-220 OPTICAL SIGNBOARD VERIFICATION (WLK-220 Know-How!)

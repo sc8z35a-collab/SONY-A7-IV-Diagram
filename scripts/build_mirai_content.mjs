@@ -24,7 +24,8 @@ const OUT_DIR = OUT_DIR_ARG ? path.resolve(OUT_DIR_ARG) : path.join(ROOT, 'src',
 const FORCE = process.argv.includes('--force') || process.argv.includes('--full');
 const CACHE_KEY = 'mirai_content_v2';
 
-const BUILT_3D_TECH_IDS = new Set(['FH01', 'FH02', 'FH08', 'FH32', 'FH25']);
+// 3D-built watchmaker technology IDs (8 structures / 140 parts)
+const BUILT_3D_TECH_IDS = new Set(['FH01', 'FH02', 'FH08', 'FH32', 'FH25', 'FH20', 'FH17', 'FH48']);
 
 // Hoisted pre-compiled RegExps (zero per-call regex compilation)
 const RE_CRLF = /\r\n/g;

@@ -157,6 +157,34 @@ export interface UnitBuildStats {
   readonly chunkCount: number;
 }
 
+export type MotionStage = 'ultra' | 'lite' | 'fast';
+
+/**
+ * Conservative solid inner occluder box extracted during V2 compilation for KINE Mode Tier-3 Hi-Z occlusion culling.
+ * Coordinates are local to part origin (assembledPos + explodeOffset * explodeFactor).
+ */
+export interface KineOccluderSpec {
+  readonly partIndex: number;
+  readonly minX: number;
+  readonly minY: number;
+  readonly minZ: number;
+  readonly maxX: number;
+  readonly maxY: number;
+  readonly maxZ: number;
+  readonly volume: number;
+}
+
+export interface KineCullingStats {
+  readonly enabled: boolean;
+  readonly totalParts: number;
+  readonly visibleParts: number;
+  readonly frustumCulled: number;
+  readonly subpixelCulled: number;
+  readonly occlusionCulled: number;
+  readonly totalCulled: number;
+  readonly evalMs: number;
+}
+
 export interface UnitBuildResult {
   readonly rootGroup: THREE.Group;
   readonly parts: CadPart[];
@@ -165,6 +193,8 @@ export interface UnitBuildResult {
   readonly batchedMeshes: readonly THREE.BatchedMesh[];
   readonly raycastIndex: UnitRaycastIndex;
   readonly stats: UnitBuildStats;
+  /** Conservative solid convex inner occluder boxes for KINE Tier-3 Hi-Z occlusion culling */
+  readonly kineOccluders?: readonly KineOccluderSpec[];
 }
 
 /**
@@ -191,6 +221,10 @@ export interface OptimizedUnit {
     isolatedId: string | null,
     renderMode: RenderMode
   ): void;
+  /** Apply orthogonal KINE visibility culling mask (1 = culled, 0 = visible; null = restore all). Returns changed count. */
+  applyKineCulling?(culledMask: Uint8Array | null): number;
+  /** Optional accessor for solid inner occluder boxes */
+  getKineOccluders?(): readonly KineOccluderSpec[];
   /** Optional sub-view filter hook (e.g. lensSection 1|2|3 or sensorFabVolume 0..4) */
   setSubView?(subView: number): void;
   /** Optional active-parts accessor filtered by current sub-view (defaults to all parts) */
