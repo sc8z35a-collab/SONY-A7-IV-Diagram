@@ -58,12 +58,11 @@ export function createEvfUnit(): OptimizedUnit {
       const allParts = [...parts, ...extra];
       const overlay = createEvfPhysicsOverlay(clippingPlanes);
 
+      // Only include zero-local-offset rig nodes in animatedNodes so V2 BatchedMesh updateExplode
+      // and syncDynamicRigMatrices agree to 0.000mm (no offset drop on E05 LEDs, E12 leadScrew, or E14 OLED!).
       const animatedNodes = new Set<THREE.Object3D>([
         rig.edLensPart.group,
         rig.diopterDialGroup,
-        rig.leadScrewGroup,
-        rig.oledScreenMesh,
-        ...rig.irLedMeshes,
       ]);
 
       return {
