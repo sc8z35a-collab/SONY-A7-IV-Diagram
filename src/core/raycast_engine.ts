@@ -265,17 +265,32 @@ function getOrBuildChunkHierarchy(
     const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
     let mnX = Infinity, mnY = Infinity, mnZ = Infinity;
     let mxX = -Infinity, mxY = -Infinity, mxZ = -Infinity;
-    for (let i = cStart; i < cEnd; i++) {
-      const vi = (idxArr ? idxArr[i] : i) * 3;
-      const x = posArr[vi];
-      const y = posArr[vi + 1];
-      const z = posArr[vi + 2];
-      if (x < mnX) mnX = x;
-      if (y < mnY) mnY = y;
-      if (z < mnZ) mnZ = z;
-      if (x > mxX) mxX = x;
-      if (y > mxY) mxY = y;
-      if (z > mxZ) mxZ = z;
+    if (idxArr) {
+      for (let i = cStart; i < cEnd; i++) {
+        const vi = idxArr[i] * 3;
+        const x = posArr[vi];
+        const y = posArr[vi + 1];
+        const z = posArr[vi + 2];
+        if (x < mnX) mnX = x;
+        if (y < mnY) mnY = y;
+        if (z < mnZ) mnZ = z;
+        if (x > mxX) mxX = x;
+        if (y > mxY) mxY = y;
+        if (z > mxZ) mxZ = z;
+      }
+    } else {
+      for (let i = cStart; i < cEnd; i++) {
+        const vi = i * 3;
+        const x = posArr[vi];
+        const y = posArr[vi + 1];
+        const z = posArr[vi + 2];
+        if (x < mnX) mnX = x;
+        if (y < mnY) mnY = y;
+        if (z < mnZ) mnZ = z;
+        if (x > mxX) mxX = x;
+        if (y > mxY) mxY = y;
+        if (z > mxZ) mxZ = z;
+      }
     }
     const o = c * 6;
     leaves[o] = mnX;
@@ -321,6 +336,144 @@ function getOrBuildChunkHierarchy(
  */
 function scanTrianglesI16U16(
   posArr: Int16Array,
+  idxArr: Uint16Array,
+  start: number,
+  end: number,
+  ox: number,
+  oy: number,
+  oz: number,
+  dx: number,
+  dy: number,
+  dz: number,
+  bestDist: number,
+  worldRay: THREE.Ray,
+  clippingPlane: THREE.Plane | null
+): number {
+  let best = bestDist;
+  for (let i = start; i + 2 < end; i += 3) {
+    const i0 = idxArr[i] * 3;
+    const i1 = idxArr[i + 1] * 3;
+    const i2 = idxArr[i + 2] * 3;
+
+    const v0x = posArr[i0];
+    const v0y = posArr[i0 + 1];
+    const v0z = posArr[i0 + 2];
+    const e1x = posArr[i1] - v0x;
+    const e1y = posArr[i1 + 1] - v0y;
+    const e1z = posArr[i1 + 2] - v0z;
+    const e2x = posArr[i2] - v0x;
+    const e2y = posArr[i2 + 1] - v0y;
+    const e2z = posArr[i2 + 2] - v0z;
+
+    const px = dy * e2z - dz * e2y;
+    const py = dz * e2x - dx * e2z;
+    const pz = dx * e2y - dy * e2x;
+    const det = e1x * px + e1y * py + e1z * pz;
+    if (det > -1e-6 && det < 1e-6) continue;
+
+    const invDet = 1.0 / det;
+    const tx = ox - v0x;
+    const ty = oy - v0y;
+    const tz = oz - v0z;
+    const u = (tx * px + ty * py + tz * pz) * invDet;
+    if (u < 0 || u > 1) continue;
+
+    const qx = ty * e1z - tz * e1y;
+    const qy = tz * e1x - tx * e1z;
+    const qz = tx * e1y - ty * e1x;
+    const v = (dx * qx + dy * qy + dz * qz) * invDet;
+    if (v < 0 || u + v > 1) continue;
+
+    const t = (e2x * qx + e2y * qy + e2z * qz) * invDet;
+    if (t <= 1e-4 || t >= best) continue;
+
+    if (clippingPlane) {
+      _worldHitPt.set(
+        worldRay.origin.x + worldRay.direction.x * t,
+        worldRay.origin.y + worldRay.direction.y * t,
+        worldRay.origin.z + worldRay.direction.z * t
+      );
+      if (clippingPlane.distanceToPoint(_worldHitPt) < 0) continue;
+    }
+    best = t;
+  }
+  return best;
+}
+
+/**
+ * Strictly monomorphic Float32Array + Uint32Array triangle scanner for STD/HIGH/ULTRA BatchedMesh & InstancedMesh.
+ */
+function scanTrianglesF32U32(
+  posArr: Float32Array,
+  idxArr: Uint32Array,
+  start: number,
+  end: number,
+  ox: number,
+  oy: number,
+  oz: number,
+  dx: number,
+  dy: number,
+  dz: number,
+  bestDist: number,
+  worldRay: THREE.Ray,
+  clippingPlane: THREE.Plane | null
+): number {
+  let best = bestDist;
+  for (let i = start; i + 2 < end; i += 3) {
+    const i0 = idxArr[i] * 3;
+    const i1 = idxArr[i + 1] * 3;
+    const i2 = idxArr[i + 2] * 3;
+
+    const v0x = posArr[i0];
+    const v0y = posArr[i0 + 1];
+    const v0z = posArr[i0 + 2];
+    const e1x = posArr[i1] - v0x;
+    const e1y = posArr[i1 + 1] - v0y;
+    const e1z = posArr[i1 + 2] - v0z;
+    const e2x = posArr[i2] - v0x;
+    const e2y = posArr[i2 + 1] - v0y;
+    const e2z = posArr[i2 + 2] - v0z;
+
+    const px = dy * e2z - dz * e2y;
+    const py = dz * e2x - dx * e2z;
+    const pz = dx * e2y - dy * e2x;
+    const det = e1x * px + e1y * py + e1z * pz;
+    if (det > -1e-6 && det < 1e-6) continue;
+
+    const invDet = 1.0 / det;
+    const tx = ox - v0x;
+    const ty = oy - v0y;
+    const tz = oz - v0z;
+    const u = (tx * px + ty * py + tz * pz) * invDet;
+    if (u < 0 || u > 1) continue;
+
+    const qx = ty * e1z - tz * e1y;
+    const qy = tz * e1x - tx * e1z;
+    const qz = tx * e1y - ty * e1x;
+    const v = (dx * qx + dy * qy + dz * qz) * invDet;
+    if (v < 0 || u + v > 1) continue;
+
+    const t = (e2x * qx + e2y * qy + e2z * qz) * invDet;
+    if (t <= 1e-4 || t >= best) continue;
+
+    if (clippingPlane) {
+      _worldHitPt.set(
+        worldRay.origin.x + worldRay.direction.x * t,
+        worldRay.origin.y + worldRay.direction.y * t,
+        worldRay.origin.z + worldRay.direction.z * t
+      );
+      if (clippingPlane.distanceToPoint(_worldHitPt) < 0) continue;
+    }
+    best = t;
+  }
+  return best;
+}
+
+/**
+ * Strictly monomorphic Float32Array + Uint16Array triangle scanner for STD/HIGH/ULTRA <=65k-vert geometries.
+ */
+function scanTrianglesF32U16(
+  posArr: Float32Array,
   idxArr: Uint16Array,
   start: number,
   end: number,
@@ -452,9 +605,10 @@ function scanTrianglesGeneric(
 }
 
 /**
- * STD LITE v2 Zero-GC 2-Level Chunk-AABB Accelerated Scalar Möller-Trumbore Intersector.
+ * Universal Zero-GC 2-Level Chunk-AABB Accelerated Scalar Möller-Trumbore Intersector (ALL 4 tiers!).
  * - O(1) diagonal-affine fast inverse for unrotated BatchedMesh items (zero 4x4 cofactor inversion!)
  * - 2-level 160-tri super-chunk + 20-tri leaf chunk AABB hierarchy with front-to-back early-break!
+ * - Monomorphic typed triangle kernels (Int16/U16, F32/U32, F32/U16, generic) so `t` stays exact world distance!
  */
 function intersectTrianglesScalarFast(
   geo: THREE.BufferGeometry,
@@ -536,7 +690,38 @@ function intersectTrianglesScalarFast(
 
   let bestDist = maxWorldDist;
   const end = drawStart + drawCount;
-  const fastI16U16 = isNormInt16 && posArr instanceof Int16Array && idxArr instanceof Uint16Array;
+  const kernelKind =
+    isNormInt16 && posArr instanceof Int16Array && idxArr instanceof Uint16Array
+      ? 1
+      : !isNormInt16 && posArr instanceof Float32Array && idxArr instanceof Uint32Array
+        ? 2
+        : !isNormInt16 && posArr instanceof Float32Array && idxArr instanceof Uint16Array
+          ? 3
+          : 0;
+
+  const scanRange = (rStart: number, rEnd: number): void => {
+    if (kernelKind === 1) {
+      bestDist = scanTrianglesI16U16(
+        posArr as Int16Array, idxArr as Uint16Array,
+        rStart, rEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane
+      );
+    } else if (kernelKind === 2) {
+      bestDist = scanTrianglesF32U32(
+        posArr as Float32Array, idxArr as Uint32Array,
+        rStart, rEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane
+      );
+    } else if (kernelKind === 3) {
+      bestDist = scanTrianglesF32U16(
+        posArr as Float32Array, idxArr as Uint16Array,
+        rStart, rEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane
+      );
+    } else {
+      bestDist = scanTrianglesGeneric(
+        posArr, idxArr,
+        rStart, rEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane
+      );
+    }
+  };
 
   if (drawCount > TRI_CHUNK_INDICES * 3) {
     const hier = getOrBuildChunkHierarchy(geo, drawStart, drawCount, posArr, idxArr);
@@ -575,9 +760,7 @@ function intersectTrianglesScalarFast(
         } else {
           const cStart = drawStart + c * TRI_CHUNK_INDICES;
           const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
-          bestDist = fastI16U16
-            ? scanTrianglesI16U16(posArr, idxArr, cStart, cEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane)
-            : scanTrianglesGeneric(posArr, idxArr, cStart, cEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane);
+          scanRange(cStart, cEnd);
         }
       }
     }
@@ -601,14 +784,10 @@ function intersectTrianglesScalarFast(
       const c = _chunkHitOrder[i];
       const cStart = drawStart + c * TRI_CHUNK_INDICES;
       const cEnd = cStart + TRI_CHUNK_INDICES < end ? cStart + TRI_CHUNK_INDICES : end;
-      bestDist = fastI16U16
-        ? scanTrianglesI16U16(posArr, idxArr, cStart, cEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane)
-        : scanTrianglesGeneric(posArr, idxArr, cStart, cEnd, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane);
+      scanRange(cStart, cEnd);
     }
   } else {
-    bestDist = fastI16U16
-      ? scanTrianglesI16U16(posArr, idxArr, drawStart, end, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane)
-      : scanTrianglesGeneric(posArr, idxArr, drawStart, end, ox, oy, oz, dx, dy, dz, bestDist, worldRay, clippingPlane);
+    scanRange(drawStart, end);
   }
 
   return bestDist < maxWorldDist ? bestDist : Infinity;
@@ -885,7 +1064,6 @@ export class TwoStageRaycaster {
     let closestDistSq = Infinity;
     let closestPartId: string | null = null;
     const bindings = index.bindings;
-    const useScalarFast = Boolean(index.fastLiteRaycast);
 
     for (let ci = 0; ci < candCount; ci++) {
       // Every remaining candidate starts further away than our closest confirmed triangle hit!
@@ -909,10 +1087,15 @@ export class TwoStageRaycaster {
         if (binding.kind === 'batched') {
           const bm = binding.mesh;
           const batchGeo = bm.geometry;
+          const posAttr = batchGeo.getAttribute('position');
+          const canScalar = Boolean(
+            posAttr &&
+              !(posAttr as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute &&
+              posAttr.itemSize === 3 &&
+              (posAttr.array instanceof Float32Array || posAttr.array instanceof Int16Array)
+          );
 
-          if (useScalarFast) {
-            const posAttr = batchGeo.getAttribute('position');
-            if (!posAttr) continue;
+          if (canScalar && posAttr) {
             const posArr = posAttr.array as Int16Array | Float32Array;
             const isNormInt16 = Boolean(posAttr.normalized && posArr instanceof Int16Array);
             const idxArr = batchGeo.index ? (batchGeo.index.array as Uint16Array | Uint32Array) : null;
@@ -997,10 +1180,15 @@ export class TwoStageRaycaster {
           const inst = binding.mesh;
           const instGeo = inst.geometry;
           if (!instGeo) continue;
+          const posAttr = instGeo.getAttribute('position');
+          const canScalar = Boolean(
+            posAttr &&
+              !(posAttr as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute &&
+              posAttr.itemSize === 3 &&
+              (posAttr.array instanceof Float32Array || posAttr.array instanceof Int16Array)
+          );
 
-          if (useScalarFast) {
-            const posAttr = instGeo.getAttribute('position');
-            if (!posAttr) continue;
+          if (canScalar && posAttr) {
             const posArr = posAttr.array as Int16Array | Float32Array;
             const isNormInt16 = Boolean(posAttr.normalized && posArr instanceof Int16Array);
             const idxArr = instGeo.index ? (instGeo.index.array as Uint16Array | Uint32Array) : null;

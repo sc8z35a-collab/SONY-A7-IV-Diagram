@@ -288,11 +288,10 @@ export function runPlyaVerificationPipeline(
     base.partDiagnostics.forEach((v, k) => visualFlags.set(k, v));
   }
 
+  const FLAG_RANK = { ok: 0, warn: 1, error: 2 } as const;
   const markFlag = (uid: string, severity: 'ok' | 'warn' | 'error', reason: string) => {
     const prev = visualFlags.get(uid);
-    const sevRank = severity === 'error' ? 2 : severity === 'warn' ? 1 : 0;
-    const prevRank = !prev ? -1 : prev.severity === 'error' ? 2 : prev.severity === 'warn' ? 1 : 0;
-    if (sevRank > prevRank) {
+    if (!prev || FLAG_RANK[severity] > FLAG_RANK[prev.severity]) {
       visualFlags.set(uid, { uid, severity, reason });
     }
   };
@@ -445,18 +444,22 @@ export function runPlyaVerificationPipeline(
       const t0 = nowMs();
       const flagged: string[] = [];
       let solidClashes = 0;
-      const internalCheck = wPlinth.filter(
-        (p) =>
-          !p.entry.partId.includes('mg-chassis') &&
-          !p.entry.partId.includes('top-datum') &&
-          !p.entry.partId.includes('bottom-weight') &&
-          !p.entry.partId.includes('busbar') &&
-          !p.entry.partId.includes('harness')
-      );
+      const internalCheck = wPlinth
+        .filter(
+          (p) =>
+            !p.entry.partId.includes('mg-chassis') &&
+            !p.entry.partId.includes('top-datum') &&
+            !p.entry.partId.includes('bottom-weight') &&
+            !p.entry.partId.includes('busbar') &&
+            !p.entry.partId.includes('harness')
+        )
+        .sort((a, b) => a.worldBox.min.x - b.worldBox.min.x);
       for (let i = 0; i < internalCheck.length; i++) {
+        const a = internalCheck[i];
+        const aMaxX = a.worldBox.max.x;
         for (let j = i + 1; j < internalCheck.length; j++) {
-          const a = internalCheck[i];
           const b = internalCheck[j];
+          if (b.worldBox.min.x >= aMaxX - 0.35) break;
           const pair = `${a.entry.partId}+${b.entry.partId}`;
           if (pair.includes('mainboard') && (pair.includes('cortex') || pair.includes('canfd') || pair.includes('audio'))) continue;
           if (boxesOverlapMm(a.worldBox, b.worldBox, 0.35)) {

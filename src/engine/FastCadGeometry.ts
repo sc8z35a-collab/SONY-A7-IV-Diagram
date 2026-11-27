@@ -167,6 +167,7 @@ let _evKeysX = new Int32Array(0);
 let _evKeysY = new Int32Array(0);
 let _evKeysZ = new Int32Array(0);
 let _evIds = new Int32Array(0);
+let _evTouched = new Int32Array(0);
 let _evMapCap = 0;
 let _evMappedId = new Int32Array(0);
 
@@ -179,6 +180,7 @@ let _eeRawB = new Int32Array(0);
 let _eeNx = new Float32Array(0);
 let _eeNy = new Float32Array(0);
 let _eeNz = new Float32Array(0);
+let _eeTouched = new Int32Array(0);
 
 let _edgeOutCap = 4096 * 6;
 let _edgeOutScratch = new Float32Array(_edgeOutCap);
@@ -193,8 +195,7 @@ function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void {
     _evKeysY = new Int32Array(vTableSize);
     _evKeysZ = new Int32Array(vTableSize);
     _evIds = new Int32Array(vTableSize);
-  } else {
-    _evIds.fill(0, 0, vTableSize);
+    _evTouched = new Int32Array(vTableSize);
   }
   if (vertCount > _evMapCap) {
     _evMapCap = nextPow2(Math.max(64, vertCount));
@@ -213,8 +214,7 @@ function ensureEdgeHashScratch(eTableSize: number): void {
     _eeNx = new Float32Array(eTableSize);
     _eeNy = new Float32Array(eTableSize);
     _eeNz = new Float32Array(eTableSize);
-  } else {
-    _eeState.fill(0, 0, eTableSize);
+    _eeTouched = new Int32Array(eTableSize);
   }
 }
 
@@ -256,24 +256,28 @@ export function extractPooledCadEdgesArray(
     return _EMPTY_F32;
   }
 
-  if (!geometry.boundingBox) geometry.computeBoundingBox();
-  const bb = geometry.boundingBox;
   let effectiveMinLen = minEdgeLengthMm;
-  if (bb) {
-    const diag = Math.hypot(
-      bb.max.x - bb.min.x,
-      bb.max.y - bb.min.y,
-      bb.max.z - bb.min.z
-    );
-    if (diag < 2.0) {
-      if (!byParam) {
-        byParam = new Map();
-        _pooledEdgeCache.set(geometry, byParam);
+  if (minEdgeLengthMm > 0) {
+    if (!geometry.boundingBox) geometry.computeBoundingBox();
+    const bb = geometry.boundingBox;
+    if (bb) {
+      const diag = Math.hypot(
+        bb.max.x - bb.min.x,
+        bb.max.y - bb.min.y,
+        bb.max.z - bb.min.z
+      );
+      if (diag < 2.0) {
+        if (!byParam) {
+          byParam = new Map();
+          _pooledEdgeCache.set(geometry, byParam);
+        }
+        byParam.set(cacheKey, _EMPTY_F32);
+        return _EMPTY_F32;
       }
-      byParam.set(cacheKey, _EMPTY_F32);
-      return _EMPTY_F32;
+      effectiveMinLen = Math.max(minEdgeLengthMm, Math.min(3.6, diag * 0.036));
     }
-    effectiveMinLen = Math.max(minEdgeLengthMm, Math.min(3.6, diag * 0.036));
+  } else {
+    effectiveMinLen = 0;
   }
 
   const posArr = posAttr.array as Float32Array;
@@ -290,10 +294,12 @@ export function extractPooledCadEdgesArray(
   const vKeysY = _evKeysY;
   const vKeysZ = _evKeysZ;
   const vIds = _evIds;
+  const vTouched = _evTouched;
   const mappedVertId = _evMappedId;
   let uniqueVerts = 0;
 
-  const Q = 500;
+  // Match THREE.EdgesGeometry 10^4 vertex welding precision when exact mode (minEdgeLengthMm <= 0)
+  const Q = minEdgeLengthMm <= 0 ? 10000 : 500;
   for (let i = 0; i < vertCount; i++) {
     const o = i * posStride;
     const qx = Math.round(posArr[o] * Q) | 0;
@@ -304,6 +310,7 @@ export function extractPooledCadEdgesArray(
     while (true) {
       const existing = vIds[slot];
       if (existing === 0) {
+        vTouched[uniqueVerts] = slot;
         uniqueVerts++;
         vKeysX[slot] = qx;
         vKeysY[slot] = qy;
@@ -319,6 +326,10 @@ export function extractPooledCadEdgesArray(
       slot = (slot + 1) & vMask;
     }
   }
+  // Reset ONLY touched vertex slots (O(uniqueVerts) instead of O(vTableSize))
+  for (let i = 0; i < uniqueVerts; i++) {
+    vIds[vTouched[i]] = 0;
+  }
 
   const eTableSize = nextPow2(Math.max(64, triCount * 4));
   const eMask = eTableSize - 1;
@@ -331,6 +342,8 @@ export function extractPooledCadEdgesArray(
   const eNx = _eeNx;
   const eNy = _eeNy;
   const eNz = _eeNz;
+  const eTouched = _eeTouched;
+  let touchedEdges = 0;
 
   let outCursor = 0;
   const emitEdge = (rawA: number, rawB: number) => {
@@ -395,6 +408,7 @@ export function extractPooledCadEdgesArray(
         const st = eState[slot];
         if (st === 0) {
           eState[slot] = 1;
+          eTouched[touchedEdges++] = slot;
           eMinV[slot] = lo;
           eMaxV[slot] = hi;
           eRawA[slot] = ra;
@@ -421,10 +435,13 @@ export function extractPooledCadEdgesArray(
     }
   }
 
-  for (let slot = 0; slot < eTableSize; slot++) {
+  // Emit boundary edges & clear ONLY touched slots in one compact pass
+  for (let i = 0; i < touchedEdges; i++) {
+    const slot = eTouched[i];
     if (eState[slot] === 1) {
       emitEdge(eRawA[slot], eRawB[slot]);
     }
+    eState[slot] = 0;
   }
 
   const res = outCursor > 0 ? _edgeOutScratch.slice(0, outCursor) : _EMPTY_F32;

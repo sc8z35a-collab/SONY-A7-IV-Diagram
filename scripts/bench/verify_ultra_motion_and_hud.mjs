@@ -13,18 +13,59 @@ const MIME = {
   '.png': 'image/png',
 };
 
+const PMREM_CACHE_DIR = '/tmp/antigravity-pp-pmrem-v1';
+
 function startServer() {
+  const mem = new Map();
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
       const urlPath = (req.url || '/').split('?')[0];
-      const filePath = path.join(DOCS_DIR, urlPath === '/' ? 'index.html' : urlPath);
-      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-        res.writeHead(200, { 'Content-Type': MIME[path.extname(filePath)] || 'application/octet-stream' });
-        fs.createReadStream(filePath).pipe(res);
-      } else {
+      if (urlPath.startsWith('/__pp_pmrem/')) {
+        const key = path.basename(urlPath).replace(/[^a-zA-Z0-9._-]/g, '');
+        const cacheFile = path.join(PMREM_CACHE_DIR, key);
+        if (req.method === 'PUT' || req.method === 'POST') {
+          const chunks = [];
+          req.on('data', (c) => chunks.push(c));
+          req.on('end', () => {
+            try {
+              fs.mkdirSync(PMREM_CACHE_DIR, { recursive: true });
+              fs.writeFileSync(cacheFile, Buffer.concat(chunks));
+              res.writeHead(204);
+              res.end();
+            } catch {
+              res.writeHead(500);
+              res.end();
+            }
+          });
+          return;
+        }
+        if (fs.existsSync(cacheFile)) {
+          const buf = fs.readFileSync(cacheFile);
+          res.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': buf.length });
+          res.end(buf);
+          return;
+        }
         res.writeHead(404);
-        res.end('Not found');
+        res.end();
+        return;
       }
+      const filePath = path.join(DOCS_DIR, urlPath === '/' ? 'index.html' : urlPath);
+      let cached = mem.get(filePath);
+      if (!cached) {
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+          cached = {
+            buf: fs.readFileSync(filePath),
+            mime: MIME[path.extname(filePath)] || 'application/octet-stream',
+          };
+          mem.set(filePath, cached);
+        } else {
+          res.writeHead(404);
+          res.end('Not found');
+          return;
+        }
+      }
+      res.writeHead(200, { 'Content-Type': cached.mime, 'Content-Length': cached.buf.length });
+      res.end(cached.buf);
     });
     srv.listen(0, '127.0.0.1', () => resolve({ srv, port: srv.address().port }));
   });
@@ -36,17 +77,25 @@ async function launchChrome() {
   for (const c of candidates) {
     if (c.startsWith('/') && fs.existsSync(c)) { bin = c; break; }
   }
+  const userDataDir = fs.mkdtempSync('/tmp/ag-ultra-verify-');
   const proc = spawn(
     bin,
     [
       '--headless=new',
+      `--user-data-dir=${userDataDir}`,
       '--no-sandbox',
       '--disable-gpu-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-background-networking',
+      '--disable-default-apps',
+      '--disable-extensions',
+      '--no-first-run',
       '--use-gl=angle',
       '--use-angle=swiftshader-webgl',
       '--enable-webgl',
       '--enable-unsafe-swiftshader',
       '--ignore-gpu-blocklist',
+      '--mute-audio',
       '--remote-debugging-port=0',
       '--window-size=1280,760',
       'about:blank',
@@ -65,7 +114,14 @@ async function launchChrome() {
   const listUrl = wsUrl.replace(/^ws:\/\//, 'http://').replace(/\/devtools\/browser\/.*$/, '/json/list');
   const pages = await (await fetch(listUrl)).json();
   const page = pages.find((p) => p.type === 'page') || pages[0];
-  return { proc, wsUrl: page.webSocketDebuggerUrl };
+  return {
+    proc,
+    wsUrl: page.webSocketDebuggerUrl,
+    cleanup: () => {
+      try { proc.kill('SIGKILL'); } catch {}
+      try { fs.rmSync(userDataDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 40 }); } catch {}
+    },
+  };
 }
 
 class CDP {
@@ -175,7 +231,16 @@ try {
     const duringCamMove = cad.v2.getDiagnostics();
 
     // Wait for camera animation + OrbitControls damping to settle -> MUST snap back to ULTRA 2.5x!
-    await new Promise(r => setTimeout(r, 900));
+    await new Promise((resolve) => {
+      const start = performance.now();
+      const poll = () => {
+        const d = cad.v2.getDiagnostics();
+        if (!d.motionProxyActive && d.idle) return resolve(true);
+        if (performance.now() - start > 6000) return resolve(false);
+        setTimeout(poll, 40);
+      };
+      setTimeout(poll, 350);
+    });
     const afterCamStop = cad.v2.getDiagnostics();
 
     // Verify 0% idle GPU & disabled dynamic motion
@@ -242,6 +307,6 @@ try {
   }
 } finally {
   cdp.close();
-  chrome.proc.kill('SIGKILL');
+  chrome.cleanup();
   srv.close();
 }
