@@ -871,13 +871,13 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
       });
 
     // =========================================================================
-    // 8. WLK-220 OPTICAL BENCH PLINTH & 220-PART MASTER SYSTEM ARCHITECTURE
+    // 8. WLK-360 OPTICAL BENCH PLINTH & 360-PART MASTER SYSTEM ARCHITECTURE
     // =========================================================================
     case 'welcome_optical_plinth':
       return wrapWelcomeHdSvg({
         badge: 'WLK-08',
-        stdTag: 'JIS B7513 Grade-0 / WLK-220',
-        title: 'WLK-220 光学ベンチ基準定盤 & 全220パーツ実動作システム系統図',
+        stdTag: 'JIS B7513 Grade-0 / WLK-360',
+        title: 'WLK-360 光学ベンチ基準定盤 & 全360パーツ実動作システム系統図',
         analogy: '4文字の独立光学モジュールを±10μm平面度で整列し、電源・制御・知覚・音響を統合するカメラ品質の頭脳台座',
         accent: '#e65a28',
         accentSoft: '#fff7ed',
@@ -885,10 +885,10 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
           <!-- Top: 4 Glyphs Mounted at Precision Pitch on Optical Bench Plinth -->
           <g transform="translate(30, 86)">
             ${[
-              { x: 46, ch: 'よ', pos: 'X=-66mm', cnt: '43 parts' },
-              { x: 196, ch: 'う', pos: 'X=-22mm', cnt: '43 parts' },
-              { x: 346, ch: 'こ', pos: 'X=+22mm', cnt: '43 parts' },
-              { x: 496, ch: 'そ', pos: 'X=+66mm', cnt: '43 parts' },
+              { x: 46, ch: 'よ', pos: 'X=-66mm', cnt: '57 parts' },
+              { x: 196, ch: 'う', pos: 'X=-22mm', cnt: '56 parts' },
+              { x: 346, ch: 'こ', pos: 'X=+22mm', cnt: '56 parts' },
+              { x: 496, ch: 'そ', pos: 'X=+66mm', cnt: '56 parts' },
             ]
               .map(
                 (g) => `
@@ -940,7 +940,7 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
             <!-- Bottom Part Count Breakdown Strip -->
             <rect x="10" y="202" width="640" height="34" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
             <text x="330" y="223" text-anchor="middle" font-size="9.4" font-weight="800" fill="#0f172a">
-              総構成 220実動作パーツ = 「よ」43 + 「う」43 + 「こ」43 + 「そ」43 + 光学ベンチ台座 48 (意味のない装飾部品 0)
+              総構成 360実動作パーツ = 「よ」57 + 「う」56 + 「こ」56 + 「そ」56 + 光学ベンチ台座 135 (意味のない装飾部品 0)
             </text>
           </g>
         `,
@@ -958,7 +958,7 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
           {
             label: '100%実製造可能な機能設計',
             line1: 'CNC切削・SMD実装・ダブテール締結の現実工程でそのまま製造可能',
-            line2: '分解スライダーで全220パーツの内部機構と熱・光・電源経路を検証',
+            line2: '分解スライダーで全360パーツの内部機構と熱・光・電源経路を検証',
           },
         ],
       });

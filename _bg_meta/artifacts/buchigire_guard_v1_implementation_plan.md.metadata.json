@@ -1,0 +1,6 @@
+{
+  "summary":  "Industrial-grade implementation plan for \"ぶち切れ対策ツール v1\" (bg — Buchigire Guard v1): 36 mechanically enforced safeguards across 6 defense-in-depth pillars (Zero-Work-Loss Off-VM Shadow Vaulting, Instant Crash/VM-Wipe Disaster Recovery + Flight Recorder + Artifact Mirroring, 8-Invariant Pre-Claim Completion Gatekeeper with tamper-evident BG-RECEIPT, Destructive-Op Interlocks & Virtual Merge-Tree Conflict Simulation, Zero-Dep Cross-Repo Portability, and 20-Case Adversarial Chaos Self-Test Suite) plus AI Agent Operations Manual (scripts/BUCHIGIRE_GUARD_GUIDE.md) and AGENTS.md Iron-Law integration.",
+  "updatedAt":  "2026-11-27T11:20:22.251309924Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

@@ -1,73 +1,112 @@
-# V3 超高速化・画質極限化・KINEモード・UI全面整理 完了ウォークスルー（PR #55 マージ済み）
+# Walkthrough — `bg` v1（PR #52）・`sp` `0.001 mm` 空間解析エンジン・ようこそ装置 `WLK-360`（+140 パーツ・最終統合マージ PR #57）完了報告
 
-- **マージ済み PR**: https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/55（`main` コミット `f30aa70`）
-- **引き継ぎ・統合仕様書**: [HANDOFF_HYPER_OPTIMIZATION.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/HANDOFF_HYPER_OPTIMIZATION.md)
-- **改ざん不能完了レシート**: `BG-RECEIPT:a3fdd3c2:origin/feat/feat-hyper-opt-v3-fast-kine-ultra-aa:integrator:a79840d2`
+> [!IMPORTANT]
+> - **Phase 0 マージ済 PR**: [PR #52](https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/52)（`bg` v1 — `BG-RECEIPT:1d00a0b2:origin/feat/buchigire-guard-v1:default:b39c4f30`）
+> - **Phase 1 & 2 最終統合マージ済 PR**: [PR #57](https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/57)（`sp` + `WLK-360` + `registry.ts`/`catalog`/`docs` 統合）
+> - **最終統合改ざん不能レシート**: `BG-RECEIPT:6d42c046:origin/feat/sp-engine-and-welcome-360:integrator:cd679427`
 
----
-
-## 1. 全10柱の実装サマリーと主要ファイル
-
-| # | 要件・柱 | 主な実装内容 | 主要ファイル |
-|---:|---|---|---|
-| 1 | **Play Ground 1.1 Hyper-Engine** | 3-DC MegaBatch + 不透明統合ライン、プリベイク間引き、`restoreSnapshotSync` 差分同期＆45msコアレッシング、永続DOMインスペクタ、16行仮想カタログ＋直接Text更新、単一パスPLYA分類、アイドル完全ゼロ負荷（`0.0 draws/s`） | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts), [PartGeometryExtractor.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PartGeometryExtractor.ts), [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts) |
-| 2 | **`STD LITE v2` 超軽量コア** | O(1) GPU頂点分解アンロック、非パーツ物理オーバーレイ省略、2階層チャンクAABB＋対角アフィン逆行列レイキャスト、曲面鏡筒・外装シルエット完全保護間引き、遅延FAST生成 | [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts), [raycast_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts), [mi_shoe.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/units/mi_shoe.ts) |
-| 3 | **ULTRA ジャギー完全撲滅 AA** | WebGL2 最大8× MSAA HDR FBO + 1.5〜2.25× スーパーサンプリング + Progressive Halton(2,3) 8× サブピクセルSSAA（自動停止→`0.0 draws/s`アイドル）+ Tokuyoshi `dFdx/dFdy` Specular-AA + 16×異方性 + ULTRAエッジ軟化 | [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts), [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts) |
-| 4 | **多段階 `FAST ↔ LITE ↔ ULTRA` (+ PG 3段階)** | 1-DC・0テクスチャ頂点ライティング + 0.5× FBOブリットの `FAST` モード（最新LITE比 **7.47×〜10.82×** 実GPU高速化）。激しいカメラ移動・高負荷で `FAST` → 減速で `LITE` → 停止で `ULTRA`。分解スライダー単独操作は `ULTRA` 維持。Play Ground も `PG_FAST ↔ PG_LITE ↔ PG_SHARP` 採用 | [fast_proxy_builder.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/fast_proxy_builder.ts), [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts), [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts) |
-| 5 | **KINEモード（オンオフ可能）** | デフォルトON＋HUD `KINE` トグルピル／`K`キー／`?kine=`。BVH 6平面フラスタム＋`<1.15px`サブピクセル＋`64×36` CPU保守的Hi-Z 4階層オクルージョンカリング（0フレーム復帰／2フレーム非表示ヒステリシス、選択/ホバー/X-Ray/CAD/断面カット安全保護） | [kine_culling_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/kine_culling_engine.ts), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts) |
-| 6 | **16×細密ズーム ＆ 最高ズームアウト引き締め** | `minDistance = 0.4375`（`7/16` = 16倍接写）、`zoomSpeed = 0.56`、動的対数 `near = 0.025..2.0`、ユニット＆分解連動 `maxDistance = 513..1437`（PG `1..680`） | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts), [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts) |
-| 7 | **負荷ガード付き F1.2 光学フォーカスボケ** | 静止ULTRA限定・既存MSAA DepthTexture再利用（追加ジオメトリ描画0回）・16タップ回転Vogel-Disk（128タップ相当）。SwiftShaderまたは純パス `>6.0ms` 時は自動バイパス（`0.00ms` 保護） | [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts), [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts) |
-| 8 | **強い電気ブルー選択マーキング** | 全レンダリング層（ULTRA / HIGH / STD / LITE / FAST / MI Shoe / Play Ground）共通のシェーダHDR青センチネル＋フレネルリム＋鮮青エッジ（追加DC 0） | [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts), [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css) |
-| 9 | **スマホ横画面全画面詳細UI整理** | `@media (orientation: landscape) and (max-height: 540px)` 専用スプリットレイアウト（左54% 3Dステージ＋単一行30pxトップバー＋ドック / 右46%詳細ドロワー・重なりゼロ・ノッチ対応・フルブリード横画面ライトボックス） | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css) |
-| 10 | **詳細表示時カメラ完全固定** | `selectPart()` からの自動フォーカス撤廃。部品クリック・`<`/`>`切替・UI選択・ドロワー開閉を通じてカメラ変動 `3.34×10⁻⁹`（完全不動） | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts), [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts) |
+すべての承認済みフェーズ（**Phase 0: ぶち切れ対策ツール v1 `bg`**、**Phase 1: `0.001 mm` 空間マップ＆事前衝突シミュレーションエンジン `sp`**、**Phase 2: ようこそ装置 `WLK-220 → WLK-360`（+140 パーツ `W221`–`W360`）＆最新 `origin/main`（PR #53–#56: V3 LITE v2 / `dx` / MIRAI Wave 3）との完全最終統合・カタログ/ビルド更新・`pp` 視覚検証・`main` マージ**）を完了しました。
 
 ---
 
-## 2. 実Chrome WebGL2 定量検証結果（全スイート PASS）
+## Phase 0: ぶち切れ対策ツール v1（`bg` / Buchigire Guard v1）— `main` マージ済（PR #52）
 
-### Suite A: Play Ground 1.1 & `STD LITE v2` vs Baseline `0106392`
+クラウド VM 突然死・未プッシュ作業消失・コンテキスト圧縮による記憶喪失・未検証完了報告を構造的にゼロ化するため、**6 柱・36 防護機構・14 コマンド** の汎用ツールを構築し、先行して `main` へマージしました。
 
-| スイート / 指標 | BEFORE (`0106392`) | FINAL V3 AFTER | 低減倍率 | 判定 |
-|---|---:|---:|---:|---|
-| **Play Ground 算術平均（11有限項目）** | 1.00× | **40.05×** | **40.05×** | ✅ 目標 ≥30× 達成 |
-| **Play Ground 幾何平均** | 1.00× | **18.50×** | **18.50×** | ✅ |
-| `pgUndoRedoMs` | 548.075 ms | **4.012 ms** | **136.61×** | ✅ |
-| `pgDrawCalls` | 246 | **3** | **82.00×** | ✅ |
-| `pgWlk220LoadMs` | 664.7 ms | **9.9 ms** | **67.14×** | ✅ |
-| `pgPlyaSteadyMs` | 1.517 ms | **0.025 ms** | **60.68×** | ✅ |
-| `pgColdOpenAndTemplateMs` | 30,713.3 ms | **662.5 ms** | **46.36×** | ✅ |
-| `pgPickRaycastMs` | 5.003 ms | **0.307 ms** | **16.30×** | ✅ |
-| `pgVboMB` / `pgTriangles` | 1.566 MB / 34,240 | **0.124 MB / 4,616** | **12.63× / 7.42×** | ✅ |
-| `pgIdleDrawsPerSec` / `a7iv Score` | 8.9 /s · 973 (17p) | **0.0 /s · 973 (17p)** | **∞× (完全無負荷)** | ✅ エラー 0件 |
-| **`STD LITE v2` 6ユニット 算術 / 幾何平均** | 1.00× | **14.45× / 3.23×** | **3.23× 幾何** | ✅ 目標 ≥3.0× / 黒潰れ全 0.00% |
-
-### Suite B & Suite C & 静的CI 検証結果
-- **静的CI (`validate_parts.mjs`)**: **10 / 10 PASS**（全22ユニット `Refs: 0`、TypeScript 0 errors）
-- **Suite B (`verify_ultra_motion_and_hud.mjs`)**: **18 / 18 PASS**（`avgSwapMs: 0.0035ms`、分解中 ULTRA 維持、移動時 FAST `1dc / 6,150 tris`、停止時 ULTRA 復帰・`idleDeltaFrames350ms: 0`、VRAM `Δg=0 / Δt=0 / Refs=0`）
-- **Suite C (`verify_v3_kine_fast_ultra_ux.mjs`)**: **100% PASS**
-  - **FAST vs 最新 `STD LITE v2` 実GPU高速化**: `integrated` **`10.82×`**（`723.9ms → 66.9ms`）・`bionz` **`7.47×`**（`499.5ms → 66.9ms`）・`welcome` **`2.42×`**
-  - **KINEモード**: `integrated` クローズアップで 56/305 パーツを **`0.4 ms`** でカリング（`76,538 → 60,689 tris`）、X-Ray/OFF で 100% 即時復帰
-  - **詳細表示時カメラ変動**: 最大 **`3.34 × 10⁻⁹`**（完全不動）
-  - **スマホ横画面 (`844×390`, DPR 2)**: ドロワー `388.2×378`、トップバー高さ `30px`・重なりなし、ボトムドック重なりなし、フルブリード `844×390` ライトボックス
+- **マージ済 PR**: [PR #52](https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/52)（`origin/main` コミット `75d4cc2`）
+- **発行レシート**: `BG-RECEIPT:1d00a0b2:origin/feat/buchigire-guard-v1:default:b39c4f30`
+- **主要成果物**:
+  - [.bgrc.json](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/.bgrc.json)（`worker` / `integrator` ポリシー定義）
+  - [scripts/bg.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/bg.mjs) ＋ `scripts/buchigire_guard/` 6 モジュール（Git Plumbing、安全スキャナ、Tier 1 不可視リモート Vault `refs/bg-vault/*` ＋ `ls-remote` OID 裏取り、Gate/Receipt/Land、Renderers、20 件カオス `selftest`）
+  - [scripts/BUCHIGIRE_GUARD_GUIDE.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/BUCHIGIRE_GUARD_GUIDE.md)（AI エージェント向け運用マニュアル）
+  - [AGENTS.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/AGENTS.md) Section 0（5 鉄則の恒久ルール化）
+- **検証結果**: `node scripts/bg.mjs selftest --ai` → **`20/20 PASS`**、実 GitHub `refs/bg-vault/*` 退避＆ `ls-remote` 裏取り確認済、ローカル `pre-commit` / `pre-push` フック稼働済。
 
 ---
 
-## 3. 専用キャプチャエンジン `pp` 視覚監査ギャラリー
+## Phase 1: `sp` `0.001 mm` 自動空間マップ ＆ 事前衝突シミュレーションエンジン
+
+### 作成・更新ファイル
+- [scripts/sp.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/sp.mjs): 統合 10 モード CLI（`inspect` / `map` / `pockets` / `sim` / `audit` / `ray` / `thermal-cog` / `diff` / `bench` / `selftest`）＋決定論的終了コード（`0=PASS, 2=FAIL, 3=WARN, 1=ERROR`）
+- [scripts/spatial_engine/exact_geometry.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/exact_geometry.mjs): `Float64`（`EPS = 1e-9 mm`）厳密幾何カーネル（BVH、Möller＋共平面 2D SAT、13 軸三角形-箱交差、Ericson Voronoi 距離、一般化巻数、連続 SDF、発散定理体積）
+- [scripts/spatial_engine/scene_extractor.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/scene_extractor.mjs): 全 22 登録ユニット自動解決、`SPB3` コンテンツハッシュ・バイナリキャッシュ（`src/core/geometry_quality.ts` 変更時の自動キャッシュ無効化を含む）、光学/RF 視界コーンプリセット
+- [scripts/spatial_engine/voxel_pockets.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/voxel_pockets.mjs): `TRI-SAT` 自動多層マップ、`0.001 mm` SDF 拡大図、`--fit` / `--pack` ポケット探索、26 方向＋11 段階二分探索 `--auto-fix`
+- [scripts/spatial_engine/audit_physics.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/audit_physics.mjs): `sim` / `audit --all-tiers --explode-steps=8 --check-floating` / `ray` / `thermal-cog` / `diff` / 20 項目数学オラクル `selftest`
+- [scripts/spatial_engine/renderers.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/renderers.mjs): UTF-8/ASCII 空間マップ、`--ai` 省トークン出力、`--emit-ts`、`sp/v1` JSON、単一ファイル HTML5 ビューア
+- [scripts/SPATIAL_SIM_GUIDE.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/SPATIAL_SIM_GUIDE.md) / [package.json](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/package.json) / [AGENTS.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/AGENTS.md): マニュアル整備・`npm run sp` 登録・最新 `dx`（PR #54）共存統合
+
+### `sp` 検証サマリー
+- **`node scripts/sp.mjs selftest --ai`**: **`20/20 PASS`（`precision=0.001mm` / `132–203 ms`）**
+- **`node scripts/sp.mjs bench --unit=welcome --ai`（360 パーツ ULTRA）**: Cold `2,861.5 ms` → Warm Cache **`455.3 ms`（6.28× 高速化）**、`sp map` キャッシュ読込 **`108.3 ms`**。
+
+---
+
+## Phase 2: ようこそ装置 `WLK-360`（`220 → 360` パーツ、+140 精密部品）＆ 最終統合
+
+最新 `origin/main` の 4 大アップデート（**PR #53** STD LITE v2＋PG Hyper-Engine、**PR #54** `dx` Zero-Token パイプライン＋`pp --sheet --audit-metrics`、**PR #55** V3 超最適化・KINE カリング・ZERO-JAGGY ULTRA AA・F1.2 ボケ、**PR #56** `mirai_2028` Wave 3 FH20/FH17/FH48＝140p）を完全に統合した上で、`WLK-360` の全 140 パーツおよび共有統合ファイル・カタログ・本番ビルド（`docs/`）を完成させました。
+
+### 1. 実装・統合ファイル一覧
+
+| ファイル | 役割・内容 |
+|---|---|
+| [welcomeGlyphPrecisionParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGlyphPrecisionParts.ts) | **Wave 0 文字精密化（+17 パーツ: `W221`–`W237`）＋共通ビルダー** — ジルコニア断熱スリーブ、FVMQ 上部応力緩和カラー、0402 NTC 温度診断小基板、IP68 ePTFE 呼吸ベント＋3A デシカント、C 型分割石英ダストブーツ＆同軸フェルール、タングステン銅カウンターウェイトほか |
+| [welcomePlinthPrecisionParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomePlinthPrecisionParts.ts) | **Wave 0 光学ベンチ台座精密化（+28 パーツ: `W238`–`W265`）** — USB-C TVS 保護、LiFePO4 シャント、PMIC 低 ESR MLCC バンク、4 分割 Kapton® 絶縁バリア（中央ノックピン逃げ＆ポゴ開口対応）、TCXO/FRAM/QSPI/セキュアエレメント、光学エンコーダ円盤＆ルビーデテント、PEM スタンドオフほか |
+| [welcomeGlyphUltraDetailParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts) | **Wave A 文字超高精細（+16 パーツ: `W266`–`W281`）** — BeCu EMI 接地フィンガー、曲線追従 Alanod MIRO-SILVER® 98% PVD 銀エンドミラー、Schnorr® ロックワッシャ＆ヘリコイル、GORE® VE8 ベント、C 型分割石英光チョーク＆PTFE スリーブ、Hirose DF57 背面端子対、W80Cu20＋Sorbothane® TMD ダンパほか |
+| [welcomePlinthUltraDetailParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomePlinthUltraDetailParts.ts) | **Wave A 光学ベンチ台座超高精細（+34 パーツ: `W282`–`W315`）** — ヒートパイプ定圧クランプ＆PTM7950 TIM、軸方向スーパーキャパシタ保持バンク、ToF/照度光学フレーム、USB-C E-Marker/リリーフ/防塵キャップ、SMA 金メッキ RF 隔壁端子、Kensington スロット、底部 CLD 制振層・HIC 湿度カード・ISO17025 QR 銘板ほか |
+| [welcomeGlyphMetrologyParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGlyphMetrologyParts.ts) | **Wave B 文字計量・信頼性（+20 パーツ: `W316`–`W335`）** — 溶融石英 3.47% フレネル帰還プリズム、Turcite® B 耐摩耗ストリップ＆真鍮逆挿防止キー、BeCu ウェーブ保持ばね、光学アンチニュートンリング（`W325`）、曲線追従エンドミラー（`W328` / `W332`）、Z 字積層銅サーマルシャント、540 Hz 2 次曲げ先端 TMD（`W335`）ほか |
+| [welcomePlinthInstrumentationParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomePlinthInstrumentationParts.ts) | **Wave B 光学ベンチ計測・サービス（+25 パーツ: `W336`–`W360`）** — 精密気泡管水準器（`W336`）、レーザー刻印インバー尺（`W337`）、合成ルビー CMM 基準球 3 点ネスト（`W338`）、NFC チタン／シナバーハロー（`W340`）、背面診断ライトパイプ＆シリアル銘板、底部保守ハッチ（`W352`）・展開キックスタンド（`W353`）・蓄光ダイヤルリング（`W357`）ほか |
+| [welcome.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/units/welcome.ts) / [welcome.json](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/data/welcome.json) | 全 7 ビルダー結線・`360` パーツ（`よ` 57 + `う` 56 + `こ` 56 + `そ` 56 + `光学ベンチ台座` 135 = **360 パーツ**、`version: "3.5.0"`、`declaredPartCount: 360`）完全同期 |
+| [registry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/units/registry.ts) / [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts) / [welcomeHdSchematics.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/welcomeHdSchematics.ts) | `welcome.declaredPartCount: 360`、`360パーツ実動作CNC光学装置` ラベル、`WLK-08` 光学ベンチマスター系統図の 360p 内訳更新（`mirai_2028: 140p` とも完全共存） |
+| `catalog/**` / `src/playground/playground_index.json` / `docs/**` | `npm run catalog && npm run build` により全 22 ユニット（`2,734` 固有 ID）の L0/L1/L2 カタログ・Code Atlas（7 TSV）・Play Ground インデックス・本番 `docs/` を完全再生成 |
+
+---
+
+### 2. `0.001 mm` 空間解析 ＆ V3 LITE v2 全品質ティア検証結果
+
+#### 2.1 コールドキャッシュ全 4 ティア横断 `sp audit --all-tiers --explode-steps=8 --check-floating`
+新規追加 **140 パーツ（`W221`–`W360`）** すべてに対し、V3 `LITE v2`（`minRadialSegments: 4`）を含む全 4 品質ティアで静止干渉・8 段階爆発軌道貫通・浮遊の完全ゼロを達成しました。
+
+| 品質ティア | 総パーツ | 三角形数（`sp` 実測） | 新規静止衝突 (`W221`–`W360`) | 新規爆発貫通 (8 steps) | 新規浮遊 | 判定 |
+|---|---:|---:|---:|---:|---:|---|
+| `standard_lite` (V3 LITE v2) | 360 | 34,312 | **0** | **0** | **0** | **PASS** |
+| `standard` | 360 | 69,357 | **0** | **0** | **0** | **PASS** |
+| `high` | 360 | 130,548 | **0** | **0** | **0** | **PASS** |
+| `ultra` | 360 | 201,565 | **0** | **0** | **0** | **PASS** |
+
+> [!TIP]
+> PR #55 の `LITE v2`（`minRadialSegments: 4`）統合後のコールドキャッシュ再監査で、`W357`（蓄光ダイヤルリング）の 4 角形弦落ちによる `W217` ダイヤル接触（`0.5196 mm`）を自動検出し、`Math.max(12, qRadialSegs(24, 12))` 固定により全ティア完全無干渉へ収束させました。また `scene_extractor.mjs` の `SPB3` ハッシュ対象へ `src/core/geometry_quality.ts` を追加し、今後のテッセレーション変更時も自動キャッシュ無効化されるよう強化しました。
+
+#### 2.2 光学・RF 視界コーン / 重心・転倒角 / 差分（`sp ray`, `sp thermal-cog`, `sp diff`）
+- **`sp ray`**:
+  - VL53L5CX ToF 63°（149 rays）: **`0% occluded` PASS**
+  - VEML7700 Ambient Lux ±45°（107 rays）: **`0% occluded` PASS**
+  - Wi-Fi 6 / BLE Rear Radome 100°（107 rays）: **`0% occluded` PASS**
+- **`sp thermal-cog`**: **PASS** — 質量 **`356.64 g`**（体積 `98.706 cm³`）、世界重心 **`(+0.481, -8.493, +0.046) mm`**、最小転倒角 **`38.169°`**（220p の `37.898°` からさらに安定化）。
+- **`sp diff`（`220p → 360p`）**: `Δparts = +140`, `Δtris = +26,243`, `Δmass = +7.457 g`, `Δvol = +1.603 cm³`, `ΔCoG = (-0.037, -0.088, -0.058) mm`。
+
+#### 2.3 全 22 ユニット V2/V3 ゲート ＆ `dx` 健全性
+- **`node scripts/validate_parts.mjs`（全 22 ユニット横断）**: **ALL CHECKS PASSED（10/10 checks, 0 failures）**
+  - `welcome`: `LITE: 2dc / 31,940 tris | STD: 50dc / 49,484 tris | HIGH: 50dc / 76,456 tris | ULTRA: 50dc / 202,642 tris | Refs: 0`
+  - ライブ V3 Perf HUD（ULTRA 実測）: **`51 / 100 Draw Calls`**、`202,268 Triangles`、`22 Inst(1820) · 27 Batch(644)`、`Parts (JSON=3D): 360 / 360`、`KINE Culling: ON`、Frame Time `avg 7.57 ms`。
+- **`node scripts/dx.mjs preflight --unit=welcome --policy=integrator --ai`**: **`8/8 PASS` (`316 ms`)**
+- **`node scripts/dx.mjs budget --ai`**: **`SCORE=100/100 (Grade S), alarms=0`**
+
+---
+
+### 3. `pp` 視覚キャプチャ監査（`docs/` 対象・初回 9 ショット＋詳細 5 ショット＋外観改善後 4 ショット）
+
+初回および側面クローズアップ監査で発見した 3 点の視覚的微調整（① `W222` の前面突出を上部ステム沿いの極薄黒色カラーへ密着整形、② `W318` ばねリテーナを横棒ベゼルへ 0.05 mm 密着配置、③ `W325` アンチニュートンマスクを半透明極細リングへ洗練＆背面 Schnorr/TMD スタックを 0.4 mm 縮小密着）を実施し、再度 4 ティア `sp audit` `0/0/0` ＋ `docs/` 再ビルド ＋ `pp` 撮影で完全解消を確認しました。
 
 ````carousel
-![Welcome ULTRA 静止表示・KINEトグル＆極限ミニマルHUD](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_01_welcome_ultra_full.png)
+![ULTRA 等角フルビュー＆ライブ V3 Perf HUD（360/360パーツ・51 Draw Calls・KINE ON）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_ultra_iso_full.webp)
 <!-- slide -->
-![α7 IV 完成カメラ ULTRA Zero-Jaggy AA](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_04_integrated_ultra_cad.png)
+![ULTRA 背面ビュー（曲線追従エンドミラー・精密放熱フィン・SMA/接地ラグ・診断ライトパイプ・シリアル銘板）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_ultra_back_cad.webp)
 <!-- slide -->
-![α7 IV STD LITE v2 シルエット保護修正後（黒潰れ0%・鏡筒輪郭完全維持）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_05b_integrated_lite_fixed.png)
+![ULTRA 側面ビュー（突出・浮遊ゼロの完全密着 Z 軸積層シルエット）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_ultra_side_cad.webp)
 <!-- slide -->
-![選択パーツの強い電気ブルーマーキング（B03 エルゴノミクスグリップ選択時）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_07b_integrated_lite_blue_grip.png)
+![ULTRA 全360パーツ分解ビュー（explode=0.72・無干渉層別展開）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_ultra_exploded.webp)
 <!-- slide -->
-![スマホ横画面 844×390 (DPR 2) 詳細表示スプリットUI（左54% 3D・右46%詳細・重なりゼロ）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_12_mobile_landscape_detail.png)
+![WLK-360 光学ベンチ基準定盤＆全360パーツ実動作システム系統図（W338 選択時）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_diagram_w338_plinth.webp)
 <!-- slide -->
-![スマホ横画面 844×390 フルブリード図説ライトボックス](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_14_mobile_landscape_lightbox.png)
-<!-- slide -->
-![Play Ground 1.1 Hyper-Engine 3-DC スタジオ（平均40.05×高速化・アイドル0.0 draws/s）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_15_playground_studio.png)
-<!-- slide -->
-![Play Ground 1.1 PLYA 全8ツール一括検証レポート（973/1000 RANK S+ 完全維持）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/228c74be-d404-45dc-b697-477345678a0a/v3_16_playground_report.png)
+![新規追加パーツ解説ドロワー検証（W335 上部Z字片持ち先端 TMD・数式＆技術解説）](/home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/ea483248-b818-42af-b225-1d8a257a8eea/w360_explanation_w335_tmd.webp)
 ````

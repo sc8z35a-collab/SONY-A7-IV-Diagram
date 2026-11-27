@@ -1,5 +1,5 @@
 {
-  "summary":  "Final walkthrough of the V3 Hyper-Optimization release (PR #55 merged into main): Play Ground 40.05x, STD LITE v2 3.23x geo mean, FAST 7.47x-10.82x over LITE v2, ULTRA Zero-Jaggy AA, KINE 3-tier culling, F1.2 load-guarded bokeh, 16x camera zoom, strong vivid electric-blue selection, smartphone landscape detail UI, strict camera lock, and visual audit screenshots.",
-  "updatedAt":  "2026-11-27T14:50:32.935298424Z",
+  "summary":  "Complete end-to-end walkthrough covering Phase 0 (Buchigire Guard v1 `bg` — PR #52), Phase 1 (`sp` 0.001 mm Automatic Spatial Map & Pre-Collision Engine), and Phase 2 (Welcome Unit `WLK-220 -> WLK-360` +140 parts fully integrated with V3 LITE-v2 / `dx` / MIRAI Wave 3, 4-tier 0/0/0 spatial audit, 10/10 validate_parts, `pp` visual verification & PR merge).",
+  "updatedAt":  "2026-11-27T16:13:32.301156770Z",
   "userFacing":  true
 }

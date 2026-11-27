@@ -52,7 +52,7 @@ function makeLazyJsonMetaLoader(
 const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   welcome: {
     unitId: 'welcome',
-    declaredPartCount: 220,
+    declaredPartCount: 360,
     loadMeta: makeLazyJsonMetaLoader('welcome', () => import('../data/welcome.json')),
     load: async () => (await import('./welcome')).createWelcomeUnit(),
   },
@@ -168,10 +168,10 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
     loadMeta: makeLazyJsonMetaLoader('sensor_fab', () => import('../data/sensor_fab.json')),
     load: async () => (await import('./sensor_fab')).createSensorFabUnit(),
   },
-  // --- Phase FH: Future History MIRAI 2028 Prototype (FH01 SPAD/QIS 16p + FH02 3-Layer RGB 16p = 32p) ---
+  // --- Phase FH: Future History MIRAI 2028 (8 Watchmaker 3D Structures: FH01/02/08/32/25/20/17/48 = 140p) ---
   mirai_2028: {
     unitId: 'mirai_2028',
-    declaredPartCount: 86,
+    declaredPartCount: 140,
     loadMeta: makeLazyJsonMetaLoader('mirai_2028', () => import('../data/mirai_2028.json')),
     load: async () => (await import('./mirai_2028')).createMirai2028Unit(),
   },

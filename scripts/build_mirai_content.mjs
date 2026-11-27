@@ -20,8 +20,8 @@ const OUT_DIR = path.join(ROOT, 'src', 'data', 'mirai_library');
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
-// 3D-built watchmaker technology IDs (FH01, FH02, FH08, FH32, FH25 — 5 structures / 86 parts)
-const BUILT_3D_TECH_IDS = new Set(['FH01', 'FH02', 'FH08', 'FH32', 'FH25']);
+// 3D-built watchmaker technology IDs (8 structures / 140 parts)
+const BUILT_3D_TECH_IDS = new Set(['FH01', 'FH02', 'FH08', 'FH32', 'FH25', 'FH20', 'FH17', 'FH48']);
 
 function readUtf8(p) {
   return fs.readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
