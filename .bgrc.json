@@ -1,0 +1,50 @@
+{
+  "schema": "bg-config/v1",
+  "defaultBranch": "main",
+  "remote": "origin",
+  "vaultNamespace": "refs/bg-vault",
+  "vaultFallbackNamespace": "refs/heads/bg-vault",
+  "watchIntervalSec": 120,
+  "retentionDays": 7,
+  "maxFileMb": 25,
+  "forbidRootGlobs": [
+    "*.png",
+    "*.webp",
+    "*.jpg",
+    "*.jpeg",
+    "*.tmp",
+    "captures/**",
+    "tmp_*",
+    "debug_*"
+  ],
+  "excludeVaultGlobs": [
+    "node_modules/**",
+    ".git/**",
+    "dist/**",
+    "*.log"
+  ],
+  "policies": {
+    "worker": {
+      "protectedPaths": [
+        "src/units/registry.ts",
+        "src/assemblies/types.ts",
+        "src/core/**",
+        "src/ui/**",
+        "catalog/**",
+        "docs/**"
+      ],
+      "checks": [
+        "npx tsc --noEmit"
+      ]
+    },
+    "integrator": {
+      "protectedPaths": [],
+      "checks": [
+        "npm run catalog",
+        "npx tsc --noEmit",
+        "node scripts/validate_parts.mjs",
+        "npm run build"
+      ]
+    }
+  }
+}
