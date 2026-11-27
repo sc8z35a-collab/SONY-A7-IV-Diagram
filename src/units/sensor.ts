@@ -87,8 +87,12 @@ export function createSensorUnit(): OptimizedUnit {
     heroSpecs: SENSOR_HERO_SPECS,
     buildRaw: async (mats, _quality, { clippingPlanes }) => {
       const macroParts = buildMacroSensorParts(mats, false);
-      const extraParts = await buildSensorStandaloneParts(mats);
-      const allParts = [...macroParts, ...extraParts];
+      const [extraParts, { buildSensorUltraPrecisionParts }] = await Promise.all([
+        buildSensorStandaloneParts(mats),
+        import('../assemblies/sensor/sensorUltraPrecisionParts'),
+      ]);
+      const ultraPrecisionParts = buildSensorUltraPrecisionParts(mats);
+      const allParts = [...macroParts, ...extraParts, ...ultraPrecisionParts];
       const overlay = createPhysicsOverlay(clippingPlanes);
       // Dispose the unused micro sibling overlay so zero orphan GPU objects exist
       disposeUnusedGroup(overlay.microOverlay);
