@@ -56,6 +56,7 @@ export class CadViewport {
   private mode: ScaleMode = 'welcome';
   private lensSection: LensSection = 1;
   private sensorFabVolume: SensorFabVolume = 0;
+  private miraiSubView = 1;
   private renderMode: RenderMode = 'solid';
   private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'standard' : 'high';
   private sectionAxis: SectionAxis = 'off';
@@ -227,6 +228,7 @@ export class CadViewport {
   private getActiveSubViewForMode(mode: ScaleMode): number {
     if (mode === 'lens') return sharedLensOpticalSim.studioOpen ? -1 : this.lensSection;
     if (mode === 'sensor_fab') return this.sensorFabVolume;
+    if (mode === 'mirai_2028') return this.miraiSubView;
     return 0;
   }
 
@@ -326,6 +328,32 @@ export class CadViewport {
     this.isolatedPartId = null;
     this.hiddenPartIds.clear();
     this.v2Runtime.setSubView(vol);
+    this.v2Runtime.syncVisualState(null, null, this.hiddenPartIds, null, this.renderMode);
+    this.updateClippingPlane();
+    this.setCameraPreset('iso', immediateCamera);
+    this.callbacks.onSelectPart(null);
+    this.callbacks.onHoverPart(null);
+    this.callbacks.onVisibilityChanged();
+  }
+
+  public getMiraiSubView(): number {
+    return this.miraiSubView;
+  }
+
+  public setMiraiSubView(subView: number, immediateCamera = false): void {
+    const clamped = subView === 2 ? 2 : 1;
+    const changed = this.miraiSubView !== clamped;
+    this.miraiSubView = clamped;
+    if (this.mode !== 'mirai_2028') return;
+    if (!changed && !immediateCamera) {
+      this.setCameraPreset('iso', false);
+      return;
+    }
+    this.selectedPartId = null;
+    this.hoveredPartId = null;
+    this.isolatedPartId = null;
+    this.hiddenPartIds.clear();
+    this.v2Runtime.setSubView(clamped);
     this.v2Runtime.syncVisualState(null, null, this.hiddenPartIds, null, this.renderMode);
     this.updateClippingPlane();
     this.setCameraPreset('iso', immediateCamera);
@@ -551,6 +579,9 @@ export class CadViewport {
     } else if (this.mode === 'bionz_v2') {
       d = 142 + e * 320;
       target = new THREE.Vector3(0, -2.6 + e * 1.2, 0);
+    } else if (this.mode === 'mirai_2028') {
+      d = 166 + e * 185;
+      target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
     } else if (this.mode === 'micro_v2') {
       d = 114 + e * 270;
       target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);
@@ -697,6 +728,8 @@ export class CadViewport {
             offset = new THREE.Vector3(d * 0.62, d * 0.46, d * 0.64);
           } else if (this.mode === 'bionz_v2') {
             offset = new THREE.Vector3(d * 0.62, d * 0.36, d * 0.68);
+          } else if (this.mode === 'mirai_2028') {
+            offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
           } else if (this.mode === 'micro_v2') {
             offset = new THREE.Vector3(d * 0.64, d * 0.34, d * 0.68);
           } else if (this.mode === 'mishoe') {
@@ -866,6 +899,7 @@ export class CadViewport {
       this.mode === 'micro_v2' ||
       this.mode === 'bionz' ||
       this.mode === 'bionz_v2' ||
+      this.mode === 'mirai_2028' ||
       this.mode === 'mishoe' ||
       this.mode === 'mic';
     const isCompactStandalone = this.mode === 'battery' || this.mode === 'cfexpress';
@@ -989,6 +1023,14 @@ export class CadViewport {
       } else {
         minCoord = -26;
         maxCoord = 22;
+      }
+    } else if (this.mode === 'mirai_2028') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -46;
+        maxCoord = 46;
+      } else {
+        minCoord = -34;
+        maxCoord = 42;
       }
     } else if (this.mode === 'mishoe') {
       if (this.sectionAxis === 'x') {

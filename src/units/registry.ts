@@ -168,6 +168,13 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
     loadMeta: makeLazyJsonMetaLoader('sensor_fab', () => import('../data/sensor_fab.json')),
     load: async () => (await import('./sensor_fab')).createSensorFabUnit(),
   },
+  // --- Phase FH: Future History MIRAI 2028 Prototype (FH01 SPAD/QIS 16p + FH02 3-Layer RGB 16p = 32p) ---
+  mirai_2028: {
+    unitId: 'mirai_2028',
+    declaredPartCount: 32,
+    loadMeta: makeLazyJsonMetaLoader('mirai_2028', () => import('../data/mirai_2028.json')),
+    load: async () => (await import('./mirai_2028')).createMirai2028Unit(),
+  },
   // --- Phase C: Composite Macro Camera Modes (All 8 / 7 Core Subsystems) ---
   integrated: {
     unitId: 'integrated',
