@@ -108,7 +108,7 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   },
   evf: {
     unitId: 'evf',
-    declaredPartCount: 55,
+    declaredPartCount: 105,
     loadMeta: makeLazyJsonMetaLoader('evf', () => import('../data/evf.json')),
     load: async () => (await import('./evf')).createEvfUnit(),
   },
