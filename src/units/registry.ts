@@ -50,6 +50,12 @@ function makeLazyJsonMetaLoader(
  * are dynamically imported on demand via `await import()` into independent code-split chunks!
  */
 const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
+  welcome: {
+    unitId: 'welcome',
+    declaredPartCount: 220,
+    loadMeta: makeLazyJsonMetaLoader('welcome', () => import('../data/welcome.json')),
+    load: async () => (await import('./welcome')).createWelcomeUnit(),
+  },
   mishoe: {
     unitId: 'mishoe',
     declaredPartCount: 32,

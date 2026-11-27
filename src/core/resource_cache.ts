@@ -118,6 +118,18 @@ export interface QualityTierConfig {
 }
 
 export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
+  standard_lite: {
+    maxPixelRatio: 1.0,
+    curveSegments: 8,
+    radialSegments: 10,
+    torusTubularSegments: 10,
+    sphereSegments: 8,
+    shadowsEnabled: false,
+    postProcessEnabled: false,
+    enableStudioEnv: false,
+    showSolidStructuralEdges: true,
+    maxHeroTextureDim: 256,
+  },
   standard: {
     maxPixelRatio: 1.0,
     curveSegments: 10,
@@ -126,7 +138,7 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     sphereSegments: 12,
     shadowsEnabled: false,
     postProcessEnabled: false,
-    enableStudioEnv: true,
+    enableStudioEnv: false,
     showSolidStructuralEdges: true,
     maxHeroTextureDim: 512,
   },
@@ -148,7 +160,7 @@ export const QUALITY_TIER_CONFIG: Record<QualityTier, QualityTierConfig> = {
     radialSegments: 22,
     torusTubularSegments: 22,
     sphereSegments: 20,
-    shadowsEnabled: false,
+    shadowsEnabled: true,
     postProcessEnabled: false,
     enableStudioEnv: true,
     showSolidStructuralEdges: true,
@@ -216,6 +228,9 @@ export interface MaterialSpec {
 
 export type ProceduralTextureKey =
   | 'studio_env'
+  | 'studio_env_ultra'
+  | 'matcap_studio_matte'
+  | 'matcap_studio_metal'
   | 'cnc_brushed'
   | 'mg_grain'
   | 'hdi_pcb'
@@ -654,6 +669,190 @@ function buildProceduralDataTexture(key: ProceduralTextureKey): THREE.DataTextur
     return tex;
   }
 
+  if (key === 'studio_env_ultra') {
+    // Commercial product-photography cyclorama: overhead key scrim softbox, twin vertical rim
+    // light strips, dark velvet contrast flags (giving liquid chrome/anodized specular depth!),
+    // and luminous studio floor bounce (0.00% crushed blacks!).
+    const w = 512;
+    const h = 256;
+    const data = new Uint8Array(w * h * 4);
+    for (let y = 0; y < h; y++) {
+      const v = y / (h - 1);
+      const theta = (1 - v) * Math.PI;
+      const sinT = Math.sin(theta);
+      const cosT = Math.cos(theta);
+      for (let x = 0; x < w; x++) {
+        const u = x / (w - 1);
+        const phi = u * Math.PI * 2;
+        const dx = sinT * Math.cos(phi);
+        const dy = cosT;
+        const dz = sinT * Math.sin(phi);
+
+        // Base studio cyclorama gradient (rich mid-high ceiling, soft bounce floor)
+        let rL = dy >= 0 ? 0.56 + dy * 0.34 : 0.44 + (1 + dy) * 0.14;
+        let gL = dy >= 0 ? 0.59 + dy * 0.34 : 0.46 + (1 + dy) * 0.14;
+        let bL = dy >= 0 ? 0.64 + dy * 0.34 : 0.51 + (1 + dy) * 0.15;
+
+        // Subtle dark velvet contrast flags near horizon (-0.12..+0.18) for dramatic metallic reflections!
+        const horizonFlag = Math.exp(-Math.pow((dy - 0.02) * 5.8, 2));
+        const flagMask = 0.62 + 0.38 * Math.pow(Math.abs(Math.sin(phi * 2.0 + 0.35)), 0.7);
+        const flagAtten = 1.0 - horizonFlag * 0.44 * flagMask;
+        rL *= flagAtten;
+        gL *= flagAtten;
+        bL *= flagAtten;
+
+        // 1) Crisp overhead key softbox scrim (feathered rectangular dome highlight for lens barrels)
+        const keySoft =
+          Math.exp(-Math.pow((dx + 0.34) * 2.8, 2)) *
+          Math.exp(-Math.pow((dy - 0.84) * 4.5, 2)) *
+          Math.exp(-Math.pow((dz - 0.28) * 2.4, 2));
+        const keySpec = Math.pow(Math.max(0, dx * -0.44 + dy * 0.78 + dz * 0.44), 14);
+        rL += keySoft * 1.45 + keySpec * 0.95;
+        gL += keySoft * 1.46 + keySpec * 0.96;
+        bL += keySoft * 1.50 + keySpec * 1.00;
+
+        // 2) Twin vertical architectural rim light strips (crisp cool sapphire-silver edge kickers!)
+        const rimRight =
+          Math.exp(-Math.pow((dx - 0.78) * 5.5, 2)) *
+          Math.exp(-Math.pow((dy - 0.24) * 2.4, 2)) *
+          Math.exp(-Math.pow((dz + 0.52) * 4.0, 2));
+        const rimLeft =
+          Math.exp(-Math.pow((dx + 0.84) * 6.0, 2)) *
+          Math.exp(-Math.pow((dy - 0.16) * 2.6, 2)) *
+          Math.exp(-Math.pow((dz + 0.36) * 4.2, 2));
+        rL += rimRight * 1.15 + rimLeft * 0.88;
+        gL += rimRight * 1.24 + rimLeft * 0.92;
+        bL += rimRight * 1.42 + rimLeft * 1.02;
+
+        // 3) Warm front-right fill softbox panel (lifts camera grip & glass reflections cleanly)
+        const fillPanel = Math.pow(Math.max(0, dx * 0.56 + dy * 0.28 + dz * 0.78), 7);
+        rL += fillPanel * 0.68;
+        gL += fillPanel * 0.66;
+        bL += fillPanel * 0.64;
+
+        // 4) Lower front studio white-card bounce (guarantees 0% crushed blacks under barrels/grips)
+        const bounceCard = Math.pow(Math.max(0, dx * 0.18 + dy * -0.52 + dz * 0.84), 3);
+        rL += bounceCard * 0.34;
+        gL += bounceCard * 0.36;
+        bL += bounceCard * 0.40;
+
+        // Soft filmic shoulder compression into sRGB 8-bit while keeping crisp specular peaks at 255
+        const enc = (c: number) => {
+          const mapped = c / (1 + c * 0.32);
+          return Math.min(255, Math.max(0, Math.round(Math.pow(Math.min(1, mapped), 1 / 2.2) * 255)));
+        };
+        const idx = (y * w + x) * 4;
+        data[idx] = enc(rL);
+        data[idx + 1] = enc(gL);
+        data[idx + 2] = enc(bL);
+        data[idx + 3] = 255;
+      }
+    }
+    const tex = new THREE.DataTexture(data, w, h, THREE.RGBAFormat);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false;
+    tex.needsUpdate = true;
+    tex.userData.__cacheKey = key;
+    return tex;
+  }
+
+  if (key === 'matcap_studio_matte' || key === 'matcap_studio_metal') {
+    // Pre-integrated view-space Studio MatCap synthesized directly from the 4-light STD studio rig
+    // (1 single texture2D fetch per pixel, ZERO dynamic lighting loops, 100% STD visual parity!)
+    const size = 128;
+    const isMetal = key === 'matcap_studio_metal';
+    const data = new Uint8Array(size * size * 4);
+
+    // Normalized view-space studio light vectors matching setupStudioLighting
+    const kLen = Math.hypot(-0.44, 0.72, 0.54);
+    const kx = -0.44 / kLen, ky = 0.72 / kLen, kz = 0.54 / kLen;
+    const fLen = Math.hypot(0.62, 0.24, 0.75);
+    const fx = 0.62 / fLen, fy = 0.24 / fLen, fz = 0.75 / fLen;
+    const rLen = Math.hypot(0.66, 0.44, -0.61);
+    const rx = 0.66 / rLen, ry = 0.44 / rLen, rz = -0.61 / rLen;
+
+    // Half vectors for view = (0, 0, 1)
+    const hkLen = Math.hypot(kx, ky, kz + 1);
+    const hkx = kx / hkLen, hky = ky / hkLen, hkz = (kz + 1) / hkLen;
+    const hfLen = Math.hypot(fx, fy, fz + 1);
+    const hfx = fx / hfLen, hfy = fy / hfLen, hfz = (fz + 1) / hfLen;
+
+    for (let y = 0; y < size; y++) {
+      // Three.js DataTexture y=0 is bottom (v=0 -> ny=-1), y=size-1 is top (v=1 -> ny=+1)
+      const nyRaw = (y / (size - 1)) * 2 - 1;
+      for (let x = 0; x < size; x++) {
+        const nxRaw = (x / (size - 1)) * 2 - 1;
+        const r2 = nxRaw * nxRaw + nyRaw * nyRaw;
+        let nx = nxRaw;
+        let ny = nyRaw;
+        let nz: number;
+        if (r2 >= 1.0) {
+          const inv = 1 / Math.sqrt(r2);
+          nx *= inv;
+          ny *= inv;
+          nz = 0;
+        } else {
+          nz = Math.sqrt(1.0 - r2);
+        }
+
+        // Hemisphere studio ambient dome (guarantees 0.00% crushed blacks matching STD/HIGH even on dark CFexpress/grips!)
+        const hemiMix = ny * 0.5 + 0.5;
+        let rL = 0.72 + hemiMix * 0.24;
+        let gL = 0.74 + hemiMix * 0.24;
+        let bL = 0.78 + hemiMix * 0.26;
+
+        // 3-point studio diffuse lobes matching setupStudioLighting
+        const dKey = Math.max(0, nx * kx + ny * ky + nz * kz);
+        const dFill = Math.max(0, nx * fx + ny * fy + nz * fz);
+        const dRim = Math.max(0, nx * rx + ny * ry + nz * rz);
+
+        const diffScale = isMetal ? 0.72 : 0.80;
+        rL += (dKey * 0.78 + dFill * 0.48 + dRim * 0.30) * diffScale;
+        gL += (dKey * 0.79 + dFill * 0.49 + dRim * 0.32) * diffScale;
+        bL += (dKey * 0.80 + dFill * 0.51 + dRim * 0.36) * diffScale;
+
+        if (isMetal) {
+          // Crisp dual-lobe Blinn-Phong studio specular + Fresnel rim sheen for metallic/optical parts
+          const specKey = Math.pow(Math.max(0, nx * hkx + ny * hky + nz * hkz), 24);
+          const specFill = Math.pow(Math.max(0, nx * hfx + ny * hfy + nz * hfz), 14);
+          const fresnel = Math.pow(1 - nz, 2.6) * (0.50 + 0.50 * hemiMix);
+          rL += specKey * 0.82 + specFill * 0.34 + fresnel * 0.36;
+          gL += specKey * 0.86 + specFill * 0.36 + fresnel * 0.40;
+          bL += specKey * 0.94 + specFill * 0.40 + fresnel * 0.46;
+        } else {
+          // Gentle studio velvet edge lift for matte grips & chassis contours
+          const softWrap = Math.pow(1 - nz, 2.2) * 0.20;
+          rL += softWrap * 0.95;
+          gL += softWrap * 0.98;
+          bL += softWrap * 1.03;
+        }
+
+        // Normalize HDR radiance [0..2.15] into sRGB 8-bit; MeshMatcapMaterial applies 2.08x HDR linear gain!
+        const enc = (c: number) => {
+          const norm = Math.min(1, c / 2.15);
+          return Math.min(255, Math.max(0, Math.round(Math.pow(norm, 1 / 2.2) * 255)));
+        };
+        const idx = (y * size + x) * 4;
+        data[idx] = enc(rL);
+        data[idx + 1] = enc(gL);
+        data[idx + 2] = enc(bL);
+        data[idx + 3] = 255;
+      }
+    }
+
+    const tex = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = false;
+    tex.needsUpdate = true;
+    tex.userData.__cacheKey = key;
+    return tex;
+  }
+
   const size = 64;
   const data = new Uint8Array(size * size * 4);
   for (let y = 0; y < size; y++) {
@@ -923,23 +1122,52 @@ export class ResourceCache {
     return false;
   }
 
+  private static computeStdPhongProps(
+    metalness: number,
+    roughness: number,
+    transparent: boolean
+  ): { specular: number; shininess: number } {
+    if (transparent) {
+      return { specular: 0xdbeafe, shininess: 92 };
+    }
+    if (metalness >= 0.7) {
+      const shininess = Math.round(Math.max(28, Math.min(96, (1 - roughness) * 95 + 18)));
+      return { specular: 0xb8c8dc, shininess };
+    }
+    if (metalness >= 0.3) {
+      const shininess = Math.round(Math.max(20, Math.min(64, (1 - roughness) * 65 + 14)));
+      return { specular: 0x6f7d91, shininess };
+    }
+    const shininess = Math.round(Math.max(16, Math.min(48, (1 - roughness) * 45 + 12)));
+    return { specular: 0x4b5563, shininess };
+  }
+
   /**
    * Acquire a quality-tiered shared material.
-   * - STD   : MeshLambertMaterial for matte/dielectric buckets, lightweight MeshStandardMaterial for metallic/optical buckets.
-   * - HIGH  : MeshStandardMaterial PBR with procedural bump/albedo DataTextures.
-   * - ULTRA : Selective MeshPhysicalMaterial (clearcoat/iridescence) ONLY for hero metallic/optical/silicon buckets.
+   * - STD LITE : Zero-light Pre-Integrated Studio MeshMatcapMaterial (1 texture fetch/px, mega-bucket draw-call fusion).
+   * - STD      : Zero-IBL MeshLambertMaterial (matte/dielectric) + Blinn-Phong MeshPhongMaterial (metallic/optical/silicon).
+   * - HIGH     : MeshStandardMaterial PBR with procedural bump/albedo DataTextures & PMREM IBL.
+   * - ULTRA    : Selective MeshPhysicalMaterial (clearcoat/iridescence) with 512x256 studio softbox reflections & PCFSoftShadowMap.
    */
   public acquireMaterial(
     bucket: MaterialBucketKey,
     quality: QualityTier,
     renderMode: RenderMode = 'solid',
-    clippingPlanes: THREE.Plane[] = []
+    clippingPlanes: THREE.Plane[] = [],
+    vertexColors = false
   ): THREE.Material {
-    const cacheKey = `mat:${bucket}:${quality}:${renderMode}`;
+    const isStdLite = quality === 'standard_lite';
+    const useVC = isStdLite && renderMode === 'solid' && vertexColors;
+    const cacheKey = `mat:${bucket}:${quality}:${renderMode}${useVC ? ':vc' : ''}`;
+    const targetSide: THREE.Side = clippingPlanes.length > 0 ? THREE.DoubleSide : THREE.FrontSide;
     const existing = this.materials.get(cacheKey);
     if (existing) {
       existing.refCount++;
       existing.resource.clippingPlanes = clippingPlanes;
+      if (existing.resource.userData?.__managedSide && existing.resource.side !== targetSide) {
+        existing.resource.side = targetSide;
+        existing.resource.needsUpdate = true;
+      }
       return existing.resource;
     }
 
@@ -952,11 +1180,11 @@ export class ResourceCache {
     let bumpTex: THREE.Texture | null = null;
 
     if (!isXray && !isCad) {
-      if (spec.mapTextureKey) {
+      if (!isStdLite && spec.mapTextureKey) {
         mapTex = this.acquireTexture(spec.mapTextureKey);
         depTextures.push(spec.mapTextureKey);
       }
-      if (quality !== 'standard' && spec.bumpTextureKey) {
+      if (!isStdLite && quality !== 'standard' && spec.bumpTextureKey) {
         bumpTex = this.acquireTexture(spec.bumpTextureKey);
         depTextures.push(spec.bumpTextureKey);
       }
@@ -975,15 +1203,40 @@ export class ResourceCache {
     const commonProps = {
       color: isCad ? 0xf4f6fa : isXray ? 0xdbeafe : spec.color,
       clippingPlanes,
-      clipShadows: false,
-      side: THREE.DoubleSide as THREE.Side,
+      clipShadows: quality === 'ultra',
+      side: targetSide,
       transparent: isTransparent || (isCad && Boolean(spec.transparent)),
       opacity,
       depthWrite,
     };
 
     let mat: THREE.Material;
-    if (isXray) {
+    if (isStdLite) {
+      const matcapKey: ProceduralTextureKey =
+        isXray || isCad || (spec.stdLambert && !spec.transparent)
+          ? 'matcap_studio_matte'
+          : 'matcap_studio_metal';
+      const matcapTex = this.acquireTexture(matcapKey);
+      depTextures.push(matcapKey);
+      const liteColor = new THREE.Color(commonProps.color);
+      if (!isCad && !isXray) {
+        // Recover full studio HDR dynamic range normalized inside the 8-bit MatCap texture
+        liteColor.multiplyScalar(2.08);
+      } else if (isCad) {
+        liteColor.multiplyScalar(1.56);
+      } else {
+        liteColor.multiplyScalar(1.62);
+      }
+      mat = new THREE.MeshMatcapMaterial({
+        ...commonProps,
+        color: liteColor,
+        matcap: matcapTex,
+        vertexColors: useVC,
+        polygonOffset: isCad,
+        polygonOffsetFactor: isCad ? 1 : 0,
+        polygonOffsetUnits: isCad ? 1 : 0,
+      });
+    } else if (isXray) {
       mat = new THREE.MeshLambertMaterial({
         ...commonProps,
         emissive: 0x1e3a8a,
@@ -1005,12 +1258,16 @@ export class ResourceCache {
           emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
       } else {
-        mat = new THREE.MeshStandardMaterial({
+        const phong = ResourceCache.computeStdPhongProps(
+          spec.metalness,
+          spec.roughness,
+          Boolean(spec.transparent)
+        );
+        mat = new THREE.MeshPhongMaterial({
           ...commonProps,
           map: mapTex,
-          metalness: spec.metalness * 0.88,
-          roughness: Math.min(1, spec.roughness + 0.04),
-          envMapIntensity: 0.9,
+          specular: phong.specular,
+          shininess: phong.shininess,
           emissive: spec.emissive ?? 0x000000,
           emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
@@ -1029,7 +1286,7 @@ export class ResourceCache {
         iridescenceIOR: spec.ultraPhysical.iridescenceIOR ?? 1.3,
         ior: spec.ultraPhysical.ior ?? 1.5,
         reflectivity: spec.ultraPhysical.reflectivity ?? 0.5,
-        envMapIntensity: 1.05,
+        envMapIntensity: 1.34,
         emissive: spec.emissive ?? 0x000000,
         emissiveIntensity: spec.emissiveIntensity ?? 0,
       });
@@ -1041,7 +1298,7 @@ export class ResourceCache {
         bumpScale: spec.bumpScale ?? 0.02,
         metalness: spec.metalness,
         roughness: spec.roughness,
-        envMapIntensity: 0.95,
+        envMapIntensity: quality === 'ultra' ? 1.16 : 0.95,
         emissive: spec.emissive ?? 0x000000,
         emissiveIntensity: spec.emissiveIntensity ?? 0,
       });
@@ -1049,6 +1306,7 @@ export class ResourceCache {
 
     mat.userData.__cacheKey = cacheKey;
     mat.userData.__materialBucket = bucket;
+    mat.userData.__managedSide = true;
     this.materials.set(cacheKey, { resource: mat, refCount: 1, depTextures });
     return mat;
   }
@@ -1068,10 +1326,15 @@ export class ResourceCache {
     }
 
     const cacheKey = `hero:${heroKey}:${quality}:${renderMode}`;
+    const targetSide: THREE.Side = clippingPlanes.length > 0 ? THREE.DoubleSide : THREE.FrontSide;
     const existing = this.materials.get(cacheKey);
     if (existing) {
       existing.refCount++;
       existing.resource.clippingPlanes = clippingPlanes;
+      if (existing.resource.userData?.__managedSide && existing.resource.side !== targetSide) {
+        existing.resource.side = targetSide;
+        existing.resource.needsUpdate = true;
+      }
       return existing.resource;
     }
 
@@ -1090,8 +1353,8 @@ export class ResourceCache {
       color: spec.baseColor ?? 0xffffff,
       map: mapTex,
       clippingPlanes,
-      clipShadows: false,
-      side: THREE.DoubleSide as THREE.Side,
+      clipShadows: quality === 'ultra',
+      side: targetSide,
       transparent,
       opacity,
       depthWrite,
@@ -1100,16 +1363,33 @@ export class ResourceCache {
     };
 
     let mat: THREE.Material;
-    if (quality === 'standard') {
-      mat =
-        bucketSpec.stdLambert && !transparent
-          ? new THREE.MeshLambertMaterial(commonProps)
-          : new THREE.MeshStandardMaterial({
-              ...commonProps,
-              metalness: metalness * 0.88,
-              roughness: Math.min(1, roughness + 0.04),
-              envMapIntensity: 0.9,
-            });
+    if (quality === 'standard_lite') {
+      const matcapKey: ProceduralTextureKey =
+        bucketSpec.stdLambert && !transparent ? 'matcap_studio_matte' : 'matcap_studio_metal';
+      const matcapTex = this.acquireTexture(matcapKey);
+      depTextures.push(matcapKey);
+      const heroLiteColor = new THREE.Color(commonProps.color).multiplyScalar(1.88);
+      mat = new THREE.MeshMatcapMaterial({
+        color: heroLiteColor,
+        map: mapTex,
+        matcap: matcapTex,
+        clippingPlanes,
+        side: targetSide,
+        transparent,
+        opacity,
+        depthWrite,
+      });
+    } else if (quality === 'standard') {
+      if (bucketSpec.stdLambert && !transparent) {
+        mat = new THREE.MeshLambertMaterial(commonProps);
+      } else {
+        const phong = ResourceCache.computeStdPhongProps(metalness, roughness, transparent);
+        mat = new THREE.MeshPhongMaterial({
+          ...commonProps,
+          specular: phong.specular,
+          shininess: phong.shininess,
+        });
+      }
     } else if (quality === 'ultra' && bucketSpec.ultraPhysical) {
       mat = new THREE.MeshPhysicalMaterial({
         ...commonProps,
@@ -1119,20 +1399,21 @@ export class ResourceCache {
         clearcoatRoughness: bucketSpec.ultraPhysical.clearcoatRoughness,
         iridescence: bucketSpec.ultraPhysical.iridescence ?? 0,
         iridescenceIOR: bucketSpec.ultraPhysical.iridescenceIOR ?? 1.3,
-        envMapIntensity: 1.05,
+        envMapIntensity: 1.34,
       });
     } else {
       mat = new THREE.MeshStandardMaterial({
         ...commonProps,
         metalness,
         roughness,
-        envMapIntensity: 0.95,
+        envMapIntensity: quality === 'ultra' ? 1.16 : 0.95,
       });
     }
 
     mat.userData.__cacheKey = cacheKey;
     mat.userData.__materialBucket = spec.bucket;
     mat.userData.__heroKey = heroKey;
+    mat.userData.__managedSide = true;
     this.materials.set(cacheKey, { resource: mat, refCount: 1, depTextures });
     return mat;
   }
@@ -1205,6 +1486,30 @@ export class ResourceCache {
       side: params.side ?? THREE.FrontSide,
       depthWrite: params.depthWrite ?? !(params.transparent ?? false),
       clippingPlanes: params.clippingPlanes ?? [],
+    });
+    mat.userData.__cacheKey = cacheKey;
+    this.materials.set(cacheKey, { resource: mat, refCount: 1 });
+    return mat;
+  }
+
+  public acquireShadowMaterial(
+    key: string,
+    params: {
+      color?: number;
+      opacity?: number;
+    } = {}
+  ): THREE.ShadowMaterial {
+    const cacheKey = `shadow:${key}`;
+    const existing = this.materials.get(cacheKey);
+    if (existing) {
+      existing.refCount++;
+      return existing.resource as THREE.ShadowMaterial;
+    }
+    const mat = new THREE.ShadowMaterial({
+      color: params.color ?? 0x0f172a,
+      opacity: params.opacity ?? 0.16,
+      transparent: true,
+      depthWrite: false,
     });
     mat.userData.__cacheKey = cacheKey;
     this.materials.set(cacheKey, { resource: mat, refCount: 1 });
@@ -1285,8 +1590,14 @@ export class ResourceCache {
   }
 
   public updateClippingPlanes(planes: THREE.Plane[]): void {
+    const targetSide: THREE.Side = planes.length > 0 ? THREE.DoubleSide : THREE.FrontSide;
     for (const entry of this.materials.values()) {
-      entry.resource.clippingPlanes = planes;
+      const mat = entry.resource;
+      mat.clippingPlanes = planes;
+      if (mat.userData?.__managedSide && mat.side !== targetSide) {
+        mat.side = targetSide;
+        mat.needsUpdate = true;
+      }
     }
   }
 

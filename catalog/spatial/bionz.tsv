@@ -1,71 +1,71 @@
 id	code	name	group	pos	size	exp	mat
 xr-emi-conformal-shield	XR01	パッケージ全面スパッタEMIシールド膜	#001-030	0,9.8,0	33.26,5.6,33.26	0,56,0	emi_shield_metal
-xr-nickel-cu-ihs	XR02	ニッケルめっき無酸素銅ヒートスプレッダ	#001-030	0,8.6,0	32.17,2.68,32.17	0,48,0	copper_thermal
-xr-tim1-indium-bond	XR03	チップ直結 TIM1	#001-030	0,7.3,0	26.47,0.62,22.75	0,41.5,0	solder_silver
-xr-pop-lpddr5x-package	XR04	PoP上層 LPDDR5X DRAM	#001-030	0,6.1,0	30.29,1.79,30.12	0,35,0	ic_epoxy_dark
-xr-pop-dram-dies	XR05	4段積層 LPDDR5X-8533	#001-030	0,5.9,0	19.7,1.53,18.5	0,29,0	solder_silver
-xr-pop-wirebond-interposer	XR06	上層MCPメモリ用 階段状金ワイヤーボン	#001-030	0,4.8,0	29.76,3.35,29.76	0,23,0	solder_silver
+xr-nickel-cu-ihs	XR02	ニッケルめっき無酸素銅ヒートスプレッダ	#001-030	0,8.6,0	32.05,2.68,32.05	0,48,0	copper_thermal
+xr-tim1-indium-bond	XR03	チップ直結 TIM1	#001-030	0,7.3,0	26.42,0.62,22.68	0,41.5,0	solder_silver
+xr-pop-lpddr5x-package	XR04	PoP上層 LPDDR5X DRAM	#001-030	0,6.1,0	30.22,1.79,29.98	0,35,0	ic_epoxy_dark
+xr-pop-dram-dies	XR05	4段積層 LPDDR5X-8533	#001-030	0,5.9,0	19.6,1.53,18.4	0,29,0	solder_silver
+xr-pop-wirebond-interposer	XR06	上層MCPメモリ用 階段状金ワイヤーボン	#001-030	0,4.8,0	29.6,3.31,29.6	0,23,0	solder_silver
 xr-tmv-pop-balls	XR07	PoP上下連結はんだボール群	#001-030	0,3.3,0	29.06,3.2,29.07	0,17.5,0	solder_silver
-xr-emc-mold-frame	XR08	低反りシリカ配合エポキシ封止樹脂	#001-030	0,1.7,0	32.13,3.02,32.13	0,12.2,0	stainless_machined
-xr-die-bulk-silicon	XR09	薄化単結晶シリコン基板	#001-030	0,1.65,0	21.94,1,21.94	0,7.6,0	silicon_hero
-xr-slvsec-rx-phy	XR10	超高速センサー受信ブロック SLVS	#001-030	-6.9,1.1,-6.9	4.37,0.97,4.37	-10.21,4.2,-10.21	silicon_hero
-xr-raw-isp-frontend	XR11	16ビットリニア RAW フロントエンド	#001-030	-2.3,1.1,-6.9	4.37,1.05,4.37	-3.4,4.6,-10.21	silicon_hero
-xr-nr-detail-engine	XR12	領域分割ノイズリダクション・回折低減	#001-030	2.3,1.1,-6.9	4.37,1.13,4.37	3.4,4.6,-10.21	silicon_photodiode
-xr-color-3dlut-engine	XR13	S-Cinetone / S-Log3	#001-030	6.9,1.1,-6.9	4.37,1.23,4.37	10.21,4.2,-10.21	silicon_hero
-xr-ai-npu-systolic	XR14	次世代統合 AIプロセッシングユニット	#001-030	-6.9,1.1,-2.3	4.37,1.13,4.37	-10.21,5.8,-3.4	silicon_hero
-xr-arm-cpu-cluster	XR15	クアッドコア ARM Cortex	#001-030	-2.3,1.1,-2.3	4.37,1.15,4.37	-3.4,6.2,-3.4	silicon_hero
-xr-sa-dsp-af-core	XR16	ソニー独自 32ビット SA DSP	#001-030	2.3,1.1,-2.3	4.37,1.14,4.37	3.4,6.2,-3.4	silicon_hero
-xr-video-codec-hevc	XR17	8K30p / 4K120p 10bit	#001-030	6.9,1.1,-2.3	4.37,1.14,4.37	10.21,5.8,-3.4	silicon_hero
-xr-audio-dsp-noisecut	XR18	ハードウェア音声DSP	#001-030	-6.9,1.1,2.3	4.37,1.17,4.37	-10.21,5.2,3.4	silicon_hero
-xr-sram-linebuffer	XR19	ダイ内蔵 超低遅延 共有L2/L3	#001-030	-2.3,1.1,2.3	4.37,1.06,4.37	-3.4,5.6,3.4	silicon_hero
-xr-ddr-mem-controller	XR20	256ビット幅 LPDDR5X	#001-030	2.3,1.1,2.3	4.37,1.11,4.37	3.4,5.6,3.4	silicon_hero
-xr-c2pa-crypto-enclave	XR21	C2PA電子署名ハードウェア暗号エンクレ	#001-030	6.9,1.1,2.3	4.37,1.17,4.37	10.21,5.2,3.4	matte_black_anodized
-xr-pcie-cfx-dma	XR22	PCIe Gen4 CFexpress	#001-030	-6.9,1.1,6.9	4.37,1.08,4.37	-10.21,3.8,10.21	silicon_hero
-xr-display-evf-hdmi-tx	XR23	9.44MドットEVF	#001-030	-2.3,1.1,6.9	4.37,1.02,4.37	-3.4,4.2,10.21	silicon_hero
-xr-usb-network-hub	XR24	USB-C 10Gbps	#001-030	2.3,1.1,6.9	4.37,1.04,4.37	3.4,4.2,10.21	gold_plating
-xr-pll-clock-dvfs-ring	XR25	超低ジッタ多系統PLLクロックツリー	#001-030	6.9,1.1,6.9	4.37,1.12,4.37	10.21,3.8,10.21	silicon_hero
-xr-feol-finfet-gaa	XR26	FEOL 最先端トランジスタ層	#001-030	0,0.35,0	20.28,0.69,20.28	0,-3.5,0	silicon_wafer_dark
-xr-beol-cu-metals	XR27	BEOL 14層銅ダマシン微細配線スタッ	#001-030	0,-0.35,0	20.5,0.95,20.5	0,-9.5,0	cucu_hybrid_copper
-xr-secondary-cetus-chiplet	XR28	セカンダリ画像処理コプロセッサ	#001-030	13.2,0.8,0	4.88,1.38,14.08	26,2.5,0	silicon_hero
-xr-silicon-bridge-lsi	XR29	2.5D 高密度シリコンブリッジ	#001-030	0,-1.3,0	26.38,0.7,22.68	8.5,-15.5,0	titanium_machined
+xr-emc-mold-frame	XR08	低反りシリカ配合エポキシ封止樹脂	#001-030	0,1.7,0	32.06,3.02,32.06	0,12.2,0	stainless_machined
+xr-die-bulk-silicon	XR09	薄化単結晶シリコン基板	#001-030	0,1.65,0	21.92,1,21.92	0,7.6,0	silicon_hero
+xr-slvsec-rx-phy	XR10	超高速センサー受信ブロック SLVS	#001-030	-6.9,1.1,-6.9	4.25,0.97,4.25	-10.21,4.2,-10.21	silicon_hero
+xr-raw-isp-frontend	XR11	16ビットリニア RAW フロントエンド	#001-030	-2.3,1.1,-6.9	4.25,1.05,4.25	-3.4,4.6,-10.21	silicon_hero
+xr-nr-detail-engine	XR12	領域分割ノイズリダクション・回折低減	#001-030	2.3,1.1,-6.9	4.25,1.13,4.25	3.4,4.6,-10.21	silicon_photodiode
+xr-color-3dlut-engine	XR13	S-Cinetone / S-Log3	#001-030	6.9,1.1,-6.9	4.25,1.23,4.25	10.21,4.2,-10.21	silicon_hero
+xr-ai-npu-systolic	XR14	次世代統合 AIプロセッシングユニット	#001-030	-6.9,1.1,-2.3	4.25,1.13,4.25	-10.21,5.8,-3.4	silicon_hero
+xr-arm-cpu-cluster	XR15	クアッドコア ARM Cortex	#001-030	-2.3,1.1,-2.3	4.25,1.15,4.25	-3.4,6.2,-3.4	silicon_hero
+xr-sa-dsp-af-core	XR16	ソニー独自 32ビット SA DSP	#001-030	2.3,1.1,-2.3	4.25,1.14,4.25	3.4,6.2,-3.4	silicon_hero
+xr-video-codec-hevc	XR17	8K30p / 4K120p 10bit	#001-030	6.9,1.1,-2.3	4.25,1.14,4.25	10.21,5.8,-3.4	silicon_hero
+xr-audio-dsp-noisecut	XR18	ハードウェア音声DSP	#001-030	-6.9,1.1,2.3	4.25,1.17,4.25	-10.21,5.2,3.4	silicon_hero
+xr-sram-linebuffer	XR19	ダイ内蔵 超低遅延 共有L2/L3	#001-030	-2.3,1.1,2.3	4.25,1.06,4.25	-3.4,5.6,3.4	silicon_hero
+xr-ddr-mem-controller	XR20	256ビット幅 LPDDR5X	#001-030	2.3,1.1,2.3	4.25,1.11,4.25	3.4,5.6,3.4	silicon_hero
+xr-c2pa-crypto-enclave	XR21	C2PA電子署名ハードウェア暗号エンクレ	#001-030	6.9,1.1,2.3	4.25,1.17,4.25	10.21,5.2,3.4	matte_black_anodized
+xr-pcie-cfx-dma	XR22	PCIe Gen4 CFexpress	#001-030	-6.9,1.1,6.9	4.25,1.08,4.25	-10.21,3.8,10.21	silicon_hero
+xr-display-evf-hdmi-tx	XR23	9.44MドットEVF	#001-030	-2.3,1.1,6.9	4.25,1.02,4.25	-3.4,4.2,10.21	silicon_hero
+xr-usb-network-hub	XR24	USB-C 10Gbps	#001-030	2.3,1.1,6.9	4.25,1.04,4.25	3.4,4.2,10.21	gold_plating
+xr-pll-clock-dvfs-ring	XR25	超低ジッタ多系統PLLクロックツリー	#001-030	6.9,1.1,6.9	4.25,1.12,4.25	10.21,3.8,10.21	silicon_hero
+xr-feol-finfet-gaa	XR26	FEOL 最先端トランジスタ層	#001-030	0,0.35,0	20.2,0.69,20.2	0,-3.5,0	silicon_wafer_dark
+xr-beol-cu-metals	XR27	BEOL 14層銅ダマシン微細配線スタッ	#001-030	0,-0.35,0	20.4,0.95,20.4	0,-9.5,0	cucu_hybrid_copper
+xr-secondary-cetus-chiplet	XR28	セカンダリ画像処理コプロセッサ	#001-030	13.2,0.8,0	4.82,1.38,14.02	26,2.5,0	silicon_hero
+xr-silicon-bridge-lsi	XR29	2.5D 高密度シリコンブリッジ	#001-030	0,-1.3,0	26.3,0.7,22.6	8.5,-15.5,0	titanium_machined
 xr-c4-copper-bumps	XR30	フリップチップ C4 銅ピラー	#001-030	0,-2.1,0	24.17,0.96,19.23	0,-21.5,0	solder_silver
-xr-capillary-underfill	XR31	毛細管アンダーフィル	#031-060	0,-2.3,0	28.33,0.88,24.05	-12,-26.5,0	membrane_translucent
-xr-esicap-mlcc-decaps	XR32	パッケージ内蔵トレンチシリコンコンデンサ	#031-060	0,-7.8,0	12.08,5.09,12.08	14,-49,0	solder_silver
-xr-abf-top-buildup	XR33	味の素ビルドアップフィルム上側多層微細配	#031-060	0,-3.4,0	32.24,1.63,32.24	0,-32,0	abf_substrate
-xr-bt-glass-core-pth	XR34	低熱膨張ガラスエポキシ／BTレジン高剛性	#031-060	0,-4.9,0	32.2,2.09,32.2	0,-39,0	gold_plating
-xr-abf-bottom-solder-mask	XR35	下側ABFファンアウト配線層・緑色ソルダ	#031-060	0,-6.4,0	35.86,1.36,35.86	0,-45.5,0	gold_plating
+xr-capillary-underfill	XR31	毛細管アンダーフィル	#031-060	0,-2.3,0	28.09,0.88,23.79	-12,-26.5,0	membrane_translucent
+xr-esicap-mlcc-decaps	XR32	パッケージ内蔵トレンチシリコンコンデンサ	#031-060	0,-7.8,0	12,5.09,12	14,-49,0	solder_silver
+xr-abf-top-buildup	XR33	味の素ビルドアップフィルム上側多層微細配	#031-060	0,-3.4,0	32.05,1.63,32.05	0,-32,0	abf_substrate
+xr-bt-glass-core-pth	XR34	低熱膨張ガラスエポキシ／BTレジン高剛性	#031-060	0,-4.9,0	32,2.09,32	0,-39,0	gold_plating
+xr-abf-bottom-solder-mask	XR35	下側ABFファンアウト配線層・緑色ソルダ	#031-060	0,-6.4,0	35.8,1.36,35.8	0,-45.5,0	gold_plating
 xr-sac305-bga-balls	XR36	SAC305鉛フリーBGAはんだボールマ	#031-060	0,-7.65,0	28.56,1.34,28.48	0,-54,0	solder_silver
-xr-pmic-vrm-rails	XR37	専用マルチフェーズ電源PMIC	#031-060	-23.2,-5.2,0	11.76,2.41,26.16	-36,-14,6	ic_epoxy_dark
-xr-tcxo-24mhz-clock	XR38	超低ジッタ 24 MHz 金封止水晶発振	#031-060	19.8,-5.2,12.2	7.52,1.84,5.92	28,-8,22	gold_plating
-xr-qspi-boot-nor-rom	XR39	256 Mb Octal-SPI	#031-060	20.6,-5.2,-10.8	9.52,1.73,7.72	30,-10,-22	solder_silver
-xr-sigma-graphite-clamp	XR40	ソニー独自 Σ形状パイロリティック	#031-060	0,10.15,0	34.93,5.85,11.65	0,62,-24	carbon_fiber
-xr-slvs-ec-microcoax-bus	XR41	8レーン SLVS-EC 2.0	#031-060	-4.2,-5.2,21.8	24.12,2.08,9.72	-10,-10,34	solder_silver
-xr-hdmi21-retimer-esd	XR42	HDMI 2.1リタイマ／リドライバIC	#031-060	22.4,-5.2,1.4	10.92,1.72,13.92	38,-6,4	ic_epoxy_dark
-xr-ddr5-vddq-pmic-sub	XR43	LPDDR5X PoPメモリ専用	#031-060	-22.8,-5.2,-19.2	11.52,1.91,10.72	-38,-8,-32	ic_epoxy_dark
+xr-pmic-vrm-rails	XR37	専用マルチフェーズ電源PMIC	#031-060	-23.2,-5.2,0	11.6,2.41,26	-36,-14,6	ic_epoxy_dark
+xr-tcxo-24mhz-clock	XR38	超低ジッタ 24 MHz 金封止水晶発振	#031-060	19.8,-5.2,12.2	7.4,1.84,5.8	28,-8,22	gold_plating
+xr-qspi-boot-nor-rom	XR39	256 Mb Octal-SPI	#031-060	20.6,-5.2,-10.8	9.4,1.73,7.6	30,-10,-22	solder_silver
+xr-sigma-graphite-clamp	XR40	ソニー独自 Σ形状パイロリティック	#031-060	0,10.15,0	34.85,5.77,11.53	0,62,-24	carbon_fiber
+xr-slvs-ec-microcoax-bus	XR41	8レーン SLVS-EC 2.0	#031-060	-4.2,-5.2,21.8	24,2.08,9.6	-10,-10,34	solder_silver
+xr-hdmi21-retimer-esd	XR42	HDMI 2.1リタイマ／リドライバIC	#031-060	22.4,-5.2,1.4	10.8,1.72,13.8	38,-6,4	ic_epoxy_dark
+xr-ddr5-vddq-pmic-sub	XR43	LPDDR5X PoPメモリ専用	#031-060	-22.8,-5.2,-19.2	11.4,1.91,10.6	-38,-8,-32	ic_epoxy_dark
 xr-die-thermal-diode-ring	XR44	オンダイ多点ジャンクション温度センス	#031-060	0,1.62,0	15.92,0.44,15.92	0,11.2,19	cucu_hybrid_copper
-xr-bga-corner-underfill	XR45	メイン基板実装 4隅エポキシ・エッジボン	#031-060	0,-6.15,0	36.1,2.37,36.1	0,-58,22	ic_epoxy_dark
-xr-jtag-swd-debug-header	XR46	工場ATE / JTAG / SWD	#031-060	10.6,-5.2,-21.2	14.32,1.29,7.72	18,-14,-36	cucu_hybrid_copper
-xr-die-io-esd-ring	XR47	ダイ外周 HBM/CDM 静電気保護クラ	#031-060	0,1.38,0	22.08,0.41,22.08	0,5.2,-22	silicon_hero
-xr-mtcmos-power-gate-ring	XR48	MTCMOS 多電源ドメイン・スリープ電	#031-060	0,0.88,0	21.28,0.36,21.28	-20,2.2,14	silicon_wafer_dark
-xr-mbist-dummy-si-spacer	XR49	左翼シリコンダミー放熱スペーサー	#031-060	-13.2,0.8,0	4.93,1.68,14.03	-26,2.5,0	silicon_wafer_dark
-xr-mg-chassis-tim3-sink	XR50	マグネシウム合金ダイカスト筐体	#031-060	0,12.25,0	36.28,4.13,30.28	0,74,0	magnesium_cast
-xr-sy1122-hdi-mainboard	XR51	Sony α7 IV 純正メイン基板SY	#031-060	0,-9.15,0	92.24,4.34,76.24	0,-68,0	abf_substrate
+xr-bga-corner-underfill	XR45	メイン基板実装 4隅エポキシ・エッジボン	#031-060	0,-6.15,0	36.1,2.34,36.1	0,-58,22	ic_epoxy_dark
+xr-jtag-swd-debug-header	XR46	工場ATE / JTAG / SWD	#031-060	10.6,-5.2,-21.2	14.2,1.29,7.6	18,-14,-36	cucu_hybrid_copper
+xr-die-io-esd-ring	XR47	ダイ外周 HBM/CDM 静電気保護クラ	#031-060	0,1.38,0	22,0.41,22	0,5.2,-22	silicon_hero
+xr-mtcmos-power-gate-ring	XR48	MTCMOS 多電源ドメイン・スリープ電	#031-060	0,0.88,0	21.2,0.36,21.2	-20,2.2,14	silicon_wafer_dark
+xr-mbist-dummy-si-spacer	XR49	左翼シリコンダミー放熱スペーサー	#031-060	-13.2,0.8,0	4.85,1.68,13.95	-26,2.5,0	silicon_wafer_dark
+xr-mg-chassis-tim3-sink	XR50	マグネシウム合金ダイカスト筐体	#031-060	0,12.25,0	36,4.13,30	0,74,0	magnesium_cast
+xr-sy1122-hdi-mainboard	XR51	Sony α7 IV 純正メイン基板SY	#031-060	0,-9.15,0	92,4.34,76	0,-68,0	abf_substrate
 xr-backside-mlcc-emi-cage	XR52	基板裏面 BGA直下 01005超小型M	#031-060	0,-11.4,0	35.13,1.99,35.06	0,-82,0	emi_shield_metal
-xr-dedicated-ai-coproc	XR53	専用AIプロセッシングユニット外付けBG	#031-060	-37.2,-5.2,-16.5	13.32,1.87,11.52	-58,-4,-26	ic_epoxy_dark
-xr-wifi6e-bt-sip-module	XR54	村田製作所 Wi-Fi 6E	#031-060	36.4,-5.2,-16.2	13.12,2.23,10.72	58,-4,-26	emi_shield_metal
-xr-usbc-pd-10g-redriver	XR55	USB Type-C PD 3.1コント	#031-060	36.4,-5.2,0.4	12.72,2.74,11.52	60,-6,2	abf_substrate
-xr-usbc-charger-efuse	XR56	USB-C PD 昇降圧バッテリー充電器	#031-060	-37.2,-5.2,0.6	12.72,2.69,10.92	-60,-6,2	abf_substrate
-xr-pcie-cfx-clock-mux	XR57	100 MHz PCIe Gen4	#031-060	36.4,-5.2,14.6	12.92,1.36,10.72	58,-8,24	gold_plating
-xr-mipi-evf-lcd-bridge	XR58	デュアルMIPI-DSI 240Hz	#031-060	16.8,-5.2,22.6	12.52,1.74,9.72	26,-10,38	abf_substrate
-xr-akm-audio-codec-afe	XR59	高音質4ch 24/32-bit	#031-060	-24.2,-5.2,20.6	12.32,1.27,10.32	-38,-8,34	abf_substrate
-xr-mishoe-digital-if	XR60	マルチインターフェースシューデジタル音声	#031-060	-37.6,-5.2,13.8	11.32,1.87,9.32	-58,-6,22	abf_substrate
-xr-emount-lens-comm-if	XR61	高速Eマウントレンズ通信バス	#061-070	-10.8,-5.2,32.4	13.52,1.87,7.72	-18,-12,52	matte_black_anodized
-xr-genlock-timecode-mcu	XR62	高精度タイムコード / Genlock	#061-070	2.8,-5.2,32.4	10.72,1.41,7.72	4,-12,52	gold_plating
-xr-ibis-servo-mcu	XR63	5軸ボディ内手ブレ補正専用サーボMCU	#061-070	-8,-5.2,-22.4	12.52,1.77,8.32	-12,-10,-38	abf_substrate
-xr-epson-quartz-gyro-imu	XR64	高精度・直交デュアル水晶ジャイロ	#061-070	16.6,-5.2,-32	11.92,1.85,8.12	26,-12,-54	gold_plating
-xr-shutter-hbridge-driver	XR65	フォーカルプレーン・メカシャッター	#061-070	2.2,-5.2,-32	12.52,1.8,8.12	2,-12,-54	abf_substrate
-xr-rtc-power-seq-backup	XR66	常時稼働RTC電源シーケンサIC	#061-070	-12.4,-5.2,-32	12.92,2.04,8.12	-20,-12,-54	gold_plating
-xr-battery-fuel-auth-if	XR67	高精度バッテリー残量ゲージ	#061-070	-37.6,-5.2,26.4	11.52,2.26,8.52	-58,-10,44	abf_substrate
-xr-thermal-ntc-telemetry-hub	XR68	多点高精度 I²C 温度テレメトリハブ	#061-070	-27,-5.2,-32	11.92,1.16,8.12	-44,-12,-54	abf_substrate
-xr-watchdog-pg-supervisor	XR69	精密電圧監視・ブラウンアウト・ウォッチド	#061-070	30.8,-5.2,-32	11.52,1.22,8.12	48,-12,-54	abf_substrate
-xr-active-vapor-ground-if	XR70	Cinema Line拡張 焼結銅ベイパ	#061-070	22.2,-5.2,32.6	13.56,2.66,7.16	36,-10,52	copper_thermal
+xr-dedicated-ai-coproc	XR53	専用AIプロセッシングユニット外付けBG	#031-060	-37.2,-5.2,-16.5	13.2,1.87,11.4	-58,-4,-26	ic_epoxy_dark
+xr-wifi6e-bt-sip-module	XR54	村田製作所 Wi-Fi 6E	#031-060	36.4,-5.2,-16.2	13,2.23,10.6	58,-4,-26	emi_shield_metal
+xr-usbc-pd-10g-redriver	XR55	USB Type-C PD 3.1コント	#031-060	36.4,-5.2,0.4	12.6,2.68,11.4	60,-6,2	abf_substrate
+xr-usbc-charger-efuse	XR56	USB-C PD 昇降圧バッテリー充電器	#031-060	-37.2,-5.2,0.6	12.6,2.69,10.8	-60,-6,2	abf_substrate
+xr-pcie-cfx-clock-mux	XR57	100 MHz PCIe Gen4	#031-060	36.4,-5.2,14.6	12.8,1.36,10.6	58,-8,24	gold_plating
+xr-mipi-evf-lcd-bridge	XR58	デュアルMIPI-DSI 240Hz	#031-060	16.8,-5.2,22.6	12.4,1.74,9.6	26,-10,38	abf_substrate
+xr-akm-audio-codec-afe	XR59	高音質4ch 24/32-bit	#031-060	-24.2,-5.2,20.6	12.2,1.24,10.2	-38,-8,34	abf_substrate
+xr-mishoe-digital-if	XR60	マルチインターフェースシューデジタル音声	#031-060	-37.6,-5.2,13.8	11.2,1.87,9.2	-58,-6,22	abf_substrate
+xr-emount-lens-comm-if	XR61	高速Eマウントレンズ通信バス	#061-070	-10.8,-5.2,32.4	13.4,1.87,7.6	-18,-12,52	matte_black_anodized
+xr-genlock-timecode-mcu	XR62	高精度タイムコード / Genlock	#061-070	2.8,-5.2,32.4	10.6,1.41,7.6	4,-12,52	gold_plating
+xr-ibis-servo-mcu	XR63	5軸ボディ内手ブレ補正専用サーボMCU	#061-070	-8,-5.2,-22.4	12.4,1.77,8.2	-12,-10,-38	abf_substrate
+xr-epson-quartz-gyro-imu	XR64	高精度・直交デュアル水晶ジャイロ	#061-070	16.6,-5.2,-32	11.8,1.85,8	26,-12,-54	gold_plating
+xr-shutter-hbridge-driver	XR65	フォーカルプレーン・メカシャッター	#061-070	2.2,-5.2,-32	12.4,1.8,8	2,-12,-54	abf_substrate
+xr-rtc-power-seq-backup	XR66	常時稼働RTC電源シーケンサIC	#061-070	-12.4,-5.2,-32	12.8,2.04,8	-20,-12,-54	gold_plating
+xr-battery-fuel-auth-if	XR67	高精度バッテリー残量ゲージ	#061-070	-37.6,-5.2,26.4	11.4,2.26,8.4	-58,-10,44	abf_substrate
+xr-thermal-ntc-telemetry-hub	XR68	多点高精度 I²C 温度テレメトリハブ	#061-070	-27,-5.2,-32	11.8,1.16,8	-44,-12,-54	abf_substrate
+xr-watchdog-pg-supervisor	XR69	精密電圧監視・ブラウンアウト・ウォッチド	#061-070	30.8,-5.2,-32	11.4,1.2,8	48,-12,-54	abf_substrate
+xr-active-vapor-ground-if	XR70	Cinema Line拡張 焼結銅ベイパ	#061-070	22.2,-5.2,32.6	13.4,2.66,7	36,-10,52	copper_thermal

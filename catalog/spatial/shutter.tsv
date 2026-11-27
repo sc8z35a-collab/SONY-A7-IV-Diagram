@@ -4,64 +4,64 @@ shutter-dust-shield	#02	電源OFF時・独立センサー保護シールドカ	#
 shutter-shield-actuator	#03	ダストシールド専用 マイクロ駆動ステッパ	#001-030	0,0,16.4	10.95,11.5,5.5	28,24,42	copper_coil
 shutter-curtain-1	#04	先幕カーボンファイバー羽根群 × 4枚	#001-030	0,0,15.3	41.2,16.3,0.85	0,0,34	carbon_fiber
 shutter-curtain1-guide	#05	先幕専用 低摩擦POMアンチフラッターガ	#001-030	0,0,15.2	23,42,1.2	-26,0,30	magnesium_cast
-shutter-link-1	#06	先幕用・平行4節リンクアーム	#001-030	0,0,14.8	14.7,10.05,1	0,0,24	stainless_machined
+shutter-link-1	#06	先幕用・平行4節リンクアーム	#001-030	0,0,14.8	14.66,10.03,1	0,0,24	stainless_machined
 shutter-pivot-jewels	#07	リンク機構 DLC硬質支点スピンドル	#001-030	0,0,14.4	2.74,12.16,4.27	26,10,18	stainless_machined
 shutter-mid-plate	#08	中間遮光仕切り板	#001-030	0,0,14	66,48,0.42	0,0,12	stainless_machined
 shutter-curtain-2	#09	後幕カーボン	#001-030	0,0,12.9	41.2,14.88,0.85	0,0,2	carbon_fiber
 shutter-curtain2-guide	#10	後幕専用 精密スリット平行度レール	#001-030	0,0,12.8	40.4,40,1.17	-26,0,-4	magnesium_cast
-shutter-link-2	#11	後幕用・平行4節リンクアーム	#001-030	0,0,12.4	14.74,11.22,1	0,0,-10	stainless_machined
-shutter-tension-drums	#12	先幕・後幕独立 高張力トーションスプリン	#001-030	0,0,13	10.19,16.49,4.32	22,10,-12	stainless_machined
-shutter-dual-drive	#13	デュアル駆動アクチュエータ	#001-030	0,0,13	8.28,9.6,3.88	38,2,-14	iron_magnetic
+shutter-link-2	#11	後幕用・平行4節リンクアーム	#001-030	0,0,12.4	14.67,11.19,1	0,0,-10	stainless_machined
+shutter-tension-drums	#12	先幕・後幕独立 高張力トーションスプリン	#001-030	0,0,13	10.19,16.49,4.3	22,10,-12	stainless_machined
+shutter-dual-drive	#13	デュアル駆動アクチュエータ	#001-030	0,0,13	8.24,9.6,4.2	38,2,-14	iron_magnetic
 shutter-counterweight	#14	逆位相タングステン銅慣性カウンターウェイ	#001-030	0,0,13.2	4.8,13.87,1.9	28,-12,-6	stainless_machined
-shutter-magnets	#15	マイクロ秒制御・先幕	#001-030	0,0,12.5	16.8,7.32,3.34	24,22,-22	iron_magnetic
-shutter-armature-levers	#16	10マイクロ秒 幕保持アーマチュア掛け金	#001-030	0,0,12.5	17.05,4.88,2	38,22,-18	stainless_machined
+shutter-magnets	#15	マイクロ秒制御・先幕	#001-030	0,0,12.5	16.8,7.32,3.37	24,22,-22	iron_magnetic
+shutter-armature-levers	#16	10マイクロ秒 幕保持アーマチュア掛け金	#001-030	0,0,12.5	17.05,4.88,2.42	38,22,-18	stainless_machined
 shutter-charge-gears	#17	4段POM・真鍮遊星減速ギアトレイン	#001-030	0,0,12.2	15.93,17.45,3.45	24,-18,-26	magnesium_cast
-shutter-charge-motor	#18	50万回耐久コアレスDCチャージモーター	#001-030	0,0,12.2	8.71,19.2,8.8	44,-14,-28	stainless_machined
+shutter-charge-motor	#18	50万回耐久コアレスDCチャージモーター	#001-030	0,0,12.2	8.8,19.2,8.8	44,-14,-28	stainless_machined
 shutter-cocking-cam	#19	ハート形偏心チャージカム	#001-030	0,0,12.2	6.67,11.77,2.2	16,-26,-20	stainless_machined
 shutter-cam-switch	#20	チャージ完了検知 カム位置リーフスイッチ	#001-030	0,0,11.9	10.3,7.2,1.4	34,-28,-22	gold_plating
 shutter-optical-sensor	#21	幕速自己診断・赤外線フォトインタラプタ光	#001-030	0,0,11.6	4.8,25,2.2	12,4,-34	ic_epoxy_dark
 shutter-blade-brakes	#22	上下デュアル 高減衰エラストマー跳ね返り	#001-030	0,0,11.4	22,34.2,2.7	0,0,-24	elastomer_rubber
-shutter-shock-piston	#23	リンク終端 キネティック・シリコンエアダ	#001-030	0,0,11.4	3.41,23.6,3.5	42,12,-28	stainless_machined
+shutter-shock-piston	#23	リンク終端 キネティック・シリコンエアダ	#001-030	0,0,11.4	3.03,23.6,3.5	42,12,-28	stainless_machined
 shutter-fpc-driver	#24	シャッター専用 大電流電磁駆動	#001-030	0,0,11.2	14.8,44.4,1.12	32,28,-36	polyimide_fpc
 shutter-floating-grommets	#25	4点フローティング粘弾性シリコン防振ブッ	#001-030	0,0,10.8	75.4,55.4,2.65	0,0,-40	elastomer_rubber
 shutter-base-damper	#26	高剛性ベース基板	#001-030	0,0,10.8	76,56,4.97	0,0,-48	magnesium_cast
 shutter-drive-bay-cover	#27	駆動ベイ 遮音・防塵ステンレス密閉カバー	#001-030	0,0,18.35	22.2,43.8,1.55	28,0,66	matte_black_anodized
-shutter-blade-rivets	#28	16連 超軽量チタン中空マイクロリベット	#001-030	0,0,14.2	3.95,20.8,3.47	-26,14,26	titanium_machined
+shutter-blade-rivets	#28	16連 超軽量チタン中空マイクロリベット	#001-030	0,0,14.2	3.75,20.8,3.5	-26,14,26	titanium_machined
 shutter-pocket-lighttrap	#29	上下シャッター羽根格納ポケット	#001-030	0,0,14.1	40.8,40.4,3.2	0,28,20	foam_felt_matte
-shutter-curtain-hooks	#30	先幕・後幕 ステンレス巻上げキャッチフッ	#001-030	0,0,12.7	9.82,8.66,3.96	30,-34,-10	stainless_machined
+shutter-curtain-hooks	#30	先幕・後幕 ステンレス巻上げキャッチフッ	#001-030	0,0,12.7	9.7,8.66,3.98	30,-34,-10	stainless_machined
 shutter-coil-heat-bridge	#31	1/400s 電磁ブーストコイル	#031-060	0,0,12.6	18.14,16.5,4.09	46,28,-6	elastomer_rubber
-shutter-x-sync-contact	#32	1/400s ストロボ X接点	#031-060	0,0,12	45.2,8.3,3.57	-28,-24,-18	polyimide_fpc
+shutter-x-sync-contact	#32	1/400s ストロボ X接点	#031-060	0,0,12	45.2,8.3,3.45	-28,-24,-18	polyimide_fpc
 shutter-rear-mask-gasket	#33	シャッター背面 36×24mm	#031-060	0,0,9.85	50.2,38.2,1.21	0,0,-58	foam_felt_matte
-shutter-no-nc-switch	SH34	常開／常閉電磁石切替ロックレバー	#031-060	0,0,13	13.65,6.4,2.87	44,38,4	stainless_machined
-shutter-sensor-shield	SH35	電源OFFセンサー保護シャッター閉鎖イン	#031-060	0,0,11.4	14.3,7.41,4.56	-42,26,-24	stainless_machined
+shutter-no-nc-switch	SH34	常開／常閉電磁石切替ロックレバー	#031-060	0,0,13	13.69,6.4,2.89	44,38,4	stainless_machined
+shutter-sensor-shield	SH35	電源OFFセンサー保護シャッター閉鎖イン	#031-060	0,0,11.4	14.3,7.37,4.57	-42,26,-24	stainless_machined
 shutter-diff-cock-cam	SH36	先幕／後幕 位相差ディファレンシャル	#031-060	0,0,12.4	11.9,12.86,4.4	46,-8,-16	stainless_machined
-shutter-rebound-governor	SH37	高速幕バウンド吸収ブレーキレバー	#031-060	0,0,13.6	11.89,8.39,1.5	-42,-12,14	stainless_machined
+shutter-rebound-governor	SH37	高速幕バウンド吸収ブレーキレバー	#031-060	0,0,13.6	11.59,8.32,1.5	-42,-12,14	stainless_machined
 shutter-slit-baffle-wall	SH38	傾斜マットブラック迷光遮断アパーチャーバ	#031-060	0,0,15.05	42.12,29.34,2.18	0,-28,32	foam_felt_matte
 shutter-cycle-hall	SH39	幕速自己診断リアルタイム・ホール効果セン	#031-060	0,0,11.8	10.2,9.2,1.81	36,-40,-26	pcb_textured
 shutter-aux-baseplate	SH40	補助地板＆ 鍵穴式スライド係止シャンク群	#031-060	0,0,11.8	71,51,0.78	0,0,-32	magnesium_cast
-shutter-drive-pins-slots	SH41	地板貫通・円弧状長穴	#031-060	0,0,13.4	3.17,22.88,4.8	-36,4,4	matte_black_anodized
+shutter-drive-pins-slots	SH41	地板貫通・円弧状長穴	#031-060	0,0,13.4	3.01,22.88,4.8	-36,4,4	matte_black_anodized
 shutter-slit-edge-blades	SH42	スリット形成羽根エッジ段差補強	#031-060	0,0,15.55	40.2,15.4,1.21	0,38,38	carbon_fiber
 shutter-blade-spacers	SH43	羽根間マイクロ段差スペーサーワッシャー	#031-060	0,0,14.5	7.1,23.68,0.76	-38,28,22	ic_epoxy_dark
 shutter-armature-iron-pieces	SH44	電磁石吸着・純鉄アマチュア鉄片	#031-060	0,0,12.7	7.2,10,5.25	56,30,-18	iron_magnetic
-shutter-armature-bias-springs	SH45	鉄片密着・自己調心コンプレッション押圧ば	#031-060	0,0,12.5	3.2,9.6,4.98	58,18,-24	becu_spring
+shutter-armature-bias-springs	SH45	鉄片密着・自己調心コンプレッション押圧ば	#031-060	0,0,12.5	2.77,9.6,4.96	58,18,-24	becu_spring
 shutter-magnet-yokes-bobbins	SH46	パーマロイU字磁気ヨーク・微細絶縁ボビン	#031-060	0,0,12.2	8.1,9.5,4.45	46,42,-32	iron_magnetic
-shutter-set-levers	SH47	先幕・後幕独立セットレバー	#031-060	0,0,12.8	16.23,13.75,2.98	56,-2,8	stainless_machined
-shutter-mb-floating-shaft	SH48	チャージユニット浮動連結シャフト MB	#031-060	0,0,12.2	14.4,5.12,5.2	58,-18,-14	stainless_machined
+shutter-set-levers	SH47	先幕・後幕独立セットレバー	#031-060	0,0,12.8	15.99,13.75,3.04	56,-2,8	stainless_machined
+shutter-mb-floating-shaft	SH48	チャージユニット浮動連結シャフト MB	#031-060	0,0,12.2	14.4,5.2,5.2	58,-18,-14	stainless_machined
 shutter-mb-charge-housing	SH49	分離独立型チャージ駆動ユニット筐体 MB	#031-060	0,0,12.2	16.8,24.3,8.97	64,-28,-32	magnesium_cast
 shutter-mb-cushion-sheet	SH50	シャッター制振防音クッションシート MB	#031-060	0,0,18	72.6,52.6,1.4	0,0,70	elastomer_rubber
-shutter-stopper-rubbers	SH51	ドライブピン終端・円筒型ブチルストッパー	#031-060	0,0,13.1	3.25,29.3,3.2	-44,-26,-4	elastomer_rubber
-shutter-worm-lock-pawls	SH52	幕張力調整ラチェット歯車	#031-060	0,0,13.3	10.93,16.49,1.91	54,14,18	becu_spring
+shutter-stopper-rubbers	SH51	ドライブピン終端・円筒型ブチルストッパー	#031-060	0,0,13.1	2.86,29.3,3.2	-44,-26,-4	elastomer_rubber
+shutter-worm-lock-pawls	SH52	幕張力調整ラチェット歯車	#031-060	0,0,13.3	10.93,16.49,1.94	54,14,18	becu_spring
 shutter-esd-ground-brush	SH53	羽根室静電気除去・導電カーボン繊維除電ブ	#031-060	0,0,14.3	9.05,24.5,1.6	-44,14,-12	stainless_machined
-shutter-guide-posts-washers	SH54	地板間ギャップ精密決定段付き支柱	#031-060	0,0,14	66.33,48.4,4.42	-34,-34,24	ic_epoxy_dark
+shutter-guide-posts-washers	SH54	地板間ギャップ精密決定段付き支柱	#031-060	0,0,14	66.4,48.4,4.4	-34,-34,24	ic_epoxy_dark
 shutter-worm-gear-stage	SH55	チャージモーター直結・真鍮ウォームギア	#031-060	0,0,12.1	13.35,10.24,3.23	50,-38,-20	magnesium_cast
 shutter-fpc-zif-stiffener	SH56	シャッターFPC多極ZIFコネクタ補強板	#031-060	0,0,10.9	24.5,9.6,1.4	24,38,-46	polyimide_fpc
-shutter-calibration-bolts	SH57	シャッターユニット防振3点段付き固定ねじ	#031-060	0,0,9.3	69.58,49.51,5.84	0,0,-68	stainless_machined
+shutter-calibration-bolts	SH57	シャッターユニット防振3点段付き固定ねじ	#031-060	0,0,9.3	69.58,48.97,5.84	0,0,-68	stainless_machined
 shutter-blade-press-springs	SH58	羽根押さえ極薄板ばね	#031-060	0,0,15.15	34.2,40.6,1.27	-42,32,34	becu_spring
-shutter-rivet-reinforce-collars	SH59	羽根カシメ孔・応力分散補強カラー	#031-060	0,0,14.8	7.4,21.26,1.36	-56,10,24	titanium_machined
+shutter-rivet-reinforce-collars	SH59	羽根カシメ孔・応力分散補強カラー	#031-060	0,0,14.8	7.4,21.26,1.34	-56,10,24	titanium_machined
 shutter-blade-aramid-ply	SH60	CFRP＋アラミド繊維ハイブリッド多層羽	#031-060	0,0,15.35	36,36.55,0.68	-18,48,46	carbon_fiber
-shutter-oil-trap-barriers	SH61	グリス飛散防止・毛細管オイルトラップ溝	#061-090	0,0,13.7	7.67,36,2.12	-48,-6,6	elastomer_rubber
+shutter-oil-trap-barriers	SH61	グリス飛散防止・毛細管オイルトラップ溝	#061-090	0,0,13.7	7.67,36,2.09	-48,-6,6	matte_black_anodized
 shutter-air-vent-equalizer	SH62	羽根室ピストン風圧逃がしエアベント	#061-090	0,0,14.9	26,52,1.74	-28,-44,32	ic_epoxy_dark
-shutter-em-tilt-shims	SH63	電磁石吸着面・マイクロ傾き調整シム	#061-090	0,0,12.1	17.1,3.2,4.3	34,48,-36	pin_carrier_gloss
+shutter-em-tilt-shims	SH63	電磁石吸着面・マイクロ傾き調整シム	#061-090	0,0,12.1	17.1,3.2,4.33	34,48,-36	pin_carrier_gloss
 shutter-em-coil-terminals	SH64	電磁石コイル極細線・中継端子ポスト	#061-090	0,0,12.6	17.1,6.65,3.15	48,44,-14	optical_ar_iridescent
 shutter-em-flux-separator	SH65	先幕・後幕電磁石間 磁気クロストーク遮蔽	#061-090	0,0,12.5	2.2,10.5,4.4	16,46,-26	stainless_machined
 shutter-dual-boost-stator	SH66	デュアル駆動・ハルバッハ高磁束ネオジムス	#061-090	0,0,13	10.28,9.76,2.9	64,8,-8	iron_magnetic
@@ -71,111 +71,111 @@ shutter-charge-rotary-encoder	SH69	チャージユニット内・多トラック
 shutter-charge-oldham-sockets	SH70	フローティング軸受口・オルダム十字カップ	#061-090	0,0,12.2	16.4,6.3,6.3	64,-16,10	magnesium_cast
 shutter-charge-oem-bolts	SH71	チャージユニット専用固定ねじ	#061-090	0,0,12.2	17.6,25.25,8.97	74,-36,-44	stainless_machined
 shutter-charge-motor-isolator	SH72	チャージモーター防振シリコーンカラー	#061-090	0,0,12.2	19.05,23.2,9.27	76,-28,-54	foam_felt_matte
-shutter-mecha-cradle-frame	SH73	メカデバイス統合クレードル枠	#061-090	0,0,13.6	84.44,63.44,6	0,0,-56	magnesium_cast
+shutter-mecha-cradle-frame	SH73	メカデバイス統合クレードル枠	#061-090	0,0,13.6	84.44,63.44,6.2	0,0,-56	magnesium_cast
 shutter-mount-baffle-trough	SH74	マウント〜シャッター間 階段状迷光遮断バ	#061-090	0,0,18.85	48.2,36.2,2.6	0,0,86	foam_felt_matte
 shutter-ibis-clearance-frame	SH75	シャッター〜IBISセンサー間	#061-090	0,0,9.85	54,40,1.34	0,-24,-76	magnesium_cast
 shutter-hbridge-driver-stage	SH76	シャッター電磁石・チャージモーター専用	#061-090	0,0,10.1	16.8,8.8,1.83	38,52,-54	pcb_textured
 shutter-eeprom-cal-tag	SH77	個体別幕速キャリブレーションQR管理タグ	#061-090	0,0,18.45	14,6.2,0.46	-46,-40,56	ic_epoxy_dark
-shutter-blade-rivet-recesses	SH78	羽根プレス絞りカシメ沈みポケット	#061-090	22,0,15.1	10.54,19.14,1.04	-100,46,30.9	carbon_fiber
-shutter-crystallized-coupling-pins	SH79	99%結晶化・析出硬化めっき羽根連結ピン	#061-090	22.2,6,14.7	11.16,3.16,2.58	-110.2,24,17.3	stainless_machined
-shutter-5layer-hybrid-laminate	SH80	5層対称ハイブリッド複合羽根	#061-090	0,17.5,15.4	18.62,6.96,2	-78,38.5,4.6	carbon_fiber
-shutter-cover-blade-overlap-steps	SH81	遮光羽根 #2〜#4 階段状オーバーラッ	#061-090	0,-16.5,15.1	18.06,16.96,1.42	-90,30.5,36.9	carbon_fiber
-shutter-baseplate-slide-dimples	SH82	地板・中板 半球状アンチスティクション摺	#061-090	-20.5,0,14.05	6.36,24.16,1.68	-61.5,8,-2.05	stainless_machined
-shutter-thin-slip-sheet	SH83	羽根室極薄低摩擦すべりシート	#061-090	0,0,14.35	46.06,33.56,0.39	-94,-14,19.65	optical_ar_iridescent
-shutter-pfpe-dry-lube-rings	SH84	非拡散フッ素系固体潤滑マイクロ保持リング	#061-090	24,-6.5,13.8	4.54,14.96,1.35	-104,-3.5,-25.8	matte_chassis
-shutter-slit-diffraction-bevel	SH85	スリット形成羽根エッジ 精密マイクロ面取	#061-090	0,12.6,15.25	20.7,4.56,1.96	-82,21.4,46.75	carbon_fiber
-shutter-arc-slot-curtain-shield	SH86	駆動長孔スライド式防塵・オイル遮蔽シャッ	#061-090	24.5,0,13.5	12.12,18.12,2.4	-118.5,-32,-5.5	magnesium_cast
-shutter-velocity-flag-tabs	SH87	幕速・スリット幅リアルタイム計測用パンチ	#061-090	-19.5,11,12.8	9.7,17.58,1.8	-58.5,-39,-36.8	stainless_machined
-shutter-split-blade-transmitter	SH88	主羽根／補助羽根 独立2系統スプリング駆	#061-090	26,3,13.2	16.04,8.36,5.2	-114,-51,20.8	becu_spring
-shutter-coaxial-split-drivers	SH89	同軸2分割・先幕駆動部材	#061-090	27.5,8.5,13.1	18.54,10.1,6.1	76.5,33.5,12.9	matte_black_anodized
-shutter-no-curtain-lock-lever	SH90	ライブビュー常時開放先幕係止レバー	#061-090	32,14,12.9	14.72,8.4,4.5	82,10,25.1	iron_magnetic
+shutter-blade-rivet-recesses	SH78	羽根プレス絞りカシメ沈みポケット	#061-090	22,0,15.1	10.5,19.1,1.04	-100,46,30.9	carbon_fiber
+shutter-crystallized-coupling-pins	SH79	99%結晶化・析出硬化めっき羽根連結ピン	#061-090	22.2,6,14.7	11,3,2.58	-110.2,24,17.3	stainless_machined
+shutter-5layer-hybrid-laminate	SH80	5層対称ハイブリッド複合羽根	#061-090	0,17.5,15.4	18.5,6.8,2	-78,38.5,4.6	carbon_fiber
+shutter-cover-blade-overlap-steps	SH81	遮光羽根 #2〜#4 階段状オーバーラッ	#061-090	0,-16.5,15.1	18,16.9,1.42	-90,30.5,36.9	carbon_fiber
+shutter-baseplate-slide-dimples	SH82	地板・中板 半球状アンチスティクション摺	#061-090	-20.5,0,14.05	6.2,24,1.68	-61.5,8,-2.05	stainless_machined
+shutter-thin-slip-sheet	SH83	羽根室極薄低摩擦すべりシート	#061-090	0,0,14.35	46,33.5,0.39	-94,-14,19.65	optical_ar_iridescent
+shutter-pfpe-dry-lube-rings	SH84	非拡散フッ素系固体潤滑マイクロ保持リング	#061-090	24,-6.5,13.8	4.54,14.96,1.35	-104,-3.5,-25.8	stainless_machined
+shutter-slit-diffraction-bevel	SH85	スリット形成羽根エッジ 精密マイクロ面取	#061-090	0,12.6,15.25	20.6,4.49,1.95	-82,21.4,46.75	carbon_fiber
+shutter-arc-slot-curtain-shield	SH86	駆動長孔スライド式防塵・オイル遮蔽シャッ	#061-090	24.5,0,13.5	12,18,2.4	-118.5,-32,-5.5	magnesium_cast
+shutter-velocity-flag-tabs	SH87	幕速・スリット幅リアルタイム計測用パンチ	#061-090	-19.5,11,12.8	9.6,17.5,1.8	-58.5,-39,-36.8	stainless_machined
+shutter-split-blade-transmitter	SH88	主羽根／補助羽根 独立2系統スプリング駆	#061-090	26,3,13.2	15.94,8.16,5.2	-114,-51,20.8	becu_spring
+shutter-coaxial-split-drivers	SH89	同軸2分割・先幕駆動部材	#061-090	27.5,8.5,13.1	18.34,9.89,6.1	76.5,33.5,12.9	matte_black_anodized
+shutter-no-curtain-lock-lever	SH90	ライブビュー常時開放先幕係止レバー	#061-090	32,14,12.9	14.5,8.2,4.5	82,10,25.1	iron_magnetic
 shutter-closing-set-spring	SH91	先幕リセット用セットばね	#091-120	28,11.5,13.3	13.26,7.71,3.6	72,36.5,-11.3	becu_spring
-shutter-aux-detent-yoke	SH92	無通電エンドストップ保持用円筒補助ヨーク	#091-120	35.5,18,12.6	11.84,12.52,3.2	82.5,18,-28.6	iron_magnetic
-shutter-escape-hole-sector-lever	SH93	アクチュエータ保持枠逃げ孔貫通セクタ駆動	#091-120	26.5,-2.5,12.8	13.7,11.7,2.78	79.5,12.5,5.2	magnesium_cast
-shutter-asymmetric-incline-cam	SH94	非対称傾斜角チャージカム	#091-120	29.5,-13.5,12.3	12.89,12.47,5.2	84.5,5.5,-6.3	brass_precision
-shutter-charge-slip-clutch	SH95	チャージギア列 過負荷保護フリクション	#091-120	33,-16.5,12.2	10.93,10.93,5.8	75,-11.5,9.8	magnesium_cast
+shutter-aux-detent-yoke	SH92	無通電エンドストップ保持用円筒補助ヨーク	#091-120	35.5,18,12.6	11.6,12.3,3.2	82.5,18,-28.6	iron_magnetic
+shutter-escape-hole-sector-lever	SH93	アクチュエータ保持枠逃げ孔貫通セクタ駆動	#091-120	26.5,-2.5,12.8	13.5,11.5,2.78	79.5,12.5,5.2	magnesium_cast
+shutter-asymmetric-incline-cam	SH94	非対称傾斜角チャージカム	#091-120	29.5,-13.5,12.3	12.71,12.36,5.2	84.5,5.5,-6.3	brass_precision
+shutter-charge-slip-clutch	SH95	チャージギア列 過負荷保護フリクション	#091-120	33,-16.5,12.2	10.76,10.76,5.8	75,-11.5,9.8	magnesium_cast
 shutter-bronze-gear-bearings	SH96	含油焼結青銅ギア軸受ブッシュ	#091-120	31,-11,12.1	12.1,11.3,2.9	85,-13,-30.1	brass_precision
-shutter-cam-follower-roller	SH97	偏心チャージカム低摩擦ニードル	#091-120	26,-16,12.4	13.32,7.18,3.6	76,-30,-18.4	stainless_machined
+shutter-cam-follower-roller	SH97	偏心チャージカム低摩擦ニードル	#091-120	26,-16,12.4	12.95,7.11,3.6	76,-30,-18.4	stainless_machined
 shutter-datum-dowel-pins	SH98	シャッター・ボディ基準位置決め精密ノック	#091-120	7.5,0,11.6	12.55,4.97,6.85	106.5,4,-47.6	stainless_machined
-shutter-exposure-interlock-sw	SH99	電磁石異常・過走行保護露光完了インターロ	#091-120	36,-6,12	14.96,6.4,2.2	82,-36,-50	matte_chassis
-shutter-coaxial-friction-brake	SH100	同軸トルク調整式多層フリクションディスク	#091-120	-22,-16,12.4	11.72,8.2,9.2	-36,-52,9.6	becu_spring
-shutter-ortho-gap-buffer	SH101	面外直交たわみ式クリアランス支持エラスト	#091-120	-18,-18.5,13	15.56,6.36,3.37	-16,-55.5,31	elastomer_rubber
-shutter-dual-durometer-stop	SH102	二層硬度終端衝撃吸収ストッパー	#091-120	0,-21,12.6	16.16,5.42,3	-10,-47,11.4	elastomer_rubber
-shutter-3em-softstop-coils	SH103	3電磁石アクティブ減速ソフトストップ制動	#091-120	34,5,12.5	16.7,5.85,4.25	-12,-79,21.5	iron_magnetic
-shutter-floating-spring-cradle	SH104	スプリング付勢フローティング保持枠	#091-120	7.5,0,13.4	83.24,59.28,5.3	40.5,-72,-3.4	magnesium_cast
-shutter-blade-rebound-latch	SH105	幕端バウンド防止ワンウェイ・キネティック	#091-120	-20,-14,13.4	11.66,6.68,2.4	-32,-56,-29.4	magnesium_cast
+shutter-exposure-interlock-sw	SH99	電磁石異常・過走行保護露光完了インターロ	#091-120	36,-6,12	14.9,6.3,2.2	82,-36,-50	matte_chassis
+shutter-coaxial-friction-brake	SH100	同軸トルク調整式多層フリクションディスク	#091-120	-22,-16,12.4	11.6,8.2,9.2	-36,-52,9.6	becu_spring
+shutter-ortho-gap-buffer	SH101	面外直交たわみ式クリアランス支持エラスト	#091-120	-18,-18.5,13	15.5,6.29,3.38	-16,-55.5,31	elastomer_rubber
+shutter-dual-durometer-stop	SH102	二層硬度終端衝撃吸収ストッパー	#091-120	0,-21,12.6	16,5.34,3	-10,-47,11.4	elastomer_rubber
+shutter-3em-softstop-coils	SH103	3電磁石アクティブ減速ソフトストップ制動	#091-120	34,5,12.5	16.5,5.85,4.25	-12,-79,21.5	iron_magnetic
+shutter-floating-spring-cradle	SH104	スプリング付勢フローティング保持枠	#091-120	7.5,0,13.4	83,59,5.3	40.5,-72,-3.4	magnesium_cast
+shutter-blade-rebound-latch	SH105	幕端バウンド防止ワンウェイ・キネティック	#091-120	-20,-14,13.4	11.5,6.5,2.4	-32,-56,-29.4	magnesium_cast
 shutter-viscous-rotary-damper	SH106	静音メカモード用高粘度シリコーン油ロータ	#091-120	25,-19.5,12.1	9.19,9.19,4.35	53,-46.5,-24.1	matte_black_anodized
-shutter-mount-passive-barrier	SH107	レンズ着脱連動・無電力メカニカル防塵バリ	#091-120	-24,0,16.9	10.42,16.43,3	2,-74,-50.9	stainless_machined
-shutter-acoustic-chamber-liner	SH108	駆動室音響減衰マイクロ多孔フォーム	#091-120	31.5,-2,11.5	13.58,16.08,2.6	-15.5,-72,-53.5	foam_felt_matte
-shutter-unconnected-dual-stator	SH109	独立2巻線・非接続ステータ電磁アクチュエ	#091-120	33.5,16.5,12.5	12.46,12.6,3.4	38.5,57.5,11.5	iron_magnetic
-shutter-reverse-demag-mosfet	SH110	永久磁石磁束キャンセル	#091-120	30,22.5,10.6	13.96,8.76,1.76	64,47.5,-18.6	ic_epoxy_dark
+shutter-mount-passive-barrier	SH107	レンズ着脱連動・無電力メカニカル防塵バリ	#091-120	-24,0,16.9	10.25,16.21,3	2,-74,-50.9	stainless_machined
+shutter-acoustic-chamber-liner	SH108	駆動室音響減衰マイクロ多孔フォーム	#091-120	31.5,-2,11.5	13.5,16,2.6	-15.5,-72,-53.5	foam_felt_matte
+shutter-unconnected-dual-stator	SH109	独立2巻線・非接続ステータ電磁アクチュエ	#091-120	33.5,16.5,12.5	12.4,12.6,3.4	38.5,57.5,11.5	iron_magnetic
+shutter-reverse-demag-mosfet	SH110	永久磁石磁束キャンセル	#091-120	30,22.5,10.6	13.8,8.6,1.76	64,47.5,-18.6	ic_epoxy_dark
 shutter-armature-cring-seat	SH111	鉄片軸マイクロCリング・円錐セルフ調心座	#091-120	34.5,19.5,12.7	7.57,7.55,6.2	11.5,58.5,23.3	iron_magnetic
-shutter-curtain-ntc-thermistor	SH112	極寒 −10 °C 幕速低下補償用	#091-120	25,21,11.8	12.66,5.06,1.98	-7,55,32.2	polyimide_fpc
-shutter-ir-schmitt-comparator	SH113	940 nm 赤外フォトインタラプタ波形	#091-120	-21.5,16,11.4	12.56,8.36,1.86	7.5,62,20.6	pcb_textured
-shutter-boost-cap-bank	SH114	1/400秒デュアル駆動用・超低ESR高	#091-120	35.5,22.5,10.7	15.16,8.96,3.12	32.5,51.5,-42.7	pcb_textured
-shutter-motor-emi-pifilter	SH115	チャージモータEMI π型フェライトビー	#091-120	38,-12,11.2	13.76,7.76,2.53	58,78,-53.2	solder_silver
+shutter-curtain-ntc-thermistor	SH112	極寒 −10 °C 幕速低下補償用	#091-120	25,21,11.8	12.6,5,1.98	-7,55,32.2	polyimide_fpc
+shutter-ir-schmitt-comparator	SH113	940 nm 赤外フォトインタラプタ波形	#091-120	-21.5,16,11.4	12.4,8.2,1.85	7.5,62,20.6	pcb_textured
+shutter-boost-cap-bank	SH114	1/400秒デュアル駆動用・超低ESR高	#091-120	35.5,22.5,10.7	15,8.8,3.12	32.5,51.5,-42.7	pcb_textured
+shutter-motor-emi-pifilter	SH115	チャージモータEMI π型フェライトビー	#091-120	38,-12,11.2	13.6,7.6,2.53	58,78,-53.2	solder_silver
 shutter-fpc-shield-tape-631s	SH116	OEM 遮光・配線固定テープ	#091-120	22,25.5,11.1	16.35,7.72,2.37	20,52.5,-57.1	foam_felt_matte
-shutter-amr-linear-angle-sensor	SH117	クローズドループ電磁直動制御用	#091-120	27,9,11.5	10.72,7.32,3.9	-13,67,-45.5	ic_epoxy_dark
-shutter-xsync-thyristor-isolator	SH118	X接点保護・高耐圧半導体トリガ絶縁段	#091-120	-23,-15.5,11.5	13.52,8.32,2.32	-19,89.5,-1.5	pcb_textured
-shutter-jis-metrology-slit-target	SH119	JIS B 7091 準拠 3点露出ムラ	#091-120	0,0,11.2	47.14,34.64,1.17	-24,76,-35.2	titanium_machined
-shutter-oem-heat-plate-top	SH120	OEM メカ上部放熱プレート	#091-120	7.5,26.8,15	34.16,4.93,7.76	-1.5,21.2,93	copper_thermal
-shutter-oem-heat-spacer-top	SH121	OEM 放熱プレート断熱スペーサー	#121-150	7.5,25.6,15	24.28,1.35,6.48	36.5,8.4,87	pin_carrier_gloss
-shutter-oem-graphite-top	SH122	OEM メカ上部グラファイト放熱シート	#121-150	7.5,27.5,15	30.86,0.38,7.46	-41.5,8.5,91	elastomer_rubber
-shutter-oem-mb-mask-sheet	SH123	OEM 前面開口マスクシート	#121-150	0,0,19.35	50.47,35.84,1.16	0,0,102.65	matte_black_anodized
-shutter-oem-adjust-washer-d	SH124	OEM 12段階選別厚み調整シムワッシャ	#121-150	7.5,22.5,9.15	17.26,8.05,5.32	-49.5,3.5,-97.15	matte_black_anodized
-shutter-afe3379-500k-rib	SH125	50万回耐久上位ユニット高剛性トラス補強	#121-150	7.5,0,10.35	79.27,52.2,2.35	-7.5,16,-108.35	magnesium_cast
-shutter-micro-fasteners-ecirc	SH126	機構室マイクロ小ねじ・E形止め輪	#121-150	28,0,11.4	13.31,8.29,5.36	20,22,-103.4	stainless_machined
-shutter-ds-bokeh-knife-baffle	SH127	シャッター〜像面距離 d_s 最小化光学	#121-150	0,0,9.55	46.66,34.16,2.68	-46,-24,88.45	matte_black_anodized
-shutter-charge-idler-stub-shafts	SH128	精密旋削SUS304／真鍮チャージ歯車支	#121-150	33,-14,11.8	14.66,8.16,4.56	21,-16,-107.8	magnesium_cast
-shutter-hybrid-gs-sync-bus	SH129	メカ／電子先幕／グローバルシャッター統合	#121-150	18,-23,10.2	16.16,9.16,1.83	-62,-13,-106.2	pcb_textured
-shutter-thick-blade-sensor-shield	SH130	メカシャッターレス機専用・高剛性厚肉セン	#121-150	0,0,17.15	53.22,36.16,4.35	54,-22,86.85	matte_black_anodized
-shutter-blade-crank-offset-arms	SH131	主・補助アーム段曲げクランクオフセット	#121-150	-22.2,0.5,14.9	6.41,23.93,2.06	-95.8,83.5,47.1	stainless_machined
-shutter-blade-rivetless-boss	SH132	リベットレスボス	#121-150	-22.5,15.2,15.6	14.12,7.08,1.32	-111.5,38.8,52.4	stainless_machined
-shutter-blade-titanium-honeycomb	SH133	化学エッチング・チタンハニカム軽量肉抜き	#121-150	0,17.2,16.4	22.26,5.01,0.45	-136,2.8,59.6	stainless_machined
-shutter-blade-5blade-split	SH134	超高速 1.8 ms5分割ジュラルミン	#121-150	0,-18.2,16	18.74,9.36,1.89	-124,4.2,66	carbon_fiber
-shutter-blade-pi-superelastic	SH135	2026次世代炭素繊維＋ホモポリイミド超	#121-150	-12,16.5,16.9	17.86,4.96,1.35	-80,79.5,55.1	carbon_fiber
-shutter-blade-crowning-beads	SH136	羽根先端反り矯正クラウニング加工	#121-150	6.5,16.8,17.2	18.08,7.04,1.15	-66.5,89.2,62.8	carbon_fiber
-shutter-blade-loose-slot-link	SH137	補助羽根遅延開放ルーズスロット	#121-150	-21.5,17.8,16.5	14.12,8.48,2.2	-2.5,94.2,69.5	stainless_machined
-shutter-blade-electroless-ni-ptfe	SH138	羽根表面黒色無電解ニッケル・PTFE複合	#121-150	10.5,-16.8,16.8	16.08,5.48,1.54	-118.5,84.8,79.2	carbon_fiber
-shutter-arm-common-pivot-journal	SH139	先幕・後幕 最内側アーム同軸共有ピボット	#121-150	-23.2,-16.8,15.2	11.68,8.58,4.8	-104.8,50.8,90.8	stainless_machined
-shutter-drive-pin-roller-cap	SH140	駆動ピン先端低摩擦PEEKローラースリー	#121-150	-23.5,16.4,17.5	8.36,4.56,5.1	-62.5,69.6,92.5	stainless_machined
-shutter-adhesive-dust-trap	SH141	羽根室外周・開口下端摩耗粉永久捕獲	#121-150	0,0,11.1	45.36,33.36,1.78	14,116,80.9	magnesium_cast
-shutter-inclined-aperture-wall	SH142	補助地板・開口縁斜め傾斜遮光壁	#121-150	0,0,18.8	46.12,34.12,2.46	52,112,77.2	magnesium_cast
-shutter-insert-molded-bushes	SH143	樹脂地板インサート成形ステンレス支軸ボス	#121-150	-23.2,0,14	7.84,17.74,4.82	-20.8,96,108	matte_chassis
-shutter-midplate-lancing-tabs	SH144	中間仕切り板切り起こしガタ吸収ばね舌片	#121-150	0,0,15.05	44.46,32.46,1.1	0,94,118.95	stainless_machined
-shutter-heat-stake-bayonet-clips	SH145	補助地板鍵穴横スライド係止環状溝	#121-150	16,16,18.2	15.62,7.32,2.73	28,80,113.8	magnesium_cast
-shutter-arc-slot-relief-notches	SH146	円弧長穴終端応力集中逃がしRノッチ	#121-150	-24.8,0,13.4	12.62,14.62,1.74	-61.2,42,114.6	magnesium_cast
-shutter-perimeter-light-seal-foam	SH147	シャッターユニット全周高密度独立気泡モル	#121-150	0,0,20.6	48.44,36.44,1.85	-44,54,125.4	foam_felt_matte
-shutter-conductive-pps-divider	SH148	カーボンナノチューブ／黒鉛配合帯電防止	#121-150	0,0,15.85	48.18,33.72,1.49	4,48,142.15	carbon_fiber
-shutter-aperture-serrated-grooves	SH149	開口フレーム内周60°ミクロ鋸歯状多段迷	#121-150	0,0,19.6	44.9,32.9,1.82	50,52,128.4	foam_felt_matte
-shutter-internal-nd-shield-bay	SH150	シャッター直後連動格納式・内蔵NDフィル	#121-150	0,-17.4,9.6	24.16,3.76,2.36	12,-88.6,98.4	magnesium_cast
-shutter-antistick-nonmag-shim	SH151	電磁石吸着面残留磁気張り付き防止	#151-180	24.6,13.8,16.4	10.12,10.01,2.6	69.4,94.2,61.6	iron_magnetic
-shutter-smco-bias-shunt-screw	SH152	ハイブリッド電磁石サマリウムコバルト温度	#151-180	26.2,9.2,16	10.6,10.3,3.95	103.8,84.8,48	iron_magnetic
-shutter-self-bonding-coil-bobbin	SH153	自己融着エナメル線	#151-180	28,5.4,15.2	7.72,7.62,8.6	126,58.6,40.8	matte_chassis
-shutter-rotary-pm-direct-actuator	SH154	永久磁石ローター直動式ロータリー電磁アク	#151-180	28.5,0.2,16.6	13.45,10.99,4.95	137.5,27.8,35.4	iron_magnetic
-shutter-intermittent-clutch-gear	SH155	チャージ完了自動切離し欠歯セクタギア	#151-180	29.8,-5.8,13.8	14.1,11.6,3.6	142.2,-2.2,32.2	stainless_machined
-shutter-oneway-wrap-spring-clutch	SH156	チャージ軸一方向コイル巻き締めスプリング	#151-180	31.2,3.2,11.8	7.54,6.2,8.2	130.8,62.8,2.2	brass_precision
-shutter-cam-deadpoint-detent	SH157	チャージカムトグル死点安定ディテントばね	#151-180	31.8,-1.5,11	13.69,13.39,2.7	142.2,29.5,-1	brass_precision
-shutter-motor-pinion-sapphire-thrust	SH158	チャージモーター圧入焼結鋼ヘリカルピニオ	#151-180	33.2,-9.2,10.6	9.48,12.67,5.66	142.8,-2.8,-6.6	stainless_machined
-shutter-uv-sealed-tension-port	SH159	先幕・後幕 個別張力微調ウォーム工場アク	#151-180	27.5,12.6,11.4	11.76,6.56,1.95	130.5,63.4,-39.4	magnesium_cast
-shutter-blackout-2stage-prep-cam	SH160	ミラーレス連写ブラックアウト短縮2段階先	#151-180	28,5.2,10.2	14.91,10.58,4.4	142,32.8,-42.2	stainless_machined
-shutter-eddy-current-self-brake	SH161	非接触自己減衰・渦電流磁気ダンピングブレ	#151-180	29,-11.5,15.8	14.22,4.72,6.04	135,-34.5,32.2	pin_carrier_gloss
-shutter-wedge-friction-brake	SH162	高速駆動レバーくさび形セルフロック摩擦ブ	#151-180	24.5,-14.8,16.2	14.26,8.92,2.85	119.5,-65.2,39.8	magnesium_cast
-shutter-multileaf-coulomb-damper	SH163	多層重ね板ばねクーロン層間摩擦リバウンド	#151-180	17.5,-16.2,15.8	14.67,4.56,3.2	94.5,-87.8,50.2	becu_spring
-shutter-squeeze-film-air-pocket	SH164	羽根室終端スクイーズフィルム流体ブレーキ	#151-180	2,-16.8,14.4	18.16,5.43,1.98	72,-99.2,61.6	stainless_machined
-shutter-slotted-elastomer-ring	SH165	偏心ピン用金属コア内蔵・U字スリット多層	#151-180	-12.5,-16.5,14.8	11.9,5.5,4.6	46.5,-103.5,67.2	elastomer_rubber
-shutter-zener-active-flyback	SH166	電磁石超高速消磁ツェナー／TVSアクティ	#151-180	31.5,-13.2,11.4	13.32,6.92,1.95	130.5,-34.8,-5.4	pcb_textured
-shutter-pwm-bulb-hold-chopper	SH167	長時間露光発熱・熱カブリ防止ピーク	#151-180	27.5,-16.8,11	13.12,6.92,2.63	114.5,-67.2,1	pcb_textured
-shutter-motor-dynamic-brake-fet	SH168	チャージモーター急停止ローサイド短絡ダイ	#151-180	21,-17.8,10.6	12.92,6.72,1.83	87,-90.2,9.4	ic_epoxy_dark
-shutter-4ch-start-end-optical	SH169	先幕／後幕 開始端・終了端4チャネル独立	#151-180	10,-17.6,13	16.3,5.3,3.23	60,-102.4,13	polyimide_fpc
-shutter-fpc-staggered-zif-tearstop	SH170	シャッターFPC先端0.3 mm千鳥2列	#151-180	24.5,-18.2,12.6	13.66,7.16,0.69	3.5,-103.8,17.4	polyimide_fpc
-shutter-hss-fp-50khz-sync	SH171	ハイスピードシンクロ20–50 kHz	#151-180	-4,-18,12.2	14.36,6.92,1.84	-12,-100,31.8	pcb_textured
-shutter-hf-antiflicker-gate	SH172	高周波フリッカーレス撮影100/120	#151-180	-15.5,-17.6,12.6	12.92,6.92,3.17	-42.5,-94.4,43.4	pcb_textured
-shutter-powerfail-safety-cap	SH173	電源瞬断・電池消耗時フェイルセーフ緊急幕	#151-180	-23.5,-15.5,11.4	13.72,7.32,5.4	-74.5,-78.5,54.6	pcb_textured
-shutter-oem-mag-cut-plate	SH174	OEM 磁気シールド遮断板	#151-180	-25.6,-7.8,9.2	15.1,12.5,1.13	-98.4,-56.2,48.8	iron_magnetic
+shutter-amr-linear-angle-sensor	SH117	クローズドループ電磁直動制御用	#091-120	27,9,11.5	10.6,7.2,3.9	-13,67,-45.5	pcb_textured
+shutter-xsync-thyristor-isolator	SH118	X接点保護・高耐圧半導体トリガ絶縁段	#091-120	-23,-15.5,11.5	13.4,8.2,2.31	-19,89.5,-1.5	pcb_textured
+shutter-jis-metrology-slit-target	SH119	JIS B 7091 準拠 3点露出ムラ	#091-120	0,0,11.2	47,34.5,1.17	-24,76,-35.2	titanium_machined
+shutter-oem-heat-plate-top	SH120	OEM メカ上部放熱プレート	#091-120	7.5,26.8,15	34,4.83,7.6	-1.5,21.2,93	copper_thermal
+shutter-oem-heat-spacer-top	SH121	OEM 放熱プレート断熱スペーサー	#121-150	7.5,25.6,15	24,1.35,6.2	36.5,8.4,87	pin_carrier_gloss
+shutter-oem-graphite-top	SH122	OEM メカ上部グラファイト放熱シート	#121-150	7.5,27.5,15	30.8,0.38,7.4	-41.5,8.5,91	elastomer_rubber
+shutter-oem-mb-mask-sheet	SH123	OEM 前面開口マスクシート	#121-150	0,0,19.35	50.47,35.84,1.17	0,0,102.65	matte_black_anodized
+shutter-oem-adjust-washer-d	SH124	OEM 12段階選別厚み調整シムワッシャ	#121-150	7.5,22.5,9.15	17.2,8,5.32	-49.5,3.5,-97.15	matte_black_anodized
+shutter-afe3379-500k-rib	SH125	50万回耐久上位ユニット高剛性トラス補強	#121-150	7.5,0,10.35	79.27,52,2.35	-7.5,16,-108.35	magnesium_cast
+shutter-micro-fasteners-ecirc	SH126	機構室マイクロ小ねじ・E形止め輪	#121-150	28,0,11.4	13.21,8.18,5.36	20,22,-103.4	stainless_machined
+shutter-ds-bokeh-knife-baffle	SH127	シャッター〜像面距離 d_s 最小化光学	#121-150	0,0,9.55	46.5,34,2.68	-46,-24,88.45	matte_black_anodized
+shutter-charge-idler-stub-shafts	SH128	精密旋削SUS304／真鍮チャージ歯車支	#121-150	33,-14,11.8	14.5,8,4.56	21,-16,-107.8	magnesium_cast
+shutter-hybrid-gs-sync-bus	SH129	メカ／電子先幕／グローバルシャッター統合	#121-150	18,-23,10.2	16,9,1.8	-62,-13,-106.2	pcb_textured
+shutter-thick-blade-sensor-shield	SH130	メカシャッターレス機専用・高剛性厚肉セン	#121-150	0,0,17.15	53.14,36,4.35	54,-22,86.85	matte_black_anodized
+shutter-blade-crank-offset-arms	SH131	主・補助アーム段曲げクランクオフセット	#121-150	-22.2,0.5,14.9	6.36,23.88,2.06	-95.8,83.5,47.1	stainless_machined
+shutter-blade-rivetless-boss	SH132	リベットレスボス	#121-150	-22.5,15.2,15.6	14,7,1.32	-111.5,38.8,52.4	stainless_machined
+shutter-blade-titanium-honeycomb	SH133	化学エッチング・チタンハニカム軽量肉抜き	#121-150	0,17.2,16.4	22.2,4.96,0.45	-136,2.8,59.6	stainless_machined
+shutter-blade-5blade-split	SH134	超高速 1.8 ms5分割ジュラルミン	#121-150	0,-18.2,16	18.7,9.31,1.89	-124,4.2,66	carbon_fiber
+shutter-blade-pi-superelastic	SH135	2026次世代炭素繊維＋ホモポリイミド超	#121-150	-12,16.5,16.9	17.75,4.8,1.35	-80,79.5,55.1	carbon_fiber
+shutter-blade-crowning-beads	SH136	羽根先端反り矯正クラウニング加工	#121-150	6.5,16.8,17.2	18,7,1.15	-66.5,89.2,62.8	carbon_fiber
+shutter-blade-loose-slot-link	SH137	補助羽根遅延開放ルーズスロット	#121-150	-21.5,17.8,16.5	14,8.36,2.2	-2.5,94.2,69.5	stainless_machined
+shutter-blade-electroless-ni-ptfe	SH138	羽根表面黒色無電解ニッケル・PTFE複合	#121-150	10.5,-16.8,16.8	16,5.4,1.54	-118.5,84.8,79.2	carbon_fiber
+shutter-arm-common-pivot-journal	SH139	先幕・後幕 最内側アーム同軸共有ピボット	#121-150	-23.2,-16.8,15.2	11.62,8.45,4.8	-104.8,50.8,90.8	stainless_machined
+shutter-drive-pin-roller-cap	SH140	駆動ピン先端低摩擦PEEKローラースリー	#121-150	-23.5,16.4,17.5	8.2,4.4,5.1	-62.5,69.6,92.5	stainless_machined
+shutter-adhesive-dust-trap	SH141	羽根室外周・開口下端摩耗粉永久捕獲	#121-150	0,0,11.1	45.2,33.2,1.78	14,116,80.9	magnesium_cast
+shutter-inclined-aperture-wall	SH142	補助地板・開口縁斜め傾斜遮光壁	#121-150	0,0,18.8	46,34,2.43	52,112,77.2	magnesium_cast
+shutter-insert-molded-bushes	SH143	樹脂地板インサート成形ステンレス支軸ボス	#121-150	-23.2,0,14	7.6,17.5,4.82	-20.8,96,108	matte_chassis
+shutter-midplate-lancing-tabs	SH144	中間仕切り板切り起こしガタ吸収ばね舌片	#121-150	0,0,15.05	44.4,32.4,1.09	0,94,118.95	stainless_machined
+shutter-heat-stake-bayonet-clips	SH145	補助地板鍵穴横スライド係止環状溝	#121-150	16,16,18.2	15.5,7.2,2.73	28,80,113.8	magnesium_cast
+shutter-arc-slot-relief-notches	SH146	円弧長穴終端応力集中逃がしRノッチ	#121-150	-24.8,0,13.4	12.5,14.5,1.74	-61.2,42,114.6	magnesium_cast
+shutter-perimeter-light-seal-foam	SH147	シャッターユニット全周高密度独立気泡モル	#121-150	0,0,20.6	48,36,1.85	-44,54,125.4	foam_felt_matte
+shutter-conductive-pps-divider	SH148	カーボンナノチューブ／黒鉛配合帯電防止	#121-150	0,0,15.85	48.15,33.6,1.49	4,48,142.15	carbon_fiber
+shutter-aperture-serrated-grooves	SH149	開口フレーム内周60°ミクロ鋸歯状多段迷	#121-150	0,0,19.6	44.8,32.8,1.82	50,52,128.4	foam_felt_matte
+shutter-internal-nd-shield-bay	SH150	シャッター直後連動格納式・内蔵NDフィル	#121-150	0,-17.4,9.6	24,3.6,2.36	12,-88.6,98.4	magnesium_cast
+shutter-antistick-nonmag-shim	SH151	電磁石吸着面残留磁気張り付き防止	#151-180	24.6,13.8,16.4	10,9.88,2.6	69.4,94.2,61.6	iron_magnetic
+shutter-smco-bias-shunt-screw	SH152	ハイブリッド電磁石サマリウムコバルト温度	#151-180	26.2,9.2,16	10.4,10.2,3.95	103.8,84.8,48	iron_magnetic
+shutter-self-bonding-coil-bobbin	SH153	自己融着エナメル線	#151-180	28,5.4,15.2	7.6,7.52,8.6	126,58.6,40.8	matte_chassis
+shutter-rotary-pm-direct-actuator	SH154	永久磁石ローター直動式ロータリー電磁アク	#151-180	28.5,0.2,16.6	13.3,10.69,4.95	137.5,27.8,35.4	iron_magnetic
+shutter-intermittent-clutch-gear	SH155	チャージ完了自動切離し欠歯セクタギア	#151-180	29.8,-5.8,13.8	13.94,11.44,3.6	142.2,-2.2,32.2	stainless_machined
+shutter-oneway-wrap-spring-clutch	SH156	チャージ軸一方向コイル巻き締めスプリング	#151-180	31.2,3.2,11.8	7.5,6.2,8.2	130.8,62.8,2.2	brass_precision
+shutter-cam-deadpoint-detent	SH157	チャージカムトグル死点安定ディテントばね	#151-180	31.8,-1.5,11	13.54,13.31,2.7	142.2,29.5,-1	brass_precision
+shutter-motor-pinion-sapphire-thrust	SH158	チャージモーター圧入焼結鋼ヘリカルピニオ	#151-180	33.2,-9.2,10.6	9.4,12.64,5.6	142.8,-2.8,-6.6	stainless_machined
+shutter-uv-sealed-tension-port	SH159	先幕・後幕 個別張力微調ウォーム工場アク	#151-180	27.5,12.6,11.4	11.6,6.4,1.95	130.5,63.4,-39.4	magnesium_cast
+shutter-blackout-2stage-prep-cam	SH160	ミラーレス連写ブラックアウト短縮2段階先	#151-180	28,5.2,10.2	14.84,10.58,4.4	142,32.8,-42.2	stainless_machined
+shutter-eddy-current-self-brake	SH161	非接触自己減衰・渦電流磁気ダンピングブレ	#151-180	29,-11.5,15.8	14.1,4.6,6.04	135,-34.5,32.2	pin_carrier_gloss
+shutter-wedge-friction-brake	SH162	高速駆動レバーくさび形セルフロック摩擦ブ	#151-180	24.5,-14.8,16.2	14.18,8.75,2.85	119.5,-65.2,39.8	magnesium_cast
+shutter-multileaf-coulomb-damper	SH163	多層重ね板ばねクーロン層間摩擦リバウンド	#151-180	17.5,-16.2,15.8	14.61,4.5,3.2	94.5,-87.8,50.2	becu_spring
+shutter-squeeze-film-air-pocket	SH164	羽根室終端スクイーズフィルム流体ブレーキ	#151-180	2,-16.8,14.4	18,5.35,1.98	72,-99.2,61.6	stainless_machined
+shutter-slotted-elastomer-ring	SH165	偏心ピン用金属コア内蔵・U字スリット多層	#151-180	-12.5,-16.5,14.8	11.7,5.3,4.6	46.5,-103.5,67.2	elastomer_rubber
+shutter-zener-active-flyback	SH166	電磁石超高速消磁ツェナー／TVSアクティ	#151-180	31.5,-13.2,11.4	13.2,6.8,1.95	130.5,-34.8,-5.4	pcb_textured
+shutter-pwm-bulb-hold-chopper	SH167	長時間露光発熱・熱カブリ防止ピーク	#151-180	27.5,-16.8,11	13,6.8,2.63	114.5,-67.2,1	pcb_textured
+shutter-motor-dynamic-brake-fet	SH168	チャージモーター急停止ローサイド短絡ダイ	#151-180	21,-17.8,10.6	12.8,6.6,1.83	87,-90.2,9.4	ic_epoxy_dark
+shutter-4ch-start-end-optical	SH169	先幕／後幕 開始端・終了端4チャネル独立	#151-180	10,-17.6,13	16.2,5.2,3.23	60,-102.4,13	polyimide_fpc
+shutter-fpc-staggered-zif-tearstop	SH170	シャッターFPC先端0.3 mm千鳥2列	#151-180	24.5,-18.2,12.6	13.6,7.1,0.69	3.5,-103.8,17.4	polyimide_fpc
+shutter-hss-fp-50khz-sync	SH171	ハイスピードシンクロ20–50 kHz	#151-180	-4,-18,12.2	14.3,6.8,1.84	-12,-100,31.8	pcb_textured
+shutter-hf-antiflicker-gate	SH172	高周波フリッカーレス撮影100/120	#151-180	-15.5,-17.6,12.6	12.8,6.8,3.17	-42.5,-94.4,43.4	pcb_textured
+shutter-powerfail-safety-cap	SH173	電源瞬断・電池消耗時フェイルセーフ緊急幕	#151-180	-23.5,-15.5,11.4	13.6,7.2,5.4	-74.5,-78.5,54.6	pcb_textured
+shutter-oem-mag-cut-plate	SH174	OEM 磁気シールド遮断板	#151-180	-25.6,-7.8,9.2	15,12.4,1.13	-98.4,-56.2,48.8	iron_magnetic
 shutter-oem-im-fix-shaft	SH175	OEM イメージャー／シャッター光軸基準	#151-180	-24.2,-13.5,9.4	12.61,3.5,6.8	-111.8,-20.5,10.6	titanium_machined
-shutter-oem-im-mask-retainer	SH176	OEM センサー直前開口遮光マスク板	#151-180	0,0,9.1	45.9,33.9,1.72	-132,-72,-27.1	stainless_machined
-shutter-oem-rl-2stage-switch	SH177	OEM 2段レリーズスイッチ	#151-180	24.8,17.6,17.8	13.56,6.92,3.09	-128.8,-121.6,-51.8	polyimide_fpc
-shutter-oem-rear-muffle-cushions	SH178	OEM シャッター作動音・背面吸音マッフ	#151-180	-12,-17.4,8.2	15.89,9.19,2.22	-50,-94.6,-62.2	elastomer_rubber
-shutter-fram-adaptive-wear-log	SH179	不揮発FRAMシャッター作動回数カウンタ	#151-180	6.5,-18.2,8.6	13.12,6.92,1.84	-22.5,-89.8,-82.6	pcb_textured
-shutter-acoustic-laser-qc-rig	SH180	工場出荷全数検査レーザー光電3点幕速計測	#151-180	24.2,0,8.8	8.43,17.66,2.21	9.8,-104,-94.8	titanium_machined
+shutter-oem-im-mask-retainer	SH176	OEM センサー直前開口遮光マスク板	#151-180	0,0,9.1	45.8,33.8,1.72	-132,-72,-27.1	stainless_machined
+shutter-oem-rl-2stage-switch	SH177	OEM 2段レリーズスイッチ	#151-180	24.8,17.6,17.8	13.5,6.92,3.09	-128.8,-121.6,-51.8	polyimide_fpc
+shutter-oem-rear-muffle-cushions	SH178	OEM シャッター作動音・背面吸音マッフ	#151-180	-12,-17.4,8.2	15.7,9,2.22	-50,-94.6,-62.2	elastomer_rubber
+shutter-fram-adaptive-wear-log	SH179	不揮発FRAMシャッター作動回数カウンタ	#151-180	6.5,-18.2,8.6	13,6.8,1.84	-22.5,-89.8,-82.6	pcb_textured
+shutter-acoustic-laser-qc-rig	SH180	工場出荷全数検査レーザー光電3点幕速計測	#151-180	24.2,0,8.8	8.3,17.5,2.21	9.8,-104,-94.8	titanium_machined

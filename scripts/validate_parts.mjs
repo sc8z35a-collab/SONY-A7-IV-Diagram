@@ -31,6 +31,7 @@ const DATA_DIR = 'src/data';
 const COMPOSITE_UNIT_IDS = new Set(['integrated', 'camera_body']);
 
 const TIER_DPR_CAPS = {
+  standard_lite: 1.0,
   standard: 1.0,
   high: 1.5,
   ultra: 2.0,
@@ -431,7 +432,7 @@ try {
     const unitId = entry.unitId;
     const unitTierMetrics = {};
 
-    for (const tier of ['standard', 'high', 'ultra']) {
+    for (const tier of ['standard_lite', 'standard', 'high', 'ultra']) {
       const unit = await entry.load();
       const meta = unit.getMeta();
       const built = await unit.build(tier, cache, {
@@ -581,8 +582,10 @@ try {
 
       // 4-F: Draw-Call & Shader Tier Budget Gate
       let visibleDrawCalls = 0;
+      let matcapMatCount = 0;
       let physicalMatCount = 0;
       let lambertMatCount = 0;
+      let phongMatCount = 0;
       let standardMatCount = 0;
       const seenMats = new Set();
 
@@ -598,8 +601,10 @@ try {
           const mat = obj.material;
           if (mat && !seenMats.has(mat)) {
             seenMats.add(mat);
-            if (mat.isMeshPhysicalMaterial) physicalMatCount++;
+            if (mat.isMeshMatcapMaterial) matcapMatCount++;
+            else if (mat.isMeshPhysicalMaterial) physicalMatCount++;
             else if (mat.isMeshStandardMaterial) standardMatCount++;
+            else if (mat.isMeshPhongMaterial) phongMatCount++;
             else if (mat.isMeshLambertMaterial) lambertMatCount++;
           }
         }
@@ -608,11 +613,13 @@ try {
       const tierCfg = cacheMod.QUALITY_TIER_CONFIG[tier];
       const tris = built.stats.estimatedTriangles;
       const tierMatOk =
-        tier === 'standard'
-          ? physicalMatCount === 0 && (lambertMatCount > 0 || standardMatCount > 0)
-          : tier === 'high'
-            ? physicalMatCount === 0 && standardMatCount > 0
-            : physicalMatCount > 0;
+        tier === 'standard_lite'
+          ? physicalMatCount === 0 && standardMatCount === 0 && matcapMatCount > 0
+          : tier === 'standard'
+            ? physicalMatCount === 0 && standardMatCount === 0 && (lambertMatCount + phongMatCount > 0)
+            : tier === 'high'
+              ? physicalMatCount === 0 && standardMatCount > 0
+              : physicalMatCount > 0;
 
       if (
         visibleDrawCalls > maxDrawCalls ||
@@ -622,7 +629,7 @@ try {
         totalRuntimeFailures++;
         fail(
           `4-4 Budget Gate (${unitId}/${tier.toUpperCase()})`,
-          `drawCalls=${visibleDrawCalls}/${maxDrawCalls}, tris=${tris}, dprCap=${tierCfg.maxPixelRatio}, mats={L:${lambertMatCount},S:${standardMatCount},P:${physicalMatCount}}`
+          `drawCalls=${visibleDrawCalls}/${maxDrawCalls}, tris=${tris}, dprCap=${tierCfg.maxPixelRatio}, mats={MC:${matcapMatCount},L:${lambertMatCount},Ph:${phongMatCount},S:${standardMatCount},P:${physicalMatCount}}`
         );
       }
 
@@ -648,20 +655,21 @@ try {
         totalInstances: built.stats.totalInstances,
         batchedMeshes: built.stats.batchedMeshCount,
         totalBatchedItems: built.stats.totalBatchedItems,
-        mats: { lambert: lambertMatCount, standard: standardMatCount, physical: physicalMatCount },
+        mats: { matcap: matcapMatCount, lambert: lambertMatCount, phong: phongMatCount, standard: standardMatCount, physical: physicalMatCount },
         postDisposeRefs: postStats.totalRefs,
       };
     }
 
-    // Assert triangle count scales across STD <= HIGH <= ULTRA with STD < ULTRA
+    // Assert triangle count scales monotonically across LITE <= STD <= HIGH <= ULTRA with LITE < ULTRA
+    const liteT = unitTierMetrics.standard_lite.triangles;
     const stdT = unitTierMetrics.standard.triangles;
     const highT = unitTierMetrics.high.triangles;
     const ultraT = unitTierMetrics.ultra.triangles;
-    if (!(stdT <= highT && highT <= ultraT && stdT < ultraT)) {
+    if (!(liteT <= stdT && stdT <= highT && highT <= ultraT && liteT < ultraT)) {
       totalRuntimeFailures++;
       fail(
         `4-6 Tier Scaling (${unitId})`,
-        `Expected STD < ULTRA & monotonic scaling, got STD=${stdT}, HIGH=${highT}, ULTRA=${ultraT}`
+        `Expected LITE <= STD <= HIGH <= ULTRA & LITE < ULTRA, got LITE=${liteT}, STD=${stdT}, HIGH=${highT}, ULTRA=${ultraT}`
       );
     }
 
@@ -671,7 +679,7 @@ try {
   if (totalRuntimeFailures === 0) {
     pass(
       '4-6 Tier Scaling & Budget Gates',
-      `All ${registeredUnits.length} unit(s) passed draw-call budgets, STD < HIGH <= ULTRA scaling, DPR caps (1.0/1.5/2.0), and 0 post-dispose cache refs`
+      `All ${registeredUnits.length} unit(s) passed draw-call budgets, LITE <= STD <= HIGH <= ULTRA scaling, DPR caps (1.0/1.0/1.5/2.0), and 0 post-dispose cache refs`
     );
     pass(
       '3-4 Runtime Invariants',
@@ -679,10 +687,10 @@ try {
     );
   }
 
-  console.log('\n[Universal V2 Tier Matrix]');
+  console.log('\n[Universal V2 4-Tier Matrix]');
   for (const [uid, m] of Object.entries(allUnitMatrices)) {
     console.log(
-      `  ${uid.padEnd(13)} | STD: ${String(m.standard.drawCalls).padStart(2)}dc / ${String(m.standard.triangles).padStart(7)} tris | HIGH: ${String(m.high.drawCalls).padStart(2)}dc / ${String(m.high.triangles).padStart(7)} tris | ULTRA: ${String(m.ultra.drawCalls).padStart(2)}dc / ${String(m.ultra.triangles).padStart(7)} tris | Inst:${m.ultra.instancedMeshes}(${m.ultra.totalInstances}) Batch:${m.ultra.batchedMeshes}(${m.ultra.totalBatchedItems}) | Refs:0`
+      `  ${uid.padEnd(13)} | LITE: ${String(m.standard_lite.drawCalls).padStart(2)}dc / ${String(m.standard_lite.triangles).padStart(7)} tris | STD: ${String(m.standard.drawCalls).padStart(2)}dc / ${String(m.standard.triangles).padStart(7)} tris | HIGH: ${String(m.high.drawCalls).padStart(2)}dc / ${String(m.high.triangles).padStart(7)} tris | ULTRA: ${String(m.ultra.drawCalls).padStart(2)}dc / ${String(m.ultra.triangles).padStart(7)} tris | Refs:0`
     );
   }
 } catch (err) {

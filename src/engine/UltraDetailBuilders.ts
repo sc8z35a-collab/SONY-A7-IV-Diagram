@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import { smoothCreaseNormals } from './FastCadGeometry';
+import { resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
 import { GPU_PROFILE } from './GpuOptimizer';
 import {
+  getActiveBuildQuality,
   getActiveGeometryScale,
   scaleBevelSegmentsForQuality,
   scaleCurveSegmentsForQuality,
@@ -18,8 +19,8 @@ export function markHiRes<T extends THREE.BufferGeometry>(geo: T): T {
 
 /**
  * High-resolution CNC-chamfered extrusion centered on Z ([-depth/2, +depth/2]).
- * Unlike the low-poly macro `extrudeCentered`, this keeps silky rounded fillets and true multi-step
- * specular-catching chamfers for the standalone macro-inspection subsystems.
+ * Scales cleanly across STD (sagitta-resampled + macro chamfer only), HIGH (sagitta + 1-step bevel),
+ * and ULTRA (full multi-step specular-catching bevels).
  */
 export function extrudeHiRes(
   shape: THREE.Shape,
@@ -29,31 +30,54 @@ export function extrudeHiRes(
   bevelSegments = 2,
   curveSegments = 24
 ): THREE.ExtrudeGeometry {
+  const quality = getActiveBuildQuality();
   const qScale = getActiveGeometryScale();
   const effCurve = qScale
     ? scaleCurveSegmentsForQuality(curveSegments, 4)
     : GPU_PROFILE.isMobile
       ? Math.max(8, Math.round(curveSegments * 0.5))
       : curveSegments;
-  const effBevelSegs =
-    bevelSize > 0.005 && bevelThickness > 0.005
-      ? qScale
-        ? scaleBevelSegmentsForQuality(bevelSegments)
-        : GPU_PROFILE.isMobile
-          ? Math.max(1, bevelSegments - 1)
-          : bevelSegments
-      : 0;
+
+  let targetShape = shape;
+  let finalCurveSegs = effCurve;
+  let effBevelSegs: number;
+
+  if (quality === 'standard_lite') {
+    targetShape = resampleShapeSagitta(shape, 0.58, Math.max(6, effCurve));
+    finalCurveSegs = 1;
+    effBevelSegs = 0;
+  } else if (quality === 'standard') {
+    targetShape = resampleShapeSagitta(shape, 0.42, Math.max(8, effCurve));
+    finalCurveSegs = 1;
+    effBevelSegs =
+      bevelSize >= 0.14 && bevelThickness >= 0.12 && depth >= 2.2 ? 1 : 0;
+  } else if (quality === 'high') {
+    targetShape = resampleShapeSagitta(shape, 0.24, Math.max(10, effCurve));
+    finalCurveSegs = 1;
+    effBevelSegs =
+      bevelSize > 0.005 && bevelThickness > 0.005 && depth >= 0.9 ? 1 : 0;
+  } else {
+    effBevelSegs =
+      bevelSize > 0.005 && bevelThickness > 0.005
+        ? qScale
+          ? scaleBevelSegmentsForQuality(bevelSegments)
+          : GPU_PROFILE.isMobile
+            ? Math.max(1, bevelSegments - 1)
+            : bevelSegments
+        : 0;
+  }
+
   const hasBevel = effBevelSegs > 0;
   const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
 
-  const geo = new THREE.ExtrudeGeometry(shape, {
+  const geo = new THREE.ExtrudeGeometry(targetShape, {
     depth: bodyDepth,
     bevelEnabled: hasBevel,
     bevelSegments: effBevelSegs,
     steps: 1,
     bevelSize,
     bevelThickness,
-    curveSegments: effCurve,
+    curveSegments: finalCurveSegs,
   });
   geo.translate(0, 0, -bodyDepth * 0.5);
   smoothCreaseNormals(geo, 36);
@@ -271,10 +295,29 @@ export function createChamferedBoxGeo(
   cornerR = 0.12,
   bevel = 0.08,
   axis: 'y' | 'z' = 'y'
-): THREE.ExtrudeGeometry {
-  const shape = new THREE.Shape();
-  const rw = axis === 'y' ? w : w;
+): THREE.BufferGeometry {
+  const quality = getActiveBuildQuality();
+  const maxDim = Math.max(w, h, d);
+  const rw = w;
   const rh = axis === 'y' ? d : h;
+
+  // Sub-12mm blocks in STD LITE, sub-5.5mm in STD, and sub-2.0mm in HIGH look crisp as boxes
+  // while cutting triangle count by 30x-100x!
+  if (
+    (quality === 'standard_lite' && (maxDim < 12.0 || bevel < 0.25)) ||
+    (quality === 'standard' && maxDim < 5.5) ||
+    (quality === 'high' && maxDim < 2.0)
+  ) {
+    const box = new THREE.BoxGeometry(w, h, d);
+    if (axis === 'y') {
+      applyPlanarUVs(box, rw, rh, 'xz');
+    } else {
+      applyPlanarUVs(box, rw, rh, 'xy');
+    }
+    return markHiRes(box);
+  }
+
+  const shape = new THREE.Shape();
   const thick = axis === 'y' ? h : d;
   const hw = rw * 0.5;
   const hh = rh * 0.5;
@@ -368,13 +411,19 @@ export function buildChipPackage(opts: ChipPackageOptions): THREE.Group {
   }
 
   // Pin-1 laser-etched index dimple on top corner + opposite mold ejector pin recess ring
-  const pin1R = Math.max(0.14, Math.min(w, d) * 0.062);
-  const pin1 = new THREE.Mesh(hiResCyl(pin1R, pin1R, 0.05, 14), pin1Mat ?? leadMat);
-  pin1.position.set(-w * 0.33, body.position.y + bodyH * 0.5 + 0.018, -d * 0.33);
-  pin1.userData.noEdges = true;
-  g.add(pin1);
+  const quality = getActiveBuildQuality();
+  if (quality !== 'standard_lite') {
+    const pin1R = Math.max(0.14, Math.min(w, d) * 0.062);
+    const pin1 = new THREE.Mesh(
+      hiResCyl(pin1R, pin1R, 0.05, quality === 'standard' ? 6 : 14),
+      pin1Mat ?? leadMat
+    );
+    pin1.position.set(-w * 0.33, body.position.y + bodyH * 0.5 + 0.018, -d * 0.33);
+    pin1.userData.noEdges = true;
+    g.add(pin1);
+  }
 
-  if (Math.min(w, d) >= 3.0) {
+  if (quality !== 'standard_lite' && quality !== 'standard' && Math.min(w, d) >= 3.0) {
     const ejR = Math.max(0.16, Math.min(w, d) * 0.075);
     const ejector = new THREE.Mesh(
       hiResTorus(ejR, ejR * 0.16, 6, 16).rotateX(Math.PI / 2),
@@ -618,9 +667,19 @@ export function buildSpiralJellyRollGeometry(
   thetaOffset = 0,
   cutoutFraction = 0.34
 ): THREE.BufferGeometry {
-  const stepsPerTurn = GPU_PROFILE.isMobile ? 22 : 34;
+  const quality = getActiveBuildQuality();
+  const stepsPerTurn =
+    quality === 'standard_lite'
+      ? 8
+      : quality === 'standard'
+        ? 12
+        : quality === 'high'
+          ? 22
+          : GPU_PROFILE.isMobile
+            ? 22
+            : 34;
   const effectiveTurns = Math.max(0.5, turns - cutoutFraction);
-  const totalSteps = Math.max(18, Math.round(effectiveTurns * stepsPerTurn));
+  const totalSteps = Math.max(10, Math.round(effectiveTurns * stepsPerTurn));
   const halfH = height * 0.5;
   const halfT = wallThick * 0.5;
 
@@ -643,7 +702,8 @@ export function buildSpiralJellyRollGeometry(
     positions.push(...p0, ...p1, ...p2, ...p3);
     normals.push(...n0, ...n1, ...n1, ...n0);
     uvs.push(u0, 0, u1, 0, u1, 1, u0, 1);
-    indices.push(base, base + 1, base + 2, base, base + 2, base + 3);
+    // Outward CCW winding matching explicit outward vertex normals under FrontSide culling
+    indices.push(base, base + 2, base + 1, base, base + 3, base + 2);
   };
 
   for (let i = 0; i < totalSteps; i++) {
@@ -745,7 +805,17 @@ export function buildCrimpedSteelCanGeometry(
     new THREE.Vector2(radius - 1.15, halfH - 0.08),
     new THREE.Vector2(radius - 1.35, halfH - 0.52),
   ];
-  const segs = GPU_PROFILE.isMobile ? Math.max(18, Math.round(radialSegments * 0.6)) : radialSegments;
+  const quality = getActiveBuildQuality();
+  const segs =
+    quality === 'standard_lite'
+      ? Math.max(12, Math.round(radialSegments * 0.35))
+      : quality === 'standard'
+        ? Math.max(16, Math.round(radialSegments * 0.45))
+        : quality === 'high'
+          ? Math.max(24, Math.round(radialSegments * 0.7))
+          : GPU_PROFILE.isMobile
+            ? Math.max(18, Math.round(radialSegments * 0.6))
+            : radialSegments;
   const geo = new THREE.LatheGeometry(pts, segs, phiStart, phiLength);
   geo.computeVertexNormals();
   return markHiRes(geo);
@@ -765,17 +835,20 @@ export function buildPhillipsScrew(
   threadMat: THREE.Material
 ): THREE.Group {
   const g = new THREE.Group();
+  const quality = getActiveBuildQuality();
 
-  // Domed pan head turned via LatheGeometry
+  // Domed pan head turned via LatheGeometry (ordered bottom -headH -> top 0 for outward CCW normals)
   const headPts: THREE.Vector2[] = [
-    new THREE.Vector2(shankR, 0),
-    new THREE.Vector2(headR * 1.04, 0),
-    new THREE.Vector2(headR * 1.04, -headH * 0.22),
-    new THREE.Vector2(headR * 0.96, -headH * 0.65),
-    new THREE.Vector2(headR * 0.72, -headH * 0.94),
     new THREE.Vector2(0.02, -headH),
+    new THREE.Vector2(headR * 0.72, -headH * 0.94),
+    new THREE.Vector2(headR * 0.96, -headH * 0.65),
+    new THREE.Vector2(headR * 1.04, -headH * 0.22),
+    new THREE.Vector2(headR * 1.04, 0),
+    new THREE.Vector2(shankR, 0),
   ];
-  const headGeo = markHiRes(new THREE.LatheGeometry(headPts, 24));
+  const headSegs =
+    quality === 'standard_lite' ? 6 : quality === 'standard' ? 10 : quality === 'high' ? 16 : 24;
+  const headGeo = markHiRes(new THREE.LatheGeometry(headPts, headSegs));
   headGeo.computeVertexNormals();
   const head = new THREE.Mesh(headGeo, headMat);
   g.add(head);
@@ -794,22 +867,27 @@ export function buildPhillipsScrew(
   shank.position.y = shankL * 0.5;
   g.add(shank);
 
-  // Continuous helical thread ridge spiraling up the shank
-  const turns = Math.max(6, Math.round(shankL * 1.1));
-  const steps = turns * 10;
-  const pts: THREE.Vector3[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const ang = t * turns * Math.PI * 2;
-    const y = 0.55 + t * (shankL - 1.1);
-    const r = shankR * (1.03 - t * 0.14);
-    pts.push(new THREE.Vector3(Math.cos(ang) * r, y, Math.sin(ang) * r));
+  // Continuous helical thread ridge spiraling up the shank (omitted in STD / STD LITE to save ~720 tris/screw)
+  if (quality !== 'standard_lite' && quality !== 'standard') {
+    const turns = Math.max(6, Math.round(shankL * 1.1));
+    const steps = turns * 10;
+    const pts: THREE.Vector3[] = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const ang = t * turns * Math.PI * 2;
+      const y = 0.55 + t * (shankL - 1.1);
+      const r = shankR * (1.03 - t * 0.14);
+      pts.push(new THREE.Vector3(Math.cos(ang) * r, y, Math.sin(ang) * r));
+    }
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const tubeSegs =
+      quality === 'high' ? Math.min(Math.round(steps * 0.45), 32) : Math.min(steps, 72);
+    const tubeRadSegs = quality === 'high' ? 4 : 5;
+    const threadGeo = markHiRes(new THREE.TubeGeometry(curve, tubeSegs, shankR * 0.16, tubeRadSegs, false));
+    const threadMesh = new THREE.Mesh(threadGeo, threadMat);
+    threadMesh.userData.noEdges = true;
+    g.add(threadMesh);
   }
-  const curve = new THREE.CatmullRomCurve3(pts);
-  const threadGeo = markHiRes(new THREE.TubeGeometry(curve, Math.min(steps, 72), shankR * 0.16, 5, false));
-  const threadMesh = new THREE.Mesh(threadGeo, threadMat);
-  threadMesh.userData.noEdges = true;
-  g.add(threadMesh);
 
   return g;
 }
@@ -826,12 +904,15 @@ export function buildGoldWirebondLoop(
   mat: THREE.Material
 ): THREE.Group {
   const g = new THREE.Group();
+  const quality = getActiveBuildQuality();
 
-  // Ball-bond bump at die pad
-  const ball = new THREE.Mesh(hiResSphere(radius * 2.0, 8, 6), mat);
-  ball.position.copy(start);
-  ball.userData.noEdges = true;
-  g.add(ball);
+  // Ball-bond bump at die pad (omitted in STD LITE where sub-mm wire arch already reads cleanly)
+  if (quality !== 'standard_lite') {
+    const ball = new THREE.Mesh(hiResSphere(radius * 2.0, 8, 6), mat);
+    ball.position.copy(start);
+    ball.userData.noEdges = true;
+    g.add(ball);
+  }
 
   // Realistic semiconductor wirebond trajectory (vertical rise -> sharp kink -> sweeping descent)
   const rise = new THREE.Vector3(
@@ -850,15 +931,24 @@ export function buildGoldWirebondLoop(
     THREE.MathUtils.lerp(start.z, end.z, 0.78)
   );
   const curve = new THREE.CatmullRomCurve3([start, rise, crown, shoulder, end]);
-  const tube = new THREE.Mesh(markHiRes(new THREE.TubeGeometry(curve, 14, radius, 6, false)), mat);
+  const wireTubSegs =
+    quality === 'standard_lite' ? 4 : quality === 'standard' ? 6 : quality === 'high' ? 10 : 14;
+  const wireRadSegs =
+    quality === 'standard_lite' || quality === 'standard' ? 3 : quality === 'high' ? 4 : 6;
+  const tube = new THREE.Mesh(
+    markHiRes(new THREE.TubeGeometry(curve, wireTubSegs, radius, wireRadSegs, false)),
+    mat
+  );
   tube.userData.noEdges = true;
   g.add(tube);
 
   // Wedge stitch foot at substrate finger
-  const stitch = new THREE.Mesh(hiResCyl(radius * 1.8, radius * 2.1, radius * 1.1, 8), mat);
-  stitch.position.copy(end);
-  stitch.userData.noEdges = true;
-  g.add(stitch);
+  if (quality !== 'standard_lite') {
+    const stitch = new THREE.Mesh(hiResCyl(radius * 1.8, radius * 2.1, radius * 1.1, 8), mat);
+    stitch.position.copy(end);
+    stitch.userData.noEdges = true;
+    g.add(stitch);
+  }
 
   return g;
 }

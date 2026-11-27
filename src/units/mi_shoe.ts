@@ -7,10 +7,18 @@ import { disposeObject3D } from '../core/dispose';
 import {
   getCadTintLuma,
   liftDarkCadTint,
+  MATERIAL_SPECS,
   MaterialBucketKey,
   QUALITY_TIER_CONFIG,
   ResourceCache,
 } from '../core/resource_cache';
+
+function resolveMiShoeLiteBucket(bucket: MaterialBucketKey): MaterialBucketKey {
+  const spec = MATERIAL_SPECS[bucket];
+  if (spec.transparent) return 'optical_glass_clear';
+  if (spec.stdLambert) return 'matte_chassis';
+  return 'metal_hero';
+}
 import {
   OptimizedUnit,
   QualityTier,
@@ -243,11 +251,6 @@ function setNodeStaticMatrix(obj: THREE.Object3D): void {
 }
 
 function yieldNextFrame(): Promise<void> {
-  if (typeof requestAnimationFrame === 'function') {
-    return new Promise((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-  }
   return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
@@ -1199,18 +1202,26 @@ export class MiShoeUnit implements OptimizedUnit {
     let totalBatchedItems = 0;
 
     // Build all Tier-1 InstancedMeshes with instanceId -> partId reverse lookup
+    const isStdLite = quality === 'standard_lite';
+    const isUltra = quality === 'ultra';
     this.instancedPools = [];
     for (const [poolId, draft] of Object.entries(instPoolsDraft)) {
       const count = draft.records.length;
       if (count === 0) continue;
 
+      const resolvedBucket = isStdLite ? resolveMiShoeLiteBucket(draft.bucket) : draft.bucket;
       const geo = cache.acquireGeometry(draft.geoKey, draft.geoFactory);
-      const mat = cache.acquireMaterial(draft.bucket, quality, 'solid', this.clippingPlanes);
+      const mat = cache.acquireMaterial(resolvedBucket, quality, 'solid', this.clippingPlanes);
       const mesh = new THREE.InstancedMesh(geo, mat, count);
       mesh.name = `mishoe-inst-${poolId}`;
       mesh.frustumCulled = false;
       mesh.boundingBox = new THREE.Box3();
       mesh.boundingSphere = new THREE.Sphere();
+      if (isUltra) {
+        const opaque = !mat.transparent;
+        mesh.castShadow = opaque;
+        mesh.receiveShadow = opaque;
+      }
       setNodeStaticMatrix(mesh);
 
       const partIndices = new Int32Array(count);
@@ -1264,7 +1275,7 @@ export class MiShoeUnit implements OptimizedUnit {
 
       this.instancedPools.push({
         id: poolId,
-        bucket: draft.bucket,
+        bucket: resolvedBucket,
         mesh,
         count,
         partIndices,
@@ -1279,16 +1290,17 @@ export class MiShoeUnit implements OptimizedUnit {
       estimatedTriangles += countGeometryTriangles(geo) * count;
     }
 
-    // Build all Tier-2 BatchedMeshes grouped by material bucket
+    // Build all Tier-2 BatchedMeshes grouped by material bucket (fused to 3 Mega-Buckets in STD LITE!)
     const piecesByBucket = new Map<MaterialBucketKey, BatchedPieceSpec[]>();
     const partLumaSum = new Float32Array(partCount);
     const partLumaCnt = new Uint16Array(partCount);
     for (let i = 0; i < batchedPieces.length; i++) {
       const bp = batchedPieces[i];
-      let arr = piecesByBucket.get(bp.bucket);
+      const targetBucket = isStdLite ? resolveMiShoeLiteBucket(bp.bucket) : bp.bucket;
+      let arr = piecesByBucket.get(targetBucket);
       if (!arr) {
         arr = [];
-        piecesByBucket.set(bp.bucket, arr);
+        piecesByBucket.set(targetBucket, arr);
       }
       arr.push(bp);
     }
@@ -1305,6 +1317,11 @@ export class MiShoeUnit implements OptimizedUnit {
       batchedMesh.frustumCulled = false;
       batchedMesh.boundingBox = new THREE.Box3();
       batchedMesh.boundingSphere = new THREE.Sphere();
+      if (isUltra) {
+        const opaque = !mat.transparent;
+        batchedMesh.castShadow = opaque;
+        batchedMesh.receiveShadow = opaque;
+      }
       setNodeStaticMatrix(batchedMesh);
 
       const batchIds = new Int32Array(list.length);
@@ -1370,7 +1387,8 @@ export class MiShoeUnit implements OptimizedUnit {
     edgeGroup.name = 'mishoe-v2-edges';
     setNodeStaticMatrix(edgeGroup);
 
-    const thresholdAngle = quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
+    const thresholdAngle =
+      quality === 'standard_lite' ? 40 : quality === 'standard' ? 32 : quality === 'high' ? 30 : 26;
     for (let pi = 0; pi < partCount; pi++) {
       const srcGeos = edgeSourceByPart.get(pi);
       if (!srcGeos || srcGeos.length === 0) continue;
@@ -1914,11 +1932,17 @@ export class MiShoeUnit implements OptimizedUnit {
     // Swap cached materials when renderMode changes (ref-counted release + acquire!)
     if (modeChanged && this.cachedCacheRef) {
       const cache = this.cachedCacheRef;
+      const isUltra = this.quality === 'ultra';
       for (let pi = 0; pi < this.instancedPools.length; pi++) {
         const pool = this.instancedPools[pi];
         const prevMat = pool.mesh.material as THREE.Material;
         const nextMat = cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes);
         pool.mesh.material = nextMat;
+        if (isUltra) {
+          const shadowOk = renderMode === 'solid' && !nextMat.transparent;
+          pool.mesh.castShadow = shadowOk;
+          pool.mesh.receiveShadow = shadowOk;
+        }
         cache.releaseMaterialInstance(prevMat);
       }
       for (let bi = 0; bi < this.batchedPools.length; bi++) {
@@ -1926,6 +1950,11 @@ export class MiShoeUnit implements OptimizedUnit {
         const prevMat = pool.mesh.material as THREE.Material;
         const nextMat = cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes);
         pool.mesh.material = nextMat;
+        if (isUltra) {
+          const shadowOk = renderMode === 'solid' && !nextMat.transparent;
+          pool.mesh.castShadow = shadowOk;
+          pool.mesh.receiveShadow = shadowOk;
+        }
         cache.releaseMaterialInstance(prevMat);
       }
     }

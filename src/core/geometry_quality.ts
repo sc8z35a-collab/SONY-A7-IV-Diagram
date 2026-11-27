@@ -16,6 +16,16 @@ export interface GeometryQualityScale {
 }
 
 const QUALITY_GEOMETRY_SCALES: Record<QualityTier, GeometryQualityScale> = {
+  standard_lite: {
+    curveScale: 0.36,
+    radialScale: 0.40,
+    bevelScale: 0.0,
+    sagittaMultiplier: 1.95,
+    allowMicroBevels: false,
+    maxCurveSegments: 16,
+    maxRadialSegments: 16,
+    minRadialSegments: 5,
+  },
   standard: {
     curveScale: 0.58,
     radialScale: 0.62,

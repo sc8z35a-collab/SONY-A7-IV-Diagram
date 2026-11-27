@@ -1,171 +1,171 @@
 id	code	name	group	pos	size	exp	mat
-cfe-top-metal-armor	C01	高剛性アルミ／ステンレス上面放熱アーマー	#001-030	0,1.4,2.48	39.06,51.86,0.98	0,0,68	stainless_machined
-cfe-bottom-metal-shell	C02	下面金属放熱バックプレート	#001-030	0,1.6,-2.48	38.96,50.76,0.9	0,0,-62	stainless_machined
-cfe-monolithic-resin	C03	ソニーTOUGH独自一体成型高強度樹脂フ	#001-030	0,0,0	41.44,56.28,5.42	-64,0,12	matte_chassis
-cfe-ip57-seal-perimeter	C04	IP57防塵・防水シームレス封止ガスケッ	#001-030	0,0,0	37.01,49.8,3.92	64,0,22	magnesium_cast
-cfe-21pin-gold-fingers	C05	21ピン硬質金メッキ・PCIe高速エッジ	#001-030	0,-24.6,0	33.56,6.85,1.35	0,-56,16	gold_plating
-cfe-connector-shroud	C06	誤挿入防止キー溝	#001-030	0,-24.8,0	40.09,7.08,4.45	0,-76,-14	matte_black_anodized
-cfe-hdi-8layer-pcb	C07	超薄型8層高密度ビルドアッププリント基板	#001-030	0,0.5,0	34.5,46.94,1.14	0,0,0	pcb_textured
+cfe-top-metal-armor	C01	高剛性アルミ／ステンレス上面放熱アーマー	#001-030	0,1.4,2.48	38.96,51.76,0.98	0,0,68	stainless_machined
+cfe-bottom-metal-shell	C02	下面金属放熱バックプレート	#001-030	0,1.6,-2.48	38.88,50.68,0.9	0,0,-62	stainless_machined
+cfe-monolithic-resin	C03	ソニーTOUGH独自一体成型高強度樹脂フ	#001-030	0,0,0	41.42,56.28,5.42	-64,0,12	matte_chassis
+cfe-ip57-seal-perimeter	C04	IP57防塵・防水シームレス封止ガスケッ	#001-030	0,0,0	36.99,49.6,3.92	64,0,22	magnesium_cast
+cfe-21pin-gold-fingers	C05	21ピン硬質金メッキ・PCIe高速エッジ	#001-030	0,-24.6,0	33.4,6.8,1.35	0,-56,16	gold_plating
+cfe-connector-shroud	C06	誤挿入防止キー溝	#001-030	0,-24.8,0	39.92,6.96,4.45	0,-76,-14	matte_chassis
+cfe-hdi-8layer-pcb	C07	超薄型8層高密度ビルドアッププリント基板	#001-030	0,0.5,0	34.5,46.86,1.14	0,0,0	pcb_textured
 cfe-pcie4-controller-soc	C08	次世代7nm/12nm PCIe	#001-030	-6.2,-9,0.65	14.52,14.52,1.74	-42,-26,26	solder_silver
-cfe-arm-dualcore-engine	C09	コントローラ内蔵マルチコアARM CPU	#001-030	-6.2,-9,1.3	9.66,7.66,0.51	-62,-16,42	silicon_hero
-cfe-ldpc-ecc-engine	C10	ハードウェア4K LDPC誤り訂正	#001-030	-6.2,-11.8,1.3	5.98,3.98,0.49	-62,-40,42	silicon_hero
-cfe-aes256-crypto-core	C11	ハードウェアAES-256暗号化	#001-030	-10.2,-10.8,1.3	4.77,4.17,0.68	-82,-28,32	gold_plating
+cfe-arm-dualcore-engine	C09	コントローラ内蔵マルチコアARM CPU	#001-030	-6.2,-9,1.3	9.6,7.6,0.51	-62,-16,42	silicon_hero
+cfe-ldpc-ecc-engine	C10	ハードウェア4K LDPC誤り訂正	#001-030	-6.2,-11.8,1.3	5.9,3.9,0.49	-62,-40,42	silicon_hero
+cfe-aes256-crypto-core	C11	ハードウェアAES-256暗号化	#001-030	-10.2,-10.8,1.3	4.65,4.05,0.68	-82,-28,32	gold_plating
 cfe-3d-nand-pkg-primary	C12	高密度3D TLC NANDフラッシュ	#001-030	0,12.6,0.7	27.28,19.28,1.84	-34,38,28	solder_silver
-cfe-3d-nand-pkg-secondary	C13	並列インターリーブ用セカンド3D	#001-030	0,12.6,-0.7	25.9,19.28,1.84	34,38,-28	solder_silver
-cfe-pslc-write-cache	C14	ダイナミック／ネイティブpSLC高速キャ	#001-030	0,7.6,1.45	20.5,5.5,0.49	44,24,36	matte_black_anodized
-cfe-3d-nand-vertical-pillar	C15	3D NAND超高層チャージトラップ垂直	#001-030	0,15.8,1.38	11.24,6.84,1.37	-24,62,54	copper_thermal
-cfe-lpddr4-dram-cache	C16	超高速LPDDR4 DRAMキャッシュメ	#001-030	9.4,-8.5,0.85	11.5,13.65,1.35	56,-24,24	solder_silver
-cfe-pmic-buck-regulator	C17	カード内蔵マルチチャネルPMIC電源管理	#001-030	9.6,-9.2,-0.85	9.63,7.38,1.02	56,-22,-26	ic_epoxy_dark
+cfe-3d-nand-pkg-secondary	C13	並列インターリーブ用セカンド3D	#001-030	0,12.6,-0.7	25.86,19.28,1.84	34,38,-28	solder_silver
+cfe-pslc-write-cache	C14	ダイナミック／ネイティブpSLC高速キャ	#001-030	0,7.6,1.45	20.4,5.4,0.49	44,24,36	matte_black_anodized
+cfe-3d-nand-vertical-pillar	C15	3D NAND超高層チャージトラップ垂直	#001-030	0,15.8,1.38	11.2,6.8,1.37	-24,62,54	copper_thermal
+cfe-lpddr4-dram-cache	C16	超高速LPDDR4 DRAMキャッシュメ	#001-030	9.4,-8.5,0.85	11.5,13.64,1.35	56,-24,24	solder_silver
+cfe-pmic-buck-regulator	C17	カード内蔵マルチチャネルPMIC電源管理	#001-030	9.6,-9.2,-0.85	9.55,7.38,0.97	56,-22,-26	ic_epoxy_dark
 cfe-power-inductors-mlcc	C18	極薄シールドパワーインダクタ	#001-030	0,0,0	27.46,5.46,2.4	54,4,-36	solder_silver
-cfe-plp-hold-caps	C19	電源瞬断保護タンタル／ポリマー大容量ホー	#001-030	-10.2,-10.5,-0.9	7.8,8.83,1.12	-56,-24,-30	titanium_machined
+cfe-plp-hold-caps	C19	電源瞬断保護タンタル／ポリマー大容量ホー	#001-030	-10.2,-10.5,-0.9	7.8,8.55,1.12	-56,-24,-30	titanium_machined
 cfe-pcie-ac-coupling	C20	PCIe Gen4高速差動レーン用ACカ	#001-030	-2,-18.5,0.72	12.38,4.8,0.73	-34,-52,34	solder_silver
-cfe-esd-tvs-diode-array	C21	極低容量TVS静電気保護ダイオードアレイ	#001-030	0,-20.8,-0.75	17.84,3.6,0.81	34,-52,-34	ic_epoxy_dark
-cfe-xtal-clock-gen	C22	超小型水晶振動子	#001-030	8.5,-17.5,0.75	8.8,4.96,0.79	46,-46,30	ic_epoxy_dark
-cfe-spi-nor-firmware	C23	専用シリアルNORフラッシュメモリ	#001-030	-11.2,0.2,-0.82	7.5,6.65,0.93	-60,8,-32	ic_epoxy_dark
-cfe-thermal-sensor-diode	C24	高精度デジタル温度センサー	#001-030	-0.2,-2,0.75	8.36,4.69,0.86	-42,4,42	gold_plating
-cfe-copper-heat-spreader	C25	ソニー独自・高熱伝導純銅ヒートスプレッダ	#001-030	0,2.2,1.78	35.31,44.51,0.84	0,0,44	copper_thermal
-cfe-graphene-tim-pad	C26	超薄型シリコーン熱伝導パッド	#001-030	0,0,1.38	34.45,45.79,3.66	0,0,-42	polyimide_fpc
-cfe-emi-shield-frame	C27	超薄型パーマロイ／洋白EMI電磁シールド	#001-030	-6.2,-9,1	18.1,18.1,1.48	-74,-46,14	solder_silver
-cfe-bga-underfill-epoxy	C28	BGAはんだボール保護アンダーフィル樹脂	#001-030	0,0,0.54	28.57,38.75,0.56	-56,36,-18	pin_carrier_gloss
+cfe-esd-tvs-diode-array	C21	極低容量TVS静電気保護ダイオードアレイ	#001-030	0,-20.8,-0.75	17.6,3.6,0.81	34,-52,-34	ic_epoxy_dark
+cfe-xtal-clock-gen	C22	超小型水晶振動子	#001-030	8.5,-17.5,0.75	8.8,4.88,0.78	46,-46,30	ic_epoxy_dark
+cfe-spi-nor-firmware	C23	専用シリアルNORフラッシュメモリ	#001-030	-11.2,0.2,-0.82	7.34,6.65,0.91	-60,8,-32	ic_epoxy_dark
+cfe-thermal-sensor-diode	C24	高精度デジタル温度センサー	#001-030	-0.2,-2,0.75	8.32,4.65,0.84	-42,4,42	gold_plating
+cfe-copper-heat-spreader	C25	ソニー独自・高熱伝導純銅ヒートスプレッダ	#001-030	0,2.2,1.78	35.25,44.45,0.84	0,0,44	copper_thermal
+cfe-graphene-tim-pad	C26	超薄型シリコーン熱伝導パッド	#001-030	0,0,1.38	34.4,45.75,3.66	0,0,-42	polyimide_fpc
+cfe-emi-shield-frame	C27	超薄型パーマロイ／洋白EMI電磁シールド	#001-030	-6.2,-9,1	18.06,18.06,1.48	-74,-46,14	solder_silver
+cfe-bga-underfill-epoxy	C28	BGAはんだボール保護アンダーフィル樹脂	#001-030	0,0,0.54	28.4,38.61,0.56	-56,36,-18	pin_carrier_gloss
 cfe-smart-health-monitor	C29	S.M.A.R.T.寿命診断	#001-030	9.8,0.5,0.8	8.68,5.68,0.78	60,14,42	gold_plating
-cfe-grip-pull-tab-rib	C30	人間工学ノンスリップ引出しリブ	#001-030	0,0,0	37.12,4.7,3.68	22,48,34	matte_black_anodized
-cfe-edge-bevel-chamfer	C31	20°〜30° エッジコネクタ先端面取り	#031-060	0,-27.2,0	33.01,1.72,1.2	-32,-64,14	gold_plating
-cfe-staggered-hotplug-pins	C32	先行接触GND・電源	#031-060	0,-24.8,0.56	31.4,6.47,0.36	34,-64,20	gold_plating
-cfe-side-guide-rails-notch	C33	非対称サイドガイドレール	#031-060	0,0,0	40.46,45.58,3.42	-92,0,26	magnesium_cast
-cfe-armor-laser-welds	C34	上下メタルアーマー微細レーザー溶接	#031-060	0,1.4,0	39.52,52.12,0.78	92,0,-24	titanium_machined
-cfe-emi-ground-spring-clips	C35	シェル導通EMIグラウンドスプリングクリ	#031-060	0,1,0.9	34,45.67,1.58	-86,-18,-32	ic_epoxy_dark
-cfe-micro-vapor-fin-plate	C36	次世代超薄型マイクロ放熱フィン	#031-060	0,2.2,2.02	34.58,42.51,1.06	46,20,26	ic_epoxy_dark
-cfe-vpg800-laser-serial	C37	高放射率マット黒放熱塗装	#031-060	0,0,-2.68	34.06,41.06,1.01	28,-26,-74	carbon_fiber
-cfe-diff-85ohm-serpentine	C38	PCIe Gen4 85Ω整合差動ペア	#031-060	-4,-16.8,0.52	11.43,11.51,0.34	-56,-68,36	pcb_textured
-cfe-backdrilled-microvias	C39	レーザー極細マイクロビア	#031-060	-2,-4.5,0	10.83,8.23,1.16	-30,-20,-56	matte_chassis
-cfe-efuse-hotplug-switch	C40	eFuse電子ヒューズ	#031-060	4.5,-19.8,0.72	7.41,4.23,0.84	54,-68,18	copper_thermal
-cfe-ferrite-cm-choke	C41	電源系統別フェライトビーズ	#031-060	6.5,-13.8,-0.78	7.63,4.07,0.79	80,-42,-26	copper_coil
-cfe-pcie-sideband-logic	C42	PERST#リセット／CLKREQ#省電	#031-060	-10.8,-19.6,0.72	4.78,4.55,0.71	-78,-62,16	solder_silver
-cfe-plp-cap-health-mcu	C43	PLP停電保護コンデンサ健全性監視回路	#031-060	-10.2,-5.2,-0.82	7.16,4.41,0.71	-82,-2,-42	ic_epoxy_dark
-cfe-jtag-uart-test-pads	C44	工場診断・ファーム書込用JTAG /	#031-060	15.2,2.5,-0.56	2.69,15.64,0.33	86,22,-36	pcb_textured
+cfe-grip-pull-tab-rib	C30	人間工学ノンスリップ引出しリブ	#001-030	0,0,0	37.12,4.7,3.68	22,48,34	matte_chassis
+cfe-edge-bevel-chamfer	C31	20°〜30° エッジコネクタ先端面取り	#031-060	0,-27.2,0	32.4,1.44,1.18	-32,-64,14	pcb_textured
+cfe-staggered-hotplug-pins	C32	先行接触GND・電源	#031-060	0,-24.8,0.56	31.4,6.45,0.36	34,-64,20	gold_plating
+cfe-side-guide-rails-notch	C33	非対称サイドガイドレール	#031-060	0,0,0	40.42,45.4,3.42	-92,0,26	magnesium_cast
+cfe-armor-laser-welds	C34	上下メタルアーマー微細レーザー溶接	#031-060	0,1.4,0	39.4,52,0.78	92,0,-24	titanium_machined
+cfe-emi-ground-spring-clips	C35	シェル導通EMIグラウンドスプリングクリ	#031-060	0,1,0.9	34,45.55,1.58	-86,-18,-32	ic_epoxy_dark
+cfe-micro-vapor-fin-plate	C36	次世代超薄型マイクロ放熱フィン	#031-060	0,2.2,2.02	34.53,42.45,1.06	46,20,26	ic_epoxy_dark
+cfe-vpg800-laser-serial	C37	高放射率マット黒放熱塗装	#031-060	0,0,-2.68	34,41,1.01	28,-26,-74	carbon_fiber
+cfe-diff-85ohm-serpentine	C38	PCIe Gen4 85Ω整合差動ペア	#031-060	-4,-16.8,0.52	11.4,11.51,0.34	-56,-68,36	pcb_textured
+cfe-backdrilled-microvias	C39	レーザー極細マイクロビア	#031-060	-2,-4.5,0	10.8,8.2,1.16	-30,-20,-56	matte_chassis
+cfe-efuse-hotplug-switch	C40	eFuse電子ヒューズ	#031-060	4.5,-19.8,0.72	7.3,4.2,0.83	54,-68,18	copper_thermal
+cfe-ferrite-cm-choke	C41	電源系統別フェライトビーズ	#031-060	6.5,-13.8,-0.78	7.6,4.02,0.79	80,-42,-26	copper_coil
+cfe-pcie-sideband-logic	C42	PERST#リセット／CLKREQ#省電	#031-060	-10.8,-19.6,0.72	4.7,4.51,0.71	-78,-62,16	solder_silver
+cfe-plp-cap-health-mcu	C43	PLP停電保護コンデンサ健全性監視回路	#031-060	-10.2,-5.2,-0.82	7,4.35,0.71	-82,-2,-42	solder_silver
+cfe-jtag-uart-test-pads	C44	工場診断・ファーム書込用JTAG /	#031-060	15.2,2.5,-0.56	2.65,15.6,0.33	86,22,-36	pcb_textured
 cfe-optical-fiducials	C45	SMT自動実装ロボット用・光学アライメン	#031-060	0,0,0.54	33.5,45.4,0.26	84,-18,40	copper_coil
-cfe-conformal-nano-coat	C46	基板全体プラズマ撥水ナノコーティング	#031-060	0,1.5,0.65	33.24,44.84,0.62	-76,36,8	matte_chassis
-cfe-solder-mask-silkscreen	C47	低誘電率ソルダーレジスト	#031-060	0,1.2,-0.52	34.64,47.04,0.41	0,-34,-66	copper_thermal
-cfe-flipchip-c4-bumps	C48	コントローラSoCフリップチップC4ハン	#031-060	-6.2,-9,0.88	9.66,9.66,0.79	-96,-38,22	solder_silver
-cfe-abf-package-substrate	C49	多層ABF / BTパッケージ基板	#031-060	-6.2,-9,0.66	12.1,12.1,0.44	-94,-14,48	abf_substrate
-cfe-nand-staggered-16die	C50	16段階段状オフセット積層NANDダイ	#031-060	0,12.6,1.05	20.68,12.88,2.34	-76,56,36	abf_substrate
-cfe-nand-daf-gold-wires	C51	ダイアタッチフィルム接着層	#031-060	0,12.6,0.85	20,11.44,1.97	-96,36,16	polyimide_fpc
-cfe-nand-emc-mold-balls	C52	高熱伝導エポキシモールド樹脂	#031-060	0,12.6,0.58	23.29,17.6,1.32	0,68,-42	solder_silver
-cfe-hmb-sram-controller-buf	C53	コントローラ内蔵高速SRAMバッファ	#031-060	-3.5,-6.5,1.32	5.68,4.68,0.5	-46,-10,64	silicon_hero
-cfe-cba-cu-hybrid-bond	C54	次世代CBAウェハ直接接合	#031-060	0,14.5,1.24	11.46,8.06,0.88	-52,74,58	silicon_hero
-cfe-crossed-bitline-cbl	C55	クロスビットライン	#031-060	0,11.2,1.22	11.46,7.86,0.47	56,58,42	silicon_hero
+cfe-conformal-nano-coat	C46	基板全体プラズマ撥水ナノコーティング	#031-060	0,1.5,0.65	33.2,44.8,0.62	-76,36,8	matte_chassis
+cfe-solder-mask-silkscreen	C47	低誘電率ソルダーレジスト	#031-060	0,1.2,-0.52	34.6,47,0.4	0,-34,-66	copper_thermal
+cfe-flipchip-c4-bumps	C48	コントローラSoCフリップチップC4ハン	#031-060	-6.2,-9,0.88	9.6,9.6,0.79	-96,-38,22	solder_silver
+cfe-abf-package-substrate	C49	多層ABF / BTパッケージ基板	#031-060	-6.2,-9,0.66	12.06,12.06,0.44	-94,-14,48	copper_coil
+cfe-nand-staggered-16die	C50	16段階段状オフセット積層NANDダイ	#031-060	0,12.6,1.05	20.6,12.8,2.34	-76,56,36	gold_plating
+cfe-nand-daf-gold-wires	C51	ダイアタッチフィルム接着層	#031-060	0,12.6,0.85	19.98,11.4,1.97	-96,36,16	polyimide_fpc
+cfe-nand-emc-mold-balls	C52	高熱伝導エポキシモールド樹脂	#031-060	0,12.6,0.58	23.15,17.4,1.32	0,68,-42	solder_silver
+cfe-hmb-sram-controller-buf	C53	コントローラ内蔵高速SRAMバッファ	#031-060	-3.5,-6.5,1.32	5.6,4.6,0.5	-46,-10,64	silicon_hero
+cfe-cba-cu-hybrid-bond	C54	次世代CBAウェハ直接接合	#031-060	0,14.5,1.24	11.4,8,0.88	-52,74,58	cucu_hybrid_copper
+cfe-crossed-bitline-cbl	C55	クロスビットライン	#031-060	0,11.2,1.22	11.4,7.8,0.47	56,58,42	silicon_hero
 cfe-ono-charge-trap-stack	C56	原子レベルONO絶縁積層	#031-060	5.5,15.8,1.15	7.32,6.77,1.36	34,72,52	silicon_dielectric
-cfe-wordline-staircase	C57	タングステン／モリブデン・ワード線階段連	#031-060	-7.5,15.8,1.15	12.27,6.26,1.22	-86,66,-6	titanium_machined
-cfe-nand-charge-pump	C58	オンダイ高電圧チャージポンプ	#031-060	8.5,12.6,1.15	9.46,4.86,0.79	84,52,16	silicon_hero
-cfe-sense-amp-page-buf	C59	高速ページバッファ	#031-060	4.5,9.2,1.15	9.46,4.86,0.77	84,34,48	silicon_hero
-cfe-read-reclaim-scrub	C60	リードディスターブ対策	#031-060	-7.5,8.8,1.15	8.28,5.48,0.67	72,68,-22	ic_epoxy_dark
-cfe-pcie-gen4-serdes-phy	C61	16 GT/s PCIe Gen4 ×1	#061-090	-6.2,-13.6,1.32	7.28,4.68,0.51	-42,-56,56	gold_plating
-cfe-nand-toggle5-phy-bus	C62	ONFI / Toggle 5.0 3	#061-090	-1,2.2,0.56	22.64,7.64,0.3	24,34,54	pcb_textured
-cfe-thermal-via-copper-slug	C63	コントローラ直下 銅充填サーマルビア群	#061-090	-6.2,-9,0	11.88,11.88,1.32	-62,-16,-54	gold_plating
-cfe-slot-contact-wiper-interface	C64	カメラ側 CFexpress Type	#061-090	0,-29.2,0	39.85,9.69,4.8	0,-88,26	gold_plating
-cfe-pcie-refclk-diff-term	C65	100 MHz HCSL PCIe基準ク	#061-090	6.4,-20.2,0.62	4.06,6.2,0.59	66,-66,36	gold_plating
-cfe-vcore-ldo-buck-rails	C66	マルチレール Point-of-Load	#061-090	11.6,-4.4,-0.82	7.84,5.64,0.76	78,-8,-42	copper_thermal
-cfe-nand-ce-rb-mux	C67	16ダイ並列 チップイネーブル	#061-090	8.2,3.8,0.72	9.66,4.66,0.54	74,24,34	silicon_hero
-cfe-thermal-paste-underfill	C68	裏面アルミナ微粒子充填 導電エラストマー	#061-090	-6.2,-9,-1.62	12.26,12.26,0.82	-48,-28,-58	elastomer_rubber
-cfe-card-detect-pullup-ins	C69	ホットプラグ挿入検出デバウンスRC回路	#061-090	1.5,-20.8,0.72	5.74,4.52,0.67	16,-74,42	gold_plating
-cfe-raid-xor-parity-engine	C70	オンダイ NANDダイ間 XOR	#061-090	-9.6,-6.2,1.32	6.08,4.68,0.64	-82,4,54	silicon_hero
-cfe-hard-gold-ni-barrier	C71	コバルト硬化金メッキ＋ニッケル拡散防止下	#061-090	-4.5,-24.4,0.05	11.96,4.16,1.02	-26,-92,42	gold_plating
-cfe-ac-cap-antipad-void	C72	ACカップリング直下 基準GNDアンチパ	#061-090	-2,-18.5,0.24	13.84,5.84,0.88	-64,-92,18	copper_coil
-cfe-glass-weave-rotated	C73	低誘電スプレッドEガラス繊維クロス	#061-090	-3,-14,-0.18	12.48,8.68,0.55	-102,-56,-24	matte_chassis
+cfe-wordline-staircase	C57	タングステン／モリブデン・ワード線階段連	#031-060	-7.5,15.8,1.15	12.22,6.2,1.22	-86,66,-6	titanium_machined
+cfe-nand-charge-pump	C58	オンダイ高電圧チャージポンプ	#031-060	8.5,12.6,1.15	9.4,4.8,0.79	84,52,16	silicon_hero
+cfe-sense-amp-page-buf	C59	高速ページバッファ	#031-060	4.5,9.2,1.15	9.4,4.8,0.78	84,34,48	silicon_hero
+cfe-read-reclaim-scrub	C60	リードディスターブ対策	#031-060	-7.5,8.8,1.15	8.2,5.4,0.67	72,68,-22	ic_epoxy_dark
+cfe-pcie-gen4-serdes-phy	C61	16 GT/s PCIe Gen4 ×1	#061-090	-6.2,-13.6,1.32	7.2,4.6,0.51	-42,-56,56	gold_plating
+cfe-nand-toggle5-phy-bus	C62	ONFI / Toggle 5.0 3	#061-090	-1,2.2,0.56	22.6,7.6,0.3	24,34,54	pcb_textured
+cfe-thermal-via-copper-slug	C63	コントローラ直下 銅充填サーマルビア群	#061-090	-6.2,-9,0	11.8,11.8,1.32	-62,-16,-54	gold_plating
+cfe-slot-contact-wiper-interface	C64	カメラ側 CFexpress Type	#061-090	0,-29.2,0	39.77,9.53,4.8	0,-88,26	gold_plating
+cfe-pcie-refclk-diff-term	C65	100 MHz HCSL PCIe基準ク	#061-090	6.4,-20.2,0.62	4.01,6.2,0.59	66,-66,36	gold_plating
+cfe-vcore-ldo-buck-rails	C66	マルチレール Point-of-Load	#061-090	11.6,-4.4,-0.82	7.8,5.6,0.76	78,-8,-42	copper_thermal
+cfe-nand-ce-rb-mux	C67	16ダイ並列 チップイネーブル	#061-090	8.2,3.8,0.72	9.6,4.6,0.54	74,24,34	silicon_hero
+cfe-thermal-paste-underfill	C68	裏面アルミナ微粒子充填 導電エラストマー	#061-090	-6.2,-9,-1.62	12.2,12.2,0.82	-48,-28,-58	elastomer_rubber
+cfe-card-detect-pullup-ins	C69	ホットプラグ挿入検出デバウンスRC回路	#061-090	1.5,-20.8,0.72	5.65,4.48,0.67	16,-74,42	gold_plating
+cfe-raid-xor-parity-engine	C70	オンダイ NANDダイ間 XOR	#061-090	-9.6,-6.2,1.32	6,4.6,0.64	-82,4,54	silicon_hero
+cfe-hard-gold-ni-barrier	C71	コバルト硬化金メッキ＋ニッケル拡散防止下	#061-090	-4.5,-24.4,0.05	11.9,4.1,1.02	-26,-92,42	gold_plating
+cfe-ac-cap-antipad-void	C72	ACカップリング直下 基準GNDアンチパ	#061-090	-2,-18.5,0.24	13.8,5.8,0.88	-64,-92,18	copper_coil
+cfe-glass-weave-rotated	C73	低誘電スプレッドEガラス繊維クロス	#061-090	-3,-14,-0.18	12.4,8.6,0.55	-102,-56,-24	matte_chassis
 cfe-perimeter-via-fence	C74	基板外周 1/20波長GNDステッチング	#061-090	0,0.6,0	32.33,44.84,1.01	106,-54,16	gold_plating
-cfe-die-backside-dbs-film	C75	30 μm極薄NANDダイ裏面DBS反り	#061-090	0,12.6,0.92	15.58,11.38,0.46	-114,58,-18	silicon_hero
-cfe-enepig-wirebond-pad	C76	パッケージ基板 ENEPIG3層表面処理	#061-090	8.5,12.6,0.85	11.68,6.48,0.69	-116,16,46	gold_plating
-cfe-bga-solder-mask-dam	C77	微細0.4 mmピッチBGA NSMD銅	#061-090	-6.2,-9,0.52	10.68,10.68,0.82	-112,-26,-52	pcb_textured
+cfe-die-backside-dbs-film	C75	30 μm極薄NANDダイ裏面DBS反り	#061-090	0,12.6,0.92	15.5,11.3,0.46	-114,58,-18	silicon_hero
+cfe-enepig-wirebond-pad	C76	パッケージ基板 ENEPIG3層表面処理	#061-090	8.5,12.6,0.85	11.6,6.4,0.69	-116,16,46	gold_plating
+cfe-bga-solder-mask-dam	C77	微細0.4 mmピッチBGA NSMD銅	#061-090	-6.2,-9,0.52	10.6,10.6,0.82	-112,-26,-52	pcb_textured
 cfe-macaroni-channel-core	C78	マカロニ型ポリシリコン中空チャネル	#061-090	-4,14.2,0.36	3.55,3.68,3.31	-32,96,68	silicon_hero
-cfe-inter-deck-channel-joint	C79	マルチデック縦穴ジョイント	#061-090	0,15.2,1.18	10.06,5.56,1.68	0,102,42	silicon_hero
-cfe-cryo-harc-etch-pillar	C80	極低温クライオ・プラズマ深穴エッチング構	#061-090	4.5,14.2,1.22	10.04,6.58,1.66	34,96,68	matte_chassis
-cfe-barrierless-moly-wl	C81	2026年次世代バリアレス・モリブデンワ	#061-090	-6.2,14.5,1.15	11.2,5.84,1.56	-68,94,34	titanium_machined
-cfe-wordline-airgap-iso	C82	ワード線間エアギャップ絶縁	#061-090	6.2,14.5,1.15	10.68,5.58,1.68	68,94,34	titanium_machined
-cfe-slit-trench-csl-wall	C83	スリットトレンチ	#061-090	-4.2,11.4,1.15	11.46,6.58,1.66	-36,98,-26	titanium_machined
-cfe-op-sgd-select-gates	C84	BiCS10独自オンピッチ・ドレイン選択	#061-090	4.2,11.4,1.15	10.88,5.48,1.48	36,98,-26	matte_black_anodized
-cfe-dummy-edge-wordlines	C85	上下端部ダミーワード線	#061-090	-8.5,12.6,1.12	10.2,5.53,1.66	-92,84,-38	titanium_machined
-cfe-multiplane-6plane-mpir	C86	2026年最新 4〜6プレーン独立並列読	#061-090	0,12.6,1.32	16.9,12.3,0.53	0,96,96	silicon_hero
-cfe-wafer-seal-ring-guard	C87	シリコンダイ最外周クラックストッパー	#061-090	0,12.6,1.02	15.46,11.46,0.52	92,84,-38	polyimide_fpc
-cfe-toggle6-sca-bus	C88	2026年最新 Toggle DDR	#061-090	3.5,3.6,0.85	12.08,6.68,0.44	108,48,52	silicon_hero
-cfe-pi-ltt-vccql-io	C89	ONFI 6.0 / BiCS10PI	#061-090	10.2,4.2,0.85	9.68,5.46,0.49	114,24,14	cfa_gloss_filter
-cfe-zq-240ohm-odt-cal	C90	0.1%高精度 240 Ω外部ZQキャリ	#061-090	11.4,-1.8,0.72	9.86,5.66,0.74	108,-2,54	pcb_textured
-cfe-dcc-vrefq-eye-trainer	C91	4.8 Gb/s デューティ比自動補正	#091-120	7.4,2.2,0.85	10.08,6.08,0.91	114,44,-22	silicon_hero
-cfe-vpg5-precond-engine	C92	CFA VPG Profile 5.0	#091-120	-6.2,-5.2,1.32	9.88,6.08,0.57	-108,22,74	ic_epoxy_dark
-cfe-nvme24-pqc-puf-root	C93	NVMe 2.4耐量子暗号	#091-120	-9.2,-10.8,1.28	11.4,9.6,0.65	-116,-24,58	gold_plating
-cfe-pcie-l12-pm-fsm	C94	PCIe ASPM L1.2 超省電力ス	#091-120	6.8,-14.8,-0.78	9.88,5.68,1.16	108,-28,-54	silicon_hero
-cfe-hctm-thermal-fsm	C95	NVMe HCTM	#091-120	-2.4,-3.5,0.95	9.68,5.88,1	-98,-68,54	ic_epoxy_dark
-cfe-vth-read-retry-tracker	C96	NANDしきい値電圧分布自動追従	#091-120	3.6,10.6,1.18	11.08,5.68,1.08	98,72,62	silicon_hero
-cfe-ldpc-data-scrambler	C97	ハードウェア・データスクランブラ	#091-120	-6.2,-10.4,1.32	9.68,5.48,0.55	-74,-42,76	silicon_hero
-cfe-pmic-ovp-uvlo-guard	C98	PMIC内蔵 OVP／UVLO	#091-120	7.2,-11.4,-0.86	9.81,4.88,0.88	74,-62,-58	gold_plating
-cfe-usb4-mrwg3-bridge-if	C99	USB4 40 GbpsリーダーPCIe	#091-120	0,28.95,0	35.44,3.7,5.19	0,62,-84	stainless_machined
-cfe-xray-magnetic-uv-shield	C100	耐X線・耐磁気・耐静電・耐UV	#091-120	0,1.3,1.88	35.86,47.66,0.38	-42,-30,96	matte_black_anodized
-cfe-besonos-tunnel-oxide	C101	BE-SONOS バンドギャップ設計トン	#091-120	-4.2,11.4,0.52	8.88,5.28,1.11	-94,92,34	matte_chassis
-cfe-highk-al2o3-blocking	C102	高誘電率 Al2O3 / LaAlOx	#091-120	-1.4,13.8,0.58	8.68,5.28,1.07	-68,108,42	titanium_machined
-cfe-si3n4-trap-energy-wells	C103	アモルファス Si3N4 電荷捕獲欠陥	#091-120	2.2,14.5,0.54	8.88,5.48,0.77	-40,118,36	matte_chassis
-cfe-ispp-step-pulse-verify	C104	適応型ステップ昇圧書込	#091-120	-7.4,8.6,0.46	9.28,5.28,0.67	-108,72,16	ic_epoxy_dark
-cfe-wafer-backside-stress-sin	C105	332〜400層ウェハ反り矯正	#091-120	-4.6,15.6,-0.45	8.86,5.86,0.71	-82,114,-8	silicon_wafer_dark
-cfe-sicn-cmp-sub2nm-dishing	C106	CBAハイブリッド接合 SiCN誘電体界	#091-120	0.5,16.4,-0.32	8.68,5.28,0.82	-48,124,-18	matte_chassis
-cfe-stealth-dicing-mod-layer	C107	25 μm極薄NANDウェハステルスダイ	#091-120	-9.2,12.2,-0.58	9.24,5.84,1.58	-114,48,-14	matte_chassis
-cfe-fenand-hzo-igzo-2026	C108	2026年次世代フロンティア：強誘電体	#091-120	3.2,17.8,0.62	9.1,5.9,0.83	-16,126,10	ic_epoxy_dark
-cfe-sac305-imc-cu6sn5-cu3sn	C109	BGAはんだ接合界面 Cu6Sn5 /	#091-120	5.6,10.2,-0.62	8.3,5.3,0.88	38,116,-24	ic_epoxy_dark
-cfe-cu-pillar-ubm-trilayer	C110	フリップチップ極細銅ピラー	#091-120	7.4,7.6,-0.52	8.48,5.48,1.47	72,108,-32	abf_substrate
-cfe-pdcu-wirebond-fab-imc	C111	パラジウム被覆銅ワイヤボンド	#091-120	8.6,13.4,-0.42	8.48,5.08,1.66	104,92,-38	pcb_textured
-cfe-fow-film-over-wire-stack	C112	16段極薄NAND積層用フィルムオーバー	#091-120	9.4,15.8,-0.25	8.86,4.98,1.92	126,66,-26	matte_chassis
-cfe-ula-silica-emc-filler	C113	超低アルファ線球状溶融シリカ88	#091-120	10.2,6.2,-0.74	8.3,5.56,0.98	132,34,-42	ic_epoxy_dark
-cfe-wafer-11n-cz-monocrystal	C114	11N超高純度CZ単結晶シリコンインゴッ	#091-120	1.8,12.2,-0.78	6.96,7.04,0.92	18,122,-62	stainless_machined
-cfe-hvlp2-copper-skin-depth	C115	超平滑HVLP2銅箔	#091-120	10.8,1.4,0.22	8.88,4.9,0.89	134,4,-14	matte_chassis
-cfe-megtron7-ultralow-df-resin	C116	超低誘電正接Megtron 7/8	#091-120	10.6,-3.4,-0.18	8.84,5.44,0.88	132,-28,-24	copper_thermal
-cfe-uv-laser-50um-microvia	C117	UVレーザー穿孔 50 μm 銅充填スタ	#091-120	9.4,-9.8,-0.12	8.44,5.04,1.29	124,-60,-18	matte_chassis
-cfe-mlcc-batio3-soft-term	C118	MLCC内部 BaTiO3強誘電ナノ粒子	#091-120	8.2,-15.4,0.62	9.2,4.34,1.26	106,-86,14	solder_silver
-cfe-atcut-quartz-shear-cavity	C119	ATカット水晶片厚みすべり圧電振動子	#091-120	9.4,-12.2,0.72	8.16,5.36,0.96	126,-42,32	gold_plating
-cfe-tvs-snapback-esd-junction	C120	超低容量ディープスナップバックTVSダイ	#091-120	8.8,-18.2,0.68	8.28,4.68,0.73	112,-10,46	ic_epoxy_dark
-cfe-pcie-tx-ffe-3tap-driver	C121	PCIe Gen4/5 送信側	#121-150	2.4,-14.8,0.64	9.1,5.7,1.21	74,-102,26	silicon_hero
-cfe-pcie-rx-ctle-dfe-eq	C122	PCIe Gen4/5 受信側	#121-150	-0.8,-15.6,0.66	9.5,5.9,0.89	42,-112,34	silicon_hero
-cfe-serdes-lctank-pll-cdr	C123	SerDes オンチップ螺旋LCタンクP	#121-150	-4.2,-16.2,0.62	8.88,5.68,0.68	8,-116,22	silicon_hero
-cfe-pcie-ltssm-128b130b-mac	C124	PCIe 128b/130b 高効率ブロ	#121-150	-7.4,-15.4,0.64	9.08,5.28,0.71	-26,-112,42	ic_epoxy_dark
-cfe-6nm-finfet-6t-sram-cell	C125	6nm FinFET / 次世代GAA	#121-150	-8.4,-10.8,0.58	9.08,5.68,1.32	-58,-104,18	silicon_hero
-cfe-ldpc-soft-llr-cgllr	C126	2026年次世代 分類段階化ソフト判定L	#121-150	3.2,-10.8,-0.58	9.08,5.68,0.94	56,-106,-46	ic_epoxy_dark
-cfe-nvme-e2e-crc32c-dif	C127	エンドツーエンドデータパス保護・T10	#121-150	-9.6,-7.2,0.56	9.08,5.28,0.76	-92,-88,22	silicon_hero
-cfe-nvme-fdp-reclaim-units	C128	2026年 NVMe 柔軟データ配置リク	#121-150	-10.4,-2.4,0.54	9.08,5.68,0.81	-116,-60,14	matte_black_anodized
-cfe-superblock-interleave-mux	C129	マルチチャネル・マルチダイ・インターリー	#121-150	-10.8,3.2,0.48	9.28,5.68,0.79	-124,-22,6	silicon_wafer_dark
-cfe-mopa-laser-oxide-pvd-coat	C130	外装MOPA 1064 nmファイバーレ	#121-150	6.4,9.2,-1.68	8.9,5.3,1.73	84,72,-96	titanium_machined
-cfe-bwwpc-wafer-power-grid	C131	BWWPC ウエハ間直接電源接合パッド	#121-150	-4.2,13.8,0.42	7.66,4.87,0.66	-136,118,56	silicon_hero
-cfe-2ti-dfe-ddsr-receiver	C132	2TI-DFE	#121-150	-0.8,10.2,0.48	7.66,4.66,0.64	-114,134,62	silicon_hero
-cfe-wl-swing-precharge	C133	非選択ワード線 中間電位スイング低減プリ	#121-150	2.8,12.2,0.44	7.66,4.66,0.53	-86,146,54	titanium_machined
-cfe-32die-twintower-stack	C134	32ダイ・ツインタワー2mm未満積層パッ	#121-150	-1.4,15.6,-0.35	7.86,4.86,0.75	-54,156,46	silicon_hero
-cfe-dummy-channel-support	C135	3D NAND ダミーチャネル構造支持柱	#121-150	-6.2,16.4,0.36	7.45,4.65,0.69	-152,92,42	matte_chassis
-cfe-efuse-redundancy-repair	C136	オンダイ eFuse 冗長救済回路	#121-150	6.2,14.8,0.46	7.26,4.46,0.45	-156,60,28	silicon_hero
-cfe-prog-suspend-resume	C137	プログラム一時停止／再開	#121-150	-8.4,10.6,0.44	7.66,4.66,0.56	-164,24,18	silicon_wafer_dark
-cfe-sris-elastic-skp-buf	C138	PCIe 4.0 SRIS /	#121-150	-4.6,-13.6,0.42	7.66,4.66,0.55	-168,-12,26	silicon_hero
-cfe-pcie-lmr-eye-scanner	C139	PCIe 4.0 受信端レーンマージニン	#121-150	-1.2,-13.2,0.48	7.66,4.66,0.68	-162,-48,38	silicon_hero
-cfe-pcie-tlp-replay-lcrc	C140	PCIe データリンク層 TLPリプレイ	#121-150	-6.8,-12.6,-0.42	7.66,4.66,0.68	-148,-82,-26	silicon_wafer_dark
-cfe-pcie-bar0-cfg-space	C141	PCIe コンフィギュレーション空間	#121-150	-7.6,-9.4,0.44	7.66,4.66,0.52	-126,-112,32	ic_epoxy_dark
-cfe-nvme-sqcq-doorbell	C142	NVMe サブミッション／コンプリーショ	#121-150	-4.2,-9.2,0.46	7.86,4.87,0.78	-98,-134,48	cucu_hybrid_copper
-cfe-nvme-prp-sgl-dma	C143	NVMe PRP / SGL ハードウェ	#121-150	-5.8,-6.4,-0.44	7.66,4.66,0.55	-66,-148,-32	ic_epoxy_dark
-cfe-nvme-msix-coalescing	C144	NVMe MSI-X キュー別割込ベクタ	#121-150	-8.8,-5.2,0.42	7.46,4.46,0.66	-32,-156,36	silicon_wafer_dark
-cfe-nvme-sanitize-huk-mek	C145	NVMe Sanitize暗号消去	#121-150	-8.4,-2,-0.46	7.66,4.87,0.58	6,-158,-42	silicon_hero
-cfe-nvme-apst-autosave	C146	NVMe APST 自律電源状態タイマー	#121-150	-4.2,-5.2,0.42	7.46,4.46,0.78	44,-154,44	ic_epoxy_dark
-cfe-nvme-telemetry-log	C147	NVMe パーシステント・イベントログ	#121-150	-1.4,-6.2,-0.44	7.46,4.46,0.51	78,-144,-36	ic_epoxy_dark
-cfe-ftl-gc-op-compactor	C148	FTL バックグラウンド・ガベージコレク	#121-150	-7.6,1.4,0.44	7.66,4.66,0.51	-148,-118,22	silicon_hero
-cfe-nvme-zns-cinema-zone	C149	NVMe ZNSシネマ連続書込ストリーム	#121-150	-4.2,3.6,-0.42	7.66,4.66,0.55	-124,-142,-24	silicon_wafer_dark
-cfe-lpddr4x-8bank-1t1c	C150	LPDDR4X デュアルチャネル8バンク	#121-150	8.6,-7.8,0.46	7.66,4.86,0.53	114,-126,44	silicon_hero
-cfe-lpddr4x-dbi-encoder	C151	LPDDR4X データバス反転低SSOノ	#151-170	9.4,-10.8,-0.44	7.46,4.46,0.56	138,-102,26	ic_epoxy_dark
-cfe-lpddr4x-trr-tcsr	C152	LPDDR4X ターゲット行リフレッシュ	#151-170	7.4,-5.2,-0.42	7.46,4.46,0.71	154,-74,-22	silicon_hero
-cfe-lpddr4x-dwl-ca-train	C153	LPDDR4X ライトレベリング	#151-170	8.6,-13.2,0.42	7.46,4.46,0.51	162,-40,38	silicon_hero
-cfe-serdes-uln-ldo-avdd	C154	SerDes専用 超低ノイズ・アナログL	#151-170	3.2,-16.8,0.46	7.25,4.45,0.7	168,-6,22	ic_epoxy_dark
-cfe-por-bor-supervisor	C155	高精度 パワーオンリセット	#151-170	5.6,-18.2,-0.44	7.05,4.25,0.5	168,28,-18	pcb_textured
-cfe-bootstrap-strap-0ohm	C156	コントローラ 0201 起動ストラップ抵	#151-170	-8.8,-16.2,-0.42	7.25,4.45,0.55	162,62,34	pcb_textured
-cfe-smbus-nvme-mi-bus	C157	SMBus / I²C サイドバンド管理	#151-170	6.2,-16.4,0.44	7.25,4.25,0.61	152,92,14	pcb_textured
-cfe-pcb-sparkgap-esd	C158	PCIeエッジ ノコギリ歯銅スパークギャ	#151-170	-2.8,-19.2,0.44	7.45,4.45,0.92	138,120,42	pcb_textured
-cfe-pmic-active-discharge	C159	PMIC 同期ソフトスタート	#151-170	1.2,-18.8,-0.44	7.45,4.45,0.56	168,-26,-34	ic_epoxy_dark
-cfe-pdn-multidecade-mlcc	C160	マルチデケードPDNプレーン容量	#151-170	4.2,-13.8,-0.44	7.65,4.65,1.08	164,52,-36	pcb_textured
-cfe-msap-12um-abf-trace	C161	mSAP12/12 μm 極微細 ABF	#151-170	4.6,1.8,-0.42	7.66,4.66,0.45	114,134,-34	abf_substrate
-cfe-tcb-lab-ncf-bond	C162	熱圧着／レーザー援用ボンディング	#151-170	-4.6,-1.6,-0.44	7.45,4.65,0.62	84,148,-46	membrane_translucent
-cfe-lts-bisn-warpage-joint	C163	低温ビスマス-スズハンダ反り抑制BGAイ	#151-170	5.4,5.2,-0.46	7.65,4.65,0.69	48,158,-56	solder_silver
-cfe-csam-xray-void-gate	C164	C-SAM 超音波探傷	#151-170	0.4,6.2,-0.46	7.66,4.86,0.67	12,162,-62	stainless_machined
-cfe-neutral-axis-150n-bend	C165	150 N 3点曲げ・中立軸PCB配置	#151-170	0,2.2,-0.58	7.85,5.06,0.56	-24,160,-56	stainless_machined
+cfe-inter-deck-channel-joint	C79	マルチデック縦穴ジョイント	#061-090	0,15.2,1.18	10,5.5,1.68	0,102,42	silicon_hero
+cfe-cryo-harc-etch-pillar	C80	極低温クライオ・プラズマ深穴エッチング構	#061-090	4.5,14.2,1.22	10,6.58,1.66	34,96,68	matte_chassis
+cfe-barrierless-moly-wl	C81	2026年次世代バリアレス・モリブデンワ	#061-090	-6.2,14.5,1.15	11.18,5.8,1.56	-68,94,34	titanium_machined
+cfe-wordline-airgap-iso	C82	ワード線間エアギャップ絶縁	#061-090	6.2,14.5,1.15	10.62,5.5,1.68	68,94,34	titanium_machined
+cfe-slit-trench-csl-wall	C83	スリットトレンチ	#061-090	-4.2,11.4,1.15	11.4,6.5,1.66	-36,98,-26	titanium_machined
+cfe-op-sgd-select-gates	C84	BiCS10独自オンピッチ・ドレイン選択	#061-090	4.2,11.4,1.15	10.8,5.4,1.48	36,98,-26	matte_black_anodized
+cfe-dummy-edge-wordlines	C85	上下端部ダミーワード線	#061-090	-8.5,12.6,1.12	10.2,5.51,1.66	-92,84,-38	titanium_machined
+cfe-multiplane-6plane-mpir	C86	2026年最新 4〜6プレーン独立並列読	#061-090	0,12.6,1.32	16.8,12.2,0.53	0,96,96	silicon_wafer_dark
+cfe-wafer-seal-ring-guard	C87	シリコンダイ最外周クラックストッパー	#061-090	0,12.6,1.02	15.4,11.4,0.52	92,84,-38	polyimide_fpc
+cfe-toggle6-sca-bus	C88	2026年最新 Toggle DDR	#061-090	3.5,3.6,0.85	12,6.6,0.44	108,48,52	silicon_hero
+cfe-pi-ltt-vccql-io	C89	ONFI 6.0 / BiCS10PI	#061-090	10.2,4.2,0.85	9.6,5.4,0.49	114,24,14	cfa_gloss_filter
+cfe-zq-240ohm-odt-cal	C90	0.1%高精度 240 Ω外部ZQキャリ	#061-090	11.4,-1.8,0.72	9.8,5.6,0.74	108,-2,54	pcb_textured
+cfe-dcc-vrefq-eye-trainer	C91	4.8 Gb/s デューティ比自動補正	#091-120	7.4,2.2,0.85	10,6,0.91	114,44,-22	silicon_hero
+cfe-vpg5-precond-engine	C92	CFA VPG Profile 5.0	#091-120	-6.2,-5.2,1.32	9.8,6,0.57	-108,22,74	ic_epoxy_dark
+cfe-nvme24-pqc-puf-root	C93	NVMe 2.4耐量子暗号	#091-120	-9.2,-10.8,1.28	11.3,9.5,0.65	-116,-24,58	gold_plating
+cfe-pcie-l12-pm-fsm	C94	PCIe ASPM L1.2 超省電力ス	#091-120	6.8,-14.8,-0.78	9.8,5.6,1.16	108,-28,-54	silicon_hero
+cfe-hctm-thermal-fsm	C95	NVMe HCTM	#091-120	-2.4,-3.5,0.95	9.6,5.8,1	-98,-68,54	ic_epoxy_dark
+cfe-vth-read-retry-tracker	C96	NANDしきい値電圧分布自動追従	#091-120	3.6,10.6,1.18	11,5.6,1.08	98,72,62	silicon_hero
+cfe-ldpc-data-scrambler	C97	ハードウェア・データスクランブラ	#091-120	-6.2,-10.4,1.32	9.6,5.4,0.55	-74,-42,76	silicon_hero
+cfe-pmic-ovp-uvlo-guard	C98	PMIC内蔵 OVP／UVLO	#091-120	7.2,-11.4,-0.86	9.65,4.88,0.88	74,-62,-58	gold_plating
+cfe-usb4-mrwg3-bridge-if	C99	USB4 40 GbpsリーダーPCIe	#091-120	0,28.95,0	35.2,3.69,5.19	0,62,-84	stainless_machined
+cfe-xray-magnetic-uv-shield	C100	耐X線・耐磁気・耐静電・耐UV	#091-120	0,1.3,1.88	35.8,47.6,0.38	-42,-30,96	matte_black_anodized
+cfe-besonos-tunnel-oxide	C101	BE-SONOS バンドギャップ設計トン	#091-120	-4.2,11.4,0.52	8.8,5.2,1.11	-94,92,34	matte_chassis
+cfe-highk-al2o3-blocking	C102	高誘電率 Al2O3 / LaAlOx	#091-120	-1.4,13.8,0.58	8.6,5.2,1.07	-68,108,42	titanium_machined
+cfe-si3n4-trap-energy-wells	C103	アモルファス Si3N4 電荷捕獲欠陥	#091-120	2.2,14.5,0.54	8.8,5.4,0.77	-40,118,36	matte_chassis
+cfe-ispp-step-pulse-verify	C104	適応型ステップ昇圧書込	#091-120	-7.4,8.6,0.46	9.2,5.2,0.67	-108,72,16	ic_epoxy_dark
+cfe-wafer-backside-stress-sin	C105	332〜400層ウェハ反り矯正	#091-120	-4.6,15.6,-0.45	8.8,5.8,0.71	-82,114,-8	silicon_wafer_dark
+cfe-sicn-cmp-sub2nm-dishing	C106	CBAハイブリッド接合 SiCN誘電体界	#091-120	0.5,16.4,-0.32	8.6,5.2,0.82	-48,124,-18	matte_chassis
+cfe-stealth-dicing-mod-layer	C107	25 μm極薄NANDウェハステルスダイ	#091-120	-9.2,12.2,-0.58	9.2,5.8,1.58	-114,48,-14	matte_chassis
+cfe-fenand-hzo-igzo-2026	C108	2026年次世代フロンティア：強誘電体	#091-120	3.2,17.8,0.62	9,5.8,0.83	-16,126,10	ic_epoxy_dark
+cfe-sac305-imc-cu6sn5-cu3sn	C109	BGAはんだ接合界面 Cu6Sn5 /	#091-120	5.6,10.2,-0.62	8.2,5.2,0.88	38,116,-24	ic_epoxy_dark
+cfe-cu-pillar-ubm-trilayer	C110	フリップチップ極細銅ピラー	#091-120	7.4,7.6,-0.52	8.4,5.4,1.47	72,108,-32	abf_substrate
+cfe-pdcu-wirebond-fab-imc	C111	パラジウム被覆銅ワイヤボンド	#091-120	8.6,13.4,-0.42	8.4,5,1.66	104,92,-38	pcb_textured
+cfe-fow-film-over-wire-stack	C112	16段極薄NAND積層用フィルムオーバー	#091-120	9.4,15.8,-0.25	8.84,4.94,1.92	126,66,-26	matte_chassis
+cfe-ula-silica-emc-filler	C113	超低アルファ線球状溶融シリカ88	#091-120	10.2,6.2,-0.74	8.2,5.49,0.98	132,34,-42	matte_chassis
+cfe-wafer-11n-cz-monocrystal	C114	11N超高純度CZ単結晶シリコンインゴッ	#091-120	1.8,12.2,-0.78	6.96,7.02,0.92	18,122,-62	stainless_machined
+cfe-hvlp2-copper-skin-depth	C115	超平滑HVLP2銅箔	#091-120	10.8,1.4,0.22	8.8,4.8,0.89	134,4,-14	matte_chassis
+cfe-megtron7-ultralow-df-resin	C116	超低誘電正接Megtron 7/8	#091-120	10.6,-3.4,-0.18	8.8,5.4,0.88	132,-28,-24	copper_thermal
+cfe-uv-laser-50um-microvia	C117	UVレーザー穿孔 50 μm 銅充填スタ	#091-120	9.4,-9.8,-0.12	8.4,5,1.29	124,-60,-18	matte_chassis
+cfe-mlcc-batio3-soft-term	C118	MLCC内部 BaTiO3強誘電ナノ粒子	#091-120	8.2,-15.4,0.62	9.1,4.24,1.26	106,-86,14	solder_silver
+cfe-atcut-quartz-shear-cavity	C119	ATカット水晶片厚みすべり圧電振動子	#091-120	9.4,-12.2,0.72	8.15,5.25,0.96	126,-42,32	gold_plating
+cfe-tvs-snapback-esd-junction	C120	超低容量ディープスナップバックTVSダイ	#091-120	8.8,-18.2,0.68	8.2,4.6,0.73	112,-10,46	ic_epoxy_dark
+cfe-pcie-tx-ffe-3tap-driver	C121	PCIe Gen4/5 送信側	#121-150	2.4,-14.8,0.64	9,5.6,1.21	74,-102,26	silicon_hero
+cfe-pcie-rx-ctle-dfe-eq	C122	PCIe Gen4/5 受信側	#121-150	-0.8,-15.6,0.66	9.4,5.8,0.89	42,-112,34	silicon_hero
+cfe-serdes-lctank-pll-cdr	C123	SerDes オンチップ螺旋LCタンクP	#121-150	-4.2,-16.2,0.62	8.8,5.6,0.68	8,-116,22	silicon_hero
+cfe-pcie-ltssm-128b130b-mac	C124	PCIe 128b/130b 高効率ブロ	#121-150	-7.4,-15.4,0.64	9,5.2,0.71	-26,-112,42	ic_epoxy_dark
+cfe-6nm-finfet-6t-sram-cell	C125	6nm FinFET / 次世代GAA	#121-150	-8.4,-10.8,0.58	9,5.6,1.32	-58,-104,18	silicon_hero
+cfe-ldpc-soft-llr-cgllr	C126	2026年次世代 分類段階化ソフト判定L	#121-150	3.2,-10.8,-0.58	9,5.6,0.94	56,-106,-46	ic_epoxy_dark
+cfe-nvme-e2e-crc32c-dif	C127	エンドツーエンドデータパス保護・T10	#121-150	-9.6,-7.2,0.56	9,5.2,0.76	-92,-88,22	silicon_hero
+cfe-nvme-fdp-reclaim-units	C128	2026年 NVMe 柔軟データ配置リク	#121-150	-10.4,-2.4,0.54	9,5.6,0.81	-116,-60,14	matte_black_anodized
+cfe-superblock-interleave-mux	C129	マルチチャネル・マルチダイ・インターリー	#121-150	-10.8,3.2,0.48	9.2,5.6,0.79	-124,-22,6	silicon_wafer_dark
+cfe-mopa-laser-oxide-pvd-coat	C130	外装MOPA 1064 nmファイバーレ	#121-150	6.4,9.2,-1.68	8.8,5.2,1.73	84,72,-96	titanium_machined
+cfe-bwwpc-wafer-power-grid	C131	BWWPC ウエハ間直接電源接合パッド	#121-150	-4.2,13.8,0.42	7.6,4.8,0.66	-136,118,56	silicon_hero
+cfe-2ti-dfe-ddsr-receiver	C132	2TI-DFE	#121-150	-0.8,10.2,0.48	7.6,4.6,0.64	-114,134,62	silicon_hero
+cfe-wl-swing-precharge	C133	非選択ワード線 中間電位スイング低減プリ	#121-150	2.8,12.2,0.44	7.6,4.6,0.53	-86,146,54	titanium_machined
+cfe-32die-twintower-stack	C134	32ダイ・ツインタワー2mm未満積層パッ	#121-150	-1.4,15.6,-0.35	7.8,4.8,0.75	-54,156,46	silicon_hero
+cfe-dummy-channel-support	C135	3D NAND ダミーチャネル構造支持柱	#121-150	-6.2,16.4,0.36	7.4,4.6,0.69	-152,92,42	matte_chassis
+cfe-efuse-redundancy-repair	C136	オンダイ eFuse 冗長救済回路	#121-150	6.2,14.8,0.46	7.2,4.4,0.45	-156,60,28	silicon_hero
+cfe-prog-suspend-resume	C137	プログラム一時停止／再開	#121-150	-8.4,10.6,0.44	7.6,4.6,0.56	-164,24,18	silicon_wafer_dark
+cfe-sris-elastic-skp-buf	C138	PCIe 4.0 SRIS /	#121-150	-4.6,-13.6,0.42	7.6,4.6,0.55	-168,-12,26	silicon_hero
+cfe-pcie-lmr-eye-scanner	C139	PCIe 4.0 受信端レーンマージニン	#121-150	-1.2,-13.2,0.48	7.6,4.6,0.68	-162,-48,38	silicon_hero
+cfe-pcie-tlp-replay-lcrc	C140	PCIe データリンク層 TLPリプレイ	#121-150	-6.8,-12.6,-0.42	7.6,4.6,0.68	-148,-82,-26	silicon_wafer_dark
+cfe-pcie-bar0-cfg-space	C141	PCIe コンフィギュレーション空間	#121-150	-7.6,-9.4,0.44	7.6,4.6,0.52	-126,-112,32	ic_epoxy_dark
+cfe-nvme-sqcq-doorbell	C142	NVMe サブミッション／コンプリーショ	#121-150	-4.2,-9.2,0.46	7.8,4.8,0.78	-98,-134,48	cucu_hybrid_copper
+cfe-nvme-prp-sgl-dma	C143	NVMe PRP / SGL ハードウェ	#121-150	-5.8,-6.4,-0.44	7.6,4.6,0.55	-66,-148,-32	ic_epoxy_dark
+cfe-nvme-msix-coalescing	C144	NVMe MSI-X キュー別割込ベクタ	#121-150	-8.8,-5.2,0.42	7.4,4.4,0.66	-32,-156,36	silicon_wafer_dark
+cfe-nvme-sanitize-huk-mek	C145	NVMe Sanitize暗号消去	#121-150	-8.4,-2,-0.46	7.6,4.8,0.58	6,-158,-42	silicon_hero
+cfe-nvme-apst-autosave	C146	NVMe APST 自律電源状態タイマー	#121-150	-4.2,-5.2,0.42	7.4,4.4,0.78	44,-154,44	ic_epoxy_dark
+cfe-nvme-telemetry-log	C147	NVMe パーシステント・イベントログ	#121-150	-1.4,-6.2,-0.44	7.4,4.4,0.51	78,-144,-36	ic_epoxy_dark
+cfe-ftl-gc-op-compactor	C148	FTL バックグラウンド・ガベージコレク	#121-150	-7.6,1.4,0.44	7.6,4.6,0.51	-148,-118,22	silicon_hero
+cfe-nvme-zns-cinema-zone	C149	NVMe ZNSシネマ連続書込ストリーム	#121-150	-4.2,3.6,-0.42	7.6,4.6,0.55	-124,-142,-24	silicon_wafer_dark
+cfe-lpddr4x-8bank-1t1c	C150	LPDDR4X デュアルチャネル8バンク	#121-150	8.6,-7.8,0.46	7.6,4.8,0.53	114,-126,44	silicon_hero
+cfe-lpddr4x-dbi-encoder	C151	LPDDR4X データバス反転低SSOノ	#151-170	9.4,-10.8,-0.44	7.4,4.4,0.56	138,-102,26	ic_epoxy_dark
+cfe-lpddr4x-trr-tcsr	C152	LPDDR4X ターゲット行リフレッシュ	#151-170	7.4,-5.2,-0.42	7.4,4.4,0.71	154,-74,-22	silicon_hero
+cfe-lpddr4x-dwl-ca-train	C153	LPDDR4X ライトレベリング	#151-170	8.6,-13.2,0.42	7.4,4.4,0.51	162,-40,38	silicon_hero
+cfe-serdes-uln-ldo-avdd	C154	SerDes専用 超低ノイズ・アナログL	#151-170	3.2,-16.8,0.46	7.2,4.4,0.64	168,-6,22	ic_epoxy_dark
+cfe-por-bor-supervisor	C155	高精度 パワーオンリセット	#151-170	5.6,-18.2,-0.44	7,4.2,0.5	168,28,-18	pcb_textured
+cfe-bootstrap-strap-0ohm	C156	コントローラ 0201 起動ストラップ抵	#151-170	-8.8,-16.2,-0.42	7.2,4.4,0.52	162,62,34	pcb_textured
+cfe-smbus-nvme-mi-bus	C157	SMBus / I²C サイドバンド管理	#151-170	6.2,-16.4,0.44	7.2,4.2,0.58	152,92,14	pcb_textured
+cfe-pcb-sparkgap-esd	C158	PCIeエッジ ノコギリ歯銅スパークギャ	#151-170	-2.8,-19.2,0.44	7.4,4.4,0.92	138,120,42	pcb_textured
+cfe-pmic-active-discharge	C159	PMIC 同期ソフトスタート	#151-170	1.2,-18.8,-0.44	7.4,4.4,0.56	168,-26,-34	ic_epoxy_dark
+cfe-pdn-multidecade-mlcc	C160	マルチデケードPDNプレーン容量	#151-170	4.2,-13.8,-0.44	7.6,4.6,0.95	164,52,-36	pcb_textured
+cfe-msap-12um-abf-trace	C161	mSAP12/12 μm 極微細 ABF	#151-170	4.6,1.8,-0.42	7.6,4.6,0.45	114,134,-34	abf_substrate
+cfe-tcb-lab-ncf-bond	C162	熱圧着／レーザー援用ボンディング	#151-170	-4.6,-1.6,-0.44	7.4,4.6,0.62	84,148,-46	membrane_translucent
+cfe-lts-bisn-warpage-joint	C163	低温ビスマス-スズハンダ反り抑制BGAイ	#151-170	5.4,5.2,-0.46	7.6,4.6,0.69	48,158,-56	solder_silver
+cfe-csam-xray-void-gate	C164	C-SAM 超音波探傷	#151-170	0.4,6.2,-0.46	7.6,4.8,0.67	12,162,-62	stainless_machined
+cfe-neutral-axis-150n-bend	C165	150 N 3点曲げ・中立軸PCB配置	#151-170	0,2.2,-0.58	7.8,5.06,0.56	-24,160,-56	stainless_machined
 cfe-eptfe-pressure-vent	C166	超音波ハーメチック溶着シーム	#151-170	-11.2,18.6,0	4.62,4.64,0.81	-64,152,-46	stainless_machined
-cfe-iso7816-xray-ser-guard	C167	ISO 7816-1耐X線シールド	#151-170	10.6,17.8,0	7.66,4.66,0.65	-104,138,-36	emi_shield_metal
-cfe-asm2464pd-usb4-bridge	C168	ASMedia ASM2464PD	#151-170	-8.4,28.95,0	7.66,1.44,2.76	-46,114,-96	pcb_textured
-cfe-usbc-cc-bmc-pd-ctrl	C169	USB Type-C CC1/CC2	#151-170	8.4,28.95,0	7.26,1.4,2.74	48,114,-96	pcb_textured
-cfe-combo-sd-uhs2-interlock	C170	ソニー α7 IV 兼用スロット	#151-170	0,-29.35,-0.58	23.66,1.98,0.62	0,-138,48	matte_chassis
+cfe-iso7816-xray-ser-guard	C167	ISO 7816-1耐X線シールド	#151-170	10.6,17.8,0	7.6,4.6,0.65	-104,138,-36	emi_shield_metal
+cfe-asm2464pd-usb4-bridge	C168	ASMedia ASM2464PD	#151-170	-8.4,28.95,0	7.6,1.38,2.76	-46,114,-96	pcb_textured
+cfe-usbc-cc-bmc-pd-ctrl	C169	USB Type-C CC1/CC2	#151-170	8.4,28.95,0	7.2,1.34,2.74	48,114,-96	pcb_textured
+cfe-combo-sd-uhs2-interlock	C170	ソニー α7 IV 兼用スロット	#151-170	0,-29.35,-0.58	23.6,1.92,0.62	0,-138,48	matte_chassis

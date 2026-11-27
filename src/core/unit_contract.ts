@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CadPart, GraphicsQuality, PartExplanation, RenderMode } from '../assemblies/types';
 import type { ResourceCache } from './resource_cache';
 
-export type QualityTier = GraphicsQuality; // 'standard' | 'high' | 'ultra'
+export type QualityTier = GraphicsQuality; // 'standard_lite' | 'standard' | 'high' | 'ultra'
 
 export interface UnitPartMeta {
   readonly id: string;
@@ -28,6 +28,7 @@ export interface UnitPartMeta {
   };
   readonly nextGenInnovation: string;
   readonly specs: ReadonlyArray<{ readonly label: string; readonly value: string }>;
+  readonly references?: readonly string[];
   readonly diagramType: PartExplanation['diagramType'];
 }
 
@@ -99,6 +100,8 @@ export interface UnitRaycastIndex {
   readonly parts: readonly RaycastPartBounds[];
   readonly groups: readonly RaycastGroupBounds[];
   readonly partBoundsById: ReadonlyMap<string, RaycastPartBounds>;
+  /** Enable zero-GC inline Möller-Trumbore scalar triangle picking fast-path (STD LITE) */
+  readonly fastLiteRaycast?: boolean;
 }
 
 export interface UnitBuildStats {

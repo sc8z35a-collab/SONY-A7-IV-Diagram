@@ -491,7 +491,7 @@ export function retessellatePrimitiveSagitta(
   geo: THREE.BufferGeometry,
   toleranceMm: number
 ): THREE.BufferGeometry {
-  if (geo.userData && geo.userData.__preserveHiRes) return geo;
+  const isLiteTol = toleranceMm >= 0.55;
   const gType = geo.type;
   const params = (geo as unknown as { parameters?: Record<string, unknown> }).parameters;
   if (!params) return geo;
@@ -506,7 +506,29 @@ export function retessellatePrimitiveSagitta(
   const sx = bb.max.x - bb.min.x;
   const sy = bb.max.y - bb.min.y;
   const sz = bb.max.z - bb.min.z;
+  const diag = Math.hypot(sx, sy, sz);
+  // Preserve high-res roundness on large hero barrels/rings (>22mm); distill smaller detail meshes in STD LITE
+  if (
+    geo.userData &&
+    geo.userData.__preserveHiRes &&
+    !(isLiteTol && (diag <= 22.0 || (gType === 'ExtrudeGeometry' && diag <= 42.0)))
+  ) {
+    return geo;
+  }
   const isCentered = Math.abs(cx) <= 0.02 && Math.abs(cy) <= 0.02 && Math.abs(cz) <= 0.02;
+
+  // 0. Subdivided BoxGeometry -> single-segment BoxGeometry in STD LITE (100% identical silhouette!)
+  if (isLiteTol && gType === 'BoxGeometry') {
+    const ws = (params.widthSegments as number) ?? 1;
+    const hs = (params.heightSegments as number) ?? 1;
+    const ds = (params.depthSegments as number) ?? 1;
+    if (ws > 1 || hs > 1 || ds > 1) {
+      const box = new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1);
+      if (!isCentered) box.translate(cx, cy, cz);
+      return box;
+    }
+    return geo;
+  }
 
   // 1. SphereGeometry (full spheres + spherical dome caps!)
   if (gType === 'SphereGeometry') {
@@ -523,8 +545,13 @@ export function retessellatePrimitiveSagitta(
 
     // 1A: Partial spherical dome cap (e.g. microlens/waveguide/cornea domes!)
     if (thetaLen < Math.PI - 0.02 && thetaLen > 0.08) {
-      const targetW = r < 2.2 ? 8 : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.25, 8, 14);
-      const targetH = Math.max(3, Math.round((thetaLen / Math.PI) * targetW * 0.65));
+      const targetW =
+        isLiteTol && r < 3.0
+          ? 6
+          : r < 2.2
+            ? 8
+            : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.25, isLiteTol ? 6 : 8, isLiteTol ? 10 : 14);
+      const targetH = Math.max(3, Math.round((thetaLen / Math.PI) * targetW * 0.6));
       if (targetW >= ws - 1 && targetH >= hs - 1) return geo;
 
       for (const rotMode of [0, 1, -1] as const) {
@@ -533,13 +560,14 @@ export function retessellatePrimitiveSagitta(
         else if (rotMode === -1) cand.rotateX(-Math.PI / 2);
         cand.computeBoundingBox();
         const cbb = cand.boundingBox!;
+        const domeTol = Math.max(0.16, r * 0.18);
         if (
-          Math.abs(cbb.min.x - bb.min.x) <= 0.08 &&
-          Math.abs(cbb.max.x - bb.max.x) <= 0.08 &&
-          Math.abs(cbb.min.y - bb.min.y) <= 0.08 &&
-          Math.abs(cbb.max.y - bb.max.y) <= 0.08 &&
-          Math.abs(cbb.min.z - bb.min.z) <= 0.08 &&
-          Math.abs(cbb.max.z - bb.max.z) <= 0.08
+          Math.abs(cbb.min.x - bb.min.x) <= domeTol &&
+          Math.abs(cbb.max.x - bb.max.x) <= domeTol &&
+          Math.abs(cbb.min.y - bb.min.y) <= domeTol &&
+          Math.abs(cbb.max.y - bb.max.y) <= domeTol &&
+          Math.abs(cbb.min.z - bb.min.z) <= domeTol &&
+          Math.abs(cbb.max.z - bb.max.z) <= domeTol
         ) {
           return cand;
         }
@@ -555,7 +583,8 @@ export function retessellatePrimitiveSagitta(
     ) {
       return geo;
     }
-    if (r <= 0.72) {
+    const octRadiusCut = isLiteTol ? 1.15 : 0.72;
+    if (r <= octRadiusCut) {
       if (isCentered) {
         const key = `OCT:${qKey(r)}`;
         let cached = pooledPrimitiveCache.get(key);
@@ -572,8 +601,10 @@ export function retessellatePrimitiveSagitta(
     }
 
     const targetW =
-      r < 1.8 ? 6 : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.25, 7, 13);
-    const targetH = r < 1.8 ? 4 : Math.max(4, Math.round(targetW * 0.55));
+      r < (isLiteTol ? 2.6 : 1.8)
+        ? 6
+        : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.25, isLiteTol ? 6 : 7, isLiteTol ? 10 : 13);
+    const targetH = r < (isLiteTol ? 2.6 : 1.8) ? 4 : Math.max(4, Math.round(targetW * 0.55));
     if (targetW >= ws - 1 && targetH >= hs - 1) return geo;
 
     if (isCentered) {
@@ -677,9 +708,18 @@ export function retessellatePrimitiveSagitta(
     }
     if (!orient) return geo;
 
-    const maxCylSegs = rMax > 22 ? 28 : rMax > 8 ? 13 : 8;
-    const targetR =
-      rMax < 0.85
+    const maxCylSegs = isLiteTol
+      ? rMax > 22 ? 28 : rMax > 8 ? 10 : 6
+      : rMax > 22 ? 28 : rMax > 8 ? 13 : 8;
+    const targetR = isLiteTol
+      ? rMax < 1.2
+        ? 4
+        : rMax < 3.2
+          ? 6
+          : rMax < 6.0
+            ? 8
+            : sagittaSegmentsForArc(rMax, Math.PI * 2, toleranceMm * 1.65, 6, maxCylSegs)
+      : rMax < 0.85
         ? 4
         : rMax < 2.2
           ? 6
@@ -723,7 +763,9 @@ export function retessellatePrimitiveSagitta(
     const thetaLen = (params.thetaLength as number) ?? Math.PI * 2;
     if (Math.abs(thetaLen - Math.PI * 2) > 0.01 || thetaStart !== 0) return geo;
 
-    const targetR = r < 1.3 ? 5 : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.4, 6, 12);
+    const targetR = isLiteTol
+      ? r < 2.0 ? 4 : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.65, 5, 10)
+      : r < 1.3 ? 5 : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.4, 6, 12);
     if (targetR >= rs - 1) return geo;
 
     const d = r * 2;
@@ -797,12 +839,16 @@ export function retessellatePrimitiveSagitta(
     }
     if (!plane) return geo;
 
-    const targetRad = tube < 0.35 ? 3 : tube < 0.9 ? 4 : 5;
-    const maxTorSegs = r > 18 ? 18 : r > 5 ? 12 : 8;
+    const targetRad = isLiteTol
+      ? tube < 0.6 ? 3 : 4
+      : tube < 0.35 ? 3 : tube < 0.9 ? 4 : 5;
+    const maxTorSegs = isLiteTol
+      ? r > 18 ? 14 : r > 5 ? 9 : 6
+      : r > 18 ? 18 : r > 5 ? 12 : 8;
     const targetTub =
-      r < 2.2
+      r < (isLiteTol ? 3.2 : 2.2)
         ? 6
-        : sagittaSegmentsForArc(r + tube, Math.PI * 2, toleranceMm * 1.7, 7, maxTorSegs);
+        : sagittaSegmentsForArc(r + tube, Math.PI * 2, toleranceMm * (isLiteTol ? 2.0 : 1.7), isLiteTol ? 6 : 7, maxTorSegs);
     if (targetRad >= radSegs && targetTub >= tubSegs - 1) return geo;
 
     if (isCentered) {
@@ -840,7 +886,9 @@ export function retessellatePrimitiveSagitta(
     else if (sx < 0.02) plane = 'yz';
     if (!plane) return geo;
 
-    const targetT = sagittaSegmentsForArc(outerR, Math.PI * 2, toleranceMm * 1.4, 8, outerR > 18 ? 22 : 14);
+    const targetT = isLiteTol
+      ? sagittaSegmentsForArc(outerR, Math.PI * 2, toleranceMm * 1.75, 6, outerR > 18 ? 16 : 10)
+      : sagittaSegmentsForArc(outerR, Math.PI * 2, toleranceMm * 1.4, 8, outerR > 18 ? 22 : 14);
     if (targetT >= ts - 1 && ps <= 1) return geo;
 
     if (isCentered && plane === 'xy') {
@@ -873,7 +921,9 @@ export function retessellatePrimitiveSagitta(
     else if (sx < 0.02) plane = 'yz';
     if (!plane) return geo;
 
-    const targetS = sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.4, 6, r > 18 ? 22 : 14);
+    const targetS = isLiteTol
+      ? sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.75, 5, r > 18 ? 16 : 10)
+      : sagittaSegmentsForArc(r, Math.PI * 2, toleranceMm * 1.4, 6, r > 18 ? 22 : 14);
     if (targetS >= segs - 1) return geo;
 
     if (isCentered && plane === 'xy') {
@@ -916,10 +966,12 @@ export function retessellatePrimitiveSagitta(
       return geo;
     }
 
-    const targetRad = radius < 0.4 ? 3 : 4;
-    const scaleTub = radius < 0.18 ? 0.34 : radius < 0.4 ? 0.42 : 0.52;
-    const targetTub = Math.max(4, Math.round(tubSegs * scaleTub));
-    if (targetRad >= radSegs && targetTub >= tubSegs - 2) return geo;
+    const targetRad = isLiteTol ? 3 : (radius < 0.4 ? 3 : 4);
+    const scaleTub = isLiteTol
+      ? (radius < 0.25 ? 0.22 : radius < 0.6 ? 0.30 : 0.38)
+      : (radius < 0.18 ? 0.34 : radius < 0.4 ? 0.42 : 0.52);
+    const targetTub = Math.max(isLiteTol ? 3 : 4, Math.round(tubSegs * scaleTub));
+    if (targetRad >= radSegs && targetTub >= tubSegs - 1) return geo;
     return new THREE.TubeGeometry(path, targetTub, radius, targetRad, closed);
   }
 
@@ -953,16 +1005,19 @@ export function retessellatePrimitiveSagitta(
     }
     if (!axis) return geo;
 
-    const targetSegs = sagittaSegmentsForArc(maxR, Math.PI * 2, toleranceMm * 1.4, 9, maxR > 18 ? 22 : 16);
-    if (targetSegs >= segs - 2) return geo;
+    const targetSegs = isLiteTol
+      ? sagittaSegmentsForArc(maxR, Math.PI * 2, toleranceMm * 1.75, 8, maxR > 18 ? 16 : 11)
+      : sagittaSegmentsForArc(maxR, Math.PI * 2, toleranceMm * 1.4, 9, maxR > 18 ? 22 : 16);
+    if (targetSegs >= segs - 1) return geo;
 
+    const latheTol = Math.max(0.18, maxR * 0.08);
     if (axis === 'z') {
       for (const sgn of [1, -1] as const) {
         const rebuilt = new THREE.LatheGeometry(pts, targetSegs);
         rebuilt.rotateX((sgn * Math.PI) / 2);
         rebuilt.computeBoundingBox();
         const rbb = rebuilt.boundingBox!;
-        if (Math.abs(rbb.min.z - bb.min.z) <= 0.15 && Math.abs(rbb.max.z - bb.max.z) <= 0.15) {
+        if (Math.abs(rbb.min.z - bb.min.z) <= latheTol && Math.abs(rbb.max.z - bb.max.z) <= latheTol) {
           rebuilt.computeVertexNormals();
           return rebuilt;
         }
@@ -984,6 +1039,24 @@ export function retessellatePrimitiveSagitta(
 
   // 8. Direct ExtrudeGeometry (catches raw `new THREE.ExtrudeGeometry` calls that bypassed `extrudeCentered`!)
   if (gType === 'ExtrudeGeometry') {
+    const posAttr = geo.getAttribute('position');
+    const rawTriCount = geo.index
+      ? Math.floor(geo.index.count / 3)
+      : posAttr
+        ? Math.floor(posAttr.count / 3)
+        : 0;
+
+    // STD LITE Screen-Equivalence Micro-OBB Distillation:
+    // Tiny <4.2mm extruded SMD components / chamfered pads occupy only a few pixels on screen;
+    // substituting an exact-fit BoxGeometry preserves 100% silhouette, position & color at 12 tris!
+    if (isLiteTol && diag > 0.01 && diag <= 4.2 && rawTriCount >= 28 && sx > 0.01 && sy > 0.01 && sz > 0.01) {
+      const box = new THREE.BoxGeometry(sx, sy, sz);
+      if (Math.abs(cx) > 1e-4 || Math.abs(cy) > 1e-4 || Math.abs(cz) > 1e-4) {
+        box.translate(cx, cy, cz);
+      }
+      return box;
+    }
+
     const opts = params.options as Record<string, unknown> | undefined;
     const shapes = params.shapes as THREE.Shape | THREE.Shape[] | undefined;
     if (opts && shapes && !Array.isArray(shapes)) {
@@ -991,45 +1064,67 @@ export function retessellatePrimitiveSagitta(
       const bSegs = (opts.bevelSegments as number) ?? 3;
       const steps = (opts.steps as number) ?? 1;
       const extrudePath = opts.extrudePath;
-      if (!extrudePath && (cSegs > 2 || bSegs > 1 || steps > 1)) {
+      const bEnabled = Boolean(opts.bevelEnabled);
+      if (!extrudePath && (isLiteTol ? (bEnabled || cSegs > 2 || rawTriCount >= 36) : (cSegs > 2 || bSegs > 1 || steps > 1))) {
         const depth = (opts.depth as number) ?? 1;
-        const bEnabled = Boolean(opts.bevelEnabled);
         const bSize = (opts.bevelSize as number) ?? 0;
         const bThick = (opts.bevelThickness as number) ?? 0;
-        const keepBevel = bEnabled && bSize >= 0.22 && bThick > 0 && depth >= 2.5;
-        const adapted = resampleShapeSagitta(shapes, toleranceMm * 1.15, 16);
-        const cand = new THREE.ExtrudeGeometry(adapted, {
-          depth,
+        const keepBevel = !isLiteTol && bEnabled && bSize >= 0.22 && bThick > 0 && depth >= 2.5;
+        const effDepth = !keepBevel && bEnabled ? depth + bThick * 2 : depth;
+        const maxCirc = isLiteTol ? 10 : 16;
+        const adapted = resampleShapeSagitta(shapes, toleranceMm * (isLiteTol ? 1.35 : 1.15), maxCirc);
+        const baseCand = new THREE.ExtrudeGeometry(adapted, {
+          depth: effDepth,
           bevelEnabled: keepBevel,
           bevelSegments: keepBevel ? 1 : 0,
-          bevelSize: bSize,
-          bevelThickness: bThick,
+          bevelSize: keepBevel ? bSize : 0,
+          bevelThickness: keepBevel ? bThick : 0,
           steps: 1,
           curveSegments: 1,
         });
-        cand.computeBoundingBox();
-        const cbb = cand.boundingBox!;
-        const cSx = cbb.max.x - cbb.min.x;
-        const cSy = cbb.max.y - cbb.min.y;
-        const cSz = cbb.max.z - cbb.min.z;
-        const tol = Math.max(0.25, bSize * 2 + 0.12);
-        if (
-          Math.abs(cSx - sx) <= tol &&
-          Math.abs(cSy - sy) <= tol &&
-          Math.abs(cSz - sz) <= Math.max(tol, bThick * 2 + 0.15)
-        ) {
-          const dx = cx - (cbb.min.x + cbb.max.x) * 0.5;
-          const dy = cy - (cbb.min.y + cbb.max.y) * 0.5;
-          const dz = cz - (cbb.min.z + cbb.max.z) * 0.5;
-          if (Math.abs(dx) > 1e-4 || Math.abs(dy) > 1e-4 || Math.abs(dz) > 1e-4) {
-            cand.translate(dx, dy, dz);
+
+        // Match raw orientation cleanly (supports identity plus 90-deg X/Y rotated horizontal plates in STD LITE!)
+        const rotModes: ReadonlyArray<0 | 1 | 2 | 3 | 4> = isLiteTol ? [0, 1, 2, 3, 4] : [0];
+        const tol = Math.max(0.28, bSize * 2.2 + 0.14);
+        const tolZ = Math.max(tol, bThick * 2.2 + 0.18);
+        for (let rm = 0; rm < rotModes.length; rm++) {
+          const mode = rotModes[rm];
+          const cand = mode === 0 ? baseCand : baseCand.clone();
+          if (mode === 1) cand.rotateX(Math.PI * 0.5);
+          else if (mode === 2) cand.rotateX(-Math.PI * 0.5);
+          else if (mode === 3) cand.rotateY(Math.PI * 0.5);
+          else if (mode === 4) cand.rotateY(-Math.PI * 0.5);
+
+          cand.computeBoundingBox();
+          const cbb = cand.boundingBox!;
+          const cSx = cbb.max.x - cbb.min.x;
+          const cSy = cbb.max.y - cbb.min.y;
+          const cSz = cbb.max.z - cbb.min.z;
+          const ok =
+            Math.abs(cSx - sx) <= (mode >= 3 ? tolZ : tol) &&
+            Math.abs(cSy - sy) <= (mode === 1 || mode === 2 ? tolZ : tol) &&
+            Math.abs(cSz - sz) <= (mode === 0 ? tolZ : tol);
+          if (ok) {
+            if (mode !== 0) baseCand.dispose();
+            const candTris = Math.floor((cand.index ? cand.index.count : cand.getAttribute('position').count) / 3);
+            if (candTris >= rawTriCount) {
+              cand.dispose();
+              return geo;
+            }
+            const dx = cx - (cbb.min.x + cbb.max.x) * 0.5;
+            const dy = cy - (cbb.min.y + cbb.max.y) * 0.5;
+            const dz = cz - (cbb.min.z + cbb.max.z) * 0.5;
+            if (Math.abs(dx) > 1e-4 || Math.abs(dy) > 1e-4 || Math.abs(dz) > 1e-4) {
+              cand.translate(dx, dy, dz);
+            }
+            if (!isLiteTol && (adapted as THREE.Shape & { __hasCurves?: boolean }).__hasCurves) {
+              smoothCreaseNormals(cand, 38);
+            }
+            return cand;
           }
-          if ((adapted as THREE.Shape & { __hasCurves?: boolean }).__hasCurves) {
-            smoothCreaseNormals(cand, 38);
-          }
-          return cand;
+          if (mode !== 0) cand.dispose();
         }
-        cand.dispose();
+        baseCand.dispose();
       }
     }
   }

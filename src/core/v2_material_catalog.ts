@@ -20,6 +20,12 @@ export interface V2MaterialTag {
 }
 
 export const CORE_MATERIAL_CATALOG: Readonly<Record<string, MaterialBindingSpec>> = {
+  welcomeCoreSlate: { bucket: 'matte_black_anodized', tint: 0x364152 },
+  welcomeCoreMid: { bucket: 'matte_chassis', tint: 0x4b586e },
+  welcomeTitaniumFace: { bucket: 'titanium_machined', tint: 0xe2eaf4 },
+  welcomeMagRear: { bucket: 'magnesium_cast', tint: 0x2a3446 },
+  sonyAlphaCinnabar: { bucket: 'pin_carrier_gloss', tint: 0xe65a28 },
+  welcomeOpticalEd: { bucket: 'optical_glass_ed', tint: 0x60a5fa },
   matteBlackAnodized: { bucket: 'matte_black_anodized', tint: 0x202328 },
   epdmGasket: { bucket: 'magnesium_cast', tint: 0x353840 },
   sswfGlass: { bucket: 'matte_chassis', tint: 0x8fd0f5 },

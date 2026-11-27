@@ -18,7 +18,7 @@ export function createIntegratedUnit(): OptimizedUnit {
     subsystem: 'body',
     meta: INTEGRATED_META,
     heroSpecs: CAMERA_MACRO_HERO_SPECS,
-    buildRaw: (mats, _quality, { clippingPlanes }) =>
-      buildCameraMacroRaw(mats, clippingPlanes, true),
+    buildRaw: (mats, _quality, { clippingPlanes, yieldChunk }) =>
+      buildCameraMacroRaw(mats, clippingPlanes, true, yieldChunk),
   });
 }

@@ -1,5 +1,5 @@
 id	code	name	group	pos	size	exp	mat
-mb-vapor-chamber	#01	超薄型ベイパーチャンバー	#001-030	0,0,-27.4	67.8,55.24,2.22	0,0,-54	copper_thermal
+mb-vapor-chamber	#01	超薄型ベイパーチャンバー	#001-030	0,0,-27.4	67.8,55.24,3.15	0,0,-54	copper_thermal
 mb-emi-shield	#02	マルチ区画EMI高周波シールド缶	#001-030	0,0,-24.6	54.1,48.12,2.41	0,0,-40.5	emi_shield_metal
 mb-isp-ihs	#03	ISPメインエンジン・ニッケルメッキ銅ヒ	#001-030	0,0,-23.4	19.2,19.2,1.43	0,0,-29	stainless_machined
 mb-isp-die	#04	次世代4nm メイン撮像処理エンジン	#001-030	0,0,-22.2	20.79,20.79,0.78	0,0,-18.5	silicon_hero
@@ -7,16 +7,16 @@ mb-isp-interposer	#05	フリップチップBGA 有機サブストレート	#001-
 mb-ai-npu	#06	専用AIプロセッシングユニット /	#001-030	0,0,-21.2	15.27,15.27,1.82	5.5,2.5,-18	solder_silver
 mb-lpddr5x	#07	クワッドチャネル LPDDR5X	#001-030	0,0,-21	12.1,31.9,1.55	-4.5,0,-11.5	solder_silver
 mb-pmic-vrm	#08	多相同期整流PMIC	#001-030	0,0,-21.2	27.31,8.71,1.85	0,-6.5,-10.5	solder_silver
-mb-cfexpress	#09	デュアル CFexpress 4.0	#001-030	0,0,-22.8	24.2,49.4,5.27	-12.5,0,-15	gold_plating
+mb-cfexpress	#09	デュアル CFexpress 4.0	#001-030	0,0,-22.8	24.2,49.4,5.3	-12.5,0,-15	gold_plating
 mb-imu-mcu	#10	6軸水晶MEMSジャイロ/加速度IMU	#001-030	0,0,-20.8	12.9,7.95,1.41	-3.5,-6.5,-9.5	ic_epoxy_dark
 mb-security-clock	#11	C2PA暗号署名セキュリティチップ	#001-030	0,0,-20.8	11.6,6.55,1.29	3.5,-3,-9.5	ic_epoxy_dark
 mb-io-ports	#12	プロフェッショナル高速I/Oポート群	#001-030	0,0,-22.2	17.5,37.7,7.6	12.5,0,-12	ic_epoxy_dark
-mb-rf-wifi	#13	Wi-Fi 6E / Wi-Fi 7	#001-030	0,0,-21	19.86,13.45,1.96	6,7,-13	copper_thermal
+mb-rf-wifi	#13	Wi-Fi 6E / Wi-Fi 7	#001-030	0,0,-21	19.8,13.44,1.77	6,7,-13	copper_thermal
 mb-hdi-pcb	#14	12層エニーレイヤーHDIメインマザーボ	#001-030	0,0,-19.2	92,64,1.94	0,0,4.5	pcb_textured
 mb-b2b-connectors	#15	高密度ボード間コネクタ	#001-030	0,0,-17.6	77,65.7,4.08	0,0,15	ic_epoxy_dark
 mb-chassis-frame	#16	前面熱分離マグネシウム構造フレーム	#001-030	0,0,-15.6	95,68.3,8.4	0,0,26.5	magnesium_cast
 mb-vapor-wick-core	M17	ベイパーチャンバー内蔵・焼結多孔質銅毛細	#001-030	0,0,-26.6	48.9,26.2,0.96	0,0,-48	copper_thermal
-mb-rf-shield-bracket	M18	背面RFシールド構造ブラケット	#001-030	0,0,-28.8	84,54,1.35	0,0,-64	stainless_machined
+mb-rf-shield-bracket	M18	背面RFシールド構造ブラケット	#001-030	0,0,-28.8	84,54,3.53	0,0,-64	stainless_machined
 mb-hdmi-daughterboard	M19	モジュラー独立HDMI 2.1ドーターボ	#001-030	0,0,-22.2	20.4,18.8,5.13	28,12,-24	emi_shield_metal
 mb-audio-jack-board	M20	独立3.5mm音声ジャック	#001-030	0,0,-22.2	16.75,13.8,5.48	28,-18,-22	pcb_textured
 mb-wifi-mimo-antennas	M21	Wi-Fi 6E/7セラミックパッチアン	#001-030	0,0,-21.4	27.3,9.8,1.77	22,26,-24	gold_plating
@@ -27,14 +27,14 @@ mb-rtc-coin-cell	M25	内蔵ML414充電式RTCバックアップボ	#001-030	0,0,-
 mb-motor-driver-soc	M26	6chフルブリッジ統合モータードライバー	#001-030	0,0,-20.8	10.72,7.86,1.04	8,-24,-14	copper_thermal
 mb-cfx-heat-plate	M27	CFexpress 4.0専用	#001-030	0,0,-25.4	27.8,31.4,1.12	-28,6,-34	copper_thermal
 mb-power-inductor-bank	M28	基板前面大電流6相モールド合金パワーイン	#001-030	0,0,-18	26.58,24.34,1.32	-18,-18,10	ic_epoxy_dark
-mb-perimeter-ribbons	M29	メイン基板外周12系統	#001-030	0,0,-17.8	96.83,77.14,6.28	0,26,14	gold_plating
+mb-perimeter-ribbons	M29	メイン基板外周12系統	#001-030	0,0,-17.8	96.83,77.11,12.41	0,26,14	polyimide_fpc
 mb-evf-cavity-bracket	M30	EVFキャビティ内FPC押さえクランプ	#001-030	0,0,-16.4	34,6.1,1.66	0,32,24	stainless_machined
 mb-vc-evaporator-plate	M31	ベイパーチャンバー蒸発側C1100無酸素	#031-060	0,0,-26.82	46.5,28.2,0.32	-4,4,-44	copper_thermal
 mb-vc-condenser-plate	M32	ベイパーチャンバー凝縮側C1100銅トッ	#031-060	0,0,-27.82	47.6,29.2,0.32	4,4,-60	cucu_hybrid_copper
 mb-vc-woven-mesh-wick	M33	200メッシュ極細銅ワイヤー織網ハイブリ	#031-060	0,0,-27.14	43.8,25.4,0.22	-12,-2,-51.5	ic_epoxy_dark
-mb-vc-working-fluid-zone	M34	減圧真空・脱気超純水作動液	#031-060	0,0,-27.36	37.85,24,0.89	10,-4,-56.5	matte_chassis
+mb-vc-working-fluid-zone	M34	減圧真空・脱気超純水作動液	#031-060	0,0,-27.36	37.85,24,0.8	10,-4,-56.5	matte_chassis
 mb-vc-pinch-seal-getter	M35	真空脱気ピンチオフ超音波圧接封止端	#031-060	0,0,-27.35	12.57,2.2,1.12	-34,-14,-54	stainless_machined
-mb-vc-spring-clamps	M36	定荷重皿バネ付きショルダービス	#031-060	0,0,-28.02	32.64,27.7,2.74	14,14,-68	becu_spring
+mb-vc-spring-clamps	M36	定荷重皿バネ付きショルダービス	#031-060	0,0,-28.02	32.6,27.7,2.74	14,14,-68	becu_spring
 mb-vc-pcm-tim-film	M37	相変化熱伝導シート	#031-060	0,0,-25.85	46.3,30.2,0.18	6,-6,-34	silicon_dielectric
 mb-vc-tripod-cold-bridge	M38	ヒートパイプ末端・三脚座コールドシンク熱	#031-060	0,0,-26.4	29.41,10.54,3.31	-24,-30,-44	copper_thermal
 mb-oem-heat-plate	M39	Sony純正 HEAT_PLATE_メイ	#031-060	0,0,-28.28	76,48,0.6	0,12,-72	stainless_machined
@@ -43,16 +43,16 @@ mb-oem-insulating-sheet-a	M41	Sony純正 INSULATING	#031-060	0,0,-25.45	78,52,0.
 mb-oem-insulating-sheet-b	M42	Sony純正 INSULATING	#031-060	0,0,-16.85	84,56,0.25	0,-10,20.5	optical_ar_iridescent
 mb-oem-mag-cut-plate	M43	Sony純正 MAGNETIC	#031-060	0,0,-16.25	48.2,20.5,0.49	12,-24,32	iron_magnetic
 mb-oem-jack-plate	M44	Sony純正 JACK PLATEサイド	#031-060	0,0,-22.2	6.83,55.6,11.6	44,0,-18	stainless_machined
-mb-oem-fp2438-flex	M45	Sony純正 FP-2438 フレキシブ	#031-060	0,0,-18.35	23.7,22.06,2.11	34,18,12	stainless_machined
+mb-oem-fp2438-flex	M45	Sony純正 FP-2438 フレキシブ	#031-060	0,0,-18.35	23.7,22.4,6.51	34,18,12	polyimide_fpc
 mb-oem-gyro-cushion-sub	M46	Sony純正 GY-1018 角速度ジャ	#031-060	0,0,-16.85	15.4,11.4,3.02	-26,-32,24	foam_felt_matte
 mb-pcb-vippo-thermal-vias	M47	12層HDI基板・銅充填サーマルビア配列	#031-060	0,0,-19.2	36,26,1.56	18,22,8	copper_thermal
 mb-ntc-thermistor-array	M48	マルチゾーン温度監視 0402	#031-060	0,0,-20.45	52.7,42.7,0.7	-12,24,-22	gold_plating
 mb-emi-conductive-gaskets	M49	導電性ニッケル銅ファブリック巻きEMIフ	#031-060	0,0,-28.08	84.2,55.8,1.59	24,24,-64	ic_epoxy_dark
 mb-battery-thermal-baffle	M50	バッテリー室・断熱エアギャップ隔壁	#031-060	0,0,-21.8	3.21,56,11.5	-48,0,-18	matte_chassis
 mb-rear-lcd-thermal-cushion	M51	背面モニター側・低熱伝導シリコン発泡断熱	#031-060	0,0,-29.38	58,44.5,1.15	0,-18,-86	elastomer_rubber
-mb-sigma-sensor-thermal-link	M52	センサーΣグラファイト〜メイン基板放熱ブ	#031-060	0,0,-14.65	37.64,8.45,1.46	-18,28,36	carbon_fiber
+mb-sigma-sensor-thermal-link	M52	センサーΣグラファイト〜メイン基板放熱ブ	#031-060	0,0,-14.65	37.55,9.22,7.55	-18,28,36	carbon_fiber
 mb-vrm-copper-busbar	M53	大電流VRM低インピーダンス純銅バスバー	#031-060	0,0,-20.58	46,13.91,0.83	-6,-34,-18	copper_thermal
-mb-esd-gnd-spring-clips	M54	基板外周・ベリリウム銅ESD静電気放電	#031-060	0,0,-19.85	73.4,62.6,1.95	28,-28,16	gold_plating
+mb-esd-gnd-spring-clips	M54	基板外周・ベリリウム銅ESD静電気放電	#031-060	0,0,-19.85	73.4,62.6,1.97	28,-28,16	gold_plating
 mb-rf-shield-4screws	M55	ソニー純正RFシールド構造締結4点精密ね	#031-060	0,0,-29.2	64.8,48.16,4.27	-42,34,-84	stainless_machined
 mb-card-detect-heartcam	M56	CFexpress / SDデュアルスロ	#031-060	0,0,-23.6	6.42,27.2,1.82	-76,-24,-46	stainless_machined
 mb-io-lowcap-esd-chokes	M57	HDMI 2.1	#031-060	0,0,-20.5	5.7,24.8,0.88	74,22,-32	ic_epoxy_dark

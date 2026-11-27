@@ -2,29 +2,29 @@ id	code	name	group	pos	size	exp	mat
 body-battery-pack	B01	7.2V 高出力デュアルセル リチウムイ	#001-030	-54.5,-6,1.5	22.6,51.5,36.8	-64,-56,20	magnesium_cast
 body-battery-chamber	B02	防水バッテリー室・金メッキ多極スプリング	#001-030	-54.5,-6,1.5	26.4,58.5,41.2	-34,-22,4	magnesium_cast
 body-ergo-grip	B03	エルゴノミクス深型右手グリップ	#001-030	-56,-2,6	29.7,78.48,69.67	-76,8,48	leatherette_grip
-body-shutter-dials	B04	2段金属ドームシャッターボタン	#001-030	-54.5,31,9	26.82,18.75,84.23	-34,48,22	stainless_machined
-body-top-dials	B05	ロック機構付きモード／ドライブダイヤル	#001-030	0,38.8,-2	94.85,11.3,32.85	0,62,0	stainless_machined
+body-shutter-dials	B04	2段金属ドームシャッターボタン	#001-030	-54.5,31,9	26.85,18.75,84.23	-34,48,22	stainless_machined
+body-top-dials	B05	ロック機構付きモード／ドライブダイヤル	#001-030	0,38.8,-2	94.32,11.3,32.74	0,62,0	stainless_machined
 body-mi-hotshoe	B06	21ピン デジタルオーディオ対応マルチイ	#001-030	0,57.6,-7.5	22.4,6.3,23	0,72,-4	stainless_machined
-body-mg-front-shell	B07	チクソモールドAZ91D マグネシウム合	#001-030	-3,0,27.6	118.5,77.11,62.95	0,0,56	magnesium_cast
+body-mg-front-shell	B07	チクソモールドAZ91D マグネシウム合	#001-030	-3,0,27.6	118.4,77.11,62.5	0,0,56	magnesium_cast
 body-top-deck	B08	マグネシウム合金トップデッキ	#001-030	0,36.8,0	123.2,22.75,63.4	0,38,0	magnesium_cast
 body-rear-controls	B09	背面マグネシウム外装・親指グリップ	#001-030	-6,0,-33	124.9,91.3,9.15	0,0,-54	magnesium_cast
-body-card-door	B10	防塵防滴デュアルCFexpress	#001-030	-70.8,-5,-13.5	5.66,46.7,25.15	-62,0,-18	magnesium_cast
-body-io-doors	B11	分割式防塵防滴 I/O ポートカバー	#001-030	56.5,-2,-7	4.37,52,27.55	56,0,-8	magnesium_cast
+body-card-door	B10	防塵防滴デュアルCFexpress	#001-030	-70.8,-5,-13.5	5.51,46.7,25.15	-62,0,-18	magnesium_cast
+body-io-doors	B11	分割式防塵防滴 I/O ポートカバー	#001-030	56.5,-2,-7	4.22,52,27.55	56,0,-8	magnesium_cast
 body-baseplate-tripod	B12	マグネシウム底板	#001-030	-6,-37.2,-1	124.9,4.02,71.9	0,-48,0	magnesium_cast
 body-battery-ejector	B13	バッテリー脱落防止スライド爪・トーション	#001-030	-54.5,-31.8,1.5	16.49,6.91,22	-68,-32,-22	stainless_machined
 body-battery-terminals	B14	6A大電流対応 金メッキ二股リン青銅スプ	#001-030	-54.5,19.6,1.5	31,10.65,34	-54,20,18	matte_chassis
-body-shutter-switch	B15	2段ステンレス・スナップドーム式シャッタ	#001-030	-54.5,31.8,20.5	14.8,8.54,18.54	-34,28,42	pcb_textured
-body-command-encoders	B16	前後コマンドダイヤル 光学スリットエンコ	#001-030	-54.5,25.8,5.5	18.3,12.07,64.8	-68,40,12	stainless_machined
-body-mode-lock-ratchet	B17	センターロック式モードダイヤル	#001-030	0,32.8,-6.5	90.06,10.22,27.06	0,48,-16	stainless_machined
+body-shutter-switch	B15	2段ステンレス・スナップドーム式シャッタ	#001-030	-54.5,31.8,20.5	14.8,8.55,18.54	-34,28,42	pcb_textured
+body-command-encoders	B16	前後コマンドダイヤル 光学スリットエンコ	#001-030	-54.5,25.8,5.5	18.3,12.07,64.8	-68,40,12	matte_black_anodized
+body-mode-lock-ratchet	B17	センターロック式モードダイヤル	#001-030	0,32.8,-6.5	90.06,10.55,27.06	0,48,-16	stainless_machined
 body-top-switch-fpc	B18	トップデッキU字型リジッドフレキ制御基板	#001-030	-6,34,4	105.5,1.55,42.85	-6,22,16	pcb_textured
 body-hotshoe-springs	B19	ホットシュー ステンレス板バネ接地圧着プ	#001-030	0,57.2,-7.5	21.4,11.5,24.7	0,56,-4	magnesium_cast
 body-card-ejectors	B20	デュアルCFexpress／SD	#001-030	-59.5,-5,-14.5	15.8,36.4,14	-42,-6,-34	magnesium_cast
 body-card-door-latch	B21	カード扉2アクション・スライドロックカム	#001-030	-67.8,-5,-13.5	6.7,36,17.9	-56,22,-26	stainless_machined
-body-joystick-gimbal	B22	8方向AFマルチセレクター 4軸ジンバル	#001-030	-44,7.5,-30	13.6,19.6,3.63	-34,16,-38	pcb_textured
-body-rear-wheel-encoder	B23	背面コントロールホイール 中空リング光学	#001-030	-48,-13,-30	23.1,23.1,3.18	-36,-16,-38	magnesium_cast
+body-joystick-gimbal	B22	8方向AFマルチセレクター 4軸ジンバル	#001-030	-44,7.5,-30	13.6,19.6,3.67	-34,16,-38	pcb_textured
+body-rear-wheel-encoder	B23	背面コントロールホイール 中空リング光学	#001-030	-48,-13,-30	23.1,22.8,3.18	-36,-16,-38	magnesium_cast
 body-strap-anchors	B24	左右高荷重ネックストラップ吊り金具	#001-030	0,22.5,0	108.1,17.5,19.4	0,26,-34	stainless_machined
 body-acoustic-breather	B25	防水ステレオMEMSマイク音響室	#001-030	0,33,17.5	66,4.15,11.2	0,26,36	elastomer_rubber
-body-chassis-gaskets	B26	全周3D一体成型シリコーン防塵防滴ガスケ	#001-030	-6,0,-2	118,73.5,57.35	0,-26,-30	magnesium_cast
+body-chassis-gaskets	B26	全周3D一体成型シリコーン防塵防滴ガスケ	#001-030	-6,0,-2	118,73.19,57.35	0,-26,-30	magnesium_cast
 body-top-sub-lcd	B27	肩部反射型ステータスサブOLEDモジュー	#001-030	-35,38.6,6	25,2.83,20.1	-36,56,22	magnesium_cast
 body-vgrip-contacts	B28	縦位置バッテリーグリップ用 12ピン金メ	#001-030	-28,-34.2,-14	19.6,11.6,9.2	-28,-62,-16	magnesium_cast
 body-rear-button-pcb	B29	背面パネル全域メンブレンFPCスイッチ基	#001-030	-6,0,-30.6	109.5,67.5,1.43	0,0,-38	polyimide_fpc
@@ -34,42 +34,42 @@ body-pc-sync-terminal	B32	ネジロック式PCフラッシュシンクロ同軸�
 body-cooling-duct	B33	内部パッシブ放熱サーマル煙突ダクト	#031-060	-4,-2,-29.8	64,44.6,2.3	0,-14,-46	matte_black_anodized
 body-port-reinforce	B34	左側面I/Oポート群ステンレス張力補強枠	#031-060	52.4,-2,-7	3.2,52,28	42,0,-6	stainless_machined
 body-tripod-block	B35	内部高荷重ステンレス三脚座ロードスプレッ	#031-060	0,-37.2,0	34,7.47,26	0,-32,10	stainless_machined
-body-batt-door-hinge	B36	縦位置グリップ対応・クイック脱着式バッテ	#031-060	-54.5,-35.6,-18.5	24.5,3.73,6.57	-52,-52,-32	stainless_machined
-body-perimeter-screws	B37	ボディ外装24本色別・緩み止め付JIS精	#031-060	0,0,0	128.08,71.99,65.08	0,0,-68	stainless_machined
+body-batt-door-hinge	B36	縦位置グリップ対応・クイック脱着式バッテ	#031-060	-54.5,-35.6,-18.5	24.5,3.86,6.91	-52,-52,-32	stainless_machined
+body-perimeter-screws	B37	ボディ外装24本色別・緩み止め付JIS精	#031-060	0,0,0	128.08,71.99,65.08	0,0,-68	matte_black_anodized
 body-evf-tie-bracket	B38	ペンタ部内部鍛造ロールケージ骨格	#031-060	0,47.6,-7.5	48.4,19.9,27.91	0,46,-24	stainless_machined
 body-main-internal-frame	B39	内部マグネシウム高剛性メイン骨格フレーム	#031-060	-6,0,-4	114.44,68.44,14	0,0,-14	magnesium_cast
 body-side-cabinet	B40	左側面マグネシウム・サイドキャビネット外	#031-060	54.8,-1,-5	7.9,66.44,43.2	78,-6,-8	magnesium_cast
 body-bottom-inner-plate	B41	底面二重構造・ステンレスインナー補強プレ	#031-060	-6,-34.2,-1	117,2.85,46	0,-76,-6	stainless_machined
-body-grip-adhesive-sheets	B42	グリップ外皮専用・2分割ダイカット強粘着	#031-060	-56,-2,12	28.6,49,38.29	-56,4,34	elastomer_rubber
+body-grip-adhesive-sheets	B42	グリップ外皮専用・2分割ダイカット強粘着	#031-060	-56,-2,12	28.6,49,38.28	-56,4,34	elastomer_rubber
 body-shoe-cap-cover	B43	マルチインターフェースシュー保護キャップ	#031-060	0,61.2,-7.5	21.4,7.3,21.8	0,96,-4	magnesium_cast
 body-gyro-sensor-unit	B44	独立防振マウント・3軸角速度ジャイロ基板	#031-060	-38.5,-10,-8.5	13.6,24.05,6.4	-28,-44,-22	elastomer_rubber
 body-still-movie-sq-lever	B45	静止画／動画／S	#031-060	-24,38.2,-6	23.6,7.81,27.73	-24,82,-12	magnesium_cast
-body-strap-triangles	B46	静音樹脂ブッシュ付・三角ストラップリング	#031-060	0,23,-1	138.68,10.75,14.58	0,44,52	stainless_machined
+body-strap-triangles	B46	静音樹脂ブッシュ付・三角ストラップリング	#031-060	0,23,-1	138.5,10.69,13.96	0,44,52	stainless_machined
 body-dc-coupler-flap	B47	バッテリー扉内蔵・外部AC電源防水ゴムケ	#031-060	-54.5,-37.2,16.5	11.8,3,10.45	-78,-68,36	magnesium_cast
 body-muffle-cushions	B48	背面シャッター静音吸音フォーム REAR	#031-060	-6,4,-28	57,37,2.5	22,18,-58	elastomer_rubber
 body-card-access-led-pipe	B49	メモリーカード書込アクセスLED導光プリ	#031-060	-62.5,-21,-24	15.71,36,14.81	-88,-28,-42	becu_spring
 body-rear-button-retainers	B50	背面ボタン群分割押さえプレート L/R	#031-060	-42,2,-31.5	93,55,3.58	-56,2,-64	stainless_machined
-body-top-rec-c2-subassy	B51	トップデッキ独立REC／C2ボタンポッド	#031-060	-32,38.5,-14	25,7.25,14.2	-44,78,-28	matte_black_anodized
-body-focal-plane-badge	B52	撮像面位置基準マーク彫刻インレイ	#031-060	24,38.8,0	22,1.24,10.5	34,76,18	magnesium_cast
+body-top-rec-c2-subassy	B51	トップデッキ独立REC／C2ボタンポッド	#031-060	-32,38.5,-14	25,7.27,14.2	-44,78,-28	matte_black_anodized
+body-focal-plane-badge	B52	撮像面位置基準マーク彫刻インレイ	#031-060	24,38.8,0	22,1.19,10.5	34,76,18	magnesium_cast
 body-speaker-emi-insulator	B53	スピーカー電磁接地シート	#031-060	36,-24,-24	39,33,2.84	64,-46,-42	optical_ar_iridescent
 body-mag-field-cut-plate	B54	磁気遮蔽パーマロイ・フィールドカットプレ	#031-060	2,-4,-26.5	58,42,3.07	28,-22,-64	iron_magnetic
 body-hdmi-light-shield	B55	フルサイズHDMI開口 遮光シート	#031-060	51.2,6,-14	20.25,23,18	76,26,-24	stainless_machined
 body-vg-fpc-retainer	B56	縦位置グリップ接続フレキ VG-1007	#031-060	-44,-24,-8	18.27,34.76,15.5	-44,-76,-26	polyimide_fpc
-body-top-antenna-coax	B57	トップデッキ内蔵 2.4/5GHz	#031-060	34,38,8	26.5,28.98,30.23	56,70,22	gold_plating
+body-top-antenna-coax	B57	トップデッキ内蔵 2.4/5GHz	#031-060	34,38,8	26.5,28.9,30.23	56,70,22	gold_plating
 body-power-lever-mechanism	B58	同軸電源ON/OFFレバー・復帰トーショ	#031-060	-54.5,34.5,20.5	16.97,5.03,22.03	-58,66,48	matte_black_anodized
 body-mic-rubber-mount	B59	ステレオマイク防振ラバーブーツ	#031-060	0,35.5,19.5	36,5.67,9.2	0,62,54	elastomer_rubber
 body-rear-lc-cover-seals	B60	背面LCD収納凹部カバー REAR LC	#031-060	10,-8,-33.2	77.8,50.4,5.2	34,-12,-80	magnesium_cast
 body-dl1008-rtc-flex	B61	Sony純正 DL-1008 サブフレキ	#061-090	-42.5,-18,-5.5	14.5,29.6,2.02	-58,-42,-26	polyimide_fpc
-body-bt2033-power-fpc	B62	Sony純正 BT_SOLDER /	#061-090	-48,-8,5.5	25.9,31.8,8.58	-76,-16,36	copper_thermal
+body-bt2033-power-fpc	B62	Sony純正 BT_SOLDER /	#061-090	-48,-8,5.5	25.9,31.8,18.12	-76,-16,36	polyimide_fpc
 body-rs1024-rear-bus	B63	Sony純正 背面4分割モジュラー制御フ	#061-090	0,0,-30.2	91.25,55.1,1.6	-24,12,-78	polyimide_fpc
 body-rl1071-shutter-fpc	B64	Sony純正 RL-1071 レリーズフ	#061-090	-51.5,32.2,16.5	22,10.47,18.58	-68,56,56	stainless_machined
 body-sh1035-top-connect	B65	Sony純正 SH-1035 トップメイ	#061-090	-4,35.8,-2	117,5.92,23	0,72,16	stainless_machined
 body-rear-thumb-grip	B66	背面エルゴノミクス親指レスト滑り止めエラ	#061-090	-52.5,2.5,-33.2	24.6,38,8.19	-82,8,-72	leatherette_grip
 body-io-port-flap-seals	B67	左側面4連ヒンジ式I/Oポート扉	#061-090	56.2,0,-5	2.65,44.5,11.83	96,6,-12	magnesium_cast
-body-bottom-gasket-bot-s	B68	Sony純正 GASKET BOT	#061-090	-4,-35.8,-2	112.8,1.49,36.88	0,-94,-18	magnesium_cast
+body-bottom-gasket-bot-s	B68	Sony純正 GASKET BOT	#061-090	-4,-35.8,-2	112.8,1.49,36.63	0,-94,-18	magnesium_cast
 body-media-lid-base-seal	B69	Sony純正 MEDIA LID	#061-090	-61.8,1.5,-14.5	4.03,42,18.5	-102,4,-24	matte_chassis
 body-backlit-button-leds	B70	暗所撮影用ボタンバックライト 0402極	#061-090	0,0,-32.2	90,52.25,0.61	-42,22,-84	matte_chassis
-body-tally-lamp-diffuser	B71	前面・背面デュアル録画タリーランプ	#061-090	0,0,0	17.4,16.65,60.45	-44,34,68	matte_black_anodized
+body-tally-lamp-diffuser	B71	前面・背面デュアル録画タリーランプ	#061-090	0,0,0	17.4,16.65,60.43	-44,34,68	matte_black_anodized
 body-exp-dial-lock-btn	B72	露出補正／カスタムRダイヤル・中央プッシ	#061-090	-43,38.6,-15	8,9.4,8	-64,88,-32	becu_spring
 body-sv-dial-fpc-cover	B73	Sony純正 SV DIAL FPC	#061-090	-24,35.6,-6	24,6.23,29	-34,96,-24	matte_chassis
 body-rear-ftb-wp-cushions	B74	Sony純正 3面合わせ目防水クッション	#061-090	0,0,0	108.6,61.8,37.3	38,42,-52	magnesium_cast
@@ -79,37 +79,37 @@ body-vl-ir-awb-sensor	B77	前面可視光＋赤外線ホワイトバランスセ
 body-front-ir-remote-window	B78	前面赤外線リモート受光窓	#061-090	-52,14.5,28.8	7.6,10,3.5	-88,22,74	magnesium_cast
 body-bodycap-alc-b1em	B79	純正バヨネット保護ボディキャップ CAP	#061-090	0,0,30.8	73,73,9.6	0,4,96	magnesium_cast
 body-sorplas-sereebo-liner	B80	再生難燃樹脂 SORPLAS™	#061-090	-6,0,-24.5	114,68,4.7	24,18,-94	carbon_fiber
-body-front-grip-thumb-insert	B81	ディープグリップ内部エルゴノミクス骨格リ	#061-090	-53.5,-2.5,11.5	31.79,64.43,21.5	-96,-8,62	magnesium_cast
+body-front-grip-thumb-insert	B81	ディープグリップ内部エルゴノミクス骨格リ	#061-090	-53.5,-2.5,11.5	31.8,64.43,21.52	-96,-8,62	magnesium_cast
 body-deep-eyecup-ep21	B82	着脱式ディープアイピースカップ EYE	#061-090	0,47.5,-36.5	43.4,30.75,14.8	0,62,-78	elastomer_rubber
 body-diopter-dial-wp	B83	視度調整ダイヤル CV DIOPTER	#061-090	-21.5,48,-24.5	13.25,13,13	-46,78,-58	leatherette_grip
 body-evf-eye-sensor-bezel	B84	EVFアイセンサー光学窓・ES	#061-090	0,37.5,-34.2	34,24,20.9	22,46,-78	magnesium_cast
 body-voice-memo-mic	B85	背面口元専用ボイスメモ・マイクロホン音響	#061-090	-28.5,29.5,-33.8	11.5,13.95,5.2	-54,42,-88	matte_black_anodized
 body-joy-retainer-stack	B86	AFジョイスティック4層防水サンドイッチ	#061-090	-44,7.5,-33.8	19,19.1,7.7	-66,20,-86	stainless_machined
-body-media-lid-hinge-spring	B87	カード扉ステンレスヒンジ軸	#061-090	-70,-5,-24	7.61,42,12.46	-110,-22,-46	stainless_machined
-body-active-cooling-fan-duct	B88	防塵防滴独立空冷マイクロブロワーファン	#061-090	22,12,-21.5	36,38.7,7.2	68,34,-74	magnesium_cast
+body-media-lid-hinge-spring	B87	カード扉ステンレスヒンジ軸	#061-090	-70,-5,-24	7.6,42,12.28	-110,-22,-46	stainless_machined
+body-active-cooling-fan-duct	B88	防塵防滴独立空冷マイクロブロワーファン	#061-090	22,12,-21.5	36,38.7,7.2	68,34,-74	carbon_fiber
 body-sigma-graphite-heatplate	B89	純正放熱ブリッジ多層スタック：HEAT_	#061-090	4,-3,-24	62,46,3.97	28,-28,-86	copper_thermal
 body-cfexpress-thermal-bridge	B90	CFexpressカードスロット専用サー	#061-090	-56,-5,-14	20.6,36.1,21	-88,-32,-42	copper_thermal
 body-external-cooling-vent-port	B91	外部冷却グリップ連動エアフロー導風ルーバ	#091-116	34,-35.8,-14	34.5,4.65,16.5	76,-78,-36	magnesium_cast
 body-cable-protector-clamp	B92	純正脱着式 HDMI／USB-C	#091-116	61,-2,-7	16.1,34,16.5	108,-18,12	matte_black_anodized
 body-dual-usbc-25g-lan-bay	B93	2026次世代プロI/Oベイ：デュアルU	#091-116	51.5,-4.5,-8.5	15.35,40,19	94,24,-26	emi_shield_metal
-body-audio-jack-jk1028	B94	純正3.5mmマイク／ヘッドホン保持枠	#091-116	51,14.5,-6.5	23.56,22,12	92,46,-12	matte_black_anodized
-body-mimo-wifi6e-nfc-coil	B95	2×2 MIMO 5/6GHz Wi	#091-116	-66.5,4,4	3.35,31.75,22	-108,32,34	iron_magnetic
+body-audio-jack-jk1028	B94	純正3.5mmマイク／ヘッドホン保持枠	#091-116	51,14.5,-6.5	23.6,22,12	92,46,-12	matte_black_anodized
+body-mimo-wifi6e-nfc-coil	B95	2×2 MIMO 5/6GHz Wi	#091-116	-66.5,4,4	3.38,31.75,22	-108,32,34	iron_magnetic
 body-bottom-wp-potting	B96	純正底面防水ポッティング封止アセンブリ	#091-116	-6,-36.5,-2	116,2.23,48	-30,-104,14	pin_carrier_gloss
-body-cinema-cage-threads	B97	ケージ不要・ボディ直結 1/4-20	#091-116	0,36.2,2	131.4,28.95,32.4	46,86,26	titanium_machined
+body-cinema-cage-threads	B97	ケージ不要・ボディ直結 1/4-20	#091-116	0,36.2,2	131.4,28.87,32.4	46,86,26	foam_felt_matte
 body-mi-shoe-fix-wp-stack	B98	マルチインターフェースシュー内部防水4点	#091-116	0,54.5,-7.5	26.5,11.65,25.9	0,96,-22	stainless_machined
 body-top-wp-cushions-sv	B99	トップデッキ	#091-116	-14,22,-18	93.8,63.9,49.1	-18,66,-68	magnesium_cast
 body-np-sa100-dc-c2-pd	B100	2026次世代大容量 NP-SA100劣	#091-116	-54.5,-20.5,1.5	21.5,25.1,31.1	-88,-86,32	magnesium_cast
 body-c2pa-security-kensington	B101	盗難防止セキュリティワイヤー座	#091-116	46,-24.5,10.5	22.6,14,16	88,-56,46	stainless_machined
-body-dial-detent-ball-spring	B102	純正ダイヤルクリック鋼球ユニット	#091-116	-33.5,34.2,-6.5	13.97,6.43,13.64	-76,138,-28	stainless_machined
-body-oem-keycap-dome-set	B103	純正背面8大操作キーキャップ	#091-116	-41,2,-32.6	24,44,2.68	-124,6,-134	elastomer_rubber
-body-forged-strap-eyelets	B104	純正左右高荷重鍛造ステンレス・ストラップ	#091-116	0,18.5,1	127.02,12.5,8.6	0,118,86	stainless_machined
+body-dial-detent-ball-spring	B102	純正ダイヤルクリック鋼球ユニット	#091-116	-33.5,34.2,-6.5	13.74,6.43,13.64	-76,138,-28	stainless_machined
+body-oem-keycap-dome-set	B103	純正背面8大操作キーキャップ	#091-116	-41,2,-32.6	24,44,2.68	-124,6,-134	magnesium_cast
+body-forged-strap-eyelets	B104	純正左右高荷重鍛造ステンレス・ストラップ	#091-116	0,18.5,1	127.1,12.5,8.6	0,118,86	stainless_machined
 body-bth-assy-fp2438	B105	純正モールド電池室インナー骨格BTH	#091-116	-54.5,-5.5,1.5	41.8,41,34.4	-156,-54,48	matte_chassis
 body-optical-smart-controller	B106	光学式タッチAFスマートコントローラー	#091-116	-43.5,22,-32.8	9.6,18.8,3.15	-124,66,-124	matte_black_anodized
 body-gnss-ceramic-antenna	B107	内蔵マルチGNSSセラミックパッチアンテ	#091-116	-16,35.4,-12	17.5,5.47,17.5	-44,152,-52	pcb_textured
 body-timecode-sync-port	B108	プロ映画同期用タイムコードロック式同軸端	#091-116	51.2,6.5,6.5	10.4,12,10.5	154,34,42	pcb_textured
 body-haptic-piezo-buttons	B109	機械接点ゼロ・完全防水感圧ピエゾ	#091-116	-47,-14,-32.6	16,11,3.24	-136,-54,-124	magnesium_cast
 body-focus-mode-lever	B110	前面独立メカニカルフォーカスモード切替レ	#091-116	34.5,-18.5,27.6	12.4,14.9,4.9	96,-54,104	magnesium_cast
-body-drive-mode-lock-subdial	B111	左肩ドライブモード／連写切替ダイヤル	#091-116	34.5,36.2,-5.5	20,13.75,20	92,138,-28	magnesium_cast
+body-drive-mode-lock-subdial	B111	左肩ドライブモード／連写切替ダイヤル	#091-116	34.5,36.2,-5.5	19.02,13.75,20	92,138,-28	magnesium_cast
 body-drop-freefall-imu	B112	落下検知3軸高G加速度センサー	#091-116	-16,-24.5,-10.5	16,4,12	-56,-138,-58	magnesium_cast
 body-vgrip-locking-pin-bay	B113	縦位置グリップ連結用ガイドボス	#091-116	-24,-35.6,0.5	26,3.8,16	-82,-142,42	stainless_machined
 body-cnt-dial-switch-blocks	B114	純正制御スイッチブロックCNT DIAL	#091-116	-49,22,-8.5	18.6,26,5.5	-164,72,-46	magnesium_cast

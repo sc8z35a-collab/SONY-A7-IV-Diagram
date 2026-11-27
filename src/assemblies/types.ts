@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export type ScaleMode =
+  | 'welcome'
   | 'integrated'
   | 'camera_body'
   | 'lens'
@@ -53,7 +54,7 @@ export type SensorFabStage =
   | 'v5_m5_wat'
   | 'v5_hb_cmp';
 export type RenderMode = 'solid' | 'xray' | 'cad';
-export type GraphicsQuality = 'standard' | 'high' | 'ultra';
+export type GraphicsQuality = 'standard_lite' | 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
 export type LensSection = 1 | 2 | 3;
@@ -77,6 +78,8 @@ export interface PartExplanation {
   };
   nextGenInnovation: string;
   specs: ExplanationSpec[];
+  /** Authentic engineering standards, datasheets, and technical literature citations */
+  references?: string[];
   diagramType:
     // Sensor Macro Super-Dissection (34: 26 existing + 8 Phase 11 watchmaker parts)
     | 'baffle'
@@ -2184,13 +2187,22 @@ export interface PartExplanation {
     | 'mount_optical_mmwave_link'
     | 'mount_strain_gauge_bridge'
     | 'mount_active_piezo_lock'
-    | 'mount_ti_invar_thermal_flange';
+    | 'mount_ti_invar_thermal_flange'
+    | 'welcome_glyph_layer'
+    | 'welcome_led_thermal'
+    | 'welcome_driver_canfd'
+    | 'welcome_quartz_bridge'
+    | 'welcome_dock_pogo'
+    | 'welcome_power_lifepo4'
+    | 'welcome_tof_audio_hmi'
+    | 'welcome_optical_plinth';
 }
 
 export interface CadPart {
   id: string;
   /** Subsystem group this part belongs to */
   subsystem:
+    | 'welcome'
     | 'lens'
     | 'mount'
     | 'sensor'

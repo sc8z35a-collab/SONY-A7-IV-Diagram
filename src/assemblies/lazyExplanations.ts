@@ -261,6 +261,9 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
         })
       );
       break;
+    case 'welcome':
+      inflight = Promise.resolve(finish({}));
+      break;
   }
 
   subsystemInflight.set(subsystem, inflight);

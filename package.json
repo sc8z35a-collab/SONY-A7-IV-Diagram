@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "pp": "./scripts/pp.mjs"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
     "catalog": "node scripts/generate_catalogs.mjs",
+    "pp": "node scripts/pp.mjs",
+    "capture": "node scripts/pp.mjs",
+    "verify:wlk220": "node scripts/verify_wlk220_industrial.mjs",
     "build": "tsc --noEmit && vite build && rm -rf docs && cp -r dist docs && touch docs/.nojekyll",
     "preview": "vite preview --host 0.0.0.0 --port 5173",
     "cap:sync": "npm run build && npx cap sync android",

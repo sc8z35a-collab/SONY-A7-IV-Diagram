@@ -24,6 +24,7 @@ import {
 } from '../../engine/UltraDetailBuilders';
 import { lazyExplanationStub } from '../lazyExplanations';
 import { GPU_PROFILE } from '../../engine/GpuOptimizer';
+import { getActiveBuildQuality } from '../../core/geometry_quality';
 import { buildMicUltra30Parts } from './micUltra30Parts';
 import { buildMicUltra31Parts } from './micUltra31Parts';
 import { buildMicUltra36Parts } from './micUltra36Parts';
@@ -202,9 +203,15 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       { ox: 0.04, oz: -0.18, len: 2.38, rad: 0.122, bendZ: 1.18, bendX: -0.18, splayX: -0.08, splayZ: -0.20 },
     ];
     const isMobFur = GPU_PROFILE.isMobile;
-    const radialSegs = isMobFur ? 3 : 4;
-    const heightSegs = isMobFur ? 3 : 4;
-    const mobRadBoost = isMobFur ? 1.24 : 1.0;
+    const qFur = getActiveBuildQuality();
+    const radialSegs = qFur === 'standard_lite' || qFur === 'standard' ? 3 : isMobFur ? 3 : 4;
+    const heightSegs =
+      qFur === 'standard_lite' ? 1 : qFur === 'standard' ? 2 : qFur === 'high' ? 3 : isMobFur ? 3 : 4;
+    const mobRadBoost =
+      qFur === 'standard_lite' ? 1.62 : qFur === 'standard' ? 1.38 : isMobFur ? 1.24 : 1.0;
+    const furCountScale =
+      (qFur === 'standard_lite' ? 0.14 : qFur === 'standard' ? 0.28 : qFur === 'high' ? 0.62 : 1.0) *
+      (isMobFur ? 0.45 : 1.0);
     let vBase = 0;
     for (const sp of strandSpecs) {
       for (let iy = 0; iy <= heightSegs; iy++) {
@@ -229,7 +236,8 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
           const b = vBase + iy * radialSegs + irNext;
           const c = vBase + (iy + 1) * radialSegs + irNext;
           const d = vBase + (iy + 1) * radialSegs + ir;
-          tuftIdx.push(a, b, c, a, c, d);
+          // Outward CCW winding around +Y so fur tufts render cleanly under FrontSide culling
+          tuftIdx.push(a, c, b, a, d, c);
         }
       }
       vBase += (heightSegs + 1) * radialSegs;
@@ -255,7 +263,7 @@ export function buildMicParts(mats: MaterialLibrary): CadPart[] {
       yBias: number,
       rimBandOnly = false
     ) => {
-      const count = isMobFur ? Math.max(80, Math.round(rawCount * 0.42)) : rawCount;
+      const count = Math.max(48, Math.round(rawCount * furCountScale));
       const inst = new THREE.InstancedMesh(lockGeo, mat, count);
       const dm = new THREE.Object3D();
       dm.rotation.order = 'YXZ';
