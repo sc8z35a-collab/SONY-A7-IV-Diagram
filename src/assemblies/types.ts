@@ -60,6 +60,16 @@ export type RenderMode = 'solid' | 'xray' | 'cad';
 export type GraphicsQuality = 'standard_lite' | 'standard' | 'high' | 'ultra';
 export type SectionAxis = 'off' | 'x' | 'y';
 export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
+export type ExtendedCameraPreset =
+  | CameraPreset
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'iso_back'
+  | 'iso_top'
+  | 'iso_low'
+  | 'hero_macro';
 export type LensSection = 1 | 2 | 3;
 
 export interface ExplanationSpec {

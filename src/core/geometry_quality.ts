@@ -59,16 +59,27 @@ const QUALITY_GEOMETRY_SCALES: Record<QualityTier, GeometryQualityScale> = {
 };
 
 let activeBuildQuality: QualityTier | null = null;
+let qualityAccessCounter = 0;
 
 export function setActiveBuildQuality(quality: QualityTier | null): void {
   activeBuildQuality = quality;
 }
 
+export function beginQualityAccessTracking(): number {
+  return qualityAccessCounter;
+}
+
+export function didQualityAccessChange(mark: number): boolean {
+  return qualityAccessCounter !== mark;
+}
+
 export function getActiveBuildQuality(): QualityTier | null {
+  qualityAccessCounter++;
   return activeBuildQuality;
 }
 
 export function getActiveGeometryScale(): GeometryQualityScale | null {
+  qualityAccessCounter++;
   return activeBuildQuality ? QUALITY_GEOMETRY_SCALES[activeBuildQuality] : null;
 }
 
