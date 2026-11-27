@@ -44,7 +44,7 @@ mb-oem-insulating-sheet-b	M42	Sony純正 INSULATING	#031-060	0,0,-16.85	84,56,0.
 mb-oem-mag-cut-plate	M43	Sony純正 MAGNETIC	#031-060	0,0,-16.25	48.2,20.5,0.49	12,-24,32	iron_magnetic
 mb-oem-jack-plate	M44	Sony純正 JACK PLATEサイド	#031-060	0,0,-22.2	6.83,55.6,11.6	44,0,-18	stainless_machined
 mb-oem-fp2438-flex	M45	Sony純正 FP-2438 フレキシブ	#031-060	0,0,-18.35	23.7,22.4,6.51	34,18,12	polyimide_fpc
-mb-oem-gyro-cushion-sub	M46	Sony純正 GY-1018 角速度ジャ	#031-060	0,0,-16.85	15.4,11.4,3.02	-26,-32,24	foam_felt_matte
+mb-oem-gyro-cushion-sub	M46	Sony純正 GY-1018 角速度ジャ	#031-060	0,0,-16.85	15.4,11.4,3.02	-26,-32,24	elastomer_rubber
 mb-pcb-vippo-thermal-vias	M47	12層HDI基板・銅充填サーマルビア配列	#031-060	0,0,-19.2	36,26,1.56	18,22,8	copper_thermal
 mb-ntc-thermistor-array	M48	マルチゾーン温度監視 0402	#031-060	0,0,-20.45	52.7,42.7,0.7	-12,24,-22	gold_plating
 mb-emi-conductive-gaskets	M49	導電性ニッケル銅ファブリック巻きEMIフ	#031-060	0,0,-28.08	84.2,55.8,1.59	24,24,-64	ic_epoxy_dark

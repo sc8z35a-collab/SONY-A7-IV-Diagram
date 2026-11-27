@@ -1,43 +1,40 @@
 {
   "schema": "bg-flight/v1",
-  "sessionId": "feat-buchigire-guard-v1-mwywn4ra",
+  "sessionId": "feat-welcome-435-parts-mwz9wceu",
   "branch": "main",
-  "goal": "Phase 1: sp 0.001mm 10-mode spatial engine + guide; Phase 2: welcome WLK-360 (+140 parts W221-W360), registry.ts(360), catalog, build, pp visual audit & merge to main",
+  "goal": "Expand welcome WLK-360 -> WLK-435 (+75 parts: Wave C W361-W405 + Wave D W406-W435) with 0/0/0 4-tier sp audit, 10/10 validate_parts, pp visual audit, and PR merge",
   "completed": [
-    "Implemented 6-module bg engine + 20/20 chaos selftest PASS + BUCHIGIRE_GUARD_GUIDE.md + AGENTS.md Iron Law",
-    "Phase 1: sp 0.001mm 10-mode spatial engine (20/20 selftest PASS, 3/3 ray cones PASS) committed & pushed",
-    "W221-W265 (+45 parts: welcomeGlyphPrecisionParts.ts & welcomePlinthPrecisionParts.ts) written",
-    "W266-W315 (+50 parts: Wave A glyph & plinth ultra-detail) written",
-    "W221-W360 all 6 TS modules written on disk",
-    "Wired WLK-360, synced welcome.json, updated registry/UI/schematics, applied 256 round-1 spatial & explode clearances",
-    "Merged origin/main (PR #53-#56), re-verified 0/0/0 under V3 LITE-v2, passed 10/10 validate_parts across 22 units, built catalog & docs"
+    "Wave C+D glyph modules written (W361-W375, W406-W413, +23 parts)",
+    "WLK-435 (+75 Wave C & D parts) cold-cache 4-tier 0.001mm sp audit 0/0/0 PASS, sp ray 3/3 0% PASS, sp thermal-cog PASS",
+    "Catalog rebuilt (2809 parts), tsc 0 errors, validate_parts 10/10 PASS (22 units, welcome LITE 2dc / ULTRA 54dc / Refs:0), production build OK",
+    "Committed WLK-435 (c1c470e) and pushed; preparing clean merge with upstream PR #58"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "All approved tasks merged to main (PR #52 & PR #57); ready for next request",
+  "nextStep": "WLK-435 merged to main (PR #59, ef7b83d); goal complete",
   "artifactsMirrored": [
     {
-      "name": "buchigire_guard_v1_implementation_plan.md",
-      "sha256": "b77db12da23ba317a186c5a7f54aa9ab94c6ec0132913b91627412222c540d45",
-      "size": 31593
+      "name": "PR #59 - WLK-435 Expansion.url.json",
+      "sha256": "2965ae44a3ad07884ebd006ef9b605e33cb480ebb938f6463b6c8ca692093f8f",
+      "size": 370
     },
     {
-      "name": "buchigire_guard_v1_implementation_plan.md.metadata.json",
-      "sha256": "2d2248217c5fe65b549f2c420c0d25cc5f451580b939ded7c6a8a51c907d682f",
-      "size": 742
+      "name": "PR #59 - WLK-435 Expansion.url.json.metadata.json",
+      "sha256": "82665e210e908c174bed7db5c9cc91aad45513c0140da5d5fb628a688c8ce591",
+      "size": 161
     },
     {
       "name": "walkthrough.md",
-      "sha256": "960bfdf5111ae44baa090bf0e043a7ca559dd76968e7169748701c0693d3b668",
-      "size": 15976
+      "sha256": "6171e487f0ca881dafa0963ee7eca03b030b6ace4ac4ce94980fc7e376368cba",
+      "size": 8014
     },
     {
       "name": "walkthrough.md.metadata.json",
-      "sha256": "ea23b66781719ee2ed89a38174c6ed74b9bf49beeb00d3387a2ce4d0525157e2",
-      "size": 451
+      "sha256": "522577a3d09e9a33c6e7611d8b5802d7474d57a9690e8ab157ef64bbf006af6a",
+      "size": 306
     }
   ],
-  "updatedAt": "2026-11-27T16:20:37.674Z",
+  "updatedAt": "2026-11-27T18:53:52.767Z",
   "vmHost": "devbox",
-  "baseSha": "79f059dc3895cf31f9802bc5d5c80997a46504d1"
+  "baseSha": "ef7b83d662408f9bec7a1cfca6c51ab468bae4d6"
 }

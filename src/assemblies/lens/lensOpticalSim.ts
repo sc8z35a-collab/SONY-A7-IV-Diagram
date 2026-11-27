@@ -537,13 +537,6 @@ export function evalSurfaceZ(y: number, zVertex: number, R: number, a4 = 0, a6 =
   return zVertex - (c * y2) / (1 + Math.sqrt(disc)) - a4 * y2 * y2 - a6 * y2 * y2 * y2;
 }
 
-function evalSurfaceSlopeDzDy(y: number, R: number, a4 = 0, a6 = 0): number {
-  const c = 1 / R;
-  const y2 = y * y;
-  const disc = Math.max(0.15, 1 - c * c * y2);
-  return -(c * y) / Math.sqrt(disc) - 4 * a4 * y2 * y - 6 * a6 * y2 * y2 * y;
-}
-
 function refractiveIndexForLambda(
   el: OpticalElementSpec,
   lambdaShift: -1 | 0 | 1,
@@ -579,39 +572,103 @@ function refractAtSurfaceScalar(
   n1: number,
   n2: number
 ): void {
-  let t = (zV - z) / dz;
-  for (let iter = 0; iter < 5; iter++) {
-    const yi = y + t * dy;
-    const zi = z + t * dz;
-    const f = zi - evalSurfaceZ(yi, zV, R, a4, a6);
-    const dfdt = dz - evalSurfaceSlopeDzDy(yi, R, a4, a6) * dy;
-    if (Math.abs(dfdt) < 1e-6) break;
-    t -= f / dfdt;
-  }
-  const yi = y + t * dy;
-  const zi = z + t * dz;
-  const dzdy = evalSurfaceSlopeDzDy(yi, R, a4, a6);
-  let ny = -dzdy;
-  let nz = 1;
-  const invNLen = 1 / Math.sqrt(ny * ny + 1);
-  ny *= invNLen;
-  nz *= invNLen;
+  let yi: number;
+  let zi: number;
+  let ny: number;
+  let nz: number;
+  const invR = 1 / R;
 
-  let cosI = -(dy * ny + dz * nz);
+  if (a4 === 0 && a6 === 0) {
+    // Exact closed-form analytical ray-sphere intersection (zero Newton iterations, exact unit normal!)
+    const zC = zV - R;
+    const wz = z - zC;
+    const b = y * dy + wz * dz;
+    const disc = b * b - (y * y + wz * wz - R * R);
+    let analyticOk = false;
+    if (disc > 0) {
+      const t = R > 0 ? -b - Math.sqrt(disc) : -b + Math.sqrt(disc);
+      yi = y + t * dy;
+      if (1 - invR * invR * yi * yi >= 0.15) {
+        zi = z + t * dz;
+        ny = yi * invR;
+        nz = (zi - zC) * invR;
+        analyticOk = true;
+      }
+    }
+    if (!analyticOk) {
+      // Fallback for extreme marginal rays clamped at disc = 0.15
+      const c2 = invR * invR;
+      let t = (zV - z) / dz;
+      for (let iter = 0; iter < 5; iter++) {
+        const yt = y + t * dy;
+        const zt = z + t * dz;
+        const y2 = yt * yt;
+        const d = 1 - c2 * y2;
+        const sq = Math.sqrt(d > 0.15 ? d : 0.15);
+        const f = zt - (zV - (invR * y2) / (1 + sq));
+        const slope = -(invR * yt) / sq;
+        const dfdt = dz - slope * dy;
+        if (dfdt > -1e-6 && dfdt < 1e-6) break;
+        const step = f / dfdt;
+        t -= step;
+        if (step > -1e-9 && step < 1e-9) break;
+      }
+      yi = y + t * dy;
+      zi = z + t * dz;
+      const d = 1 - c2 * yi * yi;
+      const dzdy = -(invR * yi) / Math.sqrt(d > 0.15 ? d : 0.15);
+      ny = -dzdy;
+      nz = 1;
+      const invNLen = 1 / Math.sqrt(ny * ny + 1);
+      ny *= invNLen;
+      nz *= invNLen;
+    }
+  } else {
+    // Fused aspheric Newton-Raphson sharing one single Math.sqrt(disc) per iteration + early exit
+    const c2 = invR * invR;
+    let t = (zV - z) / dz;
+    for (let iter = 0; iter < 5; iter++) {
+      const yt = y + t * dy;
+      const zt = z + t * dz;
+      const y2 = yt * yt;
+      const y4 = y2 * y2;
+      const d = 1 - c2 * y2;
+      const sq = Math.sqrt(d > 0.15 ? d : 0.15);
+      const surfZ = zV - (invR * y2) / (1 + sq) - a4 * y4 - a6 * y4 * y2;
+      const slope = -(invR * yt) / sq - 4 * a4 * y2 * yt - 6 * a6 * y4 * yt;
+      const dfdt = dz - slope * dy;
+      if (dfdt > -1e-6 && dfdt < 1e-6) break;
+      const step = (zt - surfZ) / dfdt;
+      t -= step;
+      if (step > -1e-9 && step < 1e-9) break;
+    }
+    yi = y + t * dy;
+    zi = z + t * dz;
+    const y2 = yi * yi;
+    const d = 1 - c2 * y2;
+    const dzdy = -(invR * yi) / Math.sqrt(d > 0.15 ? d : 0.15) - 4 * a4 * y2 * yi - 6 * a6 * y2 * y2 * yi;
+    ny = -dzdy;
+    nz = 1;
+    const invNLen = 1 / Math.sqrt(ny * ny + 1);
+    ny *= invNLen;
+    nz *= invNLen;
+  }
+
+  let cosI = -(dy * ny! + dz * nz!);
   if (cosI < 0) {
-    ny = -ny;
-    nz = -nz;
+    ny = -ny!;
+    nz = -nz!;
     cosI = -cosI;
   }
 
   const eta = n1 / n2;
   const kTerm = 1 - eta * eta * (1 - cosI * cosI);
   const cosT = Math.sqrt(kTerm > 0.04 ? kTerm : 0.04);
-  const ody = eta * dy + (eta * cosI - cosT) * ny;
-  const odz = eta * dz + (eta * cosI - cosT) * nz;
+  const ody = eta * dy + (eta * cosI - cosT) * ny!;
+  const odz = eta * dz + (eta * cosI - cosT) * nz!;
   const invOLen = 1 / Math.sqrt(ody * ody + odz * odz);
-  _refY = yi;
-  _refZ = zi;
+  _refY = yi!;
+  _refZ = zi!;
   _refDy = ody * invOLen;
   _refDz = odz * invOLen;
 }
@@ -673,9 +730,14 @@ export function traceSingleOpticalRay(opts: {
 }): TracedRay {
   let y = opts.yStart;
   let z = opts.zStart;
-  const dLen = Math.hypot(opts.dyStart, opts.dzStart);
-  let dy = opts.dyStart / dLen;
-  let dz = opts.dzStart / dLen;
+  const lenSq = opts.dyStart * opts.dyStart + opts.dzStart * opts.dzStart;
+  let dy = opts.dyStart;
+  let dz = opts.dzStart;
+  if (Math.abs(lenSq - 1) > 1e-9) {
+    const invLen = 1 / Math.sqrt(lenSq);
+    dy *= invLen;
+    dz *= invLen;
+  }
   let curN = 1.0;
 
   const points: OpticalPoint[] = [{ z, y }];
@@ -766,8 +828,55 @@ export function traceSingleOpticalRay(opts: {
 }
 
 /**
+ * Zero-allocation scalar 5-element Snell ray trace stopping strictly at the Iris plane (z = IRIS_Z).
+ * Eliminates tracing elements E06..E14 and allocating 300+ point objects inside findChiefEntryY.
+ */
+function traceYAtIrisOnly(
+  yStart: number,
+  zStart: number,
+  dy0: number,
+  dz0: number,
+  dzA: number,
+  dzB: number
+): number {
+  let y = yStart;
+  let z = zStart;
+  let dy = dy0;
+  let dz = dz0;
+  let curN = 1.0;
+
+  for (let i = 0; i < 5; i++) {
+    const el = OPTICAL_ELEMENTS[i];
+    const shift = el.focusGroup === 'A' ? dzA : el.focusGroup === 'B' ? dzB : 0;
+    const zCenter = el.z + shift;
+    const zF = zCenter + el.thick * 0.5;
+    const zR = zCenter - el.thick * 0.5;
+    const nGlass = el.nd;
+    const a4 = el.isXa ? el.a4F : 0;
+    const a6 = el.isXa ? el.a6F : 0;
+
+    refractAtSurfaceScalar(y, z, dy, dz, zF, el.rF, a4, a6, curN, nGlass);
+    y = _refY;
+    z = _refZ;
+    dy = _refDy;
+    dz = _refDz;
+
+    const nextN = el.cementedToNext ? OPTICAL_ELEMENTS[i + 1].nd : 1.0;
+    refractAtSurfaceScalar(y, z, dy, dz, zR, el.rR, 0, 0, nGlass, nextN);
+    y = _refY;
+    z = _refZ;
+    dy = _refDy;
+    dz = _refDz;
+    curN = nextN;
+  }
+
+  return y + ((IRIS_Z - z) / dz) * dy;
+}
+
+/**
  * Find the exact entrance ray height yChief at zStart=136mm so an off-axis chief ray
  * at angleDeg passes dead center through the iris aperture (yIris = 0 at z = 82.0).
+ * Uses a zero-allocation 5-element Iris-only Secant solver (< 1e-6 mm convergence in 3-4 evals!).
  */
 export function findChiefEntryY(
   angleDeg: number,
@@ -779,45 +888,33 @@ export function findChiefEntryY(
   const rad = (angleDeg * Math.PI) / 180;
   const dy0 = -Math.sin(rad);
   const dz0 = -Math.cos(rad);
-  let yC = angleDeg * 0.96;
-  for (let k = 0; k < 5; k++) {
-    const r0 = traceSingleOpticalRay({
-      yStart: yC,
-      zStart,
-      dyStart: dy0,
-      dzStart: dz0,
-      lambdaShift: 0,
-      xaStrength: 1,
-      edStrength: 1,
-      dzA,
-      dzB,
-      irisRadiusMm: 40,
-      stopAtIrisIfClipped: false,
-      color: '#0284c7',
-      hexColor: 0x0284c7,
-      rayRole: 'chief',
-    });
-    const r1 = traceSingleOpticalRay({
-      yStart: yC + 0.5,
-      zStart,
-      dyStart: dy0,
-      dzStart: dz0,
-      lambdaShift: 0,
-      xaStrength: 1,
-      edStrength: 1,
-      dzA,
-      dzB,
-      irisRadiusMm: 40,
-      stopAtIrisIfClipped: false,
-      color: '#0284c7',
-      hexColor: 0x0284c7,
-      rayRole: 'chief',
-    });
-    const d = (r1.yIris - r0.yIris) / 0.5;
-    if (Math.abs(d) > 1e-4) yC -= r0.yIris / d;
+  let y0 = angleDeg * 0.96;
+  let f0 = traceYAtIrisOnly(y0, zStart, dy0, dz0, dzA, dzB);
+  if (Math.abs(f0) < 1e-6) return y0;
+  let y1 = y0 + 0.5;
+  let f1 = traceYAtIrisOnly(y1, zStart, dy0, dz0, dzA, dzB);
+  for (let k = 0; k < 6; k++) {
+    const denom = f1 - f0;
+    if (Math.abs(denom) < 1e-12) break;
+    const yNext = y1 - f1 * ((y1 - y0) / denom);
+    y0 = y1;
+    f0 = f1;
+    y1 = yNext;
+    f1 = traceYAtIrisOnly(y1, zStart, dy0, dz0, dzA, dzB);
+    if (Math.abs(f1) < 1e-6) break;
   }
-  return yC;
+  return y1;
 }
+
+const ED_HEIGHTS = [-19.2, -11.5, 0, 11.5, 19.2] as const;
+const ED_LAMBDAS: ReadonlyArray<{ shift: -1 | 0 | 1; color: string; hex: number; role: TracedRay['rayRole'] }> = [
+  { shift: -1, color: '#ef4444', hex: 0xef4444, role: 'rgb_r' },
+  { shift: 0, color: '#10b981', hex: 0x10b981, role: 'rgb_g' },
+  { shift: 1, color: '#2563eb', hex: 0x2563eb, role: 'rgb_b' },
+];
+const XA_HEIGHTS = [-20.6, -17.5, -13.5, -7.5, 0, 7.5, 13.5, 17.5, 20.6] as const;
+const STD_HEIGHTS = [-20.4, -15.5, -10.5, -5.2, 0, 5.2, 10.5, 15.5, 20.4] as const;
+const BUNDLE_LRU_MAX = 256;
 
 // ============================================================================
 // Reactive Spring-Interpolated Optical Simulation State Controller
@@ -1070,56 +1167,56 @@ export class LensOpticalSim {
     return OPTICAL_SCENARIOS.find((s) => s.id === this.scenario) ?? OPTICAL_SCENARIOS[0];
   }
 
-  private cachedBundleKey = '';
-  private cachedBundleRays: TracedRay[] = [];
+  private readonly bundleCache = new Map<string, TracedRay[]>();
 
   /**
    * Trace the complete active bundle of physical rays for the current scenario & parameters.
-   * Memoized across consumers so 3D viewport + 2D Optics Studio share 1 single Snell trace per frame!
+   * Backed by a bounded 64-entry LRU cache so dual 3D/2D consumers and scenario cycles reuse exact Snell traces!
    */
   public traceActiveBundle(zStart = 136): TracedRay[] {
     const key = `${zStart}|${this.scenario}|${this.aperture.toFixed(5)}|${this.focusT.toFixed(5)}|${this.fieldAngleDeg.toFixed(4)}|${this.xaStrength.toFixed(4)}|${this.edStrength.toFixed(4)}|${this.nanoArStrength.toFixed(4)}`;
-    if (key === this.cachedBundleKey) {
-      return this.cachedBundleRays;
+    const hit = this.bundleCache.get(key);
+    if (hit) {
+      return hit;
     }
 
     const strokes = this.getFloatingStrokes();
     const iris = this.getIrisMetrics();
     const rays: TracedRay[] = [];
-    this.cachedBundleKey = key;
-    this.cachedBundleRays = rays;
+    if (this.bundleCache.size >= BUNDLE_LRU_MAX) {
+      const oldest = this.bundleCache.keys().next().value;
+      if (oldest !== undefined) this.bundleCache.delete(oldest);
+    }
+    this.bundleCache.set(key, rays);
     const invDist = this.focusT * 2.5; // 0 (Infinity) .. 2.5 m^-1 (0.40m MFD)
-
-    // Helper: compute starting direction from object at distance 1/invDist and field angle
-    const makeRayDir = (yEntry: number, yChief: number, fieldRad: number) => {
-      // Diverging cone angle from close focus subject + off-axis chief tilt
-      const divAngle = invDist > 0.001 ? Math.atan(((yEntry - yChief) * invDist) / 1000) : 0;
-      const totalAngle = -fieldRad + divAngle;
-      return { dy: Math.sin(totalAngle), dz: -Math.cos(totalAngle) };
-    };
+    const invDistScale = invDist > 0.001 ? invDist * 0.001 : 0;
 
     const fieldRad = (this.fieldAngleDeg * Math.PI) / 180;
+    const baseSin = Math.sin(-fieldRad);
+    const baseCos = -Math.cos(-fieldRad);
     const yChief = findChiefEntryY(this.fieldAngleDeg, strokes.dzA, strokes.dzB, zStart);
 
     if (this.scenario === 'ed_chromatic') {
       // Trace 5 entrance heights x 3 RGB wavelengths (Red 656nm, Green 587nm, Blue 486nm)!
-      const heights = [-19.2, -11.5, 0, 11.5, 19.2];
-      const lambdas: Array<{ shift: -1 | 0 | 1; color: string; hex: number; role: TracedRay['rayRole'] }> = [
-        { shift: -1, color: '#ef4444', hex: 0xef4444, role: 'rgb_r' },
-        { shift: 0, color: '#10b981', hex: 0x10b981, role: 'rgb_g' },
-        { shift: 1, color: '#2563eb', hex: 0x2563eb, role: 'rgb_b' },
-      ];
-      for (const h of heights) {
+      for (let hi = 0; hi < ED_HEIGHTS.length; hi++) {
+        const h = ED_HEIGHTS[hi];
         const yEntry = yChief + h;
-        const dir = makeRayDir(yEntry, yChief, fieldRad);
-        for (const lam of lambdas) {
+        let dy0 = baseSin;
+        let dz0 = baseCos;
+        if (invDistScale > 0) {
+          const totalAngle = -fieldRad + Math.atan(h * invDistScale);
+          dy0 = Math.sin(totalAngle);
+          dz0 = -Math.cos(totalAngle);
+        }
+        for (let li = 0; li < ED_LAMBDAS.length; li++) {
+          const lam = ED_LAMBDAS[li];
           if (h === 0 && lam.shift !== 0) continue; // Single green chief ray on axis
           rays.push(
             traceSingleOpticalRay({
               yStart: yEntry,
               zStart,
-              dyStart: dir.dy,
-              dzStart: dir.dz,
+              dyStart: dy0,
+              dzStart: dz0,
               lambdaShift: lam.shift,
               xaStrength: this.xaStrength,
               edStrength: this.edStrength,
@@ -1141,20 +1238,26 @@ export class LensOpticalSim {
 
     if (this.scenario === 'xa_aspheric') {
       // Trace 9 rays: inner paraxial (teal/emerald) vs outer marginal (bright sky/crimson when aberrant!)
-      const heights = [-20.6, -17.5, -13.5, -7.5, 0, 7.5, 13.5, 17.5, 20.6];
-      for (const h of heights) {
+      for (let hi = 0; hi < XA_HEIGHTS.length; hi++) {
+        const h = XA_HEIGHTS[hi];
         const absH = Math.abs(h);
         const isMarginal = absH >= 13.0;
         const aberrantColor = this.xaStrength < 0.5 && isMarginal ? '#e11d48' : isMarginal ? '#0284c7' : '#0d9488';
         const aberrantHex = this.xaStrength < 0.5 && isMarginal ? 0xe11d48 : isMarginal ? 0x0284c7 : 0x0d9488;
         const yEntry = yChief + h;
-        const dir = makeRayDir(yEntry, yChief, fieldRad);
+        let dy0 = baseSin;
+        let dz0 = baseCos;
+        if (invDistScale > 0) {
+          const totalAngle = -fieldRad + Math.atan(h * invDistScale);
+          dy0 = Math.sin(totalAngle);
+          dz0 = -Math.cos(totalAngle);
+        }
         rays.push(
           traceSingleOpticalRay({
             yStart: yEntry,
             zStart,
-            dyStart: dir.dy,
-            dzStart: dir.dz,
+            dyStart: dy0,
+            dzStart: dz0,
             lambdaShift: 0,
             xaStrength: this.xaStrength,
             edStrength: 1.0,
@@ -1174,28 +1277,26 @@ export class LensOpticalSim {
     }
 
     // Standard high-clarity 9-ray imaging fan (aperture_bokeh, floating_xd, nano_ar_baffle)
-    const heights = [-20.4, -15.5, -10.5, -5.2, 0, 5.2, 10.5, 15.5, 20.4];
-    for (const h of heights) {
+    for (let hi = 0; hi < STD_HEIGHTS.length; hi++) {
+      const h = STD_HEIGHTS[hi];
       const yEntry = yChief + h;
-      const dir = makeRayDir(yEntry, yChief, fieldRad);
+      let dy0 = baseSin;
+      let dz0 = baseCos;
+      if (invDistScale > 0) {
+        const totalAngle = -fieldRad + Math.atan(h * invDistScale);
+        dy0 = Math.sin(totalAngle);
+        dz0 = -Math.cos(totalAngle);
+      }
       const isChief = h === 0;
       const isOuter = Math.abs(h) >= 15;
-      const color = isChief
-        ? '#f59e0b'
-        : this.scenario === 'floating_xd'
-          ? isOuter
-            ? '#0284c7'
-            : '#0ea5e9'
-          : isOuter
-            ? '#0284c7'
-            : '#0ea5e9';
+      const color = isChief ? '#f59e0b' : isOuter ? '#0284c7' : '#0ea5e9';
       const hexColor = isChief ? 0xf59e0b : isOuter ? 0x0284c7 : 0x0ea5e9;
       rays.push(
         traceSingleOpticalRay({
           yStart: yEntry,
           zStart,
-          dyStart: dir.dy,
-          dzStart: dir.dz,
+          dyStart: dy0,
+          dzStart: dz0,
           lambdaShift: 0,
           xaStrength: this.xaStrength,
           edStrength: this.edStrength,

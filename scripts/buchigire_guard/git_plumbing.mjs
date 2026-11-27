@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { execFileSync, spawn, spawnSync } from 'node:child_process';
 
 export const EXIT_OK = 0;
 export const EXIT_ERROR = 1;
@@ -160,6 +160,33 @@ export function runGit(args, opts = {}) {
   };
 }
 
+export function runGitAsync(args, opts = {}) {
+  return new Promise((resolve) => {
+    const child = spawn('git', args, {
+      cwd: opts.cwd || process.cwd(),
+      env: opts.env ? { ...process.env, ...opts.env } : process.env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const outChunks = [];
+    const errChunks = [];
+    child.stdout.on('data', (c) => outChunks.push(c));
+    child.stderr.on('data', (c) => errChunks.push(c));
+    child.on('error', (err) => {
+      resolve({ status: 1, stdout: opts.buffer ? Buffer.alloc(0) : '', stderr: String(err), error: err });
+    });
+    child.on('close', (code) => {
+      const outBuf = Buffer.concat(outChunks);
+      const errStr = Buffer.concat(errChunks).toString('utf8');
+      resolve({
+        status: code ?? 1,
+        stdout: opts.buffer ? outBuf : outBuf.toString('utf8'),
+        stderr: errStr,
+        error: null,
+      });
+    });
+  });
+}
+
 export function runGitOrThrow(args, opts = {}) {
   const res = runGit(args, opts);
   if (res.status !== 0) {
@@ -187,36 +214,46 @@ export function runShell(command, opts = {}) {
 }
 
 /**
- * Simple glob matcher supporting **, *, ? on POSIX relative paths.
+ * Simple glob matcher supporting **, *, ? on POSIX relative paths (memoized RegExp cache).
  */
+const _globRxCache = new Map();
 export function matchGlob(relPath, pattern) {
-  const normPath = relPath.replace(/\\/g, '/').replace(/^\.\//, '');
-  const normPat = pattern.replace(/\\/g, '/').replace(/^\.\//, '');
-  let rx = '^';
-  for (let i = 0; i < normPat.length; i++) {
-    const ch = normPat[i];
-    if (ch === '*') {
-      if (normPat[i + 1] === '*') {
-        if (normPat[i + 2] === '/') {
-          rx += '(?:.*/)?';
-          i += 2;
+  const normPath =
+    relPath.indexOf('\\') === -1 && !relPath.startsWith('./')
+      ? relPath
+      : relPath.replace(/\\/g, '/').replace(/^\.\//, '');
+  let compiled = _globRxCache.get(pattern);
+  if (!compiled) {
+    const normPat = pattern.replace(/\\/g, '/').replace(/^\.\//, '');
+    let rx = '^';
+    for (let i = 0; i < normPat.length; i++) {
+      const ch = normPat[i];
+      if (ch === '*') {
+        if (normPat[i + 1] === '*') {
+          if (normPat[i + 2] === '/') {
+            rx += '(?:.*/)?';
+            i += 2;
+          } else {
+            rx += '.*';
+            i += 1;
+          }
         } else {
-          rx += '.*';
-          i += 1;
+          rx += '[^/]*';
         }
+      } else if (ch === '?') {
+        rx += '[^/]';
+      } else if ('\\^$.|+()[]{}'.includes(ch)) {
+        rx += '\\' + ch;
       } else {
-        rx += '[^/]*';
+        rx += ch;
       }
-    } else if (ch === '?') {
-      rx += '[^/]';
-    } else if ('\\^$.|+()[]{}'.includes(ch)) {
-      rx += '\\' + ch;
-    } else {
-      rx += ch;
     }
+    rx += '$';
+    compiled = new RegExp(rx);
+    if (_globRxCache.size > 512) _globRxCache.clear();
+    _globRxCache.set(pattern, compiled);
   }
-  rx += '$';
-  return new RegExp(rx).test(normPath);
+  return compiled.test(normPath);
 }
 
 export function sanitizeSlug(name) {
@@ -224,6 +261,91 @@ export function sanitizeSlug(name) {
     .replace(/[^a-zA-Z0-9._-]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80) || 'session';
+}
+
+/**
+ * Resolve a local Git ref (loose or packed-refs) directly in Node.js without spawning git.
+ */
+export function resolveLocalRef(gitDir, refName) {
+  try {
+    const loosePath = path.join(gitDir, refName);
+    if (fs.existsSync(loosePath)) {
+      const raw = fs.readFileSync(loosePath, 'utf8').trim();
+      if (raw.startsWith('ref: ')) {
+        return resolveLocalRef(gitDir, raw.slice(5).trim());
+      }
+      if (/^[0-9a-f]{40}$/i.test(raw)) return raw;
+    }
+    const packedPath = path.join(gitDir, 'packed-refs');
+    if (fs.existsSync(packedPath)) {
+      const lines = fs.readFileSync(packedPath, 'utf8').split('\n');
+      const suffix = ` ${refName}`;
+      for (let i = 0; i < lines.length; i++) {
+        const l = lines[i];
+        if (!l || l[0] === '#' || l[0] === '^') continue;
+        if (l.endsWith(suffix) && l.length === 40 + suffix.length) {
+          return l.slice(0, 40);
+        }
+      }
+    }
+  } catch {
+    // fallback handled by caller
+  }
+  return null;
+}
+
+function findGitRepoFast(startCwd) {
+  if (process.env.GIT_DIR || process.env.GIT_WORK_TREE) return null;
+  let dir = path.resolve(startCwd);
+  while (true) {
+    const dotGit = path.join(dir, '.git');
+    try {
+      const st = fs.lstatSync(dotGit);
+      if (st.isDirectory()) {
+        return { repoRoot: dir, gitDir: dotGit };
+      }
+      if (st.isFile()) {
+        const raw = fs.readFileSync(dotGit, 'utf8').trim();
+        const m = raw.match(/^gitdir:\s*(.+)$/);
+        if (m) {
+          const gd = path.isAbsolute(m[1]) ? m[1] : path.resolve(dir, m[1]);
+          return { repoRoot: dir, gitDir: gd };
+        }
+      }
+    } catch {
+      // keep walking up
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+
+function parseGitConfigSectionValue(configText, sectionHeader, key) {
+  const lines = configText.split('\n');
+  let inSection = false;
+  const target = sectionHeader.toLowerCase();
+  const keyLower = key.toLowerCase();
+  let found = null;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!trimmed || trimmed[0] === '#' || trimmed[0] === ';') continue;
+    if (trimmed[0] === '[') {
+      const close = trimmed.indexOf(']');
+      const hdr = close > 0 ? trimmed.slice(1, close).trim().toLowerCase() : '';
+      inSection = hdr === target;
+      continue;
+    }
+    if (!inSection) continue;
+    const eq = trimmed.indexOf('=');
+    if (eq > 0) {
+      const k = trimmed.slice(0, eq).trim().toLowerCase();
+      if (k === keyLower) {
+        found = trimmed.slice(eq + 1).trim();
+      }
+    }
+  }
+  return found;
 }
 
 /**
@@ -285,36 +407,101 @@ export function loadConfig(repoRoot, overrides = {}) {
 }
 
 /**
- * Detect full Git repository context.
+ * Detect full Git repository context (zero-fork direct .git inspection with git fallback).
  */
 export function getRepoContext(cwd = process.cwd(), overrides = {}) {
-  const top = runGit(['rev-parse', '--show-toplevel'], { cwd });
-  if (top.status !== 0) {
-    throw new Error(`Not inside a Git repository (cwd=${cwd}).`);
+  let repoRoot;
+  let gitDir;
+  const fastRepo = findGitRepoFast(cwd);
+  if (fastRepo) {
+    repoRoot = fastRepo.repoRoot;
+    gitDir = fastRepo.gitDir;
+  } else {
+    const top = runGit(['rev-parse', '--show-toplevel'], { cwd });
+    if (top.status !== 0) {
+      throw new Error(`Not inside a Git repository (cwd=${cwd}).`);
+    }
+    repoRoot = top.stdout.trim();
+    const gitDirRaw = runGitOrThrow(['rev-parse', '--git-dir'], { cwd: repoRoot }).trim();
+    gitDir = path.isAbsolute(gitDirRaw) ? gitDirRaw : path.resolve(repoRoot, gitDirRaw);
   }
-  const repoRoot = top.stdout.trim();
-  const gitDirRaw = runGitOrThrow(['rev-parse', '--git-dir'], { cwd: repoRoot }).trim();
-  const gitDir = path.isAbsolute(gitDirRaw) ? gitDirRaw : path.resolve(repoRoot, gitDirRaw);
   const cfg = loadConfig(repoRoot, overrides);
 
-  const headRes = runGit(['rev-parse', '--verify', 'HEAD'], { cwd: repoRoot });
-  const headSha = headRes.status === 0 ? headRes.stdout.trim() : null;
-
-  const branchRes = runGit(['symbolic-ref', '--short', 'HEAD'], { cwd: repoRoot });
-  const isDetached = branchRes.status !== 0;
-  const branch = isDetached ? 'HEAD' : branchRes.stdout.trim();
-
-  // Resolve default branch from remote HEAD if available
-  let defaultBranch = cfg.defaultBranch || 'main';
-  const symRemote = runGit(['symbolic-ref', `refs/remotes/${cfg.remote}/HEAD`], { cwd: repoRoot });
-  if (symRemote.status === 0) {
-    const parts = symRemote.stdout.trim().split('/');
-    if (parts.length > 0) defaultBranch = parts[parts.length - 1];
+  // Resolve HEAD & current branch directly from .git/HEAD
+  let headSha = null;
+  let isDetached = true;
+  let branch = 'HEAD';
+  const headPath = path.join(gitDir, 'HEAD');
+  let resolvedHeadDirectly = false;
+  if (fs.existsSync(headPath)) {
+    try {
+      const headRaw = fs.readFileSync(headPath, 'utf8').trim();
+      if (headRaw.startsWith('ref: ')) {
+        const refName = headRaw.slice(5).trim();
+        isDetached = false;
+        branch = refName.startsWith('refs/heads/') ? refName.slice('refs/heads/'.length) : refName;
+        headSha = resolveLocalRef(gitDir, refName);
+        resolvedHeadDirectly = true;
+      } else if (/^[0-9a-f]{40}$/i.test(headRaw)) {
+        isDetached = true;
+        branch = 'HEAD';
+        headSha = headRaw;
+        resolvedHeadDirectly = true;
+      }
+    } catch {
+      resolvedHeadDirectly = false;
+    }
+  }
+  if (!resolvedHeadDirectly) {
+    const headRes = runGit(['rev-parse', '--verify', 'HEAD'], { cwd: repoRoot });
+    headSha = headRes.status === 0 ? headRes.stdout.trim() : null;
+    const branchRes = runGit(['symbolic-ref', '--short', 'HEAD'], { cwd: repoRoot });
+    isDetached = branchRes.status !== 0;
+    branch = isDetached ? 'HEAD' : branchRes.stdout.trim();
   }
 
-  const remoteUrlRes = runGit(['remote', 'get-url', cfg.remote], { cwd: repoRoot });
-  const hasRemote = remoteUrlRes.status === 0;
-  const remoteUrl = hasRemote ? remoteUrlRes.stdout.trim() : null;
+  // Resolve default branch from remote HEAD ref file if available
+  let defaultBranch = cfg.defaultBranch || 'main';
+  const remoteHeadPath = path.join(gitDir, 'refs', 'remotes', cfg.remote, 'HEAD');
+  if (fs.existsSync(remoteHeadPath)) {
+    try {
+      const raw = fs.readFileSync(remoteHeadPath, 'utf8').trim();
+      if (raw.startsWith('ref: ')) {
+        const parts = raw.slice(5).trim().split('/');
+        if (parts.length > 0) defaultBranch = parts[parts.length - 1];
+      }
+    } catch {
+      // keep cfg default
+    }
+  } else {
+    const symRemote = runGit(['symbolic-ref', `refs/remotes/${cfg.remote}/HEAD`], { cwd: repoRoot });
+    if (symRemote.status === 0) {
+      const parts = symRemote.stdout.trim().split('/');
+      if (parts.length > 0) defaultBranch = parts[parts.length - 1];
+    }
+  }
+
+  // Resolve remote URL directly from .git/config when present (fallback to git remote get-url)
+  let remoteUrl = null;
+  const gitConfigPath = path.join(gitDir, 'config');
+  if (fs.existsSync(gitConfigPath)) {
+    try {
+      const cfgText = fs.readFileSync(gitConfigPath, 'utf8');
+      if (!/^\s*\[include/mi.test(cfgText)) {
+        remoteUrl = parseGitConfigSectionValue(cfgText, `remote "${cfg.remote}"`, 'url');
+      } else {
+        const remoteUrlRes = runGit(['remote', 'get-url', cfg.remote], { cwd: repoRoot });
+        remoteUrl = remoteUrlRes.status === 0 ? remoteUrlRes.stdout.trim() : null;
+      }
+    } catch {
+      const remoteUrlRes = runGit(['remote', 'get-url', cfg.remote], { cwd: repoRoot });
+      remoteUrl = remoteUrlRes.status === 0 ? remoteUrlRes.stdout.trim() : null;
+    }
+  } else {
+    const remoteUrlRes = runGit(['remote', 'get-url', cfg.remote], { cwd: repoRoot });
+    remoteUrl = remoteUrlRes.status === 0 ? remoteUrlRes.stdout.trim() : null;
+  }
+  const hasRemote = Boolean(remoteUrl);
 
   const vaultDir = path.join(gitDir, 'bg-vault');
   fs.mkdirSync(vaultDir, { recursive: true });
@@ -338,18 +525,8 @@ export function getRepoContext(cwd = process.cwd(), overrides = {}) {
   };
 }
 
-/**
- * List tracked + untracked non-ignored working files (filtered by excludeVaultGlobs).
- */
-export function listWorkingFiles(repoRoot, cfg) {
-  const res = runGit(['ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
-    cwd: repoRoot,
-    buffer: true,
-  });
-  if (res.status !== 0) {
-    throw new Error(`git ls-files failed: ${res.stderr}`);
-  }
-  const rawList = res.stdout.toString('utf8').split('\0').filter(Boolean);
+function parseWorkingFilesRaw(repoRoot, cfg, stdoutBuf) {
+  const rawList = stdoutBuf.toString('utf8').split('\0').filter(Boolean);
   const seen = new Set();
   const liveFiles = [];
   const deletedFiles = [];
@@ -364,24 +541,27 @@ export function listWorkingFiles(repoRoot, cfg) {
     if (excludes.some((pat) => matchGlob(rel, pat))) continue;
 
     const abs = path.join(repoRoot, rel);
-    let st;
-    try {
-      st = fs.lstatSync(abs);
-    } catch {
+    const st = fs.lstatSync(abs, { bigint: true, throwIfNoEntry: false });
+    if (!st) {
       deletedFiles.push(rel);
       continue;
     }
     if (st.isDirectory()) continue;
-    if (st.size > maxBytes) {
-      skippedLarge.push({ path: rel, bytes: st.size });
+    const sizeNum = Number(st.size);
+    if (sizeNum > maxBytes) {
+      skippedLarge.push({ path: rel, bytes: sizeNum });
       continue;
     }
+    const isSym = st.isSymbolicLink();
     liveFiles.push({
       path: rel,
       absPath: abs,
-      size: st.size,
-      isSymlink: st.isSymbolicLink(),
-      mode: st.isSymbolicLink() ? '120000' : (st.mode & 0o111) !== 0 ? '100755' : '100644',
+      size: sizeNum,
+      ino: st.ino.toString(),
+      mtimeNs: st.mtimeNs,
+      ctimeNs: st.ctimeNs,
+      isSymlink: isSym,
+      mode: isSym ? '120000' : (Number(st.mode) & 0o111) !== 0 ? '100755' : '100644',
     });
   }
   liveFiles.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
@@ -389,13 +569,102 @@ export function listWorkingFiles(repoRoot, cfg) {
   return { liveFiles, deletedFiles, skippedLarge };
 }
 
+function parsePorcelainRaw(stdoutBuf) {
+  const tokens = stdoutBuf.toString('utf8').split('\0');
+  const modified = [];
+  const staged = [];
+  const untracked = [];
+  const deleted = [];
+  const allDirty = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (!tok) continue;
+    const x = tok[0];
+    const y = tok[1];
+    const rel = tok.slice(3);
+    if (x === 'R' || x === 'C' || y === 'R' || y === 'C') {
+      i += 1; // skip original rename path token
+    }
+    if (x === '?' && y === '?') {
+      untracked.push(rel);
+      allDirty.push({ code: '??', path: rel });
+    } else {
+      if (x !== ' ' && x !== '?') staged.push(rel);
+      if (y === 'D' || x === 'D') deleted.push(rel);
+      else if (y !== ' ') modified.push(rel);
+      allDirty.push({ code: `${x}${y}`, path: rel });
+    }
+  }
+  return {
+    isClean: allDirty.length === 0,
+    modified,
+    staged,
+    untracked,
+    deleted,
+    allDirty,
+  };
+}
+
+/**
+ * List tracked + untracked non-ignored working files (filtered by excludeVaultGlobs).
+ */
+export function listWorkingFiles(repoRoot, cfg) {
+  const res = runGit(['ls-files', '--cached', '--others', '--exclude-standard', '-z'], {
+    cwd: repoRoot,
+    buffer: true,
+  });
+  if (res.status !== 0) {
+    throw new Error(`git ls-files failed: ${res.stderr}`);
+  }
+  return parseWorkingFilesRaw(repoRoot, cfg, res.stdout);
+}
+
+/**
+ * Run git status & git ls-files concurrently for minimal wall latency.
+ */
+export async function getPorcelainAndWorkingFilesAsync(repoRoot, cfg) {
+  const [stRes, lsRes] = await Promise.all([
+    runGitAsync(['status', '--porcelain=v1', '-uall', '-z'], { cwd: repoRoot, buffer: true }),
+    runGitAsync(['ls-files', '--cached', '--others', '--exclude-standard', '-z'], { cwd: repoRoot, buffer: true }),
+  ]);
+  if (stRes.status !== 0) throw new Error(`git status failed: ${stRes.stderr}`);
+  if (lsRes.status !== 0) throw new Error(`git ls-files failed: ${lsRes.stderr}`);
+  return {
+    porcelain: parsePorcelainRaw(stRes.stdout),
+    working: parseWorkingFilesRaw(repoRoot, cfg, lsRes.stdout),
+  };
+}
+
 /**
  * Compute deterministic SHA-256 manifest + combined fingerprint of working tree.
+ * Uses racy-git-safe (size, ino, mtimeNs, ctimeNs) SHA-256 cache under .git/bg-vault/sha_cache.json.
+ * Any file modified within the last 2 seconds is ALWAYS re-hashed fresh to guarantee 0% racy staleness.
  */
-export function buildWorkingManifest(repoRoot, liveFiles, deletedFiles, metaDigest = '') {
+export function buildWorkingManifest(repoRoot, liveFiles, deletedFiles, metaDigest = '', opts = {}) {
   const entries = [];
   const fpHash = crypto.createHash('sha256');
   fpHash.update(`meta:${metaDigest}\n`);
+
+  const defaultCachePath = path.join(repoRoot, '.git', 'bg-vault', 'sha_cache.json');
+  const cachePath = opts.cachePath || (fs.existsSync(path.dirname(defaultCachePath)) ? defaultCachePath : null);
+  let shaCache = null;
+  let cacheDirty = false;
+  if (cachePath && fs.existsSync(cachePath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+      if (parsed && parsed.v === 1 && parsed.files && typeof parsed.files === 'object') {
+        shaCache = parsed.files;
+      }
+    } catch {
+      shaCache = null;
+    }
+  }
+  if (!shaCache && cachePath) {
+    shaCache = {};
+  }
+  const nowNs = BigInt(Date.now()) * 1_000_000n;
+  const RACY_WINDOW_NS = 2_000_000_000n; // 2s racy-git protection window
 
   for (const f of liveFiles) {
     let digest;
@@ -403,7 +672,19 @@ export function buildWorkingManifest(repoRoot, liveFiles, deletedFiles, metaDige
       const target = fs.readlinkSync(f.absPath);
       digest = sha256String(`symlink:${target}`);
     } else {
-      digest = sha256File(f.absPath);
+      const hasStat = typeof f.mtimeNs === 'bigint' && typeof f.ctimeNs === 'bigint' && f.ino != null;
+      const isRacy = !hasStat || (nowNs - f.mtimeNs < RACY_WINDOW_NS && nowNs >= f.mtimeNs);
+      const sig = hasStat ? `${f.size}:${f.ino}:${f.mtimeNs.toString()}:${f.ctimeNs.toString()}` : null;
+      const cached = shaCache && sig && !isRacy ? shaCache[f.path] : null;
+      if (cached && cached.sig === sig && typeof cached.sha === 'string') {
+        digest = cached.sha;
+      } else {
+        digest = sha256File(f.absPath);
+        if (shaCache && sig && !isRacy) {
+          shaCache[f.path] = { sig, sha: digest };
+          cacheDirty = true;
+        }
+      }
     }
     entries.push({
       path: f.path,
@@ -415,7 +696,20 @@ export function buildWorkingManifest(repoRoot, liveFiles, deletedFiles, metaDige
   }
   for (const d of deletedFiles) {
     fpHash.update(`DELETED ${d}\n`);
+    if (shaCache && d in shaCache) {
+      delete shaCache[d];
+      cacheDirty = true;
+    }
   }
+
+  if (cachePath && cacheDirty && shaCache) {
+    try {
+      atomicWriteFileSync(cachePath, JSON.stringify({ v: 1, files: shaCache }));
+    } catch {
+      // non-fatal cache write error
+    }
+  }
+
   return {
     entries,
     deletedFiles,
@@ -467,9 +761,18 @@ export function getPorcelainStatus(repoRoot) {
   };
 }
 
+function formatFastImportPath(relPath) {
+  if (/[\n"\\]/.test(relPath) || relPath.startsWith('"')) {
+    return `"${relPath.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+  }
+  return relPath;
+}
+
 /**
- * Create a completely non-intrusive shadow snapshot commit using a temporary GIT_INDEX_FILE (BG-01).
+ * Create a completely non-intrusive shadow snapshot commit (BG-01).
  * Never alters HEAD, never touches .git/index, never modifies working tree files.
+ * Fast path: single-process `git fast-import` stream (<= 48 MB total payload).
+ * Fallback: chunked `git hash-object` + temporary GIT_INDEX_FILE for huge trees.
  */
 export function createShadowSnapshotCommit({
   repoRoot,
@@ -479,17 +782,91 @@ export function createShadowSnapshotCommit({
   metaEntries = [],
   message,
 }) {
+  const ident = getGitIdentityPair(repoRoot);
+  const totalBytes =
+    liveFiles.reduce((acc, f) => acc + (f.size || 0), 0) +
+    metaEntries.reduce((acc, m) => acc + (Buffer.isBuffer(m.content) ? m.content.length : Buffer.byteLength(String(m.content), 'utf8')), 0);
+
+  // Fast path: single-process `git fast-import` (eliminates 8+ git subprocess spawns & temp index I/O)
+  if (totalBytes <= 48 * 1024 * 1024) {
+    const fastRepo = findGitRepoFast(repoRoot);
+    const gitDir = fastRepo ? fastRepo.gitDir : path.join(repoRoot, '.git');
+    if (fs.existsSync(gitDir)) {
+      const tmpRef = `refs/bg-tmp/snap-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+      const unixSec = Math.floor(Date.now() / 1000);
+      const msgBuf = Buffer.from(String(message), 'utf8');
+      const chunks = [];
+      chunks.push(
+        Buffer.from(
+          `commit ${tmpRef}\n` +
+            `author ${ident.name} <${ident.email}> ${unixSec} +0000\n` +
+            `committer ${ident.name} <${ident.email}> ${unixSec} +0000\n` +
+            `data ${msgBuf.length}\n`,
+          'utf8'
+        )
+      );
+      chunks.push(msgBuf, Buffer.from('\n', 'utf8'));
+      const parent = parentOid || baseSha;
+      if (parent) {
+        chunks.push(Buffer.from(`from ${parent}\n`, 'utf8'));
+      }
+      chunks.push(Buffer.from('deleteall\n', 'utf8'));
+
+      for (const f of liveFiles) {
+        const contentBuf = f.isSymlink
+          ? Buffer.from(fs.readlinkSync(f.absPath), 'utf8')
+          : fs.readFileSync(f.absPath);
+        chunks.push(
+          Buffer.from(`M ${f.mode} inline ${formatFastImportPath(f.path)}\ndata ${contentBuf.length}\n`, 'utf8'),
+          contentBuf,
+          Buffer.from('\n', 'utf8')
+        );
+      }
+      for (const m of metaEntries) {
+        const contentBuf = Buffer.isBuffer(m.content) ? m.content : Buffer.from(String(m.content), 'utf8');
+        chunks.push(
+          Buffer.from(`M 100644 inline ${formatFastImportPath(m.path)}\ndata ${contentBuf.length}\n`, 'utf8'),
+          contentBuf,
+          Buffer.from('\n', 'utf8')
+        );
+      }
+      chunks.push(Buffer.from('done\n', 'utf8'));
+
+      const fiRes = runGit(['fast-import', '--quiet', '--done', '--force'], {
+        cwd: repoRoot,
+        input: Buffer.concat(chunks),
+        maxBuffer: 16 * 1024 * 1024,
+      });
+      if (fiRes.status === 0) {
+        try {
+          const commitOid =
+            resolveLocalRef(gitDir, tmpRef) ||
+            runGitOrThrow(['rev-parse', '--verify', tmpRef], { cwd: repoRoot }).trim();
+          const treeOid = runGitOrThrow(['rev-parse', `${commitOid}^{tree}`], { cwd: repoRoot }).trim();
+          return { treeOid, commitOid };
+        } finally {
+          try {
+            const refFile = path.join(gitDir, tmpRef);
+            if (fs.existsSync(refFile)) fs.unlinkSync(refFile);
+            else runGit(['update-ref', '-d', tmpRef], { cwd: repoRoot });
+          } catch {
+            // ignore
+          }
+        }
+      }
+    }
+  }
+
+  // Fallback path for >48MB repos: streaming chunked hash-object + temp GIT_INDEX_FILE
   const tmpIndex = path.join(os.tmpdir(), `bg-idx-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}`);
   const env = { GIT_INDEX_FILE: tmpIndex };
 
   try {
-    // 1. Batch-hash regular files into git object database via git hash-object -w --stdin-paths
     const indexLines = [];
     const regularFiles = liveFiles.filter((f) => !f.isSymlink);
     const symlinks = liveFiles.filter((f) => f.isSymlink);
 
     if (regularFiles.length > 0) {
-      // Chunk into groups of 500 paths to stay well within pipe buffers
       const chunkSize = 500;
       for (let i = 0; i < regularFiles.length; i += chunkSize) {
         const chunk = regularFiles.slice(i, i + chunkSize);
@@ -511,14 +888,12 @@ export function createShadowSnapshotCommit({
       indexLines.push(`120000 ${oid}\t${sym.path}`);
     }
 
-    // 2. Hash embedded _bg_meta entries (MANIFEST.json, flight_recorder.json, artifacts)
     for (const m of metaEntries) {
       const contentBuf = Buffer.isBuffer(m.content) ? m.content : Buffer.from(String(m.content), 'utf8');
       const oid = runGitOrThrow(['hash-object', '-w', '--stdin'], { cwd: repoRoot, input: contentBuf }).trim();
       indexLines.push(`100644 ${oid}\t${m.path}`);
     }
 
-    // 3. Populate isolated shadow index
     if (indexLines.length > 0) {
       runGitOrThrow(['update-index', '--index-info'], {
         cwd: repoRoot,
@@ -527,10 +902,8 @@ export function createShadowSnapshotCommit({
       });
     }
 
-    // 4. Write tree from shadow index
     const treeOid = runGitOrThrow(['write-tree'], { cwd: repoRoot, env }).trim();
 
-    // 5. Build commit object chaining parent vault snapshot (or baseSha if first snapshot)
     const commitArgs = ['commit-tree', treeOid];
     if (parentOid) {
       commitArgs.push('-p', parentOid);
@@ -539,10 +912,10 @@ export function createShadowSnapshotCommit({
     }
     const commitEnv = {
       ...env,
-      GIT_AUTHOR_NAME: getGitIdentity(repoRoot, 'user.name', 'Buchigire Guard'),
-      GIT_AUTHOR_EMAIL: getGitIdentity(repoRoot, 'user.email', 'bg-guard@local'),
-      GIT_COMMITTER_NAME: getGitIdentity(repoRoot, 'user.name', 'Buchigire Guard'),
-      GIT_COMMITTER_EMAIL: getGitIdentity(repoRoot, 'user.email', 'bg-guard@local'),
+      GIT_AUTHOR_NAME: ident.name,
+      GIT_AUTHOR_EMAIL: ident.email,
+      GIT_COMMITTER_NAME: ident.name,
+      GIT_COMMITTER_EMAIL: ident.email,
     };
     const commitOid = runGitOrThrow(commitArgs, {
       cwd: repoRoot,
@@ -560,9 +933,28 @@ export function createShadowSnapshotCommit({
   }
 }
 
-function getGitIdentity(repoRoot, key, fallback) {
-  const r = runGit(['config', '--get', key], { cwd: repoRoot });
-  return r.status === 0 && r.stdout.trim() ? r.stdout.trim() : fallback;
+function getGitIdentityPair(repoRoot) {
+  let name = null;
+  let email = null;
+  try {
+    const cfgPath = path.join(repoRoot, '.git', 'config');
+    if (fs.existsSync(cfgPath)) {
+      const text = fs.readFileSync(cfgPath, 'utf8');
+      name = parseGitConfigSectionValue(text, 'user', 'name');
+      email = parseGitConfigSectionValue(text, 'user', 'email');
+    }
+  } catch {
+    // fallback below
+  }
+  if (!name) {
+    const r = runGit(['config', '--get', 'user.name'], { cwd: repoRoot });
+    name = r.status === 0 && r.stdout.trim() ? r.stdout.trim() : 'Buchigire Guard';
+  }
+  if (!email) {
+    const r = runGit(['config', '--get', 'user.email'], { cwd: repoRoot });
+    email = r.status === 0 && r.stdout.trim() ? r.stdout.trim() : 'bg-guard@local';
+  }
+  return { name, email };
 }
 
 /**

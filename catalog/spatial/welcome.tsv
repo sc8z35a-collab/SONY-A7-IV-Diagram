@@ -79,7 +79,7 @@ welcome-u-crest-bolts	W77	う上部点 M2六角穴付締結ボルト	glyph_u	-21
 welcome-u-crest-copper-spreader	W78	う上部点 無酸素銅サーマルスプレッダ	glyph_u	-21,4,0	15.18,8,0.65	-8,25,-5	copper_thermal
 welcome-u-quartz-support-post	W79	う浮遊点支持・透明溶融石英構造支柱	glyph_u	-21,4,0	1.82,9,2.1	-6,18,4	optical_glass_ed
 welcome-u-quartz-brass-collars	W80	う石英支柱 上下CNC真鍮締結フランジカ	glyph_u	-21,4,0	3.73,9.15,4.3	-6,16,12	brass_precision
-welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.84,10.2,0.36	-6,19,-8	gold_plating
+welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.84,10.2,0.36	-6,19,-8	copper_coil
 welcome-u-quartz-oring-seals	W82	う石英支柱 上下エラストマー防振	glyph_u	-21,4,0	3.39,6.58,2.94	-6,17,16	magnesium_cast
 welcome-u-arc-copper-heatpipe	W83	う主弧 湾曲C1020無酸素銅ヒートスプ	glyph_u	-21,4,0	27.45,31.5,0.65	-8,2,-12	copper_thermal
 welcome-u-arc-cinnabar-edge	W84	う主弧 シナバー光学エッジアクセント導光	glyph_u	-21,4,0	29.71,33.64,0.65	-10,6,26	pin_carrier_gloss
@@ -126,7 +126,7 @@ welcome-ko-quartz-col-left	W124	こ左・透明溶融石英構造支柱コラム
 welcome-ko-quartz-col-right	W125	こ右・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	1.99,26.8,2.3	16,6,4	optical_glass_ed
 welcome-ko-quartz-brass-collars	W126	こ左右石英コラム 4点CNC真鍮締結フラ	glyph_ko	23,4,0	19.28,26.95,4.72	10,8,12	brass_precision
 welcome-ko-left-power-bus	W127	こ左コラム内蔵 12V給電ペア極細シール	glyph_ko	23,4,0	0.84,27.4,0.36	2,6,-8	copper_coil
-welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.84,28,0.36	18,6,-8	gold_plating
+welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.84,28,0.36	18,6,-8	copper_coil
 welcome-ko-quartz-seals	W129	こ左右石英コラム 防振・防塵エラストマー	glyph_ko	23,4,0	18.86,24.38,3.17	10,4,16	magnesium_cast
 welcome-so-cnc-chassis	W130	そ主骨格 CNC6061アルミ肉抜きシャ	glyph_so	67,4,0	28.98,26.82,5.2	26.39,6,0	matte_black_anodized
 welcome-so-mg-finned-backplate	W131	そ背面 AZ91Dマグネシウム3D放熱フ	glyph_so	67,4,0	27.91,25.91,2.32	29.03,4,-28	magnesium_cast
@@ -359,3 +359,78 @@ welcome-plinth-dial-lume-ring	W357	ロータリーダイヤル外周 Super	optic
 welcome-plinth-front-glare-visor	W358	前面ガラス上縁 マイクロ面取りグレア防止	optical_plinth	0,-17,0	170,0.44,0.46	0,-16,32	matte_black_anodized
 welcome-plinth-star-ground-link	W359	内部12V/5V/アナログ1点スター接地	optical_plinth	0,-17,0	14,0.42,0.7	0,-9.5,0	copper_thermal
 welcome-plinth-master-metrology-plaque	W360	台座天面中央 WLK-360 JIS	optical_plinth	0,-17,0	13,0.37,2	0,-5,0	matte_black_anodized
+welcome-yo-sapphire-ito-esd-clip	W361	よ前面サファイア窓 導電ITO〜ベゼル	glyph_yo	-66,4,0	2.8,0.75,0.14	-28,8,42	optical_ar_iridescent
+welcome-yo-t-junction-ti-gusset	W362	よ横枝〜主幹T字接合部 CNC Ti	glyph_yo	-66,4,0	3.4,2.7,0.33	-24,12,-34	titanium_machined
+welcome-yo-1wire-cal-eeprom-shunt	W363	よ着脱自動識別 1-Wire 64bit	glyph_yo	-66,4,0	3.6,2.8,0.34	-28,3,-34	pcb_textured
+welcome-u-sapphire-ito-esd-clip	W364	う前面サファイア窓 導電ITO〜ベゼル	glyph_u	-21,4,0	2.85,1.8,0.14	-9,8,42	optical_ar_iridescent
+welcome-u-quartz-belleville-stack	W365	う石英支柱 軸方向定予圧 DIN	glyph_u	-21,4,0	1.87,5.26,0.3	-6,18,-34	brass_precision
+welcome-u-crest-sma905-cal-port	W366	う浮遊上部点 背面 SMA905	glyph_u	-21,4,0	1.84,2.12,0.65	-8.5,25,-34	stainless_machined
+welcome-u-arc-piezo-shunt-damper	W367	う主弧片持ち基部 PZT-5H	glyph_u	-21,4,0	4.74,4.18,0.31	-9,4,-34	ic_epoxy_dark
+welcome-ko-sapphire-ito-esd-clip	W368	こ前面サファイア窓 導電ITO〜ベゼル	glyph_ko	23,4,0	2.85,0.94,0.14	10,4,42	optical_ar_iridescent
+welcome-ko-quartz-belleville-stacks	W369	こ左右2本石英コラム 軸定予圧 DIN	glyph_ko	23,4,0	17.39,24.44,0.3	11,10,-34	brass_precision
+welcome-ko-lower-micro-heatpipe	W370	こ下画背面 0.6mm 扁平焼結銅マイク	glyph_ko	23,4,0	3.39,5.72,0.3	10,4,-34	copper_thermal
+welcome-ko-invar-antitwist-tiebar	W371	こ上画〜石英柱間 平行四辺形せん断防止	glyph_ko	23,4,0	11.48,1.08,0.28	11,10,-34	stainless_machined
+welcome-so-sapphire-ito-esd-clip	W372	そ前面サファイア窓 導電ITO〜ベゼル	glyph_so	67,4,0	2.02,2.79,0.14	28,8,44	optical_ar_iridescent
+welcome-so-z-truss-ti-gusset	W373	そZ字斜め画〜折返し部 CNC Ti	glyph_so	67,4,0	5.48,4.67,0.33	24,18,-34	titanium_machined
+welcome-so-z-joint-ofc-braid-strap	W374	そZ字〜椀部ジョイント跨ぎ 無酸素銅	glyph_so	67,4,0	5.55,1.75,0.32	28,12,-34	copper_thermal
+welcome-so-bowl-pcm58-thermal-cap	W375	そ椀部背面 密閉 Rubitherm®	glyph_so	67,4,0	4.48,5.37,0.35	29,0,-34	stainless_machined
+welcome-plinth-usbc-m2-lock-collar	W376	背面 USB-C PD 65W USB	optical_plinth	0,-17,0	16.6,5.12,0.72	-18,-16,-32	stainless_machined
+welcome-plinth-usbc-efuse-limiter	W377	USB-C 65W入力 TI TPS25	optical_plinth	0,-17,0	4,0.5,1.75	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-ina228-power-monitor	W378	主電源系統 TI INA228	optical_plinth	0,-17,0	4,0.5,1.75	0,-9.5,0	pcb_textured
+welcome-plinth-dock-hotswap-efuses	W379	4文字磁気ドック独立ホットスワップ TI	optical_plinth	0,-17,0	7.8,0.53,1.65	0,-10.5,8	pcb_textured
+welcome-plinth-iso1042-canfd-iso	W380	外部M5同期ポート用 TI ISO104	optical_plinth	0,-17,0	3.8,0.5,1.75	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-bq34z100-fuel-gauge	W381	LiFePO4電池用 TI BQ34Z1	optical_plinth	0,-17,0	4.6,0.5,1.75	0,-9.5,0	pcb_textured
+welcome-plinth-lifepo4-preheat-foil	W382	LiFePO4電池区画 0°Cリチウム析	optical_plinth	0,-17,0	9.6,0.21,1.65	0,-9.5,0	membrane_translucent
+welcome-plinth-battery-burst-vent	W383	LiFePO4電池区画 IEC	optical_plinth	0,-17,0	3.72,4.3,0.57	0,-16,-28	stainless_machined
+welcome-plinth-sn6505b-iso-power	W384	絶縁CAN-FD専用 TI SN6505	optical_plinth	0,-17,0	5.6,0.5,1.75	0,-9.5,0	copper_coil
+welcome-plinth-tps3850-watchdog	W385	システム24/7無停止保護 TI	optical_plinth	0,-17,0	3.4,0.5,1.75	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-lmk1c1104-clkbuf	W386	基準クロック分配 TI LMK1C110	optical_plinth	0,-17,0	4,0.5,1.75	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-eui48-mac-eeprom	W387	固有ハードウェアID Microchip	optical_plinth	0,-17,0	3,0.48,1.6	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-tca9548a-i2c-mux	W388	センサーバス分離 TI TCA9548A	optical_plinth	0,-17,0	4.4,0.5,1.75	0,-9.5,0	pcb_textured
+welcome-plinth-rear-diag-oled	W389	背面サービス診断 WINSTAR	optical_plinth	0,-17,0	7.6,4,0.49	0,-16,-28	emissive_glow
+welcome-plinth-rear-piano-dip	W390	背面リセスド保守ポート Omron	optical_plinth	0,-17,0	6,2.6,0.58	0,-16,-28	pin_carrier_gloss
+welcome-plinth-as7341-spectral	W391	前面右 ams OSRAM AS7341	optical_plinth	0,-17,0	7.6,2.7,0.34	0,-16,32	matte_black_anodized
+welcome-plinth-tof-940nm-bandpass-window	W392	前面ToF専用 940±20nm	optical_plinth	0,-17,0	5.7,2.22,0.1	0,-16,32	matte_black_anodized
+welcome-plinth-bgt60tr13c-radar	W393	前面左 Infineon BGT60TR	optical_plinth	0,-17,0	7.6,2.7,0.37	0,-16,32	matte_black_anodized
+welcome-plinth-uwb-aoa-module	W394	Qorvo DW3120 / QM331	optical_plinth	0,-17,0	5,0.42,1.75	0,-9.5,0	abf_substrate
+welcome-plinth-wifi-baw-filter	W395	Qorvo QPQ1907 2.4GHz	optical_plinth	0,-17,0	3.6,0.48,1.65	0,-9.5,0	emi_shield_metal
+welcome-plinth-sht45-dewpoint	W396	結露能動防止 Sensirion	optical_plinth	0,-17,0	3.4,0.48,1.7	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-bmp390-barometer	W397	気圧・通気弁健全性監視 Bosch	optical_plinth	0,-17,0	2.8,0.48,1.5	0,-9.5,0	stainless_machined
+welcome-plinth-im73a135-mems-mic	W398	環境音圧自動追従	optical_plinth	0,-17,0	4.4,2.6,0.5	0,-16,-28	emi_shield_metal
+welcome-plinth-classd-lc-filter	W399	Class-D音声出力 Murata	optical_plinth	0,-17,0	5.5,0.47,1.75	0,-9.5,0	pcb_textured
+welcome-plinth-lra-haptic-engine	W400	精密触覚フィードバック TI DRV26	optical_plinth	0,-17,0	5.6,0.5,1.62	-8,-9.5,-6	pcb_textured
+welcome-plinth-m4x025-level-feet	W401	底面4隅 運動学的 M4×0.25	optical_plinth	0,-17,0	133.5,0.73,24.04	0,-50,0	stainless_machined
+welcome-plinth-corner-cube-retro	W402	台座天面 Thorlabs PS974M	optical_plinth	0,-17,0	3.84,1.39,4.2	0,-5,0	matte_black_anodized
+welcome-plinth-spectralon-white-ref	W403	台座天面 Labsphere Spect	optical_plinth	0,-17,0	4.6,0.46,4.6	0,-5,0	matte_black_anodized
+welcome-plinth-arri-arca-mount	W404	底面中央 ARRI Mini 1/4"	optical_plinth	0,-17,0	24,0.62,9.6	0,-50,0	matte_black_anodized
+welcome-plinth-hatch-choseal-gasket	W405	底面電池サービスハッチ外周 Parker	optical_plinth	0,-17,0	29.1,0.42,14.02	0,-50,0	ic_epoxy_dark
+welcome-yo-circular-polarizer-film	W406	よ前面外光反射抑圧 Nitto NPF™	glyph_yo	-66,4,0	3.8,5.6,0.09	-27.5,8,40	matte_chassis
+welcome-yo-helicoil-m2-inserts	W407	よ主骨格A6061ねじ座 Heli	glyph_yo	-66,4,0	21.64,19.92,0.44	-28,6,-34	stainless_machined
+welcome-u-luminit-lsd-diffuser	W408	う主弧〜上部点 Luminit LSD®	glyph_u	-21,4,0	3.49,2.44,0.09	-9,8,40	optical_dichroic
+welcome-u-index-matching-gel-pad	W409	う石英支柱両端光学界面 Nye	glyph_u	-21,4,0	8.4,4.9,0.28	-6,18,-34	foam_felt_matte
+welcome-ko-3m-alcf-microlouver	W410	こ上下水平画 昼光コントラスト向上 3M	glyph_ko	23,4,0	15.2,28.87,0.21	10,12,42	matte_chassis
+welcome-ko-pokayoke-key-pins	W411	こドック誤装着防止 非対称ポカヨケ焼入S	glyph_ko	23,4,0	9.06,1.92,0.5	10,-10,-34	stainless_machined
+welcome-so-acktar-velvet-trap	W412	そZ字45°プリズム周囲 宇宙規格	glyph_so	67,4,0	16.1,2.3,0.26	28,18,-34	foam_felt_matte
+welcome-so-susumu-rg1005-ref	W413	そ16bit定電流基準 Susumu	glyph_so	67,4,0	4,2.4,0.29	29,4,-34	pcb_textured
+welcome-plinth-dmx512-rdm-transceiver	W414	舞台・美術館照明制御 ANSI	optical_plinth	0,-17,0	5.2,0.5,2.15	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-ix-industrial-eth	W415	背面 HARTING ix Indust	optical_plinth	0,-17,0	4.2,2.6,0.53	0,-16,-28	stainless_machined
+welcome-plinth-poepp-lt4295-pd	W416	IEEE 802.3bt PoE++	optical_plinth	0,-17,0	5.8,0.5,2.15	0,-9.5,0	pcb_textured
+welcome-plinth-dp83867-ptp-phy	W417	IEEE 1588 PTP サブマイクロ	optical_plinth	0,-17,0	5.6,0.54,2.15	-6,-11,4	pcb_textured
+welcome-plinth-jjy-atomic-clock	W418	日本標準時 JJY 40/60 kHz	optical_plinth	0,-17,0	18.6,0.64,1.15	0,-13,11	copper_coil
+welcome-plinth-bourns-tbu-gdt-surge	W419	外部通信ポート IEC 61000-4	optical_plinth	0,-17,0	5.2,0.59,2.15	0,-9.5,0	pcb_textured
+welcome-plinth-lt3045-ultralownoise	W420	60GHzレーダー・分光ADC専用	optical_plinth	0,-17,0	4.6,0.5,2.15	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-ref7025-vref	W421	計装ADC絶対電圧基準 TI REF70	optical_plinth	0,-17,0	4.4,0.5,2.15	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-eta3000-active-bal	W422	LiFePO4 2S電池 92%高効率	optical_plinth	0,-17,0	5.4,0.48,2.15	-6,-9.5,18	pcb_textured
+welcome-plinth-tlp3122a-ship-relay	W423	輸送・長期保管Ship-Mode用	optical_plinth	0,-17,0	5,0.48,1.32	12,-9.5,6	foam_felt_matte
+welcome-plinth-ltc3350-scap-health	W424	スーパーキャパシタ 容量・ESR劣化診断	optical_plinth	0,-17,0	6,0.5,2.15	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-d6t-ir-thermopile	W425	前面左端 Omron D6T-44L	optical_plinth	0,-17,0	7.6,2.7,0.38	0,-16,32	matte_black_anodized
+welcome-plinth-bg40-ircut-filter	W426	前面右端 SCHOTT BG40	optical_plinth	0,-17,0	7.6,2.7,0.36	0,-16,32	matte_chassis
+welcome-plinth-optotec-micro-tec	W427	Laird OptoTEC™ OTX	optical_plinth	0,-17,0	6.55,0.52,2.05	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-mmc5983ma-amr-mag	W428	3軸超低ノイズ MEMSIC MMC59	optical_plinth	0,-17,0	4.2,0.5,2.15	12,-9.5,10	ic_epoxy_dark
+welcome-plinth-st25dv64kc-dyn-nfc	W429	STMicroelectronics	optical_plinth	0,-17,0	5,0.48,1.32	0,-9.5,0	ic_epoxy_dark
+welcome-plinth-opt-tamper-buzzer	W430	暗室光侵入タンパー検知 Vishay	optical_plinth	0,-17,0	6.2,0.54,2.15	0,-9.5,0	pcb_textured
+welcome-plinth-permendur-flux-yoke	W431	4文字磁気ドック直下 Permendur	optical_plinth	0,-17,0	142.6,0.42,1.15	0,-11.6,9.2	iron_magnetic
+welcome-plinth-smalley-wave-spring	W432	右端ロータリーダイヤル軸 Smalley	optical_plinth	0,-17,0	1.74,0.68,0.68	32,-10,2	stainless_machined
+welcome-plinth-pem-nordlock-fasteners	W433	底面電池ハッチ脱落防止 PEM®	optical_plinth	0,-17,0	129.29,0.52,20.82	0,-50,0	stainless_machined
+welcome-plinth-zeolite4a-cartridge	W434	台座内部 交換・再生式 Zeolite	optical_plinth	0,-17,0	13.62,0.42,1.44	0,-11,8	stainless_machined
+welcome-plinth-dguv-nato-rigging	W435	公共・舞台高所設置 DGUV V17	optical_plinth	0,-17,0	156.2,0.64,8.95	0,-50,0	solder_silver
