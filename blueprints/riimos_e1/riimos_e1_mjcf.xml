@@ -1,0 +1,126 @@
+<mujoco model="riimos_e1_quadruped">
+  <!--
+    Original #01: RIIMOS E1 — 9,700 JPY Ultra-Frugal 0.135J 8-Barrel Quadruped
+    Physical Twin for Google Colab Pro (NVIDIA L4 24GB) MuJoCo MJX Training
+    Total Mass: 2.48 kg | Chassis: 216x148x130 mm | 4x Symmetric X-Radial 3-DOF Legs (12x MG996R)
+  -->
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.004" iterations="4" ls_iterations="8" solver="Newton" integrator="implicitfast">
+    <flag eulerdamp="disable"/>
+  </option>
+
+  <default>
+    <joint damping="0.18" armature="0.008" frictionloss="0.04"/>
+    <geom condim="3" friction="0.85 0.01 0.002" margin="0.001" rgba="0.20 0.24 0.30 1"/>
+    <position kp="18.0" kv="0.8" forcerange="-1.18 1.18"/>
+  </default>
+
+  <worldbody>
+    <light pos="0 0 2.5" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="20 20 0.05" rgba="0.92 0.94 0.96 1"/>
+
+    <!-- Main Chassis (center at Z=0.158m in MuJoCo Z-up frame) -->
+    <body name="chassis" pos="0 0 0.158">
+      <freejoint name="root"/>
+      <!-- Core body + moto g52j + 8-barrel shared-shaft unit + 5x 21700 + 300 BBs = 1.552 kg (legs add 0.928 kg -> 2.480 kg exact) -->
+      <geom name="chassis_box" type="box" size="0.108 0.065 0.074" mass="1.532" rgba="0.16 0.20 0.26 1"/>
+      <geom name="red_battery_top" type="box" pos="0.058 -0.016 0.076" size="0.045 0.041 0.003" mass="0.01" rgba="0.86 0.15 0.15 1"/>
+      <geom name="black_mag_top" type="box" pos="-0.052 0.0 0.076" size="0.048 0.054 0.003" mass="0.01" rgba="0.07 0.09 0.14 1"/>
+      <site name="imu_site" pos="0 0 -0.018" size="0.008" rgba="0.95 0.70 0.10 1"/>
+
+      <!-- Leg 1: Front-Left (+135 deg) -->
+      <body name="fl_coxa" pos="-0.094 0.054 -0.066" euler="0 0 2.35619">
+        <joint name="fl_yaw" type="hinge" axis="0 0 1" range="-1.22 1.22"/>
+        <geom type="box" pos="0.014 0 0" size="0.016 0.011 0.012" mass="0.075"/>
+        <body name="fl_femur" pos="0.036 0 0">
+          <joint name="fl_hip" type="hinge" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="capsule" fromto="0 0 0 0.068 0 -0.008" size="0.009" mass="0.085"/>
+          <body name="fl_tibia" pos="0.068 0 -0.008">
+            <joint name="fl_knee" type="hinge" axis="0 1 0" range="-2.40 0.35"/>
+            <geom type="capsule" fromto="0 0 0 0.020 0 -0.082" size="0.008" mass="0.060"/>
+            <geom name="fl_foot" type="sphere" pos="0.020 0 -0.084" size="0.0095" mass="0.012" rgba="0.95 0.45 0.10 1"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Leg 2: Front-Right (+45 deg) -->
+      <body name="fr_coxa" pos="0.094 0.054 -0.066" euler="0 0 0.78540">
+        <joint name="fr_yaw" type="hinge" axis="0 0 1" range="-1.22 1.22"/>
+        <geom type="box" pos="0.014 0 0" size="0.016 0.011 0.012" mass="0.075"/>
+        <body name="fr_femur" pos="0.036 0 0">
+          <joint name="fr_hip" type="hinge" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="capsule" fromto="0 0 0 0.068 0 -0.008" size="0.009" mass="0.085"/>
+          <body name="fr_tibia" pos="0.068 0 -0.008">
+            <joint name="fr_knee" type="hinge" axis="0 1 0" range="-2.40 0.35"/>
+            <geom type="capsule" fromto="0 0 0 0.020 0 -0.082" size="0.008" mass="0.060"/>
+            <geom name="fr_foot" type="sphere" pos="0.020 0 -0.084" size="0.0095" mass="0.012" rgba="0.95 0.45 0.10 1"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Leg 3: Rear-Left (-135 deg) -->
+      <body name="rl_coxa" pos="-0.094 -0.054 -0.066" euler="0 0 -2.35619">
+        <joint name="rl_yaw" type="hinge" axis="0 0 1" range="-1.22 1.22"/>
+        <geom type="box" pos="0.014 0 0" size="0.016 0.011 0.012" mass="0.075"/>
+        <body name="rl_femur" pos="0.036 0 0">
+          <joint name="rl_hip" type="hinge" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="capsule" fromto="0 0 0 0.068 0 -0.008" size="0.009" mass="0.085"/>
+          <body name="rl_tibia" pos="0.068 0 -0.008">
+            <joint name="rl_knee" type="hinge" axis="0 1 0" range="-2.40 0.35"/>
+            <geom type="capsule" fromto="0 0 0 0.020 0 -0.082" size="0.008" mass="0.060"/>
+            <geom name="rl_foot" type="sphere" pos="0.020 0 -0.084" size="0.0095" mass="0.012" rgba="0.95 0.45 0.10 1"/>
+          </body>
+        </body>
+      </body>
+
+      <!-- Leg 4: Rear-Right (-45 deg) -->
+      <body name="rr_coxa" pos="0.094 -0.054 -0.066" euler="0 0 -0.78540">
+        <joint name="rr_yaw" type="hinge" axis="0 0 1" range="-1.22 1.22"/>
+        <geom type="box" pos="0.014 0 0" size="0.016 0.011 0.012" mass="0.075"/>
+        <body name="rr_femur" pos="0.036 0 0">
+          <joint name="rr_hip" type="hinge" axis="0 1 0" range="-1.57 1.57"/>
+          <geom type="capsule" fromto="0 0 0 0.068 0 -0.008" size="0.009" mass="0.085"/>
+          <body name="rr_tibia" pos="0.068 0 -0.008">
+            <joint name="rr_knee" type="hinge" axis="0 1 0" range="-2.40 0.35"/>
+            <geom type="capsule" fromto="0 0 0 0.020 0 -0.082" size="0.008" mass="0.060"/>
+            <geom name="rr_foot" type="sphere" pos="0.020 0 -0.084" size="0.0095" mass="0.012" rgba="0.95 0.45 0.10 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- 12x MG996R Position Actuators (6V stall ~1.18 N*m) -->
+  <actuator>
+    <position name="act_fl_yaw"  joint="fl_yaw"  ctrlrange="-1.22 1.22"/>
+    <position name="act_fl_hip"  joint="fl_hip"  ctrlrange="-1.57 1.57"/>
+    <position name="act_fl_knee" joint="fl_knee" ctrlrange="-2.40 0.35"/>
+    <position name="act_fr_yaw"  joint="fr_yaw"  ctrlrange="-1.22 1.22"/>
+    <position name="act_fr_hip"  joint="fr_hip"  ctrlrange="-1.57 1.57"/>
+    <position name="act_fr_knee" joint="fr_knee" ctrlrange="-2.40 0.35"/>
+    <position name="act_rl_yaw"  joint="rl_yaw"  ctrlrange="-1.22 1.22"/>
+    <position name="act_rl_hip"  joint="rl_hip"  ctrlrange="-1.57 1.57"/>
+    <position name="act_rl_knee" joint="rl_knee" ctrlrange="-2.40 0.35"/>
+    <position name="act_rr_yaw"  joint="rr_yaw"  ctrlrange="-1.22 1.22"/>
+    <position name="act_rr_hip"  joint="rr_hip"  ctrlrange="-1.57 1.57"/>
+    <position name="act_rr_knee" joint="rr_knee" ctrlrange="-2.40 0.35"/>
+  </actuator>
+
+  <!-- Built-in 400Hz moto g52j IMU + 12x CD74HC4067 Potentiometer Angle Feedback Sensors -->
+  <sensor>
+    <gyro name="g52j_gyro" site="imu_site"/>
+    <accelerometer name="g52j_accel" site="imu_site"/>
+    <jointpos name="pot_fl_yaw"  joint="fl_yaw"/>
+    <jointpos name="pot_fl_hip"  joint="fl_hip"/>
+    <jointpos name="pot_fl_knee" joint="fl_knee"/>
+    <jointpos name="pot_fr_yaw"  joint="fr_yaw"/>
+    <jointpos name="pot_fr_hip"  joint="fr_hip"/>
+    <jointpos name="pot_fr_knee" joint="fr_knee"/>
+    <jointpos name="pot_rl_yaw"  joint="rl_yaw"/>
+    <jointpos name="pot_rl_hip"  joint="rl_hip"/>
+    <jointpos name="pot_rl_knee" joint="rl_knee"/>
+    <jointpos name="pot_rr_yaw"  joint="rr_yaw"/>
+    <jointpos name="pot_rr_hip"  joint="rr_hip"/>
+    <jointpos name="pot_rr_knee" joint="rr_knee"/>
+  </sensor>
+</mujoco>

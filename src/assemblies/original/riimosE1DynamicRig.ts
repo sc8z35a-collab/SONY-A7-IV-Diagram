@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CadPart } from '../types';
 import { RiimosLauncherOpticsRigRefs } from './riimosE1LauncherOpticsBrainParts';
 import { RiimosLegRigRef } from './riimosE1LegsAndAccessoriesParts';
 
@@ -13,12 +14,15 @@ import { RiimosLegRigRef } from './riimosE1LegsAndAccessoriesParts';
  */
 export interface RiimosE1DynamicRig {
   readonly animatedNodes: Set<THREE.Object3D>;
-  applyDynamics: (elapsed: number, physicsActive: boolean, explodeFactor: number) => void;
+  applyDynamics: (elapsed: number, physicsActive: boolean, explodeFactor: number) => boolean;
 }
+
+const ZERO_VEC = new THREE.Vector3(0, 0, 0);
 
 export function createRiimosE1DynamicRig(
   launcherOptics: RiimosLauncherOpticsRigRefs,
-  legRigs: readonly RiimosLegRigRef[]
+  legRigs: readonly RiimosLegRigRef[],
+  allParts: readonly CadPart[]
 ): RiimosE1DynamicRig {
   const animatedNodes = new Set<THREE.Object3D>();
   for (const g of launcherOptics.frontLauncherGroups) animatedNodes.add(g);
@@ -35,15 +39,41 @@ export function createRiimosE1DynamicRig(
     animatedNodes.add(leg.tibiaFoot);
   }
 
-  // Cache initial positions for barrels & cameras so resting pose restores cleanly at physicsActive=false
-  const frontLauncherBase = launcherOptics.frontLauncherGroups.map((g) => g.position.clone());
-  const rearLauncherBase = launcherOptics.rearLauncherGroups.map((g) => g.position.clone());
-  const frontCamBase = launcherOptics.frontCamGimbalGroups.map((g) => g.position.clone());
-  const rearCamBase = launcherOptics.rearCamGimbalGroups.map((g) => g.position.clone());
-  const frontShutterBase = launcherOptics.frontShutterGroup.position.clone();
-  const rearShutterBase = launcherOptics.rearShutterGroup.position.clone();
+  const explodeByGroup = new Map<THREE.Object3D, THREE.Vector3>();
+  for (const p of allParts) {
+    explodeByGroup.set(p.group, p.explodeOffset);
+  }
+  const getExp = (g: THREE.Object3D): THREE.Vector3 => explodeByGroup.get(g) ?? ZERO_VEC;
 
-  const applyDynamics = (elapsed: number, physicsActive: boolean, explodeFactor: number) => {
+  // Cache initial positions & explode offsets at build time (zero-GC in hot loop)
+  const frontLauncherBase = launcherOptics.frontLauncherGroups.map((g) => g.position.clone());
+  const frontLauncherExp = launcherOptics.frontLauncherGroups.map((g) => getExp(g));
+  const rearLauncherBase = launcherOptics.rearLauncherGroups.map((g) => g.position.clone());
+  const rearLauncherExp = launcherOptics.rearLauncherGroups.map((g) => getExp(g));
+  const frontCamBase = launcherOptics.frontCamGimbalGroups.map((g) => g.position.clone());
+  const frontCamExp = launcherOptics.frontCamGimbalGroups.map((g) => getExp(g));
+  const rearCamBase = launcherOptics.rearCamGimbalGroups.map((g) => g.position.clone());
+  const rearCamExp = launcherOptics.rearCamGimbalGroups.map((g) => getExp(g));
+  const frontShutterBase = launcherOptics.frontShutterGroup.position.clone();
+  const frontShutterExp = getExp(launcherOptics.frontShutterGroup);
+  const rearShutterBase = launcherOptics.rearShutterGroup.position.clone();
+  const rearShutterExp = getExp(launcherOptics.rearShutterGroup);
+  const legExp = legRigs.map((leg) => ({
+    coxaBracket: getExp(leg.coxaBracket),
+    femurServo: getExp(leg.femurServo),
+    femurLink: getExp(leg.femurLink),
+    tibiaServo: getExp(leg.tibiaServo),
+    tibiaFoot: getExp(leg.tibiaFoot),
+  }));
+
+  let wasActive = false;
+
+  const applyDynamics = (elapsed: number, physicsActive: boolean, explodeFactor: number): boolean => {
+    if (!physicsActive && !wasActive) {
+      return false;
+    }
+    wasActive = physicsActive;
+
     // Attenuate live kinematics smoothly when exploded so exploded view remains crisp
     const damp = physicsActive ? Math.max(0, 1 - explodeFactor * 1.15) : 0;
 
@@ -52,13 +82,17 @@ export function createRiimosE1DynamicRig(
     const aimPitch = Math.sin(elapsed * 1.35 + 0.6) * 0.12 * damp;
     for (let i = 0; i < launcherOptics.frontLauncherGroups.length; i++) {
       const g = launcherOptics.frontLauncherGroups[i];
-      g.position.copy(frontLauncherBase[i]);
+      const b = frontLauncherBase[i];
+      const e = frontLauncherExp[i];
+      g.position.set(b.x + e.x * explodeFactor, b.y + e.y * explodeFactor, b.z + e.z * explodeFactor);
       g.rotation.set(aimPitch, aimYaw, 0);
       g.updateMatrixWorld(true);
     }
     for (let i = 0; i < launcherOptics.rearLauncherGroups.length; i++) {
       const g = launcherOptics.rearLauncherGroups[i];
-      g.position.copy(rearLauncherBase[i]);
+      const b = rearLauncherBase[i];
+      const e = rearLauncherExp[i];
+      g.position.set(b.x + e.x * explodeFactor, b.y + e.y * explodeFactor, b.z + e.z * explodeFactor);
       g.rotation.set(-aimPitch * 0.45, -aimYaw * 0.55, 0);
       g.updateMatrixWorld(true);
     }
@@ -67,13 +101,17 @@ export function createRiimosE1DynamicRig(
     const camStabPitch = -Math.sin(elapsed * 3.2) * 0.11 * damp;
     for (let i = 0; i < launcherOptics.frontCamGimbalGroups.length; i++) {
       const g = launcherOptics.frontCamGimbalGroups[i];
-      g.position.copy(frontCamBase[i]);
+      const b = frontCamBase[i];
+      const e = frontCamExp[i];
+      g.position.set(b.x + e.x * explodeFactor, b.y + e.y * explodeFactor, b.z + e.z * explodeFactor);
       g.rotation.set(camStabPitch, 0, 0);
       g.updateMatrixWorld(true);
     }
     for (let i = 0; i < launcherOptics.rearCamGimbalGroups.length; i++) {
       const g = launcherOptics.rearCamGimbalGroups[i];
-      g.position.copy(rearCamBase[i]);
+      const b = rearCamBase[i];
+      const e = rearCamExp[i];
+      g.position.set(b.x + e.x * explodeFactor, b.y + e.y * explodeFactor, b.z + e.z * explodeFactor);
       g.rotation.set(-camStabPitch, 0, 0);
       g.updateMatrixWorld(true);
     }
@@ -85,22 +123,24 @@ export function createRiimosE1DynamicRig(
         ? Math.sin(((cycle - 6.2) / 1.4) * Math.PI) * damp
         : 0;
     launcherOptics.frontShutterGroup.position.set(
-      frontShutterBase.x,
-      frontShutterBase.y - shutFactor * 12.2,
-      frontShutterBase.z
+      frontShutterBase.x + frontShutterExp.x * explodeFactor,
+      frontShutterBase.y + frontShutterExp.y * explodeFactor - shutFactor * 12.2,
+      frontShutterBase.z + frontShutterExp.z * explodeFactor
     );
     launcherOptics.frontShutterGroup.updateMatrixWorld(true);
     launcherOptics.rearShutterGroup.position.set(
-      rearShutterBase.x,
-      rearShutterBase.y - shutFactor * 12.2,
-      rearShutterBase.z
+      rearShutterBase.x + rearShutterExp.x * explodeFactor,
+      rearShutterBase.y + rearShutterExp.y * explodeFactor - shutFactor * 12.2,
+      rearShutterBase.z + rearShutterExp.z * explodeFactor
     );
     launcherOptics.rearShutterGroup.updateMatrixWorld(true);
 
     // 4. 4-Leg X-Radial XYZ + Diagonal Crab Trot Gait
     const gaitOmega = 4.6;
     const bodyHeave = Math.sin(elapsed * 2.1) * 6.0 * damp;
-    for (const leg of legRigs) {
+    for (let li = 0; li < legRigs.length; li++) {
+      const leg = legRigs[li];
+      const le = legExp[li];
       const phi = elapsed * gaitOmega + leg.phase;
       const swing = Math.sin(phi) * damp;
       const lift = Math.max(0, Math.cos(phi)) * 18.0 * damp;
@@ -110,45 +150,47 @@ export function createRiimosE1DynamicRig(
       const coxaYawDelta = swing * 0.16;
 
       leg.coxaBracket.position.set(
-        leg.basePositions.coxaBracket.x,
-        leg.basePositions.coxaBracket.y + bodyHeave * 0.25,
-        leg.basePositions.coxaBracket.z
+        leg.basePositions.coxaBracket.x + le.coxaBracket.x * explodeFactor,
+        leg.basePositions.coxaBracket.y + le.coxaBracket.y * explodeFactor + bodyHeave * 0.25,
+        leg.basePositions.coxaBracket.z + le.coxaBracket.z * explodeFactor
       );
       leg.coxaBracket.rotation.set(0, coxaYawDelta, 0);
       leg.coxaBracket.updateMatrixWorld(true);
 
       leg.femurServo.position.set(
-        leg.basePositions.femurServo.x + strideX * 0.22,
-        leg.basePositions.femurServo.y + lift * 0.25 + bodyHeave * 0.35,
-        leg.basePositions.femurServo.z + strideZ * 0.22
+        leg.basePositions.femurServo.x + le.femurServo.x * explodeFactor + strideX * 0.22,
+        leg.basePositions.femurServo.y + le.femurServo.y * explodeFactor + lift * 0.25 + bodyHeave * 0.35,
+        leg.basePositions.femurServo.z + le.femurServo.z * explodeFactor + strideZ * 0.22
       );
       leg.femurServo.rotation.set(0, coxaYawDelta, 0);
       leg.femurServo.updateMatrixWorld(true);
 
       leg.femurLink.position.set(
-        leg.basePositions.femurLink.x + strideX * 0.55,
-        leg.basePositions.femurLink.y + lift * 0.58 + bodyHeave * 0.45,
-        leg.basePositions.femurLink.z + strideZ * 0.55
+        leg.basePositions.femurLink.x + le.femurLink.x * explodeFactor + strideX * 0.55,
+        leg.basePositions.femurLink.y + le.femurLink.y * explodeFactor + lift * 0.58 + bodyHeave * 0.45,
+        leg.basePositions.femurLink.z + le.femurLink.z * explodeFactor + strideZ * 0.55
       );
       leg.femurLink.rotation.set(0, coxaYawDelta, 0);
       leg.femurLink.updateMatrixWorld(true);
 
       leg.tibiaServo.position.set(
-        leg.basePositions.tibiaServo.x + strideX * 0.85,
-        leg.basePositions.tibiaServo.y + lift * 0.85 + bodyHeave * 0.5,
-        leg.basePositions.tibiaServo.z + strideZ * 0.85
+        leg.basePositions.tibiaServo.x + le.tibiaServo.x * explodeFactor + strideX * 0.85,
+        leg.basePositions.tibiaServo.y + le.tibiaServo.y * explodeFactor + lift * 0.85 + bodyHeave * 0.5,
+        leg.basePositions.tibiaServo.z + le.tibiaServo.z * explodeFactor + strideZ * 0.85
       );
       leg.tibiaServo.rotation.set(0, coxaYawDelta, 0);
       leg.tibiaServo.updateMatrixWorld(true);
 
       leg.tibiaFoot.position.set(
-        leg.basePositions.tibiaFoot.x + strideX,
-        leg.basePositions.tibiaFoot.y + lift,
-        leg.basePositions.tibiaFoot.z + strideZ
+        leg.basePositions.tibiaFoot.x + le.tibiaFoot.x * explodeFactor + strideX,
+        leg.basePositions.tibiaFoot.y + le.tibiaFoot.y * explodeFactor + lift,
+        leg.basePositions.tibiaFoot.z + le.tibiaFoot.z * explodeFactor + strideZ
       );
       leg.tibiaFoot.rotation.set(0, coxaYawDelta, 0);
       leg.tibiaFoot.updateMatrixWorld(true);
     }
+
+    return true;
   };
 
   return { animatedNodes, applyDynamics };

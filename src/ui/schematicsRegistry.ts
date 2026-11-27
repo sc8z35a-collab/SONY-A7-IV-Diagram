@@ -54,11 +54,15 @@ import { renderDryboxHdSchematicSvg } from './dryboxHdSchematics';
 import { renderWelcomeHdSchematicSvg } from './welcomeHdSchematics';
 import { renderBionzV2HdSchematicSvg } from './bionzV2HdSchematics';
 import { renderMiraiHdSchematicSvg } from './miraiHdSchematics';
+import { renderOriginalHdSchematicSvg } from './originalHdSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
  */
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
+  const originalHdSvg = renderOriginalHdSchematicSvg(type);
+  if (originalHdSvg) return originalHdSvg;
+
   const miraiHdSvg = renderMiraiHdSchematicSvg(type);
   if (miraiHdSvg) return miraiHdSvg;
 

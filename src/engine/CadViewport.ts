@@ -57,6 +57,7 @@ export class CadViewport {
   private lensSection: LensSection = 1;
   private sensorFabVolume: SensorFabVolume = 0;
   private miraiSubView = 1;
+  private originalSubView = 1;
   private renderMode: RenderMode = 'solid';
   private quality: GraphicsQuality = 'ultra';
   private sectionAxis: SectionAxis = 'off';
@@ -240,6 +241,7 @@ export class CadViewport {
     if (mode === 'lens') return sharedLensOpticalSim.studioOpen ? -1 : this.lensSection;
     if (mode === 'sensor_fab') return this.sensorFabVolume;
     if (mode === 'mirai_2028') return this.miraiSubView;
+    if (mode === 'original') return this.originalSubView;
     return 0;
   }
 
@@ -356,6 +358,32 @@ export class CadViewport {
     const changed = this.miraiSubView !== clamped;
     this.miraiSubView = clamped;
     if (this.mode !== 'mirai_2028') return;
+    if (!changed && !immediateCamera) {
+      this.setCameraPreset('iso', false);
+      return;
+    }
+    this.selectedPartId = null;
+    this.hoveredPartId = null;
+    this.isolatedPartId = null;
+    this.hiddenPartIds.clear();
+    this.v2Runtime.setSubView(clamped);
+    this.v2Runtime.syncVisualState(null, null, this.hiddenPartIds, null, this.renderMode);
+    this.updateClippingPlane();
+    this.setCameraPreset('iso', immediateCamera);
+    this.callbacks.onSelectPart(null);
+    this.callbacks.onHoverPart(null);
+    this.callbacks.onVisibilityChanged();
+  }
+
+  public getOriginalSubView(): number {
+    return this.originalSubView;
+  }
+
+  public setOriginalSubView(subView: number, immediateCamera = false): void {
+    const clamped = Math.max(1, Math.round(subView || 1));
+    const changed = this.originalSubView !== clamped;
+    this.originalSubView = clamped;
+    if (this.mode !== 'original') return;
     if (!changed && !immediateCamera) {
       this.setCameraPreset('iso', false);
       return;
@@ -675,6 +703,10 @@ export class CadViewport {
         d = 166 + e * 185;
         target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
       }
+    } else if (this.mode === 'original') {
+      // Original #01 RIIMOS E1: W216xH260xD130mm chassis + 350mm X-radial 4-leg stance
+      d = 540 + e * 440;
+      target = new THREE.Vector3(0, 140 + e * 12, 0);
     } else if (this.mode === 'micro_v2') {
       d = 114 + e * 270;
       target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);
@@ -855,6 +887,9 @@ export class CadViewport {
             } else {
               offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
             }
+          } else if (this.mode === 'original') {
+            // RIIMOS E1: elevated front-right 3/4 hero angle revealing red battery, black L-mag, 4 front muzzles, camera dome & X-legs
+            offset = new THREE.Vector3(d * 0.54, d * 0.46, d * 0.70);
           } else if (this.mode === 'micro_v2') {
             offset = new THREE.Vector3(d * 0.64, d * 0.34, d * 0.68);
           } else if (this.mode === 'mishoe') {
@@ -1207,6 +1242,14 @@ export class CadViewport {
       } else {
         minCoord = -34;
         maxCoord = 42;
+      }
+    } else if (this.mode === 'original') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -195;
+        maxCoord = 195;
+      } else {
+        minCoord = 0;
+        maxCoord = 270;
       }
     } else if (this.mode === 'mishoe') {
       if (this.sectionAxis === 'x') {

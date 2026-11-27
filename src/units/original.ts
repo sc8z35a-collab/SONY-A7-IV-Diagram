@@ -38,18 +38,16 @@ export function createOriginalUnit(): OptimizedUnit {
       const g123 = buildRiimosE1ChassisPowerMagParts(mats, clippingPlanes);
       const g456 = buildRiimosE1LauncherOpticsBrainParts(mats, clippingPlanes);
       const g78 = buildRiimosE1LegsAndAccessoriesParts(mats, clippingPlanes);
-      const rig = createRiimosE1DynamicRig(g456.rigRefs, g78.legRigs);
-
       const allParts = [...g123, ...g456.parts, ...g78.parts].sort(
         (a, b) => a.order - b.order
       );
+      const rig = createRiimosE1DynamicRig(g456.rigRefs, g78.legRigs, allParts);
 
       return {
         parts: allParts,
         animatedNodes: rig.animatedNodes,
         stepRigAndOverlay: (elapsed, _delta, explodeFactor, physicsActive) => {
-          rig.applyDynamics(elapsed, physicsActive, explodeFactor);
-          return physicsActive;
+          return rig.applyDynamics(elapsed, physicsActive, explodeFactor);
         },
       };
     },

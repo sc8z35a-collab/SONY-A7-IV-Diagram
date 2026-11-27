@@ -23,6 +23,8 @@ export interface CaptureCustomOptions {
   readonly miraiSubView?: number;
   readonly miraiEdition?: 'beginner' | 'expert';
   readonly miraiStudioTab?: 'reports' | 'matrix' | 'glossary' | null;
+  readonly originalStudioTab?: 'principles' | 'bom' | 'power_rl' | null;
+  readonly physics?: boolean;
 }
 
 export interface CapturePrepareResult {
@@ -56,6 +58,9 @@ export interface CaptureHostAdapter {
   setMiraiEdition?: (edition: 'beginner' | 'expert') => void;
   openMiraiStudio?: (tab: 'reports' | 'matrix' | 'glossary') => Promise<void>;
   closeMiraiStudio?: () => void;
+  openOriginalStudio?: (tab: 'principles' | 'bom' | 'power_rl') => Promise<void>;
+  closeOriginalStudio?: () => void;
+  setPhysicsActive?: (active: boolean) => void;
   requestRenderFrame: () => void;
 }
 
@@ -173,6 +178,11 @@ export class ArtifactCaptureBridge {
     } else if (this.host.closeMiraiStudio) {
       this.host.closeMiraiStudio();
     }
+    if (options.originalStudioTab && this.host.openOriginalStudio) {
+      await this.host.openOriginalStudio(options.originalStudioTab);
+    } else if (this.host.closeOriginalStudio) {
+      this.host.closeOriginalStudio();
+    }
 
     if (options.quality && options.quality !== this.host.getQuality()) {
       this.host.setQuality(options.quality);
@@ -195,6 +205,9 @@ export class ArtifactCaptureBridge {
     }
     if (typeof options.explode === 'number') {
       this.host.setExplode(options.explode, true);
+    }
+    if (typeof options.physics === 'boolean' && this.host.setPhysicsActive) {
+      this.host.setPhysicsActive(options.physics);
     }
     if (options.renderMode) {
       this.host.setRenderMode(options.renderMode);
