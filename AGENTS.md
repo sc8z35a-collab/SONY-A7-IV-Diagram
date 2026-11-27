@@ -70,11 +70,21 @@ npm run sokutei -- --all --save-baseline=/tmp/sokutei_before.json
 npm run sokutei -- --all --compare=/tmp/sokutei_before.json --assert-speedup=6.0 --out=/tmp/sokutei_after.json --md=/tmp/sokutei_after.md
 ```
 
-## 3. パーツカタログ・V2品質規約
+## 3. 空間マップ生成・事前衝突シミュレーションには必ず `sp` を使うこと（必須）
+パーツ追加・配置調整・4 品質ティア横断干渉検査・爆発軌道貫通検査・光学/RF 視界コーン検証には、独自スクリプトを書かず **`0.001 mm` 厳密空間解析エンジン `sp`** を使用すること（詳細: `scripts/SPATIAL_SIM_GUIDE.md`）：
+```bash
+npm run sp -- selftest
+npm run sp -- map --unit=welcome --group=optical_plinth --frame=local --res=0.5
+npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai
+npm run sp -- ray --unit=welcome --preset=welcome-tof,welcome-lux,welcome-rf --ai
+npm run sp -- thermal-cog --unit=welcome --ai
+```
+
+## 4. パーツカタログ・V2品質規約
 - 並列パーツ追加・編集時は必ず `catalog/WORKER_RULE.md`（1.5 kB 以内厳守）を遵守すること。
 - 完了前には `npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build` の全ゲート（10/10 PASS）を確認すること。
 
-## 4. Zero-Token 開発パイプライン（`dx`）
+## 5. Zero-Token 開発パイプライン（`dx`）
 巨大 JSON・`docs/`・`types.ts`・冗長 CLI ログによるトークン浪費を防ぐため、探索・読込・DSL 生成・事前検証は **`node scripts/dx.mjs`**（直接実行で `npm notice` もゼロ化）を優先使用すること：
 - **文脈構築・横断検索**: `node scripts/dx.mjs brief --unit=<mode> --policy=worker` / `node scripts/dx.mjs find "<query>"` / `node scripts/dx.mjs resume`
 - **外科的読込・バッチ**: `node scripts/dx.mjs read <file>#<Symbol> | --head <file> | --part=<id> | --schematic=<type> | --css="<sel>"` / `node scripts/dx.mjs tx --ops='...'`
