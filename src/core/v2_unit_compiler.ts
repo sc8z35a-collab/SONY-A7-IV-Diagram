@@ -7,7 +7,11 @@ import {
   retessellatePrimitiveSagitta,
 } from '../engine/FastCadGeometry';
 import { disposeObject3D } from './dispose';
-import { setActiveBuildQuality } from './geometry_quality';
+import {
+  beginQualityAccessTracking,
+  didQualityAccessChange,
+  setActiveBuildQuality,
+} from './geometry_quality';
 import {
   getCadTintLuma,
   HeroMaterialSpec,
@@ -82,6 +86,15 @@ function ensureWeldScratch(cap: number, vCount: number, needUv: boolean): void {
 
 const COL_CAD_BASE = 0xf4f6fa;
 const COL_XRAY_BASE = 0xcbdcf5;
+const _tmpInitCol = new THREE.Color();
+_tmpInitCol.setHex(COL_CAD_BASE);
+const COL_CAD_R = _tmpInitCol.r;
+const COL_CAD_G = _tmpInitCol.g;
+const COL_CAD_B = _tmpInitCol.b;
+_tmpInitCol.setHex(COL_XRAY_BASE);
+const COL_XRAY_R = _tmpInitCol.r;
+const COL_XRAY_G = _tmpInitCol.g;
+const COL_XRAY_B = _tmpInitCol.b;
 
 const MAX_BATCHED_VERTS = 240000;
 const MAX_BATCHED_VERTS_LITE = 65000; // Guarantees 100% 16-bit Uint16Array IBOs (-50% index VRAM!)
@@ -140,6 +153,9 @@ interface CompiledInstancedEntry {
   readonly partId: string;
   readonly baseLocalMatrix: THREE.Matrix4;
   readonly baseColor: number;
+  readonly baseR: number;
+  readonly baseG: number;
+  readonly baseB: number;
   readonly dynamicNode: THREE.Object3D | null;
 }
 
@@ -154,6 +170,7 @@ interface CompiledInstancedPool {
   hasDynamicNodes: boolean;
   gpuExplodeTex: THREE.DataTexture | null;
   gpuExplodeTexW: number;
+  modeMats: Partial<Record<RenderMode, THREE.Material>>;
 }
 
 interface CompiledBatchedEntry {
@@ -161,6 +178,9 @@ interface CompiledBatchedEntry {
   readonly partIndex: number;
   readonly partId: string;
   readonly baseColor: number;
+  readonly baseR: number;
+  readonly baseG: number;
+  readonly baseB: number;
   readonly dynamicNode: THREE.Object3D | null;
   readonly baseLocalMatrix: THREE.Matrix4 | null;
   readonly quantCx: number;
@@ -181,6 +201,7 @@ interface CompiledBatchedPool {
   hasDynamicNodes: boolean;
   gpuExplodeTex: THREE.DataTexture | null;
   gpuExplodeTexW: number;
+  modeMats: Partial<Record<RenderMode, THREE.Material>>;
 }
 
 interface BatchedEdgePartSpan {
@@ -197,12 +218,16 @@ interface BatchedEdgeBundle {
   readonly basePositions: Float32Array;
   readonly livePositions: Float32Array;
   readonly liveColors: Float32Array;
+  readonly solidBaseColors: Float32Array;
+  cadBaseColors: Float32Array | null;
+  xrayBaseColors: Float32Array | null;
   readonly posAttr: THREE.BufferAttribute;
   readonly colAttr: THREE.BufferAttribute;
   readonly spans: BatchedEdgePartSpan[];
   readonly solidMatKey: string;
   readonly cadMatKey: string;
   readonly xrayMatKey: string;
+  modeMats: Partial<Record<RenderMode, THREE.Material>>;
 }
 
 interface CompiledPartState {
@@ -325,6 +350,16 @@ function isLatheProfileOpen(geo: THREE.BufferGeometry): boolean {
  * - Automatically fixes negative-determinant mirrored winding and inverted closed Lathe/custom winding
  * - Emits lit reversed-winding back-faces for open-ended shells so all meshes render cleanly under FrontSide!
  */
+function isIdentityMatrix4(m: THREE.Matrix4): boolean {
+  const e = m.elements;
+  return (
+    e[0] === 1 && e[1] === 0 && e[2] === 0 && e[3] === 0 &&
+    e[4] === 0 && e[5] === 1 && e[6] === 0 && e[7] === 0 &&
+    e[8] === 0 && e[9] === 0 && e[10] === 1 && e[11] === 0 &&
+    e[12] === 0 && e[13] === 0 && e[14] === 0 && e[15] === 1
+  );
+}
+
 function normalizeGeometry(
   source: THREE.BufferGeometry,
   bakeMatrix: THREE.Matrix4 | null,
@@ -333,21 +368,23 @@ function normalizeGeometry(
   dropUv = false,
   quantizeNormals = false,
   liteFinishBit = 255,
-  decimateLite = false
+  decimateLite = false,
+  skipBoundsSphere = false
 ): THREE.BufferGeometry | null {
   const srcPos = source.getAttribute('position');
   if (!srcPos || srcPos.count < 3) return null;
 
+  const effBake = bakeMatrix && !isIdentityMatrix4(bakeMatrix) ? bakeMatrix : null;
   const isOpen = isGeometryLikelyOpen(source) || isLatheProfileOpen(source);
-  const mirrorFlip = Boolean(bakeMatrix && bakeMatrix.determinant() < 0);
+  const mirrorFlip = Boolean(effBake && effBake.determinant() < 0);
 
   let tempCloned: THREE.BufferGeometry | null = null;
   let readGeo: THREE.BufferGeometry = source;
-  let applyInline = Boolean(bakeMatrix);
+  let applyInline = Boolean(effBake);
   if (!source.getAttribute('normal')) {
     tempCloned = source.clone();
-    if (bakeMatrix) {
-      tempCloned.applyMatrix4(bakeMatrix);
+    if (effBake) {
+      tempCloned.applyMatrix4(effBake);
       applyInline = false;
     }
     tempCloned.computeVertexNormals();
@@ -369,23 +406,73 @@ function normalizeGeometry(
     maxY = -Infinity,
     maxZ = -Infinity;
 
-  if (applyInline && bakeMatrix) {
-    const me = bakeMatrix.elements;
+  const isDirectPos =
+    !(posAttr as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute &&
+    posAttr.itemSize === 3 &&
+    posAttr.array instanceof Float32Array;
+
+  if (applyInline && effBake) {
+    const me = effBake.elements;
     const m0 = me[0], m1 = me[1], m2 = me[2];
     const m4 = me[4], m5 = me[5], m6 = me[6];
     const m8 = me[8], m9 = me[9], m10 = me[10];
     const m12 = me[12], m13 = me[13], m14 = me[14];
-    for (let i = 0; i < vCount; i++) {
-      const rx = posAttr.getX(i);
-      const ry = posAttr.getY(i);
-      const rz = posAttr.getZ(i);
-      const x0 = m0 * rx + m4 * ry + m8 * rz + m12;
-      const y0 = m1 * rx + m5 * ry + m9 * rz + m13;
-      const z0 = m2 * rx + m6 * ry + m10 * rz + m14;
-      const x = Number.isFinite(x0) ? x0 : 0;
-      const y = Number.isFinite(y0) ? y0 : 0;
-      const z = Number.isFinite(z0) ? z0 : 0;
-      const o = i * 3;
+    if (isDirectPos) {
+      const sa = posAttr.array as Float32Array;
+      const len3 = vCount * 3;
+      for (let o = 0; o < len3; o += 3) {
+        const rx = sa[o];
+        const ry = sa[o + 1];
+        const rz = sa[o + 2];
+        const x0 = m0 * rx + m4 * ry + m8 * rz + m12;
+        const y0 = m1 * rx + m5 * ry + m9 * rz + m13;
+        const z0 = m2 * rx + m6 * ry + m10 * rz + m14;
+        const x = x0 === x0 && x0 !== Infinity && x0 !== -Infinity ? x0 : 0;
+        const y = y0 === y0 && y0 !== Infinity && y0 !== -Infinity ? y0 : 0;
+        const z = z0 === z0 && z0 !== Infinity && z0 !== -Infinity ? z0 : 0;
+        posArr[o] = x;
+        posArr[o + 1] = y;
+        posArr[o + 2] = z;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (z < minZ) minZ = z;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+        if (z > maxZ) maxZ = z;
+      }
+    } else {
+      for (let i = 0; i < vCount; i++) {
+        const rx = posAttr.getX(i);
+        const ry = posAttr.getY(i);
+        const rz = posAttr.getZ(i);
+        const x0 = m0 * rx + m4 * ry + m8 * rz + m12;
+        const y0 = m1 * rx + m5 * ry + m9 * rz + m13;
+        const z0 = m2 * rx + m6 * ry + m10 * rz + m14;
+        const x = Number.isFinite(x0) ? x0 : 0;
+        const y = Number.isFinite(y0) ? y0 : 0;
+        const z = Number.isFinite(z0) ? z0 : 0;
+        const o = i * 3;
+        posArr[o] = x;
+        posArr[o + 1] = y;
+        posArr[o + 2] = z;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (z < minZ) minZ = z;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+        if (z > maxZ) maxZ = z;
+      }
+    }
+  } else if (isDirectPos) {
+    const sa = posAttr.array as Float32Array;
+    const len3 = vCount * 3;
+    for (let o = 0; o < len3; o += 3) {
+      const rawX = sa[o];
+      const rawY = sa[o + 1];
+      const rawZ = sa[o + 2];
+      const x = rawX === rawX && rawX !== Infinity && rawX !== -Infinity ? rawX : 0;
+      const y = rawY === rawY && rawY !== Infinity && rawY !== -Infinity ? rawY : 0;
+      const z = rawZ === rawZ && rawZ !== Infinity && rawZ !== -Infinity ? rawZ : 0;
       posArr[o] = x;
       posArr[o + 1] = y;
       posArr[o + 2] = z;
@@ -420,31 +507,72 @@ function normalizeGeometry(
   const normAttr = readGeo.getAttribute('normal');
   const normArr = new Float32Array(vCount * 3);
   if (normAttr && normAttr.count === vCount) {
-    if (applyInline && bakeMatrix) {
-      _scratchNormMat.getNormalMatrix(bakeMatrix);
+    const isDirectNorm =
+      !(normAttr as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute &&
+      normAttr.itemSize === 3 &&
+      normAttr.array instanceof Float32Array;
+
+    if (applyInline && effBake) {
+      _scratchNormMat.getNormalMatrix(effBake);
       const ne = _scratchNormMat.elements;
       const n0 = ne[0], n1 = ne[1], n2 = ne[2];
       const n3 = ne[3], n4 = ne[4], n5 = ne[5];
       const n6 = ne[6], n7 = ne[7], n8 = ne[8];
-      for (let i = 0; i < vCount; i++) {
-        const rnx = normAttr.getX(i);
-        const rny = normAttr.getY(i);
-        const rnz = normAttr.getZ(i);
-        let nx = n0 * rnx + n3 * rny + n6 * rnz;
-        let ny = n1 * rnx + n4 * rny + n7 * rnz;
-        let nz = n2 * rnx + n5 * rny + n8 * rnz;
-        const lenSq = nx * nx + ny * ny + nz * nz;
-        const o = i * 3;
-        if (lenSq > 1e-12 && Number.isFinite(lenSq)) {
-          const inv = 1 / Math.sqrt(lenSq);
-          normArr[o] = nx * inv;
-          normArr[o + 1] = ny * inv;
-          normArr[o + 2] = nz * inv;
-        } else {
-          normArr[o] = 0;
-          normArr[o + 1] = 1;
-          normArr[o + 2] = 0;
+      if (isDirectNorm) {
+        const na = normAttr.array as Float32Array;
+        const len3 = vCount * 3;
+        for (let o = 0; o < len3; o += 3) {
+          const rnx = na[o];
+          const rny = na[o + 1];
+          const rnz = na[o + 2];
+          const nx = n0 * rnx + n3 * rny + n6 * rnz;
+          const ny = n1 * rnx + n4 * rny + n7 * rnz;
+          const nz = n2 * rnx + n5 * rny + n8 * rnz;
+          const lenSq = nx * nx + ny * ny + nz * nz;
+          if (lenSq > 1e-12 && lenSq !== Infinity) {
+            const inv = 1 / Math.sqrt(lenSq);
+            normArr[o] = nx * inv;
+            normArr[o + 1] = ny * inv;
+            normArr[o + 2] = nz * inv;
+          } else {
+            normArr[o] = 0;
+            normArr[o + 1] = 1;
+            normArr[o + 2] = 0;
+          }
         }
+      } else {
+        for (let i = 0; i < vCount; i++) {
+          const rnx = normAttr.getX(i);
+          const rny = normAttr.getY(i);
+          const rnz = normAttr.getZ(i);
+          const nx = n0 * rnx + n3 * rny + n6 * rnz;
+          const ny = n1 * rnx + n4 * rny + n7 * rnz;
+          const nz = n2 * rnx + n5 * rny + n8 * rnz;
+          const lenSq = nx * nx + ny * ny + nz * nz;
+          const o = i * 3;
+          if (lenSq > 1e-12 && Number.isFinite(lenSq)) {
+            const inv = 1 / Math.sqrt(lenSq);
+            normArr[o] = nx * inv;
+            normArr[o + 1] = ny * inv;
+            normArr[o + 2] = nz * inv;
+          } else {
+            normArr[o] = 0;
+            normArr[o + 1] = 1;
+            normArr[o + 2] = 0;
+          }
+        }
+      }
+    } else if (isDirectNorm) {
+      const na = normAttr.array as Float32Array;
+      const len3 = vCount * 3;
+      for (let o = 0; o < len3; o += 3) {
+        const nx = na[o];
+        const ny = na[o + 1];
+        const nz = na[o + 2];
+        const ok = nx === nx && ny === ny && nz === nz && nx !== Infinity && ny !== Infinity && nz !== Infinity;
+        normArr[o] = ok ? nx : 0;
+        normArr[o + 1] = ok ? ny : 1;
+        normArr[o + 2] = ok ? nz : 0;
       }
     } else {
       for (let i = 0; i < vCount; i++) {
@@ -469,12 +597,27 @@ function normalizeGeometry(
     const uvAttr = readGeo.getAttribute('uv');
     uvArr = new Float32Array(vCount * 2);
     if (uvAttr && uvAttr.count === vCount) {
-      for (let i = 0; i < vCount; i++) {
-        const u = uvAttr.getX(i);
-        const v = uvAttr.getY(i);
-        const o = i * 2;
-        uvArr[o] = Number.isFinite(u) ? u : 0;
-        uvArr[o + 1] = Number.isFinite(v) ? v : 0;
+      const isDirectUv =
+        !(uvAttr as THREE.InterleavedBufferAttribute).isInterleavedBufferAttribute &&
+        uvAttr.itemSize === 2 &&
+        uvAttr.array instanceof Float32Array;
+      if (isDirectUv) {
+        const ua = uvAttr.array as Float32Array;
+        const len2 = vCount * 2;
+        for (let o = 0; o < len2; o += 2) {
+          const u = ua[o];
+          const v = ua[o + 1];
+          uvArr[o] = u === u && u !== Infinity && u !== -Infinity ? u : 0;
+          uvArr[o + 1] = v === v && v !== Infinity && v !== -Infinity ? v : 0;
+        }
+      } else {
+        for (let i = 0; i < vCount; i++) {
+          const u = uvAttr.getX(i);
+          const v = uvAttr.getY(i);
+          const o = i * 2;
+          uvArr[o] = Number.isFinite(u) ? u : 0;
+          uvArr[o + 1] = Number.isFinite(v) ? v : 0;
+        }
       }
     } else {
       // Triplanar box projection fallback so procedural textures render cleanly on every geometry
@@ -510,8 +653,12 @@ function normalizeGeometry(
   const baseIdx = new Uint32Array(idxCount);
   if (rawIndex) {
     const srcIdxArr = rawIndex.array;
-    for (let i = 0; i < idxCount; i++) {
-      baseIdx[i] = srcIdxArr[i];
+    if (idxCount === srcIdxArr.length) {
+      baseIdx.set(srcIdxArr);
+    } else {
+      for (let i = 0; i < idxCount; i++) {
+        baseIdx[i] = srcIdxArr[i];
+      }
     }
   } else {
     for (let i = 0; i < idxCount; i++) {
@@ -894,26 +1041,137 @@ function normalizeGeometry(
     const b8 = Math.min(255, Math.max(0, Math.round(_scratchColor.b * 255)));
     const a8 = liteFinishBit & 0xff;
     const colArr = new Uint8Array(finalVCount * 4);
-    for (let k = 0; k < colArr.length; k += 4) {
-      colArr[k] = r8;
-      colArr[k + 1] = g8;
-      colArr[k + 2] = b8;
-      colArr[k + 3] = a8;
-    }
+    const col32 = new Uint32Array(colArr.buffer);
+    col32.fill((a8 << 24) | (b8 << 16) | (g8 << 8) | r8);
     out.setAttribute('color', new THREE.BufferAttribute(colArr, 4, true));
   }
 
   if (finalVCount <= 65535) {
     const idx16 = new Uint16Array(finalIdxU32.length);
-    for (let i = 0; i < finalIdxU32.length; i++) idx16[i] = finalIdxU32[i];
+    idx16.set(finalIdxU32);
     out.setIndex(new THREE.BufferAttribute(idx16, 1));
   } else {
     out.setIndex(new THREE.BufferAttribute(finalIdxU32, 1));
   }
 
-  out.computeBoundingBox();
-  out.computeBoundingSphere();
+  if (!didDecimate && Number.isFinite(minX)) {
+    out.boundingBox = new THREE.Box3(
+      new THREE.Vector3(minX, minY, minZ),
+      new THREE.Vector3(maxX, maxY, maxZ)
+    );
+  } else {
+    out.computeBoundingBox();
+  }
+  if (!skipBoundsSphere) {
+    out.computeBoundingSphere();
+  }
   return out;
+}
+
+/**
+ * Direct typed-array merger for homogeneous indexed BufferGeometries emitted by `normalizeGeometry`.
+ * Eliminates Three.js `mergeGeometries` dynamic attribute reflection & copies via native `TypedArray.set()`.
+ */
+function fastMergeNormalizedGeos(geos: THREE.BufferGeometry[]): THREE.BufferGeometry | null {
+  const n = geos.length;
+  if (n === 0) return null;
+  if (n === 1) {
+    if (!geos[0].boundingSphere) geos[0].computeBoundingSphere();
+    return geos[0];
+  }
+
+  const first = geos[0];
+  const fNorm = first.getAttribute('normal');
+  const fUv = first.getAttribute('uv');
+  const fCol = first.getAttribute('color');
+  const hasUv = Boolean(fUv);
+  const hasCol = Boolean(fCol);
+  const normIsInt8 = Boolean(fNorm && fNorm.array instanceof Int8Array);
+
+  let totalVerts = 0;
+  let totalIndices = 0;
+  let mnX = Infinity, mnY = Infinity, mnZ = Infinity;
+  let mxX = -Infinity, mxY = -Infinity, mxZ = -Infinity;
+
+  for (let i = 0; i < n; i++) {
+    const g = geos[i];
+    const p = g.getAttribute('position');
+    const nm = g.getAttribute('normal');
+    const idx = g.getIndex();
+    if (
+      !p || !nm || !idx ||
+      !(p.array instanceof Float32Array) ||
+      Boolean(g.getAttribute('uv')) !== hasUv ||
+      Boolean(g.getAttribute('color')) !== hasCol ||
+      (nm.array instanceof Int8Array) !== normIsInt8
+    ) {
+      return mergeGeometries(geos, false);
+    }
+    totalVerts += p.count;
+    totalIndices += idx.count;
+    const bb = g.boundingBox;
+    if (bb && !bb.isEmpty()) {
+      if (bb.min.x < mnX) mnX = bb.min.x;
+      if (bb.min.y < mnY) mnY = bb.min.y;
+      if (bb.min.z < mnZ) mnZ = bb.min.z;
+      if (bb.max.x > mxX) mxX = bb.max.x;
+      if (bb.max.y > mxY) mxY = bb.max.y;
+      if (bb.max.z > mxZ) mxZ = bb.max.z;
+    }
+  }
+
+  const posOut = new Float32Array(totalVerts * 3);
+  const normOut = normIsInt8 ? new Int8Array(totalVerts * 3) : new Float32Array(totalVerts * 3);
+  const uvOut = hasUv ? new Float32Array(totalVerts * 2) : null;
+  const colOut = hasCol ? new Uint8Array(totalVerts * 4) : null;
+  const idxOut = totalVerts <= 65535 ? new Uint16Array(totalIndices) : new Uint32Array(totalIndices);
+
+  let vCursor = 0;
+  let iCursor = 0;
+  for (let i = 0; i < n; i++) {
+    const g = geos[i];
+    const p = g.getAttribute('position');
+    const vCnt = p.count;
+    posOut.set(p.array as Float32Array, vCursor * 3);
+    normOut.set(g.getAttribute('normal').array as Float32Array | Int8Array, vCursor * 3);
+    if (uvOut) {
+      uvOut.set(g.getAttribute('uv').array as Float32Array, vCursor * 2);
+    }
+    if (colOut) {
+      colOut.set(g.getAttribute('color').array as Uint8Array, vCursor * 4);
+    }
+    const srcIdx = g.getIndex()!.array;
+    const iCnt = srcIdx.length;
+    if (vCursor === 0) {
+      idxOut.set(srcIdx, 0);
+    } else {
+      for (let k = 0; k < iCnt; k++) {
+        idxOut[iCursor + k] = srcIdx[k] + vCursor;
+      }
+    }
+    vCursor += vCnt;
+    iCursor += iCnt;
+  }
+
+  const merged = new THREE.BufferGeometry();
+  merged.setAttribute('position', new THREE.BufferAttribute(posOut, 3));
+  merged.setAttribute('normal', new THREE.BufferAttribute(normOut, 3, normIsInt8));
+  if (uvOut) merged.setAttribute('uv', new THREE.BufferAttribute(uvOut, 2));
+  if (colOut) merged.setAttribute('color', new THREE.BufferAttribute(colOut, 4, true));
+  merged.setIndex(new THREE.BufferAttribute(idxOut, 1));
+  if (Number.isFinite(mnX)) {
+    const box = new THREE.Box3(new THREE.Vector3(mnX, mnY, mnZ), new THREE.Vector3(mxX, mxY, mxZ));
+    merged.boundingBox = box;
+    const cx = (mnX + mxX) * 0.5;
+    const cy = (mnY + mxY) * 0.5;
+    const cz = (mnZ + mxZ) * 0.5;
+    const r = Math.hypot(mxX - cx, mxY - cy, mxZ - cz);
+    merged.boundingSphere = new THREE.Sphere(new THREE.Vector3(cx, cy, cz), r);
+  } else {
+    merged.computeBoundingBox();
+    merged.computeBoundingSphere();
+  }
+  return merged;
 }
 
 /**
@@ -1368,6 +1626,7 @@ export class CompiledV2Unit implements OptimizedUnit {
   private rawBuild: CompiledUnitRawBuild | null = null;
   private hasDynamicRig = false;
   private allPoolsGpuExplode = false;
+  private hasAnyGpuExplode = false;
   private gpuExplodeBindings: RaycastMeshBinding[] = [];
   private boundsDirty = false;
 
@@ -1379,18 +1638,22 @@ export class CompiledV2Unit implements OptimizedUnit {
   private physicsVisible = false;
   private edgePositionsDirty = false;
   private guidesWereVisible = true;
+  private retainedSharedRaw = false;
 
   private readonly syncLazyBounds = (): void => {
     if (!this.boundsDirty && !this.raycastIndex?.boundsDirty) return;
     const clamped = this.lastExplodeT < 0 ? 0 : this.lastExplodeT;
     const states = this.partsState;
+    const syncRig = this.hasDynamicRig;
     for (let i = 0; i < states.length; i++) {
       const st = states[i];
       st.curX = st.assembledPos.x + st.explodeOffset.x * clamped;
       st.curY = st.assembledPos.y + st.explodeOffset.y * clamped;
       st.curZ = st.assembledPos.z + st.explodeOffset.z * clamped;
-      st.partGroup.position.set(st.curX, st.curY, st.curZ);
-      st.partGroup.updateMatrix();
+      if (syncRig) {
+        st.partGroup.position.set(st.curX, st.curY, st.curZ);
+        st.partGroup.updateMatrix();
+      }
     }
     this.boundsDirty = false;
     this.refreshRaycastBounds();
@@ -1428,6 +1691,7 @@ export class CompiledV2Unit implements OptimizedUnit {
     this.edgePositionsDirty = false;
     this.guidesWereVisible = true;
     this.allPoolsGpuExplode = false;
+    this.hasAnyGpuExplode = false;
     this.gpuExplodeBindings = [];
     this.boundsDirty = false;
 
@@ -1476,25 +1740,46 @@ export class CompiledV2Unit implements OptimizedUnit {
       this.cfg.heroSpecs
     );
 
+    const sharedCacheKey = `${this.unitId}:${this.integratedMode ? 1 : 0}:${this.subView}`;
+    const cachedRawEntry = options.sharedRawBuildCache?.get(sharedCacheKey);
     let rawBuild: CompiledUnitRawBuild;
-    setActiveBuildQuality(quality);
-    try {
-      rawBuild = await this.cfg.buildRaw(proxy.library, quality, {
-        integratedMode: this.integratedMode,
-        subView: this.subView,
-        cache,
-        clippingPlanes: this.clippingPlanes,
-        dryboxPalette: proxy.dryboxPalette,
-        yieldChunk: yieldBuildChunk,
-      });
-    } finally {
-      if (!isAborted()) {
-        setActiveBuildQuality(null);
+    let retainSharedRaw = false;
+
+    if (cachedRawEntry && cachedRawEntry.pure) {
+      rawBuild = cachedRawEntry.rawBuild as CompiledUnitRawBuild;
+      retainSharedRaw = Boolean(options.keepSharedRawAlive);
+    } else {
+      const purityMark = beginQualityAccessTracking();
+      setActiveBuildQuality(quality);
+      try {
+        rawBuild = await this.cfg.buildRaw(proxy.library, quality, {
+          integratedMode: this.integratedMode,
+          subView: this.subView,
+          cache,
+          clippingPlanes: this.clippingPlanes,
+          dryboxPalette: proxy.dryboxPalette,
+          yieldChunk: yieldBuildChunk,
+        });
+      } finally {
+        if (!isAborted()) {
+          setActiveBuildQuality(null);
+        }
+      }
+      const qualityTouched = didQualityAccessChange(purityMark);
+      // Only trees without reparented overlays/guides/dynamic rigs and without quality reads are 100% pure & shareable
+      const isPure =
+        !qualityTouched &&
+        !rawBuild.overlayGroup &&
+        !rawBuild.explodeGuides &&
+        !rawBuild.stepRigAndOverlay;
+      if (isPure && options.sharedRawBuildCache && options.keepSharedRawAlive && !isAborted()) {
+        options.sharedRawBuildCache.set(sharedCacheKey, { rawBuild, pure: true });
+        retainSharedRaw = true;
       }
     }
 
     if (isAborted()) {
-      disposeTemporaryRawTree(rawBuild.parts, false);
+      if (!retainSharedRaw) disposeTemporaryRawTree(rawBuild.parts, false);
       proxy.releaseAll();
       this.dispose(cache);
       throw new Error(`${this.unitId} build aborted`);
@@ -1958,11 +2243,15 @@ export class CompiledV2Unit implements OptimizedUnit {
           localMat = new THREE.Matrix4().multiplyMatrices(_scratchInv, _scratchMat2);
         }
 
+        _scratchColor.setHex(cap.tint);
         entries.push({
           partIndex: cap.partIndex,
           partId: cap.partId,
           baseLocalMatrix: localMat,
           baseColor: cap.tint,
+          baseR: _scratchColor.r,
+          baseG: _scratchColor.g,
+          baseB: _scratchColor.b,
           dynamicNode: effDyn,
         });
 
@@ -1971,7 +2260,6 @@ export class CompiledV2Unit implements OptimizedUnit {
         _scratchMat.elements[13] += pst.curY;
         _scratchMat.elements[14] += pst.curZ;
         instMesh.setMatrixAt(ii, pst.visible ? _scratchMat : _zeroMatrix);
-        _scratchColor.setHex(cap.tint);
         instMesh.setColorAt(ii, _scratchColor);
       }
       instMesh.instanceMatrix.needsUpdate = true;
@@ -1996,6 +2284,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         hasDynamicNodes: hasDynamic,
         gpuExplodeTex: null,
         gpuExplodeTexW: 1,
+        modeMats: { solid: mat },
       });
 
       totalInstances += count;
@@ -2094,7 +2383,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       return id;
     };
 
-    const maxEdgeVerts = MAX_EDGE_SEGMENTS_BY_QUALITY[quality] * 2;
+    const maxEdgeVerts = options.skipEdges ? 0 : MAX_EDGE_SEGMENTS_BY_QUALITY[quality] * 2;
     const collectEdges = maxEdgeVerts > 0;
     const quantizeBatchPos = isStdLite && !onlyPartIds;
 
@@ -2131,7 +2420,8 @@ export class CompiledV2Unit implements OptimizedUnit {
         useLiteVC,
         isStdLite,
         cap.liteFinishBit,
-        isStdLite && !cap.heroKey
+        isStdLite && !cap.heroKey,
+        true
       );
       if (!normGeo) continue;
 
@@ -2186,8 +2476,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       const mergedItems: SubBatchItem[] = [];
       for (const sub of mb.subMap.values()) {
         if (sub.geos.length === 0) continue;
-        const merged =
-          sub.geos.length === 1 ? sub.geos[0] : mergeGeometries(sub.geos, false);
+        const merged = fastMergeNormalizedGeos(sub.geos);
         if (!merged) continue;
         // Dispose individual normalized pieces if mergeGeometries created a new BufferGeometry
         if (sub.geos.length > 1) {
@@ -2322,11 +2611,15 @@ export class CompiledV2Unit implements OptimizedUnit {
           this.partBatchRefs[it.partIndex].push({ poolIdx, entryIdx: i });
           if (it.dynamicNode) hasDynamic = true;
 
+          _scratchColor.setHex(it.tint);
           const entry: CompiledBatchedEntry = {
             batchId,
             partIndex: it.partIndex,
             partId: it.partId,
             baseColor: it.tint,
+            baseR: _scratchColor.r,
+            baseG: _scratchColor.g,
+            baseB: _scratchColor.b,
             dynamicNode: it.dynamicNode,
             baseLocalMatrix: null,
             quantCx,
@@ -2336,7 +2629,6 @@ export class CompiledV2Unit implements OptimizedUnit {
           };
           this.writeBatchEntryMatrix(batched, entry, pst.curX, pst.curY, pst.curZ);
           batched.setVisibleAt(batchId, pst.visible);
-          _scratchColor.setHex(it.tint);
           batched.setColorAt(batchId, _scratchColor);
 
           entries.push(entry);
@@ -2367,6 +2659,7 @@ export class CompiledV2Unit implements OptimizedUnit {
           hasDynamicNodes: hasDynamic,
           gpuExplodeTex: null,
           gpuExplodeTexW: 1,
+          modeMats: { solid: mat },
         });
         totalBatchedItems += chunkItems.length;
       }
@@ -2449,6 +2742,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         gpuPoolCount++;
       }
 
+      this.hasAnyGpuExplode = gpuPoolCount > 0;
       this.allPoolsGpuExplode = totalPools > 0 && gpuPoolCount === totalPools;
     }
 
@@ -2483,35 +2777,17 @@ export class CompiledV2Unit implements OptimizedUnit {
           const src = holder.geos[g];
           const srcPosCount = src.getAttribute('position')?.count ?? 0;
           if (srcPosCount > maxEdgeSrcVerts) continue;
-          if (isStdLite) {
-            const rawEdges = extractPooledCadEdgesArray(src, edgeAngle, 1.35);
-            const rawVerts = Math.floor(rawEdges.length / 3);
-            if (rawVerts >= 2) {
-              const allowed = Math.min(rawVerts, maxEdgeVerts - totalEdgeVerts);
-              const evenCount = allowed - (allowed % 2);
-              if (evenCount >= 2) {
-                edgeChunks.push(
-                  evenCount === rawVerts ? rawEdges : rawEdges.subarray(0, evenCount * 3)
-                );
-                totalEdgeVerts += evenCount;
-              }
+          const rawEdges = extractPooledCadEdgesArray(src, edgeAngle, isStdLite ? 1.35 : 0);
+          const rawVerts = Math.floor(rawEdges.length / 3);
+          if (rawVerts >= 2) {
+            const allowed = Math.min(rawVerts, maxEdgeVerts - totalEdgeVerts);
+            const evenCount = allowed - (allowed % 2);
+            if (evenCount >= 2) {
+              edgeChunks.push(
+                evenCount === rawVerts ? rawEdges : rawEdges.subarray(0, evenCount * 3)
+              );
+              totalEdgeVerts += evenCount;
             }
-          } else {
-            const eGeo = new THREE.EdgesGeometry(src, edgeAngle);
-            const ePos = eGeo.getAttribute('position');
-            if (ePos && ePos.count >= 2) {
-              const allowed = Math.min(ePos.count, maxEdgeVerts - totalEdgeVerts);
-              const evenCount = allowed - (allowed % 2);
-              if (evenCount >= 2) {
-                const arr = new Float32Array(evenCount * 3);
-                for (let k = 0; k < evenCount * 3; k++) {
-                  arr[k] = (ePos.array as Float32Array)[k];
-                }
-                edgeChunks.push(arr);
-                totalEdgeVerts += evenCount;
-              }
-            }
-            eGeo.dispose();
           }
         }
         if (totalEdgeVerts > partStartVert) {
@@ -2578,6 +2854,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         }
       }
 
+      const solidBaseColors = liveColors.slice();
       const edgeGeo = new THREE.BufferGeometry();
       const posAttr = new THREE.BufferAttribute(livePositions, 3);
       posAttr.setUsage(THREE.DynamicDrawUsage);
@@ -2609,12 +2886,16 @@ export class CompiledV2Unit implements OptimizedUnit {
         basePositions,
         livePositions,
         liveColors,
+        solidBaseColors,
+        cadBaseColors: null,
+        xrayBaseColors: null,
         posAttr,
         colAttr,
         spans: edgeSpans,
         solidMatKey,
         cadMatKey,
         xrayMatKey,
+        modeMats: { solid: edgeMat },
       };
     }
 
@@ -2648,7 +2929,10 @@ export class CompiledV2Unit implements OptimizedUnit {
     }
 
     // Step 7: Dispose all raw build geometries & temporary proxy material refs (zero VRAM bloat!)
-    disposeTemporaryRawTree(rawParts, this.hasDynamicRig);
+    if (!retainSharedRaw) {
+      disposeTemporaryRawTree(rawParts, this.hasDynamicRig);
+    }
+    this.retainedSharedRaw = retainSharedRaw;
     proxy.releaseAll();
 
     // Ensure 100% of scene nodes have matrixAutoUpdate = false
@@ -2853,6 +3137,7 @@ export class CompiledV2Unit implements OptimizedUnit {
     }
 
     const states = this.partsState;
+    const syncRig = this.hasDynamicRig;
     for (let i = 0; i < states.length; i++) {
       const st = states[i];
       if (
@@ -2866,8 +3151,10 @@ export class CompiledV2Unit implements OptimizedUnit {
       st.curX = st.assembledPos.x + st.explodeOffset.x * clamped;
       st.curY = st.assembledPos.y + st.explodeOffset.y * clamped;
       st.curZ = st.assembledPos.z + st.explodeOffset.z * clamped;
-      st.partGroup.position.set(st.curX, st.curY, st.curZ);
-      st.partGroup.updateMatrix();
+      if (syncRig) {
+        st.partGroup.position.set(st.curX, st.curY, st.curZ);
+        st.partGroup.updateMatrix();
+      }
     }
 
     // Update Tier-1 InstancedMesh transforms (zero allocations; GPU-exploded pools stay at assembledPos)
@@ -2964,9 +3251,17 @@ export class CompiledV2Unit implements OptimizedUnit {
       }
     }
 
-    // Update 2-stage AABB world bounding boxes & mark flat BVH dirty (zero allocations)
-    this.boundsDirty = false;
-    this.refreshRaycastBounds();
+    // Lazy-sync 2-stage AABB world bounding boxes & flat BVH on demand (zero wasted work during explode drags)
+    if (force || clamped === 0) {
+      this.boundsDirty = false;
+      this.refreshRaycastBounds();
+    } else {
+      this.boundsDirty = true;
+      if (this.raycastIndex) {
+        this.raycastIndex.boundsDirty = true;
+        this.raycastIndex.bvhDirty = true;
+      }
+    }
     return true;
   }
 
@@ -3078,7 +3373,9 @@ export class CompiledV2Unit implements OptimizedUnit {
 
     const computeHighlightColor = (
       partId: string,
-      baseHex: number,
+      baseR: number,
+      baseG: number,
+      baseB: number,
       usesVertexColors = false
     ): void => {
       if (usesVertexColors && renderMode === 'solid') {
@@ -3087,28 +3384,28 @@ export class CompiledV2Unit implements OptimizedUnit {
         } else if (partId === hoveredId) {
           _scratchColor.setRGB(0.76, 1.06, 1.45);
         } else {
-          _scratchColor.setHex(0xffffff);
+          _scratchColor.setRGB(1, 1, 1);
         }
         return;
       }
       if (partId === selectedId) {
-        _scratchColor.setHex(baseHex);
-        const r = _scratchColor.r * 0.48 + 0.102 * 0.52;
-        const g = _scratchColor.g * 0.48 + 0.451 * 0.52;
-        const b = _scratchColor.b * 0.48 + 0.910 * 0.52;
-        _scratchColor.setRGB(r, g, b);
+        _scratchColor.setRGB(
+          baseR * 0.48 + 0.102 * 0.52,
+          baseG * 0.48 + 0.451 * 0.52,
+          baseB * 0.48 + 0.910 * 0.52
+        );
       } else if (partId === hoveredId) {
-        _scratchColor.setHex(baseHex);
-        const r = _scratchColor.r * 0.62 + 0.231 * 0.38;
-        const g = _scratchColor.g * 0.62 + 0.510 * 0.38;
-        const b = _scratchColor.b * 0.62 + 0.965 * 0.38;
-        _scratchColor.setRGB(r, g, b);
+        _scratchColor.setRGB(
+          baseR * 0.62 + 0.231 * 0.38,
+          baseG * 0.62 + 0.510 * 0.38,
+          baseB * 0.62 + 0.965 * 0.38
+        );
       } else if (renderMode === 'cad') {
-        _scratchColor.setHex(COL_CAD_BASE);
+        _scratchColor.setRGB(COL_CAD_R, COL_CAD_G, COL_CAD_B);
       } else if (renderMode === 'xray') {
-        _scratchColor.setHex(COL_XRAY_BASE);
+        _scratchColor.setRGB(COL_XRAY_R, COL_XRAY_G, COL_XRAY_B);
       } else {
-        _scratchColor.setHex(baseHex);
+        _scratchColor.setRGB(baseR, baseG, baseB);
       }
     };
 
@@ -3168,7 +3465,7 @@ export class CompiledV2Unit implements OptimizedUnit {
             const ref = instRefs[r];
             const pool = this.instancedPools[ref.poolIdx];
             const e = pool.entries[ref.entryIdx];
-            computeHighlightColor(e.partId, e.baseColor, false);
+            computeHighlightColor(e.partId, e.baseR, e.baseG, e.baseB, false);
             pool.mesh.setColorAt(ref.entryIdx, _scratchColor);
             if (pool.mesh.instanceColor) pool.mesh.instanceColor.needsUpdate = true;
           }
@@ -3180,7 +3477,7 @@ export class CompiledV2Unit implements OptimizedUnit {
             const ref = batchRefs[r];
             const pool = this.batchedPools[ref.poolIdx];
             const e = pool.entries[ref.entryIdx];
-            computeHighlightColor(e.partId, e.baseColor, pool.usesVertexColors);
+            computeHighlightColor(e.partId, e.baseR, e.baseG, e.baseB, pool.usesVertexColors);
             pool.mesh.setColorAt(e.batchId, _scratchColor);
           }
         }
@@ -3201,7 +3498,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       return;
     }
 
-    // Swap cached materials cleanly on renderMode change (solid / xray / cad)
+    // Swap cached materials cleanly on renderMode change (solid / xray / cad) — retains modeMats until dispose()!
     let needCpuExplodeResync = false;
     if (modeChanged && this.cache) {
       const cache = this.cache;
@@ -3210,47 +3507,54 @@ export class CompiledV2Unit implements OptimizedUnit {
         const pool = this.instancedPools[p];
         const oldMat = pool.mesh.material as THREE.Material;
         if (pool.gpuExplodeTex) bindGpuExplodeToMaterial(oldMat, null, 1, 0);
-        const nextMat =
-          pool.heroKey && pool.heroSpec
-            ? cache.acquireHeroMaterial(
-                pool.heroKey,
-                pool.heroSpec,
-                this.quality,
-                renderMode,
-                this.clippingPlanes,
-                pool.poolSlot
-              )
-            : cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes, false, pool.poolSlot);
+        let nextMat = pool.modeMats[renderMode];
+        if (!nextMat) {
+          nextMat =
+            pool.heroKey && pool.heroSpec
+              ? cache.acquireHeroMaterial(
+                  pool.heroKey,
+                  pool.heroSpec,
+                  this.quality,
+                  renderMode,
+                  this.clippingPlanes,
+                  pool.poolSlot
+                )
+              : cache.acquireMaterial(pool.bucket, this.quality, renderMode, this.clippingPlanes, false, pool.poolSlot);
+          pool.modeMats[renderMode] = nextMat;
+        }
         pool.mesh.material = nextMat;
         if (isUltra) {
           const shadowOk = renderMode === 'solid' && !nextMat.transparent;
           pool.mesh.castShadow = shadowOk;
           pool.mesh.receiveShadow = shadowOk;
         }
-        cache.releaseMaterialInstance(oldMat);
       }
       for (let p = 0; p < this.batchedPools.length; p++) {
         const pool = this.batchedPools[p];
         const oldMat = pool.mesh.material as THREE.Material;
         if (pool.gpuExplodeTex) bindGpuExplodeToMaterial(oldMat, null, 1, 0);
-        const nextMat =
-          pool.heroKey && pool.heroSpec
-            ? cache.acquireHeroMaterial(
-                pool.heroKey,
-                pool.heroSpec,
-                this.quality,
-                renderMode,
-                this.clippingPlanes,
-                pool.poolSlot
-              )
-            : cache.acquireMaterial(
-                pool.bucket,
-                this.quality,
-                renderMode,
-                this.clippingPlanes,
-                pool.usesVertexColors,
-                pool.poolSlot
-              );
+        let nextMat = pool.modeMats[renderMode];
+        if (!nextMat) {
+          nextMat =
+            pool.heroKey && pool.heroSpec
+              ? cache.acquireHeroMaterial(
+                  pool.heroKey,
+                  pool.heroSpec,
+                  this.quality,
+                  renderMode,
+                  this.clippingPlanes,
+                  pool.poolSlot
+                )
+              : cache.acquireMaterial(
+                  pool.bucket,
+                  this.quality,
+                  renderMode,
+                  this.clippingPlanes,
+                  pool.usesVertexColors,
+                  pool.poolSlot
+                );
+          pool.modeMats[renderMode] = nextMat;
+        }
         pool.mesh.material = nextMat;
         pool.mesh.sortObjects = Boolean(nextMat.transparent);
         if (isUltra) {
@@ -3258,64 +3562,67 @@ export class CompiledV2Unit implements OptimizedUnit {
           pool.mesh.castShadow = shadowOk;
           pool.mesh.receiveShadow = shadowOk;
         }
-        cache.releaseMaterialInstance(oldMat);
       }
 
-      // Re-bind GPU Explode DataTextures onto unique nextMats (fallback to CPU matrices if shared in xray/cad)
-      const curT = this.lastExplodeT < 0 ? 0 : this.lastExplodeT;
-      const matUseCount = new Map<THREE.Material, number>();
-      for (let p = 0; p < this.instancedPools.length; p++) {
-        const m = this.instancedPools[p].mesh.material as THREE.Material;
-        matUseCount.set(m, (matUseCount.get(m) ?? 0) + 1);
-      }
-      for (let p = 0; p < this.batchedPools.length; p++) {
-        const m = this.batchedPools[p].mesh.material as THREE.Material;
-        matUseCount.set(m, (matUseCount.get(m) ?? 0) + 1);
-      }
-      let gpuBound = 0;
-      const totalPools = this.instancedPools.length + this.batchedPools.length;
-      for (let p = 0; p < this.instancedPools.length; p++) {
-        const pool = this.instancedPools[p];
-        const m = pool.mesh.material as THREE.Material;
-        if (pool.gpuExplodeTex && matUseCount.get(m) === 1 && m.userData?.__liteUniforms) {
-          bindGpuExplodeToMaterial(m, pool.gpuExplodeTex, pool.gpuExplodeTexW, curT);
-          gpuBound++;
-        } else if (pool.gpuExplodeTex) {
-          bindGpuExplodeToMaterial(m, null, 1, 0);
-          needCpuExplodeResync = true;
+      // Re-bind GPU Explode DataTextures ONLY when unit actually has GPU explode pools (STD LITE)
+      if (this.hasAnyGpuExplode) {
+        const curT = this.lastExplodeT < 0 ? 0 : this.lastExplodeT;
+        const matUseCount = new Map<THREE.Material, number>();
+        for (let p = 0; p < this.instancedPools.length; p++) {
+          const m = this.instancedPools[p].mesh.material as THREE.Material;
+          matUseCount.set(m, (matUseCount.get(m) ?? 0) + 1);
         }
-      }
-      for (let p = 0; p < this.batchedPools.length; p++) {
-        const pool = this.batchedPools[p];
-        const m = pool.mesh.material as THREE.Material;
-        if (pool.gpuExplodeTex && matUseCount.get(m) === 1 && m.userData?.__liteUniforms) {
-          bindGpuExplodeToMaterial(m, pool.gpuExplodeTex, pool.gpuExplodeTexW, curT);
-          gpuBound++;
-        } else if (pool.gpuExplodeTex) {
-          bindGpuExplodeToMaterial(m, null, 1, 0);
-          needCpuExplodeResync = true;
+        for (let p = 0; p < this.batchedPools.length; p++) {
+          const m = this.batchedPools[p].mesh.material as THREE.Material;
+          matUseCount.set(m, (matUseCount.get(m) ?? 0) + 1);
         }
+        let gpuBound = 0;
+        const totalPools = this.instancedPools.length + this.batchedPools.length;
+        for (let p = 0; p < this.instancedPools.length; p++) {
+          const pool = this.instancedPools[p];
+          const m = pool.mesh.material as THREE.Material;
+          if (pool.gpuExplodeTex && matUseCount.get(m) === 1 && m.userData?.__liteUniforms) {
+            bindGpuExplodeToMaterial(m, pool.gpuExplodeTex, pool.gpuExplodeTexW, curT);
+            gpuBound++;
+          } else if (pool.gpuExplodeTex) {
+            bindGpuExplodeToMaterial(m, null, 1, 0);
+            needCpuExplodeResync = true;
+          }
+        }
+        for (let p = 0; p < this.batchedPools.length; p++) {
+          const pool = this.batchedPools[p];
+          const m = pool.mesh.material as THREE.Material;
+          if (pool.gpuExplodeTex && matUseCount.get(m) === 1 && m.userData?.__liteUniforms) {
+            bindGpuExplodeToMaterial(m, pool.gpuExplodeTex, pool.gpuExplodeTexW, curT);
+            gpuBound++;
+          } else if (pool.gpuExplodeTex) {
+            bindGpuExplodeToMaterial(m, null, 1, 0);
+            needCpuExplodeResync = true;
+          }
+        }
+        this.allPoolsGpuExplode = totalPools > 0 && gpuBound === totalPools;
       }
-      this.allPoolsGpuExplode = totalPools > 0 && gpuBound === totalPools;
 
       if (this.edgeBundle) {
         const eb = this.edgeBundle;
-        const oldMat = eb.lines.material as THREE.Material;
-        const nextKey =
-          renderMode === 'cad'
-            ? eb.cadMatKey
-            : renderMode === 'xray'
-              ? eb.xrayMatKey
-              : eb.solidMatKey;
-        const nextOp = renderMode === 'cad' ? 0.62 : renderMode === 'xray' ? 0.34 : 0.28;
-        const nextMat = cache.acquireLineMaterial(nextKey, {
-          color: 0xffffff,
-          opacity: nextOp,
-          vertexColors: true,
-          clippingPlanes: this.clippingPlanes,
-        });
+        let nextMat = eb.modeMats[renderMode];
+        if (!nextMat) {
+          const nextKey =
+            renderMode === 'cad'
+              ? eb.cadMatKey
+              : renderMode === 'xray'
+                ? eb.xrayMatKey
+                : eb.solidMatKey;
+          const nextOp = renderMode === 'cad' ? 0.62 : renderMode === 'xray' ? 0.34 : 0.28;
+          nextMat = cache.acquireLineMaterial(nextKey, {
+            color: 0xffffff,
+            opacity: nextOp,
+            vertexColors: true,
+            clippingPlanes: this.clippingPlanes,
+          });
+          eb.modeMats[renderMode] = nextMat;
+        }
         eb.lines.material = nextMat;
-        cache.releaseMaterialInstance(oldMat);
         eb.lines.visible =
           renderMode === 'cad' ||
           renderMode === 'xray' ||
@@ -3330,10 +3637,10 @@ export class CompiledV2Unit implements OptimizedUnit {
       const useGpuPos = Boolean(pool.gpuExplodeTex && this.allPoolsGpuExplode);
       for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
-        const st = states[e.partIndex];
-        computeHighlightColor(e.partId, e.baseColor, false);
+        computeHighlightColor(e.partId, e.baseR, e.baseG, e.baseB, false);
         pool.mesh.setColorAt(i, _scratchColor);
         if (visChanged) {
+          const st = states[e.partIndex];
           if (!st.visible) {
             pool.mesh.setMatrixAt(i, _zeroMatrix);
           } else {
@@ -3352,11 +3659,13 @@ export class CompiledV2Unit implements OptimizedUnit {
     for (let p = 0; p < this.batchedPools.length; p++) {
       const pool = this.batchedPools[p];
       const entries = pool.entries;
+      const useVC = pool.usesVertexColors;
       for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
-        const st = states[e.partIndex];
-        pool.mesh.setVisibleAt(e.batchId, st.visible);
-        computeHighlightColor(e.partId, e.baseColor, pool.usesVertexColors);
+        if (visChanged) {
+          pool.mesh.setVisibleAt(e.batchId, states[e.partIndex].visible);
+        }
+        computeHighlightColor(e.partId, e.baseR, e.baseG, e.baseB, useVC);
         pool.mesh.setColorAt(e.batchId, _scratchColor);
       }
     }
@@ -3382,9 +3691,46 @@ export class CompiledV2Unit implements OptimizedUnit {
 
     if (this.edgeBundle) {
       const eb = this.edgeBundle;
-      const spans = eb.spans;
-      for (let s = 0; s < spans.length; s++) {
-        writeEdgeSpanColor(eb, spans[s]);
+      let tmpl: Float32Array;
+      if (renderMode === 'cad') {
+        if (!eb.cadBaseColors) {
+          const buf = new Float32Array(eb.liveColors.length);
+          for (let k = 0; k < buf.length; k += 3) {
+            buf[k] = 0.08;
+            buf[k + 1] = 0.09;
+            buf[k + 2] = 0.10;
+          }
+          eb.cadBaseColors = buf;
+        }
+        tmpl = eb.cadBaseColors;
+      } else if (renderMode === 'xray') {
+        if (!eb.xrayBaseColors) {
+          const buf = new Float32Array(eb.liveColors.length);
+          for (let k = 0; k < buf.length; k += 3) {
+            buf[k] = 0.23;
+            buf[k + 1] = 0.32;
+            buf[k + 2] = 0.43;
+          }
+          eb.xrayBaseColors = buf;
+        }
+        tmpl = eb.xrayBaseColors;
+      } else {
+        tmpl = eb.solidBaseColors;
+      }
+      eb.liveColors.set(tmpl);
+      if (selectedId) {
+        const st = this.partById.get(selectedId);
+        if (st) {
+          const si = this.partEdgeSpanIdx[st.index];
+          if (si >= 0) writeEdgeSpanColor(eb, eb.spans[si]);
+        }
+      }
+      if (hoveredId && hoveredId !== selectedId) {
+        const st = this.partById.get(hoveredId);
+        if (st) {
+          const si = this.partEdgeSpanIdx[st.index];
+          if (si >= 0) writeEdgeSpanColor(eb, eb.spans[si]);
+        }
       }
       eb.colAttr.needsUpdate = true;
       if (visChanged || (eb.lines.visible && this.edgePositionsDirty)) {
@@ -3514,19 +3860,40 @@ export class CompiledV2Unit implements OptimizedUnit {
   public dispose(cache: ResourceCache): void {
     for (let p = 0; p < this.instancedPools.length; p++) {
       const pool = this.instancedPools[p];
+      const activeMat = pool.mesh.material as THREE.Material;
       if (pool.gpuExplodeTex) {
-        bindGpuExplodeToMaterial(pool.mesh.material as THREE.Material, null, 1, 0);
+        bindGpuExplodeToMaterial(activeMat, null, 1, 0);
         pool.gpuExplodeTex.dispose();
         pool.gpuExplodeTex = null;
       }
+      const mm = pool.modeMats;
+      if (mm.solid && mm.solid !== activeMat) cache.releaseMaterialInstance(mm.solid);
+      if (mm.cad && mm.cad !== activeMat) cache.releaseMaterialInstance(mm.cad);
+      if (mm.xray && mm.xray !== activeMat) cache.releaseMaterialInstance(mm.xray);
+      pool.modeMats = {};
     }
     for (let p = 0; p < this.batchedPools.length; p++) {
       const pool = this.batchedPools[p];
+      const activeMat = pool.mesh.material as THREE.Material;
       if (pool.gpuExplodeTex) {
-        bindGpuExplodeToMaterial(pool.mesh.material as THREE.Material, null, 1, 0);
+        bindGpuExplodeToMaterial(activeMat, null, 1, 0);
         pool.gpuExplodeTex.dispose();
         pool.gpuExplodeTex = null;
       }
+      const mm = pool.modeMats;
+      if (mm.solid && mm.solid !== activeMat) cache.releaseMaterialInstance(mm.solid);
+      if (mm.cad && mm.cad !== activeMat) cache.releaseMaterialInstance(mm.cad);
+      if (mm.xray && mm.xray !== activeMat) cache.releaseMaterialInstance(mm.xray);
+      pool.modeMats = {};
+    }
+    if (this.edgeBundle) {
+      const eb = this.edgeBundle;
+      const activeMat = eb.lines.material as THREE.Material;
+      const mm = eb.modeMats;
+      if (mm.solid && mm.solid !== activeMat) cache.releaseMaterialInstance(mm.solid);
+      if (mm.cad && mm.cad !== activeMat) cache.releaseMaterialInstance(mm.cad);
+      if (mm.xray && mm.xray !== activeMat) cache.releaseMaterialInstance(mm.xray);
+      eb.modeMats = {};
     }
     if (this.rootGroup) {
       disposeObject3D(this.rootGroup, cache, true);
@@ -3536,7 +3903,10 @@ export class CompiledV2Unit implements OptimizedUnit {
       this.rigSkeletonRoot.clear();
       this.rigSkeletonRoot = null;
     }
-    this.rawBuild?.onDispose?.();
+    if (!this.retainedSharedRaw) {
+      this.rawBuild?.onDispose?.();
+    }
+    this.retainedSharedRaw = false;
     this.rawBuild = null;
     this.partsState = [];
     this.partById.clear();
@@ -3556,7 +3926,24 @@ export class CompiledV2Unit implements OptimizedUnit {
     this.edgePositionsDirty = false;
     this.guidesWereVisible = true;
     this.allPoolsGpuExplode = false;
+    this.hasAnyGpuExplode = false;
     this.gpuExplodeBindings = [];
     this.boundsDirty = false;
   }
+}
+
+/**
+ * Dispose all compiler-verified pure rawBuild trees stored in a shared multi-tier cache.
+ */
+export function disposeSharedRawBuildCache(
+  sharedCache: Map<string, { rawBuild: unknown; pure: boolean }>
+): void {
+  for (const entry of sharedCache.values()) {
+    const rb = entry.rawBuild as CompiledUnitRawBuild | undefined;
+    if (rb?.parts) {
+      disposeTemporaryRawTree(rb.parts, false);
+    }
+    rb?.onDispose?.();
+  }
+  sharedCache.clear();
 }

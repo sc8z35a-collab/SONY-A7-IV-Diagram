@@ -16,42 +16,60 @@
    - `exit 0` で発行される **`BG-RECEIPT:<tree8>:<remoteRef>:<policy>:<sig8>`** を取得・明記するまで「完了しました」と報告してはならない。
    - 危険な一括変更や Git 操作の前は必ず `npm run bg -- guard-exec -- <cmd>` で事前セーフティ網を張ること。
 
-## 1. 視覚確認・成果物検証には必ず高速専用キャプチャツール `pp` を使うこと（必須）
-UI、3D CADモデル、図説（SVG）、解説ドロワー、スマホ画面表示（390×844）、Play Ground 1.1、品質ティア比較（`LITE` / `STD` / `HIGH` / `ULTRA`）の見た目やレイアウトを確認・監査する必要がある時は、**手動のブラウザ操作や独自スクリーンショットスクリプトを書かず、必ず専用の超高速画像キャプチャエンジン `pp` を使用すること**。
+## 1. 視覚確認・成果物検証には必ず超高速 6-DoF キャプチャツール `pp1.1` を使うこと（必須）
+UI、3D CADモデル、図説（SVG）、解説ドロワー、スマホ画面表示（390×844）、Play Ground 1.1、品質ティア比較（`LITE` / `STD` / `HIGH` / `ULTRA`）、断面カット、パーツ単体拡大検証を行う際は、**手動ブラウザ操作や独自スクショスクリプトを書かず、必ず `pp1.1` を使用すること**（AI専用詳細マニュアル: `scripts/PP1_1_MANUAL.md`）。
 
-### `pp` クイックコマンド集（全6モード対応）
-事前に `npm run build`（`docs/` 更新）を実行した上で以下を使用する：
+### `pp1.1` クイックコマンド集（全6モード + 自由自在 6-DoF カメラワーク + 永続ウォームデーモン）
+事前に `npm run build`（`docs/` 更新）を実行した上で使用する（連続撮影時は `--warm` 推奨、完了時に `--daemon=stop`）：
 
 ```bash
-# 1. 全6モード一括高速監査パック（welcome / ui / cad / diagram / explanation）
-npm run pp -- --preset=audit --out=./captures
+# 1. 全6モード一括高速監査パック（ウォームデーモンで超高速・品質100%無劣化）
+npm run pp -- --warm --preset=audit --out=/tmp/pp_out
 
 # 2. 単体モード指定（ui | cad | diagram | explanation | full | custom）
-npm run pp -- --mode=cad --unit=welcome --quality=ultra --out=./captures
-npm run pp -- --mode=ui --unit=integrated --quality=standard_lite --out=./captures
-npm run pp -- --mode=diagram --unit=integrated --part=lens-front-xa --out=./captures
-npm run pp -- --mode=explanation --unit=integrated --part=lens-front-xa --out=./captures
-npm run pp -- --mode=full --unit=welcome --quality=high --explode=0.65 --out=./captures
+npm run pp -- --warm --mode=cad --unit=welcome --quality=ultra --out=/tmp/pp_out
+npm run pp -- --warm --mode=ui --unit=integrated --quality=standard_lite --out=/tmp/pp_out
+npm run pp -- --warm --mode=diagram --unit=integrated --part=lens-front-xa --out=/tmp/pp_out
+npm run pp -- --warm --mode=explanation --unit=integrated --part=lens-front-xa --out=/tmp/pp_out
 
-# 3. スマホ画面（390×844, DPR 2）＆ 図説90°横向き全画面ライトボックス検証
-npm run pp -- --preset=mobile --out=./captures
-npm run pp -- --mode=diagram --mobile --lightbox --rotate --unit=integrated --out=./captures
+# 3. 自由自在 6-DoF / 球面カメラ・自動パーツフィット・断面カット・2×SSAA・コールアウト注釈
+npm run pp -- --warm --mode=cad --unit=evf --quality=ultra --az=35 --el=22 --fov=24 --section=x:0.52 --ssaa=2 --annotate=8 --out=/tmp/pp_out
+npm run pp -- --warm --mode=cad --unit=welcome --quality=high --fit-part=welcome-yo-cnc-chassis --ortho-pack --contact-sheet=3 --out=/tmp/pp_out
+npm run pp -- --warm --mode=cad --unit=lens --quality=high --turntable=8 --contact-sheet=4 --out=/tmp/pp_out
 
-# 4. Play Ground 1.1 ＆ PLYA全8ツール一括検証・1000点採点レポート検証
-npm run pp -- --preset=playground --out=./captures
+# 4. スマホ（390×844 DPR 2）・Play Ground 1.1・品質完全一致証明（--diff SSIM/PSNR/RMSE）
+npm run pp -- --warm --preset=mobile --out=/tmp/pp_out
+npm run pp -- --warm --preset=playground --out=/tmp/pp_out
+npm run pp -- --warm --preset=audit --diff=/tmp/pp_before_ref --json --out=/tmp/pp_diff
 
-# 5. 超高速イテレーションモード（WebP q=90 + ユニット再利用パイプライン）
-npm run pp -- --preset=audit --fast --out=./captures
-
-# 6. カスタマイズモード＆JSONバッチ実行
-npm run pp -- --mode=custom --custom='{"unit":"welcome","quality":"ultra","explode":0.7,"showCad":true,"showUi":false}' --out=./captures
-npm run pp -- --batch=jobs.json --out=./captures --manifest
+# 5. 高速イテレーション（WebP q=90）＆ 0-Chrome ユニット/パーツID検索 ＆ デーモン停止
+npm run pp -- --warm --preset=audit --fast --out=/tmp/pp_fast
+npm run pp -- --list-units --json
+npm run pp -- --daemon=stop
 ```
 
-### `pp` 運用ルール
-- 複数ショットを撮る時は単発実行を繰り返さず、`--modes=...` / `--preset=...` / `--batch=...` で **1つのウォームChromeセッション＆スマートグルーピング** を活用して最速化すること。
-- リポジトリルート直下に一時キャプチャ画像を残してコミットしないこと（`--out=/tmp/pp_out` や専用アーティファクト領域へ出力すること）。
+### `pp1.1` 運用ルール
+- 複数ショットは `--warm` と `--preset` / `--modes` / `--ortho-pack` / `--turntable` / `--batch` で一括実行し、終了時に必ず `npm run pp -- --daemon=stop` を実行すること。
+- リポジトリルート直下に一時キャプチャ画像を残してコミットしないこと（必ず `--out=/tmp/...` や専用アーティファクト領域へ出力すること）。
 
-## 2. パーツカタログ・V2品質規約
-- 並列パーツ追加・編集時は必ず `catalog/WORKER_RULE.md` を遵守すること。
+## 2. 処理負荷・処理速度のベンチマーク測定には必ず `sokutei` を使うこと（必須）
+ビルド、V2 3D エンジン、実ブラウザ WebGL、キャプチャ (`pp1.1`)、CI 検証、カタログ生成、MIRAI コンパイラ、WLK-220 DFM、アプリ内光学/工学シミュレータ、`bg v1` の**全10領域（55+項目）の速度・負荷（Wall/p50/p95/95%CI/CV%/CPU%/Peak RSS/GPU Frame/JSHeap）**を統計的に自動測定する時は、必ず **`sokutei`** を使用すること（AI専用詳細マニュアル: `scripts/SOKUTEI_MANUAL.md`）。
+
+```bash
+# 1. ワンコマンド全10領域自動測定（全項目）
+npm run sokutei
+
+# 2. カスタム領域・ユニット・ティア・任意コマンド指定測定
+npm run sokutei -- --list
+npm run sokutei -- --target=v2_unit,sim_app,pp --runs=2 --warmup=1 --json
+npm run sokutei -- --target=v2_unit --units=welcome,evf --tiers=high,ultra --runs=3
+npm run sokutei -- --cmd="node scripts/validate_parts.mjs --full" --runs=2 --warmup=1
+
+# 3. Before / After 統計比較・スピードアップ検証ゲート
+npm run sokutei -- --all --save-baseline=/tmp/sokutei_before.json
+npm run sokutei -- --all --compare=/tmp/sokutei_before.json --assert-speedup=6.0 --out=/tmp/sokutei_after.json --md=/tmp/sokutei_after.md
+```
+
+## 3. パーツカタログ・V2品質規約
+- 並列パーツ追加・編集時は必ず `catalog/WORKER_RULE.md`（1.5 kB 以内厳守）を遵守すること。
 - 完了前には `npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build` の全ゲート（10/10 PASS）を確認すること。

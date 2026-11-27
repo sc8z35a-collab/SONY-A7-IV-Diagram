@@ -241,45 +241,73 @@ export function runPlyaVerificationPipeline(
     base.partDiagnostics.forEach((v, k) => visualFlags.set(k, v));
   }
 
+  const FLAG_RANK = { ok: 0, warn: 1, error: 2 } as const;
   const markFlag = (uid: string, severity: 'ok' | 'warn' | 'error', reason: string) => {
     const prev = visualFlags.get(uid);
-    const rank = { ok: 0, warn: 1, error: 2 };
-    if (!prev || rank[severity] > rank[prev.severity]) {
+    if (!prev || FLAG_RANK[severity] > FLAG_RANK[prev.severity]) {
       visualFlags.set(uid, { uid, severity, reason });
     }
   };
 
-  const byRole = (role: PlacedPartSnapshot['entry']['role']) =>
-    parts.filter((p) => p.entry.role === role);
+  const lenses: PlacedPartSnapshot[] = [];
+  const mounts: PlacedPartSnapshot[] = [];
+  const sensors: PlacedPartSnapshot[] = [];
+  const mainboards: PlacedPartSnapshot[] = [];
+  const bionzs: PlacedPartSnapshot[] = [];
+  const batteries: PlacedPartSnapshot[] = [];
+  const storages: PlacedPartSnapshot[] = [];
+  const bodies: PlacedPartSnapshot[] = [];
+  const thermals: PlacedPartSnapshot[] = [];
+  const evfs: PlacedPartSnapshot[] = [];
+  const lcds: PlacedPartSnapshot[] = [];
+  const mishoes: PlacedPartSnapshot[] = [];
 
-  const lenses = byRole('lens');
-  const mounts = byRole('mount');
-  const sensors = byRole('sensor');
-  const mainboards = byRole('mainboard');
-  const bionzs = byRole('bionz');
-  const batteries = byRole('battery');
-  const storages = byRole('storage');
-  const bodies = byRole('body');
-  const thermals = byRole('thermal_emi');
-  const evfs = byRole('evf');
-  const lcds = byRole('lcd');
-  const mishoes = byRole('mishoe');
-  const procList = [...mainboards, ...bionzs];
+  let minX = Infinity, minY = Infinity, minZ = Infinity;
+  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    const wb = p.worldBox;
+    if (wb.min.x < minX) minX = wb.min.x;
+    if (wb.min.y < minY) minY = wb.min.y;
+    if (wb.min.z < minZ) minZ = wb.min.z;
+    if (wb.max.x > maxX) maxX = wb.max.x;
+    if (wb.max.y > maxY) maxY = wb.max.y;
+    if (wb.max.z > maxZ) maxZ = wb.max.z;
+    switch (p.entry.role) {
+      case 'lens': lenses.push(p); break;
+      case 'mount': mounts.push(p); break;
+      case 'sensor': sensors.push(p); break;
+      case 'mainboard': mainboards.push(p); break;
+      case 'bionz': bionzs.push(p); break;
+      case 'battery': batteries.push(p); break;
+      case 'storage': storages.push(p); break;
+      case 'body': bodies.push(p); break;
+      case 'thermal_emi': thermals.push(p); break;
+      case 'evf': evfs.push(p); break;
+      case 'lcd': lcds.push(p); break;
+      case 'mishoe': mishoes.push(p); break;
+    }
+  }
+  const procList = mainboards.length === 0 ? bionzs : bionzs.length === 0 ? mainboards : [...mainboards, ...bionzs];
 
   const centerOf = (list: readonly PlacedPartSnapshot[]): THREE.Vector3 | null => {
-    if (list.length === 0) return null;
-    const c = new THREE.Vector3();
-    for (const p of list) c.add(p.worldCenter);
-    return c.divideScalar(list.length);
+    const len = list.length;
+    if (len === 0) return null;
+    let sx = 0, sy = 0, sz = 0;
+    for (let i = 0; i < len; i++) {
+      const c = list[i].worldCenter;
+      sx += c.x;
+      sy += c.y;
+      sz += c.z;
+    }
+    const inv = 1 / len;
+    return new THREE.Vector3(sx * inv, sy * inv, sz * inv);
   };
 
   // Compute total bounding box surface area (cm²) for coupled thermal convection solver
-  const unionBox = new THREE.Box3();
-  for (const p of parts) unionBox.union(p.worldBox);
-  const unionSize = parts.length > 0 ? unionBox.getSize(new THREE.Vector3()) : new THREE.Vector3();
   const surfaceAreaCm2 =
-    parts.length > 0
-      ? (2 * (unionSize.x * unionSize.y + unionSize.y * unionSize.z + unionSize.z * unionSize.x)) / 100
+    parts.length > 0 && Number.isFinite(minX)
+      ? (2 * ((maxX - minX) * (maxY - minY) + (maxY - minY) * (maxZ - minZ) + (maxZ - minZ) * (maxX - minX))) / 100
       : 0;
 
   // =========================================================================
@@ -409,18 +437,22 @@ export function runPlyaVerificationPipeline(
       const t0 = nowMs();
       const flagged: string[] = [];
       let solidClashes = 0;
-      const internalCheck = wPlinth.filter(
-        (p) =>
-          !p.entry.partId.includes('mg-chassis') &&
-          !p.entry.partId.includes('top-datum') &&
-          !p.entry.partId.includes('bottom-weight') &&
-          !p.entry.partId.includes('busbar') &&
-          !p.entry.partId.includes('harness')
-      );
+      const internalCheck = wPlinth
+        .filter(
+          (p) =>
+            !p.entry.partId.includes('mg-chassis') &&
+            !p.entry.partId.includes('top-datum') &&
+            !p.entry.partId.includes('bottom-weight') &&
+            !p.entry.partId.includes('busbar') &&
+            !p.entry.partId.includes('harness')
+        )
+        .sort((a, b) => a.worldBox.min.x - b.worldBox.min.x);
       for (let i = 0; i < internalCheck.length; i++) {
+        const a = internalCheck[i];
+        const aMaxX = a.worldBox.max.x;
         for (let j = i + 1; j < internalCheck.length; j++) {
-          const a = internalCheck[i];
           const b = internalCheck[j];
+          if (b.worldBox.min.x >= aMaxX - 0.35) break;
           const pair = `${a.entry.partId}+${b.entry.partId}`;
           if (pair.includes('mainboard') && (pair.includes('cortex') || pair.includes('canfd') || pair.includes('audio'))) continue;
           if (boxesOverlapMm(a.worldBox, b.worldBox, 0.35)) {

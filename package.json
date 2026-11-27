@@ -5,7 +5,8 @@
   "type": "module",
   "bin": {
     "pp": "./scripts/pp.mjs",
-    "bg": "./scripts/bg.mjs"
+    "bg": "./scripts/bg.mjs",
+    "sokutei": "./scripts/sokutei.mjs"
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
@@ -14,6 +15,8 @@
     "bg": "node scripts/bg.mjs",
     "pp": "node scripts/pp.mjs",
     "capture": "node scripts/pp.mjs",
+    "sokutei": "node scripts/sokutei.mjs",
+    "validate": "node scripts/validate_parts.mjs",
     "verify:wlk220": "node scripts/verify_wlk220_industrial.mjs",
     "build": "tsc --noEmit && vite build && rm -rf docs && cp -r dist docs && touch docs/.nojekyll",
     "preview": "vite preview --host 0.0.0.0 --port 5173",

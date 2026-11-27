@@ -268,7 +268,8 @@ export class VramLeakMonitor {
 
   public verifyAfterDispose(
     renderer: THREE.WebGLRenderer,
-    cache: ResourceCache
+    cache: ResourceCache,
+    expectedTextureDelta = 0
   ): VramLeakVerification {
     const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
     const after: VramSnapshot = {
@@ -280,7 +281,7 @@ export class VramLeakMonitor {
     const peak = this.peak ?? after;
     const cacheStats = cache.getStats();
     const deltaGeometries = after.geometries - base.geometries;
-    const deltaTextures = after.textures - base.textures;
+    const deltaTextures = after.textures - base.textures - expectedTextureDelta;
     const passed =
       deltaGeometries <= 0 &&
       deltaTextures <= 0 &&

@@ -4804,9 +4804,13 @@ body,
 /* ============================================================================
    6-MODE DEDICATED ARTIFACT CAPTURE ENGINE ISOLATION RULES
    ============================================================================ */
-#app[data-capture-mode] .explanation-drawer,
-#app[data-capture-mode] .schematic-lightbox {
+#app[data-capture-mode],
+#app[data-capture-mode] *,
+#app[data-capture-mode] *::before,
+#app[data-capture-mode] *::after {
   transition: none !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
 }
 
 #app[data-capture-mode="ui"] {

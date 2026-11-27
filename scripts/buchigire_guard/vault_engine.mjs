@@ -21,6 +21,7 @@ import {
   listWorkingFiles,
   pushVaultWithReadback,
   releaseLock,
+  resolveLocalRef,
   runGit,
   runGitOrThrow,
   sanitizeSlug,
@@ -151,37 +152,64 @@ function collectMirroredArtifacts(artifactsDir) {
  */
 function getCurrentVaultParent(ctx) {
   const tier1Ref = `${ctx.cfg.vaultNamespace.replace(/\/+$/, '')}/${ctx.slug}`;
-  const res = runGit(['rev-parse', '--verify', tier1Ref], { cwd: ctx.repoRoot });
-  if (res.status === 0) return res.stdout.trim();
-  const rem = runGit(['rev-parse', '--verify', `refs/bg-remote/${ctx.slug}`], { cwd: ctx.repoRoot });
-  if (rem.status === 0) return rem.stdout.trim();
+  const local = resolveLocalRef(ctx.gitDir, tier1Ref);
+  if (local) return local;
+  const rem = resolveLocalRef(ctx.gitDir, `refs/bg-remote/${ctx.slug}`);
+  if (rem) return rem;
   return null;
 }
 
 /**
- * Inspect embedded _bg_meta/MANIFEST.json and _bg_meta/flight_recorder.json from a vault commit.
+ * Inspect embedded _bg_meta/MANIFEST.json and _bg_meta/flight_recorder.json from a vault commit
+ * via a single batched `git cat-file --batch` invocation (3 spawns -> 1 spawn).
  */
 export function readVaultCommitMetadata(repoRoot, commitOid) {
-  const readBlob = (rel) => {
-    const r = runGit(['show', `${commitOid}:${rel}`], { cwd: repoRoot });
-    if (r.status !== 0) return null;
-    try {
-      return JSON.parse(r.stdout);
-    } catch {
-      return null;
-    }
-  };
-  const manifest = readBlob('_bg_meta/MANIFEST.json');
-  const flight = readBlob('_bg_meta/flight_recorder.json');
-  const logRes = runGit(['show', '-s', '--format=%H%x00%ct%x00%cI%x00%s', commitOid], { cwd: repoRoot });
+  const input = `${commitOid}\n${commitOid}:_bg_meta/MANIFEST.json\n${commitOid}:_bg_meta/flight_recorder.json\n`;
+  const res = runGit(['cat-file', '--batch'], { cwd: repoRoot, input, buffer: true });
   let commitTime = 0;
   let commitIso = null;
   let subject = '';
-  if (logRes.status === 0) {
-    const parts = logRes.stdout.trim().split('\0');
-    commitTime = Number(parts[1] || 0);
-    commitIso = parts[2] || null;
-    subject = parts[3] || '';
+  let manifest = null;
+  let flight = null;
+
+  if (res.status === 0 && Buffer.isBuffer(res.stdout) && res.stdout.length > 0) {
+    const buf = res.stdout;
+    const objects = [];
+    let offset = 0;
+    while (offset < buf.length && objects.length < 3) {
+      const nl = buf.indexOf(0x0a, offset);
+      if (nl < 0) break;
+      const header = buf.subarray(offset, nl).toString('utf8');
+      offset = nl + 1;
+      if (header.endsWith(' missing')) {
+        objects.push(null);
+        continue;
+      }
+      const parts = header.split(' ');
+      const size = Number.parseInt(parts[2] || '0', 10);
+      const body = buf.subarray(offset, offset + size).toString('utf8');
+      offset += size + 1; // trailing LF after each object
+      objects.push(body);
+    }
+
+    if (objects[0]) {
+      const commitText = objects[0];
+      const blankIdx = commitText.indexOf('\n\n');
+      const hdr = blankIdx >= 0 ? commitText.slice(0, blankIdx) : commitText;
+      const msg = blankIdx >= 0 ? commitText.slice(blankIdx + 2) : '';
+      subject = msg.split('\n')[0] || '';
+      const cm = hdr.match(/^committer .*> (\d+) ([+-]\d{4})$/m);
+      if (cm) {
+        commitTime = Number(cm[1]);
+        commitIso = new Date(commitTime * 1000).toISOString();
+      }
+    }
+    if (objects[1]) {
+      try { manifest = JSON.parse(objects[1]); } catch { manifest = null; }
+    }
+    if (objects[2]) {
+      try { flight = JSON.parse(objects[2]); } catch { flight = null; }
+    }
   }
   return { commitOid, commitTime, commitIso, subject, manifest, flight };
 }
@@ -234,7 +262,9 @@ export function createSnapshot(ctx, opts = {}) {
       })
     );
 
-    const manifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, metaDigest);
+    const manifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, metaDigest, {
+      cachePath: path.join(ctx.vaultDir, 'sha_cache.json'),
+    });
 
     // BG-28: No-Op deduplication if working tree + flight recorder match last verified remote snapshot
     const journal = readJournal(ctx);
@@ -1014,9 +1044,10 @@ export function runGc(ctx, opts = {}) {
 /**
  * Compute live durability telemetry score (0..100) and full status payload (BG-34).
  */
-export function computeStatus(ctx) {
-  const status = getPorcelainStatus(ctx.repoRoot);
-  const { liveFiles, deletedFiles, skippedLarge } = listWorkingFiles(ctx.repoRoot, ctx.cfg);
+export function computeStatus(ctx, opts = {}) {
+  const status = opts.porcelain || getPorcelainStatus(ctx.repoRoot);
+  const working = opts.working || listWorkingFiles(ctx.repoRoot, ctx.cfg);
+  const { liveFiles, deletedFiles, skippedLarge } = working;
   const flight = readFlightRecorder(ctx);
   const journal = readJournal(ctx);
   const lastEntry = journal.length > 0 ? journal[journal.length - 1] : null;
@@ -1034,7 +1065,9 @@ export function computeStatus(ctx) {
       artifacts: (flight.artifactsMirrored || []).map((a) => `${a.name}:${a.sha256}`),
     })
   );
-  const curManifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, curMetaDigest);
+  const curManifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, curMetaDigest, {
+    cachePath: path.join(ctx.vaultDir, 'sha_cache.json'),
+  });
 
   const vaultMatchesCurrent = Boolean(
     lastRemote &&
@@ -1043,13 +1076,22 @@ export function computeStatus(ctx) {
       lastRemote.headSha === ctx.headSha
   );
 
-  // Also check if branch HEAD itself is pushed to origin/<branch> and working tree is clean
+  // Also check if branch HEAD itself is pushed to origin/<branch> and working tree is clean.
+  // Fast path: check local remote-tracking ref (updated by every git push/fetch);
+  // runGate / --verify-remote always perform live `git ls-remote` verification.
   let branchHeadPushed = false;
   if (ctx.hasRemote && !ctx.isDetached && ctx.headSha) {
-    const ls = runGit(['ls-remote', ctx.remote, `refs/heads/${ctx.branch}`], { cwd: ctx.repoRoot });
-    if (ls.status === 0) {
-      const line = ls.stdout.trim().split('\n')[0] || '';
-      branchHeadPushed = line.startsWith(ctx.headSha);
+    const trackingRef = `refs/remotes/${ctx.remote}/${ctx.branch}`;
+    const localTrackedSha = resolveLocalRef(ctx.gitDir, trackingRef);
+    const isLocalFileRemote = ctx.remoteUrl && !/^(?:https?:\/\/|ssh:\/\/|git@|git:\/\/)/i.test(ctx.remoteUrl);
+    if (!opts.verifyRemote && !isLocalFileRemote && localTrackedSha) {
+      branchHeadPushed = localTrackedSha === ctx.headSha;
+    } else if (opts.verifyRemote || isLocalFileRemote || (status.isClean && !vaultMatchesCurrent)) {
+      const ls = runGit(['ls-remote', ctx.remote, `refs/heads/${ctx.branch}`], { cwd: ctx.repoRoot });
+      if (ls.status === 0) {
+        const line = ls.stdout.trim().split('\n')[0] || '';
+        branchHeadPushed = line.startsWith(ctx.headSha);
+      }
     }
   }
 

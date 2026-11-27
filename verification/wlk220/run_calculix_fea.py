@@ -272,8 +272,12 @@ def run_quartz_thermo_fea():
 
 
 def main():
-    plinth = run_plinth_fea()
-    quartz = run_quartz_thermo_fea()
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        f_plinth = pool.submit(run_plinth_fea)
+        f_quartz = pool.submit(run_quartz_thermo_fea)
+        plinth = f_plinth.result()
+        quartz = f_quartz.result()
     res = {
         "tool": "CalculiX ccx 2.21 (3D C3D8 Finite Element Solver)",
         "ok": plinth["ok"] and quartz["ok"],

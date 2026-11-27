@@ -1,38 +1,61 @@
 #!/usr/bin/env node
 /**
- * Deterministic 3-Tier AI Part Catalog Generator (L0 / L1 / L2)
+ * Hyper-Accelerated Deterministic 3-Tier AI Part Catalog Generator (L0 / L1 / L2 + Play Ground Index/Templates)
  * Single Source of Truth: `src/data/*.json` + `src/units/registry.ts` + Headless V2 STD Build.
  *
- * Outputs under `catalog/`:
- *   - L0: `catalog/INDEX.tsv`            — Global 20-mode overview map (counts, prefixes, next codes, file paths)
- *   - L1: `catalog/names/<mode>.txt`     — Ultra-compact grouped Japanese name list (~1.2-8 kB/mode)
- *   - L1: `catalog/ALL_NAMES.txt`        — Concatenated L1 roster of all 18 individual assemblies
- *   - L2: `catalog/spatial/<mode>.tsv`   — Per-part spatial coordinates, real Box3 size, explode vector, primary PBR bucket
+ * Outputs (100% byte-identical parity):
+ *   - L0: `catalog/INDEX.tsv`
+ *   - L1: `catalog/names/<mode>.txt` & `catalog/ALL_NAMES.txt`
+ *   - L2: `catalog/spatial/<mode>.tsv`
+ *   - Play Ground: `src/playground/playground_index.json` & `src/playground/playground_templates.json`
  *
- * Optional flags:
- *   --sync-registry   Also synchronize `declaredPartCount` in `src/units/registry.ts` from `src/data/*.json`
- *                     (post-merge helper after parallel worker sprints).
+ * Flags:
+ *   --sync-registry   Synchronize `declaredPartCount` in `src/units/registry.ts` from `src/data/*.json`
+ *   --full / --no-cache  Bypass transitive SHA-256 spatial/template cache and rebuild all 22 units from scratch
+ *   --out-dir=<dir>   Redirect output root (useful for repo-clean `sokutei` benchmarking)
  */
 
 import fs from 'node:fs';
+import fsp from 'node:fs/promises';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
-import * as THREE from 'three';
-import { buildSync } from 'esbuild';
+import os from 'node:os';
+import { Worker } from 'node:worker_threads';
+import {
+  computeFilesSha256,
+  ensureUnifiedV2RuntimeBundlePath,
+  loadCachedTsModule,
+  readCacheJson,
+  writeCacheJson,
+} from './lib/hyper_cache.mjs';
 
 const ROOT = process.cwd();
 const REGISTRY_REL = 'src/units/registry.ts';
-const CATALOG_DIR = path.join(ROOT, 'catalog');
-const NAMES_DIR = path.join(CATALOG_DIR, 'names');
-const SPATIAL_DIR = path.join(CATALOG_DIR, 'spatial');
 const COMPOSITE_MODES = new Set(['integrated', 'camera_body']);
 const SYNC_REGISTRY = process.argv.includes('--sync-registry');
+const FORCE_FULL = process.argv.includes('--full') || process.argv.includes('--no-cache');
+const OUT_DIR_ARG = process.argv.find((a) => a.startsWith('--out-dir='))?.slice(10) || null;
 
-const _boxSize = new THREE.Vector3();
+const OUT_ROOT = OUT_DIR_ARG ? path.resolve(OUT_DIR_ARG) : ROOT;
+const CATALOG_DIR = path.join(OUT_ROOT, 'catalog');
+const NAMES_DIR = path.join(CATALOG_DIR, 'names');
+const SPATIAL_DIR = path.join(CATALOG_DIR, 'spatial');
+const PG_OUT_DIR = path.join(OUT_ROOT, 'src', 'playground');
 
-// -----------------------------------------------------------------------------
-// Formatting & Text Compression Helpers
-// -----------------------------------------------------------------------------
+const SPATIAL_CACHE_KEY = 'catalog_spatial_v2';
+const PG_TPL_CACHE_KEY = 'catalog_pg_templates_v2';
+
+// Pre-compiled RegExps for hot text formatting
+const RE_TSV_WS = /[\t\r\n]+/g;
+const RE_MULTI_WS = /\s+/g;
+const RE_TITLE_CODE = /^([A-Z][A-Z0-9]*-|[A-Z]{1,3})(\d+)(?:[\.\s:：、]+|$)(.*)$/;
+const RE_ERA_PREFIX = /^【[^】]{1,18}】\s*/;
+const RE_SONY_OEM = /^Sony\s+OEM\s+/i;
+const RE_JA_PARENS = /（[^）]*）/g;
+const RE_EN_PARENS = /\([^)]*\)/g;
+const RE_AMP = /\s*[＆&]\s*/;
+const RE_QUOTES = /[「」『』]/g;
+const RE_COMMAS = /[,，]/g;
+const RE_SLUG_PREFIX = /^([a-z0-9]+-)/;
 
 function fmtNum(v) {
   if (typeof v !== 'number' || !Number.isFinite(v)) return '0';
@@ -47,20 +70,14 @@ function fmtVec3(arr) {
 
 function sanitizeTsv(str) {
   return String(str ?? '')
-    .replace(/[\t\r\n]+/g, ' ')
-    .replace(/\s+/g, ' ')
+    .replace(RE_TSV_WS, ' ')
+    .replace(RE_MULTI_WS, ' ')
     .trim();
 }
 
-/**
- * Parse a leading display code from a Japanese part title, e.g.:
- *   "SH180. 工場..." -> { full: "SH180", prefix: "SH", num: 180, pad: 3, rest: "工場..." }
- *   "X2-01. TSMC..." -> { full: "X2-01", prefix: "X2-", num: 1, pad: 2, rest: "TSMC..." }
- *   "F5-38 累計..."  -> { full: "F5-38", prefix: "F5-", num: 38, pad: 2, rest: "累計..." }
- */
 function parseTitleCode(title) {
   const s = String(title ?? '').trim();
-  const m = s.match(/^([A-Z][A-Z0-9]*-|[A-Z]{1,3})(\d+)(?:[\.\s:：、]+|$)(.*)$/);
+  const m = s.match(RE_TITLE_CODE);
   if (!m) return null;
   const prefix = m[1];
   const digits = m[2];
@@ -77,36 +94,25 @@ function parseTitleCode(title) {
 function shortenJaName(title, maxLen = 14) {
   let s = sanitizeTsv(title);
   const parsed = parseTitleCode(s);
-  if (parsed && parsed.rest) {
-    s = parsed.rest;
-  }
-  // Remove leading announcement/era/OEM prefixes to keep core part noun crisp
-  s = s
-    .replace(/^【[^】]{1,18}】\s*/, '')
-    .replace(/^Sony\s+OEM\s+/i, 'OEM ');
-  // Strip parenthetical English / secondary explanations
+  if (parsed && parsed.rest) s = parsed.rest;
+  s = s.replace(RE_ERA_PREFIX, '').replace(RE_SONY_OEM, 'OEM ');
   const noParens = s
-    .replace(/（[^）]*）/g, '')
-    .replace(/\([^)]*\)/g, '')
-    .replace(/\s+/g, ' ')
+    .replace(RE_JA_PARENS, '')
+    .replace(RE_EN_PARENS, '')
+    .replace(RE_MULTI_WS, ' ')
     .trim();
   if (noParens.length >= 4) s = noParens;
 
-  // Prefer the concise primary clause before '＆' when already descriptive
-  const ampIdx = s.search(/\s*[＆&]\s*/);
-  if (ampIdx >= 6) {
-    s = s.slice(0, ampIdx).trim();
-  }
+  const ampIdx = s.search(RE_AMP);
+  if (ampIdx >= 6) s = s.slice(0, ampIdx).trim();
 
-  // Strip surrounding quotation marks and normalize commas so L1 comma-lists stay clean
   s = s
-    .replace(/[「」『』]/g, '')
-    .replace(/[,，]/g, '・')
-    .replace(/\s+/g, ' ')
+    .replace(RE_QUOTES, '')
+    .replace(RE_COMMAS, '・')
+    .replace(RE_MULTI_WS, ' ')
     .trim();
 
   if (s.length > maxLen) {
-    // Prefer cutting at a natural delimiter inside [minKeep, maxLen] to avoid mid-word katakana splits
     const minKeep = Math.max(7, maxLen - 5);
     let cutAt = -1;
     for (let i = maxLen; i >= minKeep; i--) {
@@ -120,18 +126,13 @@ function shortenJaName(title, maxLen = 14) {
   return s || sanitizeTsv(title).slice(0, maxLen);
 }
 
-/**
- * Infer the modern kebab-case slug prefix from the unit's parts (preferring recent tail parts).
- */
 function inferSlugPrefix(mode, parts) {
   if (COMPOSITE_MODES.has(mode)) return '-';
   const tail = parts.slice(Math.max(0, parts.length - 40));
   const counts = new Map();
   for (const p of tail) {
-    const m = String(p.id || '').match(/^([a-z0-9]+-)/);
-    if (m) {
-      counts.set(m[1], (counts.get(m[1]) || 0) + 1);
-    }
+    const m = String(p.id || '').match(RE_SLUG_PREFIX);
+    if (m) counts.set(m[1], (counts.get(m[1]) || 0) + 1);
   }
   let best = `${mode}-`;
   let bestCount = 0;
@@ -144,10 +145,6 @@ function inferSlugPrefix(mode, parts) {
   return best;
 }
 
-/**
- * Compute code_min, code_max, next_code across a unit's parts.
- * Handles multi-volume prefixes (e.g., sensor_fab F0-01..F5-38 -> next F5-39).
- */
 function computeCodeRange(mode, parts) {
   if (COMPOSITE_MODES.has(mode)) {
     return { codeMin: '-', codeMax: '-', nextCode: '-', validPrefixes: new Set() };
@@ -161,7 +158,6 @@ function computeCodeRange(mode, parts) {
       prefixCounts.set(parsed.prefix, (prefixCounts.get(parsed.prefix) || 0) + 1);
     }
   }
-  // Keep prefixes appearing >= 2 times (avoids accidental matches like "ISO100")
   const validPrefixes = new Set(
     Array.from(prefixCounts.entries())
       .filter(([, cnt]) => cnt >= 2)
@@ -171,9 +167,7 @@ function computeCodeRange(mode, parts) {
   if (valid.length === 0) {
     return { codeMin: '-', codeMax: '-', nextCode: `#${parts.length + 1}`, validPrefixes };
   }
-
   const first = valid[0];
-  // Active prefix for next_code = prefix of the last coded part (handles Vol.0..Vol.5 naturally)
   const lastPrefix = valid[valid.length - 1].prefix;
   let maxItem = valid[valid.length - 1];
   let maxPad = maxItem.pad;
@@ -207,23 +201,18 @@ function inferCompositeSubsystem(partId) {
 }
 
 function buildGroupAssigner(mode, parts) {
-  if (mode === 'sensor_fab') {
-    return (p) => `Vol.${p.fabVolume ?? 0}`;
-  }
+  if (mode === 'sensor_fab') return (p) => `Vol.${p.fabVolume ?? 0}`;
   if (mode === 'lens') {
     return (p) => {
       const sec = p.lensSection ?? 2;
       return sec === 1 ? 'Sec1:Rear' : sec === 3 ? 'Sec3:Front' : 'Sec2:Mid';
     };
   }
-  if (COMPOSITE_MODES.has(mode)) {
-    return (p) => inferCompositeSubsystem(p.id);
-  }
+  if (COMPOSITE_MODES.has(mode)) return (p) => inferCompositeSubsystem(p.id);
   const uniqueGroups = new Set(parts.map((p) => p.groupKey).filter(Boolean));
   if (uniqueGroups.size >= 1 && uniqueGroups.size <= 12) {
     return (p) => sanitizeTsv(p.groupKey || 'all');
   }
-  // Fallback for ~1:1 groupKey units: balanced 30-part sequential blocks
   const blockSize = 30;
   return (_p, idx) => {
     const start = Math.floor(idx / blockSize) * blockSize + 1;
@@ -231,10 +220,6 @@ function buildGroupAssigner(mode, parts) {
     return `#${String(start).padStart(3, '0')}-${String(end).padStart(3, '0')}`;
   };
 }
-
-// -----------------------------------------------------------------------------
-// Registry Parser & Optional --sync-registry Helper
-// -----------------------------------------------------------------------------
 
 function parseRegistryEntries() {
   const abs = path.join(ROOT, REGISTRY_REL);
@@ -255,9 +240,7 @@ function parseRegistryEntries() {
       l2File: `catalog/spatial/${mode}.tsv`,
     });
   }
-  if (entries.length === 0) {
-    throw new Error(`Failed to parse unit entries from ${REGISTRY_REL}`);
-  }
+  if (entries.length === 0) throw new Error(`Failed to parse unit entries from ${REGISTRY_REL}`);
   return entries;
 }
 
@@ -269,10 +252,7 @@ function syncRegistryPartCounts(entries) {
     const jsonData = JSON.parse(fs.readFileSync(path.join(ROOT, e.dataFile), 'utf8'));
     const actualCount = jsonData.parts.length;
     if (actualCount !== e.registryDeclaredCount) {
-      const re = new RegExp(
-        `(unitId:\\s*'${e.mode}',\\s*declaredPartCount:\\s*)\\d+`,
-        'g'
-      );
+      const re = new RegExp(`(unitId:\\s*'${e.mode}',\\s*declaredPartCount:\\s*)\\d+`, 'g');
       src = src.replace(re, `$1${actualCount}`);
       console.log(`[SYNC] registry.ts ${e.mode}: declaredPartCount ${e.registryDeclaredCount} -> ${actualCount}`);
       e.registryDeclaredCount = actualCount;
@@ -287,133 +267,110 @@ function syncRegistryPartCounts(entries) {
   }
 }
 
-// -----------------------------------------------------------------------------
-// Headless V2 STD Spatial & Material Extractor (Zero-Leak Verified!)
-// -----------------------------------------------------------------------------
-
-async function bundleTsModuleForNode(entryRel) {
-  const result = buildSync({
-    entryPoints: [path.join(ROOT, entryRel)],
-    bundle: true,
-    write: false,
-    format: 'esm',
-    platform: 'node',
-    external: ['three', 'three/*'],
-  });
-  const tmpDir = path.join(ROOT, 'node_modules', '.cache', 'generate-catalogs');
-  fs.mkdirSync(tmpDir, { recursive: true });
-  const tmpFile = path.join(
-    tmpDir,
-    `${path.basename(entryRel, '.ts')}.${process.pid}.${Math.random().toString(36).slice(2, 8)}.mjs`
-  );
-  fs.writeFileSync(tmpFile, result.outputFiles[0].text, 'utf8');
-  try {
-    return await import(pathToFileURL(tmpFile).href);
-  } finally {
-    fs.rmSync(tmpFile, { force: true });
+function computeUnitDepHash(e, coreHash, allAssembliesHash) {
+  const deps = [e.unitFile, e.dataFile];
+  if (COMPOSITE_MODES.has(e.mode)) {
+    return computeFilesSha256(deps) + ':' + coreHash + ':' + allAssembliesHash;
   }
+  const asmDir = `src/assemblies/${e.mode}`;
+  if (fs.existsSync(path.join(ROOT, asmDir))) deps.push(asmDir);
+  if (e.mode === 'micro_v2' && fs.existsSync(path.join(ROOT, 'src/assemblies/micro'))) deps.push('src/assemblies/micro');
+  if (e.mode === 'bionz_v2' && fs.existsSync(path.join(ROOT, 'src/assemblies/bionz'))) deps.push('src/assemblies/bionz');
+  if (e.mode === 'mishoe' && fs.existsSync(path.join(ROOT, 'src/assemblies/mi_shoe'))) deps.push('src/assemblies/mi_shoe');
+  for (const shared of ['src/assemblies/types.ts', 'src/assemblies/materials.ts', 'src/assemblies/camera_macro_shared.ts']) {
+    if (fs.existsSync(path.join(ROOT, shared))) deps.push(shared);
+  }
+  return computeFilesSha256(deps) + ':' + coreHash;
+}
+
+function runCatalogWorker(bundlePath, modes) {
+  return new Promise((resolve, reject) => {
+    const w = new Worker(path.join(ROOT, 'scripts/lib/catalog_worker.mjs'), {
+      workerData: { bundlePath, modes },
+    });
+    let done = false;
+    w.on('message', (msg) => {
+      done = true;
+      if (msg.ok) resolve(msg.out);
+      else reject(new Error(msg.error));
+    });
+    w.on('error', (err) => {
+      if (!done) {
+        done = true;
+        reject(err);
+      }
+    });
+    w.on('exit', (code) => {
+      if (!done) {
+        done = true;
+        reject(new Error(`catalog_worker exited unexpectedly (${code})`));
+      }
+    });
+  });
 }
 
 async function extractSpatialAndMaterialInfo(entries) {
-  const [regMod, cacheMod] = await Promise.all([
-    bundleTsModuleForNode('src/units/registry.ts'),
-    bundleTsModuleForNode('src/core/resource_cache.ts'),
+  const coreHash = computeFilesSha256([
+    'src/core',
+    'src/engine',
+    'src/units/registry.ts',
+    'scripts/lib/catalog_worker.mjs',
   ]);
-  const cache = new cacheMod.ResourceCache();
+  const allAssembliesHash = computeFilesSha256(['src/assemblies']);
+
+  const prevCache = FORCE_FULL ? null : readCacheJson(SPATIAL_CACHE_KEY);
+  const prevModes = prevCache?.version === 2 ? prevCache.modes || {} : {};
+  const nextModes = { ...prevModes };
+
   const byMode = new Map();
+  const modeHashes = new Map();
+  const toBuild = [];
 
   for (const e of entries) {
-    const unit = await regMod.loadRegisteredUnit(e.mode);
-    const built = await unit.build('standard', cache, {
-      synchronous: true,
-      integratedMode: COMPOSITE_MODES.has(e.mode),
-    });
-
-    const sizeByPartId = new Map();
-    for (const [partId, pb] of built.raycastIndex.partBoundsById.entries()) {
-      if (pb.localBox && !pb.localBox.isEmpty()) {
-        pb.localBox.getSize(_boxSize);
-        sizeByPartId.set(partId, `${fmtNum(_boxSize.x)},${fmtNum(_boxSize.y)},${fmtNum(_boxSize.z)}`);
-      } else {
-        sizeByPartId.set(partId, '-');
-      }
+    const h = computeUnitDepHash(e, coreHash, allAssembliesHash);
+    modeHashes.set(e.mode, h);
+    const hit = prevModes[e.mode];
+    if (!FORCE_FULL && hit && hit.hash === h && hit.sizeEntries && hit.matEntries) {
+      byMode.set(e.mode, {
+        sizeByPartId: new Map(Object.entries(hit.sizeEntries)),
+        matByPartId: new Map(Object.entries(hit.matEntries)),
+      });
+    } else {
+      toBuild.push(e);
     }
-
-    // Tally primary ResourceCache PBR material bucket per part from raycast bindings
-    const matTallies = new Map(); // partId -> Map<bucket, weight>
-    const addTally = (partId, bucket, weight) => {
-      if (!partId || !bucket) return;
-      let m = matTallies.get(partId);
-      if (!m) {
-        m = new Map();
-        matTallies.set(partId, m);
-      }
-      m.set(bucket, (m.get(bucket) || 0) + weight);
-    };
-
-    const _tmpBox = new THREE.Box3();
-    for (const binding of built.raycastIndex.bindings) {
-      const mat = binding.mesh?.material;
-      const bucket = mat?.userData?.__materialBucket || null;
-      if (!bucket) continue;
-      if (binding.kind === 'batched') {
-        const bm = binding.mesh;
-        for (let bi = 0; bi < binding.batchIdToPartId.length; bi++) {
-          const pid = binding.batchIdToPartId[bi];
-          if (!pid) continue;
-          let weight = 2;
-          try {
-            if (typeof bm.getGeometryIdAt === 'function' && typeof bm.getBoundingBoxAt === 'function') {
-              const gid = bm.getGeometryIdAt(bi);
-              if (bm.getBoundingBoxAt(gid, _tmpBox) && !_tmpBox.isEmpty()) {
-                _tmpBox.getSize(_boxSize);
-                weight = Math.max(0.5, _boxSize.x + _boxSize.y + _boxSize.z);
-              }
-            }
-          } catch {
-            weight = 2;
-          }
-          addTally(pid, bucket, weight);
-        }
-      } else if (binding.kind === 'instanced') {
-        const geo = binding.mesh?.geometry;
-        let instW = 0.8;
-        if (geo) {
-          if (!geo.boundingBox) geo.computeBoundingBox();
-          if (geo.boundingBox && !geo.boundingBox.isEmpty()) {
-            geo.boundingBox.getSize(_boxSize);
-            instW = Math.max(0.25, (_boxSize.x + _boxSize.y + _boxSize.z) * 0.5);
-          }
-        }
-        for (const pid of binding.instanceIdToPartId) {
-          addTally(pid, bucket, instW);
-        }
-      }
-    }
-
-    const matByPartId = new Map();
-    for (const [partId, tally] of matTallies.entries()) {
-      let bestBucket = '-';
-      let bestW = -1;
-      for (const [bucket, w] of tally.entries()) {
-        if (w > bestW || (w === bestW && bucket < bestBucket)) {
-          bestBucket = bucket;
-          bestW = w;
-        }
-      }
-      matByPartId.set(partId, bestBucket);
-    }
-
-    unit.dispose(cache);
-    const post = cache.getStats();
-    if (post.totalRefs !== 0 || post.materials !== 0 || post.geometries !== 0 || post.textures !== 0) {
-      throw new Error(`Zero-leak violation during catalog build of '${e.mode}': ${JSON.stringify(post)}`);
-    }
-
-    byMode.set(e.mode, { sizeByPartId, matByPartId });
   }
 
-  return byMode;
+  if (toBuild.length > 0) {
+    const bundlePath = ensureUnifiedV2RuntimeBundlePath();
+    toBuild.sort((a, b) => b.registryDeclaredCount - a.registryDeclaredCount);
+    const workerCount = Math.min(Math.max(1, os.cpus().length), toBuild.length);
+    const buckets = Array.from({ length: workerCount }, () => ({ modes: [], load: 0 }));
+    for (const e of toBuild) {
+      buckets.sort((a, b) => a.load - b.load);
+      buckets[0].modes.push(e.mode);
+      buckets[0].load += e.registryDeclaredCount;
+    }
+
+    const workerOuts = await Promise.all(
+      buckets.filter((b) => b.modes.length > 0).map((b) => runCatalogWorker(bundlePath, b.modes))
+    );
+    for (const outObj of workerOuts) {
+      for (const [mode, data] of Object.entries(outObj)) {
+        byMode.set(mode, {
+          sizeByPartId: new Map(Object.entries(data.sizeEntries)),
+          matByPartId: new Map(Object.entries(data.matEntries)),
+        });
+        nextModes[mode] = {
+          hash: modeHashes.get(mode),
+          sizeEntries: data.sizeEntries,
+          matEntries: data.matEntries,
+        };
+      }
+    }
+    writeCacheJson(SPATIAL_CACHE_KEY, { version: 2, updatedAt: new Date().toISOString(), modes: nextModes });
+  }
+
+  return { byMode, rebuiltCount: toBuild.length, cachedCount: entries.length - toBuild.length };
 }
 
 function classifyPlaygroundRole(unitId, part) {
@@ -433,15 +390,9 @@ function classifyPlaygroundRole(unitId, part) {
     if (hay.includes('vapor') || hay.includes('emi') || hay.includes('shield') || hay.includes('放熱') || hay.includes('シールド')) {
       return 'thermal_emi';
     }
-    if (hay.includes('isp') || hay.includes('bionz') || hay.includes('npu') || hay.includes('die')) {
-      return 'bionz';
-    }
-    if (hay.includes('cfexpress') || hay.includes('io') || hay.includes('slot') || hay.includes('port')) {
-      return 'storage';
-    }
-    if (hay.includes('pmic') || hay.includes('power') || hay.includes('電源')) {
-      return 'battery';
-    }
+    if (hay.includes('isp') || hay.includes('bionz') || hay.includes('npu') || hay.includes('die')) return 'bionz';
+    if (hay.includes('cfexpress') || hay.includes('io') || hay.includes('slot') || hay.includes('port')) return 'storage';
+    if (hay.includes('pmic') || hay.includes('power') || hay.includes('電源')) return 'battery';
     return 'mainboard';
   }
   if (unitId === 'battery') return 'battery';
@@ -453,13 +404,8 @@ function classifyPlaygroundRole(unitId, part) {
   if (unitId === 'body') {
     const pid = String(part.id || '').toLowerCase();
     if (
-      pid.includes('gasket') ||
-      pid.includes('seal') ||
-      pid.includes('heat') ||
-      pid.includes('graphite') ||
-      pid.includes('thermal') ||
-      pid.includes('shield') ||
-      pid.includes('emi')
+      pid.includes('gasket') || pid.includes('seal') || pid.includes('heat') ||
+      pid.includes('graphite') || pid.includes('thermal') || pid.includes('shield') || pid.includes('emi')
     ) {
       return 'thermal_emi';
     }
@@ -470,10 +416,6 @@ function classifyPlaygroundRole(unitId, part) {
   return 'accessory';
 }
 
-// -----------------------------------------------------------------------------
-// Main Generation Pipeline
-// -----------------------------------------------------------------------------
-
 async function main() {
   const t0 = Date.now();
   const entries = parseRegistryEntries();
@@ -483,9 +425,23 @@ async function main() {
 
   fs.mkdirSync(NAMES_DIR, { recursive: true });
   fs.mkdirSync(SPATIAL_DIR, { recursive: true });
+  fs.mkdirSync(PG_OUT_DIR, { recursive: true });
 
   console.log(`[CATALOG] Extracting exact Box3 sizes & PBR buckets for ${entries.length} modes (STD headless)...`);
-  const spatialDataByMode = await extractSpatialAndMaterialInfo(entries);
+
+  // Read all 22 JSONs in parallel while spatial workers run!
+  const [spatialRes, jsonLoaded] = await Promise.all([
+    extractSpatialAndMaterialInfo(entries),
+    Promise.all(
+      entries.map(async (e) => {
+        const jsonAbs = path.join(ROOT, e.dataFile);
+        const raw = await fsp.readFile(jsonAbs, 'utf8');
+        return { mode: e.mode, jsonBytes: Buffer.byteLength(raw, 'utf8'), jsonData: JSON.parse(raw) };
+      })
+    ),
+  ]);
+  const spatialDataByMode = spatialRes.byMode;
+  const jsonByMode = new Map(jsonLoaded.map((x) => [x.mode, x]));
 
   const indexRows = [
     'mode\tkind\tparts\tslug_prefix\tcode_min\tcode_max\tnext_code\tunit_file\tdata_file\tl1_file\tl2_file',
@@ -501,11 +457,10 @@ async function main() {
   let totalL1BytesAll = 0;
   let totalL2BytesAll = 0;
   const statsPerMode = [];
+  const writePromises = [];
 
   for (const e of entries) {
-    const jsonAbs = path.join(ROOT, e.dataFile);
-    const jsonBytes = fs.statSync(jsonAbs).size;
-    const jsonData = JSON.parse(fs.readFileSync(jsonAbs, 'utf8'));
+    const { jsonBytes, jsonData } = jsonByMode.get(e.mode);
     const parts = jsonData.parts;
 
     totalJsonBytesAll += jsonBytes;
@@ -538,24 +493,13 @@ async function main() {
     const getGroup = buildGroupAssigner(e.mode, parts);
     const extracted = spatialDataByMode.get(e.mode);
 
-    // Build L0 row
     indexRows.push(
       [
-        e.mode,
-        e.kind,
-        String(parts.length),
-        slugPrefix,
-        codeMin,
-        codeMax,
-        nextCode,
-        e.unitFile,
-        e.dataFile,
-        e.l1File,
-        e.l2File,
+        e.mode, e.kind, String(parts.length), slugPrefix, codeMin, codeMax, nextCode,
+        e.unitFile, e.dataFile, e.l1File, e.l2File,
       ].join('\t')
     );
 
-    // Build L1 grouped ultra-compact name roster + L2 spatial TSV
     const groupOrder = [];
     const groupItems = new Map();
     const l2Rows = ['id\tcode\tname\tgroup\tpos\tsize\texp\tmat'];
@@ -582,18 +526,7 @@ async function main() {
       const expStr = fmtVec3(p.explodeOffset);
       const matStr = extracted?.matByPartId.get(p.id) ?? '-';
 
-      l2Rows.push(
-        [
-          sanitizeTsv(p.id),
-          code,
-          l2Name,
-          grp,
-          posStr,
-          sizeStr,
-          expStr,
-          matStr,
-        ].join('\t')
-      );
+      l2Rows.push([sanitizeTsv(p.id), code, l2Name, grp, posStr, sizeStr, expStr, matStr].join('\t'));
     }
 
     const headerSuffix =
@@ -607,10 +540,8 @@ async function main() {
     const l1Content = `${l1Lines.join('\n')}\n`;
     const l2Content = `${l2Rows.join('\n')}\n`;
 
-    const l1Abs = path.join(ROOT, e.l1File);
-    const l2Abs = path.join(ROOT, e.l2File);
-    fs.writeFileSync(l1Abs, l1Content, 'utf8');
-    fs.writeFileSync(l2Abs, l2Content, 'utf8');
+    writePromises.push(fsp.writeFile(path.join(OUT_ROOT, e.l1File), l1Content, 'utf8'));
+    writePromises.push(fsp.writeFile(path.join(OUT_ROOT, e.l2File), l2Content, 'utf8'));
 
     const l1Bytes = Buffer.byteLength(l1Content, 'utf8');
     const l2Bytes = Buffer.byteLength(l2Content, 'utf8');
@@ -621,42 +552,51 @@ async function main() {
       allIndividualL1Chunks.push(l1Content.trimEnd());
     }
 
-    statsPerMode.push({
-      mode: e.mode,
-      kind: e.kind,
-      parts: parts.length,
-      jsonBytes,
-      l1Bytes,
-      l2Bytes,
-    });
+    statsPerMode.push({ mode: e.mode, kind: e.kind, parts: parts.length, jsonBytes, l1Bytes, l2Bytes });
   }
 
   indexRows.push(
     `# total_individual_modes=${totalIndivModes}\ttotal_individual_parts=${totalIndivParts}\ttotal_modes=${entries.length}`
   );
   const indexContent = `${indexRows.join('\n')}\n`;
-  fs.writeFileSync(path.join(CATALOG_DIR, 'INDEX.tsv'), indexContent, 'utf8');
+  writePromises.push(fsp.writeFile(path.join(CATALOG_DIR, 'INDEX.tsv'), indexContent, 'utf8'));
 
   const allNamesContent = `# ALL INDIVIDUAL ASSEMBLIES (${totalIndivModes} modes | ${totalIndivParts} unique parts)\n\n${allIndividualL1Chunks.join('\n\n')}\n`;
-  fs.writeFileSync(path.join(CATALOG_DIR, 'ALL_NAMES.txt'), allNamesContent, 'utf8');
+  writePromises.push(fsp.writeFile(path.join(CATALOG_DIR, 'ALL_NAMES.txt'), allNamesContent, 'utf8'));
 
-  // Compact columnar Play Ground catalog index (stored outside src/data/ to preserve validate_parts 2-1!)
-  const pgIndexPath = path.join(ROOT, 'src', 'playground', 'playground_index.json');
+  const pgIndexPath = path.join(PG_OUT_DIR, 'playground_index.json');
   const pgIndexJson = JSON.stringify({ v: 2, units: pgUnits, parts: pgParts });
-  fs.writeFileSync(pgIndexPath, pgIndexJson, 'utf8');
+  // Must finish writing BEFORE PartGeometryExtractor.ts esbuild imports playground_index.json!
+  await fsp.writeFile(pgIndexPath, pgIndexJson, 'utf8');
   const pgIndexBytes = Buffer.byteLength(pgIndexJson, 'utf8');
 
-  // Pre-bake quantized SNORM16/SNORM8/RGBA8/Uint16 blueprints for all 42 Play Ground starter template parts
-  // (`a7iv`, `zve1`, `fx3`, `wlk220`) -> cold Play Ground launch skips compiling 12 camera units (>300x faster!)
-  const pgTplPath = path.join(ROOT, 'src', 'playground', 'playground_templates.json');
+  // Play Ground pre-baked template blueprints (SHA-256 cached unless source units/extractor changed or --full!)
+  const pgTplPath = path.join(PG_OUT_DIR, 'playground_templates.json');
+  const pgTplRepoPath = path.join(ROOT, 'src', 'playground', 'playground_templates.json');
   let pgTplBytes = 0;
   let pgTplCount = 0;
-  {
-    // Ensure placeholder exists before bundling PartGeometryExtractor (which imports playground_templates.json)
-    if (!fs.existsSync(pgTplPath)) {
-      fs.writeFileSync(pgTplPath, '{"v":1,"parts":{}}', 'utf8');
+  const tplDepHash = computeFilesSha256([
+    'src/core',
+    'src/engine',
+    'src/playground/PartGeometryExtractor.ts',
+    'src/units/registry.ts',
+    'src/units/body.ts', 'src/units/mount.ts', 'src/units/lens.ts', 'src/units/shutter.ts',
+    'src/units/sensor.ts', 'src/units/mainboard.ts', 'src/units/bionz.ts', 'src/units/battery.ts',
+    'src/units/cfexpress.ts', 'src/units/evf.ts', 'src/units/lcd.ts', 'src/units/mi_shoe.ts',
+    'src/units/mic.ts', 'src/units/welcome.ts',
+    'src/assemblies',
+  ]);
+  const prevTplCache = FORCE_FULL ? null : readCacheJson(PG_TPL_CACHE_KEY);
+
+  if (!FORCE_FULL && prevTplCache?.hash === tplDepHash && prevTplCache?.json) {
+    writePromises.push(fsp.writeFile(pgTplPath, prevTplCache.json, 'utf8'));
+    pgTplBytes = Buffer.byteLength(prevTplCache.json, 'utf8');
+    pgTplCount = prevTplCache.count || 0;
+  } else {
+    if (!fs.existsSync(pgTplRepoPath)) {
+      fs.writeFileSync(pgTplRepoPath, '{"v":1,"parts":{}}', 'utf8');
     }
-    const extMod = await bundleTsModuleForNode('src/playground/PartGeometryExtractor.ts');
+    const extMod = await loadCachedTsModule('src/playground/PartGeometryExtractor.ts');
     const extractor = new extMod.PartGeometryExtractor();
     await extractor.ensureCatalogLoaded();
     const allEntries = extractor.getAllEntries();
@@ -739,15 +679,20 @@ async function main() {
     }
     extractor.dispose();
     const pgTplJson = JSON.stringify({ v: 1, parts: packedParts });
-    fs.writeFileSync(pgTplPath, pgTplJson, 'utf8');
+    writePromises.push(fsp.writeFile(pgTplPath, pgTplJson, 'utf8'));
     pgTplBytes = Buffer.byteLength(pgTplJson, 'utf8');
+    writeCacheJson(PG_TPL_CACHE_KEY, { hash: tplDepHash, count: pgTplCount, json: pgTplJson });
   }
+
+  await Promise.all(writePromises);
 
   const indexBytes = Buffer.byteLength(indexContent, 'utf8');
   const allNamesBytes = Buffer.byteLength(allNamesContent, 'utf8');
   const elapsedMs = Date.now() - t0;
 
-  console.log(`\n[CATALOG] Generated L0/L1/L2 + Play Ground Index & Templates for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks).`);
+  console.log(
+    `\n[CATALOG] Generated L0/L1/L2 + Play Ground Index & Templates for ${entries.length} modes (${totalIndivParts} unique parts) in ${(elapsedMs / 1000).toFixed(2)}s (0 cache leaks | spatial: ${spatialRes.rebuiltCount} built, ${spatialRes.cachedCount} SHA-256 cached).`
+  );
   console.log(`  L0 catalog/INDEX.tsv     : ${(indexBytes / 1024).toFixed(2)} kB`);
   console.log(`  PG src/playground/playground_index.json     : ${(pgIndexBytes / 1024).toFixed(2)} kB (${pgParts.length} parts, -${(100 * (1 - pgIndexBytes / totalJsonBytesIndiv)).toFixed(1)}% vs indiv JSONs)`);
   console.log(`  PG src/playground/playground_templates.json : ${(pgTplBytes / 1024).toFixed(2)} kB (${pgTplCount} pre-baked SNORM16/SNORM8 template blueprints)`);
@@ -760,18 +705,6 @@ async function main() {
   console.log(
     `  L2 all 20 modes sum      : ${(totalL2BytesAll / 1024).toFixed(2)} kB (vs ${(totalJsonBytesAll / 1024).toFixed(1)} kB all JSONs -> ${(100 * (1 - totalL2BytesAll / totalJsonBytesAll)).toFixed(2)}% reduction)`
   );
-
-  for (const rep of ['shutter', 'sensor_fab', 'integrated']) {
-    const s = statsPerMode.find((x) => x.mode === rep);
-    if (s) {
-      const r1 = (100 * (1 - s.l1Bytes / s.jsonBytes)).toFixed(2);
-      const r2 = (100 * (1 - s.l2Bytes / s.jsonBytes)).toFixed(2);
-      const r12 = (100 * (1 - (s.l1Bytes + s.l2Bytes) / s.jsonBytes)).toFixed(2);
-      console.log(
-        `  Rep ${rep.padEnd(11)}: JSON ${(s.jsonBytes / 1024).toFixed(1)}kB -> L1 ${(s.l1Bytes / 1024).toFixed(2)}kB (-${r1}%) | L2 ${(s.l2Bytes / 1024).toFixed(2)}kB (-${r2}%) | L1+L2 -${r12}%`
-      );
-    }
-  }
 }
 
 main().catch((err) => {

@@ -31,19 +31,60 @@ const MIME = {
   '.png': 'image/png',
 };
 
+const PMREM_CACHE_DIR = '/tmp/antigravity-pp-pmrem-v1';
+
 function startServer() {
+  const mem = new Map();
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
-      let rel = decodeURIComponent((req.url || '/').split('?')[0]);
-      if (rel === '/') rel = '/index.html';
-      const fp = path.join(STATIC_DIR, rel);
-      if (!fs.existsSync(fp)) {
+      const urlPath = (req.url || '/').split('?')[0];
+      if (urlPath.startsWith('/__pp_pmrem/')) {
+        const key = path.basename(urlPath).replace(/[^a-zA-Z0-9._-]/g, '');
+        const cacheFile = path.join(PMREM_CACHE_DIR, key);
+        if (req.method === 'PUT' || req.method === 'POST') {
+          const chunks = [];
+          req.on('data', (c) => chunks.push(c));
+          req.on('end', () => {
+            try {
+              fs.mkdirSync(PMREM_CACHE_DIR, { recursive: true });
+              fs.writeFileSync(cacheFile, Buffer.concat(chunks));
+              res.writeHead(204);
+              res.end();
+            } catch {
+              res.writeHead(500);
+              res.end();
+            }
+          });
+          return;
+        }
+        if (fs.existsSync(cacheFile)) {
+          const buf = fs.readFileSync(cacheFile);
+          res.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': buf.length });
+          res.end(buf);
+          return;
+        }
         res.writeHead(404);
-        res.end('404');
+        res.end();
         return;
       }
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(fp)] || 'application/octet-stream' });
-      fs.createReadStream(fp).pipe(res);
+      let rel = decodeURIComponent(urlPath);
+      if (rel === '/') rel = '/index.html';
+      const fp = path.join(STATIC_DIR, rel);
+      let cached = mem.get(fp);
+      if (!cached) {
+        if (!fs.existsSync(fp)) {
+          res.writeHead(404);
+          res.end('404');
+          return;
+        }
+        cached = {
+          buf: fs.readFileSync(fp),
+          mime: MIME[path.extname(fp)] || 'application/octet-stream',
+        };
+        mem.set(fp, cached);
+      }
+      res.writeHead(200, { 'Content-Type': cached.mime, 'Content-Length': cached.buf.length });
+      res.end(cached.buf);
     });
     srv.listen(0, '127.0.0.1', () => resolve({ srv, port: srv.address().port }));
   });
@@ -60,11 +101,16 @@ async function launchChrome() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
+      '--disable-background-networking',
+      '--disable-default-apps',
+      '--disable-extensions',
+      '--no-first-run',
       '--use-gl=angle',
       '--use-angle=swiftshader-webgl',
       '--enable-webgl',
       '--enable-unsafe-swiftshader',
       '--ignore-gpu-blocklist',
+      '--mute-audio',
       'about:blank',
     ],
     { stdio: ['ignore', 'pipe', 'pipe'] }
@@ -91,7 +137,7 @@ async function launchChrome() {
         proc.kill('SIGKILL');
       } catch {}
       try {
-        fs.rmSync(dir, { recursive: true, force: true });
+        fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 40 });
       } catch {}
     },
   };

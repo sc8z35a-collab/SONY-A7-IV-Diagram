@@ -69,6 +69,12 @@ export interface UnitBuildOptions {
   integratedMode?: boolean;
   /** Optional selective compilation filter (Play Ground hyper-extractor): compile ONLY these part IDs! */
   onlyPartIds?: ReadonlySet<string>;
+  /** Skip BatchedEdgeLines generation (for pure spatial Box3/material catalog extraction; 0 visual impact) */
+  skipEdges?: boolean;
+  /** Optional compiler-verified pure rawBuild cache shared across quality tiers in multi-tier verifiers */
+  sharedRawBuildCache?: Map<string, { rawBuild: unknown; pure: boolean }>;
+  /** Keep shared rawBuild geometries alive after build() until caller calls disposeSharedRawBuildCache() */
+  keepSharedRawAlive?: boolean;
 }
 
 export interface RaycastInstancedBinding {
