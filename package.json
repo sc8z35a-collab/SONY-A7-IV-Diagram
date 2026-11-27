@@ -5,13 +5,15 @@
   "type": "module",
   "bin": {
     "pp": "./scripts/pp.mjs",
-    "bg": "./scripts/bg.mjs"
+    "bg": "./scripts/bg.mjs",
+    "dx": "./scripts/dx.mjs"
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 5173",
     "catalog": "node scripts/generate_catalogs.mjs",
     "mirai:content": "node scripts/build_mirai_content.mjs",
     "bg": "node scripts/bg.mjs",
+    "dx": "node scripts/dx.mjs",
     "pp": "node scripts/pp.mjs",
     "capture": "node scripts/pp.mjs",
     "verify:wlk220": "node scripts/verify_wlk220_industrial.mjs",
