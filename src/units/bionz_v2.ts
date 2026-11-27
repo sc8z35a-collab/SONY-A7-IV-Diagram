@@ -1,6 +1,8 @@
 import bionzV2Json from '../data/bionz_v2.json';
 import { buildBionzV2Parts } from '../assemblies/bionz/bionzV2Parts';
 import { buildBionzV2DeepParts } from '../assemblies/bionz/bionzV2DeepParts';
+import { buildBionzV2UltraParts } from '../assemblies/bionz_v2/bionzV2UltraParts';
+import { buildBionzV2Wave3Parts } from '../assemblies/bionz_v2/bionzV2Wave3Parts';
 import { createBionzV2PhysicsOverlay } from '../assemblies/bionz/bionzV2PhysicsOverlay';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
 import { CompiledV2Unit } from '../core/v2_unit_compiler';
@@ -20,7 +22,12 @@ export function createBionzV2Unit(): OptimizedUnit {
     subsystem: 'bionz_v2',
     meta: BIONZ_V2_META,
     buildRaw: (mats, _quality, { clippingPlanes }) => {
-      const parts = [...buildBionzV2Parts(mats), ...buildBionzV2DeepParts(mats)];
+      const parts = [
+        ...buildBionzV2Parts(mats),
+        ...buildBionzV2DeepParts(mats),
+        ...buildBionzV2UltraParts(mats),
+        ...buildBionzV2Wave3Parts(mats),
+      ];
       const overlay = createBionzV2PhysicsOverlay(clippingPlanes);
       return {
         parts,

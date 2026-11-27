@@ -2224,7 +2224,7 @@ export class ZeroTextControls {
               ? 25
               : 19;
       } else if (part.subsystem === 'bionz_v2') {
-        // BIONZ XR / XR2 V2 Ultra-Microscopic 2nm GAA / A16 BSPDN / Ångström Dissection (55 parts: X2-01–X2-55)
+        // BIONZ XR / XR2 V2 Ultra-Microscopic 2nm GAA / A16 BSPDN / Ångström Dissection (105 parts: X2-01–X2-105)
         widthPx =
           part.order === 1 ||
           part.order === 3 ||
@@ -2247,7 +2247,24 @@ export class ZeroTextControls {
           part.order === 45 ||
           part.order === 50 ||
           part.order === 52 ||
-          part.order === 55
+          part.order === 55 ||
+          part.order === 56 ||
+          part.order === 57 ||
+          part.order === 68 ||
+          part.order === 74 ||
+          part.order === 78 ||
+          part.order === 79 ||
+          part.order === 80 ||
+          part.order === 81 ||
+          part.order === 86 ||
+          part.order === 89 ||
+          part.order === 91 ||
+          part.order === 94 ||
+          part.order === 96 ||
+          part.order === 98 ||
+          part.order === 100 ||
+          part.order === 102 ||
+          part.order === 105
             ? 32
             : part.order === 2 ||
                 part.order === 5 ||
@@ -2273,7 +2290,24 @@ export class ZeroTextControls {
                 part.order === 48 ||
                 part.order === 49 ||
                 part.order === 51 ||
-                part.order === 53
+                part.order === 53 ||
+                part.order === 58 ||
+                part.order === 62 ||
+                part.order === 65 ||
+                part.order === 69 ||
+                part.order === 72 ||
+                part.order === 75 ||
+                part.order === 82 ||
+                part.order === 84 ||
+                part.order === 87 ||
+                part.order === 90 ||
+                part.order === 93 ||
+                part.order === 95 ||
+                part.order === 97 ||
+                part.order === 99 ||
+                part.order === 101 ||
+                part.order === 103 ||
+                part.order === 104
               ? 25
               : 19;
       } else if (part.subsystem === 'sensor_fab') {

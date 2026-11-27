@@ -133,7 +133,7 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   },
   bionz_v2: {
     unitId: 'bionz_v2',
-    declaredPartCount: 55,
+    declaredPartCount: 105,
     loadMeta: makeLazyJsonMetaLoader('bionz_v2', () => import('../data/bionz_v2.json')),
     load: async () => (await import('./bionz_v2')).createBionzV2Unit(),
   },

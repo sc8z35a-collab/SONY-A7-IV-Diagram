@@ -290,8 +290,8 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         47,
         '#f59e0b',
         g,
-        new THREE.Vector3(0, 1.38, 0),
-        new THREE.Vector3(0, 5.2, -22.0),
+        new THREE.Vector3(0, 1.34, 0),
+        new THREE.Vector3(0, 8.8, -26.0),
         cp,
         0.2
       )
@@ -333,7 +333,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         48,
         '#3b82f6',
         g,
-        new THREE.Vector3(0, 0.88, 0),
+        new THREE.Vector3(0, 0.97, 0),
         new THREE.Vector3(-20.0, 2.2, 14.0),
         cp,
         0.2
@@ -388,7 +388,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         49,
         '#64748b',
         g,
-        new THREE.Vector3(-13.2, 0.8, 0),
+        new THREE.Vector3(-13.55, 0.25, 0),
         new THREE.Vector3(-26.0, 2.5, 0),
         cp,
         0.22
@@ -450,8 +450,8 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         50,
         '#94a3b8',
         g,
-        new THREE.Vector3(0, 12.25, 0),
-        new THREE.Vector3(0, 74.0, 0),
+        new THREE.Vector3(0, 11.05, 0),
+        new THREE.Vector3(0, 76.0, 0),
         cp,
         0.24
       )
@@ -465,7 +465,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
     const mbD = 76.0;
     const mbH = 1.36;
 
-    // extrudeHiRes auto-centers around y = 0 -> spans [-0.80, +0.80]
+    // extrudeHiRes auto-centers around y = 0 -> spans [-0.80, +0.80]; top solder mask sits at y = -9.15 + 0.82 = -8.33
     const pcbGeo = extrudeHiRes(createRoundedRectShape(mbW, mbD, 2.8), mbH, 0.12, 0.12, 2, 24);
     pcbGeo.rotateX(Math.PI / 2);
     applyPlanarUVs(pcbGeo, mbW, mbD, 'xz');
@@ -496,27 +496,6 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
       collar.userData.noEdges = true;
       g.add(collar);
     }
-
-    // Perimeter machined brass standoffs rising from SY-1122 top (+0.80) up to peripheral carrier undersides (+3.53)
-    const postGeo = hiResCyl(0.45, 0.52, 2.72, 12);
-    const postCoords: Array<[number, number]> = [
-      [-37.2, -16.5], [36.4, -16.2], [36.4, 0.4], [-37.2, 0.6],
-      [36.4, 14.6], [16.8, 22.6], [-24.2, 20.6], [-37.6, 13.8],
-      [-10.8, 32.4], [2.8, 32.4], [-8.0, -22.4], [16.6, -32.0],
-      [2.2, -32.0], [-12.4, -32.0], [-37.6, 26.4], [-27.0, -32.0],
-      [30.8, -32.0], [22.2, 32.6],
-    ];
-    const postInst = new THREE.InstancedMesh(postGeo, mats.goldPlating, postCoords.length);
-    postInst.userData.noEdges = true;
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < postCoords.length; i++) {
-      dummy.position.set(postCoords[i][0], 2.16, postCoords[i][1]);
-      dummy.rotation.set(0, 0, 0);
-      dummy.updateMatrix();
-      postInst.setMatrixAt(i, dummy.matrix);
-    }
-    postInst.instanceMatrix.needsUpdate = true;
-    g.add(postInst);
 
     parts.push(
       finalizeBionzExtraPart(
@@ -604,7 +583,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         52,
         '#94a3b8',
         g,
-        new THREE.Vector3(0, -11.4, 0),
+        new THREE.Vector3(0, -10.74, 0),
         new THREE.Vector3(0, -82.0, 0),
         cp,
         0.24
@@ -664,7 +643,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         53,
         '#8b5cf6',
         g,
-        new THREE.Vector3(-37.2, -5.2, -16.5),
+        new THREE.Vector3(-37.2, -7.97, -16.5),
         new THREE.Vector3(-58.0, -4.0, -26.0),
         cp,
         0.22
@@ -706,7 +685,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         54,
         '#10b981',
         g,
-        new THREE.Vector3(36.4, -5.2, -16.2),
+        new THREE.Vector3(36.4, -7.97, -16.2),
         new THREE.Vector3(58.0, -4.0, -26.0),
         cp,
         0.22
@@ -766,7 +745,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         55,
         '#06b6d4',
         g,
-        new THREE.Vector3(36.4, -5.2, 0.4),
+        new THREE.Vector3(36.4, -7.97, 0.4),
         new THREE.Vector3(60.0, -6.0, 2.0),
         cp,
         0.22
@@ -836,7 +815,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         56,
         '#f97316',
         g,
-        new THREE.Vector3(-37.2, -5.2, 0.6),
+        new THREE.Vector3(-37.2, -7.95, 0.6),
         new THREE.Vector3(-60.0, -6.0, 2.0),
         cp,
         0.22
@@ -895,7 +874,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         57,
         '#ec4899',
         g,
-        new THREE.Vector3(36.4, -5.2, 14.6),
+        new THREE.Vector3(36.4, -7.97, 14.6),
         new THREE.Vector3(58.0, -8.0, 24.0),
         cp,
         0.22
@@ -946,7 +925,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         58,
         '#22d3ee',
         g,
-        new THREE.Vector3(16.8, -5.2, 22.6),
+        new THREE.Vector3(16.8, -7.97, 23.4),
         new THREE.Vector3(26.0, -10.0, 38.0),
         cp,
         0.22
@@ -1001,7 +980,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         59,
         '#a855f7',
         g,
-        new THREE.Vector3(-24.2, -5.2, 20.6),
+        new THREE.Vector3(-24.6, -7.97, 20.6),
         new THREE.Vector3(-38.0, -8.0, 34.0),
         cp,
         0.22
@@ -1051,7 +1030,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         60,
         '#eab308',
         g,
-        new THREE.Vector3(-37.6, -5.2, 13.8),
+        new THREE.Vector3(-37.6, -7.97, 13.8),
         new THREE.Vector3(-58.0, -6.0, 22.0),
         cp,
         0.22
@@ -1106,7 +1085,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         61,
         '#f43f5e',
         g,
-        new THREE.Vector3(-10.8, -5.2, 32.4),
+        new THREE.Vector3(-10.8, -7.97, 32.4),
         new THREE.Vector3(-18.0, -12.0, 52.0),
         cp,
         0.22
@@ -1156,7 +1135,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         62,
         '#6366f1',
         g,
-        new THREE.Vector3(2.8, -5.2, 32.4),
+        new THREE.Vector3(2.8, -7.97, 32.4),
         new THREE.Vector3(4.0, -12.0, 52.0),
         cp,
         0.22
@@ -1210,7 +1189,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         63,
         '#eab308',
         g,
-        new THREE.Vector3(-8.0, -5.2, -22.4),
+        new THREE.Vector3(-8.0, -7.97, -22.8),
         new THREE.Vector3(-12.0, -10.0, -38.0),
         cp,
         0.22
@@ -1259,7 +1238,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         64,
         '#f59e0b',
         g,
-        new THREE.Vector3(16.6, -5.2, -32.0),
+        new THREE.Vector3(16.6, -7.97, -32.0),
         new THREE.Vector3(26.0, -12.0, -54.0),
         cp,
         0.22
@@ -1304,7 +1283,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         65,
         '#ef4444',
         g,
-        new THREE.Vector3(2.2, -5.2, -32.0),
+        new THREE.Vector3(2.2, -7.97, -32.0),
         new THREE.Vector3(2.0, -12.0, -54.0),
         cp,
         0.22
@@ -1367,7 +1346,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         66,
         '#cbd5e1',
         g,
-        new THREE.Vector3(-12.4, -5.2, -32.0),
+        new THREE.Vector3(-12.4, -7.97, -32.0),
         new THREE.Vector3(-20.0, -12.0, -54.0),
         cp,
         0.22
@@ -1415,7 +1394,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         67,
         '#22c55e',
         g,
-        new THREE.Vector3(-37.6, -5.2, 26.4),
+        new THREE.Vector3(-37.6, -7.97, 26.4),
         new THREE.Vector3(-58.0, -10.0, 44.0),
         cp,
         0.22
@@ -1460,7 +1439,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         68,
         '#f43f5e',
         g,
-        new THREE.Vector3(-27.0, -5.2, -32.0),
+        new THREE.Vector3(-27.0, -7.97, -32.0),
         new THREE.Vector3(-44.0, -12.0, -54.0),
         cp,
         0.22
@@ -1513,7 +1492,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         69,
         '#14b8a6',
         g,
-        new THREE.Vector3(30.8, -5.2, -32.0),
+        new THREE.Vector3(30.8, -7.97, -32.0),
         new THREE.Vector3(48.0, -12.0, -54.0),
         cp,
         0.22
@@ -1561,7 +1540,7 @@ export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[] {
         70,
         '#d97706',
         g,
-        new THREE.Vector3(22.2, -5.2, 32.6),
+        new THREE.Vector3(22.2, -7.90, 32.6),
         new THREE.Vector3(36.0, -10.0, 52.0),
         cp,
         0.24

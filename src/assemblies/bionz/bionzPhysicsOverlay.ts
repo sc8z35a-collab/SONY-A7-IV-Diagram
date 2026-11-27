@@ -214,8 +214,8 @@ export function createBionzPhysicsOverlay(
       explodeGuides.visible = show;
       if (!show) return;
       guideMat.opacity = 0.34 * THREE.MathUtils.smoothstep(explodeFactor, 0.04, 0.35);
-      const yMin = -12.0 - explodeFactor * 84.0;
-      const yMax = 14.0 + explodeFactor * 76.0;
+      const yMin = -12.0 - explodeFactor * 82.0;
+      const yMax = 15.4 + explodeFactor * 75.0;
       for (let i = 0; i < cornerLines.length; i++) {
         const [cx, cz] = corners[i];
         updateLine2PtsInPlace(cornerLines[i], cx, yMin, cz, cx, yMax, cz, true);

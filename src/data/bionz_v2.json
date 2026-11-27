@@ -1,9 +1,9 @@
 {
   "unitId": "bionz_v2",
   "version": "2.0.0",
-  "nameJa": "BIONZ XR V2 2nm GAAナノシート＆BSPDN超微細解剖（55パーツ）",
+  "nameJa": "BIONZ XR V2 2nm GAAナノシート＆BSPDN超微細解剖（105パーツ）",
   "nameEn": "BIONZ XR V2 2nm GAA Nanosheet & A16 BSPDN Nanoscale",
-  "declaredPartCount": 55,
+  "declaredPartCount": 105,
   "parts": [
     {
       "id": "xv2-soic-hybrid-bond-3d",
@@ -12,12 +12,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_01_2つの頭脳チップ",
       "assembledPos": [
         0,
-        14.8,
+        11.598,
         0
       ],
       "explodeOffset": [
         0,
-        56,
+        72,
         0
       ],
       "edgeOpacity": 0.22,
@@ -64,13 +64,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_02_チップ同士をつな",
       "assembledPos": [
         0,
-        13,
-        -7.8
+        -16.321,
+        0
       ],
       "explodeOffset": [
         0,
-        48,
-        -26
+        -60,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -115,14 +115,14 @@
       "swatchColor": "#2563eb",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_03_1ピンあたり毎秒",
       "assembledPos": [
-        0,
-        13,
-        8.8
+        8.2,
+        -15.211,
+        -13
       ],
       "explodeOffset": [
-        0,
-        48,
-        28
+        11.07,
+        -46,
+        -17.55
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -168,12 +168,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_04_チップの土台を樹",
       "assembledPos": [
         0,
-        11,
+        -17.761,
         0
       ],
       "explodeOffset": [
-        -34,
-        38,
+        0,
+        -78,
         0
       ],
       "edgeOpacity": 0.22,
@@ -219,14 +219,14 @@
       "swatchColor": "#ec4899",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_05_電気の代わりに_",
       "assembledPos": [
-        -8.4,
-        9.6,
+        -13,
+        -15.261,
         0
       ],
       "explodeOffset": [
-        -34,
-        30,
-        18
+        -17.55,
+        -46,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -271,14 +271,14 @@
       "swatchColor": "#06b6d4",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_06_0と1だけでなく",
       "assembledPos": [
-        8.4,
-        9.6,
+        13,
+        -15.261,
         0
       ],
       "explodeOffset": [
-        34,
-        30,
-        -18
+        17.55,
+        -46,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -324,12 +324,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_07_極細電線のあいだ",
       "assembledPos": [
         0,
-        7.6,
+        8.348,
         0
       ],
       "explodeOffset": [
         0,
-        24,
+        54,
         0
       ],
       "edgeOpacity": 0.22,
@@ -376,12 +376,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_08_細すぎると急に電",
       "assembledPos": [
         0,
-        5.4,
+        4.573,
         0
       ],
       "explodeOffset": [
         0,
-        17,
+        36,
         0
       ],
       "edgeOpacity": 0.22,
@@ -427,14 +427,14 @@
       "swatchColor": "#ef4444",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_09_トランジスタの大",
       "assembledPos": [
-        -10.2,
-        6.6,
-        10.2
+        -12.6,
+        9.413,
+        11.2
       ],
       "explodeOffset": [
-        -34,
-        20,
-        24
+        -15.75,
+        60,
+        14
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -479,14 +479,14 @@
       "swatchColor": "#8b5cf6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_10_AI処理が一瞬で",
       "assembledPos": [
-        10.2,
-        6.6,
-        10.2
+        12.6,
+        10.223,
+        11.2
       ],
       "explodeOffset": [
-        34,
-        20,
-        24
+        15.75,
+        60,
+        14
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -532,13 +532,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_11_激しい電気の川に",
       "assembledPos": [
         0,
-        4.3,
-        -10.8
+        10.688,
+        -13.2
       ],
       "explodeOffset": [
         0,
-        14,
-        -32
+        60,
+        -16.5
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -584,12 +584,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_12_縦の板_FinF",
       "assembledPos": [
         0,
-        0.2,
+        -2.832,
         0
       ],
       "explodeOffset": [
         0,
-        2,
+        3,
         0
       ],
       "edgeOpacity": 0.22,
@@ -636,13 +636,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_13_4枚の極薄シリコ",
       "assembledPos": [
         0,
-        0.2,
+        -2.832,
         0
       ],
       "explodeOffset": [
         0,
-        11,
-        -18
+        8,
+        -14
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -688,13 +688,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_14_わずか原子1個分",
       "assembledPos": [
         0,
-        0.2,
+        -2.832,
         0
       ],
       "explodeOffset": [
         0,
-        7,
-        24
+        6,
+        16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -740,13 +740,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_15_4枚のシートの隙",
       "assembledPos": [
         0,
-        0.2,
+        -2.832,
         0
       ],
       "explodeOffset": [
-        -24,
+        -18,
         4,
-        18
+        12
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -792,12 +792,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_16_シリコンの原子間",
       "assembledPos": [
         0,
-        0.2,
+        -2.832,
         0
       ],
       "explodeOffset": [
-        28,
-        2,
+        20,
+        3,
         0
       ],
       "edgeOpacity": 0.22,
@@ -844,11 +844,11 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_17_半導体と金属電線",
       "assembledPos": [
         0,
-        0.2,
+        -2.692,
         0
       ],
       "explodeOffset": [
-        -28,
+        -20,
         10,
         0
       ],
@@ -895,14 +895,14 @@
       "swatchColor": "#7c3aed",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_18_これまで横並びだ",
       "assembledPos": [
-        12.8,
-        0.2,
-        10.6
+        15.2,
+        -2.293,
+        0
       ],
       "explodeOffset": [
-        36,
-        2,
-        28
+        20.52,
+        4,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -947,14 +947,14 @@
       "swatchColor": "#3b82f6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_19_微細化が止まって",
       "assembledPos": [
-        -11.4,
-        -2.6,
-        -9.6
+        -0.096,
+        1.943,
+        -5.3
       ],
       "explodeOffset": [
-        -34,
-        -8,
-        -24
+        -0.13,
+        22,
+        -7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -999,14 +999,14 @@
       "swatchColor": "#8b5cf6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_20_人の骨格・鳥の瞳",
       "assembledPos": [
-        11.4,
-        -2.6,
-        -9.6
+        9.8,
+        1.898,
+        -5.3
       ],
       "explodeOffset": [
-        34,
-        -8,
-        -24
+        13.23,
+        22,
+        -7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1051,14 +1051,14 @@
       "swatchColor": "#10b981",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_21_蛍光灯・夕日・日",
       "assembledPos": [
-        -12.2,
-        -2.8,
-        9.6
+        -10.296,
+        1.761,
+        5.3
       ],
       "explodeOffset": [
-        -36,
-        -10,
-        24
+        -13.9,
+        22,
+        7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1103,14 +1103,14 @@
       "swatchColor": "#0284c7",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_22_赤・緑・青バラバ",
       "assembledPos": [
-        0,
-        -4.4,
-        11.4
+        -9.896,
+        1.753,
+        -5.3
       ],
       "explodeOffset": [
-        0,
-        -14,
-        34
+        -13.36,
+        22,
+        -7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1155,14 +1155,14 @@
       "swatchColor": "#f97316",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_23_手の揺れセンサー",
       "assembledPos": [
-        0,
-        -4.4,
-        -11.4
+        0.354,
+        1.792,
+        5.3
       ],
       "explodeOffset": [
-        0,
-        -14,
-        -34
+        0.48,
+        22,
+        7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1207,14 +1207,14 @@
       "swatchColor": "#0ea5e9",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_24_シャッターを切っ",
       "assembledPos": [
-        12.2,
-        -3.8,
-        0
+        10.65,
+        1.993,
+        5.3
       ],
       "explodeOffset": [
-        36,
-        -16,
-        0
+        14.38,
+        22,
+        7.16
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1260,12 +1260,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_25_信号の電線と渋滞",
       "assembledPos": [
         0,
-        -5.6,
+        -5.873,
         0
       ],
       "explodeOffset": [
         0,
-        -24,
+        -5,
         0
       ],
       "edgeOpacity": 0.22,
@@ -1312,12 +1312,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_26_シリコン板を18",
       "assembledPos": [
         0,
-        -7.8,
+        -8.02,
         0
       ],
       "explodeOffset": [
         0,
-        -32,
+        -13,
         0
       ],
       "edgeOpacity": 0.22,
@@ -1364,12 +1364,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_27_表側をデータ専用",
       "assembledPos": [
         0,
-        -10.2,
+        -11.231,
         0
       ],
       "explodeOffset": [
         0,
-        -44,
+        -32,
         0
       ],
       "edgeOpacity": 0.22,
@@ -1416,13 +1416,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_28_チップ全体のリズ",
       "assembledPos": [
         0,
-        -8.8,
+        -10.071,
         0
       ],
       "explodeOffset": [
-        34,
-        -38,
-        14
+        0,
+        -22,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1468,13 +1468,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_29_シリコンを極薄に",
       "assembledPos": [
         0,
-        -12.4,
+        13.588,
         0
       ],
       "explodeOffset": [
-        -34,
-        -52,
-        -14
+        0,
+        80,
+        0
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1520,12 +1520,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_30_データを何度もコ",
       "assembledPos": [
         0,
-        -3.4,
+        1.128,
         0
       ],
       "explodeOffset": [
         0,
-        -56,
+        16,
         0
       ],
       "edgeOpacity": 0.22,
@@ -1571,14 +1571,14 @@
       "swatchColor": "#0ea5e9",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_31_同じシリコン基板",
       "assembledPos": [
-        -18.6,
-        2.6,
-        4.4
+        -17.45,
+        -3.223,
+        -12.6
       ],
       "explodeOffset": [
-        -54,
-        10,
-        14
+        -23.56,
+        4,
+        -17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1623,14 +1623,14 @@
       "swatchColor": "#7c3aed",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_32_プラスの粒が得意",
       "assembledPos": [
-        19.2,
-        3.8,
-        -4.8
+        15.4,
+        -3.283,
+        12.6
       ],
       "explodeOffset": [
-        54,
-        14,
-        -16
+        20.79,
+        4,
+        17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1675,14 +1675,14 @@
       "swatchColor": "#a855f7",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_33_シリコンの限界を",
       "assembledPos": [
-        19.6,
-        1,
-        4.2
+        -15.4,
+        -3.303,
+        12.6
       ],
       "explodeOffset": [
-        56,
+        -20.79,
         4,
-        18
+        17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1727,14 +1727,14 @@
       "swatchColor": "#22d3ee",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_34_高誘電膜HfO_",
       "assembledPos": [
-        0,
-        3,
-        -18.6
+        -9.2,
+        -3.573,
+        12.6
       ],
       "explodeOffset": [
-        0,
-        12,
-        -54
+        -12.42,
+        4,
+        17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1779,14 +1779,14 @@
       "swatchColor": "#f59e0b",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_35_隣のシートを絶縁",
       "assembledPos": [
-        -18.6,
-        0.2,
-        -5.8
+        15.4,
+        -3.203,
+        6.6
       ],
       "explodeOffset": [
-        -54,
-        2,
-        -22
+        20.79,
+        4,
+        8.91
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1831,14 +1831,14 @@
       "swatchColor": "#14b8a6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_36_上下の結晶同士を",
       "assembledPos": [
-        18.6,
-        -2.6,
-        -5.8
+        15.4,
+        -2.733,
+        -6.6
       ],
       "explodeOffset": [
-        54,
-        -10,
-        -22
+        20.79,
+        4,
+        -8.91
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1883,14 +1883,14 @@
       "swatchColor": "#6366f1",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_37_わずか42ナノメ",
       "assembledPos": [
-        0,
-        0.4,
-        18.6
+        5.743,
+        -3.073,
+        -12.6
       ],
       "explodeOffset": [
-        0,
-        2,
-        54
+        7.75,
+        4,
+        -17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1935,14 +1935,14 @@
       "swatchColor": "#f97316",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_38_同じトランジスタ",
       "assembledPos": [
-        -18.6,
-        -3.2,
-        5.4
+        -6.203,
+        -2.583,
+        -12.6
       ],
       "explodeOffset": [
-        -54,
-        -12,
-        18
+        -8.37,
+        4,
+        -17.01
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -1987,14 +1987,14 @@
       "swatchColor": "#cbd5e1",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_39_銅より細くても電",
       "assembledPos": [
-        -18.6,
-        7.6,
-        -2.4
+        -13.2,
+        6.04,
+        -14.2
       ],
       "explodeOffset": [
-        -54,
-        26,
-        -8
+        -17.16,
+        42,
+        -18.46
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2039,14 +2039,14 @@
       "swatchColor": "#8b5cf6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_40_縦横4倍_8倍の",
       "assembledPos": [
-        18.6,
-        7.6,
-        -2.4
+        13.2,
+        6.159,
+        -14.2
       ],
       "explodeOffset": [
-        54,
-        26,
-        -8
+        17.16,
+        42,
+        -18.46
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2092,13 +2092,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_41_超細いローカル配",
       "assembledPos": [
         0,
-        7.6,
-        -18.6
+        6.183,
+        -14.2
       ],
       "explodeOffset": [
         0,
-        26,
-        -54
+        42,
+        -18.46
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2143,14 +2143,14 @@
       "swatchColor": "#ef4444",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_42_わざとハードに働",
       "assembledPos": [
-        -18.6,
-        6.6,
-        8.4
+        17.9,
+        2.528,
+        7.8
       ],
       "explodeOffset": [
-        -54,
+        24.16,
         22,
-        28
+        10.53
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2195,14 +2195,14 @@
       "swatchColor": "#b45309",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_43_1マイクロメート",
       "assembledPos": [
-        18.6,
-        -7.8,
-        4.8
+        -16.4,
+        -8.571,
+        4.6
       ],
       "explodeOffset": [
-        54,
-        -30,
-        16
+        -20.5,
+        -22,
+        5.75
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2247,14 +2247,14 @@
       "swatchColor": "#3b82f6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_44_6個必要だったS",
       "assembledPos": [
-        -18.6,
-        -5.8,
-        -5.8
+        2.37,
+        2.828,
+        -14.5
       ],
       "explodeOffset": [
-        -54,
-        -22,
-        -22
+        3.2,
+        22,
+        -19.58
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2299,14 +2299,14 @@
       "swatchColor": "#8b5cf6",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_45_電源を切っても記",
       "assembledPos": [
-        18.6,
-        -5.2,
-        -10.8
+        17.8,
+        2.627,
+        -14.5
       ],
       "explodeOffset": [
-        54,
-        -20,
-        -36
+        24.03,
+        22,
+        -19.58
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2351,14 +2351,14 @@
       "swatchColor": "#10b981",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_46_巨大なコンデンサ",
       "assembledPos": [
-        -18.6,
-        -8.4,
-        0.4
+        17.9,
+        2.768,
+        -7.8
       ],
       "explodeOffset": [
-        -54,
-        -34,
-        2
+        24.16,
+        22,
+        -10.53
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2403,14 +2403,14 @@
       "swatchColor": "#ec4899",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_47_電子の_自転_ス",
       "assembledPos": [
-        18.6,
-        -4.4,
-        11.4
+        17.9,
+        2.798,
+        -2.6
       ],
       "explodeOffset": [
-        54,
-        -16,
-        38
+        24.16,
+        22,
+        -3.51
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2456,13 +2456,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_48_急速充電器の主役",
       "assembledPos": [
         0,
-        -7.8,
-        -18.6
+        -9.121,
+        -13.2
       ],
       "explodeOffset": [
         0,
-        -30,
-        -54
+        -22,
+        -16.5
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2507,14 +2507,14 @@
       "swatchColor": "#0284c7",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_49_1ミリ幅のフチか",
       "assembledPos": [
-        18.6,
-        11.6,
-        6.6
+        14.2,
+        -14.601,
+        13
       ],
       "explodeOffset": [
-        54,
-        42,
-        22
+        19.17,
+        -46,
+        17.55
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2559,14 +2559,14 @@
       "swatchColor": "#2563eb",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_50_2048車線もの",
       "assembledPos": [
-        -18.6,
-        11.6,
-        6.6
+        -15.6,
+        -14.451,
+        -13
       ],
       "explodeOffset": [
-        -54,
-        42,
-        22
+        -21.06,
+        -46,
+        -17.55
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2611,14 +2611,14 @@
       "swatchColor": "#f43f5e",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_51_電気のON_OF",
       "assembledPos": [
-        -18.6,
-        11.2,
-        -9.2
+        4.8,
+        -14.551,
+        13
       ],
       "explodeOffset": [
-        -54,
-        40,
-        -30
+        6.48,
+        -46,
+        17.55
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2664,12 +2664,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_52_チップの裏側のシ",
       "assembledPos": [
         0,
-        -15.2,
+        16.298,
         0
       ],
       "explodeOffset": [
         0,
-        -68,
+        92,
         0
       ],
       "edgeOpacity": 0.22,
@@ -2716,13 +2716,13 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_53_外付けの水晶振動",
       "assembledPos": [
         0,
-        -8.8,
-        18.6
+        -9.871,
+        13.2
       ],
       "explodeOffset": [
         0,
-        -34,
-        54
+        -22,
+        16.5
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2767,14 +2767,14 @@
       "swatchColor": "#0d9488",
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_54_常に_表と裏のペ",
       "assembledPos": [
-        18.6,
-        -9.8,
-        -1.6
+        17.9,
+        2.548,
+        14.5
       ],
       "explodeOffset": [
-        54,
-        -38,
-        -6
+        24.17,
+        22,
+        19.58
       ],
       "edgeOpacity": 0.22,
       "standaloneOnly": true,
@@ -2820,12 +2820,12 @@
       "groupKey": "BIONZ_XR_極超解剖図_V2_X2_55_電子チップの真上",
       "assembledPos": [
         0,
-        16.8,
+        -16.431,
         0
       ],
       "explodeOffset": [
         0,
-        68,
+        -46,
         0
       ],
       "edgeOpacity": 0.22,
@@ -2864,6 +2864,2606 @@
         }
       ],
       "diagramType": "xv2_coupe_35d_interposer"
+    },
+    {
+      "id": "xv2-a14-nanoflex-pro-boost",
+      "order": 56,
+      "swatchColor": "#0ea5e9",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_56_A14_NanoFlexPro",
+      "assembledPos": [
+        -11.717,
+        -3.643,
+        -12.6
+      ],
+      "explodeOffset": [
+        -15.82,
+        4,
+        -17.01
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-56. TSMC A14「NanoFlex Pro 第2世代GAA ＆ Boost Cell 異種セル高融合構造」（IEDM 2026 Paper 3-2）",
+      "subtitle": "TSMC A14 (1.4nm-Class) 2nd-Gen GAA NanoFlex Pro, Boost Cells & <0.017um^2 6T SRAM (IEDM 2026 Paper 3-2)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-56 — 1.4nm世代で背の高い超加速Boost Cellと世界最小0.017μm²級SRAMを同一列で混載する究極DTCO",
+      "plainAnalogy": "2nm世代のNanoFlexが「道路の幅」を自由に変える技だったのに対し、TSMC 1.4nm級「A14」のNanoFlex Proは、なんと「ビルの階高（セル高さ）」と「nMOS/pMOSそれぞれのしきい値（VT Flex）」まで自在に組み合わせます！さらに8年間縮まらなかったSRAMの面積の壁を打ち破り、0.017平方マイクロメートル未満という世界最小ビットセルを実現。AI認識の急所だけ背の高い「Boost Cell」で一気に加速し、隣のキャッシュを極限まで詰め込める次世代の切り札です！",
+      "summary": "TSMCがIEDM 2026（Paper 3-2）および2026年OIP PDK v0.9で公開した1.4nm級「A14」第2世代GAAナノシート基盤。Boost Cellsによる臨界経路加速、NanoFlex Pro異種セル高融合、および8年ぶりの大幅縮小を果たした<0.017 μm² 6T SRAMを一体化します。",
+      "opticsAndPhysics": [
+        "N2P比で同一電力あたり+14%の高速化または同一速度あたり−23%の消費電力削減（N2比で速度+10〜15%・電力−25〜30%・チップ密度約+20%）を達成し、特にエネルギー効率はN2P基準比で最大+50%に達します。",
+        "N5（2020年）以降約0.021 μm²付近で足踏みしていた高密度6T SRAMビットセル面積を、次元グランドルール縮小とDTCOにより<0.017 μm²（約19%以上の大幅縮小）へ突破し、大容量オンダイAIキャッシュ搭載を可能にします。",
+        "さらにA14から派生するA13ではM0再設計とnMOS/pMOS独立しきい値調整「VT Flex」により設計フロー変更なしで面積−6%・エネルギー効率+5%のダイレクトシュリンク経路を備えています。"
+      ],
+      "formula": {
+        "expression": "A14 6T SRAM < 0.017 μm²（N5/N2比 −19%超） ＆ Boost Cell 速度 +14% / 電力 −23%（vs N2P）",
+        "description": "第2世代GAAとBoost Cell＋VT Flexの融合で、8年ぶりのSRAM縮小とフルノードPPA飛躍を同時達成"
+      },
+      "nextGenInnovation": "2026年11月にPDK v0.9が顧客設計可能となり2028年量産開始予定のA14（および2029年A12/A13）は、次世代αフラッグシップの超大容量オンダイAIキャッシュと8K/120pリアルタイムRAW処理を支える最有力ノードです。",
+      "specs": [
+        {
+          "label": "プロセス世代",
+          "value": "TSMC A14（1.4nm級・第2世代GAAナノシート）"
+        },
+        {
+          "label": "SRAMビットセル面積",
+          "value": "< 0.017 μm²（世界最小クラス・8年ぶり大幅縮小）"
+        },
+        {
+          "label": "PPA改善（vs N2P）",
+          "value": "速度 +14%（同電力）または 電力 −23%（同速度）・密度 +20〜23%"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "TSMC IEDM 2026 Paper 3-2 / 2026 OIP PDK v0.9"
+        }
+      ],
+      "diagramType": "xv2_a14_nanoflex_pro_boost"
+    },
+    {
+      "id": "xv2-14a-ribbonfet2-powerdirect",
+      "order": 57,
+      "swatchColor": "#f97316",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_57_Intel14A_PowerDirect",
+      "assembledPos": [
+        -0.69,
+        -3.643,
+        -12.6
+      ],
+      "explodeOffset": [
+        -0.93,
+        4,
+        -17.01
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-57. Intel 14A「RibbonFET 2 第2世代GAA ＋ PowerDirect 直接S/D裏面給電 ＆ Turbo Cells」（2026 PDK 0.9）",
+      "subtitle": "Intel 14A RibbonFET 2 2nd-Gen GAA, PowerDirect Direct-to-S/D Backside Power & Turbo Cells (2026 PDK 0.9)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-57 — 表面M0配線すら迂回して裏面からトランジスタの足元へ電気を直撃させる第2世代BSPDN＋高速Turbo Cell",
+      "plainAnalogy": "18A世代のPowerViaでは、裏側から運んできた電気をいったん表面のM0配線に受け渡してからトランジスタへ流していました。ところが次世代1.4nm級の「PowerDirect」は、裏側の電源パイプをトランジスタのソース・ドレイン結晶の真下へダイレクトに突き刺します！途中の回り道がゼロになるため電圧ロスがさらに激減し、High-NA EUV露光と「Turbo Cells」の組み合わせで、同じ電力のまま15〜20%も計算スピードを押し上げます！",
+      "summary": "Intelが2026年11月にPDK 0.9を公開した1.4nm級「Intel 14A」の3大革新構造。第2世代GAA「RibbonFET 2」、ソース・ドレイン裏面直結給電「PowerDirect」、および臨界パス専用高速セル「Turbo Cells」を統合した断面モデルです。",
+      "opticsAndPhysics": [
+        "第1世代PowerVia（裏面nTSV→表面M0経由）から進化したPowerDirect（Direct Backside Contact）により、裏面電源網がS/Dエピタキシャル結晶底面へ直結され、表面M0の信号配線自由度とIRドロップ耐性が飛躍的に向上します。",
+        "High-NA EUV（0.55 NA、Twinscan EXE:5200B）の単一露光パターニングを前提に設計され、18A比で性能/ワット比 +15〜20% または消費電力 −25〜35%、トランジスタ密度最大1.3倍を目標としています。",
+        "高密度標準セル列の中に背の高い高駆動「Turbo Cells」を局所混載することで、チップ全体の面積増加を抑えつつCPU/NPU/ISPの最大動作周波数を引き上げます。"
+      ],
+      "formula": {
+        "expression": "Intel 14A vs 18A: Perf/W +15〜20% ／ 消費電力 −25〜35% ／ 密度 1.3×（PowerDirect直結）",
+        "description": "RibbonFET 2＋裏面S/D直結PowerDirect＋Turbo Cellsの三位一体で電圧降下と遅延限界を同時突破"
+      },
+      "nextGenInnovation": "2026年末のPDK 0.9から2027年Q1のPDK 1.0を経てHigh-NA EUV量産へ進む14A世代は、裏面直結給電（Direct Backside Contact）時代の標準形を示しています。",
+      "specs": [
+        {
+          "label": "トランジスタ構造",
+          "value": "RibbonFET 2（第2世代水平積層GAAナノリボン）"
+        },
+        {
+          "label": "裏面給電方式",
+          "value": "PowerDirect（S/D底面直接コンタクト・表面M0非経由）"
+        },
+        {
+          "label": "PPA目標（vs 18A）",
+          "value": "速度/W +15〜20% または 電力 −25〜35%・密度最大1.3×"
+        },
+        {
+          "label": "露光＆設計キット",
+          "value": "High-NA EUV（0.55 NA）＋ Turbo Cells（2026 PDK 0.9）"
+        }
+      ],
+      "diagramType": "xv2_14a_ribbonfet2_powerdirect"
+    },
+    {
+      "id": "xv2-outer-wall-forksheet-fet",
+      "order": 58,
+      "swatchColor": "#8b5cf6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_58_OuterWall_Forksheet",
+      "assembledPos": [
+        12.177,
+        -3.663,
+        -12.6
+      ],
+      "explodeOffset": [
+        16.44,
+        4,
+        -17.01
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-58. imec A10世代「アウターウォール・フォークシート（Outer-Wall Forksheet）FET ＆ 連続チャネルひずみ維持壁」（VLSI 2025/2026）",
+      "subtitle": "imec A10-Node Outer-Wall Forksheet FET with Continuous S/D Channel Stressor Architecture (VLSI 2025/2026)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-58 — GAAナノシートとCFETの間を繋ぎ、外側絶縁壁でSRAM面積−22%と33%の駆動電流回復を両立するフォーク型構造",
+      "plainAnalogy": "nMOSとpMOSをギリギリまで近づける「フォークシート」は、2つのトランジスタの間に絶縁の壁を立ててフォーク（三又）のようにゲートを噛み合わせる構造です。しかし壁を「内側」に置くと結晶のひずみ（電子を速く流すバネ効果）が途切れて速度が33%も落ちてしまう弱点がありました。imecの最新「アウターウォール・フォークシート」は絶縁壁を思い切って「外側」へ移す逆転の発想で、SRAMを22%も小さくしながらバネ効果のフルパワーを完全復活させました！",
+      "summary": "imecがVLSI 2025/2026で実証したA10ノード向け「Outer-Wall Forksheet」アーキテクチャ。SiN誘電体壁をセル外縁へ配置することで、GAAナノシートとCFETの間を架橋しつつ、S/Dひずみ連続性と極小SRAM面積を両立します。",
+      "opticsAndPhysics": [
+        "従来のInner-Wall Forksheetや高密度GAAではp-n間隔縮小に伴いS/Dエピタキシャル・ストレッサーの応力連続性が失われ、駆動電流が最大約33%低下する課題がありました。",
+        "絶縁壁をn-n / p-p境界の外側へ移すOuter-Wall構造により、アクティブチャネルへ均一な圧縮／引張ひずみ（Full Channel Stress）を印加でき、リングオシレータ周波数（I_eff / C_eff）でA14世代を上回る性能を維持します。",
+        "さらにp-pおよびn-n間隔の極小化とゲートピッチ縮小の相乗効果により、A14ナノシート比でSRAMビットセル面積を約22%削減できることがDTCO解析で示されています。"
+      ],
+      "formula": {
+        "expression": "SRAM面積: −22%（vs A14 NS） ＆ S/D連続応力による駆動電流 +33%損失回復",
+        "description": "外側誘電体壁で隣接セルを分離しながらチャネル応力を途切れさせず、A10世代の密度と速度を両立"
+      },
+      "nextGenInnovation": "モノリシックCFET量産前の現実的なA10橋渡し技術として注目されており、高密度オンチップISPフレームメモリと高速ロジックを同一ウェハーで高歩留まりに両立する有力候補です。",
+      "specs": [
+        {
+          "label": "ゲート構造",
+          "value": "フォーク型三面制御（Tri-Gate Forked Wrap）＋ 外側SiN誘電体壁"
+        },
+        {
+          "label": "SRAM面積削減",
+          "value": "A14ナノシート比 −22%（p-p / n-n間隔極小化）"
+        },
+        {
+          "label": "ひずみ効果",
+          "value": "S/D応力連続性の確保（無応力比 −33%電流低下を完全回避）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "imec VLSI 2025 / 2026 A10ロジックロードマップ"
+        }
+      ],
+      "diagramType": "xv2_outer_wall_forksheet_fet"
+    },
+    {
+      "id": "xv2-full-bdi-subfin-stopper",
+      "order": 59,
+      "swatchColor": "#06b6d4",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_59_FullBDI_Stopper",
+      "assembledPos": [
+        17.68,
+        -3.613,
+        -12.6
+      ],
+      "explodeOffset": [
+        23.87,
+        4,
+        -17.01
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-59. 2nm GAA必須「全面ボトム誘電体絶縁層（Full BDI）＆ 寄生サブチャネル・パンチスルー遮断構造」",
+      "subtitle": "2nm Bulk-Si GAA Nanosheet Full Bottom Dielectric Isolation (Full BDI) & Sub-Channel Punch-Through Stopper",
+      "category": "BIONZ XR 極超解剖図 V2 X2-59 — ナノシート最下段とシリコン基板のあいだに完全絶縁の床を敷き、地面へ逃げるムダ電流をゼロにする秘密の床板",
+      "plainAnalogy": "GAAナノシートは空中に浮いた3〜4枚の板のすべてをゲートで包み込みますが、じつは一番下の板のさらに下、地面（シリコン基板）との境目にはゲートが届かず、そこから電気が「モグラのように地下トンネルを掘って」漏れ出す弱点（サブチャネル・パンチスルー）があります！そこで製造時に一番下だけゲルマニウム濃度約45%の犠牲層を溶かし抜き、代わりにガラス状の絶縁床板（Full BDI）を敷き詰めます。これで待機中の電池消耗が劇的に減るのです！",
+      "summary": "バルクSiウェハー上の2nm GAAナノシートで必須となる全面ボトム誘電体絶縁（Full BDI：Bottom Dielectric Isolation）。最下層に高Ge濃度（~45%）SiGe犠牲層を選択エッチングしSiN/SiO₂で完全置換することで、ゲート下およびS/D下の寄生基板リークを物理遮断します。",
+      "opticsAndPhysics": [
+        "従来の高濃度パンチスルーストッパー（PTS）不純物注入は、ドーパントが最下段ナノシートへ熱拡散してキャリア移動度劣化とVthばらつき（RDF）を引き起こす欠点がありました。",
+        "Full BDIはゲート直下だけでなくソース・ドレイン（S/D）エピタキシャル直下まで連続する誘電体バリアを形成し、サブチャネル寄生トランジスタのリーク電流 I_off と接合容量 C_j を同時に激減させます。",
+        "これにより短ゲート長（L_g ≈ 12 nm）でも優れたDIBL耐性と急峻なサブスレッショルド係数（SS ~ 63 mV/dec）を維持でき、カメラのスタンバイ待機電力と高感度撮影時の暗電流的発熱を抑えます。"
+      ],
+      "formula": {
+        "expression": "犠牲層 Ge~45% SiGe 選択除去 → SiN/SiO₂ Full BDI置換 ⇒ 寄生基板リーク I_sub → ≈ 0",
+        "description": "不純物ドーピングに頼らず物理的な絶縁床でサブチャネル漏れを根絶し、低Vmin動作と省電力を実現"
+      },
+      "nextGenInnovation": "IBM/TSMC/imecの2nm・A14量産GAAプロセスから将来CFETの中間絶縁層まで共通する基礎モジュールであり、バルクSiのままSOI級の低リーク性能を引き出す中核技術です。",
+      "specs": [
+        {
+          "label": "形成プロセス",
+          "value": "最下層高Ge（~45%）SiGe犠牲層エッチング → SiN/SiO₂コンフォーマル充填"
+        },
+        {
+          "label": "絶縁範囲",
+          "value": "ゲート直下 ＆ S/Dエピタキシャル底面の全面連続遮断（Full BDI）"
+        },
+        {
+          "label": "電気的効果",
+          "value": "サブチャネル・パンチスルー遮断・接合容量低減・12nmゲート長対応"
+        },
+        {
+          "label": "適用世代",
+          "value": "2nm GAA / A14 / Forksheet バルクSi量産プロセス標準構造"
+        }
+      ],
+      "diagramType": "xv2_full_bdi_subfin_stopper"
+    },
+    {
+      "id": "xv2-sdb-sagc-cell-isolation",
+      "order": 60,
+      "swatchColor": "#f43f5e",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_60_SDB_SAGC",
+      "assembledPos": [
+        -15.4,
+        -3.663,
+        6.6
+      ],
+      "explodeOffset": [
+        -20.79,
+        4,
+        8.91
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-60. 標準セル高縮小の極意「シングル拡散ブレーク（SDB）＆ 自己整合ゲートカット（SAGC）絶縁トレンチ」",
+      "subtitle": "Single Diffusion Break (SDB) Deep SiN Wall & Self-Aligned Gate Cut (SAGC) Sub-12nm Isolation Trench",
+      "category": "BIONZ XR 極超解剖図 V2 X2-60 — 隣り合うトランジスタをダミーゲート1本分の極薄カッター壁と自己整合ゲート切断刃で鮮やかに仕切る超高密度パズル",
+      "plainAnalogy": "マンションの部屋（トランジスタ）を1つでも多く詰め込むには、部屋と部屋を仕切る壁を極限まで薄くする必要があります。昔は「空き部屋を2つ（ダブル拡散ブレーク）」挟んで隣と絶縁していましたが、2nm世代ではダミーゲートたった1本分だけを深くくり抜いて硬いSiN壁を流し込む「シングル拡散ブレーク（SDB）」へ進化！さらに横に長く伸びた金属ゲートを12nm未満の刃幅でスパッと分断する「自己整合ゲートカット（SAGC）」の十字クロスで、チップ面積を約15〜20%も節約します！",
+      "summary": "2nm/A14標準セル面積を劇的に圧縮する2大FEOLパターニング・ブースター。ダミーゲート1ピッチで隣接アクティブ領域を分断するSDB（Single Diffusion Break）と、連続HKMG配線を自己整合的に切断するSAGC（Self-Aligned Gate Cut）の直交構造です。",
+      "opticsAndPhysics": [
+        "SDBはダミーポリゲートを除去した直後の溝を通してナノシート積層と基板表層まで垂直エッチングし、低誘電率SiN/SiO₂トレンチで埋め戻すことで、従来のDDB（2ゲートピッチ消費）に比べセル幅を1 CPP（42〜48 nm）まるごと削減します。",
+        "SAGCはメタルゲート置換（RMG）前後の狭いセル上下境界へ誘電体カット壁を自己整合形成することで、露光オーバーレイ誤差があっても隣接アクティブチャネル端を傷つけずに金属ゲートを完全分離します。",
+        "この十字型誘電体仕切り構造により、5トラック〜4トラック級の超低ハイト標準セルライブラリ（BIONZ XR2の数億ゲート論理ブロック）が高歩留まりに実現されます。"
+      ],
+      "formula": {
+        "expression": "セル境界オーバーヘッド: 2 CPP（DDB） → 1 CPP（SDB） ＋ SAGCカット幅 < 12 nm ⇒ 標準セル面積 −15〜20%",
+        "description": "横方向のSDBと縦方向のSAGCの直交絶縁トレンチが、2nmロジック高密度化の物理的基盤を支える"
+      },
+      "nextGenInnovation": "TSMC N2/A14およびimecのForksheet/CFET DTCO研究で、SDB/SAGCの極細アスペクト比エッチングとボイドフリーALD充填が歩留まりと密度を左右する最重要プロセスとなっています。",
+      "specs": [
+        {
+          "label": "横方向分離（SDB）",
+          "value": "単一ダミーゲート除去・深掘りSiN絶縁壁（1 CPP境界）"
+        },
+        {
+          "label": "縦方向分離（SAGC）",
+          "value": "自己整合誘電体ゲートカット刃（カット幅 < 12 nm級）"
+        },
+        {
+          "label": "面積削減効果",
+          "value": "DDB比で標準セル面積 約15〜20%削減・4〜5T低セル高対応"
+        },
+        {
+          "label": "役割",
+          "value": "数億ゲート規模のISP/NPU論理セル間リーク・短絡完全遮断"
+        }
+      ],
+      "diagramType": "xv2_sdb_sagc_cell_isolation"
+    },
+    {
+      "id": "xv2-gaa-active-backside-esd",
+      "order": 61,
+      "swatchColor": "#ef4444",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_61_Backside_ESD",
+      "assembledPos": [
+        16.4,
+        -9.081,
+        0
+      ],
+      "explodeOffset": [
+        20.5,
+        -22,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-61. 超薄膜300nm基板の死活問題「アクティブ裏面（Active Backside）垂直ESD保護ダイオード ＆ CDMクランプ」",
+      "subtitle": "Active Backside Vertical ESD Protection Diode on 300nm Thinned Si Substrate & Low-C CDM Clamp (EOS/ESD Roadmap 2027)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-61 — 裏面給電で紙の1/200以下に削られた極薄シリコンを静電気の雷撃から守る、裏面銅ヒートシンク直結の垂直避雷針",
+      "plainAnalogy": "冬にドアノブでバチッとくる静電気（ESD）は、ナノサイズのチップにとっては数千ボルトの落雷と同じです！しかも裏面給電（BSPDN）のためにシリコン基板をわずか300ナノメートルまで極限に薄く削ると、従来の横向き保護ダイオードは熱の逃げ場がなくなり、たった0.67アンペアの静電気で一瞬にして焼き切れてしまいます。そこで登場したのが「アクティブ裏面垂直ESDダイオード」！静電気の巨大な電流と熱を真下の極太・裏面銅プレートへ真っ直ぐ逃がす、極薄チップ専用の立体避雷針です！",
+      "summary": "BSPDNで300 nm級まで極薄化されたシリコン基板特有のESD熱破壊問題を解決する「Active Backside垂直ESD保護ダイオード」およびチップレットD2D向け超低容量CDMクランプ（imec / EOS-ESD Roadmap 2027）。",
+      "opticsAndPhysics": [
+        "100 ns幅のHBM静電気パルス（1 kV ≈ 0.67 A）のシリコン中熱拡散長は約3 μmに達するため、厚さ300 nmに薄化された従来型横方向STIダイオードは電流密度が約2倍に集中し、熱暴走（T_max超過）で破壊します。",
+        "Active Backside構造は、薄化シリコン裏面にp+エピタキシャル層と裏面コンタクトを形成して垂直ダイオード化し、巨大な熱容量を持つ裏面金属層（BSM）を直接ヒートシンク兼低抵抗カソードとして機能させます。",
+        "さらに10 μm未満ピッチの3D/D2Dインターフェースでは従来型大型ESD素子が置けないため（EOS/ESD 2027ロードマップ）、超低寄生容量の自己保護型CDMクランプと組み合わせてカメラのUSB-C/HDMI/ホットシュー経由の静電気からBIONZ XR2を守ります。"
+      ],
+      "formula": {
+        "expression": "t_Si = 300 nm ≪ L_th(100 ns) ≈ 3 μm ⇒ 垂直Active Backsideダイオード＋BSM直結放熱でΔT_max大幅低減",
+        "description": "基板薄化による横方向ESD焼損を、裏面金属直結の垂直電流・垂直放熱パスへ構造転換して克服"
+      },
+      "nextGenInnovation": "2025–2027年のBSPDN・CFET量産化において、微細化しないESD面積の増大と極薄基板ESD耐性は最重要信頼性テーマ（EOS/ESD Association Roadmap 2027）として積極導入が進んでいます。",
+      "specs": [
+        {
+          "label": "薄化基板厚",
+          "value": "約 300 nm（従来バルク 4.5 μm超の熱拡散長を下回る極薄領域）"
+        },
+        {
+          "label": "保護構造",
+          "value": "p+アクティブ裏面エピ＋垂直ダイオード＋裏面金属（BSM）直結ヒートシンク"
+        },
+        {
+          "label": "対象サージ",
+          "value": "HBM（人体帯電 100ns TLP）＆ CDM（デバイス帯電超高速サージ）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "imec Active Backside ESD / EOS-ESD Association Roadmap 2027"
+        }
+      ],
+      "diagramType": "xv2_gaa_active_backside_esd"
+    },
+    {
+      "id": "xv2-ald-mon-linerless-mo-via",
+      "order": 62,
+      "swatchColor": "#94a3b8",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_62_Linerless_Mo_Via",
+      "assembledPos": [
+        4.8,
+        6.263,
+        14.2
+      ],
+      "explodeOffset": [
+        6.24,
+        42,
+        18.46
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-62. ALD窒化モリブデン転換「完全バリアレス・モリブデン（Linerless Mo）超低抵抗ビア＆M0ローカル配線」（IEDM 2025 / VLSI 2026）",
+      "subtitle": "ALD MoN-Seed-Converted Linerless Pure Molybdenum (Mo) Bottom-Up Super-Via & M0 Interconnect (IEDM 2025 / VLSI 2026)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-62 — 銅を包む邪魔なバリア膜をゼロにし、窒化モリブデン種膜から純モリブデン結晶を底上げ成長させる極細ビア革命",
+      "plainAnalogy": "幅18ナノメートル以下の極細トンネル（ビア）に銅を詰めようとすると、銅が外へ滲み出さないように巻く「保護シート（TaNバリア膜）」だけでトンネルの半分以上が塞がってしまい、電気抵抗が急増します。2025–2026年の最新解決策が「完全バリアレス・モリブデン（Mo）」！最初に原子数層だけの窒化モリブデン（MoN）の種を敷いて純モリブデンへ化学変換し、その上からボトムアップで純Moを隙間なく成長させます。保護シートがゼロなので穴いっぱいに金属が詰まり、信号速度が30%超も向上して断線寿命も劇的に延びます！",
+      "summary": "IEDM 2025 / VLSI 2026で実用化が加速したバリアレス・モリブデン（Linerless Mo）垂直ビアおよびM0ローカル配線。ALDによるMoNシード層形成→純Mo還元転換とボトムアップ成膜により、TaNバリアを撤廃して極細ビア抵抗とEM故障を劇的に改善します。",
+      "opticsAndPhysics": [
+        "モリブデン（Mo）は電子平均自由行程（λ ≈ 11.2 nm）が銅（39 nm）の約1/3以下と極めて短く、さらに融点が2,623°Cと高いため、15 nm以下の極細ビアでも粒界散乱による抵抗急増とエレクトロマイグレーション（EM）が起きにくい理想金属です。",
+        "直接MoをALD成膜すると絶縁膜との密着性や核形成遅延が課題になりますが、極薄の窒化モリブデン（MoN）シード層を先に成長させて純Moへ転換する化学プロセスにより、高抵抗なTiN/TaNライナーを完全に排除できます。",
+        "先端ロジックおよびメモリ実証では、従来タングステン／銅バリア構造に比べて読み出し・RC遅延を30%以上改善し、寿命試験での故障率を94%削減する劇的な信頼性向上が報告されています。"
+      ],
+      "formula": {
+        "expression": "電子平均自由行程 λ_Mo = 11.2 nm（vs λ_Cu = 39 nm） ＋ バリア膜厚 0 nm ⇒ 極細ビア抵抗＆RC遅延 −30%超",
+        "description": "高抵抗ライナーを撤廃して有効断面積を最大化し、高融点Moの短平均自由行程で極細配線の壁を突破"
+      },
+      "nextGenInnovation": "IEDM 2025以降、先端3Dメモリワードラインから2nm/A14ロジックのM0・スーパービアまでモリブデンALD成膜（Lam Research等）の全面展開が進行中です。",
+      "specs": [
+        {
+          "label": "配線金属・製法",
+          "value": "ALD MoNシード転換 → 完全バリアレス純モリブデン（Mo）ボトムアップ充填"
+        },
+        {
+          "label": "電子平均自由行程",
+          "value": "約 11.2 nm（銅 39 nmの約1/3以下・サイズ効果による抵抗増を抑制）"
+        },
+        {
+          "label": "性能・信頼性改善",
+          "value": "遅延改善 > 30% ／ 寿命試験故障率 −94%（ライナー撤廃効果）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "IEDM 2025 / VLSI 2026 次世代ポスト銅インターコネクト実証"
+        }
+      ],
+      "diagramType": "xv2_ald_mon_linerless_mo_via"
+    },
+    {
+      "id": "xv2-self-aligned-sac-v0-cap",
+      "order": 63,
+      "swatchColor": "#a855f7",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_63_SAC_SiN_Helmet",
+      "assembledPos": [
+        14.5,
+        6.263,
+        14.2
+      ],
+      "explodeOffset": [
+        18.85,
+        42,
+        18.46
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-63. 極細42nmピッチ短絡ゼロ「自己整合コンタクト（SAC）SiNゲートキャップ ＆ エアーギャップV0ビア」",
+      "subtitle": "Self-Aligned Contact (SAC) High-Selectivity SiN Gate Helmet Cap & Recessed Air-Gap V0 Via",
+      "category": "BIONZ XR 極超解剖図 V2 X2-63 — 金属ゲートの頭に頑丈な窒化ケイ素ヘルメットを被せ、わずか数nm隣へ掘り下げるコンタクトとの接触ショートを100%防ぐ守護兜",
+      "plainAnalogy": "ゲートピッチ42〜48nmという超満員の世界では、トランジスタの「金属ゲート（MG）」と、すぐ隣のソース・ドレインへ降りる「コンタクト金属（CA）」の間がわずか数ナノメートルしか離れていません！露光がほんの2ナノメートルずれただけで隣同士が接触ショートしてチップが死んでしまいます。そこで金属ゲートの頭頂部に硬い窒化ケイ素（SiN）の「保護ヘルメット（SACキャップ）」を被せておきます。上からコンタクト溝を掘ってもヘルメットがエッチングを弾き返し、狙った溝へ勝手に滑って着地する（自己整合）名人芸です！",
+      "summary": "42〜48 nm CPPの2nm GAA・MOL（ミドル・オブ・ライン）で歩留まりを決定づける自己整合コンタクト（SAC：Self-Aligned Contact）用高選択比SiNゲートキャップ、Co/Wトレンチコンタクト、および低容量V0ビア構造。",
+      "opticsAndPhysics": [
+        "リプレイスメント・メタルゲート（RMG）を上部リセス（掘り下げ）加工した後、エッチング選択比の極めて高い緻密なSiNまたはSiOCN誘電体キャップ（ヘルメット）を埋め込みCMP平坦化します。",
+        "続くS/Dコンタクト開口エッチングでは、酸化膜（SiO₂）だけを高速に削りSiNキャップはほとんど削らない高選択プラズマを使うことで、リソグラフィのオーバーレイ誤差を物理的に吸収し、ゲートとS/Dの短絡（ショート）を防止します。",
+        "同時にコンタクトとゲート間のフリンジ寄生容量（C_gd / C_gs）が2nm回路の動作速度の約4割を支配するため、低誘電率スペーサーとV0エアーギャップを組み合わせてスイッチング速度と省電力を高めます。"
+      ],
+      "formula": {
+        "expression": "エッチング選択比 S(SiO₂ : SiN) > 20 : 1 ⇒ EPE（エッジ配置誤差）±3 nmでもゲート–コンタクト短絡ゼロ",
+        "description": "高選択比SiNヘルメットが露光ズレを物理的にガードし、サブ50nmピッチMOLの量産歩留まりを成立させる"
+      },
+      "nextGenInnovation": "A14・CFET世代ではSiNキャップ自体の誘電率（k≈7）による寄生容量すら削減するため、SiBCN/SiCOなどの低k高選択比SACキャップ材料への置き換えが進んでいます。",
+      "specs": [
+        {
+          "label": "キャップ材料",
+          "value": "高エッチング選択比 SiN / 低k SiBCN ゲート保護ヘルメット（SAC Cap）"
+        },
+        {
+          "label": "対象ピッチ",
+          "value": "ゲートピッチ（CPP）42〜48 nm 級 2nm/A14 MOL領域"
+        },
+        {
+          "label": "コンタクト金属",
+          "value": "ラップアラウンド・シリサイド上 Co / W / Mo 自己整合トレンチ充填"
+        },
+        {
+          "label": "効果",
+          "value": "ゲート–S/D短絡防止・EPEマージン拡大・寄生容量 C_parasitic 低減"
+        }
+      ],
+      "diagramType": "xv2_self_aligned_sac_v0_cap"
+    },
+    {
+      "id": "xv2-bspdn-sige-etch-stop-thinning",
+      "order": 64,
+      "swatchColor": "#10b981",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_64_SiGe_EtchStop",
+      "assembledPos": [
+        -16.4,
+        -9.121,
+        -4.6
+      ],
+      "explodeOffset": [
+        -20.5,
+        -22,
+        -5.75
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-64. BSPDN極限ウェハー薄化「エピタキシャルSiGeエッチストップ層（TTV < 40nm）＆ 裏面赤外アライメントマーク」",
+      "subtitle": "BSPDN Extreme Wafer-Thinning Epitaxial SiGe Soft-Landing Etch-Stop (TTV < 40nm) & Through-Si IR Alignment Vernier",
+      "category": "BIONZ XR 極超解剖図 V2 X2-64 — 厚さ0.775mmのウェハーを2,500分の1の極薄300nmまで削る際、トランジスタ寸前でピタッと止める魔法のストッパー膜と透視照準マーク",
+      "plainAnalogy": "裏面給電（BSPDN）を作るには、チップをひっくり返して裏側から厚さ775マイクロメートルのシリコンウェハーを「わずか300ナノメートル」まで削り落とす必要があります！例えるなら東京タワーの高さをわずか13センチまで削って、その下の髪の毛1本も傷つけないような超絶荒業です。そこで製造の一番最初に、シリコンの下へ「SiGe（シリコン・ゲルマニウム）のブレーキ層」を敷いておきます。専用薬液で削るとSiGeに当たった瞬間に化学反応がピタッと止まり、ウェハー全面の厚み誤差40nm未満で裏面配線へ完璧に着地します！",
+      "summary": "TSMC A16 / Intel 18A・14A / imec BSPDNの最重要製造キーモジュール。300mmウェハーの2,500倍極限薄化を全厚ばらつき（TTV）< 40 nmで自動停止させるエピタキシャルSiGeエッチストップ層と、シリコン透過赤外（IR）裏面アライメント・バーニア構造です。",
+      "opticsAndPhysics": [
+        "表面のトランジスタとBPR/M0を完成させた後、SiCN対SiCNの常温誘電体フュージョン接合（250°Cアニール）で支持キャリアウェハーへ貼り合わせ、機械研削（BG）→CMP→高選択ウェットエッチングの3段階で裏面を削ります。",
+        "最終ウェットエッチングが埋め込みエピタキシャルSiGe層で自動停止（Soft-Landing）した後、Siに対して超高選択比を持つ専用薬液でSiGe層だけを剥離することで、300 mmウェハー全域の残存Si厚ばらつき（TTV）を40 nm未満へ抑え込みます。",
+        "さらに表面と裏面をサブ10 nm精度で重ね合わせるため、シリコンを透過する近赤外光（IR）で表面基準マークを裏側から読み取る専用アライメント・バーニアを備え、裏面nTSVの確実な着地を保証します。"
+      ],
+      "formula": {
+        "expression": "ウェハー厚: 775 μm → ~300 nm（2,500×薄化） ＆ 全面厚ばらつき TTV < 40 nm（SiGe高選択停止）",
+        "description": "機械研削では不可能なナノメートル精度の薄化制御を、エピタキシャルSiGeの化学選択ストップとIR透視照準で実現"
+      },
+      "nextGenInnovation": "imec・Intel・TSMCの2025–2026 BSPDN量産プロセスの中核を成し、将来的にはダミーキャリアの代わりに3Dメモリウェハーを貼り合わせる「両面アクティブ3D-SoC（Flip-3D）」へ直結します。",
+      "specs": [
+        {
+          "label": "薄化プロセス",
+          "value": "SiCNフュージョン仮接合 → 研削 → CMP → SiGe高選択ウェット停止"
+        },
+        {
+          "label": "残存Si厚 ＆ 均一性",
+          "value": "約 300〜500 nm ／ 全面厚みばらつき TTV < 40 nm"
+        },
+        {
+          "label": "裏面露光位置合わせ",
+          "value": "シリコン透過近赤外（IR）スルーSiアライメント・バーニア格子"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "imec BSPDN Wafer Thinning & Backside Alignment プロセス実証"
+        }
+      ],
+      "diagramType": "xv2_bspdn_sige_etch_stop_thinning"
+    },
+    {
+      "id": "xv2-die-crackstop-mob-seal-ring",
+      "order": 65,
+      "swatchColor": "#d97706",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_65_CrackStop_MOB",
+      "assembledPos": [
+        -15.5,
+        10.363,
+        -12.8
+      ],
+      "explodeOffset": [
+        -19.38,
+        60,
+        -16
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-65. ダイ外周装甲「多層銅ビア壁・クラックストップ（Crack-Stop）＆ 防湿酸化バリア（MOB）シールリング」",
+      "subtitle": "Die-Perimeter Silicon-Anchored Crack-Stop Trench & Multi-Tier Stacked Cu Via-Bar Moisture Oxidation Barrier (MOB) Seal Ring",
+      "category": "BIONZ XR 極超解剖図 V2 X2-65 — ウェハー切り出し時の衝撃ヒビを跳ね返し、空気中の湿気やナトリウムイオンから極繊細2nm配線を守るチップ外周の二重城壁",
+      "plainAnalogy": "1枚の丸いシリコンウェハーから個々のBIONZ XR2チップを切り出すとき（ダイシング）、チップのフチには激しい衝撃と目に見えないミクロのヒビが発生します。しかも最新の2nmチップの絶縁膜（ULK）はスポンジのようにスカスカで割れやすく、湿気を吸うと銅配線が一発で錆びて断線します！そこで実際のチップはすべて、外周ぐるり一周を「クラックストップ溝（衝撃を受け止めるお堀）」と、M0から最上層まで途切れなく銅の壁を積み上げた「防湿城壁（MOBシールリング）」の二重装甲で完全に囲っているのです！",
+      "summary": "すべての実機2nm/ULKシリコンダイ外周に実装される必須の機械・環境保護構造。ダイシング・スクライブ線からの亀裂進展を遮断するシリコンアンカー型クラックストップ（CS）と、全BEOL金属層を連続ビアバーで貫通密封する防湿酸化バリア（MOB）の二重シールリングです。",
+      "opticsAndPhysics": [
+        "超低誘電率（ULK、k < 2.2）の多孔質SiCOH層は機械的破壊靭性が通常のSiO₂の数分の1と極めて脆いため、レーザーグルービング／ステルスダイシングやパッケージ熱サイクル時の剥離応力を最外周の深掘りアンカー付きCrack-Stop壁で偏向・停止させます。",
+        "その内側に配置されるMoisture Oxidation Barrier（MOB）は、シリコン基板から最上層パッシベーション膜まで15層以上の金属線と連続スリット・ビアバー（Via Bar）を隙間なく連結した金属城壁であり、水分子（H₂O）やアルカリイオン（Na⁺）の横方向拡散を完全に遮断します。",
+        "さらに2026年のSoICハイブリッド接合チップレットでは、切断面の微細パーティクル発生とコーナー応力集中を抑えるため、角を45°面取りした多段シールリングとプラズマダイシングの組み合わせが標準採用されています。"
+      ],
+      "formula": {
+        "expression": "二重外周防御: [ダイシング溝] → [深アンカー Crack-Stop壁] → [緩衝帯] → [全層Cuビアバー MOB防湿壁] → [活性回路]",
+        "description": "脆い多孔質ULK配線と極細銅／ルテニウム層を、切断亀裂と湿気腐食から物理的に完全隔離するチップ外周の城壁"
+      },
+      "nextGenInnovation": "極限まで薄化された3D積層チップレットや過酷な屋外防塵防滴環境（高温多湿・氷点下）で使われるプロカメラ用SoCにおいて、10年以上の長期信頼性を保証する縁の下の要塞です。",
+      "specs": [
+        {
+          "label": "外層保護（CS）",
+          "value": "基板アンカー付き多層クラックストップ構造（ダイシング亀裂遮断）"
+        },
+        {
+          "label": "内層保護（MOB）",
+          "value": "M0〜最上層 連続銅メタル＆スリットビアバー防湿・イオン遮断城壁"
+        },
+        {
+          "label": "対応ダイシング",
+          "value": "レーザーアブレーション / ステルス・プラズマダイシング対応"
+        },
+        {
+          "label": "保護対象",
+          "value": "多孔質ULK（k<2.2）BEOL配線層 ＆ 3Dハイブリッド接合界面"
+        }
+      ],
+      "diagramType": "xv2_die_crackstop_mob_seal_ring"
+    },
+    {
+      "id": "xv2-dti-mixed-signal-guard-ring",
+      "order": 66,
+      "swatchColor": "#0d9488",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_66_DTI_GuardRing",
+      "assembledPos": [
+        -17.9,
+        2.598,
+        7.8
+      ],
+      "explodeOffset": [
+        -24.16,
+        22,
+        10.53
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-66. アナログ／デジタル干渉遮断「深溝分離（DTI）＆ トリプルウェル・サブストレートノイズ防護ガードリング」",
+      "subtitle": "Mixed-Signal Deep Trench Isolation (DTI) Oxide Moat, Triple-Well Deep N-Well Basin & Double Substrate Guard Ring",
+      "category": "BIONZ XR 極超解剖図 V2 X2-66 — AIやISPが何億回も高速スイッチングする激しい振動ノイズから、繊細なPLLやSerDesアナログ回路を静寂の防音室へ隔離する構造",
+      "plainAnalogy": "BIONZ XR2のチップ上では、巨大なAIエンジンと動画エンコーダが1秒間に何十億回も電力をオンオフして「工事現場のような激しい電気ノイズ」をシリコン基板の地面へバラ撒いています。すぐ隣にいる超精密なクロック回路（PLL）やセンサー受信回路（SerDes）がこの地面の揺れを受けると、画質ノイズや通信エラーに直結します！そこで繊細なアナログ回路の周囲を、深いガラス溝の防音壁（DTI）と電気を吸い取る二重の排水溝（p+/n+ガードリング）、さらに底面の金属皿（Deep N-Well）で丸ごと囲い、静寂の無響室を作り出しています！",
+      "summary": "高速デジタル論理と超低ジッタPLL／SLVS-EC PAM4 SerDes／精密BGRを単一2nm SoC上に混載するための基板ノイズ遮断モジュール。深溝分離（DTI）酸化膜お堀、二重p+/n+ガードリング、および埋め込みディープNウェル（DNW）ファラデー隔離槽で構成されます。",
+      "opticsAndPhysics": [
+        "デジタル回路の高速スイッチング電流が共通シリコン基板インピーダンスを通じてアナログ回路へ回り込む基板結合ノイズ（Substrate Coupling Noise）は、数GHz帯域でPLLジッタ悪化とSerDesアイ開口劣化の主因となります。",
+        "高アスペクト比の深溝分離（DTI）酸化膜トレンチが高周波表面電流の横方向伝搬を物理分断し、さらに内側を囲む低インピーダンスの二重p+/n+ガードリングが漏れ電流を専用静寂グランド（AVSS）へ即座に逃がします。",
+        "加えて底面を覆う埋め込みDeep N-Well（トリプルウェル）が逆バイアスPN接合の遮蔽浴槽を形成し、20〜40 dB以上の広帯域アイソレーション（分離度）を確保します。"
+      ],
+      "formula": {
+        "expression": "基板アイソレーション S₂₁: DTI酸化膜壁 ＋ 二重Guard Ring ＋ Deep N-Well ⇒ ノイズ結合 −25〜40 dB以上抑制",
+        "description": "横方向のDTIお堀と底面のDNW浴槽による3次元ファラデー隔離で、2nmデジタル雑音から精密アナログを防衛"
+      },
+      "nextGenInnovation": "BSPDN極薄基板ではバルク基板の横方向抵抗が変化するため、DTIと裏面接地ビアを連携させた次世代3Dノイズ遮断設計（Mixed-Signal STCO）が不可欠になっています。",
+      "specs": [
+        {
+          "label": "横方向遮断",
+          "value": "高アスペクト比 深溝分離（DTI）SiO₂絶縁トレンチお堀"
+        },
+        {
+          "label": "接地吸収構造",
+          "value": "低抵抗 p+ / n+ 二重コンセントリック・ガードリング（専用AVSS直結）"
+        },
+        {
+          "label": "底面遮断",
+          "value": "トリプルウェル構造（埋め込みDeep N-Well 逆バイアス遮蔽槽）"
+        },
+        {
+          "label": "保護対象",
+          "value": "71.5fs ADPLL・2.1ppm/°C BGR・SLVS-EC v3.0 PAM4アナログフロントエンド"
+        }
+      ],
+      "diagramType": "xv2_dti_mixed_signal_guard_ring"
+    },
+    {
+      "id": "xv2-m3d-si-igo-hybrid-sram",
+      "order": 67,
+      "swatchColor": "#14b8a6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_67_M3D_Si_IGO_SRAM",
+      "assembledPos": [
+        7.55,
+        2.648,
+        -14.5
+      ],
+      "explodeOffset": [
+        10.19,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-67. モノリシック3D異種積層「Siナノシート・ラッチ × BEOL二重ゲートIGO酸化物パスゲート 6T SRAM」（2026最新研究）",
+      "subtitle": "2nm Process-Aware Monolithic-3D (M3D) Hybrid 6T SRAM: FEOL Si-Nanosheet Latch + BEOL Double-Gate Ga-In2O3 (IGO) Pass-Gates (Aug 2026)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-67 — 6T SRAMの扉役2個だけを配線層（BEOL）の2階へ酸化物半導体で縦積みし、セル面積−25%・書込遅延−42%を叩き出す3Dハイブリッドメモリ",
+      "plainAnalogy": "従来の6T SRAMは6個のトランジスタを平屋建てで横に並べていたため、面積がなかなか縮みませんでした。2026年8月発表の最先端モノリシック3D（M3D）ハイブリッドSRAMは、データ記憶の本体4個を1階（2nmシリコン・ナノシート）に置き、読み書きの扉役2個（パスゲート）だけを「低温で作れる酸化物半導体（GaドープIn₂O₃：IGO）」を使って2階の配線層（BEOL）の真上へ縦積みします！1階の空きスペースで本体トランジスタを強化できるため、面積25%縮小と書き込み42%高速化を同時に叶えます！",
+      "summary": "2026年8月（CoCoSys / DARPA JUMP 2.0）で実証解析された2nm世代モノリシック3D（M3D）ハイブリッド6T SRAM。FEOLのSiナノシート交差結合ラッチ真上のBEOL層へ、三層HZH（HfO₂/ZrO₂/HfO₂）二重ゲートIGOパスゲートを直接積層した革新的メモリセルです。",
+      "opticsAndPhysics": [
+        "酸化物半導体IGO（Ga-doped In₂O₃）は400°C以下の低温BEOLプロセスで成膜できるため、下層2nm Siナノシートのドーパントやシリサイドを熱劣化させずにモノリシック3D積層が可能です。",
+        "2個のパスゲート（PG）をBEOL 2階へ退避させたことで1階FEOLの面積に余裕が生まれ、プルダウン（PD）駆動力を強化しつつセル面積をSiハイパフォーマンス基準比で25%縮小できます。",
+        "さらに隣接セル間でソース・ドレイン（S/D）ビット線コンタクトを共有する構造により酸化物コンタクト抵抗を克服し、128×256サブアレイで書き込み遅延−42.2%、読み出し遅延−22.3%、EDP −9.7%（0.4〜1.0 V動作）を達成しました。"
+      ],
+      "formula": {
+        "expression": "M3D 6T SRAM（FEOL Si-NS 4T + BEOL DG-IGO 2T） ⇒ セル面積 −25% ／ 書込遅延 −42.2% ／ 読出遅延 −22.3%",
+        "description": "低温BEOL酸化物トランジスタをSRAMの2階部分へ縦積みし、2次元レイアウトの物理限界を突破"
+      },
+      "nextGenInnovation": "BIONZ XR2のラインバッファやAI特徴マップ用L1/L2キャッシュの面積と遅延を同時に削り、高画素連写時のオンダイSRAM容量を飛躍させる次世代M3Dメモリの決定版です。",
+      "specs": [
+        {
+          "label": "1階（FEOL）",
+          "value": "2nm Siナノシート 4T交差結合ラッチ ＋ BPR埋設電源レール"
+        },
+        {
+          "label": "2階（BEOL）",
+          "value": "二重ゲート（DG）GaドープIn₂O₃（IGO）パスゲート ＋ 三層HZHゲート絶縁膜"
+        },
+        {
+          "label": "実測・解析性能",
+          "value": "セル面積 −25%・書込遅延 −42.2%・読出遅延 −22.3%・動作電圧 0.4〜1.0 V"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "CoCoSys / JUMP 2.0（arXiv:2608.22741, Aug 2026）"
+        }
+      ],
+      "diagramType": "xv2_m3d_si_igo_hybrid_sram"
+    },
+    {
+      "id": "xv2-sub100fs-adpll-dtcloop",
+      "order": 68,
+      "swatchColor": "#eab308",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_68_Sub100fs_ADPLL",
+      "assembledPos": [
+        -17.825,
+        2.478,
+        14.5
+      ],
+      "explodeOffset": [
+        -24.06,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-68. ISSCC 2026 超低ジッタ「71.5 fs 電源耐性フラクショナルN全デジタルPLL（ADPLL）＆ デュアルランプDTC」",
+      "subtitle": "ISSCC 2026 Sub-100fs (71.47fs RMS) Supply-Resilient Fractional-N ADPLL with Time-Amplifying Dual-Ramp DTC & LC-DCO",
+      "category": "BIONZ XR 極超解剖図 V2 X2-68 — 1兆分の0.07秒という神業の精度で超高速クロックを刻み、SLVS-ECやLPDDR6の通信波形をピタリと揃えるデジタル心臓",
+      "plainAnalogy": "X2-53のシリコンBAW共振器が「水晶のメトロノーム（基準拍）」だとすれば、この全デジタルPLL（ADPLL）はその拍子をもとに毎秒何十ギガ回もの超高速リズムを寸分の狂いなく作り出す「超高精度指揮者」です！ISSCC 2026最先端のデュアルランプDTC（時間増幅型デジタル・時間変換器）と対称8角形銅コイル発振器により、タイミングの揺らぎ（ジッタ）をわずか71.5フェムト秒（光が髪の毛の太さの1/3も進めない時間！）に封じ込め、超高帯域センサー通信やLPDDR6メモリ通信をエラーゼロで同期させます！",
+      "summary": "ISSCC 2026最新精密アナログ動向の中核を成すサブ100 fs級（71.47 fs積分RMSジッタ）電源耐性フラクショナルN全デジタルPLL（ADPLL）。対称8角形LC-DCOタンクと時間増幅デュアルランプDTC（Digital-to-Time Converter）を統合しています。",
+      "opticsAndPhysics": [
+        "従来のアナログチャージポンプPLLは2nm GAAの低電源電圧（0.7 V）と高いゲートリークに弱いため、デジタル位相検出と時間増幅デュアルランプDTCで小数分周誤差をナノ秒以下で相殺する全デジタル（ADPLL）構成が標準化しています。",
+        "電源電圧変動に対して時間傾斜を自己相殺するSupply-Resilient DTC回路により、積分ジッタ71.47 fs・近傍整数スプリアス −60 dBcという極めて純度の高いマルチGHzクロックを生成します。",
+        "56G UCIe-SやPAM4 SLVS-EC v3.0、14.4 Gb/s LPDDR6では、わずかなクロックジッタがそのままアイ開口を潰してビットエラーを生むため、本ADPLLの純度がカメラ全体のデータ転送速度上限を決定づけます。"
+      ],
+      "formula": {
+        "expression": "積分RMSジッタ σ_j = 71.47 fs（< 100 fs） ＆ 近傍スプリアス −60 dBc（Dual-Ramp DTC補正）",
+        "description": "電源雑音に強いデュアルランプDTC＋対称LC-DCOで、次世代高速SerDes/メモリが要求するフェムト秒精度を達成"
+      },
+      "nextGenInnovation": "ISSCC 2026で発表された電源耐性DTC-ADPLLは、デジタルノイズの激しい2nm AI-ISPチップ上でも外付け水晶発振器に頼らずオンダイBAW共振器と組み合わせて極限低ジッタを実現します。",
+      "specs": [
+        {
+          "label": "積分RMSジッタ",
+          "value": "71.47 fs（サブ100 fs級超低位相雑音）"
+        },
+        {
+          "label": "スプリアス性能",
+          "value": "近傍整数スプリアス −60 dBc（分数分周ノイズ抑制）"
+        },
+        {
+          "label": "発振・補正方式",
+          "value": "対称8角形CuスパイラルLC-DCO ＋ 電源耐性時間増幅デュアルランプDTC"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ISSCC 2026 Precision Clocking / Supply-Resilient ADPLL"
+        }
+      ],
+      "diagramType": "xv2_sub100fs_adpll_dtcloop"
+    },
+    {
+      "id": "xv2-droop-adaptive-clock-fll",
+      "order": 69,
+      "swatchColor": "#f59e0b",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_69_Droop_AdaptiveFLL",
+      "assembledPos": [
+        -12.603,
+        2.478,
+        14.5
+      ],
+      "explodeOffset": [
+        -17.01,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-69. ISSCC 2026 ナノ秒応答「動的電圧ドロップ検知（di/dt Droop Detector）＆ 適応型クロック伸縮器（Adaptive FLL）」",
+      "subtitle": "ISSCC 2026 Nanosecond di/dt Dynamic Voltage Droop Detector & Reflexive Adaptive Clock Stretcher (FLL)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-69 — AI認識と30fps連写が同時に起動した瞬間の急激な電圧ガク落ちを1〜2クロックで検知し、拍子を一瞬だけ伸ばしてフリーズを完全回避する反射神経",
+      "plainAnalogy": "カメラでシャッターを切った瞬間、AIとISPと動画エンコーダが一斉に全力疾走するため、チップの電源電圧がわずか数ナノ秒の間にガクンと約0.1ボルトも落ち込む「電圧ドロップ（Droop）」が起きます！普通のPLLが気づくころには数万クロックも経っていて、計算ミスでカメラがフリーズしてしまいます。そこでチップの反射神経である「ドロップ検知器」が電圧低下を1〜2クロック以内に察知し、「適応型クロック伸縮器」がその瞬間だけ拍子（クロック周期）をゴムのようにスッと引き伸ばして計算ミスをゼロに防ぎます！",
+      "summary": "ISSCC 2026（Paper 10.5等）および2026年先端2nm/3nm SoCで必須化されたナノ秒反射型「動的電圧ドロップ検知（Droop Detector）＆ 適応型クロックFLL（Frequency-Locked Loop）」。極限低電圧動作時のガードバンド電力を大幅回収します。",
+      "opticsAndPhysics": [
+        "2nm/3nm世代では定格電圧 V_nom ≈ 0.70〜0.75 V・下限 V_min ≈ 0.45〜0.50 Vまで低下しており、急激な di/dt 負荷変動による 75〜115 mV の瞬時電圧ドロップは即座にセットアップ時間違反を引き起こします。",
+        "従来のPLL周波数変更には数十マイクロ秒の再ロックが必要ですが、本モジュールは臨界パス遅延を模倣したリング型インバータ遅延線（Droop Detector）で数ナノ秒以内に電圧低下を検知し、グリッチレス多相クロック・マルチプレクサで次サイクルのクロック周期を即座に延伸します。",
+        "このナノ秒反射保護により、従来は最悪ドロップに備えて全動作点へ上乗せしていた10〜15%のムダな電圧マージン（ガードバンド）を削ぎ落とせ、バッテリー撮影枚数を大幅に伸ばします。"
+      ],
+      "formula": {
+        "expression": "ΔV_droop = L·(di/dt) = 75〜115 mV（数ns） ⇒ 1〜2サイクル適応クロック延伸 → 電圧ガードバンド 10〜15%回収",
+        "description": "マイクロ秒級PLLでは間に合わないナノ秒級電圧急落を、反射的クロック伸縮で無傷にやり過ごし省電力化"
+      },
+      "nextGenInnovation": "ISSCC 2026では機械学習（ニューラルドロップ予測器）と適応クロックを統合した先読み型プロアクティブ電圧保護へと進化しており、瞬間負荷変動が激しいカメラSoCに最適の技術です。",
+      "specs": [
+        {
+          "label": "検知応答時間",
+          "value": "数ナノ秒（1〜2クロックサイクル以内・反射的グリッチレス制御）"
+        },
+        {
+          "label": "対象ドロップ規模",
+          "value": "75〜115 mV 級高速 di/dt 電源電圧降下（V_nom ~0.70V環境）"
+        },
+        {
+          "label": "省電力効果",
+          "value": "最悪時電圧ガードバンド 約10〜15%削減（P ∝ V² により電力大幅低減）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ISSCC 2026 Paper 10.5 / 2026 2nm Adaptive Clocking 基盤"
+        }
+      ],
+      "diagramType": "xv2_droop_adaptive_clock_fll"
+    },
+    {
+      "id": "xv2-2nm-clock-edge-lowpower",
+      "order": 70,
+      "swatchColor": "#38bdf8",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_70_ClockEdge_2nm",
+      "assembledPos": [
+        -7.466,
+        2.478,
+        14.5
+      ],
+      "explodeOffset": [
+        -10.08,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-70. ISSCC 2026 Paper 10.3「2nm クロックエッジ駆動アーキテクチャ ＆ 低電力マルチビット・パルスラッチ」",
+      "subtitle": "ISSCC 2026 Paper 10.3: A 2nm Clock-Edge Architecture for Processor Clock-Power Reduction & Multi-Bit Pulse Latch",
+      "category": "BIONZ XR 極超解剖図 V2 X2-70 — チップ消費電力の3〜4割を食い潰すクロック配線のムダ撃ちを、共有パルス発生とマルチビットラッチ化で根こそぎ削減する2nm省エネ回路",
+      "plainAnalogy": "実はプロセッサが消費する電力のうち、なんと30〜40%もの大金が「データ処理そのもの」ではなく、何億個もの記憶回路（フリップフロップ）へ毎秒何十億回もクロック信号を送り続けるだけで消えています！ISSCC 2026の注目論文10.3「2nmクロックエッジ駆動アーキテクチャ」は、1個ずつ独立して電気を食っていたフリップフロップを4ビット単位の省エネ・パルスラッチ群へ束ね、中央の共有エッジ発生器から超短い配線で一括駆動することで、クロック消費電力を劇的にカットします！",
+      "summary": "ISSCC 2026 Paper 10.3で発表された2nm GAAプロセッサ向け「Clock-Edge Architecture」。従来型マスター・スレーブFFを共有エッジパルス生成器＋マルチビット・パルスラッチ群へ置換し、動的電力の最大要因であるローカルクロック網消費電力を大幅削減します。",
+      "opticsAndPhysics": [
+        "2nmノードではトランジスタのスイッチングエネルギーが極小化する一方、微細M0/M1ローカルクロック配線の寄生容量が支配的となり、クロックツリーおよび順序回路（FF）が総動的電力の30〜40%以上を占めます。",
+        "中央のデュアルエッジ・パルス生成器（Pulse Generator Spine）を複数ビットのコンパクトラッチバンクで共有することで、各FF内部にあった冗長なクロックインバータ段とクロック入力ゲート容量を大幅に削減します。",
+        "さらにスター型の極短・対称ローカルスタブ配線により2nm特有のクロックスキューとホールド違反マージンを改善し、BIONZ XR2の長時間4K60p/120p録画時の発熱上限を引き上げます。"
+      ],
+      "formula": {
+        "expression": "P_clk = α · C_clk · V_DD² · f（総電力の30〜40%） ⇒ 共有パルスエッジ＋4-bitラッチ化で C_clk 大幅圧縮",
+        "description": "クロック負荷容量 C_clk と内部スイッチング素子数を同時に削り、2nmプロセッサ最大の電力ボトルネックを解消"
+      },
+      "nextGenInnovation": "ISSCC 2026で実証された2nmクロックエッジ省電力技術は、小型ボディ・ファンレスで4K60p/120p連続撮影を求められるミラーレスカメラSoCの熱設計に直結する革新的回路手法です。",
+      "specs": [
+        {
+          "label": "アーキテクチャ",
+          "value": "共有クロックエッジ・パルス生成器 ＋ クワッド（マルチビット）パルスラッチ"
+        },
+        {
+          "label": "対象プロセス",
+          "value": "2nm GAA ナノシート・プロセッサ設計（低C_clkローカル配線）"
+        },
+        {
+          "label": "省電力ターゲット",
+          "value": "SoC総動的電力の30〜40%を占めるクロック網・順序回路電力の抜本削減"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ISSCC 2026 Paper 10.3（2nm Clock-Edge Architecture）"
+        }
+      ],
+      "diagramType": "xv2_2nm_clock_edge_lowpower"
+    },
+    {
+      "id": "xv2-curvature-comp-bgr-ref",
+      "order": 71,
+      "swatchColor": "#f43f5e",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_71_SuperPTAT_BGR",
+      "assembledPos": [
+        -2.329,
+        2.478,
+        14.5
+      ],
+      "explodeOffset": [
+        -3.14,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-71. ISSCC 2026 精密基準源「2.1 ppm/°C 高次曲率補償バンドギャップ電圧リファレンス（Super-PTAT BGR）」",
+      "subtitle": "ISSCC 2026 2.1-3.7 ppm/C High-Order Curvature-Compensated CMOS Bandgap Reference (Super-PTAT Ping-Pong BGR)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-71 — −40°Cの極寒から+125°Cの猛暑まで基準電圧が0.06%もブレない、全アナログ回路と温度センサーの絶対ものさし",
+      "plainAnalogy": "カメラを氷点下の雪山で使っても、真夏の炎天下で4K動画を撮り続けても、チップ内部の電圧計や温度センサー・通信回路が狂ってはいけません。その「絶対的な1ボルトの基準ものさし」を作り出すのがバンドギャップ・リファレンス（BGR）です！ISSCC 2026最先端のSuper-PTAT曲率補償回路は、温度が上がるほど下がる電圧と上がる電圧を足し合わせるだけでなく、残ったわずかな「弓なりの曲がり（非線形曲率誤差）」までピンポン容量回路で打ち消し、温度1°Cあたりわずか100万分の2.1という驚異の安定度を誇ります！",
+      "summary": "ISSCC 2026精密アナログ基準源の最先端（Ref. [13]）である高次電流ドメイン曲率補償CMOSバンドギャップ電圧リファレンス（BGR）。コモンセントロイド3×3整合PNPコアとピンポン容量バイアスSuper-PTAT補償により2.1〜3.7 ppm/°Cを達成します。",
+      "opticsAndPhysics": [
+        "通常の1次補償BGRはシリコンBJTのベース・エミッタ間電圧 V_BE(T) が持つ固有の2次・高次温度曲率（数mVの放物線誤差）を消せず、10 ppm/°Cの壁を越えられませんでした。",
+        "本回路は負の温度係数遅延で制御されるピンポン容量バイアスダイオードから「Super-PTAT（超絶対温度比例）電流」を生成してBJTコアへ注入し、V_BEの非線形曲率を電流領域で高精度に相殺します。",
+        "3×3コモンセントロイド配置でチップ内の機械応力・温度勾配を打ち消し、−40°C〜+125°Cの広温度範囲で温度係数 2.1〜3.7 ppm/°C・3σ誤差 ±0.06%（2点トリム）という計測器級の基準電圧をチップ全域へ供給します。"
+      ],
+      "formula": {
+        "expression": "TC = 2.1〜3.7 ppm/°C ＆ 3σ精度 ±0.06%（−40°C 〜 +125°C, Super-PTAT高次曲率相殺）",
+        "description": "V_BE固有の非線形曲率をピンポン容量Super-PTAT電流で打ち消し、極限環境でも揺るがない基準電圧を確立"
+      },
+      "nextGenInnovation": "ISSCC 2026の超精密BGRは、オンダイ温度監視（X2-09）・内部LDO電源レギュレーション・高速SerDes終端抵抗校正の絶対基準として次世代カメラSoCの信頼性を支えます。",
+      "specs": [
+        {
+          "label": "温度係数（TC）",
+          "value": "2.1〜3.7 ppm/°C（サブ10 ppm/°C級 高次曲率補償）"
+        },
+        {
+          "label": "電圧精度（3σ）",
+          "value": "±0.06%（2点工場トリミング・−40°C 〜 +125°C動作）"
+        },
+        {
+          "label": "補償・配置技術",
+          "value": "ピンポン容量バイアスSuper-PTAT電流注入 ＋ 3×3コモンセントロイドPNP配列"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ISSCC 2026 Precision Analog Circuits（Current-Domain Curvature-Comp BGR）"
+        }
+      ],
+      "diagramType": "xv2_curvature_comp_bgr_ref"
+    },
+    {
+      "id": "xv2-350mv-sram-assist-otp",
+      "order": 72,
+      "swatchColor": "#3b82f6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_72_350mV_SRAM_OTP",
+      "assembledPos": [
+        12.62,
+        2.478,
+        -14.5
+      ],
+      "explodeOffset": [
+        17.04,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-72. ISSCC 2026 Paper 15.2「350mV単一電源2nm SRAM書込アシスト（負ビット線NBL）＆ アンチヒューズOTP冗長救済」",
+      "subtitle": "ISSCC 2026 Paper 15.2: 350mV Single-Rail 2nm GAA SRAM (21.04Mb/mm^2, 102ps) NBL Write-Assist & Oxide Anti-Fuse OTP Redundancy",
+      "category": "BIONZ XR 極超解剖図 V2 X2-72 — わずか0.35ボルトの極省エネ電圧でも確実に読み書きを助ける負ビット線ブースターと、不良メモリ行を自動修復＆秘密鍵を永久刻印するOTPメモリ",
+      "plainAnalogy": "α7 Vが同じバッテリーで静止画撮影枚数を520枚から630〜750枚へと劇的に伸ばせた秘密の1つが、オンダイSRAMの極限低電圧動作です！普通SRAMは電圧を0.6ボルト以下に下げるとデータの書き換えに失敗しますが、ISSCC 2026 Paper 15.2の2nmカスタム単一電源SRAMと負ビット線（NBL）書込アシストは、書き込みの瞬間だけ配線をマイナス電圧へグッと引っ張って「0.35ボルト」でも102ピコ秒の爆速アクセスを実現！さらに隣のアンチヒューズOTPが、不良ビットの予備行差し替えや工場調整値・C2PAルート鍵を永久記憶します！",
+      "summary": "ISSCC 2026 Paper 15.2の2nm GAA 350 mV単一電源SRAM（21.04 Mb/mm²・102 psアクセス）を支える負ビット線（NBL）書込アシスト／センスアンプ周辺回路と、ゲート酸化膜絶縁破壊型アンチヒューズOTP不揮発性メモリ（冗長救済＆セキュリティ鍵格納）の統合モジュールです。",
+      "opticsAndPhysics": [
+        "2nm GAAではプロセスばらつきにより通常SRAMの最低動作電圧 V_min が約0.55〜0.60 Vで頭打ちになりますが、カップリング容量でビット線を一時的に負電位（Negative Bit-Line：NBL）へ引き下げる書込アシストとデュアル読出極性により、単一電源350 mVというニアスレッショルド動作を実現します。",
+        "21.04 Mb/mm²の高密度と102 psの高速読み出しアクセスを両立しつつ、待機・低負荷時のカメラメニュー操作や待機中AI監視の消費電力を劇的に削減します。",
+        "併設のアンチヒューズOTP（One-Time Programmable）配列は、選択セルの極薄High-k/酸化膜へ高電界をかけて永久的な導電フィラメントを焼き付けることで、レーザー溶断なしにSRAM冗長行リペア・センサー固有補正値・C2PAハードウェア証明書を改ざん不能な形で刻印します。"
+      ],
+      "formula": {
+        "expression": "2nm Single-Rail SRAM: V_min = 350 mV ／ 密度 21.04 Mb/mm² ／ 読出 102 ps（NBL負電圧アシスト＋OTP冗長救済）",
+        "description": "負ビット線アシストによる350mV極限省エネ動作と、アンチヒューズOTPによる歩留まり救済＆不揮発ルート鍵保護"
+      },
+      "nextGenInnovation": "ISSCC 2026 Paper 15.2はエッジAIカメラ・モバイルSoCの電力の壁を破る単一電源ニアスレッショルドSRAMの金字塔であり、α7 V以降の圧倒的な省電力スタミナ性能を支える基盤技術です。",
+      "specs": [
+        {
+          "label": "最低動作電圧（V_min）",
+          "value": "350 mV（単一電源・負ビット線 NBL 書込アシスト搭載）"
+        },
+        {
+          "label": "密度 ＆ アクセス速度",
+          "value": "21.04 Mb/mm² ／ 読出アクセス時間 102 ps（2nm GAA）"
+        },
+        {
+          "label": "OTP不揮発性メモリ",
+          "value": "ゲート酸化膜絶縁破壊アンチヒューズ（冗長行修復・トリム・C2PAルート鍵）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ISSCC 2026 Paper 15.2（350mV Single-Rail 2nm GAA SRAM）"
+        }
+      ],
+      "diagramType": "xv2_350mv_sram_assist_otp"
+    },
+    {
+      "id": "xv2-ieee1838-3dic-dft-slm",
+      "order": 73,
+      "swatchColor": "#10b981",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_73_IEEE1838_DFT_SLM",
+      "assembledPos": [
+        -16.6,
+        13.838,
+        0
+      ],
+      "explodeOffset": [
+        -20.75,
+        80,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-73. 3D積層チップ必須テスト網「IEEE 1838 ダイラッパー（DWR）／柔軟並列ポート（FPP）＆ シリコン寿命テレメトリ（SLM）」",
+      "subtitle": "IEEE Std 1838 3D-IC DFT Primary/Secondary TAP, Die Wrapper Register (DWR), Flexible Parallel Port (FPP) & SLM In-Field Health Agents",
+      "category": "BIONZ XR 極超解剖図 V2 X2-73 — 3D縦積みされて外からピンが触れなくなった上層チップを高速検査し、故障レーンを予備配線へ自動切替する3D-IC専用ドクター網",
+      "plainAnalogy": "複数のチップを縦に重ねた3D-ICでは、上段に乗ったAIチップやSRAMチップは外部端子（ピン）に直接触れない「影のチップ」になってしまいます！もし組み立て後に上段チップや層間のミクロ接合が1本でも不良だったら、高額なパッケージ全体がゴミになってしまいます。そこで国際規格「IEEE 1838」の3Dテスト専用エレベーター（PTAP/STAPと柔軟並列ポートFPP）を全ダイに貫通させ、出荷検査から出荷後の経年劣化診断（SLM）、さらにUCIe予備レーンへの自動修復までをチップ自身が自律実行します！",
+      "summary": "3D積層SoIC／2.5D CoWoS-Lの歩留まりと長期信頼性を担保する国際標準「IEEE 1838 3D-ICテストアクセス構造（PTAP/STAP・DWR・FPP）」およびUCIe予備レーン修復（LTR）・稼働中シリコン寿命監視（SLM）テレメトリブロックです。",
+      "opticsAndPhysics": [
+        "最下層ダイのPrimary TAP（PTAP）が3D設定レジスタ（3DCR）を通じて上層ダイのSecondary TAP（STAP）を階層制御し、外から見えない積層ダイ（Shadowed Die）内部のMBIST/LBISTを自在に起動します。",
+        "各ダイ外周を包むDie Wrapper Register（DWR）がダイ単体テスト（KGD）と積層後ダイ間接続テスト（KGS）を切り替え、さらに多ビット高速バス「Flexible Parallel Port（FPP / Streaming Scan Network）」が膨大なATPG検査パターンを並列配送してテストコストを劇的に圧縮します。",
+        "稼働中もオンダイのSLM（Silicon Lifecycle Management）パス遅延エージェントが経年劣化や微細バンプ抵抗上昇を常時監視し、故障したUCIe/D2Dレーンを自動で冗長予備レーンへ切り替える自己修復（RAS）を実現します。"
+      ],
+      "formula": {
+        "expression": "PTAP(3DCR) → STAP階層 ＋ DWR境界ラッパー ＋ FPP並列スキャン ⇒ KGD→KGS歩留まり＆稼働中レーン自動修復",
+        "description": "物理ピンが届かない3D積層ダイ内部まで全数検査と出荷後ヘルス監視を貫通させる多層テスト基盤"
+      },
+      "nextGenInnovation": "2025–2026年のTSMC OIPエコシステム実証（Synopsys SLM / Siemens Tessent SSN）で標準化が完了し、マルチダイ3D-IC量産における最大のボトルネック「テストアクセス問題」を解決しています。",
+      "specs": [
+        {
+          "label": "標準規格",
+          "value": "IEEE Std 1838-2019（PTAP / STAP / 3DCR / DWR / FPP）"
+        },
+        {
+          "label": "並列スキャン転送",
+          "value": "Flexible Parallel Port（FPP）＋ ストリーミングスキャン網（SSN）"
+        },
+        {
+          "label": "自己修復＆監視",
+          "value": "UCIe予備レーン自動切替（LTR）＋ 稼働中SLMパス遅延テレメトリ"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "TSMC OIP 2025/2026 3D-IC Multi-Die SLM/IEEE 1838 シリコン実証"
+        }
+      ],
+      "diagramType": "xv2_ieee1838_3dic_dft_slm"
+    },
+    {
+      "id": "xv2-sub500nm-sicn-hybrid-bond",
+      "order": 74,
+      "swatchColor": "#d97736",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_74_Sub500nm_SiCN_HB",
+      "assembledPos": [
+        -16.6,
+        13.778,
+        -7.2
+      ],
+      "explodeOffset": [
+        -20.75,
+        80,
+        -9
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-74. ECTC 2026 限界突破「200–450nmピッチ Cu/SiCN直接接合 ＆ 曲面ボンディング波・ボイド零化界面」",
+      "subtitle": "ECTC 2026 200nm-450nm Pitch Fine-Grain Cu/SiCN Hybrid Bonding & Center-to-Edge Void-Free Bonding-Front Angle Control",
+      "category": "BIONZ XR 極超解剖図 V2 X2-74 — 接合ピッチを10μmから一気に0.2〜0.45μmへ20倍以上微細化し、中心から外側へ空気を押し出す波の角度制御で歩留まり99%へ引き上げる極限接合界面",
+      "plainAnalogy": "X2-01のSoICは現在量産のサブ10μm（10,000nm）ピッチですが、2026年5月の世界最高峰パッケージ学会「ECTC 2026」では、なんと「200〜450ナノメートル間隔」という桁違いの超高密度Cu/SiCN直接接合が実証されました！スマホの画面保護フィルムを貼るとき端から変に押さえると真ん中に気泡（ボイド）が閉じ込められるように、チップ接合でも気泡は致命傷です。ASEがECTC 2026で発見した「初期接触のボンディング波角度制御」は、中心から外側へ美しい同心円の波を走らせて空気を100%追い出し、歩留まりを2.8%から99%へ劇的に跳ね上げました！",
+      "summary": "2026年5月 IEEE第76回ECTCの3大マイルストーンを凝縮した次世代サブ500 nm直接Cu/SiCNハイブリッド接合界面。imec/EVGの200 nmピッチ（<40 nmオーバーレイ）、Applied Materials/EVGの450 nmピッチ98%歩留まり、およびASEのボンディング波角度制御による界面ボイド零化（2.8%→99%）を表現しています。",
+      "opticsAndPhysics": [
+        "従来のSiO₂絶縁接合に代わるプラズマ活性化親水性SiCN誘電体は、常温での結合エネルギーが高く低温アニールでの銅の拡散も防げるため、サブnm級CMPディッシング制御と微細結晶粒Cu冶金により450 nmピッチで98%・300 nmで50 nmオーバーレイ・200 nmで<40 nmオーバーレイが達成されました。",
+        "Chip-on-Wafer（CoW）接合の最大の敵である界面ボイド（閉じ込め気泡による断線）に対し、ASE（ECTC 2026）はチップ接触時の初期「ボンディングフロント角度」を最適化して接合波を中心から外縁へ連続伝搬させる純機械的手法で、反り102 μmの極薄30 μmダイでも歩留まり2.8%→99%（完全ボイドレス）を実証しました。",
+        "Face-to-Face直接接合の密度は現行6 μmでも約14,000本/mm²に達しますが、サブ500 nm世代では1 mm²あたり数百万本規模の「トランジスタ・ブロック分割3D（Logic-on-Logic / Memory-on-Logic）」が現実になります。"
+      ],
+      "formula": {
+        "expression": "W2Wピッチ: 200 nm（<40 nm精度）・450 nm（歩留98%） ＆ 波面角度最適化でCoWボイド歩留 2.8% → 99%",
+        "description": "SiCN親水接合＋サブnm CMPディッシング＋同心円ボンディング波制御が、超微細3D積層時代の歩留まり壁を突破"
+      },
+      "nextGenInnovation": "ECTC 2026の成果は、将来のBIONZ XR3/XR4において「センサー画素・ADC・ISP・NPU・SRAM」を単一ダイ内部の配線並みのピッチで立体融合させる究極の3Dカメラチップ基盤となります。",
+      "specs": [
+        {
+          "label": "最小実証ピッチ",
+          "value": "W2W 200 nm（imec/EVG, <40nm精度）・450 nm（AMAT/EVG, 歩留98%）"
+        },
+        {
+          "label": "接合界面材料",
+          "value": "プラズマ活性化 SiCN 誘電体 ＋ サブnm CMPディッシング微細粒Cu"
+        },
+        {
+          "label": "ボイド零化技術",
+          "value": "初期ボンディングフロント角度最適化（CoW歩留 2.8% → 99%, ASE ECTC 2026）"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "IEEE 76th ECTC 2026（imec / Applied Materials / EVG / ASE）"
+        }
+      ],
+      "diagramType": "xv2_sub500nm_sicn_hybrid_bond"
+    },
+    {
+      "id": "xv2-emib-t-silicon-bridge-tsv",
+      "order": 75,
+      "swatchColor": "#0284c7",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_75_EMIB_T_Bridge",
+      "assembledPos": [
+        0,
+        -14.481,
+        -4.5
+      ],
+      "explodeOffset": [
+        0,
+        -46,
+        -6.08
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-75. 次世代2.5D/3.5D「貫通シリコンビア内蔵・能動シリコンブリッジ（EMIB-T / LSI-TSV）＆ ガラスコア貫通電力結合」",
+      "subtitle": "TSV-Enabled Embedded Silicon Bridge (EMIB-T / LSI-TSV) with Vertical Power-Through Columns & 0.8um RDL",
+      "category": "BIONZ XR 極超解剖図 V2 X2-75 — チップレット同士を横へ超高速接続する埋め込みシリコン橋のド真ん中に「垂直の電源貫通柱（TSV）」を打ち抜き、電力も真っ直ぐ通す進化版ブリッジ",
+      "plainAnalogy": "2つのチップレットを横につなぐ「埋め込みシリコンブリッジ（EMIBやCoWoS-LのLSI）」は、巨大なインターポーザを使わずに済む賢い橋ですが、従来の橋は「真下からの電気（電源）を通せない絶縁のフタ」になってしまい、橋の真上だけ電力不足（電圧降下）が起きる弱点がありました！2026年世代の進化版「EMIB-T（TSV内蔵ブリッジ）」は、シリコン橋そのものに無数の貫通シリコンビア（TSV）の金柱を縦にぶち抜き、横は0.8μm極細信号線・縦は極太電源供給を同時にこなす立体交差ハブです！",
+      "summary": "CoWoS-L LSIブリッジ（X2-02）をさらに進化させた貫通シリコンビア（TSV）内蔵型埋め込みシリコンブリッジ（EMIB-T / LSI-TSV）。基板側からの垂直大電流供給と、チップレット間の超微細RDL水平通信（UCIe-S / HBM4）を立体直交で両立します。",
+      "opticsAndPhysics": [
+        "従来のTSVレス・シリコンブリッジはブリッジ直下の電源・グランド経路を遮断するため、ブリッジ外周を大回りする迂回インダクタンスがHBM4や高帯域UCIe-Sの電源品質を悪化させていました。",
+        "ブリッジダイ内部に低抵抗Cu-TSV柱を高密度貫通させることで、パッケージ基板（またはガラスコアTGV）からISPダイ・AIダイ・HBM4ベースダイの直下へ最短距離で安定した電源を垂直供給しつつ、表面側ではL/S = 0.8/0.8 μm級の微細多層RDLが毎ミリ数Tbpsの水平信号を結びます。",
+        "大型フルレチクル・シリコンインターポーザに比べて歩留まりとコスト効率に優れ、3.5D積層（Foveros Direct / SoIC）とのハイブリッド統合にもそのまま対応します。"
+      ],
+      "formula": {
+        "expression": "水平: 0.8/0.8 μm 多層RDL（>4 Tbps/mm） ⊥ 垂直: 貫通Cu-TSV電源柱 ⇒ ブリッジ直下の電源インピーダンス −60%超",
+        "description": "信号の横橋と電力の縦柱を1枚の極小シリコンブリッジ内で立体交差させ、チップレット境界の電圧降下を根絶"
+      },
+      "nextGenInnovation": "2026年以降の大型AI・プロ映像マルチチップレットパッケージにおいて、TSV内蔵ブリッジ（EMIB-T / CoWoS-L世代進化）はHBM4と光電融合エンジンを結ぶ標準インフラとなっています。",
+      "specs": [
+        {
+          "label": "ブリッジ構造",
+          "value": "有機/ガラス基板埋設型 TSV貫通シリコンブリッジ（EMIB-T / LSI-TSV）"
+        },
+        {
+          "label": "水平配線微細度",
+          "value": "多層微細RDL L/S = 0.8 / 0.8 μm 級（UCIe-S / HBM4高密度配線）"
+        },
+        {
+          "label": "垂直電源経路",
+          "value": "ブリッジ貫通Cu-TSVアレイ（直下最短低インダクタンス給電）"
+        },
+        {
+          "label": "効果",
+          "value": "フルインターポーザ比低コスト＆チップレット端IRドロップ劇的低減"
+        }
+      ],
+      "diagramType": "xv2_emib_t_silicon_bridge_tsv"
+    },
+    {
+      "id": "xv2-embedded-stc-package-decap",
+      "order": 76,
+      "swatchColor": "#38bdf8",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_76_eSTC_CoaxTGV",
+      "assembledPos": [
+        -4.2,
+        -19.246,
+        0
+      ],
+      "explodeOffset": [
+        -6.3,
+        -94,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-76. パッケージ基板直下内蔵「超高密度シリコン・トレンチコンデンサ（eSTC）＆ ガラスコア同軸シールドTGV」",
+      "subtitle": "Package-Embedded Deep-Trench Silicon Capacitor (eSTC, >1.5uF/mm^2, <10pH ESL) & Coaxial-Shielded 5-Via Glass-Core TGV",
+      "category": "BIONZ XR 極超解剖図 V2 X2-76 — チップ真下のガラス基板キャビティへ超高密度シリコン蓄電池を埋め込み、周囲を同軸シールドTGVで囲って112Gbps級の高速波を守る電源＆伝送要塞",
+      "plainAnalogy": "メイン基板の裏に並べる普通のチップコンデンサ（MLCC）は、チップまでの距離が数ミリも離れているため、ギガヘルツ級の急激な電流ショックには電気の慣性（インダクタンス）が邪魔して間に合いません！そこで最新のガラスコア基板では、チップの「ど真ん中・真下の空洞」へ、深い溝を何万本も彫った黒シリコン製「埋め込みトレンチコンデンサ（eSTC）」を内蔵します！さらに高速信号を通すガラス貫通穴（TGV）の周囲を4本のグランド柱で同軸ケーブルのように囲み、ノイズ干渉を完璧に封じ込めます！",
+      "summary": "オンダイSHPMIM（X2-10）と基板MLCCの中間周波数帯（10 MHz〜1 GHz）の電源インピーダンス・ピークを完全に押し潰すパッケージ基板内蔵深溝シリコンコンデンサ（eSTC）と、同軸シールド5ビア構成ガラス貫通ビア（Coaxial TGV）モジュールです。",
+      "opticsAndPhysics": [
+        "深掘りエッチング（DRIE）でアスペクト比30:1以上の微細トレンチを刻み高誘電率ALD MIM膜を成膜したシリコン・トレンチコンデンサ（eSTC）は、1.5〜3.0 μF/mm²超という圧倒的静電容量密度と10 pH未満の超低等価直列インダクタンス（ESL）を実現します。",
+        "ガラスコア基板内部のダイ直下キャビティへeSTCを埋設することで、BSPDN裏面グリッドとの垂直ループ長を数百μm以下へ短縮し、AI NPUと30fps RAW一斉読み出し時の共振インピーダンス（Z_PDN）を劇的に平坦化します。",
+        "隣接する高速差動I/O用TGVは中央信号ビアを4本のグランドTGVで対称包囲する同軸（GSSG/Coax）構造を採り、低誘電損失ガラス（tanδ ≈ 0.004）と相まって56G〜112G PAM4通信のクロストークを−40 dB以下へ抑制します。"
+      ],
+      "formula": {
+        "expression": "eSTC容量密度 > 1.5 μF/mm²・ESL < 10 pH ＆ 5ビア同軸TGV クロストーク < −40 dB（@56G+ PAM4）",
+        "description": "ダイ直下の超低ESLキャビティ蓄電とガラス同軸シールド伝送が、2nmパッケージの電源品質とSIを同時保証"
+      },
+      "nextGenInnovation": "ECTC 2026のガラスコア基板＆内蔵受動素子トラックで量産統合が加速しており、薄型ミラーレスカメラの狭小メイン基板面積でもフラッグシップ級PDNを実現する重要パーツです。",
+      "specs": [
+        {
+          "label": "内蔵コンデンサ（eSTC）",
+          "value": "深溝DRIEシリコンMIMキャパシタ（> 1.5 μF/mm²・ESL < 10 pH）"
+        },
+        {
+          "label": "配置位置",
+          "value": "ガラスコア基板内部・BIONZ XR2演算ダイ直下キャビティ埋設"
+        },
+        {
+          "label": "高速貫通ビア",
+          "value": "1信号＋4グランド包囲 同軸シールド型ガラス貫通ビア（Coaxial TGV）"
+        },
+        {
+          "label": "効果",
+          "value": "中〜高周波PDN共振インピーダンス抑制 ＆ 56G–112G PAM4低損失伝送"
+        }
+      ],
+      "diagramType": "xv2_embedded_stc_package_decap"
+    },
+    {
+      "id": "xv2-bga-micro-c4-imc-underfill",
+      "order": 77,
+      "swatchColor": "#cbd5e1",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_77_CuPillar_CUF",
+      "assembledPos": [
+        4.2,
+        -19.263,
+        0
+      ],
+      "explodeOffset": [
+        6.3,
+        -94,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-77. パッケージ接合信頼性「無鉛SAC/SnAgマイクロバンプ Cuピラー ＆ ナノシリカ・キャピラリアンダーフィル（CUF）」",
+      "subtitle": "25-35um Pitch Cu-Pillar Micro-Bump (Cu/Ni Barrier/SnAg Cu6Sn5 IMC) & Low-CTE Nano-Silica Capillary Underfill (CUF)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-77 — 薄化ダイとインターポーザを結ぶ数万本の銅柱バンプと、熱膨張のズレ応力を丸ごと吸い取るナノシリカ樹脂の弾性クッション",
+      "plainAnalogy": "3D積層チップの上下ははんだゼロのハイブリッド接合（SoIC）で直結されますが、そのチップ全体とパッケージ基板（ガラスやABF）を結ぶ境界には、今も数万本の「銅ピラー・マイクロバンプ」がズラリと並んでいます！ところがシリコンと基板は温まると伸び縮みの度合い（熱膨張率）が違うため、何千回も電源を入切りすると接合部が引きちぎれそうになります。そこで銅柱の上にニッケル防壁と銀スズはんだ（Cu₆Sn₅金属間化合物）を精密に重ね、さらに隙間にナノシリカ粒入り樹脂（CUF）を毛細管現象で流し込んで鉄壁に固めています！",
+      "summary": "2nmチップレット／インターポーザとパッケージ基板を電気的・機械的に高信頼接続する25〜35 μmピッチCuピラー・マイクロバンプ（Cu柱＋Ni拡散バリア＋SnAgはんだ＆Cu₆Sn₅ IMC界面）と、低CTEナノシリカ充填キャピラリアンダーフィル（CUF）の微細断面構造です。",
+      "opticsAndPhysics": [
+        "従来の球形はんだバンプは微細化するとリフロー時に横へ潰れて隣と短絡しますが、電解めっきで立てた高アスペクト比Cuピラー（銅柱）は形状を保ったまま25〜35 μmピッチへ高密度化でき、優れたエレクトロマイグレーション耐性と放熱性を発揮します。",
+        "CuピラーとSnAg無鉛はんだキャップの間に挟む極薄ニッケル（Ni）拡散バリア層が、過度のCu₆Sn₅ / Cu₃Sn脆性金属間化合物（IMC）成長やカーケンダル・ボイド（空孔）の発生を抑制します。",
+        "バンプ間のわずか20〜40 μmの隙間へ毛細管現象で浸透させるCUF（Capillary Underfill）樹脂には高濃度（60〜70 wt%）のサブミクロン球状ナノシリカ粒子が充填されており、エポキシ樹脂の熱膨張係数（CTE）を20〜25 ppm/°Cまで引き下げて温度サイクル疲労寿命を10倍以上延ばします。"
+      ],
+      "formula": {
+        "expression": "Cuピラー（25–35 μmピッチ）＋ Niバリア ＋ SnAg/Cu₆Sn₅ IMC ＋ ナノシリカCUF（CTE ~22 ppm/°C） ⇒ 熱疲労寿命 10×超",
+        "description": "銅柱の構造安定性・Ni拡散抑止・低CTEナノシリカ樹脂の3層保護で、カメラの激しい温度変化に耐え抜く"
+      },
+      "nextGenInnovation": "2026年の超狭ピッチ2.5D/3.5Dパッケージでは、超微細ギャップでもボイドを作らず高速浸透するナノフィラーCUFとモールドアンダーフィル（MUF）の材料革新が歩留まりを左右しています。",
+      "specs": [
+        {
+          "label": "バンプ構成",
+          "value": "電解Cuピラー ＋ Ni拡散バリア層 ＋ 無鉛SnAgはんだキャップ（Cu₆Sn₅ IMC）"
+        },
+        {
+          "label": "接続ピッチ",
+          "value": "25〜35 μm ピッチ（高密度チップレット〜インターポーザ／基板接合）"
+        },
+        {
+          "label": "アンダーフィル（CUF）",
+          "value": "高充填ナノシリカ球状フィラー（60–70 wt%）低CTE毛細管エポキシ樹脂"
+        },
+        {
+          "label": "信頼性役割",
+          "value": "CTE不整合せん断応力の分散吸収・カーケンダル空孔＆EM断線防止"
+        }
+      ],
+      "diagramType": "xv2_bga_micro_c4_imc_underfill"
+    },
+    {
+      "id": "xv2-stim-cu-diamond-thermal-lid",
+      "order": 78,
+      "swatchColor": "#ea580c",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_78_CuDiamond_sTIM_Lid",
+      "assembledPos": [
+        0,
+        18.948,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        104,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-78. 【底面グランド構造】銀焼結／インジウム金属sTIM ＆ CVD銅ダイヤモンド複合ヒートスプレッダ蓋・反り抑制フランジ",
+      "subtitle": "Direct-Bonded Sintered-Ag / Indium Metallic sTIM & Cu-Diamond Composite Heat Spreader Lid with Invar Clamp Rim",
+      "category": "BIONZ XR 極超解剖図 V2 X2-78 — シリコン直彫りマイクロ流体冷却の底を完全密閉し、熱伝導率600W/m·K超の銅ダイヤモンド複合装甲と焼結銀sTIMで熱をカメラ筐体へ一気逃がしする底面王冠",
+      "plainAnalogy": "X2-52のシリコン直彫りマイクロ流体クーラーがチップ内部のホットスポットから熱を吸い上げても、それを外側のマグネシウム製カメラボディへ渡す「最終出口（フタ）」が詰まっていたら熱は逃げません！BIONZ XR V2の最下部を締めくくるこの底面グランド装甲は、普通のグリスより数十倍も熱を通す「焼結銀／インジウム金属はんだ（sTIM）」と、銅の中に人工ダイヤモンド粒子を練り込んだ「銅ダイヤモンド複合ヒートスプレッダ（熱伝導率600W/m·K超！）」の最強タッグ！4隅のチタン固定ボスで薄型ダイの反りも押さえ込みます！",
+      "summary": "マイクロ流体シリコン冷却（X2-52）の下面を気密・熱結合する底面グランド構造。超高熱伝導の焼結ナノ銀／インジウム金属インターフェース（sTIM）、熱伝導率550–650 W/m·K級の銅ダイヤモンド複合（Cu-Diamond）ヒートスプレッダ、および低膨張インバー反り抑制スカートで構成されます。",
+      "opticsAndPhysics": [
+        "従来ポリマー系グリス（3〜8 W/m·K）では2nm/3D積層チップの局所熱流束（>150 W/cm²）で界面温度差だけで20°C以上跳ね上がりますが、焼結ナノ銀（Sintered-Ag、~200–250 W/m·K）または純インジウム金属sTIM（~86 W/m·K）の直接金属接合により界面熱抵抗 R_TIM を1/5以下へ削減します。",
+        "ヒートスプレッダ本体には銅マトリクス（~400 W/m·K）へ高熱伝導ダイヤモンド粒子（~2,000 W/m·K）を均一分散させたCu-Diamond複合材を採用し、熱伝導率550〜650 W/m·K以上とシリコンに近い低熱膨張係数（CTE ≈ 6〜8 ppm/°C）を同時に実現します。",
+        "底面に配列された放射状ヒートシンク・フィンがカメラのマグネシウム合金フレームおよびグラファイト放熱シートへ大面積で熱を逃がし、ファンレス構造のα7 V / α7R VIで長時間の4K60p/120p連続録画を可能にします。"
+      ],
+      "formula": {
+        "expression": "k(Cu-Diamond) ≈ 600 W/m·K ＋ k(Sintered-Ag sTIM) ≈ 220 W/m·K ＆ CTE ≈ 7 ppm/°C（低反り整合）",
+        "description": "ポリマーTIMの熱の壁を金属焼結sTIM＋銅ダイヤモンド複合蓋で打ち破り、3D-ICの究極放熱出口を完成"
+      },
+      "nextGenInnovation": "2026年の高出力AI-HPCおよびコンパクト・プロシネマカメラでは、純銅IHSの限界を超えるCu-Diamond複合リッド＋金属sTIMが次世代サーマルパッケージの最高峰として実用化が進んでいます。",
+      "specs": [
+        {
+          "label": "界面熱接合（sTIM）",
+          "value": "焼結ナノ銀（~220 W/m·K）／インジウム金属sTIM マイクログリッド接合"
+        },
+        {
+          "label": "スプレッダ母材",
+          "value": "CVD銅ダイヤモンド複合材（Cu-Diamond、k ≈ 550–650 W/m·K）"
+        },
+        {
+          "label": "熱膨張整合＆固定",
+          "value": "低CTEインバー外周スカート（CTE ~6–8 ppm/°C）＋ 4隅チタン固定ボス"
+        },
+        {
+          "label": "効果",
+          "value": "ファンレス長時間4K60p/120p録画時のジャンクション温度 ΔT 劇的抑制"
+        }
+      ],
+      "diagramType": "xv2_stim_cu_diamond_thermal_lid"
+    },
+    {
+      "id": "xv2-35d-stiffener-mt-ferrule-frame",
+      "order": 79,
+      "swatchColor": "#94a3b8",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_79_35D_Stiffener_MT",
+      "assembledPos": [
+        0,
+        -15.721,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -62,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-79. 【頂面グランド構造】3.5Dパッケージ「低熱膨張インバー反り抑制スティフナー枠 ＆ 着脱式光ファイバーMTフェルール結合フレーム」",
+      "subtitle": "3.5D CoWoS-L / COUPE Low-CTE Invar Warpage-Control Stiffener Frame, EMI Spring Perimeter & Detachable Optical MT-Ferrule Latch Docks",
+      "category": "BIONZ XR 極超解剖図 V2 X2-79 — 超大型3.5D光電融合パッケージの反りをミクロン以下に抑え込み、4隅のワンタッチ光コネクタとEMIバネで完璧に武装する頂面の額縁装甲",
+      "plainAnalogy": "TSMC 3.5D COUPE（X2-55）や大型ガラスコア基板は、製造時の加熱や使用中の発熱でポテトチップスのように「反り（Warpage）」が起きやすく、光ファイバーの位置がたった1マイクロメートルずれただけで光信号が途切れてしまいます！また光ファイバーを接着剤で固定してしまうと工場でのリフロー溶接に通せません。そこでBIONZ XR V2の最頂部を飾るこの中空額縁フレームは、熱でほとんど伸びない「インバー鋼」で反りをガッチリ矯正しつつ、4隅に高精度ガイドピン付きの「着脱式MT光フェルール・ラッチ」を備え、いつでも光ハーネスをカチッと脱着できる3.5D時代の最先端クラウンです！",
+      "summary": "TSMC 3.5D COUPE（X2-55）直上を保護・剛性補強する頂面グランド構造。中央開口型の低熱膨張インバー／ステンレス反り抑制スティフナー枠、外周ベリリウム銅EMI接地フィンガー、および4隅のガイドピン付き着脱式光ファイバーMTフェルール・ラッチドック（ECTC 2026）を一体化しています。",
+      "opticsAndPhysics": [
+        "大型2.5D/3.5Dパッケージでは異種材料（Si・ガラス・ABF・銅）のCTE差によりリフロー時に100 μm超の反りが発生しますが、剛性の高い低CTEインバー（Fe-36Ni）額縁スティフナーを周囲へ接着することで全温度域の平坦度（Coplanarity）を15 μm以下へ拘束します。",
+        "外周リップに配列されたベリリウム銅（BeCu）EMI接地スプリング群が上部シールドカンと低インダクタンスで多点接触し、200G光電ドライバと高速SerDesからの高周波放射ノイズ（EMI）が近接するイメージセンサーやマイク回路へ漏れるのを防ぎます。",
+        "4隅の着脱式（Detachable）MT/MPO光フェルール・ドックは2本の精密チタン・ガイドダウエルピンでサブミクロン自己整合を実現し、高温はんだリフロー工程の「後」に光ファイバーアレイをワンタッチ装着できる量産・保守性（ECTC 2026 CPO実用化の必須要件）を確立します。"
+      ],
+      "formula": {
+        "expression": "インバー枠（CTE ≈ 1.2 ppm/°C）反り拘束 < 15 μm ＆ 着脱式MTガイドピン光結合精度 < ±0.5 μm",
+        "description": "3.5D大型基板の熱反り矯正・EMI多点接地・リフロー後着脱式光コネクタの3要件を1つの中空クラウンに凝縮"
+      },
+      "nextGenInnovation": "ECTC 2026で標準化が進む「着脱式ファイバーアレイユニット（DFAU / Detachable MT Ferrule）」により、光電融合パッケージの本格的な量産ライン投入とフィールド保守性が現実のものとなりました。",
+      "specs": [
+        {
+          "label": "枠体材質＆役割",
+          "value": "中空開口型 低CTEインバー／SUS 反り抑制スティフナー（平坦度 < 15 μm）"
+        },
+        {
+          "label": "着脱式光結合",
+          "value": "4隅 精密ガイドダウエルピン付き MPO/MTフェルール・ラッチドック（DFAU）"
+        },
+        {
+          "label": "EMIシールド接地",
+          "value": "金メッキEMIリップ ＋ 全周ベリリウム銅（BeCu）多点スプリングフィンガー"
+        },
+        {
+          "label": "最新研究出典",
+          "value": "ECTC 2026 Detachable CPO Fiber Connector & 3.5D Warpage Control"
+        }
+      ],
+      "diagramType": "xv2_35d_stiffener_mt_ferrule_frame"
+    },
+    {
+      "id": "xv2-pdaf-759-pose-af-engine",
+      "order": 80,
+      "swatchColor": "#10b981",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_80_PDAF759_PoseAF",
+      "assembledPos": [
+        -17.91,
+        2.548,
+        -14.5
+      ],
+      "explodeOffset": [
+        -24.18,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-80. BIONZ XR2「759点像面位相差AF相関演算器 ＆ 60回/秒 AI骨格・瞳3D姿勢推定エンジン（Real-time Recognition AF+）」",
+      "subtitle": "Sony BIONZ XR2 759-Point Phase-Detection Correlation DSP & 60Hz AI 3D Skeletal Pose / Eye Recognition AF+ Engine (α7 V)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-80 — 画面を覆う759点の位相差ピント距離とAIの3D人体骨格・瞳認識を毎秒60回リアルタイム融合し、振り向く瞬間も瞳を外さない専用AF頭脳",
+      "plainAnalogy": "ソニーα7 Vに初搭載された「BIONZ XR2」最大の武器が、AI処理ユニットをワンチップ統合したリアルタイム認識AF+です！センサー全面に敷き詰められた759点の像面位相差センサーから「左右の像のズレ（距離）」を高速計算する専用相関回路と、人間の頭・首・肩・肘・腰の3D骨格を推定するAIエンジンが、なんと「1秒間に60回」も合体計算します！被写体が後ろを向いて瞳が見えなくなっても「頭の向きと骨格」から瞳の位置を予測し続け、秒間30コマのブラックアウトフリー連写中もピントを吸い付かせ続けます！",
+      "summary": "ソニーα7 V（ILCE-7M5）／FX5搭載BIONZ XR2の核となる専用オートフォーカス演算ブロック。759点像面位相差（PDAF）の左右画素相関DSPと、毎秒60回のAF/AE演算・3D骨格姿勢推定（人物・動物・鳥・昆虫・車・列車・飛行機）をゼロ遅延で融合します。",
+      "opticsAndPhysics": [
+        "部分積層Exmor RSセンサーの高速読み出し（従来比約4.5倍）から届く759点像面位相差ペア信号に対し、専用ハードウェアSAD/NCC相互相関パイプラインがサブピクセル単位のデフォーカス量 Δd をマイクロ秒単位で算出します。",
+        "従来機（α7R V等）では外付け別チップだったAI処理ユニットをBIONZ XR2同一ダイ内へ統合したことで、骨格キーポイント推論結果と位相差距離マップの受け渡し遅延・メモリ帯域ロスが劇的に減少しました。",
+        "これによりブラックアウトフリー30fps連写中でも毎秒60回のAF/AE追従演算（16.6 ms周期）を維持し、逆光・サングラス・後ろ姿・複雑なスポーツ動作でも瞳と頭部を高精度トラッキングします。"
+      ],
+      "formula": {
+        "expression": "759点PDAF相関（Δd算出） ⊗ 3D骨格キーポイントAI推論 ＝ 60回/秒 リアルタイムAF/AE追従（30fps連写対応）",
+        "description": "物理的な位相差距離計算とディープラーニング骨格認識を同一ダイ内で60Hz同期融合し、究極のピント精度を実現"
+      },
+      "nextGenInnovation": "2025年12月発表のα7 Vで幕を開けたBIONZ XR2ワンチップ統合AIアーキテクチャは、2026年のFX5や次世代αフラッグシップ群へ展開され、動画・静止画のオートフォーカス常識を刷新しています。",
+      "specs": [
+        {
+          "label": "位相差測距点",
+          "value": "759点 像面位相差AF（撮像領域約94%カバー・高速相関DSP）"
+        },
+        {
+          "label": "演算レート",
+          "value": "最大 60回/秒 AF/AE追従演算（30fps ブラックアウトフリー連写連動）"
+        },
+        {
+          "label": "AI認識対象",
+          "value": "人物3D骨格姿勢＆瞳・動物・鳥・昆虫・車・列車・飛行機（自動認識対応）"
+        },
+        {
+          "label": "搭載実機",
+          "value": "Sony α7 V（ILCE-7M5）／ FX5 BIONZ XR2 統合AI処理エンジン"
+        }
+      ],
+      "diagramType": "xv2_pdaf_759_pose_af_engine"
+    },
+    {
+      "id": "xv2-16stop-dual-gain-hdr-fusion",
+      "order": 81,
+      "swatchColor": "#f59e0b",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_81_16Stop_HDR_Fusion",
+      "assembledPos": [
+        -12.84,
+        2.548,
+        -14.5
+      ],
+      "explodeOffset": [
+        -17.33,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-81. BIONZ XR2 α7 V新機軸「16ストップ広ダイナミックレンジ デュアルゲイン合成 ＆ コンポジットRAWマルチフレームNR演算器」",
+      "subtitle": "Sony BIONZ XR2 16-Stop Dynamic Range Dual-Conversion-Gain Linear HDR Fusion & Sub-Pixel Composite RAW MFNR Engine",
+      "category": "BIONZ XR 極超解剖図 V2 X2-81 — 暗部の微かな光と強烈な太陽光を同時に16ストップの極広階調へ溶け込ませ、さらに複数枚RAWをピクセル精度で重ねてノイズを消し去る階調の魔術師",
+      "plainAnalogy": "暗い室内の黒つぶれと、窓の外の明るい空の白飛びを1枚の写真に両方美しく収めるのはカメラ永遠の難題でした。α7 VとBIONZ XR2が達成した「驚異の16ストップ・ダイナミックレンジ」を支えるのがこの専用合成回路です！センサーから届く「暗部くっきり高ゲイン信号」と「ハイライト白飛び知らず低ゲイン信号」を16bitリニア空間で滑らかにブレンドし、さらに高感度撮影時には4〜32枚のRAWを動き補償しながらリアルタイム重ね合わせ（コンポジットRAW NR）して、暗闇でも息を呑むほどクリアな階調を生み出します！",
+      "summary": "Sony α7 V（ILCE-7M5）が実現した最大16ストップの広ダイナミックレンジ処理と、マルチフレーム・コンポジットRAWノイズリダクション（MFNR）をリアルタイム実行する専用HDR融合・サブピクセル位置合わせ演算エンジンです。",
+      "opticsAndPhysics": [
+        "部分積層センサーのDual-Conversion-Gain（高変換効率HCG／低変換効率LCG）出力や高速デュアル露光データを、リニア16bit空間でピクセル単位の飽和判定・SNR最適重み付け合成し、境目の偽色やバンディングのない16ストップ級階調を再構築します。",
+        "さらにコンポジットRAW処理では、高速読み出しされた複数フレーム（4/8/16/32枚）の微小手ブレと動体被写体をブロックマッチング＋オプティカルフローでサブピクセル整合し、ランダムなショットノイズ・読み出しノイズを 1/√N へ劇的に低減します。",
+        "静止画だけでなくS-Log3動画撮影時にもリアルタイムのローカル・トーンマッピングおよびハイライトロールオフ制御を並列適用し、シネマカメラ級の自然な明暗移行を実現します。"
+      ],
+      "formula": {
+        "expression": "DR = 20·log₁₀(Q_sat / σ_read) → 最大 16 Stops（Dual-Gain融合） ＆ MFNR雑音低減 σ_out = σ_in / √N",
+        "description": "HCG暗部信号とLCG明部信号のリニア16bitシームレス融合と複数枚RAW整合により、階調と低ノイズを極限化"
+      },
+      "nextGenInnovation": "フルサイズハイブリッド機の標準を14〜15段から「16ストップ」へ引き上げたα7 Vの中核処理パイプラインであり、次世代LOFIC積層センサー時代（18〜20段級）へ直結するHDR基盤です。",
+      "specs": [
+        {
+          "label": "ダイナミックレンジ",
+          "value": "最大 16 ストップ（α7 V公式スペック・滑らかな明暗グラデーション）"
+        },
+        {
+          "label": "合成アーキテクチャ",
+          "value": "16-bitリニア Dual-Gain（HCG/LCG）最適SNRブレンドパイプライン"
+        },
+        {
+          "label": "マルチフレーム処理",
+          "value": "サブピクセル動体補償付き コンポジットRAW NR（ノイズ 1/√N 低減）"
+        },
+        {
+          "label": "対応フォーマット",
+          "value": "14-bitロスレス圧縮RAW / 非圧縮RAW / 10-bit HEIF / S-Log3 HDR"
+        }
+      ],
+      "diagramType": "xv2_16stop_dual_gain_hdr_fusion"
+    },
+    {
+      "id": "xv2-xavc-hs-10bit-422-codec",
+      "order": 82,
+      "swatchColor": "#e11d48",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_82_XAVC_HS_Codec",
+      "assembledPos": [
+        -17.9,
+        2.548,
+        -7.8
+      ],
+      "explodeOffset": [
+        -24.16,
+        22,
+        -10.53
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-82. BIONZ XR2 映像圧縮核「4K 60p/120p 10bit 4:2:2 XAVC HS（HEVC / AV1）ハードウェア動画エンコーダ ＆ 動き補償エンジン」",
+      "subtitle": "BIONZ XR2 Real-Time 4K 60p/120p 10-bit 4:2:2 XAVC HS (HEVC/H.265), XAVC S-I All-Intra & Next-Gen AV1 Hardware Video Codec",
+      "category": "BIONZ XR 極超解剖図 V2 X2-82 — 7K超解像4K 60pや4K 120pの膨大な10bit 4:2:2映像データを、ごく僅かな電力と発熱でリアルタイム高画質圧縮する専用シネマ符号化エンジン",
+      "plainAnalogy": "4K 60pや4K 120pの10bit 4:2:2動画は、圧縮せずにそのまま記録すると1秒間だけでギガバイト級の凄まじいデータ量になり、カードもバッテリーも一瞬でパンクします。そこでBIONZ XR2は、映像圧縮だけに特化した超効率の「ハードウェア動画エンコーダ」を内蔵しています！画面を大小のブロック（CTU）へ賢く分割し、前のコマから物がどこへ動いたかを専用回路で超高速探索（動き補償）しながら、放送・映画グレードの10bit 4:2:2画質を劣化させずに極小ビットレートへリアルタイム圧縮します！",
+      "summary": "Sony α7 Vのフルサイズ7Kオーバーサンプリング4K 60pおよびSuper 35 4K 120p（10-bit 4:2:2）収録を支える専用ハードウェア動画コーデック核。並列CTU分割・動き推定/補償、直交変換/量子化、インループフィルタ、およびCABACエントロピー符号化器を低消費電力に統合しています。",
+      "opticsAndPhysics": [
+        "XAVC HS（H.265/HEVC）の最大64×64四分木CTU（Coding Tree Unit）分割と多方向イントラ予測・分数画素動き推定（ME）をシストリック専用ハードウェアで並列実行し、汎用CPU処理比で100分の1以下の電力で4K 120pをリアルタイム処理します。",
+        "プロ映像制作のカラーグレーディング耐性を決める10-bit（10億色超）＆ 4:2:2クロマサブサンプリングに対応し、Long GOPのXAVC HSとフレーム単位編集に強いAll-Intra（XAVC S-I、最大600 Mbps）の両方をネイティブ出力します。",
+        "さらにインループ・デブロッキングフィルタ＆SAO（Sample Adaptive Offset）と次世代AV1互換エントロピー演算器を備え、2nm GAAの低リーク特性と相まって小型ボディでの長時間熱停止フリー収録を実現します。"
+      ],
+      "formula": {
+        "expression": "7K→4K 60p / S35 4K 120p（10-bit 4:2:2） ⇒ 並列CTU動き推定＋DCT＋CABAC 1フレーム < 8.3 ms リアルタイム圧縮",
+        "description": "専用ハードウェア符号化パイプラインにより、放送・シネマ基準の10bit 4:2:2高フレームレート動画を極低消費電力で圧縮"
+      },
+      "nextGenInnovation": "BIONZ XR2世代のハードウェア動画エンジンは、10-bit 4:2:2 XAVC HS/S-Iに加え、将来の8K 60p/120pおよびオープンロイヤリティフリーAV1 / 16bit圧縮RAW内部収録へとシームレスに拡張されます。",
+      "specs": [
+        {
+          "label": "対応解像度・速度",
+          "value": "フルサイズ7K超解像 4K 60p ／ Super 35 4K 120p リアルタイム処理"
+        },
+        {
+          "label": "色深度・サンプリング",
+          "value": "10-bit 4:2:2（XAVC HS HEVC / XAVC S-I All-Intra / 次世代AV1対応）"
+        },
+        {
+          "label": "主要ハードウェア段",
+          "value": "並列CTU動き推定・シストリックDCT/量子化・SAO・CABAC符号化器"
+        },
+        {
+          "label": "最大ビットレート",
+          "value": "最大 600 Mbps（All-Intra）＋ 高効率 Long GOP リアルタイム出力"
+        }
+      ],
+      "diagramType": "xv2_xavc_hs_10bit_422_codec"
+    },
+    {
+      "id": "xv2-3d-lut-breathing-warp-isp",
+      "order": 83,
+      "swatchColor": "#ec4899",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_83_3DLUT_WarpISP",
+      "assembledPos": [
+        -2.81,
+        2.548,
+        -14.5
+      ],
+      "explodeOffset": [
+        -3.79,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-83. BIONZ XR2 光学・色彩核「33³四面体3D LUT（S-Log3 / S-Cinetone）＆ リアルタイム収差・ブリージング補正ジオメトリワープ回路」",
+      "subtitle": "BIONZ XR2 33x33x33 Tetrahedral 3D Color LUT Engine (S-Log3/S-Cinetone/User LUT) & Real-Time Bicubic Optical/Breathing Mesh Warper",
+      "category": "BIONZ XR 極超解剖図 V2 X2-83 — 3万5千点の立体色キューブでシネマ色彩を一瞬で仕上げつつ、レンズの歪み・色収差・ピント呼吸まで1パスで滑らかに直す光学＆色彩マジック回路",
+      "plainAnalogy": "ピントを遠くから近くへ動かすと画角が少しズームしたように変わる「フォーカスブリージング」や、広角レンズの樽型歪み・歩いたときの激しい手ブレ揺れを、BIONZ XR2は専用「2Dジオメトリワープ回路」で1フレームごとにゴムの地図を伸ばすようにリアルタイム矯正します！さらにその直後、赤・緑・青の立体キューブ（33×33×33＝35,937点）を四面体補間する「3D LUT色彩エンジン」が、シネマ機VENICE譲りのS-Cinetoneやクリエイター独自のユーザーLUTを遅延ゼロで焼き込みます！",
+      "summary": "Sony α / Cinema Lineの色彩表現と光学電子補正を担う2大ISP専用ブロック。33×33×33四面体補間3DカラーLUTエンジン（S-Log3 / S-Cinetone / ユーザーLUT）と、レンズ歪曲・倍率色収差・ブリージング・ダイナミックアクティブ手ブレを一括処理するバイキュービック・ジオメトリワープ回路です。",
+      "opticsAndPhysics": [
+        "33³（35,937格子点）3D LUTエンジンは、単純な三線形補間（8点参照）より色相の連続性と非線形カーブ再現に優れる「四面体補間（Tetrahedral Interpolation、4頂点高速補間）」をハードウェア実装し、16bit色空間でS-Gamut3.CineやS-Cinetone・クリエイティブルックをバンディングなしで変換します。",
+        "光学ジオメトリワープ回路は、Eマウントレンズ固有のディストーション係数・R/G/B別倍率色収差マップ・ピント位置連動のブリージング倍率・さらに6軸ジャイロ由来のローリングシャッター歪み＆ダイナミックアクティブ手ブレ補正ベクトルを単一の2Dメッシュ座標変換へ統合します。",
+        "複数の幾何補正を1回のバイキュービック（またはランチョス）リサンプリング・パスで一括完了させることで、再サンプリングの繰り返しによる解像度劣化（ボケ）を徹底的に防ぎます。"
+      ],
+      "formula": {
+        "expression": "C_out = Tetrahedral_LUT33³(C_in) ∘ SinglePass_BicubicWarp(Distortion + LatCA + Breathing + ActiveIS)",
+        "description": "四面体3D色空間補間と全幾何光学補正のワンパス統合により、解像感を損なわずシネマ級のルックと安定映像を生成"
+      },
+      "nextGenInnovation": "カメラ内ユーザーLUT直接適用と全純正G Masterレンズのブリージング・ダイナミックアクティブ統合補正により、撮影現場で完成品グレーディング映像をそのまま収録できるワークフローを支えます。",
+      "specs": [
+        {
+          "label": "色彩変換エンジン",
+          "value": "33×33×33（35,937点）四面体補間 3D Color LUT ハードウェア"
+        },
+        {
+          "label": "対応ルック＆ログ",
+          "value": "S-Cinetone / S-Log3 / S-Gamut3.Cine / Creative Look / ユーザー.cube LUT"
+        },
+        {
+          "label": "幾何ワープ補正",
+          "value": "歪曲収差・R/G/B倍率色収差・ブリージング・ローリング歪み・Active IS 1パス統合"
+        },
+        {
+          "label": "補間フィルタ",
+          "value": "高先鋭バイキュービック / 適応ランチョス・リアルタイム2Dメッシュワープ"
+        }
+      ],
+      "diagramType": "xv2_3d_lut_breathing_warp_isp"
+    },
+    {
+      "id": "xv2-precapture-ring-dma-cfe",
+      "order": 84,
+      "swatchColor": "#06b6d4",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_84_PreCapture_DMA",
+      "assembledPos": [
+        -17.9,
+        2.548,
+        2.6
+      ],
+      "explodeOffset": [
+        -24.16,
+        22,
+        3.51
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-84. BIONZ XR2 高速記録核「30fps 1秒遡りプリ撮影（Pre-Capture）リングDMA ＆ CFexpress Type A（PCIe Gen4/5）／デュアルUSB-C制御核」",
+      "subtitle": "BIONZ XR2 30fps 1.0s Zero-Copy Pre-Capture Ring-Buffer DMA, PCIe Gen4/5 CFexpress Type A & Dual USB-C / Wi-Fi 6E I/O Controller",
+      "category": "BIONZ XR 極超解剖図 V2 X2-84 — シャッターを押し切る最大1秒前の決定的瞬間を30fps RAWのまま循環記憶し、超高速DMAでCFexpressやデュアルUSB-Cへ一気に吐き出す時空記録エンジン",
+      "plainAnalogy": "野鳥が飛び立つ瞬間やスポーツの決定的瞬間は、人間の反射神経でシャッターを押したときにはもう遅いことがほとんどです。α7 Vの「プリ撮影（Pre-Capture）」は、シャッター半押しのあいだ毎秒30コマの14bit RAWを専用の「円形メリーゴーランド・メモリ（リングバッファ）」へずっと上書き保存し続け、全押しした瞬間に「最大1秒前まで時間を遡って」CFexpressカードへ一気に書き出します！さらにα7 V新搭載のデュアルUSB-CやWi-Fi 6Eへの並列高速転送もこのDMA司令塔がゼロコピーで捌き切ります！",
+      "summary": "Sony α7 Vの目玉機能である最大1.0秒遡り30fps 14-bit RAWプリ撮影を支えるゼロコピー円環リングバッファDMAエンジン、PCIe Gen4/5 CFexpress Type A（＋デュアルUHS-II SD）ストレージコントローラ、およびデュアルUSB-C／Wi-Fi 6E高速I/Oサブシステムです。",
+      "opticsAndPhysics": [
+        "33MP 14-bit RAW × 30 fps（非圧縮／ロスレス圧縮で毎秒1〜2 GB超）の連続ストリームをCPUコピーなしでLPDDR6上の循環リングバッファへ書き込み続け、トリガー発生瞬間に最大30フレーム過去のポインタをロックするハードウェア・スキャッターギャザーDMAを備えます。",
+        "NVMe over PCIe Gen4/5コントローラがCFexpress Type Aカードの超高速書き込み帯域（>1.5〜3.2 GB/s級）をフル駆動し、連写後のバッファ解放待ち時間を極小化します。",
+        "α7 Vで新採用されたデュアルUSB-Cポート（高速10 Gbpsデータ転送・UVC/UAC 4Kストリーミング・USB PD給電の同時運用）およびWi-Fi 6E（6 GHz帯）無線モジュールへのダイレクトDMAパスにより、報道現場からの即座のFTP送信（C2PA署名付き）を実現します。"
+      ],
+      "formula": {
+        "expression": "Pre-Capture環状帯域: 33MP×14bit×30fps ≈ 1.7 GB/s ゼロコピー循環 → PCIe CFexpress＋Dual USB-C並列DMA吐出",
+        "description": "リングバッファDMAによる1秒遡り時間旅行記録と、高速ストレージ／デュアルUSB-Cの同時並列転送を両立"
+      },
+      "nextGenInnovation": "α7 Vで標準化されたプリ撮影＋デュアルUSB-C＋Wi-Fi 6E直結DMAは、次世代PCIe Gen5 CFexpress Type A 4.0およびUSB4 40Gbpsテザー撮影時代の中枢I/Oハブへと進化します。",
+      "specs": [
+        {
+          "label": "プリ撮影機能",
+          "value": "最大 1.0秒遡り・30fps 14-bit RAW ゼロコピー円環リングバッファDMA"
+        },
+        {
+          "label": "カード制御",
+          "value": "CFexpress Type A（NVMe / PCIe Gen4・5）＋ デュアル UHS-II SD 同時記録"
+        },
+        {
+          "label": "外部高速I/O",
+          "value": "α7 V新搭載 デュアルUSB-C（10Gbpsデータ＋PD同時）＆ Wi-Fi 6E（6GHz）"
+        },
+        {
+          "label": "転送方式",
+          "value": "ハードウェア・スキャッターギャザーDMA（CPU負荷ゼロ・即座バッファ解放）"
+        }
+      ],
+      "diagramType": "xv2_precapture_ring_dma_cfe"
+    },
+    {
+      "id": "xv2-blackoutfree-evf-hdmi-disp",
+      "order": 85,
+      "swatchColor": "#2563eb",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_85_EVF240Hz_HDMI21",
+      "assembledPos": [
+        17.9,
+        2.548,
+        2.6
+      ],
+      "explodeOffset": [
+        24.16,
+        22,
+        3.51
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-85. BIONZ XR2 映像出力核「ブラックアウトフリー240Hz EVF表示コンポジタ ＆ 4K 16bit RAW HDMI 2.1（FRL）出力エンジン」",
+      "subtitle": "BIONZ XR2 Line-Sliced Blackout-Free 120Hz/240Hz OLED EVF Display Compositor & 4K 16-bit RAW HDMI 2.1 FRL Output Engine",
+      "category": "BIONZ XR 極超解剖図 V2 X2-85 — 30fps連写中でもファインダーが1ミリ秒も暗転しない超低遅延EVF合成器と、非圧縮16bit RAWを外部レコーダーへ送り出すHDMI 2.1出力核",
+      "plainAnalogy": "秒間30コマで猛スピードのスポーツカーを追いかけるとき、ファインダーがパカパカ暗転（ブラックアウト）したり映像が遅れたりすると被写体を見失います。このBIONZ XR2表示コンポジタは、センサーから届いた映像をフレーム丸ごと待たずに「数ライン単位（ラインスライス）」で即座にEVFへ流し込み、同時にピーキング・ゼブラ・AF枠・水準器などのOSD画面を多層リアルタイム合成！さらに隣の4レーンHDMI 2.1（FRL）出力エンジンが、最高4K60pの16bit RAWや10bit 4:2:2映像を外部シネマレコーダーへ寸分の狂いなく出力します！",
+      "summary": "ブラックアウトフリー30fps連写時の超低遅延120Hz/240Hz OLED EVF（MIPI-DSI）駆動、マルチアングルLCD同時表示、および4K 16-bit RAW / 10-bit 4:2:2対応のHDMI 2.1 Fixed Rate Link（FRL）出力を司るBIONZ XR2専用ディスプレイ・タイミング＆合成エンジンです。",
+      "opticsAndPhysics": [
+        "従来のフレームバッファ完了待ち表示を排し、センサー読み出しと同期したラインベース・スライスパイプラインでEVFへ直接転送することで、ガラス・トゥ・アイ（被写体から瞳まで）遅延をサブ5 ms級へ短縮し、30fps電子シャッター連写中の完全ブラックアウトフリー視界を実現します。",
+        "専用多層アルファブレンド・コンポジタがライブ映像の上へリアルタイムにフォーカスピーキング（エッジ微分検出）・ゼブラパターン（輝度閾値マスク）・フォルスカラー・ウェーブフォーム・AI認識枠を遅延ゼロで重畳します。",
+        "外部出力側には4レーン最大48 GbpsのHDMI 2.1 FRL（Fixed Rate Link）高速SerDes送信器を搭載し、従来のTMDS上限を超える非圧縮4K60p 16-bitリニアRAWや高フレームレート10-bit 4:2:2モニタリング出力を安定供給します。"
+      ],
+      "formula": {
+        "expression": "ラインスライス直結EVF（120/240Hz, 遅延 < 5 ms） ＋ 4-Lane HDMI 2.1 FRL（最大 48 Gbps / 16-bit RAW）",
+        "description": "超低遅延ブラックアウトフリーEVF合成とプロシネマ対応48Gbps HDMI 2.1出力を単一タイミング核で完全同期"
+      },
+      "nextGenInnovation": "部分積層Exmor RSセンサーの高速スキャンとBIONZ XR2ラインスライスEVF駆動の融合により、光学ファインダーを超える情報量とリアルタイム性を両立した次世代ミラーレス視界が完成します。",
+      "specs": [
+        {
+          "label": "EVF駆動パイプライン",
+          "value": "ラインスライス超低遅延 MIPI-DSI（120Hz / 240Hz・ブラックアウトフリー）"
+        },
+        {
+          "label": "多層OSD合成機能",
+          "value": "リアルタイム・ピーキング / ゼブラ / ウェーブフォーム / AI瞳枠ハードウェア重畳"
+        },
+        {
+          "label": "外部映像インターフェース",
+          "value": "HDMI 2.1 FRL（4レーン最大48 Gbps・16-bit RAW / 4K60 10-bit 4:2:2出力）"
+        },
+        {
+          "label": "同時表示対応",
+          "value": "高輝度OLED EVF ＋ 4軸マルチアングルLCD ＋ HDMI外部レコーダー同時同期"
+        }
+      ],
+      "diagramType": "xv2_blackoutfree_evf_hdmi_disp"
+    },
+    {
+      "id": "xv2-2d-tmd-sb-bi-vdw-contact",
+      "order": 86,
+      "swatchColor": "#06b6d4",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_86_2D_vdW半金属コンタクト",
+      "assembledPos": [
+        -15.4,
+        -3.873,
+        0
+      ],
+      "explodeOffset": [
+        -20.79,
+        4,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-86. 2D半導体ファンデルワールス半金属コンタクト「Sb（アンチモン）／Bi・Sb-Pt 界面MIGS消去オーミック接合」",
+      "subtitle": "2D TMD Monolayer Semimetal van der Waals Contact (Sb(01-12)/Bi nFET & Sb/Pt Alloy pFET, MIGS-Free Ohmic Interface)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-86 — 原子1層2D半導体チャネルに「共有結合の傷」をつけず電気的障壁（MIGS）を消去する半金属ファンデルワールス電極接合",
+      "plainAnalogy": "厚さわずか0.7 nmの2D半導体シートに普通の金属（TiやNi）をドスンと載せると、原子の結び目が傷ついて「目に見えない高い関所（ショットキー障壁）」ができてしまい、電気がほとんど流れなくなります。そこでフェルミ準位付近の電子状態がほぼゼロの「半金属アンチモン（Sb）やビスマス（Bi）」を3.3 Åの極微な隙間（ファンデルワールス界面）でそっと重ねると、関所（MIGS）そのものが消滅！さらにp型WSe₂にはSb/Pt合金を使うことで、420°CのCMOS量産熱工程にも耐えながら量子限界に迫る極低接触抵抗を実現します！",
+      "summary": "A5以降のポストシリコン2D半導体（1L MoS₂ / WS₂ / WSe₂）CFETで最大のボトルネックだった金属−半導体界面のフェルミ準位ピニングを打破する、TSMC / MIT IEDM実証の半金属（Sb / Bi / Sb-Pt）ファンデルワールス（vdW）オーミック接合構造です。",
+      "opticsAndPhysics": [
+        "通常3D金属を2D遷移金属ダイカルコゲナイド（TMD）へ成膜すると金属電子波が半導体ギャップへ染み出して金属誘起ギャップ準位（MIGS）を生じ、フェルミ準位が強くピニング（S ≈ 0.1）されて高いショットキー障壁 Φ_SB と数 kΩ·μm 以上の寄生抵抗が発生します。",
+        "半金属のBiやSb(01-12)はフェルミ準位近傍の状態密度（DOS）が極めて小さいためMIGSの生成自体が抑制され、軌道混成・圧縮ファンデルワールス空隙（標準 3.3 Å → 圧縮 0.285 nm）を介して1L MoS₂ / WS₂へ障壁ゼロのオーミック接触を形成し、量子限界に迫る Rc = 42 Ω·μm（NSR 2026年3月実証 41 Ω·μm・I_on = 1.23–2.30 mA/μm）を達成します。",
+        "融点271°CのBiに対し、Sb(01-12)半金属は >600°C（420°C BEOL熱履歴完全耐性）でも界面劣化せず、EOT = 0.67 nm・SS = 62.8 mV/dec の急峻スイッチングと p型WSe₂向けSb/Pt合金コンタクトによりn/p相補2D-CFETのウェハスケール集積が可能になります。"
+      ],
+      "formula": {
+        "expression": "Φ_SB = S·(Φ_M − χ_2D) + (1 − S)·Φ_CNL   （d_vdW = 0.285 nm,  Rc = 41–42 Ω·μm,  I_on = 1.23–2.30 mA/μm）",
+        "description": "半金属コンタクトと圧縮vdW界面でMIGSを消去し、EOT 0.67 nm・SS 62.8 mV/dec の量子限界級2D駆動電流を解放"
+      },
+      "nextGenInnovation": "X2-33の0.7nm単層2Dチャネルと本コンタクト技術の統合により、シリコン限界を超えるA5/A2世代BIONZ XRの極超省電力・高駆動トランジスタが現実の量産ロードマップに乗ります。",
+      "specs": [
+        {
+          "label": "n型／p型半金属接合",
+          "value": "Sb(01-12) / Bi（1L MoS₂・WS₂）＆ Sb/Pt合金（1L WSe₂・vdW界面 0.285 nm）"
+        },
+        {
+          "label": "接触抵抗 Rc・オン電流",
+          "value": "Rc = 42 Ω·μm（NSR Mar 2026 41 Ω·μm）・I_on = 1.23〜2.30 mA/μm"
+        },
+        {
+          "label": "ゲート特性（EOT / SS）",
+          "value": "EOT = 0.67 nm・サブスレッショルド係数 SS = 62.8 mV/dec（MIGS消去）"
+        },
+        {
+          "label": "熱安定性（BEOL耐性）",
+          "value": "Sb(01-12): >600°C 安定・420°C CMOS熱履歴無劣化（Bi 271°C制約を克服）"
+        }
+      ],
+      "diagramType": "xv2_2d_tmd_sb_bi_vdw_contact"
+    },
+    {
+      "id": "xv2-mwald-hfalo-gate-dielectric",
+      "order": 87,
+      "swatchColor": "#8b5cf6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_87_MWALD_HfAlO高誘電膜",
+      "assembledPos": [
+        -15.4,
+        -3.873,
+        -6.6
+      ],
+      "explodeOffset": [
+        -20.79,
+        4,
+        -8.91
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-87. マイクロ波支援ALD（MW-ALD）高耐熱高誘電合金「Hf₀.₄₄Al₀.₅₆O 結晶化抑制ゲート／MIM絶縁膜スタック」",
+      "subtitle": "Microwave-Enhanced ALD (MW-ALD) Amorphous-Stabilized Ternary High-k Hf0.44Al0.56O Gate & MIM Dielectric Stack (AVS / IEDM 2025)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-87 — マイクロ波プラズマ原子層堆積により高温アニール後も結晶粒界リークを完全封鎖する3元高誘電合金絶縁膜",
+      "plainAnalogy": "従来のHfO₂（ハフニア）高誘電膜は高温の熱処理を受けると部分的に結晶化し、その結晶の「つなぎ目（粒界）」から電気がじわじわ漏れてしまう弱点がありました。本技術は電子レンジと同じ2.45 GHzマイクロ波プラズマを援用したALD（MW-ALD）でHfO₂とAl₂O₃を原子レベルで混ぜ合わせたアモルファス合金「Hf₀.₄₄Al₀.₅₆O」を形成！Al₂O₃より68%も高い誘電率を保ったまま結晶の割れ目を一切作らず、8 MV/cmの高耐圧と10 nA/cm²の極小リークを両立する鉄壁のナノ絶縁バリアです！",
+      "summary": "AVS 2025 / IEDM 2025で実証されたマイクロ波支援ALD（MW-ALD）による3元高誘電合金 Hf₀.₄₄Al₀.₅₆O ナノラミネート絶縁膜です。高κ特性と高温アモルファス安定性・酸素欠損修復を同時実現し、先端GAAゲートおよび超高密度MIMキャパシタのリーク限界を押し下げます。",
+      "opticsAndPhysics": [
+        "純粋なHfO₂は400〜500°Cの熱処理で多結晶化し、結晶粒界に沿った酸素欠損（V_O）連鎖がPoole-Frenkel型およびトラップ支援トンネル（TAT）リーク電流の支配的経路となります。",
+        "HfO₂へAl₂O₃を精密比率（Hf₀.₄₄Al₀.₅₆O）でスーパーサイクル混晶化することで結晶化開始温度を大幅に引き上げ、熱処理後も完全アモルファス相を維持しつつAl₂O₃単体比+68%高い比誘電率κを実現します。",
+        "2.45 GHzマイクロ波ECRプラズマで高密度・低エネルギーの酸素ラジカルを供給するMW-ALDにより、低温下でもカーボン残留不純物と酸素欠損を徹底除去し、3 MV/cm印加時リーク 10 nA/cm²・絶縁破壊電界 8 MV/cm を達成します。"
+      ],
+      "formula": {
+        "expression": "κ(Hf₀.₄₄Al₀.₅₆O) = 1.68 × κ(Al₂O₃),   J_leak = 10 nA/cm² @ 3 MV/cm,   E_BD = 8 MV/cm",
+        "description": "アモルファス相安定化とMWプラズマ緻密化により高容量・高耐圧・極低リークを同時成立"
+      },
+      "nextGenInnovation": "2nm/1.4nm世代のGAAゲート絶縁膜・超高密度デカップリングMIM・強誘電体障壁層のすべてで、待機リーク電力と高温TDDB経年劣化を劇的に改善します。",
+      "specs": [
+        {
+          "label": "高誘電合金組成",
+          "value": "Hf₀.₄₄Al₀.₅₆O アモルファス安定化3元酸化物（MW-ALD成膜）"
+        },
+        {
+          "label": "比誘電率向上",
+          "value": "Al₂O₃単体比 +68% 高誘電率（高容量密度・薄EOT両立）"
+        },
+        {
+          "label": "絶縁破壊電界 E_BD",
+          "value": "8 MV/cm（結晶粒界リーク経路の完全抑止）"
+        },
+        {
+          "label": "リーク電流密度",
+          "value": "10 nA/cm² @ 3 MV/cm（AVS 2025 / IEDM 2025実証）"
+        }
+      ],
+      "diagramType": "xv2_mwald_hfalo_gate_dielectric"
+    },
+    {
+      "id": "xv2-odometer-fmax-aging-rtn-sensor",
+      "order": 88,
+      "swatchColor": "#f43f5e",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_88_CICC25オドメータ劣化計",
+      "assembledPos": [
+        2.754,
+        2.438,
+        14.5
+      ],
+      "explodeOffset": [
+        3.72,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-88. IEEE CICC 2025 オンダイ劣化走行計「ビート周波数オドメータ（Odometer）＆ RTN/TDDB/HCI Fmax劣化リアルタイム監視アレイ」",
+      "subtitle": "IEEE CICC 2025 Synthesizable Beat-Frequency Odometer Aging Sensor Array & Single-Trap RTN / HCI / Fmax Degradation Telemetry",
+      "category": "BIONZ XR 極超解剖図 V2 X2-88 — 無劣化の基準リング発振器と酷使された発振器の「うなり」を計数し、チップの経年速度低下を0.01%精度で常時診断するデジタル走行距離計",
+      "plainAnalogy": "自動車に「オドメータ（走行距離計）」があるように、2nm先端チップにも自分の老化具合を測るメーターが内蔵されています！同じリング発振器をペアで置き、片方は普段オフにして新品のまま温存、もう片方はCPUと一緒に働かせます。測定時だけ両方動かして2つの音のズレ（ビート＝うなり）をデジタル計数することで、温度変化の影響を綺麗に打ち消しながら「最大クロックFmaxが何%落ちたか」を0.01%未満の超高精度で読み取り、プロ用カメラの10年運用でも最適な電圧・周波数を保ち続けます！",
+      "summary": "IEEE CICC 2025（ミネソタ大学 Chris Kim研・RAREチップ）で実証された、標準論理セルのみで自動合成可能なビート周波数オドメータ（Odometer）劣化センサアレイです。3系統独立電源ドメイン・ロックステップRISC-Vコア近傍へ42基分散配置し、HCI・BTI・TDDB・単一トラップRTNに起因するFmax低下を実機稼働中に精密追跡します。",
+      "opticsAndPhysics": [
+        "各オドメータはINV・NAND・NORの3種ゲートで構成された「非ストレス基準リング発振器（f_REF）」と「ストレス負荷リング発振器（f_AGED）」のペアを持ち、位相比較器で差周波数 Δf = f_REF − f_AGED のビート周期を計数します。",
+        "同一局所領域に近接配置されたペア発振器の差分をとるため、電源電圧揺らぎやダイ温度勾配（PVT変動）が共通モードとして自動キャンセルされ、0.01%未満の微小な経年周波数シフトを抽出できます。",
+        "CICC 2025 RARE実証チップでは3系統の独立電源ドメイン（ストレス／基準／I/O）と8-bit デジタル制御発振器（DCO：300 MHz〜1.6 GHz）を備えるロックステップRISC-Vコアへ42基のメモリマップド・オドメータを配置し、25°C〜100°C加速試験下の実CPU Fmax劣化と電圧ノイズ注入によるレアクリティカル異常（Signal Contamination）のリアルタイム相関計測に成功しています。"
+      ],
+      "formula": {
+        "expression": "Δf / f_REF = 1 / N_beat   （42 Odo / 3電源ドメイン / 8-bit DCO 300MHz–1.6GHz / Lock-Step RISC-V）",
+        "description": "ビート計数によりPVT変動を除去し、過剰な初期電圧ガードバンドを削って消費電力と寿命を同時最適化"
+      },
+      "nextGenInnovation": "新品出荷時から過剰な安全マージン電圧（ガードバンド）を上乗せする無駄を廃止し、BIONZ XR2の実使用経年に連動して必要最小限の電圧だけを供給する適応型SLM寿命制御を実現します。",
+      "specs": [
+        {
+          "label": "計測方式・DCO",
+          "value": "基準RO vs ストレスRO 差動ビート計数・8-bit DCO（300 MHz〜1.6 GHz）"
+        },
+        {
+          "label": "搭載構成（CICC 2025）",
+          "value": "42基メモリマップド・オドメータ（3電源ドメイン・ロックステップRISC-V RARE）"
+        },
+        {
+          "label": "周波数シフト分解能",
+          "value": "< 0.01%（温度・電圧PVTコモンモード雑音を差動相殺・INV/NAND/NOR切替）"
+        },
+        {
+          "label": "分離診断対象",
+          "value": "Fmax経年劣化 / HCI / NBTI・PBTI / 単一トラップRTN / ノイズレアエラー"
+        }
+      ],
+      "diagramType": "xv2_odometer_fmax_aging_rtn_sensor"
+    },
+    {
+      "id": "xv2-nbp-topological-semimetal-line",
+      "order": 89,
+      "swatchColor": "#38bdf8",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_89_Science25_NbP半金属配線",
+      "assembledPos": [
+        -14.5,
+        6.073,
+        14.2
+      ],
+      "explodeOffset": [
+        -18.85,
+        42,
+        18.46
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-89. Stanford Science 2025 トポロジカル半金属配線「極薄1.5nm NbP（リン化ニオブ）表面伝導インターコネクト」",
+      "subtitle": "Stanford Science 2025 Ultrathin 1.5nm Noncrystalline NbP Weyl Topological Semimetal Surface-Conduction Interconnect",
+      "category": "BIONZ XR 極超解剖図 V2 X2-89 — 銅配線が細線化で抵抗暴騰する5nm以下の壁を逆転し、薄くするほど表面量子伝導で低抵抗化するワイル半金属配線",
+      "plainAnalogy": "銅（Cu）やルテニウム（Ru）などの普通の金属配線は、厚さが5 nmを切ると電子が壁にぶつかりまくって電気抵抗が10倍以上に跳ね上がる「細線の呪い」に悩まされてきました。ところが2025年1月にScience誌で発表されたスタンフォード大学の「NbP（リン化ニオブ）」は真逆！ワイル半金属ならではの「トポロジカル表面伝導」のおかげで、1.5 nmまで薄くするほどバルクの1/6の低抵抗（34 μΩ·cm）へ逆転低下し、しかも単結晶不要の400°C成膜でそのまま先端チップに使える夢の次世代配線です！",
+      "summary": "スタンフォード大学 Eric Pop研究室（Khan et al., Science 2025年1月）が実証した、BEOL互換400°C成膜・Nb(001)シード層対応の非晶質／ナノ結晶リン化ニオブ（NbP）トポロジカル半金属ナノ配線です。膜厚5 nm以下で銅の電気抵抗率を逆転し、A5以降の極微細BEOL RC遅延ボトルネックを根本打破します。",
+      "opticsAndPhysics": [
+        "銅（電子平均自由行程 MFP ≈ 39 nm）をはじめとする従来金属は、配線寸法が5 nmを下回ると表面・粒界散乱（Fuchs-Sondheimer / Mayadas-Shatzkes効果）が支配的となり、室温抵抗率が >100 μΩ·cm へ急騰します。",
+        "ワイル型トポロジカル半金属NbPは Nb(001) シード上へ格子定数 4a_NbP ≈ 1.34 nm 級で極薄成長させても表面フェルミアーク（Fermi Arc）由来トポロジカル表面状態が散乱耐性を保持し、5 K 極低温まで真の金属的挙動（dρ/dT > 0）を維持したまま薄層化で実効抵抗率が劇的に低下します。",
+        "室温で膜厚 1.5 nm の非晶質／ナノ結晶NbP薄膜はバルクNbPの最大1/6となる約 34 μΩ·cm を記録（同膜厚Cu >100 μΩ·cm比で66%以上低抵抗）。さらに大気酸化による抵抗ドリフトも <10%（同厚4 nm純Nbの90%劣化を圧倒）に抑えつつ400°Cスパッタ成膜で既存CMOS BEOLへそのまま統合可能です。"
+      ],
+      "formula": {
+        "expression": "ρ_eff(t) = [ (1/ρ_bulk) + (2·σ_surf / t) ]⁻¹   （1.5nm: 34 μΩ·cm,  dρ/dT>0 to 5K,  酸化変動 <10%）",
+        "description": "薄層化に伴い表面伝導コンダクタンス σ_surf/t が支配的となり従来金属の抵抗急騰則を完全に覆す"
+      },
+      "nextGenInnovation": "金属の「細くなるほど抵抗が増える」という半世紀の常識をトポロジカル物性で覆し、サブ10nmピッチ時代のBIONZ次世代SoCにおける最下層ローカル配線の性能限界を切り拓きます。",
+      "specs": [
+        {
+          "label": "配線材料・シード構造",
+          "value": "NbP ワイル半金属・Nb(001)シード（4a_NbP ≈ 1.34 nm・5Kまで dρ/dT>0）"
+        },
+        {
+          "label": "室温抵抗率（1.5 nm）",
+          "value": "~34 μΩ·cm（バルクNbPの1/6・同膜厚Cu >100 μΩ·cm比 66%以上低減）"
+        },
+        {
+          "label": "耐酸化・対Cu逆転",
+          "value": "膜厚 < 5 nmでCu/Ru逆転・大気酸化抵抗変動 <10%（4nm純Nbの90%を圧倒）"
+        },
+        {
+          "label": "成膜温度・互換性",
+          "value": "400°C 非晶質/ナノ結晶スパッタ（単結晶不要・BEOL完全互換 / Science 2025）"
+        }
+      ],
+      "diagramType": "xv2_nbp_topological_semimetal_line"
+    },
+    {
+      "id": "xv2-rual-intermetallic-supervia",
+      "order": 90,
+      "swatchColor": "#f59e0b",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_90_imec_RuAlスーパービア",
+      "assembledPos": [
+        -4.8,
+        6.073,
+        14.2
+      ],
+      "explodeOffset": [
+        -6.24,
+        42,
+        18.46
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-90. imec IEDM 2025 金属間化合物＆多層スキップ構造「RuAl / グラフェン被覆Cu ＆ バリアレス・スーパービア（M0→M2直結）」",
+      "subtitle": "imec IEDM 2025 Ordered Binary Intermetallic RuAl, Graphene-Capped Cu & Three-Level Barrierless M0-to-M2 Supervia",
+      "category": "BIONZ XR 極超解剖図 V2 X2-90 — M1中間層をノンストップ貫通する長尺スーパービアと短MFP規則合金RuAlにより垂直ビア抵抗と配線混雑を一挙解消",
+      "plainAnalogy": "高層ビルで1階（M0）から3階（M2）へ行くのに、わざわざ2階（M1）で乗り換えて狭い通路と重い扉（高抵抗TaNバリア層）を4回も通過していては大渋滞になります。imecの「スーパービア（Supervia）」は2階を丸ごとスキップして1階と3階を直通エレベーターで一撃連結！さらに電子の移動距離（MFP）が僅か6 nmの規則合金「RuAl」とグラフェン被覆Cuを組み合わせることで、バリア膜無しでも壊れず垂直RC遅延を最大40%も削ぎ落とします！",
+      "summary": "imec IEDM 2025 および 2025年金属間化合物探索研究で実証された、16〜21 nmピッチBEOL向け3層直結スーパービア（Supervia）と規則金属間化合物 RuAl（およびグラフェン単層被覆Cu）配線アーキテクチャです。",
+      "opticsAndPhysics": [
+        "従来のM0→V0→M1→V1→M2スタックビアでは、M1に中間着地パッドを専有するためM1配線混雑を悪化させ、かつ各ビア底部に高抵抗TaNバリア界面が2重に直列挿入されるため垂直抵抗が支配的ボトルネックとなります。",
+        "バリアレス・スーパービアはM0からM2へM1配線の隙間を縫って1本の連続柱で直結する構造であり、中間着地パッドと界面バリア抵抗を撤去することで垂直RC遅延を約30〜40%削減し、同時にM1信号トラックを開放します。",
+        "規則金属間化合物RuAl（およびNiAl・AlCu₃）は低バルク抵抗率と約6 nmの極短電子平均自由行程（Cuは39 nm）および高凝集エネルギーを併せ持ち、単層グラフェン被覆Cuと合わせてバリアレス高EM信頼性配線を形成します。"
+      ],
+      "formula": {
+        "expression": "R_supervia = R_pillar(M0→M2)  ≪  R_V0 + R_barrier×2 + R_M1_pad + R_V1 + R_barrier×2",
+        "description": "中間着地パッドと2重バリア界面の排除により垂直RC遅延を30〜40%短縮しつつM1配線面積を解放"
+      },
+      "nextGenInnovation": "BIONZ XR2内部の超密集NPU積和アレイやSRAMマクロ間で多発するM0〜M2配線渋滞を構造的に解消し、標準セルの実効面積縮小とクロック高速化を同時に引き出します。",
+      "specs": [
+        {
+          "label": "垂直スキップ構造",
+          "value": "3層BEOL M0→M2 直結バリアレス・スーパービア（16–21 nmピッチ）"
+        },
+        {
+          "label": "次世代導体材料",
+          "value": "規則金属間化合物 RuAl（MFP ~6 nm・高凝集エネルギー）＋ グラフェン被覆Cu"
+        },
+        {
+          "label": "垂直RC遅延削減",
+          "value": "従来スタックビア比 −30〜40%（中間M1パッド＆2重バリア界面撤去）"
+        },
+        {
+          "label": "研究出典",
+          "value": "imec IEDM 2025 / arXiv 2504.19676 金属間化合物BEOL実証"
+        }
+      ],
+      "diagramType": "xv2_rual_intermetallic_supervia"
+    },
+    {
+      "id": "xv2-isscc26-ca-hybrid-dldo",
+      "order": 91,
+      "swatchColor": "#10b981",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_91_ISSCC26_CAHLDO電源",
+      "assembledPos": [
+        14.8,
+        10.213,
+        -5.6
+      ],
+      "explodeOffset": [
+        18.5,
+        60,
+        -7
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-91. ISSCC 2026 Paper 8.5 コマンド予測ハイブリッド電源「CA-HLDO（予測DLDO＋アナログALDO複合・8.7mV超低ドループ）」",
+      "subtitle": "ISSCC 2026 Paper 8.5 Command-Aware Hybrid LDO (CA-HLDO: Feedforward DLDO + Analog ALDO, 8.7mV Droop / 400ps Settling)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-91 — メモリ命令を先読みして負荷急変の瞬間に予測電流を注入し、僅か20pF容量で電圧降下を185mVから8.7mVへ95%圧縮するハイブリッド電源",
+      "plainAnalogy": "従来の電源レギュレータは「電圧がガクッと落ちてから慌てて電気を足す」後追い式だったため、HBMやLPDDR6が一斉に動き出すと185 mVも電圧が暴落していました。ISSCC 2026で発表された「CA-HLDO」は、メモリへの動作命令（ACTCMD / WDQS）を直前で盗み見て「これから大電流が来る！」と先制予測し、デジタルLDOが一瞬でドッと電流を流し込み、残った極小リップルだけをアナログLDOが綺麗に均します！結果、巨大なコンデンサ無し（僅か20 pF）で電圧降下を8.7 mV・0.4ナノ秒で鎮圧する神業電源です！",
+      "summary": "ISSCC 2026 Paper 8.5（ソウル大学）で発表された、高速HBM/DRAMインターフェース向けコマンド予測ハイブリッドLDO（Command-Aware Hybrid LDO: CA-HLDO）です。デジタルLDOの先読み電流注入とアナログLDOの残留補償を並列統合し、極小20 pF出力容量で8.7 mVドループと400 ps整定を達成します。",
+      "opticsAndPhysics": [
+        "従来の純アナログLDO（ALDO）はフィードバック帯域制限により高速I/Oバースト起動時の急峻なステップ負荷に追随できず、出力容量20 pF条件下で最大185 mVもの壊滅的電圧ドループを引き起こします。",
+        "CA-HLDOはコントローラから発行されるACTCMDおよびWDQSトグル信号をリアルタイムに先読み（コマンドスヌーピング）し、負荷電流増加と完全に同期して並列デジタルLDO（DLDO）のパワーMOS群を即時オンさせて予測電流をフィードフォワード注入します。",
+        "並列のALDOが微小な予測誤差と定常リップルのみを高精度吸収することで、電圧ドループを 8.7 mV（95.3%削減）、整定時間 400 ps、電源起因ジッタ（PSIJ）10.8 ps、全周波数帯域 PSR ≤ −10 dB という驚異的電源品質を実現します。"
+      ],
+      "formula": {
+        "expression": "I_out(t) = I_DLDO_pred(ACTCMD, WDQS) + I_ALDO_err(t)   ⇒   ΔV_droop = 8.7 mV,  t_settle = 400 ps",
+        "description": "コマンド先読みフィードフォワードとアナログ帰還のハイブリッド化でフィードバック遅延の物理限界を突破"
+      },
+      "nextGenInnovation": "30fps RAW連写や8K120p録画でHBM4 / LPDDR6 I/Oが間欠的にフル稼働する瞬間でも、電源ノイズ起因のタイミングジッタ（PSIJ）を10.8 psへ抑え込み、超高速インターフェースのアイ開口を死守します。",
+      "specs": [
+        {
+          "label": "出典・アーキテクチャ",
+          "value": "ISSCC 2026 Paper 8.5（コマンド先読みDLDO ＋ 並列ALDO複合）"
+        },
+        {
+          "label": "負荷ステップ電圧ドループ",
+          "value": "8.7 mV（従来ALDO 185 mV比 −95.3% 劇的削減）"
+        },
+        {
+          "label": "整定時間 ＆ 出力容量",
+          "value": "400 ps 整定・僅か 20 pF オンチップ容量（面積激減）"
+        },
+        {
+          "label": "ジッタ ＆ 電源除去比",
+          "value": "PSIJ 10.8 ps・全周波数帯域 PSR ≤ −10 dB"
+        }
+      ],
+      "diagramType": "xv2_isscc26_ca_hybrid_dldo"
+    },
+    {
+      "id": "xv2-tdc-supply-noise-oscilloscope",
+      "order": 92,
+      "swatchColor": "#ec4899",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_92_オンダイ電源オシロPDM",
+      "assembledPos": [
+        14.8,
+        10.213,
+        0.8
+      ],
+      "explodeOffset": [
+        18.5,
+        60,
+        1
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-92. オンダイ電源品質オシロスコープ「全デジタルVCO-TDC 電源ノイズ波形サンプラ ＆ PDNインピーダンス解析プローブ（PDM）」",
+      "subtitle": "All-Digital On-Die Power Delivery Monitor (PDM): VCO + Vernier TDC Supply-Noise Oscilloscope & Synthetic-Load Z_PDN(f) Profiler",
+      "category": "BIONZ XR 極超解剖図 V2 X2-92 — 外部プローブが届かないチップ直下の1ナノ秒電源ノイズ波形とPDN共振周波数を標準デジタル回路だけで生観測する内蔵オシロスコープ",
+      "plainAnalogy": "3D積層チップや裏面電源（BSPDN）の奥底にあるトランジスタ直下の電源ノイズは、外からオシロスコープの針を当てることが物理的に不可能です。そこでチップ自身のデジタル標準セルだけで「超小型デジタルオシロ（PDM）」を作り、電源電圧で速度が変わる発振器（VCO）とピコ秒ストップウォッチ（バーニアTDC）で生の電圧波形をデジタル録画！さらに内蔵の擬似電流ステップ負荷で電源網を揺らし、危険な共振周波数（50〜250 MHz）をチップ自身が自動診断します！",
+      "summary": "多コアSoC内部のパワーインテグリティ（PI）を実稼働OS・ワークロード下で直接可視化する、全デジタル標準セル構成のオンダイ電源配信モニタ（PDM）＆ VCO-TDC 波形サンプリングオシロスコープです。",
+      "opticsAndPhysics": [
+        "アナログADCを一切使わず、ローカル電源レール VDD で直接駆動されるリング型VCO（電圧→周波数変換）とサブピコ秒分解能のバーニア時間デジタル変換器（TDC）を組み合わせることで、パッケージ内部の1次/2次 L·di/dt 電源ドループ過渡波形を高時間分解能で離散サンプリングします。",
+        "内蔵のプログラマブル合成電流負荷（Synthetic Current Load）が矩形波／スイープ周波数で意図的な di/dt 電流ステップを印加し、応答電圧振幅からPDNインピーダンススペクトル |Z_PDN(f)| とパッケージL−ダイC反共振ピーク（50〜250 MHz）を実シリコン上で自動同定します。",
+        "イベントトリガ・デバッグエンジンにより、NPU・ISP・動画エンコーダ同時起動時や工場スキャンテスト時の突発的電源ノイズ事象をオンチップSRAMへ自動記録し、パワーゲーティング設計やデカップ配置を実測最適化します。"
+      ],
+      "formula": {
+        "expression": "Z_PDN(f) = ΔV_TDC(f) / ΔI_synth(f),    f_res = 1 / (2π √(L_pkg · C_die))",
+        "description": "オンダイ合成励振とVCO-TDC波形観測によりパッケージ〜2nmダイ間の実効PDNインピーダンスを直接計測"
+      },
+      "nextGenInnovation": "X2-91 CA-HLDOやX2-69適応型FLLへ正確な局所ノイズプロファイルをフィードバックすることで、8K動画収録と30fps連写が交錯する極限負荷でもゼロクラッシュ電源配信を維持します。",
+      "specs": [
+        {
+          "label": "構成アーキテクチャ",
+          "value": "100% デジタル標準セル構成（VCO + バーニアTDC + 合成負荷 + トリガ）"
+        },
+        {
+          "label": "時間／電圧計測能力",
+          "value": "ピコ秒級サンプリング分解能・1次/2次ドループ過渡波形直接取得"
+        },
+        {
+          "label": "PDNインピーダンス解析",
+          "value": "合成di/dtスイープによる 50〜250 MHz 反共振ピーク |Z_PDN(f)| 自動測定"
+        },
+        {
+          "label": "稼働観測モード",
+          "value": "実カメラOS稼働中ワークロード ＆ 工場スキャンテスト時ノイズ観測両対応"
+        }
+      ],
+      "diagramType": "xv2_tdc_supply_noise_oscilloscope"
+    },
+    {
+      "id": "xv2-cozrta-magnetic-fivr-inductor",
+      "order": 93,
+      "swatchColor": "#d97706",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_93_CoZrTa薄膜磁性FIVRインダクタ",
+      "assembledPos": [
+        14.8,
+        10.213,
+        -12.8
+      ],
+      "explodeOffset": [
+        18.5,
+        60,
+        -16
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-93. BEOL最上層モノリシック薄膜磁性インダクタ「CoZrTa（CZTB）異方性アモルファス磁心FIVR高周波インダクタアレイ」",
+      "subtitle": "Monolithic CMOS Thin-Film CoZrTa (CZTB) Anisotropic Magnetic-Core Coupled FIVR Power Inductor Array (127–290 nH/mm², 100–170 MHz)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-93 — メイン基板上の大型コイルをBEOL最上層の積層磁性薄膜へ圧縮統合し、100MHz超・効率97.8%のオンダイ高速降圧を実現するFIVR磁心コイル",
+      "plainAnalogy": "完全内蔵型電圧レギュレータ（FIVR）をチップ上に作るうえで一番場所を食うのが「コイル（インダクタ）」です。空芯の渦巻き配線では大きすぎて電力密度が足りません。本部品は、アモルファス軟磁性薄膜「CoZrTa（CZTB）」と極薄のAlN絶縁膜をミルフィーユ状に何層も重ねて渦電流ロスを遮断し、分厚い銅巻線を閉じた磁気ループで挟み込んだ超微細磁性インダクタ！空芯コイルの51倍ものインダクタンス密度を叩き出し、NPU・ISP・CPU各コアの電圧を100ナノ秒以下で独立制御してバッテリー消費を劇的に減らします！",
+      "summary": "完全内蔵型電圧レギュレータ（FIVR）の受動素子ボトルネックを解消する、CMOS互換BEOL積層型 CoZrTa（CZTB）/ AlN 異方性アモルファス軟磁性薄膜・結合ソレノイド電源インダクタアレイです。",
+      "opticsAndPhysics": [
+        "高透磁率・高飽和磁束密度を持つ一軸異方性アモルファス軟磁性膜 CoZrTa（CZTB）と極薄 4 nm AlN（または SiO₂）誘電体層を交互積層し、さらに磁心をフィンガー状パターニング＋閉磁路ビアで連結することで、100〜200 MHz（〜GHz帯）超高周波動作でも渦電流損失を抑えつつ Q 値を +30% 向上（Q = 15〜30）します。",
+        "異方性磁心と等方性閉磁路ビアを組み合わせたソレノイド構造により漏れ磁束を最小化し、単層比 9.1倍のインダクタンス増強および空芯インダクタ比 51倍となる 127〜290 nH/mm² の圧倒的インダクタンス密度と L/R_DC = 323 nH/Ω、電流密度 >11 A/mm² を実現します。",
+        "隣接相のインダクタを磁気結合（結合係数 k = 0.5〜0.89）させた多相結合インダクタ構成により出力電流リップルを相殺しつつ過渡応答を高速化し、1.8 V → 0.9〜1.1 V・100〜170 MHz 降圧変換でピークインダクタ効率 96.0〜97.8%、DVFS遷移 <100 ns を達成します。"
+      ],
+      "formula": {
+        "expression": "L_density = 127–290 nH/mm² (51× Air-Core, 9.1× L gain),   4nm AlN積層 / Q +30% (15–30),  η = 96.0–97.8%",
+        "description": "4nm AlN絶縁積層とフィンガー状CZTB閉磁路ビアにより高周波GHz級Q値と超高電力密度をオンチップで両立"
+      },
+      "nextGenInnovation": "X2-48のGaNスイッチ素子・X2-10のSHPMIM容量と合わせ「スイッチ＋容量＋磁性コイル」のFIVR 3要素をチップ近傍へ完全集積し、BIONZ XR2の細粒度コア別省電力制御を完成させます。",
+      "specs": [
+        {
+          "label": "軟磁性コア・絶縁層",
+          "value": "フィンガー状 CoZrTa（CZTB）閉磁路ビア ／ 4 nm AlN 渦電流遮断多層ラミネート"
+        },
+        {
+          "label": "インダクタンス密度",
+          "value": "127〜290 nH/mm²（空芯比 51倍・9.1× L増強・L/R_DC = 323 nH/Ω）"
+        },
+        {
+          "label": "動作周波数・Q値・効率",
+          "value": "100〜200 MHz・Q +30%（15〜30）・ピークインダクタ効率 96.0〜97.8%"
+        },
+        {
+          "label": "電流耐量・磁気結合",
+          "value": "電流密度 > 11 A/mm²・結合係数 k = 0.5〜0.89・DVFS遷移 < 100 ns"
+        }
+      ],
+      "diagramType": "xv2_cozrta_magnetic_fivr_inductor"
+    },
+    {
+      "id": "xv2-sic-single-crystal-interposer",
+      "order": 94,
+      "swatchColor": "#14b8a6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_94_TSMC単結晶SiCインターポーザ",
+      "assembledPos": [
+        0,
+        -14.621,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -46,
+        0
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-94. TSMC 2026 次世代熱機械プラットフォーム「単結晶SiC（炭化ケイ素）超高熱伝導インターポーザ ＆ 光・電源ハイブリッド基板」",
+      "subtitle": "TSMC 2026 Single-Crystal 4H-SiC Ultra-High-Conductivity Thermal, Mechanical & Optical Hybrid Interposer (~490 W/m·K, 410 GPa)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-94 — 銅を上回る熱伝導率とシリコンの2.6倍の超高剛性を誇り、巨大3.5Dチップレットの放熱・反り抑制・光配線・高圧IVRを単一基板に統合する単結晶SiCインターポーザ",
+      "plainAnalogy": "チップレットとHBMを5.5倍〜9.5倍レチクルサイズまで並べる超大型3.5Dパッケージでは、普通のシリコン土台（インターポーザ）だと熱がこもって反り返り、隣に置いた温度敏感な光変調器やHBMまで誤動作してしまいます。そこでTSMCが2026年に探索を本格化させたのが宝石級硬度の「単結晶SiC（炭化ケイ素）」インターポーザ！シリコンの3.3倍（銅さえ上回る約490 W/m·K）の熱伝導と2.6倍の剛性で反りと熱干渉を一撃制圧し、さらに透明な光学特性と高耐圧で「熱・電源・光」を1枚の基板に統合する革命的土台です！",
+      "summary": "TSMC 2026先端パッケージ戦略で注目される、従来のシリコンインターポーザを置換する単結晶4H-SiC（炭化ケイ素）インターポーザ基板です。超高熱伝導・超高ヤング率・高絶縁破壊電界・低光損失を兼ね備え、キロワット級3Dチップレット／CPOの熱機械限界を突破します。",
+      "opticsAndPhysics": [
+        "単結晶4H-SiCの熱伝導率は約 370〜490 W/m·K に達し、標準シリコン（148 W/m·K）の最大3.3倍、純銅（~400 W/m·K）さえ凌駕する横方向熱拡散能力により、高発熱ロジックダイから隣接HBM4や熱敏感な光変調器への熱クロストークを遮断します。",
+        "ヤング率 410〜450 GPa（シリコン 165 GPa の約2.6倍）という圧倒的な機械的剛性により、大面積3Dチップレット積層時の熱膨張差に起因するパッケージ反り（Warpage）と微細接合部へのせん断応力を劇的に低減します。",
+        "約 2.8 MV/cm（Siの9倍超）の絶縁破壊電界とワイドバンドギャップによる光透過性により、貫通SiCビア（TSCV）を介した高耐圧オンチップ電源（IVR / BSPDN）とSiPh / TFLN光導波路を単一プラットフォームへハイブリッド統合できます。"
+      ],
+      "formula": {
+        "expression": "κ_4H-SiC ≈ 490 W/m·K (3.3× Si),   E_SiC ≈ 410–450 GPa (2.6× Si),   E_BD ≈ 2.8 MV/cm",
+        "description": "熱拡散・機械剛性・高耐圧・光学低損失の4大物性を単一単結晶基板で同時に極限化"
+      },
+      "nextGenInnovation": "CoWoS-Lのレチクル倍率拡大（5.5×→9.5×）で露呈した熱・反り・光統合の三重苦を材料科学から一挙解決し、次世代AIシネマカメラSoC＋光I/O実装の基盤となります。",
+      "specs": [
+        {
+          "label": "基板結晶材料",
+          "value": "単結晶 4H-SiC（炭化ケイ素）インターポーザ ＋ 貫通TSCV導体"
+        },
+        {
+          "label": "熱伝導率 κ",
+          "value": "~370〜490 W/m·K（Si 148 W/m·K の約3.3倍・純銅超え）"
+        },
+        {
+          "label": "機械剛性（ヤング率）",
+          "value": "410〜450 GPa（Si 165 GPa の約2.6倍・超大型パッケージ反り極小化）"
+        },
+        {
+          "label": "ハイブリッド統合能力",
+          "value": "破壊電界 2.8 MV/cm（高圧IVR・BSPDN ＋ SiPh/TFLN光学導波路共存）"
+        }
+      ],
+      "diagramType": "xv2_sic_single_crystal_interposer"
+    },
+    {
+      "id": "xv2-tsmc-copos-panel-packaging",
+      "order": 95,
+      "swatchColor": "#6366f1",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_95_TSMC_CoPoS角型パネル",
+      "assembledPos": [
+        0,
+        -14.681,
+        4.5
+      ],
+      "explodeOffset": [
+        0,
+        -46,
+        6.08
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-95. TSMC CoPoS（Chip-on-Panel-on-Substrate）「310×310 mm 角型パネルレベル・ファンアウト超大型RDLパッケージ基板」",
+      "subtitle": "TSMC CoPoS (Chip-on-Panel-on-Substrate) Standardized 310×310 mm Rectangular Panel-Level Fan-Out RDL Packaging Architecture",
+      "category": "BIONZ XR 極超解剖図 V2 X2-95 — 丸型300mmウェハの外周ロスを根本解消し、310×310mm角型パネル上で超大型チップレット群を一括再配線する次世代FOPLP実装技術",
+      "plainAnalogy": "丸い直径300 mmのピザ生地から巨大な四角いパッケージ（5.5倍〜9.5倍レチクルサイズ）を切り抜こうとすると、円の外周に広大な「使えない切れ端」が出てコストが爆上がりします。TSMCが2026年にパイロットラインを立ち上げる「CoPoS」は、円盤ウェハをやめて「310×310 mmの四角い大型パネル」上で2/2 μmの微細RDL配線とチップレット実装を一気に行う画期的アプローチ！有効面積を36%以上（大型品では取得個数を最大2倍近く）増やし、先端3.5Dパッケージの量産性を激変させます！",
+      "summary": "TSMCがCoWoSの次世代補完・発展軸として2026年にパイロットライン構築（初期歩留り68%水準）・2028年量産を目指す、310×310 mm角型パネル標準化ファンアウト実装アーキテクチャ「CoPoS（Chip-on-Panel-on-Substrate）」です。",
+      "opticsAndPhysics": [
+        "直径300 mm円形ウェハの面積 70,685 mm² に対し、対角 438 mm（18インチ級インゴット／ガラスキャリア）から切り出す 310×310 mm 角型パネルは 96,100 mm²（+36%）の面積を持ち、矩形パッケージを辺に沿って隙間なく敷き詰められるため外周エッジロスが激減し、大型パッケージのパネル当たり実効取得個数が最大約1.5〜2倍へ向上します。",
+        "パネル全面で 2/2 μm 級の多層銅RDL・LSIブリッジ・ガラスコア統合を成立させるため、128ゾーン動的圧力CMPにより板厚均一性 TTV ≤ 2 μm・表面粗さ Ra < 0.5 nm RMS を維持し、裏面 Si₃N₄ 応力補償膜によって大面積パネルの反り（Bow）を ≤ 75 μm へ厳密制御します。",
+        "2026年の 310×310 mm パイロット（歩留り ~68% 改善中）を足掛かりに、次世代では 510×515 mm 級大型パネル上で最大 36基のHBM4E（総帯域 30 TB/s 級）と超大型マルチチップレットを混載するロードマップを描きます。"
+      ],
+      "formula": {
+        "expression": "A_panel(310×310) = 96,100 mm² (+36%, 438mm diag),  128-Zone CMP: TTV ≤ 2 μm, Ra < 0.5 nm, Bow ≤ 75 μm",
+        "description": "128ゾーンCMP・Si₃N₄反り補償と角型パネル形状の整合により大型チップレットの面効率と平坦度を極限化"
+      },
+      "nextGenInnovation": "超高価だった先端チップレット3.5D実装のコスト構造を劇的に改善し、将来のプロ用ミラーレス／シネマカメラ向けマルチチップレットBIONZ XR世代への量産展開を後押しします。",
+      "specs": [
+        {
+          "label": "TSMC標準パネル寸法",
+          "value": "310×310 mm 角型（96,100 mm²・対角438 mm / 将来 510×515 mm・36 HBM4E 30 TB/s）"
+        },
+        {
+          "label": "平坦度・反り管理",
+          "value": "128ゾーン動的CMP（TTV ≤ 2 μm・Ra < 0.5 nm RMS）・Si₃N₄反り補償（Bow ≤ 75 μm）"
+        },
+        {
+          "label": "配線密度・統合機能",
+          "value": "微細 2/2 μm 級多層パネルRDL・LSIブリッジ＆ガラスコア混載対応"
+        },
+        {
+          "label": "量産ロードマップ",
+          "value": "2026年パイロットライン稼働（初期歩留り68%水準改善中）→ 2028年量産計画"
+        }
+      ],
+      "diagramType": "xv2_tsmc_copos_panel_packaging"
+    },
+    {
+      "id": "xv2-tfln-400g-pockels-modulator",
+      "order": 96,
+      "swatchColor": "#0ea5e9",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_96_OFC26_TFLN400G光変調",
+      "assembledPos": [
+        -4.8,
+        -14.621,
+        13
+      ],
+      "explodeOffset": [
+        -6.48,
+        -46,
+        17.55
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-96. OFC 2026 400G/レーン超高速光変調器「薄膜ニオブ酸リチウム（TFLN）ポッケルス効果・進行波MZMチップレット」",
+      "subtitle": "OFC 2026 400 Gb/s/Lane Thin-Film Lithium Niobate (TFLN) Linear Pockels Electro-Optic Traveling-Wave MZM Chiplet (>110 GHz BW)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-96 — シリコンPN変調の70〜80GHz帯域限界を突破し、純粋ポッケルス効果で110GHz超・1レーン400Gb/s PAM4伝送を実現する薄膜LiNbO₃光変調器",
+      "plainAnalogy": "従来のシリコン光変調器はシリコンの中に電気キャリアを出し入れして光を切り替えるため、200G/レーン（70〜80 GHz）あたりでスピードの限界にぶつかり光も吸収されて暗くなります。OFC 2026で400G/レーン世代の本命と目される「TFLN（薄膜ニオブ酸リチウム）」変調器は、電界をかけるだけで結晶の屈折率が瞬時に直線変化する「ポッケルス効果」を利用！110 GHz超の圧倒的スピードと低光損失・無歪み変調で、たった1本の光レーンに毎秒400ギガビット（8レーンで3.2 Tbps）を流し込む次世代光シャッターです！",
+      "summary": "OFC 2026（Papers M2B.6 / M2C.1 / W1D.7）で200 GBaud超・400G/レーン光インターコネクトの切り札として脚光を浴びる、X-cut薄膜ニオブ酸リチウム（TFLN: LiNbO₃）異種接合進行波マッハツェンダ変調器（TW-MZM）チップレットです。",
+      "opticsAndPhysics": [
+        "従来のシリコンPN接合MZMは自由キャリアプラズマ分散効果に依存するため、キャリア吸収損失・非線形チャープおよび帯域上限（量産プロセス 70〜80 GHz）が400G/レーン（~200 GBaud PAM4）化の壁となっています。",
+        "X-cut TFLN結晶へ側壁角 60°・幅 1 μm × エッチ深さ 200 nm の低損失リッジ導波路を形成（600 nm SiO₂ クラッド絶縁）し、強力な線形電気光学（ポッケルス）係数 r₃₃ ≈ 30.8 pm/V による純粋電界誘起屈折率変化 Δn = −½ n_e³ r₃₃ E でプッシュプル位相変調することでチャープゼロ・極低光損失を実現します。",
+        "厚さ 1.4 μm の金（Au）容量装荷Tレール型GSG進行波電極（CL-TWE、電極ギャップ G = 5〜6 μm）でマイクロ波と光波を厳密に速度整合させることで、110 GHz 時ロールオフ僅か 0.77 dB（外挿3dB帯域 ~220 GHz）、低半波長電圧積 Vπ·L = 1.08〜1.33 V·cm（低駆動長）、偏波多重DP-TFLNで 512 Gb/s/λ・単一偏波 400 Gb/s/レーン PAM4 を達成します。"
+      ],
+      "formula": {
+        "expression": "Δn = −½ n_e³ r₃₃ E  （60° 1μm×200nmリッジ / 0.77 dB @110GHz → 外挿220GHz / Vπ·L = 1.08–1.33 V·cm）",
+        "description": "自由キャリア不要の純粋ポッケルス効果＋1.4μm Au CL-TWE進行波整合により400G〜512G/λの物理限界を突破"
+      },
+      "nextGenInnovation": "X2-05のSiPhリング変調器やX2-51のGeSi EAMをさらに超越する200 GBaud級光チップレットとして、将来の超解像シネマカメラとAI演算ノードを結ぶテラビット光バスの中核を担います。",
+      "specs": [
+        {
+          "label": "TFLN導波路幾何構造",
+          "value": "X-Cut LiNbO₃（r₃₃=30.8 pm/V）・60°側壁 1 μm×200 nm リッジ ＋ 600 nm SiO₂"
+        },
+        {
+          "label": "EO変調帯域・速度",
+          "value": "0.77 dB @ 110 GHz（外挿 220 GHz）・400 Gb/s PAM4 / 512 Gb/s/λ DP-TFLN"
+        },
+        {
+          "label": "進行波電極構造",
+          "value": "1.4 μm Au 容量装荷Tレール CL-TWE（G = 5–6 μm・Vπ·L = 1.08–1.33 V·cm）"
+        },
+        {
+          "label": "光学特性・出典",
+          "value": "チャープゼロ・低挿入損失・OFC 2026（M2B.6 / M2C.1 / W1D.7）実証動向"
+        }
+      ],
+      "diagramType": "xv2_tfln_400g_pockels_modulator"
+    },
+    {
+      "id": "xv2-inp-on-si-cwdfb-laser-pic",
+      "order": 97,
+      "swatchColor": "#ef4444",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_97_OFC26_InPonSi光源PIC",
+      "assembledPos": [
+        -14.2,
+        -14.621,
+        13
+      ],
+      "explodeOffset": [
+        -19.17,
+        -46,
+        17.55
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-97. OFC 2026 III-V/Si 異種接合光源「InP-on-Si 直接接合CW-DFBレーザー集積PIC ＆ 400G差動駆動EML光エンジン」",
+      "subtitle": "OFC 2026 Heterogeneous InP-on-Si Wafer-Bonded CW-DFB Laser-Integrated PIC (1.6T/3.2T DR8) & 400G Differential-Drive EML",
+      "category": "BIONZ XR 極超解剖図 V2 X2-97 — 間接遷移で発光できないシリコン上へ直接遷移InP量子井戸を直接接合し、チップ自身が1310nm単一波長レーザーを発振・変調する完全集積光源PIC",
+      "plainAnalogy": "シリコンフォトニクス最大の弱点は「シリコンは間接遷移半導体なので自分ではレーザー発光できない」ことでした。そのため外付けレーザーモジュールを光ファイバで繋ぐ必要があり、光損失と大型化の原因になっていました。OFC 2026で実用化が進んだ「InP-on-Si 異種接合PIC」は、発光できるIII-V族InP半導体チップをシリコン導波路の真上へウェハー直接接合！シリコン側に刻んだ極細の回折格子（Bragg格子）で純粋な単一波長1310nmレーザーをチップ内で直接発振させ、そのまま隣の400G差動EMLへ流し込む究極の自発光シリコン光回路です！",
+      "summary": "OFC 2026（OpenLight / Tower PH18DA 1.6T・3.2T DR8 PIC および Paper Tu3J.6 400G差動駆動EML）で量産段階に入った、III-V族InP多重量子井戸（MQW）直接接合型CW-DFBレーザー集積シリコンフォトニクスPICです。",
+      "opticsAndPhysics": [
+        "間接遷移バンドギャップを持つシリコン導波路の上面へ、直接遷移半導体である 350 nm AlGaInAs / InP 多重量子井戸（MQW）利得層を室温（RT）分子ウェハー直接接合＋300°C・2時間アニールで強固に貼り合わせ、両翼への横方向 H⁺ プロトン注入電流狭窄により高密度キャリアを中央活性層へ集中させ、断熱エバネッセントテーパでOバンド（1272.55〜1310.19 nm LAN-WDM 8波長）光をシリコン導波路へ高効率移行させます。",
+        "シリコン導波路側に電子線／液浸リソグラフィで高精度形成した λ/4 位相シフト分布帰還（DFB）Bragg回折格子が単一縦モード共振を厳密選択し、サイドモード抑圧比 SMSR > 50 dB・スロープ効率 > 0.35 W/A の高純度連続波（CW）レーザー発振を実現します。",
+        "同一チップ上に99 GHz 6-dB EO帯域・片側僅か 0.75 Vpp の低振幅差動駆動電界吸収変調レーザー（DD-EML）を集積することで、8チャネル 3.2T DR8 光エンジンのドライバ消費電力とパッケージ実装サイズを大幅削減します。"
+      ],
+      "formula": {
+        "expression": "λ_Bragg = 2 · n_eff · Λ_grating   （RT貼合+300°C 2h / 350nm AlGaInAs MQW / H⁺狭窄 / 99GHz DD-EML）",
+        "description": "シリコン側の高精度Bragg格子とIII-V族AlGaInAs/InP発光層の融合により単一波長自発光PICと400G変調を一体化"
+      },
+      "nextGenInnovation": "外部光源モジュール（ELS）と光ファイバ調心工数を不要化するオンチップ光源集積により、小型ミラーレス筐体でも成立する超高密度・低損失な次世代光インターコネクトを切り拓きます。",
+      "specs": [
+        {
+          "label": "異種接合・活性層",
+          "value": "RTウェハー直接接合＋300°C 2h・350 nm AlGaInAs MQW ＋ 横方向 H⁺ プロトン狭窄"
+        },
+        {
+          "label": "発振波長・純度",
+          "value": "Oバンド 1310 nm（Si λ/4 Bragg・LAN-WDM 8ch）・SMSR > 50 dB・> 0.35 W/A"
+        },
+        {
+          "label": "量産プラットフォーム",
+          "value": "OpenLight / Tower PH18DA 1.6T & 3.2T DR8 レーザー集積PIC（OFC 2026）"
+        },
+        {
+          "label": "集積変調器仕様",
+          "value": "400G/レーン差動駆動EML（99 GHz 6-dB EO帯域・0.75 Vpp/arm低振幅）"
+        }
+      ],
+      "diagramType": "xv2_inp_on_si_cwdfb_laser_pic"
+    },
+    {
+      "id": "xv2-4f2-vct-cop-3d-dram",
+      "order": 98,
+      "swatchColor": "#a855f7",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_98_ISSCC26_4F2_VCT_3DDRAM",
+      "assembledPos": [
+        -8,
+        -14.621,
+        -13
+      ],
+      "explodeOffset": [
+        -10.8,
+        -46,
+        -17.55
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-98. ISSCC / IEDM 2026 極限メモリ密度「4F² 垂直チャネル（VCT）＆ 周辺回路ウェハー貼合（CoP / FBC）次世代3D DRAM」",
+      "subtitle": "ISSCC / IEDM 2026 4F² Vertical-Channel Transistor (VCT), Capacitorless FBC (170s @85°C) & Wafer-Bonded Cell-on-Peripheral (CoP) 3D DRAM",
+      "category": "BIONZ XR 極超解剖図 V2 X2-98 — 横置き6F² DRAMの微細化限界を打破し、トランジスタを垂直起立（4F²）させ周辺回路をCu-Cuウェハー貼合で真下へ移設して記憶密度を約2倍にする次世代DRAM",
+      "plainAnalogy": "これまでのDRAM（6F²構造）は平屋建ての住宅地のように横へ並べていたため、10nm以下の微細化で物理的な限界に直面していました。Samsung（ISSCC 2026）やSK hynix（IEDM 2026）が挑む「4F² 垂直チャネル（VCT）＋ 周辺回路貼合（CoP）」は、トランジスタをビルの柱のように垂直へ起立させて1セル面積を33%縮小し、さらにセンスアンプや制御回路（さらには近メモリAI演算器）を別ウェハで作ってCu-Cu直接貼合で地下室へ配置！さらにSK hynixのキャパシタレス浮遊ボディ型（FBC）は85°Cで170秒もの驚異的保持時間を実証し、同一面積で2倍の超大容量メモリを実現します！",
+      "summary": "サブ10nm世代DRAMの微細化限界を突破する、4F² 垂直チャネルトランジスタ（VCT）／キャパシタレス浮遊ボディセル（FBC）およびCu-Cuハイブリッドウェハー貼合によるCell-on-Peripheral（CoP / POC）次世代3D DRAMアーキテクチャです。",
+      "opticsAndPhysics": [
+        "従来の水平アクセストランジスタを用いる6F²セルに対し、シリコン柱を垂直に立ててゲートで取り囲む4F² VCT構造は理論セル占有面積を33%削減します。SamsungはISSCC 2026の16Gb試作チップ（41 × 47.3 nmピッチ＋ビット線結合ノイズシールド）で同一デザインルール下20%超のウェハ取得ダイ増加を実証しました。",
+        "SK hynixはIEDM 2026（講演11-1）でキャパシタを不要とする4F²垂直ゲート柱型浮遊ボディセル（FBC）DRAMを試作し、非対称ダブルゲート・バックゲート酸化膜・GIDL抑制アンダーラップ接合の組合せにより、85°Cで170秒・25°Cで8,000秒という極めて長いデータ保持時間を達成しました。",
+        "メモリセルアレイウェハと周辺回路ウェハを最適プロセスで別製造してCu-Cuハイブリッド貼合するCoP（Cell-on-Peripheral / Peri-over-Cell）構造により、同一面積で約2倍のメモリ密度を実現し、周辺ダイ側へ近メモリ演算（Tier-1 NMP）を混載する拡張も可能になります。"
+      ],
+      "formula": {
+        "expression": "Area_cell: 6F² → 4F² (−33%)  ＋  CoP Wafer Bonding ⇒ ~2× Iso-Area Density  （FBC保持: 170s @85°C）",
+        "description": "垂直チャネル起立化・GIDLリーク抑止・周辺回路Cu-Cu直下貼合の三位一体で10nm以下のDRAMスケーリングを継続"
+      },
+      "nextGenInnovation": "33MP〜100MP超の30fps〜120fps連続RAWプリ撮影バッファと大規模マルチモーダルAI認識モデルの重みを、極小パッケージフットプリントのまま丸ごと超高速オンパッケージ常駐させます。",
+      "specs": [
+        {
+          "label": "セル構造・微細化",
+          "value": "4F² 垂直チャネル（VCT / 41×47.3nm）＆ キャパシタレス4F² FBC柱構造"
+        },
+        {
+          "label": "Samsung ISSCC 2026",
+          "value": "16Gb 4F² VCT試作（ウェハ取得ダイ数 +20%超・シールド付ビット線）"
+        },
+        {
+          "label": "SK hynix IEDM 2026",
+          "value": "講演11-1 4F² FBC（保持時間 85°C: 170秒 / 25°C: 8,000秒・GIDL抑止）"
+        },
+        {
+          "label": "3D貼合アーキテクチャ",
+          "value": "Cu-Cuハイブリッド貼合 Cell-on-Peripheral（CoP / 同面積比 約2×高密度）"
+        }
+      ],
+      "diagramType": "xv2_4f2_vct_cop_3d_dram"
+    },
+    {
+      "id": "xv2-ectc26-cow-angle-d-hb-wave",
+      "order": 99,
+      "swatchColor": "#f97316",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_99_ECTC26_AngleD無ボイドCoW",
+      "assembledPos": [
+        -16.6,
+        13.748,
+        7.2
+      ],
+      "explodeOffset": [
+        -20.75,
+        80,
+        9
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-99. ECTC 2026 チップ対ウェハー接合革新「ボンド波面角度（Angle D）制御・無ボイドCoWハイブリッドボンディング ＆ プラズマダイシング」",
+      "subtitle": "IEEE 76th ECTC 2026 (ASE) Void-Free Chip-on-Wafer (CoW) Hybrid Bonding via Controlled Bonding-Front Angle D & Plasma Dicing",
+      "category": "BIONZ XR 極超解剖図 V2 X2-99 — 良品チップだけを選別積層するCoWハイブリッド接合最大の敵「界面ガス気泡」を、初期接触角制御と無塵プラズマ切断で歩留まり2.8%→99%へ劇的解決",
+      "plainAnalogy": "スマホの画面に保護フィルムを貼るとき、真ん中と端がバラバラにペタッと着くと空気が逃げ場を失って中央に巨大な気泡（ボイド）が残りますよね？良品のチップレットだけをウェハへ直貼りするCoWハイブリッド接合でも全く同じ現象が起き、歩留まりが僅か2.8%に落ち込む致命的課題がありました。ECTC 2026でASEが実証した「Angle D制御」は、ボンドヘッドの初期接触角を精密に傾けて中央から外周へ滑らかな接合波面を進め、ガスを完全に押し出す機械的神技！厚さ僅か0.03 mmで102.4 μmも反った極薄ダイでも気泡ゼロ・歩留まり99%を叩き出します！",
+      "summary": "IEEE 76th ECTC 2026（ASE）で発表された、チップ・オン・ウェハー（CoW）ハイブリッドボンディングにおける界面ボイドを低コストな機械的初期接触角（Bonding-Front Angle D）制御とプラズマダイシングの融合で根絶する先端3D実装プロセスです。",
+      "opticsAndPhysics": [
+        "前工程のチップ個片化で従来のブレード切断やレーザー切断を使うと微細パーティクルや再凝固屑がダイ端面に残り、接合波面の乱れと界面ボイドを誘発します。水溶性保護膜（PL）塗布→レーザーグルービング→Bosch高アスペクト比プラズマエッチング→純水リンスによるプラズマダイシングで完全無塵端面を生成します。",
+        "Shibaura TFC-6500（1 μm 3σ高精度アライメント）のボンドヘッド姿勢を制御し、初期ボンド波面角度を最適化（Angle A→D）して単一の秩序ある接合波面を中央から外周へ連続伝播させることで、界面ガスを完全に押し出し 8×12×0.05 mm TEOSダイの歩留まりを 2.8% から 99% へ劇的向上させました。",
+        "0.03 mm厚で最大 102.4 μm の大きな反りを持つ極薄ダイでもAngle Dは完全ゼロボイドを達成し、さらに6 μmピッチのパターン付ウェハやSiCN／有機−TEOS異種界面でもCSAM（超音波探傷）歩留まり 95〜99%・FIB断面デラミゼロを実証しています。"
+      ],
+      "formula": {
+        "expression": "Yield_CSAM:  2.8% (Angle A, 多点接触気泡封込)  →  95–99% (Angle D, 秩序波面排気 · 0.03mm / 102.4μm反り)",
+        "description": "プラズマダイシング無塵端面と初期接触角Angle D波面制御の組み合わせでCoW 3D積層の量産窓を劇的拡大"
+      },
+      "nextGenInnovation": "X2-74のウェハ対ウェハ（W2W）超微細接合と補完し合い、異なるサイズ・異なるプロセス（2nm ISP + 4nm AI + HBM + 光PIC）の良品ダイだけを高歩留まりで3D混載する究極のヘテロジニアスBIONZ実装を支えます。",
+      "specs": [
+        {
+          "label": "実証学会・装置",
+          "value": "IEEE 76th ECTC 2026 (ASE) / Shibaura TFC-6500（1 μm 3σ精度）"
+        },
+        {
+          "label": "CSAM無ボイド歩留り",
+          "value": "2.8% → 99%（6 μmピッチ・SiCN/TEOS/有機異種界面で 95〜99%）"
+        },
+        {
+          "label": "極薄ダイ反り耐性",
+          "value": "0.03 mm厚・反り 102.4 μm でも完全ゼロボイド（0.05mm: 41.3μm）"
+        },
+        {
+          "label": "前処理ダイシング",
+          "value": "水溶性PL保護膜 ＋ レーザ溝加工 ＋ Boschプラズマダイシング（無塵端面）"
+        }
+      ],
+      "diagramType": "xv2_ectc26_cow_angle_d_hb_wave"
+    },
+    {
+      "id": "xv2-pqc-mlkem-mldsa-clatch-trng",
+      "order": 100,
+      "swatchColor": "#eab308",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_100_PQC耐量子暗号_CLatchTRNG",
+      "assembledPos": [
+        7.781,
+        2.438,
+        14.5
+      ],
+      "explodeOffset": [
+        10.5,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-100. 耐量子暗号PQCアクセラレータ「ML-KEM / ML-DSA 統合NTT演算器（FIPS 203/204）＆ 38.1 fJ/bit 自動零点C-Latch真性乱数器」",
+      "subtitle": "NIST FIPS 203/204 Post-Quantum Cryptography (ML-KEM & ML-DSA) Unified Mixed-Radix NTT Accelerator & 38.1 fJ/bit Auto-Zeroing C-Latch TRNG",
+      "category": "BIONZ XR 極超解剖図 V2 X2-100 — 未来の量子コンピュータでも偽造不可能な格子暗号でC2PA写真署名を永年防衛し、38.1 fJ/bitの極小電力で完全真性乱数を供給する次世代暗号核",
+      "plainAnalogy": "現在カメラの真正性署名（C2PA）で使われる楕円曲線暗号（ECDSA）は、将来大規模な量子コンピュータが登場すると「ショアのアルゴリズム」で解読される恐れがあります。そこでNIST標準の耐量子格子暗号「ML-KEM（鍵交換）」と「ML-DSA（電子署名）」の両方を1つの共通数論変換（NTT）バタフライ回路で超高速に処理する専用エンジンを搭載！さらに秘密鍵の種となる乱数を、6σのばらつきや電源ノイズ攻撃も自動で打ち消す「自動零点C-Latch真性乱数器（僅か38.1 fJ/bit）」で常時供給する未来対応セキュリティ中核です！",
+      "summary": "NIST標準化耐量子暗号 FIPS 203（ML-KEM / 旧Kyber）および FIPS 204（ML-DSA / 旧Dilithium）を単一ハードウェアで高速処理する統合NTTアクセラレータと、2026年実証のミスマッチ自動零点化容量ラッチ（C-Latch）真性乱数生成器（TRNG）の複合セキュリティモジュールです。",
+      "opticsAndPhysics": [
+        "ML-KEM（Module-LWE格子問題）とML-DSA（Module-SIS格子問題＋Fiat-Shamir with Aborts棄却サンプリング）は共に多項式乗算とSHAKE-256（Keccak）が演算負荷の大半を占めます。統合多項式演算器（UniPAM：Mixed-Radix-4/2 NTT/INTTバタフライ）とKeccakサンプラを共有化することで最小回路面積で全セキュリティレベル（Level 1/3/5）を高速処理します。",
+        "暗号鍵・ノンス生成の根幹を担う2026年C-Latch TRNGは、結合キャパシタによるインバータ閾値ミスマッチ自動零点化（Auto-Zeroing）と4-bitフォンノイマン後処理器を搭載し、製造ばらつき 6σ および外部電源ノイズ注入攻撃下でも純粋な熱雑音エントロピーのみを抽出します。",
+        "TRNGは 0.4 V 駆動時に僅か 38.1 fJ/bit の超高効率、0.9 V 駆動時に 162.48 Mb/s の高速乱数生成を達成し、NIST SP800-22 および SP800-90B ランダム性検定を完全クリアします。"
+      ],
+      "formula": {
+        "expression": "ML-KEM (A·s + e) / ML-DSA (UniPAM NTT)  ＋  C-Latch TRNG: 38.1 fJ/bit @0.4V,  162.48 Mb/s @0.9V",
+        "description": "耐量子格子暗号のハードウェア統合高速化と極低エネルギー自動零点真性乱数生成をワンチップ結合"
+      },
+      "nextGenInnovation": "X2-24の現行ECDSA C2PA署名コアとハイブリッド署名（古典＋耐量子）を構成することで、報道機関・法的証拠として撮影された写真データの真正性を量子コンピュータ時代以降も数十年単位で証明し続けます。",
+      "specs": [
+        {
+          "label": "対応耐量子暗号標準",
+          "value": "NIST FIPS 203 (ML-KEM) ＆ FIPS 204 (ML-DSA) 全セキュリティレベル"
+        },
+        {
+          "label": "演算アクセラレータ核",
+          "value": "統合Mixed-Radix-4/2 NTT/INTT（UniPAM）＋ SHAKE-256 Keccak棄却サンプラ"
+        },
+        {
+          "label": "真性乱数器（TRNG）",
+          "value": "ミスマッチ自動零点C-Latch ＋ 4-bitフォンノイマン（6σ・電源攻撃耐性）"
+        },
+        {
+          "label": "TRNG効率・速度",
+          "value": "38.1 fJ/bit (@ 0.4 V) ・ 162.48 Mb/s (@ 0.9 V) ・ NIST SP800-22/90B準拠"
+        }
+      ],
+      "diagramType": "xv2_pqc_mlkem_mldsa_clatch_trng"
+    },
+    {
+      "id": "xv2-lfi-optical-bulk-current-mesh",
+      "order": 101,
+      "swatchColor": "#dc2626",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_101_LFI光学バルク電流防御網",
+      "assembledPos": [
+        12.808,
+        2.438,
+        14.5
+      ],
+      "explodeOffset": [
+        17.29,
+        22,
+        19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-101. レーザー物理攻撃防御網「286 F²/cell 分散バルク電流センサ（BBICS）＆ 即時鍵消去セキュアフラッシュ（LFI対抗）」",
+      "subtitle": "286 F²/Cell Distributed Bulk Built-In Current Sensor (BBICS) Mesh & Single-Cycle Secure Flush Eraser Against Backside 1064nm Laser Fault Injection (LFI)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-101 — チップ裏面から近赤外レーザーを照射して秘密鍵を抜き取る物理攻撃（LFI）を、ウエル内光電流の異常急増で即座に捕捉し鍵を瞬時消去する能動光学防御網",
+      "plainAnalogy": "最高レベルのハッカーは、チップの配線面を隠してもシリコンを素通りする「1064 nm近赤外パルスレーザー」をチップの裏側から暗号回路へピンポイント照射し、一瞬だけビットを反転させて秘密鍵を吐き出させます（レーザーフォールト注入：LFI）。本防御網は僅か286 F²という極小面積の「バルク電流センサ（BBICS）」を暗号回路のウエル全域に網の目のように敷き詰め、レーザーが当たった瞬間に湧き出る異常な光電流を即座に検知！1クロック以内にセキュアフラッシュが秘密鍵を完全0消去して物理ハッキングを封殺します！",
+      "summary": "ISSCC / IEEE TDMR 2024–2026実証の 286 F²/cell 超小型分散バルク組込電流センサ（BBICS）アレイと、異常光電流検知と同時に秘密鍵レジスタを単一サイクルでゼロ化するセキュアフラッシュ（Secure Flush Code Eraser）物理攻撃防御機構です。",
+      "opticsAndPhysics": [
+        "波長 1064 nm 付近の近赤外パルスレーザーはシリコン基板を透過してP/Nウエル空乏層へ到達し、高密度の電子・正孔対を瞬間生成して異常な光電バルク電流（I_ph）と基板バウンス（IRドロップ）を引き起こし、暗号演算の命令スキップやビット反転（フォールト注入）を誘発します。",
+        "暗号モジュール下の全ウエルタップへ 286 F²/cell の極小BBICSセルをタイル状に分散配置し、時分割センシングにより低待機電力のまま局所バルク電流密度の微小スパイク（通常CMOSスイッチング電流を大幅に超える異常電流）を空間的に死角なく監視します。",
+        "BBICS（および併用するTDC局所IRドロップセンサ）がLFI攻撃を検知した瞬間、ハードウェア直結のセキュアフラッシュ回路がC2PA秘密鍵・PQC内部状態・一時メモリを1クロックで全ビット消去し、差分フォールト解析（DFA）による鍵抽出を完全に無効化します。"
+      ],
+      "formula": {
+        "expression": "I_bulk(LFI) = I_normal + q · η · Φ_laser · A_spot  >  I_th(BBICS)  ⇒  Secure Flush (1-Cycle Zeroize)",
+        "description": "裏面レーザー照射誘起の光電バルク電流スパイクを286 F²/cell分散センサ網で即捕捉し秘密鍵を瞬時消去"
+      },
+      "nextGenInnovation": "X2-54の受動的サイドチャネル電力マスキングと本部の能動的LFIレーザー攻撃防御を組み合わせることで、報道・司法用途のカメラ電子署名ハードウェアへ金融ICカード級以上の耐タンパ性を付与します。",
+      "specs": [
+        {
+          "label": "センサセル面積",
+          "value": "286 F²/cell 超高密度分散BBICS（Bulk Built-in Current Sensor）"
+        },
+        {
+          "label": "検知対象物理現象",
+          "value": "裏面1064 nm近赤外レーザー誘起 光電バルク電流密度＆基板バウンス"
+        },
+        {
+          "label": "防御アクション",
+          "value": "単一サイクル即時ゼロ化（Secure Flush Code Eraser ＆ 署名停止）"
+        },
+        {
+          "label": "省電力・併用防御",
+          "value": "時分割監視モード ＋ TDC局所IRドロップ検知協調（ISSCC / TDMR実証）"
+        }
+      ],
+      "diagramType": "xv2_lfi_optical_bulk_current_mesh"
+    },
+    {
+      "id": "xv2-xr2-dynamic-active-framing-eis",
+      "order": 102,
+      "swatchColor": "#0284c7",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_102_XR2ダイナミックアクティブEIS",
+      "assembledPos": [
+        -17.9,
+        2.438,
+        -2.6
+      ],
+      "explodeOffset": [
+        -24.16,
+        22,
+        -3.51
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-102. BIONZ XR2 動画手ブレ・構図制御核「ダイナミックアクティブ（+30%強化）オプティカルフローEIS ＆ AIオートフレーミング／フレーミング補正エンジン」",
+      "subtitle": "Sony BIONZ XR2 Dynamic Active Mode (+30% Stabilization) Dense Optical-Flow Electronic EIS & AI Auto Framing / Framing Stabilizer Warp Engine",
+      "category": "BIONZ XR 極超解剖図 V2 X2-102 — 6軸ジャイロ四元数・密オプティカルフロー・AI姿勢認識を1フレーム内で融合し、走り撮りジンバル級安定化と自動カメラワークを実現する動画空間制御核",
+      "plainAnalogy": "歩き撮りや走り撮りでは、ボディ内手ブレ補正（IBIS）の機械的な可動範囲を超える大きな揺れやコンニャク歪みが起きます。ソニーα7 Vやα1 II、FX2のBIONZ XR2に内蔵された本エンジンは、センサーの7K全画素読出の余白を活かしてジャイロ角度・映像の密オプティカルフロー・ローリングシャッター歪みをリアルタイムに逆算ワープし、従来のアクティブモードより約30%も強力な「ダイナミックアクティブ」を実現！さらにAIが被写体の位置を常時ロックする「フレーミング補正」や三脚自動パン「オートフレーミング」まで遅延ゼロでこなす専属AIカメラマンです！",
+      "summary": "Sony α7 V / α1 II / ZV-E1 / FX2 のBIONZ XR2に統合された、ダイナミックアクティブモード（対アクティブ比+30%補正）専用オプティカルフロー電子EISワープおよびAI被写体連動オートフレーミング／フレーミング補正ハードウェアエンジンです。",
+      "opticsAndPhysics": [
+        "X2-23の機械式5軸IBISセンサシフト制御と協調動作し、高レート6軸ジャイロ四元数積分データと映像フレーム間の密オプティカルフロー動きベクトルを融合して、並進・回転ブレと電子シャッター走査行ごとのローリングシャッター（RS）歪みをサブピクセル精度の2Dメッシュワープで同時除去します。",
+        "従来のアクティブモード比で約30%高い動画手ブレ補正効果（ダイナミックアクティブモード）を発揮し、ジョギングや階段移動などの激しい手持ち撮影でもジンバル装着時に迫る滑らかな4K60p映像を生成します。",
+        "X2-80の60Hz AI骨格・被写体姿勢認識エンジンから出力される被写体座標へ動的クロップ窓と滑らかなPID減衰軌道を直結することで、並走撮影でも被写体を画面内定位置に固定する「フレーミング補正」と、三脚固定のままカメラが自動パン・ズーム追尾する「オートフレーミング」をリアルタイム実行します。"
+      ],
+      "formula": {
+        "expression": "M_warp(x, y, t_row) = H_crop(p_AI) · R_quat(t_row)⁻¹ · Φ_flow(x, y)   （アクティブ比 +30% 補正強化）",
+        "description": "ライン別ローリングシャッター回転逆変換・オプティカルフロー・AI構図トラッキングを単一ワープで統合"
+      },
+      "nextGenInnovation": "機械式IBIS・電子EISワープ・AI骨格構図制御をBIONZ XR2内部でゼロコピー直結することで、ワンマン映像制作でもジンバル＆専任オペレーター級の映画的カメラワークをカメラ単体で完結させます。",
+      "specs": [
+        {
+          "label": "動画電子安定化性能",
+          "value": "ダイナミックアクティブモード（従来アクティブモード比 約+30%強化）"
+        },
+        {
+          "label": "融合アルゴリズム",
+          "value": "6軸ジャイロ四元数 ＋ 密オプティカルフロー ＋ 行別RS歪み逆変換ワープ"
+        },
+        {
+          "label": "AI構図自動化機能",
+          "value": "オートフレーミング（自動パン/ズーム追尾）＆ フレーミング補正（被写体定位置ロック）"
+        },
+        {
+          "label": "ポスト編集連携",
+          "value": "7Kオーバーサンプリング4K60p対応・Catalyst Browse用同期ジャイロメタ記録"
+        }
+      ],
+      "diagramType": "xv2_xr2_dynamic_active_framing_eis"
+    },
+    {
+      "id": "xv2-xr2-var-shutter-lossless-raw",
+      "order": 103,
+      "swatchColor": "#22c55e",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_103_XR2可変シャッター_ロスレスRAW",
+      "assembledPos": [
+        -7.825,
+        2.438,
+        -14.5
+      ],
+      "explodeOffset": [
+        -10.56,
+        22,
+        -19.58
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-103. BIONZ XR2 露光同期・静止画圧縮核「高周波フリッカーレス可変シャッター（0.1段 1/100.3s LED同期）＆ ロスレス圧縮RAW（L/M/S）／10bit HEIFエントロピー符号化器」",
+      "subtitle": "Sony BIONZ XR2 High-Frequency Anti-Flicker Variable Shutter (0.1-Step LED PWM Sync) & Hardware Lossless Compressed RAW (L/M/S) / 10-bit HEIF Entropy Engine",
+      "category": "BIONZ XR 極超解剖図 V2 X2-103 — LED照明の高速点滅へマイクロ秒精度でシャッター速度を同期して黒縞を消し、さらに14bit RAWを完全無劣化で最大半分に圧縮する専用タイミング＆静止画符号化核",
+      "plainAnalogy": "LED看板やスタジアム照明の下で無音の電子シャッター撮影をすると、通常の1/100秒では画面に太い黒い縞模様（バンディング）が入って台無しになります。本エンジンはLEDの点滅周期（PWM）をリアルタイム検出し、シャッター速度を「1/100.3秒」や「1/64.2秒」のように0.1刻みで微調整して縞を綺麗に消し去ります！さらに撮れた14bit RAWデータを専用ハードウェアの空間予測＋ゴロム・ライス符号化で「画質劣化ゼロのまま容量35〜50%圧縮（ロスレス圧縮RAW L/M/S）」し、10億色10bit HEIFや16枚ピクセルシフト同期まで一手に引き受ける静止画の要です！",
+      "summary": "Sony α7 V / α1 II / α7R V のBIONZ XR2に搭載された、高周波PWM LED光源対応の可変シャッター（Variable Shutter）露光同期コントローラ、完全可逆ロスレス圧縮RAW（L/M/S）ハードウェアエントロピー符号化器、および10-bit 4:2:2 HEIF静止画エンコーダの統合ブロックです。",
+      "opticsAndPhysics": [
+        "従来の50/60Hz商用電源（100/120Hzフリッカー）検知を超え、ライブビューのライン輝度プロファイルから数百Hz〜数kHz級のLED PWM駆動周期を解析し、電子シャッター露光時間 T_exp をPWM周期の厳密整数倍（例：1/64.2s、1/100.3s）へ 0.1ステップ相当のマイクロ秒分解能でロックしてバンディングを物理的に相殺します。",
+        "ロスレス圧縮RAW専用ハードウェアは、14-bitベイヤー配列の各色プレーン（R/Gr/Gb/B）に対して2次元空間予測フィルタで隣接画素差分（予測残差 e[x,y]）を算出し、適応ゴロム・ライス／エントロピー符号化でビット単位の完全可逆（誤差0）のままファイルサイズを約35〜50%削減しつつ30fps連写へ並列追従します。",
+        "同時にJPEG比約半分の容量で10億色階調を記録できる10-bit 4:2:2 / 4:2:0 HEIF（H.265イントラ静止画）ハードウェア出力、およびIBISと0.5/1.0画素精度で完全同期する4枚／16枚ピクセルシフトマルチ撮影（最大199〜240MP合成用）タイミングシーケンサを統合しています。"
+      ],
+      "formula": {
+        "expression": "T_exp = N · T_PWM (0.1刻み同期)  ＋  e[x,y] = I[x,y] − Î_2D  →  Lossless RAW (−35〜50%, 誤差=0)",
+        "description": "マイクロ秒級PWM位相同期による無縞露光と完全可逆空間予測エントロピー圧縮をハードウェア並列実行"
+      },
+      "nextGenInnovation": "LEDサイネージやアリーナ照明が当たり前となった現代のスポーツ・舞台撮影で電子シャッターの実用性を完全解放し、高画素30fps連写のバッファ詰まりとストレージ負担を画質妥協ゼロで半減します。",
+      "specs": [
+        {
+          "label": "高周波フリッカーレス",
+          "value": "可変シャッター（0.1刻み例 1/64.2s・1/100.3s・LED PWM周期自動同期）"
+        },
+        {
+          "label": "ロスレス圧縮RAW核",
+          "value": "2D Bayer空間予測＋適応ゴロム・ライス（完全可逆 −35〜50%・L/M/S選択）"
+        },
+        {
+          "label": "次世代静止画形式",
+          "value": "10-bit 4:2:2 / 4:2:0 HEIF ハードウェア静止画エンコーダ（10億色階調）"
+        },
+        {
+          "label": "超高解像シーケンサ",
+          "value": "4枚／16枚ピクセルシフトマルチ撮影（IBIS 0.5画素ステップ同期制御）"
+        }
+      ],
+      "diagramType": "xv2_xr2_var_shutter_lossless_raw"
+    },
+    {
+      "id": "xv2-aln-phonon-thermal-dielectric",
+      "order": 104,
+      "swatchColor": "#06b6d4",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_104_Stanford_AlNフォノン絶縁膜",
+      "assembledPos": [
+        16.6,
+        13.748,
+        -5
+      ],
+      "explodeOffset": [
+        20.75,
+        80,
+        -6.25
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-104. Stanford AFM 2025 / IEDM 2025 3D積層放熱絶縁膜「c軸配向AlN（窒化アルミニウム）フォノン導熱ILD ＆ 局所ホットスポット熱橋」",
+      "subtitle": "Stanford AFM 2025 / IEDM 2025 Low-Temperature c-Axis (0002) Columnar AlN Phonon Thermal Dielectric (~150 W/m·K, 100× SiO₂) & Diamond Hotspot Bridge",
+      "category": "BIONZ XR 極超解剖図 V2 X2-104 — 電気は完全に絶縁しながら熱（格子振動フォノン）だけを従来SiO₂の約100倍の速さで垂直排出する低温成膜c軸配向AlN導熱絶縁膜",
+      "plainAnalogy": "3D積層チップの最大のアキレス腱は、配線やダイの間を電気的に絶縁する酸化膜（SiO₂）が熱伝導率 1.4 W/m·K しかない「分厚い断熱毛布」になってしまい、奥のトランジスタが蒸し焼きになることでした。2025年にスタンフォード大学Eric Pop研とIEDMで実証された「c軸配向AlN（窒化アルミニウム）」薄膜は、200°C以下の低温成膜でありながら柱状結晶を縦に揃えることで、電気は6.2 eVの鉄壁バンドギャップで完全に止めつつ熱（フォノン）だけをSiO₂の約100倍（最大150 W/m·K）の速度で一気にダイヤモンド放熱蓋へ逃がす魔法の絶縁導熱フィルムです！",
+      "summary": "スタンフォード大学（Vaziri & Eric Pop, Adv. Funct. Mater. 2025）および IEDM 2025 3D-ICマルチスケール熱デカップリング研究で実証された、低温成膜（<200°C）高度c軸（0002）配向（XRD 2θ = 35.95°）ポリAlN熱伝導層間絶縁膜（Thermal ILD）＆ ダイヤモンド界面熱橋です。",
+      "opticsAndPhysics": [
+        "従来の非晶質 SiO₂ 層間絶縁膜・ボンディング酸化膜（κ ≈ 1.4 W/m·K）はフォノン平均自由行程が極端に短く、GAA/CFETや3D積層ロジック内部に強烈な局所ホットスポット（>140°C級）を閉じ込める主因となっています。",
+        "XRD (0002) ピーク 2θ = 35.95° に鋭く揃えた粒径 20〜30 nm の柱状ウルツ鉱型 AlN 薄膜（酸素不純物 O < 5% 制御、下地 14 nm SiO₂ 界面整合）は、BEOL/3D-IC互換の 200°C 未満低温スパッタ成膜でありながら 300 nm 以下の薄膜で垂直熱伝導率 κ_⊥ = 92±20 → 最大 150 W/m·K（SiO₂ の約65〜100倍！）を実現し、同時にバンドギャップ 6.2 eV の完全な電気絶縁体として機能します。",
+        "さらにc軸配向の高度化に伴い AlN / SiO₂ および多結晶CVDダイヤモンド熱スプレッダとの界面熱コンダクタンス TBC = 150〜300 MW/(m²·K) を達成し、界面熱抵抗（TBR）ボトルネックを打破して3Dチップ内部のピーク温度上昇を劇的に抑制します。"
+      ],
+      "formula": {
+        "expression": "κ_⊥(AlN 0002, 2θ=35.95°) = 92±20 → 150 W/m·K (~100× SiO₂),   TBC = 150–300 MW/m²K,  E_g = 6.2 eV",
+        "description": "粒径20–30nmの柱状(0002)c軸結晶配向とO<5%制御で垂直フォノン輸送と完全電気絶縁を低温プロセス両立"
+      },
+      "nextGenInnovation": "X2-29の金属サーマルビアでは通せなかった高密度配線隙間や接合酸化膜層そのものを「高熱伝導絶縁体」へ変貌させ、炎天下での8K長時間連続録画におけるサーマルスロットリング限界を大幅に引き上げます。",
+      "specs": [
+        {
+          "label": "結晶構造・XRD配向",
+          "value": "c軸 (0002) 柱状AlN（XRD 2θ=35.95°・粒径 20–30 nm・O < 5%・14 nm SiO₂界面）"
+        },
+        {
+          "label": "垂直熱伝導率 κ_⊥",
+          "value": "92±20 → 最大 150 W/m·K（300nm以下薄膜・従来SiO₂ 1.4 W/m·K比 最大~100倍）"
+        },
+        {
+          "label": "界面熱コンダクタンス",
+          "value": "TBC = 150〜300 MW/(m²·K)（多結晶CVDダイヤモンド熱スプレッダ直結）"
+        },
+        {
+          "label": "成膜温度・研究出典",
+          "value": "< 200°C 低温スパッタ・E_g = 6.2 eV・Stanford AFM 2025 / IEDM 2025実証"
+        }
+      ],
+      "diagramType": "xv2_aln_phonon_thermal_dielectric"
+    },
+    {
+      "id": "xv2-twophase-evaporative-pinfin-jet",
+      "order": 105,
+      "swatchColor": "#3b82f6",
+      "groupKey": "BIONZ_XR_極超解剖図_V2_X2_105_ITherm25二相ジェット蒸発冷却",
+      "assembledPos": [
+        16.6,
+        13.748,
+        5
+      ],
+      "explodeOffset": [
+        20.75,
+        80,
+        6.25
+      ],
+      "edgeOpacity": 0.22,
+      "standaloneOnly": true,
+      "title": "X2-105. IEEE ITherm 2025 / ASME JEP 2026 潜熱二相冷却「マイクロジェット衝突＆直接LPBF 6花弁銅ウィック＋3経路相分離マニホールド冷却器」",
+      "subtitle": "IEEE ITherm 2025 / ASME JEP 2026 Zero-TIM Direct-on-Si LPBF 6-Petal Hex Copper Wick & 3-Path SLM 316L Phase-Separating Micro-Jet Evaporative Cooler (CHF up to 1,000 W/cm²)",
+      "category": "BIONZ XR 極超解剖図 V2 X2-105 — 単相水冷の顕熱限界を超え、シリコン直印刷LPBF 6花弁多孔質銅ウィックと3経路相分離マニホールドで気化潜熱最大1,000 W/cm²を抜き去る究極の二相蒸発冷却器",
+      "plainAnalogy": "X2-52の単相マイクロ流体冷却は冷たい水を流して温めるだけなので、下流に行くほど水温が上がってチップに温度ムラが出ます。IEEE ITherm 2025 / ASME JEP 2025–2026で実証された「二相ジェット衝突＋シリコン直印刷LPBF 6花弁ウィック冷却器」は次元が違います！TIMグリスを完全撤去（Zero-TIM）してチップ裏面へ直接3D印刷した6花弁六角形の多孔質銅スポンジへ、SLM 316L 3経路相分離マニホールドから微細液ジェットを直撃させ、蒸気だけをリガメント蓋で横へ分離排出！莫大な気化潜熱で最大1,000 W/cm²を全面等温冷却する最終兵器的構造です！",
+      "summary": "IEEE ITherm 2025 および ASME JEP 2025/2026 実証に基づく、シリコン裏面への直接LPBF 6花弁六角多孔質銅ウィック（Zero-TIM）と3経路相分離SLM 316Lマイクロジェットマニホールドを融合した潜熱二相蒸発冷却モジュールです。",
+      "opticsAndPhysics": [
+        "単相液冷の顕熱輸送（q = ṁ c_p ΔT）では入口〜出口間の大きな温度勾配とポンプ圧損増大が避けられませんが、二相沸騰・蒸発冷却は巨大な蒸発潜熱 ΔH_vap を利用するため極小流量で全面等温冷却（ΔT = q / h）を実現し、TIM熱界面材を排除するシリコン直印刷LPBF 6花弁六角形多孔質銅ウィックにより界面熱抵抗そのものを根絶します。",
+        "SLM（選択的レーザー溶融）316Lステンレスで一体造形した3経路相分離マニホールド（経路1：垂直供給マイクロジェット、経路2：ウィック内毛細管液浸透、経路3：リガメント蓋下の独立蒸気排気プレナム）が液ジェットと蒸気泡を空間的に完全分離し、誘電冷媒 R1233zd(E) による 1U GPU 200時間連続運転で熱抵抗 R_th を従来比 23〜29% 削減しました。",
+        "多孔質銅ウィックと千鳥状マイクロピンフィンが核沸騰サイトを増殖させつつ毛細管力で液膜を常時補充することで、ドライアウト（膜沸騰暴走）を極限遅延し、限界熱流束 CHF 350〜1,000 W/cm²（水系・ITherm 2025 850 W/cm²級／誘電冷媒 100〜300 W/cm²）、熱伝達係数 HTC 30〜400 kW/(m²·K)、極低熱抵抗 0.247 °C/W 級を達成します。"
+      ],
+      "formula": {
+        "expression": "q_CHF = 350–1,000 W/cm² (水) / 100–300 (R1233zd(E): −23–29% R_th),   h = 30–400 kW/m²·K,  R_th = 0.247 °C/W",
+        "description": "Zero-TIM LPBF 6花弁銅ウィックと3経路SLM相分離マニホールドにより超高熱流束と全面等温性を両立"
+      },
+      "nextGenInnovation": "X2-52（単相シリコン直彫り液冷）とX2-104（c軸AlNフォノン絶縁膜）のさらに先を見据える二相相変化冷却として、将来のキロワット級AIシネマカメラ・3D多層演算チップの最終熱障壁を打ち破ります。",
+      "specs": [
+        {
+          "label": "ウィック＆マニホールド",
+          "value": "Zero-TIM シリコン直印刷LPBF 6花弁六角多孔質銅ウィック ＋ 3経路SLM 316L相分離蓋"
+        },
+        {
+          "label": "限界熱流束（CHF）",
+          "value": "350〜1,000 W/cm²（水二相・ITherm 2025 850 W/cm² / 誘電冷媒 100〜300 W/cm²）"
+        },
+        {
+          "label": "誘電冷媒・熱抵抗削減",
+          "value": "R1233zd(E) 1U GPU 200h実証：リガメント相分離で R_th −23〜29%・最小 0.247 °C/W"
+        },
+        {
+          "label": "熱伝達係数・出典",
+          "value": "HTC 30〜400 kW/(m²·K)・IEEE ITherm 2025 / ASME JEP 2025–2026 実証"
+        }
+      ],
+      "diagramType": "xv2_twophase_evaporative_pinfin_jet"
     }
   ]
 }
