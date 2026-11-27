@@ -1,0 +1,25 @@
+{
+  "schema": "bg-flight/v1",
+  "sessionId": "main-mwyyn3zg",
+  "branch": "main",
+  "goal": "Complete HANDOFF_HYPER_OPTIMIZATION.md + ULTRA Zero-Jaggy/F1.2 + FAST-LITE-ULTRA + KINE + Zoom/Blue/MobileLandscape/CamLock",
+  "completed": [],
+  "verifiedGates": [],
+  "knownPitfalls": [],
+  "nextStep": "Await user approval on implementation_plan.md, then run bg start feat-hyper-opt-v3-fast-kine-ultra-aa and execute Phases 1-8",
+  "artifactsMirrored": [
+    {
+      "name": "implementation_plan.md",
+      "sha256": "98e175a261b6ebb4b1c34154347a08a7bd12171802acad42b5808abc1552645f",
+      "size": 47865
+    },
+    {
+      "name": "implementation_plan.md.metadata.json",
+      "sha256": "3f71985bd7689d9f56562a5ee9830c3e502c0c2bc5501b1a85f1da1b121f7fe3",
+      "size": 837
+    }
+  ],
+  "updatedAt": "2026-11-27T12:31:20.045Z",
+  "vmHost": "devbox",
+  "baseSha": "1bc895d9fa5086d3590b035b2f946654517458e7"
+}
