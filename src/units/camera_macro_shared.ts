@@ -308,11 +308,9 @@ export async function buildCameraMacroRaw(
     bodyBuilt.rig.frontDialMesh,
     bodyBuilt.rig.rearDialMesh,
     bodyBuilt.rig.afJoystickCap,
+    // Match src/units/evf.ts: only zero-local-offset EVF rig nodes belong in animatedNodes
     evfBuilt.rig.edLensPart.group,
     evfBuilt.rig.diopterDialGroup,
-    evfBuilt.rig.leadScrewGroup,
-    evfBuilt.rig.oledScreenMesh,
-    ...evfBuilt.rig.irLedMeshes,
     ...shutterBuilt.rig.curtain1Blades,
     ...shutterBuilt.rig.curtain2Blades,
     ...shutterBuilt.rig.shieldBlades,

@@ -286,8 +286,8 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
   });
   const diopterGuide = new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(14.8, EVF_OPTICAL_Y, -9.2),
-      new THREE.Vector3(15.0, EVF_OPTICAL_Y - 24, -9.2),
+      new THREE.Vector3(-14.8, EVF_OPTICAL_Y, -9.2),
+      new THREE.Vector3(-15.0, EVF_OPTICAL_Y - 24, -9.2),
     ]),
     diopterGuideMat
   );
@@ -343,7 +343,7 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
       if (!pOled || !pG1 || !pEd || !pG4 || !pDic || !pIrLed || !pAf || !pCup || !pGaze) return;
 
       const axisY = pOled.group.position.y;
-      const zOled = pOled.group.position.z - 0.85;
+      const zOled = pOled.group.position.z - 2.66;
       const zG1 = pG1.group.position.z;
       const zEd = pEd.group.position.z;
       const zG4 = pG4.group.position.z;
@@ -456,10 +456,10 @@ export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysi
 
       updateLine2PtsInPlace(
         diopterGuide,
-        pEd.group.position.x + 14.8,
+        pEd.group.position.x - 14.8,
         pEd.group.position.y,
         pEd.group.position.z,
-        pDio.group.position.x - 0.2,
+        pDio.group.position.x + 0.2,
         pDio.group.position.y,
         pDio.group.position.z,
         true

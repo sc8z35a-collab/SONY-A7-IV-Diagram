@@ -8,7 +8,7 @@ drybox	individual	186	db-	DB01	DB186	DB187	src/units/drybox.ts	src/data/drybox.j
 mount	individual	100	mount-	M22	M100	M101	src/units/mount.ts	src/data/mount.json	catalog/names/mount.txt	catalog/spatial/mount.tsv
 shutter	individual	180	shutter-	SH34	SH180	SH181	src/units/shutter.ts	src/data/shutter.json	catalog/names/shutter.txt	catalog/spatial/shutter.tsv
 body	individual	116	body-	B01	B116	B117	src/units/body.ts	src/data/body.json	catalog/names/body.txt	catalog/spatial/body.tsv
-evf	individual	55	evf-	E26	E55	E56	src/units/evf.ts	src/data/evf.json	catalog/names/evf.txt	catalog/spatial/evf.tsv
+evf	individual	105	evf-	E26	E105	E106	src/units/evf.ts	src/data/evf.json	catalog/names/evf.txt	catalog/spatial/evf.tsv
 lcd	individual	150	lcd-	D01	D150	D151	src/units/lcd.ts	src/data/lcd.json	catalog/names/lcd.txt	catalog/spatial/lcd.tsv
 lens	individual	128	lens-	L01	L128	L129	src/units/lens.ts	src/data/lens.json	catalog/names/lens.txt	catalog/spatial/lens.tsv
 mainboard	individual	60	mb-	M17	M60	M61	src/units/mainboard.ts	src/data/mainboard.json	catalog/names/mainboard.txt	catalog/spatial/mainboard.tsv
@@ -21,4 +21,4 @@ sensor_fab	individual	235	fab5-	F0-01	F5-38	F5-39	src/units/sensor_fab.ts	src/da
 mirai_2028	individual	32	mirai-	FH01-01	FH02-16	FH02-17	src/units/mirai_2028.ts	src/data/mirai_2028.json	catalog/names/mirai_2028.txt	catalog/spatial/mirai_2028.tsv
 integrated	composite	305	-	-	-	-	src/units/integrated.ts	src/data/integrated.json	catalog/names/integrated.txt	catalog/spatial/integrated.tsv
 camera_body	composite	231	-	-	-	-	src/units/camera_body.ts	src/data/camera_body.json	catalog/names/camera_body.txt	catalog/spatial/camera_body.tsv
-# total_individual_modes=20	total_individual_parts=2436	total_modes=22
+# total_individual_modes=20	total_individual_parts=2486	total_modes=22

@@ -1,56 +1,106 @@
 id	code	name	group	pos	size	exp	mat
-evf-eyecup	#01	エルゴノミック遮光アイカップ	#001-030	0,39.5,-37.2	39.24,32.04,11.21	0,0,-56	ic_epoxy_dark
-evf-eyecup-latch	#02	アイカップ クイックリリース・ステンレス	#001-030	0,39.5,-34.6	32.5,23.6,2.34	-6,-24,-48	stainless_machined
-evf-antifog-window	#03	防曇密閉ダブルガラス接眼保護窓	#001-030	0,39.5,-32.2	29.3,23.5,3.5	0,0,-44	matte_black_anodized
-evf-eye-sensor	#04	ToF赤外線アイセンサー	#001-030	0,28.4,-30.6	16.6,10.31,4.2	0,-15,-34	matte_black_anodized
-evf-ir-leds	#05	視線入力AF用 850nm赤外線リングL	#001-030	0,39.5,-28	28.1,25.96,2.69	0,0,-30	ic_epoxy_dark
-evf-dichroic-mirror	#06	45° ダイクロイック・ホットミラー	#001-030	0,39.5,-22.2	28.95,19.41,19.41	0,0,-16	matte_black_anodized
-evf-gaze-camera	#07	視線入力AF 30.7万画素 赤外CMO	#001-030	0,25.4,-22.2	16.8,3.52,16.2	0,-18,-16	ic_epoxy_dark
-evf-lens-rear	#08	後群 大口径両面非球面 接眼レンズ	#001-030	0,39.5,-15.4	26.71,26.9,6.7	0,0,-2	magnesium_cast
-evf-lens-ed-doublet	#09	視度補正可動群：ED低分散＋高屈折ランタ	#001-030	0,39.5,-9.2	31.74,24.29,7.18	0,0,12	matte_chassis
-evf-diopter-rails	#10	視度可動レンズ 2軸センタレス研磨ガイド	#001-030	0,39.5,-9.2	27.4,18.95,21.6	-28,-14,12	stainless_machined
-evf-diopter-helicoid	#11	スパイラルカム溝ヘリコイド鏡筒スリーブ	#001-030	0,39.5,-9.2	30.17,27.27,11.56	30,8,12	foam_felt_matte
-evf-diopter-mech	#12	精密ヘリコイド視度調整ダイヤル	#001-030	15,39.5,-9.2	11.43,14.81,20.44	16,-24,12	magnesium_cast
-evf-lens-field	#13	前群 非球面フィールドフラットナー集光レ	#001-030	0,39.5,-2.4	23.4,22.69,5.19	0,0,26	foam_felt_matte
-evf-oled-panel	#14	0.64型 944万ドット 2層タンデム	#001-030	0,39.5,3.6	29.2,19.7,2.28	0,0,44	gold_plating
-evf-oled-alignment	#15	マイクロOLED 3点μm光軸チルト調整	#001-030	0,39.5,5.2	25.4,20.65,3.19	28,0,50	stainless_machined
-evf-tcon-pcb	#16	240Hz MIPI-DSI タイミング	#001-030	0,39.5,6.8	24.8,30.6,2.39	0,0,58	ic_epoxy_dark
-evf-thermal-sink	#17	マイクロOLED背面 銅/アルミ複合ヒー	#001-030	0,39.5,10.2	33.2,19.8,4.84	0,0,72	copper_thermal
-evf-magnesium-housing	#18	防塵防滴マグネシウム合金EVF鏡筒	#001-030	0,39.5,-12.5	37.99,30.78,45.56	0,29,4	magnesium_cast
-evf-eyepiece-shutter	#19	内蔵アイピース遮光シャッター幕	#001-030	0,39.5,-30	30.38,20.8,3.7	-26,8,-38	matte_black_anodized
-evf-gaze-ir-optics	#20	視線入力AF 850nm 狭帯域バンドパ	#001-030	0,26.5,-22.2	11.8,5.35,11.8	18,-16,-16	ic_epoxy_dark
-evf-diopter-lock-clutch	#21	プッシュロック式 視度調整ダイヤル	#001-030	19.6,39.5,-15.6	5.22,9.29,7.7	34,-24,12	stainless_machined
-evf-polarizer-qwp	#22	直線偏光板 ＋ λ/4 波長板	#001-030	0,39.5,0.65	21.3,21.3,1.52	0,0,35	matte_black_anodized
-evf-oled-mla-stack	#23	Micro-OLED オンチップ六角マイ	#001-030	0,39.5,2.55	16.8,13,0.66	-24,0,41	solder_silver
-evf-tcon-emi-shield	#24	240Hz MIPI-DSI TCON	#001-030	0,39.5,8.2	25.16,19.56,1.86	26,16,62	becu_spring
-evf-baffle-seal-kit	#25	EVF光学室 密閉防曇Oリングキット	#001-030	0,39.5,-12.5	33.14,29.93,36.55	-28,22,-6	magnesium_cast
-evf-cavity-clamp	E26	EVF底面キャビティFPC抜け止めステン	#001-030	0,25.9,5.5	28.09,2.25,7.8	0,-28,36	stainless_machined
-evf-eyecup-subframe	E27	大型ディープアイカップ着脱用 4点ねじス	#001-030	0,39.5,-35.8	32.1,27.04,3.34	0,0,-68	stainless_machined
-evf-eyeaf-shims	E28	視線入力IRカメラ光軸±5μm校正マイク	#001-030	0,26.9,-22.2	18,3.2,14.6	24,-30,-24	brass_precision
-evf-desiccant-breather	E29	密閉光学室モレキュラーシーブ防曇乾燥剤カ	#001-030	14.8,45.7,-5.5	7.8,14.2,4.6	38,22,8	ic_epoxy_dark
-evf-ambient-photodiode	E30	EVF自動輝度・色温度適応 周囲光RGB	#001-030	-12.5,50.9,-26.5	7.4,14,2.57	-34,34,-36	ic_epoxy_dark
-evf-diopter-detent	E31	視度調整ダイヤル 0.1dptクリックデ	#031-055	16.2,38,-18.5	2.42,11.23,13.17	44,-8,-16	stainless_machined
-evf-oem-finder-cover	E32	Sony純正 FINDER COVER	#031-055	0,38.3,-35	32.4,28.1,3.27	0,-4,-58	matte_chassis
-evf-oem-eye-sensor-window	E33	Sony純正 EYE SENSOR	#031-055	0,28.4,-32.15	15.2,4.75,2.3	0,-24,-46	matte_black_anodized
-evf-oem-eye-sensor-cushions	E34	Sony純正 EYE SENSOR WP	#031-055	0,28.4,-31.1	16.2,13.52,2.83	-18,-32,-38	ic_epoxy_dark
-evf-oem-vf-radiation-sheet	E35	Sony純正 VF SHEET・	#031-055	0,39.5,12.15	24.5,18,0.75	0,8,84	elastomer_rubber
-evf-oem-evf-protector	E36	Sony純正 EVF PROTECTOR	#031-055	0,53.3,-12.5	32.2,6.73,36.2	0,44,4	ic_epoxy_dark
-evf-oem-diopter-wp-sheet	E37	Sony純正 DIOPTER COVER	#031-055	19.6,39.5,-15.6	6.93,11.8,11.8	52,-16,-26	matte_chassis
-evf-oem-jk1028-flex-holder	E38	Sony純正 JK-1028 フレキ中継	#031-055	-13.8,35.3,5.2	4.68,18.15,8.88	-42,-14,18	stainless_machined
-evf-oem-vf-mounting-screws	E39	Sony純正 VFブロック固定精密ネジ群	#031-055	0,39.5,-12.5	30.61,25.77,38.47	-34,-22,-46	stainless_machined
-evf-surr-mi-shoe-shell	E40	ファインダー頭頂・MIシュー外枠	#031-055	0,57.1,-8.3	21.6,6,21.4	0,58,12	stainless_machined
-evf-surr-mi-shoe-contacts	E41	Sony純正 21ピン デジタルオーディ	#031-055	0,57.1,-8.3	18.6,10.09,10.05	24,62,26	ic_epoxy_dark
-evf-surr-mi-shoe-springs	E42	Sony純正 MI SHOE SPRIN	#031-055	0,57.7,-8.3	21,5.78,21.4	-22,74,8	matte_chassis
-evf-surr-stereo-mics	E43	ファインダー両脇・内蔵ステレオMEMSマ	#031-055	0,50.1,3.8	39,11.87,12.2	0,44,48	ic_epoxy_dark
-evf-surr-mic-wind-mesh	E44	マイク集音口・疎水アコースティック防風ス	#031-055	0,52.7,3.8	36.72,1.03,6.32	0,62,54	ic_epoxy_dark
-evf-surr-hump-wp-gasket	E45	ファインダー軍艦部合わせ目・全周防塵防滴	#031-055	0,26.9,-12.5	35.3,4.29,46.4	0,-38,0	ic_epoxy_dark
-evf-oled-tandem-cavity	E46	Micro-OLED2層タンデム白色有機	#031-055	0,39.5,2.95	14.15,10.75,0.73	24,10,44	ic_epoxy_dark
-evf-oled-bondwires-glob	E47	Micro-OLED シリコンチップ周辺	#031-055	0,39.5,3.22	19.8,15.8,0.83	28,-12,46	gold_plating
-evf-oled-fpc-decaps	E48	OLEDパネル直結フレキ・0201電源デ	#031-055	0,27.3,4.45	13.9,11.25,0.89	-22,-26,48	gold_plating
-evf-lens-zeiss-tstar-coat	E49	接眼レンズ群多層誘電体反射防止蒸着膜	#031-055	0,39.5,0	22.39,22.39,15.36	-34,18,8	optical_dichroic
-evf-lens-edge-blackening	E50	接眼レンズ外周・光学墨塗り処理	#031-055	0,39.5,0	22.92,23.7,15.06	-38,-8,4	foam_felt_matte
-evf-lens-inter-spacers	E51	接眼レンズ間・精密黒染め真鍮スペーサーリ	#031-055	0,39.5,0	24.32,24.84,9.41	34,22,16	matte_black_anodized
-evf-oled-field-mask	E52	Micro-OLED直前・ナイフエッジ矩	#031-055	0,39.5,1.65	23.07,17.6,0.69	0,22,36	foam_felt_matte
-evf-diopter-antibacklash-nut	E53	視度調整・バックラッシュ除去スプリットナ	#031-055	14.8,39.5,-9.2	4.36,4.44,5.34	44,-28,22	magnesium_cast
-evf-diopter-gland-seals	E54	視度調整軸・二重リップ防水フッ素ゴムOリ	#031-055	16.2,39.5,-15.6	4.15,5.84,5.9	48,8,-22	stainless_machined
-evf-mipi-ferrite-shield-fpc	E55	EVF 240Hz MIPI-DSI高周	#031-055	0,25.3,7.65	15.2,11.5,1.2	24,-30,62	copper_thermal
+evf-eyecup	#01	エルゴノミック遮光アイカップ	#001-030	0,39.5,-39.46	39.1,31.9,13.65	0,0,-56	magnesium_cast
+evf-eyecup-latch	#02	アイカップ クイックリリース・ステンレス	#001-030	0,39.5,-35.34	32.4,23.6,1.28	-6,-24,-48	stainless_machined
+evf-antifog-window	#03	防曇密閉ダブルガラス接眼保護窓	#001-030	0,39.5,-31.8	25.2,19,1.88	0,0,-44	titanium_machined
+evf-eye-sensor	#04	ToF赤外線アイセンサー	#001-030	0,27.3,-30	19.05,3.9,3.26	0,-15,-34	titanium_machined
+evf-ir-leds	#05	視線入力AF用 850nm赤外線リングL	#001-030	0,39.5,-27.55	24.7,19.6,1.67	0,0,-30	ic_epoxy_dark
+evf-dichroic-mirror	#06	45° ダイクロイック・ホットミラー	#001-030	0,39.5,-23.6	24.35,6.8,6.8	0,0,-16	becu_spring
+evf-gaze-camera	#07	視線入力AF 30.7万画素 赤外CMO	#001-030	0,25.05,-23.6	14.8,3.04,10.3	0,-18,-16	ic_epoxy_dark
+evf-lens-rear	#08	後群 大口径両面非球面 接眼レンズ	#001-030	0,39.5,-15.4	23.68,23.73,3.7	0,0,-2	magnesium_cast
+evf-lens-ed-doublet	#09	視度補正可動群：ED低分散＋高屈折ランタ	#001-030	0,39.5,-9.4	31.07,20.84,4.86	0,0,12	matte_chassis
+evf-diopter-rails	#10	視度可動レンズ 2軸センタレス研磨ガイド	#001-030	0,39.5,-9	25.76,16.56,9.92	-28,-14,12	stainless_machined
+evf-diopter-helicoid	#11	スパイラルカム溝ヘリコイド鏡筒スリーブ	#001-030	0,39.5,-9.4	23.21,23.13,6.42	30,8,12	stainless_machined
+evf-diopter-mech	#12	精密ヘリコイド視度調整ダイヤル	#001-030	-19.2,39.5,-15.6	10.27,8.74,17.49	16,-24,12	magnesium_cast
+evf-lens-field	#13	前群 非球面フィールドフラットナー集光レ	#001-030	0,39.5,-2.42	21.2,20.9,3.41	0,0,26	titanium_machined
+evf-oled-panel	#14	0.64型 944万ドット 2層タンデム	#001-030	0,39.5,4.76	26.6,19.38,2.95	0,0,44	gold_plating
+evf-oled-alignment	#15	マイクロOLED 3点μm光軸チルト調整	#001-030	0,39.5,5.84	24,19.37,1.21	28,0,50	stainless_machined
+evf-tcon-pcb	#16	240Hz MIPI-DSI タイミング	#001-030	0,39.5,7.92	24.4,30.44,2.2	0,0,58	ic_epoxy_dark
+evf-thermal-sink	#17	マイクロOLED背面 銅/アルミ複合ヒー	#001-030	0,39.5,11.62	32.4,19.4,3.45	0,0,72	copper_thermal
+evf-magnesium-housing	#18	防塵防滴マグネシウム合金EVF鏡筒	#001-030	0,39.5,-12.5	45.2,28.2,43.75	0,29,4	stainless_machined
+evf-eyepiece-shutter	#19	内蔵アイピース遮光シャッター幕	#001-030	0,39.5,-30.15	28.16,19.2,1.41	-26,8,-38	matte_black_anodized
+evf-gaze-ir-optics	#20	視線入力AF 850nm 狭帯域バンドパ	#001-030	0,27.4,-23.6	7.64,4.22,7.6	18,-16,-16	ic_epoxy_dark
+evf-diopter-lock-clutch	#21	プッシュロック式 視度調整ダイヤル	#001-030	-20.42,39.5,-15.6	1.44,8.16,6.5	34,-24,12	stainless_machined
+evf-polarizer-qwp	#22	直線偏光板 ＋ λ/4 波長板	#001-030	0,39.5,0.1	20.62,20.54,0.91	0,0,35	titanium_machined
+evf-oled-mla-stack	#23	Micro-OLED オンチップ六角マイ	#001-030	0,39.5,1.6	16.8,13,0.4	-24,0,41	matte_chassis
+evf-tcon-emi-shield	#24	240Hz MIPI-DSI TCON	#001-030	0,39.5,9.28	25.1,19.52,1.63	26,16,62	becu_spring
+evf-baffle-seal-kit	#25	EVF光学室 密閉防曇Oリングキット	#001-030	0,39.5,-12.5	31.68,27.71,43.7	-28,22,-6	foam_felt_matte
+evf-cavity-clamp	E26	EVF底面キャビティFPC抜け止めステン	#001-030	0,24.3,6.9	26.87,1.73,1.77	0,-28,36	stainless_machined
+evf-eyecup-subframe	E27	大型ディープアイカップ着脱用 4点ねじス	#001-030	0,39.5,-36.52	32,26.7,1.46	0,0,-68	stainless_machined
+evf-eyeaf-shims	E28	視線入力IRカメラ光軸±5μm校正マイク	#001-030	0,25.6,-23.6	15.95,2.34,8.6	24,-30,-24	brass_precision
+evf-desiccant-breather	E29	密閉光学室モレキュラーシーブ防曇乾燥剤カ	#001-030	-16.57,46.6,-4.4	3.47,6.26,2.49	38,22,8	stainless_machined
+evf-ambient-photodiode	E30	EVF自動輝度・色温度適応 周囲光RGB	#001-030	-11.8,53.2,-28.2	3.6,1.51,4.95	-34,34,-36	ic_epoxy_dark
+evf-diopter-detent	E31	視度調整ダイヤル 0.1dptクリックデ	#031-060	-19.2,39.5,-15.6	1.01,8.38,8.13	44,-8,-16	stainless_machined
+evf-oem-finder-cover	E32	Sony純正 FINDER COVER	#031-060	0,38.3,-34.1	32.4,27.9,1.47	0,-4,-58	matte_chassis
+evf-oem-eye-sensor-window	E33	Sony純正 EYE SENSOR	#031-060	0,27.3,-33.42	14.6,3.7,1.37	0,-24,-46	matte_black_anodized
+evf-oem-eye-sensor-cushions	E34	Sony純正 EYE SENSOR WP	#031-060	0,27.3,-32.02	21.63,3.6,1.08	-18,-32,-38	ic_epoxy_dark
+evf-oem-vf-radiation-sheet	E35	Sony純正 VF SHEET・	#031-060	0,39.5,14.34	24.5,18,0.71	0,8,84	elastomer_rubber
+evf-oem-evf-protector	E36	Sony純正 EVF PROTECTOR	#031-060	0,53.42,-12.6	28.11,4,24.8	0,44,4	ic_epoxy_dark
+evf-oem-diopter-wp-sheet	E37	Sony純正 DIOPTER COVER	#031-060	-20.9,39.5,-15.6	5.67,8.04,8.04	52,-16,-26	titanium_machined
+evf-oem-jk1028-flex-holder	E38	Sony純正 JK-1028 フレキ中継	#031-060	-16.44,35.8,4.4	3.48,12.7,7.6	-42,-14,18	matte_chassis
+evf-oem-vf-mounting-screws	E39	Sony純正 VFブロック固定精密ネジ群	#031-060	0,39.5,-12.5	30.36,27.24,24.86	-34,-22,-46	titanium_machined
+evf-surr-mi-shoe-shell	E40	ファインダー頭頂・MIシュー外枠	#031-060	0,56.32,-8.3	21.4,4.02,21	0,58,12	stainless_machined
+evf-surr-mi-shoe-contacts	E41	Sony純正 21ピン デジタルオーディ	#031-060	0,56.32,-8.3	14.14,7.13,19.36	24,62,26	ic_epoxy_dark
+evf-surr-mi-shoe-springs	E42	Sony純正 MI SHOE SPRIN	#031-060	0,56.92,-8.3	21,3.96,21.75	-22,74,8	matte_chassis
+evf-surr-stereo-mics	E43	ファインダー両脇・内蔵ステレオMEMSマ	#031-060	0,50.85,5	45.6,5.73,10.5	0,44,48	ic_epoxy_dark
+evf-surr-mic-wind-mesh	E44	マイク集音口・疎水アコースティック防風ス	#031-060	0,53.3,5	44.48,0.99,6.08	0,62,54	ic_epoxy_dark
+evf-surr-hump-wp-gasket	E45	ファインダー軍艦部合わせ目・全周防塵防滴	#031-060	0,26.02,-11.4	34,0.72,39.2	0,-38,0	ic_epoxy_dark
+evf-oled-tandem-cavity	E46	Micro-OLED2層タンデム白色有機	#031-060	0,39.5,2.36	14.18,10.78,0.36	24,10,44	ic_epoxy_dark
+evf-oled-bondwires-glob	E47	Micro-OLED シリコンチップ周辺	#031-060	0,39.5,3.18	20.4,16.4,0.48	28,-12,46	gold_plating
+evf-oled-fpc-decaps	E48	OLEDパネル直結フレキ・0201電源デ	#031-060	0,24.8,5.45	13,9.15,0.79	-22,-26,48	solder_silver
+evf-lens-zeiss-tstar-coat	E49	接眼レンズ群多層誘電体反射防止蒸着膜	#031-060	0,39.5,0	19.46,19.46,16.49	-34,18,8	matte_chassis
+evf-lens-edge-blackening	E50	接眼レンズ外周・光学墨塗り処理	#031-060	0,39.5,0	20.22,20.22,14.3	-38,-8,4	matte_black_anodized
+evf-lens-inter-spacers	E51	接眼レンズ間・精密黒染め真鍮スペーサーリ	#031-060	0,39.5,0	23.13,22.7,10.12	34,22,16	brass_precision
+evf-oled-field-mask	E52	Micro-OLED直前・ナイフエッジ矩	#031-060	0,39.5,0.76	22.59,17.2,0.3	0,22,36	foam_felt_matte
+evf-diopter-antibacklash-nut	E53	視度調整・バックラッシュ除去スプリットナ	#031-060	-14.8,39.5,-9.4	3.88,3.88,4.32	44,-28,22	brass_precision
+evf-diopter-gland-seals	E54	視度調整軸・二重リップ防水フッ素ゴムOリ	#031-060	-17.66,39.5,-15.6	1.38,5.44,5.44	48,8,-22	becu_spring
+evf-mipi-ferrite-shield-fpc	E55	EVF 240Hz MIPI-DSI高周	#031-060	0,24.4,8.95	13.6,10.2,1.01	24,-30,62	copper_thermal
+evf-oled-cmos-backplane	E56	Micro-OLED 単結晶シリコンCM	#031-060	0,39.5,3.2	16.4,12.6,0.4	-28,-14,48	membrane_translucent
+evf-oled-occf-array	E57	Micro-OLED オンチップカラーフ	#031-060	0,39.5,1.94	14.5,11.1,0.15	26,22,42	cfa_gloss_filter
+evf-oled-tfe-coverglass	E58	Micro-OLED ALD薄膜封止多層	#031-060	0,39.5,1.16	16.8,13.2,0.34	-30,18,39	solder_silver
+evf-oled-anode-cathode-bus	E59	Micro-OLED 高反射Ag合金画素	#031-060	0,39.5,2.74	16.2,12.4,0.21	36,4,46	gold_plating
+evf-oled-ceramic-carrier	E60	Micro-OLED アルミナセラミック	#031-060	0,39.5,3.98	21.4,16.68,0.91	34,-22,52	copper_thermal
+evf-oled-pmic-regulator	E61	Micro-OLED専用 正負両電源PM	#061-090	7.2,37.3,7.22	7.2,5.6,0.87	42,-16,62	solder_silver
+evf-oled-ntc-eeprom	E62	Micro-OLED 温度補償NTCサー	#061-090	-7.2,44.5,7.22	6.6,5,0.76	-42,22,62	solder_silver
+evf-tcon-zif-connector	E63	EVF TCON基板 0.3mmピッチ6	#061-090	0,31.6,6.98	20.62,3.32,0.84	-16,-38,60	solder_silver
+evf-tcon-mems-clock	E64	240Hz EVF専用 低ジッタ水晶	#061-090	-7.2,37.3,7.22	6.6,5.2,0.8	-42,-16,62	gold_plating
+evf-ir-led-driver-safety	E65	視線入力AF 850nm赤外LEDパルス	#061-090	7.2,44.5,7.22	6.8,5.2,0.8	42,22,62	gold_plating
+evf-eyepiece-fluorine-coat	E66	接眼最外保護面 フッ素撥水・撥油防汚ナノ	#061-090	0,39.5,-32.85	21.8,16.8,0.43	0,22,-52	optical_glass_ed
+evf-lens-retaining-spanner	E67	接眼後群レンズ 精密ネジ込みカニ目押さえ	#061-090	0,39.5,-17.3	23.42,23.42,1.04	-36,-24,-10	titanium_machined
+evf-doublet-uv-cement	E68	視度可動ダブレット 屈折率整合UV光学バ	#061-090	0,39.5,-9.4	17.92,17.92,1.43	0,-32,12	optical_glass_ed
+evf-lens-active-uv-pockets	E69	接眼レンズ群 6軸アクティブ調心UV硬化	#061-090	0,39.5,-2.42	22.84,22.87,1.58	36,16,26	titanium_machined
+evf-barrel-internal-baffles	E70	EVF鏡筒内壁 多段鋸歯ナイフエッジ遮光	#061-090	0,39.5,-18.68	24.2,23.56,1.46	38,24,-18	matte_black_anodized
+evf-diopter-cam-followers	E71	視度ヘリコイド 低摩擦ガラス強化POMカ	#061-090	0,39.5,-9.4	22.98,24.15,0.87	44,6,18	becu_spring
+evf-diopter-endstop-index	E72	視度調整 機械式終端ストッパーピン	#061-090	-16.15,45.35,-15.6	2.26,2,5.2	48,22,-6	titanium_machined
+evf-shutter-hall-actuator	E73	内蔵アイピース遮光シャッター 磁気ホール	#061-090	14.7,36.2,-30.15	3.06,7.2,1.8	-44,14,-40	matte_black_anodized
+evf-ir-led-collimator-ring	E74	視線入力AF 850nm赤外LED用	#061-090	0,39.5,-29.22	24.6,19.6,0.52	32,10,-28	matte_black_anodized
+evf-chassis-dowel-emi-ground	E75	VFブロック主筐体位置決め h6焼入れノ	#061-090	0,25.44,-11.4	35.84,3.21,26.2	0,-48,-14	stainless_machined
+evf-oled-pdl-planarization	E76	Micro-OLED 黒色ポリイミドPD	#061-090	0,39.5,2.89	15.72,11.92,0.06	0,18,16	cfa_gloss_filter
+evf-oled-tsv-rdl-interposer	E77	Micro-OLED 裏面銅再配線層	#061-090	0,39.5,3.42	15.84,12.04,0.08	0,-18,26	gold_plating
+evf-oled-moisture-getter-frit	E78	ウェハレベルBaO/CaO薄膜水分ゲッタ	#061-090	0,39.5,1.38	20.6,16,0.43	-24,14,10	stainless_machined
+evf-oled-oca-laminate	E79	屈折率整合 光学透明粘着シート	#061-090	0,39.5,1.38	17.28,12.9,0.05	24,14,12	matte_chassis
+evf-oled-acf-fog-bond	E80	異方性導電フィルム3µm金コート微粒子	#061-090	0,29.64,5.42	13.11,0.51,0.54	0,-24,20	matte_chassis
+evf-oled-dsc-bridge-ic	E81	MIPI D-PHY 4レーン VESA	#061-090	0,44.7,7.22	6.4,5.2,0.68	0,26,44	solder_silver
+evf-tcon-mipi-esd-tvs	E82	0.3pF超低容量 4レーンMIPI	#061-090	0,34.35,7.22	6.4,1.72,0.49	-14,-22,40	solder_silver
+evf-tcon-cmc-filter-bank	E83	90Ω差動インピーダンス整合 コモンモー	#061-090	0,36.7,7.06	6.3,2.08,0.57	14,-22,42	copper_coil
+evf-tcon-ldo-gamma-ref	E84	超低ノイズアナログLDO	#061-090	0,39.85,7.22	6.4,3.04,0.56	-22,6,46	solder_silver
+evf-tcon-ferrite-absorber	E85	高周波焼結Ni-Znフェライト磁性EMI	#061-090	0,39.5,10.4	22.8,17.6,0.22	0,16,62	optical_ar_iridescent
+evf-thermal-graphite-bridge	E86	Sony純正 Ref.454パイロリティ	#061-090	0,39.2,15.02	26.4,19.8,0.32	0,-14,88	copper_thermal
+evf-chassis-permalloy-shield	E87	Sony純正 Ref.352高透磁率パー	#061-090	0,24.78,-10	22.4,0.67,13	0,-38,-8	stainless_machined
+evf-dichroic-kinematic-clips	E88	45°ダイクロイックミラー用 3点キネマ	#061-090	0,39.5,-23.6	27.41,5.5,5.3	-28,4,-20	matte_black_anodized
+evf-pupil-glare-stop	E89	ナイフエッジ射出瞳リオグレアストップ絞り	#061-090	0,39.5,-19.95	22.48,21.61,0.18	24,14,-18	titanium_machined
+evf-eyepiece-ito-defogger	E90	結露防止 透明ITO導電マイクロヒーター	#061-090	0,39.5,-30.75	23.2,17.63,0.13	-26,-12,-42	solder_silver
+evf-barrel-n2-purge-valve	E91	光学室気密 乾燥窒素パージポートバルブ	#091-105	-15.12,46.2,-23.4	2.1,3.44,3.44	36,18,-24	titanium_machined
+evf-ambient-light-pipe	E92	環境光RGBフォトダイオード用	#091-105	-11.8,55.4,-29.56	2.76,1.81,4.1	-36,24,-36	matte_chassis
+evf-shutter-detent-bumpers	E93	アイピース遮光シャッター用 双安定オーバ	#091-105	-12.96,39.5,-30.15	1.04,14.36,0.72	30,4,-38	stainless_machined
+evf-ir-led-shunt-esd	E94	850nm赤外LED直近 0.1Ω	#091-105	0,39.5,-26.68	16.6,16.95,0.53	-28,-16,-26	ic_epoxy_dark
+evf-gaze-stray-light-hood	E95	視線検出カメラ専用 3段ナイフエッジ85	#091-105	0,25.43,-23.6	7.48,0.7,4.26	-22,-32,-24	titanium_machined
+evf-gaze-emi-micro-can	E96	視線検出カメラダイ裏面 洋白C7521	#091-105	0,21.48,-22.7	13.12,0.9,8.72	0,-48,-26	stainless_machined
+evf-tof-vcsel-diffuser	E97	ToF近接アイセンサー940nm	#091-105	0,27.3,-32.6	13.4,3.1,0.08	0,-26,-54	stainless_machined
+evf-diopter-belleville-thrust	E98	視度ガイド軸両端 SUS301円錐皿バネ	#091-105	0,39.5,-9	25.16,15.96,11.6	-30,-14,-8	titanium_machined
+evf-diopter-friction-drag	E99	視度リードスクリュー軸 粘性シリコンダン	#091-105	-14.8,39.5,-1.92	4.12,4.12,0.95	40,-8,12	becu_spring
+evf-oem-top-connect-plate	E100	Sony純正 Ref.313ステンレス左	#091-105	-12.2,53.72,-12.6	4.65,1.75,15	-36,36,-6	stainless_machined
+evf-oem-kapton-shield-tape	E101	Sony純正 Ref.306/3607m	#091-105	-18.76,35.4,4.4	3.39,11.85,6.41	-44,6,18	matte_black_anodized
+evf-oem-brow-wp-cushions	E102	Sony純正 Ref.269	#091-105	0,54.44,-10	18.1,0.97,41.72	0,46,-20	elastomer_rubber
+evf-oem-sh1035-top-flex	E103	Sony純正 Ref.307トップデッキ	#091-105	-8.2,54.48,3.7	8.1,0.86,7.1	40,36,16	stainless_machined
+evf-barrel-fof-emi-gaskets	E104	導電ニッケル銅ファブリック・オーバー	#091-105	0,29.5,-14	31.09,5.2,18.68	-38,-12,-14	stainless_machined
+evf-chassis-iso-grommets-fiducial	E105	4点Shore-50Aシリコン防振グロメ	#091-105	0,39.5,-16	33.26,24.39,41.4	38,-24,-26	stainless_machined
