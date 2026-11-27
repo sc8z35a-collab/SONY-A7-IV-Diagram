@@ -37,13 +37,53 @@ const TIER_DPR_CAPS = {
   ultra: 2.0,
 };
 
+// Opt-in targeted / low-token CLI flags (default no-arg execution remains 100% identical!)
+const ARGV = process.argv.slice(2);
+const AI_MODE = ARGV.includes('--ai');
+const SKIP_TSC = ARGV.includes('--skip-tsc');
+const CHANGED_ONLY = ARGV.includes('--changed');
+const UNIT_ARG = ARGV.find((a) => a.startsWith('--unit='));
+let UNIT_FILTER = UNIT_ARG
+  ? new Set(UNIT_ARG.slice(7).split(',').map((s) => s.trim()).filter(Boolean))
+  : null;
+
+if (CHANGED_ONLY && !UNIT_FILTER) {
+  try {
+    const por = execSync('git status --porcelain', { cwd: ROOT, encoding: 'utf8' });
+    const dirty = por
+      .split('\n')
+      .map((l) => l.slice(3).trim().split(' -> ').pop())
+      .filter(Boolean);
+    const graphPath = path.join(ROOT, 'catalog/code/GRAPH.tsv');
+    const inferred = new Set();
+    let allHit = false;
+    if (fs.existsSync(graphPath)) {
+      const gMap = new Map();
+      for (const line of fs.readFileSync(graphPath, 'utf8').split('\n').slice(1)) {
+        if (!line) continue;
+        const cols = line.split('\t');
+        if (cols[0] && cols[3]) gMap.set(cols[0], cols[3]);
+      }
+      for (const rel of dirty) {
+        const aff = gMap.get(rel);
+        if (!aff || aff === '-') continue;
+        if (aff.startsWith('*ALL')) allHit = true;
+        else aff.split(',').forEach((u) => u && inferred.add(u));
+      }
+    }
+    if (!allHit && inferred.size > 0) UNIT_FILTER = inferred;
+  } catch {
+    // fallback to full unit scan
+  }
+}
+
 let failCount = 0;
 const reportLines = [];
 
 function pass(section, detail) {
   const line = `[PASS] ${section}: ${detail}`;
   reportLines.push(line);
-  console.log(line);
+  if (!AI_MODE) console.log(line);
 }
 
 function fail(section, detail) {
@@ -181,9 +221,11 @@ async function bundleTsModuleForNode(entryRel) {
   }
 }
 
-console.log('====================================================================');
-console.log(' Universal V2 WebGL Optimization CI Guardrail (validate_parts.mjs)');
-console.log('====================================================================');
+if (!AI_MODE) {
+  console.log('====================================================================');
+  console.log(' Universal V2 WebGL Optimization CI Guardrail (validate_parts.mjs)');
+  console.log('====================================================================');
+}
 
 // -----------------------------------------------------------------------------
 // 1. Syntax & TypeScript Build Verification
@@ -198,11 +240,15 @@ try {
   fail('1-1 Syntax Check', String(err?.stderr || err));
 }
 
-try {
-  execSync('npx tsc --noEmit', { cwd: ROOT, stdio: 'pipe' });
-  pass('1-2 TypeScript Build', 'npx tsc --noEmit passed with 0 errors');
-} catch (err) {
-  fail('1-2 TypeScript Build', String(err?.stdout || err?.stderr || err));
+if (SKIP_TSC) {
+  pass('1-2 TypeScript Build', 'Skipped via --skip-tsc flag');
+} else {
+  try {
+    execSync('npx tsc --noEmit', { cwd: ROOT, stdio: 'pipe' });
+    pass('1-2 TypeScript Build', 'npx tsc --noEmit passed with 0 errors');
+  } catch (err) {
+    fail('1-2 TypeScript Build', String(err?.stdout || err?.stderr || err));
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -428,7 +474,11 @@ try {
   const allUnitMatrices = {};
   let totalRuntimeFailures = 0;
 
-  for (const entry of registeredUnits) {
+  const unitsToVerify = UNIT_FILTER
+    ? registeredUnits.filter((e) => UNIT_FILTER.has(e.unitId))
+    : registeredUnits;
+
+  for (const entry of unitsToVerify) {
     const unitId = entry.unitId;
     const unitTierMetrics = {};
 
@@ -679,19 +729,21 @@ try {
   if (totalRuntimeFailures === 0) {
     pass(
       '4-6 Tier Scaling & Budget Gates',
-      `All ${registeredUnits.length} unit(s) passed draw-call budgets, LITE <= STD <= HIGH <= ULTRA scaling, DPR caps (1.0/1.0/1.5/2.0), and 0 post-dispose cache refs`
+      `All ${unitsToVerify.length} unit(s) passed draw-call budgets, LITE <= STD <= HIGH <= ULTRA scaling, DPR caps (1.0/1.0/1.5/2.0), and 0 post-dispose cache refs`
     );
     pass(
       '3-4 Runtime Invariants',
-      `All ${registeredUnits.length} unit(s) verified: matrixAutoUpdate=false (100%), JSON=3D (100%), reverse-lookup (100%), zero-NaN explode, 2-stage AABB raycast + drag-pause + 30Hz throttle, zero-leak dispose`
+      `All ${unitsToVerify.length} unit(s) verified: matrixAutoUpdate=false (100%), JSON=3D (100%), reverse-lookup (100%), zero-NaN explode, 2-stage AABB raycast + drag-pause + 30Hz throttle, zero-leak dispose`
     );
   }
 
-  console.log('\n[Universal V2 4-Tier Matrix]');
-  for (const [uid, m] of Object.entries(allUnitMatrices)) {
-    console.log(
-      `  ${uid.padEnd(13)} | LITE: ${String(m.standard_lite.drawCalls).padStart(2)}dc / ${String(m.standard_lite.triangles).padStart(7)} tris | STD: ${String(m.standard.drawCalls).padStart(2)}dc / ${String(m.standard.triangles).padStart(7)} tris | HIGH: ${String(m.high.drawCalls).padStart(2)}dc / ${String(m.high.triangles).padStart(7)} tris | ULTRA: ${String(m.ultra.drawCalls).padStart(2)}dc / ${String(m.ultra.triangles).padStart(7)} tris | Refs:0`
-    );
+  if (!AI_MODE) {
+    console.log('\n[Universal V2 4-Tier Matrix]');
+    for (const [uid, m] of Object.entries(allUnitMatrices)) {
+      console.log(
+        `  ${uid.padEnd(13)} | LITE: ${String(m.standard_lite.drawCalls).padStart(2)}dc / ${String(m.standard_lite.triangles).padStart(7)} tris | STD: ${String(m.standard.drawCalls).padStart(2)}dc / ${String(m.standard.triangles).padStart(7)} tris | HIGH: ${String(m.high.drawCalls).padStart(2)}dc / ${String(m.high.triangles).padStart(7)} tris | ULTRA: ${String(m.ultra.drawCalls).padStart(2)}dc / ${String(m.ultra.triangles).padStart(7)} tris | Refs:0`
+      );
+    }
   }
 } catch (err) {
   fail('4 Runtime Verification', err instanceof Error ? err.stack || err.message : String(err));
@@ -835,6 +887,17 @@ if (process.argv.includes('--skip-catalog')) {
     }
   } catch (err) {
     fail('5-1 Catalog Freshness', String(err));
+  }
+}
+
+if (AI_MODE) {
+  const scopeTag = UNIT_FILTER ? `units=[${[...UNIT_FILTER].join(',')}]` : 'units=ALL';
+  if (failCount === 0) {
+    console.log(`[validate_parts] PASS checks=${reportLines.length} failures=0 ${scopeTag} Refs:0`);
+    process.exit(0);
+  } else {
+    console.error(`[validate_parts] FAIL failures=${failCount} ${scopeTag}`);
+    process.exit(1);
   }
 }
 

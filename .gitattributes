@@ -1,0 +1,8 @@
+# Passive Zero-Deletion Diff Firewall
+# Prevents multi-million-token git diff / git show explosions from generated build artifacts
+# while preserving 100% Git tracking and GitHub Pages (docs/) deployment.
+docs/** -diff linguist-generated=true
+src/playground/playground_index.json -diff linguist-generated=true
+src/playground/playground_templates.json -diff linguist-generated=true
+package-lock.json -diff linguist-generated=true
+catalog/ALL_NAMES.txt -diff linguist-generated=true

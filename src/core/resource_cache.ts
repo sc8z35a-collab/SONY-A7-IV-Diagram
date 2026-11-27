@@ -201,6 +201,18 @@ export function getCadTintLuma(hex: number): number {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
+/**
+ * Unclamped HDR float sentinel RGB triplets written into BatchedMesh/InstancedMesh `setColorAt()`.
+ * Detected directly in vertex shaders across ULTRA/HIGH/STD/LITE/FAST/Play Ground with ZERO extra draw calls:
+ *  - `CAD_SELECT_SENTINEL` : Strong vivid electric cobalt blue + Fresnel rim glow (unmistakable even on black/chrome)
+ *  - `CAD_HOVER_SENTINEL`  : Subtle luminous sky-blue hover highlight
+ *  - `PG_ERROR_SELECT_SENTINEL` / `PG_WARN_SELECT_SENTINEL` : Play Ground simultaneous Error/Warn + Selected blue rim
+ */
+export const CAD_SELECT_SENTINEL: readonly [number, number, number] = [0.02, 0.35, 2.45];
+export const CAD_HOVER_SENTINEL: readonly [number, number, number] = [0.16, 0.56, 1.62];
+export const PG_ERROR_SELECT_SENTINEL: readonly [number, number, number] = [2.5, 0.0, 2.45];
+export const PG_WARN_SELECT_SENTINEL: readonly [number, number, number] = [0.0, 2.5, 2.45];
+
 export interface MaterialSpec {
   readonly color: number;
   readonly metalness: number;
@@ -1179,7 +1191,7 @@ export class ResourceCache {
         cTex.colorSpace = THREE.SRGBColorSpace;
         cTex.minFilter = THREE.LinearMipmapLinearFilter;
         cTex.magFilter = THREE.LinearFilter;
-        cTex.anisotropy = quality === 'ultra' ? 8 : quality === 'high' ? 2 : 1;
+        cTex.anisotropy = quality === 'ultra' ? 16 : quality === 'high' ? 4 : 1;
         if (spec.wrapRepeat) {
           cTex.wrapS = THREE.RepeatWrapping;
           cTex.wrapT = THREE.RepeatWrapping;
@@ -1370,6 +1382,7 @@ export class ResourceCache {
         emissive: 0x1e3a8a,
         emissiveIntensity: 0.14,
       });
+      ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'xray' });
     } else if (isCad) {
       mat = new THREE.MeshLambertMaterial({
         ...commonProps,
@@ -1377,6 +1390,7 @@ export class ResourceCache {
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
       });
+      ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'cad' });
     } else if (quality === 'standard') {
       if (spec.stdLambert && !spec.transparent) {
         mat = new THREE.MeshLambertMaterial({
@@ -1385,6 +1399,7 @@ export class ResourceCache {
           emissive: spec.emissive ?? 0x000000,
           emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
+        ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'std_l' });
       } else {
         const phong = ResourceCache.computeStdPhongProps(
           spec.metalness,
@@ -1399,6 +1414,7 @@ export class ResourceCache {
           emissive: spec.emissive ?? 0x000000,
           emissiveIntensity: spec.emissiveIntensity ?? 0,
         });
+        ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'std_p' });
       }
     } else if (quality === 'ultra' && spec.ultraPhysical) {
       mat = new THREE.MeshPhysicalMaterial({
@@ -1418,6 +1434,7 @@ export class ResourceCache {
         emissive: spec.emissive ?? 0x000000,
         emissiveIntensity: spec.emissiveIntensity ?? 0,
       });
+      ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: true, tag: 'u_phys' });
     } else {
       mat = new THREE.MeshStandardMaterial({
         ...commonProps,
@@ -1430,6 +1447,10 @@ export class ResourceCache {
         emissive: spec.emissive ?? 0x000000,
         emissiveIntensity: spec.emissiveIntensity ?? 0,
       });
+      ResourceCache.patchStandardSelectionAndAA(mat, {
+        specularAA: quality === 'ultra' || quality === 'high',
+        tag: quality === 'ultra' ? 'u_std' : 'h_std',
+      });
     }
 
     mat.userData.__cacheKey = cacheKey;
@@ -1440,11 +1461,94 @@ export class ResourceCache {
   }
 
   /**
-   * Patches a MeshMatcapMaterial with our 3 STD LITE v2 / Play Ground Hyper-Engine GPU Innovations:
+   * Patches ULTRA / HIGH / STD PBR, Phong & Lambert materials with:
+   *  1. Unmistakable Strong Vivid Cobalt-Blue Selection + Emissive Fresnel Rim (`c.b > 1.8 && c.r < 0.25`)
+   *  2. Tokuyoshi / Kaplanyan Analytical Geometric Specular-AA (`dFdx`/`dFdy` roughness clamping) on HIGH & ULTRA
+   * Zero extra draw calls, zero extra meshes, shared program cache key!
+   */
+  public static patchStandardSelectionAndAA(
+    mat: THREE.Material,
+    opts: { specularAA: boolean; tag: string }
+  ): void {
+    const keyTag = `cad_sel_aa_v3_${opts.specularAA ? '1' : '0'}`;
+    mat.customProgramCacheKey = () => keyTag;
+    mat.onBeforeCompile = (shader) => {
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <common>',
+        `#include <common>
+varying float vCadSel;`
+      );
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <color_vertex>',
+        `#if defined( USE_COLOR_ALPHA )
+  vColor = vec4( 1.0 );
+#elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR ) || defined( USE_BATCHING_COLOR )
+  vColor = vec3( 1.0 );
+#endif
+#ifdef USE_COLOR
+  vColor *= color;
+#endif
+vCadSel = 0.0;
+#ifdef USE_INSTANCING_COLOR
+  if ( instanceColor.b > 1.8 && instanceColor.r < 0.25 ) {
+    vCadSel = 2.0;
+  } else if ( instanceColor.b > 1.45 && instanceColor.r < 0.25 ) {
+    vCadSel = 1.0;
+  } else {
+    vColor.xyz *= instanceColor.xyz;
+  }
+#endif
+#ifdef USE_BATCHING_COLOR
+  vec3 batchingColor = getBatchingColor( getIndirectIndex( gl_DrawID ) );
+  if ( batchingColor.b > 1.8 && batchingColor.r < 0.25 ) {
+    vCadSel = 2.0;
+  } else if ( batchingColor.b > 1.45 && batchingColor.r < 0.25 ) {
+    vCadSel = 1.0;
+  } else {
+    vColor.xyz *= batchingColor.xyz;
+  }
+#endif`
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <common>',
+        `#include <common>
+varying float vCadSel;`
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <emissivemap_fragment>',
+        `#include <emissivemap_fragment>
+${
+          opts.specularAA
+            ? `#ifndef FLAT_SHADED
+{
+  vec3 aaDndu = dFdx( normal );
+  vec3 aaDndv = dFdy( normal );
+  float aaVar = clamp( 0.28 * ( dot( aaDndu, aaDndu ) + dot( aaDndv, aaDndv ) ), 0.0, 0.22 );
+  roughnessFactor = clamp( sqrt( roughnessFactor * roughnessFactor + aaVar ), 0.04, 1.0 );
+}
+#endif`
+            : ''
+        }
+if ( vCadSel > 1.5 ) {
+  float selRim = pow( 1.0 - clamp( abs( normal.z ), 0.0, 1.0 ), 1.6 );
+  diffuseColor.rgb = mix( diffuseColor.rgb * vec3( 0.10, 0.40, 1.0 ), vec3( 0.02, 0.34, 1.0 ), 0.80 );
+  totalEmissiveRadiance += vec3( 0.02, 0.28, 1.0 ) * 0.78 + vec3( 0.20, 0.62, 1.0 ) * selRim * 1.25;
+} else if ( vCadSel > 0.5 ) {
+  float hovRim = pow( 1.0 - clamp( abs( normal.z ), 0.0, 1.0 ), 2.0 );
+  diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.14, 0.54, 1.0 ), 0.36 );
+  totalEmissiveRadiance += vec3( 0.05, 0.22, 0.72 ) * 0.24 + vec3( 0.18, 0.58, 1.0 ) * hovRim * 0.42;
+}`
+      );
+    };
+  }
+
+  /**
+   * Patches a MeshMatcapMaterial with our 4 STD LITE v2 / Play Ground Hyper-Engine GPU Innovations:
    *   1. Dual-Atlas Pre-Baked Filmic Studio MatCap (Matte + Metallic in 1 single draw call via RGBA8 color.a!)
    *   2. Ultra-Slim 6-Instruction View-Normal MatCap + Analytical Fresnel Rim (replaces BatchedEdgeLines at 0 dc!)
    *   3. Hardware GPU Vertex-Shader Kinematic Explode (`uExplode` + `RGBA32F` DataTexture -> 0 CPU matrix loops!)
-   *   4. Optional Play Ground In-Shader Signed Red/Amber Error Highlight (`batchColor.r > 1.5` -> Red, `.g > 1.5` -> Amber)
+   *   4. In-Shader Vivid Electric-Blue Selection Mark (`b > 1.8`) + Play Ground Red/Amber Error Highlight
    */
   public static patchLiteMatcapMaterial(
     mat: THREE.MeshMatcapMaterial,
@@ -1465,7 +1569,7 @@ export class ResourceCache {
     mat.userData.__liteUniforms = uniforms;
     mat.userData.__liteDummyTex = dummyExplodeTex;
 
-    const keyTag = `lite_mc_v2_${opts.dualAtlas ? 'd' : 's'}_${opts.defaultFinish > 0.5 ? 'm' : 't'}_${opts.enableRim ? 'r' : 'n'}_${opts.playgroundMode ? 'pg' : 'v2'}`;
+    const keyTag = `lite_mc_v3_${opts.dualAtlas ? 'd' : 's'}_${opts.defaultFinish > 0.5 ? 'm' : 't'}_${opts.enableRim ? 'r' : 'n'}_${opts.playgroundMode ? 'pg' : 'v2'}`;
     mat.customProgramCacheKey = () => keyTag;
 
     const defFinLit = opts.defaultFinish.toFixed(1);
@@ -1475,7 +1579,7 @@ export class ResourceCache {
       shader.uniforms.uExplodeTexW = uniforms.uExplodeTexW;
       shader.uniforms.uExplodeActive = uniforms.uExplodeActive;
 
-      // 1. Vertex shader: inject GPU Explode uniforms + optional Play Ground diagnostic varying
+      // 1. Vertex shader: inject GPU Explode uniforms + strong blue selection & Play Ground diagnostic varyings
       shader.vertexShader = shader.vertexShader.replace(
         '#include <common>',
         `#include <common>
@@ -1483,13 +1587,13 @@ uniform float uExplode;
 uniform float uExplodeActive;
 uniform int uExplodeTexW;
 uniform highp sampler2D uExplodeTex;
+varying float vSelMark;
 ${opts.playgroundMode ? 'varying float vPgDiag;' : ''}`
       );
 
-      if (opts.playgroundMode) {
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <color_vertex>',
-          `#if defined( USE_COLOR_ALPHA )
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <color_vertex>',
+        `#if defined( USE_COLOR_ALPHA )
   vColor = vec4( 1.0 );
 #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR ) || defined( USE_BATCHING_COLOR )
   vColor = vec3( 1.0 );
@@ -1497,22 +1601,44 @@ ${opts.playgroundMode ? 'varying float vPgDiag;' : ''}`
 #ifdef USE_COLOR
   vColor *= color;
 #endif
+vSelMark = 0.0;
+${opts.playgroundMode ? 'vPgDiag = 0.0;' : ''}
 #ifdef USE_INSTANCING_COLOR
-  vColor.xyz *= instanceColor.xyz;
+  if ( instanceColor.b > 1.8 && instanceColor.r < 0.25 ) {
+    vSelMark = 2.0;
+  } else if ( instanceColor.b > 1.45 && instanceColor.r < 0.25 ) {
+    vSelMark = 1.0;
+  } else {
+    vColor.xyz *= instanceColor.xyz;
+  }
 #endif
-vPgDiag = 0.0;
 #ifdef USE_BATCHING_COLOR
   vec3 batchingColor = getBatchingColor( getIndirectIndex( gl_DrawID ) );
-  if ( batchingColor.r > 1.5 ) {
+  ${
+    opts.playgroundMode
+      ? `if ( batchingColor.r > 1.5 ) {
     vPgDiag = 2.0;
+    if ( batchingColor.b > 1.8 ) vSelMark = 2.0;
   } else if ( batchingColor.g > 1.5 ) {
     vPgDiag = 1.0;
+    if ( batchingColor.b > 1.8 ) vSelMark = 2.0;
+  } else if ( batchingColor.b > 1.8 && batchingColor.r < 0.25 ) {
+    vSelMark = 2.0;
+  } else if ( batchingColor.b > 1.45 && batchingColor.r < 0.25 ) {
+    vSelMark = 1.0;
   } else {
     vColor.xyz *= batchingColor.xyz;
+  }`
+      : `if ( batchingColor.b > 1.8 && batchingColor.r < 0.25 ) {
+    vSelMark = 2.0;
+  } else if ( batchingColor.b > 1.45 && batchingColor.r < 0.25 ) {
+    vSelMark = 1.0;
+  } else {
+    vColor.xyz *= batchingColor.xyz;
+  }`
   }
 #endif`
-        );
-      }
+      );
 
       shader.vertexShader = shader.vertexShader.replace(
         '#include <project_vertex>',
@@ -1539,14 +1665,13 @@ mvPosition = modelViewMatrix * mvPosition;
 gl_Position = projectionMatrix * mvPosition;`
       );
 
-      // 2. Fragment shader: RGBA8 color.a material finish decode + 6-ALU Dual-Atlas MatCap + Analytical Fresnel Rim
-      if (opts.playgroundMode) {
-        shader.fragmentShader = shader.fragmentShader.replace(
-          '#include <common>',
-          `#include <common>
-varying float vPgDiag;`
-        );
-      }
+      // 2. Fragment shader: RGBA8 color.a material finish decode + 6-ALU Dual-Atlas MatCap + Strong Electric Blue Selection
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <common>',
+        `#include <common>
+varying float vSelMark;
+${opts.playgroundMode ? 'varying float vPgDiag;' : ''}`
+      );
 
       shader.fragmentShader = shader.fragmentShader.replace(
         '#include <color_fragment>',
@@ -1582,14 +1707,25 @@ varying float vPgDiag;`
 \t#endif
 \tfloat rimEdge = ${opts.enableRim ? 'mix( 0.78, 1.0, smoothstep( 0.04, 0.34, abs( normal.z ) ) )' : '1.0'};
 \tvec3 outgoingLight = diffuseColor.rgb * matcapColor.rgb * rimEdge;
+\tfloat selFresnel = pow( 1.0 - clamp( abs( normal.z ), 0.0, 1.0 ), 1.55 );
 ${
         opts.playgroundMode
           ? `\tif ( vPgDiag > 1.5 ) {
 \t\toutgoingLight = vec3( 0.98, 0.14, 0.14 ) * ( 0.46 + 0.64 * matcapColor.rgb ) * rimEdge;
+\t\tif ( vSelMark > 1.5 ) outgoingLight += vec3( 0.04, 0.46, 1.0 ) * ( 0.22 + selFresnel * 1.15 );
 \t} else if ( vPgDiag > 0.5 ) {
 \t\toutgoingLight = vec3( 0.98, 0.68, 0.08 ) * ( 0.44 + 0.64 * matcapColor.rgb ) * rimEdge;
+\t\tif ( vSelMark > 1.5 ) outgoingLight += vec3( 0.04, 0.46, 1.0 ) * ( 0.22 + selFresnel * 1.15 );
+\t} else if ( vSelMark > 1.5 ) {
+\t\toutgoingLight = vec3( 0.02, 0.34, 1.0 ) * ( 0.60 + 0.54 * matcapColor.rgb ) + vec3( 0.22, 0.64, 1.0 ) * selFresnel * 0.92;
+\t} else if ( vSelMark > 0.5 ) {
+\t\toutgoingLight = mix( outgoingLight, vec3( 0.12, 0.52, 1.0 ) * ( 0.56 + 0.50 * matcapColor.rgb ), 0.44 );
 \t}`
-          : ''
+          : `\tif ( vSelMark > 1.5 ) {
+\t\toutgoingLight = vec3( 0.02, 0.34, 1.0 ) * ( 0.60 + 0.54 * matcapColor.rgb ) + vec3( 0.22, 0.64, 1.0 ) * selFresnel * 0.92;
+\t} else if ( vSelMark > 0.5 ) {
+\t\toutgoingLight = mix( outgoingLight, vec3( 0.12, 0.52, 1.0 ) * ( 0.56 + 0.50 * matcapColor.rgb ), 0.44 );
+\t}`
       }`;
 
       shader.fragmentShader = shader.fragmentShader.replace(oldMatcapBlock, fastMatcapBlock);
@@ -1599,8 +1735,171 @@ ${
   }
 
   /**
+   * Acquire a 0-Texture Vertex-Lit FAST Mode proxy material (5-10x+ lighter than STD LITE v2!).
+   * Lighting (studio hemisphere + key wrap), GPU vertex-shader explode, and strong electric-blue
+   * selection marking execute 100% in the vertex shader so the fragment shader is a 1-instruction color copy!
+   */
+  public acquireFastProxyMaterial(
+    clippingPlanes: THREE.Plane[] = [],
+    poolSlot = 0,
+    playgroundMode = false
+  ): THREE.Material {
+    const cacheKey = `fast_proxy_mat:${playgroundMode ? 'pg' : 'v2'}:p${poolSlot}`;
+    const targetSide: THREE.Side = clippingPlanes.length > 0 ? THREE.DoubleSide : THREE.FrontSide;
+    const existing = this.materials.get(cacheKey);
+    if (existing) {
+      existing.refCount++;
+      existing.resource.clippingPlanes = clippingPlanes;
+      if (existing.resource.userData?.__managedSide && existing.resource.side !== targetSide) {
+        existing.resource.side = targetSide;
+        existing.resource.needsUpdate = true;
+      }
+      return existing.resource;
+    }
+
+    const dummyExplodeTex = this.acquireTexture('lite_explode_dummy') as THREE.DataTexture;
+    const depTextures: string[] = ['lite_explode_dummy'];
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      vertexColors: true,
+      side: targetSide,
+      clippingPlanes,
+      toneMapped: false,
+    });
+
+    const uniforms: LiteMatcapUniforms = {
+      uExplode: { value: 0.0 },
+      uExplodeTex: { value: dummyExplodeTex },
+      uExplodeTexW: { value: 1 },
+      uExplodeActive: { value: 0.0 },
+    };
+    mat.userData.__liteUniforms = uniforms;
+    mat.userData.__liteDummyTex = dummyExplodeTex;
+    mat.userData.__cacheKey = cacheKey;
+    mat.userData.__managedSide = true;
+
+    const keyTag = `fast_vtx_v3_${playgroundMode ? 'pg' : 'v2'}`;
+    mat.customProgramCacheKey = () => keyTag;
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms.uExplode = uniforms.uExplode;
+      shader.uniforms.uExplodeTex = uniforms.uExplodeTex;
+      shader.uniforms.uExplodeTexW = uniforms.uExplodeTexW;
+      shader.uniforms.uExplodeActive = uniforms.uExplodeActive;
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <common>',
+        `#include <common>
+uniform float uExplode;
+uniform float uExplodeActive;
+uniform int uExplodeTexW;
+uniform highp sampler2D uExplodeTex;
+varying vec3 vFastShade;`
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <color_vertex>',
+        `#if defined( USE_COLOR_ALPHA )
+  vColor = vec4( 1.0 );
+#elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR ) || defined( USE_BATCHING_COLOR )
+  vColor = vec3( 1.0 );
+#endif
+#ifdef USE_COLOR
+  vColor *= color;
+#endif
+float fSel = 0.0;
+float fDiag = 0.0;
+#ifdef USE_INSTANCING_COLOR
+  if ( instanceColor.b > 1.8 && instanceColor.r < 0.25 ) {
+    fSel = 2.0;
+  } else {
+    vColor.xyz *= instanceColor.xyz;
+  }
+#endif
+#ifdef USE_BATCHING_COLOR
+  vec3 bc = getBatchingColor( getIndirectIndex( gl_DrawID ) );
+  ${
+    playgroundMode
+      ? `if ( bc.r > 1.5 ) {
+    fDiag = 2.0;
+  } else if ( bc.g > 1.5 ) {
+    fDiag = 1.0;
+  } else if ( bc.b > 1.8 && bc.r < 0.25 ) {
+    fSel = 2.0;
+  } else {
+    vColor.xyz *= bc.xyz;
+  }`
+      : `if ( bc.b > 1.8 && bc.r < 0.25 ) {
+    fSel = 2.0;
+  } else {
+    vColor.xyz *= bc.xyz;
+  }`
+  }
+#endif`
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <project_vertex>',
+        `vec3 fnObj = vec3( normal );
+#ifdef USE_BATCHING
+  fnObj = mat3( batchingMatrix ) * fnObj;
+#endif
+#ifdef USE_INSTANCING
+  fnObj = mat3( instanceMatrix ) * fnObj;
+#endif
+vec3 fn = normalize( normalMatrix * fnObj );
+float hemi = 0.58 + 0.26 * clamp( fn.y, -1.0, 1.0 );
+float keyL = 0.34 * max( 0.0, dot( fn, vec3( -0.45, 0.60, 0.66 ) ) );
+float shade = clamp( hemi + keyL, 0.38, 1.18 );
+if ( fDiag > 1.5 ) {
+  vFastShade = vec3( 0.96, 0.16, 0.16 ) * shade;
+} else if ( fDiag > 0.5 ) {
+  vFastShade = vec3( 0.96, 0.68, 0.10 ) * shade;
+} else if ( fSel > 1.5 ) {
+  vFastShade = vec3( 0.04, 0.42, 1.0 ) * ( 0.72 + 0.40 * shade );
+} else {
+  vFastShade = vColor.rgb * shade;
+}
+vec4 mvPosition = vec4( transformed, 1.0 );
+#ifdef USE_BATCHING
+  mvPosition = batchingMatrix * mvPosition;
+  if ( uExplodeActive > 0.5 && uExplode > 0.0001 ) {
+    int eIdx = int( getIndirectIndex( gl_DrawID ) );
+    int ex = eIdx % uExplodeTexW;
+    int ey = eIdx / uExplodeTexW;
+    mvPosition.xyz += texelFetch( uExplodeTex, ivec2( ex, ey ), 0 ).xyz * uExplode;
+  }
+#endif
+#ifdef USE_INSTANCING
+  mvPosition = instanceMatrix * mvPosition;
+  if ( uExplodeActive > 0.5 && uExplode > 0.0001 ) {
+    int eIdx = gl_InstanceID;
+    int ex = eIdx % uExplodeTexW;
+    int ey = eIdx / uExplodeTexW;
+    mvPosition.xyz += texelFetch( uExplodeTex, ivec2( ex, ey ), 0 ).xyz * uExplode;
+  }
+#endif
+mvPosition = modelViewMatrix * mvPosition;
+gl_Position = projectionMatrix * mvPosition;`
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <common>',
+        `#include <common>
+varying vec3 vFastShade;`
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <color_fragment>',
+        `diffuseColor.rgb = vFastShade;`
+      );
+    };
+
+    this.materials.set(cacheKey, { resource: mat, refCount: 1, depTextures });
+    return mat;
+  }
+
+  /**
    * Acquire a Play Ground Hyper-Engine Dual-Atlas MatCap material (0 dynamic lights,
-   * in-shader per-instance 3D Red Error / Amber Warning highlight, solid/xray/wireframe modes!).
+   * in-shader per-instance 3D Vivid Blue Selection + Red Error / Amber Warning highlight!).
    */
   public acquirePlaygroundMatcapMaterial(
     mode: 'solid_opaque' | 'solid_glass' | 'xray' | 'wireframe'
@@ -1653,6 +1952,219 @@ ${
 
     mat.userData.__cacheKey = cacheKey;
     this.materials.set(cacheKey, { resource: mat, refCount: 1, depTextures });
+    return mat;
+  }
+
+  /**
+   * Acquire ref-counted fullscreen post-process ShaderMaterials for ULTRA Zero-Jaggy AA + F1.2 Bokeh + FAST Blit.
+   * Centralized in ResourceCache to strictly satisfy CI Gate 3-1 & guarantee Δg=0 / Δt=0 / Refs=0!
+   */
+  public acquirePostProcessMaterial(
+    kind: 'ultra_accum' | 'ultra_bokeh' | 'ultra_resolve' | 'fast_blit'
+  ): THREE.ShaderMaterial {
+    const cacheKey = `post:${kind}`;
+    const existing = this.materials.get(cacheKey);
+    if (existing) {
+      existing.refCount++;
+      return existing.resource as THREE.ShaderMaterial;
+    }
+
+    const vert = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = vec4( position.xy, 0.0, 1.0 );
+}`;
+
+    let mat: THREE.ShaderMaterial;
+    if (kind === 'ultra_accum') {
+      mat = new THREE.ShaderMaterial({
+        uniforms: {
+          tPrev: { value: null },
+          tCurr: { value: null },
+          uWeight: { value: 1.0 },
+        },
+        vertexShader: vert,
+        fragmentShader: `
+uniform sampler2D tPrev;
+uniform sampler2D tCurr;
+uniform float uWeight;
+varying vec2 vUv;
+void main() {
+  vec4 curr = texture2D( tCurr, vUv );
+  if ( uWeight >= 0.999 ) {
+    gl_FragColor = curr;
+  } else {
+    vec4 prev = texture2D( tPrev, vUv );
+    gl_FragColor = mix( prev, curr, uWeight );
+  }
+}`,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      });
+    } else if (kind === 'ultra_bokeh') {
+      mat = new THREE.ShaderMaterial({
+        uniforms: {
+          tColor: { value: null },
+          tDepth: { value: null },
+          uTexelSize: { value: new THREE.Vector2(1 / 1280, 1 / 720) },
+          uCameraNear: { value: 0.85 },
+          uCameraFar: { value: 4200.0 },
+          uFocusDist: { value: 220.0 },
+          uApertureScale: { value: 12.0 },
+          uMaxCocPx: { value: 9.0 },
+          uRotationAngle: { value: 0.0 },
+        },
+        vertexShader: vert,
+        fragmentShader: `
+uniform sampler2D tColor;
+uniform sampler2D tDepth;
+uniform vec2 uTexelSize;
+uniform float uCameraNear;
+uniform float uCameraFar;
+uniform float uFocusDist;
+uniform float uApertureScale;
+uniform float uMaxCocPx;
+uniform float uRotationAngle;
+varying vec2 vUv;
+
+float linearDepth( float z ) {
+  float ndc = z * 2.0 - 1.0;
+  return ( 2.0 * uCameraNear * uCameraFar ) / max( 0.0001, uCameraFar + uCameraNear - ndc * ( uCameraFar - uCameraNear ) );
+}
+
+float calcCoc( float d, float rawZ ) {
+  if ( rawZ >= 0.99985 ) return 0.0;
+  float rel = abs( d - uFocusDist ) / max( d, 0.25 );
+  return clamp( ( rel - 0.09 ) * uApertureScale, 0.0, uMaxCocPx );
+}
+
+void main() {
+  vec4 centerCol = texture2D( tColor, vUv );
+  float rawZ = texture2D( tDepth, vUv ).r;
+  float centerD = linearDepth( rawZ );
+  float centerCoc = calcCoc( centerD, rawZ );
+
+  // Fast early-out on crisp focal plane
+  if ( centerCoc < 0.35 && rawZ < 0.99985 ) {
+    gl_FragColor = centerCol;
+    return;
+  }
+
+  float radiusPx = rawZ >= 0.99985 ? uMaxCocPx * 0.55 : max( centerCoc, 0.5 );
+  vec4 acc = centerCol;
+  float wSum = 1.0;
+  const float GOLDEN = 2.39996323;
+
+  for ( int i = 0; i < 16; i++ ) {
+    float fi = float( i );
+    float r = sqrt( ( fi + 0.5 ) / 16.0 ) * radiusPx;
+    float ang = fi * GOLDEN + uRotationAngle;
+    vec2 ofs = vec2( cos( ang ), sin( ang ) ) * r * uTexelSize;
+    vec2 suv = clamp( vUv + ofs, vec2( 0.001 ), vec2( 0.999 ) );
+    float sRawZ = texture2D( tDepth, suv ).r;
+    float sD = linearDepth( sRawZ );
+    float sCoc = calcCoc( sD, sRawZ );
+
+    // Prevent razor-sharp in-focus foreground edges from bleeding into blurred background
+    float bgWeight = ( sD + 0.6 < centerD && sCoc < 0.65 ) ? 0.0 : 1.0;
+    float scatterW = rawZ >= 0.99985
+      ? smoothstep( 0.35, 2.4, sCoc ) * ( sRawZ < 0.99985 ? 0.48 : 0.0 )
+      : ( sCoc >= r * 0.65 || sD >= centerD - 0.5 ? 1.0 : 0.16 );
+    vec4 sCol = texture2D( tColor, suv );
+    float luma = dot( sCol.rgb, vec3( 0.2126, 0.7152, 0.0722 ) ) / max( sCol.a, 0.05 );
+    float bokehPop = 1.0 + 0.24 * smoothstep( 0.95, 2.4, luma );
+    float w = bgWeight * scatterW * bokehPop;
+    acc += sCol * w;
+    wSum += w;
+  }
+
+  gl_FragColor = acc / max( wSum, 0.0001 );
+}`,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      });
+    } else if (kind === 'ultra_resolve') {
+      mat = new THREE.ShaderMaterial({
+        uniforms: {
+          tDiffuse: { value: null },
+          uExposure: { value: 1.18 },
+        },
+        vertexShader: vert,
+        fragmentShader: `
+uniform sampler2D tDiffuse;
+uniform float uExposure;
+varying vec2 vUv;
+
+vec3 RRTAndODTFit( vec3 v ) {
+  vec3 a = v * ( v + 0.0245786 ) - 0.000090537;
+  vec3 b = v * ( 0.983729 * v + 0.4329510 ) + 0.238081;
+  return a / b;
+}
+
+vec3 acesFilmic( vec3 color ) {
+  const mat3 ACESInputMat = mat3(
+    vec3( 0.59719, 0.07600, 0.02840 ),
+    vec3( 0.35458, 0.90834, 0.13383 ),
+    vec3( 0.04823, 0.01566, 0.83777 )
+  );
+  const mat3 ACESOutputMat = mat3(
+    vec3(  1.60475, -0.10208, -0.00327 ),
+    vec3( -0.53108,  1.10813, -0.07276 ),
+    vec3( -0.07367, -0.00605,  1.07602 )
+  );
+  color = ACESInputMat * color;
+  color = RRTAndODTFit( color );
+  color = ACESOutputMat * color;
+  return clamp( color, 0.0, 1.0 );
+}
+
+vec3 linearToSrgb( vec3 c ) {
+  vec3 lo = c * 12.92;
+  vec3 hi = 1.055 * pow( max( c, vec3( 0.0 ) ), vec3( 1.0 / 2.4 ) ) - 0.055;
+  return mix( lo, hi, step( vec3( 0.0031308 ), c ) );
+}
+
+void main() {
+  vec4 premul = texture2D( tDiffuse, vUv );
+  float alpha = clamp( premul.a, 0.0, 1.0 );
+  if ( alpha < 0.0005 ) {
+    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+    return;
+  }
+  vec3 hdr = ( premul.rgb / max( alpha, 0.001 ) ) * ( uExposure / 0.6 );
+  vec3 srgbObj = linearToSrgb( acesFilmic( hdr ) );
+  vec3 composited = mix( vec3( 1.0 ), srgbObj, alpha );
+  float ign = fract( 52.9829189 * fract( dot( gl_FragCoord.xy, vec2( 0.06711056, 0.00583715 ) ) ) );
+  composited = clamp( composited + ( ign - 0.5 ) / 255.0, 0.0, 1.0 );
+  gl_FragColor = vec4( composited, 1.0 );
+}`,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      });
+    } else {
+      mat = new THREE.ShaderMaterial({
+        uniforms: {
+          tDiffuse: { value: null },
+        },
+        vertexShader: vert,
+        fragmentShader: `
+uniform sampler2D tDiffuse;
+varying vec2 vUv;
+void main() {
+  gl_FragColor = texture2D( tDiffuse, vUv );
+}`,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+      });
+    }
+
+    mat.userData.__cacheKey = cacheKey;
+    this.materials.set(cacheKey, { resource: mat, refCount: 1 });
     return mat;
   }
 
@@ -1737,6 +2249,7 @@ ${
     } else if (quality === 'standard') {
       if (bucketSpec.stdLambert && !transparent) {
         mat = new THREE.MeshLambertMaterial(commonProps);
+        ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'hero_l' });
       } else {
         const phong = ResourceCache.computeStdPhongProps(metalness, roughness, transparent);
         mat = new THREE.MeshPhongMaterial({
@@ -1744,6 +2257,7 @@ ${
           specular: phong.specular,
           shininess: phong.shininess,
         });
+        ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: false, tag: 'hero_p' });
       }
     } else if (quality === 'ultra' && bucketSpec.ultraPhysical) {
       mat = new THREE.MeshPhysicalMaterial({
@@ -1756,12 +2270,17 @@ ${
         iridescenceIOR: bucketSpec.ultraPhysical.iridescenceIOR ?? 1.3,
         envMapIntensity: 1.34,
       });
+      ResourceCache.patchStandardSelectionAndAA(mat, { specularAA: true, tag: 'hero_up' });
     } else {
       mat = new THREE.MeshStandardMaterial({
         ...commonProps,
         metalness,
         roughness,
         envMapIntensity: quality === 'ultra' ? 1.16 : 0.95,
+      });
+      ResourceCache.patchStandardSelectionAndAA(mat, {
+        specularAA: quality === 'ultra' || quality === 'high',
+        tag: quality === 'ultra' ? 'hero_us' : 'hero_hs',
       });
     }
 
