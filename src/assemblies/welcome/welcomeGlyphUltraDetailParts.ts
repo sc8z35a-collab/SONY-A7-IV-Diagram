@@ -85,7 +85,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
       'CISPR 32 / FCC Part 15B Radiated Emissions Enclosure Seam Bonding Guidelines',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildStrokeEmiFingerstock(YO_STEM, -6.32, 5, m),
+    build: (m) => buildStrokeEmiFingerstock(YO_STEM, -6.28, 5, m),
   },
   {
     id: 'welcome-yo-schnorr-lock-washers',
@@ -123,10 +123,10 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
     build: (m) =>
       buildSchnorrHelicoilArray(
         [
-          [0.5, 21.8, -6.76],
-          [11.8, 11.6, -6.76],
-          [-13.4, -7.2, -6.76],
-          [10.2, -6.4, -6.76],
+          [0.5, 21.8, -6.64],
+          [11.8, 11.6, -6.64],
+          [-13.4, -7.2, -6.64],
+          [10.2, -6.4, -6.64],
         ],
         m
       ),
@@ -199,7 +199,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
       'Harris, C. M., "Shock and Vibration Handbook", 6th Ed., McGraw-Hill',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildGlyphTmdDamper(0.6, 11.8, -7.36, 3.8, 4.4, m),
+    build: (m) => buildGlyphTmdDamper(0.6, 11.8, -7.02, 3.8, 4.4, m),
   },
 
   // --- 「う」 Wave A (W270 - W273) ---
@@ -280,10 +280,10 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
     build: (m) =>
       buildSchnorrHelicoilArray(
         [
-          [-3.2, 23.6, -6.76],
-          [-9.0, 9.8, -6.76],
-          [11.8, 3.2, -6.76],
-          [-5.2, -13.2, -6.76],
+          [-3.2, 23.6, -6.64],
+          [-9.0, 9.8, -6.64],
+          [11.8, 3.2, -6.64],
+          [-5.2, -13.2, -6.64],
         ],
         m
       ),
@@ -474,10 +474,10 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
     build: (m) =>
       buildSchnorrHelicoilArray(
         [
-          [-9.5, 14.8, -6.76],
-          [8.6, 15.2, -6.76],
-          [-10.8, -9.2, -6.76],
-          [10.2, -11.8, -6.76],
+          [-9.5, 14.8, -6.64],
+          [8.6, 15.2, -6.64],
+          [-10.8, -9.2, -6.64],
+          [10.2, -11.8, -6.64],
         ],
         m
       ),
@@ -568,7 +568,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
       'Steinberg, D. S., "Vibration Analysis for Electronic Equipment" (Cantilever Sub-Assembly Damping)',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildGlyphTmdDamper(4.5, 15.8, -7.36, 4.2, 2.2, m),
+    build: (m) => buildGlyphTmdDamper(4.5, 15.8, -7.02, 4.2, 2.2, m),
   },
 
   // --- 「そ」 Wave A (W278 - W281) ---
@@ -605,7 +605,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
       'CISPR 32 Class B Radiated Emission Compliance for High-Power PWM LED Arrays',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildStrokeEmiFingerstock(SO_BOWL, -6.32, 6, m),
+    build: (m) => buildStrokeEmiFingerstock(SO_BOWL, -6.28, 6, m),
   },
   {
     id: 'welcome-so-bowl-tmd-damper',
@@ -640,7 +640,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
       'Beranek, L. L., "Acoustics" (Structure-Borne Enclosure Excitation & Isolation)',
     ],
     diagramType: 'welcome_tof_audio_hmi',
-    build: (m) => buildGlyphTmdDamper(-10.2, -5.2, -7.36, 3.6, 4.4, m),
+    build: (m) => buildGlyphTmdDamper(-10.2, -5.2, -7.02, 3.6, 4.4, m),
   },
   {
     id: 'welcome-so-schnorr-lock-washers',
@@ -678,10 +678,10 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
     build: (m) =>
       buildSchnorrHelicoilArray(
         [
-          [-6.2, 21.0, -6.76],
-          [8.2, 6.8, -6.76],
-          [-6.0, -1.2, -6.76],
-          [8.6, -12.6, -6.76],
+          [-6.2, 21.0, -6.64],
+          [8.2, 6.8, -6.64],
+          [-6.0, -1.2, -6.64],
+          [8.6, -12.6, -6.64],
         ],
         m
       ),

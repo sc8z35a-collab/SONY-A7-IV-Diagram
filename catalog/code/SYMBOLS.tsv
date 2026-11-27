@@ -449,12 +449,33 @@ src/assemblies/welcome/welcomeGeometry.ts	buildPlinthRoundedSlab	func	960	999	ex
 src/assemblies/welcome/welcomeGeometry.ts	buildUsbCPdReceptacle	func	1001	1024	export function buildUsbCPdReceptacle(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.Gro…
 src/assemblies/welcome/welcomeGeometry.ts	buildWelcomeSpeakerUnit	func	1026	1044	export function buildWelcomeSpeakerUnit(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.G…
 src/assemblies/welcome/welcomeGeometry.ts	buildKnurledRotaryDial	func	1046	1069	export function buildKnurledRotaryDial(cx: number, cy: number, cz: number, mats: V2MaterialLibrary): THREE.Gr…
+src/assemblies/welcome/welcomeGlyphMetrologyParts.ts	WELCOME_GLYPH_METROLOGY_DEFS	const	81	902	WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- 「よ」 Wave B (W316 - W320) ---
+src/assemblies/welcome/welcomeGlyphMetrologyParts.ts	buildWelcomeGlyphMetrologyParts	func	904	906	export function buildWelcomeGlyphMetrologyParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	WelcomeDiagramType	type	15	23	export type WelcomeDiagramType =
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	WelcomeExpansionPartDef	interface	25	45	export interface WelcomeExpansionPartDef
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildExpansionCadParts	func	47	89	export function buildExpansionCadParts( defs: readonly WelcomeExpansionPartDef[], mats: V2MaterialLibrary ): …
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildBreatherDesiccantPack	func	96	124	export function buildBreatherDesiccantPack( cx: number, cy: number, cz: number, mats: V2MaterialLibrary ): TH…
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildCurvedEndMirrorCap	func	127	156	export function buildCurvedEndMirrorCap( cx: number, cy: number, z: number, outwardAngle: number, rInner: num…
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildStrokeEmiFingerstock	func	159	186	export function buildStrokeEmiFingerstock( pts: readonly StrokePt[], zPos: number, count: number, mats: V2Mat…
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildGlyphTmdDamper	func	189	210	export function buildGlyphTmdDamper( cx: number, cy: number, cz: number, w: number, h: number, mats: V2Materi…
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildSchnorrHelicoilArray	func	213	232	export function buildSchnorrHelicoilArray( positions: ReadonlyArray<readonly [number, number, number]>, mats:…
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	WELCOME_GLYPH_PRECISION_DEFS	const	237	995	WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- 「よ」モジュール (+5パーツ: W221 - W225) ---
+src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildWelcomeGlyphPrecisionParts	func	997	999	export function buildWelcomeGlyphPrecisionParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts	WELCOME_GLYPH_ULTRA_DETAIL_DEFS	const	53	724	WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- 「よ」 Wave A (W266 - W269) ---
+src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts	buildWelcomeGlyphUltraDetailParts	func	726	728	export function buildWelcomeGlyphUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
 src/assemblies/welcome/welcomePartEnrichment.ts	WelcomeDiagramType	type	3	11	export type WelcomeDiagramType =
 src/assemblies/welcome/welcomePartEnrichment.ts	EnrichableWelcomeDef	interface	295	313	export interface EnrichableWelcomeDef
 src/assemblies/welcome/welcomePartEnrichment.ts	enrichWelcomeDef	func	319	355	export function enrichWelcomeDef<T extends EnrichableWelcomeDef>(def: T, index: number): T
 src/assemblies/welcome/welcomeParts.ts	WelcomePartDef	interface	39	58	export interface WelcomePartDef
 src/assemblies/welcome/welcomeParts.ts	WELCOME_PART_DEFS	const	2804	2804	WELCOME_PART_DEFS: readonly WelcomePartDef[] = buildAllWelcome216Defs()
 src/assemblies/welcome/welcomeParts.ts	buildWelcomeParts	func	2826	2852	export function buildWelcomeParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomePlinthInstrumentationParts.ts	WELCOME_PLINTH_INSTRUMENTATION_DEFS	const	42	1135	WELCOME_PLINTH_INSTRUMENTATION_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- Top Optical Bench Deck Met…
+src/assemblies/welcome/welcomePlinthInstrumentationParts.ts	buildWelcomePlinthInstrumentationParts	func	1137	1139	export function buildWelcomePlinthInstrumentationParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomePlinthPrecisionParts.ts	buildMicroModuleBox	func	43	77	export function buildMicroModuleBox( cx: number, cy: number, cz: number, w: number, h: number, d: number, bod…
+src/assemblies/welcome/welcomePlinthPrecisionParts.ts	WELCOME_PLINTH_PRECISION_DEFS	const	86	1181	WELCOME_PLINTH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = [ makePlinthDef(
+src/assemblies/welcome/welcomePlinthPrecisionParts.ts	buildWelcomePlinthPrecisionParts	func	1183	1185	export function buildWelcomePlinthPrecisionParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	WELCOME_PLINTH_ULTRA_DETAIL_DEFS	const	42	1424	WELCOME_PLINTH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ makePlinthUltraDef(
+src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	buildWelcomePlinthUltraDetailParts	func	1426	1428	export function buildWelcomePlinthUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
 src/core/capture_bridge.ts	CaptureMode	type	3	3	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
 src/core/capture_bridge.ts	CaptureCustomOptions	interface	5	26	export interface CaptureCustomOptions
 src/core/capture_bridge.ts	CapturePrepareResult	interface	28	35	export interface CapturePrepareResult
@@ -1268,4 +1289,4 @@ src/units/registry.ts	loadRegisteredUnit	func	206	212	export async function load
 src/units/sensor.ts	createSensorUnit	func	82	133	export function createSensorUnit(): OptimizedUnit
 src/units/sensor_fab.ts	createSensorFabUnit	func	86	173	export function createSensorFabUnit(): OptimizedUnit
 src/units/shutter.ts	createShutterUnit	func	17	63	export function createShutterUnit(): OptimizedUnit
-src/units/welcome.ts	createWelcomeUnit	func	15	25	export function createWelcomeUnit(): OptimizedUnit
+src/units/welcome.ts	createWelcomeUnit	func	21	39	export function createWelcomeUnit(): OptimizedUnit

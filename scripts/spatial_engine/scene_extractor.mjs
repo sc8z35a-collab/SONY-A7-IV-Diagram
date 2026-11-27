@@ -175,7 +175,13 @@ function createMaterialProxy() {
 function computeUnitSourceHash(unitInfo, quality) {
   const hash = crypto.createHash('sha256');
   hash.update(`${CACHE_MAGIC}|${unitInfo.unitId}|${quality}|`);
-  const candidates = [unitInfo.unitModulePath, unitInfo.jsonPath];
+  const candidates = [
+    unitInfo.unitModulePath,
+    unitInfo.jsonPath,
+    path.join(ROOT, 'src/core/geometry_quality.ts'),
+    path.join(ROOT, 'src/engine/CadHelpers.ts'),
+    path.join(ROOT, 'src/assemblies/UltraDetailBuilders.ts'),
+  ];
   const asmDir = path.join(ROOT, 'src/assemblies', unitInfo.unitId === 'mishoe' ? 'mi_shoe' : unitInfo.unitId);
   if (fs.existsSync(asmDir) && fs.statSync(asmDir).isDirectory()) {
     for (const f of fs.readdirSync(asmDir).sort()) {

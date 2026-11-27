@@ -196,11 +196,11 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
     build: (m) => {
       const g = new THREE.Group();
       for (const dy of [-3.35, 3.35]) {
-        const sp = new THREE.Mesh(new THREE.BoxGeometry(10.5, 0.34, 0.18), m.beCuSpring);
-        sp.position.set(8.8, 11.4 + dy, 4.64);
+        const sp = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.28, 0.14), m.beCuSpring);
+        sp.position.set(9.4, 11.4 + dy, 4.06);
         sp.rotation.z = 0.11;
-        const sl = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.24, 0.14), m.epdmGasket);
-        sl.position.set(8.8, 11.4 + dy * 1.07, 4.54);
+        const sl = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.20, 0.12), m.epdmGasket);
+        sl.position.set(9.4, 11.4 + dy * 1.07, 4.02);
         sl.rotation.z = 0.11;
         g.add(sp, sl);
       }
@@ -332,7 +332,7 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       'CISPR 32 Class B Enclosure Seam Bonding Requirements',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildStrokeEmiFingerstock(U_ARC, -6.32, 5, m),
+    build: (m) => buildStrokeEmiFingerstock(U_ARC, -6.28, 5, m),
   },
   {
     id: 'welcome-u-crest-thermal-shunt',
@@ -483,8 +483,7 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       const g = new THREE.Group();
       // Nested cleanly INSIDE W84 cinnabar rim & IP65 gasket hollow corridor across ALL 4 LOD tiers (incl. LITE chord sagitta)
       const midArc = U_ARC.slice(1, 6);
-      g.add(buildHollowPerimeterRing(midArc, 1.72, 0.36, 0.06, 4.16, m.matteBlackAnodized, 0));
-      g.add(buildHollowPerimeterRing(midArc, 1.28, 0.34, 0.06, 4.24, m.lcdDiffuserMatte, 0));
+      g.add(buildHollowPerimeterRing(midArc, 2.25, 0.20, 0.04, 4.13, m.lcdDiffuserMatte, 0));
       return g;
     },
   },
@@ -525,8 +524,8 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
       const g = new THREE.Group();
-      g.add(buildStrokeEmiFingerstock(KO_TOP, -6.32, 3, m));
-      g.add(buildStrokeEmiFingerstock(KO_BOT, -6.32, 3, m));
+      g.add(buildStrokeEmiFingerstock(KO_TOP, -6.28, 3, m));
+      g.add(buildStrokeEmiFingerstock(KO_BOT, -6.28, 3, m));
       return g;
     },
   },
@@ -898,7 +897,7 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       'Rao, S. S., "Mechanical Vibrations", 6th Ed., Pearson (Modal Participation Factor at Free Tip)',
     ],
     diagramType: 'welcome_tof_audio_hmi',
-    build: (m) => buildGlyphTmdDamper(5.4, 21.3, -7.36, 4.2, 2.2, m),
+    build: (m) => buildGlyphTmdDamper(5.4, 21.3, -6.42, 4.2, 2.2, m),
   },
 ];
 

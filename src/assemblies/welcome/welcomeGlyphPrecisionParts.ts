@@ -316,10 +316,10 @@ export const WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = 
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
       const g = new THREE.Group();
-      const stripL = new THREE.Mesh(new THREE.BoxGeometry(0.32, 24.0, 0.30), m.antiVibRubber);
-      stripL.position.set(-2.95, 6.2, 4.30);
-      const stripR = new THREE.Mesh(new THREE.BoxGeometry(0.32, 24.0, 0.30), m.antiVibRubber);
-      stripR.position.set(4.55, 6.2, 4.30);
+      const stripL = new THREE.Mesh(new THREE.BoxGeometry(0.20, 7.6, 0.14), m.epdmGasket);
+      stripL.position.set(-2.60, 19.2, 4.18);
+      const stripR = new THREE.Mesh(new THREE.BoxGeometry(0.20, 7.6, 0.14), m.epdmGasket);
+      stripR.position.set(3.60, 19.2, 4.18);
       g.add(stripL, stripR);
       return g;
     },

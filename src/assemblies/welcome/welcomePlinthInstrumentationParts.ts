@@ -1000,10 +1000,10 @@ export const WELCOME_PLINTH_INSTRUMENTATION_DEFS: readonly WelcomeExpansionPartD
     diagramType: 'welcome_tof_audio_hmi',
     build: (m) => {
       const g = new THREE.Group();
-      const seg = qRadialSegs(24, 12);
-      // r = 5.85 mm (inner edge >= 5.53 mm) clears W217 dial (r = 4.80 mm) even with standard_lite chord sagitta!
+      const seg = Math.max(12, qRadialSegs(24, 12));
+      // r = 5.85 mm with >=12 segs (inner chord >= 5.36 mm) clears W217 dial (r = 4.80 mm) across ALL tiers incl. V3 LITE v2!
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(5.85, 0.30, 6, seg).rotateX(Math.PI * 0.5),
+        new THREE.TorusGeometry(5.85, 0.28, 6, seg).rotateX(Math.PI * 0.5),
         m.blue450Glow
       );
       ring.position.set(91.5, 4.78, 0);
