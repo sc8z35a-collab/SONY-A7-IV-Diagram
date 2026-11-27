@@ -6,6 +6,10 @@ import { buildWelcomeGlyphUltraDetailParts } from '../assemblies/welcome/welcome
 import { buildWelcomePlinthUltraDetailParts } from '../assemblies/welcome/welcomePlinthUltraDetailParts';
 import { buildWelcomeGlyphMetrologyParts } from '../assemblies/welcome/welcomeGlyphMetrologyParts';
 import { buildWelcomePlinthInstrumentationParts } from '../assemblies/welcome/welcomePlinthInstrumentationParts';
+import { buildWelcomeGlyphWaveCParts } from '../assemblies/welcome/welcomeGlyphWaveCParts';
+import { buildWelcomePlinthWaveCParts } from '../assemblies/welcome/welcomePlinthWaveCParts';
+import { buildWelcomeGlyphWaveDParts } from '../assemblies/welcome/welcomeGlyphWaveDParts';
+import { buildWelcomePlinthWaveDParts } from '../assemblies/welcome/welcomePlinthWaveDParts';
 import { OptimizedUnit, UnitMeta, UnitPartMeta } from '../core/unit_contract';
 import { CompiledV2Unit } from '../core/v2_unit_compiler';
 
@@ -32,6 +36,10 @@ export function createWelcomeUnit(): OptimizedUnit {
         ...buildWelcomePlinthUltraDetailParts(mats),
         ...buildWelcomeGlyphMetrologyParts(mats),
         ...buildWelcomePlinthInstrumentationParts(mats),
+        ...buildWelcomeGlyphWaveCParts(mats),
+        ...buildWelcomePlinthWaveCParts(mats),
+        ...buildWelcomeGlyphWaveDParts(mats),
+        ...buildWelcomePlinthWaveDParts(mats),
       ];
       return { parts };
     },
