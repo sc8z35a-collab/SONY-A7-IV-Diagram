@@ -1,4 +1,4 @@
-import { QualityTier, UnitBuildStats } from './unit_contract';
+import { KineCullingStats, MotionStage, QualityTier, UnitBuildStats } from './unit_contract';
 import { VramLeakVerification } from './dispose';
 
 export interface PerfHudSnapshot {
@@ -11,12 +11,16 @@ export interface PerfHudSnapshot {
   frameTimeMs: number;
   avgFrameTimeMs: number;
   quality: QualityTier;
+  motionStage?: MotionStage;
   pixelRatio: number;
   idle: boolean;
   shaderWarmupMs: number;
   buildStats: UnitBuildStats | null;
   vramCheck: VramLeakVerification | null;
   vramSwitchCount: number;
+  kineStats?: KineCullingStats | null;
+  bokehStatus?: string;
+  bokehMs?: number;
 }
 
 /**
@@ -53,7 +57,9 @@ export class UnitPerfHud {
       ['geometries', 'Geometries'],
       ['textures', 'Textures'],
       ['frameTime', 'Frame Time'],
-      ['quality', 'Tier / DPR'],
+      ['quality', 'Tier / Stage'],
+      ['kine', 'KINE Culling'],
+      ['bokeh', 'F1.2 Bokeh'],
       ['batches', 'Batching'],
       ['parts', 'Parts (JSON=3D)'],
       ['build', 'Build / Warmup'],
@@ -110,7 +116,7 @@ export class UnitPerfHud {
     if (!force && now - this.lastDomUpdateMs < 90) return;
     this.lastDomUpdateMs = now;
 
-    this.fields.unitTitle.textContent = `${snap.unitId.toUpperCase()} · V2 OPT`;
+    this.fields.unitTitle.textContent = `${snap.unitId.toUpperCase()} · V3 OPT`;
 
     const dc = snap.drawCalls;
     const budget = snap.maxDrawCallsBudget ?? 100;
@@ -122,7 +128,24 @@ export class UnitPerfHud {
     this.fields.geometries.textContent = String(snap.geometries);
     this.fields.textures.textContent = String(snap.textures);
     this.fields.frameTime.textContent = `${snap.frameTimeMs.toFixed(2)} ms (avg ${snap.avgFrameTimeMs.toFixed(2)})`;
-    this.fields.quality.textContent = `${snap.quality.toUpperCase()} · DPR ${snap.pixelRatio.toFixed(2)}`;
+    const stageStr = snap.motionStage ? snap.motionStage.toUpperCase() : snap.quality.toUpperCase();
+    this.fields.quality.textContent = `${snap.quality.toUpperCase()} → ${stageStr} · DPR ${snap.pixelRatio.toFixed(2)}`;
+
+    if (snap.kineStats) {
+      const k = snap.kineStats;
+      this.fields.kine.textContent = k.enabled
+        ? `ON · -${k.totalCulled}/${k.totalParts} (F:${k.frustumCulled} S:${k.subpixelCulled} O:${k.occlusionCulled}) ${k.evalMs.toFixed(2)}ms`
+        : 'OFF';
+      this.fields.kine.className = k.enabled ? 'unit-v2-perf-val is-ok' : 'unit-v2-perf-val';
+    } else {
+      this.fields.kine.textContent = 'OFF';
+    }
+
+    const bk = snap.bokehStatus ?? 'disabled';
+    this.fields.bokeh.textContent =
+      bk === 'active'
+        ? `F1.2 ON (${(snap.bokehMs ?? 0).toFixed(1)}ms)`
+        : bk.toUpperCase();
 
     if (snap.buildStats) {
       const s = snap.buildStats;
@@ -144,7 +167,7 @@ export class UnitPerfHud {
       this.fields.vram.className = 'unit-v2-perf-val';
     }
 
-    this.fields.loopState.textContent = snap.idle ? 'IDLE 0% GPU' : 'ACTIVE';
+    this.fields.loopState.textContent = snap.idle ? 'IDLE 0% GPU' : stageStr;
     this.fields.loopState.className = snap.idle
       ? 'unit-v2-perf-state is-idle'
       : 'unit-v2-perf-state is-active';
