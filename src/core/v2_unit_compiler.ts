@@ -275,6 +275,7 @@ function buildPartExplanationFromMeta(m: UnitPartMeta): PartExplanation {
     nextGenInnovation: m.nextGenInnovation,
     specs: m.specs.map((s) => ({ label: s.label, value: s.value })),
     references: m.references ? [...m.references] : undefined,
+    mirai: m.mirai,
     diagramType: m.diagramType,
   };
 }
@@ -1275,6 +1276,7 @@ export class CompiledV2Unit implements OptimizedUnit {
         standaloneOnly: meta.standaloneOnly,
         lensSection: meta.lensSection,
         fabVolume: meta.fabVolume,
+        miraiSubView: meta.miraiSubView,
         ibisMovable: rp.ibisMovable,
         ultrasonicElement: rp.ultrasonicElement,
       };

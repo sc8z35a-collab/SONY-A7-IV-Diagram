@@ -262,6 +262,7 @@ function loadSubsystemExplanations(subsystem: SubsystemId): Promise<Record<strin
       );
       break;
     case 'welcome':
+    case 'mirai_2028':
       inflight = Promise.resolve(finish({}));
       break;
   }

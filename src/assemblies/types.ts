@@ -21,7 +21,9 @@ export type ScaleMode =
   | 'mishoe'
   | 'mic'
   | 'sensor_fab'
-  | 'drybox';
+  | 'drybox'
+  | 'mirai_2028';
+export type MiraiStructureId = 'fh01' | 'fh02';
 export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
 export type SensorFabStage =
   | 'overview'
@@ -64,6 +66,28 @@ export interface ExplanationSpec {
   value: string;
 }
 
+export interface MiraiExplanationExtension {
+  readonly fhId: string;
+  readonly volume: number;
+  readonly badge: '量産民主化' | '超知能加速' | '願望ブレイクスルー';
+  readonly eta: string;
+  readonly score: number;
+  readonly axes: readonly [number, number, number, number, number];
+  readonly scoreRationale: string;
+  readonly baselineMode?: ScaleMode;
+  readonly beginnerTitle: string;
+  readonly beginnerSummary: string;
+  readonly beginnerPoints: readonly string[];
+  readonly beginnerCaution: string;
+  readonly comparisonRows: ReadonlyArray<{
+    readonly metric: string;
+    readonly current2026: string;
+    readonly future2028: string;
+  }>;
+  readonly sourceUrls: ReadonlyArray<{ readonly label: string; readonly url: string }>;
+  readonly glossaryIds: readonly string[];
+}
+
 export interface PartExplanation {
   title: string;
   subtitle: string;
@@ -80,6 +104,8 @@ export interface PartExplanation {
   specs: ExplanationSpec[];
   /** Authentic engineering standards, datasheets, and technical literature citations */
   references?: string[];
+  /** Optional FH MIRAI 2028 dual-edition (やさしい / 専門) & 5-axis innovation metadata */
+  mirai?: MiraiExplanationExtension;
   diagramType:
     // Sensor Macro Super-Dissection (34: 26 existing + 8 Phase 11 watchmaker parts)
     | 'baffle'
@@ -2247,7 +2273,41 @@ export interface PartExplanation {
     | 'welcome_dock_pogo'
     | 'welcome_power_lifepo4'
     | 'welcome_tof_audio_hmi'
-    | 'welcome_optical_plinth';
+    | 'welcome_optical_plinth'
+    // FH MIRAI 2028 Prototype Structure #1 (FH01 SPAD/QIS 3D Stacked Full-Frame Sensor — 16 Watchmaker Parts)
+    | 'mirai_fh01_baffle_frame'
+    | 'mirai_fh01_ar_coverglass'
+    | 'mirai_fh01_ocl_microlens_array'
+    | 'mirai_fh01_spad_top_die'
+    | 'mirai_fh01_dti_guard_grid'
+    | 'mirai_fh01_cucu_microbumps'
+    | 'mirai_fh01_quench_tdc_wafer'
+    | 'mirai_fh01_dram_ring_die'
+    | 'mirai_fh01_hv_chargepump_ring'
+    | 'mirai_fh01_htcc_ceramic_pkg'
+    | 'mirai_fh01_gold_wirebond_frame'
+    | 'mirai_fh01_mlcc_decoupling_bank'
+    | 'mirai_fh01_slvs_fpc_harness'
+    | 'mirai_fh01_cuw_slug_spreader'
+    | 'mirai_fh01_graphite_thermal_pad'
+    | 'mirai_fh01_precision_mount_base'
+    // FH MIRAI 2028 Prototype Structure #2 (FH02 Perovskite/OPF 3-Layer Vertical RGB Sensor — 16 Watchmaker Parts)
+    | 'mirai_fh02_optical_hood_bezel'
+    | 'mirai_fh02_ald_tfe_barrier'
+    | 'mirai_fh02_top_ito_electrode'
+    | 'mirai_fh02_blue_perovskite_layer'
+    | 'mirai_fh02_etl_htl_interlayer_1'
+    | 'mirai_fh02_green_perovskite_layer'
+    | 'mirai_fh02_etl_htl_interlayer_2'
+    | 'mirai_fh02_red_perovskite_layer'
+    | 'mirai_fh02_vertical_via_pillars'
+    | 'mirai_fh02_passivation_darkblock'
+    | 'mirai_fh02_cmos_roic_wafer'
+    | 'mirai_fh02_color_matrix_dsp'
+    | 'mirai_fh02_hermetic_ceramic_carrier'
+    | 'mirai_fh02_desiccant_getter_ring'
+    | 'mirai_fh02_highspeed_fpc_array'
+    | 'mirai_fh02_thermal_chassis_plate';
 }
 
 export interface CadPart {
@@ -2272,7 +2332,8 @@ export interface CadPart {
     | 'mishoe'
     | 'mic'
     | 'sensor_fab'
-    | 'drybox';
+    | 'drybox'
+    | 'mirai_2028';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
@@ -2294,6 +2355,8 @@ export interface CadPart {
   lensSection?: LensSection;
   /** For Sensor Manufacturing Process multi-volume encyclopedia: 0 = Vol.0, 1 = Vol.1, 2 = Vol.2 (Phase 1), 3 = Vol.3 (Phase 2 Design & Mask) */
   fabVolume?: SensorFabVolume;
+  /** For FH MIRAI 2028 multi-structure encyclopedia: 1 = FH01 SPAD/QIS, 2 = FH02 3-Layer Perovskite RGB, ... */
+  miraiSubView?: number;
 }
 
 export interface AssemblyController {

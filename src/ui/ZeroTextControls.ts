@@ -23,6 +23,8 @@ export interface ZeroTextUIHandlers {
   onPhysicsToggle: (active: boolean) => void;
   onOpticsStudioToggle: () => void;
   onOpenPlayground?: () => void;
+  onMiraiSubViewChange?: (subView: number) => void;
+  onOpenMiraiStudio?: (tab: 'reports' | 'matrix' | 'glossary') => void;
   onResetVisibility: () => void;
   onFullscreenToggle: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
@@ -63,6 +65,7 @@ const ICONS = {
   mishoe: '<path d="M4 17h16v2.5H4z"/><path d="M6 17V9h12v8"/><line x1="9" y1="12.5" x2="15" y2="12.5"/>',
   mic: '<rect x="9" y="3.5" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><line x1="12" y1="17" x2="12" y2="20.5"/><line x1="8.5" y1="20.5" x2="15.5" y2="20.5"/>',
   drybox: '<rect x="4" y="3.5" width="16" height="17" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16.5" cy="7.5" r="1.2"/>',
+  mirai: '<path d="M12 2.8l7.6 4.4v9.6L12 21.2l-7.6-4.4V7.2z"/><path d="M12 7.2l3.8 2.2v4.4L12 16l-3.8-2.2V9.4z"/><circle cx="12" cy="11.6" r="1.3" fill="currentColor" stroke="none"/>',
   playground: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
   chevronDown: '<polyline points="6 9 12 15 18 9"/>',
   assembled: '<rect x="7" y="7" width="10" height="10" rx="1.6"/>',
@@ -91,6 +94,12 @@ const ASSEMBLY_GROUPS: readonly AssemblyPaletteGroup[] = [
     heading: 'イントロダクション',
     items: [
       { mode: 'welcome', label: 'ようこそ 3D立体', sub: '220パーツ実動作CNC光学装置', icon: ICONS.welcome },
+    ],
+  },
+  {
+    heading: 'Future History MIRAI 2028',
+    items: [
+      { mode: 'mirai_2028', label: 'FH MIRAI 2028', sub: '未来技術48選・試作FH01/FH02', icon: ICONS.mirai },
     ],
   },
   {
@@ -211,6 +220,7 @@ export class ZeroTextControls {
   private paletteEl: HTMLElement;
   private paletteBtns = new Map<ScaleMode, HTMLButtonElement>();
   private playgroundBtn: HTMLButtonElement;
+  private miraiCtaBtn: HTMLButtonElement;
 
   private subViewHost: HTMLElement;
   private lensSubBar: HTMLElement;
@@ -221,6 +231,8 @@ export class ZeroTextControls {
   private fabVolBtns: Record<SensorFabVolume, HTMLButtonElement>;
   private fabStageRow: HTMLElement;
   private fabStageBtns = new Map<SensorFabStage, HTMLButtonElement>();
+  private miraiSubBar: HTMLElement;
+  private miraiSubBtns: Record<1 | 2, HTMLButtonElement>;
 
   private qualityBtns: Record<GraphicsQuality, HTMLButtonElement>;
   private camPresetBtns: Record<CameraPreset, HTMLButtonElement>;
@@ -333,7 +345,26 @@ export class ZeroTextControls {
       this.handlers.onOpenPlayground?.();
     });
 
-    topLeft.append(selectorWrap, this.playgroundBtn);
+    // Future History MIRAI 2028 Quick-Launch CTA Pill
+    this.miraiCtaBtn = document.createElement('button');
+    this.miraiCtaBtn.type = 'button';
+    this.miraiCtaBtn.className = 'mirai-cta-pill';
+    this.miraiCtaBtn.title = 'Future History MIRAI 2028 — 2028未来技術48選＆精密3D試作(FH01/FH02)';
+    this.miraiCtaBtn.append(svgIcon(ICONS.mirai));
+    const miraiTxt = document.createElement('span');
+    miraiTxt.textContent = 'FH 2028';
+    this.miraiCtaBtn.append(miraiTxt);
+    this.miraiCtaBtn.addEventListener('click', () => {
+      this.setPaletteOpen(false);
+      if (this.currentMode !== 'mirai_2028') {
+        this.syncMode('mirai_2028');
+        handlers.onModeChange('mirai_2028');
+      } else {
+        this.handlers.onOpenMiraiStudio?.('reports');
+      }
+    });
+
+    topLeft.append(selectorWrap, this.playgroundBtn, this.miraiCtaBtn);
 
     // --- CENTER: Contextual Sub-View Bar ---
     this.subViewHost = document.createElement('div');
@@ -422,7 +453,45 @@ export class ZeroTextControls {
     this.fabSubBar.append(fabVolRow, this.fabStageRow);
     this.rebuildFabStages(0);
 
-    this.subViewHost.append(this.lensSubBar, this.v2SubBar, this.fabSubBar);
+    // Future History MIRAI 2028 contextual sub-bar (FH01 / FH02 prototype switcher + Library Studio launchers)
+    this.miraiSubBar = document.createElement('div');
+    this.miraiSubBar.className = 'studio-subbar mirai-subbar is-hidden';
+    const makeMiraiSub = (sv: 1 | 2, label: string, tip: string) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = `studio-sub-btn mirai-sub-struct${sv === 1 ? ' is-active' : ''}`;
+      b.textContent = label;
+      b.title = tip;
+      b.addEventListener('click', () => {
+        this.syncMiraiSubView(sv);
+        handlers.onMiraiSubViewChange?.(sv);
+      });
+      return b;
+    };
+    this.miraiSubBtns = {
+      1: makeMiraiSub(1, 'FH01 SPAD/QIS', 'FH01 フルサイズ単一光子SPAD/QIS 3D積層センサー（16パーツ精密試作）'),
+      2: makeMiraiSub(2, 'FH02 3層RGB', 'FH02 ペロブスカイト/OPF 3層垂直RGBセンサー（16パーツ精密試作）'),
+    };
+    const miraiSep = document.createElement('span');
+    miraiSep.className = 'mirai-subbar-sep';
+    const makeMiraiLib = (tab: 'reports' | 'matrix' | 'glossary', label: string) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'studio-sub-btn mirai-sub-lib';
+      b.textContent = label;
+      b.addEventListener('click', () => handlers.onOpenMiraiStudio?.(tab));
+      return b;
+    };
+    this.miraiSubBar.append(
+      this.miraiSubBtns[1],
+      this.miraiSubBtns[2],
+      miraiSep,
+      makeMiraiLib('reports', 'レポート'),
+      makeMiraiLib('matrix', '48技術'),
+      makeMiraiLib('glossary', '用語113')
+    );
+
+    this.subViewHost.append(this.lensSubBar, this.v2SubBar, this.fabSubBar, this.miraiSubBar);
 
     // --- RIGHT: 4-Tier Quality Switcher (LITE | STD | HIGH | ULTRA) + Camera Angle Pill ---
     const topRight = document.createElement('div');
@@ -699,6 +768,12 @@ export class ZeroTextControls {
     });
   }
 
+  public syncMiraiSubView(subView: number): void {
+    const active = subView === 2 ? 2 : 1;
+    this.miraiSubBtns[1].classList.toggle('is-active', active === 1);
+    this.miraiSubBtns[2].classList.toggle('is-active', active === 2);
+  }
+
   public syncQuality(quality: GraphicsQuality): void {
     (['standard_lite', 'standard', 'high', 'ultra'] as const).forEach((q) => {
       this.qualityBtns[q].classList.toggle('is-active', q === quality);
@@ -735,6 +810,10 @@ export class ZeroTextControls {
     if (mode === 'sensor_fab') {
       this.syncFabVolume(this.currentFabVol);
     }
+    this.miraiSubBar.classList.toggle('is-hidden', mode !== 'mirai_2028');
+    this.miraiCtaBtn.classList.toggle('is-active', mode === 'mirai_2028');
+    // Strictly no dynamic physics ray animations in FH MIRAI 2028
+    this.physicsBtn.classList.toggle('is-hidden-btn', mode === 'mirai_2028');
 
     // Reset active camera pill highlight to ISO on unit change
     (['iso', 'front', 'side', 'back'] as const).forEach((p) => {

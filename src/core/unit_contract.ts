@@ -1,5 +1,11 @@
 import * as THREE from 'three';
-import { CadPart, GraphicsQuality, PartExplanation, RenderMode } from '../assemblies/types';
+import {
+  CadPart,
+  GraphicsQuality,
+  MiraiExplanationExtension,
+  PartExplanation,
+  RenderMode,
+} from '../assemblies/types';
 import type { ResourceCache } from './resource_cache';
 
 export type QualityTier = GraphicsQuality; // 'standard_lite' | 'standard' | 'high' | 'ultra'
@@ -15,6 +21,7 @@ export interface UnitPartMeta {
   readonly edgeOpacity: number;
   readonly lensSection?: 1 | 2 | 3;
   readonly fabVolume?: 0 | 1 | 2 | 3 | 4;
+  readonly miraiSubView?: number;
   readonly standaloneOnly?: boolean;
   readonly title: string;
   readonly subtitle: string;
@@ -29,6 +36,7 @@ export interface UnitPartMeta {
   readonly nextGenInnovation: string;
   readonly specs: ReadonlyArray<{ readonly label: string; readonly value: string }>;
   readonly references?: readonly string[];
+  readonly mirai?: MiraiExplanationExtension;
   readonly diagramType: PartExplanation['diagramType'];
 }
 
