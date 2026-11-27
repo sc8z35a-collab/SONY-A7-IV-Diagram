@@ -19,16 +19,13 @@ export interface PerfHudSnapshot {
   vramSwitchCount: number;
 }
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
-
 /**
  * Toggleable Developer Performance HUD mounted for ALL V2-optimized units.
- * Displays active unitId, real-time drawCalls, triangles, geometries, textures, frameTime(ms),
- * quality tier, DPR, idle GPU status, batching counts, and VRAM leak verification.
+ * Toggle button removed from UI per minimalist HUD redesign; accessible via `P` key,
+ * `?perfhud=1` URL parameter, or `window.__cad.v2.togglePerfHud()`.
  */
 export class UnitPerfHud {
   private readonly host: HTMLElement;
-  private readonly toggleBtn: HTMLButtonElement;
   private readonly panelEl: HTMLElement;
   private readonly fields: Record<string, HTMLElement> = {};
   private mounted = false;
@@ -38,22 +35,6 @@ export class UnitPerfHud {
   constructor(host: HTMLElement, initialExpanded = false) {
     this.host = host;
     this.expanded = initialExpanded;
-
-    this.toggleBtn = document.createElement('button');
-    this.toggleBtn.type = 'button';
-    this.toggleBtn.className = 'unit-v2-perf-toggle mishoe-v2-perf-toggle is-hidden';
-    this.toggleBtn.setAttribute('aria-label', 'V2 パフォーマンスHUD切替 (P)');
-    this.toggleBtn.setAttribute('title', 'V2 Perf HUD (P)');
-
-    const icon = document.createElementNS(SVG_NS, 'svg');
-    icon.setAttribute('viewBox', '0 0 24 24');
-    icon.setAttribute('aria-hidden', 'true');
-    icon.innerHTML =
-      '<path d="M4.5 16.5a8.5 8.5 0 1 1 15 0"/><line x1="12" y1="13" x2="16.2" y2="8.8"/><circle cx="12" cy="13.5" r="1.4" fill="currentColor" stroke="none"/>';
-    const label = document.createElement('span');
-    label.textContent = 'V2 HUD';
-    this.toggleBtn.append(icon, label);
-    this.toggleBtn.addEventListener('click', () => this.toggle());
 
     this.panelEl = document.createElement('div');
     this.panelEl.className = 'unit-v2-perf-panel mishoe-v2-perf-panel is-hidden';
@@ -100,26 +81,22 @@ export class UnitPerfHud {
     this.fields.loopState = header.querySelector('[data-field="loopState"]') as HTMLElement;
     this.panelEl.appendChild(grid);
 
-    this.host.append(this.toggleBtn, this.panelEl);
+    this.host.append(this.panelEl);
   }
 
   public setModeVisible(visible: boolean): void {
     this.mounted = visible;
-    this.toggleBtn.classList.toggle('is-hidden', !visible);
-    this.toggleBtn.classList.toggle('is-active', visible && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !visible || !this.expanded);
   }
 
   public toggle(): boolean {
     this.expanded = !this.expanded;
-    this.toggleBtn.classList.toggle('is-active', this.mounted && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !this.mounted || !this.expanded);
     return this.expanded;
   }
 
   public setExpanded(expanded: boolean): void {
     this.expanded = expanded;
-    this.toggleBtn.classList.toggle('is-active', this.mounted && this.expanded);
     this.panelEl.classList.toggle('is-hidden', !this.mounted || !this.expanded);
   }
 
@@ -174,7 +151,6 @@ export class UnitPerfHud {
   }
 
   public dispose(): void {
-    this.toggleBtn.remove();
     this.panelEl.remove();
   }
 }

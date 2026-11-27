@@ -17,14 +17,14 @@ export interface GeometryQualityScale {
 
 const QUALITY_GEOMETRY_SCALES: Record<QualityTier, GeometryQualityScale> = {
   standard_lite: {
-    curveScale: 0.36,
-    radialScale: 0.40,
+    curveScale: 0.16,
+    radialScale: 0.18,
     bevelScale: 0.0,
-    sagittaMultiplier: 1.95,
+    sagittaMultiplier: 3.8,
     allowMicroBevels: false,
-    maxCurveSegments: 16,
-    maxRadialSegments: 16,
-    minRadialSegments: 5,
+    maxCurveSegments: 8,
+    maxRadialSegments: 9,
+    minRadialSegments: 4,
   },
   standard: {
     curveScale: 0.58,
@@ -47,8 +47,8 @@ const QUALITY_GEOMETRY_SCALES: Record<QualityTier, GeometryQualityScale> = {
     minRadialSegments: 8,
   },
   ultra: {
-    curveScale: 1.0,
-    radialScale: 1.0,
+    curveScale: 1.05,
+    radialScale: 1.05,
     bevelScale: 1.0,
     sagittaMultiplier: 0.85,
     allowMicroBevels: true,

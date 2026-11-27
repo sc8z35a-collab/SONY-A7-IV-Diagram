@@ -40,6 +40,7 @@ export interface UnitV2Diagnostics {
   raycastDiagnostics: ReturnType<TwoStageRaycaster['getDiagnostics']>;
   contextLostRecoveryCount: number;
   renderFrameCount: number;
+  motionProxyActive: boolean;
 }
 
 // Module-scoped zero-GC scratch objects for ULTRA tight-frustum shadow fitting
@@ -50,11 +51,12 @@ const _shadowSize = new THREE.Vector3();
  * Universal V2 Rendering Core for ANY unit registered in `src/units/registry.ts`.
  * Unifies:
  * - Dynamic lazy loading & time-sliced chunked build with abort cancellation
- * - 4-Tier Pipeline: STD LITE (Zero-Light MatCap + Mega-Bucket Fusion), STD (Lambert+Phong),
- *   HIGH (PBR + PMREM), ULTRA (512x256 Softbox Cyclorama + PCFSoftShadowMap + Ground Contact Shadow)
- * - Quality-tier DPR capping (LITE/STD <=1.0, HIGH <=1.5, ULTRA <=2.0) & shader warmup
+ * - 4-Tier Pipeline: STD LITE v2 (Dual-Atlas MatCap + GPU Explode), STD (Lambert+Phong),
+ *   HIGH (PBR + PMREM), ULTRA 2.5x (1024x512 Softbox Cyclorama + 4096px PCFSoftShadowMap +
+ *   Zero-Lag Dual-Resident Motion-Adaptive STD LITE v2 Proxy on camera movement!)
+ * - Quality-tier DPR capping (LITE/STD <=1.0, HIGH <=1.5, ULTRA <=2.0) & dual shader warmup
  * - Dirty-flag on-demand rendering (0% idle GPU)
- * - Front-to-back two-stage zero-GC AABB raycasting (camera-drag hover pause + 30Hz throttle)
+ * - Front-to-back flat BVH zero-GC raycasting (camera-drag hover pause + 30Hz throttle)
  * - Automatic STD fallback recovery upon webglcontextlost / webglcontextrestored
  * - Automatic VRAM leak verification (Δg=0, Δt=0, cacheRemainingRefs=0)
  */
@@ -77,13 +79,17 @@ export class UnitV2Runtime {
   private activationToken = 0;
   private activeUnit: OptimizedUnit | null = null;
   private buildResult: UnitBuildResult | null = null;
+  // Co-resident STD LITE v2 motion proxy for Zero-Lag Motion-Adaptive ULTRA
+  private liteProxyUnit: OptimizedUnit | null = null;
+  private liteProxyBuildResult: UnitBuildResult | null = null;
+  private ultraMotionProxyActive = false;
   private partById = new Map<string, CadPart>();
   private studioEnvRenderTarget: THREE.WebGLRenderTarget | null = null;
   private ultraKeyLight: THREE.DirectionalLight | null = null;
   private ultraShadowCatcher: THREE.Mesh | null = null;
   private savedExternalPixelRatio = 1.0;
 
-  private quality: QualityTier = 'high';
+  private quality: QualityTier = 'ultra';
   private renderMode: RenderMode = 'solid';
   private explodeFactor = 0;
   private physicsActive = false;
@@ -168,12 +174,46 @@ export class UnitV2Runtime {
     return this.activeUnit?.isPartCulledBySubView?.(partId) ?? false;
   }
 
-  public needsContinuousAnimation(physicsActive: boolean): boolean {
-    if (!this.active || !this.ready) return false;
-    if (this.activeUnit?.needsContinuousAnimation) {
-      return this.activeUnit.needsContinuousAnimation(physicsActive);
+  public needsContinuousAnimation(_physicsActive: boolean): boolean {
+    // Dynamic continuous motion execution disabled at runtime (system API retained).
+    return false;
+  }
+
+  public isUltraMotionProxyActive(): boolean {
+    return this.ultraMotionProxyActive;
+  }
+
+  /**
+   * Zero-Lag Motion-Adaptive ULTRA <-> STD LITE v2 swap (~0.001ms visibility/uniform flip!).
+   * Invoked ONLY on camera viewpoint movement (Drag / Wheel / Pinch / Camera Anim) — NEVER during Explode slider!
+   * Both ULTRA and STD LITE v2 roots + shader programs stay co-resident in VRAM so transitions have ZERO lag/flash.
+   */
+  public setUltraMotionProxyActive(moving: boolean): boolean {
+    if (
+      this.quality !== 'ultra' ||
+      !this.ready ||
+      !this.buildResult ||
+      !this.liteProxyBuildResult
+    ) {
+      this.ultraMotionProxyActive = false;
+      return false;
     }
-    return physicsActive;
+    if (moving === this.ultraMotionProxyActive) return false;
+    this.ultraMotionProxyActive = moving;
+    if (moving) {
+      this.buildResult.rootGroup.visible = false;
+      this.liteProxyBuildResult.rootGroup.visible = true;
+      this.lightGroup.visible = false;
+      this.scene.environment = null;
+      this.renderer.shadowMap.enabled = false;
+    } else {
+      this.liteProxyBuildResult.rootGroup.visible = false;
+      this.buildResult.rootGroup.visible = true;
+      this.lightGroup.visible = true;
+      this.scene.environment = this.studioEnvRenderTarget?.texture ?? null;
+      this.renderer.shadowMap.enabled = QUALITY_TIER_CONFIG.ultra.shadowsEnabled;
+    }
+    return true;
   }
 
   public getRaycastIndex(): UnitRaycastIndex | null {
@@ -206,19 +246,19 @@ export class UnitV2Runtime {
 
     // Physically-based Three.js r174 light units (useLegacyLights=false):
     // - STD has no PMREM IBL, so boost omnidirectional hemisphere & 3-point lights to match HIGH brightness (0% crushed blacks)
-    // - ULTRA pairs crisp directional key shadow + architectural rim separation with our 512x256 softbox cyclorama
+    // - ULTRA 2.5x pairs 4096px PCFSoftShadowMap key + razor-sharp architectural rim separation + 1024x512 Hasselblad softbox cyclorama
     const hemi = new THREE.HemisphereLight(
       0xffffff,
-      isStd ? 0xeef3fa : isUltra ? 0xe8eef8 : 0xedf2fa,
-      isStd ? 2.85 : isUltra ? 0.96 : 1.08
+      isStd ? 0xeef3fa : isUltra ? 0xe2eaf6 : 0xedf2fa,
+      isStd ? 2.85 : isUltra ? 0.92 : 1.08
     );
     hemi.position.set(0, 80, 0);
     hemi.matrixAutoUpdate = false;
     hemi.updateMatrix();
 
     const key = new THREE.DirectionalLight(
-      isUltra ? 0xfffdf9 : 0xffffff,
-      isStd ? 2.05 : isUltra ? 2.15 : 1.78
+      isUltra ? 0xfffdf8 : 0xffffff,
+      isStd ? 2.05 : isUltra ? 2.28 : 1.78
     );
     key.position.set(-72, 112, 68);
     key.matrixAutoUpdate = false;
@@ -227,11 +267,22 @@ export class UnitV2Runtime {
     key.target.updateMatrix();
 
     if (isUltra && cfg.shadowsEnabled) {
+      const maxTex = this.renderer.capabilities.maxTextureSize || 2048;
+      let isSoftwareGl = false;
+      try {
+        const gl = this.renderer.getContext();
+        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        const rend = String(dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) || '');
+        isSoftwareGl = /SwiftShader|llvmpipe|Software|Mesa OffScreen/i.test(rend);
+      } catch {
+        isSoftwareGl = false;
+      }
+      const shadowRes = isSoftwareGl ? Math.min(2048, maxTex) : Math.min(4096, maxTex >= 4096 ? 4096 : 2048);
       key.castShadow = true;
-      key.shadow.mapSize.set(2048, 2048);
-      key.shadow.bias = -0.00035;
-      key.shadow.normalBias = 0.08;
-      key.shadow.radius = 3.0;
+      key.shadow.mapSize.set(shadowRes, shadowRes);
+      key.shadow.bias = -0.00028;
+      key.shadow.normalBias = 0.05;
+      key.shadow.radius = 2.4;
       this.ultraKeyLight = key;
 
       // Subtle grounded studio contact-shadow catcher plane (cached & auto-disposed, zero leak!)
@@ -242,7 +293,7 @@ export class UnitV2Runtime {
       });
       const shadowMat = this.cache.acquireShadowMaterial('ultra-ground', {
         color: 0x0f172a,
-        opacity: 0.16,
+        opacity: 0.18,
       });
       const catcher = new THREE.Mesh(planeGeo, shadowMat);
       catcher.name = 'ultra-studio-shadow-catcher';
@@ -256,22 +307,23 @@ export class UnitV2Runtime {
     }
 
     const fill = new THREE.DirectionalLight(
-      0xf4f8ff,
-      isStd ? 1.45 : isUltra ? 0.86 : 0.92
+      isUltra ? 0xebf4ff : 0xf4f8ff,
+      isStd ? 1.45 : isUltra ? 0.84 : 0.92
     );
     fill.position.set(66, 24, 86);
     fill.matrixAutoUpdate = false;
     fill.updateMatrix();
 
     const rim = new THREE.DirectionalLight(
-      isUltra ? 0xe0f2fe : 0xeef6ff,
-      isStd ? 1.35 : isUltra ? 1.32 : 1.02
+      isUltra ? 0xdbeafe : 0xeef6ff,
+      isStd ? 1.35 : isUltra ? 1.48 : 1.02
     );
     rim.position.set(82, 48, -84);
     rim.matrixAutoUpdate = false;
     rim.updateMatrix();
 
     this.lightGroup.add(hemi, key, key.target, fill, rim);
+    this.lightGroup.visible = true;
     this.lightGroup.updateMatrixWorld(true);
 
     if (cfg.enableStudioEnv) {
@@ -355,7 +407,7 @@ export class UnitV2Runtime {
 
   private applyQualityRendererCaps(quality: QualityTier): void {
     const cfg = QUALITY_TIER_CONFIG[quality];
-    this.renderer.shadowMap.enabled = cfg.shadowsEnabled;
+    this.renderer.shadowMap.enabled = cfg.shadowsEnabled && !this.ultraMotionProxyActive;
     if (cfg.shadowsEnabled) {
       this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       // On-demand shadow baking: bake shadows only when geometry/explode/subView changes (0% orbit overhead!)
@@ -364,6 +416,7 @@ export class UnitV2Runtime {
     } else {
       this.renderer.shadowMap.autoUpdate = false;
     }
+    this.renderer.toneMappingExposure = quality === 'ultra' ? 1.18 : 1.15;
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
     const targetDpr = Math.min(dpr, cfg.maxPixelRatio);
     this.renderer.setPixelRatio(targetDpr);
@@ -373,6 +426,12 @@ export class UnitV2Runtime {
   }
 
   private disposeActiveUnitResources(): void {
+    this.ultraMotionProxyActive = false;
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.dispose(this.cache);
+      this.liteProxyUnit = null;
+    }
+    this.liteProxyBuildResult = null;
     if (this.activeUnit) {
       this.activeUnit.dispose(this.cache);
       this.activeUnit = null;
@@ -381,6 +440,7 @@ export class UnitV2Runtime {
     this.partById.clear();
     this.ready = false;
     this.teardownStudioLighting();
+    this.lightGroup.visible = true;
     this.renderer.renderLists.dispose();
   }
 
@@ -388,8 +448,8 @@ export class UnitV2Runtime {
    * Enter (or switch to) any registered V2 unit:
    * - Disposes any prior V2 unit and verifies Δg=0, Δt=0 before capturing new baseline
    * - Dynamically imports the target unit via registry.ts
-   * - Runs 8ms time-sliced quality-tiered build
-   * - Pre-compiles shaders before first visible frame
+   * - Runs time-sliced quality-tiered build (and co-resident STD LITE v2 motion proxy when quality === 'ultra')
+   * - Pre-compiles shaders for BOTH ULTRA and STD LITE v2 before first visible frame (0 Shader Hitch!)
    */
   public async activate(
     unitId: string,
@@ -417,6 +477,7 @@ export class UnitV2Runtime {
 
     this.active = true;
     this.ready = false;
+    this.ultraMotionProxyActive = false;
     this.activeUnitId = unitId;
     this.quality = quality;
     this.explodeFactor = initialState.explode;
@@ -455,8 +516,36 @@ export class UnitV2Runtime {
         return;
       }
 
+      // When quality === 'ultra', co-build a resident STD LITE v2 motion proxy so ANY camera
+      // movement swaps in ~0.001ms with ZERO lag/flash, snapping back to ULTRA 2.5x on stop!
+      let proxyUnit: OptimizedUnit | null = null;
+      let proxyBuilt: UnitBuildResult | null = null;
+      if (quality === 'ultra') {
+        const candidateProxy = await loadRegisteredUnit(unitId);
+        if (token !== this.activationToken || !this.active) {
+          unit.dispose(this.cache);
+          return;
+        }
+        const candidateProxyBuilt = await candidateProxy.build('standard_lite', this.cache, {
+          frameBudgetMs: 14.0,
+          clippingPlanes: planes,
+          subView: this.subView,
+          integratedMode: this.integratedMode,
+          isAborted: () => token !== this.activationToken || !this.active,
+        });
+        if (token !== this.activationToken || !this.active) {
+          candidateProxy.dispose(this.cache);
+          unit.dispose(this.cache);
+          return;
+        }
+        proxyUnit = candidateProxy;
+        proxyBuilt = candidateProxyBuilt;
+      }
+
       this.activeUnit = unit;
       this.buildResult = built;
+      this.liteProxyUnit = proxyUnit;
+      this.liteProxyBuildResult = proxyBuilt;
       this.partById.clear();
       for (let i = 0; i < built.parts.length; i++) {
         this.partById.set(built.parts[i].id, built.parts[i]);
@@ -473,17 +562,36 @@ export class UnitV2Runtime {
         this.isolatedId,
         this.renderMode
       );
-      unit.setPhysicsVisible?.(this.physicsActive);
+      unit.setPhysicsVisible?.(false);
       unit.updateExplodeGuides?.(this.explodeFactor, true);
-      if (this.physicsActive || unit.needsContinuousAnimation?.(this.physicsActive)) {
-        unit.updatePhysics?.(0, this.explodeFactor, this.physicsActive, 0);
+
+      if (proxyUnit && proxyBuilt) {
+        this.scene.add(proxyBuilt.rootGroup);
+        proxyUnit.setClippingPlanes?.(planes);
+        proxyUnit.setSubView?.(this.subView);
+        proxyUnit.updateExplode(this.explodeFactor, true);
+        proxyUnit.setVisualState(
+          this.selectedId,
+          this.hoveredId,
+          this.hiddenIds,
+          this.isolatedId,
+          this.renderMode
+        );
+        proxyUnit.setPhysicsVisible?.(false);
+        proxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+        // Keep proxy visible ONLY during shader pre-compilation so first drag has 0.00ms compile hitch!
+        proxyBuilt.rootGroup.visible = true;
       }
 
       this.fitUltraShadowRig();
 
-      // Pre-compile all active V2 shader programs BEFORE first visible frame (0 Shader Hitch!)
+      // Pre-compile all active V2 shader programs (both ULTRA + LITE proxy) BEFORE first visible frame!
       if (!this.contextLost) {
         this.shaderWarmupMs = this.cache.warmupShaders(this.renderer, this.scene, camera);
+      }
+
+      if (proxyBuilt) {
+        proxyBuilt.rootGroup.visible = false;
       }
 
       this.ready = true;
@@ -567,6 +675,17 @@ export class UnitV2Runtime {
       );
       this.activeUnit.updateExplode(this.explodeFactor, true);
       this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+      if (this.liteProxyUnit) {
+        this.liteProxyUnit.setVisualState(
+          this.selectedId,
+          this.hoveredId,
+          this.hiddenIds,
+          this.isolatedId,
+          this.renderMode
+        );
+        this.liteProxyUnit.updateExplode(this.explodeFactor, true);
+        this.liteProxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+      }
       this.fitUltraShadowRig();
       this.callbacks.onRequestRender();
       this.refreshHud(true);
@@ -578,6 +697,10 @@ export class UnitV2Runtime {
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setSubView?.(subView);
     this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.setSubView?.(subView);
+      this.liteProxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+    }
     this.fitUltraShadowRig();
     this.callbacks.onRequestRender();
     this.refreshHud(true);
@@ -587,8 +710,14 @@ export class UnitV2Runtime {
     this.explodeFactor = t;
     if (!this.activeUnit || !this.ready) return false;
     const changed = this.activeUnit.updateExplode(t, force);
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.updateExplode(t, force);
+    }
     if (changed) {
       this.activeUnit.updateExplodeGuides?.(t, true);
+      if (this.liteProxyUnit) {
+        this.liteProxyUnit.updateExplodeGuides?.(t, true);
+      }
       this.fitUltraShadowRig();
     }
     return changed;
@@ -614,9 +743,15 @@ export class UnitV2Runtime {
     this.renderMode = renderMode;
     if (!this.activeUnit || !this.ready) return;
     this.activeUnit.setVisualState(selectedId, hoveredId, hiddenIds, isolatedId, renderMode);
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.setVisualState(selectedId, hoveredId, hiddenIds, isolatedId, renderMode);
+    }
     if (guidesNeedSync) {
       if (this.explodeFactor >= 0.02) {
         this.activeUnit.updateExplodeGuides?.(this.explodeFactor, true);
+        if (this.liteProxyUnit) {
+          this.liteProxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+        }
       }
       if (this.quality === 'ultra') {
         this.fitUltraShadowRig();
@@ -626,29 +761,29 @@ export class UnitV2Runtime {
 
   public syncSectionPlane(active: boolean): void {
     if (!this.activeUnit || !this.ready) return;
-    this.activeUnit.setClippingPlanes?.(active ? [this.clippingPlane] : []);
+    const planes = active ? [this.clippingPlane] : [];
+    this.activeUnit.setClippingPlanes?.(planes);
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.setClippingPlanes?.(planes);
+    }
     if (this.quality === 'ultra') {
       this.renderer.shadowMap.needsUpdate = true;
     }
   }
 
   public syncPhysicsActive(active: boolean): void {
+    // Store flag for API compatibility while keeping runtime dynamic physics disabled
     this.physicsActive = active;
     if (!this.activeUnit || !this.ready) return;
-    this.activeUnit.setPhysicsVisible?.(active);
-    if (this.quality === 'ultra') {
-      this.renderer.shadowMap.needsUpdate = true;
+    this.activeUnit.setPhysicsVisible?.(false);
+    if (this.liteProxyUnit) {
+      this.liteProxyUnit.setPhysicsVisible?.(false);
     }
   }
 
-  public stepPhysics(elapsed: number, delta = 0.016): boolean {
-    if (!this.activeUnit || !this.ready) return false;
-    const res = this.activeUnit.updatePhysics?.(elapsed, this.explodeFactor, this.physicsActive, delta);
-    const activeMoved = res !== false && (this.physicsActive || Boolean(res));
-    if (activeMoved && this.quality === 'ultra') {
-      this.renderer.shadowMap.needsUpdate = true;
-    }
-    return activeMoved;
+  public stepPhysics(_elapsed: number, _delta = 0.016): boolean {
+    // Dynamic physics motion execution disabled at runtime (system code retained).
+    return false;
   }
 
   public handleResize(): void {
@@ -781,6 +916,7 @@ export class UnitV2Runtime {
       raycastDiagnostics: this.raycaster.getDiagnostics(),
       contextLostRecoveryCount: this.contextLostRecoveryCount,
       renderFrameCount: this.frameSampleCount,
+      motionProxyActive: this.ultraMotionProxyActive,
     };
   }
 

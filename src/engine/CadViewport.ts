@@ -58,7 +58,7 @@ export class CadViewport {
   private sensorFabVolume: SensorFabVolume = 0;
   private miraiSubView = 1;
   private renderMode: RenderMode = 'solid';
-  private quality: GraphicsQuality = GPU_PROFILE.isMobile ? 'standard' : 'high';
+  private quality: GraphicsQuality = 'ultra';
   private sectionAxis: SectionAxis = 'off';
   private sectionValue = 0.5;
   private targetExplode = 0;
@@ -73,13 +73,17 @@ export class CadViewport {
 
   private initialActivated = false;
 
-  // Smooth camera transition
+  // Smooth camera transition & Zero-Lag Motion-Adaptive ULTRA viewpoint tracking
   private camAnimActive = false;
   private camStartPos = new THREE.Vector3();
   private camEndPos = new THREE.Vector3();
   private camStartTarget = new THREE.Vector3();
   private camEndTarget = new THREE.Vector3();
   private camAnimT = 0;
+  private wheelMotionFrames = 0;
+  private prevCamPos = new THREE.Vector3();
+  private prevCamQuat = new THREE.Quaternion();
+  private prevCamInitialized = false;
 
   private resizeObserver: ResizeObserver | null = null;
   private boundHandleResize = () => this.handleResize();
@@ -99,7 +103,9 @@ export class CadViewport {
   private idleFrameStreak = 0;
   private disposed = false;
   private cachedDomRect: DOMRect | null = null;
-  private customSceneRenderer: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null = null;
+  private customSceneRenderer:
+    | ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void)
+    | null = null;
 
   constructor(container: HTMLElement, callbacks: ViewportCallbacks) {
     this.container = container;
@@ -193,7 +199,7 @@ export class CadViewport {
     // Defer initial activation by one microtask so synchronous URL ?quality= / ?preset= setup
     // in main.ts applies before the first dynamic chunk import & GPU compile begins!
     queueMicrotask(() => {
-      if (!this.disposed && !this.initialActivated) {
+      if (!this.disposed && !this.initialActivated && !this.customSceneRenderer) {
         this.activateCurrentMode();
       }
     });
@@ -785,6 +791,11 @@ export class CadViewport {
       this.camera.position.copy(pos);
       this.controls.target.copy(target);
       this.controls.update();
+      this.prevCamPos.copy(this.camera.position);
+      this.prevCamQuat.copy(this.camera.quaternion);
+      this.prevCamInitialized = true;
+      this.wheelMotionFrames = 0;
+      this.v2Runtime.setUltraMotionProxyActive(false);
       this.markDirty();
     } else {
       this.animateCameraTo(pos, target);
@@ -1201,6 +1212,7 @@ export class CadViewport {
 
     this.controls.addEventListener('end', () => {
       this.v2Runtime.setCameraDragging(false);
+      this.markDirty(2);
     });
 
     dom.addEventListener('pointerdown', (e) => {
@@ -1255,7 +1267,17 @@ export class CadViewport {
       }
     });
 
-    dom.addEventListener('wheel', () => this.wakeLoop(), { passive: true });
+    dom.addEventListener(
+      'wheel',
+      () => {
+        if (!this.customSceneRenderer) {
+          this.wheelMotionFrames = 2;
+          this.v2Runtime.setUltraMotionProxyActive(true);
+        }
+        this.markDirty(2);
+      },
+      { passive: true }
+    );
     dom.addEventListener('touchstart', () => this.wakeLoop(), { passive: true });
 
     dom.addEventListener('webglcontextlost', this.boundContextLost, false);
@@ -1279,12 +1301,26 @@ export class CadViewport {
   }
 
   public setCustomSceneRenderer(
-    fn: ((renderer: THREE.WebGLRenderer, dt: number) => void) | null
+    fn: ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void) | null
   ): void {
     this.customSceneRenderer = fn;
     this.controls.enabled = fn === null;
     this.hoverRaycastPending = false;
     this.container.classList.remove('is-hovering');
+    if (fn !== null) {
+      if (this.v2Runtime.isActive() && !this.v2Runtime.isReady()) {
+        this.v2Runtime.deactivate();
+        this.initialActivated = false;
+      }
+    } else {
+      this.prevCamPos.copy(this.camera.position);
+      this.prevCamQuat.copy(this.camera.quaternion);
+      this.prevCamInitialized = true;
+      this.v2Runtime.setUltraMotionProxyActive(false);
+      if (!this.v2Runtime.isActive()) {
+        this.activateCurrentMode();
+      }
+    }
     this.markDirty(3);
   }
 
@@ -1375,10 +1411,13 @@ export class CadViewport {
 
     const delta = Math.min(this.clock.getDelta(), 0.05);
 
+    // Demand-Driven Zero-Load Play Ground Loop: sleeps at 0.0 draws/s when orbit damping settles!
     if (this.customSceneRenderer) {
-      this.customSceneRenderer(this.renderer, delta);
+      const keepAlive = this.customSceneRenderer(this.renderer, delta) === true;
       if (this.dirtyFrames > 0) this.dirtyFrames--;
-      this.rafId = requestAnimationFrame(this.animate);
+      if (keepAlive || this.dirtyFrames > 0) {
+        this.rafId = requestAnimationFrame(this.animate);
+      }
       return;
     }
 
@@ -1387,11 +1426,9 @@ export class CadViewport {
       this.updateHoverFromRaycast();
     }
 
-    const elapsed = this.clock.getElapsedTime();
+    let active = this.dirtyFrames > 0;
 
-    const continuousAnim = this.v2Runtime.needsContinuousAnimation(this.physicsActive);
-    let active = continuousAnim || this.dirtyFrames > 0;
-
+    // Explode slider transition (NOTE: NEVER triggers ULTRA->LITE motion proxy — maintains ULTRA!)
     const diff = this.targetExplode - this.currentExplode;
     if (Math.abs(diff) > 0.0005) {
       this.currentExplode += diff * Math.min(1, delta * 10.0);
@@ -1417,12 +1454,37 @@ export class CadViewport {
       active = true;
     }
 
+    // Zero-Lag Motion-Adaptive ULTRA: detect camera viewpoint motion down to 0.001mm / 0.0001rad
+    let cameraMoved = false;
+    if (this.prevCamInitialized) {
+      const posDeltaSq = this.camera.position.distanceToSquared(this.prevCamPos);
+      const quatDot = Math.abs(this.camera.quaternion.dot(this.prevCamQuat));
+      cameraMoved = posDeltaSq > 1e-6 || quatDot < 0.9999995;
+    } else {
+      this.prevCamInitialized = true;
+    }
+    this.prevCamPos.copy(this.camera.position);
+    this.prevCamQuat.copy(this.camera.quaternion);
+
+    const wheelActive = this.wheelMotionFrames > 0;
+    if (wheelActive) this.wheelMotionFrames--;
+
+    // Trigger strictly on actual camera viewpoint motion (drag movement, wheel, pinch, camera anim),
+    // never on motionless clicks and never on Explode slider!
+    const cameraInMotion = this.camAnimActive || cameraMoved || wheelActive;
+
+    if (cameraInMotion) {
+      this.v2Runtime.setUltraMotionProxyActive(true);
+      active = true;
+    } else if (this.v2Runtime.isUltraMotionProxyActive()) {
+      // Camera viewpoint just stopped -> flip back to ULTRA 2.5x in ~0.001ms & render ONE razor-sharp frame!
+      this.v2Runtime.setUltraMotionProxyActive(false);
+      active = true;
+    }
+
     if (active) {
       this.idleFrameStreak = 0;
       this.v2Runtime.syncExplode(this.currentExplode);
-      if (this.physicsActive || continuousAnim) {
-        this.v2Runtime.stepPhysics(elapsed, delta);
-      }
       this.v2Runtime.render(this.camera);
       if (this.dirtyFrames > 0) this.dirtyFrames--;
     } else {
@@ -1431,8 +1493,9 @@ export class CadViewport {
 
     if (
       active ||
+      cameraInMotion ||
+      this.v2Runtime.isUltraMotionProxyActive() ||
       this.hoverRaycastPending ||
-      continuousAnim ||
       this.camAnimActive ||
       this.dirtyFrames > 0 ||
       this.idleFrameStreak < 1
