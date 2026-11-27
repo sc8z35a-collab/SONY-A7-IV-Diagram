@@ -1,7 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
-import { ResourceCache } from '../core/resource_cache';
+import {
+  CAD_SELECT_SENTINEL,
+  PG_ERROR_SELECT_SENTINEL,
+  PG_WARN_SELECT_SENTINEL,
+  ResourceCache,
+} from '../core/resource_cache';
 import {
   CatalogPartEntry,
   ExtractedPartBlueprint,
@@ -36,6 +41,7 @@ export interface PlaygroundHostBridge {
 export type PlaygroundTemplateId = 'a7iv' | 'zve1' | 'fx3' | 'wlk220' | 'empty';
 export type PlaygroundCameraView = 'iso' | 'front' | 'side' | 'top' | 'back';
 export type PlaygroundShadingMode = 'solid' | 'xray' | 'wireframe';
+export type PlaygroundMotionStage = 'sharp' | 'lite' | 'fast';
 
 interface PlacedInstance {
   readonly uid: string;
@@ -47,6 +53,14 @@ interface PlacedInstance {
   glassBatchId: number;
   hidden: boolean;
   locked: boolean;
+  /** Cached inverse matrix & epoch for O(1) zero-invert raycast picking */
+  readonly invMatrix: THREE.Matrix4;
+  transformEpoch: number;
+  invMatrixEpoch: number;
+  /** Last uploaded color sentinel code (0=norm,1=warn,2=err,3=sel,4=sel+warn,5=sel+err) */
+  lastColorCode: number;
+  /** Reusable zero-GC PLYA evaluation snapshot updated in-place */
+  readonly cachedSnap: PlacedPartSnapshot;
 }
 
 interface SerializedPartState {
@@ -78,14 +92,28 @@ const ROLE_FILTER_CHIPS: ReadonlyArray<{ readonly key: RoleFilterKey; readonly l
 const MAX_UNDO_STEPS = 60;
 const CATALOG_ROW_HEIGHT = 44;
 const CATALOG_POOL_SIZE = 24;
-const OVERLAY_MAX_SEGMENTS = 1400;
+const OVERLAY_MAX_SEGMENTS = 520;
 
 // Module-scoped zero-GC scratch objects (never allocated inside interaction / render / pick loops)
 const _pgMat = new THREE.Matrix4();
-const _pgInvMat = new THREE.Matrix4();
 const _pgNormalColor = new THREE.Color().setRGB(1, 1, 1);
 const _pgWarnColor = new THREE.Color().setRGB(0, 2.5, 0);
 const _pgErrorColor = new THREE.Color().setRGB(2.5, 0, 0);
+const _pgSelectColor = new THREE.Color().setRGB(
+  CAD_SELECT_SENTINEL[0],
+  CAD_SELECT_SENTINEL[1],
+  CAD_SELECT_SENTINEL[2]
+);
+const _pgWarnSelectColor = new THREE.Color().setRGB(
+  PG_WARN_SELECT_SENTINEL[0],
+  PG_WARN_SELECT_SENTINEL[1],
+  PG_WARN_SELECT_SENTINEL[2]
+);
+const _pgErrorSelectColor = new THREE.Color().setRGB(
+  PG_ERROR_SELECT_SENTINEL[0],
+  PG_ERROR_SELECT_SENTINEL[1],
+  PG_ERROR_SELECT_SENTINEL[2]
+);
 const _pgRayOrigin = new THREE.Vector3();
 const _pgRayDir = new THREE.Vector3();
 const _pgTmpBox = new THREE.Box3();
@@ -307,12 +335,31 @@ export class CadPlaygroundStudio {
   private overlayPosArr: Float32Array;
   private overlayColArr: Uint8Array;
   private overlayVertCursor = 0;
-  private opticalConeMesh: THREE.Mesh;
+  private staticOverlayVertCount = 0;
+  private staticOverlayDirty = true;
+
+  // Play Ground 3-Stage Adaptive Rendering (PG_SHARP <-> PG_LITE <-> PG_FAST 0.55x FBO Blit!)
+  private pgMotionStage: PlaygroundMotionStage = 'sharp';
+  private pgFastTarget: THREE.WebGLRenderTarget | null = null;
+  private pgFastW = 0;
+  private pgFastH = 0;
+  private pgBlitScene: THREE.Scene | null = null;
+  private pgBlitCamera: THREE.OrthographicCamera | null = null;
+  private pgBlitGeo: THREE.BufferGeometry | null = null;
+  private pgBlitQuad: THREE.Mesh | null = null;
+  private pgBlitMat: THREE.ShaderMaterial | null = null;
+  private prevPgCamPos = new THREE.Vector3();
+  private prevPgCamQuat = new THREE.Quaternion();
+  private prevPgCamInit = false;
+  private pgEmaRenderMs = 10;
+  private pgFastCooldown = 0;
+  private isSoftwareGl = false;
 
   private placed: PlacedInstance[] = [];
   private selectedUid: string | null = null;
   private uidSeq = 1;
   private sceneEpoch = 1;
+  private partsGroupMatrixDirty = true;
   private lastEvaluatedEpoch = -1;
   private lastEvaluatedProfile: CameraDesignProfile | null = null;
   private lastReport: CameraEngineeringReport | null = null;
@@ -330,14 +377,16 @@ export class CadPlaygroundStudio {
   private redoStack: SerializedPartState[][] = [];
   private isApplyingHistory = false;
 
-  // Reusable zero-GC pick candidates
+  // Reusable zero-GC pick candidates & snapshot array
   private readonly pickCandidates: PickCandidate[] = [];
+  private readonly reusableSnapArray: PlacedPartSnapshot[] = [];
 
-  // Shared Dual-Atlas MatCap materials from pgCache (0 dynamic lights!)
+  // Shared Dual-Atlas MatCap + 0-texture FAST Vertex-Lit materials from pgCache (0 dynamic lights!)
   private readonly matSolidOpaque: THREE.Material;
   private readonly matSolidGlass: THREE.Material;
   private readonly matXray: THREE.Material;
   private readonly matWireframe: THREE.Material;
+  private readonly matFastOpaque: THREE.Material;
 
   // UI Root & Elements
   private rootEl: HTMLElement;
@@ -388,11 +437,20 @@ export class CadPlaygroundStudio {
   private mobileTab: 'viewport' | 'catalog' | 'inspector' = 'viewport';
   private toastTimer = 0;
 
-  // Zero-reflow cached DOM & renderer state
+  // Zero-reflow cached DOM & renderer state (shadow-string diff caches skip redundant DOM mutations!)
   private cachedCanvasRect: DOMRect | null = null;
   private lastSpacerHeight = -1;
+  private lastCatalogCountText = '';
+  private lastCatalogScrollTop = 0;
+  private lastAlertCls = '';
+  private lastAlertText = '';
+  private lastScoreText = '';
+  private lastScoreStatus = '';
+  private lastLiveStripSig = '';
   private savedShadowEnabled = false;
   private savedToneMapping: THREE.ToneMapping = THREE.ACESFilmicToneMapping;
+  private savedPixelRatio = 1.0;
+  private activePgPixelRatio = 1.0;
   private liveStripRefs: {
     top: HTMLElement;
     score: HTMLElement;
@@ -424,11 +482,23 @@ export class CadPlaygroundStudio {
   constructor(appRoot: HTMLElement, host: PlaygroundHostBridge) {
     this.host = host;
 
-    // Acquire 0-light Dual-Atlas MatCap materials (4 shared materials total vs 81 before!)
+    try {
+      const gl = host.renderer.getContext();
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      const rend = String(
+        dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) || ''
+      );
+      this.isSoftwareGl = /SwiftShader|llvmpipe|Software|Mesa OffScreen/i.test(rend);
+    } catch {
+      this.isSoftwareGl = false;
+    }
+
+    // Acquire 0-light Dual-Atlas MatCap + 0-texture Vertex-Lit FAST materials (5 shared materials total!)
     this.matSolidOpaque = this.pgCache.acquirePlaygroundMatcapMaterial('solid_opaque');
     this.matSolidGlass = this.pgCache.acquirePlaygroundMatcapMaterial('solid_glass');
     this.matXray = this.pgCache.acquirePlaygroundMatcapMaterial('xray');
     this.matWireframe = this.pgCache.acquirePlaygroundMatcapMaterial('wireframe');
+    this.matFastOpaque = this.pgCache.acquireFastProxyMaterial([], 0, true);
 
     // 1. Setup Industrial CAD Scene (0 Dynamic Lights — Dual-Atlas MatCap is self-lit!)
     this.scene = new THREE.Scene();
@@ -436,14 +506,16 @@ export class CadPlaygroundStudio {
 
     const w = Math.max(1, host.container.clientWidth);
     const h = Math.max(1, host.container.clientHeight);
-    this.camera = new THREE.PerspectiveCamera(34, w / h, 0.5, 4000);
+    this.camera = new THREE.PerspectiveCamera(34, w / h, 1.0, 1800);
     this.camera.position.set(-148, 92, 188);
 
     this.orbit = new OrbitControls(this.camera, host.renderer.domElement);
     this.orbit.enableDamping = true;
     this.orbit.dampingFactor = 0.08;
-    this.orbit.minDistance = 12;
-    this.orbit.maxDistance = 1400;
+    // Finer macro zoom (minDistance=1.0mm) + tighter max zoom-out (680mm vs 1400mm)!
+    this.orbit.minDistance = 1.0;
+    this.orbit.maxDistance = 680;
+    this.orbit.zoomSpeed = 0.62;
     this.orbit.target.set(0, 10, 8);
     this.orbit.enabled = false;
     this.orbit.addEventListener('change', () => {
@@ -467,9 +539,10 @@ export class CadPlaygroundStudio {
       const sel = this.getSelectedInstance();
       if (sel) {
         sel.anchor.updateMatrixWorld();
+        sel.transformEpoch++;
         this.syncInstanceMatrix(sel);
         this.markSceneDirty();
-        this.rebuildOverlayLines();
+        this.rebuildOverlayLines(false);
       }
       this.refreshInspectorValues();
       this.host.requestRender();
@@ -477,7 +550,7 @@ export class CadPlaygroundStudio {
     // TransformControls helper is mounted lazily ONLY while a part is selected (saves 67 meshes / 22 mats / 14 DCs / 0.45MB VBO!)
     this.transformHelper = this.transform.getHelper();
 
-    // 2. Unified 1-DC Dynamic Overlay LineSegments (Grid + Optical Axis + Flange + CoG + Selection + Diagnostics!)
+    // 2. Unified 1-DC Split Static+Dynamic Overlay LineSegments (Grid + Optical Axis + Cone Ribs + Flange + CoG + Selection + Diagnostics!)
     const maxVerts = OVERLAY_MAX_SEGMENTS * 2;
     this.overlayPosArr = new Float32Array(maxVerts * 3);
     this.overlayColArr = new Uint8Array(maxVerts * 3);
@@ -500,27 +573,12 @@ export class CadPlaygroundStudio {
     this.overlayLines.renderOrder = 10;
     this.scene.add(this.overlayLines);
 
-    // 3. Translucent 3D Optical Light Frustum Cone (1 DC)
-    const coneGeo = new THREE.CylinderGeometry(23.5, 15.5, 62, 24, 1, true);
-    coneGeo.rotateX(Math.PI / 2);
-    const coneMat = this.pgCache.acquireBasicMaterial('pg_optical_cone', {
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.14,
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-    this.opticalConeMesh = new THREE.Mesh(coneGeo, coneMat);
-    this.opticalConeMesh.position.set(0, 0, 31);
-    this.opticalConeMesh.visible = this.showOpticalAxis;
-    this.scene.add(this.opticalConeMesh);
-
     this.partsGroup = new THREE.Group();
     this.scene.add(this.partsGroup);
 
-    this.rebuildOverlayLines();
+    this.rebuildOverlayLines(true);
 
-    // 4. Build Play Ground 1.1 Industrial CAD Studio UI Overlay
+    // 3. Build Play Ground 1.1 Industrial CAD Studio UI Overlay
     this.rootEl = document.createElement('div');
     this.rootEl.className = 'pg-studio-overlay';
     this.rootEl.dataset.mobileTab = 'viewport';
@@ -534,7 +592,7 @@ export class CadPlaygroundStudio {
   }
 
   // =========================================================================
-  // Unified 1-DC Dynamic Line Overlay Builder (Zero Allocations!)
+  // Unified 1-DC Split Static/Dynamic Line Overlay Builder (Partial GPU Upload!)
   // =========================================================================
   private pushOverlaySeg(
     x0: number,
@@ -587,27 +645,27 @@ export class CadPlaygroundStudio {
     this.pushOverlaySeg(x0, y0, z1, x0, y1, z1, r, g, b);
   }
 
-  private rebuildOverlayLines(): void {
+  private rebuildStaticOverlayPrefix(): void {
     this.overlayVertCursor = 0;
 
-    // 1. Millimeter CAD Build Plate & Reference Grid (240x240mm + 120x120mm fine grid + XYZ corner axes)
+    // 1. Clean Millimeter CAD Build Plate & Reference Grid (240x240mm @ 20mm major + 120x120mm @ 10mm fine + XYZ axes)
     if (this.showGrid) {
       const yMaj = -48.0;
-      for (let i = -12; i <= 12; i++) {
-        const v = i * 10;
+      for (let i = -6; i <= 6; i++) {
+        const v = i * 20;
         const isCenter = i === 0;
-        const r = isCenter ? 148 : 219;
-        const g = isCenter ? 163 : 226;
-        const b = isCenter ? 184 : 236;
+        const r = isCenter ? 148 : 216;
+        const g = isCenter ? 163 : 224;
+        const b = isCenter ? 184 : 235;
         this.pushOverlaySeg(-120, yMaj, v, 120, yMaj, v, r, g, b);
         this.pushOverlaySeg(v, yMaj, -120, v, yMaj, 120, r, g, b);
       }
       const yFine = -47.95;
-      for (let i = -15; i <= 15; i++) {
-        if (i % 5 === 0) continue;
-        const v = i * 4;
-        this.pushOverlaySeg(-60, yFine, v, 60, yFine, v, 232, 237, 245);
-        this.pushOverlaySeg(v, yFine, -60, v, yFine, 60, 232, 237, 245);
+      for (let i = -6; i <= 6; i++) {
+        if (i % 2 === 0) continue;
+        const v = i * 10;
+        this.pushOverlaySeg(-60, yFine, v, 60, yFine, v, 230, 236, 244);
+        this.pushOverlaySeg(v, yFine, -60, v, yFine, 60, 230, 236, 244);
       }
       // Corner RGB AxesHelper (36mm)
       this.pushOverlaySeg(-112, -47.8, -112, -76, -47.8, -112, 239, 68, 68);
@@ -615,10 +673,10 @@ export class CadPlaygroundStudio {
       this.pushOverlaySeg(-112, -47.8, -112, -112, -47.8, -76, 59, 130, 246);
     }
 
-    // 2. Sony E-Mount Optical Axis Laser Guide + 36x24mm Sensor Frame + 18.0mm Flange Ring
+    // 2. Sony E-Mount Optical Axis + Sensor Frame + 18mm Flange Ring + 8-Rib Optical Cone (replaces separate 1-DC mesh!)
     if (this.showOpticalAxis) {
-      for (let z = -84; z < 146; z += 7) {
-        this.pushOverlaySeg(0, 0, z, 0, 0, Math.min(148, z + 4.2), 230, 90, 40);
+      for (let z = -80; z < 142; z += 10) {
+        this.pushOverlaySeg(0, 0, z, 0, 0, Math.min(144, z + 5.8), 230, 90, 40);
       }
       // 36x24mm Full-Frame Sensor Focal Plane Frame (Z = 0)
       this.pushOverlaySeg(-18, -12, 0, 18, -12, 0, 2, 132, 199);
@@ -626,7 +684,7 @@ export class CadPlaygroundStudio {
       this.pushOverlaySeg(18, 12, 0, -18, 12, 0, 2, 132, 199);
       this.pushOverlaySeg(-18, 12, 0, -18, -12, 0, 2, 132, 199);
       // E-Mount 18.0mm Flange Ring (Ø46.1mm, Z = +18mm)
-      const segs = 36;
+      const segs = 28;
       const rad = 23.05;
       let px = rad;
       let py = 0;
@@ -638,7 +696,48 @@ export class CadPlaygroundStudio {
         px = nx;
         py = ny;
       }
+      // Lightweight 8-rib Optical Frustum Cone + Front Aperture Ring (Z=0 -> Z=62mm, 0 extra draw calls!)
+      const rRear = 15.5;
+      const rFront = 23.5;
+      let fx0 = rFront;
+      let fy0 = 0;
+      for (let i = 0; i < 16; i++) {
+        const a1 = ((i + 1) / 16) * Math.PI * 2;
+        const fx1 = Math.cos(a1) * rFront;
+        const fy1 = Math.sin(a1) * rFront;
+        this.pushOverlaySeg(fx0, fy0, 62.0, fx1, fy1, 62.0, 56, 189, 248);
+        if ((i & 1) === 0) {
+          const a0 = (i / 16) * Math.PI * 2;
+          this.pushOverlaySeg(
+            Math.cos(a0) * rRear,
+            Math.sin(a0) * rRear,
+            0.0,
+            fx0,
+            fy0,
+            62.0,
+            56,
+            189,
+            248
+          );
+        }
+        fx0 = fx1;
+        fy0 = fy1;
+      }
     }
+
+    this.staticOverlayVertCount = this.overlayVertCursor;
+    this.staticOverlayDirty = false;
+  }
+
+  private rebuildOverlayLines(forceStatic = false): void {
+    const needStatic = forceStatic || this.staticOverlayDirty;
+    if (needStatic) {
+      this.rebuildStaticOverlayPrefix();
+    } else {
+      this.overlayVertCursor = this.staticOverlayVertCount;
+    }
+
+    const dynStartVert = this.staticOverlayVertCount;
 
     // 3. Industrial 3D Center-of-Gravity (CoG) Crosshair + Diamond Ring
     if (this.showCogMarker && this.placed.length > 0) {
@@ -649,8 +748,8 @@ export class CadPlaygroundStudio {
       const r = 6.5;
       let px = gx + r;
       let py = gy;
-      for (let i = 1; i <= 16; i++) {
-        const a = (i / 16) * Math.PI * 2;
+      for (let i = 1; i <= 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
         const nx = gx + Math.cos(a) * r;
         const ny = gy + Math.sin(a) * r;
         this.pushOverlaySeg(px, py, gz, nx, ny, gz, 234, 179, 8);
@@ -659,12 +758,11 @@ export class CadPlaygroundStudio {
       }
     }
 
-    // 4. Selection Cyan Wireframe Box
+    // 4. Vivid Electric-Blue Selection Wireframe Box
     const sel = this.getSelectedInstance();
     if (sel && !sel.hidden) {
-      sel.anchor.updateMatrixWorld();
       computeInstanceWorldBoxInto(sel, _pgTmpBox);
-      this.pushOverlayBox(_pgTmpBox, 2, 132, 199);
+      this.pushOverlayBox(_pgTmpBox, 0, 102, 255);
     }
 
     // 5. Diagnostic 3D Red / Amber Wireframe Boxes
@@ -675,7 +773,6 @@ export class CadPlaygroundStudio {
         if (inst.hidden) continue;
         const flag = diagMap.get(inst.uid);
         if (!flag || flag.severity === 'ok') continue;
-        inst.anchor.updateMatrixWorld();
         computeInstanceWorldBoxInto(inst, _pgTmpBox);
         if (flag.severity === 'error') {
           this.pushOverlayBox(_pgTmpBox, 239, 68, 68);
@@ -687,9 +784,26 @@ export class CadPlaygroundStudio {
 
     const geo = this.overlayLines.geometry;
     geo.setDrawRange(0, this.overlayVertCursor);
-    (geo.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true;
-    (geo.getAttribute('color') as THREE.BufferAttribute).needsUpdate = true;
-    this.opticalConeMesh.visible = this.showOpticalAxis;
+    const posAttr = geo.getAttribute('position') as THREE.BufferAttribute;
+    const colAttr = geo.getAttribute('color') as THREE.BufferAttribute;
+    posAttr.clearUpdateRanges();
+    colAttr.clearUpdateRanges();
+    if (needStatic) {
+      if (this.overlayVertCursor > 0) {
+        posAttr.addUpdateRange(0, this.overlayVertCursor * 3);
+        colAttr.addUpdateRange(0, this.overlayVertCursor * 3);
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+      }
+    } else {
+      const dynCount = this.overlayVertCursor - dynStartVert;
+      if (dynCount > 0) {
+        posAttr.addUpdateRange(dynStartVert * 3, dynCount * 3);
+        colAttr.addUpdateRange(dynStartVert * 3, dynCount * 3);
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+      }
+    }
   }
 
   // =========================================================================
@@ -725,6 +839,7 @@ export class CadPlaygroundStudio {
   private getCurrentBatchMaterial(isGlass: boolean): THREE.Material {
     if (this.shadingMode === 'xray') return this.matXray;
     if (this.shadingMode === 'wireframe') return this.matWireframe;
+    if (!isGlass && this.pgMotionStage === 'fast') return this.matFastOpaque;
     return isGlass ? this.matSolidGlass : this.matSolidOpaque;
   }
 
@@ -769,6 +884,7 @@ export class CadPlaygroundStudio {
     if (this.placed.length === 0) return;
 
     this.partsGroup.updateMatrixWorld(true);
+    this.partsGroupMatrixDirty = false;
 
     const uniqueOpaque = new Map<string, QuantizedGeoPack>();
     const uniqueGlass = new Map<string, QuantizedGeoPack>();
@@ -797,9 +913,9 @@ export class CadPlaygroundStudio {
     }
 
     if (opInst > 0 && opVerts > 0 && opIdx > 0) {
-      const capInst = Math.max(24, Math.ceil(opInst * 1.35));
-      const capVerts = Math.max(512, Math.ceil(opVerts * 1.25));
-      const capIdx = Math.max(1536, Math.ceil(opIdx * 1.25));
+      const capInst = Math.max(20, Math.ceil(opInst * 1.15));
+      const capVerts = Math.max(128, Math.ceil(opVerts * 1.08));
+      const capIdx = Math.max(384, Math.ceil(opIdx * 1.08));
       const bm = new THREE.BatchedMesh(capInst, capVerts, capIdx, this.getCurrentBatchMaterial(false));
       bm.frustumCulled = false;
       bm.sortObjects = false;
@@ -821,9 +937,9 @@ export class CadPlaygroundStudio {
     }
 
     if (glInst > 0 && glVerts > 0 && glIdx > 0) {
-      const capInst = Math.max(12, Math.ceil(glInst * 1.35));
-      const capVerts = Math.max(256, Math.ceil(glVerts * 1.25));
-      const capIdx = Math.max(768, Math.ceil(glIdx * 1.25));
+      const capInst = Math.max(8, Math.ceil(glInst * 1.15));
+      const capVerts = Math.max(64, Math.ceil(glVerts * 1.08));
+      const capIdx = Math.max(192, Math.ceil(glIdx * 1.08));
       const bm = new THREE.BatchedMesh(capInst, capVerts, capIdx, this.getCurrentBatchMaterial(true));
       bm.frustumCulled = false;
       bm.sortObjects = false;
@@ -849,6 +965,8 @@ export class CadPlaygroundStudio {
       const inst = this.placed[i];
       inst.opaqueBatchId = -1;
       inst.glassBatchId = -1;
+      inst.lastColorCode = -1;
+      inst.transformEpoch++;
       const bp = inst.blueprint;
 
       if (this.opaqueMegaBatch && bp.opaque) {
@@ -874,7 +992,10 @@ export class CadPlaygroundStudio {
       this.syncInstanceMatrix(inst);
     }
 
-    this.applyAllVisualMaterials();
+    if (this.glassMegaBatch) {
+      this.glassMegaBatch.visible = this.glassUsedInst > 0 && this.pgMotionStage !== 'fast';
+    }
+    this.applyAllVisualMaterials(true);
   }
 
   /** Try O(1) incremental append to existing MegaBatches; rebuild cleanly only if capacity exceeded. */
@@ -1234,26 +1355,28 @@ export class CadPlaygroundStudio {
     this.axisToggleBtn.addEventListener('click', () => {
       this.showOpticalAxis = !this.showOpticalAxis;
       this.axisToggleBtn.classList.toggle('is-active', this.showOpticalAxis);
-      this.rebuildOverlayLines();
+      this.staticOverlayDirty = true;
+      this.rebuildOverlayLines(true);
       this.host.requestRender();
     });
     this.cogToggleBtn.addEventListener('click', () => {
       this.showCogMarker = !this.showCogMarker;
       this.cogToggleBtn.classList.toggle('is-active', this.showCogMarker);
-      this.rebuildOverlayLines();
+      this.rebuildOverlayLines(false);
       this.host.requestRender();
     });
     this.diagToggleBtn.addEventListener('click', () => {
       this.showDiagnostics3D = !this.showDiagnostics3D;
       this.diagToggleBtn.classList.toggle('is-active', this.showDiagnostics3D);
-      this.applyAllVisualMaterials();
-      this.rebuildOverlayLines();
+      this.applyAllVisualMaterials(false);
+      this.rebuildOverlayLines(false);
       this.host.requestRender();
     });
     this.gridToggleBtn.addEventListener('click', () => {
       this.showGrid = !this.showGrid;
       this.gridToggleBtn.classList.toggle('is-active', this.showGrid);
-      this.rebuildOverlayLines();
+      this.staticOverlayDirty = true;
+      this.rebuildOverlayLines(true);
       this.host.requestRender();
     });
     this.rootEl.querySelector('[data-action="toggleShortcuts"]')?.addEventListener('click', () => {
@@ -1365,7 +1488,9 @@ export class CadPlaygroundStudio {
     this.catalogListEl.addEventListener(
       'scroll',
       () => {
-        this.renderVisibleCatalogRows();
+        const st = this.catalogListEl.scrollTop;
+        this.lastCatalogScrollTop = st;
+        this.renderVisibleCatalogRows(st);
       },
       { passive: true }
     );
@@ -1375,27 +1500,200 @@ export class CadPlaygroundStudio {
     return this.active;
   }
 
+  public getPlaygroundMotionStage(): PlaygroundMotionStage {
+    return this.pgMotionStage;
+  }
+
+  public getCameraZoomBounds(): { minDistance: number; maxDistance: number; distance: number } {
+    return {
+      minDistance: this.orbit.minDistance,
+      maxDistance: this.orbit.maxDistance,
+      distance: this.camera.position.distanceTo(this.orbit.target),
+    };
+  }
+
+  public setPlaygroundMotionStage(stage: PlaygroundMotionStage): boolean {
+    if (stage === this.pgMotionStage) return false;
+    this.pgMotionStage = stage;
+    if (this.opaqueMegaBatch && this.shadingMode === 'solid') {
+      this.opaqueMegaBatch.material = this.getCurrentBatchMaterial(false);
+    }
+    if (this.glassMegaBatch) {
+      this.glassMegaBatch.visible = this.glassUsedInst > 0 && stage !== 'fast';
+    }
+    // Cap pixelRatio dynamically (1.0 during motion, crisp settledDpr on stop!)
+    const nativeDpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    const settledDpr = this.isSoftwareGl ? 1.0 : Math.min(nativeDpr, 1.35);
+    const targetDpr = stage === 'sharp' ? settledDpr : 1.0;
+    if (Math.abs(targetDpr - this.activePgPixelRatio) > 0.01) {
+      this.activePgPixelRatio = targetDpr;
+      this.host.renderer.setPixelRatio(targetDpr);
+    }
+    return true;
+  }
+
+  private ensurePgFastBlitResources(cssW: number, cssH: number): boolean {
+    if (!this.host.renderer.capabilities.isWebGL2) return false;
+    if (!this.pgBlitScene) {
+      this.pgBlitScene = new THREE.Scene();
+      this.pgBlitCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      this.pgBlitGeo = new THREE.BufferGeometry();
+      this.pgBlitGeo.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3)
+      );
+      this.pgBlitGeo.setAttribute(
+        'uv',
+        new THREE.BufferAttribute(new Float32Array([0, 0, 2, 0, 0, 2]), 2)
+      );
+      this.pgBlitMat = this.pgCache.acquirePostProcessMaterial('fast_blit');
+      this.pgBlitQuad = new THREE.Mesh(this.pgBlitGeo, this.pgBlitMat);
+      this.pgBlitQuad.frustumCulled = false;
+      this.pgBlitScene.add(this.pgBlitQuad);
+    }
+    const fw = Math.max(64, Math.round(cssW * 0.55));
+    const fh = Math.max(64, Math.round(cssH * 0.55));
+    if (fw !== this.pgFastW || fh !== this.pgFastH || !this.pgFastTarget) {
+      if (this.pgFastTarget) {
+        this.pgFastTarget.dispose();
+        this.pgFastTarget = null;
+      }
+      this.pgFastW = fw;
+      this.pgFastH = fh;
+      this.pgFastTarget = new THREE.WebGLRenderTarget(fw, fh, {
+        type: THREE.UnsignedByteType,
+        format: THREE.RGBAFormat,
+        colorSpace: THREE.SRGBColorSpace,
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        depthBuffer: true,
+        stencilBuffer: false,
+        samples: 0,
+      });
+    }
+    return true;
+  }
+
+  private disposePgFastBlitResources(): void {
+    if (this.pgFastTarget) {
+      this.pgFastTarget.dispose();
+      this.pgFastTarget = null;
+    }
+    this.pgFastW = 0;
+    this.pgFastH = 0;
+    if (this.pgBlitMat) {
+      this.pgCache.releaseMaterialInstance(this.pgBlitMat);
+      this.pgBlitMat = null;
+    }
+    if (this.pgBlitGeo) {
+      this.pgBlitGeo.dispose();
+      this.pgBlitGeo = null;
+    }
+    this.pgBlitQuad = null;
+    this.pgBlitScene = null;
+    this.pgBlitCamera = null;
+  }
+
+  private updatePgDynamicClipPlanes(): void {
+    const dist = Math.max(this.orbit.minDistance, this.camera.position.distanceTo(this.orbit.target));
+    const targetNear = THREE.MathUtils.clamp(dist * 0.015, 0.08, 4.0);
+    if (Math.abs(targetNear - this.camera.near) / Math.max(0.05, this.camera.near) > 0.04) {
+      this.camera.near = targetNear;
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
   public async open(): Promise<void> {
     if (this.active) return;
     this.active = true;
     this.rootEl.classList.add('is-open');
     this.rootEl.setAttribute('aria-hidden', 'false');
 
-    // Disable unnecessary renderer shadowMap & toneMapping inside MatCap Play Ground
+    // Save host renderer state & optimize pixelRatio/shadowMap/toneMapping for Play Ground!
     this.savedShadowEnabled = this.host.renderer.shadowMap.enabled;
     this.savedToneMapping = this.host.renderer.toneMapping;
+    this.savedPixelRatio = this.host.renderer.getPixelRatio();
     this.host.renderer.shadowMap.enabled = false;
     this.host.renderer.toneMapping = THREE.NoToneMapping;
 
+    const nativeDpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    this.activePgPixelRatio = this.isSoftwareGl ? 1.0 : Math.min(nativeDpr, 1.35);
+    this.host.renderer.setPixelRatio(this.activePgPixelRatio);
+
+    this.pgMotionStage = 'sharp';
+    this.prevPgCamInit = false;
+    this.pgFastCooldown = 0;
     this.orbit.enabled = true;
     this.transform.enabled = true;
     this.handleResize();
 
-    // Demand-Driven Zero-Load Idle Loop: returns `true` ONLY while orbit damping is settling!
-    this.host.setCustomSceneRenderer((renderer) => {
+    // Demand-Driven Zero-Load + 3-Stage Adaptive PG_SHARP <-> PG_LITE <-> PG_FAST Loop!
+    this.host.setCustomSceneRenderer((renderer, dt) => {
       const moved = this.orbit.update();
-      renderer.render(this.scene, this.camera);
-      return moved;
+
+      let camMoved = moved;
+      let motionScore = 0;
+      if (this.prevPgCamInit) {
+        const posDelta = this.camera.position.distanceTo(this.prevPgCamPos);
+        const camDist = Math.max(1.0, this.camera.position.distanceTo(this.orbit.target));
+        const clampedDot = Math.min(1, Math.abs(this.camera.quaternion.dot(this.prevPgCamQuat)));
+        const angDelta = 2 * Math.acos(clampedDot);
+        if (posDelta > 1e-3 || angDelta > 1e-4) {
+          camMoved = true;
+          const dtSafe = Math.max(0.008, dt);
+          motionScore = Math.max(angDelta / dtSafe / 1.45, posDelta / camDist / dtSafe / 1.15);
+        }
+      } else {
+        this.prevPgCamInit = true;
+      }
+      this.prevPgCamPos.copy(this.camera.position);
+      this.prevPgCamQuat.copy(this.camera.quaternion);
+
+      if (camMoved) {
+        this.updatePgDynamicClipPlanes();
+        const violent =
+          motionScore >= 1.45 || (motionScore >= 0.72 && this.pgEmaRenderMs > 26.0);
+        const calmed = motionScore < 0.75 && this.pgEmaRenderMs < 28.0;
+        if (violent) {
+          this.setPlaygroundMotionStage('fast');
+          this.pgFastCooldown = 3;
+        } else if (this.pgMotionStage === 'fast') {
+          if (this.pgFastCooldown > 0) this.pgFastCooldown--;
+          else if (calmed) this.setPlaygroundMotionStage('lite');
+        } else {
+          this.setPlaygroundMotionStage('lite');
+        }
+      } else if (this.pgMotionStage !== 'sharp') {
+        this.pgFastCooldown = 0;
+        this.setPlaygroundMotionStage('sharp');
+      }
+
+      const r0 = typeof performance !== 'undefined' ? performance.now() : 0;
+      if (
+        this.pgMotionStage === 'fast' &&
+        this.shadingMode === 'solid' &&
+        this.ensurePgFastBlitResources(
+          Math.max(1, this.host.container.clientWidth),
+          Math.max(1, this.host.container.clientHeight)
+        ) &&
+        this.pgFastTarget &&
+        this.pgBlitScene &&
+        this.pgBlitCamera &&
+        this.pgBlitMat
+      ) {
+        renderer.setRenderTarget(this.pgFastTarget);
+        renderer.clear(true, true, false);
+        renderer.render(this.scene, this.camera);
+        this.pgBlitMat.uniforms.tDiffuse.value = this.pgFastTarget.texture;
+        renderer.setRenderTarget(null);
+        renderer.render(this.pgBlitScene, this.pgBlitCamera);
+      } else {
+        renderer.render(this.scene, this.camera);
+      }
+      const r1 = typeof performance !== 'undefined' ? performance.now() : 0;
+      this.pgEmaRenderMs = this.pgEmaRenderMs * 0.78 + (r1 - r0) * 0.22;
+
+      return camMoved || this.pgMotionStage !== 'sharp';
     });
 
     const dom = this.host.renderer.domElement;
@@ -1432,10 +1730,16 @@ export class CadPlaygroundStudio {
     if (this.transformHelper.parent === this.scene) {
       this.scene.remove(this.transformHelper);
     }
+    this.setPlaygroundMotionStage('sharp');
+    this.disposePgFastBlitResources();
 
-    // Restore host renderer state
+    // Restore host renderer state (including exact DPR!)
     this.host.renderer.shadowMap.enabled = this.savedShadowEnabled;
     this.host.renderer.toneMapping = this.savedToneMapping;
+    this.host.renderer.setPixelRatio(this.savedPixelRatio);
+    const w = Math.max(1, this.host.container.clientWidth);
+    const h = Math.max(1, this.host.container.clientHeight);
+    this.host.renderer.setSize(w, h);
 
     const dom = this.host.renderer.domElement;
     dom.removeEventListener('pointerdown', this.boundPointerDown);
@@ -1472,34 +1776,59 @@ export class CadPlaygroundStudio {
     (['solid', 'xray', 'wireframe'] as const).forEach((sm) => {
       this.shadingBtns[sm].classList.toggle('is-active', sm === mode);
     });
-    this.applyAllVisualMaterials();
+    this.applyAllVisualMaterials(false);
     this.host.requestRender();
   }
 
   /**
-   * O(N) Zero-Material-Swap 3D Shading + Error/Warning Highlight:
-   *  - Swaps material ONCE on the 2 MegaBatches for solid/xray/wireframe.
-   *  - Encodes per-instance Red Error (`rgb(2.5,0,0)`) / Amber Warning (`rgb(0,2.5,0)`) directly into
-   *    BatchedMesh Float32 `_colorsTexture` -> 0 extra draw calls!
+   * O(changed) Zero-Material-Swap 3D Shading + Vivid Electric-Blue Selection + Error/Warning Highlight:
+   *  - Swaps material ONCE on the 2 MegaBatches for solid/xray/wireframe/fast.
+   *  - Encodes per-instance Vivid Blue Selection, Red Error, Amber Warning, and combined Selected+Error/Warn
+   *    directly into BatchedMesh Float32 `_colorsTexture` with diff-skip -> 0 redundant uploads!
    */
-  private applyAllVisualMaterials(): void {
+  private applyAllVisualMaterials(forceColor = false): void {
     if (this.opaqueMegaBatch) {
-      this.opaqueMegaBatch.material = this.getCurrentBatchMaterial(false);
+      const mat = this.getCurrentBatchMaterial(false);
+      if (this.opaqueMegaBatch.material !== mat) this.opaqueMegaBatch.material = mat;
     }
     if (this.glassMegaBatch) {
-      this.glassMegaBatch.material = this.getCurrentBatchMaterial(true);
+      const mat = this.getCurrentBatchMaterial(true);
+      if (this.glassMegaBatch.material !== mat) this.glassMegaBatch.material = mat;
     }
 
     const diagMap = this.showDiagnostics3D ? this.lastReport?.partDiagnostics : undefined;
+    const selUid = this.selectedUid;
     for (let i = 0; i < this.placed.length; i++) {
       const inst = this.placed[i];
       const flag = diagMap?.get(inst.uid);
+      const isSel = inst.uid === selUid;
+      const sev = flag?.severity;
+      const code = isSel
+        ? sev === 'error'
+          ? 5
+          : sev === 'warn'
+            ? 4
+            : 3
+        : sev === 'error'
+          ? 2
+          : sev === 'warn'
+            ? 1
+            : 0;
+      if (!forceColor && inst.lastColorCode === code) continue;
+      inst.lastColorCode = code;
+
       const col =
-        flag?.severity === 'error'
-          ? _pgErrorColor
-          : flag?.severity === 'warn'
-            ? _pgWarnColor
-            : _pgNormalColor;
+        code === 5
+          ? _pgErrorSelectColor
+          : code === 4
+            ? _pgWarnSelectColor
+            : code === 3
+              ? _pgSelectColor
+              : code === 2
+                ? _pgErrorColor
+                : code === 1
+                  ? _pgWarnColor
+                  : _pgNormalColor;
       if (this.opaqueMegaBatch && inst.opaqueBatchId >= 0) {
         this.opaqueMegaBatch.setColorAt(inst.opaqueBatchId, col);
       }
@@ -1513,7 +1842,10 @@ export class CadPlaygroundStudio {
     if (this.placed.length === 0) {
       return outBox.set(new THREE.Vector3(-60, -40, -40), new THREE.Vector3(60, 50, 65));
     }
-    this.partsGroup.updateMatrixWorld(true);
+    if (this.partsGroupMatrixDirty) {
+      this.partsGroup.updateMatrixWorld(true);
+      this.partsGroupMatrixDirty = false;
+    }
     outBox.makeEmpty();
     for (let i = 0; i < this.placed.length; i++) {
       computeInstanceWorldBoxInto(this.placed[i], _pgTmpBox);
@@ -1545,6 +1877,7 @@ export class CadPlaygroundStudio {
       this.camera.position.set(_pgTmpCenter.x, _pgTmpCenter.y + 4, _pgTmpCenter.z - dist * 1.05);
     }
     this.orbit.update();
+    this.updatePgDynamicClipPlanes();
     this.host.requestRender();
   }
 
@@ -1555,7 +1888,7 @@ export class CadPlaygroundStudio {
     if (this.catalogUnitSelectEl.options.length > 0) return;
     const allOpt = document.createElement('option');
     allOpt.value = 'all';
-    allOpt.textContent = `全ユニット (${totalParts.toLocaleString()}パーツ)`;
+    allOpt.textContent = `全ユニット (${totalParts}パーツ)`;
     this.catalogUnitSelectEl.appendChild(allOpt);
     for (const u of units) {
       const opt = document.createElement('option');
@@ -1594,13 +1927,20 @@ export class CadPlaygroundStudio {
     }
 
     this.filteredCount = count;
-    this.catalogCountEl.textContent = `${count.toLocaleString()} / ${n.toLocaleString()}件`;
+    const countText = `${count} / ${n}件`;
+    if (countText !== this.lastCatalogCountText) {
+      this.lastCatalogCountText = countText;
+      this.catalogCountEl.textContent = countText;
+    }
     const nextHeight = count * CATALOG_ROW_HEIGHT;
     if (nextHeight !== this.lastSpacerHeight) {
       this.lastSpacerHeight = nextHeight;
       this.catalogSpacerEl.style.height = `${nextHeight}px`;
     }
-    this.catalogListEl.scrollTop = 0;
+    if (this.lastCatalogScrollTop !== 0) {
+      this.catalogListEl.scrollTop = 0;
+      this.lastCatalogScrollTop = 0;
+    }
     // Pass known scrollTop=0 directly so Chrome NEVER performs forced synchronous layout reflow!
     this.renderVisibleCatalogRows(0);
   }
@@ -1686,6 +2026,7 @@ export class CadPlaygroundStudio {
     anchor.visible = !hidden;
 
     this.partsGroup.add(anchor);
+    this.partsGroupMatrixDirty = true;
     const inst: PlacedInstance = {
       uid,
       entry: blueprint.entry,
@@ -1695,6 +2036,20 @@ export class CadPlaygroundStudio {
       glassBatchId: -1,
       hidden,
       locked,
+      invMatrix: new THREE.Matrix4(),
+      transformEpoch: 1,
+      invMatrixEpoch: -1,
+      lastColorCode: -1,
+      cachedSnap: {
+        uid,
+        entry: blueprint.entry,
+        worldBox: new THREE.Box3(),
+        worldCenter: new THREE.Vector3(),
+        worldSize: new THREE.Vector3(),
+        position: new THREE.Vector3(),
+        rotationEuler: new THREE.Euler(),
+        scale: new THREE.Vector3(1, 1, 1),
+      },
     };
     this.placed.push(inst);
     return inst;
@@ -1960,9 +2315,11 @@ export class CadPlaygroundStudio {
   }
 
   public selectInstance(uid: string | null): void {
+    if (uid === this.selectedUid) return;
     this.selectedUid = uid;
     this.syncTransformAttachment();
-    this.rebuildOverlayLines();
+    this.applyAllVisualMaterials(false);
+    this.rebuildOverlayLines(false);
     this.syncPlacedSelection();
     this.renderInspector();
     this.host.requestRender();
@@ -1977,7 +2334,7 @@ export class CadPlaygroundStudio {
     if (inst.uid === this.selectedUid) {
       this.syncTransformAttachment();
     }
-    this.rebuildOverlayLines();
+    this.rebuildOverlayLines(false);
     this.renderPlacedList();
     this.host.requestRender();
   }
@@ -2024,6 +2381,7 @@ export class CadPlaygroundStudio {
       }
       if (changed) {
         inst.anchor.updateMatrixWorld();
+        inst.transformEpoch++;
         this.syncInstanceMatrix(inst);
         moved++;
       }
@@ -2044,7 +2402,10 @@ export class CadPlaygroundStudio {
   private snapSelectedAdjacent(): void {
     const sel = this.getSelectedInstance();
     if (!sel || sel.locked || this.placed.length < 2) return;
-    this.partsGroup.updateMatrixWorld(true);
+    if (this.partsGroupMatrixDirty) {
+      this.partsGroup.updateMatrixWorld(true);
+      this.partsGroupMatrixDirty = false;
+    }
     const selBox = computeInstanceWorldBoxInto(sel, new THREE.Box3());
     const selC = selBox.getCenter(new THREE.Vector3());
     const selSize = selBox.getSize(new THREE.Vector3());
@@ -2090,6 +2451,7 @@ export class CadPlaygroundStudio {
     }
 
     sel.anchor.updateMatrixWorld();
+    sel.transformEpoch++;
     this.syncInstanceMatrix(sel);
     this.markSceneDirty();
     this.refreshInspectorValues();
@@ -2117,6 +2479,9 @@ export class CadPlaygroundStudio {
   private renderLiveTelemetryStrip(r: CameraEngineeringReport): void {
     const ffd = r.metrics.flangeDistanceMm !== null ? `${r.metrics.flangeDistanceMm.toFixed(1)}mm` : '--';
     const cls = r.canOperate ? 'pg-live-top is-pass' : 'pg-live-top is-fail';
+    const sig = `${cls}|${r.totalScore}|${r.rank}|${r.resolvedProfileLabel}|${r.telemetry.estimatedMassG}|${ffd}|${r.telemetry.vignettingPct}|${r.metrics.severeCollisionCount}`;
+    if (this.liveStripRefs && sig === this.lastLiveStripSig) return;
+    this.lastLiveStripSig = sig;
     if (!this.liveStripRefs) {
       this.liveStripEl.innerHTML = `
         <div class="${cls}" data-ls="top">
@@ -2323,6 +2688,7 @@ export class CadPlaygroundStudio {
           else if (prop === 'sy') g.scale.y = Math.max(0.1, val);
           else if (prop === 'sz') g.scale.z = Math.max(0.1, val);
           g.updateMatrixWorld();
+          cur.transformEpoch++;
           this.syncInstanceMatrix(cur);
           this.markSceneDirty();
           this.pushHistorySnapshot();
@@ -2339,6 +2705,7 @@ export class CadPlaygroundStudio {
         g.position.y = 0;
         g.rotation.set(0, 0, 0);
         g.updateMatrixWorld();
+        cur.transformEpoch++;
         this.syncInstanceMatrix(cur);
         this.markSceneDirty();
         this.refreshInspectorValues();
@@ -2355,6 +2722,7 @@ export class CadPlaygroundStudio {
         if (!cur || cur.locked) return;
         cur.anchor.position.x = -cur.anchor.position.x;
         cur.anchor.updateMatrixWorld();
+        cur.transformEpoch++;
         this.syncInstanceMatrix(cur);
         this.markSceneDirty();
         this.refreshInspectorValues();
@@ -2369,6 +2737,7 @@ export class CadPlaygroundStudio {
         cur.anchor.rotation.set(0, 0, 0);
         cur.anchor.scale.set(1, 1, 1);
         cur.anchor.updateMatrixWorld();
+        cur.transformEpoch++;
         this.syncInstanceMatrix(cur);
         this.markSceneDirty();
         this.refreshInspectorValues();
@@ -2485,6 +2854,7 @@ export class CadPlaygroundStudio {
       _pgTmpCenter.z + dist * 0.78
     );
     this.orbit.update();
+    this.updatePgDynamicClipPlanes();
     this.host.requestRender();
   }
 
@@ -2493,35 +2863,30 @@ export class CadPlaygroundStudio {
   }
 
   // =========================================================================
-  // Chief Engineer 1,000-Point Evaluation (v1.1) — Analytical O(1) + Epoch Memoized!
+  // Chief Engineer 1,000-Point Evaluation (v1.1) — Zero-GC In-Place + Epoch Memoized!
   // =========================================================================
   private buildSnapshots(): PlacedPartSnapshot[] {
-    this.partsGroup.updateMatrixWorld(true);
+    if (this.partsGroupMatrixDirty) {
+      this.partsGroup.updateMatrixWorld(true);
+      this.partsGroupMatrixDirty = false;
+    }
     const n = this.placed.length;
-    const out = new Array<PlacedPartSnapshot>(n);
+    const out = this.reusableSnapArray;
+    out.length = n;
     for (let i = 0; i < n; i++) {
       const p = this.placed[i];
-      const wb = computeInstanceWorldBoxInto(p, new THREE.Box3());
-      const wc = new THREE.Vector3(
+      const snap = p.cachedSnap;
+      const wb = computeInstanceWorldBoxInto(p, snap.worldBox);
+      snap.worldCenter.set(
         0.5 * (wb.min.x + wb.max.x),
         0.5 * (wb.min.y + wb.max.y),
         0.5 * (wb.min.z + wb.max.z)
       );
-      const ws = new THREE.Vector3(
-        wb.max.x - wb.min.x,
-        wb.max.y - wb.min.y,
-        wb.max.z - wb.min.z
-      );
-      out[i] = {
-        uid: p.uid,
-        entry: p.entry,
-        worldBox: wb,
-        worldCenter: wc,
-        worldSize: ws,
-        position: p.anchor.position.clone(),
-        rotationEuler: p.anchor.rotation.clone(),
-        scale: p.anchor.scale.clone(),
-      };
+      snap.worldSize.set(wb.max.x - wb.min.x, wb.max.y - wb.min.y, wb.max.z - wb.min.z);
+      snap.position.copy(p.anchor.position);
+      snap.rotationEuler.copy(p.anchor.rotation);
+      snap.scale.copy(p.anchor.scale);
+      out[i] = snap;
     }
     return out;
   }
@@ -2548,6 +2913,7 @@ export class CadPlaygroundStudio {
     if (!inst) return false;
     inst.anchor.position.set(x, y, z);
     inst.anchor.updateMatrixWorld();
+    inst.transformEpoch++;
     this.syncInstanceMatrix(inst);
     this.markSceneDirty();
     this.refreshInspectorValues();
@@ -2579,7 +2945,7 @@ export class CadPlaygroundStudio {
     this.lastEvaluatedEpoch = this.sceneEpoch;
     this.lastEvaluatedProfile = this.designProfile;
 
-    // Update 3D Center-of-Gravity position & Unified 1-DC Diagnostic Overlays + 0-DC Error Highlights
+    // Update 3D Center-of-Gravity position & Unified 1-DC Dynamic Overlays + O(changed) Error/Selection Colors
     const [gx, gy, gz] = report.telemetry.centerOfGravityMm;
     this.cogPos[0] = gx;
     this.cogPos[1] = gy;
@@ -2595,25 +2961,44 @@ export class CadPlaygroundStudio {
       }
     }
 
-    this.applyAllVisualMaterials();
-    this.rebuildOverlayLines();
+    this.applyAllVisualMaterials(false);
+    this.rebuildOverlayLines(false);
 
-    // Update Floating Top-Center 3D Visual Alert Banner
+    // Shadow-string diff cache eliminates redundant DOM style/text writes on every PLYA tick!
+    let nextAlertCls = 'pg-viewport-alert';
+    let nextAlertText = '';
     if (snaps.length === 0) {
-      this.viewportAlertEl.className = 'pg-viewport-alert';
+      nextAlertCls = 'pg-viewport-alert';
     } else if (errorPartCount > 0) {
-      this.viewportAlertEl.className = 'pg-viewport-alert is-visible is-error';
-      this.viewportAlertEl.textContent = `🔴 エラー部品 ${errorPartCount}個を赤色表示中 — クリックでPLYA修正ヒントを表示`;
+      nextAlertCls = 'pg-viewport-alert is-visible is-error';
+      nextAlertText = `🔴 エラー部品 ${errorPartCount}個を赤色表示中 — クリックでPLYA修正ヒントを表示`;
     } else if (warnPartCount > 0 || plya.failCount > 0) {
-      this.viewportAlertEl.className = 'pg-viewport-alert is-visible is-warn';
-      this.viewportAlertEl.textContent = `⚠️ 注意部品 ${warnPartCount}個 / 要確認 ${plya.failCount + plya.warnCount}項目 — PLYAで詳細確認`;
+      nextAlertCls = 'pg-viewport-alert is-visible is-warn';
+      nextAlertText = `⚠️ 注意部品 ${warnPartCount}個 / 要確認 ${plya.failCount + plya.warnCount}項目 — PLYAで詳細確認`;
     } else {
-      this.viewportAlertEl.className = 'pg-viewport-alert is-visible is-ok';
-      this.viewportAlertEl.textContent = `✅ PLYA 全8ツール合格 · ${report.totalScore}/1000 (${report.rank})`;
+      nextAlertCls = 'pg-viewport-alert is-visible is-ok';
+      nextAlertText = `✅ PLYA 全8ツール合格 · ${report.totalScore}/1000 (${report.rank})`;
+    }
+    if (nextAlertCls !== this.lastAlertCls) {
+      this.lastAlertCls = nextAlertCls;
+      this.viewportAlertEl.className = nextAlertCls;
+    }
+    if (nextAlertText !== this.lastAlertText) {
+      this.lastAlertText = nextAlertText;
+      this.viewportAlertEl.textContent = nextAlertText;
     }
 
-    this.scoreBadgeEl.textContent = `${report.totalScore} / 1000 (${report.rank})`;
-    this.scoreBadgeEl.dataset.status = report.canOperate ? 'pass' : 'fail';
+    const nextScoreText = `${report.totalScore} / 1000 (${report.rank})`;
+    const nextScoreStatus = report.canOperate ? 'pass' : 'fail';
+    if (nextScoreText !== this.lastScoreText) {
+      this.lastScoreText = nextScoreText;
+      this.scoreBadgeEl.textContent = nextScoreText;
+    }
+    if (nextScoreStatus !== this.lastScoreStatus) {
+      this.lastScoreStatus = nextScoreStatus;
+      this.scoreBadgeEl.dataset.status = nextScoreStatus;
+    }
+
     this.renderLiveTelemetryStrip(report);
     this.renderPlacedList();
     this.renderInspector();
@@ -2862,15 +3247,34 @@ export class CadPlaygroundStudio {
         for (let i = 0; i < state.length; i++) {
           const item = state[i];
           const inst = this.placed[i];
-          inst.anchor.position.set(item.pos[0], item.pos[1], item.pos[2]);
-          inst.anchor.rotation.set(item.rot[0], item.rot[1], item.rot[2]);
-          inst.anchor.scale.set(item.scale[0], item.scale[1], item.scale[2]);
-          inst.hidden = Boolean(item.hidden);
-          inst.locked = Boolean(item.locked);
-          inst.anchor.visible = !inst.hidden;
-          inst.anchor.updateMatrixWorld();
-          this.syncInstanceMatrix(inst);
-          this.syncInstanceVisibility(inst);
+          const a = inst.anchor;
+          const nextHidden = Boolean(item.hidden);
+          const nextLocked = Boolean(item.locked);
+          const xformChanged =
+            a.position.x !== item.pos[0] ||
+            a.position.y !== item.pos[1] ||
+            a.position.z !== item.pos[2] ||
+            a.rotation.x !== item.rot[0] ||
+            a.rotation.y !== item.rot[1] ||
+            a.rotation.z !== item.rot[2] ||
+            a.scale.x !== item.scale[0] ||
+            a.scale.y !== item.scale[1] ||
+            a.scale.z !== item.scale[2];
+          const visChanged = inst.hidden !== nextHidden;
+          inst.locked = nextLocked;
+          if (xformChanged) {
+            a.position.set(item.pos[0], item.pos[1], item.pos[2]);
+            a.rotation.set(item.rot[0], item.rot[1], item.rot[2]);
+            a.scale.set(item.scale[0], item.scale[1], item.scale[2]);
+            a.updateMatrixWorld();
+            inst.transformEpoch++;
+            this.syncInstanceMatrix(inst);
+          }
+          if (visChanged) {
+            inst.hidden = nextHidden;
+            a.visible = !nextHidden;
+            this.syncInstanceVisibility(inst);
+          }
         }
       } else {
         // Reconcile topology synchronously and rebuild MegaBatches ONCE
@@ -2891,6 +3295,7 @@ export class CadPlaygroundStudio {
             existing.hidden = Boolean(item.hidden);
             existing.locked = Boolean(item.locked);
             existing.anchor.visible = !existing.hidden;
+            existing.transformEpoch++;
             nextPlaced.push(existing);
             keepUids.add(existing.uid);
           } else {
@@ -2913,6 +3318,20 @@ export class CadPlaygroundStudio {
               glassBatchId: -1,
               hidden: Boolean(item.hidden),
               locked: Boolean(item.locked),
+              invMatrix: new THREE.Matrix4(),
+              transformEpoch: 1,
+              invMatrixEpoch: -1,
+              lastColorCode: -1,
+              cachedSnap: {
+                uid: item.uid,
+                entry: bp.entry,
+                worldBox: new THREE.Box3(),
+                worldCenter: new THREE.Vector3(),
+                worldSize: new THREE.Vector3(),
+                position: new THREE.Vector3(),
+                rotationEuler: new THREE.Euler(),
+                scale: new THREE.Vector3(1, 1, 1),
+              },
             });
             keepUids.add(item.uid);
           }
@@ -2924,6 +3343,7 @@ export class CadPlaygroundStudio {
           }
         }
         this.placed = nextPlaced;
+        this.partsGroupMatrixDirty = true;
         this.rebuildMegaBatches();
       }
 
@@ -3027,7 +3447,7 @@ export class CadPlaygroundStudio {
   }
 
   // =========================================================================
-  // Zero-GC OBB + Scalar SNORM16 Triangle Click Picker & Industrial CAD Hotkeys
+  // Zero-GC Cached-Inverse OBB + Scalar SNORM16 Triangle Click Picker & Hotkeys
   // =========================================================================
   private onCanvasPointerDown(e: PointerEvent): void {
     this.pointerDown.set(e.clientX, e.clientY);
@@ -3048,7 +3468,7 @@ export class CadPlaygroundStudio {
     const wOrigin = this.raycaster.ray.origin;
     const wDir = this.raycaster.ray.direction;
 
-    // 1. Broad-phase OBB slab test in each instance's local anchor space (exact world-space t!)
+    // 1. Broad-phase OBB slab test using cached per-instance inverse matrix (0 redundant invert() calls!)
     const cands = this.pickCandidates;
     let candCount = 0;
 
@@ -3056,8 +3476,11 @@ export class CadPlaygroundStudio {
       const inst = this.placed[i];
       if (inst.hidden) continue;
 
-      _pgInvMat.copy(inst.anchor.matrixWorld).invert();
-      const m = _pgInvMat.elements;
+      if (inst.invMatrixEpoch !== inst.transformEpoch) {
+        inst.invMatrix.copy(inst.anchor.matrixWorld).invert();
+        inst.invMatrixEpoch = inst.transformEpoch;
+      }
+      const m = inst.invMatrix.elements;
       const ox = m[0] * wOrigin.x + m[4] * wOrigin.y + m[8] * wOrigin.z + m[12];
       const oy = m[1] * wOrigin.x + m[5] * wOrigin.y + m[9] * wOrigin.z + m[13];
       const oz = m[2] * wOrigin.x + m[6] * wOrigin.y + m[10] * wOrigin.z + m[14];
@@ -3134,15 +3557,18 @@ export class CadPlaygroundStudio {
       cands[j + 1].tMin = curT;
     }
 
-    // 2. Narrow-phase scalar Möller-Trumbore directly on SNORM16 geometry with early-out!
+    // 2. Narrow-phase scalar Möller-Trumbore directly on SNORM16 geometry reusing cached inst.invMatrix!
     let bestT = Infinity;
     let bestUid: string | null = null;
     for (let i = 0; i < candCount; i++) {
       if (cands[i].tMin >= bestT) break;
       const inst = cands[i].inst;
-      _pgInvMat.copy(inst.anchor.matrixWorld).invert();
-      _pgRayOrigin.copy(wOrigin).applyMatrix4(_pgInvMat);
-      const m = _pgInvMat.elements;
+      const m = inst.invMatrix.elements;
+      _pgRayOrigin.set(
+        m[0] * wOrigin.x + m[4] * wOrigin.y + m[8] * wOrigin.z + m[12],
+        m[1] * wOrigin.x + m[5] * wOrigin.y + m[9] * wOrigin.z + m[13],
+        m[2] * wOrigin.x + m[6] * wOrigin.y + m[10] * wOrigin.z + m[14]
+      );
       _pgRayDir.set(
         m[0] * wDir.x + m[4] * wDir.y + m[8] * wDir.z,
         m[1] * wDir.x + m[5] * wDir.y + m[9] * wDir.z,
@@ -3245,8 +3671,8 @@ export class CadPlaygroundStudio {
   public dispose(): void {
     this.close();
     this.clearAllPartsInternal();
+    this.disposePgFastBlitResources();
     this.overlayLines.geometry.dispose();
-    this.opticalConeMesh.geometry.dispose();
     this.pgCache.disposeAll();
     this.extractor.dispose();
     this.transform.dispose();

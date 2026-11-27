@@ -4,11 +4,12 @@
   "branch": "feat/feat-hyper-opt-v3-fast-kine-ultra-aa",
   "goal": "Complete HANDOFF_HYPER_OPTIMIZATION.md + ULTRA Zero-Jaggy/F1.2 + FAST-LITE-ULTRA + KINE + Zoom/Blue/MobileLandscape/CamLock",
   "completed": [
-    "Steps 1-3: unit_contract, resource_cache, v2_unit_compiler, raycast_engine, mi_shoe, fast_proxy_builder, kine_culling_engine, ultra_post_pipeline"
+    "Steps 1-3: unit_contract, resource_cache, v2_unit_compiler, raycast_engine, mi_shoe, fast_proxy_builder, kine_culling_engine, ultra_post_pipeline",
+    "Steps 4-5: unit_v2_runtime, perf_hud, CadViewport, PartGeometryExtractor, CadPlaygroundStudio"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Step 4: unit_v2_runtime, perf_hud, CadViewport wiring",
+  "nextStep": "Step 6: UI KINE toggle, Mobile Landscape Fullscreen Detail UI, main.ts wiring",
   "artifactsMirrored": [
     {
       "name": "implementation_plan.md",
@@ -21,7 +22,7 @@
       "size": 837
     }
   ],
-  "updatedAt": "2026-11-27T12:52:57.048Z",
+  "updatedAt": "2026-11-27T13:09:54.790Z",
   "vmHost": "devbox",
   "baseSha": "1bc895d9fa5086d3590b035b2f946654517458e7"
 }

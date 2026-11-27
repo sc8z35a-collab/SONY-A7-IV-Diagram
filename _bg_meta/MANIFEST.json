@@ -1,15 +1,15 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-27T12:52:57.262Z",
+  "createdAt": "2026-11-27T13:09:55.013Z",
   "slug": "feat-feat-hyper-opt-v3-fast-kine-ultra-aa",
   "branch": "feat/feat-hyper-opt-v3-fast-kine-ultra-aa",
   "baseSha": "1bc895d9fa5086d3590b035b2f946654517458e7",
   "vmHost": "devbox",
   "reason": "snap",
-  "fingerprint": "a2a3f8602f8f6d3a739462c568c21611a1b36cd7f3df891bba8a47d55b3fb4db",
+  "fingerprint": "5e999784800aaf1ba4a14531eff030607b7e8fbec97d63817effc23eb43cfdf7",
   "fileCount": 759,
   "deletedFiles": [],
-  "dirtyCount": 8,
+  "dirtyCount": 13,
   "skippedLarge": [],
   "artifacts": [
     {
@@ -3218,14 +3218,14 @@
     },
     {
       "path": "src/core/kine_culling_engine.ts",
-      "sha256": "4028ee5a0161d4a15d178ca6f0010ea55c60edb627aa6b083d70cb50c4131648",
-      "size": 23883,
+      "sha256": "954adc10b12758a164f220119ac410134fe6124208facb5570e6367562ff3229",
+      "size": 23892,
       "mode": "100644"
     },
     {
       "path": "src/core/perf_hud.ts",
-      "sha256": "06fca57e0021500f6defec90a42499ac0bd61932ee4509f3895f2e7e7d8f1239",
-      "size": 5904,
+      "sha256": "3e1723b070431653b936c617553d0c4f0bbf12b411a8ea81f47fba2e25a31b64",
+      "size": 6846,
       "mode": "100644"
     },
     {
@@ -3242,8 +3242,8 @@
     },
     {
       "path": "src/core/ultra_post_pipeline.ts",
-      "sha256": "359b61723b78cbf3e27ffc1ca54eb7fe7f6d43eaa9e3bbbd47c9d88e84308a0d",
-      "size": 18306,
+      "sha256": "390ce97f97d748a125b5e72d8583facf9de3a293fb0e1d13773bbf32bdaf9d47",
+      "size": 19216,
       "mode": "100644"
     },
     {
@@ -3260,8 +3260,8 @@
     },
     {
       "path": "src/core/unit_v2_runtime.ts",
-      "sha256": "cd995b3201c430169c4be2a4bf35d026feac3770cd360a7533c488c8de6b19b5",
-      "size": 33208,
+      "sha256": "e5984797aae396f27996eced35246ee6e631244ce19d429fa73031207bd3ceef",
+      "size": 44683,
       "mode": "100644"
     },
     {
@@ -3476,8 +3476,8 @@
     },
     {
       "path": "src/engine/CadViewport.ts",
-      "sha256": "dfe389f3dfd874e2cdcd01c38e02880fbc64f35ca40534863dcd3475ac752638",
-      "size": 54207,
+      "sha256": "109b72a7eabbee6334fe631d306b249af101a98662973775a73971166a1e3521",
+      "size": 59061,
       "mode": "100644"
     },
     {
@@ -3512,8 +3512,8 @@
     },
     {
       "path": "src/playground/CadPlaygroundStudio.ts",
-      "sha256": "f07993e1d827145f1a8f38fdfbe7e1b3753bfe866dd822ed4a7258dde1bbf4fd",
-      "size": 131140,
+      "sha256": "f584209bedd9605741f1de6924ada2c5f10bf869526b4de0bdd2acd4e9ad8a65",
+      "size": 147281,
       "mode": "100644"
     },
     {
@@ -3524,8 +3524,8 @@
     },
     {
       "path": "src/playground/PartGeometryExtractor.ts",
-      "sha256": "2fc09b693aef8bbe70776256c5b49ed4d5d19abecd1427ec9a45ce2e8efc0b9e",
-      "size": 29443,
+      "sha256": "a3a75b0c5b37a953fa9c2175698ec57127cbef6290dce079de550f37a5673577",
+      "size": 30155,
       "mode": "100644"
     },
     {
@@ -4430,8 +4430,8 @@
     },
     {
       "path": "src/units/mi_shoe.ts",
-      "sha256": "ccc053e307d5c412ddd83bbf2499a4e16fd74751f9145e47be9cee0df97bf18f",
-      "size": 105622,
+      "sha256": "a21f8a3fa9151d3dbde2fd7372fe4d2fcf8dc32dd379e98559f99bf3f4c33d38",
+      "size": 105592,
       "mode": "100644"
     },
     {

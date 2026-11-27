@@ -74,6 +74,10 @@ export class UltraPostPipeline {
   private lastBokehMs = 0;
   private bokehLoadTripped = false;
 
+  // Captured true 3D scene pass stats (before fullscreen post-process quads overwrite renderer.info.render)
+  private lastSceneDrawCalls = 0;
+  private lastSceneTriangles = 0;
+
   constructor(renderer: THREE.WebGLRenderer) {
     this.renderer = renderer;
     this.isWebGL2 = renderer.capabilities.isWebGL2;
@@ -129,6 +133,14 @@ export class UltraPostPipeline {
     return this.lastBokehMs;
   }
 
+  public getLastSceneDrawCalls(): number {
+    return this.lastSceneDrawCalls;
+  }
+
+  public getLastSceneTriangles(): number {
+    return this.lastSceneTriangles;
+  }
+
   public getSampleProgress(): { current: number; target: number; complete: boolean } {
     return {
       current: this.sampleIndex,
@@ -166,33 +178,35 @@ export class UltraPostPipeline {
     }
   }
 
+  private ensurePostQuad(cache: ResourceCache): void {
+    if (this.postScene) return;
+    this.postScene = new THREE.Scene();
+    this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    // Single fullscreen clip-space triangle (3 verts, 0 seams, 0 index buffer!)
+    this.postGeo = new THREE.BufferGeometry();
+    this.postGeo.setAttribute(
+      'position',
+      new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3)
+    );
+    this.postGeo.setAttribute(
+      'uv',
+      new THREE.BufferAttribute(new Float32Array([0, 0, 2, 0, 0, 2]), 2)
+    );
+
+    this.blitMat = cache.acquirePostProcessMaterial('fast_blit');
+    this.postQuad = new THREE.Mesh(this.postGeo, this.blitMat);
+    this.postQuad.frustumCulled = false;
+    this.postScene.add(this.postQuad);
+  }
+
   private ensureResources(cache: ResourceCache, cssW: number, cssH: number): boolean {
     if (!this.isWebGL2) return false;
 
-    if (!this.postScene) {
-      this.postScene = new THREE.Scene();
-      this.postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-      // Single fullscreen clip-space triangle (3 verts, 0 seams, 0 index buffer!)
-      this.postGeo = new THREE.BufferGeometry();
-      this.postGeo.setAttribute(
-        'position',
-        new THREE.BufferAttribute(new Float32Array([-1, -1, 0, 3, -1, 0, -1, 3, 0]), 3)
-      );
-      this.postGeo.setAttribute(
-        'uv',
-        new THREE.BufferAttribute(new Float32Array([0, 0, 2, 0, 0, 2]), 2)
-      );
-
-      this.accumMat = cache.acquirePostProcessMaterial('ultra_accum');
-      this.bokehMat = cache.acquirePostProcessMaterial('ultra_bokeh');
-      this.resolveMat = cache.acquirePostProcessMaterial('ultra_resolve');
-      this.blitMat = cache.acquirePostProcessMaterial('fast_blit');
-
-      this.postQuad = new THREE.Mesh(this.postGeo, this.resolveMat);
-      this.postQuad.frustumCulled = false;
-      this.postScene.add(this.postQuad);
-    }
+    this.ensurePostQuad(cache);
+    if (!this.accumMat) this.accumMat = cache.acquirePostProcessMaterial('ultra_accum');
+    if (!this.bokehMat) this.bokehMat = cache.acquirePostProcessMaterial('ultra_bokeh');
+    if (!this.resolveMat) this.resolveMat = cache.acquirePostProcessMaterial('ultra_resolve');
 
     // Supersampled internal resolution for crisp edge reconstruction even on 1.0 DPR monitors!
     const nativeDpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
@@ -261,9 +275,7 @@ export class UltraPostPipeline {
 
   private ensureFastTarget(cache: ResourceCache, cssW: number, cssH: number): boolean {
     if (!this.isWebGL2) return false;
-    if (!this.postScene) {
-      this.ensureResources(cache, cssW, cssH);
-    }
+    this.ensurePostQuad(cache);
     const fw = Math.max(64, Math.round(cssW * 0.5));
     const fh = Math.max(64, Math.round(cssH * 0.5));
     if (fw !== this.fastW || fh !== this.fastH || !this.fastTarget) {
@@ -276,6 +288,7 @@ export class UltraPostPipeline {
       this.fastTarget = new THREE.WebGLRenderTarget(fw, fh, {
         type: THREE.UnsignedByteType,
         format: THREE.RGBAFormat,
+        colorSpace: THREE.SRGBColorSpace,
         minFilter: THREE.LinearFilter,
         magFilter: THREE.LinearFilter,
         depthBuffer: true,
@@ -341,6 +354,10 @@ export class UltraPostPipeline {
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.clear(true, true, false);
     this.renderer.render(scene, camera);
+
+    // Record TRUE 3D scene draw calls & triangles BEFORE fullscreen post quads overwrite renderer.info.render!
+    this.lastSceneDrawCalls = this.renderer.info.render.calls;
+    this.lastSceneTriangles = this.renderer.info.render.triangles;
 
     // Restore camera & scene background immediately
     camera.clearViewOffset();
@@ -431,6 +448,10 @@ export class UltraPostPipeline {
     this.renderer.setRenderTarget(ft);
     this.renderer.clear(true, true, false);
     this.renderer.render(scene, camera);
+
+    // Record TRUE FAST 3D scene draw calls & triangles BEFORE fullscreen blit quad!
+    this.lastSceneDrawCalls = this.renderer.info.render.calls;
+    this.lastSceneTriangles = this.renderer.info.render.triangles;
 
     this.blitMat.uniforms.tDiffuse.value = ft.texture;
     quad.material = this.blitMat;

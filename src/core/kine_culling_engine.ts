@@ -118,8 +118,7 @@ export class KineCullingEngine {
     }
   ): Uint8Array | null {
     const parts = raycastIndex?.parts;
-    const n = parts ? parts.length : 0;
-    if (n === 0 || !raycastIndex) {
+    if (!raycastIndex || !parts || parts.length === 0) {
       this.stats = {
         enabled: this.enabled,
         totalParts: 0,
@@ -132,6 +131,7 @@ export class KineCullingEngine {
       };
       return null;
     }
+    const n = parts.length;
 
     if (this.partCount !== n) {
       this.partCount = n;
