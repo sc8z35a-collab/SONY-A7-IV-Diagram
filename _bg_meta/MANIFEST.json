@@ -1,17 +1,28 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-27T17:56:16.961Z",
+  "createdAt": "2026-11-27T18:21:27.082Z",
   "slug": "feat-feat-original-riimos-e1",
   "branch": "feat/feat-original-riimos-e1",
   "baseSha": "79f059dc3895cf31f9802bc5d5c80997a46504d1",
   "vmHost": "devbox",
-  "reason": "branch_start",
-  "fingerprint": "0feb9d9c1caf4c17b9c1251be38ceac5d770f14646a4a698c0007ac4f09e595e",
-  "fileCount": 800,
+  "reason": "snap",
+  "fingerprint": "0e7e37b4468c6ac9d30ad8c4ed13ef210876865eb7edb11c605963cb5aa5be97",
+  "fileCount": 807,
   "deletedFiles": [],
-  "dirtyCount": 0,
+  "dirtyCount": 11,
   "skippedLarge": [],
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "implementation_plan.md",
+      "sha256": "696c3294e47fee8e7a59eb8c09becddf7b0ee38463f0376afb251b49104f54b3",
+      "size": 28275
+    },
+    {
+      "name": "implementation_plan.md.metadata.json",
+      "sha256": "1c3253d9803a3dc17f5cead8b95b78e590937aa87b45859de3fc8c5121f340a7",
+      "size": 718
+    }
+  ],
   "files": [
     {
       "path": ".agents/environment.json",
@@ -2061,8 +2072,8 @@
     },
     {
       "path": "scripts/spatial_engine/scene_extractor.mjs",
-      "sha256": "04d51d89efc96af25ccc763d02d08171d7fddbb61589b4651cdc33113d8b3246",
-      "size": 17791,
+      "sha256": "6456a18a68cbd38ca29bb948ac44a95a4b9d50daf854a538e9dac60bde2a901a",
+      "size": 18854,
       "mode": "100644"
     },
     {
@@ -2936,6 +2947,36 @@
       "mode": "100644"
     },
     {
+      "path": "src/assemblies/original/originalShared.ts",
+      "sha256": "225dee7a6aac9c9f1c762b2948f1fd7793975dbba3545a331da38bdf76fb68a6",
+      "size": 16509,
+      "mode": "100644"
+    },
+    {
+      "path": "src/assemblies/original/riimosE1ChassisPowerMagParts.ts",
+      "sha256": "f026c8e032d1cca2cd1aa41abea4a9d4fff83815d5e9db2075ac9a97cfdba31c",
+      "size": 20279,
+      "mode": "100644"
+    },
+    {
+      "path": "src/assemblies/original/riimosE1DynamicRig.ts",
+      "sha256": "45bf0885fdcf675696997a1ab23a34738adf92a8cc7a4943d004494ee3320ee7",
+      "size": 6822,
+      "mode": "100644"
+    },
+    {
+      "path": "src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts",
+      "sha256": "2ecea8d99c98ad35c1a6f886da0124d5d620e05cc3d6c099cd2f93cecffde2a6",
+      "size": 20693,
+      "mode": "100644"
+    },
+    {
+      "path": "src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts",
+      "sha256": "d5585cdd8307ad728077c4e8b0bc6a703969bf772b413c4020d4f5eb63a003dc",
+      "size": 11648,
+      "mode": "100644"
+    },
+    {
       "path": "src/assemblies/sensor/explanations.ts",
       "sha256": "23765ea9ad3be40749d62c8eedafcec6f3e51892c14ded939dd239874eba6af1",
       "size": 428,
@@ -3351,8 +3392,8 @@
     },
     {
       "path": "src/assemblies/types.ts",
-      "sha256": "ada945b11c737fb8409bf8d74ae912768cfb57e5ac0df0f0d7cca1bc73b90f9e",
-      "size": 87437,
+      "sha256": "d5e822aa96bd9b83e3000f06d80f555629fd9ba3afb8bffe28d915b9a94b688d",
+      "size": 88034,
       "mode": "100644"
     },
     {
@@ -3465,8 +3506,8 @@
     },
     {
       "path": "src/core/unit_contract.ts",
-      "sha256": "f7817509cce10c35d8df79a591f11941cf520891b75dfe666640ff80fb2814c6",
-      "size": 9831,
+      "sha256": "d85bf85f21e96059c4bfd705a7fbe5c98fbb597b3cdb803379b14f1e7e368579",
+      "size": 9868,
       "mode": "100644"
     },
     {
@@ -3659,6 +3700,12 @@
       "path": "src/data/mount.json",
       "sha256": "388fdc5aa1a6a01eb041b10b396a1eb0c4f27fb891e8bbac379361a11092a7bc",
       "size": 355180,
+      "mode": "100644"
+    },
+    {
+      "path": "src/data/original.json",
+      "sha256": "fb374abed970a32194a9075fd36ce714e084f2ccce5f80f5103fe37530538892",
+      "size": 326628,
       "mode": "100644"
     },
     {
@@ -4700,9 +4747,15 @@
       "mode": "100644"
     },
     {
+      "path": "src/units/original.ts",
+      "sha256": "edb626c4c902db07493ba0ff7fdd5c8dc20c128063c0e5e9124c82bf9d0034dd",
+      "size": 2590,
+      "mode": "100644"
+    },
+    {
       "path": "src/units/registry.ts",
-      "sha256": "6b98eef11f094e02b20f649c56a7a3101058b5ebe9391596dfb2f3c7f2dee95d",
-      "size": 7843,
+      "sha256": "7d1107a9447248eff3e29780188560fac5ea4b54eb7a2a45f53b7f079ca2de93",
+      "size": 8182,
       "mode": "100644"
     },
     {
