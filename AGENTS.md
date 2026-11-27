@@ -55,3 +55,12 @@ npm run pp -- --batch=jobs.json --out=./captures --manifest
 ## 2. パーツカタログ・V2品質規約
 - 並列パーツ追加・編集時は必ず `catalog/WORKER_RULE.md` を遵守すること。
 - 完了前には `npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build` の全ゲート（10/10 PASS）を確認すること。
+
+## 3. Zero-Token 開発パイプライン（`dx`）
+巨大 JSON・`docs/`・`types.ts`・冗長 CLI ログによるトークン浪費を防ぐため、探索・読込・DSL 生成・事前検証は **`node scripts/dx.mjs`**（直接実行で `npm notice` もゼロ化）を優先使用すること：
+- **文脈構築・横断検索**: `node scripts/dx.mjs brief --unit=<mode> --policy=worker` / `node scripts/dx.mjs find "<query>"` / `node scripts/dx.mjs resume`
+- **外科的読込・バッチ**: `node scripts/dx.mjs read <file>#<Symbol> | --head <file> | --part=<id> | --schematic=<type> | --css="<sel>"` / `node scripts/dx.mjs tx --ops='...'`
+- **3大 Micro-DSL コンパイラ（デフォルト `--dry-run`、`--apply` で書込）**: `dx part upsert` / `dx cad compile` / `dx svg compile`
+- **瞬間検証・差分ゲート・視覚プリジャッジ**: `node scripts/dx.mjs preflight --unit=<mode> --ai` / `node scripts/dx.mjs check --changed --ai` / `node scripts/pp.mjs --preset=audit --fast --sheet --audit-metrics --ai --out=/tmp/pp_out`
+- **圧縮出力ラッパ・自己監査**: `node scripts/dx.mjs run -- <cmd>` / `node scripts/dx.mjs budget --ai` / `node scripts/dx.mjs selftest --ai`
+

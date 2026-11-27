@@ -1,0 +1,14 @@
+# Passive Zero-Deletion Token Firewall for ripgrep (rg)
+# Excludes generated build artifacts, minified single-line JSONs, lockfiles, and redundant/machine catalog indices
+# from default search results WITHOUT deleting or untracking any repository files.
+docs/
+dist/
+android/
+package-lock.json
+src/playground/playground_index.json
+src/playground/playground_templates.json
+catalog/ALL_NAMES.txt
+catalog/code/
+catalog/spatial/integrated.tsv
+catalog/spatial/camera_body.tsv
+verification/
