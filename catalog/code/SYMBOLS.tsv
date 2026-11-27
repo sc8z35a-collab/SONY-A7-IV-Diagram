@@ -177,29 +177,29 @@ src/assemblies/lens/lensOpticalSim.ts	EFFECTIVE_FOCAL_LENGTH_MM	const	112	112	EF
 src/assemblies/lens/lensOpticalSim.ts	OPTICAL_ELEMENTS	const	124	447	OPTICAL_ELEMENTS: OpticalElementSpec[] = [
 src/assemblies/lens/lensOpticalSim.ts	OPTICAL_SCENARIOS	const	449	527	OPTICAL_SCENARIOS: ScenarioDescriptor[] = [
 src/assemblies/lens/lensOpticalSim.ts	evalSurfaceZ	func	533	538	export function evalSurfaceZ(y: number, zVertex: number, R: number, a4 = 0, a6 = 0): number
-src/assemblies/lens/lensOpticalSim.ts	computeFloatingStrokes	func	623	630	export function computeFloatingStrokes(focusT: number): FloatingStrokes
-src/assemblies/lens/lensOpticalSim.ts	computeIrisMetrics	func	635	650	export function computeIrisMetrics(fNumber: number, focusT: number): IrisMetrics
-src/assemblies/lens/lensOpticalSim.ts	traceSingleOpticalRay	func	656	766	export function traceSingleOpticalRay(opts:
-src/assemblies/lens/lensOpticalSim.ts	findChiefEntryY	func	772	820	export function findChiefEntryY( angleDeg: number, dzA: number, dzB: number, zStart = 136 ): number
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim	class	826	1305	export class LensOpticalSim
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.subscribe	method	860	863	public subscribe(fn: () => void): () => void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.notify	method	865	867	public notify(): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setStudioOpen	method	869	876	public setStudioOpen(open: boolean): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setScenario	method	878	884	public setScenario(id: OpticalScenarioId): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.applyScenarioDefaults	method	886	929	private applyScenarioDefaults(id: OpticalScenarioId): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualAperture	method	931	935	public setManualAperture(f: number): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFocusT	method	937	941	public setManualFocusT(t: number): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFieldAngle	method	943	947	public setManualFieldAngle(deg: number): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.toggleComparison	method	949	959	public toggleComparison(): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setAutoPlay	method	961	964	public setAutoPlay(playing: boolean): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setHoveredElement	method	966	970	public setHoveredElement(partId: string | null): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.step	method	975	1052	public step(elapsed: number, delta: number, physicsActive: boolean): void
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFloatingStrokes	method	1054	1056	public getFloatingStrokes(): FloatingStrokes
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getIrisMetrics	method	1058	1060	public getIrisMetrics(): IrisMetrics
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFocusDistanceLabel	method	1062	1067	public getFocusDistanceLabel(): string
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getScenarioDescriptor	method	1069	1071	public getScenarioDescriptor(): ScenarioDescriptor
-src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.traceActiveBundle	method	1080	1304	public traceActiveBundle(zStart = 136): TracedRay[]
-src/assemblies/lens/lensOpticalSim.ts	sharedLensOpticalSim	const	1307	1307	sharedLensOpticalSim = new LensOpticalSim()
+src/assemblies/lens/lensOpticalSim.ts	computeFloatingStrokes	func	680	687	export function computeFloatingStrokes(focusT: number): FloatingStrokes
+src/assemblies/lens/lensOpticalSim.ts	computeIrisMetrics	func	692	707	export function computeIrisMetrics(fNumber: number, focusT: number): IrisMetrics
+src/assemblies/lens/lensOpticalSim.ts	traceSingleOpticalRay	func	713	828	export function traceSingleOpticalRay(opts:
+src/assemblies/lens/lensOpticalSim.ts	findChiefEntryY	func	881	907	export function findChiefEntryY( angleDeg: number, dzA: number, dzB: number, zStart = 136 ): number
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim	class	923	1406	export class LensOpticalSim
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.subscribe	method	957	960	public subscribe(fn: () => void): () => void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.notify	method	962	964	public notify(): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setStudioOpen	method	966	973	public setStudioOpen(open: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setScenario	method	975	981	public setScenario(id: OpticalScenarioId): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.applyScenarioDefaults	method	983	1026	private applyScenarioDefaults(id: OpticalScenarioId): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualAperture	method	1028	1032	public setManualAperture(f: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFocusT	method	1034	1038	public setManualFocusT(t: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setManualFieldAngle	method	1040	1044	public setManualFieldAngle(deg: number): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.toggleComparison	method	1046	1056	public toggleComparison(): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setAutoPlay	method	1058	1061	public setAutoPlay(playing: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.setHoveredElement	method	1063	1067	public setHoveredElement(partId: string | null): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.step	method	1072	1149	public step(elapsed: number, delta: number, physicsActive: boolean): void
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFloatingStrokes	method	1151	1153	public getFloatingStrokes(): FloatingStrokes
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getIrisMetrics	method	1155	1157	public getIrisMetrics(): IrisMetrics
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getFocusDistanceLabel	method	1159	1164	public getFocusDistanceLabel(): string
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.getScenarioDescriptor	method	1166	1168	public getScenarioDescriptor(): ScenarioDescriptor
+src/assemblies/lens/lensOpticalSim.ts	LensOpticalSim.traceActiveBundle	method	1176	1405	public traceActiveBundle(zStart = 136): TracedRay[]
+src/assemblies/lens/lensOpticalSim.ts	sharedLensOpticalSim	const	1408	1408	sharedLensOpticalSim = new LensOpticalSim()
 src/assemblies/lens/lensParts.ts	LensDynamicRig	interface	19	37	export interface LensDynamicRig
 src/assemblies/lens/lensParts.ts	buildLensParts	func	148	3617	export function buildLensParts( mats: MaterialLibrary, _includeStandalone = true ):
 src/assemblies/lens/lensParts.ts	buildLensStandaloneParts	func	3619	3630	export async function buildLensStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
@@ -423,12 +423,13 @@ src/assemblies/types.ts	RenderMode	type	59	59	export type RenderMode = 'solid' |
 src/assemblies/types.ts	GraphicsQuality	type	60	60	export type GraphicsQuality = 'standard_lite' | 'standard' | 'high' | 'ultra';
 src/assemblies/types.ts	SectionAxis	type	61	61	export type SectionAxis = 'off' | 'x' | 'y';
 src/assemblies/types.ts	CameraPreset	type	62	62	export type CameraPreset = 'iso' | 'front' | 'side' | 'back';
-src/assemblies/types.ts	LensSection	type	63	63	export type LensSection = 1 | 2 | 3;
-src/assemblies/types.ts	ExplanationSpec	interface	65	68	export interface ExplanationSpec
-src/assemblies/types.ts	MiraiExplanationExtension	interface	70	90	export interface MiraiExplanationExtension
-src/assemblies/types.ts	PartExplanation	interface	92	2437	export interface PartExplanation [diagramType:2209 members]
-src/assemblies/types.ts	CadPart	interface	2439	2489	export interface CadPart
-src/assemblies/types.ts	AssemblyController	interface	2491	2509	export interface AssemblyController
+src/assemblies/types.ts	ExtendedCameraPreset	type	63	72	type ExtendedCameraPreset = union(9 members)
+src/assemblies/types.ts	LensSection	type	73	73	export type LensSection = 1 | 2 | 3;
+src/assemblies/types.ts	ExplanationSpec	interface	75	78	export interface ExplanationSpec
+src/assemblies/types.ts	MiraiExplanationExtension	interface	80	100	export interface MiraiExplanationExtension
+src/assemblies/types.ts	PartExplanation	interface	102	2447	export interface PartExplanation [diagramType:2209 members]
+src/assemblies/types.ts	CadPart	interface	2449	2499	export interface CadPart
+src/assemblies/types.ts	AssemblyController	interface	2501	2519	export interface AssemblyController
 src/assemblies/welcome/welcomeGeometry.ts	StrokePt	interface	10	13	export interface StrokePt
 src/assemblies/welcome/welcomeGeometry.ts	CX_YO	const	18	18	CX_YO = -66
 src/assemblies/welcome/welcomeGeometry.ts	CX_U	const	19	19	CX_U = -21
@@ -501,27 +502,32 @@ src/assemblies/welcome/welcomePlinthPrecisionParts.ts	WELCOME_PLINTH_PRECISION_D
 src/assemblies/welcome/welcomePlinthPrecisionParts.ts	buildWelcomePlinthPrecisionParts	func	1183	1185	export function buildWelcomePlinthPrecisionParts(mats: V2MaterialLibrary): CadPart[]
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	WELCOME_PLINTH_ULTRA_DETAIL_DEFS	const	42	1424	WELCOME_PLINTH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ makePlinthUltraDef(
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	buildWelcomePlinthUltraDetailParts	func	1426	1428	export function buildWelcomePlinthUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
-src/core/capture_bridge.ts	CaptureMode	type	3	3	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
-src/core/capture_bridge.ts	CaptureCustomOptions	interface	5	28	export interface CaptureCustomOptions
-src/core/capture_bridge.ts	CapturePrepareResult	interface	30	37	export interface CapturePrepareResult
-src/core/capture_bridge.ts	CaptureHostAdapter	interface	39	65	export interface CaptureHostAdapter
-src/core/capture_bridge.ts	ArtifactCaptureBridge	class	89	313	export class ArtifactCaptureBridge
-src/core/capture_bridge.ts	ArtifactCaptureBridge.waitUnitReady	method	96	102	private async waitUnitReady(timeoutMs = 15000): Promise<void>
-src/core/capture_bridge.ts	ArtifactCaptureBridge.waitSchematicHydrated	method	104	112	private async waitSchematicHydrated(timeoutMs = 8000): Promise<void>
-src/core/capture_bridge.ts	ArtifactCaptureBridge.captureDirectCanvasDataUrl	method	118	129	public async captureDirectCanvasDataUrl( format: 'png' | 'webp' | 'jpeg' = 'png', quality = 0.92 ): Promise<s…
-src/core/capture_bridge.ts	ArtifactCaptureBridge.measureClip	method	131	148	private measureClip(selector: string | null):
-src/core/capture_bridge.ts	ArtifactCaptureBridge.reset	method	150	161	public reset(): void
-src/core/capture_bridge.ts	ArtifactCaptureBridge.prepare	method	163	312	public async prepare( mode: CaptureMode, options: CaptureCustomOptions =
+src/core/capture_bridge.ts	CaptureMode	type	12	12	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
+src/core/capture_bridge.ts	CaptureCameraState	interface	14	22	export interface CaptureCameraState
+src/core/capture_bridge.ts	CaptureUnitWorldBox	interface	24	29	export interface CaptureUnitWorldBox
+src/core/capture_bridge.ts	CaptureCustomOptions	interface	31	87	export interface CaptureCustomOptions
+src/core/capture_bridge.ts	CapturePrepareResult	interface	89	108	export interface CapturePrepareResult
+src/core/capture_bridge.ts	CaptureHostAdapter	interface	110	214	export interface CaptureHostAdapter
+src/core/capture_bridge.ts	ArtifactCaptureBridge	class	253	786	export class ArtifactCaptureBridge
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitUnitReady	method	262	267	private async waitUnitReady(timeoutMs = 15000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitSchematicHydrated	method	269	276	private async waitSchematicHydrated(timeoutMs = 8000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.clearAnnotations	method	278	283	private clearAnnotations(): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.renderAnnotations	method	285	355	private renderAnnotations(maxLabels: number): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.captureDirectCanvasDataUrl	method	361	378	public async captureDirectCanvasDataUrl( format: 'png' | 'webp' | 'jpeg' = 'png', quality = 0.92 ): Promise<s…
+src/core/capture_bridge.ts	ArtifactCaptureBridge.measureClip	method	380	399	private measureClip( selector: string | null ):
+src/core/capture_bridge.ts	ArtifactCaptureBridge.reset	method	401	414	public reset(): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.resetCaptureDomOnly	method	416	427	private resetCaptureDomOnly(): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.prepare	method	429	785	public async prepare( mode: CaptureMode, options: CaptureCustomOptions =
 src/core/dispose.ts	DisposeReport	interface	20	29	export interface DisposeReport
 src/core/dispose.ts	disposeObject3D	func	90	215	export function disposeObject3D( root: THREE.Object3D, cache: ResourceCache | null = null, detachRootFromPare…
 src/core/dispose.ts	VramSnapshot	interface	217	221	export interface VramSnapshot
 src/core/dispose.ts	VramLeakVerification	interface	223	231	export interface VramLeakVerification
-src/core/dispose.ts	VramLeakMonitor	class	236	320	export class VramLeakMonitor
+src/core/dispose.ts	VramLeakMonitor	class	236	321	export class VramLeakMonitor
 src/core/dispose.ts	VramLeakMonitor.captureBaseline	method	242	251	public captureBaseline(renderer: THREE.WebGLRenderer): VramSnapshot
 src/core/dispose.ts	VramLeakMonitor.recordActivePeak	method	253	267	public recordActivePeak(renderer: THREE.WebGLRenderer): VramSnapshot
-src/core/dispose.ts	VramLeakMonitor.verifyAfterDispose	method	269	311	public verifyAfterDispose( renderer: THREE.WebGLRenderer, cache: ResourceCache ): VramLeakVerification
-src/core/dispose.ts	VramLeakMonitor.getLastVerification	method	313	315	public getLastVerification(): VramLeakVerification | null
-src/core/dispose.ts	VramLeakMonitor.getSwitchCount	method	317	319	public getSwitchCount(): number
+src/core/dispose.ts	VramLeakMonitor.verifyAfterDispose	method	269	312	public verifyAfterDispose( renderer: THREE.WebGLRenderer, cache: ResourceCache, expectedTextureDelta = 0 ): V…
+src/core/dispose.ts	VramLeakMonitor.getLastVerification	method	314	316	public getLastVerification(): VramLeakVerification | null
+src/core/dispose.ts	VramLeakMonitor.getSwitchCount	method	318	320	public getSwitchCount(): number
 src/core/fast_proxy_builder.ts	FastProxyBundle	class	50	182	export class FastProxyBundle
 src/core/fast_proxy_builder.ts	FastProxyBundle.updateExplode	method	89	99	public updateExplode(t: number): void
 src/core/fast_proxy_builder.ts	FastProxyBundle.setVisualState	method	101	139	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
@@ -530,13 +536,15 @@ src/core/fast_proxy_builder.ts	FastProxyBundle.setClippingPlanes	method	162	172	
 src/core/fast_proxy_builder.ts	FastProxyBundle.dispose	method	174	181	public dispose(cache: ResourceCache): void
 src/core/fast_proxy_builder.ts	buildFastProxyFromLiteResult	func	285	487	export function buildFastProxyFromLiteResult( unitId: string, liteResult: UnitBuildResult, cache: ResourceCac…
 src/core/geometry_quality.ts	GeometryQualityScale	interface	7	16	export interface GeometryQualityScale
-src/core/geometry_quality.ts	setActiveBuildQuality	func	63	65	export function setActiveBuildQuality(quality: QualityTier | null): void
-src/core/geometry_quality.ts	getActiveBuildQuality	func	67	69	export function getActiveBuildQuality(): QualityTier | null
-src/core/geometry_quality.ts	getActiveGeometryScale	func	71	73	export function getActiveGeometryScale(): GeometryQualityScale | null
-src/core/geometry_quality.ts	scaleCurveSegmentsForQuality	func	75	80	export function scaleCurveSegmentsForQuality(requested: number, minSegs = 4): number
-src/core/geometry_quality.ts	scaleRadialSegmentsForQuality	func	82	87	export function scaleRadialSegmentsForQuality(requested: number, minSegs = 5): number
-src/core/geometry_quality.ts	scaleBevelSegmentsForQuality	func	89	94	export function scaleBevelSegmentsForQuality(requested: number): number
-src/core/geometry_quality.ts	withQualityGeometry	func	96	104	export function withQualityGeometry<T>(quality: QualityTier, fn: () => T): T
+src/core/geometry_quality.ts	setActiveBuildQuality	func	64	66	export function setActiveBuildQuality(quality: QualityTier | null): void
+src/core/geometry_quality.ts	beginQualityAccessTracking	func	68	70	export function beginQualityAccessTracking(): number
+src/core/geometry_quality.ts	didQualityAccessChange	func	72	74	export function didQualityAccessChange(mark: number): boolean
+src/core/geometry_quality.ts	getActiveBuildQuality	func	76	79	export function getActiveBuildQuality(): QualityTier | null
+src/core/geometry_quality.ts	getActiveGeometryScale	func	81	84	export function getActiveGeometryScale(): GeometryQualityScale | null
+src/core/geometry_quality.ts	scaleCurveSegmentsForQuality	func	86	91	export function scaleCurveSegmentsForQuality(requested: number, minSegs = 4): number
+src/core/geometry_quality.ts	scaleRadialSegmentsForQuality	func	93	98	export function scaleRadialSegmentsForQuality(requested: number, minSegs = 5): number
+src/core/geometry_quality.ts	scaleBevelSegmentsForQuality	func	100	105	export function scaleBevelSegmentsForQuality(requested: number): number
+src/core/geometry_quality.ts	withQualityGeometry	func	107	115	export function withQualityGeometry<T>(quality: QualityTier, fn: () => T): T
 src/core/kine_culling_engine.ts	KineCullingEngine	class	49	474	export class KineCullingEngine
 src/core/kine_culling_engine.ts	KineCullingEngine.isEnabled	method	79	81	public isEnabled(): boolean
 src/core/kine_culling_engine.ts	KineCullingEngine.setEnabled	method	83	88	public setEnabled(enabled: boolean): boolean
@@ -553,15 +561,15 @@ src/core/perf_hud.ts	UnitPerfHud.isExpanded	method	109	111	public isExpanded(): 
 src/core/perf_hud.ts	UnitPerfHud.update	method	113	174	public update(snap: PerfHudSnapshot, force = false): void
 src/core/perf_hud.ts	UnitPerfHud.dispose	method	176	178	public dispose(): void
 src/core/perf_hud.ts	MiShoePerfHud	const	182	182	MiShoePerfHud = UnitPerfHud
-src/core/raycast_engine.ts	HoverRaycastResult	interface	639	642	export interface HoverRaycastResult
-src/core/raycast_engine.ts	TwoStageRaycaster	class	654	1097	export class TwoStageRaycaster
-src/core/raycast_engine.ts	TwoStageRaycaster.setCameraDragging	method	667	669	public setCameraDragging(dragging: boolean): void
-src/core/raycast_engine.ts	TwoStageRaycaster.isCameraDragging	method	671	673	public isCameraDragging(): boolean
-src/core/raycast_engine.ts	TwoStageRaycaster.resetHoverThrottle	method	675	677	public resetHoverThrottle(): void
-src/core/raycast_engine.ts	TwoStageRaycaster.getDiagnostics	method	679	684	public getDiagnostics():
-src/core/raycast_engine.ts	TwoStageRaycaster.pickHover	method	689	711	public pickHover(
-src/core/raycast_engine.ts	TwoStageRaycaster.pickClick	method	716	726	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, index: UnitRaycastIndex | null, isPartHidd…
-src/core/raycast_engine.ts	TwoStageRaycaster.pickWithRay	method	731	1096	public pickWithRay( raycaster: THREE.Raycaster, index: UnitRaycastIndex, isPartHidden: (partId: string) => bo…
+src/core/raycast_engine.ts	HoverRaycastResult	interface	818	821	export interface HoverRaycastResult
+src/core/raycast_engine.ts	TwoStageRaycaster	class	833	1285	export class TwoStageRaycaster
+src/core/raycast_engine.ts	TwoStageRaycaster.setCameraDragging	method	846	848	public setCameraDragging(dragging: boolean): void
+src/core/raycast_engine.ts	TwoStageRaycaster.isCameraDragging	method	850	852	public isCameraDragging(): boolean
+src/core/raycast_engine.ts	TwoStageRaycaster.resetHoverThrottle	method	854	856	public resetHoverThrottle(): void
+src/core/raycast_engine.ts	TwoStageRaycaster.getDiagnostics	method	858	863	public getDiagnostics():
+src/core/raycast_engine.ts	TwoStageRaycaster.pickHover	method	868	890	public pickHover(
+src/core/raycast_engine.ts	TwoStageRaycaster.pickClick	method	895	905	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, index: UnitRaycastIndex | null, isPartHidd…
+src/core/raycast_engine.ts	TwoStageRaycaster.pickWithRay	method	910	1284	public pickWithRay( raycaster: THREE.Raycaster, index: UnitRaycastIndex, isPartHidden: (partId: string) => bo…
 src/core/resource_cache.ts	MaterialBucketKey	type	5	48	type MaterialBucketKey = union(38 members)
 src/core/resource_cache.ts	ALL_MATERIAL_BUCKETS	const	50	89	ALL_MATERIAL_BUCKETS: readonly MaterialBucketKey[] = [ 'metal_hero', 'matte_chassis', 'elastomer_rubber', 'pc…
 src/core/resource_cache.ts	ResourceCacheStats	interface	97	105	export interface ResourceCacheStats
@@ -631,74 +639,82 @@ src/core/ultra_post_pipeline.ts	UltraPostPipeline.dispose	method	526	559	public 
 src/core/unit_contract.ts	QualityTier	type	11	11	export type QualityTier = GraphicsQuality;
 src/core/unit_contract.ts	UnitPartMeta	interface	13	42	export interface UnitPartMeta
 src/core/unit_contract.ts	UnitMeta	interface	44	54	export interface UnitMeta
-src/core/unit_contract.ts	UnitBuildOptions	interface	56	73	export interface UnitBuildOptions
-src/core/unit_contract.ts	RaycastInstancedBinding	interface	75	84	export interface RaycastInstancedBinding
-src/core/unit_contract.ts	RaycastBatchedBinding	interface	86	95	export interface RaycastBatchedBinding
-src/core/unit_contract.ts	RaycastMeshBinding	type	97	97	export type RaycastMeshBinding = RaycastInstancedBinding | RaycastBatchedBinding;
-src/core/unit_contract.ts	RaycastPartBounds	interface	99	108	export interface RaycastPartBounds
-src/core/unit_contract.ts	RaycastGroupBounds	interface	110	114	export interface RaycastGroupBounds
-src/core/unit_contract.ts	UnitRaycastIndex	interface	116	138	export interface UnitRaycastIndex
-src/core/unit_contract.ts	UnitBuildStats	interface	140	153	export interface UnitBuildStats
-src/core/unit_contract.ts	MotionStage	type	155	155	export type MotionStage = 'ultra' | 'lite' | 'fast';
-src/core/unit_contract.ts	KineOccluderSpec	interface	161	170	export interface KineOccluderSpec
-src/core/unit_contract.ts	KineCullingStats	interface	172	181	export interface KineCullingStats
-src/core/unit_contract.ts	UnitBuildResult	interface	183	193	export interface UnitBuildResult
-src/core/unit_contract.ts	OptimizedUnit	interface	199	246	export interface OptimizedUnit
+src/core/unit_contract.ts	UnitBuildOptions	interface	56	79	export interface UnitBuildOptions
+src/core/unit_contract.ts	RaycastInstancedBinding	interface	81	90	export interface RaycastInstancedBinding
+src/core/unit_contract.ts	RaycastBatchedBinding	interface	92	101	export interface RaycastBatchedBinding
+src/core/unit_contract.ts	RaycastMeshBinding	type	103	103	export type RaycastMeshBinding = RaycastInstancedBinding | RaycastBatchedBinding;
+src/core/unit_contract.ts	RaycastPartBounds	interface	105	114	export interface RaycastPartBounds
+src/core/unit_contract.ts	RaycastGroupBounds	interface	116	120	export interface RaycastGroupBounds
+src/core/unit_contract.ts	UnitRaycastIndex	interface	122	144	export interface UnitRaycastIndex
+src/core/unit_contract.ts	UnitBuildStats	interface	146	159	export interface UnitBuildStats
+src/core/unit_contract.ts	MotionStage	type	161	161	export type MotionStage = 'ultra' | 'lite' | 'fast';
+src/core/unit_contract.ts	KineOccluderSpec	interface	167	176	export interface KineOccluderSpec
+src/core/unit_contract.ts	KineCullingStats	interface	178	187	export interface KineCullingStats
+src/core/unit_contract.ts	UnitBuildResult	interface	189	199	export interface UnitBuildResult
+src/core/unit_contract.ts	OptimizedUnit	interface	205	252	export interface OptimizedUnit
 src/core/unit_explanations.ts	explanationsFromUnitJson	func	21	43	export function explanationsFromUnitJson(data:
 src/core/unit_v2_runtime.ts	UnitV2RuntimeCallbacks	interface	21	25	export interface UnitV2RuntimeCallbacks
 src/core/unit_v2_runtime.ts	UnitV2Diagnostics	interface	27	58	export interface UnitV2Diagnostics
-src/core/unit_v2_runtime.ts	UnitV2Runtime	class	98	1286	export class UnitV2Runtime
-src/core/unit_v2_runtime.ts	UnitV2Runtime.isActive	method	192	194	public isActive(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.isReady	method	196	198	public isReady(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getActiveUnitId	method	200	202	public getActiveUnitId(): string | null
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getQuality	method	204	206	public getQuality(): QualityTier
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getMotionStage	method	208	210	public getMotionStage(): MotionStage
-src/core/unit_v2_runtime.ts	UnitV2Runtime.isKineMode	method	212	214	public isKineMode(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setKineMode	method	216	228	public setKineMode(enabled: boolean): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getKineStats	method	230	232	public getKineStats(): KineCullingStats
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setOpticalBokehMode	method	234	238	public setOpticalBokehMode(mode: OpticalBokehMode): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getOpticalBokehState	method	240	250	public getOpticalBokehState():
-src/core/unit_v2_runtime.ts	UnitV2Runtime.needsStationaryRefinement	method	252	260	public needsStationaryRefinement(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getParts	method	262	268	public getParts(): CadPart[]
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getAllBuiltParts	method	270	272	public getAllBuiltParts(): CadPart[]
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartById	method	274	276	public getPartById(partId: string): CadPart | null
-src/core/unit_v2_runtime.ts	UnitV2Runtime.isPartCulledBySubView	method	278	280	public isPartCulledBySubView(partId: string): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.needsContinuousAnimation	method	282	285	public needsContinuousAnimation(_physicsActive: boolean): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.isUltraMotionProxyActive	method	287	289	public isUltraMotionProxyActive(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setMotionStage	method	296	378	public setMotionStage(requested: MotionStage): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setUltraMotionProxyActive	method	384	387	public setUltraMotionProxyActive(moving: boolean): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getRaycastIndex	method	389	391	public getRaycastIndex(): UnitRaycastIndex | null
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartWorldBox	method	393	401	public getPartWorldBox(partId: string, out: THREE.Box3): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setupStudioLighting	method	403	515	private setupStudioLighting(quality: QualityTier): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.fitUltraShadowRig	method	521	560	private fitUltraShadowRig(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.teardownStudioLighting	method	562	577	private teardownStudioLighting(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.applyQualityRendererCaps	method	579	599	private applyQualityRendererCaps(quality: QualityTier): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.disposeActiveUnitResources	method	601	625	private disposeActiveUnitResources(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.activate	method	634	815	public async activate( unitId: string, quality: QualityTier, camera: THREE.Camera, initialState:
-src/core/unit_v2_runtime.ts	UnitV2Runtime.deactivate	method	824	839	public deactivate(): VramLeakVerification | null
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setQuality	method	841	913	public async setQuality( quality: QualityTier, camera: THREE.Camera, sectionActive: boolean ): Promise<void>
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setSubView	method	915	929	public setSubView(subView: number): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.syncExplode	method	931	953	public syncExplode(t: number, force = false): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.syncVisualState	method	955	993	public syncVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, …
-src/core/unit_v2_runtime.ts	UnitV2Runtime.syncSectionPlane	method	995	1011	public syncSectionPlane(active: boolean): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.syncPhysicsActive	method	1013	1021	public syncPhysicsActive(active: boolean): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.stepPhysics	method	1023	1026	public stepPhysics(_elapsed: number, _delta = 0.016): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.handleResize	method	1028	1033	public handleResize(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setCameraDragging	method	1035	1037	public setCameraDragging(dragging: boolean): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.pickHover	method	1039	1052	public pickHover( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
-src/core/unit_v2_runtime.ts	UnitV2Runtime.pickClick	method	1054	1067	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
-src/core/unit_v2_runtime.ts	UnitV2Runtime.render	method	1072	1176	public render(camera: THREE.Camera, focusTarget?: THREE.Vector3): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.markIdle	method	1178	1182	public markIdle(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextLost	method	1184	1186	public handleContextLost(): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextRestored	method	1191	1206	public async handleContextRestored(camera: THREE.Camera, sectionActive: boolean): Promise<void>
-src/core/unit_v2_runtime.ts	UnitV2Runtime.togglePerfHud	method	1208	1212	public togglePerfHud(): boolean
-src/core/unit_v2_runtime.ts	UnitV2Runtime.setPerfHudVisible	method	1214	1217	public setPerfHudVisible(expanded: boolean): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.getDiagnostics	method	1219	1253	public getDiagnostics(): UnitV2Diagnostics
-src/core/unit_v2_runtime.ts	UnitV2Runtime.refreshHud	method	1255	1279	private refreshHud(force: boolean): void
-src/core/unit_v2_runtime.ts	UnitV2Runtime.dispose	method	1281	1285	public dispose(): void
-src/core/unit_v2_runtime.ts	MiShoeV2Runtime	type	1289	1289	export type MiShoeV2Runtime = UnitV2Runtime;
-src/core/unit_v2_runtime.ts	MiShoeV2Diagnostics	type	1290	1290	export type MiShoeV2Diagnostics = UnitV2Diagnostics;
-src/core/unit_v2_runtime.ts	MiShoeV2RuntimeCallbacks	type	1291	1291	export type MiShoeV2RuntimeCallbacks = UnitV2RuntimeCallbacks;
+src/core/unit_v2_runtime.ts	UnitV2Runtime	class	100	1554	export class UnitV2Runtime
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isActive	method	199	201	public isActive(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isReady	method	203	205	public isReady(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getActiveUnitId	method	207	209	public getActiveUnitId(): string | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getQuality	method	211	213	public getQuality(): QualityTier
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getMotionStage	method	215	217	public getMotionStage(): MotionStage
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isKineMode	method	219	221	public isKineMode(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setKineMode	method	223	235	public setKineMode(enabled: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getKineStats	method	237	239	public getKineStats(): KineCullingStats
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setOpticalBokehMode	method	241	245	public setOpticalBokehMode(mode: OpticalBokehMode): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getOpticalBokehState	method	247	257	public getOpticalBokehState():
+src/core/unit_v2_runtime.ts	UnitV2Runtime.needsStationaryRefinement	method	259	267	public needsStationaryRefinement(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getParts	method	269	275	public getParts(): CadPart[]
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getAllBuiltParts	method	277	279	public getAllBuiltParts(): CadPart[]
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartById	method	281	283	public getPartById(partId: string): CadPart | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isPartCulledBySubView	method	285	287	public isPartCulledBySubView(partId: string): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.needsContinuousAnimation	method	289	292	public needsContinuousAnimation(_physicsActive: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isUltraMotionProxyActive	method	294	296	public isUltraMotionProxyActive(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setMotionStage	method	303	385	public setMotionStage(requested: MotionStage): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setUltraMotionProxyActive	method	391	394	public setUltraMotionProxyActive(moving: boolean): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getRaycastIndex	method	396	398	public getRaycastIndex(): UnitRaycastIndex | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getUnitWorldBox	method	400	408	public getUnitWorldBox(out: THREE.Box3): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setBackground	method	410	423	public setBackground(colorHex: number | null): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getPartWorldBox	method	425	433	public getPartWorldBox(partId: string, out: THREE.Box3): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.isPpCaptureUrl	method	435	438	private isPpCaptureUrl(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.tryFetchPrebakedPmrem	method	440	499	private async tryFetchPrebakedPmrem(quality: QualityTier): Promise<THREE.DataTexture | null>
+src/core/unit_v2_runtime.ts	UnitV2Runtime.tryPersistBakedPmrem	method	501	556	private tryPersistBakedPmrem(quality: QualityTier, envRt: THREE.WebGLRenderTarget): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.attachStudioEnvironment	method	558	594	private attachStudioEnvironment( quality: QualityTier, preloadedTex: THREE.DataTexture | null = null ): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.disposeStudioEnvironment	method	596	607	private disposeStudioEnvironment(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setupStudioLighting	method	609	727	private setupStudioLighting( quality: QualityTier, deferEnv = false, preloadedEnvTex: THREE.DataTexture | nul…
+src/core/unit_v2_runtime.ts	UnitV2Runtime.ensureShadersWarmed	method	729	739	public ensureShadersWarmed(camera: THREE.Camera): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.fitUltraShadowRig	method	745	787	private fitUltraShadowRig(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.teardownStudioLighting	method	789	802	private teardownStudioLighting(disposeEnv = true): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.applyQualityRendererCaps	method	804	824	private applyQualityRendererCaps(quality: QualityTier): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.disposeActiveUnitResources	method	826	851	private disposeActiveUnitResources(disposeEnv = true): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.activate	method	860	1078	public async activate( unitId: string, quality: QualityTier, camera: THREE.Camera, initialState:
+src/core/unit_v2_runtime.ts	UnitV2Runtime.deactivate	method	1087	1107	public deactivate(): VramLeakVerification | null
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setQuality	method	1109	1181	public async setQuality( quality: QualityTier, camera: THREE.Camera, sectionActive: boolean ): Promise<void>
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setSubView	method	1183	1197	public setSubView(subView: number): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncExplode	method	1199	1221	public syncExplode(t: number, force = false): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncVisualState	method	1223	1261	public syncVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, …
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncSectionPlane	method	1263	1279	public syncSectionPlane(active: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.syncPhysicsActive	method	1281	1289	public syncPhysicsActive(active: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.stepPhysics	method	1291	1294	public stepPhysics(_elapsed: number, _delta = 0.016): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleResize	method	1296	1301	public handleResize(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setCameraDragging	method	1303	1305	public setCameraDragging(dragging: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.pickHover	method	1307	1320	public pickHover( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
+src/core/unit_v2_runtime.ts	UnitV2Runtime.pickClick	method	1322	1335	public pickClick( ndcPointer: THREE.Vector2, camera: THREE.Camera, isPartHidden: (partId: string) => boolean,…
+src/core/unit_v2_runtime.ts	UnitV2Runtime.render	method	1340	1444	public render(camera: THREE.Camera, focusTarget?: THREE.Vector3): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.markIdle	method	1446	1450	public markIdle(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextLost	method	1452	1454	public handleContextLost(): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.handleContextRestored	method	1459	1474	public async handleContextRestored(camera: THREE.Camera, sectionActive: boolean): Promise<void>
+src/core/unit_v2_runtime.ts	UnitV2Runtime.togglePerfHud	method	1476	1480	public togglePerfHud(): boolean
+src/core/unit_v2_runtime.ts	UnitV2Runtime.setPerfHudVisible	method	1482	1485	public setPerfHudVisible(expanded: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.getDiagnostics	method	1487	1521	public getDiagnostics(): UnitV2Diagnostics
+src/core/unit_v2_runtime.ts	UnitV2Runtime.refreshHud	method	1523	1547	private refreshHud(force: boolean): void
+src/core/unit_v2_runtime.ts	UnitV2Runtime.dispose	method	1549	1553	public dispose(): void
+src/core/unit_v2_runtime.ts	MiShoeV2Runtime	type	1557	1557	export type MiShoeV2Runtime = UnitV2Runtime;
+src/core/unit_v2_runtime.ts	MiShoeV2Diagnostics	type	1558	1558	export type MiShoeV2Diagnostics = UnitV2Diagnostics;
+src/core/unit_v2_runtime.ts	MiShoeV2RuntimeCallbacks	type	1559	1559	export type MiShoeV2RuntimeCallbacks = UnitV2RuntimeCallbacks;
 src/core/v2_material_catalog.ts	V2MaterialLibrary	type	7	7	export type V2MaterialLibrary = any;
 src/core/v2_material_catalog.ts	MaterialBindingSpec	interface	9	13	export interface MaterialBindingSpec
 src/core/v2_material_catalog.ts	V2MaterialTag	interface	15	20	export interface V2MaterialTag
@@ -707,34 +723,35 @@ src/core/v2_material_catalog.ts	ULTRA_MATERIAL_CATALOG	const	220	515	ULTRA_MATER
 src/core/v2_material_catalog.ts	V2MaterialProxyHandle	interface	521	525	export interface V2MaterialProxyHandle
 src/core/v2_material_catalog.ts	getV2MaterialTag	func	527	541	export function getV2MaterialTag(mat: THREE.Material | null | undefined): V2MaterialTag | null
 src/core/v2_material_catalog.ts	createV2MaterialProxy	func	543	645	export function createV2MaterialProxy( cache: ResourceCache, quality: QualityTier, renderMode: RenderMode, cl…
-src/core/v2_unit_compiler.ts	CompiledUnitRawBuild	interface	228	255	export interface CompiledUnitRawBuild
-src/core/v2_unit_compiler.ts	CompiledV2UnitConfig	interface	257	277	export interface CompiledV2UnitConfig
-src/core/v2_unit_compiler.ts	quantizeGeometryPositionInPlace	func	928	976	export function quantizeGeometryPositionInPlace(geo: THREE.BufferGeometry):
-src/core/v2_unit_compiler.ts	decimateMergedGeometryRGBA	func	983	1214	export function decimateMergedGeometryRGBA( src: THREE.BufferGeometry, gridCells: number, preserveNormalBucke…
-src/core/v2_unit_compiler.ts	createGpuExplodeDataTexture	func	1219	1241	export function createGpuExplodeDataTexture( offsetsXYZ: Float32Array, count: number ):
-src/core/v2_unit_compiler.ts	bindGpuExplodeToMaterial	func	1243	1263	export function bindGpuExplodeToMaterial( mat: THREE.Material, tex: THREE.DataTexture | null, texW: number, e…
-src/core/v2_unit_compiler.ts	buildFlatPartBvh	func	1271	1376	export function buildFlatPartBvh(parts: readonly RaycastPartBounds[]):
-src/core/v2_unit_compiler.ts	adoptOverlaySubtreeToCache	func	1444	1518	export function adoptOverlaySubtreeToCache( root: THREE.Object3D, cache: ResourceCache, unitId: string, clipp…
-src/core/v2_unit_compiler.ts	CompiledV2Unit	class	1587	3986	export class CompiledV2Unit implements OptimizedUnit
-src/core/v2_unit_compiler.ts	CompiledV2Unit.getMeta	method	1647	1649	public getMeta(): UnitMeta
-src/core/v2_unit_compiler.ts	CompiledV2Unit.build	method	1651	3082	public async build( quality: QualityTier, cache: ResourceCache, options: UnitBuildOptions =
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setSubView	method	3084	3102	public setSubView(subView: number): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.getActiveParts	method	3104	3117	public getActiveParts(): CadPart[]
-src/core/v2_unit_compiler.ts	CompiledV2Unit.isPartCulledBySubView	method	3119	3122	public isPartCulledBySubView(partId: string): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.writeBatchEntryMatrix	method	3124	3150	private writeBatchEntryMatrix( mesh: THREE.BatchedMesh, e: CompiledBatchedEntry, tx: number, ty: number, tz: …
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplode	method	3156	3306	public updateExplode(t: number, force = false): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.syncBatchedEdgePositions	method	3308	3348	private syncBatchedEdgePositions(forceAll = true): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.refreshRaycastBounds	method	3350	3381	private refreshRaycastBounds(): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setVisualState	method	3383	3731	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
-src/core/v2_unit_compiler.ts	CompiledV2Unit.getKineOccluders	method	3733	3735	public getKineOccluders(): readonly KineOccluderSpec[]
-src/core/v2_unit_compiler.ts	CompiledV2Unit.applyKineCulling	method	3742	3820	public applyKineCulling(culledMask: Uint8Array | null): number
-src/core/v2_unit_compiler.ts	CompiledV2Unit.needsContinuousAnimation	method	3822	3825	public needsContinuousAnimation(physicsActive: boolean): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setPhysicsVisible	method	3827	3837	public setPhysicsVisible(visible: boolean): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplodeGuides	method	3839	3854	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updatePhysics	method	3856	3886	public updatePhysics( elapsed: number, explodeFactor: number, active: boolean, delta = 0.016 ): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.syncDynamicRigMatrices	method	3888	3930	private syncDynamicRigMatrices(): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setClippingPlanes	method	3932	3935	public setClippingPlanes(planes: THREE.Plane[]): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.dispose	method	3937	3985	public dispose(cache: ResourceCache): void
+src/core/v2_unit_compiler.ts	CompiledUnitRawBuild	interface	253	280	export interface CompiledUnitRawBuild
+src/core/v2_unit_compiler.ts	CompiledV2UnitConfig	interface	282	302	export interface CompiledV2UnitConfig
+src/core/v2_unit_compiler.ts	quantizeGeometryPositionInPlace	func	1186	1234	export function quantizeGeometryPositionInPlace(geo: THREE.BufferGeometry):
+src/core/v2_unit_compiler.ts	decimateMergedGeometryRGBA	func	1241	1472	export function decimateMergedGeometryRGBA( src: THREE.BufferGeometry, gridCells: number, preserveNormalBucke…
+src/core/v2_unit_compiler.ts	createGpuExplodeDataTexture	func	1477	1499	export function createGpuExplodeDataTexture( offsetsXYZ: Float32Array, count: number ):
+src/core/v2_unit_compiler.ts	bindGpuExplodeToMaterial	func	1501	1521	export function bindGpuExplodeToMaterial( mat: THREE.Material, tex: THREE.DataTexture | null, texW: number, e…
+src/core/v2_unit_compiler.ts	buildFlatPartBvh	func	1529	1634	export function buildFlatPartBvh(parts: readonly RaycastPartBounds[]):
+src/core/v2_unit_compiler.ts	adoptOverlaySubtreeToCache	func	1702	1776	export function adoptOverlaySubtreeToCache( root: THREE.Object3D, cache: ResourceCache, unitId: string, clipp…
+src/core/v2_unit_compiler.ts	CompiledV2Unit	class	1845	4358	export class CompiledV2Unit implements OptimizedUnit
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getMeta	method	1910	1912	public getMeta(): UnitMeta
+src/core/v2_unit_compiler.ts	CompiledV2Unit.build	method	1914	3366	public async build( quality: QualityTier, cache: ResourceCache, options: UnitBuildOptions =
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setSubView	method	3368	3386	public setSubView(subView: number): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getActiveParts	method	3388	3401	public getActiveParts(): CadPart[]
+src/core/v2_unit_compiler.ts	CompiledV2Unit.isPartCulledBySubView	method	3403	3406	public isPartCulledBySubView(partId: string): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.writeBatchEntryMatrix	method	3408	3434	private writeBatchEntryMatrix( mesh: THREE.BatchedMesh, e: CompiledBatchedEntry, tx: number, ty: number, tz: …
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplode	method	3440	3601	public updateExplode(t: number, force = false): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncBatchedEdgePositions	method	3603	3643	private syncBatchedEdgePositions(forceAll = true): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.refreshRaycastBounds	method	3645	3676	private refreshRaycastBounds(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setVisualState	method	3678	4078	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getKineOccluders	method	4080	4082	public getKineOccluders(): readonly KineOccluderSpec[]
+src/core/v2_unit_compiler.ts	CompiledV2Unit.applyKineCulling	method	4089	4167	public applyKineCulling(culledMask: Uint8Array | null): number
+src/core/v2_unit_compiler.ts	CompiledV2Unit.needsContinuousAnimation	method	4169	4172	public needsContinuousAnimation(physicsActive: boolean): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setPhysicsVisible	method	4174	4184	public setPhysicsVisible(visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplodeGuides	method	4186	4201	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updatePhysics	method	4203	4233	public updatePhysics( elapsed: number, explodeFactor: number, active: boolean, delta = 0.016 ): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncDynamicRigMatrices	method	4235	4277	private syncDynamicRigMatrices(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setClippingPlanes	method	4279	4282	public setClippingPlanes(planes: THREE.Plane[]): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.dispose	method	4284	4357	public dispose(cache: ResourceCache): void
+src/core/v2_unit_compiler.ts	disposeSharedRawBuildCache	func	4363	4374	export function disposeSharedRawBuildCache( sharedCache: Map<string,
 src/engine/CadHelpers.ts	createRoundedRectShape	func	13	30	export function createRoundedRectShape(width: number, height: number, radius: number): THREE.Shape
 src/engine/CadHelpers.ts	createFrameShape	func	35	63	export function createFrameShape( outerW: number, outerH: number, outerR: number, innerW: number, innerH: num…
 src/engine/CadHelpers.ts	addCircleHoles	func	68	74	export function addCircleHoles(shape: THREE.Shape, positions: Array<[number, number, number]>): void
@@ -756,71 +773,93 @@ src/engine/CadHelpers.ts	RadialTrajectoryGuides	interface	511	523	export interfa
 src/engine/CadHelpers.ts	createRadialTrajectoryGuides	func	528	637	export function createRadialTrajectoryGuides( clippingPlanes: THREE.Plane[], color = 0x64748b, maxLines = 48 …
 src/engine/CadHelpers.ts	updateLinePointsInPlace	func	642	664	export function updateLinePointsInPlace( line: THREE.Line, pts: ReadonlyArray<THREE.Vector3>, computeDistance…
 src/engine/CadHelpers.ts	updateLine2PtsInPlace	func	669	693	export function updateLine2PtsInPlace( line: THREE.Line, ax: number, ay: number, az: number, bx: number, by: …
-src/engine/CadViewport.ts	ViewportCallbacks	interface	19	24	export interface ViewportCallbacks
-src/engine/CadViewport.ts	CadViewport	class	43	1733	export class CadViewport
-src/engine/CadViewport.ts	CadViewport.activateCurrentMode	method	214	225	private activateCurrentMode(): void
-src/engine/CadViewport.ts	CadViewport.isV2Mode	method	227	229	public isV2Mode(mode: ScaleMode = this.mode): boolean
-src/engine/CadViewport.ts	CadViewport.getV2Runtime	method	231	233	public getV2Runtime(): UnitV2Runtime
-src/engine/CadViewport.ts	CadViewport.getMiShoeV2Runtime	method	236	238	public getMiShoeV2Runtime(): UnitV2Runtime
-src/engine/CadViewport.ts	CadViewport.getActiveSubViewForMode	method	240	246	private getActiveSubViewForMode(mode: ScaleMode): number
-src/engine/CadViewport.ts	CadViewport.getTotalPartCount	method	249	257	public getTotalPartCount(): number
-src/engine/CadViewport.ts	CadViewport.ensureAllHydrated	method	259	261	public async ensureAllHydrated(): Promise<number>
-src/engine/CadViewport.ts	CadViewport.getPartsForCurrentMode	method	263	265	public getPartsForCurrentMode(): CadPart[]
-src/engine/CadViewport.ts	CadViewport.getSelectedPart	method	267	270	public getSelectedPart(): CadPart | null
-src/engine/CadViewport.ts	CadViewport.isPartHidden	method	272	275	public isPartHidden(partId: string): boolean
-src/engine/CadViewport.ts	CadViewport.isIsolated	method	277	279	public isIsolated(): boolean
-src/engine/CadViewport.ts	CadViewport.hasAnyHidden	method	281	283	public hasAnyHidden(): boolean
-src/engine/CadViewport.ts	CadViewport.getMode	method	285	287	public getMode(): ScaleMode
-src/engine/CadViewport.ts	CadViewport.getLensSection	method	289	291	public getLensSection(): LensSection
-src/engine/CadViewport.ts	CadViewport.refreshVisibility	method	293	304	public refreshVisibility(): void
-src/engine/CadViewport.ts	CadViewport.setLensSection	method	306	325	public setLensSection(section: LensSection, immediateCamera = false): void
-src/engine/CadViewport.ts	CadViewport.getSensorFabVolume	method	327	329	public getSensorFabVolume(): SensorFabVolume
-src/engine/CadViewport.ts	CadViewport.setSensorFabVolume	method	331	350	public setSensorFabVolume(vol: SensorFabVolume, immediateCamera = false): void
-src/engine/CadViewport.ts	CadViewport.getMiraiSubView	method	352	354	public getMiraiSubView(): number
-src/engine/CadViewport.ts	CadViewport.setMiraiSubView	method	356	376	public setMiraiSubView(subView: number, immediateCamera = false): void
-src/engine/CadViewport.ts	CadViewport.getOriginalSubView	method	378	380	public getOriginalSubView(): number
-src/engine/CadViewport.ts	CadViewport.setOriginalSubView	method	382	402	public setOriginalSubView(subView: number, immediateCamera = false): void
-src/engine/CadViewport.ts	CadViewport.setMode	method	404	424	public setMode(nextMode: ScaleMode, immediateCamera = false): void
-src/engine/CadViewport.ts	CadViewport.setExplode	method	426	434	public setExplode(value: number, immediate = false): void
-src/engine/CadViewport.ts	CadViewport.getExplode	method	436	438	public getExplode(): number
-src/engine/CadViewport.ts	CadViewport.setKineMode	method	440	444	public setKineMode(enabled: boolean): boolean
-src/engine/CadViewport.ts	CadViewport.isKineMode	method	446	448	public isKineMode(): boolean
-src/engine/CadViewport.ts	CadViewport.getKineStats	method	450	452	public getKineStats()
-src/engine/CadViewport.ts	CadViewport.getCameraZoomBounds	method	454	468	public getCameraZoomBounds():
-src/engine/CadViewport.ts	CadViewport.setRenderMode	method	470	473	public setRenderMode(mode: RenderMode): void
-src/engine/CadViewport.ts	CadViewport.setQuality	method	475	483	public setQuality(quality: GraphicsQuality): void
-src/engine/CadViewport.ts	CadViewport.getQuality	method	485	487	public getQuality(): GraphicsQuality
-src/engine/CadViewport.ts	CadViewport.setSection	method	489	495	public setSection(axis: SectionAxis, normalizedValue?: number): void
-src/engine/CadViewport.ts	CadViewport.setPhysicsActive	method	497	500	public setPhysicsActive(active: boolean): void
-src/engine/CadViewport.ts	CadViewport.selectPart	method	502	532	public selectPart(partId: string | null, _focusCamera = false): void
-src/engine/CadViewport.ts	CadViewport.setHoveredPartFromUI	method	534	538	public setHoveredPartFromUI(partId: string | null): void
-src/engine/CadViewport.ts	CadViewport.togglePartHidden	method	540	560	public togglePartHidden(partId: string): void
-src/engine/CadViewport.ts	CadViewport.toggleIsolateSelected	method	562	572	public toggleIsolateSelected(): void
-src/engine/CadViewport.ts	CadViewport.resetAllVisibility	method	574	579	public resetAllVisibility(): void
-src/engine/CadViewport.ts	CadViewport.stepSelectedPart	method	581	588	public stepSelectedPart(delta: -1 | 1): void
-src/engine/CadViewport.ts	CadViewport.updateTightMaxDistance	method	590	601	private updateTightMaxDistance(heroDistOverride?: number): void
-src/engine/CadViewport.ts	CadViewport.updateDynamicClipPlanes	method	603	614	private updateDynamicClipPlanes(): void
-src/engine/CadViewport.ts	CadViewport.setCameraPreset	method	616	929	public setCameraPreset(preset: CameraPreset, immediate = false): void
-src/engine/CadViewport.ts	CadViewport.focusSensorFabStage	method	932	1056	public focusSensorFabStage(stage: SensorFabStage, immediate = false): void
-src/engine/CadViewport.ts	CadViewport.focusOnPart	method	1058	1105	public focusOnPart(part: CadPart): void
-src/engine/CadViewport.ts	CadViewport.wakeLoop	method	1107	1113	private wakeLoop(): void
-src/engine/CadViewport.ts	CadViewport.animateCameraTo	method	1115	1123	private animateCameraTo(pos: THREE.Vector3, target: THREE.Vector3): void
-src/engine/CadViewport.ts	CadViewport.markDirty	method	1125	1128	private markDirty(frames = 3): void
-src/engine/CadViewport.ts	CadViewport.requestRenderFrame	method	1130	1132	public requestRenderFrame(): void
-src/engine/CadViewport.ts	CadViewport.frameLensForOpticsStudio	method	1134	1147	public frameLensForOpticsStudio(immediate = false): void
-src/engine/CadViewport.ts	CadViewport.handleResize	method	1149	1157	public handleResize(): void
-src/engine/CadViewport.ts	CadViewport.updateClippingPlane	method	1159	1349	private updateClippingPlane(): void
-src/engine/CadViewport.ts	CadViewport.applyVisibilityAndStyles	method	1351	1360	private applyVisibilityAndStyles(): void
-src/engine/CadViewport.ts	CadViewport.bindEvents	method	1362	1454	private bindEvents(): void
-src/engine/CadViewport.ts	CadViewport.getRenderer	method	1456	1458	public getRenderer(): THREE.WebGLRenderer
-src/engine/CadViewport.ts	CadViewport.getContainer	method	1460	1462	public getContainer(): HTMLElement
-src/engine/CadViewport.ts	CadViewport.setCustomSceneRenderer	method	1464	1487	public setCustomSceneRenderer( fn: ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void) | null ): …
-src/engine/CadViewport.ts	CadViewport.handleContextLost	method	1489	1495	private handleContextLost(event: Event): void
-src/engine/CadViewport.ts	CadViewport.handleContextRestored	method	1497	1503	private handleContextRestored(): void
-src/engine/CadViewport.ts	CadViewport.handleVisibilityChange	method	1505	1511	private handleVisibilityChange(): void
-src/engine/CadViewport.ts	CadViewport.getGpuStats	method	1513	1551	public getGpuStats():
-src/engine/CadViewport.ts	CadViewport.updateHoverFromRaycast	method	1553	1568	private updateHoverFromRaycast(): void
-src/engine/CadViewport.ts	CadViewport.dispose	method	1715	1732	public dispose(): void
+src/engine/CadViewport.ts	ViewportCallbacks	interface	20	25	export interface ViewportCallbacks
+src/engine/CadViewport.ts	CadViewport	class	56	2494	export class CadViewport
+src/engine/CadViewport.ts	CadViewport.isSectionActive	method	239	241	private isSectionActive(): boolean
+src/engine/CadViewport.ts	CadViewport.activateCurrentMode	method	243	257	private activateCurrentMode(): void
+src/engine/CadViewport.ts	CadViewport.setCaptureControlled	method	263	273	public setCaptureControlled(enabled: boolean): void
+src/engine/CadViewport.ts	CadViewport.activateAtomic	method	279	366	public async activateAtomic( nextMode: ScaleMode, quality: GraphicsQuality, opts?:
+src/engine/CadViewport.ts	CadViewport.hydrateMetaOnly	method	372	474	public async hydrateMetaOnly( nextMode: ScaleMode, quality?: GraphicsQuality, subView?: number ): Promise<voi…
+src/engine/CadViewport.ts	CadViewport.isMetaOnlyActive	method	476	481	public isMetaOnlyActive(): boolean
+src/engine/CadViewport.ts	CadViewport.renderCaptureFrameNow	method	486	504	public renderCaptureFrameNow(): void
+src/engine/CadViewport.ts	CadViewport.isV2Mode	method	506	508	public isV2Mode(mode: ScaleMode = this.mode): boolean
+src/engine/CadViewport.ts	CadViewport.getV2Runtime	method	510	512	public getV2Runtime(): UnitV2Runtime
+src/engine/CadViewport.ts	CadViewport.getMiShoeV2Runtime	method	515	517	public getMiShoeV2Runtime(): UnitV2Runtime
+src/engine/CadViewport.ts	CadViewport.getActiveSubViewForMode	method	519	525	private getActiveSubViewForMode(mode: ScaleMode): number
+src/engine/CadViewport.ts	CadViewport.getTotalPartCount	method	528	536	public getTotalPartCount(): number
+src/engine/CadViewport.ts	CadViewport.ensureAllHydrated	method	538	540	public async ensureAllHydrated(): Promise<number>
+src/engine/CadViewport.ts	CadViewport.getPartsForCurrentMode	method	542	547	public getPartsForCurrentMode(): CadPart[]
+src/engine/CadViewport.ts	CadViewport.getSelectedPart	method	549	555	public getSelectedPart(): CadPart | null
+src/engine/CadViewport.ts	CadViewport.isPartHidden	method	557	560	public isPartHidden(partId: string): boolean
+src/engine/CadViewport.ts	CadViewport.isIsolated	method	562	564	public isIsolated(): boolean
+src/engine/CadViewport.ts	CadViewport.hasAnyHidden	method	566	568	public hasAnyHidden(): boolean
+src/engine/CadViewport.ts	CadViewport.getMode	method	570	572	public getMode(): ScaleMode
+src/engine/CadViewport.ts	CadViewport.getLensSection	method	574	576	public getLensSection(): LensSection
+src/engine/CadViewport.ts	CadViewport.refreshVisibility	method	578	589	public refreshVisibility(): void
+src/engine/CadViewport.ts	CadViewport.setLensSection	method	591	610	public setLensSection(section: LensSection, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.getSensorFabVolume	method	612	614	public getSensorFabVolume(): SensorFabVolume
+src/engine/CadViewport.ts	CadViewport.setSensorFabVolume	method	616	635	public setSensorFabVolume(vol: SensorFabVolume, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.getMiraiSubView	method	637	639	public getMiraiSubView(): number
+src/engine/CadViewport.ts	CadViewport.setMiraiSubView	method	641	661	public setMiraiSubView(subView: number, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.getOriginalSubView	method	663	665	public getOriginalSubView(): number
+src/engine/CadViewport.ts	CadViewport.setOriginalSubView	method	667	687	public setOriginalSubView(subView: number, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setMode	method	689	709	public setMode(nextMode: ScaleMode, immediateCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setExplode	method	711	719	public setExplode(value: number, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.getExplode	method	721	723	public getExplode(): number
+src/engine/CadViewport.ts	CadViewport.setKineMode	method	725	729	public setKineMode(enabled: boolean): boolean
+src/engine/CadViewport.ts	CadViewport.isKineMode	method	731	733	public isKineMode(): boolean
+src/engine/CadViewport.ts	CadViewport.getKineStats	method	735	737	public getKineStats()
+src/engine/CadViewport.ts	CadViewport.getCameraZoomBounds	method	739	753	public getCameraZoomBounds():
+src/engine/CadViewport.ts	CadViewport.setRenderMode	method	755	758	public setRenderMode(mode: RenderMode): void
+src/engine/CadViewport.ts	CadViewport.setQuality	method	760	768	public setQuality(quality: GraphicsQuality): void
+src/engine/CadViewport.ts	CadViewport.getQuality	method	770	772	public getQuality(): GraphicsQuality
+src/engine/CadViewport.ts	CadViewport.setSection	method	774	781	public setSection(axis: SectionAxis, normalizedValue?: number): void
+src/engine/CadViewport.ts	CadViewport.setArbitraryClipPlane	method	783	791	public setArbitraryClipPlane(normal: [number, number, number], constant: number): void
+src/engine/CadViewport.ts	CadViewport.clearArbitraryClipPlane	method	793	797	public clearArbitraryClipPlane(): void
+src/engine/CadViewport.ts	CadViewport.setStudioBackground	method	799	802	public setStudioBackground(colorHex: number | null): void
+src/engine/CadViewport.ts	CadViewport.stepPhysicsAtTime	method	804	807	public stepPhysicsAtTime(sec: number): void
+src/engine/CadViewport.ts	CadViewport.setPhysicsActive	method	809	815	public setPhysicsActive(active: boolean): void
+src/engine/CadViewport.ts	CadViewport.selectPart	method	817	854	public selectPart(partId: string | null, _focusCamera = false): void
+src/engine/CadViewport.ts	CadViewport.setHoveredPartFromUI	method	856	860	public setHoveredPartFromUI(partId: string | null): void
+src/engine/CadViewport.ts	CadViewport.setVisibleOnlyParts	method	862	876	public setVisibleOnlyParts(partIds: string[] | null): void
+src/engine/CadViewport.ts	CadViewport.setHiddenParts	method	878	886	public setHiddenParts(partIds: string[]): void
+src/engine/CadViewport.ts	CadViewport.setIsolatedPart	method	888	895	public setIsolatedPart(partId: string | null): void
+src/engine/CadViewport.ts	CadViewport.togglePartHidden	method	897	917	public togglePartHidden(partId: string): void
+src/engine/CadViewport.ts	CadViewport.toggleIsolateSelected	method	919	929	public toggleIsolateSelected(): void
+src/engine/CadViewport.ts	CadViewport.resetAllVisibility	method	931	936	public resetAllVisibility(): void
+src/engine/CadViewport.ts	CadViewport.stepSelectedPart	method	938	945	public stepSelectedPart(delta: -1 | 1): void
+src/engine/CadViewport.ts	CadViewport.updateTightMaxDistance	method	947	958	private updateTightMaxDistance(heroDistOverride?: number): void
+src/engine/CadViewport.ts	CadViewport.updateDynamicClipPlanes	method	960	971	private updateDynamicClipPlanes(): void
+src/engine/CadViewport.ts	CadViewport.setCameraPreset	method	973	1287	public setCameraPreset(preset: CameraPreset, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.resetCameraUpAndFov	method	1289	1295	public resetCameraUpAndFov(fov = 32): void
+src/engine/CadViewport.ts	CadViewport.commitCameraImmediate	method	1297	1336	private commitCameraImmediate( pos: THREE.Vector3, target: THREE.Vector3, up?: THREE.Vector3, fov?: number, r…
+src/engine/CadViewport.ts	CadViewport.setExtendedCameraPreset	method	1342	1388	public setExtendedCameraPreset(preset: ExtendedCameraPreset, immediate = true): void
+src/engine/CadViewport.ts	CadViewport.setCameraSpherical	method	1399	1467	public setCameraSpherical(opts:
+src/engine/CadViewport.ts	CadViewport.setCameraPose	method	1472	1483	public setCameraPose(opts:
+src/engine/CadViewport.ts	CadViewport.focusOnParts	method	1490	1581	public focusOnParts( partIds: string[], opts?:
+src/engine/CadViewport.ts	CadViewport.getCameraState	method	1583	1610	public getCameraState():
+src/engine/CadViewport.ts	CadViewport.getUnitWorldBoxTuple	method	1612	1627	public getUnitWorldBoxTuple():
+src/engine/CadViewport.ts	CadViewport.getPartScreenAnnotations	method	1632	1679	public getPartScreenAnnotations( maxLabels = 12 ): Array<
+src/engine/CadViewport.ts	CadViewport.focusSensorFabStage	method	1682	1806	public focusSensorFabStage(stage: SensorFabStage, immediate = false): void
+src/engine/CadViewport.ts	CadViewport.focusOnPart	method	1808	1855	public focusOnPart(part: CadPart): void
+src/engine/CadViewport.ts	CadViewport.wakeLoop	method	1857	1869	private wakeLoop(): void
+src/engine/CadViewport.ts	CadViewport.animateCameraTo	method	1871	1879	private animateCameraTo(pos: THREE.Vector3, target: THREE.Vector3): void
+src/engine/CadViewport.ts	CadViewport.markDirty	method	1881	1884	private markDirty(frames = 3): void
+src/engine/CadViewport.ts	CadViewport.requestRenderFrame	method	1886	1888	public requestRenderFrame(): void
+src/engine/CadViewport.ts	CadViewport.frameLensForOpticsStudio	method	1890	1903	public frameLensForOpticsStudio(immediate = false): void
+src/engine/CadViewport.ts	CadViewport.handleResize	method	1905	1913	public handleResize(): void
+src/engine/CadViewport.ts	CadViewport.updateClippingPlane	method	1915	2110	private updateClippingPlane(): void
+src/engine/CadViewport.ts	CadViewport.applyVisibilityAndStyles	method	2112	2121	private applyVisibilityAndStyles(): void
+src/engine/CadViewport.ts	CadViewport.bindEvents	method	2123	2215	private bindEvents(): void
+src/engine/CadViewport.ts	CadViewport.getRenderer	method	2217	2219	public getRenderer(): THREE.WebGLRenderer
+src/engine/CadViewport.ts	CadViewport.getContainer	method	2221	2223	public getContainer(): HTMLElement
+src/engine/CadViewport.ts	CadViewport.setCustomSceneRenderer	method	2225	2248	public setCustomSceneRenderer( fn: ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void) | null ): …
+src/engine/CadViewport.ts	CadViewport.handleContextLost	method	2250	2256	private handleContextLost(event: Event): void
+src/engine/CadViewport.ts	CadViewport.handleContextRestored	method	2258	2264	private handleContextRestored(): void
+src/engine/CadViewport.ts	CadViewport.handleVisibilityChange	method	2266	2272	private handleVisibilityChange(): void
+src/engine/CadViewport.ts	CadViewport.getGpuStats	method	2274	2312	public getGpuStats():
+src/engine/CadViewport.ts	CadViewport.updateHoverFromRaycast	method	2314	2329	private updateHoverFromRaycast(): void
+src/engine/CadViewport.ts	CadViewport.dispose	method	2476	2493	public dispose(): void
 src/engine/FastCadGeometry.ts	QUANT_POS_INV_SCALE	const	16	16	QUANT_POS_INV_SCALE = 64.0
 src/engine/FastCadGeometry.ts	QUANT_POS_SCALE	const	17	17	QUANT_POS_SCALE = 1.0 / QUANT_POS_INV_SCALE
 src/engine/FastCadGeometry.ts	MESH_I16_STRIDE	const	18	18	MESH_I16_STRIDE = 8
@@ -829,25 +868,25 @@ src/engine/FastCadGeometry.ts	sagittaSegmentsForArc	func	26	41	function sagittaS
 src/engine/FastCadGeometry.ts	resampleCurvePathPoints	func	43	108	function resampleCurvePathPoints( curves: THREE.Curve<THREE.Vector2>[], toleranceMm: number, maxCircleSegs: n…
 src/engine/FastCadGeometry.ts	resampleShapeSagitta	func	110	153	export function resampleShapeSagitta( shape: THREE.Shape, toleranceMm: number, maxCircleSegs: number ): THREE…
 src/engine/FastCadGeometry.ts	nextPow2	func	159	163	function nextPow2(n: number): number
-src/engine/FastCadGeometry.ts	ensureEdgeVertScratch	func	189	203	function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void
-src/engine/FastCadGeometry.ts	ensureEdgeHashScratch	func	205	219	function ensureEdgeHashScratch(eTableSize: number): void
-src/engine/FastCadGeometry.ts	extractPooledCadEdgesArray	func	225	437	export function extractPooledCadEdgesArray( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLe…
-src/engine/FastCadGeometry.ts	extractFastCadEdges	func	439	448	export function extractFastCadEdges( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLengthMm …
-src/engine/FastCadGeometry.ts	qKey	func	456	458	function qKey(n: number): string
-src/engine/FastCadGeometry.ts	maxRadialAtAxisExtreme	func	460	488	function maxRadialAtAxisExtreme( posAttr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, axis: 'x'…
-src/engine/FastCadGeometry.ts	retessellatePrimitiveSagitta	func	490	1133	export function retessellatePrimitiveSagitta( geo: THREE.BufferGeometry, toleranceMm: number ): THREE.BufferG…
-src/engine/FastCadGeometry.ts	isGeometryLikelyOpen	func	1139	1173	export function isGeometryLikelyOpen(geo: THREE.BufferGeometry): boolean
-src/engine/FastCadGeometry.ts	encodeOctahedralNormal16	func	1179	1197	export function encodeOctahedralNormal16( nx: number, ny: number, nz: number, out: Int16Array, offset: number…
-src/engine/FastCadGeometry.ts	smoothCreaseNormals	func	1212	1305	export function smoothCreaseNormals(geo: THREE.BufferGeometry, creaseAngleDeg = 38): void
-src/engine/FastCadGeometry.ts	CompactEntryInput	interface	1311	1319	export interface CompactEntryInput
-src/engine/FastCadGeometry.ts	WeldedPageEntrySpan	interface	1321	1325	export interface WeldedPageEntrySpan
-src/engine/FastCadGeometry.ts	CompactWeldedPage	interface	1327	1332	export interface CompactWeldedPage
-src/engine/FastCadGeometry.ts	clampI16	func	1334	1336	function clampI16(v: number): number
-src/engine/FastCadGeometry.ts	weldEntriesRangeToPage	func	1338	1531	function weldEntriesRangeToPage( entries: ReadonlyArray<CompactEntryInput>, startEntry: number, endEntry: num…
-src/engine/FastCadGeometry.ts	buildCompactWeldedPagesFromEntries	func	1537	1561	export function buildCompactWeldedPagesFromEntries( entries: ReadonlyArray<CompactEntryInput>, omitUv = false…
-src/engine/FastCadGeometry.ts	RawEdgeChunk	interface	1567	1572	export interface RawEdgeChunk
-src/engine/FastCadGeometry.ts	IndexedEdgeBuildResult	interface	1574	1578	export interface IndexedEdgeBuildResult
-src/engine/FastCadGeometry.ts	buildIndexedEdgeGeometry	func	1580	1704	export function buildIndexedEdgeGeometry( chunks: ReadonlyArray<RawEdgeChunk> ): IndexedEdgeBuildResult | null
+src/engine/FastCadGeometry.ts	ensureEdgeVertScratch	func	191	204	function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void
+src/engine/FastCadGeometry.ts	ensureEdgeHashScratch	func	206	219	function ensureEdgeHashScratch(eTableSize: number): void
+src/engine/FastCadGeometry.ts	extractPooledCadEdgesArray	func	225	454	export function extractPooledCadEdgesArray( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLe…
+src/engine/FastCadGeometry.ts	extractFastCadEdges	func	456	465	export function extractFastCadEdges( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLengthMm …
+src/engine/FastCadGeometry.ts	qKey	func	473	475	function qKey(n: number): string
+src/engine/FastCadGeometry.ts	maxRadialAtAxisExtreme	func	477	505	function maxRadialAtAxisExtreme( posAttr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, axis: 'x'…
+src/engine/FastCadGeometry.ts	retessellatePrimitiveSagitta	func	507	1150	export function retessellatePrimitiveSagitta( geo: THREE.BufferGeometry, toleranceMm: number ): THREE.BufferG…
+src/engine/FastCadGeometry.ts	isGeometryLikelyOpen	func	1156	1190	export function isGeometryLikelyOpen(geo: THREE.BufferGeometry): boolean
+src/engine/FastCadGeometry.ts	encodeOctahedralNormal16	func	1196	1214	export function encodeOctahedralNormal16( nx: number, ny: number, nz: number, out: Int16Array, offset: number…
+src/engine/FastCadGeometry.ts	smoothCreaseNormals	func	1229	1322	export function smoothCreaseNormals(geo: THREE.BufferGeometry, creaseAngleDeg = 38): void
+src/engine/FastCadGeometry.ts	CompactEntryInput	interface	1328	1336	export interface CompactEntryInput
+src/engine/FastCadGeometry.ts	WeldedPageEntrySpan	interface	1338	1342	export interface WeldedPageEntrySpan
+src/engine/FastCadGeometry.ts	CompactWeldedPage	interface	1344	1349	export interface CompactWeldedPage
+src/engine/FastCadGeometry.ts	clampI16	func	1351	1353	function clampI16(v: number): number
+src/engine/FastCadGeometry.ts	weldEntriesRangeToPage	func	1355	1548	function weldEntriesRangeToPage( entries: ReadonlyArray<CompactEntryInput>, startEntry: number, endEntry: num…
+src/engine/FastCadGeometry.ts	buildCompactWeldedPagesFromEntries	func	1554	1578	export function buildCompactWeldedPagesFromEntries( entries: ReadonlyArray<CompactEntryInput>, omitUv = false…
+src/engine/FastCadGeometry.ts	RawEdgeChunk	interface	1584	1589	export interface RawEdgeChunk
+src/engine/FastCadGeometry.ts	IndexedEdgeBuildResult	interface	1591	1595	export interface IndexedEdgeBuildResult
+src/engine/FastCadGeometry.ts	buildIndexedEdgeGeometry	func	1597	1721	export function buildIndexedEdgeGeometry( chunks: ReadonlyArray<RawEdgeChunk> ): IndexedEdgeBuildResult | null
 src/engine/GpuOptimizer.ts	GpuProfile	interface	3	22	export interface GpuProfile
 src/engine/GpuOptimizer.ts	GPU_PROFILE	const	79	79	GPU_PROFILE: GpuProfile = detectGpuProfile()
 src/engine/GpuOptimizer.ts	NATIVE_HI_TEX_W	const	83	83	NATIVE_HI_TEX_W = 512
@@ -971,8 +1010,8 @@ src/playground/CameraEngineeringGrader.ts	GraderCategoryResult	interface	32	41	e
 src/playground/CameraEngineeringGrader.ts	PartDiagnosticFlag	interface	43	47	export interface PartDiagnosticFlag
 src/playground/CameraEngineeringGrader.ts	CameraPhysicalTelemetry	interface	49	57	export interface CameraPhysicalTelemetry
 src/playground/CameraEngineeringGrader.ts	CameraEngineeringReport	interface	59	88	export interface CameraEngineeringReport
-src/playground/CameraEngineeringGrader.ts	evaluateCustomCamera	func	172	959	export function evaluateCustomCamera( parts: readonly PlacedPartSnapshot[], requestedProfile: CameraDesignPro…
-src/playground/CameraEngineeringGrader.ts	renderEngineeringRadarSvg	func	965	1019	export function renderEngineeringRadarSvg(report: CameraEngineeringReport): string
+src/playground/CameraEngineeringGrader.ts	evaluateCustomCamera	func	222	1096	export function evaluateCustomCamera( parts: readonly PlacedPartSnapshot[], requestedProfile: CameraDesignPro…
+src/playground/CameraEngineeringGrader.ts	renderEngineeringRadarSvg	func	1102	1156	export function renderEngineeringRadarSvg(report: CameraEngineeringReport): string
 src/playground/PartGeometryExtractor.ts	EngineeringRole	type	30	46	type EngineeringRole = union(16 members)
 src/playground/PartGeometryExtractor.ts	PG_ROLE_CHIP_BITS	const	48	60	PG_ROLE_CHIP_BITS =
 src/playground/PartGeometryExtractor.ts	CatalogPartEntry	interface	62	73	export interface CatalogPartEntry
@@ -999,9 +1038,9 @@ src/playground/PlyaVerificationPipeline.ts	PlyaToolResult	interface	20	37	export
 src/playground/PlyaVerificationPipeline.ts	PlyaWebContext	interface	39	43	export interface PlyaWebContext
 src/playground/PlyaVerificationPipeline.ts	PlyaIndustrialMetrics	interface	45	53	export interface PlyaIndustrialMetrics
 src/playground/PlyaVerificationPipeline.ts	PlyaPipelineReport	interface	55	72	export interface PlyaPipelineReport
-src/playground/PlyaVerificationPipeline.ts	runPlyaVerificationPipeline	func	226	1215	export function runPlyaVerificationPipeline( parts: readonly PlacedPartSnapshot[], profile: CameraDesignProfi…
-src/playground/PlyaVerificationPipeline.ts	generatePlaygroundKiCadSchematic	func	1221	1331	export function generatePlaygroundKiCadSchematic( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
-src/playground/PlyaVerificationPipeline.ts	generatePlaygroundNgspiceNetlist	func	1337	1382	export function generatePlaygroundNgspiceNetlist( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
+src/playground/PlyaVerificationPipeline.ts	runPlyaVerificationPipeline	func	226	1218	export function runPlyaVerificationPipeline( parts: readonly PlacedPartSnapshot[], profile: CameraDesignProfi…
+src/playground/PlyaVerificationPipeline.ts	generatePlaygroundKiCadSchematic	func	1224	1334	export function generatePlaygroundKiCadSchematic( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
+src/playground/PlyaVerificationPipeline.ts	generatePlaygroundNgspiceNetlist	func	1340	1385	export function generatePlaygroundNgspiceNetlist( parts: readonly PlacedPartSnapshot[], plya: PlyaPipelineRep…
 src/ui/ExplanationDrawer.ts	DrawerViewTab	type	5	5	export type DrawerViewTab = 'all' | 'diagram' | 'explanation';
 src/ui/ExplanationDrawer.ts	ExplanationDrawerHandlers	interface	7	19	export interface ExplanationDrawerHandlers
 src/ui/ExplanationDrawer.ts	ExplanationDrawer	class	200	1109	export class ExplanationDrawer

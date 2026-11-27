@@ -79,7 +79,7 @@ welcome-u-crest-bolts	W77	う上部点 M2六角穴付締結ボルト	glyph_u	-21
 welcome-u-crest-copper-spreader	W78	う上部点 無酸素銅サーマルスプレッダ	glyph_u	-21,4,0	15.18,8,0.65	-8,25,-5	copper_thermal
 welcome-u-quartz-support-post	W79	う浮遊点支持・透明溶融石英構造支柱	glyph_u	-21,4,0	1.82,9,2.1	-6,18,4	optical_glass_ed
 welcome-u-quartz-brass-collars	W80	う石英支柱 上下CNC真鍮締結フランジカ	glyph_u	-21,4,0	3.73,9.15,4.3	-6,16,12	brass_precision
-welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.84,10.2,0.36	-6,19,-8	gold_plating
+welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.84,10.2,0.36	-6,19,-8	copper_coil
 welcome-u-quartz-oring-seals	W82	う石英支柱 上下エラストマー防振	glyph_u	-21,4,0	3.39,6.58,2.94	-6,17,16	magnesium_cast
 welcome-u-arc-copper-heatpipe	W83	う主弧 湾曲C1020無酸素銅ヒートスプ	glyph_u	-21,4,0	27.45,31.5,0.65	-8,2,-12	copper_thermal
 welcome-u-arc-cinnabar-edge	W84	う主弧 シナバー光学エッジアクセント導光	glyph_u	-21,4,0	29.71,33.64,0.65	-10,6,26	pin_carrier_gloss
@@ -126,7 +126,7 @@ welcome-ko-quartz-col-left	W124	こ左・透明溶融石英構造支柱コラム
 welcome-ko-quartz-col-right	W125	こ右・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	1.99,26.8,2.3	16,6,4	optical_glass_ed
 welcome-ko-quartz-brass-collars	W126	こ左右石英コラム 4点CNC真鍮締結フラ	glyph_ko	23,4,0	19.28,26.95,4.72	10,8,12	brass_precision
 welcome-ko-left-power-bus	W127	こ左コラム内蔵 12V給電ペア極細シール	glyph_ko	23,4,0	0.84,27.4,0.36	2,6,-8	copper_coil
-welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.84,28,0.36	18,6,-8	gold_plating
+welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.84,28,0.36	18,6,-8	copper_coil
 welcome-ko-quartz-seals	W129	こ左右石英コラム 防振・防塵エラストマー	glyph_ko	23,4,0	18.86,24.38,3.17	10,4,16	magnesium_cast
 welcome-so-cnc-chassis	W130	そ主骨格 CNC6061アルミ肉抜きシャ	glyph_so	67,4,0	28.98,26.82,5.2	26.39,6,0	matte_black_anodized
 welcome-so-mg-finned-backplate	W131	そ背面 AZ91Dマグネシウム3D放熱フ	glyph_so	67,4,0	27.91,25.91,2.32	29.03,4,-28	magnesium_cast

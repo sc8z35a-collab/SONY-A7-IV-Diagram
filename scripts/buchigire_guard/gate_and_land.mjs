@@ -51,7 +51,9 @@ function writeReceipts(ctx, data) {
  */
 export function computeWorktreeFingerprint(ctx) {
   const { liveFiles, deletedFiles, skippedLarge } = listWorkingFiles(ctx.repoRoot, ctx.cfg);
-  const manifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, '');
+  const manifest = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, '', {
+    cachePath: path.join(ctx.vaultDir, 'sha_cache.json'),
+  });
   return { fingerprint: manifest.fingerprint, liveFiles, deletedFiles, skippedLarge };
 }
 
@@ -142,9 +144,13 @@ export function runGate(ctx, opts = {}) {
     }
   }
 
-  const st = computeStatus(ctx);
   const por = getPorcelainStatus(ctx.repoRoot);
-  const { fingerprint, liveFiles, skippedLarge } = computeWorktreeFingerprint(ctx);
+  const working = listWorkingFiles(ctx.repoRoot, ctx.cfg);
+  const st = computeStatus(ctx, { porcelain: por, working, verifyRemote: true });
+  const { liveFiles, deletedFiles, skippedLarge } = working;
+  const fingerprint = buildWorkingManifest(ctx.repoRoot, liveFiles, deletedFiles, '', {
+    cachePath: path.join(ctx.vaultDir, 'sha_cache.json'),
+  }).fingerprint;
 
   // Collect all paths changed relative to origin/<defaultBranch> PLUS current dirty files
   const branchChanged = new Set(por.allDirty.map((d) => d.path));

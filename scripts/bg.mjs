@@ -15,30 +15,11 @@ import {
   getRepoContext,
 } from './buchigire_guard/git_plumbing.mjs';
 import {
-  computeStatus,
-  createSnapshot,
-  runBoot,
-  runGc,
-  runRecover,
-  runStart,
-  runWatchDaemon,
-} from './buchigire_guard/vault_engine.mjs';
-import {
-  manageHooks,
-  runAndRecordCheck,
-  runGate,
-  runGuardExec,
-  runHookCheck,
-  runLand,
-  runSyncCheck,
-} from './buchigire_guard/gate_and_land.mjs';
-import {
   formatAi,
   formatHuman,
   formatJson,
   writeHtmlDashboard,
 } from './buchigire_guard/renderers.mjs';
-import { runSelfTest } from './buchigire_guard/selftest.mjs';
 
 const HELP_TEXT = `
 bg — Buchigire Guard v1 (ぶち切れ対策ツール v1)
@@ -133,7 +114,8 @@ async function main() {
 
   try {
     if (cmd === 'selftest') {
-      const res = runSelfTest();
+      const { runSelfTest } = await import('./buchigire_guard/selftest.mjs');
+      const res = await runSelfTest();
       outputResult('selftest', res, flags);
       process.exit(res.exitCode);
     }
@@ -144,10 +126,14 @@ async function main() {
       retentionDays: flags.days,
     });
 
+    const isVaultCmd = ['boot', 'start', 'snap', 'checkpoint', 'seal', 'watch', 'recover', 'status', 'gc'].includes(cmd);
+    const ve = isVaultCmd ? await import('./buchigire_guard/vault_engine.mjs') : null;
+    const gl = !isVaultCmd ? await import('./buchigire_guard/gate_and_land.mjs') : null;
+
     let res;
     switch (cmd) {
       case 'boot':
-        res = runBoot(ctx);
+        res = ve.runBoot(ctx);
         break;
 
       case 'start': {
@@ -155,7 +141,7 @@ async function main() {
         if (!slug) {
           throw new Error('Usage: npm run bg -- start <branch-slug> [--goal="..."]');
         }
-        res = runStart(ctx, slug, {
+        res = ve.runStart(ctx, slug, {
           goal: flags.goal,
           nextStep: flags.next,
           artifactsDir: flags.artifacts,
@@ -168,7 +154,7 @@ async function main() {
 
       case 'snap':
       case 'checkpoint':
-        res = createSnapshot(ctx, {
+        res = ve.createSnapshot(ctx, {
           reason: flags.reason || 'snap',
           note: flags.note,
           goal: flags.goal,
@@ -184,7 +170,7 @@ async function main() {
         break;
 
       case 'seal':
-        res = createSnapshot(ctx, {
+        res = ve.createSnapshot(ctx, {
           reason: 'seal_pre_idle',
           note: flags.note || 'Pre-idle mandatory flush',
           goal: flags.goal,
@@ -200,7 +186,7 @@ async function main() {
         break;
 
       case 'watch':
-        res = await runWatchDaemon(ctx, {
+        res = await ve.runWatchDaemon(ctx, {
           intervalSec: flags.interval,
           artifactsDir: flags.artifacts,
           maxCycles: flags['max-cycles'],
@@ -208,7 +194,7 @@ async function main() {
         break;
 
       case 'recover':
-        res = runRecover(ctx, {
+        res = ve.runRecover(ctx, {
           mode: flags.mode || 'worktree',
           slug: flags.slug || positionals[0],
           oid: flags.oid,
@@ -220,7 +206,7 @@ async function main() {
         break;
 
       case 'gate':
-        res = runGate(ctx, {
+        res = gl.runGate(ctx, {
           policy: flags.policy,
           runChecks: Boolean(flags['run-checks']),
           requireChecks: Boolean(flags['require-checks']),
@@ -235,7 +221,7 @@ async function main() {
         const name = flags.name || 'custom_check';
         const command = tailCmd.length > 0 ? tailCmd.join(' ') : positionals.join(' ');
         if (!command) throw new Error('Usage: npm run bg -- record-check --name=<key> -- <command>');
-        const r = runAndRecordCheck(ctx, name, command);
+        const r = gl.runAndRecordCheck(ctx, name, command);
         res = {
           exitCode: r.passed ? EXIT_OK : EXIT_BLOCKED,
           verdict: r.passed ? 'CHECK_RECORDED_PASS' : 'CHECK_FAILED',
@@ -246,16 +232,16 @@ async function main() {
 
       case 'guard-exec': {
         const execArgs = tailCmd.length > 0 ? tailCmd : positionals;
-        res = runGuardExec(ctx, execArgs, { localOnly: Boolean(flags['local-only']) });
+        res = gl.runGuardExec(ctx, execArgs, { localOnly: Boolean(flags['local-only']) });
         break;
       }
 
       case 'sync':
-        res = runSyncCheck(ctx, { target: flags.target, noFetch: Boolean(flags['no-fetch']) });
+        res = gl.runSyncCheck(ctx, { target: flags.target, noFetch: Boolean(flags['no-fetch']) });
         break;
 
       case 'land':
-        res = runLand(ctx, {
+        res = gl.runLand(ctx, {
           policy: flags.policy || 'integrator',
           title: flags.title,
           body: flags.body,
@@ -267,28 +253,31 @@ async function main() {
         });
         break;
 
-      case 'status':
-        res = computeStatus(ctx);
+      case 'status': {
+        const { getPorcelainAndWorkingFilesAsync } = await import('./buchigire_guard/git_plumbing.mjs');
+        const { porcelain, working } = await getPorcelainAndWorkingFilesAsync(ctx.repoRoot, ctx.cfg);
+        res = ve.computeStatus(ctx, { porcelain, working, verifyRemote: Boolean(flags['verify-remote']) });
         if (typeof flags.html === 'string') {
           res.htmlDashboardPath = writeHtmlDashboard(res, flags.html);
         }
         break;
+      }
 
       case 'hooks': {
         const act = positionals[0] || 'status';
         if (!['install', 'uninstall', 'status'].includes(act)) {
           throw new Error(`Invalid hooks action '${act}'. Use install | uninstall | status.`);
         }
-        res = manageHooks(ctx, act);
+        res = gl.manageHooks(ctx, act);
         break;
       }
 
       case 'hook-check':
-        res = runHookCheck(ctx);
+        res = gl.runHookCheck(ctx);
         break;
 
       case 'gc':
-        res = runGc(ctx, {
+        res = ve.runGc(ctx, {
           retentionDays: flags.days,
           dryRun: Boolean(flags['dry-run']),
           all: Boolean(flags.all),

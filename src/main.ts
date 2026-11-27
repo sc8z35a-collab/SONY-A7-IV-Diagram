@@ -726,10 +726,11 @@ const captureBridge = new ArtifactCaptureBridge({
     viewport.setExplode(val, immediate);
     controls.setExplodeValue(val);
   },
-  setCameraPreset: (p, immediate) => viewport.setCameraPreset(p, immediate),
+  setCameraPreset: (p, immediate) => viewport.setExtendedCameraPreset(p, immediate),
   selectPart: (partId, focusCamera) => viewport.selectPart(partId, focusCamera),
   getFirstPartId: () => viewport.getPartsForCurrentMode()[0]?.id ?? null,
   getSelectedPartId: () => viewport.getSelectedPart()?.id ?? null,
+  getPartCount: () => viewport.getPartsForCurrentMode().length,
   isUnitReady: () => viewport.getV2Runtime().isReady(),
   setPerfHudVisible: (v) => viewport.getV2Runtime().setPerfHudVisible(v),
   setDrawerViewTab: (tab) => drawer.setViewTab(tab),
@@ -746,11 +747,84 @@ const captureBridge = new ArtifactCaptureBridge({
   closeMiraiStudio: () => miraiStudioApi.close(),
   openOriginalStudio: (tab) => originalStudioApi.open(tab),
   closeOriginalStudio: () => originalStudioApi.close(),
+  requestRenderFrame: () => viewport.requestRenderFrame(),
+  setCaptureControlled: (enabled) => viewport.setCaptureControlled(enabled),
+  activateAtomic: async (mode, quality, opts) => {
+    await viewport.activateAtomic(mode, quality, opts);
+    controls.syncMode(mode);
+    controls.syncQuality(quality);
+    syncRail();
+  },
+  hydrateMetaOnly: async (mode, quality, subView) => {
+    await viewport.hydrateMetaOnly(mode, quality, subView);
+    controls.syncMode(mode);
+    if (quality) controls.syncQuality(quality);
+    syncRail();
+  },
+  isMetaOnlyActive: () => viewport.isMetaOnlyActive(),
+  renderCaptureFrameNow: () => viewport.renderCaptureFrameNow(),
+  syncUiForUnit: (mode, quality, explode) => {
+    controls.syncMode(mode);
+    controls.syncQuality(quality);
+    controls.setExplodeValue(explode);
+    if (mode === 'lens') controls.syncLensSection(viewport.getLensSection());
+    if (mode === 'sensor_fab') controls.syncFabVolume(viewport.getSensorFabVolume());
+    if (mode === 'mirai_2028') controls.syncMiraiSubView(viewport.getMiraiSubView());
+    syncRail();
+  },
+  resetCameraUpAndFov: (fov) => viewport.resetCameraUpAndFov(fov),
+  setCameraSpherical: (opts) => viewport.setCameraSpherical(opts),
+  setCameraPose: (opts) => viewport.setCameraPose(opts),
+  focusOnParts: (partIds, opts) => viewport.focusOnParts(partIds, opts),
+  getCameraState: () => viewport.getCameraState(),
+  getUnitWorldBox: () => viewport.getUnitWorldBoxTuple(),
+  getGpuStatsSummary: () => {
+    const s = viewport.getGpuStats();
+    return {
+      calls: s.calls,
+      triangles: s.triangles,
+      geometries: s.geometries,
+      textures: s.textures,
+      pixelRatio: s.pixelRatio,
+    };
+  },
+  setSection: (axis, value) => {
+    currentSectionAxis = axis;
+    viewport.setSection(axis, value);
+    controls.syncSectionAxis(axis, value);
+  },
+  setArbitraryClipPlane: (normal, constant) => viewport.setArbitraryClipPlane(normal, constant),
+  clearArbitraryClipPlane: () => viewport.clearArbitraryClipPlane(),
+  setVisibleOnlyParts: (partIds) => viewport.setVisibleOnlyParts(partIds),
+  setHiddenParts: (partIds) => viewport.setHiddenParts(partIds),
+  setIsolatedPart: (partId) => viewport.setIsolatedPart(partId),
+  setLensSection: (sec, immediate) => {
+    viewport.setLensSection(sec, immediate);
+    controls.syncLensSection(sec);
+    syncRail();
+  },
+  setSensorFabVolume: (vol, immediate) => {
+    viewport.setSensorFabVolume(vol, immediate);
+    controls.syncFabVolume(vol);
+    syncRail();
+  },
+  focusSensorFabStage: (stage, immediate) => {
+    viewport.focusSensorFabStage(stage, immediate);
+    controls.syncFabStage(stage);
+  },
+  openOpticsStudio: async (scenario) => {
+    const inst = await ensureRealOpticsStudio();
+    inst.open(scenario as Parameters<typeof opticsStudio.open>[0]);
+    viewport.frameLensForOpticsStudio(true);
+  },
+  closeOpticsStudio: () => opticsStudio.close(),
   setPhysicsActive: (active) => {
     viewport.setPhysicsActive(active);
     controls.syncPhysics(active);
   },
-  requestRenderFrame: () => viewport.requestRenderFrame(),
+  stepPhysicsAtTime: (sec) => viewport.stepPhysicsAtTime(sec),
+  setStudioBackground: (hex) => viewport.setStudioBackground(hex),
+  getPartScreenAnnotations: (maxLabels) => viewport.getPartScreenAnnotations(maxLabels),
 });
 
 // Expose lightweight inspection, Play Ground 1.1, FH MIRAI 2028, Original Showcase, and High-Speed Capture Engine (`pp`) hooks on window

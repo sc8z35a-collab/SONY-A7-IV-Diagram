@@ -91,13 +91,6 @@ function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
 
-function boxDistance(a: THREE.Box3, b: THREE.Box3): number {
-  const dx = Math.max(0, Math.max(a.min.x - b.max.x, b.min.x - a.max.x));
-  const dy = Math.max(0, Math.max(a.min.y - b.max.y, b.min.y - a.max.y));
-  const dz = Math.max(0, Math.max(a.min.z - b.max.z, b.min.z - a.max.z));
-  return Math.hypot(dx, dy, dz);
-}
-
 /** Realistic single-module baseline mass (grams) used for 3D CoG and mass telemetry */
 const ROLE_BASE_MASS_G: Record<EngineeringRole, number> = {
   lens: 175,
@@ -157,6 +150,63 @@ function resolveAutoProfile(
   return 'mirrorless';
 }
 
+const SEVERITY_RANK = { ok: 0, warn: 1, error: 2 } as const;
+
+let _sapCap = 0;
+let _sapWorld = new Float32Array(0);
+let _sapCore = new Float32Array(0);
+let _sapVols = new Float32Array(0);
+let _sapOrder = new Int32Array(0);
+let _sapVisited = new Uint8Array(0);
+let _sapQueue = new Int32Array(0);
+
+function ensureSapScratch(n: number): void {
+  if (n > _sapCap) {
+    _sapCap = Math.max(n, 256);
+    _sapWorld = new Float32Array(_sapCap * 6);
+    _sapCore = new Float32Array(_sapCap * 6);
+    _sapVols = new Float32Array(_sapCap);
+    _sapOrder = new Int32Array(_sapCap);
+    _sapVisited = new Uint8Array(_sapCap);
+    _sapQueue = new Int32Array(_sapCap);
+  } else {
+    _sapVisited.fill(0, 0, n);
+  }
+}
+
+function sortOrderByWorldMinX(order: Int32Array, world: Float32Array, left: number, right: number): void {
+  if (right - left <= 16) {
+    for (let i = left + 1; i <= right; i++) {
+      const key = order[i];
+      const keyX = world[key * 6];
+      let j = i - 1;
+      while (j >= left && world[order[j] * 6] > keyX) {
+        order[j + 1] = order[j];
+        j--;
+      }
+      order[j + 1] = key;
+    }
+    return;
+  }
+  const mid = (left + right) >> 1;
+  const pivotX = world[order[mid] * 6];
+  let i = left;
+  let j = right;
+  while (i <= j) {
+    while (world[order[i] * 6] < pivotX) i++;
+    while (world[order[j] * 6] > pivotX) j--;
+    if (i <= j) {
+      const tmp = order[i];
+      order[i] = order[j];
+      order[j] = tmp;
+      i++;
+      j--;
+    }
+  }
+  if (left < j) sortOrderByWorldMinX(order, world, left, j);
+  if (i < right) sortOrderByWorldMinX(order, world, i, right);
+}
+
 /**
  * Play Ground 1.1 Chief Camera Systems Engineer 1,000-Point Operational Grader.
  *
@@ -164,7 +214,7 @@ function resolveAutoProfile(
  *  - 6 Camera Design Profiles (`auto` / `mirrorless` / `compact` / `cinema` / `action` / `custom`)
  *    for both higher engineering precision AND higher creative design freedom.
  *  - True 3D Optical Cone Vignetting / Obstruction Ray-Corridor verification (Lens -> Mount -> 36x24mm Sensor).
- *  - BFS Structural Connectivity Graph detecting genuinely disconnected floating sub-assemblies.
+ *  - O(N log N + k) 1D X-Axis Sweep-and-Prune (28mm horizon) + BFS Structural Connectivity Graph.
  *  - Core-Box 0.78× Solid Interference check eliminating false-positive contact warnings.
  *  - Real-World Physical Telemetry Simulation: Total Mass (g), Mass-Weighted 3D Center of Gravity (mm),
  *    Peak Power (W), Estimated CIPA Shots, Continuous 4K60p Thermal Limit (min), Vignetting %.
@@ -176,44 +226,74 @@ export function evaluateCustomCamera(
   const partDiagnostics = new Map<string, PartDiagnosticFlag>();
   const markPart = (uid: string, severity: 'ok' | 'warn' | 'error', reason: string) => {
     const prev = partDiagnostics.get(uid);
-    const rank = { ok: 0, warn: 1, error: 2 };
-    if (!prev || rank[severity] > rank[prev.severity]) {
+    if (!prev || SEVERITY_RANK[severity] > SEVERITY_RANK[prev.severity]) {
       partDiagnostics.set(uid, { uid, severity, reason });
     }
   };
 
-  for (const p of parts) {
-    partDiagnostics.set(p.uid, { uid: p.uid, severity: 'ok', reason: '正常配置' });
-  }
-
-  const byRole = (role: EngineeringRole): PlacedPartSnapshot[] =>
-    parts.filter((p) => p.entry.role === role);
-
-  const lenses = byRole('lens');
-  const mounts = byRole('mount');
-  const shutters = byRole('shutter');
-  const sensors = byRole('sensor');
-  const mainboards = byRole('mainboard');
-  const bionzs = byRole('bionz');
-  const batteries = byRole('battery');
-  const storages = byRole('storage');
-  const evfs = byRole('evf');
-  const lcds = byRole('lcd');
-  const bodies = byRole('body');
-  const audios = byRole('audio');
-  const thermals = byRole('thermal_emi');
-  const mishoes = byRole('mishoe');
-
-  const computeGroupCenter = (list: PlacedPartSnapshot[]): THREE.Vector3 | null => {
-    if (list.length === 0) return null;
-    const acc = new THREE.Vector3();
-    for (const p of list) acc.add(p.worldCenter);
-    acc.divideScalar(list.length);
-    return acc;
-  };
+  const lenses: PlacedPartSnapshot[] = [];
+  const mounts: PlacedPartSnapshot[] = [];
+  const shutters: PlacedPartSnapshot[] = [];
+  const sensors: PlacedPartSnapshot[] = [];
+  const mainboards: PlacedPartSnapshot[] = [];
+  const bionzs: PlacedPartSnapshot[] = [];
+  const batteries: PlacedPartSnapshot[] = [];
+  const storages: PlacedPartSnapshot[] = [];
+  const evfs: PlacedPartSnapshot[] = [];
+  const lcds: PlacedPartSnapshot[] = [];
+  const bodies: PlacedPartSnapshot[] = [];
+  const audios: PlacedPartSnapshot[] = [];
+  const thermals: PlacedPartSnapshot[] = [];
+  const mishoes: PlacedPartSnapshot[] = [];
 
   const unionBox = new THREE.Box3();
-  for (const p of parts) unionBox.union(p.worldBox);
+  let totalMassG = 0;
+  let cogX = 0;
+  let cogY = 0;
+  let cogZ = 0;
+
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    partDiagnostics.set(p.uid, { uid: p.uid, severity: 'ok', reason: '正常配置' });
+    unionBox.union(p.worldBox);
+    const m = estimatePartMassG(p);
+    totalMassG += m;
+    cogX += p.worldCenter.x * m;
+    cogY += p.worldCenter.y * m;
+    cogZ += p.worldCenter.z * m;
+
+    switch (p.entry.role) {
+      case 'lens': lenses.push(p); break;
+      case 'mount': mounts.push(p); break;
+      case 'shutter': shutters.push(p); break;
+      case 'sensor': sensors.push(p); break;
+      case 'mainboard': mainboards.push(p); break;
+      case 'bionz': bionzs.push(p); break;
+      case 'battery': batteries.push(p); break;
+      case 'storage': storages.push(p); break;
+      case 'evf': evfs.push(p); break;
+      case 'lcd': lcds.push(p); break;
+      case 'body': bodies.push(p); break;
+      case 'audio': audios.push(p); break;
+      case 'thermal_emi': thermals.push(p); break;
+      case 'mishoe': mishoes.push(p); break;
+    }
+  }
+
+  const computeGroupCenter = (list: PlacedPartSnapshot[]): THREE.Vector3 | null => {
+    const len = list.length;
+    if (len === 0) return null;
+    let sx = 0, sy = 0, sz = 0;
+    for (let i = 0; i < len; i++) {
+      const c = list[i].worldCenter;
+      sx += c.x;
+      sy += c.y;
+      sz += c.z;
+    }
+    const inv = 1 / len;
+    return new THREE.Vector3(sx * inv, sy * inv, sz * inv);
+  };
+
   const envSize = unionBox.isEmpty() ? new THREE.Vector3() : unionBox.getSize(new THREE.Vector3());
 
   const resolvedProfile: Exclude<CameraDesignProfile, 'auto'> =
@@ -224,7 +304,7 @@ export function evaluateCustomCamera(
   const mountC = computeGroupCenter(mounts);
   const shutterC = computeGroupCenter(shutters);
   const sensorC = computeGroupCenter(sensors);
-  const procList = [...mainboards, ...bionzs];
+  const procList = mainboards.length === 0 ? bionzs : bionzs.length === 0 ? mainboards : [...mainboards, ...bionzs];
   const procC = computeGroupCenter(procList);
   const batC = computeGroupCenter(batteries);
 
@@ -234,17 +314,10 @@ export function evaluateCustomCamera(
   let flangeDistanceMm: number | null = null;
   let opticalEccentricityMm: number | null = null;
 
-  // =========================================================================
-  // PHYSICAL SIMULATION: Mass, 3D Center of Gravity (CoG), Power, Shots, Thermal
-  // =========================================================================
-  let totalMassG = 0;
-  const cogAcc = new THREE.Vector3();
-  for (const p of parts) {
-    const m = estimatePartMassG(p);
-    totalMassG += m;
-    cogAcc.addScaledVector(p.worldCenter, m);
-  }
-  const cogVec = totalMassG > 0 ? cogAcc.divideScalar(totalMassG) : new THREE.Vector3(0, 0, 0);
+  const cogVec =
+    totalMassG > 0
+      ? new THREE.Vector3(cogX / totalMassG, cogY / totalMassG, cogZ / totalMassG)
+      : new THREE.Vector3(0, 0, 0);
 
   const peakPowerW =
     parts.length === 0
@@ -649,22 +722,38 @@ export function evaluateCustomCamera(
   }
 
   // =========================================================================
-  // 8. 筐体剛性・3D構造干渉解析 & BFS連結性グラフ (100点)
+  // 8. 筐体剛性・3D構造干渉解析 & DSU連結性解析 (100点) — O(N alpha(N)) DSU + Tight Core-SAP!
   // =========================================================================
   let severeCollisionCount = 0;
   const collidingPairs: string[] = [];
   const nParts = parts.length;
-  const coreCoords = new Float32Array(nParts * 6);
-  const coreVols = new Float32Array(nParts);
+  ensureSapScratch(nParts);
+  const worldCoords = _sapWorld;
+  const coreCoords = _sapCore;
+  const coreVols = _sapVols;
+  const order = _sapOrder;
+  const dsuParent = _sapQueue;
+  let nonBodyCount = 0;
+
   for (let i = 0; i < nParts; i++) {
-    const wb = parts[i].worldBox;
-    const cx = 0.5 * (wb.min.x + wb.max.x);
-    const cy = 0.5 * (wb.min.y + wb.max.y);
-    const cz = 0.5 * (wb.min.z + wb.max.z);
-    const hx = 0.39 * (wb.max.x - wb.min.x); // 0.5 * 0.78
-    const hy = 0.39 * (wb.max.y - wb.min.y);
-    const hz = 0.39 * (wb.max.z - wb.min.z);
+    const p = parts[i];
+    const wb = p.worldBox;
+    const wMinX = wb.min.x, wMinY = wb.min.y, wMinZ = wb.min.z;
+    const wMaxX = wb.max.x, wMaxY = wb.max.y, wMaxZ = wb.max.z;
     const o = i * 6;
+    worldCoords[o] = wMinX;
+    worldCoords[o + 1] = wMinY;
+    worldCoords[o + 2] = wMinZ;
+    worldCoords[o + 3] = wMaxX;
+    worldCoords[o + 4] = wMaxY;
+    worldCoords[o + 5] = wMaxZ;
+
+    const cx = 0.5 * (wMinX + wMaxX);
+    const cy = 0.5 * (wMinY + wMaxY);
+    const cz = 0.5 * (wMinZ + wMaxZ);
+    const hx = 0.39 * (wMaxX - wMinX); // 0.5 * 0.78
+    const hy = 0.39 * (wMaxY - wMinY);
+    const hz = 0.39 * (wMaxZ - wMinZ);
     coreCoords[o] = cx - hx;
     coreCoords[o + 1] = cy - hy;
     coreCoords[o + 2] = cz - hz;
@@ -672,84 +761,132 @@ export function evaluateCustomCamera(
     coreCoords[o + 4] = cy + hy;
     coreCoords[o + 5] = cz + hz;
     coreVols[i] = Math.max(0.2, 2 * hx) * Math.max(0.2, 2 * hy) * Math.max(0.2, 2 * hz);
+    order[i] = i;
+    dsuParent[i] = i;
   }
 
-  // Build adjacency graph (surface-to-surface gap <= 28mm OR enclosed inside body shell)
-  const adj: number[][] = Array.from({ length: nParts }, () => []);
+  if (nParts > 1) {
+    sortOrderByWorldMinX(order, worldCoords, 0, nParts - 1);
+  }
 
-  for (let i = 0; i < nParts; i++) {
-    const a = parts[i];
+  // Pass 8A: Disjoint-Set Union (Union-Find) Connected Components with 28mm X-axis SAP!
+  // Graph Theory invariant: Connected components are 100% invariant to skipping intra-component edges!
+  // Once components === 1 (common case once housing/body connects all internal parts), sweep terminates immediately!
+  let components = nParts;
+  const dsuFind = (x: number): number => {
+    let cur = x;
+    while (dsuParent[cur] !== cur) {
+      dsuParent[cur] = dsuParent[dsuParent[cur]];
+      cur = dsuParent[cur];
+    }
+    return cur;
+  };
+
+  for (let p = 0; p < nParts && components > 1; p++) {
+    const i = order[p];
+    const oa = i * 6;
+    const wMinY_a = worldCoords[oa + 1], wMinZ_a = worldCoords[oa + 2];
+    const wMaxX_a = worldCoords[oa + 3], wMaxY_a = worldCoords[oa + 4], wMaxZ_a = worldCoords[oa + 5];
+    let ri = dsuFind(i);
+
+    for (let q = p + 1; q < nParts; q++) {
+      const j = order[q];
+      const ob = j * 6;
+      const dx = worldCoords[ob] - wMaxX_a;
+      if (dx > 28) break;
+
+      const rj = dsuFind(j);
+      if (ri === rj) continue;
+
+      const wMinY_b = worldCoords[ob + 1], wMaxY_b = worldCoords[ob + 4];
+      const dy = wMinY_b > wMaxY_a ? wMinY_b - wMaxY_a : wMinY_a > wMaxY_b ? wMinY_a - wMaxY_b : 0;
+      if (dy > 28) continue;
+
+      const wMinZ_b = worldCoords[ob + 2], wMaxZ_b = worldCoords[ob + 5];
+      const dz = wMinZ_b > wMaxZ_a ? wMinZ_b - wMaxZ_a : wMinZ_a > wMaxZ_b ? wMinZ_a - wMaxZ_b : 0;
+      const dxPos = dx > 0 ? dx : 0;
+      if (dxPos * dxPos + dy * dy + dz * dz <= 784) {
+        dsuParent[rj] = ri;
+        components--;
+        if (components <= 1) break;
+      }
+    }
+  }
+
+  // Pass 8B: Tight Core-Box 0.78x Interference Sweep on NON-BODY parts ONLY (prunes at coreMinX_j >= coreMaxX_i - 0.6)!
+  for (let p = 0; p < nParts; p++) {
+    const idx = order[p];
+    if (parts[idx].entry.role !== 'body') {
+      order[nonBodyCount++] = idx;
+    }
+  }
+  if (nonBodyCount > 1) {
+    sortOrderByWorldMinX(order, coreCoords, 0, nonBodyCount - 1);
+  }
+  for (let p = 0; p < nonBodyCount; p++) {
+    const i = order[p];
     const oa = i * 6;
     const ax0 = coreCoords[oa], ay0 = coreCoords[oa + 1], az0 = coreCoords[oa + 2];
     const ax1 = coreCoords[oa + 3], ay1 = coreCoords[oa + 4], az1 = coreCoords[oa + 5];
+    const cutX = ax1 - 0.6;
     const volA = coreVols[i];
+    const a = parts[i];
     const aRole = a.entry.role;
-    const aIsBody = aRole === 'body';
+    const aUnit = a.entry.unitId;
 
-    for (let j = i + 1; j < nParts; j++) {
+    for (let q = p + 1; q < nonBodyCount; q++) {
+      const j = order[q];
+      const ob = j * 6;
+      const bx0 = coreCoords[ob];
+      if (bx0 >= cutX) break;
+
       const b = parts[j];
-      const d = boxDistance(a.worldBox, b.worldBox);
-      if (d <= 28) {
-        adj[i].push(j);
-        adj[j].push(i);
-      }
-
-      // Skip housing enclosure pairs & concentric optical pairs (lens-mount-shutter) & same-unit sub-parts
+      if (aUnit === b.entry.unitId) continue;
       const bRole = b.entry.role;
-      const isHousingPair = aIsBody || bRole === 'body';
-      const isSameUnit = a.entry.unitId === b.entry.unitId;
-      const isOpticalRingPair =
-        (aRole === 'lens' && bRole === 'mount') ||
-        (aRole === 'mount' && bRole === 'lens');
+      if ((aRole === 'lens' && bRole === 'mount') || (aRole === 'mount' && bRole === 'lens')) continue;
 
-      if (!isHousingPair && !isSameUnit && !isOpticalRingPair) {
-        const ob = j * 6;
-        const ox = Math.min(ax1, coreCoords[ob + 3]) - Math.max(ax0, coreCoords[ob]);
-        if (ox > 0.6) {
-          const oy = Math.min(ay1, coreCoords[ob + 4]) - Math.max(ay0, coreCoords[ob + 1]);
-          if (oy > 0.6) {
-            const oz = Math.min(az1, coreCoords[ob + 5]) - Math.max(az0, coreCoords[ob + 2]);
-            if (oz > 0.6) {
-              const ov = ox * oy * oz;
-              const minVol = volA < coreVols[j] ? volA : coreVols[j];
-              const ratio = ov / Math.max(1, minVol);
-              if (ratio > 0.24) {
-                severeCollisionCount++;
-                collidingPairs.push(`${a.entry.partId} ✕ ${b.entry.partId}`);
-                markPart(a.uid, 'error', `3Dコア干渉: ${b.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
-                markPart(b.uid, 'error', `3Dコア干渉: ${a.entry.title} と体積比${Math.round(ratio * 100)}%重なり`);
-              }
-            }
-          }
-        }
+      const ox = (ax1 < coreCoords[ob + 3] ? ax1 : coreCoords[ob + 3]) - (ax0 > bx0 ? ax0 : bx0);
+      if (ox <= 0.6) continue;
+      const oy = (ay1 < coreCoords[ob + 4] ? ay1 : coreCoords[ob + 4]) - (ay0 > coreCoords[ob + 1] ? ay0 : coreCoords[ob + 1]);
+      if (oy <= 0.6) continue;
+      const oz = (az1 < coreCoords[ob + 5] ? az1 : coreCoords[ob + 5]) - (az0 > coreCoords[ob + 2] ? az0 : coreCoords[ob + 2]);
+      if (oz <= 0.6) continue;
+
+      const ov = ox * oy * oz;
+      const minVol = volA < coreVols[j] ? volA : coreVols[j];
+      const ratio = ov / (minVol > 1 ? minVol : 1);
+      if (ratio > 0.24) {
+        const loPart = i < j ? a : b;
+        const hiPart = i < j ? b : a;
+        severeCollisionCount++;
+        collidingPairs.push(`${loPart.entry.partId} ✕ ${hiPart.entry.partId}`);
+        const pct = Math.round(ratio * 100);
+        markPart(loPart.uid, 'error', `3Dコア干渉: ${hiPart.entry.title} と体積比${pct}%重なり`);
+        markPart(hiPart.uid, 'error', `3Dコア干渉: ${loPart.entry.title} と体積比${pct}%重なり`);
       }
     }
   }
 
-  // BFS Connected Components to find truly floating/disconnected sub-assemblies!
-  const visited = new Uint8Array(nParts);
-  const bfsQueue = new Int32Array(nParts);
+  // Materialize Connected Components from DSU (O(N), zero BFS overhead!)
   const clusters: number[][] = [];
-  for (let i = 0; i < nParts; i++) {
-    if (visited[i]) continue;
-    const comp: number[] = [];
-    let qHead = 0;
-    let qTail = 0;
-    bfsQueue[qTail++] = i;
-    visited[i] = 1;
-    while (qHead < qTail) {
-      const u = bfsQueue[qHead++];
-      comp.push(u);
-      const neighbors = adj[u];
-      for (let k = 0; k < neighbors.length; k++) {
-        const v = neighbors[k];
-        if (!visited[v]) {
-          visited[v] = 1;
-          bfsQueue[qTail++] = v;
-        }
-      }
+  if (components <= 1) {
+    if (nParts > 0) {
+      const single = new Array<number>(nParts);
+      for (let i = 0; i < nParts; i++) single[i] = i;
+      clusters.push(single);
     }
-    clusters.push(comp);
+  } else {
+    const rootToCluster = new Map<number, number[]>();
+    for (let i = 0; i < nParts; i++) {
+      const r = dsuFind(i);
+      let c = rootToCluster.get(r);
+      if (!c) {
+        c = [];
+        rootToCluster.set(r, c);
+        clusters.push(c);
+      }
+      c.push(i);
+    }
   }
 
   // Pick main cluster (largest, tie-break by containing body/sensor/mount)
