@@ -29,6 +29,10 @@ import {
   MISHOE_ULTRA_HERO_EDGE_PARTS,
 } from '../assemblies/mishoe/miShoeUltraParts';
 import {
+  buildMiShoeExtendedChunks,
+  MiShoeInstPoolName,
+} from '../assemblies/mishoe/miShoeExtendedBuilder';
+import {
   OptimizedUnit,
   QualityTier,
   RaycastBatchedBinding,
@@ -1206,6 +1210,38 @@ export class MiShoeUnit implements OptimizedUnit {
         return [
           ...createMiShoeExtraBuildChunks(extraCtx),
           ...createMiShoeUltraBuildChunks(extraCtx),
+          ...buildMiShoeExtendedChunks({
+            outerW: OUTER_W,
+            innerW: INNER_W,
+            throatW: THROAT_W,
+            railL: RAIL_L,
+            pinPitch: PIN_PITCH,
+            curveSegments: cfg.curveSegments,
+            radialSegments: cfg.radialSegments,
+            pinX,
+            makeTransformedGeo,
+            makeHorizPlateGeo,
+            addBatchedPiece: (partId, bucket, colorHex, geo, includeInEdges) => {
+              // Skip the 2 IDs already built by PR #42 (MI43 & MI54) and free geometry cleanly
+              if (partId === 'mi-xsync-plunger-spring' || partId === 'mi-top-connect-plate-l') {
+                geo.dispose();
+                return;
+              }
+              addBatchedPiece(partId, bucket, colorHex, geo, includeInEdges);
+            },
+            addInst: (poolName: MiShoeInstPoolName, partId, localPos, localRot, localScale, colorHex, halfExtents) => {
+              if (partId === 'mi-xsync-plunger-spring' || partId === 'mi-top-connect-plate-l') return;
+              const mappedPool: MiShoeInstPoolKey =
+                poolName === 'solder_pads'
+                  ? 'solder_fillets'
+                  : poolName === 'ic_packages'
+                    ? 'ic_chips'
+                    : poolName === 'brass_contacts'
+                      ? 'smd_blocks'
+                      : poolName;
+              addInst(mappedPool, partId, localPos, localRot, localScale, colorHex, halfExtents);
+            },
+          }),
         ];
       })(),
     ];

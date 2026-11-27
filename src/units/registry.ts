@@ -58,7 +58,7 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   },
   mishoe: {
     unitId: 'mishoe',
-    declaredPartCount: 71,
+    declaredPartCount: 99,
     loadMeta: makeLazyJsonMetaLoader('mishoe', () => import('../data/mi_shoe.json')),
     load: async () => (await import('./mi_shoe')).createMiShoeUnit(),
   },
