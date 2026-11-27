@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import miShoeJson from '../data/mi_shoe.json';
 import { CadPart, PartExplanation, RenderMode } from '../assemblies/types';
+import { buildMiShoeExtendedChunks } from '../assemblies/mishoe/miShoeExtendedBuilder';
 import { createFrameShape, createRoundedRectShape } from '../engine/CadHelpers';
 import { disposeObject3D } from '../core/dispose';
 import {
@@ -81,6 +82,14 @@ const HERO_EDGE_PARTS = new Set<string>([
   'mi-top-deck-boss-seat',
   'mi-shoe-fix-plate',
   'mi-mainboard-zif-connector',
+  'mi-shoe-resin-base-carrier',
+  'mi-21pin-insert-mold-block',
+  'mi-21pin-emi-metal-hood',
+  'mi-fpc-wp-sheet-h',
+  'mi-top-connect-plate-l',
+  'mi-insulating-barrier-sheet',
+  'mi-magnetic-field-cut-plate',
+  'mi-unreg-load-switch-ic',
 ]);
 
 // =============================================================================
@@ -274,7 +283,7 @@ function toPartExplanation(meta: UnitPartMeta): PartExplanation {
 }
 
 // =============================================================================
-// MiShoeUnit — Experimental V2 Fully Optimized Standalone Unit (MI01–MI32)
+// MiShoeUnit — V2 Fully Optimized Standalone Unit (MI01–MI62)
 // =============================================================================
 
 export class MiShoeUnit implements OptimizedUnit {
@@ -498,6 +507,24 @@ export class MiShoeUnit implements OptimizedUnit {
           g.rotateZ(Math.PI * 0.5);
           return g;
         },
+        records: [],
+      },
+      solder_pads: {
+        bucket: 'solder_silver',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      ic_packages: {
+        bucket: 'ic_epoxy_dark',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      brass_contacts: {
+        bucket: 'brass_precision',
+        geoKey: `mi:unit_cyl:r${cfg.radialSegments}`,
+        geoFactory: () => new THREE.CylinderGeometry(1.0, 1.0, 1.0, cfg.radialSegments),
         records: [],
       },
     };
@@ -1156,6 +1183,21 @@ export class MiShoeUnit implements OptimizedUnit {
           addInst('smd_blocks', 'mi-mainboard-zif-connector', [sx, 1.1, 0], [0, 0, 0], [1.6, 1.2, 4.4], 0xd9e0e8, [0.85, 0.65, 2.25]);
         }
       },
+      // Chunks 9–13: Extended OEM Precision Sub-Components (MI33–MI62)
+      ...buildMiShoeExtendedChunks({
+        outerW: OUTER_W,
+        innerW: INNER_W,
+        throatW: THROAT_W,
+        railL: RAIL_L,
+        pinPitch: PIN_PITCH,
+        curveSegments: cfg.curveSegments,
+        radialSegments: cfg.radialSegments,
+        pinX,
+        makeTransformedGeo,
+        makeHorizPlateGeo,
+        addBatchedPiece,
+        addInst,
+      }),
     ];
 
     // Execute all geometry build chunks within an 8ms per-frame time slice budget!
@@ -1664,6 +1706,46 @@ export class MiShoeUnit implements OptimizedUnit {
         fromOffset: [5.0, 1.5, 0],
         toPartIdx: idxOf('mi-pins-18to20-ttl-flash'),
         toOffset: [13.5, 0, 0],
+      },
+      {
+        colorHex: 0xf97316,
+        speed: 1.2,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-unreg-load-switch-ic'),
+        fromOffset: [0, 1.1, 0],
+        toPartIdx: idxOf('mi-esd-tvs-protection'),
+        toOffset: [-4.5, 1.0, 0],
+      },
+      {
+        colorHex: 0x38bdf8,
+        speed: 1.05,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-logic-3v15-ldo-reg'),
+        fromOffset: [0, 1.1, 0],
+        toPartIdx: idxOf('mi-id-resistor-adc-net'),
+        toOffset: [-4.5, 1.0, 0],
+      },
+      {
+        colorHex: 0x22d3ee,
+        speed: 1.4,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-digital-audio-pll-shifter'),
+        fromOffset: [0, 1.1, 0],
+        toPartIdx: idxOf('mi-audio-mux-emi-choke'),
+        toOffset: [4.5, 1.0, 0],
+      },
+      {
+        colorHex: 0xf43f5e,
+        speed: 1.35,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-flash-ttl-bus-transceiver'),
+        fromOffset: [0, 1.1, 0],
+        toPartIdx: idxOf('mi-pins-18to20-ttl-flash'),
+        toOffset: [15.5, 0, 0],
       },
     ];
 
