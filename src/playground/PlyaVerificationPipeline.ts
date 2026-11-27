@@ -234,7 +234,54 @@ export function runPlyaVerificationPipeline(
   const base = evaluateCustomCamera(parts, profile);
   const visualFlags = new Map<string, PartDiagnosticFlag>();
 
-  const sculptures = parts.filter((p) => p.entry.unitId === 'welcome' || p.entry.role === 'sculpture');
+  const sculptures: PlacedPartSnapshot[] = [];
+  const lenses: PlacedPartSnapshot[] = [];
+  const mounts: PlacedPartSnapshot[] = [];
+  const sensors: PlacedPartSnapshot[] = [];
+  const mainboards: PlacedPartSnapshot[] = [];
+  const bionzs: PlacedPartSnapshot[] = [];
+  const batteries: PlacedPartSnapshot[] = [];
+  const storages: PlacedPartSnapshot[] = [];
+  const bodies: PlacedPartSnapshot[] = [];
+  const thermals: PlacedPartSnapshot[] = [];
+  const evfs: PlacedPartSnapshot[] = [];
+  const lcds: PlacedPartSnapshot[] = [];
+  const mishoes: PlacedPartSnapshot[] = [];
+  const procList: PlacedPartSnapshot[] = [];
+
+  let uMinX = Infinity, uMinY = Infinity, uMinZ = Infinity;
+  let uMaxX = -Infinity, uMaxY = -Infinity, uMaxZ = -Infinity;
+
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i];
+    const role = p.entry.role;
+    if (p.entry.unitId === 'welcome' || role === 'sculpture') sculptures.push(p);
+    if (role === 'lens') lenses.push(p);
+    else if (role === 'mount') mounts.push(p);
+    else if (role === 'sensor') sensors.push(p);
+    else if (role === 'mainboard') {
+      mainboards.push(p);
+      procList.push(p);
+    } else if (role === 'bionz') {
+      bionzs.push(p);
+      procList.push(p);
+    } else if (role === 'battery') batteries.push(p);
+    else if (role === 'storage') storages.push(p);
+    else if (role === 'body') bodies.push(p);
+    else if (role === 'thermal_emi') thermals.push(p);
+    else if (role === 'evf') evfs.push(p);
+    else if (role === 'lcd') lcds.push(p);
+    else if (role === 'mishoe') mishoes.push(p);
+
+    const wb = p.worldBox;
+    if (wb.min.x < uMinX) uMinX = wb.min.x;
+    if (wb.min.y < uMinY) uMinY = wb.min.y;
+    if (wb.min.z < uMinZ) uMinZ = wb.min.z;
+    if (wb.max.x > uMaxX) uMaxX = wb.max.x;
+    if (wb.max.y > uMaxY) uMaxY = wb.max.y;
+    if (wb.max.z > uMaxZ) uMaxZ = wb.max.z;
+  }
+
   const isWelcomeMode = sculptures.length > 0 && sculptures.length >= parts.length * 0.5;
 
   if (!isWelcomeMode) {
@@ -243,44 +290,33 @@ export function runPlyaVerificationPipeline(
 
   const markFlag = (uid: string, severity: 'ok' | 'warn' | 'error', reason: string) => {
     const prev = visualFlags.get(uid);
-    const rank = { ok: 0, warn: 1, error: 2 };
-    if (!prev || rank[severity] > rank[prev.severity]) {
+    const sevRank = severity === 'error' ? 2 : severity === 'warn' ? 1 : 0;
+    const prevRank = !prev ? -1 : prev.severity === 'error' ? 2 : prev.severity === 'warn' ? 1 : 0;
+    if (sevRank > prevRank) {
       visualFlags.set(uid, { uid, severity, reason });
     }
   };
 
-  const byRole = (role: PlacedPartSnapshot['entry']['role']) =>
-    parts.filter((p) => p.entry.role === role);
-
-  const lenses = byRole('lens');
-  const mounts = byRole('mount');
-  const sensors = byRole('sensor');
-  const mainboards = byRole('mainboard');
-  const bionzs = byRole('bionz');
-  const batteries = byRole('battery');
-  const storages = byRole('storage');
-  const bodies = byRole('body');
-  const thermals = byRole('thermal_emi');
-  const evfs = byRole('evf');
-  const lcds = byRole('lcd');
-  const mishoes = byRole('mishoe');
-  const procList = [...mainboards, ...bionzs];
-
   const centerOf = (list: readonly PlacedPartSnapshot[]): THREE.Vector3 | null => {
-    if (list.length === 0) return null;
-    const c = new THREE.Vector3();
-    for (const p of list) c.add(p.worldCenter);
-    return c.divideScalar(list.length);
+    const len = list.length;
+    if (len === 0) return null;
+    let sx = 0, sy = 0, sz = 0;
+    for (let i = 0; i < len; i++) {
+      const c = list[i].worldCenter;
+      sx += c.x;
+      sy += c.y;
+      sz += c.z;
+    }
+    const inv = 1 / len;
+    return new THREE.Vector3(sx * inv, sy * inv, sz * inv);
   };
 
   // Compute total bounding box surface area (cm²) for coupled thermal convection solver
-  const unionBox = new THREE.Box3();
-  for (const p of parts) unionBox.union(p.worldBox);
-  const unionSize = parts.length > 0 ? unionBox.getSize(new THREE.Vector3()) : new THREE.Vector3();
+  const ux = parts.length > 0 ? Math.max(0, uMaxX - uMinX) : 0;
+  const uy = parts.length > 0 ? Math.max(0, uMaxY - uMinY) : 0;
+  const uz = parts.length > 0 ? Math.max(0, uMaxZ - uMinZ) : 0;
   const surfaceAreaCm2 =
-    parts.length > 0
-      ? (2 * (unionSize.x * unionSize.y + unionSize.y * unionSize.z + unionSize.z * unionSize.x)) / 100
-      : 0;
+    parts.length > 0 ? (2 * (ux * uy + uy * uz + uz * ux)) / 100 : 0;
 
   // =========================================================================
   // BRANCH A: NATIVE WLK-220 OPTICAL SIGNBOARD VERIFICATION (WLK-220 Know-How!)

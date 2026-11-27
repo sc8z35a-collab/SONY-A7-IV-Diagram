@@ -20,6 +20,7 @@ export interface ZeroTextUIHandlers {
   onSectionValueChange: (value: number) => void;
   onRenderModeChange: (mode: RenderMode) => void;
   onQualityChange: (quality: GraphicsQuality) => void;
+  onKineToggle?: (enabled: boolean) => void;
   onPhysicsToggle: (active: boolean) => void;
   onOpticsStudioToggle: () => void;
   onOpenPlayground?: () => void;
@@ -234,6 +235,8 @@ export class ZeroTextControls {
   private miraiSubBtns: Record<1 | 2 | 3 | 4 | 5, HTMLButtonElement>;
 
   private qualityBtns: Partial<Record<GraphicsQuality, HTMLButtonElement>>;
+  private kineToggleBtn: HTMLButtonElement;
+  private kineEnabled = true;
 
   // Bottom Workbench Dock Elements
   private explodeSlider: HTMLInputElement;
@@ -498,6 +501,24 @@ export class ZeroTextControls {
     const topRight = document.createElement('div');
     topRight.className = 'studio-topbar-right';
 
+    // Standalone KINE Mode ON/OFF Toggle Pill (sibling of .quality-pill so quality buttons remain strictly LITE | ULTRA)
+    this.kineToggleBtn = document.createElement('button');
+    this.kineToggleBtn.type = 'button';
+    this.kineToggleBtn.className = 'kine-toggle-pill is-active';
+    this.kineToggleBtn.setAttribute('aria-pressed', 'true');
+    this.kineToggleBtn.title =
+      'KINEモード ON/OFF — カメラ視界外・完全遮蔽の不可視パーツを非表示にしてさらに軽量化（選択・ホバー・X-Ray・断面は常時保護）';
+    const kineDot = document.createElement('span');
+    kineDot.className = 'kine-toggle-dot';
+    const kineLbl = document.createElement('span');
+    kineLbl.textContent = 'KINE';
+    this.kineToggleBtn.append(kineDot, kineLbl);
+    this.kineToggleBtn.addEventListener('click', () => {
+      this.kineEnabled = !this.kineEnabled;
+      this.syncKineMode(this.kineEnabled);
+      this.handlers.onKineToggle?.(this.kineEnabled);
+    });
+
     const qualityGroup = document.createElement('div');
     qualityGroup.className = 'studio-seg-pill quality-pill';
     qualityGroup.setAttribute('role', 'group');
@@ -519,17 +540,17 @@ export class ZeroTextControls {
       standard_lite: makeQual(
         'standard_lite',
         'LITE',
-        'STD LITE v2 — 超軽量Dual-Atlas MatCap＋GPU分解（常時最高効率）'
+        'STD LITE v2 — 超軽量Dual-Atlas MatCap＋GPU分解（激しい移動時はFASTへ自動切替）'
       ),
       ultra: makeQual(
         'ultra',
         'ULTRA',
-        'ULTRA 2.5× — 視点移動中はLITE自動切替・静止瞬時に4K影＋1024pxソフトボックスULTRA描画（遅延ゼロ）'
+        'ULTRA V3 — 多段階自動切替（静止ULTRA無ジャギーAA＋F1.2ボケ / 移動LITE / 激動FAST）'
       ),
     };
     qualityGroup.append(this.qualityBtns.standard_lite!, this.qualityBtns.ultra!);
 
-    topRight.append(qualityGroup);
+    topRight.append(this.kineToggleBtn, qualityGroup);
     topBar.append(topLeft, this.subViewHost, topRight);
 
     // =========================================================================
@@ -686,6 +707,12 @@ export class ZeroTextControls {
     (['standard_lite', 'standard', 'high', 'ultra'] as const).forEach((q) => {
       this.qualityBtns[q]?.classList.toggle('is-active', q === quality);
     });
+  }
+
+  public syncKineMode(enabled: boolean): void {
+    this.kineEnabled = enabled;
+    this.kineToggleBtn.classList.toggle('is-active', enabled);
+    this.kineToggleBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
   }
 
   public setExplodeValue(v: number): void {

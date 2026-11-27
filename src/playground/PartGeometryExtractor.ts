@@ -3,7 +3,10 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { listRegisteredUnits, loadRegisteredUnit } from '../units/registry';
 import { ResourceCache } from '../core/resource_cache';
 import { UnitMeta, UnitPartMeta } from '../core/unit_contract';
-import { quantizeGeometryPositionInPlace } from '../core/v2_unit_compiler';
+import {
+  decimateMergedGeometryRGBA,
+  quantizeGeometryPositionInPlace,
+} from '../core/v2_unit_compiler';
 
 const COMPOSITE_UNIT_IDS = new Set(['integrated', 'camera_body']);
 
@@ -319,21 +322,36 @@ function finalizeQuantizedPack(
   if (!merged) return null;
 
   // Center around geometric center & scale to real camera millimeters
-  const posAttr = merged.getAttribute('position');
+  let working = merged;
+  const posAttr = working.getAttribute('position');
   const posArr = posAttr.array as Float32Array;
-  const vCount = posAttr.count;
-  for (let i = 0; i < vCount; i++) {
+  const rawVCount = posAttr.count;
+  for (let i = 0; i < rawVCount; i++) {
     const o = i * 3;
     posArr[o] = (posArr[o] - cx) * unitScale;
     posArr[o + 1] = (posArr[o + 1] - cy) * unitScale;
     posArr[o + 2] = (posArr[o + 2] - cz) * unitScale;
   }
 
+  // Aggressive silhouette-preserving vertex-clustering decimation for dense Play Ground parts (>180 tris)
+  // Halves a7iv triangles (10.6k -> ~4.5k), VBO footprint, and click raycast cost while keeping PLYA bounds identical!
+  const rawIdxCount = working.index ? working.index.count : rawVCount;
+  const rawTris = Math.floor(rawIdxCount / 3);
+  if (rawTris > 180) {
+    const gridDiv = rawTris > 2400 ? 16 : rawTris > 900 ? 20 : 26;
+    const decimated = decimateMergedGeometryRGBA(working, gridDiv);
+    if (decimated) {
+      working.dispose();
+      working = decimated;
+    }
+  }
+
   // Convert Float32 positions -> Isotropic SNORM16 Int16 positions (-50% VRAM, 13B/vert total!)
-  const q = quantizeGeometryPositionInPlace(merged);
-  const iCount = merged.index ? merged.index.count : vCount;
+  const q = quantizeGeometryPositionInPlace(working);
+  const vCount = working.getAttribute('position').count;
+  const iCount = working.index ? working.index.count : vCount;
   return {
-    geometry: merged,
+    geometry: working,
     cx: q.cx,
     cy: q.cy,
     cz: q.cz,

@@ -5,6 +5,8 @@ import { CadPart, PartExplanation, RenderMode } from '../assemblies/types';
 import { createFrameShape, createRoundedRectShape } from '../engine/CadHelpers';
 import { disposeObject3D } from '../core/dispose';
 import {
+  CAD_HOVER_SENTINEL,
+  CAD_SELECT_SENTINEL,
   getCadTintLuma,
   liftDarkCadTint,
   LiteMatcapUniforms,
@@ -38,6 +40,7 @@ import {
   MiShoeInstPoolName,
 } from '../assemblies/mishoe/miShoeExtendedBuilder';
 import {
+  KineOccluderSpec,
   OptimizedUnit,
   QualityTier,
   RaycastBatchedBinding,
@@ -61,8 +64,7 @@ const _tmpScale = new THREE.Vector3();
 const _tmpMat4 = new THREE.Matrix4();
 const _tmpColor = new THREE.Color();
 const _zeroScale = new THREE.Vector3(0, 0, 0);
-const _selTint = new THREE.Color(0x2563eb);
-const _hovTint = new THREE.Color(0x60a5fa);
+const _zeroMat4 = new THREE.Matrix4().makeScale(0, 0, 0);
 const _cadTint = new THREE.Color(0xf8fafc);
 const _xrayTint = new THREE.Color(0xcbd5e1);
 const _defVec = new THREE.Vector3();
@@ -433,6 +435,8 @@ export class MiShoeUnit implements OptimizedUnit {
   private hiddenIds: ReadonlySet<string> = new Set();
   private isolatedId: string | null = null;
   private cachedCacheRef: ResourceCache | null = null;
+  private kineCulledParts = new Uint8Array(0);
+  private kineOccluders: KineOccluderSpec[] = [];
 
   private readonly syncLazyBounds = (): void => {
     if (!this.boundsDirty && !this.raycastIndex?.boundsDirty) return;
@@ -1525,7 +1529,7 @@ export class MiShoeUnit implements OptimizedUnit {
           totalVerts += chunk[i].vCount;
           totalIndices += chunk[i].iCount;
         }
-        const mat = cache.acquireMaterial('metal_hero', quality, 'solid', this.clippingPlanes, true);
+        const mat = cache.acquireMaterial('metal_hero', quality, 'solid', this.clippingPlanes, true, ci);
         const batchedMesh = new THREE.BatchedMesh(
           chunk.length,
           Math.max(64, totalVerts + 32),
@@ -1581,7 +1585,7 @@ export class MiShoeUnit implements OptimizedUnit {
 
         let gpuTex: THREE.DataTexture | null = null;
         let gpuTexW = 1;
-        if (chunks.length === 1 && !onlyPartIds && mat.userData?.__liteUniforms) {
+        if (!onlyPartIds && mat.userData?.__liteUniforms) {
           let maxBid = 0;
           for (let i = 0; i < chunk.length; i++) {
             if (batchIds[i] + 1 > maxBid) maxBid = batchIds[i] + 1;
@@ -2501,7 +2505,8 @@ export class MiShoeUnit implements OptimizedUnit {
           this.quality,
           renderMode,
           this.clippingPlanes,
-          pool.usesVertexColors
+          pool.usesVertexColors,
+          this.quality === 'standard_lite' ? bi : 0
         );
         pool.mesh.material = nextMat;
         if (pool.gpuExplodeTex && nextMat.userData?.__liteUniforms) {
@@ -2518,14 +2523,24 @@ export class MiShoeUnit implements OptimizedUnit {
 
     // Update per-instance & per-batch highlight colors via setColorAt (zero allocations!)
     const applyTint = (baseHex: number, partId: string, usesVC = false): void => {
+      if (partId === this.selectedId) {
+        _tmpColor.setRGB(
+          CAD_SELECT_SENTINEL[0],
+          CAD_SELECT_SENTINEL[1],
+          CAD_SELECT_SENTINEL[2]
+        );
+        return;
+      }
+      if (partId === this.hoveredId) {
+        _tmpColor.setRGB(
+          CAD_HOVER_SENTINEL[0],
+          CAD_HOVER_SENTINEL[1],
+          CAD_HOVER_SENTINEL[2]
+        );
+        return;
+      }
       if (usesVC && renderMode === 'solid') {
-        if (partId === this.selectedId) {
-          _tmpColor.setRGB(0.55, 0.95, 1.65);
-        } else if (partId === this.hoveredId) {
-          _tmpColor.setRGB(0.76, 1.06, 1.45);
-        } else {
-          _tmpColor.setHex(0xffffff);
-        }
+        _tmpColor.setHex(0xffffff);
         return;
       }
       if (renderMode === 'cad') {
@@ -2534,11 +2549,6 @@ export class MiShoeUnit implements OptimizedUnit {
         _tmpColor.copy(_xrayTint);
       } else {
         _tmpColor.setHex(baseHex);
-      }
-      if (partId === this.selectedId) {
-        _tmpColor.lerp(_selTint, 0.56);
-      } else if (partId === this.hoveredId) {
-        _tmpColor.lerp(_hovTint, 0.34);
       }
     };
 
@@ -2592,7 +2602,7 @@ export class MiShoeUnit implements OptimizedUnit {
         if (prevMat.userData?.__cacheKey !== `line:${targetKey}`) {
           const nextMat = cache.acquireLineMaterial(targetKey, {
             color: isSel
-              ? 0x0d5bd9
+              ? 0x007aff
               : isHov
                 ? 0x2563eb
                 : renderMode === 'cad'
@@ -2603,16 +2613,16 @@ export class MiShoeUnit implements OptimizedUnit {
                       ? 0x7a889e
                       : 0x181c24,
             opacity: isSel
-              ? 0.92
+              ? 0.96
               : isHov
-                ? 0.72
+                ? 0.76
                 : renderMode === 'cad'
                   ? 0.72
                   : renderMode === 'xray'
                     ? 0.36
                     : rec.isDark
-                      ? 0.32
-                      : 0.26,
+                      ? 0.24
+                      : 0.18,
             clippingPlanes: this.clippingPlanes,
           });
           rec.line.material = nextMat;
@@ -2628,6 +2638,71 @@ export class MiShoeUnit implements OptimizedUnit {
     if (visibilityChanged) {
       this.updateExplode(this.lastExplodeT < 0 ? 0 : this.lastExplodeT, true);
     }
+  }
+
+  public getKineOccluders(): readonly KineOccluderSpec[] {
+    return this.kineOccluders;
+  }
+
+  public applyKineCulling(culledMask: Uint8Array | null): number {
+    const n = this.parts.length;
+    if (n === 0) return 0;
+    if (this.kineCulledParts.length !== n) {
+      this.kineCulledParts = new Uint8Array(n);
+    }
+    let changed = 0;
+    for (let i = 0; i < n; i++) {
+      const next = culledMask !== null && i < culledMask.length ? (culledMask[i] ? 1 : 0) : 0;
+      if (this.kineCulledParts[i] !== next) {
+        this.kineCulledParts[i] = next;
+        changed++;
+      }
+    }
+    if (changed === 0) return 0;
+
+    for (let bi = 0; bi < this.batchedPools.length; bi++) {
+      const pool = this.batchedPools[bi];
+      for (let i = 0; i < pool.count; i++) {
+        const pIdx = pool.partIndices[i];
+        const bId = pool.batchIds[i];
+        const hidden = this.isPartHiddenInternal(pool.batchIdToPartId[bId]) || this.kineCulledParts[pIdx] !== 0;
+        pool.mesh.setVisibleAt(bId, !hidden);
+      }
+    }
+
+    const cur = this.currentPosFlat;
+    for (let pi = 0; pi < this.instancedPools.length; pi++) {
+      const pool = this.instancedPools[pi];
+      let touched = false;
+      for (let i = 0; i < pool.count; i++) {
+        const pIdx = pool.partIndices[i];
+        const hidden = this.isPartHiddenInternal(pool.instanceIdToPartId[i]) || this.kineCulledParts[pIdx] !== 0;
+        if (hidden) {
+          pool.mesh.setMatrixAt(i, _zeroMat4);
+          touched = true;
+        } else {
+          const po = pIdx * 3;
+          const lo = i * 3;
+          const qo = i * 4;
+          _tmpPos.set(cur[po] + pool.localPos[lo], cur[po + 1] + pool.localPos[lo + 1], cur[po + 2] + pool.localPos[lo + 2]);
+          _tmpQuat.set(pool.localQuat[qo], pool.localQuat[qo + 1], pool.localQuat[qo + 2], pool.localQuat[qo + 3]);
+          _tmpScale.set(pool.localScale[lo], pool.localScale[lo + 1], pool.localScale[lo + 2]);
+          _tmpMat4.compose(_tmpPos, _tmpQuat, _tmpScale);
+          pool.mesh.setMatrixAt(i, _tmpMat4);
+          touched = true;
+        }
+      }
+      if (touched) pool.mesh.instanceMatrix.needsUpdate = true;
+    }
+
+    for (let ei = 0; ei < this.edgeLines.length; ei++) {
+      const rec = this.edgeLines[ei];
+      const pIdx = this.partIdToIdx.get(rec.partId) ?? -1;
+      if (pIdx >= 0 && this.kineCulledParts[pIdx] !== 0) {
+        rec.line.visible = false;
+      }
+    }
+    return changed;
   }
 
   public setClippingPlanes(planes: THREE.Plane[]): void {
@@ -2801,6 +2876,8 @@ export class MiShoeUnit implements OptimizedUnit {
     this.allPoolsGpuExplode = false;
     this.gpuExplodeBindings = [];
     this.boundsDirty = false;
+    this.kineCulledParts = new Uint8Array(0);
+    this.kineOccluders = [];
   }
 }
 
