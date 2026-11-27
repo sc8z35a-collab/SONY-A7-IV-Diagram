@@ -768,12 +768,21 @@ html, body, #app, #viewport	-	9	19	6
 #app.has-drawer .studio-topbar, .studio-topbar:has(.mirai-subbar:not(.is-hidden))	-	6061	6066	3
 #app.has-drawer .studio-topbar-center, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center	-	6068	6077	7
 #app.has-drawer .studio-topbar-center > *, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center > *	-	6079	6082	1
-.mirai-subbar	-	6084	6089	4
-.mirai-subbar .studio-sub-btn	-	6091	6093	1
-.studio-topbar-left	@media (max-width: 767px)	6096	6099	2
-.assembly-trigger-pill	@media (max-width: 767px)	6101	6106	4
-.assembly-trigger-badge	@media (max-width: 767px)	6108	6111	2
-.playground-cta-pill, .mirai-cta-pill	@media (max-width: 767px)	6113	6119	4
-.mirai-subbar	@media (max-width: 767px)	6121	6124	2
-.mirai-subbar .studio-sub-btn	@media (max-width: 767px)	6126	6129	2
-.mirai-subbar-sep	@media (max-width: 767px)	6131	6133	1
+.mirai-subbar	-	6084	6092	7
+.mirai-struct-rail	-	6094	6100	5
+.mirai-lib-group	-	6102	6107	4
+.mirai-subbar .studio-sub-btn	-	6109	6113	3
+#app.has-drawer .mirai-subbar-sep	-	6115	6117	1
+.mirai-subbar .mirai-sub-flagship	-	6119	6124	4
+.mirai-subbar .mirai-sub-flagship.is-active	-	6126	6131	4
+.studio-topbar-left	@media (max-width: 767px)	6134	6137	2
+.assembly-trigger-pill	@media (max-width: 767px)	6139	6144	4
+.assembly-trigger-badge	@media (max-width: 767px)	6146	6149	2
+.playground-cta-pill, .mirai-cta-pill	@media (max-width: 767px)	6151	6157	4
+.mirai-subbar	@media (max-width: 767px)	6159	6171	11
+.mirai-struct-rail	@media (max-width: 767px)	6173	6187	13
+.mirai-struct-rail::-webkit-scrollbar	@media (max-width: 767px)	6189	6191	1
+.mirai-struct-rail .studio-sub-btn	@media (max-width: 767px)	6193	6198	4
+.mirai-lib-group	@media (max-width: 767px)	6200	6206	5
+.mirai-lib-group .studio-sub-btn	@media (max-width: 767px)	6208	6211	2
+.mirai-subbar-sep	@media (max-width: 767px)	6213	6215	1
