@@ -52,7 +52,7 @@ function makeLazyJsonMetaLoader(
 const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   welcome: {
     unitId: 'welcome',
-    declaredPartCount: 220,
+    declaredPartCount: 360,
     loadMeta: makeLazyJsonMetaLoader('welcome', () => import('../data/welcome.json')),
     load: async () => (await import('./welcome')).createWelcomeUnit(),
   },
