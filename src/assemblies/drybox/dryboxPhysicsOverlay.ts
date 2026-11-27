@@ -21,8 +21,9 @@ interface DryboxFlow {
  * Real-time 3D Dry Cabinet Microclimate, PEM Proton Pumping, Zr-MOF Regeneration,
  * Dual-Zone Laminar Dry Air Circulation, UV-C/TiO2 & Far-UVC 222nm Sterilization,
  * SPD-SmartGlass & Low-E IR Rejection, Graphene Oxide Nanoslit Permeation,
- * MLX90640 Battery IR Monitoring, Indoor OPV Harvest, and ESD Grounding
- * Physics Overlay (DB01–DB150, 22 animated flows).
+ * MLX90640 Battery IR Monitoring, Indoor OPV Harvest, Sintered Heat-Pipe Transport,
+ * Laminar N2 Sparger Sweep, Bipolar ESD Ionization, and Ambient Dew-Point Guard
+ * Physics Overlay (DB01–DB186, 26 animated flows).
  */
 export function createDryboxPhysicsOverlay(
   clippingPlanes: THREE.Plane[]
@@ -58,7 +59,7 @@ export function createDryboxPhysicsOverlay(
     cornerLines.push(line);
   }
 
-  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 156);
+  const radialGuides = createRadialTrajectoryGuides(clippingPlanes, 0x64748b, 196);
   explodeGuides.add(radialGuides.group);
   explodeGuides.visible = false;
 
@@ -313,6 +314,34 @@ export function createDryboxPhysicsOverlay(
   registerFlow(0xa855f7, 0.95, 3, false, (m) => {
     pt(_a, m, 'db-indoor-opv-ceracharge-harvest', 0, -1.0, 0);
     pt(_b, m, 'db-eink-touch-bezel', 0, 1.5, 0);
+    return _pair;
+  });
+
+  // 23. Sintered Copper Two-Phase Heat-Pipe Vapor Transport (DB38 -> DB169 -> DB40)
+  registerFlow(0xea580c, 1.04, 3, false, (m) => {
+    pt(_a, m, 'db-peltier-tec-module', 0, 0, -1.0);
+    pt(_b, m, 'db-tec-sintered-heatpipes', 0, 14.0, 0);
+    return _pair;
+  });
+
+  // 24. Regulated Laminar N2 Sparger Diffuser Sweep (DB177 -> DB179)
+  registerFlow(0x38bdf8, 0.98, 4, true, (m) => {
+    pt(_a, m, 'db-n2-pressure-regulator-gauge', -2.0, 0, 0);
+    pt(_b, m, 'db-n2-sparger-diffuser-bar', 0, -14.0, 0);
+    return _pair;
+  });
+
+  // 25. ANSI/ESD S20.20 Bipolar Corona Ion Neutralization Shower (DB164 -> DB163)
+  registerFlow(0x06b6d4, 0.9, 3, true, (m) => {
+    pt(_a, m, 'db-bipolar-esd-ionizer-bar', 0, -1.2, 0);
+    pt(_b, m, 'db-lens-haze-transilluminator', 0, 1.5, 0);
+    return _pair;
+  });
+
+  // 26. External Ambient Dew-Point Pod -> Anti-Sweat Perimeter Door Heater (DB180 -> DB154)
+  registerFlow(0xd97706, 0.85, 3, true, (m) => {
+    pt(_a, m, 'db-ambient-dewpoint-pod', 0, -1.0, 1.5);
+    pt(_b, m, 'db-mullion-antisweat-heater', -16.0, 44.0, 0);
     return _pair;
   });
 
