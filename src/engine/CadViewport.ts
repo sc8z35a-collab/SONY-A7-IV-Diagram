@@ -704,9 +704,9 @@ export class CadViewport {
         target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
       }
     } else if (this.mode === 'original') {
-      // Original #01 RIIMOS E1: W216xH260xD130mm chassis + 350mm X-radial 4-leg stance
-      d = 540 + e * 440;
-      target = new THREE.Vector3(0, 140 + e * 12, 0);
+      // Original #01 RIIMOS E1: W216xH265xD130mm chassis + 390mm X-radial 4-leg stance (accounts for 0.70..0.86 hero lerp)
+      d = 880 + e * 480;
+      target = new THREE.Vector3(0, 128 + e * 10, 0);
     } else if (this.mode === 'micro_v2') {
       d = 114 + e * 270;
       target = new THREE.Vector3(0, -1.0 - e * 2.0, 0);

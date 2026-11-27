@@ -5,11 +5,12 @@
   "goal": "Add Original section and RIIMOS E1 (9,700 JPY ultra-frugal 128-part manufacturable quadruped) + Blueprint Studio + Colab L4 MJX pack",
   "completed": [
     "Milestone 1: Core types/registry + RIIMOS E1 128-part CAD (OR01-OR128) + Dynamic Rig + original.json synced + sp audit 4-tier 0-collision/0-floating/0-explodeHits PASS + sp ray 3/3 0% occlusion PASS",
-    "Milestone 2: UI, OriginalBlueprintStudio, 10 HD SVG schematics, Colab L4 MJX pack, explode-safe rig, full CI & build PASS"
+    "Milestone 2: UI, OriginalBlueprintStudio, 10 HD SVG schematics, Colab L4 MJX pack, explode-safe rig, full CI & build PASS",
+    "Pre-merge checkpoint: full Original + RIIMOS E1 128p, polished UI & framing, 13/13 pp PASS"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Milestone 3: pp visual audit (13 shots incl. Studio/mobile/exploded/physics/diagrams), polish if needed, walkthrough.md, bg gate",
+  "nextStep": "Commit feature & merge latest origin/main (#58)",
   "artifactsMirrored": [
     {
       "name": "implementation_plan.md",
@@ -22,7 +23,7 @@
       "size": 718
     }
   ],
-  "updatedAt": "2026-11-27T18:38:33.403Z",
+  "updatedAt": "2026-11-27T18:49:34.526Z",
   "vmHost": "devbox",
   "baseSha": "79f059dc3895cf31f9802bc5d5c80997a46504d1"
 }

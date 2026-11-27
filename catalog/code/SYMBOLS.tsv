@@ -142,7 +142,7 @@ src/assemblies/evf/evfUltraSemiParts.ts	createUltraRingGeo	func	58	71	export fun
 src/assemblies/evf/evfUltraSemiParts.ts	buildEvfUltraSemiParts	func	77	1914	export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/lazyExplanations.ts	lazyExplanationStub	func	23	25	export function lazyExplanationStub(_partId?: string): PartExplanation
 src/assemblies/lazyExplanations.ts	isLazyExplanationStub	func	27	29	export function isLazyExplanationStub(exp: PartExplanation | undefined | null): boolean
-src/assemblies/lazyExplanations.ts	resolvePartExplanation	func	274	285	export async function resolvePartExplanation(part: CadPart): Promise<PartExplanation>
+src/assemblies/lazyExplanations.ts	resolvePartExplanation	func	275	286	export async function resolvePartExplanation(part: CadPart): Promise<PartExplanation>
 src/assemblies/lcd/lcdExplanations.ts	LCD_EXPLANATIONS	const	5	6	LCD_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(lcdJson)
 src/assemblies/lcd/lcdMicroExplanations.ts	LCD_MICRO_EXPLANATIONS	const	4	4	LCD_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/lcd/lcdMicroParts.ts	buildLcdMicroParts	func	61	1213	export function buildLcdMicroParts( mats: MaterialLibrary ):
@@ -309,8 +309,8 @@ src/assemblies/original/originalShared.ts	makeLShapeMagGeometry	func	218	249	exp
 src/assemblies/original/originalShared.ts	buildMg996rServoSubGroup	func	255	285	export function buildMg996rServoSubGroup( mats: V2MaterialLibrary, withPotTap = true ): THREE.Group
 src/assemblies/original/originalShared.ts	ORIGINAL_HERO_SPECS	const	290	511	ORIGINAL_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> =
 src/assemblies/original/riimosE1ChassisPowerMagParts.ts	buildRiimosE1ChassisPowerMagParts	func	27	522	export function buildRiimosE1ChassisPowerMagParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[] ): …
-src/assemblies/original/riimosE1DynamicRig.ts	RiimosE1DynamicRig	interface	14	17	export interface RiimosE1DynamicRig
-src/assemblies/original/riimosE1DynamicRig.ts	createRiimosE1DynamicRig	func	19	155	export function createRiimosE1DynamicRig( launcherOptics: RiimosLauncherOpticsRigRefs, legRigs: readonly Riim…
+src/assemblies/original/riimosE1DynamicRig.ts	RiimosE1DynamicRig	interface	15	18	export interface RiimosE1DynamicRig
+src/assemblies/original/riimosE1DynamicRig.ts	createRiimosE1DynamicRig	func	22	197	export function createRiimosE1DynamicRig( launcherOptics: RiimosLauncherOpticsRigRefs, legRigs: readonly Riim…
 src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts	RiimosLauncherOpticsRigRefs	interface	13	20	export interface RiimosLauncherOpticsRigRefs
 src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts	buildRiimosE1LauncherOpticsBrainParts	func	28	569	export function buildRiimosE1LauncherOpticsBrainParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[]…
 src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts	RiimosLegRigRef	interface	13	35	export interface RiimosLegRigRef
@@ -502,16 +502,16 @@ src/assemblies/welcome/welcomePlinthPrecisionParts.ts	buildWelcomePlinthPrecisio
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	WELCOME_PLINTH_ULTRA_DETAIL_DEFS	const	42	1424	WELCOME_PLINTH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ makePlinthUltraDef(
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	buildWelcomePlinthUltraDetailParts	func	1426	1428	export function buildWelcomePlinthUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
 src/core/capture_bridge.ts	CaptureMode	type	3	3	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
-src/core/capture_bridge.ts	CaptureCustomOptions	interface	5	26	export interface CaptureCustomOptions
-src/core/capture_bridge.ts	CapturePrepareResult	interface	28	35	export interface CapturePrepareResult
-src/core/capture_bridge.ts	CaptureHostAdapter	interface	37	60	export interface CaptureHostAdapter
-src/core/capture_bridge.ts	ArtifactCaptureBridge	class	84	300	export class ArtifactCaptureBridge
-src/core/capture_bridge.ts	ArtifactCaptureBridge.waitUnitReady	method	91	97	private async waitUnitReady(timeoutMs = 15000): Promise<void>
-src/core/capture_bridge.ts	ArtifactCaptureBridge.waitSchematicHydrated	method	99	107	private async waitSchematicHydrated(timeoutMs = 8000): Promise<void>
-src/core/capture_bridge.ts	ArtifactCaptureBridge.captureDirectCanvasDataUrl	method	113	124	public async captureDirectCanvasDataUrl( format: 'png' | 'webp' | 'jpeg' = 'png', quality = 0.92 ): Promise<s…
-src/core/capture_bridge.ts	ArtifactCaptureBridge.measureClip	method	126	143	private measureClip(selector: string | null):
-src/core/capture_bridge.ts	ArtifactCaptureBridge.reset	method	145	156	public reset(): void
-src/core/capture_bridge.ts	ArtifactCaptureBridge.prepare	method	158	299	public async prepare( mode: CaptureMode, options: CaptureCustomOptions =
+src/core/capture_bridge.ts	CaptureCustomOptions	interface	5	28	export interface CaptureCustomOptions
+src/core/capture_bridge.ts	CapturePrepareResult	interface	30	37	export interface CapturePrepareResult
+src/core/capture_bridge.ts	CaptureHostAdapter	interface	39	65	export interface CaptureHostAdapter
+src/core/capture_bridge.ts	ArtifactCaptureBridge	class	89	313	export class ArtifactCaptureBridge
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitUnitReady	method	96	102	private async waitUnitReady(timeoutMs = 15000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.waitSchematicHydrated	method	104	112	private async waitSchematicHydrated(timeoutMs = 8000): Promise<void>
+src/core/capture_bridge.ts	ArtifactCaptureBridge.captureDirectCanvasDataUrl	method	118	129	public async captureDirectCanvasDataUrl( format: 'png' | 'webp' | 'jpeg' = 'png', quality = 0.92 ): Promise<s…
+src/core/capture_bridge.ts	ArtifactCaptureBridge.measureClip	method	131	148	private measureClip(selector: string | null):
+src/core/capture_bridge.ts	ArtifactCaptureBridge.reset	method	150	161	public reset(): void
+src/core/capture_bridge.ts	ArtifactCaptureBridge.prepare	method	163	312	public async prepare( mode: CaptureMode, options: CaptureCustomOptions =
 src/core/dispose.ts	DisposeReport	interface	20	29	export interface DisposeReport
 src/core/dispose.ts	disposeObject3D	func	90	215	export function disposeObject3D( root: THREE.Object3D, cache: ResourceCache | null = null, detachRootFromPare…
 src/core/dispose.ts	VramSnapshot	interface	217	221	export interface VramSnapshot
@@ -1317,7 +1317,7 @@ src/units/micro.ts	createMicroUnit	func	34	64	export function createMicroUnit():
 src/units/micro_v2.ts	createMicroV2Unit	func	17	40	export function createMicroV2Unit(): OptimizedUnit
 src/units/mirai_2028.ts	createMirai2028Unit	func	39	60	export function createMirai2028Unit(): OptimizedUnit
 src/units/mount.ts	createMountUnit	func	17	51	export function createMountUnit(): OptimizedUnit
-src/units/original.ts	createOriginalUnit	func	29	57	export function createOriginalUnit(): OptimizedUnit
+src/units/original.ts	createOriginalUnit	func	29	55	export function createOriginalUnit(): OptimizedUnit
 src/units/registry.ts	RegisteredUnitEntry	interface	3	10	export interface RegisteredUnitEntry
 src/units/registry.ts	hasRegisteredUnit	func	200	202	export function hasRegisteredUnit(unitId: string): boolean
 src/units/registry.ts	listRegisteredUnits	func	204	206	export function listRegisteredUnits(): readonly RegisteredUnitEntry[]

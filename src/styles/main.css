@@ -6871,7 +6871,7 @@ body,
   background: #ffffff;
 }
 
-.orig-hack-card strong {
+.orig-hack-card > strong {
   display: block;
   font-size: 12.5px;
   color: #0f172a;
@@ -7089,11 +7089,36 @@ body,
   color: #64748b;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
+  .studio-topbar-left {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5px;
+  }
+  .studio-topbar-center {
+    width: 100%;
+    align-items: stretch;
+  }
   .orig-cta-pill {
     height: 34px;
     padding: 0 9px;
     font-size: 11px;
+  }
+  .orig-subbar {
+    width: 100%;
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+    justify-content: flex-start;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .orig-subbar::-webkit-scrollbar {
+    display: none;
+  }
+  .orig-subbar .studio-sub-btn {
+    flex-shrink: 0;
+    font-size: 11px;
+    padding: 5px 8px;
   }
   .orig-pillars,
   .orig-hacks-grid,

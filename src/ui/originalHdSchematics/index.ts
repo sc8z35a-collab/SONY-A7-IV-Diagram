@@ -134,10 +134,10 @@ export function renderOriginalHdSchematicSvg(
         <text x="193" y="246" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">C2</text>
         <circle cx="271" cy="242" r="30" fill="#0369a1" stroke="#0c4a6e" stroke-width="2.5"/>
         <text x="271" y="246" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">C3</text>
-        <text x="44" y="318" font-size="11" font-weight="700" fill="#1e293b">・中心間距離 21.95 mm > φ21.4 mm（全セル間 1.35mm断熱）</text>
-        <text x="44" y="338" font-size="11" font-weight="700" fill="#1e293b">・スポット溶接不要の脱着スプリング接点（100円）</text>
-        <text x="44" y="358" font-size="11" font-weight="700" fill="#1e293b">・USB-C PD そのまま充電 ＋ 予備5本即交換の両対応</text>
-        <text x="44" y="378" font-size="11" font-weight="700" fill="#dc2626">・回路部品合計 1,170円（※充電池5本代は予算外）</text>
+        <text x="42" y="318" font-size="10.4" font-weight="700" fill="#1e293b">・中心間 21.95mm &gt; φ21.4mm（全セル間 1.35mm断熱）</text>
+        <text x="42" y="338" font-size="10.4" font-weight="700" fill="#1e293b">・スポット溶接不要の脱着スプリング接点（100円）</text>
+        <text x="42" y="358" font-size="10.4" font-weight="700" fill="#1e293b">・USB-C PD そのまま充電 ＋ 予備5本即交換の両対応</text>
+        <text x="42" y="378" font-size="10.4" font-weight="700" fill="#dc2626">・回路部品合計 1,170円（※充電池5本代は予算外）</text>
 
         <rect x="370" y="84" width="322" height="318" rx="8" fill="#ffffff" stroke="#cbd5e1"/>
         <text x="384" y="106" font-size="12.5" font-weight="800" fill="#0f172a">電源保護・2系統分離配電ブロック図</text>

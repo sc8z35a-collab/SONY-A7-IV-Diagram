@@ -877,7 +877,7 @@ html, body, #app, #viewport	-	9	19	6
 .orig-sec-title	-	6854	6859	4
 .orig-hacks-grid	-	6861	6865	3
 .orig-hack-card	-	6867	6872	4
-.orig-hack-card strong	-	6874	6879	4
+.orig-hack-card > strong	-	6874	6879	4
 .orig-hack-card p	-	6881	6886	4
 .orig-kpi-strip	-	6888	6892	3
 .orig-kpi	-	6894	6902	7
@@ -908,10 +908,15 @@ html, body, #app, #viewport	-	9	19	6
 .orig-result-box.purple	-	7072	7076	3
 .orig-rl-list	-	7078	7084	5
 .orig-note	-	7086	7090	3
-.orig-cta-pill	@media (max-width: 760px)	7093	7097	3
-.orig-pillars, .orig-hacks-grid, .orig-kpi-strip, .orig-two-col	@media (max-width: 760px)	7098	7103	1
-.orig-studio-backdrop	@media (max-width: 760px)	7104	7106	1
-.orig-studio-modal	@media (max-width: 760px)	7107	7110	2
-.orig-studio-header h2	@media (max-width: 760px)	7111	7113	1
-.orig-studio-header p	@media (max-width: 760px)	7114	7116	1
-.orig-bar-row	@media (max-width: 760px)	7117	7119	1
+.studio-topbar-left	@media (max-width: 768px)	7093	7097	3
+.studio-topbar-center	@media (max-width: 768px)	7098	7101	2
+.orig-cta-pill	@media (max-width: 768px)	7102	7106	3
+.orig-subbar	@media (max-width: 768px)	7107	7114	6
+.orig-subbar::-webkit-scrollbar	@media (max-width: 768px)	7115	7117	1
+.orig-subbar .studio-sub-btn	@media (max-width: 768px)	7118	7122	3
+.orig-pillars, .orig-hacks-grid, .orig-kpi-strip, .orig-two-col	@media (max-width: 768px)	7123	7128	1
+.orig-studio-backdrop	@media (max-width: 768px)	7129	7131	1
+.orig-studio-modal	@media (max-width: 768px)	7132	7135	2
+.orig-studio-header h2	@media (max-width: 768px)	7136	7138	1
+.orig-studio-header p	@media (max-width: 768px)	7139	7141	1
+.orig-bar-row	@media (max-width: 768px)	7142	7144	1
