@@ -3601,7 +3601,13 @@ body,
   height: 40px;
   box-sizing: border-box;
   will-change: transform;
-  contain: layout style paint;
+  contain: strict;
+}
+
+.pg-catalog-count {
+  contain: layout style;
+  min-width: 72px;
+  text-align: right;
 }
 
 .pg-cat-item:hover {
@@ -6132,3 +6138,380 @@ body,
     display: none;
   }
 }
+
+/* ============================================================================
+   V3 HYPER-OPT UI POLISH: KINE Toggle Pill, Play Ground Containment,
+   Electric-Blue Selection Swatch, & Smartphone Landscape Fullscreen Detail UI
+   ============================================================================ */
+
+/* Play Ground Virtualized Catalog Strict Containment (Eliminates Keystroke Reflow) */
+.pg-catalog-list {
+  contain: strict;
+}
+
+.pg-cat-vrow {
+  contain: layout style paint;
+}
+
+/* Standalone KINE Mode ON/OFF Toggle Pill (sibling of .quality-pill) */
+.kine-toggle-pill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 11px;
+  border-radius: 13px;
+  border: 1px solid rgba(15, 23, 42, 0.13);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #475569;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.07);
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, transform 0.12s ease;
+}
+
+.kine-toggle-pill:hover {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.24);
+}
+
+.kine-toggle-pill:active {
+  transform: scale(0.96);
+}
+
+.kine-toggle-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+  transition: background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.kine-toggle-pill.is-active {
+  background: linear-gradient(135deg, #0047d4 0%, #0284c7 100%);
+  border-color: rgba(0, 98, 255, 0.5);
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 98, 255, 0.28);
+}
+
+.kine-toggle-pill.is-active .kine-toggle-dot {
+  background: #67e8f9;
+  box-shadow: 0 0 0 2.5px rgba(103, 232, 249, 0.34);
+}
+
+/* Vivid Electric-Blue Selection Marker Accent on Detail Drawer Swatch */
+.explanation-drawer.is-open .drawer-swatch-pill {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0066ff;
+}
+
+@media (max-width: 768px) {
+  .kine-toggle-pill {
+    height: 34px;
+    padding: 0 9px;
+    border-radius: 11px;
+    font-size: 10px;
+  }
+}
+
+/* ============================================================================
+   SMARTPHONE LANDSCAPE FULLSCREEN DETAIL UI (844x390 / 932x430 / 812x375)
+   Dedicated Split-Stage Layout: Left ~54% Unobstructed 3D CAD Stage +
+   Right ~46% Compact Detail Drawer (overrides desktop 600px .is-wide & mobile
+   bottom-sheet!) + Notch Safe-Area Insets + Full-Bleed Landscape Lightbox!
+   ============================================================================ */
+@media (orientation: landscape) and (max-height: 540px) {
+  /* Single-row ultra-compact topbar with notch safe-area support */
+  .studio-topbar {
+    top: max(6px, env(safe-area-inset-top)) !important;
+    left: max(8px, env(safe-area-inset-left)) !important;
+    right: max(8px, env(safe-area-inset-right)) !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+    row-gap: 0 !important;
+  }
+
+  #app.has-drawer .studio-topbar {
+    right: calc(clamp(296px, 46vw, 410px) + max(14px, env(safe-area-inset-right))) !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .studio-topbar-left {
+    width: auto !important;
+    min-width: 0;
+    flex: 1 1 auto;
+    gap: 5px;
+    flex-wrap: nowrap;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .studio-topbar-left::-webkit-scrollbar {
+    display: none;
+  }
+
+  .studio-topbar-center {
+    display: none !important;
+  }
+
+  .studio-topbar-right {
+    width: auto !important;
+    flex-shrink: 0;
+    gap: 5px;
+    justify-content: flex-end !important;
+  }
+
+  .assembly-trigger-pill {
+    height: 30px !important;
+    padding: 0 8px 0 6px !important;
+    border-radius: 9px !important;
+    font-size: 11px !important;
+    max-width: 195px !important;
+  }
+
+  .assembly-trigger-badge {
+    font-size: 9.5px !important;
+    padding: 1px 4px !important;
+  }
+
+  .playground-cta-pill,
+  .mirai-cta-pill {
+    height: 30px !important;
+    padding: 0 8px !important;
+    border-radius: 9px !important;
+    font-size: 10px !important;
+    gap: 4px !important;
+  }
+
+  #app.has-drawer .playground-cta-pill span,
+  #app.has-drawer .mirai-cta-pill span {
+    display: none;
+  }
+
+  .kine-toggle-pill {
+    height: 30px !important;
+    padding: 0 7px !important;
+    border-radius: 9px !important;
+    font-size: 9.5px !important;
+    gap: 4px !important;
+  }
+
+  .studio-seg-pill {
+    height: 30px !important;
+    padding: 2px !important;
+    border-radius: 9px !important;
+  }
+
+  .studio-seg-item {
+    height: 24px !important;
+    padding: 0 7px !important;
+    font-size: 9.5px !important;
+    border-radius: 7px !important;
+  }
+
+  /* Compact single-row bottom workbench dock anchored neatly to the 3D stage */
+  .studio-bottom-dock {
+    bottom: max(6px, env(safe-area-inset-bottom)) !important;
+    left: max(8px, env(safe-area-inset-left)) !important;
+    right: auto !important;
+    transform: none !important;
+    max-width: calc(100vw - max(16px, env(safe-area-inset-left) + env(safe-area-inset-right))) !important;
+    padding: 4px 8px !important;
+    gap: 6px !important;
+    border-radius: 11px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .studio-bottom-dock::-webkit-scrollbar {
+    display: none;
+  }
+
+  #app.has-drawer .studio-bottom-dock {
+    left: max(8px, env(safe-area-inset-left)) !important;
+    max-width: calc(100vw - clamp(296px, 46vw, 410px) - max(22px, env(safe-area-inset-left) + env(safe-area-inset-right))) !important;
+  }
+
+  .dock-explode {
+    width: auto !important;
+    min-width: 108px;
+    flex: 1 1 118px;
+    gap: 5px;
+  }
+
+  .dock-explode .dock-slider {
+    width: 76px;
+    min-width: 68px;
+  }
+
+  .dock-pct-badge {
+    font-size: 10px !important;
+    min-width: 30px !important;
+  }
+
+  /* Right-Side Split-Stage Detail Drawer (Overrides desktop 600px .is-wide & portrait bottom-sheet!) */
+  .explanation-drawer,
+  .explanation-drawer.is-wide {
+    top: max(6px, env(safe-area-inset-top)) !important;
+    bottom: max(6px, env(safe-area-inset-bottom)) !important;
+    right: max(6px, env(safe-area-inset-right)) !important;
+    left: auto !important;
+    width: clamp(296px, 46vw, 410px) !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 14px !important;
+    transform: translateX(calc(100% + 28px)) !important;
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.16), 0 1px 4px rgba(15, 23, 42, 0.08) !important;
+  }
+
+  .explanation-drawer.is-open,
+  .explanation-drawer.is-wide.is-open {
+    transform: translateX(0) !important;
+  }
+
+  .drawer-mobile-handle {
+    display: none !important;
+  }
+
+  .explanation-drawer .drawer-toolbar {
+    padding: 5px 10px !important;
+    min-height: 36px;
+  }
+
+  .explanation-drawer .icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+  }
+
+  .explanation-drawer .icon-btn svg {
+    width: 14.5px;
+    height: 14.5px;
+  }
+
+  .explanation-drawer .drawer-tab-bar {
+    padding: 4px 8px !important;
+    gap: 4px !important;
+  }
+
+  .explanation-drawer .drawer-tab-btn {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+  }
+
+  .explanation-drawer .drawer-body {
+    padding: 10px 12px 16px !important;
+    gap: 10px !important;
+  }
+
+  .explanation-drawer .exp-category {
+    font-size: 9.5px;
+  }
+
+  .explanation-drawer .exp-title {
+    font-size: 14.5px;
+    line-height: 1.28;
+    margin-top: 2px;
+  }
+
+  .explanation-drawer .exp-subtitle {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .explanation-drawer .exp-summary,
+  .explanation-drawer .exp-list li,
+  .explanation-drawer .exp-analogy-text,
+  .explanation-drawer .exp-innovation {
+    font-size: 12px;
+    line-height: 1.56;
+  }
+
+  .explanation-drawer .exp-analogy,
+  .explanation-drawer .exp-innovation,
+  .explanation-drawer .exp-formula {
+    padding: 8px 10px;
+  }
+
+  .explanation-drawer .exp-section {
+    padding-top: 9px;
+    gap: 6px;
+  }
+
+  .explanation-drawer .schematic-stage.exp-diagram-box {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    padding: 5px !important;
+  }
+
+  .explanation-drawer .exp-diagram-actions {
+    margin-top: 5px;
+    gap: 4px;
+  }
+
+  .explanation-drawer .exp-diagram-action-btn {
+    padding: 3.5px 8px;
+    font-size: 10px;
+  }
+
+  /* Full-Bleed 100vw x 100dvh Landscape Schematic Lightbox */
+  .schematic-lightbox {
+    padding: 0 !important;
+  }
+
+  .schematic-lightbox-panel,
+  .schematic-lightbox-card {
+    width: 100vw !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .schematic-lightbox-header {
+    padding: 5px max(10px, env(safe-area-inset-right)) 5px max(10px, env(safe-area-inset-left)) !important;
+    min-height: 36px;
+    flex-wrap: nowrap !important;
+    gap: 8px;
+  }
+
+  .schematic-lightbox-title {
+    font-size: 12px !important;
+  }
+
+  .schematic-lightbox-stage,
+  .schematic-lightbox-viewport {
+    padding: 4px max(10px, env(safe-area-inset-right)) 4px max(10px, env(safe-area-inset-left)) !important;
+  }
+
+  .schematic-lightbox-canvas {
+    width: 96vw !important;
+    height: 100% !important;
+  }
+
+  .schematic-lightbox-controls {
+    padding: 4px 8px !important;
+    gap: 4px !important;
+    bottom: max(6px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .lb-ctrl-btn {
+    padding: 4px 8px !important;
+    font-size: 10.5px !important;
+  }
+}
+
