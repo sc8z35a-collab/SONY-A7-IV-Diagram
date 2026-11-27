@@ -60,6 +60,8 @@ export interface UnitV2Diagnostics {
 // Module-scoped zero-GC scratch objects (CI Gate 3-2 strict compliance!)
 const _shadowCenter = new THREE.Vector3();
 const _shadowSize = new THREE.Vector3();
+const _bgColor = new THREE.Color(0xffffff);
+const PMREM_LUT_MAGIC = 0x504d5231; // 'PMR1'
 const _renderFocusBox = new THREE.Box3();
 const _renderFocusCenter = new THREE.Vector3();
 const _lastUltraCamMat = new Float32Array(16);
@@ -123,6 +125,11 @@ export class UnitV2Runtime {
   private motionStage: MotionStage = 'ultra';
   private partById = new Map<string, CadPart>();
   private studioEnvRenderTarget: THREE.WebGLRenderTarget | null = null;
+  private studioEnvDataTex: THREE.DataTexture | null = null;
+  private cachedEnvQuality: QualityTier | null = null;
+  private baselineEnvTexCount = 0;
+  private shadersWarmed = false;
+  private envDeferred = false;
   private ultraKeyLight: THREE.DirectionalLight | null = null;
   private ultraShadowCatcher: THREE.Mesh | null = null;
   private savedExternalPixelRatio = 1.0;
@@ -361,7 +368,7 @@ export class UnitV2Runtime {
         if (this.fastProxyBundle) this.fastProxyBundle.rootGroup.visible = false;
         this.buildResult.rootGroup.visible = true;
         this.lightGroup.visible = true;
-        this.scene.environment = this.studioEnvRenderTarget?.texture ?? null;
+        this.scene.environment = this.studioEnvDataTex ?? this.studioEnvRenderTarget?.texture ?? null;
         this.renderer.shadowMap.enabled = QUALITY_TIER_CONFIG.ultra.shadowsEnabled;
         this.ultraPost.resetAccumulation();
       }
@@ -390,6 +397,31 @@ export class UnitV2Runtime {
     return this.buildResult ? this.buildResult.raycastIndex : null;
   }
 
+  public getUnitWorldBox(out: THREE.Box3): boolean {
+    const ri = this.buildResult?.raycastIndex;
+    if (!ri) return false;
+    if (ri.boundsDirty && ri.syncBounds) ri.syncBounds();
+    const box = ri.unitWorldBox;
+    if (!box || box.isEmpty()) return false;
+    out.copy(box);
+    return true;
+  }
+
+  public setBackground(colorHex: number | null): void {
+    if (colorHex === null) {
+      this.scene.background = null;
+      this.renderer.setClearAlpha(0);
+    } else {
+      _bgColor.setHex(colorHex);
+      if (this.scene.background instanceof THREE.Color) {
+        this.scene.background.copy(_bgColor);
+      } else {
+        this.scene.background = _bgColor;
+      }
+      this.renderer.setClearAlpha(1);
+    }
+  }
+
   public getPartWorldBox(partId: string, out: THREE.Box3): boolean {
     const idx = this.buildResult?.raycastIndex;
     if (!idx) return false;
@@ -400,15 +432,198 @@ export class UnitV2Runtime {
     return true;
   }
 
-  private setupStudioLighting(quality: QualityTier): void {
-    this.teardownStudioLighting();
+  private isPpCaptureUrl(): boolean {
+    if (typeof window === 'undefined') return false;
+    return window.location.search.includes('pp=1');
+  }
+
+  private async tryFetchPrebakedPmrem(quality: QualityTier): Promise<THREE.DataTexture | null> {
+    if (!this.isPpCaptureUrl() || typeof fetch === 'undefined') return null;
+    try {
+      const resp = await fetch(`/__pp_pmrem/${quality}.bin`, { cache: 'force-cache' });
+      if (!resp.ok || resp.status === 204) return null;
+      const buf = await resp.arrayBuffer();
+      if (buf.byteLength < 16) return null;
+      const hdr = new Uint32Array(buf, 0, 4);
+      if (hdr[0] !== PMREM_LUT_MAGIC) return null;
+      const w = hdr[1];
+      const h = hdr[2];
+      const kind = hdr[3]; // 1 = HalfFloatType (Uint16Array), 2 = UnsignedByteType (Uint8Array)
+      if (w < 64 || h < 64 || w > 4096 || h > 4096) return null;
+      if (kind === 1 && buf.byteLength === 16 + w * h * 4 * 2) {
+        const pixels = new Uint16Array(buf, 16);
+        const tex = new THREE.DataTexture(
+          pixels,
+          w,
+          h,
+          THREE.RGBAFormat,
+          THREE.HalfFloatType,
+          undefined,
+          THREE.ClampToEdgeWrapping,
+          THREE.ClampToEdgeWrapping,
+          THREE.LinearFilter,
+          THREE.LinearFilter
+        );
+        tex.mapping = THREE.CubeUVReflectionMapping;
+        tex.generateMipmaps = false;
+        tex.flipY = false;
+        tex.colorSpace = THREE.LinearSRGBColorSpace;
+        tex.needsUpdate = true;
+        return tex;
+      }
+      if (kind === 2 && buf.byteLength === 16 + w * h * 4) {
+        const pixels = new Uint8Array(buf, 16);
+        const tex = new THREE.DataTexture(
+          pixels,
+          w,
+          h,
+          THREE.RGBAFormat,
+          THREE.UnsignedByteType,
+          undefined,
+          THREE.ClampToEdgeWrapping,
+          THREE.ClampToEdgeWrapping,
+          THREE.LinearFilter,
+          THREE.LinearFilter
+        );
+        tex.mapping = THREE.CubeUVReflectionMapping;
+        tex.generateMipmaps = false;
+        tex.flipY = false;
+        tex.colorSpace = THREE.LinearSRGBColorSpace;
+        tex.needsUpdate = true;
+        return tex;
+      }
+    } catch {
+      // Fall back to standard PMREM bake
+    }
+    return null;
+  }
+
+  private tryPersistBakedPmrem(quality: QualityTier, envRt: THREE.WebGLRenderTarget): void {
+    if (!this.isPpCaptureUrl() || typeof fetch === 'undefined') return;
+    try {
+      const w = envRt.width;
+      const h = envRt.height;
+      const gl = this.renderer.getContext();
+      const isHalf = envRt.texture.type === THREE.HalfFloatType;
+      const isU8 = envRt.texture.type === THREE.UnsignedByteType;
+      if (!isHalf && !isU8) return;
+      const elemBytes = isHalf ? 2 : 1;
+      const packet = new ArrayBuffer(16 + w * h * 4 * elemBytes);
+      const hdr = new Uint32Array(packet, 0, 4);
+      hdr[0] = PMREM_LUT_MAGIC;
+      hdr[1] = w;
+      hdr[2] = h;
+      hdr[3] = isHalf ? 1 : 2;
+      const pixels = isHalf ? new Uint16Array(packet, 16) : new Uint8Array(packet, 16);
+      // Drain prior GL error state
+      while (gl.getError() !== gl.NO_ERROR) {}
+      this.renderer.readRenderTargetPixels(envRt, 0, 0, w, h, pixels);
+      let readOk = gl.getError() === gl.NO_ERROR;
+      if (!readOk && isHalf && gl instanceof WebGL2RenderingContext) {
+        // WebGL2 spec guarantees (RGBA, FLOAT) readback on RGBA16F attachments
+        const prevRt = this.renderer.getRenderTarget();
+        this.renderer.setRenderTarget(envRt);
+        const f32 = new Float32Array(w * h * 4);
+        gl.readPixels(0, 0, w, h, gl.RGBA, gl.FLOAT, f32);
+        readOk = gl.getError() === gl.NO_ERROR;
+        this.renderer.setRenderTarget(prevRt);
+        if (readOk) {
+          const out16 = pixels as Uint16Array;
+          for (let i = 0; i < f32.length; i++) {
+            out16[i] = THREE.DataUtils.toHalfFloat(f32[i]);
+          }
+        }
+      }
+      if (!readOk) return;
+      // Sanity check non-zero content before uploading
+      let nonZero = 0;
+      const step = Math.max(1, Math.floor(pixels.length / 256));
+      for (let i = 0; i < pixels.length; i += step) {
+        if (pixels[i] !== 0) {
+          nonZero++;
+          break;
+        }
+      }
+      if (nonZero === 0) return;
+      void fetch(`/__pp_pmrem/${quality}.bin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/octet-stream' },
+        body: packet,
+      }).catch(() => {});
+    } catch {
+      // Optional optimization; ignore readback errors
+    }
+  }
+
+  private attachStudioEnvironment(
+    quality: QualityTier,
+    preloadedTex: THREE.DataTexture | null = null
+  ): void {
+    const cfg = QUALITY_TIER_CONFIG[quality];
+    if (!cfg.enableStudioEnv) {
+      this.disposeStudioEnvironment();
+      return;
+    }
+    // Reuse already-resident PMREM environment when staying at the same quality tier (0ms!)
+    if (this.cachedEnvQuality === quality && (this.studioEnvDataTex || this.studioEnvRenderTarget)) {
+      this.scene.environment = this.studioEnvDataTex ?? this.studioEnvRenderTarget?.texture ?? null;
+      return;
+    }
+    this.disposeStudioEnvironment();
+
+    if (preloadedTex) {
+      this.studioEnvDataTex = preloadedTex;
+      this.cachedEnvQuality = quality;
+      this.scene.environment = preloadedTex;
+      return;
+    }
+
+    // Explicit PMREM bake + immediate pmrem.dispose() prevents Three.js WebGLCubeUVMaps
+    // from retaining 8 internal LOD plane geometries + 1 pingPong texture permanently!
+    const isUltra = quality === 'ultra';
+    const envKey = isUltra ? 'studio_env_ultra' : 'studio_env';
+    const rawEnvTex = this.cache.acquireTexture(envKey);
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    const envRt = pmrem.fromEquirectangular(rawEnvTex);
+    pmrem.dispose();
+    this.cache.releaseTexture(envKey);
+    this.studioEnvRenderTarget = envRt;
+    this.cachedEnvQuality = quality;
+    this.scene.environment = envRt.texture;
+    this.tryPersistBakedPmrem(quality, envRt);
+  }
+
+  private disposeStudioEnvironment(): void {
+    this.scene.environment = null;
+    if (this.studioEnvRenderTarget) {
+      this.studioEnvRenderTarget.dispose();
+      this.studioEnvRenderTarget = null;
+    }
+    if (this.studioEnvDataTex) {
+      this.studioEnvDataTex.dispose();
+      this.studioEnvDataTex = null;
+    }
+    this.cachedEnvQuality = null;
+  }
+
+  private setupStudioLighting(
+    quality: QualityTier,
+    deferEnv = false,
+    preloadedEnvTex: THREE.DataTexture | null = null
+  ): void {
+    const keepEnv =
+      !deferEnv &&
+      QUALITY_TIER_CONFIG[quality].enableStudioEnv &&
+      this.cachedEnvQuality === quality &&
+      Boolean(this.studioEnvDataTex || this.studioEnvRenderTarget);
+    this.teardownStudioLighting(!keepEnv);
 
     const cfg = QUALITY_TIER_CONFIG[quality];
 
     // STD LITE uses pre-integrated Studio MatCap shaders -> ZERO dynamic scene lights needed!
     if (quality === 'standard_lite') {
-      this.scene.environment = null;
-      this.studioEnvRenderTarget = null;
+      this.disposeStudioEnvironment();
+      this.envDeferred = false;
       return;
     }
 
@@ -498,19 +713,28 @@ export class UnitV2Runtime {
     this.lightGroup.updateMatrixWorld(true);
 
     if (cfg.enableStudioEnv) {
-      // Explicit PMREM bake + immediate pmrem.dispose() prevents Three.js WebGLCubeUVMaps
-      // from retaining 8 internal LOD plane geometries + 1 pingPong texture permanently!
-      const envKey = isUltra ? 'studio_env_ultra' : 'studio_env';
-      const rawEnvTex = this.cache.acquireTexture(envKey);
-      const pmrem = new THREE.PMREMGenerator(this.renderer);
-      const envRt = pmrem.fromEquirectangular(rawEnvTex);
-      pmrem.dispose();
-      this.cache.releaseTexture(envKey);
-      this.studioEnvRenderTarget = envRt;
-      this.scene.environment = envRt.texture;
+      if (deferEnv) {
+        this.envDeferred = true;
+        this.scene.environment = null;
+      } else {
+        this.envDeferred = false;
+        this.attachStudioEnvironment(quality, preloadedEnvTex);
+      }
     } else {
-      this.scene.environment = null;
-      this.studioEnvRenderTarget = null;
+      this.envDeferred = false;
+      this.disposeStudioEnvironment();
+    }
+  }
+
+  public ensureShadersWarmed(camera: THREE.Camera): void {
+    if (!this.active || !this.ready || this.contextLost) return;
+    if (this.envDeferred && QUALITY_TIER_CONFIG[this.quality].enableStudioEnv) {
+      this.envDeferred = false;
+      this.attachStudioEnvironment(this.quality, null);
+    }
+    if (!this.shadersWarmed) {
+      this.shaderWarmupMs = this.cache.warmupShaders(this.renderer, this.scene, camera);
+      this.shadersWarmed = true;
     }
   }
 
@@ -520,7 +744,10 @@ export class UnitV2Runtime {
    */
   private fitUltraShadowRig(): void {
     if (this.quality !== 'ultra' || !this.ultraKeyLight) return;
-    const box = this.buildResult?.raycastIndex.unitWorldBox;
+    const ri = this.buildResult?.raycastIndex;
+    if (!ri) return;
+    if (ri.boundsDirty && ri.syncBounds) ri.syncBounds();
+    const box = ri.unitWorldBox;
     if (!box || box.isEmpty()) return;
 
     box.getCenter(_shadowCenter);
@@ -559,7 +786,7 @@ export class UnitV2Runtime {
     this.renderer.shadowMap.needsUpdate = true;
   }
 
-  private teardownStudioLighting(): void {
+  private teardownStudioLighting(disposeEnv = true): void {
     if (this.ultraKeyLight?.shadow?.map) {
       this.ultraKeyLight.shadow.map.dispose();
       this.ultraKeyLight.shadow.map = null;
@@ -569,10 +796,8 @@ export class UnitV2Runtime {
     if (this.lightGroup.children.length > 0) {
       disposeObject3D(this.lightGroup, this.cache, false);
     }
-    if (this.studioEnvRenderTarget) {
-      this.scene.environment = null;
-      this.studioEnvRenderTarget.dispose();
-      this.studioEnvRenderTarget = null;
+    if (disposeEnv) {
+      this.disposeStudioEnvironment();
     }
   }
 
@@ -598,8 +823,9 @@ export class UnitV2Runtime {
     _hasLastUltraCamMat = false;
   }
 
-  private disposeActiveUnitResources(): void {
+  private disposeActiveUnitResources(disposeEnv = true): void {
     this.motionStage = 'ultra';
+    this.shadersWarmed = false;
     this.kineEngine.invalidate();
     _hasLastUltraCamMat = false;
     if (this.fastProxyBundle) {
@@ -619,7 +845,7 @@ export class UnitV2Runtime {
     this.partById.clear();
     this.ready = false;
     this.ultraPost.dispose(this.cache);
-    this.teardownStudioLighting();
+    this.teardownStudioLighting(disposeEnv);
     this.lightGroup.visible = true;
     this.renderer.renderLists.dispose();
   }
@@ -642,21 +868,40 @@ export class UnitV2Runtime {
       sectionActive: boolean;
       subView?: number;
       integratedMode?: boolean;
+      synchronous?: boolean;
+      skipMotionProxy?: boolean;
+      deferShaderWarmup?: boolean;
+      skipRenderCallback?: boolean;
     }
   ): Promise<void> {
     const token = ++this.activationToken;
     const wasActive = this.active;
+    const reuseSameQualityEnv =
+      wasActive &&
+      !initialState.deferShaderWarmup &&
+      QUALITY_TIER_CONFIG[quality].enableStudioEnv &&
+      this.cachedEnvQuality === quality &&
+      Boolean(this.studioEnvDataTex || this.studioEnvRenderTarget);
+
     if (!wasActive) {
       this.savedExternalPixelRatio = this.renderer.getPixelRatio();
       this.vramMonitor.captureBaseline(this.renderer);
+      this.baselineEnvTexCount = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
     } else {
-      this.disposeActiveUnitResources();
-      this.vramMonitor.verifyAfterDispose(this.renderer, this.cache);
+      this.disposeActiveUnitResources(!reuseSameQualityEnv);
+      const retainedEnvTex = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
+      this.vramMonitor.verifyAfterDispose(
+        this.renderer,
+        this.cache,
+        retainedEnvTex - this.baselineEnvTexCount
+      );
       this.vramMonitor.captureBaseline(this.renderer);
+      this.baselineEnvTexCount = retainedEnvTex;
     }
 
     this.active = true;
     this.ready = false;
+    this.shadersWarmed = false;
     this.motionStage = quality === 'standard_lite' ? 'lite' : 'ultra';
     this.activeUnitId = unitId;
     this.quality = quality;
@@ -678,17 +923,29 @@ export class UnitV2Runtime {
 
     this.perfHud.setModeVisible(true);
     this.applyQualityRendererCaps(quality);
-    this.setupStudioLighting(quality);
+
+    // Fetch pre-baked lossless PMREM binary LUT concurrently with unit module import when in ?pp=1 mode!
+    const needEnvFetch =
+      !initialState.deferShaderWarmup &&
+      !reuseSameQualityEnv &&
+      QUALITY_TIER_CONFIG[quality].enableStudioEnv;
 
     try {
-      const unit = await loadRegisteredUnit(unitId);
+      const [unit, preloadedEnvTex] = await Promise.all([
+        loadRegisteredUnit(unitId),
+        needEnvFetch ? this.tryFetchPrebakedPmrem(quality) : Promise.resolve(null),
+      ]);
       if (token !== this.activationToken || !this.active) {
+        preloadedEnvTex?.dispose();
         return;
       }
+
+      this.setupStudioLighting(quality, Boolean(initialState.deferShaderWarmup), preloadedEnvTex);
 
       const planes = initialState.sectionActive ? [this.clippingPlane] : [];
       const built = await unit.build(quality, this.cache, {
         frameBudgetMs: 14.0,
+        synchronous: Boolean(initialState.synchronous),
         clippingPlanes: planes,
         subView: this.subView,
         integratedMode: this.integratedMode,
@@ -701,10 +958,11 @@ export class UnitV2Runtime {
       }
 
       // When quality === 'ultra', co-build a resident STD LITE v2 motion proxy so normal camera
-      // movement swaps in ~0.001ms with ZERO lag/flash, snapping back to ULTRA on stop!
+      // movement swaps in ~0.001ms with ZERO lag/flash, snapping back to ULTRA on stop
+      // (bypassed during static deterministic captures via skipMotionProxy for 2x faster ULTRA builds!).
       let proxyUnit: OptimizedUnit | null = null;
       let proxyBuilt: UnitBuildResult | null = null;
-      if (quality === 'ultra') {
+      if (quality === 'ultra' && !initialState.skipMotionProxy) {
         const candidateProxy = await loadRegisteredUnit(unitId);
         if (token !== this.activationToken || !this.active) {
           unit.dispose(this.cache);
@@ -712,6 +970,7 @@ export class UnitV2Runtime {
         }
         const candidateProxyBuilt = await candidateProxy.build('standard_lite', this.cache, {
           frameBudgetMs: 14.0,
+          synchronous: Boolean(initialState.synchronous),
           clippingPlanes: planes,
           subView: this.subView,
           integratedMode: this.integratedMode,
@@ -790,9 +1049,11 @@ export class UnitV2Runtime {
 
       this.fitUltraShadowRig();
 
-      // Pre-compile all active shader programs (ULTRA + LITE + FAST) BEFORE first visible frame!
-      if (!this.contextLost) {
+      // Pre-compile all active shader programs (ULTRA + LITE + FAST) BEFORE first visible frame
+      // (unless explicitly deferred for non-3D capture modes)!
+      if (!this.contextLost && !initialState.deferShaderWarmup) {
         this.shaderWarmupMs = this.cache.warmupShaders(this.renderer, this.scene, camera);
+        this.shadersWarmed = true;
       }
 
       if (proxyBuilt) {
@@ -805,7 +1066,9 @@ export class UnitV2Runtime {
       this.ready = true;
       this.vramMonitor.recordActivePeak(this.renderer);
       this.callbacks.onBuildComplete(unitId, this.getParts());
-      this.callbacks.onRequestRender();
+      if (!initialState.skipRenderCallback) {
+        this.callbacks.onRequestRender();
+      }
       this.refreshHud(true);
     } catch (err) {
       if (token === this.activationToken && this.active) {
@@ -828,8 +1091,13 @@ export class UnitV2Runtime {
     this.active = false;
     this.activeUnitId = null;
     this.perfHud.setModeVisible(false);
-    this.disposeActiveUnitResources();
-    const verification = this.vramMonitor.verifyAfterDispose(this.renderer, this.cache);
+    this.disposeActiveUnitResources(true);
+    const verification = this.vramMonitor.verifyAfterDispose(
+      this.renderer,
+      this.cache,
+      -this.baselineEnvTexCount
+    );
+    this.baselineEnvTexCount = 0;
 
     this.renderer.setPixelRatio(this.savedExternalPixelRatio);
     const w = Math.max(1, this.container.clientWidth);

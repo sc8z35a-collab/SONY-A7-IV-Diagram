@@ -1,12 +1,14 @@
 file	symbol	kind	start	end	signature
 src/core/geometry_quality.ts	GeometryQualityScale	interface	7	16	export interface GeometryQualityScale
-src/core/geometry_quality.ts	setActiveBuildQuality	func	63	65	export function setActiveBuildQuality(quality: QualityTier | null): void
-src/core/geometry_quality.ts	getActiveBuildQuality	func	67	69	export function getActiveBuildQuality(): QualityTier | null
-src/core/geometry_quality.ts	getActiveGeometryScale	func	71	73	export function getActiveGeometryScale(): GeometryQualityScale | null
-src/core/geometry_quality.ts	scaleCurveSegmentsForQuality	func	75	80	export function scaleCurveSegmentsForQuality(requested: number, minSegs = 4): number
-src/core/geometry_quality.ts	scaleRadialSegmentsForQuality	func	82	87	export function scaleRadialSegmentsForQuality(requested: number, minSegs = 5): number
-src/core/geometry_quality.ts	scaleBevelSegmentsForQuality	func	89	94	export function scaleBevelSegmentsForQuality(requested: number): number
-src/core/geometry_quality.ts	withQualityGeometry	func	96	104	export function withQualityGeometry<T>(quality: QualityTier, fn: () => T): T
+src/core/geometry_quality.ts	setActiveBuildQuality	func	64	66	export function setActiveBuildQuality(quality: QualityTier | null): void
+src/core/geometry_quality.ts	beginQualityAccessTracking	func	68	70	export function beginQualityAccessTracking(): number
+src/core/geometry_quality.ts	didQualityAccessChange	func	72	74	export function didQualityAccessChange(mark: number): boolean
+src/core/geometry_quality.ts	getActiveBuildQuality	func	76	79	export function getActiveBuildQuality(): QualityTier | null
+src/core/geometry_quality.ts	getActiveGeometryScale	func	81	84	export function getActiveGeometryScale(): GeometryQualityScale | null
+src/core/geometry_quality.ts	scaleCurveSegmentsForQuality	func	86	91	export function scaleCurveSegmentsForQuality(requested: number, minSegs = 4): number
+src/core/geometry_quality.ts	scaleRadialSegmentsForQuality	func	93	98	export function scaleRadialSegmentsForQuality(requested: number, minSegs = 5): number
+src/core/geometry_quality.ts	scaleBevelSegmentsForQuality	func	100	105	export function scaleBevelSegmentsForQuality(requested: number): number
+src/core/geometry_quality.ts	withQualityGeometry	func	107	115	export function withQualityGeometry<T>(quality: QualityTier, fn: () => T): T
 src/engine/CadHelpers.ts	createRoundedRectShape	func	13	30	export function createRoundedRectShape(width: number, height: number, radius: number): THREE.Shape
 src/engine/CadHelpers.ts	createFrameShape	func	35	63	export function createFrameShape( outerW: number, outerH: number, outerR: number, innerW: number, innerH: num…
 src/engine/CadHelpers.ts	addCircleHoles	func	68	74	export function addCircleHoles(shape: THREE.Shape, positions: Array<[number, number, number]>): void
@@ -36,25 +38,25 @@ src/engine/FastCadGeometry.ts	sagittaSegmentsForArc	func	26	41	function sagittaS
 src/engine/FastCadGeometry.ts	resampleCurvePathPoints	func	43	108	function resampleCurvePathPoints( curves: THREE.Curve<THREE.Vector2>[], toleranceMm: number, maxCircleSegs: n…
 src/engine/FastCadGeometry.ts	resampleShapeSagitta	func	110	153	export function resampleShapeSagitta( shape: THREE.Shape, toleranceMm: number, maxCircleSegs: number ): THREE…
 src/engine/FastCadGeometry.ts	nextPow2	func	159	163	function nextPow2(n: number): number
-src/engine/FastCadGeometry.ts	ensureEdgeVertScratch	func	189	203	function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void
-src/engine/FastCadGeometry.ts	ensureEdgeHashScratch	func	205	219	function ensureEdgeHashScratch(eTableSize: number): void
-src/engine/FastCadGeometry.ts	extractPooledCadEdgesArray	func	225	437	export function extractPooledCadEdgesArray( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLe…
-src/engine/FastCadGeometry.ts	extractFastCadEdges	func	439	448	export function extractFastCadEdges( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLengthMm …
-src/engine/FastCadGeometry.ts	qKey	func	456	458	function qKey(n: number): string
-src/engine/FastCadGeometry.ts	maxRadialAtAxisExtreme	func	460	488	function maxRadialAtAxisExtreme( posAttr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, axis: 'x'…
-src/engine/FastCadGeometry.ts	retessellatePrimitiveSagitta	func	490	1133	export function retessellatePrimitiveSagitta( geo: THREE.BufferGeometry, toleranceMm: number ): THREE.BufferG…
-src/engine/FastCadGeometry.ts	isGeometryLikelyOpen	func	1139	1173	export function isGeometryLikelyOpen(geo: THREE.BufferGeometry): boolean
-src/engine/FastCadGeometry.ts	encodeOctahedralNormal16	func	1179	1197	export function encodeOctahedralNormal16( nx: number, ny: number, nz: number, out: Int16Array, offset: number…
-src/engine/FastCadGeometry.ts	smoothCreaseNormals	func	1212	1305	export function smoothCreaseNormals(geo: THREE.BufferGeometry, creaseAngleDeg = 38): void
-src/engine/FastCadGeometry.ts	CompactEntryInput	interface	1311	1319	export interface CompactEntryInput
-src/engine/FastCadGeometry.ts	WeldedPageEntrySpan	interface	1321	1325	export interface WeldedPageEntrySpan
-src/engine/FastCadGeometry.ts	CompactWeldedPage	interface	1327	1332	export interface CompactWeldedPage
-src/engine/FastCadGeometry.ts	clampI16	func	1334	1336	function clampI16(v: number): number
-src/engine/FastCadGeometry.ts	weldEntriesRangeToPage	func	1338	1531	function weldEntriesRangeToPage( entries: ReadonlyArray<CompactEntryInput>, startEntry: number, endEntry: num…
-src/engine/FastCadGeometry.ts	buildCompactWeldedPagesFromEntries	func	1537	1561	export function buildCompactWeldedPagesFromEntries( entries: ReadonlyArray<CompactEntryInput>, omitUv = false…
-src/engine/FastCadGeometry.ts	RawEdgeChunk	interface	1567	1572	export interface RawEdgeChunk
-src/engine/FastCadGeometry.ts	IndexedEdgeBuildResult	interface	1574	1578	export interface IndexedEdgeBuildResult
-src/engine/FastCadGeometry.ts	buildIndexedEdgeGeometry	func	1580	1704	export function buildIndexedEdgeGeometry( chunks: ReadonlyArray<RawEdgeChunk> ): IndexedEdgeBuildResult | null
+src/engine/FastCadGeometry.ts	ensureEdgeVertScratch	func	191	204	function ensureEdgeVertScratch(vTableSize: number, vertCount: number): void
+src/engine/FastCadGeometry.ts	ensureEdgeHashScratch	func	206	219	function ensureEdgeHashScratch(eTableSize: number): void
+src/engine/FastCadGeometry.ts	extractPooledCadEdgesArray	func	225	454	export function extractPooledCadEdgesArray( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLe…
+src/engine/FastCadGeometry.ts	extractFastCadEdges	func	456	465	export function extractFastCadEdges( geometry: THREE.BufferGeometry, thresholdAngleDeg = 34, minEdgeLengthMm …
+src/engine/FastCadGeometry.ts	qKey	func	473	475	function qKey(n: number): string
+src/engine/FastCadGeometry.ts	maxRadialAtAxisExtreme	func	477	505	function maxRadialAtAxisExtreme( posAttr: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, axis: 'x'…
+src/engine/FastCadGeometry.ts	retessellatePrimitiveSagitta	func	507	1150	export function retessellatePrimitiveSagitta( geo: THREE.BufferGeometry, toleranceMm: number ): THREE.BufferG…
+src/engine/FastCadGeometry.ts	isGeometryLikelyOpen	func	1156	1190	export function isGeometryLikelyOpen(geo: THREE.BufferGeometry): boolean
+src/engine/FastCadGeometry.ts	encodeOctahedralNormal16	func	1196	1214	export function encodeOctahedralNormal16( nx: number, ny: number, nz: number, out: Int16Array, offset: number…
+src/engine/FastCadGeometry.ts	smoothCreaseNormals	func	1229	1322	export function smoothCreaseNormals(geo: THREE.BufferGeometry, creaseAngleDeg = 38): void
+src/engine/FastCadGeometry.ts	CompactEntryInput	interface	1328	1336	export interface CompactEntryInput
+src/engine/FastCadGeometry.ts	WeldedPageEntrySpan	interface	1338	1342	export interface WeldedPageEntrySpan
+src/engine/FastCadGeometry.ts	CompactWeldedPage	interface	1344	1349	export interface CompactWeldedPage
+src/engine/FastCadGeometry.ts	clampI16	func	1351	1353	function clampI16(v: number): number
+src/engine/FastCadGeometry.ts	weldEntriesRangeToPage	func	1355	1548	function weldEntriesRangeToPage( entries: ReadonlyArray<CompactEntryInput>, startEntry: number, endEntry: num…
+src/engine/FastCadGeometry.ts	buildCompactWeldedPagesFromEntries	func	1554	1578	export function buildCompactWeldedPagesFromEntries( entries: ReadonlyArray<CompactEntryInput>, omitUv = false…
+src/engine/FastCadGeometry.ts	RawEdgeChunk	interface	1584	1589	export interface RawEdgeChunk
+src/engine/FastCadGeometry.ts	IndexedEdgeBuildResult	interface	1591	1595	export interface IndexedEdgeBuildResult
+src/engine/FastCadGeometry.ts	buildIndexedEdgeGeometry	func	1597	1721	export function buildIndexedEdgeGeometry( chunks: ReadonlyArray<RawEdgeChunk> ): IndexedEdgeBuildResult | null
 src/engine/UltraDetailBuilders.ts	markHiRes	func	15	18	export function markHiRes<T extends THREE.BufferGeometry>(geo: T): T
 src/engine/UltraDetailBuilders.ts	extrudeHiRes	func	25	85	export function extrudeHiRes( shape: THREE.Shape, depth: number, bevelSize = 0.14, bevelThickness = 0.14, bev…
 src/engine/UltraDetailBuilders.ts	makeHiResHorizPlate	func	90	101	export function makeHiResHorizPlate( shape: THREE.Shape, thickness: number, mat: THREE.Material, bevel = 0.12…

@@ -46,39 +46,51 @@ def run_optical_monte_carlo(n_rays=10000):
         energy = np.ones(n_rays, dtype=np.float64)
         dx = np.where(from_right, -np.cos(theta), np.cos(theta))
         dy = np.sin(theta)
-        alive = np.ones(n_rays, dtype=bool)
+        inv_L_bins = n_bins / L
         for _bounce in range(220):
-            idx = np.where(alive)[0]
-            if idx.size == 0:
+            n_act = x.size
+            if n_act == 0:
                 break
-            going_up = dy[idx] >= 0
-            dist_y = np.where(going_up, (H - y[idx]) / np.maximum(np.abs(dy[idx]), 1e-6), y[idx] / np.maximum(np.abs(dy[idx]), 1e-6))
-            x_next = x[idx] + dx[idx] * dist_y
-            hit_far = x_next >= L
-            x_next = np.where(hit_far, 2 * L - x_next, x_next)
-            dx[idx] = np.where(hit_far, -dx[idx], dx[idx])
-            energy[idx] = np.where(hit_far, energy[idx] * 0.982, energy[idx])
-            hit_near = x_next <= 0.0
-            x_next = np.where(hit_near, -x_next, x_next)
-            dx[idx] = np.where(hit_near, -dx[idx], dx[idx])
-            energy[idx] = np.where(hit_near, energy[idx] * 0.982, energy[idx])
-            x_clamped = np.clip(x_next, 0.0, L - 1e-6)
-            x[idx] = x_clamped
-            y[idx] = np.where(going_up, H, 0.0)
-            dy[idx] = -dy[idx]
-            step_len = np.hypot(dx[idx] * dist_y, dist_y)
-            energy[idx] *= np.exp(-0.0008 * step_len)
-            hit_bottom = ~going_up
-            b_idx = np.clip((x_clamped / L * n_bins).astype(int), 0, n_bins - 1)
-            p_dot = dot_weights[b_idx]
-            scattered = hit_bottom & (rng_l.random(idx.size) < p_dot)
+            going_up = dy >= 0.0
+            abs_dy = np.abs(dy)
+            np.maximum(abs_dy, 1e-6, out=abs_dy)
+            dist_y = np.where(going_up, H - y, y)
+            dist_y /= abs_dy
+            dx_step = dx * dist_y
+            x += dx_step
+
+            hit_far = x >= L
+            if np.any(hit_far):
+                x[hit_far] = 2.0 * L - x[hit_far]
+                dx[hit_far] = -dx[hit_far]
+                energy[hit_far] *= 0.982
+            hit_near = x <= 0.0
+            if np.any(hit_near):
+                x[hit_near] = -x[hit_near]
+                dx[hit_near] = -dx[hit_near]
+                energy[hit_near] *= 0.982
+
+            np.clip(x, 0.0, L - 1e-6, out=x)
+            y = np.where(going_up, H, 0.0)
+            np.negative(dy, out=dy)
+            step_len = np.hypot(dx_step, dist_y)
+            energy *= np.exp(-0.0008 * step_len)
+
+            b_idx = np.clip((x * inv_L_bins).astype(np.intp), 0, n_bins - 1)
+            scattered = (~going_up) & (rng_l.random(n_act) < dot_weights[b_idx])
             if np.any(scattered):
-                s_idx = idx[scattered]
-                out_e = energy[s_idx] * 0.982 * 0.935
-                np.add.at(bins_out, b_idx[scattered], out_e)
+                out_e = energy[scattered] * (0.982 * 0.935)
+                bins_out += np.bincount(b_idx[scattered], weights=out_e, minlength=n_bins)
                 tot_ext += float(np.sum(out_e))
-                alive[s_idx] = False
-            alive[idx] &= (energy[idx] > 0.02)
+                keep = (~scattered) & (energy > 0.02)
+            else:
+                keep = energy > 0.02
+            if not np.all(keep):
+                x = x[keep]
+                y = y[keep]
+                dx = dx[keep]
+                dy = dy[keep]
+                energy = energy[keep]
         return bins_out, tot_ext
 
     # LightTools-style 6-iteration inverse CO2 laser-dot density solver (symmetric 11-zone dot pitch)
