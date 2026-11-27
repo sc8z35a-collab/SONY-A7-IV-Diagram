@@ -1,17 +1,28 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-27T12:33:28.222Z",
+  "createdAt": "2026-11-27T12:52:57.262Z",
   "slug": "feat-feat-hyper-opt-v3-fast-kine-ultra-aa",
   "branch": "feat/feat-hyper-opt-v3-fast-kine-ultra-aa",
   "baseSha": "1bc895d9fa5086d3590b035b2f946654517458e7",
   "vmHost": "devbox",
-  "reason": "branch_start",
-  "fingerprint": "39f1f2f6bff030d9d95497a8cebc05eba8653f177f50c6dba2668dcfef21d2c2",
-  "fileCount": 756,
+  "reason": "snap",
+  "fingerprint": "a2a3f8602f8f6d3a739462c568c21611a1b36cd7f3df891bba8a47d55b3fb4db",
+  "fileCount": 759,
   "deletedFiles": [],
-  "dirtyCount": 0,
+  "dirtyCount": 8,
   "skippedLarge": [],
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "implementation_plan.md",
+      "sha256": "98e175a261b6ebb4b1c34154347a08a7bd12171802acad42b5808abc1552645f",
+      "size": 47865
+    },
+    {
+      "name": "implementation_plan.md.metadata.json",
+      "sha256": "3f71985bd7689d9f56562a5ee9830c3e502c0c2bc5501b1a85f1da1b121f7fe3",
+      "size": 837
+    }
+  ],
   "files": [
     {
       "path": ".agents/environment.json",
@@ -3194,9 +3205,21 @@
       "mode": "100644"
     },
     {
+      "path": "src/core/fast_proxy_builder.ts",
+      "sha256": "14dd02e3dcba6bcc8ce97ea0f1564f6e78ec0238e4489f85aa8bab59a6f4f08c",
+      "size": 16543,
+      "mode": "100644"
+    },
+    {
       "path": "src/core/geometry_quality.ts",
       "sha256": "928d5778e995908bc5facfd388a3292c80acede68a69e5237454f1b57c0d64f7",
       "size": 3028,
+      "mode": "100644"
+    },
+    {
+      "path": "src/core/kine_culling_engine.ts",
+      "sha256": "4028ee5a0161d4a15d178ca6f0010ea55c60edb627aa6b083d70cb50c4131648",
+      "size": 23883,
       "mode": "100644"
     },
     {
@@ -3207,20 +3230,26 @@
     },
     {
       "path": "src/core/raycast_engine.ts",
-      "sha256": "6108e49370ffb4fc324f2e287f166a88e5f8cdcf9067e858717cb734faddf715",
-      "size": 33404,
+      "sha256": "862f80e1b8885b7d1086c980d030ba6501cea5d23e5e4ac864d491f0a95d56b3",
+      "size": 37249,
       "mode": "100644"
     },
     {
       "path": "src/core/resource_cache.ts",
-      "sha256": "430bd43b0afc53e46af3b56afaff6c5a1a8e39ce2022fa86f5cd43def3784f94",
-      "size": 66725,
+      "sha256": "638e9a865c6869a4bee6416f41c69758f335c5a798bc80b06d723a186776ccba",
+      "size": 85201,
+      "mode": "100644"
+    },
+    {
+      "path": "src/core/ultra_post_pipeline.ts",
+      "sha256": "359b61723b78cbf3e27ffc1ca54eb7fe7f6d43eaa9e3bbbd47c9d88e84308a0d",
+      "size": 18306,
       "mode": "100644"
     },
     {
       "path": "src/core/unit_contract.ts",
-      "sha256": "f43a90643462b7c37ce1accc9111e67f3cef5f8e0a5e6f88c2aa292dbf21abc1",
-      "size": 8575,
+      "sha256": "f7817509cce10c35d8df79a591f11941cf520891b75dfe666640ff80fb2814c6",
+      "size": 9831,
       "mode": "100644"
     },
     {
@@ -3243,8 +3272,8 @@
     },
     {
       "path": "src/core/v2_unit_compiler.ts",
-      "sha256": "c407d626ce6ad877c42c84b39bfdd44054745f9282546ea315246b2b257ece32",
-      "size": 125082,
+      "sha256": "8926999b703a41e7ed0b21217e4be7b27204026611302c6ce65b68749743aa75",
+      "size": 140776,
       "mode": "100644"
     },
     {
@@ -4401,8 +4430,8 @@
     },
     {
       "path": "src/units/mi_shoe.ts",
-      "sha256": "3802ce54fa0ef7ddaf0245e584e3c1d14c064c208352b59793e3ed6ed2baaa84",
-      "size": 102898,
+      "sha256": "ccc053e307d5c412ddd83bbf2499a4e16fd74751f9145e47be9cee0df97bf18f",
+      "size": 105622,
       "mode": "100644"
     },
     {
