@@ -104,6 +104,36 @@ export const RAY_PRESETS = Object.freeze({
     ignoreIds: ['welcome-plinth-wifi-ble-module', 'welcome-plinth-rear-io-bezel', 'welcome-plinth-mg-chassis'],
     ignoreSubstrings: ['wifi', 'radome', 'antenna', 'rf'],
   },
+  'riimos-cam-front': {
+    name: 'RIIMOS E1 Front 120Hz OV7720/7725 75° Sightline Cone',
+    unitId: 'original',
+    origin: [0, 167.0, 69.6],
+    dir: [0, 0, 1],
+    fovDeg: 75,
+    rangeMm: 220,
+    ignoreIds: ['orig-e1-cam-front-glass', 'orig-e1-cam-front-ring', 'orig-e1-cam-front-lens'],
+    ignoreSubstrings: ['cam-front-glass', 'cam-front-ring'],
+  },
+  'riimos-cam-rear': {
+    name: 'RIIMOS E1 Rear 120Hz OV7720/7725 75° Sightline Cone',
+    unitId: 'original',
+    origin: [0, 167.0, -69.6],
+    dir: [0, 0, -1],
+    fovDeg: 75,
+    rangeMm: 220,
+    ignoreIds: ['orig-e1-cam-rear-glass', 'orig-e1-cam-rear-ring', 'orig-e1-cam-rear-lens'],
+    ignoreSubstrings: ['cam-rear-glass', 'cam-rear-ring'],
+  },
+  'riimos-cam-top360': {
+    name: 'RIIMOS E1 Top 360° Fisheye Surveillance Dome 120° Zenith Cone',
+    unitId: 'original',
+    origin: [-4.0, 260.2, 42.0],
+    dir: [0, 1, 0],
+    fovDeg: 120,
+    rangeMm: 220,
+    ignoreIds: ['orig-e1-cam-top-dome', 'orig-e1-cam-top-fisheye', 'orig-e1-cam-top-mast'],
+    ignoreSubstrings: ['cam-top'],
+  },
 });
 
 /**
