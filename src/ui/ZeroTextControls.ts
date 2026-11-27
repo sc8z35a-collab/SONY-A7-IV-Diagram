@@ -97,7 +97,7 @@ const ASSEMBLY_GROUPS: readonly AssemblyPaletteGroup[] = [
   {
     heading: 'イントロダクション',
     items: [
-      { mode: 'welcome', label: 'ようこそ 3D立体', sub: '360パーツ実動作CNC光学装置', icon: ICONS.welcome },
+      { mode: 'welcome', label: 'ようこそ 3D立体', sub: '435パーツ実動作CNC光学装置', icon: ICONS.welcome },
     ],
   },
   {

@@ -1,9 +1,9 @@
 {
   "unitId": "welcome",
-  "version": "3.5.0",
-  "nameJa": "ようこそ 3D立体光学機構 (360パーツ実動作CNC装置)",
-  "nameEn": "Welcome 3D Functional CNC Optical Kinetic Signboard (WLK-360)",
-  "declaredPartCount": 360,
+  "version": "3.8.0",
+  "nameJa": "ようこそ 3D立体光学機構 (435パーツ実動作CNC装置)",
+  "nameEn": "Welcome 3D Functional CNC Optical Kinetic Signboard (WLK-435)",
+  "declaredPartCount": 435,
   "parts": [
     {
       "id": "welcome-yo-cnc-chassis",
@@ -22034,6 +22034,4281 @@
         "JIS B 7513:2018 Precision Surface Plates (Grade-0 Flatness & Metrology Certification)",
         "ISO 8512-2 Surface Plates — Granite and Precision Metallic Optical Bench Plates",
         "ASME B89.3.7 Granite & Optical Reference Datum Plate Certification Standards"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-yo-sapphire-ito-esd-clip",
+      "order": 361,
+      "swatchColor": "#7dd3fc",
+      "groupKey": "glyph_yo",
+      "assembledPos": [
+        -66,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -28,
+        8,
+        42
+      ],
+      "integratedExplodeOffset": [
+        -28,
+        8,
+        42
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W361. 「よ」前面サファイア窓 導電ITO〜ベゼル 1MΩ ESD静電放電スプリングクリップ",
+      "subtitle": "Glyph \"よ\" Front Sapphire Window Conductive ITO-to-Bezel 1 MOhm ESD Discharge Spring Clip",
+      "category": "「よ」モジュール / 光学窓ESD静電放電",
+      "plainAnalogy": "「よ」の透明サファイア窓を布で拭いた時に溜まる静電気を、目に見えない透明導電膜と100万オーム安全抵抗つきバネクリップでそっと地面へ逃がし、ホコリ吸着とLED破損を防ぎます。",
+      "summary": "体積抵抗率 10^14 Ω·cm の完全絶縁体であるサファイア窓（W03）外周上部（X=+0.6, Y=+8.5, Z=+4.18）に配置された ITO 透明導電膜（10–45 Ω/sq, 可視透過率 ≥85%）〜チタンベゼル（W05）間 1 MΩ 電流制限 ESD 放電クリップ（IEC 61340-5-1 準拠）。",
+      "opticsAndPhysics": [
+        "サファイア窓表面の乾拭き・来客接触で蓄積する 8–15 kV の摩擦帯電を、1 MΩ 電流制限抵抗経由で時定数 τ ≈ 10 μs で緩やかに安全放電し、高電流スパークによる LED 沿面破壊を防止。",
+        "シート抵抗 10–45 Ω/sq の極薄 ITO 膜と BeCu/SUS301 マイクロ板ばねにより、透過率を損なわず静電ホコリ付着を 95% 以上低減。"
+      ],
+      "formula": {
+        "expression": "I_peak = V_ESD / R_bleed = 15 kV / 1 MΩ = 15 mA,   τ_bleed = R_bleed · C_win ≈ 10 μs (IEC 61340-5-1)",
+        "description": "1 MΩ ブリード抵抗でピーク放電電流を 15 mA へ抑制しつつ 10 μs で帯電を完全除電。"
+      },
+      "nextGenInnovation": "航空機コックピット計器ガラス標準の ITO 1 MΩ 電流制限 ESD 接地クリップを光学文字へ実装。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "IEC 61340-5-1 ESD Control / MIL-STD-883 HBM"
+        },
+        {
+          "label": "導電膜・抵抗",
+          "value": "ITO 10–45 Ω/sq (T ≥ 85%) + 0402 1.0 MΩ 電流制限抵抗"
+        },
+        {
+          "label": "配置位置",
+          "value": "YO_STEM 前面サファイア縁 (X=+0.6, Y=+8.5, Z=+4.18)"
+        }
+      ],
+      "references": [
+        "IEC 61340-5-1:2016 Electrostatics — Protection of Electronic Devices from Electrostatic Phenomena",
+        "Edmund Optics, \"ITO Coated Sapphire & Optical Windows — Sheet Resistance & Transmittance Application Note\"",
+        "ANSI/ESD S20.20 Standard for the Development of an Electrostatic Discharge Control Program"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-yo-t-junction-ti-gusset",
+      "order": 362,
+      "swatchColor": "#aab4c0",
+      "groupKey": "glyph_yo",
+      "assembledPos": [
+        -66,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -24,
+        12,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -24,
+        12,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W362. 「よ」横枝〜主幹T字接合部 CNC Ti-6Al-4V 剪断ダウエル＆剛性補強ガセット橋",
+      "subtitle": "Glyph \"よ\" Stem-to-Bar T-Junction CNC Ti-6Al-4V Shear Dowel & Stiffening Gusset Bridge",
+      "category": "「よ」モジュール / T字構造剛性補強",
+      "plainAnalogy": "「よ」の縦棒から右へ突き出た横枝の付け根を、航空機用チタンの補強プレートと2本の精密ピンでガッチリつなぎ、スピーカーの音圧でもビビリ振動させない橋渡し部品です。",
+      "summary": "主幹（W01）から片持ち突出する横枝（W27）の背面T字交差部（X=+4.3, Y=+11.2, Z=-5.84）を橋渡しする Ti-6Al-4V Grade 5（E=114 GPa, σ_y=880 MPa）CNC 軽量ポケットガセット＆ JIS B 1359 焼入精密剪断ノックピン2点結合。",
+      "opticsAndPhysics": [
+        "横枝付け根の曲げモーメント集中部へ高比剛性 Ti-6Al-4V ガセット橋と2点剪断ダウエルを挿入し、片持ち一次ねじり固有振動数を 310 Hz → 540 Hz へ引き上げて音響共振域外へ退避。",
+        "軽量リブポケット切削により重量増を 0.42 g へ抑えつつ横枝先端たわみを 48% 低減。"
+      ],
+      "formula": {
+        "expression": "f_1 ∝ √(E·I / m·L³),   Δf_1 = +74% (310 Hz → 540 Hz),   σ_y(Ti-6Al-4V) = 880 MPa",
+        "description": "Ti-6Al-4V ガセットと2点剪断ピンにより片持ち横枝の曲げ剛性を約3倍へ強化。"
+      },
+      "nextGenInnovation": "航空宇宙 Ti-6Al-4V トラスガセット＆ JIS B 1359 精密剪断ダウエルによる無共振T字結合。",
+      "specs": [
+        {
+          "label": "材質",
+          "value": "Ti-6Al-4V Grade 5 (ASTM B348, E = 114 GPa, σ_y = 880 MPa)"
+        },
+        {
+          "label": "剪断結合",
+          "value": "JIS B 1359 h6 焼入平行ノックピン Ø1.5 mm × 2点"
+        },
+        {
+          "label": "配置位置",
+          "value": "「よ」背面T字交差橋 (X=+4.3, Y=+11.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "ASTM B348 / AMS 4928 Titanium Alloy Ti-6Al-4V (Grade 5) Bars and Forgings Mechanical Properties",
+        "JIS B 1359:2015 / ISO 8734 Parallel Pins of Hardened Steel (Dowel Pin Shear Joint Design)",
+        "Roark, R. J. & Young, W. C., \"Roark's Formulas for Stress and Strain\", 8th Ed. (Cantilever Gusset Stiffening)"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-yo-1wire-cal-eeprom-shunt",
+      "order": 363,
+      "swatchColor": "#1b5e47",
+      "groupKey": "glyph_yo",
+      "assembledPos": [
+        -66,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -28,
+        3,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -28,
+        3,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W363. 「よ」着脱自動識別 1-Wire 64bit校正EEPROM (DS28E07) & 10mΩ LED電流検知シャント (WSLP0603)",
+      "subtitle": "Glyph \"よ\" Auto-ID 1-Wire 64-bit Calibration EEPROM (DS28E07) & 10 mOhm LED Shunt (WSLP0603)",
+      "category": "「よ」モジュール / 個体識別・色度校正",
+      "plainAnalogy": "「よ」を台座へカチッと挿した瞬間に「私は『よ』で、この明るさと色味で光る個体です」と自動申告し、LEDの電流異常も見張る小さな身分証メモリ＆電流計基板です。",
+      "summary": "「よ」主幹背面下部（X=+0.8, Y=-2.2, Z=-5.84）に実装された Analog Devices DS28E07（1024-bit 1-Wire EEPROM, 工場固有64-bit ROM ID, ±8 kV HBM ESD）と Vishay WSLP0603 10 mΩ ±0.5% 金属帯シャント抵抗（0.4 W, <3 μV/°C, AEC-Q200）校正キャリア。",
+      "opticsAndPhysics": [
+        "DS28E07 の4ページ×256-bit EEPROM へ工場実測 CIE 1931 色度座標（x, y, Y）・累積通電時間・LED 劣化補正テーブルを保持し、4文字のどれを交換しても即座に Δu'v' < 0.001 均一発色を実現。",
+        "Vishay WSLP0603 Power Metal Strip® 10 mΩ シャントの極低熱起電力（<3 μV/°C）と 100 Hz 電流監視により、LED ストリングのオープン／ショート故障を 2 ms 以内で検知。"
+      ],
+      "formula": {
+        "expression": "V_shunt = I_LED · R_shunt = 0.45 A × 10 mΩ = 4.50 mV  (ΔV_EMF < 3 μV/°C, 64-bit Unique ROM ID)",
+        "description": "10 mΩ 精密シャントと 1-Wire 固有 64-bit 校正 EEPROM でプラグ＆プレイ色度均一化と故障診断を統合。"
+      },
+      "nextGenInnovation": "プロ用シネマレンズ電子接点と同等の 1-Wire 個体校正メモリ＆金属帯電流シャント実装。",
+      "specs": [
+        {
+          "label": "校正メモリIC",
+          "value": "Analog Devices DS28E07 (1024-bit 1-Wire EEPROM / 64-bit ROM ID)"
+        },
+        {
+          "label": "電流シャント",
+          "value": "Vishay WSLP0603 10 mΩ ±0.5% (0.4 W / <3 μV/°C / AEC-Q200)"
+        },
+        {
+          "label": "配置位置",
+          "value": "「よ」主幹背面下部キャリア (X=+0.8, Y=-2.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "Analog Devices / Maxim Integrated, \"DS28E07 1024-Bit 1-Wire® EEPROM Datasheet (19-5928)\"",
+        "Vishay Dale, \"WSLP0603 Power Metal Strip® Low-Value Surface-Mount Resistors Datasheet (30122)\"",
+        "IEC 62717 LED Modules for General Lighting — Chromaticity Binning & Drift Compensation"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-u-sapphire-ito-esd-clip",
+      "order": 364,
+      "swatchColor": "#7dd3fc",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -9,
+        8,
+        42
+      ],
+      "integratedExplodeOffset": [
+        -9,
+        8,
+        42
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W364. 「う」前面サファイア窓 導電ITO〜ベゼル 1MΩ ESD静電放電スプリングクリップ",
+      "subtitle": "Glyph \"う\" Front Sapphire Window Conductive ITO-to-Bezel 1 MOhm ESD Discharge Spring Clip",
+      "category": "「う」モジュール / 光学窓ESD静電放電",
+      "plainAnalogy": "大きくカーブした「う」のサファイア前面窓に溜まる静電気を、透明導電ITO膜と1MΩ安全抵抗スプリング経由で確実に逃がし、ホコリ付着や静電故障を防ぐクリップです。",
+      "summary": "「う」主弧サファイア窓（W46）左上縁（X=-9.6, Y=+9.4, Z=+4.20）に配した ITO 透明導電膜（10–45 Ω/sq）＋ SUS301/BeCu マイクロ接触片＋ 1 MΩ ESD 電流制限放電クリップ（IEC 61340-5-1 準拠）。",
+      "opticsAndPhysics": [
+        "湾曲主弧の全面に成膜した ITO 透明導電膜（R_s = 10–45 Ω/sq）を単一点 1 MΩ ブリード抵抗でチタンベゼル（W48）へ接地し、表面電位を常に < 100 V に維持。",
+        "可視透過率 ≥ 85% を確保しつつ摩擦帯電による塵埃吸着・LED ドライバ沿面放電リスクを構造的に排除。"
+      ],
+      "formula": {
+        "expression": "V_surf(t) = V_0 · exp(-t / (R_bleed · C_win)) < 100 V @ t = 50 μs  (R_bleed = 1.0 MΩ)",
+        "description": "1 MΩ ブリード接地により高電圧摩擦帯電を 50 μs 以内で安全電位へ指数減衰。"
+      },
+      "nextGenInnovation": "曲面サファイア光学窓へ適合させた超低背 ITO-to-Ti ベゼル ESD 放電クリップ。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "IEC 61340-5-1 / ANSI/ESD S20.20"
+        },
+        {
+          "label": "導電膜・ばね",
+          "value": "ITO 10–45 Ω/sq + SUS301/BeCu 接触片 + 1 MΩ 0402 抵抗"
+        },
+        {
+          "label": "配置位置",
+          "value": "U_ARC 左上前面縁 (X=-9.6, Y=+9.4, Z=+4.20)"
+        }
+      ],
+      "references": [
+        "IEC 61340-5-1:2016 Protection of Electronic Devices from Electrostatic Phenomena",
+        "Corning / Edmund Optics, \"Conductive ITO Anti-Static Optical Window Grounding Guide\"",
+        "MIL-STD-883 Method 3015 Electrostatic Discharge Sensitivity Classification"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-u-quartz-belleville-stack",
+      "order": 365,
+      "swatchColor": "#98a2b0",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -6,
+        18,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -6,
+        18,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W365. 「う」石英支柱(W79) 軸方向定予圧 DIN 2093 皿ばね(ベルビル)ワッシャー積層対",
+      "subtitle": "Glyph \"う\" Quartz Pillar (W79) Axial Constant-Preload DIN 2093 Belleville Disc-Spring Stack Pair",
+      "category": "「う」モジュール / ΔCTE熱膨張吸収・定予圧",
+      "plainAnalogy": "ガラスの柱とアルミの枠は温度で伸び方が40倍も違います。3枚重ねた円錐状の「皿バネ」を柱の上下へ仕込むことで、夏も冬もガラスを割らずにピタッと一定の力で支え続けます。",
+      "summary": "溶融石英支柱（W79, CTE = 0.55 ppm/K）と A6061 アルミ骨格（W44/W70, CTE = 23.6 ppm/K）間の ΔCTE = 23.05 ppm/K 熱膨張差を吸収するため、支柱上下背面座（X=+0.5, Y=+14.8 / +17.9, Z=-5.82）へ配した DIN 2093 / DIN EN 16983 SUS301-CSP 皿ばね3枚直列積層対。",
+      "opticsAndPhysics": [
+        "Almen–László の皿ばね特性式において高さ板厚比 h₀/t ≈ 1.41 の準定荷重（ゼロ剛性プラトー）域で動作させることで、−10〜+65°C の温度サイクルでも軸予圧 18 N ±8% を一定保持。",
+        "石英ガラス端面への過大圧縮（圧壊）と低温収縮時のガタ発生を同時に防ぎ、同軸給電導通と光学軸精度を維持。"
+      ],
+      "formula": {
+        "expression": "F(s) = [4E / (1-ν²)] · (t⁴ / (K₁·D_e²)) · (s/t) · [(h₀/t - s/t)(h₀/t - s/2t) + 1] ≈ 18 N ± 8%",
+        "description": "Almen–László 式 h₀/t ≈ 1.4 設計により ΔCTE = 23.05 ppm/K の変位全域で準定荷重予圧を達成。"
+      },
+      "nextGenInnovation": "精密望遠鏡鏡筒のガラス―金属 ΔCTE 補償で実証された DIN 2093 準定荷重皿ばね積層。",
+      "specs": [
+        {
+          "label": "ばね規格",
+          "value": "DIN 2093 / DIN EN 16983 SUS301-CSP 3枚直列積層 × 2座"
+        },
+        {
+          "label": "軸予圧・ΔCTE",
+          "value": "18 N ± 8% (h₀/t ≈ 1.41) / ΔCTE 23.05 ppm/K 補償"
+        },
+        {
+          "label": "配置位置",
+          "value": "石英支柱 W79 上下背面座 (X=+0.5, Y=+14.8/+17.9, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "DIN EN 16983 (formerly DIN 2093), \"Disc Springs — Quality Specifications, Dimensions & Calculation\"",
+        "Almen, J. O. & László, A. (1936), \"The Uniform-Section Disk Spring\", Trans. ASME 58, 305–314",
+        "Yoder, P. R., \"Opto-Mechanical Systems Design\", 4th Ed. (Athermal Axial Preload of Glass Optics)"
+      ],
+      "diagramType": "welcome_quartz_bridge"
+    },
+    {
+      "id": "welcome-u-crest-sma905-cal-port",
+      "order": 366,
+      "swatchColor": "#d4a137",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -8.5,
+        25,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -8.5,
+        25,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W366. 「う」浮遊上部点 背面 SMA905 光ファイバ分光校正タップ＆ローレット真鍮盲蓋",
+      "subtitle": "Glyph \"う\" Floating Crest Rear SMA905 Fiber-Optic Spectrometer Calibration Tap & Brass Cap",
+      "category": "「う」モジュール / 非破壊分光校正ポート",
+      "plainAnalogy": "防水シールを剥がさずに「う」の上部点の色味（CRI 97）が経年変化していないか現地チェックできるよう、光ファイバ測定器を直結できる真鍮キャップ付の光取り出し口です。",
+      "summary": "「う」浮遊上部点（U_CREST）背面右端（X=+7.4, Y=+20.2, Z=-5.84）へ設けた Thorlabs SMA905 マルチモード光ファイバ規格（NA=0.22, 400–2200 nm）準拠マイクロ分光校正光タップ＆ EPDM Oリング封止 C3604 ローレット真鍮盲蓋。",
+      "opticsAndPhysics": [
+        "通常運用時は EPDM Oリング付 C3604 ローレット盲蓋で IP65 気密と完全遮光を維持し、定期点検時のみ SMA905（1/4\"-36 UNS）パッチファイバを接続して分光放射計で CRI Ra / R9 / Duv を現地計測。",
+        "開口数 NA = 0.22（受光半角 12.7°）により導光板内部スペクトルを再現性 ±0.1 nm で安定サンプリング。"
+      ],
+      "formula": {
+        "expression": "NA = n₀ · sin(θ_max) = 0.22  (θ_max = 12.7°),   λ = 400–2200 nm,   Duv < 0.001 現地検証",
+        "description": "IP65 封止を破壊せず SMA905 ファイバ直結で CRI 97・Duv 経年分光校正を実施可能。"
+      },
+      "nextGenInnovation": "光学実験室標準 Thorlabs SMA905 分光校正タップの文字モジュール背面統合。",
+      "specs": [
+        {
+          "label": "コネクタ規格",
+          "value": "Thorlabs SMA905 (1/4\"-36 UNS, NA = 0.22, 400–2200 nm)"
+        },
+        {
+          "label": "盲蓋・封止",
+          "value": "C3604 ローレット真鍮盲蓋 + EPDM Oリング (IP65)"
+        },
+        {
+          "label": "配置位置",
+          "value": "U_CREST 背面右端 (X=+7.4, Y=+20.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "Thorlabs Inc., \"SMA905 Multimode Fiber Optic Patch Cables & Bulkhead Adapters Specification (NA=0.22)\"",
+        "TIA/EIA-604-1 (FOCIS 1) Fiber Optic Connector Intermateability Standard — Type SMA 905",
+        "CIE 13.3 / TM-30-20 Method for Evaluating Light Source Color Rendition (In-Situ Spectral Verification)"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-u-arc-piezo-shunt-damper",
+      "order": 367,
+      "swatchColor": "#e6decb",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -9,
+        4,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -9,
+        4,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W367. 「う」主弧片持ち基部 PZT-5H 圧電パッシブRLシャント構造制振パッチ",
+      "subtitle": "Glyph \"う\" Main Arc Cantilever Root PZT-5H Piezoelectric Passive RL-Shunt Structural Damper Patch",
+      "category": "「う」モジュール / 圧電RLシャント制振",
+      "plainAnalogy": "「う」の大きなカーブがスピーカーの音でブルブル共振するエネルギーを、セラミック圧電板で電気に変えてコイルと抵抗の回路で熱として消し去る「電気式の制振ダンパー」です。",
+      "summary": "片持ち湾曲構造「う」主弧の背面高歪み域（X=+4.2, Y=-9.6, Z=-5.82）へ接着された PZT-5H 圧電セラミック薄板＆同調インダクタ／抵抗パッシブ RL シャント回路（Hagood & von Flotow 1991 理論準拠）。",
+      "opticsAndPhysics": [
+        "台座スピーカー（W214）音圧で励起される 180–420 Hz 曲げ歪みエネルギーを PZT-5H の高い電気機械結合係数（k₃₁ ≈ 0.39）で電荷へ変換し、同調 L-C_p-R 共振回路でジュール熱として無電源散逸。",
+        "質量ダンパー（TMD）と異なり超薄型（0.36 mm）・超軽量（0.18 g）のまま構造減衰比 ζ を +6.2 dB 向上。"
+      ],
+      "formula": {
+        "expression": "ω_e = 1 / √(L_opt · C_p) = ω_n · √(1 + K₃₁²),   R_opt = √2 · K₃₁ / (C_p · ω_n · (1 + K₃₁²))",
+        "description": "Hagood & von Flotow 最適同調 RL シャント条件により 180–420 Hz 曲げ共振ピークを -6.2 dB 減衰。"
+      },
+      "nextGenInnovation": "衛星アンテナ・精密望遠鏡支柱で採用される PZT-5H 無電源 RL 同調シャント制振。",
+      "specs": [
+        {
+          "label": "圧電素子",
+          "value": "PZT-5H (d₃₁ = -274 pC/N, k₃₁ = 0.39) + Ag焼付電極"
+        },
+        {
+          "label": "同調回路",
+          "value": "パッシブ直列 RL シャント (f_tune = 290 Hz, -6.2 dB 減衰)"
+        },
+        {
+          "label": "配置位置",
+          "value": "U_ARC 背面下部高歪み域 (X=+4.2, Y=-9.6, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "Hagood, N. W. & von Flotow, A. (1991), \"Damping of Structural Vibrations with Piezoelectric Materials and Passive Electrical Networks\", J. Sound Vib. 146(2), 243–268",
+        "Moheimani, S. O. R. & Fleming, A. J. (2006), \"Piezoelectric Transducers for Vibration Control and Damping\", Springer",
+        "Morgan Advanced Materials, \"PZT-5H (Navy Type VI) Piezoelectric Ceramics Technical Data\""
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-ko-sapphire-ito-esd-clip",
+      "order": 368,
+      "swatchColor": "#7dd3fc",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        10,
+        4,
+        42
+      ],
+      "integratedExplodeOffset": [
+        10,
+        4,
+        42
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W368. 「こ」前面サファイア窓 導電ITO〜ベゼル 1MΩ ESD静電放電スプリングクリップ",
+      "subtitle": "Glyph \"こ\" Front Sapphire Window Conductive ITO-to-Bezel 1 MOhm ESD Discharge Spring Clip",
+      "category": "「こ」モジュール / 光学窓ESD静電放電",
+      "plainAnalogy": "「こ」の横長サファイア前面窓に溜まる静電気を、透明導電ITO膜と1MΩ抵抗スプリングで安全に逃がし、ホコリの張り付きとLED回路への静電破壊を防ぎます。",
+      "summary": "「こ」下画サファイア窓（W89）右側縁（X=+5.8, Y=-12.0, Z=+4.18）へ装着された ITO 導電膜（10–45 Ω/sq）〜チタンベゼル間 1 MΩ ESD 静電放電スプリングクリップ（IEC 61340-5-1 準拠）。",
+      "opticsAndPhysics": [
+        "水平に広い下画サファイア表面へ蓄積した静電気を 1 MΩ 電流制限経路で緩やかに除電し、静電ホコリ付着を防止。",
+        "光学有効発光域を避けた外周配置により、輝度均一性 ≥92% と色度を完全に保持。"
+      ],
+      "formula": {
+        "expression": "R_bleed = 1.0 MΩ ± 5%,   V_clamp < 100 V (IEC 61340-5-1),   T_vis(ITO) ≥ 85%",
+        "description": "高透過 ITO 導電膜と 1 MΩ 放電クリップで下画サファイア窓の帯電・沿面放電を根絶。"
+      },
+      "nextGenInnovation": "IEC 61340-5-1 準拠の水平光学窓向け超低背 ITO ESD ブリードクリップ。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "IEC 61340-5-1 / ANSI/ESD S20.20"
+        },
+        {
+          "label": "構成",
+          "value": "ITO 10–45 Ω/sq + BeCu 板ばね + 0402 1 MΩ 抵抗"
+        },
+        {
+          "label": "配置位置",
+          "value": "KO_BOT 右側前面縁 (X=+5.8, Y=-12.0, Z=+4.18)"
+        }
+      ],
+      "references": [
+        "IEC 61340-5-1:2016 Electrostatics — Protection of Electronic Devices from Electrostatic Phenomena",
+        "Edmund Optics, \"Conductive ITO Coatings for Anti-Static Optical Windows\"",
+        "IPC-A-610 ESD Control & Grounding Requirements for Optical Assemblies"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-ko-quartz-belleville-stacks",
+      "order": 369,
+      "swatchColor": "#98a2b0",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        11,
+        10,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        11,
+        10,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W369. 「こ」左右2本石英コラム(W124/W125) 軸定予圧 DIN 2093 皿ばねワッシャー積層対",
+      "subtitle": "Glyph \"こ\" Dual Quartz Columns (W124/W125) Axial Preload DIN 2093 Belleville Spring Stacks",
+      "category": "「こ」モジュール / ΔCTE熱膨張吸収・定予圧",
+      "plainAnalogy": "「こ」の浮いた上画を支える左右2本の石英ガラス柱の上下4か所へ、それぞれ皿バネの積層クッションを仕込み、温度が変わっても均等な力でガラスと電源ピンを守ります。",
+      "summary": "左右2本の平行溶融石英コラム（W124/W125, X=±7.6）の上下4端面背面座（Z=-5.82）へ配した DIN 2093 / DIN EN 16983 SUS301-CSP 皿ばね積層ユニット4基。ΔCTE = 23.05 ppm/K による熱膨張差を吸収し、内蔵給電/PWM 芯線（W127/W128）の接触圧を 16 N 均等維持します。",
+      "opticsAndPhysics": [
+        "左右2柱の軸予圧を Almen–László 準定荷重域（16 N ±8%）で完全均等化することで、上画（W113）の熱傾斜（チルト誤差）を < 0.005° へ抑制。",
+        "低温収縮時の接点浮きと高温膨張時の石英端面圧壊を同時に防止。"
+      ],
+      "formula": {
+        "expression": "F_left = F_right = 16.0 N ± 8% (DIN 2093, h₀/t ≈ 1.41)  ⇒  Δθ_tilt < 0.005°",
+        "description": "左右2本石英柱4端の均等皿ばね予圧により温度変化下でも上画の平行度と同軸導通を維持。"
+      },
+      "nextGenInnovation": "二柱平行光学ブリッジ向け4点同期 DIN 2093 準定荷重アサーマル予圧機構。",
+      "specs": [
+        {
+          "label": "ばね規格",
+          "value": "DIN 2093 / DIN EN 16983 SUS301-CSP 皿ばね積層 × 4座"
+        },
+        {
+          "label": "均等予圧",
+          "value": "16.0 N ± 8% / ΔCTE 23.05 ppm/K 吸収"
+        },
+        {
+          "label": "配置位置",
+          "value": "左右石英柱 W124/W125 上下4背面座 (Z=-5.82)"
+        }
+      ],
+      "references": [
+        "DIN EN 16983 (DIN 2093) Disc Springs — Calculation and Quality Specifications",
+        "Almen, J. O. & László, A. (1936), \"The Uniform-Section Disk Spring\", Trans. ASME 58",
+        "Corning HPFS® 7980 Fused Silica Thermal Expansion & Optomechanical Mounting Guidelines"
+      ],
+      "diagramType": "welcome_quartz_bridge"
+    },
+    {
+      "id": "welcome-ko-lower-micro-heatpipe",
+      "order": 370,
+      "swatchColor": "#d07447",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        10,
+        4,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        10,
+        4,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W370. 「こ」下画背面 0.6mm 扁平焼結銅マイクロヒートパイプ＆ウィック均熱サドル",
+      "subtitle": "Glyph \"こ\" Lower Stroke Rear 0.6mm Ultra-Thin Sintered Copper Micro-Heatpipe & Saddle",
+      "category": "「こ」モジュール / 超薄相変化均熱輸送",
+      "plainAnalogy": "横長の「こ」下画の中央にこもりがちなLEDと駆動ICの熱を、厚さわずか0.6mmの超極薄ヒートパイプが蒸発と凝縮の相変化で端まで瞬時に運んで均一に冷やします。",
+      "summary": "「こ」下画背面左腕（X∈[-13.2..-9.6], Y∈[-10.2..-4.6], Z=-5.82）へロウ付け密着させた厚さ 0.6 mm 複合メッシュ／焼結銅ウィック扁平マイクロヒートパイプ（k_eff ≈ 3500–3800 W/m·K, 最大熱輸送 20–26 W）＆均熱銅サドル。",
+      "opticsAndPhysics": [
+        "減圧封入純水の潜熱蒸発・毛細管還流サイクルにより、アルミ単体（167 W/m·K）の 20 倍超となる実効熱伝導率 3,800 W/m·K を厚さ 0.6 mm で達成。",
+        "PWM ドライバ近傍ホットスポットとストローク端部の温度勾配を 8.4°C → 1.9°C へ平準化し、LED 色度偏差 Δu'v' を 0.0008 未満に抑制。"
+      ],
+      "formula": {
+        "expression": "k_eff ≈ 3,800 W/(m·K),   Q_max = 22 W (t = 0.6 mm),   ΔT_stroke: 8.4°C → 1.9°C",
+        "description": "0.6 mm 極薄焼結銅ウィック・マイクロヒートパイプで下画の温度ムラと色度偏差を根絶。"
+      },
+      "nextGenInnovation": "薄型モバイル・宇宙機器向け 0.6 mm 複合ウィック扁平マイクロヒートパイプ均熱帯。",
+      "specs": [
+        {
+          "label": "構造・厚み",
+          "value": "C1020 焼結銅+マイクロメッシュ複合ウィック (厚 0.6 mm)"
+        },
+        {
+          "label": "実効熱伝導",
+          "value": "k_eff ≈ 3,500–3,800 W/m·K / Q_max = 20–26 W"
+        },
+        {
+          "label": "配置位置",
+          "value": "KO_BOT 左湾曲背面均熱帯 (X=-11.4, Y=-7.4, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "Tang, H. et al., \"Review of Applications and Developments of Ultra-Thin Micro Heat Pipes for Electronic Cooling\", Applied Energy / PMC11123008",
+        "Faghri, A., \"Heat Pipe Science and Technology\", 2nd Ed., Global Digital Press (Capillary Limit of Sintered Wicks)",
+        "JEDEC JESD51-14 Thermal Uniformity & LED Chromaticity Shift Mitigation Guidelines"
+      ],
+      "diagramType": "welcome_led_thermal"
+    },
+    {
+      "id": "welcome-ko-invar-antitwist-tiebar",
+      "order": 371,
+      "swatchColor": "#e2eaf4",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        11,
+        10,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        11,
+        10,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W371. 「こ」上画〜石英柱間 平行四辺形せん断防止 Invar-36 低膨張マイクロタイバー橋",
+      "subtitle": "Glyph \"こ\" Upper Bar Anti-Racking Invar-36 Low-CTE Precision Cross-Tension Tie-Bar",
+      "category": "「こ」モジュール / 平行せん断防止・低膨張剛性",
+      "plainAnalogy": "2本のガラス柱で浮いた上画が横からの力で平行四辺形にグニャっと傾くのを防ぐため、温度で伸び縮みしない特殊合金インバー36で左右の柱頭をしっかり連結する筋交いバーです。",
+      "summary": "左右石英コラム（W124/W125）頂部間の上画背面下縁スパン（X∈[-5.8..+5.8], Y=+12.55, Z=-5.82）を直結する Invar-36（UNS K93600, Fe-36%Ni, CTE = 1.2 ppm/K）極低膨張マイクロタイバー橋。着脱時横力による平行四辺形ラッキングと熱バイメタル反りを同時抑制します。",
+      "opticsAndPhysics": [
+        "Invar-36 の極低線膨張係数（1.2 ppm/K）は溶融石英（0.55 ppm/K）と近接するため、上画を剛連結しても温度変化で石英柱へ曲げ応力を発生させない。",
+        "左右柱頭を剪断トラス化することで横方向着脱衝撃に対する水平変位剛性を 3.4 倍へ向上。"
+      ],
+      "formula": {
+        "expression": "α_Invar36 = 1.2 ppm/K ≈ α_SiO2 = 0.55 ppm/K  ⇒  ΔL_rel(ΔT=40K) = 0.30 μm,  K_shear × 3.4",
+        "description": "Invar-36 により熱反り 0.3 μm 以下と平行四辺形ラッキング剛性 3.4 倍を同時実現。"
+      },
+      "nextGenInnovation": "精密レーザー共振器スペーサ標準の Invar-36 低膨張テンション・タイバー適用。",
+      "specs": [
+        {
+          "label": "材質",
+          "value": "Invar-36 (UNS K93600 / ASTM F1684, Fe-36%Ni, CTE = 1.2 ppm/K)"
+        },
+        {
+          "label": "構造効果",
+          "value": "平行四辺形ラッキング剛性 3.4× / 熱反り < 0.3 μm"
+        },
+        {
+          "label": "配置位置",
+          "value": "KO_TOP 背面左右柱間スパン (X∈[-5.8..+5.8], Y=+12.55, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "ASTM F1684 Standard Specification for Iron-Nickel-Cobalt & Invar-36 (UNS K93600) Low-Expansion Alloys",
+        "Guillaume, C. E. (1920), \"Invar and Elinvar — Nobel Lecture on Low-Expansion Metrology Alloys\"",
+        "Vukobratovich, D., \"Introduction to Optomechanical Design\" (Athermal Invar Metering Trusses)"
+      ],
+      "diagramType": "welcome_quartz_bridge"
+    },
+    {
+      "id": "welcome-so-sapphire-ito-esd-clip",
+      "order": 372,
+      "swatchColor": "#7dd3fc",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        28,
+        8,
+        44
+      ],
+      "integratedExplodeOffset": [
+        28,
+        8,
+        44
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W372. 「そ」前面サファイア窓 導電ITO〜ベゼル 1MΩ ESD静電放電スプリングクリップ",
+      "subtitle": "Glyph \"そ\" Front Sapphire Window Conductive ITO-to-Bezel 1 MOhm ESD Discharge Spring Clip",
+      "category": "「そ」モジュール / 光学窓ESD静電放電",
+      "plainAnalogy": "「そ」の下部椀カーブのサファイア前面窓に溜まる静電気を、透明導電ITO膜と1MΩ安全抵抗スプリングで静かに逃がし、ホコリ吸着とLED静電破壊を防ぐクリップです。",
+      "summary": "「そ」椀部サファイア窓（W132）左湾曲縁（X=-9.6, Y=-4.2, Z=+4.38）へ配した ITO 導電膜（10–45 Ω/sq）＋ 1 MΩ ESD 静電放電スプリングクリップ（IEC 61340-5-1 準拠）。4文字すべてのサファイア窓を完全 ESD 防護化します。",
+      "opticsAndPhysics": [
+        "「よ・う・こ・そ」4文字すべての前面サファイア窓へ同一 1 MΩ ブリード接地を完結させ、清掃時の摩擦帯電 15 kV を全文字で均等安全放電。",
+        "光学窓外周の低背配置により、W332 ミラーおよび前面光束への遮蔽を 0% に保持。"
+      ],
+      "formula": {
+        "expression": "R_bleed = 1.0 MΩ (全4文字統一),   I_ESD,max = 15 mA @ 15 kV (IEC 61340-5-1)",
+        "description": "全4着脱グリフ前面サファイア窓の 1 MΩ ESD 電流制限接地を「そ」にて完全統一。"
+      },
+      "nextGenInnovation": "4文字共通規格の IEC 61340-5-1 準拠 ITO-to-Bezel ESD 防護クリップ。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "IEC 61340-5-1 / ANSI/ESD S20.20"
+        },
+        {
+          "label": "構成",
+          "value": "ITO 10–45 Ω/sq + BeCu/SUS301 ばね + 1 MΩ 0402 抵抗"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_BOWL 左湾曲前面縁 (X=-9.6, Y=-4.2, Z=+4.38)"
+        }
+      ],
+      "references": [
+        "IEC 61340-5-1:2016 Electrostatics — Protection of Electronic Devices from Electrostatic Phenomena",
+        "Edmund Optics, \"ITO Anti-Static Conductive Coatings on Sapphire Optics\"",
+        "ANSI/ESD S20.20 Electrostatic Discharge Control Program Standard"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-so-z-truss-ti-gusset",
+      "order": 373,
+      "swatchColor": "#aab4c0",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        24,
+        18,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        24,
+        18,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W373. 「そ」Z字斜め画〜折返し部 CNC Ti-6Al-4V 構造トラス補強ガセットブレース",
+      "subtitle": "Glyph \"そ\" Z-Diagonal Stroke CNC Ti-6Al-4V Structural Truss Gusset Brace",
+      "category": "「そ」モジュール / Z字トラス曲げ剛性補強",
+      "plainAnalogy": "4文字の中で一番背が高く2回も急角度で折れ曲がる「そ」の斜め腕を、軽量肉抜きした航空機用チタントラスで補強し、輸送衝撃でも内部プリズムの光軸を絶対に狂わせません。",
+      "summary": "2回急折返し構造をもつ「そ」Z字斜め画（SO_Z2）の背面中下部（X=-6.8, Y=+10.2, Z=-5.82）へ斜め密着する Ti-6Al-4V Grade 5 CNC 軽量肉抜きトラス補強ガセットブレース。片持ち曲げ剛性を +42% 向上させ、45°プリズム（W167/W168）の光軸ズレを防止します。",
+      "opticsAndPhysics": [
+        "細長い Z 字斜め腕（長 27.6 mm）の背面中立軸から最大距離 Z = -5.82 mm へ Ti-6Al-4V リブトラスを配置することで断面二次モーメント I を +42% 増大。",
+        "輸送 15G 衝撃時の 45°全反射プリズム（W167/W168）傾き角を < 0.01° 以内に抑え、折返しコーナーの輝度連続性を維持。"
+      ],
+      "formula": {
+        "expression": "Δ(E·I)_Z-truss = +42%,   δ_impact(15G) < 4.5 μm  ⇒  Δθ_prism < 0.01°",
+        "description": "Ti-6Al-4V 軽量ポケットトラスガセットによりZ字片持ち剛性 +42% とプリズム光軸保持を達成。"
+      },
+      "nextGenInnovation": "航空宇宙 Ti-6Al-4V ポケット肉抜きトラス補強による高背 Z 字光学フレームの無歪み化。",
+      "specs": [
+        {
+          "label": "材質",
+          "value": "Ti-6Al-4V Grade 5 (ASTM B348, E = 114 GPa)"
+        },
+        {
+          "label": "剛性向上",
+          "value": "Z字片持ち曲げ剛性 +42% (プリズム角度誤差 < 0.01°)"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_Z2 斜め背面 (X=-6.8, Y=+10.2, Z=-5.82, 傾角 34.4°)"
+        }
+      ],
+      "references": [
+        "ASTM B348 / AMS 4911 Ti-6Al-4V Aerospace Structural Sheet & Plate Properties",
+        "Roark, R. J. & Young, W. C., \"Roark's Formulas for Stress and Strain\" (Offset Truss Stiffeners)",
+        "MIL-STD-810H Method 516.8 Shock — Optical Alignment Retention in Cantilevered Structures"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-so-z-joint-ofc-braid-strap",
+      "order": 374,
+      "swatchColor": "#c97643",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        28,
+        12,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        28,
+        12,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W374. 「そ」Z字〜椀部ジョイント(W171)跨ぎ 無酸素銅 C10100 編組フレキシブル熱バイパス帯",
+      "subtitle": "Glyph \"そ\" Z-to-Bowl Joint (W171) Bridging C10100 OFC Braided Flexible Thermal Bypass Strap",
+      "category": "「そ」モジュール / 編組銅熱バイパス",
+      "plainAnalogy": "「そ」の上部Z字と下部お椀をつなぐ真鍮ジョイントは熱が通りにくいボトルネックです。極細の純銅ワイヤーを編み込んだ柔らかい帯で跨いで熱の渋滞を68%も解消します。",
+      "summary": "真鍮ジョイント（W171, k = 109 W/m·K）の熱ボトルネックを迂回するよう Z 字中段〜椀部背面（X=+9.7, Y=+6.8, Z=-5.82）を跨ぐ C10100 無酸素銅（k = 398 W/m·K）極細素線編組フレキシブル熱シャントストラップ＆圧着ラグ対。",
+      "opticsAndPhysics": [
+        "C10100 無酸素銅（純度 99.99%, k = 398 W/m·K）は真鍮 C3604（109 W/m·K）の 3.65 倍の熱伝導率を持ち、ジョイント間の直列熱抵抗を 68% 低減。",
+        "Ø0.05 mm 極細素線編組構造により機械的振動・熱膨張応力を椀部やプリズムへ伝達せず、純粋な熱バイパス路として機能。"
+      ],
+      "formula": {
+        "expression": "R_th,bypass = L / (k_OFC · A_eff) = 0.85 K/W  (k_OFC = 398 W/m·K ⇒ 接合部熱抵抗 -68%)",
+        "description": "C10100 無酸素銅編組バイパスにより機械応力ゼロのまま Z〜椀間の熱抵抗を 68% 削減。"
+      },
+      "nextGenInnovation": "宇宙赤外線望遠鏡極低温冷却標準の C10100 無酸素銅編組フレキシブル熱ストラップ。",
+      "specs": [
+        {
+          "label": "材質",
+          "value": "ASTM B170 C10100 無酸素銅 (OFHC, k = 398 W/m·K, Ø0.05mm 編組)"
+        },
+        {
+          "label": "熱抵抗削減",
+          "value": "真鍮ジョイント W171 跨ぎ熱抵抗 -68% (応力非伝達)"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_Z3〜椀接合部右背面 (X=+9.7, Y=+6.8, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "ASTM B170 Standard Specification for Oxygen-Free Electrolytic Copper (UNS C10100, k=398 W/m·K)",
+        "Technology Applications Inc. / NASA GSFC, \"OFHC Copper Braided Flexible Thermal Straps Design Guide\"",
+        "Incropera, F. P. et al., \"Fundamentals of Heat and Mass Transfer\", 8th Ed. (Parallel Thermal Shunts)"
+      ],
+      "diagramType": "welcome_led_thermal"
+    },
+    {
+      "id": "welcome-so-bowl-pcm58-thermal-cap",
+      "order": 375,
+      "swatchColor": "#8b6ec9",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        29,
+        0,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        29,
+        0,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W375. 「そ」椀部背面 密閉 Rubitherm® RT58 パラフィン相変化(PCM)潜熱蓄熱キャパシタ",
+      "subtitle": "Glyph \"そ\" Bowl Rear Hermetic Rubitherm® RT58 Paraffin Phase-Change (PCM) Latent Thermal Capacitor",
+      "category": "「そ」モジュール / 相変化潜熱サーマルバッファ",
+      "plainAnalogy": "4文字の中で一番LEDが多く発熱しやすい「そ」のお椀裏に、58℃で固体から液体へ溶けて大量の熱を吸い込む「熱のスポンジ（パラフィン蓄熱セル）」を密閉搭載し、迎賓ブースト点灯時の急激な温度上昇をピタリと抑えます。",
+      "summary": "4文字中 LED 実装密度が最大の「そ」椀部背面下部（X=-9.6, Y=-5.2, Z=-5.84）へ密着配置された Rubitherm® RT58 純パラフィン PCM（融点 58°C, 潜熱容量 ~160–179 kJ/kg, 密度 0.88 kg/L）金属封止サーマルキャパシタセル。",
+      "opticsAndPhysics": [
+        "来客検知時の 30 秒フル輝度ブースト点灯で生じる過渡熱スパイクを、58°C 等温融解潜熱（~179 kJ/kg）として吸収し、LED ジャンクション温度のオーバーシュートを 6.8°C 抑制。",
+        "金属マイクロ封止アルミセル＋内部銅フォーム伝熱フィン構造により、パラフィン単体の低熱伝導を補いつつ液漏れ・揮発を完全ゼロ化。"
+      ],
+      "formula": {
+        "expression": "Q_latent = m_PCM · ΔH_fus (RT58: T_m = 58.0°C, ΔH ≈ 179 kJ/kg)  ⇒  ΔT_spike ↓ -6.8°C",
+        "description": "58°C 融解潜熱キャパシタによりブースト点灯時の LED ジャンクション温度急騰を等温クランプ。"
+      },
+      "nextGenInnovation": "航空電子・高出力レーザー過渡冷却標準の密閉 RT58 PCM 潜熱サーマルキャパシタ。",
+      "specs": [
+        {
+          "label": "相変化材",
+          "value": "Rubitherm® RT58 純パラフィン PCM (融点 58°C / 潜熱 ~179 kJ/kg)"
+        },
+        {
+          "label": "封止構造",
+          "value": "レーザー溶接アルミマイクロセル + 内部銅熱拡散フィン"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_BOWL 左下背面 (X=-9.6, Y=-5.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "Rubitherm Technologies GmbH, \"RT58 Organic Phase Change Material Technical Data Sheet\"",
+        "Agyenim, F. et al. (2012), \"Experimental Investigation and Improvement in Heat Transfer of RT58 PCM\", Int. J. Low-Carbon Tech. 8(4), 260–268",
+        "Zalba, B. et al. (2003), \"Review on Thermal Energy Storage with Phase Change: Materials, Heat Transfer Analysis and Applications\", Applied Thermal Engineering"
+      ],
+      "diagramType": "welcome_led_thermal"
+    },
+    {
+      "id": "welcome-plinth-usbc-m2-lock-collar",
+      "order": 376,
+      "swatchColor": "#98a2b0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        -18,
+        -16,
+        -32
+      ],
+      "integratedExplodeOffset": [
+        -18,
+        -16,
+        -32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W376. 背面 USB-C PD 65W USB-IF Rev 1.0 デュアルM2ねじロック保持カラー (15.0mmピッチ)",
+      "subtitle": "Plinth Rear USB-C PD 65W USB-IF Rev 1.0 Dual-M2 Locking Connector Collar (15.0mm Pitch)",
+      "category": "光学ベンチ台座 / 抜け防止USB-C機械ロック",
+      "plainAnalogy": "美術館で太いUSB-C給電ケーブルを誰かが引っ掛けても絶対に抜けないよう、USB-IF国際標準の15.0mm間隔2本ネジでプラグを筐体へガッチリ固定する金属ロック枠です。",
+      "summary": "背面 USB-C PD 65W 端子（W195, X=-48.0）を包囲する USB-IF Type-C Locking Connector Specification Rev 1.0 準拠 SUS304 CNC デュアル M2 ねじロック保持カラー（標準中心間 15.0 mm ピッチ：X=-55.5 / -40.5, リバーシブル挿抜互換）。",
+      "opticsAndPhysics": [
+        "USB-IF Rev 1.0 デュアル M2（15.0 mm ピッチ）ネジロックにより、65W 編組ケーブルの自重・引張り荷重（最大 40 N）を USB-C レセプタクル基板はんだ脚（W195）へ伝達せず金属シャーシへ直逃がし。",
+        "通常 USB-C プラグとの後方互換性を維持しつつ、常設展示では両翼 M2 摘まみネジで脱落ゼロを保証。"
+      ],
+      "formula": {
+        "expression": "Pitch_M2 = 15.00 ± 0.05 mm (USB-IF Rev 1.0 Dual-Screw),   F_pull ≥ 40 N 無脱落保持",
+        "description": "USB-IF 15.0 mm デュアル M2 ロック機構で 65W 給電ケーブルの抜け事故と端子破断を根絶。"
+      },
+      "nextGenInnovation": "産業・マシンビジョンカメラ標準 USB-IF Type-C Dual-M2 ロック規格の光学台座統合。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "USB-IF Type-C Locking Connector Spec Rev 1.0 (Dual M2)"
+        },
+        {
+          "label": "ロックピッチ",
+          "value": "15.00 mm (X=-55.5 / -40.5) / M2×0.4 SUS304 雌ねじボス"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面 USB-C PD ポート W195 外周枠 (Z=-13.56)"
+        }
+      ],
+      "references": [
+        "USB Implementers Forum (USB-IF), \"USB Type-C Locking Connector Specification Revision 1.0\" (15.0 mm Dual M2)",
+        "AIA Vision Standards, \"USB3 Vision Locking USB-C Mechanical Retention Guidelines\"",
+        "ISO 261 / JIS B 0205 M2 × 0.4 Metric Screw Thread Engagement Standards"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-usbc-efuse-limiter",
+      "order": 377,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W377. USB-C 65W入力 TI TPS25982 UL 2367 15AスマートeFuse＆突入電流スルーレート制限IC",
+      "subtitle": "Plinth USB-C 65W Input TI TPS25982 UL 2367 15A Smart eFuse & Inrush Slew-Rate Limiter IC",
+      "category": "光学ベンチ台座 / 入力電子ヒューズ保護",
+      "plainAnalogy": "USB-C電源を挿した瞬間の激しい突入電流や異常ショートを、100万分の1秒レベルで電子的に優しく遮断・復帰できるUL安全認証つき「頭脳を持った電子ヒューズ」です。",
+      "summary": "内部上部バスウェイ内後列（X=-32.0, Y=+1.92, Z=-3.45）に実装された Texas Instruments TPS25982（2.7–24V, 2.7 mΩ, 15A, UL 2367 File No. E339631 認証, ±1.5% 電流監視）。活線挿抜時の LC リンギング過電圧（>32V）と短絡過電流を瞬断します。",
+      "opticsAndPhysics": [
+        "オン抵抗わずか 2.7 mΩ の内蔵パワー FET により 65W（3.25A）連続通電時の損失を 28.5 mW へ極小化しつつ、dV/dt スルーレート制御で MLCC バンク（W241）への突入電流サージを完全抑制。",
+        "ガラス管ヒューズ（W204）より桁違いに高速な < 2 μs 短絡遮断と過渡フォルト管理（ITIMER）で UL 2367 / IEC 62368-1 安全要件を充足。"
+      ],
+      "formula": {
+        "expression": "P_loss = I² · R_on = (3.25 A)² × 2.7 mΩ = 28.5 mW,   t_short < 2 μs (UL 2367 E339631)",
+        "description": "2.7 mΩ 超低損失スマート eFuse が活線挿抜サージと短絡事故を非破壊で高速遮断。"
+      },
+      "nextGenInnovation": "UL 2367 認証 2.7 mΩ / 15A スマート eFuse による無破壊・自動復帰型 65W 入力保護。",
+      "specs": [
+        {
+          "label": "保護IC",
+          "value": "Texas Instruments TPS25982 (2.7–24V, 2.7 mΩ, 15A)"
+        },
+        {
+          "label": "安全認証",
+          "value": "UL 2367 Recognition (File E339631) / IEC 62368-1 CB"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=-32.0, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"TPS25982 2.7-V to 24-V, 2.7-mΩ, 15-A Smart eFuse Datasheet (SLVSEI3)\"",
+        "UL 2367 Solid State Overcurrent Protectors — File No. E339631 & IEC 62368-1 Safety Standard",
+        "TI Application Report SLVA882, \"Hot-Swap & Inrush Current Management with Smart eFuses\""
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-ina228-power-monitor",
+      "order": 378,
+      "swatchColor": "#1b5e47",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W378. 主電源系統 TI INA228 20bit ΔΣ 超高精度I²C電力・電力量・電荷テレメトリ監視IC",
+      "subtitle": "Plinth Main Power Rail TI INA228 20-bit Delta-Sigma Ultra-Precise I2C Power/Energy Monitor IC",
+      "category": "光学ベンチ台座 / 20bit精密電力計測",
+      "plainAnalogy": "USB-Cから入ってくる電圧・電流・消費ワット数・積算電力量（Wh）を20ビット＝100万段階の超高精度で測り続け、背面OLEDや管理アプリへ正確に伝えるスマート電力計ICです。",
+      "summary": "内部上部バスウェイ内後列（X=-26.2, Y=+1.92, Z=-3.45）の Texas Instruments INA228（85V 同相耐圧, 20-bit ΔΣ ADC, ±163.84/±40.96 mV シャント入力, 電力/エネルギー/電荷積算レジスタ内蔵, ±0.5% 内蔵発振器）。",
+      "opticsAndPhysics": [
+        "20-bit ΔΣ ADC（分解能 312.5 nV/LSB @ ±40.96 mV）により待機 15 mW からピーク 65 W まで単一シャントで 0.05% 精度の電力・Wh エネルギー・クーロン電荷積算を実現。",
+        "PMIC 変換効率のリアルタイム診断と異常リーク電流の早期予知保全を I²C 経由で提供。"
+      ],
+      "formula": {
+        "expression": "LSB_shunt = 40.96 mV / 2¹⁹ = 78.125 nV,   E_total = Σ (V_bus · I_shunt · Δt) [Wh] (20-bit ΔΣ)",
+        "description": "85V 耐圧・20-bit ΔΣ ADC 電力計により待機〜65W 全域の消費電力と累積電力量を高精度積算。"
+      },
+      "nextGenInnovation": "データセンター電源品質の TI INA228 20-bit 電力・電力量・電荷積算テレメトリ。",
+      "specs": [
+        {
+          "label": "計測IC",
+          "value": "Texas Instruments INA228 (85V 同相 / 20-bit ΔΣ ADC / I²C)"
+        },
+        {
+          "label": "計測項目",
+          "value": "バス電圧・シャント電流・瞬時電力(W)・積算電力量(Wh)・電荷(C)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=-26.2, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"INA228 85-V, 20-Bit, Ultra-Precise Power/Energy/Charge Monitor Datasheet (SBOS984)\"",
+        "TI Application Note SBOA511, \"Energy & Charge Accumulation Accuracy Using INA228\"",
+        "IEC 62053-22 Electricity Metering Equipment — High-Precision Static Watt-Hour Measurement Principles"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-dock-hotswap-efuses",
+      "order": 379,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -10.5,
+        8
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -10.5,
+        8
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W379. 4文字磁気ドック独立ホットスワップ TI TPS25947 4chハイサイドeFuse保護バンク",
+      "subtitle": "Plinth 4-Glyph Magnetic Dock Independent Hot-Swap TI TPS25947 4-Channel High-Side eFuse Bank",
+      "category": "光学ベンチ台座 / ドック独立短絡保護",
+      "plainAnalogy": "文字を外して空いた磁石ドックに鍵やコインが落ちてショートしても、その1文字分だけを瞬時に切り離して残り3文字と本体マイコンを無傷で守り抜く4ch独立ブレーカーです。",
+      "summary": "4つの磁気ポゴピンドック（W188/190/192/194）へそれぞれ独立給電するため上部バスウェイ外前列（X=-37.1, Y=+1.92, Z=+6.10）へ実装された Texas Instruments TPS25947 × 4 基（2.7–23V, 5.5A, 28 mΩ, 真の逆流遮断＋個別ソフトスタート＋高速短絡分離）。",
+      "opticsAndPhysics": [
+        "各文字ドックが共通 12V 銅バスバー（W205）から独立 TPS25947 eFuse 経由で分岐しているため、1 ドック短絡時も 12V 主幹電圧ドロップを < 150 mV へ抑え他 3 文字と STM32H743 を無瞬断維持。",
+        "真の逆流遮断（True Reverse Current Blocking）により、通電中の文字活線着脱（ホットスワップ）時のアーク放電・接点焼損を防止。"
+      ],
+      "formula": {
+        "expression": "N_ch = 4 × TPS25947 (28 mΩ, I_lim = 2.0 A/dock, True Reverse Block)  ⇒  ΔV_bus(short) < 150 mV",
+        "description": "4 文字ドック独立 eFuse 分離により空ドック異物短絡と活線着脱アークを完全防護。"
+      },
+      "nextGenInnovation": "サーバーバックプレーン標準のチャンネル独立逆流遮断ホットスワップ eFuse バンク。",
+      "specs": [
+        {
+          "label": "保護IC構成",
+          "value": "Texas Instruments TPS25947 × 4基 (2.7–23V, 5.5A, 28 mΩ)"
+        },
+        {
+          "label": "保護機能",
+          "value": "ドック個別ソフトスタート / 高速短絡分離 / 真の逆流遮断"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ外前列 (X=-37.1, lY=+1.92, Z=+6.10)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"TPS25947xx 2.7-V to 23-V, 5.5-A, 28-mΩ True Reverse Current Blocking eFuse Datasheet (SLVSFC9)\"",
+        "TI User Guide SLVUC01, \"TPS25947EVM Multi-Channel Hot-Swap Protection Evaluation\"",
+        "IEC 62368-1 Clause 6 Electrically-Caused Fire & Limited Power Source (LPS) Branch Isolation"
+      ],
+      "diagramType": "welcome_dock_pogo"
+    },
+    {
+      "id": "welcome-plinth-iso1042-canfd-iso",
+      "order": 380,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W380. 外部M5同期ポート用 TI ISO1042 5kVrms 強化ガルバニック絶縁CAN-FDトランシーバ",
+      "subtitle": "Plinth External M5 Sync Port TI ISO1042 5 kVrms Reinforced Galvanic Isolated CAN-FD Transceiver",
+      "category": "光学ベンチ台座 / 5kV強化絶縁CAN-FD",
+      "plainAnalogy": "別々のコンセントに繋いだ複数台の「ようこそ」同士をケーブルで連結しても、地面の電位差（グランドループ）で回路が焼けないよう、5,000Vに耐える光の壁（SiO₂絶縁バリア）で完全に電気分離する通信チップです。",
+      "summary": "背面 M5 同期ポート（W342）と内部 CAN-FD バス間に配置された（X=-3.8, Y=+1.92, Z=-6.35）Texas Instruments ISO1042 強化絶縁 CAN-FD トランシーバ（5 Mbps, 5000 Vrms UL 1577, 7071 Vpk VIOTM DIN EN IEC 60747-17, ±70V バスフォルト耐圧, 100 kV/μs CMTI）。",
+      "opticsAndPhysics": [
+        "二重容量結合 SiO₂ 強化絶縁バリア（5000 Vrms / 7071 Vpk）により、複数台連結時の建屋間アース電位差・グランドループ電流を完全遮断。",
+        "±70V バスフォルト保護と 100 kV/μs の高同相過渡耐性（CMTI）により、業務用照明調光器からの誘導ノイズ下でも 5 Mbps CAN-FD エラーフレームゼロを実現。"
+      ],
+      "formula": {
+        "expression": "V_ISO = 5,000 Vrms (UL 1577) / V_IOTM = 7,071 Vpk (IEC 60747-17),   CMTI ≥ 100 kV/μs,   ±70 V Fault",
+        "description": "5 kVrms SiO₂ 強化ガルバニック絶縁により複数台デイジーチェーン接続時のグランドループ焼損を根絶。"
+      },
+      "nextGenInnovation": "産業オートメーション・EV 基準の 5 kVrms 強化絶縁 5 Mbps CAN-FD トランシーバ。",
+      "specs": [
+        {
+          "label": "絶縁IC",
+          "value": "Texas Instruments ISO1042 (5 Mbps CAN-FD / 強化絶縁 SiO₂)"
+        },
+        {
+          "label": "絶縁耐圧",
+          "value": "5000 Vrms (UL 1577) / 7071 Vpk (IEC 60747-17) / ±70V Fault"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ外後列 W341 直近 (X=-3.8, lY=+1.92, Z=-6.35)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"ISO1042 Galvanically Isolated CAN Transceiver With 70-V Bus Fault Protection Datasheet (SLLSF09)\"",
+        "DIN EN IEC 60747-17 (formerly DIN VDE V 0884-11) Magnetic and Capacitive Coupler Reinforced Isolation Standard",
+        "UL 1577 Standard for Optical & Digital Isolators (5000 Vrms 1-Minute Withstand)"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-bq34z100-fuel-gauge",
+      "order": 381,
+      "swatchColor": "#1b5e47",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W381. LiFePO4電池用 TI BQ34Z100-R2 Impedance Track™ クーロン積算残量計IC",
+      "subtitle": "Plinth LiFePO4 Battery TI BQ34Z100-R2 Impedance Track™ Coulomb-Counting Fuel Gauge IC",
+      "category": "光学ベンチ台座 / ±1%高精度電池残量計",
+      "plainAnalogy": "リン酸鉄リチウム電池は電圧がずっと平らなので電圧計だけでは残量がわかりません。出し入れした電気量（クーロン）と電池の内部抵抗劣化を自動学習し、±1%精度で残量を割り出す専用ICです。",
+      "summary": "LiFePO4 電池区画上部バスウェイ（X=-78.0, Y=+1.92, Z=-3.45）に実装された Texas Instruments BQ34Z100-R2 マルチケミストリー対応 Impedance Track™ 独立型残量計 IC（3–65V, ±1% SoC 精度, SOH 劣化診断, <140 μA 動作）。",
+      "opticsAndPhysics": [
+        "LiFePO4 特有の 3.25V/cell 極平坦放電プラトー（残量 20%〜85% で電圧差わずか 40 mV）に対し、クーロン積算とリアルタイム化学インピーダンス学習（Impedance Track™）を組み合わせて残量誤差を ±30% → ±1% へ劇的改善。",
+        "サイクル劣化による内部抵抗上昇と実満充電容量（FCC）を自動追従し、停電 UPS 残時間を秒単位で正確に予告。"
+      ],
+      "formula": {
+        "expression": "SoC(t) = SoC₀ - (1 / Q_max(SOH)) ∫ I_batt(t) dt,   Error ≤ ±1.0% (Impedance Track™)",
+        "description": "クーロン積算＋内部インピーダンス劣化モデルにより平坦電圧の LiFePO4 でも ±1% SoC 精度を実現。"
+      },
+      "nextGenInnovation": "医療・産業 UPS 標準 TI Impedance Track™ 劣化補償付きマルチケミストリー残量計。",
+      "specs": [
+        {
+          "label": "残量計IC",
+          "value": "Texas Instruments BQ34Z100-R2 (Impedance Track™ / I²C)"
+        },
+        {
+          "label": "精度・消費",
+          "value": "SoC ±1.0% / SOH 自動学習 / 動作電流 < 140 μA"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列電池上部 (X=-78.0, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"BQ34Z100-R2 Wide Range Fuel Gauge with Impedance Track™ Technology Datasheet (SLUSF37)\"",
+        "Texas Instruments, \"BQ34Z100-R2 Technical Reference Manual (SLUUCO5)\"",
+        "Barsukov, Y. & Qian, J., \"Battery Power Management for Portable Devices\", Artech House (Impedance Track Algorithm)"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-lifepo4-preheat-foil",
+      "order": 382,
+      "swatchColor": "#d97706",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W382. LiFePO4電池区画 0°Cリチウム析出防止 Minco 全ポリイミド 5W 低温予熱フォイルヒータ",
+      "subtitle": "Plinth LiFePO4 Bay Sub-Zero Li-Plating Prevention Minco All-Polyimide 5W Thermofoil™ Heater",
+      "category": "光学ベンチ台座 / 低温充電安全予熱",
+      "plainAnalogy": "氷点下の寒い玄関ロビーでリチウム電池をそのまま充電すると金属リチウムが析出して危険です。充電前にNASA宇宙規格の極薄オレンジ色フィルムヒーターで電池を+5℃まで安全に温めます。",
+      "summary": "LiFePO4 電池区画上部（X=-67.5, Y=+1.92, Z=-3.45）へ密着させた Minco All-Polyimide Thermofoil™ 5W 低温予熱フォイルヒータ（NASA GSFC S-311-P-841 準拠, 0.05/0.03 mm Kapton/FEP 積層, 厚 ≤0.3 mm, 1000 Vrms 絶縁耐圧）。",
+      "opticsAndPhysics": [
+        "0°C 未満でのリチウムイオン／LiFePO4 充電は負極グラファイトの拡散速度低下により不可逆な金属リチウム析出・デンドライト内部短絡を引き起こす。",
+        "NTC（W240）が < 2°C を検知すると BMS が充電を保留し、5W ポリイミドエッチングフォイルヒータで電池パックを +5°C へ昇温してから安全充電を開始。"
+      ],
+      "formula": {
+        "expression": "t_preheat = (m_cell · c_p · ΔT) / (P_heater · η) ≈ (25 g × 1.0 J/gK × 10 K) / 4.2 W ≈ 60 s  (T_chg ≥ +5°C)",
+        "description": "5W 宇宙規格ポリイミドフォイルヒータが 0°C 未満環境での充電前予熱を 60 秒で完了しデンドライト析出を阻止。"
+      },
+      "nextGenInnovation": "NASA GSFC S-311-P-841 宇宙機規格の All-Polyimide Thermofoil™ 低温安全予熱ヒータ。",
+      "specs": [
+        {
+          "label": "ヒータ規格",
+          "value": "Minco All-Polyimide Thermofoil™ (NASA GSFC S-311-P-841 準拠)"
+        },
+        {
+          "label": "定格・厚み",
+          "value": "5.0 W (12V PWM) / Kapton-FEP 厚 0.3 mm / 耐圧 1000 Vrms"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列電池上部 (X=-67.5, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Minco Products Inc., \"All-Polyimide Thermofoil™ Heaters — NASA GSFC S-311-P-841 Space Qualified Design Guide\"",
+        "Waldmann, T. et al. (2018), \"Li Plating as Unwanted Side Reaction in Commercial Li-Ion Cells — A Review\", J. Power Sources 384",
+        "IEC 62133-2:2017 Safe Operating Temperature Charging Window Requirements for Lithium Batteries"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-battery-burst-vent",
+      "order": 383,
+      "swatchColor": "#b91c1c",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W383. LiFePO4電池区画 IEC 62133-2 2段階過圧安全破裂ベント＆焼結SUS316Lフレームアレスタ",
+      "subtitle": "Plinth LiFePO4 Bay IEC 62133-2 Two-Stage Overpressure Burst Vent & Sintered SUS316L Flame Arrestor",
+      "category": "光学ベンチ台座 / 電池防爆安全ベント",
+      "plainAnalogy": "密閉された金属ケースの中で万が一電池から異常ガスが出ても、ケースが破裂しないよう0.7気圧で安全にガスだけを後ろへ逃がし、焼結金属フィルターで火花を完全に止める安全弁です。",
+      "summary": "背面空き壁面（X=-27.2, Y=-1.0, Z=-13.52）へ装備された IEC 62133-2 / UL 2580 準拠 2 段階過圧安全ベント（通常呼吸 0.1 bar ePTFE＋非常破裂 0.7 bar ダイヤフラム＋焼結 SUS316L 多孔質フレームアレスタ）。",
+      "opticsAndPhysics": [
+        "平常時は疎水 ePTFE 膜（0.1 bar 呼吸）が IP54 防滴を保ちつつ気圧差を逃がし、異常セルガス発生時は 0.7 bar スコアード破裂膜が開裂して筐体破裂圧（>4 bar）前に安全放圧。",
+        "孔径 20 μm の焼結 SUS316L フレームアレスタ（消炎距離 < MESG）が高温ガスを急冷し、外部への火炎・火花噴出を物理遮断。"
+      ],
+      "formula": {
+        "expression": "P_breathe = 0.10 bar (ePTFE),   P_burst = 0.70 ± 0.10 bar < P_case,   d_pore = 20 μm < MESG",
+        "description": "2 段階破裂ベントと 20 μm 焼結 SUS316L 消炎器で IEC 62133-2 / UL 2580 の電池異常安全性を完結。"
+      },
+      "nextGenInnovation": "EV バッテリーパック標準の 2 段階 ePTFE＋破裂ダイヤフラム＋焼結消炎器安全ベント。",
+      "specs": [
+        {
+          "label": "安全規格",
+          "value": "IEC 62133-2 / UL 2580 電池区画過圧放圧ベント"
+        },
+        {
+          "label": "2段階構造",
+          "value": "通常呼吸 0.1 bar ePTFE + 非常破裂 0.7 bar + 20μm SUS316L 消炎器"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面電池区画壁面 (X=-27.2, lY=-1.0, Z=-13.52)"
+        }
+      ],
+      "references": [
+        "IEC 62133-2:2017 Secondary Lithium Cells and Batteries — Mechanical & Thermal Abuse Venting",
+        "UL 2580 Standard for Batteries for Use in Electric Vehicles — Pressure Relief & Flame Arrestor Provisions",
+        "Donaldson / W. L. Gore, \"Dual-Stage Battery Pack Pressure Equalization & Emergency Burst Vent Technical Note\""
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-sn6505b-iso-power",
+      "order": 384,
+      "swatchColor": "#3a3f4a",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W384. 絶縁CAN-FD専用 TI SN6505B プッシュプル駆動IC＆Würth 750315240 5kVrms 絶縁トランス",
+      "subtitle": "Plinth Isolated CAN-FD Power TI SN6505B Push-Pull Driver & Würth 750315240 5 kVrms Transformer",
+      "category": "光学ベンチ台座 / 5kV絶縁DC-DC電源",
+      "plainAnalogy": "5,000Vの絶縁壁の向こう側にあるCAN-FD通信チップ（W380）へ、電気をつながず磁力だけでクリーンな5V電力を送り届ける超小型トランス電源です。",
+      "summary": "内部上部バスウェイ内後列（X=-13.0, Y=+1.92, Z=-3.45）に搭載された Texas Instruments SN6505B（420 kHz, 1A, 低EMI ソフトスタート・プッシュプルドライバ）＋ Würth Elektronik WE-PPTI 750315240（5 kVrms 強化絶縁マイクロトランス）。",
+      "opticsAndPhysics": [
+        "SN6505B のスルーレート制御＋スペクトラム拡散プッシュプル駆動と WE-PPTI 750315240（沿面距離 >8 mm, 結合容量 7 pF）により、CISPR 32 Class B 放射雑音余裕 > 12 dB で ISO1042（W380）の 2 次側 5V を絶縁供給。",
+        "低リーク静電容量（7 pF）のため高周波コモンモード電流の絶縁バリア通過を極小化。"
+      ],
+      "formula": {
+        "expression": "V_iso = 5,000 Vrms (WE-PPTI 750315240),   f_sw = 420 kHz,   C_ww ≈ 7 pF ⇒ 低EMI 絶縁5V供給",
+        "description": "420 kHz 低 EMI プッシュプル駆動＋5 kVrms 強化絶縁トランスで W380 バス側電源を完全絶縁。"
+      },
+      "nextGenInnovation": "TI SN6505B + Würth WE-PPTI 5 kVrms 強化絶縁マイクロトランス電源の超低背統合。",
+      "specs": [
+        {
+          "label": "駆動IC",
+          "value": "Texas Instruments SN6505B (420 kHz / 1A / ソフトスタート低EMI)"
+        },
+        {
+          "label": "絶縁トランス",
+          "value": "Würth Elektronik WE-PPTI 750315240 (5 kVrms 強化絶縁)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=-13.0, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"SN6505x Low-Noise 1-A Transformer Drivers for Isolated Power Supplies Datasheet (SLLSEP9)\"",
+        "Würth Elektronik eiSos, \"WE-PPTI 750315240 Push-Pull Reinforced Isolation Transformer (5 kVrms) Datasheet\"",
+        "CISPR 32 / EN 55032 Class B Radiated Emissions Compliance for Isolated DC/DC Converters"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-tps3850-watchdog",
+      "order": 385,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W385. システム24/7無停止保護 TI TPS3850 ±0.8%ウィンドウ電圧監視＆ハードウェアWDT IC",
+      "subtitle": "Plinth 24/7 Fail-Safe TI TPS3850 ±0.8% Window Voltage Supervisor & Hardware Watchdog Timer IC",
+      "category": "光学ベンチ台座 / 24時間無停止WDT監視",
+      "plainAnalogy": "24時間365日稼働する美術館で万が一メインマイコンがフリーズしても、別の独立した「番犬チップ（ウォッチドッグ）」が電圧異常や応答停止を即座に検知して自動で再起動復旧します。",
+      "summary": "内部上部バスウェイ内後列（X=+4.0, Y=+1.92, Z=-3.45）に配置された Texas Instruments TPS3850 精密ウィンドウ電圧スーパーバイザ＆独立ウィンドウ型ハードウェア WDT（±0.8% 過電圧/低電圧監視, 10 μA, 3.0×3.0 mm 10-pin VSON）。",
+      "opticsAndPhysics": [
+        "低電圧（UV）だけでなく過電圧（OV）も ±0.8% ウィンドウで監視し、暴走したソフトウェアが速すぎる／遅すぎる WDI パルスを出した場合も独立ハードウェア・リセットを 200 ms 以内にアサート。",
+        "Cortex-M7（W208）内蔵 WDT と完全独立したクロック・電源監視系により、単一障害点ゼロの 24/7 無停止稼働を担保。"
+      ],
+      "formula": {
+        "expression": "V_mon = 3.30 V ± 0.8% (UV/OV Window),   t_WDT,open < t_kick < t_WDT,close  (I_Q = 10 μA)",
+        "description": "±0.8% 過不足電圧監視＋ウィンドウ型ハードウェア WDT で 24/7 展示稼働の無停止信頼性を確立。"
+      },
+      "nextGenInnovation": "機能安全 IEC 61508 / ISO 26262 級ウィンドウ電圧監視＆独立ハードウェア WDT。",
+      "specs": [
+        {
+          "label": "監視IC",
+          "value": "Texas Instruments TPS3850 (10-pin 3×3 mm VSON / 10 μA)"
+        },
+        {
+          "label": "監視精度",
+          "value": "±0.8% 過電圧/低電圧ウィンドウ監視 + プログラマブル窓WDT"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=+4.0, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"TPS3850 Precision Window Supervisor with Programmable Window Watchdog Timer Datasheet (SBVS315)\"",
+        "IEC 61508-2 Functional Safety of Electrical/Electronic Systems — Independent Watchdog Supervision",
+        "TI Application Report SLVA847, \"Designing Reliable 24/7 Embedded Systems with Window Watchdogs\""
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-lmk1c1104-clkbuf",
+      "order": 386,
+      "swatchColor": "#c8a654",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W386. 基準クロック分配 TI LMK1C1104 1:4 超低付加ジッタ (7.5fs RMS) LVCMOSファンアウトバッファ",
+      "subtitle": "Plinth Reference Clock Distribution TI LMK1C1104 1:4 Ultra-Low Additive Jitter (7.5fs RMS) Buffer",
+      "category": "光学ベンチ台座 / 7.5fs超低ジッタクロック分配",
+      "plainAnalogy": "高精度TCXO水晶発振器の心臓の鼓動を、マイコン・音響DAC・32kHz LED制御・UWBレーダーの4か所へ、わずか7.5フェムト秒（1秒の130兆分の1）しかブレさせずに配る超精密時計分配器です。",
+      "summary": "内部上部バスウェイ内後列（X=+10.5, Y=+1.92, Z=-3.45）へ実装された Texas Instruments LMK1C1104 1:4 LVCMOS クロック・ファンアウトバッファ（付加ジッタ 7.5 fs RMS typ @ 3.3V, 出力間スキュー <50 ps, f_max = 250 MHz, 8-pin WSON）。",
+      "opticsAndPhysics": [
+        "TCXO（W246, ±0.5 ppm）の単一出力を分岐した際に生じるインピーダンス反射と波形鈍りを 4 独立 50 Ω 出力ドライバで解消し、出力間スキューを < 50 ps へ揃える。",
+        "7.5 fs RMS の極限低付加ジッタにより、24-bit/96 kHz I²S オーディオ DAC と UWB（W394）15.65 ps タイムスタンプの位相雑音劣化を完全ゼロ化。"
+      ],
+      "formula": {
+        "expression": "σ_jitter,add = 7.5 fs RMS typ (VDD = 3.3 V),   t_skew(o-o) < 50 ps,   f_max = 250 MHz",
+        "description": "7.5 fs RMS 付加ジッタ・<50 ps スキューの 1:4 クロック分配で音響・UWB・PWM 同期を極限精度化。"
+      },
+      "nextGenInnovation": "基地局・計測器標準の 7.5 fs RMS 超低付加ジッタ 1:4 クロックファンアウト。",
+      "specs": [
+        {
+          "label": "クロックIC",
+          "value": "Texas Instruments LMK1C1104 (1:4 LVCMOS / 8-pin WSON)"
+        },
+        {
+          "label": "ジッタ・スキュー",
+          "value": "付加ジッタ 7.5 fs RMS typ @ 3.3V / スキュー < 50 ps"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=+10.5, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"LMK1C110x 1.8-V, 2.5-V, and 3.3-V LVCMOS Clock Buffer Family Datasheet (SNAS791)\"",
+        "TI Application Report SCAA117, \"Clock Distribution Additive Phase Jitter Analysis for Audio & RF\"",
+        "IEEE Std 1139 Standard Definitions of Physical Quantities for Fundamental Frequency and Time Metrology"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-eui48-mac-eeprom",
+      "order": 387,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W387. 固有ハードウェアID Microchip 24AA02E48 工場書込済 IEEE EUI-48 MAC & 校正係数EEPROM",
+      "subtitle": "Plinth Hardware Unique ID Microchip 24AA02E48 Pre-Programmed IEEE EUI-48 MAC & Calibration EEPROM",
+      "category": "光学ベンチ台座 / 固有MACアドレス・校正ROM",
+      "plainAnalogy": "工場で世界唯一の48ビット住所（MACアドレス）がレーザー焼き付け済みの不揮発メモリで、複数台をネットワーク同期する時の個体識別と定盤の校正データを一生失わずに覚えています。",
+      "summary": "内部上部バスウェイ内後列（X=-43.2, Y=+1.92, Z=-3.45）に搭載された Microchip 24AA02E48 2-Kbit I²C EEPROM（工場書込・書換不可 IEEE EUI-48™ グローバル一意 MAC ノード ID, 1.7–5.5V, 1 μA 待機, 5-pin SOT-23）。",
+      "opticsAndPhysics": [
+        "Wi-Fi 6 / BLE / 1000BASE-T PTP / CAN-FD 複数台同期ネットワークにおいて、ファームウェア書換や故障復旧後も絶対に重複しない IEEE 登録済み 48-bit 固有ハードウェア ID を保証。",
+        "書込保護された上位ブロックとは別に、工場 ISO/IEC 17025 基準定盤平面度・分光・傾斜ゼロ点校正係数を 100 年保持。"
+      ],
+      "formula": {
+        "expression": "ID_node ∈ {0..2⁴⁸ - 1} (IEEE OUI + Unique 24-bit),   Retention > 100 yr,   I_sb = 1 μA",
+        "description": "工場書込済 IEEE EUI-48 固有 ID と不変定盤校正メモリにより複数台ネットワーク運用を確立。"
+      },
+      "nextGenInnovation": "IEEE 登録 OUI 工場書込済 EUI-48™ ノード ID＋定盤校正 EEPROM 統合。",
+      "specs": [
+        {
+          "label": "メモリIC",
+          "value": "Microchip 24AA02E48 (2 Kbit I²C EEPROM / SOT-23-5)"
+        },
+        {
+          "label": "固有ID",
+          "value": "工場書込済 IEEE EUI-48™ グローバル一意 MAC (書換保護)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=-43.2, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Microchip Technology Inc., \"24AA02E48/24AA025E48 2-Kbit I²C Serial EEPROMs with Pre-Programmed EUI-48™ Node Identity (DS20002124)\"",
+        "IEEE Registration Authority, \"Guidelines for Use of Extended Unique Identifier (EUI-48™)\"",
+        "ISO/IEC 17025 Calibration Coefficient Traceability & Non-Volatile Storage Requirements"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-tca9548a-i2c-mux",
+      "order": 388,
+      "swatchColor": "#1b5e47",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W388. センサーバス分離 TI TCA9548A 8ch I²Cマルチプレクサ＆ADI LTC4311 能動プルアップ加速器",
+      "subtitle": "Plinth Sensor Bus Isolation TI TCA9548A 8-Ch I2C Multiplexer & ADI LTC4311 Active Pull-Up Accelerator",
+      "category": "光学ベンチ台座 / 8ch I²Cバス分離・高速化",
+      "plainAnalogy": "10個以上のセンサーや残量計・OLED画面が1本の通信線でぶつかり合ったり、1個の故障で全滅したりしないよう、8車線へ交通整理して波形の立ち上がりも鋭く加速する通信ハブです。",
+      "summary": "内部上部バスウェイ内後列（X=+51.5, Y=+1.92, Z=-3.45）に実装された Texas Instruments TCA9548A（1-to-8 双方向 I²C スイッチ, ハードウェア RESET 付, 400 kHz）＋ Analog Devices LTC4311（>400 pF 負荷対応デュアル能動立上り加速器）。",
+      "opticsAndPhysics": [
+        "同一 I²C アドレスを持つ複数センサー・ドックを 8 チャンネルへ物理分離し、任意の 1 センサーが SDA を Low 固定（バスハング）してもハードウェア RESET とチャンネル遮断で残系統を無停止保護。",
+        "LTC4311 の電流源能動プルアップ（立上りスルーレート加速）により、194 mm 筐体内の長配線寄生容量（>200 pF）下でも 400 kHz Fast-Mode I²C 矩形波をシャープに維持。"
+      ],
+      "formula": {
+        "expression": "t_rise(LTC4311) = C_bus · ΔV / I_boost < 80 ns (C_bus ≤ 400 pF @ 400 kHz, 8-Ch Isolated)",
+        "description": "8ch I²C スイッチ分離＋能動プルアップ加速でアドレス衝突・バス凍結・長距離波形鈍りを同時解消。"
+      },
+      "nextGenInnovation": "TCA9548A 8ch 故障隔離＋LTC4311 能動スルーレート加速による産業級センサーバックボーン。",
+      "specs": [
+        {
+          "label": "マルチプレクサ",
+          "value": "Texas Instruments TCA9548A (1-to-8 I²C Switch / HW RESET)"
+        },
+        {
+          "label": "立上り加速器",
+          "value": "Analog Devices LTC4311 (デュアル能動プルアップ / >400 pF対応)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=+51.5, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"TCA9548A Low-Voltage 8-Channel I2C Switch with Reset Datasheet (SCPS207)\"",
+        "Analog Devices / Linear Technology, \"LTC4311 Low Voltage I2C/SMBus Accelerator Datasheet\"",
+        "NXP Semiconductors, \"UM10204 I²C-Bus Specification and User Manual (Fast-Mode 400 kHz Bus Capacitance)\""
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-rear-diag-oled",
+      "order": 389,
+      "swatchColor": "#2563eb",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W389. 背面サービス診断 WINSTAR WEO006432A 0.49型 64×32 モノクロMicro-OLEDテレメトリ画面 (SSD1306)",
+      "subtitle": "Plinth Rear Service Diagnostics WINSTAR WEO006432A 0.49\" 64x32 Monochrome Micro-OLED Display (SSD1306)",
+      "category": "光学ベンチ台座 / 現地診断Micro-OLED画面",
+      "plainAnalogy": "スマホやPCを繋がなくても、台座の裏側をのぞくだけで入力電圧・消費ワット・電池残量%・最高温度・CAN番号・エラーコードをくっきり直読できる0.49型の超小型有機EL画面です。",
+      "summary": "背面空き窓（X=-35.2, Y=-1.0, Z=-13.52）へフラッシュ組込みされた WINSTAR WEO006432A 0.49 インチ COG パッシブマトリクス OLED モジュール（64×32 ドット, SSD1306 I²C, 外形 14.5×11.6×1.26 mm / 実表示域 11.18×5.58 mm, 10,000:1 高コントラスト, −40〜+80°C）。",
+      "opticsAndPhysics": [
+        "自発光 PMOLED（10,000:1 コントラスト・視野角 160°超・応答 10 μs）により、暗い美術館バックヤードでも懐中電灯不要で電圧・W・SoC%・最高温度・エラーコードを即読。",
+        "通常展示中は自動タイムアウト消灯して背面迷光をゼロ化し、保守時のみロータリーダイヤル長押しまたは NFC タップで起動。"
+      ],
+      "formula": {
+        "expression": "CR_OLED = 10,000:1,   Active = 11.18 × 5.58 mm (64 × 32 px, Pitch 0.175 mm),   T_op = -40〜+80°C",
+        "description": "0.49 型 64×32 SSD1306 モノクロ Micro-OLED により PC レスの現場テレメトリ直読診断を実現。"
+      },
+      "nextGenInnovation": "放送・測定器ラック標準のオンシャーシ 0.49 型 64×32 Micro-OLED テレメトリ画面。",
+      "specs": [
+        {
+          "label": "表示モジュール",
+          "value": "WINSTAR WEO006432A (0.49\" COG PMOLED / 64×32 / SSD1306 I²C)"
+        },
+        {
+          "label": "コントラスト・温度",
+          "value": "10,000:1 / 視野角 >160° / 動作 -40〜+80°C"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面診断パネル窓 (X=-35.2, lY=-1.0, Z=-13.52)"
+        }
+      ],
+      "references": [
+        "WINSTAR Display Co., Ltd., \"WEO006432A 0.49-inch 64×32 COG Graphic OLED Module Datasheet (SSD1306 I²C)\"",
+        "Solomon Systech, \"SSD1306 128×64 Dot Matrix OLED/PLED Segment/Common Driver Controller Datasheet\"",
+        "IEC 62341-6-1 Organic Light Emitting Diode (OLED) Displays — Optical & Environmental Reliability"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-rear-piano-dip",
+      "order": 390,
+      "swatchColor": "#dc2626",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W390. 背面リセスド保守ポート Omron A6SR 金メッキ双接点 4極ピアノDIPハード設定スイッチ",
+      "subtitle": "Plinth Rear Recessed Maintenance Port Omron A6SR Gold Twin-Contact 4-Pole Piano DIP Switch",
+      "category": "光学ベンチ台座 / ハードウェア構成DIPスイッチ",
+      "plainAnalogy": "電源を入れる前でも物理的にパチッと切り替えられる4つの小さなピアノ鍵盤スイッチです。CAN通信の台数番号・120Ω終端抵抗・ファーム強制復旧・校正モードを確実に設定できます。",
+      "summary": "背面右空き域（X=+66.2, Y=-0.9, Z=-13.52）へリセス実装された Omron A6SR 低背 SMT 4 極ピアノ型 DIP スイッチ（2.54 mm ピッチ, 金メッキ双接点スライド構造）。CAN-FD ノード ID・120 Ω 終端・DFU ブート・校正モードをハードウェア確定します。",
+      "opticsAndPhysics": [
+        "金メッキ双接点セルフワイピング機構により低電圧ロジック（3.3V / 100 μA）でも酸化膜接触不良ゼロ、耐衝撃・耐振動 10–55 Hz で設定保持。",
+        "ピアノ型リセスドアクチュエータは背面から精密ドライバ先端でのみ切替可能とし、清掃や運搬時の誤操作を物理防止。"
+      ],
+      "formula": {
+        "expression": "4-bit Hardware Config: [SW1:2]=NodeID(0..3), [SW3]=120Ω Term, [SW4]=DFU/Cal  (R_c < 100 mΩ)",
+        "description": "金メッキ双接点 4 極ピアノ DIP によりファーム起動前のハードウェア終端・DFU・ノード番号を確定。"
+      },
+      "nextGenInnovation": "産業制御機器標準の Omron A6SR 金メッキ双接点リセスド・ピアノ DIP 設定ポート。",
+      "specs": [
+        {
+          "label": "スイッチ型番",
+          "value": "Omron A6SR-4104 (低背 SMT 4極ピアノDIP / 2.54 mm ピッチ)"
+        },
+        {
+          "label": "接点仕様",
+          "value": "金メッキ双接点セルフワイピング / 接触抵抗 < 100 mΩ"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面右保守ポート W350〜W343 間 (X=+66.2, lY=-0.9, Z=-13.52)"
+        }
+      ],
+      "references": [
+        "Omron Electronic Components, \"A6SR Surface-Mounting Piano-Type DIP Switch Datasheet (G055)\"",
+        "ISO 11898-2 CAN-FD 120-Ohm Switchable End-of-Line Bus Termination Guidelines",
+        "IEC 61058-1 Switches for Appliances & Industrial Control Hardware Strapping Standards"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-as7341-spectral",
+      "order": 391,
+      "swatchColor": "#38bdf8",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W391. 前面右 ams OSRAM AS7341 11ch CIE 1931 XYZ 環境光分光色温度＆フリッカー検知センサー",
+      "subtitle": "Plinth Front Right ams OSRAM AS7341 11-Ch CIE 1931 XYZ Ambient Spectral CCT & Flicker Sensor",
+      "category": "光学ベンチ台座 / 11ch分光色温度・フリッカー検知",
+      "plainAnalogy": "明るさだけ測る照度計（W212）では電球色か昼光色か見分けられません。光を11の波長帯へ分解して部屋の本当の光の色味と50/60Hzチラつきを読み取り、文字のCRI 97発色を完璧に調和させます。",
+      "summary": "前面右対称計装窓（X=+28.0, Y=-0.70, Z=+13.26）へ配置された ams OSRAM AS7341 11 チャンネル分光センサー（可視 8ch 415–680 nm＋Clear＋NIR＋50/60 Hz フリッカー専用 ch, 6 並列 16-bit ADC, 3.1×2.0×1.0 mm）＋ PTFE コサイン拡散窓。",
+      "opticsAndPhysics": [
+        "F1(415 nm)〜F8(680 nm) の 8 狭帯域可視チャネル＋NIR を 3×8 校正行列で CIE 1931 XYZ / 相関色温度（CCT 2000–10000 K）へ変換し、美術館ハロゲン（2700 K）から自然昼光（6500 K）へ文字のホワイトバランスを自動追従。",
+        "専用フリッカー検出チャネル（最大 2 kHz サンプリング）が周囲照明の 100/120 Hz 脈動を検知し、カメラ撮影時のビート干渉を回避。"
+      ],
+      "formula": {
+        "expression": "[X, Y, Z]ᵀ = M_3×8 · [F₁(415nm) .. F₈(680nm)]ᵀ  ⇒  CCT(2000–10000 K),  Duv < 0.002",
+        "description": "11ch 分光多波長センサ＋PTFE コサイン拡散窓で展示室の色温度・フリッカーを精密リアルタイム解析。"
+      },
+      "nextGenInnovation": "スマートフォン最高級カメラ搭載の ams OSRAM AS7341 11ch ナノ光学分光センサー。",
+      "specs": [
+        {
+          "label": "分光センサー",
+          "value": "ams OSRAM AS7341 (11ch: 可視8ch 415–680nm + Clear + NIR + Flicker)"
+        },
+        {
+          "label": "ADC・光学窓",
+          "value": "6並列 16-bit ADC + PTFE コサイン拡散光学窓 (I²C)"
+        },
+        {
+          "label": "配置位置",
+          "value": "前面右対称計装窓 (X=+28.0, lY=-0.70, Z=+13.26, 全Ray非遮蔽)"
+        }
+      ],
+      "references": [
+        "ams OSRAM AG, \"AS7341 11-Channel Multi-Spectral Digital Sensor Datasheet (DS000504)\"",
+        "ams OSRAM AG, \"AS7341 Opto-Mechanical Design & Cosine Diffuser Application Note (UG000400)\"",
+        "CIE 15:2018 Colorimetry — 1931 Standard Colorimetric Observer & Correlated Color Temperature (CCT)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-tof-940nm-bandpass-window",
+      "order": 392,
+      "swatchColor": "#312e81",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W392. 前面ToF専用 940±20nm 狭帯域誘電体多層膜 光学バンドパスフィルタカバー窓",
+      "subtitle": "Plinth Front ToF Dedicated 940±20nm Narrowband Dielectric Optical Bandpass Filter Cover Window",
+      "category": "光学ベンチ台座 / 940nm太陽光遮断ToF窓",
+      "plainAnalogy": "強い太陽の光が差し込むガラス張りロビーでは距離センサーが眩しくて目がくらんでしまいます。距離レーザーの940nm赤外線だけを通し可視太陽光を99.9%カットする専用サングラス窓です。",
+      "summary": "前面 ToF 測距軸上（X=0.0, Y=-0.60, Z=+13.46）へフラッシュ配置された 940 ± 20 nm 狭帯域誘電体多層膜干渉バンドパスフィルタカバー窓（可視 400–850 nm を OD > 3 / 99.9% 遮断、940 nm VCSEL 透過率 > 90%）。",
+      "opticsAndPhysics": [
+        "42 層 Nb₂O₅/SiO₂ 誘電体多層干渉膜により太陽光エネルギーの大半を占める可視域（400–850 nm）を OD > 3（<0.1%）へ遮断し、100 klux 直射日光下でも VL53L5CX（W211）SPAD アレイの飽和を防止。",
+        "940 nm VCSEL レーザーに対する高透過率（>90%）と極薄低分散ガラスにより、63° 対角視界コーンの光学遮蔽率 0.000%（sp ray 認証）を維持。"
+      ],
+      "formula": {
+        "expression": "T(940±20 nm) > 90%,   OD(400–850 nm) > 3.0 (T < 0.1%)  ⇒  SNR_ToF(100 klux) +28 dB",
+        "description": "940±20 nm 狭帯域誘電体フィルタ窓により直射日光下の ToF 測距飽和を解消（視界遮蔽 0%）。"
+      },
+      "nextGenInnovation": "自動車 LiDAR・屋外 ToF 標準の 940±20 nm OD>3 誘電体多層バンドパスフィルタ窓。",
+      "specs": [
+        {
+          "label": "中心波長・帯域",
+          "value": "940 ± 20 nm (T > 90%) / 400–850 nm 遮断 OD > 3 (>99.9%)"
+        },
+        {
+          "label": "光学膜・基板",
+          "value": "Nb₂O₅/SiO₂ 42層誘電体干渉膜 / 光学ガラス (t = 0.10 mm)"
+        },
+        {
+          "label": "配置位置",
+          "value": "前面 ToF 軸上 W302 前面 (X=0.0, lY=-0.60, Z=+13.46, sp ray 透過)"
+        }
+      ],
+      "references": [
+        "STMicroelectronics, \"AN5644 Cover Glass Guidelines for VL53L5CX 940nm Time-of-Flight Sensor\"",
+        "MidOpt / Edmund Optics, \"BP940 Narrowband 940nm Dielectric Bandpass Filters for ToF & LiDAR\"",
+        "Macleod, H. A., \"Thin-Film Optical Filters\", 5th Ed., CRC Press (Narrowband Cavity Interference Filters)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-bgt60tr13c-radar",
+      "order": 393,
+      "swatchColor": "#1e3a8a",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W393. 前面左 Infineon BGT60TR13C 60GHz FMCWミリ波 静止在室・微動呼吸レーダーMMIC (AiP)",
+      "subtitle": "Plinth Front Left Infineon XENSIV™ BGT60TR13C 60 GHz FMCW Millimeter-Wave Presence & Breathing Radar (AiP)",
+      "category": "光学ベンチ台座 / 60GHzミリ波静止在室レーダー",
+      "plainAnalogy": "黒いコートを着てじっと立ち止まって鑑賞している人のわずかな胸の呼吸（数ミリ）まで、60GHzミリ波電波で確実に捉え、文字の光を切らさずに見守り続ける最新レーダーです。",
+      "summary": "前面左対称窓（X=-28.0, Y=-0.70, Z=+13.26, W391 と完全左右対称）へ誘電体レドーム窓付で搭載された Infineon XENSIV™ BGT60TR13C 60 GHz FMCW ミリ波レーダー MMIC（58–63.5 GHz, 帯域幅 5.5 GHz → 距離分解能 2.7 cm, 1 TX / 3 RX 封止内アンテナ AiP, 6.5×5.0×0.9 mm）。",
+      "opticsAndPhysics": [
+        "広帯域 5.5 GHz の FMCW チャープ変調（ΔR = c / 2B = 2.73 cm）と 3 RX 位相差到来角（水平・垂直 AoA）により、黒衣類やガラス逆光の影響を受けず静止鑑賞者の呼吸（0.2–0.5 Hz, ±1 mm 微動）を検知。",
+        "低誘電率（ε_r ≈ 2.6, tan δ < 0.002）の λ/2 厚誘電体レドーム窓を採用し、60 GHz 帯の反射挿入損失を < 0.4 dB に抑制。"
+      ],
+      "formula": {
+        "expression": "ΔR = c / (2 · B) = 3×10⁸ / (2 × 5.5 GHz) = 2.73 cm,   λ_60GHz = 5.0 mm (1 TX / 3 RX AiP)",
+        "description": "5.5 GHz 超広帯域 60 GHz FMCW レーダーにより 2.73 cm 分解能と静止呼吸微動検知を実現。"
+      },
+      "nextGenInnovation": "Infineon XENSIV™ 60 GHz AiP ミリ波レーダーと光学 ToF の異種物理センサー融合。",
+      "specs": [
+        {
+          "label": "レーダーMMIC",
+          "value": "Infineon XENSIV™ BGT60TR13C (58–63.5 GHz / 1TX 3RX AiP)"
+        },
+        {
+          "label": "帯域・分解能",
+          "value": "FMCW 帯域 5.5 GHz / 距離分解能 2.73 cm / 静止呼吸検知"
+        },
+        {
+          "label": "配置位置",
+          "value": "前面左対称計装窓 (X=-28.0, lY=-0.70, Z=+13.26, W391 対称)"
+        }
+      ],
+      "references": [
+        "Infineon Technologies AG, \"XENSIV™ BGT60TR13C 60 GHz Radar Sensor with Antenna-in-Package Datasheet\"",
+        "Infineon Technologies AG, \"AN608 Radome Design Guidelines for 60 GHz Millimeter-Wave FMCW Radar\"",
+        "Richards, M. A., \"Fundamentals of Radar Signal Processing\", 3rd Ed. (FMCW Range Resolution & Vital Signs)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-uwb-aoa-module",
+      "order": 394,
+      "swatchColor": "#164a41",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W394. Qorvo DW3120 / QM33120W IEEE 802.15.4z 超広帯域(UWB) 10cm精密測距＆AoA到来角モジュール",
+      "subtitle": "Plinth Qorvo DW3120 / QM33120W IEEE 802.15.4z UWB 10cm Ranging & PDoA Angle-of-Arrival Module",
+      "category": "光学ベンチ台座 / UWB 10cm測距・到来角検知",
+      "plainAnalogy": "来客のスマートフォンや入場タグの位置を10cm精度と左右の方位角（±5°）で捉え、「左から近づいたら『よ→う→こ→そ』、右からなら『そ→こ→う→よ』」と光の波を方向連動させる超広帯域無線です。",
+      "summary": "内部上部バスウェイ内後列（X=+63.5, Y=+1.92, Z=-3.45）に搭載された Qorvo DW3120 / QM33120W IEEE 802.15.4z FiRa 2.0 準拠 UWB トランシーバ（Ch.5/Ch.9 6.5/8.0 GHz, タイムスタンプ分解能 15.65 ps = 4.69 mm/tick, 10 cm 測距, 2 ポート PDoA 到来角 ±5°）。",
+      "opticsAndPhysics": [
+        "64 GHz 相当のタイムスタンプ粒度 Δt = 1 / (128 × 499.2 MHz) = 15.65 ps（光速換算 4.69 mm/tick）と STS 暗号化フレーム（IEEE 802.15.4z）により、マルチパス屋内ロビーでも 10 cm 測距精度を達成。",
+        "デュアル RX チェーン位相差（PDoA）から来訪者の接近方位角を ±5° 精度で算出し、4 文字のウェーブ演出方向と追尾輝度をシームレス制御。"
+      ],
+      "formula": {
+        "expression": "Δt_UWB = 1 / (128 × 499.2 MHz) = 15.65 ps (4.69 mm/tick),   θ_AoA = arcsin(λ · Δφ / (2π · d))",
+        "description": "15.65 ps 高分解能タイムスタンプ＋2 ポート PDoA により来客距離（10 cm）と接近方位（±5°）を同時取得。"
+      },
+      "nextGenInnovation": "Apple U1/U2 相互運用・FiRa 2.0 準拠 Qorvo QM33120W / DW3120 1 チップ PDoA 到来角測距。",
+      "specs": [
+        {
+          "label": "UWB IC",
+          "value": "Qorvo DW3120 / QM33120W (IEEE 802.15.4z / FiRa 2.0 / Ch.5 & Ch.9)"
+        },
+        {
+          "label": "測距・方位",
+          "value": "分解能 15.65 ps (4.69 mm) / 精度 10 cm / PDoA AoA ±5°"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=+63.5, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Qorvo Inc., \"QM33120W / DW3120 IEEE 802.15.4z UWB Transceiver with PDoA Datasheet\"",
+        "IEEE Std 802.15.4z-2020 Enhanced Impulse Radio UWB (HRP-ERDEV) & Scrambled Timestamp Sequence",
+        "FiRa Consortium, \"PHY/MAC Technical Specifications v2.0 — Two-Way Ranging & PDoA Angle of Arrival\""
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-wifi-baw-filter",
+      "order": 395,
+      "swatchColor": "#c2cbd6",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W395. Qorvo QPQ1907 2.4GHz Wi-Fi 6 / BLE / UWB 共存 急峻スカートBAWバンドパスフィルタ",
+      "subtitle": "Plinth Qorvo QPQ1907 2.4 GHz Wi-Fi 6 / BLE / UWB Coexistence Steep-Skirt BAW Bandpass Filter",
+      "category": "光学ベンチ台座 / RF共存BAWフィルタ",
+      "plainAnalogy": "Wi-Fi 6・Bluetooth・UWBの3つの電波が狭い筐体の中でケンカして受信感度が落ちないよう、結晶の超音波振動（BAW）の急峻な壁で隣の帯域へ漏れる電波を切り落とす高性能フィルターです。",
+      "summary": "内部上部バスウェイ内後列（X=+57.5, Y=+1.92, Z=-3.45）に配置された Qorvo QPQ1907 バルク弾性波（BAW）2.4 GHz 共存バンドパスフィルタ（2.0×1.6 mm, 低挿入損失 ~2.0 dB, 急峻帯域外減衰スカート >45 dB）。",
+      "opticsAndPhysics": [
+        "AlN 圧電薄膜のバルク弾性波共振（Q > 2,000）により、LC フィルタでは不可能な急峻スカート遮断を実現し、Wi-Fi 6（W209）の +20 dBm 送信バーストによる UWB（W394）および BLE 受信デセンス（感度抑圧）を根絶。",
+        "高電力耐性（+28 dBm 連続）と低温度ドリフトにより、密閉金属筐体内の複数無線同時稼働を安定化。"
+      ],
+      "formula": {
+        "expression": "IL_pass(2.4–2.48 GHz) ≈ 2.0 dB,   Atten_OOB(UWB/LTE) > 45 dB  (BAW Q > 2,000)",
+        "description": "急峻スカート BAW 共存フィルタにより Wi-Fi 6 送信と UWB/BLE 受信の同時無干渉動作を保証。"
+      },
+      "nextGenInnovation": "AlN 圧電バルク弾性波（BAW）急峻スカート Wi-Fi 6 / BLE / UWB 共存フロントエンド。",
+      "specs": [
+        {
+          "label": "フィルタIC",
+          "value": "Qorvo QPQ1907 (2.4 GHz BAW Coexistence Bandpass Filter)"
+        },
+        {
+          "label": "性能",
+          "value": "挿入損失 ~2.0 dB / 帯域外減衰 >45 dB / 2.0×1.6 mm CSP"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列 (X=+57.5, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Qorvo Inc., \"QPQ1907 High-Performance 2.4 GHz Wi-Fi BAW Coexistence Filter Datasheet\"",
+        "Ruby, R. (2015), \"A Snapshot in Time: The Future in Filters for Cell Phones (FBAR/BAW)\", IEEE Microwave Mag.",
+        "IEEE 802.11ax / 802.15.4z Coexistence & Adjacent-Channel Desense Mitigation Guidelines"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-sht45-dewpoint",
+      "order": 396,
+      "swatchColor": "#f8fafc",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W396. 結露能動防止 Sensirion SHT45-AD1F-R2 (±1.0%RH / ±0.1°C) PTFE膜付デジタル温湿度センサー",
+      "subtitle": "Plinth Active Anti-Condensation Sensirion SHT45-AD1F-R2 (±1.0%RH / ±0.1°C) PTFE-Membrane Sensor",
+      "category": "光学ベンチ台座 / 露点予測・結露能動防止",
+      "plainAnalogy": "室内の温度と湿度を超高精度（±0.1℃・±1%RH）で測って結露する温度（露点）をリアルタイム計算し、サファイア窓が曇る前にLEDをわずかに微予熱して曇りを防ぐ賢い温湿度センサーです。",
+      "summary": "内部上部バスウェイ外後列（X=+19.0, Y=+1.92, Z=-6.35）へ実装された Sensirion SHT45-AD1F-R2（±1.0% RH / ±0.1°C typ, CMOSens® 同時単点計測, 工場装着 IP67 PTFE 防塵防水膜付, WDFN-4, I²C）。",
+      "opticsAndPhysics": [
+        "Magnus–Tetens 飽和水蒸気圧式からリアルタイム露点温度 T_dp を算出し、筐体温度が T_dp + 2.0°C に接近した時点で LED 微電流（1% 予熱モード）を作動させて光学窓の結露を未然防止。",
+        "工場装着疎水 PTFE 保護膜（-AD1F-R2）により、コンフォーマルコートや塵埃から感湿ポリマーを恒久保護。"
+      ],
+      "formula": {
+        "expression": "T_dp = (b · γ(T,RH)) / (a - γ(T,RH)),   γ = ln(RH/100) + a·T/(b+T)  (±1.0%RH / ±0.1°C)",
+        "description": "SHT45 による高精度露点算出と T_dp + 2°C 微予熱制御で美術館空調急変時の光学曇りを根絶。"
+      },
+      "nextGenInnovation": "Sensirion CMOSens® SHT45 PTFE 保護膜付フラッグシップ温湿度センサーによる能動防曇。",
+      "specs": [
+        {
+          "label": "センサー型番",
+          "value": "Sensirion SHT45-AD1F-R2 (CMOSens® / 工場装着 PTFE 保護膜)"
+        },
+        {
+          "label": "計測精度",
+          "value": "±1.0% RH typ / ±0.1°C typ / I²C (0x44) / 内部ヒータ内蔵"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ外後列 (X=+19.0, lY=+1.92, Z=-6.35)"
+        }
+      ],
+      "references": [
+        "Sensirion AG, \"SHT4x (SHT45-AD1F-R2) 4th Generation Relative Humidity and Temperature Sensor Datasheet\"",
+        "Alduchov, O. A. & Eskridge, R. E. (1996), \"Improved Magnus Form Approximation of Saturation Vapor Pressure\", J. Appl. Meteor.",
+        "ISO 11799 Museum & Archive Environmental Humidity & Condensation Prevention Guidelines"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-bmp390-barometer",
+      "order": 397,
+      "swatchColor": "#98a2b0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W397. 気圧・通気弁健全性監視 Bosch BMP390 超高精度絶対気圧センサー (±0.03 hPa / ±25cm)",
+      "subtitle": "Plinth Barometric & Vent-Health Monitor Bosch Sensortec BMP390 Precision Pressure Sensor (±0.03 hPa)",
+      "category": "光学ベンチ台座 / 気圧補正・封止健全性監視",
+      "plainAnalogy": "わずか25cmの高さ変化の気圧差まで見抜く超高精度気圧計です。標高の高い高原美術館での自然放熱補正だけでなく、防水通気弁が目詰まりして筐体内の気圧が異常に上がっていないかも自己診断します。",
+      "summary": "内部上部バスウェイ外後列（X=+59.8, Y=+1.92, Z=-6.35）に実装された Bosch Sensortec BMP390 デジタル絶対気圧センサー（300–1250 hPa, 相対精度 ±0.03 hPa = ±25 cm, RMS 雑音 0.02 Pa, 2.0×2.0×0.75 mm 10-pin メタルリッド LGA）。",
+      "opticsAndPhysics": [
+        "高地設置（例：標高 1,500 m, 845 hPa → 空気密度 -16%）時の自然対流熱伝達低下を気圧から自動計算し、LED 最大電流ディレーティングカーブをリアルタイム補正。",
+        "電源投入直後の筐体昇温に伴う内圧上昇カーブを監視し、ePTFE 通気ベント（W224/W383）の目詰まりや IP54 ガスケット劣化を予知診断。"
+      ],
+      "formula": {
+        "expression": "ΔP_rel = ±0.03 hPa (±25 cm),   h_conv ∝ (P / P₀)^0.5  ⇒  高地自然対流ディレーティング自動補正",
+        "description": "±0.03 hPa 超高精度気圧監視により高地放熱補正と密閉筐体ベント健全性の両方を自動監視。"
+      },
+      "nextGenInnovation": "Bosch Sensortec BMP390 メタルリッド気圧センサーによる熱対流補正＆ベント目詰まり自己診断。",
+      "specs": [
+        {
+          "label": "気圧センサー",
+          "value": "Bosch Sensortec BMP390 (300–1250 hPa / 10-pin メタルリッド LGA)"
+        },
+        {
+          "label": "精度・雑音",
+          "value": "相対精度 ±0.03 hPa (±25 cm) / RMS雑音 0.02 Pa / 3.2 μA @ 1 Hz"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ外後列 (X=+59.8, lY=+1.92, Z=-6.35)"
+        }
+      ],
+      "references": [
+        "Bosch Sensortec GmbH, \"BMP390 Digital Pressure Sensor Datasheet (BST-BMP390-DS001)\"",
+        "JEDEC / IEEE Thermal Management at High Altitude — Air Density Natural Convection Derating",
+        "IEC 60529 Enclosure Breathing Vent Pressure-Equalization Diagnostic Methodology"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-im73a135-mems-mic",
+      "order": 398,
+      "swatchColor": "#c2cbd6",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W398. 環境音圧自動追従＆自己音響診断 Infineon IM73A135V01 73dB(A) IP57密閉MEMSマイク",
+      "subtitle": "Plinth Ambient SPL Auto-Gain & Acoustic Self-Test Infineon IM73A135V01 73 dB(A) IP57 Sealed MEMS Mic",
+      "category": "光学ベンチ台座 / 73dB(A) IP57音響帰還マイク",
+      "plainAnalogy": "静かな美術館ではささやくように、賑やかなホテルロビーでは心地よく響くように歓迎チャイムの音量を自動調整し、スピーカーの故障も自分で聴いてチェックする防塵防水マイクロホンです。",
+      "summary": "背面右音響ポート（X=+77.2, Y=-0.9, Z=-13.52）へ密閉実装された Infineon XENSIV™ IM73A135V01 産業用密閉デュアルメンブレン MEMS マイクロホン（73 dB(A) SNR, ±1 dB 感度公差, 20 Hz フラット低域, IP57 防塵防水, AOP 135 dB SPL）。",
+      "opticsAndPhysics": [
+        "周囲環境騒音（30–85 dB SPL）を常時 A 特性計測し、歓迎チャイムの再生ゲインを常に環境音 +8 dB へ自動追従（ALS 適応音量制御）。",
+        "毎朝の自己点検時に 440 Hz/1 kHz スイープ音を再生・帰還収音して N52 スピーカー（W214）とバスレフ共鳴ダクト（W256）の周波数特性異常を自動診断。"
+      ],
+      "formula": {
+        "expression": "SNR = 73 dB(A),   AOP = 135 dB SPL,   G_chime = clip(SPL_amb + 8 dB, 42, 74 dB)  (IP57 密閉)",
+        "description": "73 dB(A) 高 SNR・IP57 密閉 MEMS マイクで環境騒音追従チャイムとスピーカー自己音響診断を実現。"
+      },
+      "nextGenInnovation": "スタジオコンデンサ級の 73 dB(A) SNR と IP57 防塵防水を両立した Infineon 密閉 MEMS マイク。",
+      "specs": [
+        {
+          "label": "MEMSマイク",
+          "value": "Infineon XENSIV™ IM73A135V01 (IP57 デュアルメンブレン密閉)"
+        },
+        {
+          "label": "音響性能",
+          "value": "SNR 73 dB(A) / AOP 135 dB SPL / 感度公差 ±1 dB / 20 Hz〜"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面右音響ポート W343〜W218 間 (X=+77.2, lY=-0.9, Z=-13.52)"
+        }
+      ],
+      "references": [
+        "Infineon Technologies AG, \"XENSIV™ IM73A135V01 IP57 Dust & Water Resistant 73 dB(A) MEMS Microphone Datasheet\"",
+        "IEC 61672-1 Electroacoustics — Sound Level Meters (A-Weighting Ambient SPL Estimation)",
+        "AES2-2012 Loudspeaker & Enclosure Acoustic Self-Test Frequency Response Verification"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-classd-lc-filter",
+      "order": 399,
+      "swatchColor": "#3a3f4a",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W399. Class-D音声出力 Murata BLM18PG331SN1D フェライト＋15µH/0.22µF LC復調EMIフィルタ網",
+      "subtitle": "Plinth Class-D Audio Output Murata BLM18PG331SN1D Ferrite & 15uH/0.22uF LC Demodulation EMI Filter",
+      "category": "光学ベンチ台座 / Class-D音響EMI復調フィルタ",
+      "plainAnalogy": "高効率なデジタル（Class-D）アンプのスピーカー配線はアンテナになって電波ノイズを出しがちです。村田製作所のフェライトビーズとコイル・コンデンサのろ過網で高周波ノイズを完全に滑らかな音声へ戻します。",
+      "summary": "内部上部バスウェイ内後列（X=+71.0, Y=+1.92, Z=-3.45）に配置された Murata BLM18PG331SN1D フェライトビーズ（330 Ω ±25% @ 100 MHz, 1.2A, 0603）＋シールド電力インダクタ 15 μH / 0.22 μF X7R 差動 LC 復調 EMI フィルタ網（CISPR 32 Class B）。",
+      "opticsAndPhysics": [
+        "カットオフ周波数 f_c = 1 / (2π√(LC)) = 87.6 kHz の 2 次バターワース LC 復調器が Class-D PWM キャリア（400 kHz–1.2 MHz）を -32 dB 減衰させ、さらに BLM18PG331SN1D が 30–300 MHz 放射雑音を吸収。",
+        "至近距離にある 2.4 GHz Wi-Fi / UWB（W394）へのスピーカー配線経由放射干渉を CISPR 32 Class B 基準値 -10 dB 以下へ抑制。"
+      ],
+      "formula": {
+        "expression": "f_c = 1 / (2π√(15 μH × 0.22 μF)) = 87.6 kHz,   Z_bead(100 MHz) = 330 Ω (CISPR 32 Class B)",
+        "description": "87.6 kHz 差動 LC 復調＋330 Ω@100 MHz 村田フェライトで Class-D スピーカー配線の高調波放射を根絶。"
+      },
+      "nextGenInnovation": "ハイエンド音響機器標準のシールド 15 μH LC 復調＋村田 BLM18PG 複合 EMI フィルタ。",
+      "specs": [
+        {
+          "label": "フェライト・LC",
+          "value": "Murata BLM18PG331SN1D (330 Ω@100 MHz) + 15 μH / 0.22 μF X7R"
+        },
+        {
+          "label": "EMC準拠",
+          "value": "CISPR 32 / FCC Part 15B Class B (30–300 MHz -18 dB 抑制)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ内後列スピーカー直近 (X=+71.0, lY=+1.92, Z=-3.45)"
+        }
+      ],
+      "references": [
+        "Murata Manufacturing Co., Ltd., \"BLM18PG331SN1D Chip Ferrite Bead Datasheet (330 Ω @ 100 MHz, 1.2 A)\"",
+        "Texas Instruments Application Report SLOA119, \"LC Filter Design for Class-D Audio Amplifiers\"",
+        "CISPR 32:2015 Electromagnetic Compatibility of Multimedia Equipment — Class B Emission Limits"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-lra-haptic-engine",
+      "order": 400,
+      "swatchColor": "#98a2b0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        -8,
+        -9.5,
+        -6
+      ],
+      "integratedExplodeOffset": [
+        -8,
+        -9.5,
+        -6
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W400. 精密触覚フィードバック TI DRV2605L 駆動 175Hz リニア共振アクチュエータ (LRA) エンジン",
+      "subtitle": "Plinth Precision Haptic Feedback TI DRV2605L Driver & 175 Hz Z-Axis Linear Resonant Actuator (LRA)",
+      "category": "光学ベンチ台座 / 175Hz LRA触覚フィードバック",
+      "plainAnalogy": "右端ダイヤルを回した時やスマホをNFCにかざした時、文字がドックへピタッと吸着した瞬間に、高級カメラやスマホのような心地よい「コツッ」という上質な固体振動を指先へ返します。",
+      "summary": "右端ロータリーダイヤル直近の内部上部バスウェイ外後列（X=+79.5, Y=+1.92, Z=-6.15）に搭載された Texas Instruments DRV2605L（2.0–5.2V I²C, 123 種内蔵 ROM 触覚波形, ±2.5 Hz 自動共振追尾＆アクティブブレーキ）＋ 175 Hz Z 軸コイン型 LRA。",
+      "opticsAndPhysics": [
+        "偏心回転モータ（ERM）比 5 倍高速な立上り（< 10 ms）と DRV2605L の逆位相アクティブブレーキにより、ボケのないシャープな 1 サイクル固体クリック触感を生成。",
+        "逆起電力（Back-EMF）自動共振周波数トラッキングが 175 Hz ± 2.5 Hz の機械共振点へ常にロックし、温度・経年変化でも一定の触覚強度を保持。"
+      ],
+      "formula": {
+        "expression": "f_res = 175.0 ± 2.5 Hz (Auto Back-EMF Tracking),   t_rise < 10 ms,   123 Immersion ROM Waveforms",
+        "description": "DRV2605L 自動共振追尾＋アクティブブレーキ駆動 175 Hz LRA で上質な固体クリック触覚を提供。"
+      },
+      "nextGenInnovation": "高級ミラーレス操作系・スマートフォン Taptic 級の 175 Hz LRA 閉ループ触覚エンジン。",
+      "specs": [
+        {
+          "label": "ドライバIC",
+          "value": "Texas Instruments DRV2605L (I²C / 123波形ROM / 自動共振追尾)"
+        },
+        {
+          "label": "アクチュエータ",
+          "value": "175 Hz Z軸コイン型 LRA (立上り <10 ms / 1.8 Grms)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部上部バスウェイ外後列ダイヤル直近 (X=+79.5, lY=+1.92, Z=-6.15)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"DRV2605L 2- to 5.2-V Haptic Driver for LRA and ERM with Effect Library Datasheet (SLOS854)\"",
+        "Texas Instruments User Guide SLOU389, \"DRV2605L 123 Embedded Immersion Haptic Waveforms Reference\"",
+        "Precision Microdrives, \"Linear Resonant Actuators (LRA) Resonance Tracking & Active Braking Guide\""
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-m4x025-level-feet",
+      "order": 401,
+      "swatchColor": "#d4a137",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W401. 底面4隅 運動学的 M4×0.25 (Thorlabs級) 極細目ローレット真鍮レベリング微調脚 (4基)",
+      "subtitle": "Plinth Bottom 4-Corner Kinematic M4x0.25 (Thorlabs-Grade) Fine-Pitch Knurled Brass Leveling Feet",
+      "category": "光学ベンチ台座 / 0.25mm/rev水平微調脚",
+      "plainAnalogy": "天面に2分角の精密水準器（W336）が載っているのに底面に調整脚が無ければ水平を追い込めません。1回転わずか0.25mm（1度回すと0.7ミクロン）だけ上下する光学実験室グレードの真鍮ネジ脚4本です。",
+      "summary": "底面 4 隅の空き座標（X=±65.0, Z=±10.0, lY∈[-7.82..-7.16]）へ配した Thorlabs 規格 M4×0.25 極細目（0.25 mm/rev = 0.69 μm/deg）ローレット C3604 真鍮レベリング微調脚＋硬球先端＋ロックナット 4 基。天面気泡管水準器（W336）と対を成します。",
+      "opticsAndPhysics": [
+        "ピッチ 0.25 mm/rev の超細目ねじと 130 mm スパン配置により、1/4 回転（90°）で 62.5 μm ＝ 傾斜角 1.65 分角（天面水準器 W336 の 1 目盛未満）の精密水平追い込みが可能。",
+        "C3604 真鍮ブッシュ＋硬球先端点接触＋ローレットロックナットにより、調整後の机上クリープ沈み込みをゼロ化。"
+      ],
+      "formula": {
+        "expression": "Δh / deg = 0.25 mm / 360° = 0.694 μm/deg,   Δθ(90°) = arctan(62.5 μm / 130 mm) = 1.65′ < 2′ (W336)",
+        "description": "Thorlabs 級 M4×0.25 極細目真鍮微調脚 4 基により天面 2 分角水準器の真水平調整を完結。"
+      },
+      "nextGenInnovation": "光学ベンチ標準 Thorlabs M4×0.25（100 TPI 相当）極細目真鍮マイクロレベリング脚 4 点系。",
+      "specs": [
+        {
+          "label": "ねじ規格",
+          "value": "Thorlabs 級 M4 × 0.25 極細目 (0.25 mm/rev, 0.69 μm/deg) × 4基"
+        },
+        {
+          "label": "構造材",
+          "value": "C3604 ローレット真鍮 + 焼入硬球先端 + ロックナット"
+        },
+        {
+          "label": "配置位置",
+          "value": "底面4隅クリア域 (X=±65.0, Z=±10.0, lY∈[-7.82..-7.16])"
+        }
+      ],
+      "references": [
+        "Thorlabs Inc., \"F4SS / F4ES M4×0.25 Fine-Adjustment Hex & Knurled Optical Mount Screws Specification\"",
+        "ISO 261 / DIN 13-2 Fine-Pitch Metric Screw Threads (M4 × 0.25 Optical Instrumentation Standard)",
+        "Slocum, A. H., \"Precision Machine Design\" (Kinematic Leveling Screws & Lock-Nut Preload)"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-corner-cube-retro",
+      "order": 402,
+      "swatchColor": "#60a5fa",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W402. 台座天面 Thorlabs PS974M 級 N-BK7 マウント済コーナーキューブ再帰反射プリズム (<3″)",
+      "subtitle": "Plinth Top Deck Thorlabs PS974M-Grade Mounted N-BK7 Corner-Cube Retroreflector (<3 arcsec)",
+      "category": "光学ベンチ台座 / レーザー干渉計再帰反射基準",
+      "plainAnalogy": "どの角度からレーザー測定光を当てても必ず来た方向へ3秒角（0.0008度）以内の精度で真っ直ぐ跳ね返す、三面直角の精密ガラスプリズムです。展示台の据付姿勢をレーザー干渉計で検証できます。",
+      "summary": "台座天面中央右後（X=+9.2, Y=+4.64, Z=-7.0）へ搭載された Thorlabs PS974M-A 級マウント済 N-BK7 コーナーキューブ再帰反射プリズム（350–700 nm BBAR コート, ビーム偏差 < 3 arcsec, SM 黒アルマイトねじ枠封止）。",
+      "opticsAndPhysics": [
+        "互いに厳密 90°±1″ で交わる 3 全反射面により、入射角に関わらずレーザービームを 180°±<3″ の完全平行で光源へ帰還させ、レーザートラッカー・干渉計による 6 自由度設置アライメントを可能化。",
+        "N-BK7 光学ガラス（n_d = 1.5168）＋ 350–700 nm 広帯域 AR コート（R < 0.5%）により可視レーザーの戻り光効率を 96% 以上に維持。"
+      ],
+      "formula": {
+        "expression": "θ_return = 180° ± < 3″ (14.5 μrad),   n_d(N-BK7) = 1.5168,   R_BBAR(350–700 nm) < 0.5%",
+        "description": "コーナーキューブ再帰反射プリズムによりレーザー干渉計・トラッカーの 6DOF ベンチ姿勢計測に対応。"
+      },
+      "nextGenInnovation": "月面レーザー測距と同原理の Thorlabs PS974M 級 <3″ 再帰反射ターゲットの天面実装。",
+      "specs": [
+        {
+          "label": "プリズム規格",
+          "value": "Thorlabs PS974M-A 級 N-BK7 コーナーキューブ (偏差 < 3 arcsec)"
+        },
+        {
+          "label": "コート・枠",
+          "value": "350–700 nm BBAR コート + 黒アルマイト SM マウント枠"
+        },
+        {
+          "label": "配置位置",
+          "value": "台座天面中央右後 (X=+9.2, lY∈[+3.95..+5.32], Z=-7.0)"
+        }
+      ],
+      "references": [
+        "Thorlabs Inc., \"PS974M-A Mounted N-BK7 Retroreflector (<3 arcsec Beam Deviation, 350-700 nm AR) Specification\"",
+        "SCHOTT AG, \"N-BK7® Optical Borosilicate Crown Glass Technical Data Sheet\"",
+        "ISO 10110-5 / ASME B89.4.19 Laser Tracker Spherically Mounted & Corner-Cube Retroreflector Metrology"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-spectralon-white-ref",
+      "order": 403,
+      "swatchColor": "#f8fafc",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W403. 台座天面 Labsphere Spectralon® SRM-99 (>99% ランバート拡散反射) 色度校正白基準プラグ",
+      "subtitle": "Plinth Top Deck Labsphere Spectralon® SRM-99 (>99% Lambertian Diffuse Reflectance) White Reference Plug",
+      "category": "光学ベンチ台座 / NIST準拠99%拡散白基準",
+      "plainAnalogy": "カメラや分光測色計で「完全な白」を基準合わせするために天面へ埋め込んだ、反射率99%以上・どの角度から見ても均一なランバート拡散の焼結PTFE白色標準ターゲットです。",
+      "summary": "台座天面右前空き域（X=+54.8, Y=+4.18, Z=+7.5）へ埋設された Labsphere Spectralon® SRM-99 焼結 PTFE 拡散反射白基準プラグ（400–1500 nm 反射率 > 99%, 250–2500 nm 校正可能, ASTM E-595 脱ガス TML = 0.00%）。",
+      "opticsAndPhysics": [
+        "微細多孔質焼結 PTFE 内部の多重体積散乱により、全可視〜近赤外（400–1500 nm）で >99% の極めて平坦な分光反射率と完全ランバート拡散特性を実現。",
+        "現場カメラのカスタムホワイトバランス基準および CRI 97 文字発光との分光比較リファレンスとして即座に利用可能（耐水洗・脱ガス 0.00%）。"
+      ],
+      "formula": {
+        "expression": "ρ_8/H(400–1500 nm) > 0.990 (Lambertian cos θ),   ASTM E-595 TML = 0.00% (Spectralon® SRM-99)",
+        "description": "NIST トレーサブル >99% 拡散反射 Spectralon® SRM-99 白基準プラグを光学ベンチ天面へ常設。"
+      },
+      "nextGenInnovation": "衛星地球観測キャリブレーション標準 Labsphere Spectralon® SRM-99 の天面内蔵。",
+      "specs": [
+        {
+          "label": "白基準材",
+          "value": "Labsphere Spectralon® SRM-99 焼結PTFE (反射率 > 99% @ 400–1500 nm)"
+        },
+        {
+          "label": "光学・脱ガス",
+          "value": "極限ランバート拡散 / 250–2500 nm 校正可 / ASTM E-595 TML 0.00%"
+        },
+        {
+          "label": "配置位置",
+          "value": "台座天面右前空き域 (X=+54.8, lY∈[+3.95..+4.44], Z=+7.5)"
+        }
+      ],
+      "references": [
+        "Labsphere Inc., \"Spectralon® Diffuse Reflectance Material SRM-99 Technical Data Sheet (PB-13021 Rev 04)\"",
+        "ASTM E595 Outgassing Test — Spectralon® Total Mass Loss (TML = 0.00%) Qualification",
+        "NIST Special Publication 250-65 Spectral Reflectance Calibration & Lambertian Standards"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-arri-arca-mount",
+      "order": 404,
+      "swatchColor": "#364152",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W404. 底面中央 ARRI Mini 1/4\"-20 回り止めピンボス対 (Ø3mm) & 38mm Arca-Swiss 45°ダブテール爪",
+      "subtitle": "Plinth Bottom Center ARRI Mini 1/4\"-20 Anti-Twist Pin-Lock Bosses (Ø3mm) & 38mm Arca-Swiss 45° Claws",
+      "category": "光学ベンチ台座 / ARRI回り止め・Arcaクイック着脱",
+      "plainAnalogy": "幅194mmの横長ベンチを三脚ネジ1本だけで支えるとクルッと回って緩んでしまいます。シネマカメラ標準のARRI回り止めピン穴と38mmアルカスイス45°クランプ爪を底面中央へ一体化しました。",
+      "summary": "底面中央 1/4\"-20 三脚ブッシュ（W351）両翼（X=±9.8, Z∈[-5.0..+5.0], lY∈[-7.78..-7.16]）へ装備された ARRI 1/4\"-20 Pin-Lock 焼入 SUS440C 回り止めピン穴ボス対（Ø3.0 mm）＆ Arca-Swiss 38 mm 45°ダブテールクイックリリース爪対。",
+      "opticsAndPhysics": [
+        "左右対称の Ø3.0 mm 焼入 SUS440C ARRI 回り止めピンボスが横長 194 mm 台座への偏心モーメント（最大 12 N·m）を剪断受けし、ISO 1222 1/4\"-20 単軸ネジ（W351）の回転緩みを 100% 防止。",
+        "両側 45°斜面の Arca-Swiss ダブテール爪により、プロ用雲台・スライダー・スタジオスタンドへ 1 秒で無工具クイック着脱可能。"
+      ],
+      "formula": {
+        "expression": "T_anti-twist = F_pin · d_span = 2 × 400 N × 18 mm = 14.4 N·m (Ø3.0 mm HRC 58 ARRI Pin + 45° Arca)",
+        "description": "ARRI 回り止めピンボス対と 45°Arca-Swiss 爪で横長光学ベンチの三脚回転緩みをゼロ化。"
+      },
+      "nextGenInnovation": "シネマカメラ ARRI Pin-Lock × 写真業界標準 38 mm Arca-Swiss ハイブリッド底面マウント。",
+      "specs": [
+        {
+          "label": "回り止め規格",
+          "value": "ARRI Mini 1/4\"-20 Pin-Lock (Ø3.0 mm 焼入 SUS440C ピン座対)"
+        },
+        {
+          "label": "クイック着脱",
+          "value": "Arca-Swiss 38 mm 45°ダブテール爪 (A6061 硬質黒アルマイト)"
+        },
+        {
+          "label": "配置位置",
+          "value": "底面中央 W351 両翼 (X=±9.8, Z∈[-5.0..+5.0], lY∈[-7.78..-7.16])"
+        }
+      ],
+      "references": [
+        "ARRI AG, \"Accessory Interface Specification — 1/4\"-20 & 3/8\"-16 Anti-Twist Pin-Lock Geometry (Ø3.0 mm)\"",
+        "ISO 1222:2010 Photography — Tripod Connections & Anti-Rotation Torque Prevention",
+        "Arca-Swiss International, \"38 mm 45° Dovetail Quick-Release Monoball Clamp Interface Standard\""
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-hatch-choseal-gasket",
+      "order": 405,
+      "swatchColor": "#8e99a8",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W405. 底面電池サービスハッチ外周 Parker Chomerics CHO-SEAL 1285 導電シリコーンEMI/IP54ガスケット",
+      "subtitle": "Plinth Bottom Service Hatch Parker Chomerics CHO-SEAL 1285 Conductive Silicone EMI/IP54 Gasket",
+      "category": "光学ベンチ台座 / 115dB導電EMIハッチ封止",
+      "plainAnalogy": "底面の電池交換ハッチ（W352）は便利な反面、電波とホコリが漏れる大きな穴になります。銀コートアルミ粒子を練り込んだ軍用規格の導電ゴム枠で隙間をぐるりと密閉し、115dBの電波遮蔽と防滴を両立します。",
+      "summary": "底面電池サービスハッチ（W352, 28×13 mm 開口）全周（X∈[-68.6..-39.4], Z∈[-7.02..+7.02], lY∈[-7.58..-7.16]）へ配した Parker Chomerics CHO-SEAL 1285 導電エラストマー EMI/IP54 ガスケット（MIL-DTL-83528 Type B, 銀コートアルミ充填シリコーン, ≤0.008 Ω·cm, シールド効果 115 dB @ 100 MHz, Shore A 65）。",
+      "opticsAndPhysics": [
+        "28 mm のハッチ開口スロットは未封止だと 480 MHz MCU 高調波の効率的なスロットアンテナとなるが、体積抵抗率 ≤0.008 Ω·cm の CHO-SEAL 1285 圧縮接地により 100 MHz で 115 dB のファラデー連続性を回復。",
+        "銀コートアルミ充填材はアルミ／マグネシウム筐体（W173）とのガルバニック電位差を最小化し、耐食性と IP54 防滴圧縮封止を 10 年以上維持。"
+      ],
+      "formula": {
+        "expression": "ρ_vol ≤ 0.008 Ω·cm,   SE(100 MHz) = 115 dB (MIL-DTL-83528 Type B),   Shore A = 65",
+        "description": "MIL-DTL-83528 Type B 導電シリコーンガスケットにより電池ハッチの 115 dB EMI 遮蔽と IP54 防滴を同時達成。"
+      },
+      "nextGenInnovation": "航空宇宙・軍用 EMC 規格 MIL-DTL-83528 Type B CHO-SEAL 1285 ハッチ導電封止。",
+      "specs": [
+        {
+          "label": "ガスケット材",
+          "value": "Parker Chomerics CHO-SEAL 1285 (MIL-DTL-83528 Type B, Ag/Al シリコーン)"
+        },
+        {
+          "label": "電気・遮蔽",
+          "value": "体積抵抗率 ≤ 0.008 Ω·cm / シールド効果 115 dB @ 100 MHz / Shore A 65"
+        },
+        {
+          "label": "配置位置",
+          "value": "底面サービスハッチ W352 全周外枠 (X[-68.6..-39.4], Z[-7.02..+7.02])"
+        }
+      ],
+      "references": [
+        "Parker Chomerics, \"CHO-SEAL 1285 Conductive Elastomer EMI Gasket Datasheet (MIL-DTL-83528 Type B)\"",
+        "MIL-DTL-83528G General Specification for Elastomeric, Shielding Gasket, Conductive (Type B Ag-Al Silicone)",
+        "IEC 60529 IP54 Environmental Sealing & CISPR 32 Enclosure Aperture EMI Attenuation Guidelines"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-yo-circular-polarizer-film",
+      "order": 406,
+      "swatchColor": "#3b6796",
+      "groupKey": "glyph_yo",
+      "assembledPos": [
+        -66,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -27.5,
+        8,
+        40
+      ],
+      "integratedExplodeOffset": [
+        -27.5,
+        8,
+        40
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W406. 「よ」前面外光反射抑圧 Nitto NPF™ 円偏光(直線偏光+λ/4位相差)コントラスト光学フィルム",
+      "subtitle": "Glyph \"よ\" Ambient Reflection Suppressing Nitto NPF™ Circular Polarizer (Linear + λ/4 QWP) Film",
+      "category": "「よ」モジュール / 円偏光コントラスト向上",
+      "plainAnalogy": "明るい美術館で外光が文字の内部で反射して白っぽくなるのを防ぐ「光の片道トラップ」フィルムです。入った外光は内部反射で回転方向が逆になり、出るときに98%以上ブロックされます。",
+      "summary": "「よ」主幹前面光学域（X=+0.8, Y=+2.5, Z=+4.16）へ積層された Nitto Denko NPF™ 円偏光光学フィルム（ヨウ素系直線偏光子＋広帯域 λ/4 位相差板）。外光鏡面反射を 98% 超吸収し明室コントラスト比を 10 倍以上改善します。",
+      "opticsAndPhysics": [
+        "外光は往路で直線偏光→λ/4 板で右円偏光へ変換され、内部アルミ MCPCB/反射面で鏡面反射すると左円偏光へ反転。復路で λ/4 板を再通過すると直線偏光軸と 90°直交するため完全吸収される。",
+        "非偏光LED発光はそのまま透過するため、直射照明下の展示室でも漆黒の非発光部と鮮烈な立体発光を両立。"
+      ],
+      "formula": {
+        "expression": "R_amb = R_surf + T² · R_int · cos²(90°) ≈ R_surf  (内部鏡面反射抑圧 > 98%, コントラスト 10×)",
+        "description": "直線偏光＋λ/4 位相差板の片道光学トラップにより内部鏡面反射を 98% 超消去。"
+      },
+      "nextGenInnovation": "ハイエンド OLED ディスプレイ反射防止標準 Nitto NPF™ 円偏光スタックの立体文字導入。",
+      "specs": [
+        {
+          "label": "光学フィルム",
+          "value": "Nitto Denko NPF™ 円偏光積層膜 (直線偏光子 + 広帯域 λ/4 QWP)"
+        },
+        {
+          "label": "反射抑圧",
+          "value": "内部鏡面反射 > 98% 吸収 (明室コントラスト 10×)"
+        },
+        {
+          "label": "配置位置",
+          "value": "YO_STEM 前面光学域 (X=+0.8, Y=+2.5, Z=+4.16)"
+        }
+      ],
+      "references": [
+        "Nitto Denko Corp., \"NPF™ Polarizing & Circular Polarizing Optical Films for OLED/Display Contrast Enhancement\"",
+        "Hecht, E., \"Optics\", 5th Ed., Ch. 8 (Circular Polarizers & Quarter-Wave Retardation Glare Traps)",
+        "SID Display Metrology Standard (IDMS) Ambient Contrast Ratio (ACR) Measurement Methodology"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-yo-helicoil-m2-inserts",
+      "order": 407,
+      "swatchColor": "#98a2b0",
+      "groupKey": "glyph_yo",
+      "assembledPos": [
+        -66,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -28,
+        6,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -28,
+        6,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W407. 「よ」主骨格A6061ねじ座 Heli-Coil® DIN 8140 / NASM21209 焼付防止SUS304ワイヤーインサート群",
+      "subtitle": "Glyph \"よ\" A6061 Chassis Tapped Bosses Heli-Coil® DIN 8140 / NASM21209 SUS304 Wire Thread Inserts",
+      "category": "「よ」モジュール / 航空規格ねじ座補強",
+      "plainAnalogy": "アルミのネジ穴へ硬いステンレスボルトを何度も締め直すとネジ山が削れてしまいます。菱形断面の高張力ステンレスコイルを埋め込み、航空機並みの3倍強度と焼付防止を実現します。",
+      "summary": "「よ」主骨格 A6061-T6 の主要4締結ねじ座（W26/W34 対応内部ボス、Z=-5.84）へ圧入された Böllhoff HELICOIL® Plus（DIN 8140 / NASM21209, M2×0.4 2D, 18-8 SUS304 菱形断面＋ドライフィルム MoS₂ 潤滑）焼付防止ワイヤーねじインサート群。",
+      "opticsAndPhysics": [
+        "冷間圧延菱形断面 SUS304 ワイヤーコイルがアルミ母材のピッチ・フランク角誤差を弾性吸収し、荷重を全ねじ山へ均等分散して引き抜き剪断強度を約 3 倍へ増強。",
+        "NASM21209 ドライフィルム MoS₂ 潤滑被膜により、SUS ボルト（W26/W34）との同種金属カジリ（galling）を 1,000 回着脱でもゼロ化。"
+      ],
+      "formula": {
+        "expression": "F_pullout(HELICOIL 2D) ≈ 3.0 · F_tap(A6061),   σ_t(wire) > 1,400 MPa (DIN 8140 / NASM21209)",
+        "description": "航空規格 NASM21209 ワイヤーインサートによりアルミ母材 M2 ねじ座の耐摩耗・剪断強度を 3 倍化。"
+      },
+      "nextGenInnovation": "航空宇宙規格 NASM21209 / DIN 8140 ドライ潤滑 2D ワイヤーねじインサート。",
+      "specs": [
+        {
+          "label": "準拠規格",
+          "value": "Böllhoff HELICOIL® Plus / DIN 8140 / NASM21209 (M2×0.4 2D)"
+        },
+        {
+          "label": "線材・被膜",
+          "value": "18-8 SUS304 菱形冷間圧延線 (>1400 MPa) + MoS₂ 焼付防止膜"
+        },
+        {
+          "label": "配置点数",
+          "value": "「よ」主骨格・横枝・ループ4締結座 (Z=-5.84 mm)"
+        }
+      ],
+      "references": [
+        "DIN 8140-1:2018 Wire Thread Inserts for ISO Metric Screw Threads — Dimensions & Technical Delivery Conditions",
+        "SAE / DoD NASM21209 (formerly MS21209) Screw Thread Inserts, Coarse & Fine Thread, Corrosion-Resistant Steel",
+        "Böllhoff GmbH, \"HELICOIL® Plus Engineering Handbook — Fatigue Strength & Anti-Galling in Aluminum Alloys\""
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-u-luminit-lsd-diffuser",
+      "order": 408,
+      "swatchColor": "#e2f1ff",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -9,
+        8,
+        40
+      ],
+      "integratedExplodeOffset": [
+        -9,
+        8,
+        40
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W408. 「う」主弧〜上部点 Luminit LSD® 楕円ホログラフィック・マイクロ配光ディフューザ膜 (92%透過)",
+      "subtitle": "Glyph \"う\" Main Arc Luminit LSD® Elliptical Holographic Light Shaping Diffuser Film (92% Transmittance)",
+      "category": "「う」モジュール / ホログラフィック楕円配光",
+      "plainAnalogy": "通常のすりガラス拡散板は光が後ろへ跳ね返って暗くなりますが、非周期ホログラム微細レンズ構造なら92%もの光を通しつつ、左右は広く上下は絞った美しい配光を作り出します。",
+      "summary": "「う」主弧前面光学域（X=-5.4, Y=+12.2, Z=+4.18）へ配した Luminit Light Shaping Diffuser®（LSD®）非周期ホログラフィック表面レリーフ配光フィルム（透過率 85–92%, 300–1500 nm, 水平 60°×垂直 20°楕円 FWHM 配光）。",
+      "opticsAndPhysics": [
+        "体積散乱粒子を使わず表面ランダム化マイクロレリーフ構造の純粋屈折のみで光を整形するため、後方散乱損失を劇的に抑えて透過率最大 92%（透明ポリカーボネート 89% 超）を達成。",
+        "展示室床・天井方向への無駄な光漏れを抑えつつ鑑賞者目線方向（水平 60°）へ輝度を集中させ、湾曲「う」主弧のホットスポットを完全平滑化。"
+      ],
+      "formula": {
+        "expression": "T_LSD = 92% (vs Bulk Diffuser 65–72%),   FWHM = 60°(H) × 20°(V) 楕円ホログラフィック配光",
+        "description": "Luminit LSD® 非周期表面レリーフ光学により 92% 高透過と楕円配光制御を両立。"
+      },
+      "nextGenInnovation": "車載 LiDAR・高級光学計器標準の Luminit LSD® ホログラフィック表面レリーフ配光膜。",
+      "specs": [
+        {
+          "label": "光学膜",
+          "value": "Luminit Light Shaping Diffuser® (LSD®) ホログラフィック膜"
+        },
+        {
+          "label": "透過率・配光",
+          "value": "透過率 85–92% (300–1500 nm) / 楕円 FWHM 60°×20°"
+        },
+        {
+          "label": "配置位置",
+          "value": "U_ARC 左上前面光学縁 (X=-5.4, Y=+12.2, Z=+4.18)"
+        }
+      ],
+      "references": [
+        "Luminit LLC, \"Light Shaping Diffusers® (LSD®) Technical Data Sheet — Holographic Surface Relief Micro-Optics\"",
+        "Petersen, J. et al., \"High-Efficiency Beam Homogenization Using Non-Periodic Holographic Diffusers\", Proc. SPIE",
+        "ISO 13696 Optics and Photonics — Measurement of Total Scattering by Optical Components"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-u-index-matching-gel-pad",
+      "order": 409,
+      "swatchColor": "#a5f3fc",
+      "groupKey": "glyph_u",
+      "assembledPos": [
+        -21,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        -6,
+        18,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        -6,
+        18,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W409. 「う」石英支柱(W79)両端光学界面 Nye SmartGel® OCK-451 (n=1.46) 屈折率整合光結合クッション対",
+      "subtitle": "Glyph \"う\" Quartz Pillar Ends Nye SmartGel® OCK-451 (n=1.46) Refractive Index-Matching Coupling Pads",
+      "category": "「う」モジュール / 屈折率整合光結合",
+      "plainAnalogy": "透明な石英ガラスの端にわずかな空気の隙間があると光が反射してにじみます。石英ガラスとぴったり同じ屈折率（n=1.46）の光学シリコーンゲルを挟むことで、境目の反射をほぼゼロに消します。",
+      "summary": "溶融石英支柱（W79, n_d = 1.4585）両端の光学界面部（X=-2.5, Y=+14.8 / X=+3.5, Y=+17.9, Z=-5.78）へ装填された Nye Lubricants SmartGel® OCK-451 光学屈折率整合シリコーンゲル結合パッド対（n_D = 1.46）。フレネル反射損失を -14 dB → < -40 dB へ低減します。",
+      "opticsAndPhysics": [
+        "空気ギャップ（n = 1.0）では石英端面ごとに R = ((1.458-1)/(1.458+1))² = 3.47%（往復 2 界面計 ~7%, -14.6 dB）のフレネル反射迷光が発生するが、n = 1.460 の SmartGel® OCK-451 で置換すると R < 0.0001%（-60 dB 級）へ激減。",
+        "非流動性チキソトロピー・シリコーンゲルは熱サイクル下でも気泡侵入・流出を起こさず長期光結合を保持。"
+      ],
+      "formula": {
+        "expression": "R = ((n_SiO2 - n_gel)/(n_SiO2 + n_gel))² = ((1.4585 - 1.460)/(2.9185))² = 2.6×10⁻⁷ (< -40 dB Return Loss)",
+        "description": "n = 1.46 屈折率整合ゲルにより石英端面のフレネル反射と迷光ハローを -14 dB から -40 dB 以下へ低減。"
+      },
+      "nextGenInnovation": "光ファイバスプライス・高出力レーザー結晶結合標準の Nye SmartGel® OCK-451 導入。",
+      "specs": [
+        {
+          "label": "整合ゲル",
+          "value": "Nye Lubricants SmartGel® OCK-451 (n_D = 1.460 @ 589 nm)"
+        },
+        {
+          "label": "反射低減",
+          "value": "フレネル反射損失 -14 dB → < -40 dB (非流動・低脱ガス)"
+        },
+        {
+          "label": "配置位置",
+          "value": "石英支柱 W79 上下光学界面対 (X=-2.5,Y=+14.8 / X=+3.5,Y=+17.9, Z=-5.78)"
+        }
+      ],
+      "references": [
+        "Nye Lubricants (Fuchs), \"SmartGel® OCK-451 Optical Index-Matching Silicone Gel Technical Data Sheet (n=1.46)\"",
+        "Corning HPFS® 7980 Fused Silica Refractive Index Dispersion (n_d = 1.45846) Data Sheet",
+        "Hecht, E., \"Optics\", 5th Ed. (Fresnel Equations & Index-Matched Optical Interfaces)"
+      ],
+      "diagramType": "welcome_quartz_bridge"
+    },
+    {
+      "id": "welcome-ko-3m-alcf-microlouver",
+      "order": 410,
+      "swatchColor": "#1e242d",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        10,
+        12,
+        42
+      ],
+      "integratedExplodeOffset": [
+        10,
+        12,
+        42
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W410. 「こ」上下水平画 昼光コントラスト向上 3M Vikuiti™ ALCF マイクロルーバー遮光制御フィルム対",
+      "subtitle": "Glyph \"こ\" Horizontal Strokes Daylight-Contrast 3M Vikuiti™ ALCF Micro-Louver Control Film Pair",
+      "category": "「こ」モジュール / 天井グレア遮断ルーバー",
+      "plainAnalogy": "窓のブラインドを顕微鏡サイズまで縮小した特殊フィルムです。美術館の天井スポットライトが斜め上から照りつけてもブラインドの羽根が外光を遮り、正面の鑑賞者にはクッキリと発光文字を届けます。",
+      "summary": "水平2本の長いバー構造「こ」の上画（X=-0.5, Y=+15.5, Z=+4.06）および下画（X=-2.4, Y=-11.8, Z=+4.18）前面へ装着された 3M™ Advanced Light Control Film（Vikuiti™ ALCF-P）マイクロルーバー遮光制御フィルム対。天井高仰角グレアを物理遮蔽し正面コントラストを 4 倍改善します。",
+      "opticsAndPhysics": [
+        "ピッチ 60–100 μm の黒色微細ルーバー（遮光角 ±30° 垂直）が、天井ダウンライト（仰角 45–70°）からの直達外光を幾何学的に遮断しつつ正面 0° 発光を高透過。",
+        "水平面積が大きく上向き反射しやすい「こ」上下バーの白飛びを防止し、4 文字全体の視認コントラストを均質化。"
+      ],
+      "formula": {
+        "expression": "θ_cutoff = arctan(p_louver / h_louver) = ±30°(V)  ⇒  天井45°グレア遮蔽 99%, ACR × 4.0",
+        "description": "3M ALCF マイクロルーバー幾何遮光により天井ダウンライト反射を遮断し正面コントラストを 4 倍化。"
+      },
+      "nextGenInnovation": "車載ヘッドアップ・航空計器標準の 3M Vikuiti™ ALCF-P マイクロルーバー光学制御膜。",
+      "specs": [
+        {
+          "label": "光学膜",
+          "value": "3M™ Vikuiti™ Advanced Light Control Film (ALCF-P)"
+        },
+        {
+          "label": "遮光性能",
+          "value": "垂直視野カットオフ ±30° / 天井グレア遮断 / ACR 4×"
+        },
+        {
+          "label": "配置位置",
+          "value": "KO_TOP (Z=+4.06) & KO_BOT (Z=+4.18) 前面光学縁対"
+        }
+      ],
+      "references": [
+        "3M Optical Systems Division, \"3M™ Advanced Light Control Film (ALCF-P) Technical Data Sheet\"",
+        "SAE ARP4256 / MIL-L-85762 Sunlight Readability & Micro-Louver Glare Control Standards",
+        "ISO 9241-307 Electronic Visual Displays — Ambient Glare Mitigation & Contrast Ratio"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-ko-pokayoke-key-pins",
+      "order": 411,
+      "swatchColor": "#475569",
+      "groupKey": "glyph_ko",
+      "assembledPos": [
+        23,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        10,
+        -10,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        10,
+        -10,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W411. 「こ」ドック誤装着防止 非対称ポカヨケ焼入SUS440C極性位置決めピン対",
+      "subtitle": "Glyph \"こ\" Dock Anti-Misinsertion Asymmetric Poka-Yoke Hardened SUS440C Polarity Key Pin Pair",
+      "category": "「こ」モジュール / 非対称ポカヨケ誤挿防止",
+      "plainAnalogy": "4つの文字ドックはどれも同じアリ溝形状ですが、左右非対称の硬いステンレス製キーピンを2本配置することで、暗い会場でも「こ」を逆向きや別の場所へ絶対に誤装着できないようにします。",
+      "summary": "「こ」ダブテール背面座（Y=-15.2, 非対称オフセット X=-4.6 / +2.8, Z=-5.84）へ圧入された焼入マルテンサイト系 SUS440C（HRC 58, JIS B 1359 h6 公差）Ø1.5 mm 非対称ポカヨケ（Poka-Yoke）極性位置決めキーピン対。",
+      "opticsAndPhysics": [
+        "中心対称軸から意図的に 1.8 mm ズラした非対称二ピン配置（-4.6 mm / +2.8 mm）により、180°逆挿入および他文字スロットへの誤挿入をポゴピン接触前に物理阻止。",
+        "HRC 58 焼入 SUS440C 表面硬化と 30° リードイン面取りにより、10 万回着脱でも摩耗ガタ 5 μm 未満を維持。"
+      ],
+      "formula": {
+        "expression": "Δx_asym = |x_L| - |x_R| = 4.6 - 2.8 = 1.8 mm ≠ 0  ⇒  P_misinsertion = 0 (HRC 58, ISO h6)",
+        "description": "1.8 mm 非対称オフセット焼入ピン対により逆向き・他文字誤装着を機械的に完全禁止。"
+      },
+      "nextGenInnovation": "トヨタ生産方式ポカヨケ×JIS B 1359 h6 焼入キーピンによる無誤挿光学ドック結合。",
+      "specs": [
+        {
+          "label": "ピン材・硬度",
+          "value": "SUS440C 焼入ステンレス (HRC 58 / JIS B 1359 h6 公差)"
+        },
+        {
+          "label": "非対称配置",
+          "value": "Ø1.5 mm × 2本 (X = -4.6 mm / +2.8 mm, 非対称差 1.8 mm)"
+        },
+        {
+          "label": "配置位置",
+          "value": "「こ」ダブテール背面座 (Y=-15.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "Shingo, S. (1986), \"Zero Quality Control: Source Inspection and the Poka-Yoke System\", Productivity Press",
+        "JIS B 1359 / ISO 8734 Hardened Parallel Dowel Pins (SUS440C Martensitic Stainless, HRC 58)",
+        "ISO 286-2 Precision Limits and Fits (h6 Pin / H7 Receiver Keyway Mechanical Coding)"
+      ],
+      "diagramType": "welcome_dock_pogo"
+    },
+    {
+      "id": "welcome-so-acktar-velvet-trap",
+      "order": 412,
+      "swatchColor": "#090b0f",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        28,
+        18,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        28,
+        18,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W412. 「そ」Z字45°プリズム(W167/W168)周囲 宇宙規格 Acktar Metal Velvet™ 超黒体迷光トラップフォイル",
+      "subtitle": "Glyph \"そ\" Z-Prism Perimeter Space-Qualified Acktar Metal Velvet™ 99.9% Ultra-Black Stray-Light Trap Foil",
+      "category": "「そ」モジュール / 宇宙規格99.9%超黒体遮光",
+      "plainAnalogy": "通常の黒塗装は斜めの光を5〜8%も反射して二重写り（ゴースト）を起こします。宇宙望遠鏡にも使われる「99.9%の光を飲み込む超黒色フォイル」で「そ」の急カーブの迷光を完全に吸い取ります。",
+      "summary": "「そ」Z 字上部バー背面（X∈[-9.6..-2.2] & [+2.4..+6.8], Y=+21.1, Z=-5.82）へ貼設された Acktar Metal Velvet™ 宇宙適格・完全無機超黒体アルミフォイル（EUV–FIR 鏡面吸収率 99.9%, 膜厚 3–8 μm, 脱ガス CVCM < 0.001, −250〜+350°C）。",
+      "opticsAndPhysics": [
+        "ナノポーラス無機黒体樹枝状微細構造が斜め入射迷光を多重内部吸収し、黒アルマイト（R ≈ 5–8%）比で 50 倍以上低い鏡面反射率 R < 0.1% を実現。",
+        "ASTM E595 適合の完全無機低脱ガス（CVCM < 0.001）のため、密閉 IP65 光学室内のサファイア窓や 45°プリズム表面を曇らせない。"
+      ],
+      "formula": {
+        "expression": "A_spec(Acktar Metal Velvet) = 99.9% (R < 0.1%, EUV–FIR),   CVCM < 0.001 (ASTM E595)",
+        "description": "宇宙規格 99.9% 超黒体迷光トラップにより Z 字 2 回急折返し部のゴースト二重発光を根絶。"
+      },
+      "nextGenInnovation": "宇宙望遠鏡バッフル標準 Acktar Metal Velvet™（99.9% 吸収・無機低脱ガス）の文字光学室導入。",
+      "specs": [
+        {
+          "label": "超黒体材",
+          "value": "Acktar Metal Velvet™ 完全無機アルミフォイル (厚 3–8 μm)"
+        },
+        {
+          "label": "吸収率・脱ガス",
+          "value": "鏡面吸収率 99.9% (EUV–FIR) / CVCM < 0.001 / ISO 5"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_Z1 背面キャビティ縁2分割 (Y=+21.1, Z=-5.82)"
+        }
+      ],
+      "references": [
+        "Acktar Ltd., \"Metal Velvet™ Ultra-Diffusive Wideband Light-Absorbing Foil Datasheet (99.9% Absorptance)\"",
+        "ASTM E595 Standard Test Method for Total Mass Loss and Collected Volatile Condensable Materials (CVCM < 0.001)",
+        "Pompea, S. M. & Breault, R. P., \"Black Surfaces for Optical Systems\", Handbook of Optics, Vol. IV"
+      ],
+      "diagramType": "welcome_glyph_layer"
+    },
+    {
+      "id": "welcome-so-susumu-rg1005-ref",
+      "order": 413,
+      "swatchColor": "#e2b648",
+      "groupKey": "glyph_so",
+      "assembledPos": [
+        67,
+        4,
+        0
+      ],
+      "explodeOffset": [
+        29,
+        4,
+        -34
+      ],
+      "integratedExplodeOffset": [
+        29,
+        4,
+        -34
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W413. 「そ」16bit定電流基準 Susumu RG1005 (±0.05% / ±5 ppm/°C) 精密薄膜抵抗アレイ＆金テストパッド帯",
+      "subtitle": "Glyph \"そ\" 16-bit Constant-Current Reference Susumu RG1005 (±0.05%, ±5 ppm/°C) Thin-Film Array & Gold Pads",
+      "category": "「そ」モジュール / 超精密定電流基準",
+      "plainAnalogy": "一番LED数が多く温まりやすい「そ」の明るさを決める「基準抵抗」に、温度が40℃変わっても0.02%しかズレない日本製超精密金属薄膜抵抗を採用し、4文字の明るさを完璧に揃えます。",
+      "summary": "「そ」椀部背面ドライバー近傍（X=-5.4, Y=+0.2, Z=-5.84）へ実装された Susumu RG1005 シリーズ金属薄膜精密チップ抵抗アレイ（0402, 公差 ±0.05%, TCR ±5 ppm/°C, 耐硫化・非磁性 NiCr）＆ 4 端子ケルビン金テストパッド帯。",
+      "opticsAndPhysics": [
+        "一般厚膜抵抗（±1%, ±100 ppm/°C）では 40 K 昇温時に定電流値が 0.4% ドリフトするが、Susumu RG1005（±5 ppm/°C）なら 0.02%（200 ppm）へ 1/20 低減し 16-bit 調光階調の再現性を維持。",
+        "非磁性 NiCr 薄膜＋耐硫化構造により、美術館空気中の微量硫化水素ガスによる長期抵抗値ドリフトと断線を防止。"
+      ],
+      "formula": {
+        "expression": "ΔI_LED / I_LED = -TCR · ΔT = ±5 ppm/°C × 40°C = ±0.02%  (Susumu RG1005 ±0.05%)",
+        "description": "±5 ppm/°C 精密金属薄膜基準抵抗アレイにより発熱最大の「そ」でも 4 文字間輝度差を 0.02% 以内へ固定。"
+      },
+      "nextGenInnovation": "精密計測器標準 Susumu RG1005（±0.05% / ±5 ppm/°C）耐硫化薄膜基準抵抗アレイ。",
+      "specs": [
+        {
+          "label": "基準抵抗",
+          "value": "Susumu RG1005 シリーズ (0402 / ±0.05% / ±5 ppm/°C / -55〜+155°C)"
+        },
+        {
+          "label": "信頼性",
+          "value": "耐硫化構造 (ASTM B809) / 非磁性 / 4端子ケルビン金テストパッド"
+        },
+        {
+          "label": "配置位置",
+          "value": "SO_BOWL 上部左背面 (X=-5.4, Y=+0.2, Z=-5.84)"
+        }
+      ],
+      "references": [
+        "Susumu Co., Ltd. (Japan), \"RG Series Precision Thin Film Chip Resistors Datasheet (±0.05%, ±5 ppm/°C)\"",
+        "ASTM B809 Standard Test Method for Porosity in Metallic Coatings by Humid Sulfur Vapor (Anti-Sulfuration)",
+        "AEC-Q200 Stress Test Qualification for Passive Electronic Components (Thin-Film Stability)"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-dmx512-rdm-transceiver",
+      "order": 414,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W414. 舞台・美術館照明制御 ANSI E1.11 DMX512-A / RDM 信号電源一体絶縁トランシーバ (ADI ADM2587E)",
+      "subtitle": "Plinth Stage/Museum Lighting ANSI E1.11 DMX512-A / RDM Signal+Power Isolated Transceiver (ADM2587E)",
+      "category": "光学ベンチ台座 / 舞台照明DMX512-A/RDM絶縁",
+      "plainAnalogy": "劇場や美術館のプロ用照明コンソールから直接「ようこそ」の明るさや演出をコントロールできるよう、信号と電源を丸ごと2,500V絶縁した世界標準DMX512-A/RDM通信チップです。",
+      "summary": "内部中央バスウェイ（X=-57.5, Y=+1.92, Z=0.0）に実装された Analog Devices ADM2587E（iCoupler® デジタル信号絶縁＋isoPower® 絶縁 DC/DC 一体内蔵, 2500 Vrms, 500 kbps RS-485 / ANSI E1.11 DMX512-A & ANSI E1.20 RDM 対応, ±15 kV ESD, >25 kV/μs CMTI, 256 ノード）。",
+      "opticsAndPhysics": [
+        "建築・舞台照明の世界標準 ANSI E1.11 DMX512-A（250 kbps 差動 RS-485）および双方向ステータス監視 RDM（ANSI E1.20）へ単一 20-SOIC パッケージで 2.5 kVrms 信号＋電源一体絶縁対応。",
+        "大型劇場ディマーラックからの接地電位差や ±15 kV 静電サージを完全遮断しつつ、最大 256 台のバス接続負荷（1/8 ユニットロード）に対応。"
+      ],
+      "formula": {
+        "expression": "V_iso = 2,500 Vrms (iCoupler® + isoPower®),   Baud = 250 kbps (DMX512-A / RDM),   ESD = ±15 kV",
+        "description": "信号・電源一体 2.5 kVrms 絶縁 RS-485 トランシーバにより舞台・美術館照明卓へ直結編入。"
+      },
+      "nextGenInnovation": "Analog Devices iCoupler® + isoPower® 1 チップ絶縁 DMX512-A / RDM 照明統合インターフェース。",
+      "specs": [
+        {
+          "label": "絶縁IC",
+          "value": "Analog Devices ADM2587E (iCoupler® + isoPower® 2.5 kVrms)"
+        },
+        {
+          "label": "対応規格",
+          "value": "ANSI E1.11 DMX512-A (250 kbps) / ANSI E1.20 RDM / ±15 kV ESD"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-1 (X=-57.5, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Analog Devices Inc., \"ADM2587E 2.5 kV rms Signal and Power Isolated RS-485 Transceiver Datasheet\"",
+        "ANSI E1.11-2008 (R2018) Entertainment Technology — USITT DMX512-A Asynchronous Serial Digital Data Transmission",
+        "ANSI E1.20-2010 Entertainment Technology — RDM Remote Device Management over DMX512 Networks"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-ix-industrial-eth",
+      "order": 415,
+      "swatchColor": "#98a2b0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        -28
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W415. 背面 HARTING ix Industrial® (IEC 61076-3-124) 10GBASE-T / PoE++ 小型堅牢イーサネット端子",
+      "subtitle": "Plinth Rear HARTING ix Industrial® (IEC 61076-3-124) 10GBASE-T / PoE++ Miniature Rugged Ethernet Jack",
+      "category": "光学ベンチ台座 / 10G/PoE++産業イーサネット端子",
+      "plainAnalogy": "薄い光学台座には背の高い従来のLANポート（RJ45）は入りません。RJ45より70%小さく5,000回抜き差ししても壊れない金属ロック付の次世代産業LAN端子で、10ギガ通信と71W給電を1本でこなします。",
+      "summary": "背面空き枠（X=-17.5, Y=-1.0, Z=-13.52）へ実装された HARTING ix Industrial® レセプタクル（IEC 61076-3-124 国際標準, RJ45 比 70% 省スペース, 10 mm ピッチ, 5,000 回挿抜耐久, 金属 2 点ラッチロック, 360° 全周シールド, Cat.6A 10GBASE-T & IEEE 802.3bt PoE++ 1.5A/pair 対応）。",
+      "opticsAndPhysics": [
+        "内高わずか 7.6 mm の極薄 CNC 光学ベンチへ収まる超低背プロファイルと、プラスチック爪折れを根絶した金属 2 点スナップロック機構（5,000 サイクル保証）を両立。",
+        "360° 全周金属シェルシールドと 5 本スルーホール THR 脚により、10GBASE-T 高速差動伝送と 71.3 W PoE++ 大電流給電時の EMC・振動耐性を確保。"
+      ],
+      "formula": {
+        "expression": "Footprint = 0.30 × RJ45 (-70%),   Cycles ≥ 5,000,   Cat.6A 10 Gbps + PoE++ 71.3 W (IEC 61076-3-124)",
+        "description": "IEC 61076-3-124 準拠 HARTING ix Industrial® で薄型台座への 10G Ethernet＋71W 単線給電を実現。"
+      },
+      "nextGenInnovation": "次世代産業・放送機器標準 HARTING ix Industrial®（RJ45 後継 IEC 61076-3-124）搭載。",
+      "specs": [
+        {
+          "label": "コネクタ規格",
+          "value": "HARTING ix Industrial® Type A (IEC 61076-3-124, 10 mm ピッチ)"
+        },
+        {
+          "label": "伝送・耐久",
+          "value": "Cat.6A 10GBASE-T / PoE++ 1.5A/pair / 5,000回挿抜 / 360°シールド"
+        },
+        {
+          "label": "配置位置",
+          "value": "背面 W342〜W346 間空き枠 (X=-17.5, lY=-1.0, Z=-13.52)"
+        }
+      ],
+      "references": [
+        "IEC 61076-3-124:2019 Connectors for Electrical and Electronic Equipment — 10-Way Shielded Free & Fixed (ix Industrial)",
+        "HARTING Technology Group, \"ix Industrial® Ethernet Interface System Technical Specification (5,000 Cycles)\"",
+        "IEEE 802.3bt-2018 Power over Ethernet (4-Pair PoE++ Type 4 / 1.5A per Pair Contact Rating)"
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-poepp-lt4295-pd",
+      "order": 416,
+      "swatchColor": "#1b5e47",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W416. IEEE 802.3bt PoE++ Type 4 (71.3W) 高効率受電PDコントローラ (ADI LT4295) ＆ 理想ブリッジ (LT4321)",
+      "subtitle": "Plinth IEEE 802.3bt PoE++ Type 4 (71.3W) High-Efficiency PD Controller (LT4295) & Ideal Bridge (LT4321)",
+      "category": "光学ベンチ台座 / PoE++ 71.3W単線受電",
+      "plainAnalogy": "美術館の天井近くやコンセントの無い壁面へ設置しても、LANケーブル1本から通信と同時に最大71.3Wもの電力を効率94%以上で受け取れるハイパワーPoE++受電回路です。",
+      "summary": "内部中央バスウェイ（X=-48.0, Y=+1.92, Z=0.0）へ搭載された Analog Devices LT4295（IEEE 802.3bt Type 4 Class 8 71.3 W 受電 PD コントローラ＋フォワード/フライバック制御）＆ LT4321（4 ペア PoE 理想ダイオードブリッジ, 100V サージ耐圧, 総合効率 > 94%）。",
+      "opticsAndPhysics": [
+        "従来ショットキーダイオードブリッジ（電圧降下 ~1.2V → 損失 >1.8W）を LT4321 低 R_DS(on) MOSFET 理想ブリッジへ置換し、整流効率 >99%・DC/DC 含め総合 >94% で発熱を劇的削減。",
+        "USB-C PD 65W（W195）と PoE++ 71.3W（W416）のデュアル給電冗長構成により、片系断線時も 0 ms 無瞬断稼働。"
+      ],
+      "formula": {
+        "expression": "P_PD,max = 71.3 W (IEEE 802.3bt Type 4 Class 8),   η_bridge(LT4321) > 99%,   η_sys > 94%",
+        "description": "LT4295＋LT4321 理想ブリッジ構成でコンセント不要の LAN 単線 71.3 W 高効率受電を確立。"
+      },
+      "nextGenInnovation": "Analog Devices LT4295 + LT4321 理想ダイオードブリッジによる 71.3 W 高効率 PoE++ 単線駆動。",
+      "specs": [
+        {
+          "label": "受電IC構成",
+          "value": "Analog Devices LT4295 (PD Ctrl) + LT4321 (PoE 理想ダイオードブリッジ)"
+        },
+        {
+          "label": "規格・効率",
+          "value": "IEEE 802.3bt Type 4 Class 8 (71.3 W) / 総合効率 > 94% / 100V耐圧"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-1 (X=-48.0, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Analog Devices Inc., \"LT4295 IEEE 802.3bt PD Interface with Forward/Flyback Controller Datasheet\"",
+        "Analog Devices Inc., \"LT4321 PoE Ideal Diode Bridge Controller Datasheet (99% Bridge Efficiency)\"",
+        "IEEE Std 802.3bt-2018 Physical Layer and Management Parameters for Power over Ethernet over 4 Pairs (Type 4)"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-dp83867-ptp-phy",
+      "order": 417,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        -6,
+        -11,
+        4
+      ],
+      "integratedExplodeOffset": [
+        -6,
+        -11,
+        4
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W417. IEEE 1588 PTP サブマイクロ秒時刻同期 ギガビットEthernet PHY (TI DP83867IR) ＆ パルストランス",
+      "subtitle": "Plinth IEEE 1588 PTP Sub-Microsecond Sync Gigabit Ethernet PHY (TI DP83867IR) & Magnetics",
+      "category": "光学ベンチ台座 / IEEE 1588 PTPナノ秒同期PHY",
+      "plainAnalogy": "美術館の長い廊下に何台もの「ようこそ」を並べて光の波を走らせる時、Wi-Fiの遅延ブレ無しに100万分の1秒以下の精度で全機の時計を揃えるハードウェア時刻同期LANチップです。",
+      "summary": "内部中央バスウェイ（X=-38.5, Y=+1.92, Z=0.0）の Texas Instruments DP83867IR 産業用ギガビット Ethernet PHY（10/100/1000BASE-T, IEEE 1588 SFD ハードウェア・タイムスタンプ, TX <90 ns / RX <290 ns 超低確定遅延, >8 kV IEC 61000-4-2 ESD, TSN 準拠）＆絶縁パルストランス。",
+      "opticsAndPhysics": [
+        "パケット先頭（SFD）を物理層ハードウェアで直接タイムスタンプする IEEE 1588v2 PTP 機能により、複数台間のクロック同期ジッタを < 100 ns（0.1 μs）へ抑え込み、32 kHz PWM 位相まで完全同期。",
+        "確定的な超低遅延（TX < 90 ns, RX < 290 ns）と >8 kV 接触 ESD 耐性により、長距離回廊の産業 TSN ネットワークで高い堅牢性を発揮。"
+      ],
+      "formula": {
+        "expression": "Δt_sync(IEEE 1588 PTP) < 100 ns,   t_TX < 90 ns,   t_RX < 290 ns (DP83867IR SFD Hardware Timestamp)",
+        "description": "IEEE 1588 ハードウェア・タイムスタンプ対応ギガビット PHY で複数台回廊設置のナノ秒同期を実現。"
+      },
+      "nextGenInnovation": "産業 TSN / 放送スタジオ同期基準 TI DP83867IR IEEE 1588 ハードウェア PTP PHY 搭載。",
+      "specs": [
+        {
+          "label": "Ethernet PHY",
+          "value": "Texas Instruments DP83867IR (10/100/1000BASE-T / IEEE 1588 SFD)"
+        },
+        {
+          "label": "遅延・耐性",
+          "value": "TX < 90 ns / RX < 290 ns / >8 kV IEC 61000-4-2 ESD / TSN"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-1 (X=-38.5, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"DP83867IR/CR Robust, High Immunity 10/100/1000 Ethernet PHY Datasheet (SNLS484)\"",
+        "IEEE Std 1588-2019 Precision Clock Synchronization Protocol for Networked Measurement and Control Systems (PTPv2.1)",
+        "TI Application Report SNLA242, \"IEEE 1588 Start-of-Frame Detection (SFD) Implementation with DP83867\""
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-jjy-atomic-clock",
+      "order": 418,
+      "swatchColor": "#3a3f4a",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -13,
+        11
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -13,
+        11
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W418. 日本標準時 JJY 40/60 kHz 原子長波電波時計 フェライトバーアンテナ＆受信IC (MAS6180 / CME6005)",
+      "subtitle": "Plinth Japan Standard Time JJY 40/60 kHz Atomic Longwave Clock Ferrite Bar Antenna & Receiver (MAS6180)",
+      "category": "光学ベンチ台座 / JJY原子長波電波時計",
+      "plainAnalogy": "Wi-FiもGPSも届かないオフライン展示室でも、日本の標準電波（福島40kHz・九州60kHz）を長いフェライト棒アンテナで直接キャッチし、開館挨拶や季節の色温度スケジュールを原子時計へ自動合わせします。",
+      "summary": "内部前面空き貫通レーン（X=-52.0, Y=+1.94, Z=+3.05, 幅 19.6 mm）へ収容された高透磁率フェライトバーアンテナ（Mn-Zn, 40/60 kHz デュアル同調巻線）＆ Micro Analog Systems MAS6180（高感度 0.4 μVrms, 40–100 kHz JJY/WWVB/DCF77 対応, 消費電流 40–66 μA, 水晶フィルタ高選択度）。",
+      "opticsAndPhysics": [
+        "波長 7.5 km（40 kHz）/ 5.0 km（60 kHz）の長波標準電波は鉄筋コンクリート美術館の奥深くまで透過するため、非接続環境でも NICT セシウム原子時計へ ±10 ms 精度で自動校正。",
+        "高 Q（>100）Mn-Zn フェライトバーアンテナと狭帯域水晶フィルタ付 MAS6180 により、32 kHz LED PWM 高調波を避け 0.4 μVrms の微弱電界でも安定復調。"
+      ],
+      "formula": {
+        "expression": "f_JJY = 40.000 kHz (おおたかどや山) / 60.000 kHz (はがね山),   Sensitivity = 0.4 μVrms,   I_DD ≈ 50 μA",
+        "description": "JJY 40/60 kHz 原子標準電波受信により完全オフライン環境でも時刻・季節色温度を原子時計同期。"
+      },
+      "nextGenInnovation": "日本の伝統「ようこそ」にふさわしい NICT JJY 40/60 kHz 原子長波標準電波時計の自律内蔵。",
+      "specs": [
+        {
+          "label": "受信IC",
+          "value": "Micro Analog Systems MAS6180 (40–100 kHz / 0.4 μVrms / 50 μA)"
+        },
+        {
+          "label": "アンテナ",
+          "value": "Mn-Zn 高透磁率フェライトバー + リッツ銅巻線 (40/60 kHz 切替同調)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部前面貫通レーン (X=-52.0, lY=+1.94, Z=+3.05, 長 19.6 mm)"
+        }
+      ],
+      "references": [
+        "Micro Analog Systems Oy, \"MAS6180D Very High Sensitivity AM Time Signal Receiver (40–100 kHz JJY) Datasheet\"",
+        "NICT (情報通信研究機構), \"日本標準時・標準電波 JJY (40 kHz / 60 kHz) 送信仕様およびタイムコード規格\"",
+        "ITU-R Recommendation TF.768-6 Standard Frequencies and Time Signals (LF/VLF Broadcast Reception)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-bourns-tbu-gdt-surge",
+      "order": 419,
+      "swatchColor": "#b91c1c",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W419. 外部通信ポート IEC 61000-4-5 誘導雷サージ防護 Bourns TBU-CA 超高速遮断器 (<1µs) ＆ マイクロGDT",
+      "subtitle": "Plinth External Port IEC 61000-4-5 Lightning Surge Bourns TBU-CA (<1us) Blocker & Micro-GDT",
+      "category": "光学ベンチ台座 / <1μs誘導雷サージ遮断",
+      "plainAnalogy": "建屋内の長い通信ケーブルに落雷サージやAC100V誤配線が飛び込んでも、100万分の1秒以内に電子シャッターで電流を1mA以下へ断ち切り、ガス避雷管と連携して基板と絶縁壁を守り抜きます。",
+      "summary": "内部中央バスウェイ（X=-16.0, Y=+1.92, Z=0.0）の Bourns TBU-CA085 超高速過渡遮断器（応答 < 1 μs, 耐圧 850 V, 遮断時残留 < 1 mA, 通過エネルギー 100 nJ, 自動復帰）＋セラミック・マイクロ GDT ガス放電避雷管（IEC 61000-4-5 協調防護）。",
+      "opticsAndPhysics": [
+        "一次段マイクロ GDT（最大 5 kA 8/20 μs 放流）と直列段 Bourns TBU-CA085（< 1 μs で高インピーダンス遮断状態へ遷移）の協調動作により、TVS 単体では焼損する大エネルギー誘導雷サージを 100 nJ 未満へ抑え込む。",
+        "サージ消滅後はヒューズ交換不要で自動復帰し、遠隔地展示館の保守コストを削減。"
+      ],
+      "formula": {
+        "expression": "t_block(TBU-CA085) < 1.0 μs,   V_imp = 850 V,   I_hold < 1 mA,   E_let-through ≈ 100 nJ",
+        "description": "TBU-CA 超高速遮断＋マイクロ GDT 協調防護により長距離 CAN-FD/DMX512 配線の誘導雷破壊を根絶。"
+      },
+      "nextGenInnovation": "通信基地局標準の Bourns TBU-CA + マイクロ GDT 二段協調 IEC 61000-4-5 雷サージ防護。",
+      "specs": [
+        {
+          "label": "高速遮断器",
+          "value": "Bourns TBU-CA085 HSP (応答 <1 μs / 耐圧 850 V / 自動復帰)"
+        },
+        {
+          "label": "一次避雷管",
+          "value": "セラミック・マイクロ GDT (IEC 61000-4-5 8/20 μs 協調防護)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-2 (X=-16.0, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Bourns Inc., \"TBU-CA Series High-Speed Protector (850 V, <1 μs Transient Blocking Unit) Datasheet\"",
+        "IEC 61000-4-5:2014+AMD1:2017 Electromagnetic Compatibility — Surge Immunity Test (1.2/50 μs & 8/20 μs)",
+        "Bourns Design Note, \"Coordinated GDT + TBU + TVS Protection for Industrial RS-485 & CAN-FD Ports\""
+      ],
+      "diagramType": "welcome_driver_canfd"
+    },
+    {
+      "id": "welcome-plinth-lt3045-ultralownoise",
+      "order": 420,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W420. 60GHzレーダー・分光ADC専用 Analog Devices LT3045 超低ノイズ (0.8µVrms, 76dB PSRR) リニアLDO",
+      "subtitle": "Plinth 60 GHz Radar & Spectral ADC Analog Devices LT3045 Ultra-Low-Noise (0.8 uVrms, 76 dB PSRR) LDO",
+      "category": "光学ベンチ台座 / 0.8µVrms超静粛アナログ電源",
+      "plainAnalogy": "60GHzレーダーや高感度マイクにスイッチング電源の微かな雑音が混ざると性能が落ちます。雑音わずか0.8マイクロボルト・1MHz電源リップルを1/6300へ消し去る世界最高峰の静粛電源ICです。",
+      "summary": "内部中央バスウェイ（X=-8.2, Y=+1.92, Z=0.0）の Analog Devices LT3045 超低ノイズ・超高 PSRR リニアレギュレータ（0.8 μVrms @ 10 Hz–100 kHz, スポット雑音 2 nV/√Hz @ 10 kHz, PSRR 76 dB @ 1 MHz, 500 mA, 1.8–20V）。",
+      "opticsAndPhysics": [
+        "既存汎用 LDO（W244, 4.6 μVrms）の約 1/6 となる 0.8 μVrms の極限低雑音と 76 dB @ 1 MHz の超高リップル除去比（PSRR）により、60 GHz FMCW レーダー（W393）VCO 位相雑音と 73 dB(A) MEMS マイク（W398）の SN 比を最大化。",
+        "単一 SET 抵抗による精密出力設定＋高精度電流源アーキテクチャで出力電圧に依存しない一定ノイズフロアを実現。"
+      ],
+      "formula": {
+        "expression": "V_n(10 Hz–100 kHz) = 0.8 μVrms,   e_n(10 kHz) = 2 nV/√Hz,   PSRR(1 MHz) = 76 dB (1/6310)",
+        "description": "世界最高クラスの 0.8 μVrms / 76 dB PSRR LDO で 60 GHz VCO・分光 ADC・高 SNR マイクを静粛給電。"
+      },
+      "nextGenInnovation": "精密 RF 測定器・ハイエンドオーディオ基準の Analog Devices LT3045 超低雑音電源段。",
+      "specs": [
+        {
+          "label": "LDO型番",
+          "value": "Analog Devices LT3045 (500 mA / 1.8–20V / DFN-10)"
+        },
+        {
+          "label": "雑音・PSRR",
+          "value": "0.8 μVrms (10Hz–100kHz) / 2 nV/√Hz / PSRR 76 dB @ 1 MHz"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-2 (X=-8.2, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Analog Devices Inc., \"LT3045 20V, 500mA, Ultralow Noise, Ultrahigh PSRR Linear Regulator Datasheet\"",
+        "Analog Devices AN-159, \"Measuring 2 nV/√Hz Output Noise & 76 dB PSRR of Ultralow-Noise LDOs for RF VCOs\"",
+        "Infineon AN608, \"Power Supply Phase Noise Requirements for BGT60TR13C 60 GHz Radar MMIC\""
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-ref7025-vref",
+      "order": 421,
+      "swatchColor": "#e2b648",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W421. 計装ADC絶対電圧基準 TI REF7025 / ADI ADR4525 超低ドリフト 2.5000V リファレンスIC (2 ppm/°C)",
+      "subtitle": "Plinth Instrumentation ADC Voltage Reference TI REF7025 Ultra-Low-Drift 2.5000V Reference (2 ppm/°C)",
+      "category": "光学ベンチ台座 / 2ppm/°C絶対電圧基準",
+      "plainAnalogy": "光センサー・温度計・電流計すべての「電圧の物差し」となる絶対基準チップです。温度が1℃変わっても100万分の2（0.0002%）しか狂わないセラミック密閉パッケージで、校正精度を一生守ります。",
+      "summary": "内部中央バスウェイ（X=-1.0, Y=+1.92, Z=0.0）の Texas Instruments REF7025 超高精度シリーズ電圧リファレンス（固定 2.5000 V ±0.025%, 温度係数 最大 2 ppm/°C, 0.1–10 Hz 1/f 雑音 0.23 ppm_p-p, 8-LCCC 気密セラミック 5×5 mm）。",
+      "opticsAndPhysics": [
+        "ハーメチック 8-LCCC セラミックパッケージが基板曲げ応力と吸湿ヒステリシスを遮断し、長期安定度 28 ppm/1000h・温度ドリフト最大 2 ppm/°C（−40〜+125°C）を実現。",
+        "4 文字フォトダイオード帰還・NTC 温度計測・シャント電流 ADC へ共通の絶対 2.5000 V 物差しを供給し、16-bit 計装計測の系統誤差を排除。"
+      ],
+      "formula": {
+        "expression": "V_REF = 2.5000 V ± 0.025%,   TC_max = 2 ppm/°C,   V_n(0.1–10 Hz) = 0.23 ppm_p-p (REF7025)",
+        "description": "気密セラミック 2 ppm/°C 絶対電圧基準により全アナログ計測・輝度帰還の校正精度を長期維持。"
+      },
+      "nextGenInnovation": "6.5 桁デジタルマルチメータ級の TI REF7025 気密 LCCC 2 ppm/°C 絶対電圧基準。",
+      "specs": [
+        {
+          "label": "電圧基準IC",
+          "value": "Texas Instruments REF7025 (2.5000 V ±0.025% / 8-LCCC 気密セラミック)"
+        },
+        {
+          "label": "ドリフト・雑音",
+          "value": "最大 2 ppm/°C (-40〜+125°C) / 0.23 ppm_p-p (0.1–10 Hz)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-2 (X=-1.0, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Texas Instruments, \"REF70 2 ppm/°C Maximum Drift, 0.23 ppmp-p 1/f Noise Precision Voltage Reference Datasheet (SNAS771)\"",
+        "TI Application Note SLYT813, \"Hermetic LCCC Package Immunity to Humidity & PCB Mechanical Stress Drift\"",
+        "NIST / IEEE 1241 Standard for Terminology and Test Methods for Analog-to-Digital Converters (Vref Accuracy)"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-eta3000-active-bal",
+      "order": 422,
+      "swatchColor": "#1b5e47",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        -6,
+        -9.5,
+        18
+      ],
+      "integratedExplodeOffset": [
+        -6,
+        -9.5,
+        18
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W422. LiFePO4 2S電池 92%高効率 2A インダクティブ能動セルバランサ (ETA3000 / LT8584)",
+      "subtitle": "Plinth 2S LiFePO4 Battery 92%-Efficiency 2A Inductive Active Cell Balancer (ETA3000 / LT8584)",
+      "category": "光学ベンチ台座 / 92%高効率能動セルバランス",
+      "plainAnalogy": "従来のバランス回路は多い方の電池の電気を熱として捨てていました。この能動バランサはコイルの磁力で多いセルから少ないセルへ92%の効率で直接電気を移し替え、熱を出さず電池寿命を倍増します。",
+      "summary": "電池区画直上の内部中央バスウェイ Bay-0（X=-80.0, Y=+1.92, Z=0.0）に配置された ETA3000 / ADI LT8584 インダクティブ双方向能動セルバランサ（最大 2.0 A 均等化電流, 電荷移送効率 92%, 静止電流 <10 μA, パッシブ発熱ゼロ）。",
+      "opticsAndPhysics": [
+        "既存パッシブ抵抗バランス（W290, ~100 mA 散逸）の 20 倍となる最大 2 A の双方向インダクティブ電荷移送（効率 92%）により、2S LiFePO4 セル間電圧差を < 5 mV 以内へ高速収束。",
+        "余剰エネルギーを熱へ捨てないため密閉筐体内の温度上昇ゼロ、UPS 電池パックの使用可能容量と 3,000 サイクル超の長寿命を最大化。"
+      ],
+      "formula": {
+        "expression": "η_transfer = E_dst / E_src = 92%,   I_bal,max = 2.0 A,   |V_cell1 - V_cell2| < 5 mV",
+        "description": "92% 効率 2 A インダクティブ双方向電荷移送で発熱ゼロ・高速 2S LiFePO4 セル均等化を達成。"
+      },
+      "nextGenInnovation": "EV・蓄電システム最先端のインダクティブ 2A 92% 高効率能動セルバランシング。",
+      "specs": [
+        {
+          "label": "バランサIC",
+          "value": "ETA3000 / Analog Devices LT8584 インダクティブ能動バランサ"
+        },
+        {
+          "label": "均等化性能",
+          "value": "最大 2.0 A 双方向移送 / 効率 92% / セル電圧差 < 5 mV"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-0 電池直上 (X=-80.0, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Analog Devices Inc., \"LT8584 2.5A Monolithic Active Cell Balancer with Telemetry Monitor Datasheet\"",
+        "ETA Solutions, \"ETA3000 2A High-Efficiency Inductive Active Battery Balancer Technical Specification\"",
+        "Plett, G. L., \"Battery Management Systems, Vol. II: Equivalent-Circuit Methods\" (Active vs Passive Balancing)"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-tlp3122a-ship-relay",
+      "order": 423,
+      "swatchColor": "#f8fafc",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        12,
+        -9.5,
+        6
+      ],
+      "integratedExplodeOffset": [
+        12,
+        -9.5,
+        6
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W423. 輸送・長期保管Ship-Mode用 Toshiba TLP3122A PhotoMOS® 絶縁ソリッドステート・バッテリー遮断リレー",
+      "subtitle": "Plinth Transport Ship-Mode Toshiba TLP3122A PhotoMOS® 3750 Vrms Solid-State Battery Cutoff Relay",
+      "category": "光学ベンチ台座 / Ship-Mode無接点電池遮断",
+      "plainAnalogy": "美術館から倉庫へ移して何年も保管する間、わずかな待機電力で電池が空っぽになって壊れないよう、光の信号で電池回路を完全に切り離す3,750V絶縁・無接点リレーです。",
+      "summary": "内部前面レーン電池直上（X=-76.0, Y=+1.92, Z=+2.95）の Toshiba TLP3122A PhotoMOS® 光結合 MOSFET リレー（60V / 1.4A, 3750 Vrms 絶縁耐圧, UL 1577 File E67349 / EN 60747-5-5 認証, 4-pin SO6, 遮断時リーク暗電流 < 1 μA）。",
+      "opticsAndPhysics": [
+        "輸送・長期保管コマンド受信時に電池正極パスを光絶縁 MOSFET で完全遮断し、システム暗電流を < 1 μA へ落として LiFePO4 過放電死を 5 年以上防止。",
+        "機械式リレーと異なり接点バウンス・振動誤開放・酸化劣化がゼロで、USB-C 接続検出で瞬時自動ウェイクアップ。"
+      ],
+      "formula": {
+        "expression": "I_leak(Ship-Mode) < 1.0 μA  ⇒  Storage Life > 5 yr,   V_iso = 3,750 Vrms (UL 1577 E67349)",
+        "description": "3750 Vrms 絶縁 PhotoMOS® 遮断リレーにより輸送・長期保管時の過放電劣化と暗電流を根絶。"
+      },
+      "nextGenInnovation": "UN38.3 航空輸送・長期保管 Ship-Mode 対応 Toshiba TLP3122A 光結合無接点遮断リレー。",
+      "specs": [
+        {
+          "label": "PhotoMOSリレー",
+          "value": "Toshiba TLP3122A (60V / 1.4A / 1 Form A / 4-pin SO6)"
+        },
+        {
+          "label": "絶縁・暗電流",
+          "value": "3750 Vrms (UL 1577 E67349) / Ship-Mode リーク < 1 μA"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部前面貫通レーン左端 (X=-76.0, lY=+1.92, Z=+2.95)"
+        }
+      ],
+      "references": [
+        "Toshiba Electronic Devices & Storage Corp., \"TLP3122A Photorelay (60V, 1.4A, 3750 Vrms) Datasheet\"",
+        "UL 1577 Optical Isolators (File No. E67349) & IEC/EN 60747-5-5 Optocoupler Safety Standard",
+        "UN38.3 Manual of Tests and Criteria — Lithium Battery Transport Ship-Mode Isolation Guidelines"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-ltc3350-scap-health",
+      "order": 424,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W424. スーパーキャパシタ(W291) 容量・ESR劣化診断＆昇降圧バックアップ制御IC (ADI LTC3350)",
+      "subtitle": "Plinth Supercapacitor (W291) Capacitance/ESR Health Monitor & Buck-Boost Backup Controller (ADI LTC3350)",
+      "category": "光学ベンチ台座 / EDLC寿命・ESR自動診断",
+      "plainAnalogy": "瞬停バックアップ用スーパーキャパシタ（W291）は年数とともに容量が減り内部抵抗が増えます。定期的に自動で容量と内部抵抗（ESR）を測って劣化を予知し、停電時は昇降圧で電力を供給する専用管理ICです。",
+      "summary": "スーパーキャパシタバンク（W291）直近の内部中央バスウェイ Bay-3（X=+56.0, Y=+1.92, Z=0.0）に配置された Analog Devices LTC3350（1–4 直列 EDLC 充電・セルバランス・双方向同期昇降圧＋I²C 経由スタック静電容量＆ESR 自動診断・デュアル理想ダイオード内蔵）。",
+      "opticsAndPhysics": [
+        "定期テストパルスでスーパーキャパシタスタック（W291）の真の静電容量 C_stack と等価直列抵抗 ESR を自動計測し、I²C 経由で残存バックアップ時間（秒）と交換予兆アラートを報告。",
+        "主電源・電池同時瞬断時もデュアル理想ダイオードが 0 ms でバックアップ昇圧へ切替、FRAM（W249）ログ書込と安全フェードアウトを完結。"
+      ],
+      "formula": {
+        "expression": "E_avail = ½ C_stack · (V_chg² - V_min²) - I² · ESR · t  (LTC3350 自動 C / ESR 診断)",
+        "description": "LTC3350 による EDLC 容量・ESR 自動計測と双方向昇降圧で停電フェイルセーフの劣化死を防止。"
+      },
+      "nextGenInnovation": "産業無停電ストレージ標準 Analog Devices LTC3350 EDLC 予知保全コントローラ統合。",
+      "specs": [
+        {
+          "label": "管理IC",
+          "value": "Analog Devices LTC3350 (1–4直列 EDLC 充電・昇降圧・理想ダイオード)"
+        },
+        {
+          "label": "劣化診断",
+          "value": "I²C / SMBus 経由 スタック静電容量 (F) & ESR (mΩ) 自動測定"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-3 W291 直近 (X=+56.0, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Analog Devices Inc., \"LTC3350 High Current Supercapacitor Backup Controller and System Monitor Datasheet\"",
+        "Analog Devices Application Note, \"Automated Stack Capacitance and ESR Measurement Using LTC3350\"",
+        "IEC 62391-1 Fixed Electric Double-Layer Capacitors — Aging & End-of-Life ESR Criteria"
+      ],
+      "diagramType": "welcome_power_lifepo4"
+    },
+    {
+      "id": "welcome-plinth-d6t-ir-thermopile",
+      "order": 425,
+      "swatchColor": "#1b0814",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W425. 前面左端 Omron D6T-44L-06 4×4 MEMS遠赤外線サーモパイル人体体温検知センサー (Siレンズ付)",
+      "subtitle": "Plinth Front Far-Left Omron D6T-44L-06 4x4 MEMS Far-IR Thermopile Human Thermal Sensor (Si Lens)",
+      "category": "光学ベンチ台座 / 遠赤外線人体体温4層目融合",
+      "plainAnalogy": "風で揺れるカーテンやお掃除ロボットを人間と間違えないよう、人の体温（約36.5℃）が放つ遠赤外線を4×4＝16マスで非接触サーモグラフィー検知するオムロン製シリコンレンズ付温度センサーです。",
+      "summary": "前面左端対称計装窓（X=-48.0, Y=-0.70, Z=+13.26, W426 と完全左右対称）に配置された Omron D6T-44L-06 4×4（16ch）MEMS 遠赤外線サーモパイル・サーマルセンサー（シリコン集光レンズ内蔵, 視野角 44.2°×45.7°, I²C 出力, 波長 8–14 μm 遠赤外線非接触人体検知）。",
+      "opticsAndPhysics": [
+        "光学 ToF（W211）・60 GHz ミリ波レーダー（W393）・UWB（W394）に続く第 4 の異種物理モダリティとして、ステファン・ボルツマン則に基づく人体皮膚（~33–36.5°C, ピーク λ ≈ 9.4 μm）の遠赤外放射を 4×4 マトリクス撮像。",
+        "無生物（カーテン・清掃ロボット）と静止鑑賞中の人間を 99.9% 識別し、誤点灯ゼロの洗練された迎賓演出を実現。"
+      ],
+      "formula": {
+        "expression": "M = ε · σ · T⁴ (λ_peak ≈ 9.4 μm @ 309 K),   4×4 MEMS Array,   FOV = 44.2° × 45.7°",
+        "description": "遠赤外線 4×4 体温マトリクスを 4 層目融合することで非人間物体への誤反応をゼロ化。"
+      },
+      "nextGenInnovation": "ToF × 60 GHz レーダー × UWB × Omron 遠赤外線 4×4 サーモパイルの 4 重物理センサー融合。",
+      "specs": [
+        {
+          "label": "センサー型番",
+          "value": "Omron D6T-44L-06 (4×4 = 16ch MEMS 遠赤外線サーモパイル / I²C)"
+        },
+        {
+          "label": "光学・視野",
+          "value": "8–14 μm 遠赤外線シリコンレンズ内蔵 / FOV 44.2° × 45.7°"
+        },
+        {
+          "label": "配置位置",
+          "value": "前面左端対称窓 (X=-48.0, lY=-0.70, Z=+13.26, W426 対称)"
+        }
+      ],
+      "references": [
+        "Omron Electronic Components, \"D6T-44L-06 4×4 MEMS Thermal Sensor Datasheet & Application Catalog\"",
+        "Planck / Stefan-Boltzmann Thermal Radiation Law — Human Skin Long-Wave IR Emission (8–14 μm)",
+        "IEEE Sensors Journal, \"Multi-Modal Presence Detection Combining 60 GHz Radar, ToF & Far-IR Thermopiles\""
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-bg40-ircut-filter",
+      "order": 426,
+      "swatchColor": "#0e94c8",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -16,
+        32
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W426. 前面右端 SCHOTT BG40 吸収型近赤外カット光学フィルタガラス (400–700nm CIE色度補正)",
+      "subtitle": "Plinth Front Far-Right SCHOTT BG40 Absorption NIR-Cut Optical Filter Glass (400-700nm CIE Correction)",
+      "category": "光学ベンチ台座 / SCHOTT BG40近赤外カット窓",
+      "plainAnalogy": "太陽や白熱電球に含まれる目に見えない近赤外線が色センサーへ入り込むと色が狂ってしまいます。ドイツSCHOTT社の青緑色ガラスフィルタで近赤外線だけを吸収し、人間の目と同じ正しい測色を保証します。",
+      "summary": "前面右端対称窓（X=+48.0, Y=-0.70, Z=+13.26, W425 と完全左右対称）へ配置された SCHOTT BG40 吸収型バンドパス・近赤外カット光学ガラス（400–700 nm 高透過、>750 nm 急峻吸収遮断, CIE 1931 測色角度非依存補正）。",
+      "opticsAndPhysics": [
+        "干渉型 IR カットと異なり吸収型 BG40 ガラスは斜め大入射角（±60°）でもカットオフ波長が青方シフトしないため、広角環境光測色（AS7341 / VEML7700）の CIE 1931 色度系統誤差を 85% 削減。",
+        "前面 5 窓対称計装配列（-48:遠IR / -28:60GHz / 0:940nm ToF / +28:11ch分光 / +48:BG40 IRカット）の右翼を美観・機能ともに完結。"
+      ],
+      "formula": {
+        "expression": "T_i(BG40, 400–620 nm) > 90%,   T_i(850–1000 nm) < 0.1%,   Δλ_cut(AOI 0→60°) = 0 nm",
+        "description": "入射角非依存の吸収型 SCHOTT BG40 フィルタガラスにより広角展示環境光の CIE 測色精度を保証。"
+      },
+      "nextGenInnovation": "高級カメラセンサー・分光測色計標準のドイツ SCHOTT BG40 吸収型 IR カット光学窓。",
+      "specs": [
+        {
+          "label": "光学ガラス",
+          "value": "SCHOTT BG40 吸収型バンドパス・近赤外カットガラス"
+        },
+        {
+          "label": "透過帯域",
+          "value": "可視 400–700 nm 高透過 / <315 nm & >750 nm 急峻吸収遮断"
+        },
+        {
+          "label": "配置位置",
+          "value": "前面右端対称窓 (X=+48.0, lY=-0.70, Z=+13.26, W425 対称)"
+        }
+      ],
+      "references": [
+        "SCHOTT AG, \"BG40 Optical Bandpass Filter Glass Technical Data Sheet (Absorption NIR-Cut)\"",
+        "CIE 1931 Standard Colorimetric Observer — Photopic V(λ) & IR Leakage Error Correction",
+        "ISO 10110-12 Optical Filter Glass Surface Quality & Angle-Insensitive Absorption Optics"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-optotec-micro-tec",
+      "order": 427,
+      "swatchColor": "#eef2f6",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W427. Laird OptoTEC™ OTX マイクロ・ペルチェ熱電恒温素子 (TEC) & TI TMP117 (±0.1°C NIST) 基準温度計",
+      "subtitle": "Plinth Laird OptoTEC™ OTX Micro-Peltier TEC & TI TMP117 (±0.1°C NIST-Traceable) Reference Thermometer",
+      "category": "光学ベンチ台座 / ±0.05°Cマイクロ熱電恒温槽",
+      "plainAnalogy": "電源を入れた直後の自己発熱で水晶時計（W246）や電圧基準（W421）がわずかにズレないよう、超小型ペルチェ素子とNIST規格±0.1℃温度計で±0.05℃のミニ恒温槽に保つ精密温度制御です。",
+      "summary": "TCXO（W246）直近の内部中央バスウェイ Bay-2（X=+9.5, Y=+1.92, Z=0.0）へ実装された Laird Thermal OptoTEC™ OTX マイクロ熱電クーラ（Telcordia GR-468 認証, 最大 ΔT = 74–82°C, 上限 120°C）＋ Texas Instruments TMP117（±0.1°C max, 0.0078°C 16-bit, ISO/IEC 17025 NIST トレーサブル）。",
+      "opticsAndPhysics": [
+        "Bi₂Te₃ ペルチェ熱電素子（OptoTEC™ OTX）を TMP117 の 7.8 mK 分解能 PID 閉ループで双方向電流駆動し、TCXO 基準発振器と REF7025 電圧基準の温度を 35.00 ± 0.05°C へロック（小型 OCXO 相当）。",
+        "Telcordia GR-468 光通信レーザーモジュール認証準拠の耐熱はんだ構造により 24/7 連続稼働で長寿命。"
+      ],
+      "formula": {
+        "expression": "Q_c = α_S · I · T_c - ½ I² R - K · ΔT,   T_ref = 35.00 ± 0.05°C (TMP117 ±0.1°C NIST)",
+        "description": "マイクロ TEC＋NIST ±0.1°C 基準温度計の閉ループ恒温化により基準クロック・基準電圧ドリフトを極小化。"
+      },
+      "nextGenInnovation": "光トランシーバ Telcordia GR-468 準拠 OptoTEC™ OTX マイクロ恒温槽＋TI TMP117 統合。",
+      "specs": [
+        {
+          "label": "熱電素子",
+          "value": "Laird Thermal OptoTEC™ OTX (Bi₂Te₃ / Telcordia GR-468 / ΔT 74°C)"
+        },
+        {
+          "label": "基準温度計",
+          "value": "Texas Instruments TMP117 (±0.1°C max / 0.0078°C / NIST準拠)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-2 W246 直近 (X=+9.5, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Laird Thermal Systems, \"OptoTEC™ OTX Series High-Temperature Miniature Thermoelectric Coolers (GR-468) Datasheet\"",
+        "Texas Instruments, \"TMP117 High-Accuracy, Low-Power, Digital Temperature Sensor (±0.1°C NIST) Datasheet (SNOSCY1)\"",
+        "Telcordia GR-468-CORE Generic Reliability Assurance Requirements for Optoelectronic Devices"
+      ],
+      "diagramType": "welcome_led_thermal"
+    },
+    {
+      "id": "welcome-plinth-mmc5983ma-amr-mag",
+      "order": 428,
+      "swatchColor": "#1d2026",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        12,
+        -9.5,
+        10
+      ],
+      "integratedExplodeOffset": [
+        12,
+        -9.5,
+        10
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W428. 3軸超低ノイズ MEMSIC MMC5983MA 18bit AMR磁気コンパス (0.4mG, ±0.5°方位, 自動消磁SET/RESET)",
+      "subtitle": "Plinth 3-Axis Ultra-Low-Noise MEMSIC MMC5983MA 18-bit AMR Compass (0.4 mG, ±0.5°, Auto SET/RESET)",
+      "category": "光学ベンチ台座 / 18bit AMR方位・磁気妨害検知",
+      "plainAnalogy": "台座が東西南北のどちらを向いて設置されたか±0.5°の精度で自動把握してレーダー空間マップを補正し、さらに悪意ある強力磁石でドックセンサーを騙そうとする妨害も即座に検知します。",
+      "summary": "内部中央バスウェイ Bay-3（X=+34.5, Y=+1.92, Z=0.0）に配置された MEMSIC MMC5983MA AEC-Q100 認証 3 軸異方性磁気抵抗（AMR）磁気センサー（±8 G, 18-bit 分解能, 0.4 mG RMS 雑音, 方位精度 ±0.5°, 内蔵 SET/RESET 自動消磁コイル, 3.0×3.0×1.0 mm LGA）。",
+      "opticsAndPhysics": [
+        "内蔵 SET/RESET 電流パルスによりパーマロイ AMR 薄膜の磁区ヒステリシス・残留着磁・温度オフセットを毎計測時に自動消去し、0.4 mG（40 nT）の超低雑音と ±0.5° 方位精度を達成。",
+        "地球磁場（~0.46 G）の異常ベクトル変化を監視することで、外部ネオジム磁石によるドック着脱ホールセンサー（W262）へのスプーフィング妨害を検知。"
+      ],
+      "formula": {
+        "expression": "LSB_18bit = 16 G / 2¹⁸ = 0.0625 mG,   Noise = 0.4 mG RMS ⇒ Heading ±0.5° (Auto SET/RESET)",
+        "description": "18-bit AMR＋内蔵自動消磁により設置方位の自動キャリブレーションと磁気改ざん検知を両立。"
+      },
+      "nextGenInnovation": "車載 AEC-Q100 準拠 MEMSIC MMC5983MA 18-bit 自動消磁 AMR 磁気コンパス搭載。",
+      "specs": [
+        {
+          "label": "磁気センサー",
+          "value": "MEMSIC MMC5983MA (AEC-Q100 / 3軸 18-bit AMR / ±8 G)"
+        },
+        {
+          "label": "精度・機能",
+          "value": "0.4 mG RMS / 方位 ±0.5° / 内蔵 SET-RESET 自動消磁 / 1000 Hz"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-3 (X=+34.5, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "MEMSIC Inc., \"MMC5983MA High Performance 3-Axis 18-bit AMR Magnetic Sensor Datasheet (Rev. A)\"",
+        "AEC-Q100 Stress Test Qualification for Integrated Circuits — Automotive Magnetometer Reliability",
+        "Ripka, P., \"Magnetic Sensors and Magnetometers\", Artech House (AMR SET/RESET Offset Cancellation)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-st25dv64kc-dyn-nfc",
+      "order": 429,
+      "swatchColor": "#0284c7",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W429. STMicroelectronics ST25DV64KC 動的NFC (ISO/IEC 15693) 64Kbit デュアルIF & RF給電ブリッジIC",
+      "subtitle": "Plinth STMicroelectronics ST25DV64KC Dynamic NFC (ISO/IEC 15693) 64-Kbit Dual-IF & RF Energy-Harvesting IC",
+      "category": "光学ベンチ台座 / 動的NFC双方向・RF給電起動",
+      "plainAnalogy": "天面のNFCリング（W340）へスマホをかざすと、マイコンとリアルタイムに双方向で設定や診断ログをやり取りでき、本体が完全スリープ中でもスマホの電波エネルギーだけで起動できる動的NFCチップです。",
+      "summary": "天面 NFC ハロー（W340）直下の内部前面レーン（X=-5.0, Y=+1.92, Z=+2.95）へ配置された STMicroelectronics ST25DV64KC 動的 NFC/RFID タグ IC（13.56 MHz ISO/IEC 15693 Type 5 + I²C デュアル IF, 64 Kbit EEPROM, 256B Fast Transfer メールボックス, V_EH RF エナジーハーベスティング出力）。",
+      "opticsAndPhysics": [
+        "256 バイト高速転送メールボックス（FTM）により EEPROM 書換寿命を消費せずスマホと STM32H743 間で双方向ファーム設定・リアルタイムテレメトリ・演出切替を実施。",
+        "V_EH RF エナジーハーベスティング端子がスマホの 13.56 MHz 磁界から直接 DC 電圧を生成し、完全電源断／Ship-Mode 状態でも非接触シリアル・診断ログ読出が可能。"
+      ],
+      "formula": {
+        "expression": "f_carrier = 13.56 MHz (ISO/IEC 15693),   EEPROM = 64 Kbit,   FTM = 256 B Mailbox + V_EH RF Harvest",
+        "description": "ISO/IEC 15693 デュアル IF＋RF エナジーハーベスティングで無電源保守＆双方向スマホ連携を実現。"
+      },
+      "nextGenInnovation": "STMicroelectronics ST25DV64KC RF 給電＆256B 高速メールボックス付動的 NFC ブリッジ。",
+      "specs": [
+        {
+          "label": "動的NFC IC",
+          "value": "STMicroelectronics ST25DV64KC (13.56 MHz ISO/IEC 15693 + I²C)"
+        },
+        {
+          "label": "メモリ・機能",
+          "value": "64 Kbit EEPROM / 256B FTM 双方向 / V_EH RF エナジーハーベスト"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部前面貫通レーン W340 直下 (X=-5.0, lY=+1.92, Z=+2.95)"
+        }
+      ],
+      "references": [
+        "STMicroelectronics, \"ST25DV64KC Dynamic NFC/RFID Tag IC with 64-Kbit EEPROM & Fast Transfer Mode Datasheet (DS13519)\"",
+        "ISO/IEC 15693-3 Identification Cards — Contactless Integrated Circuit Cards (Vicinity Cards, 13.56 MHz)",
+        "NFC Forum Type 5 Tag Technical Specification — Dynamic NDEF & Energy Harvesting"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-opt-tamper-buzzer",
+      "order": 430,
+      "swatchColor": "#e65a28",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -9.5,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W430. 暗室光侵入タンパー検知 Vishay VBPW34S フォトダイオード & TDK PS1240P02BT ハード直結 4kHz 圧電サウンダ",
+      "subtitle": "Plinth Dark-Cavity Optical Tamper Photodiode (Vishay VBPW34S) & Hard-Wired 4 kHz Piezo Sounder (TDK PS1240P02BT)",
+      "category": "光学ベンチ台座 / 光侵入防犯・独立異常警報",
+      "plainAnalogy": "真っ暗な台座の内部へ誰かが天板や端蓋をこじ開けて光が差し込んだ瞬間に検知する光防犯センサーと、万が一マイコンやメインスピーカーが故障した電池異常時でも独立して4kHz警報を鳴らす圧電ブザーです。",
+      "summary": "内部中央バスウェイ Bay-3（X=+44.5, Y=+1.92, Z=0.0）の Vishay VBPW34S 高感度 PIN フォトダイオード（受光面積 7.5 mm², 430–1100 nm, 130° 広角）＋ TDK PS1240P02BT 独立ハードウェア駆動圧電サウンダ（共振 4.0 kHz, 最小 70 dB @ 10 cm）。",
+      "opticsAndPhysics": [
+        "底面マイクロスイッチ（W312）では防げない天板（W174）や両端蓋（W176/W177）の不正こじ開けを、暗室筐体内部の 1 lux 以上の光侵入で即座に検知し FRAM（W249）へ改ざん時刻を記録。",
+        "TDK PS1240P02BT 圧電サウンダは BMS 過温/過圧ラインと独立ハードウェア直結されており、MCU や Class-D アンプ故障時でも 4 kHz 聴覚最高感度帯で警報吹鳴。"
+      ],
+      "formula": {
+        "expression": "A_PD = 7.5 mm² (VBPW34S, ±65°),   f_alarm = 4.0 kHz (TDK PS1240P02BT ≥ 70 dB @ 10 cm)",
+        "description": "暗室光侵入タンパー検知＋MCU 独立 4 kHz 圧電サウンダで防犯と電池異常警報の単一障害点を排除。"
+      },
+      "nextGenInnovation": "銀行 HSM 級暗室光侵入タンパー検知とハード独立 4 kHz フェイルセーフ圧電警報の統合。",
+      "specs": [
+        {
+          "label": "光タンパー",
+          "value": "Vishay VBPW34S PIN フォトダイオード (7.5 mm² / 430–1100 nm / 130°)"
+        },
+        {
+          "label": "独立警報器",
+          "value": "TDK PS1240P02BT 圧電サウンダ (4.0 kHz / ≥70 dB / ハード直結)"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部中央バスウェイ Bay-3 (X=+44.5, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Vishay Semiconductors, \"VBPW34S Silicon PIN Photodiode (7.5 mm², ±65° Half-Angle) Datasheet (81128)\"",
+        "TDK Corporation, \"PS1240P02BT Piezoelectric Sounder (4 kHz, 70 dB min) Technical Data Sheet\"",
+        "FIPS 140-3 Level 3 / PCI-HSM Optical Cavity Intrusion Tamper Detection Engineering Practices"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-permendur-flux-yoke",
+      "order": 431,
+      "swatchColor": "#626a75",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -11.6,
+        9.2
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -11.6,
+        9.2
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W431. 4文字磁気ドック直下 Permendur 49 / Hiperco® 50 (B_sat=2.34T) ハルバッハ磁束集束バックヨーク群",
+      "subtitle": "Plinth 4-Dock Permendur 49 / Hiperco® 50 (B_sat = 2.34-2.4T) Halbach Flux-Focusing Back Yoke Array",
+      "category": "光学ベンチ台座 / 2.34T最高飽和磁束バックヨーク",
+      "plainAnalogy": "4つの文字を吸着する強力磁石の裏側へ逃げて無駄になっていた磁力を、商用金属で世界最高の飽和磁束（2.4テスラ）を誇る航空宇宙用コバルト鉄合金ヨークで上向きに跳ね返し、吸着力を55%高めます。",
+      "summary": "4 文字磁気ドック直下前面レーン（X = -68.0, -26.5, +23.0, +68.0, Y=+1.92, Z=+2.95）へ配した Permendur 49 / Hiperco® 50（Fe-49Co-2V, ASTM A801 / UNS R30005, B_sat = 2.34–2.40 T, キュリー点 940°C）ハルバッハ磁束集束バックヨーク 4 基。",
+      "opticsAndPhysics": [
+        "一般軟鉄（B_sat ≈ 1.9 T）では薄肉 0.38 mm で磁気飽和してしまう N52 ネオジム磁束を、商用軟磁性金属最高の B_sat = 2.40 T を持つ Hiperco® 50 で無飽和閉回路化し、上向き磁気吸着力を +55% 向上。",
+        "同時に台座内部への下方漏洩磁束を -18 dB 遮蔽し、18-bit AMR 磁気コンパス（W428）やオーディオインダクタへの磁気干渉を抑制。"
+      ],
+      "formula": {
+        "expression": "B_sat(Hiperco 50) = 2.40 T (ASTM A801 Fe-49Co-2V),   F_hold = B²A / (2μ₀) ↑ +55%,   B_leak ↓ -18 dB",
+        "description": "2.40 T 最高飽和軟磁性バックヨークにより極薄肉のままドック吸着力 +55% と内部漏洩遮蔽を実現。"
+      },
+      "nextGenInnovation": "ジェットエンジン・人工衛星アクチュエータ標準 Permendur 49 / Hiperco® 50 磁束集束ヨーク。",
+      "specs": [
+        {
+          "label": "軟磁性合金",
+          "value": "Permendur 49 / Hiperco® 50 (Fe-49Co-2V, ASTM A801, UNS R30005)"
+        },
+        {
+          "label": "磁気性能",
+          "value": "飽和磁束密度 B_sat = 2.34–2.40 T / T_c = 940°C / 吸着力 +55%"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部4ドック直下前面レーン (X=-68/-26.5/+23/+68, Z=+2.95)"
+        }
+      ],
+      "references": [
+        "ASTM A801 Standard Specification for Wrought Iron-Cobalt High Magnetic Saturation Alloys (Alloy Type 1 / UNS R30005)",
+        "Carpenter Technology Corp., \"Hiperco® 50 / 50A Soft Magnetic Alloy Technical Data Sheet (2.4 T Saturation)\"",
+        "Mallinson, J. C. (1973), \"One-Sided Fluxes — Halbach Magnetic Circuit Back-Yoke Optimization\", IEEE Trans. Magn."
+      ],
+      "diagramType": "welcome_dock_pogo"
+    },
+    {
+      "id": "welcome-plinth-smalley-wave-spring",
+      "order": 432,
+      "swatchColor": "#c0c9d4",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        32,
+        -10,
+        2
+      ],
+      "integratedExplodeOffset": [
+        32,
+        -10,
+        2
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W432. 右端ロータリーダイヤル軸(W217) Smalley Crest-to-Crest® 17-7PH多層波ばね ゼロバックラッシュ予圧カラー",
+      "subtitle": "Plinth Rotary Dial Shaft Smalley Crest-to-Crest® 17-7PH Multi-Turn Wave Spring Zero-Backlash Collar",
+      "category": "光学ベンチ台座 / ダイヤル軸ゼロバックラッシュ予圧",
+      "plainAnalogy": "右端ダイヤルを回した時に軸方向のわずかなガタつき（カタカタ感）が残らないよう、波打つステンレス板を山と山で重ねた超省スペース波ばねで360度均等に予圧をかけ、高級カメラ並みのしっとりした操作感にします。",
+      "summary": "右端ロータリーダイヤル軸受（W301）直結の内部 Bay-4 空き域（X=+76.3, Y=+1.92, Z=0.0）へ実装された Smalley Crest-to-Crest® CS-S17 析出硬化 17-7PH ステンレス多層波ばね（シム端付 360° 均圧, 従来コイルばね比 軸長 50% 削減, エンドプレイ < 0.01 mm）。",
+      "opticsAndPhysics": [
+        "平線をエッジワイズ巻線し波の山同士（Crest-to-Crest）で精密接合する構造により、コイルばねの半分の軸長スペース（2.2 mm）で 12 N の一定軸予圧を 360° 均等に印加。",
+        "青銅スリーブ（W301）とルビーデテント（W259）の軸方向ガタ（エンドプレイ）を < 0.01 mm へ完全ゼロバックラッシュ化。"
+      ],
+      "formula": {
+        "expression": "L_wave = 0.50 · L_coil (Smalley Crest-to-Crest®),   F_preload = 12.0 N ⇒ Endplay < 0.01 mm",
+        "description": "Smalley 17-7PH シム端付多層波ばねにより極狭 2.2 mm 空間でダイヤル軸の完全ゼロバックラッシュを達成。"
+      },
+      "nextGenInnovation": "高級シネマレンズ・宇宙機構標準 Smalley Crest-to-Crest® 17-7PH エッジワイズ波ばね予圧。",
+      "specs": [
+        {
+          "label": "波ばね型式",
+          "value": "Smalley Crest-to-Crest® CS-S17 (17-7PH 析出硬化 SUS / シム端付)"
+        },
+        {
+          "label": "予圧・省寸",
+          "value": "従来コイル比 軸長 -50% / 360° 均圧 12 N / ガタ < 0.01 mm"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部ダイヤル軸受直結 Bay-4 (X=+76.3, lY=+1.92, Z=0.0)"
+        }
+      ],
+      "references": [
+        "Smalley Steel Ring Co., \"Crest-to-Crest® Multi-Turn Wave Springs with Shim Ends Engineering Catalog\"",
+        "AMS 5528 / ASTM A693 Precipitation-Hardening 17-7PH (Condition CH900) Spring Stainless Steel Properties",
+        "Slocum, A. H., \"Precision Machine Design\" (Axial Preloading & Zero-Backlash Rotary Spindle Bearings)"
+      ],
+      "diagramType": "welcome_tof_audio_hmi"
+    },
+    {
+      "id": "welcome-plinth-pem-nordlock-fasteners",
+      "order": 433,
+      "swatchColor": "#98a2b0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W433. 底面電池ハッチ脱落防止 PEM® PF11M キャプティブねじ対 & Nord-Lock® DIN 25201 M3ウェッジロック座金群",
+      "subtitle": "Plinth Bottom Hatch PEM® PF11M Captive Screws & Nord-Lock® DIN 25201 M3 Wedge-Locking Washers",
+      "category": "光学ベンチ台座 / 脱落防止・楔緩み止め締結",
+      "plainAnalogy": "底面の電池蓋を開けた時にネジが転がり落ちて基板をショートさせない「脱落防止キャプティブネジ」と、振動が加わるほど楔（くさび）効果で逆に締まりが強くなるNord-Lock座金のプロ締結セットです。",
+      "summary": "底面電池ハッチ（W352）左右（X=-69.9 / -38.1, Z=0.0）の PEM® PF11M ばね付ローレット脱落防止キャプティブねじ対（MAThread® クロススレッド防止）＆底面主要 M3 ボルト（W182, X=±57.15, Z=±9.2）同心配置 Nord-Lock® DIN 25201 NL3 ウェッジロック座金 4 対。",
+      "opticsAndPhysics": [
+        "Nord-Lock® DIN 25201 2 枚組座金の内面カム角 α がねじリード角 β を上回る（α > β）幾何学的楔効果により、スピーカー振動や熱サイクルでボルトが緩もうとすると逆に軸力が増大して回転を物理ロック。",
+        "PEM® PF11M キャプティブパネルねじはハッチ開放時も蓋側に保持されるため、現地電池交換時のネジ紛失・内部落下短絡リスクをゼロ化。"
+      ],
+      "formula": {
+        "expression": "α_cam > β_thread (Nord-Lock® DIN 25201 NL3)  ⇒  純機械ウェッジロック (Junker振動試験 緩み 0%)",
+        "description": "DIN 25201 カム楔角 α > ねじリード角 β の機械ロック座金と PEM® キャプティブねじで現場保守と耐震締結を両立。"
+      },
+      "nextGenInnovation": "航空・鉄道・半導体装置標準の PEM® PF11M キャプティブ＋Nord-Lock® DIN 25201 締結系。",
+      "specs": [
+        {
+          "label": "脱落防止ねじ",
+          "value": "PEM® PF11M ローレットばね付キャプティブねじ (MAThread® / ATCA準拠) × 2"
+        },
+        {
+          "label": "楔ロック座金",
+          "value": "Nord-Lock® DIN 25201 NL3 (SUS316 2枚組カムウェッジ座金) × 4座"
+        },
+        {
+          "label": "配置位置",
+          "value": "底面ハッチ左右 (X=-69.9/-38.1) & W182 外周 (X=±57.15, Z=±9.2)"
+        }
+      ],
+      "references": [
+        "DIN 25201-4:2015 Design Guide for Railway Vehicles — Bolted Joints & Wedge-Locking Washers (Nord-Lock®)",
+        "PennEngineering (PEM®), \"PF11M / PF11MF Captive Panel Screws with MAThread® Anti-Cross-Thread Datasheet\"",
+        "Nord-Lock Group, \"Junker Vibration Test (DIN 65151) Performance of NL3 Wedge-Locking Washers\""
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-zeolite4a-cartridge",
+      "order": 434,
+      "swatchColor": "#fbf8f0",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -11,
+        8
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -11,
+        8
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W434. 台座内部 交換・再生式 Zeolite 4A モレキュラーシーブ (0.4nm細孔, 22 wt%吸湿) 光学防湿除湿カートリッジ",
+      "subtitle": "Plinth Internal Regenerable Zeolite 4A Molecular Sieve (0.4nm Pore, 22 wt%) Optical Desiccant Cartridge",
+      "category": "光学ベンチ台座 / 再生式ゼオライト4A光学防湿",
+      "plainAnalogy": "湿度計カード（W315）は湿気を測るだけです。水分子（0.28nm）だけをピッタリ閉じ込める0.4nmの結晶細孔ゼオライト4Aを多孔ステンレス籠へ封入し、底面ハッチから交換・加熱再生できる本格除湿ユニットです。",
+      "summary": "内部前面レーン中央右（X=+41.0, Y=+1.92, Z=+2.95, 長 13.6 mm）へ収容された Zeolite Molecular Sieve 4A（細孔径 0.4 nm, 平衡吸湿容量 22 wt%, 嵩密度 770 g/L, 200–300°C 加熱再生可能）多孔 SUS316 マイクロケージ封入光学防湿カートリッジ。",
+      "opticsAndPhysics": [
+        "シリカゲルと異なり低相対湿度域（< 20% RH）でも急峻な Type-I 吸着等温線を維持する 0.4 nm 細孔ゼオライト 4A により、密閉筐体内の水分を露点 -20°C 以下へ長期保持。",
+        "化学反応を伴わない物理吸着のため、定期保守時に 250°C オーブンで 2 時間加熱すれば吸湿能力を 100% 再生して繰り返し使用可能。"
+      ],
+      "formula": {
+        "expression": "d_pore(Zeolite 4A) = 0.40 nm > d_H2O(0.28 nm),   Capacity = 22 wt% (Regen @ 200–300°C)",
+        "description": "0.4 nm 細孔モレキュラーシーブ 4A により低湿域まで強力除湿し、200–300°C 加熱再生で半永久運用。"
+      },
+      "nextGenInnovation": "光学防衛機器・宇宙カメラ標準の交換・加熱再生式 Zeolite 4A SUS316 除湿カートリッジ。",
+      "specs": [
+        {
+          "label": "吸着材",
+          "value": "Zeolite Molecular Sieve 4A (細孔 0.4 nm / 22 wt% 吸湿 / 770 g/L)"
+        },
+        {
+          "label": "再生・筐体",
+          "value": "200–300°C 加熱再生可 / 穴あき SUS316 マイクロケージ封入"
+        },
+        {
+          "label": "配置位置",
+          "value": "内部前面貫通レーン右 (X=+41.0, lY=+1.92, Z=+2.95, 長 13.6 mm)"
+        }
+      ],
+      "references": [
+        "Zeochem / UOP Honeywell, \"Molecular Sieve Type 4A (0.4 nm Pore, 22 wt% Water Capacity) Technical Data Sheet\"",
+        "MIL-D-3464E / DIN 55473 Desiccants for Optical & Electronic Sealed Instrument Enclosures",
+        "Breck, D. W., \"Zeolite Molecular Sieves: Structure, Chemistry, and Use\", Wiley (Type-I Adsorption Isotherm)"
+      ],
+      "diagramType": "welcome_optical_plinth"
+    },
+    {
+      "id": "welcome-plinth-dguv-nato-rigging",
+      "order": 435,
+      "swatchColor": "#475569",
+      "groupKey": "optical_plinth",
+      "assembledPos": [
+        0,
+        -17,
+        0
+      ],
+      "explodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "integratedExplodeOffset": [
+        0,
+        -50,
+        0
+      ],
+      "edgeOpacity": 0.24,
+      "standaloneOnly": true,
+      "title": "W435. 公共・舞台高所設置 DGUV V17 (BGV-C1) SUS316 落下防止セーフティアンカー環 & STANAG 4694 (21.2mm) NATOレール",
+      "subtitle": "Plinth Public/Stage Rigging DGUV V17 (BGV-C1) SUS316 Safety Anchor Rings & STANAG 4694 (21.2mm) NATO Rail",
+      "category": "光学ベンチ台座 / 公共安全落下防止・NATOレール",
+      "plainAnalogy": "美術館の壁面や舞台トラスへ高所設置する際に法規上必須となる「独立した二次落下防止ワイヤー（DIN 56927）を掛ける鍛造ステンレス安全環」と、シネマ機材を1秒着脱できる国際規格21.2mm NATOレールです。",
+      "summary": "底面リギングベース両端空き域（X=-74.5 / +78.5, Z=0.0）の DGUV Vorschrift 17（旧 BGV-C1 / DGUV 215-313）準拠 SUS316 鍛造落下防止セーフティアンカー環対（DIN 56927 クイックリンク対応, 落下距離 < 20 cm）＋底面前左空きポケット（X∈[-34.0..-12.8], 幅 21.2 mm 厳密基準, Z∈[+3.2..+7.2]）の STANAG 4694 NATO クイックリリースレール。",
+      "opticsAndPhysics": [
+        "公共展示空間・舞台の上空設置に関する欧州最高安全規則 DGUV V17（BGV-C1）に基づき、主固定具（W351/W404）から機械的に完全独立した鍛造 SUS316 二次落下防止アイ（安全率 10:1）を両翼へ配備。",
+        "STANAG 4694（基準幅 21.20 +0/-0.13 mm, 45°±20′ ダブテール斜面）NATO アクセサリーレールにより、C スタンド・マジックアーム・モニター・外部センサーを無工具クイック装着可能。"
+      ],
+      "formula": {
+        "expression": "W_NATO = 21.20 (+0/-0.13) mm (STANAG 4694, 45°),   SF_safety ≥ 10:1,   h_drop < 20 cm (DGUV V17)",
+        "description": "DGUV V17 独立二次落下防止アンカー環と STANAG 4694 21.2 mm NATO レールで公共高所設置法規を完全充足。"
+      },
+      "nextGenInnovation": "欧州舞台安全規格 DGUV V17 (BGV-C1) × シネマ/防衛 STANAG 4694 NATO レールの底面統合。",
+      "specs": [
+        {
+          "label": "落下防止規格",
+          "value": "DGUV V17 (BGV-C1) / DGUV 215-313 鍛造 SUS316 安全環対 (DIN 56927対応)"
+        },
+        {
+          "label": "NATOレール",
+          "value": "STANAG 4694 準拠 (幅 21.20 +0/-0.13 mm / 45°±20′ ダブテール)"
+        },
+        {
+          "label": "配置位置",
+          "value": "底面両翼安全環 (X=-74.5/+78.5, Z=0) & NATOレール (X[-34.0..-12.8], Z[+3.2..+7.2])"
+        }
+      ],
+      "references": [
+        "DGUV Vorschrift 17 (formerly BGV-C1) & DGUV Information 215-313, \"Safety at Events and Productions — Secondary Safety Bonds\"",
+        "NATO Standardization Agreement STANAG 4694 (2009), \"NATO Accessory Rail — 21.2 mm +0/-0.13 mm Geometry\"",
+        "DIN 56927 Wire Rope Safety Bonds & Quick-Connect Links for Overhead Stage & Museum Rigging"
       ],
       "diagramType": "welcome_optical_plinth"
     }

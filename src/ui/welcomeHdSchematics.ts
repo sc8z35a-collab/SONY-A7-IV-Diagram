@@ -871,31 +871,31 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
       });
 
     // =========================================================================
-    // 8. WLK-360 OPTICAL BENCH PLINTH & 360-PART MASTER SYSTEM ARCHITECTURE
+    // 8. WLK-435 OPTICAL BENCH PLINTH & 435-PART MASTER SYSTEM ARCHITECTURE
     // =========================================================================
     case 'welcome_optical_plinth':
       return wrapWelcomeHdSvg({
         badge: 'WLK-08',
-        stdTag: 'JIS B7513 Grade-0 / WLK-360',
-        title: 'WLK-360 光学ベンチ基準定盤 & 全360パーツ実動作システム系統図',
-        analogy: '4文字の独立光学モジュールを±10μm平面度で整列し、電源・制御・知覚・音響を統合するカメラ品質の頭脳台座',
+        stdTag: 'JIS B7513 Grade-0 / WLK-435',
+        title: 'WLK-435 光学ベンチ基準定盤 & 全435パーツ実動作システム系統図',
+        analogy: '4文字(各62p)の独立光学モジュールを±10μm平面度で整列し、4重人感・PoE++・DMX512・JJY電波時計を統合する計装台座',
         accent: '#e65a28',
         accentSoft: '#fff7ed',
         body: `
           <!-- Top: 4 Glyphs Mounted at Precision Pitch on Optical Bench Plinth -->
           <g transform="translate(30, 86)">
             ${[
-              { x: 46, ch: 'よ', pos: 'X=-66mm', cnt: '57 parts' },
-              { x: 196, ch: 'う', pos: 'X=-22mm', cnt: '56 parts' },
-              { x: 346, ch: 'こ', pos: 'X=+22mm', cnt: '56 parts' },
-              { x: 496, ch: 'そ', pos: 'X=+66mm', cnt: '56 parts' },
+              { x: 46, ch: 'よ', pos: 'X=-66mm', cnt: '62 parts' },
+              { x: 196, ch: 'う', pos: 'X=-22mm', cnt: '62 parts' },
+              { x: 346, ch: 'こ', pos: 'X=+22mm', cnt: '62 parts' },
+              { x: 496, ch: 'そ', pos: 'X=+66mm', cnt: '62 parts' },
             ]
               .map(
                 (g) => `
               <rect x="${g.x}" y="6" width="118" height="72" rx="8" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
               <text x="${g.x + 59}" y="42" text-anchor="middle" font-size="24" font-weight="900" fill="#0f172a">${g.ch}</text>
               <text x="${g.x + 59}" y="58" text-anchor="middle" font-size="8.2" font-weight="700" fill="#0284c7" style="font-family:${FONT_MONO};">${g.pos}</text>
-              <text x="${g.x + 59}" y="71" text-anchor="middle" font-size="8" font-weight="700" fill="#64748b">${g.cnt} (CNC+光学+PWM)</text>
+              <text x="${g.x + 59}" y="71" text-anchor="middle" font-size="7.2" font-weight="700" fill="#64748b">${g.cnt} (CNC+光学+熱)</text>
               <!-- Dovetail + 6-pin pogo stem -->
               <rect x="${g.x + 42}" y="78" width="34" height="14" rx="2" fill="url(#wlk08-gold)" stroke="#a16207"/>
             `
@@ -911,54 +911,54 @@ export function renderWelcomeHdSchematicSvg(type: PartExplanation['diagramType']
             <rect x="38" y="102" width="584" height="7" rx="3" fill="#e65a28"/>
 
             <!-- Internal Subsystems inside Plinth Cutaway -->
-            <rect x="44" y="116" width="122" height="30" rx="4" fill="#065f46" stroke="#10b981"/>
-            <text x="105" y="130" text-anchor="middle" font-size="8.4" font-weight="800" fill="#ffffff">USB-C PD 65W</text>
-            <text x="105" y="141" text-anchor="middle" font-size="7.6" fill="#a7f3d0">2S LiFePO4 UPS</text>
+            <rect x="44" y="116" width="128" height="30" rx="4" fill="#065f46" stroke="#10b981"/>
+            <text x="108" y="130" text-anchor="middle" font-size="8.1" font-weight="800" fill="#ffffff">PD 65W / PoE++ 71W</text>
+            <text x="108" y="141" text-anchor="middle" font-size="7.3" fill="#a7f3d0">eFuse+LiFePO4+予熱/破裂弁</text>
 
-            <rect x="178" y="116" width="152" height="30" rx="4" fill="#312e81" stroke="#818cf8"/>
-            <text x="254" y="130" text-anchor="middle" font-size="8.4" font-weight="800" fill="#ffffff">6層マザーボード+EMI缶</text>
-            <text x="254" y="141" text-anchor="middle" font-size="7.6" fill="#c7d2fe">STM32H743 + CAN-FD</text>
+            <rect x="182" y="116" width="150" height="30" rx="4" fill="#312e81" stroke="#818cf8"/>
+            <text x="257" y="130" text-anchor="middle" font-size="8.1" font-weight="800" fill="#ffffff">絶縁CAN-FD / DMX / PTP</text>
+            <text x="257" y="141" text-anchor="middle" font-size="7.3" fill="#c7d2fe">STM32H7+7.5fs+JJY+OLED</text>
 
-            <rect x="342" y="116" width="130" height="30" rx="4" fill="#831843" stroke="#f472b6"/>
-            <text x="407" y="130" text-anchor="middle" font-size="8.4" font-weight="800" fill="#ffffff">8×8 ToF + RGB照度</text>
-            <text x="407" y="141" text-anchor="middle" font-size="7.6" fill="#fbcfe8">VL53L5CX + 状態LED</text>
+            <rect x="342" y="116" width="134" height="30" rx="4" fill="#831843" stroke="#f472b6"/>
+            <text x="409" y="130" text-anchor="middle" font-size="8.1" font-weight="800" fill="#ffffff">4重人感 + 11ch分光</text>
+            <text x="409" y="141" text-anchor="middle" font-size="7.3" fill="#fbcfe8">ToF+60GHz+UWB+遠IR+BG40</text>
 
-            <rect x="484" y="116" width="132" height="30" rx="4" fill="#1e3a8a" stroke="#60a5fa"/>
-            <text x="550" y="130" text-anchor="middle" font-size="8.4" font-weight="800" fill="#ffffff">N52音響 + 光学ダイヤル</text>
-            <text x="550" y="141" text-anchor="middle" font-size="7.6" fill="#bfdbfe">3Wバスレフ + 24click</text>
+            <rect x="486" y="116" width="130" height="30" rx="4" fill="#1e3a8a" stroke="#60a5fa"/>
+            <text x="551" y="130" text-anchor="middle" font-size="8.1" font-weight="800" fill="#ffffff">音響+175Hz LRA+定盤</text>
+            <text x="551" y="141" text-anchor="middle" font-size="7.3" fill="#bfdbfe">M4×0.25脚+ARRI+DGUV</text>
 
-            <!-- Sorbothane Anti-Vibration Feet -->
+            <!-- Sorbothane Anti-Vibration Feet + M4x0.25 Leveling Feet -->
             <rect x="64" y="154" width="38" height="10" rx="3" fill="#334155"/>
             <rect x="298" y="154" width="64" height="10" rx="3" fill="#334155"/>
             <rect x="558" y="154" width="38" height="10" rx="3" fill="#334155"/>
 
             <!-- Datum Dimension Line -->
             <line x1="24" y1="180" x2="636" y2="180" stroke="#0284c7" stroke-width="1.4" marker-start="url(#wlk08-arr-b)" marker-end="url(#wlk08-arr-b)"/>
-            <rect x="208" y="170" width="244" height="20" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
+            <rect x="202" y="170" width="256" height="20" rx="5" fill="#f0f9ff" stroke="#0284c7"/>
             <text x="330" y="183.5" text-anchor="middle" font-size="9" font-weight="800" fill="#0369a1" style="font-family:${FONT_MONO};">光学基準定盤 194.0 mm (±0.010 mm 平面度)</text>
 
             <!-- Bottom Part Count Breakdown Strip -->
             <rect x="10" y="202" width="640" height="34" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
-            <text x="330" y="223" text-anchor="middle" font-size="9.4" font-weight="800" fill="#0f172a">
-              総構成 360実動作パーツ = 「よ」57 + 「う」56 + 「こ」56 + 「そ」56 + 光学ベンチ台座 135 (意味のない装飾部品 0)
+            <text x="330" y="223" text-anchor="middle" font-size="9.2" font-weight="800" fill="#0f172a">
+              総構成 435実動作パーツ = 「よ」62 + 「う」62 + 「こ」62 + 「そ」62 + 光学ベンチ台座 187 (装飾部品 0)
             </text>
           </g>
         `,
         cards: [
           {
-            label: 'A6061-T6 基準定盤＆SUS端蓋',
-            line1: '194mm肉厚アルミ定盤が4文字の重心と平面度±10μmを維持',
-            line2: '左右SUS304バヨネット端蓋とSorbothane防振脚で共振を吸収',
+            label: '定盤メトロロジー＆安全リギング',
+            line1: 'コーナーキューブ・Spectralon白板・M4微調脚',
+            line2: 'ARRI/Arca-Swiss・NATOレール・DGUV安全環',
           },
           {
-            label: '6層HDIマザーボード＆EMI缶',
-            line1: '480MHz Cortex-M7＋Wi-Fi/BLE＋CAN-FDを1枚の高密度基板へ統合',
-            line2: 'ニッケル洋白シールド缶が480MHz高調波を-34dB以上減衰',
+            label: '4重人感融合＆舞台/建築インフラ',
+            line1: 'ToF・60GHzレーダー・UWB・遠IR＋11ch分光',
+            line2: 'ix Industrial PoE++・PTP・DMX512・5kV CAN',
           },
           {
-            label: '100%実製造可能な機能設計',
-            line1: 'CNC切削・SMD実装・ダブテール締結の現実工程でそのまま製造可能',
-            line2: '分解スライダーで全360パーツの内部機構と熱・光・電源経路を検証',
+            label: '100%実製造可能な435パーツ設計',
+            line1: 'eFuse・能動バランサ・0℃予熱・破裂弁・TEC',
+            line2: '分解スライダーで全435パーツの熱・光経路を検証',
           },
         ],
       });

@@ -489,6 +489,10 @@ src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	WELCOME_GLYPH_PRECISION_DEF
 src/assemblies/welcome/welcomeGlyphPrecisionParts.ts	buildWelcomeGlyphPrecisionParts	func	997	999	export function buildWelcomeGlyphPrecisionParts(mats: V2MaterialLibrary): CadPart[]
 src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts	WELCOME_GLYPH_ULTRA_DETAIL_DEFS	const	53	724	WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- 「よ」 Wave A (W266 - W269) ---
 src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts	buildWelcomeGlyphUltraDetailParts	func	726	728	export function buildWelcomeGlyphUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomeGlyphWaveCParts.ts	WELCOME_GLYPH_WAVE_C_DEFS	const	110	872	WELCOME_GLYPH_WAVE_C_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- A. 「よ」モジュール (+3: W361 - W363) ---
+src/assemblies/welcome/welcomeGlyphWaveCParts.ts	buildWelcomeGlyphWaveCParts	func	874	876	export function buildWelcomeGlyphWaveCParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomeGlyphWaveDParts.ts	WELCOME_GLYPH_WAVE_D_DEFS	const	15	473	WELCOME_GLYPH_WAVE_D_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- 「よ」 Wave D (+2: W406 - W407) ---
+src/assemblies/welcome/welcomeGlyphWaveDParts.ts	buildWelcomeGlyphWaveDParts	func	475	477	export function buildWelcomeGlyphWaveDParts(mats: V2MaterialLibrary): CadPart[]
 src/assemblies/welcome/welcomePartEnrichment.ts	WelcomeDiagramType	type	3	11	export type WelcomeDiagramType =
 src/assemblies/welcome/welcomePartEnrichment.ts	EnrichableWelcomeDef	interface	295	313	export interface EnrichableWelcomeDef
 src/assemblies/welcome/welcomePartEnrichment.ts	enrichWelcomeDef	func	319	355	export function enrichWelcomeDef<T extends EnrichableWelcomeDef>(def: T, index: number): T
@@ -502,6 +506,10 @@ src/assemblies/welcome/welcomePlinthPrecisionParts.ts	WELCOME_PLINTH_PRECISION_D
 src/assemblies/welcome/welcomePlinthPrecisionParts.ts	buildWelcomePlinthPrecisionParts	func	1183	1185	export function buildWelcomePlinthPrecisionParts(mats: V2MaterialLibrary): CadPart[]
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	WELCOME_PLINTH_ULTRA_DETAIL_DEFS	const	42	1424	WELCOME_PLINTH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[] = [ makePlinthUltraDef(
 src/assemblies/welcome/welcomePlinthUltraDetailParts.ts	buildWelcomePlinthUltraDetailParts	func	1426	1428	export function buildWelcomePlinthUltraDetailParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomePlinthWaveCParts.ts	WELCOME_PLINTH_WAVE_C_DEFS	const	47	1422	WELCOME_PLINTH_WAVE_C_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- E. Power / Hot-Swap / Galvanic Isol…
+src/assemblies/welcome/welcomePlinthWaveCParts.ts	buildWelcomePlinthWaveCParts	func	1424	1426	export function buildWelcomePlinthWaveCParts(mats: V2MaterialLibrary): CadPart[]
+src/assemblies/welcome/welcomePlinthWaveDParts.ts	WELCOME_PLINTH_WAVE_D_DEFS	const	46	1071	WELCOME_PLINTH_WAVE_D_DEFS: readonly WelcomeExpansionPartDef[] = [ // --- J. Stage / Museum / Building Networ…
+src/assemblies/welcome/welcomePlinthWaveDParts.ts	buildWelcomePlinthWaveDParts	func	1073	1075	export function buildWelcomePlinthWaveDParts(mats: V2MaterialLibrary): CadPart[]
 src/core/capture_bridge.ts	CaptureMode	type	12	12	export type CaptureMode = 'ui' | 'cad' | 'diagram' | 'explanation' | 'full' | 'custom';
 src/core/capture_bridge.ts	CaptureCameraState	interface	14	22	export interface CaptureCameraState
 src/core/capture_bridge.ts	CaptureUnitWorldBox	interface	24	29	export interface CaptureUnitWorldBox
@@ -1365,4 +1373,4 @@ src/units/registry.ts	loadRegisteredUnit	func	213	219	export async function load
 src/units/sensor.ts	createSensorUnit	func	82	133	export function createSensorUnit(): OptimizedUnit
 src/units/sensor_fab.ts	createSensorFabUnit	func	86	173	export function createSensorFabUnit(): OptimizedUnit
 src/units/shutter.ts	createShutterUnit	func	17	63	export function createShutterUnit(): OptimizedUnit
-src/units/welcome.ts	createWelcomeUnit	func	21	39	export function createWelcomeUnit(): OptimizedUnit
+src/units/welcome.ts	createWelcomeUnit	func	25	47	export function createWelcomeUnit(): OptimizedUnit
