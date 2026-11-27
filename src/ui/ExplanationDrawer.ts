@@ -13,7 +13,50 @@ export interface ExplanationDrawerHandlers {
   onOpenOpticsMotion?: (scenario: OpticalScenarioId, partId: string) => void;
   onSwitchMode?: (mode: ScaleMode) => void;
   onSwitchFabVolume?: (vol: SensorFabVolume) => void;
+  onOpenMiraiReport?: (fhId: string) => void;
+  onOpenMiraiGlossary?: (glossaryId: string) => void;
+  onMiraiEditionChange?: (edition: 'beginner' | 'expert') => void;
 }
+
+const MIRAI_EDITION_KEY = 'mirai_2028_edition';
+const MIRAI_AXIS_LABELS = ['物理・構造突破', '量産民主化', '既存比優位性', '撮影体験革命', 'ASI/AI加速'] as const;
+const MIRAI_GLOSSARY_SHORT_LABELS: Readonly<Record<string, string>> = {
+  '001': 'SPAD',
+  '002': 'QIS',
+  '003': 'ベイヤー配列',
+  '004': 'ペロブスカイト',
+  '008': '暗電流',
+  '009': 'kTC雑音',
+  '010': 'ショット雑音',
+  '012': 'ダイナミックレンジ',
+  '014': 'メタサーフェス／DOE',
+  '015': '群遅延限界',
+  '016': 'アッベ数',
+  '017': 'エタンデュ／入射瞳',
+  '018': 'ナノインプリント(NIL)',
+  '020': '逆設計(Inverse Design)',
+  '021': '色収差',
+  '022': '自由曲面光学',
+  '048': '回折限界',
+  '051': 'PSF(点像分布関数)',
+  '055': 'Micro-OLED',
+  '056': 'True-RGBタンデム',
+  '057': 'MicroLED',
+  '058': '青色PHOLED',
+  '059': 'LTPOバックプレーン',
+  '070': '超音波MEMS空冷',
+  '071': '水密隔離カプセル',
+  '072': '熱収支(TDP)',
+  '073': 'IP68防水防塵',
+  '074': 'トポロジー最適化',
+  '098': '超知能(ASI)',
+  '101': '歩留まり',
+  '102': 'エージェンティックEDA',
+  '103': 'TCAD',
+  '106': 'Cu-Cuハイブリッド接合',
+  '108': '自律ロボット実験室',
+  '111': '固有色科学',
+};
 
 type SchematicRendererFn = (type: PartExplanation['diagramType']) => string;
 
@@ -140,6 +183,17 @@ export class ExplanationDrawer {
   private handlers: ExplanationDrawerHandlers;
   private renderSeq = 0;
   private activeTab: DrawerViewTab = 'all';
+  private miraiEdition: 'beginner' | 'expert' = (() => {
+    try {
+      const saved = window.localStorage.getItem(MIRAI_EDITION_KEY);
+      if (saved === 'beginner' || saved === 'expert') return saved;
+    } catch {
+      // ignore storage errors
+    }
+    return 'beginner';
+  })();
+  private currentPart: CadPart | null = null;
+  private currentExp: PartExplanation | null = null;
   private latestTitle = '';
   private latestSvg = '';
 
@@ -646,6 +700,7 @@ export class ExplanationDrawer {
 
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
     const isHdDiagram = (svg: string) =>
+      svg.includes('data-mirai-hd="1"') ||
       svg.includes('data-evf-hd="1"') ||
       svg.includes('data-lcd-hd="1"') ||
       svg.includes('data-fab-hd="1"') ||
@@ -691,8 +746,113 @@ export class ExplanationDrawer {
     };
     const stackStripHtml = buildBionzStackStrip(syncSvg);
 
+    const mirai = exp.mirai;
+    const isMiraiBeginner = Boolean(mirai && this.miraiEdition === 'beginner');
+    this.currentPart = part;
+    this.currentExp = exp;
+
+    const miraiTopBarHtml = mirai
+      ? `
+      <div class="mirai-drawer-top">
+        <div class="mirai-drawer-meta-pills">
+          <span class="mirai-fh-code">${mirai.fhId}</span>
+          <span class="mirai-badge ${mirai.badge === '量産民主化' ? 'badge-demo' : mirai.badge === '超知能加速' ? 'badge-asi' : 'badge-wish'}">${mirai.badge}</span>
+          <span class="mirai-eta-pill">${mirai.eta}</span>
+        </div>
+        <div class="mirai-edition-toggle mirai-drawer-ed-toggle" role="group" aria-label="解説切替">
+          <button type="button" class="mirai-ed-btn${this.miraiEdition === 'beginner' ? ' active' : ''}" data-mirai-ed="beginner">やさしい</button>
+          <button type="button" class="mirai-ed-btn${this.miraiEdition === 'expert' ? ' active' : ''}" data-mirai-ed="expert">専門</button>
+        </div>
+      </div>`
+      : '';
+
+    const miraiScoreCardHtml = mirai
+      ? `
+      <div class="mirai-drawer-score-card exp-block-text">
+        <div class="mirai-drawer-score-head">
+          <div>
+            <div class="mirai-score-lbl">FH MIRAI 2028 革新性スコア（科学クリアリング済）</div>
+            <div class="mirai-score-sub">物理・量産・優位性・体験・ASI加速の5軸評価</div>
+          </div>
+          <div class="mirai-score-big">${mirai.score}<span> / 100</span></div>
+        </div>
+        <div class="mirai-axes-list">
+          ${MIRAI_AXIS_LABELS.map(
+            (lbl, idx) => `
+            <div class="mirai-axis-row">
+              <span class="mirai-axis-lbl">${lbl}</span>
+              <div class="mirai-axis-track"><div class="mirai-axis-fill" style="width:${(mirai.axes[idx] / 20) * 100}%"></div></div>
+              <span class="mirai-axis-val">${mirai.axes[idx]}/20</span>
+            </div>`
+          ).join('')}
+        </div>
+        <p class="mirai-score-rationale">${mirai.scoreRationale}</p>
+      </div>`
+      : '';
+
+    const miraiCompareHtml =
+      mirai && mirai.comparisonRows.length > 0
+        ? `
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">2026年現行技術 vs 2028年未来技術</div>
+        <table class="mirai-compare-table">
+          <thead><tr><th>比較項目</th><th>2026現行</th><th>2028未来 (${mirai.fhId})</th></tr></thead>
+          <tbody>
+            ${mirai.comparisonRows
+              .map(
+                (r) =>
+                  `<tr><td><strong>${r.metric}</strong></td><td>${r.current2026}</td><td class="mirai-td-future">${r.future2028}</td></tr>`
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>`
+        : '';
+
+    const miraiGlossaryAndActionsHtml = mirai
+      ? `
+      ${
+        mirai.glossaryIds.length > 0
+          ? `<div class="exp-section exp-block-text">
+              <div class="exp-section-heading">関連専門用語（別冊113語・タップで辞典表示）</div>
+              <div class="mirai-glossary-chips">
+                ${mirai.glossaryIds
+                  .map(
+                    (gid) =>
+                      `<button type="button" class="mirai-gloss-chip" data-mirai-gloss="${gid}">#${gid} ${MIRAI_GLOSSARY_SHORT_LABELS[gid] ?? '用語解説'}</button>`
+                  )
+                  .join('')}
+              </div>
+            </div>`
+          : ''
+      }
+      <div class="mirai-drawer-actions exp-block-text">
+        <button type="button" class="mirai-drawer-cta is-primary" data-mirai-open-report="${mirai.fhId}">Vol.0${mirai.volume} レポート全文を読む (${this.miraiEdition === 'beginner' ? 'やさしい' : '専門'})</button>
+        ${
+          mirai.baselineMode && this.handlers.onSwitchMode
+            ? `<button type="button" class="mirai-drawer-cta" data-mirai-baseline="${mirai.baselineMode}">現行2026実機 (${mirai.baselineMode}) と比較</button>`
+            : ''
+        }
+      </div>
+      ${
+        mirai.sourceUrls.length > 0
+          ? `<div class="exp-section exp-block-text exp-references-section">
+              <div class="exp-section-heading">検証済み一次情報・根拠リンク</div>
+              <ul class="mirai-source-list">
+                ${mirai.sourceUrls
+                  .map(
+                    (s) =>
+                      `<li><a href="${s.url}" target="_blank" rel="noopener noreferrer">${s.label}</a></li>`
+                  )
+                  .join('')}
+              </ul>
+            </div>`
+          : ''
+      }`
+      : '';
+
     const referencesHtml =
-      exp.references && exp.references.length > 0
+      !mirai && exp.references && exp.references.length > 0
         ? `
       <div class="exp-section exp-block-text exp-references-section">
         <div class="exp-section-heading">出典・準拠規格・技術リファレンス</div>
@@ -707,14 +867,56 @@ export class ExplanationDrawer {
       </div>`
         : '';
 
-    this.latestTitle = exp.title;
+    const displayTitle = isMiraiBeginner && mirai ? mirai.beginnerTitle : exp.title;
+    const displaySubtitle = isMiraiBeginner && mirai ? `${exp.title} ｜ ${exp.subtitle}` : exp.subtitle;
+    this.latestTitle = displayTitle;
     this.latestSvg = syncSvg;
 
+    const mainExplanationBodyHtml =
+      isMiraiBeginner && mirai
+        ? `
+      ${analogyHtml}
+      <p class="exp-summary exp-block-text">${mirai.beginnerSummary}</p>
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">やさしくわかる 3つのポイント</div>
+        <ul class="exp-list">${mirai.beginnerPoints.map((pt) => `<li>${pt}</li>`).join('')}</ul>
+      </div>
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">正直な課題・2028年実用化へのカギ</div>
+        <div class="mirai-caution-box">${mirai.beginnerCaution}</div>
+      </div>
+      ${miraiCompareHtml}
+      ${miraiScoreCardHtml}
+      ${miraiGlossaryAndActionsHtml}
+    `
+        : `
+      ${analogyHtml}
+      <p class="exp-summary exp-block-text">${exp.summary}</p>
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">光学的・科学的原理</div>
+        <ul class="exp-list">${physicsListHtml}</ul>
+        ${formulaHtml}
+      </div>
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">${mirai ? '2026.12–2028.12 の技術革新' : '最新世代（2024–2026）の技術革新'}</div>
+        <div class="exp-innovation">${exp.nextGenInnovation}</div>
+      </div>
+      <div class="exp-section exp-block-text">
+        <div class="exp-section-heading">主要物理・設計諸元</div>
+        <div class="exp-specs">${specsHtml}</div>
+      </div>
+      ${miraiCompareHtml}
+      ${miraiScoreCardHtml}
+      ${miraiGlossaryAndActionsHtml}
+      ${referencesHtml}
+    `;
+
     this.bodyEl.innerHTML = `
+      ${miraiTopBarHtml}
       <div class="exp-header-block">
         <div class="exp-category">${exp.category}</div>
-        <h2 class="exp-title">${exp.title}</h2>
-        <div class="exp-subtitle">${exp.subtitle}</div>
+        <h2 class="exp-title">${displayTitle}</h2>
+        <div class="exp-subtitle">${displaySubtitle}</div>
       </div>
 
       <div data-stack-strip-host>${stackStripHtml}</div>
@@ -737,27 +939,7 @@ export class ExplanationDrawer {
       ${fabVolBtnHtml}
       ${v2SwitchBtnHtml}
 
-      ${analogyHtml}
-
-      <p class="exp-summary exp-block-text">${exp.summary}</p>
-
-      <div class="exp-section exp-block-text">
-        <div class="exp-section-heading">光学的・科学的原理</div>
-        <ul class="exp-list">${physicsListHtml}</ul>
-        ${formulaHtml}
-      </div>
-
-      <div class="exp-section exp-block-text">
-        <div class="exp-section-heading">最新世代（2024–2026）の技術革新</div>
-        <div class="exp-innovation">${exp.nextGenInnovation}</div>
-      </div>
-
-      <div class="exp-section exp-block-text">
-        <div class="exp-section-heading">主要物理・設計諸元</div>
-        <div class="exp-specs">${specsHtml}</div>
-      </div>
-
-      ${referencesHtml}
+      ${mainExplanationBodyHtml}
     `;
 
     const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
@@ -775,7 +957,7 @@ export class ExplanationDrawer {
     }
 
     const triggerZoom = (rotated = false) => {
-      if (this.latestSvg) this.openLightbox(exp.title, this.latestSvg, rotated);
+      if (this.latestSvg) this.openLightbox(displayTitle, this.latestSvg, rotated);
     };
 
     contentEl?.addEventListener('click', () => triggerZoom(false));
@@ -791,6 +973,28 @@ export class ExplanationDrawer {
     this.bodyEl
       .querySelector('[data-diagram-open-landscape]')
       ?.addEventListener('click', () => triggerZoom(true));
+
+    // FH MIRAI 2028 top [やさしい | 専門] edition switcher
+    this.bodyEl.querySelectorAll<HTMLButtonElement>('[data-mirai-ed]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const nextEd = btn.dataset.miraiEd === 'expert' ? 'expert' : 'beginner';
+        this.setMiraiEdition(nextEd, true);
+      });
+    });
+    this.bodyEl.querySelectorAll<HTMLButtonElement>('[data-mirai-gloss]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const gid = btn.dataset.miraiGloss;
+        if (gid) this.handlers.onOpenMiraiGlossary?.(gid);
+      });
+    });
+    this.bodyEl.querySelector<HTMLButtonElement>('[data-mirai-open-report]')?.addEventListener('click', (e) => {
+      const fhId = (e.currentTarget as HTMLButtonElement).dataset.miraiOpenReport;
+      if (fhId) this.handlers.onOpenMiraiReport?.(fhId);
+    });
+    this.bodyEl.querySelector<HTMLButtonElement>('[data-mirai-baseline]')?.addEventListener('click', (e) => {
+      const m = (e.currentTarget as HTMLButtonElement).dataset.miraiBaseline as ScaleMode | undefined;
+      if (m) this.handlers.onSwitchMode?.(m);
+    });
 
     const ctaBtn = this.bodyEl.querySelector<HTMLButtonElement>('[data-open-optics-motion]');
     if (ctaBtn && this.handlers.onOpenOpticsMotion) {
@@ -814,6 +1018,25 @@ export class ExplanationDrawer {
     }
 
     this.bodyEl.scrollTop = 0;
+  }
+
+  public getMiraiEdition(): 'beginner' | 'expert' {
+    return this.miraiEdition;
+  }
+
+  public setMiraiEdition(edition: 'beginner' | 'expert', notify = false): void {
+    const changed = this.miraiEdition !== edition;
+    this.miraiEdition = edition;
+    try {
+      window.localStorage.setItem(MIRAI_EDITION_KEY, edition);
+    } catch {
+      // ignore
+    }
+    if (notify) this.handlers.onMiraiEditionChange?.(edition);
+    if (changed && this.currentPart && this.currentExp && this.drawerEl.classList.contains('is-open')) {
+      const seq = ++this.renderSeq;
+      this.renderPopulatedPart(this.currentPart, this.currentExp, seq);
+    }
   }
 
   public show(part: CadPart, isIsolated: boolean): void {

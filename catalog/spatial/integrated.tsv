@@ -137,37 +137,37 @@ body-tripod-block	B35	内部高荷重ステンレス三脚座ロードスプレ�
 body-batt-door-hinge	B36	縦位置グリップ対応・クイック脱着式バッテ	body	-54.5,-35.6,-18.5	24.5,3.86,6.91	-52,-52,-32	stainless_machined
 body-perimeter-screws	B37	ボディ外装24本色別・緩み止め付JIS精	body	0,0,0	128.08,71.99,65.08	0,0,-68	stainless_machined
 body-evf-tie-bracket	B38	ペンタ部内部鍛造ロールケージ骨格	body	0,47.6,-7.5	48.4,19.9,27.91	0,46,-24	stainless_machined
-evf-eyecup	#139	エルゴノミック遮光アイカップ	evf	0,39.5,-37.2	39.24,32.04,11.21	0,0,-56	ic_epoxy_dark
-evf-eyecup-latch	#140	アイカップ クイックリリース・ステンレス	evf	0,39.5,-34.6	32.5,23.6,2.34	-6,-24,-48	stainless_machined
-evf-antifog-window	#141	防曇密閉ダブルガラス接眼保護窓	evf	0,39.5,-32.2	29.3,23.5,3.5	0,0,-44	matte_black_anodized
-evf-eye-sensor	#142	ToF赤外線アイセンサー	evf	0,28.4,-30.6	16.6,10.31,4.2	0,-15,-34	matte_black_anodized
-evf-ir-leds	#143	視線入力AF用 850nm赤外線リングL	evf	0,39.5,-28	28.1,25.96,2.69	0,0,-30	ic_epoxy_dark
-evf-dichroic-mirror	#144	45° ダイクロイック・ホットミラー	evf	0,39.5,-22.2	28.95,19.41,19.41	0,0,-16	matte_black_anodized
-evf-gaze-camera	#145	視線入力AF 30.7万画素 赤外CMO	evf	0,25.4,-22.2	16.8,3.52,16.2	0,-18,-16	ic_epoxy_dark
-evf-lens-rear	#146	後群 大口径両面非球面 接眼レンズ	evf	0,39.5,-15.4	26.71,26.9,6.7	0,0,-2	magnesium_cast
-evf-lens-ed-doublet	#147	視度補正可動群：ED低分散＋高屈折ランタ	evf	0,39.5,-9.2	31.74,24.29,7.18	0,0,12	matte_chassis
-evf-diopter-rails	#148	視度可動レンズ 2軸センタレス研磨ガイド	evf	0,39.5,-9.2	27.4,18.95,21.6	-28,-14,12	stainless_machined
-evf-diopter-helicoid	#149	スパイラルカム溝ヘリコイド鏡筒スリーブ	evf	0,39.5,-9.2	30.17,27.27,11.56	30,8,12	stainless_machined
-evf-diopter-mech	#150	精密ヘリコイド視度調整ダイヤル	evf	15,39.5,-9.2	11.43,14.81,20.44	16,-24,12	magnesium_cast
-evf-lens-field	#151	前群 非球面フィールドフラットナー集光レ	evf	0,39.5,-2.4	23.4,22.69,5.19	0,0,26	matte_black_anodized
-evf-oled-panel	#152	0.64型 944万ドット 2層タンデム	evf	0,39.5,3.6	29.2,19.7,2.28	0,0,44	gold_plating
-evf-oled-alignment	#153	マイクロOLED 3点μm光軸チルト調整	evf	0,39.5,5.2	25.4,20.65,3.19	28,0,50	stainless_machined
-evf-tcon-pcb	#154	240Hz MIPI-DSI タイミング	evf	0,39.5,6.8	24.8,30.6,2.39	0,0,58	ic_epoxy_dark
-evf-thermal-sink	#155	マイクロOLED背面 銅/アルミ複合ヒー	evf	0,39.5,10.2	33.2,19.8,4.84	0,0,72	copper_thermal
-evf-magnesium-housing	#156	防塵防滴マグネシウム合金EVF鏡筒	evf	0,39.5,-12.5	37.99,30.78,45.56	0,29,4	magnesium_cast
-evf-eyepiece-shutter	#157	内蔵アイピース遮光シャッター幕	evf	0,39.5,-30	30.38,20.8,3.7	-26,8,-38	matte_black_anodized
-evf-gaze-ir-optics	#158	視線入力AF 850nm 狭帯域バンドパ	evf	0,26.5,-22.2	11.8,5.35,11.8	18,-16,-16	ic_epoxy_dark
-evf-diopter-lock-clutch	#159	プッシュロック式 視度調整ダイヤル	evf	19.6,39.5,-15.6	5.22,9.29,7.7	34,-24,12	stainless_machined
-evf-polarizer-qwp	#160	直線偏光板 ＋ λ/4 波長板	evf	0,39.5,0.65	21.3,21.3,1.52	0,0,35	matte_black_anodized
-evf-oled-mla-stack	#161	Micro-OLED オンチップ六角マイ	evf	0,39.5,2.55	16.8,13,0.66	-24,0,41	solder_silver
-evf-tcon-emi-shield	#162	240Hz MIPI-DSI TCON	evf	0,39.5,8.2	25.16,19.56,1.86	26,16,62	becu_spring
-evf-baffle-seal-kit	#163	EVF光学室 密閉防曇Oリングキット	evf	0,39.5,-12.5	33.14,29.93,36.55	-28,22,-6	stainless_machined
-evf-cavity-clamp	E26	EVF底面キャビティFPC抜け止めステン	evf	0,25.9,5.5	28.09,2.25,7.8	0,-28,36	stainless_machined
-evf-eyecup-subframe	E27	大型ディープアイカップ着脱用 4点ねじス	evf	0,39.5,-35.8	32.1,27.04,3.34	0,0,-68	stainless_machined
-evf-eyeaf-shims	E28	視線入力IRカメラ光軸±5μm校正マイク	evf	0,26.9,-22.2	18,3.2,14.6	24,-30,-24	brass_precision
-evf-desiccant-breather	E29	密閉光学室モレキュラーシーブ防曇乾燥剤カ	evf	14.8,45.7,-5.5	7.8,14.2,4.6	38,22,8	stainless_machined
-evf-ambient-photodiode	E30	EVF自動輝度・色温度適応 周囲光RGB	evf	-12.5,50.9,-26.5	7.4,14,2.57	-34,34,-36	ic_epoxy_dark
-evf-diopter-detent	E31	視度調整ダイヤル 0.1dptクリックデ	evf	16.2,38,-18.5	2.42,11.23,13.17	44,-8,-16	stainless_machined
+evf-eyecup	#139	エルゴノミック遮光アイカップ	evf	0,39.5,-39.46	39.1,31.9,13.65	0,0,-56	magnesium_cast
+evf-eyecup-latch	#140	アイカップ クイックリリース・ステンレス	evf	0,39.5,-35.34	32.4,23.6,1.28	-6,-24,-48	stainless_machined
+evf-antifog-window	#141	防曇密閉ダブルガラス接眼保護窓	evf	0,39.5,-31.8	25.2,19,1.88	0,0,-44	titanium_machined
+evf-eye-sensor	#142	ToF赤外線アイセンサー	evf	0,27.3,-30	19.05,3.9,3.26	0,-15,-34	titanium_machined
+evf-ir-leds	#143	視線入力AF用 850nm赤外線リングL	evf	0,39.5,-27.55	24.7,19.6,1.67	0,0,-30	ic_epoxy_dark
+evf-dichroic-mirror	#144	45° ダイクロイック・ホットミラー	evf	0,39.5,-23.6	24.35,6.8,6.8	0,0,-16	becu_spring
+evf-gaze-camera	#145	視線入力AF 30.7万画素 赤外CMO	evf	0,25.05,-23.6	14.8,3.04,10.3	0,-18,-16	ic_epoxy_dark
+evf-lens-rear	#146	後群 大口径両面非球面 接眼レンズ	evf	0,39.5,-15.4	23.68,23.73,3.7	0,0,-2	magnesium_cast
+evf-lens-ed-doublet	#147	視度補正可動群：ED低分散＋高屈折ランタ	evf	0,39.5,-9.4	31.07,20.84,4.86	0,0,12	matte_chassis
+evf-diopter-rails	#148	視度可動レンズ 2軸センタレス研磨ガイド	evf	0,39.5,-9	25.76,16.56,9.92	-28,-14,12	stainless_machined
+evf-diopter-helicoid	#149	スパイラルカム溝ヘリコイド鏡筒スリーブ	evf	0,39.5,-9.4	23.21,23.13,6.42	30,8,12	stainless_machined
+evf-diopter-mech	#150	精密ヘリコイド視度調整ダイヤル	evf	-19.2,39.5,-15.6	10.27,8.74,17.49	16,-24,12	magnesium_cast
+evf-lens-field	#151	前群 非球面フィールドフラットナー集光レ	evf	0,39.5,-2.42	21.2,20.9,3.41	0,0,26	titanium_machined
+evf-oled-panel	#152	0.64型 944万ドット 2層タンデム	evf	0,39.5,4.76	26.6,19.38,2.95	0,0,44	gold_plating
+evf-oled-alignment	#153	マイクロOLED 3点μm光軸チルト調整	evf	0,39.5,5.84	24,19.37,1.21	28,0,50	stainless_machined
+evf-tcon-pcb	#154	240Hz MIPI-DSI タイミング	evf	0,39.5,7.92	24.4,30.44,2.2	0,0,58	ic_epoxy_dark
+evf-thermal-sink	#155	マイクロOLED背面 銅/アルミ複合ヒー	evf	0,39.5,11.62	32.4,19.4,3.45	0,0,72	copper_thermal
+evf-magnesium-housing	#156	防塵防滴マグネシウム合金EVF鏡筒	evf	0,39.5,-12.5	45.2,28.2,43.75	0,29,4	stainless_machined
+evf-eyepiece-shutter	#157	内蔵アイピース遮光シャッター幕	evf	0,39.5,-30.15	28.16,19.2,1.41	-26,8,-38	matte_black_anodized
+evf-gaze-ir-optics	#158	視線入力AF 850nm 狭帯域バンドパ	evf	0,27.4,-23.6	7.64,4.22,7.6	18,-16,-16	ic_epoxy_dark
+evf-diopter-lock-clutch	#159	プッシュロック式 視度調整ダイヤル	evf	-20.42,39.5,-15.6	1.44,8.16,6.5	34,-24,12	stainless_machined
+evf-polarizer-qwp	#160	直線偏光板 ＋ λ/4 波長板	evf	0,39.5,0.1	20.62,20.54,0.91	0,0,35	titanium_machined
+evf-oled-mla-stack	#161	Micro-OLED オンチップ六角マイ	evf	0,39.5,1.6	16.8,13,0.4	-24,0,41	matte_chassis
+evf-tcon-emi-shield	#162	240Hz MIPI-DSI TCON	evf	0,39.5,9.28	25.1,19.52,1.63	26,16,62	becu_spring
+evf-baffle-seal-kit	#163	EVF光学室 密閉防曇Oリングキット	evf	0,39.5,-12.5	31.68,27.71,43.7	-28,22,-6	foam_felt_matte
+evf-cavity-clamp	E26	EVF底面キャビティFPC抜け止めステン	evf	0,24.3,6.9	26.87,1.73,1.77	0,-28,36	stainless_machined
+evf-eyecup-subframe	E27	大型ディープアイカップ着脱用 4点ねじス	evf	0,39.5,-36.52	32,26.7,1.46	0,0,-68	stainless_machined
+evf-eyeaf-shims	E28	視線入力IRカメラ光軸±5μm校正マイク	evf	0,25.6,-23.6	15.95,2.34,8.6	24,-30,-24	brass_precision
+evf-desiccant-breather	E29	密閉光学室モレキュラーシーブ防曇乾燥剤カ	evf	-16.57,46.6,-4.4	3.47,6.26,2.49	38,22,8	stainless_machined
+evf-ambient-photodiode	E30	EVF自動輝度・色温度適応 周囲光RGB	evf	-11.8,53.2,-28.2	3.6,1.51,4.95	-34,34,-36	ic_epoxy_dark
+evf-diopter-detent	E31	視度調整ダイヤル 0.1dptクリックデ	evf	-19.2,39.5,-15.6	1.01,8.38,8.13	44,-8,-16	stainless_machined
 shutter-front-cover	#170	フロント保護カバー板	shutter	0,0,17.6	74,54,1.6	0,0,56	matte_black_anodized
 shutter-dust-shield	#171	電源OFF時・独立センサー保護シールドカ	shutter	0,0,16.6	44.9,39.5,0.62	0,0,46	emi_shield_metal
 shutter-shield-actuator	#172	ダストシールド専用 マイクロ駆動ステッパ	shutter	0,0,16.4	10.95,11.5,5.5	28,24,42	copper_coil

@@ -7794,7 +7794,7 @@
       "assembledPos": [
         0,
         39.5,
-        -37.2
+        -39.46
       ],
       "explodeOffset": [
         0,
@@ -7850,7 +7850,7 @@
       "assembledPos": [
         0,
         39.5,
-        -34.6
+        -35.34
       ],
       "explodeOffset": [
         -6,
@@ -7906,7 +7906,7 @@
       "assembledPos": [
         0,
         39.5,
-        -32.2
+        -31.8
       ],
       "explodeOffset": [
         0,
@@ -7961,8 +7961,8 @@
       "groupKey": "evf:EVF層_E03_自動EVF_LCD切替・HDR環境順応調光",
       "assembledPos": [
         0,
-        28.4,
-        -30.6
+        27.3,
+        -30
       ],
       "explodeOffset": [
         0,
@@ -8018,7 +8018,7 @@
       "assembledPos": [
         0,
         39.5,
-        -28
+        -27.55
       ],
       "explodeOffset": [
         0,
@@ -8074,7 +8074,7 @@
       "assembledPos": [
         0,
         39.5,
-        -22.2
+        -23.6
       ],
       "explodeOffset": [
         0,
@@ -8129,8 +8129,8 @@
       "groupKey": "evf:EVF層_E06_視線トラッキング専用カメラ_メイン基板切欠き収",
       "assembledPos": [
         0,
-        25.4,
-        -22.2
+        25.05,
+        -23.6
       ],
       "explodeOffset": [
         0,
@@ -8242,7 +8242,7 @@
       "assembledPos": [
         0,
         39.5,
-        -9.2
+        -9.4
       ],
       "explodeOffset": [
         0,
@@ -8298,7 +8298,7 @@
       "assembledPos": [
         0,
         39.5,
-        -9.2
+        -9
       ],
       "explodeOffset": [
         -28,
@@ -8354,7 +8354,7 @@
       "assembledPos": [
         0,
         39.5,
-        -9.2
+        -9.4
       ],
       "explodeOffset": [
         30,
@@ -8408,9 +8408,9 @@
       "swatchColor": "#d97706",
       "groupKey": "evf:EVF層_E09_バックラッシュレス精密直進カム駆動機構",
       "assembledPos": [
-        15,
+        -19.2,
         39.5,
-        -9.2
+        -15.6
       ],
       "explodeOffset": [
         16,
@@ -8466,7 +8466,7 @@
       "assembledPos": [
         0,
         39.5,
-        -2.4
+        -2.42
       ],
       "explodeOffset": [
         0,
@@ -8522,7 +8522,7 @@
       "assembledPos": [
         0,
         39.5,
-        3.6
+        4.76
       ],
       "explodeOffset": [
         0,
@@ -8578,7 +8578,7 @@
       "assembledPos": [
         0,
         39.5,
-        5.2
+        5.84
       ],
       "explodeOffset": [
         28,
@@ -8634,7 +8634,7 @@
       "assembledPos": [
         0,
         39.5,
-        6.8
+        7.92
       ],
       "explodeOffset": [
         0,
@@ -8690,7 +8690,7 @@
       "assembledPos": [
         0,
         39.5,
-        10.2
+        11.62
       ],
       "explodeOffset": [
         0,
@@ -8802,7 +8802,7 @@
       "assembledPos": [
         0,
         39.5,
-        -30
+        -30.15
       ],
       "explodeOffset": [
         -26,
@@ -8857,8 +8857,8 @@
       "groupKey": "evf:EVF層_E20_90_反射角膜プルキンエ像結像・可視光99_9",
       "assembledPos": [
         0,
-        26.5,
-        -22.2
+        27.4,
+        -23.6
       ],
       "explodeOffset": [
         18,
@@ -8912,7 +8912,7 @@
       "swatchColor": "#f59e0b",
       "groupKey": "evf:EVF層_E21_撮影中の視度ズレ防止・引き出し解除クリッククラ",
       "assembledPos": [
-        19.6,
+        -20.42,
         39.5,
         -15.6
       ],
@@ -8970,7 +8970,7 @@
       "assembledPos": [
         0,
         39.5,
-        0.65
+        0.1
       ],
       "explodeOffset": [
         0,
@@ -9026,7 +9026,7 @@
       "assembledPos": [
         0,
         39.5,
-        2.55
+        1.6
       ],
       "explodeOffset": [
         -24,
@@ -9082,7 +9082,7 @@
       "assembledPos": [
         0,
         39.5,
-        8.2
+        9.28
       ],
       "explodeOffset": [
         26,
@@ -9193,8 +9193,8 @@
       "groupKey": "evf:E26_240Hz高速MIPI配線保護・A1_II_A7R_VI",
       "assembledPos": [
         0,
-        25.9,
-        5.5
+        24.3,
+        6.9
       ],
       "explodeOffset": [
         0,
@@ -9249,7 +9249,7 @@
       "assembledPos": [
         0,
         39.5,
-        -35.8
+        -36.52
       ],
       "explodeOffset": [
         0,
@@ -9303,8 +9303,8 @@
       "groupKey": "evf:E28_視線トラッキング角膜プルキンエ像・精密位置合わせ機構",
       "assembledPos": [
         0,
-        26.9,
-        -22.2
+        25.6,
+        -23.6
       ],
       "explodeOffset": [
         24,
@@ -9357,9 +9357,9 @@
       "swatchColor": "#06b6d4",
       "groupKey": "evf:E29_25_露点長期維持・内部結露ゼロ防曇呼吸システム",
       "assembledPos": [
-        14.8,
-        45.7,
-        -5.5
+        -16.57,
+        46.6,
+        -4.4
       ],
       "explodeOffset": [
         38,
@@ -9412,9 +9412,9 @@
       "swatchColor": "#10b981",
       "groupKey": "evf:E30_真夏雪原_暗闇ライブハウス・視認性_色恒常性自動最適化",
       "assembledPos": [
-        -12.5,
-        50.9,
-        -26.5
+        -11.8,
+        53.2,
+        -28.2
       ],
       "explodeOffset": [
         -34,
@@ -9467,9 +9467,9 @@
       "swatchColor": "#d97706",
       "groupKey": "evf:E31_誤回転防止・_4_3_dpt_明瞭ステップクリック機構",
       "assembledPos": [
-        16.2,
-        38,
-        -18.5
+        -19.2,
+        39.5,
+        -15.6
       ],
       "explodeOffset": [
         44,

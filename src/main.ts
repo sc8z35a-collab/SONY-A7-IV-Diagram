@@ -8,6 +8,7 @@ import { ArtifactCaptureBridge } from './core/capture_bridge';
 import type { LensOpticsStudio } from './ui/LensOpticsStudio';
 import type { OpticalScenarioId } from './assemblies/lens/lensOpticalSim';
 import type { CadPlaygroundStudio } from './playground/CadPlaygroundStudio';
+import type { MiraiEdition, MiraiLibraryStudio, MiraiStudioTab } from './ui/MiraiLibraryStudio';
 
 const appRoot = document.getElementById('app')!;
 const viewportEl = document.getElementById('viewport')!;
@@ -24,6 +25,8 @@ let opticsStudioLoadPromise: Promise<LensOpticsStudio> | null = null;
 let pendingOpticsOpen = false;
 let realPlayground: CadPlaygroundStudio | null = null;
 let playgroundLoadPromise: Promise<CadPlaygroundStudio> | null = null;
+let realMiraiStudio: MiraiLibraryStudio | null = null;
+let miraiStudioLoadPromise: Promise<MiraiLibraryStudio> | null = null;
 
 const handleOpticsOpenChange = (open: boolean) => {
   controls.syncOpticsStudio(open);
@@ -267,6 +270,14 @@ controls = new ZeroTextControls(appRoot, {
   onOpenPlayground: () => {
     void playgroundApi.open();
   },
+  onMiraiSubViewChange: (subView) => {
+    viewport.setMiraiSubView(subView, false);
+    controls.syncMiraiSubView(viewport.getMiraiSubView());
+    syncRail();
+  },
+  onOpenMiraiStudio: (tab) => {
+    void miraiStudioApi.open({ tab });
+  },
   onResetVisibility: () => {
     viewport.resetAllVisibility();
   },
@@ -351,6 +362,59 @@ const playgroundApi = {
     realPlayground?.setShadingMode(mode),
 };
 
+const ensureMiraiStudio = (): Promise<MiraiLibraryStudio> => {
+  if (realMiraiStudio) return Promise.resolve(realMiraiStudio);
+  if (!miraiStudioLoadPromise) {
+    miraiStudioLoadPromise = import('./ui/MiraiLibraryStudio').then((mod) => {
+      realMiraiStudio = new mod.MiraiLibraryStudio({
+        onJumpTo3d: (subView) => {
+          if (opticsStudio.getIsOpen()) opticsStudio.close();
+          viewport.setMiraiSubView(subView, true);
+          viewport.setMode('mirai_2028', true);
+          viewport.setMiraiSubView(subView, true);
+          controls.syncMode('mirai_2028');
+          controls.syncMiraiSubView(subView);
+          controls.setExplodeValue(viewport.getExplode());
+          syncRail();
+        },
+        onJumpToBaseline: (mode) => {
+          if (opticsStudio.getIsOpen()) opticsStudio.close();
+          viewport.setMode(mode, true);
+          controls.syncMode(mode);
+          controls.setExplodeValue(viewport.getExplode());
+          syncRail();
+        },
+        onEditionChange: (edition) => {
+          drawer.setMiraiEdition(edition, false);
+        },
+      });
+      return realMiraiStudio;
+    });
+  }
+  return miraiStudioLoadPromise;
+};
+
+const miraiStudioApi = {
+  isOpen: () => realMiraiStudio?.isOpen() ?? false,
+  open: async (opts?: {
+    tab?: MiraiStudioTab;
+    volume?: number;
+    fhId?: string;
+    glossaryId?: string;
+    edition?: MiraiEdition;
+  }): Promise<void> => {
+    const studio = await ensureMiraiStudio();
+    await studio.open({ ...opts, edition: opts?.edition ?? drawer.getMiraiEdition() });
+  },
+  close: (): void => {
+    realMiraiStudio?.close();
+  },
+  setEdition: (edition: MiraiEdition): void => {
+    drawer.setMiraiEdition(edition, false);
+    realMiraiStudio?.setEdition(edition, false);
+  },
+};
+
 drawer = new ExplanationDrawer(appRoot, {
   onClose: () => viewport.selectPart(null, false),
   onPrev: () => viewport.stepSelectedPart(-1),
@@ -392,6 +456,15 @@ drawer = new ExplanationDrawer(appRoot, {
     );
     controls.syncMode('sensor_fab');
     syncRail();
+  },
+  onOpenMiraiReport: (fhId) => {
+    void miraiStudioApi.open({ tab: 'reports', fhId });
+  },
+  onOpenMiraiGlossary: (glossaryId) => {
+    void miraiStudioApi.open({ tab: 'glossary', glossaryId });
+  },
+  onMiraiEditionChange: (edition) => {
+    realMiraiStudio?.setEdition(edition, false);
   },
 });
 
@@ -440,7 +513,7 @@ const setQuality = (q: GraphicsQuality): void => {
 };
 
 window.addEventListener('keydown', (e) => {
-  if (playgroundApi.isOpen()) return;
+  if (playgroundApi.isOpen() || miraiStudioApi.isOpen()) return;
   if (e.key === 'Escape') {
     if (zenFullscreen) {
       zenFullscreen = false;
@@ -462,6 +535,17 @@ window.addEventListener('keydown', (e) => {
     const sec = Number(e.key) as 1 | 2 | 3;
     viewport.setLensSection(sec);
     controls.syncLensSection(sec);
+    syncRail();
+  } else if (
+    (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4' || e.key === '5') &&
+    viewport.getMode() === 'mirai_2028' &&
+    !e.ctrlKey &&
+    !e.metaKey &&
+    !e.altKey
+  ) {
+    const sv = Number(e.key);
+    viewport.setMiraiSubView(sv, false);
+    controls.syncMiraiSubView(sv);
     syncRail();
   } else if (
     (e.key === 'v' || e.key === 'V') &&
@@ -563,16 +647,25 @@ const captureBridge = new ArtifactCaptureBridge({
   setLightboxOpen: (open, rotated) => drawer.setLightboxOpen(open, rotated),
   openPlayground: (showReport) => playgroundApi.open(showReport),
   closePlayground: () => playgroundApi.close(),
+  setMiraiSubView: (sv, immediate) => {
+    viewport.setMiraiSubView(sv, immediate);
+    controls.syncMiraiSubView(sv);
+    syncRail();
+  },
+  setMiraiEdition: (ed) => miraiStudioApi.setEdition(ed),
+  openMiraiStudio: (tab) => miraiStudioApi.open({ tab }),
+  closeMiraiStudio: () => miraiStudioApi.close(),
   requestRenderFrame: () => viewport.requestRenderFrame(),
 });
 
-// Expose lightweight inspection, Play Ground 1.1, and High-Speed Capture Engine (`pp`) hooks on window
+// Expose lightweight inspection, Play Ground 1.1, FH MIRAI 2028, and High-Speed Capture Engine (`pp`) hooks on window
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
   drawer,
   opticsStudio,
   playground: playgroundApi,
+  miraiStudio: miraiStudioApi,
   pp: captureBridge,
   capture: captureBridge,
   toggleFullscreen,
@@ -2181,6 +2274,110 @@ if (preset === 'welcome') {
   viewport.setCameraPreset('iso', true);
   viewport.selectPart('db-pem-nafion-membrane', false);
   syncRail();
+} else if (preset === 'mirai_fh01' || preset === 'mirai_2028') {
+  viewport.setMiraiSubView(1, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(1);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh01_exploded') {
+  viewport.setMiraiSubView(1, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(1);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh02') {
+  viewport.setMiraiSubView(2, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(2);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh02_exploded') {
+  viewport.setMiraiSubView(2, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(2);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh08') {
+  viewport.setMiraiSubView(3, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(3);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh08_exploded') {
+  viewport.setMiraiSubView(3, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(3);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh32') {
+  viewport.setMiraiSubView(4, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(4);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh32_exploded') {
+  viewport.setMiraiSubView(4, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(4);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh25') {
+  viewport.setMiraiSubView(5, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(5);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh25_exploded') {
+  viewport.setMiraiSubView(5, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(5);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_library') {
+  viewport.setMiraiSubView(1, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(1);
+  syncRail();
+  void miraiStudioApi.open({ tab: 'reports' });
+} else if (preset === 'mirai_glossary') {
+  viewport.setMiraiSubView(1, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(1);
+  syncRail();
+  void miraiStudioApi.open({ tab: 'glossary' });
 }
 
 

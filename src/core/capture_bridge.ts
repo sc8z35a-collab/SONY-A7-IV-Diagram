@@ -20,6 +20,9 @@ export interface CaptureCustomOptions {
   readonly explode?: number;
   readonly partId?: string | null;
   readonly clipSelector?: string | null;
+  readonly miraiSubView?: number;
+  readonly miraiEdition?: 'beginner' | 'expert';
+  readonly miraiStudioTab?: 'reports' | 'matrix' | 'glossary' | null;
 }
 
 export interface CapturePrepareResult {
@@ -49,6 +52,10 @@ export interface CaptureHostAdapter {
   setLightboxOpen: (open: boolean, rotated?: boolean) => void;
   openPlayground: (showReport?: boolean) => Promise<void>;
   closePlayground: () => void;
+  setMiraiSubView?: (subView: number, immediateCamera?: boolean) => void;
+  setMiraiEdition?: (edition: 'beginner' | 'expert') => void;
+  openMiraiStudio?: (tab: 'reports' | 'matrix' | 'glossary') => Promise<void>;
+  closeMiraiStudio?: () => void;
   requestRenderFrame: () => void;
 }
 
@@ -161,15 +168,30 @@ export class ArtifactCaptureBridge {
     } else {
       this.host.closePlayground();
     }
+    if (options.miraiStudioTab && this.host.openMiraiStudio) {
+      await this.host.openMiraiStudio(options.miraiStudioTab);
+    } else if (this.host.closeMiraiStudio) {
+      this.host.closeMiraiStudio();
+    }
 
     if (options.quality && options.quality !== this.host.getQuality()) {
       this.host.setQuality(options.quality);
+    }
+    if (typeof options.miraiSubView === 'number' && this.host.setMiraiSubView) {
+      this.host.setMiraiSubView(options.miraiSubView, true);
     }
     if (options.unit && options.unit !== this.host.getMode()) {
       this.host.setMode(options.unit, true);
     }
     if (!options.playground) {
       await this.waitUnitReady();
+    }
+    if (typeof options.miraiSubView === 'number' && this.host.setMiraiSubView) {
+      this.host.setMiraiSubView(options.miraiSubView, true);
+      await waitFrames(1);
+    }
+    if (options.miraiEdition && this.host.setMiraiEdition) {
+      this.host.setMiraiEdition(options.miraiEdition);
     }
     if (typeof options.explode === 'number') {
       this.host.setExplode(options.explode, true);

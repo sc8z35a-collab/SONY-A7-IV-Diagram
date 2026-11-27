@@ -5040,3 +5040,1095 @@ body,
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ============================================================================
+   FUTURE HISTORY MIRAI 2028 — Pure-White Industrial Precision CAD Styling
+   ============================================================================ */
+
+.mirai-cta-pill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 13px;
+  border-radius: 13px;
+  border: 1px solid rgba(15, 118, 110, 0.36);
+  background: linear-gradient(135deg, #065f46 0%, #0f766e 100%);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.22);
+  transition: transform 0.14s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.mirai-cta-pill svg {
+  width: 15px;
+  height: 15px;
+  stroke: #a7f3d0;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mirai-cta-pill:hover {
+  transform: translateY(-1px);
+  border-color: #10b981;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.3);
+}
+
+.mirai-cta-pill.is-active {
+  background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.28), 0 8px 20px rgba(15, 118, 110, 0.28);
+}
+
+.mirai-subbar {
+  gap: 4px;
+}
+
+.mirai-subbar .mirai-sub-struct.is-active {
+  background: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.28);
+}
+
+.mirai-subbar-sep {
+  width: 1px;
+  height: 18px;
+  background: #cbd5e1;
+  margin: 0 3px;
+}
+
+.mirai-subbar .mirai-sub-lib {
+  color: #0f766e;
+  background: rgba(15, 118, 110, 0.07);
+}
+
+.mirai-subbar .mirai-sub-lib:hover {
+  background: rgba(15, 118, 110, 0.15);
+}
+
+/* Top [やさしい | 専門] Edition Toggle & Drawer Header Strip */
+.mirai-drawer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: #f0fdfa;
+  border: 1px solid rgba(15, 118, 110, 0.22);
+}
+
+.mirai-drawer-meta-pills {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.mirai-fh-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #ffffff;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.mirai-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.mirai-badge.badge-demo {
+  background: #dcfce7;
+  color: #065f46;
+  border: 1px solid #86efac;
+}
+
+.mirai-badge.badge-asi {
+  background: #e0f2fe;
+  color: #075985;
+  border: 1px solid #7dd3fc;
+}
+
+.mirai-badge.badge-wish {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.mirai-eta-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #475569;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+
+.mirai-edition-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  gap: 2px;
+}
+
+.mirai-ed-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.mirai-ed-btn.active {
+  background: #0f766e;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.28);
+}
+
+.mirai-ed-btn:not(.active):hover {
+  background: rgba(255, 255, 255, 0.72);
+  color: #0f172a;
+}
+
+/* 5-Axis Innovation Score Card */
+.mirai-drawer-score-card,
+.mirai-score-card {
+  margin: 14px 0;
+  padding: 13px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.mirai-drawer-score-head,
+.mirai-score-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mirai-score-lbl {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0f766e;
+}
+
+.mirai-score-sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.mirai-score-big {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.mirai-score-big span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.mirai-axes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mirai-axis-row {
+  display: grid;
+  grid-template-columns: 92px 1fr 38px;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.mirai-axis-lbl {
+  color: #334155;
+  font-weight: 700;
+}
+
+.mirai-axis-track {
+  height: 7px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.mirai-axis-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0d9488 0%, #0284c7 100%);
+}
+
+.mirai-axis-val {
+  text-align: right;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.mirai-score-rationale {
+  margin: 10px 0 0;
+  padding-top: 9px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #334155;
+}
+
+/* Comparison Table & Beginner Caution Box */
+.mirai-caution-box {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #78350f;
+  font-size: 12.2px;
+  line-height: 1.6;
+}
+
+.mirai-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+}
+
+.mirai-compare-table th {
+  text-align: left;
+  padding: 7px 9px;
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 800;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.mirai-compare-table td {
+  padding: 7px 9px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  vertical-align: top;
+  line-height: 1.48;
+}
+
+.mirai-compare-table td.mirai-td-future {
+  background: #f0fdfa;
+  color: #065f46;
+  font-weight: 700;
+}
+
+/* Glossary Chips & Drawer CTAs */
+.mirai-glossary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mirai-gloss-chip {
+  appearance: none;
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  background: #f0fdfa;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+
+.mirai-gloss-chip:hover {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.mirai-drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.mirai-drawer-cta {
+  appearance: none;
+  flex: 1 1 160px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 11.8px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+
+.mirai-drawer-cta:hover {
+  background: #f8fafc;
+  border-color: #0f766e;
+}
+
+.mirai-drawer-cta.is-primary {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
+}
+
+.mirai-drawer-cta.is-primary:hover {
+  background: #0d9488;
+}
+
+.mirai-source-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.3px;
+  line-height: 1.5;
+}
+
+.mirai-source-list a {
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-word;
+}
+
+/* ============================================================================
+   MIRAI LIBRARY STUDIO MODAL (Reports Vol.01-08 / 48-Tech Matrix / 113 Glossary)
+   ============================================================================ */
+
+.mirai-studio-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgba(15, 23, 42, 0.56);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.mirai-studio-modal {
+  width: min(1240px, 100%);
+  height: min(880px, 92dvh);
+  background: #f8fafc;
+  border-radius: 18px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 28px 72px rgba(15, 23, 42, 0.34);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #0f172a;
+}
+
+.mirai-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.mirai-studio-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mirai-studio-emblem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #065f46, #0f766e);
+  color: #ffffff;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mirai-studio-titles h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mirai-studio-titles p {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.mirai-studio-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mirai-studio-close {
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mirai-studio-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.mirai-studio-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.mirai-tab-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 7px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.mirai-tab-btn.active {
+  background: #f0fdfa;
+  border-color: rgba(15, 118, 110, 0.32);
+  color: #0f766e;
+}
+
+.mirai-studio-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 26px;
+}
+
+.mirai-vol-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.mirai-vol-pill {
+  appearance: none;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 7px 11px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mirai-vol-pill.active {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
+}
+
+.mirai-vol-num {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.mirai-vol-theme {
+  font-size: 10.5px;
+  opacity: 0.88;
+}
+
+.mirai-vol-intro-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.mirai-vol-intro-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f766e;
+  margin-bottom: 4px;
+}
+
+.mirai-vol-intro-card h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.mirai-preamble-details summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0369a1;
+}
+
+.mirai-preamble-body {
+  margin-top: 10px;
+  font-size: 12.6px;
+  line-height: 1.72;
+  color: #334155;
+}
+
+.mirai-tech-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mirai-tech-article {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 16px 18px;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.mirai-tech-article.mirai-focus-pulse,
+.mirai-gloss-card.mirai-focus-pulse {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.24);
+}
+
+.mirai-tech-id-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.mirai-3d-jump-btn,
+.mirai-3d-mini-btn {
+  appearance: none;
+  border: none;
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.mirai-3d-jump-btn:hover,
+.mirai-3d-mini-btn:hover {
+  background: #0d9488;
+}
+
+.mirai-3d-soon-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.mirai-base-jump-btn,
+.mirai-read-mini-btn {
+  appearance: none;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.mirai-base-jump-btn:hover,
+.mirai-read-mini-btn:hover {
+  border-color: #0f766e;
+  color: #0f766e;
+}
+
+.mirai-tech-title {
+  margin: 0 0 6px;
+  font-size: 15.5px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mirai-tech-oneliner {
+  margin: 0 0 12px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: #f0fdfa;
+  color: #134e4a;
+  font-size: 12.5px;
+  line-height: 1.62;
+}
+
+.mirai-tech-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  gap: 16px;
+  align-items: start;
+}
+
+.mirai-subsec {
+  margin-bottom: 12px;
+}
+
+.mirai-subsec h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f766e;
+}
+
+.mirai-feature-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.4px;
+  line-height: 1.66;
+  color: #1e293b;
+}
+
+.mirai-procon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mirai-pc-box {
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 11.6px;
+  line-height: 1.55;
+}
+
+.mirai-pc-box.pc-pro {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.mirai-pc-box.pc-con {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.mirai-pc-box p {
+  margin: 4px 0 0;
+}
+
+/* Matrix & Glossary Filter Bars */
+.mirai-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mirai-search-input {
+  flex: 1 1 260px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 12.5px;
+  color: #0f172a;
+}
+
+.mirai-select {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.mirai-matrix-meta {
+  font-size: 12px;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.mirai-matrix-wrap {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.mirai-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mirai-matrix-table th {
+  text-align: left;
+  padding: 9px 10px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  font-weight: 800;
+  color: #334155;
+}
+
+.mirai-matrix-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.mirai-matrix-title-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  font-size: 12.3px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.mirai-matrix-title-btn:hover {
+  color: #0f766e;
+  text-decoration: underline;
+}
+
+.mirai-matrix-score {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  white-space: nowrap;
+}
+
+.mirai-gloss-mode-group {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.mirai-gm-btn {
+  appearance: none;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 7px 11px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.mirai-gm-btn.active {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
+}
+
+.mirai-gloss-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 10px;
+}
+
+.mirai-gloss-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.mirai-gloss-card-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.mirai-gloss-num {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 900;
+  color: #0f766e;
+}
+
+.mirai-gloss-card-head h4 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mirai-gloss-reading {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+.mirai-gloss-ch {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.mirai-gloss-oneline,
+.mirai-gloss-analogy,
+.mirai-gloss-impact {
+  margin: 0 0 6px;
+  font-size: 11.8px;
+  line-height: 1.56;
+  color: #334155;
+}
+
+.mirai-gloss-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.mirai-fh-mini-chip {
+  appearance: none;
+  border: 1px solid rgba(15, 118, 110, 0.25);
+  background: #f0fdfa;
+  color: #0f766e;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.mirai-fh-mini-chip:hover {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.mirai-loading {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .mirai-tech-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mirai-procon-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .mirai-cta-pill {
+    height: 36px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .mirai-subbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100vw - 16px);
+  }
+
+  .mirai-studio-backdrop {
+    padding: 0;
+  }
+
+  .mirai-studio-modal {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .mirai-studio-header {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+  }
+
+  .mirai-studio-titles p {
+    display: none;
+  }
+
+  .mirai-studio-tabs {
+    padding: 8px 10px;
+    overflow-x: auto;
+  }
+
+  .mirai-studio-body {
+    padding: 10px 12px 24px;
+  }
+
+  .mirai-gloss-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ============================================================================
+   FH MIRAI 2028 Visual Audit Polish (Flex-Shrink Fix + Zero-Overlap Top Bar)
+   ============================================================================ */
+
+/* Prevent flex-column compression of full-size 720x500 Ultra-HD SVG diagrams inside Drawer */
+.explanation-drawer .drawer-body > * {
+  flex-shrink: 0;
+}
+
+.schematic-stage.exp-diagram-box {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+/* Prevent Assembly Selector Pill label wrapping into multiple vertical lines */
+.assembly-trigger-label,
+.playground-cta-pill span,
+.mirai-cta-pill span {
+  white-space: nowrap;
+}
+
+/* Guarantee zero HUD pill collision when contextual Mirai sub-bar + right drawer share desktop width */
+#app.has-drawer .studio-topbar,
+.studio-topbar:has(.mirai-subbar:not(.is-hidden)) {
+  flex-wrap: wrap;
+  row-gap: 7px;
+  align-items: flex-start;
+}
+
+#app.has-drawer .studio-topbar-center,
+.studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center {
+  position: static;
+  transform: none;
+  order: 3;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+#app.has-drawer .studio-topbar-center > *,
+.studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center > * {
+  pointer-events: auto;
+}
+
+.mirai-subbar {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 4px;
+  max-width: min(100%, 960px);
+}
+
+.mirai-subbar .studio-sub-btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .studio-topbar-left {
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+
+  .assembly-trigger-pill {
+    padding: 0 8px 0 6px;
+    gap: 5px;
+    font-size: 11px;
+    min-width: 0;
+  }
+
+  .assembly-trigger-badge {
+    padding: 1px 5px;
+    font-size: 9.5px;
+  }
+
+  .playground-cta-pill,
+  .mirai-cta-pill {
+    padding: 0 8px;
+    gap: 4px;
+    font-size: 10.5px;
+    flex-shrink: 0;
+  }
+
+  .mirai-subbar {
+    padding: 3px 5px;
+    gap: 3px;
+  }
+
+  .mirai-subbar .studio-sub-btn {
+    font-size: 10px;
+    padding: 4px 6.5px;
+  }
+
+  .mirai-subbar-sep {
+    display: none;
+  }
+}
