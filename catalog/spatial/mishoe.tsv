@@ -31,3 +31,42 @@ mi-id-resistor-adc-net	MI29	アクセサリーID判別 100kΩプルアッ	electr
 mi-audio-mux-emi-choke	MI30	EXT_LINE_SEL 音声ソース自動	electronics_zif	13.5,-8.8,7.5	16,2.16,12	14,-20.5,11	pcb_textured
 mi-emi-copper-shield	MI31	MIシュー直下 銅箔EMIシールドブリッ	deck_chassis	0,-10.2,0.5	44,1.66,32	0,-23.5,0	metal_hero
 mi-mainboard-zif-connector	MI32	メイン基板直結 24極ファインピッチZI	electronics_zif	0,-11.4,10.6	34,3.33,16	0,-27.5,13.5	pcb_textured
+mi-cap-detent-dust-baffle	MI33	シューキャップ裏面 弾性ディテント爪	top_protection	0,5.45,7.8	36.8,1.3,11.8	0,26.5,-14.5	matte_chassis
+mi-mating-metal-foot-frame	MI34	強化金属MIフット嵌合基準面	top_protection	0,9.4,-0.5	41.8,2.88,35.55	0,31.5,13	stainless_machined
+mi-quick-lock-plunger-pin	MI35	クイックロック昇降ピン	top_protection	0,11.6,-13.5	18.26,4.98,17.33	21,33,-14	matte_black_anodized
+mi-wp-lip-compression-ring	MI36	防塵防滴シリコーンスカート 二重圧縮ビー	top_protection	0,3.2,0.5	59.4,1.04,54	-22,23,14	elastomer_rubber
+mi-rail-chamfer-guide-ramps	MI37	ISO 518 レール導入テーパーランプ	shell_rails	0,4.35,-15.5	45.4,2.63,16.27	-24,16.5,-18.5	stainless_machined
+mi-cover-front-interlock-hooks	MI38	スクリューカバー前方係止爪	shell_rails	0,2.55,10.5	31.2,1.37,7.2	24,17.5,-18	matte_chassis
+mi-spring-relief-stops	MI39	板バネ過屈曲防止ストッパー	shell_rails	0,1.95,-10	28.8,1.04,8.4	-23,10.8,-14	metal_hero
+mi-m17-countersink-bushings	MI40	4点締結 M1.7 特殊頭ネジ座ぐりカラ	fasteners	0,1.85,0	34.7,1.47,27.7	25,14.8,-8	torus_seal
+mi-threadlocker-retention-sleeves	MI41	ネジ緩み止めマイクロカプセル嫌気性樹脂層	fasteners	0,-4.1,0	33.7,2.67,26.7	-26,4.5,-9	torus_seal
+mi-m14-rear-nut-boss	MI42	M1.4 極小カバーネジ受け 精密雌ネジ	fasteners	0,2.1,-18	5.3,2.3,5.3	16,21,-32	brass_precision
+mi-xsync-plunger-spring	MI43	中央X接点 内部リン青銅コイル	iso518_contacts	0,1.3,-3.2	5.9,2.34,5.9	16,6.2,-13	gold_plating
+mi-xsync-dielectric-bushing	MI44	中央X接点 高耐圧LCP絶縁ブッシュ	iso518_contacts	0,1.8,-3.2	12.2,2.02,12.2	-16,7,-13	ceramic_alumina
+mi-fg-ground-spring-fingers	MI45	左右フレームGND 多点アース弾性コンタ	iso518_contacts	0,2.35,-1.5	47.15,2.52,31	-28,9.2,2.5	copper_thermal
+mi-21pin-metal-shield-cage	MI46	21極コネクタ外周 金属EMIシールドシ	front_21pin_array	0,3.05,17.6	46.2,4.52,7.14	0,12.2,27.5	emi_shield_metal
+mi-21pin-keyway-align-boss	MI47	前方21極コネクタ 誤挿入防止ガイドキー	front_21pin_array	0,2.7,17.8	45.3,4.6,7.3	25,8,24.5	matte_black_anodized
+mi-21pin-smt-solder-array	MI48	21極ファインピッチ SMTガルウィング	front_21pin_array	0,1.35,19.6	35.4,1.04,2.6	-24,3.5,25	matte_chassis
+mi-21pin-gold-nickel-barrier	MI49	21極接点 摺動多層めっき構造	front_21pin_array	0,2.42,13.7	35.32,0.81,2.2	24.5,2.8,19.5	becu_spring
+mi-fpc-sus-stiffener-plate	MI50	MIS-2006 コネクタ裏面	flex_sealing	0,-0.05,14	40.2,0.5,10.2	-25.5,-0.5,14.5	polyimide_fpc
+mi-fpc-black-coverlay-shield	MI51	MIS-2006 黒色ポリイミドカバーレ	flex_sealing	0,-4.8,9.8	16.6,9.2,1.39	22.5,-3.5,15	matte_black_anodized
+mi-fpc-zif-tail-stiffener	MI52	MIS-2006 終端 24極ZIF挿入	flex_sealing	0,-10.22,12.6	19.2,0.47,4.4	-20.5,-24.5,19.5	pin_carrier_gloss
+mi-tape-631s-fpc-retention	MI53	純正ブラック絶縁固定テープ	flex_sealing	0,-1.8,9.8	22.6,2.44,4.8	25.5,-5.5,11.5	matte_black_anodized
+mi-top-connect-plate-l	MI54	トップコネクトプレート L	deck_chassis	-32.5,-5.4,-2	11.68,4.93,26.16	-34,-10,-5.5	stainless_machined
+mi-evf-protector-barrier	MI55	MIシュー直下 EVFプロテクター隔壁	deck_chassis	0,-7.2,-22.5	44.7,3.05,12	0,-15.5,-26	matte_chassis
+mi-magnetic-cut-insul-sheet	MI56	メイン基板上部 磁気遮断プレート	deck_chassis	0,-11.4,-3.5	43.2,0.99,12.2	0,-26.5,-23	matte_black_anodized
+mi-unreg-mosfet-load-switch	MI57	Pin 17 UNREG 大電流ハイサイ	electronics_zif	-30,-8.8,7.5	14,1.78,12	-32,-19.5,15	pcb_textured
+mi-chip-fuse-16a-decouple	MI58	Sony純正 1.6 A / 36 V	electronics_zif	-30,-8.8,-6.5	14,2.3,12	-32,-22,-12	pcb_textured
+mi-logic-vdd-315v-ldo	MI59	Pin 13 LOGIC_VDD	electronics_zif	30,-8.8,7.5	14,1.93,12	32,-19.5,15	pcb_textured
+mi-digital-audio-pll-damping	MI60	48 kHz / 24-bit 4ch	electronics_zif	30,-8.8,-6.5	14,1.9,12	32,-22,-12	pcb_textured
+mi-analog-mic-bias-coupling	MI61	アナログマイク プラグインパワーDCバイ	electronics_zif	-13.5,-11.4,-15.5	16,2.08,10	-19,-28.5,-21	pcb_textured
+mi-flash-bus-level-shifter	MI62	フラッシュ高速通信双方向レベルシフタ	electronics_zif	13.5,-11.4,-15.5	16,1.85,10	19,-28.5,-21	pcb_textured
+mi-mic-elastomer-shock-isolator	MI63	マイク側 振動減衰エラストマーショックア	top_protection	0,12.1,-0.5	27.6,3.35,22.8	-18.5,36.5,16	stainless_machined
+mi-lateral-stabilizer-lugs	MI64	前方左右 2点補助ロックピン嵌合ガイドブ	shell_rails	0,3.05,6.2	35.57,2.81,6.4	26.5,13.5,11.5	stainless_machined
+mi-21pin-fmlb-stagger-array	MI65	21極ホットプラグ保護 段差シークエンス	front_21pin_array	0,3.65,13.1	37.4,0.91,4.23	-26.5,9.8,30.5	gold_plating
+mi-fpc-ra-copper-hatched-gnd	MI66	MIS-2006 圧延焼鈍銅箔差動インピ	flex_sealing	0,-4.8,8.6	15.6,13.29,0.55	-26.5,-4.8,17.5	matte_chassis
+mi-top-wp-cushion-f3-drain	MI67	天面防塵防滴フォームクッション F3	deck_chassis	0,-1.7,0	62.8,1.43,55.2	31.5,-3.5,-4	foam_felt_matte
+mi-vf-radiation-graphite-sheet	MI68	EVF／MIシュー境界 グラファイト熱拡	deck_chassis	0,-8.85,-22.5	49.98,1.21,12.2	-24,-19.5,-31.5	pin_carrier_gloss
+mi-zif-dual-beam-cam-latch	MI69	24極 0.4 mm バックフリップZI	electronics_zif	0,-8.35,16.5	23.55,2.86,4.87	21.5,-27.5,24.5	becu_spring
+mi-id-rc-debounce-gvif-mux	MI70	ID1〜ID3 RCチャタリング除去フィ	electronics_zif	-30,-11.4,-15.5	14,1.78,10	-34.5,-28.5,-23	pcb_textured
+mi-sy1122-audio-emi-shield-can	MI71	SY-1122 メイン基板 MI音声	electronics_zif	30,-11.4,-15.5	15.04,2.68,11.04	34.5,-28.5,-23	stainless_machined

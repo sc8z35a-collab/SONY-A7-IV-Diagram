@@ -149,3 +149,39 @@ db-rain-rfid-gen2x-asset-shelf	DB147	2026年 UHF RAIN RFID	#121-150	0,0,0	38,49.
 db-mlx90640-ir-thermal-battery	DB148	Melexis MLX90640	#121-150	12,-36.1,2	12.4,1.78,6.2	22,-24,44	pcb_textured
 db-microcapsule-aerosol-firesheet	DB149	2025–2026年 熱応答マイクロカプ	#121-150	0,-35.7,-1.5	36,0.75,26	0,-24,52	pin_carrier_gloss
 db-indoor-opv-ceracharge-harvest	DB150	CES 2026 室内光有機薄膜太陽電池	#121-150	0,50.6,24.4	36,2.2,1.64	0,52,38	silicon_photodiode
+db-igu-warmedge-spacer	DB151	EN 1279-2 複層ガラスウォームエ	#151-180	0,-3.15,25.26	45.1,86.5,0.42	0,3,69.5	elastomer_rubber
+db-3pt-espagnolette-lockrods	DB152	DIRAK／Southco思想	#151-180	25,-3.15,24.3	1.65,87.6,2.07	34,0,58	stainless_machined
+db-ept-armored-door-loop	DB153	扉・筐体間 貫通給電コンシールドE.P.	#151-180	-25.8,16,23	2.04,11.4,4.1	-36,14,40	stainless_machined
+db-mullion-antisweat-heater	DB154	ドア枠全周 結露防止24V低ワット	#151-180	0,-3.15,23.45	52.4,94.45,0.65	-8,4,28	membrane_translucent
+db-door-taper-align-pins	DB155	扉垂れ・パッキン擦れ防止 テーパー自動調	#151-180	25.4,-3.15,23.8	2,80.9,3.75	34,-6,40	stainless_machined
+db-base-plinth-crossbeams	DB156	2.0 mm高張力鋼Cチャンネル底面補強	#151-180	0,-51.4,0	49.6,1.73,45.6	0,-22,-8	stainless_machined
+db-pem-blind-clinch-studs	DB157	非貫通・完全気密 PEM® Type	#151-180	0,0,0	52.35,74.96,35.65	-30,-14,-16	brass_precision
+db-rear-ip2x-service-shroud	DB158	IP2X感電・火傷防護 背面除湿エンジン	#151-180	0,-8.5,-33	34.6,70,3.57	0,-10,-90	magnesium_cast
+db-recessed-bail-lift-handles	DB159	筐体側面 埋込式スプリング復帰SUS30	#151-180	0,23,12.5	56.24,8.2,12	0,36,16	stainless_machined
+db-roxtec-divider-cable-seal	DB160	上下ゾーン隔壁 Roxtec思想	#151-180	15.5,-12,-14.5	7.4,4.6,5.6	28,-8,-16	stainless_machined
+db-antitip-drawer-interlock	DB161	複数段同時引き出し転倒防止 メカニカル	#151-180	23.6,-2,-10.5	2.55,78.1,2.4	38,-2,26	matte_black_anodized
+db-slide-softclose-cartridge	DB162	Accuride思想 引き出しスライド油	#151-180	0,2.5,4	45.65,51.1,22.85	-32,4,28	matte_chassis
+db-lens-haze-transilluminator	DB163	レンズ曇り・バルサム切れ・カビ検品用	#151-180	9.5,-9.6,5	14.6,0.89,14.6	18,10,50	matte_black_anodized
+db-bipolar-esd-ionizer-bar	DB164	ANSI/ESD S20.20準拠	#151-180	0,39.2,12.5	28,2.3,2.7	-14,34,44	matte_black_anodized
+db-battery-fusible-fire-damper	DB165	EN 14470-1／VDMA	#151-180	12.5,-41.5,-22.2	6.8,6.8,5.07	26,-24,-36	stainless_machined
+db-battery-mica-cell-dividers	DB166	電池間熱暴走連鎖遮断 金雲母耐火セル隔壁	#151-180	0,-42.3,0	32,6.7,23.8	0,-18,56	membrane_translucent
+db-battery-shunt-trip-breaker	DB167	熱暴走連動シャントトリップ電磁遮断ブレー	#151-180	-18.5,-41,-16.5	7.05,7.25,6.84	-36,-26,-24	pin_carrier_gloss
+db-return-air-plenum-louver	DB168	庫内下隅デッドエア解消 デュアルゾーン還	#151-180	0,-22.5,-18	25.4,28.8,1.3	0,-14,-16	magnesium_cast
+db-tec-sintered-heatpipes	DB169	ペルチェ高温側 熱拡散用 焼結銅ウィック	#151-180	0,-4,-27.8	16.5,37.32,1.26	16,-6,-68	copper_coil
+db-rear-heatsink-boost-fan	DB170	背面放熱フィン用 ゼロRPM準パッシブ8	#151-180	0,-14,-31.8	10.2,10.2,1.83	0,-16,-82	matte_black_anodized
+db-condensate-sump-optomax	DB171	緊急結露オーバーフロー回収サンプトレイ	#151-180	0,-27.5,-26.8	17.98,2.53,4.95	0,-32,-66	stainless_machined
+db-mof-belt-ceramic-hub	DB172	MOFローター駆動 耐熱ガラス繊維芯PT	#151-180	-5.2,-0.5,-26.3	19.14,12.53,2.2	-20,6,-50	elastomer_rubber
+db-ptc-steatite-terminal-block	DB173	PTC再生ヒーター用 1000°C耐熱ス	#151-180	12.5,-0.5,-26.2	7.3,5.4,2.52	32,-1,-60	ic_epoxy_dark
+db-pem-cathode-h2-recombiner	DB174	PEMカソード側 微量水素再結合Pt	#151-180	0,14.5,-27.2	13.2,9.8,1.23	-18,26,-54	titanium_machined
+db-uvc-chevron-light-trap	DB175	UV-C完全遮光 マットブラック陽極酸化	#151-180	0,-6.5,-19.6	21.6,10.6,2	-24,-10,-28	foam_felt_matte
+db-washable-mesh-prefilter	DB176	水洗い対応 SUS304 100メッシュ	#151-180	0,16.8,-19.7	22.2,11.4,1.17	-24,24,-10	stainless_machined
+db-n2-pressure-regulator-gauge	DB177	窒素パージ入口 精密減圧レギュレーター	#151-180	28.2,26,-14.5	4.5,7.55,3.1	50,22,-18	brass_precision
+db-n2-rotameter-needle-valve	DB178	目視確認用 ホウケイ酸ガラス・フロート式	#151-180	28.2,14.5,-14.5	3.23,10.7,2.8	50,10,-22	stainless_machined
+db-n2-sparger-diffuser-bar	DB179	庫内均一層流置換 SUS316L多段微細	#151-180	22.6,11,-16.2	1.95,45.7,2.38	38,8,-22	brass_precision
+db-ambient-dewpoint-pod	DB180	室外露点・負荷予測用 マルチプレート放射	#151-180	-16.5,53.6,-14.5	5.3,4.04,5.3	-26,44,-22	foam_felt_matte
+db-chilled-mirror-cal-port	DB181	ISO/IEC 17025 鏡面冷却式露	#181-186	-27.8,-2,-4	3.2,9.2,6.2	-48,-2,-6	stainless_machined
+db-esd-wrist-strap-station	DB182	IEC 61340-5-1 作業者接地デ	#181-186	27.5,-24.5,14.5	2.18,6.4,8.6	46,-22,26	magnesium_cast
+db-mains-breaker-fuse-module	DB183	両切ガード付き主電源ロッカースイッチ	#181-186	16.5,-46.2,-24.4	7.2,4.4,4.16	34,-34,-48	matte_black_anodized
+db-ina228-power-monitor-pcb	DB184	TI INA228 20-bit超高精度	#181-186	0,-36.5,-24.8	6.8,9.6,1.4	0,-36,-44	pcb_textured
+db-lt3045-ultralownoise-ldo	DB185	Analog Devices LT304	#181-186	0,47.4,7.2	11.2,2.51,5.4	0,40,2	pcb_textured
+db-rs485-poe-pslc-telemetry	DB186	絶縁RS-485／PoE+有線LAN端子	#181-186	-17.5,-22.5,-25.2	7.2,5.4,3.22	-42,-22,-40	pcb_textured

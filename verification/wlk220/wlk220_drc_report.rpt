@@ -1,25 +1,25 @@
 ** Drc report for /home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/verification/wlk220/wlk220_mainboard.kicad_pcb **
-** Created on 2026-11-27 04:44:42 **
+** Created on 2026-11-27 07:23:26 **
 
 ** Found 6 DRC violations **
 [lib_footprint_issues]: The current configuration does not include the library ''.
     Local override; Severity: warning
-    @(126.0000 mm, 106.0000 mm): Footprint R1
+    @(138.5000 mm, 106.0000 mm): Footprint J_BUS
 [lib_footprint_issues]: The current configuration does not include the library ''.
     Local override; Severity: warning
     @(110.5000 mm, 106.0000 mm): Footprint C1
-[lib_footprint_issues]: The current configuration does not include the library ''.
-    Local override; Severity: warning
-    @(131.5000 mm, 106.0000 mm): Footprint U6
-[lib_footprint_issues]: The current configuration does not include the library ''.
-    Local override; Severity: warning
-    @(138.5000 mm, 106.0000 mm): Footprint J_BUS
 [lib_footprint_issues]: The current configuration does not include the library ''.
     Local override; Severity: warning
     @(118.0000 mm, 106.0000 mm): Footprint U4
 [lib_footprint_issues]: The current configuration does not include the library ''.
     Local override; Severity: warning
     @(104.5000 mm, 106.0000 mm): Footprint U2
+[lib_footprint_issues]: The current configuration does not include the library ''.
+    Local override; Severity: warning
+    @(131.5000 mm, 106.0000 mm): Footprint U6
+[lib_footprint_issues]: The current configuration does not include the library ''.
+    Local override; Severity: warning
+    @(126.0000 mm, 106.0000 mm): Footprint R1
 
 ** Found 0 unconnected pads **
 

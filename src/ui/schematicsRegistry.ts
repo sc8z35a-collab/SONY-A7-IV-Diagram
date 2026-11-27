@@ -52,6 +52,7 @@ import { renderPhase34MountUltraSchematicSvg } from './mountUltra34Schematics';
 import { renderPhase34ShutterHdSchematicSvg } from './shutterHdSchematics';
 import { renderDryboxHdSchematicSvg } from './dryboxHdSchematics';
 import { renderWelcomeHdSchematicSvg } from './welcomeHdSchematics';
+import { renderBionzV2HdSchematicSvg } from './bionzV2HdSchematics';
 
 /**
  * Generate bespoke technical physics/optics schematic SVG inside the explanation card.
@@ -59,6 +60,9 @@ import { renderWelcomeHdSchematicSvg } from './welcomeHdSchematics';
 export function renderSchematicSvg(type: PartExplanation['diagramType']): string {
   const welcomeHdSvg = renderWelcomeHdSchematicSvg(type);
   if (welcomeHdSvg) return welcomeHdSvg;
+
+  const bionzV2HdSvg = renderBionzV2HdSchematicSvg(type);
+  if (bionzV2HdSvg) return bionzV2HdSvg;
 
   const phase34MountSvg = renderPhase34MountUltraSchematicSvg(type);
   if (phase34MountSvg) return phase34MountSvg;

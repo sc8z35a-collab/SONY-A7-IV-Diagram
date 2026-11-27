@@ -650,12 +650,46 @@ export class ExplanationDrawer {
       svg.includes('data-lcd-hd="1"') ||
       svg.includes('data-fab-hd="1"') ||
       svg.includes('data-bionz-diagram=') ||
+      svg.includes('data-bionz-v2-hd="1"') ||
+      svg.includes('data-bionz-tier=') ||
       svg.includes('data-sensor-hd="1"') ||
       svg.includes('data-mount-hd="1"') ||
       svg.includes('data-shutter-hd="1"') ||
       svg.includes('data-drybox-hd="1"') ||
       svg.includes('data-welcome-hd="1"');
     const isSyncHd = isHdDiagram(syncSvg);
+
+    const buildBionzStackStrip = (svg: string): string => {
+      if (part.subsystem !== 'bionz' && part.subsystem !== 'bionz_v2') return '';
+      const isV2 = part.subsystem === 'bionz_v2';
+      const layers = isV2
+        ? [
+            { id: 'pkg35d', code: '3.5D', label: '光/実装' },
+            { id: 'beol', code: 'BEOL', label: '配線層' },
+            { id: 'feol', code: 'FEOL', label: 'GAA/14A' },
+            { id: 'isp_mem', code: 'SoC', label: 'AI/ISP' },
+            { id: 'bspdn_cool', code: 'BACK', label: '裏面/冷' },
+          ]
+        : [
+            { id: 'L1', code: 'L1', label: '蓋・PoP' },
+            { id: 'L2', code: 'L2', label: 'ISP/AI' },
+            { id: 'L3', code: 'L3', label: 'FEOL' },
+            { id: 'L4', code: 'L4', label: 'ABF基板' },
+            { id: 'L5', code: 'L5', label: '電源・基板' },
+            { id: 'L6', code: 'L6', label: '周辺IC' },
+          ];
+      const mZone = svg.match(/data-bionz-zone="([^"]+)"/);
+      const activeZone = mZone ? mZone[1] : null;
+      const tierLabel = isV2 ? 'BIONZ V2 極超積層マップ (105)' : 'BIONZ V1 パッケージ階層 (70)';
+      const pills = layers
+        .map(
+          (l) =>
+            `<span class="bionz-stack-step${activeZone === l.id ? ' is-active' : ''}" data-stack-zone="${l.id}"><span class="bionz-stack-code">${l.code}</span><span class="bionz-stack-name">${l.label}</span></span>`
+        )
+        .join('');
+      return `<div class="bionz-stack-strip"><div class="bionz-stack-strip-head">${tierLabel}</div><div class="bionz-stack-steps">${pills}</div></div>`;
+    };
+    const stackStripHtml = buildBionzStackStrip(syncSvg);
 
     const referencesHtml =
       exp.references && exp.references.length > 0
@@ -682,6 +716,8 @@ export class ExplanationDrawer {
         <h2 class="exp-title">${exp.title}</h2>
         <div class="exp-subtitle">${exp.subtitle}</div>
       </div>
+
+      <div data-stack-strip-host>${stackStripHtml}</div>
 
       <div class="schematic-stage exp-diagram-box${isSyncHd ? ' is-hd-schematic' : ''}" data-schematic-box>
         <div class="exp-diagram-content" data-schematic-content role="button" tabindex="0" title="タップしてピンチ拡大・横向き全画面">${syncSvg}</div>
@@ -726,6 +762,7 @@ export class ExplanationDrawer {
 
     const box = this.bodyEl.querySelector<HTMLElement>('[data-schematic-box]');
     const contentEl = this.bodyEl.querySelector<HTMLElement>('[data-schematic-content]');
+    const stripHost = this.bodyEl.querySelector<HTMLElement>('[data-stack-strip-host]');
 
     if (!cachedSchematicRenderer && box && contentEl) {
       void loadSchematicRenderer().then((renderFn) => {
@@ -733,6 +770,7 @@ export class ExplanationDrawer {
         this.latestSvg = renderFn(exp.diagramType);
         contentEl.innerHTML = this.latestSvg;
         box.classList.toggle('is-hd-schematic', isHdDiagram(this.latestSvg));
+        if (stripHost) stripHost.innerHTML = buildBionzStackStrip(this.latestSvg);
       });
     }
 

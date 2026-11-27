@@ -6,5 +6,6 @@
 *.dat
 *.kicad_prl
 *.kicad_pro
+spooles.out
 gerbers/
 sch_svg/

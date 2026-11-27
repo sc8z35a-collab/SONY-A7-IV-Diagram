@@ -150,7 +150,7 @@ def run_plinth_fea():
     with open(job + ".inp", "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    r = subprocess.run(["ccx", "-i", job], capture_output=True, text=True, check=False)
+    r = subprocess.run(["ccx", "-i", job], cwd=OUT_DIR, capture_output=True, text=True, check=False)
     if r.returncode != 0 or not os.path.exists(job + ".dat"):
         return {"ok": False, "error": f"ccx plinth failed: {r.stderr or r.stdout}"}
 
@@ -252,7 +252,7 @@ def run_quartz_thermo_fea():
     with open(job + ".inp", "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    r = subprocess.run(["ccx", "-i", job], capture_output=True, text=True, check=False)
+    r = subprocess.run(["ccx", "-i", job], cwd=OUT_DIR, capture_output=True, text=True, check=False)
     if r.returncode != 0 or not os.path.exists(job + ".dat"):
         return {"ok": False, "error": f"ccx quartz failed: {r.stderr or r.stdout}"}
 
