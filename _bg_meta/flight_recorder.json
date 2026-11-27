@@ -1,0 +1,14 @@
+{
+  "schema": "bg-flight/v1",
+  "sessionId": "feat-feat-original-riimos-e1-mwza8y1o",
+  "branch": "feat/feat-original-riimos-e1",
+  "goal": "Add Original section and RIIMOS E1 (9,700 JPY ultra-frugal 128-part manufacturable quadruped) + Blueprint Studio + Colab L4 MJX pack",
+  "completed": [],
+  "verifiedGates": [],
+  "knownPitfalls": [],
+  "nextStep": "Phase 1: Core types, registry, 128-part CAD + Dynamic Rig",
+  "artifactsMirrored": [],
+  "updatedAt": "2026-11-27T17:56:16.707Z",
+  "vmHost": "devbox",
+  "baseSha": "79f059dc3895cf31f9802bc5d5c80997a46504d1"
+}
