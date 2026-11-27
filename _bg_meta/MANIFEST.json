@@ -1,15 +1,85 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-27T13:09:55.013Z",
+  "createdAt": "2026-11-27T13:18:31.232Z",
   "slug": "feat-feat-hyper-opt-v3-fast-kine-ultra-aa",
   "branch": "feat/feat-hyper-opt-v3-fast-kine-ultra-aa",
   "baseSha": "1bc895d9fa5086d3590b035b2f946654517458e7",
   "vmHost": "devbox",
   "reason": "snap",
-  "fingerprint": "5e999784800aaf1ba4a14531eff030607b7e8fbec97d63817effc23eb43cfdf7",
+  "fingerprint": "a723aa6a9d19a1a771472d8fac8b8ed223a49cdaebed27df62494aa3fa34ef3d",
   "fileCount": 759,
-  "deletedFiles": [],
-  "dirtyCount": 13,
+  "deletedFiles": [
+    "docs/assets/CadHelpers-B9eaiy9k.js",
+    "docs/assets/CadPlaygroundStudio-BSWt1Rib.js",
+    "docs/assets/LensOpticsStudio-BnMZWxWk.js",
+    "docs/assets/MiraiLibraryStudio-DncoUr1n.js",
+    "docs/assets/UltraDetailBuilders-lDidlJvj.js",
+    "docs/assets/battery-BAofaaN7.js",
+    "docs/assets/bionz-DTVuLTBu.js",
+    "docs/assets/bionz_v2-DsGzSEDr.js",
+    "docs/assets/body-L7KOBOnE.js",
+    "docs/assets/bodyMicroParts-Cfa0pj5V.js",
+    "docs/assets/bodyNextGenParts-TjoQ5rOG.js",
+    "docs/assets/bodyPhysicsOverlay-DP8ivRFG.js",
+    "docs/assets/bodyUltra25Parts-BRloitp_.js",
+    "docs/assets/bodyUltraAuditParts-NXNDnzAZ.js",
+    "docs/assets/camera_body-jv8lBNvf.js",
+    "docs/assets/camera_macro_shared-BSY8AR3y.js",
+    "docs/assets/cfexpress-CG_-pnZM.js",
+    "docs/assets/drybox-DvsXFKD8.js",
+    "docs/assets/evf-BZHf1SCp.js",
+    "docs/assets/evfMicroParts-8tuyJRls.js",
+    "docs/assets/evfParts-DmqcHOpz.js",
+    "docs/assets/evfPhysicsOverlay-BI4k-pqw.js",
+    "docs/assets/evfPrecisionParts-DYNGy9yF.js",
+    "docs/assets/evfUltraParts-DPhBhOs3.js",
+    "docs/assets/index-0vjjhyQs.js",
+    "docs/assets/index-Bo6YKrSK.css",
+    "docs/assets/integrated-TYzHqGMC.js",
+    "docs/assets/lcd-DNPEkZlp.js",
+    "docs/assets/lcdParts-DtYeQoON.js",
+    "docs/assets/lcdPhysicsOverlay-DXM-vJ31.js",
+    "docs/assets/lens-BMtso4WO.js",
+    "docs/assets/lensMicroParts-DFnDsXmg.js",
+    "docs/assets/lensPhysicsOverlay-B9nED66W.js",
+    "docs/assets/lensUltraSplitParts-B6oPpRci.js",
+    "docs/assets/macroParts-epKhOSzf.js",
+    "docs/assets/mainboard-rBhssl0l.js",
+    "docs/assets/mainboardMicroParts-N4X7j2FL.js",
+    "docs/assets/mainboardPhysicsOverlay-BZtLvZFE.js",
+    "docs/assets/mainboardUltraAuditParts-CKWjVBtm.js",
+    "docs/assets/mi_shoe-CoOm-hOT.js",
+    "docs/assets/mic-BvY-FsFm.js",
+    "docs/assets/micro-Nw5WURVu.js",
+    "docs/assets/micro_v2-BPW7RXvR.js",
+    "docs/assets/mirai_2028-DsvDMaac.js",
+    "docs/assets/mount-Dj-c_mWf.js",
+    "docs/assets/mountDeepAuditParts-2WhUpZNa.js",
+    "docs/assets/mountMicroParts-W-c90YEt.js",
+    "docs/assets/mountPhysicsOverlay-C4gA45tu.js",
+    "docs/assets/mountUltra34PartsA-CYkJ4tuu.js",
+    "docs/assets/mountUltra34PartsB-CCBpmMxC.js",
+    "docs/assets/mountUltraAuditParts-BfEoKwpd.js",
+    "docs/assets/physicsOverlay-DaeO7Xlq.js",
+    "docs/assets/playground_templates-CAVJW7ER.js",
+    "docs/assets/sensor-B25HZGxb.js",
+    "docs/assets/sensorMicroParts-D0-cToyz.js",
+    "docs/assets/sensorMicroUltraAuditParts-D2wXRGU2.js",
+    "docs/assets/sensorNextGenParts-Cont9Z0J.js",
+    "docs/assets/sensorUltraPrecisionParts-B4a9cuJH.js",
+    "docs/assets/sensor_fab-cu2LyE5V.js",
+    "docs/assets/shutter-DukaTIU8.js",
+    "docs/assets/shutterMicroParts-CIqYaNod.js",
+    "docs/assets/shutterPhysicsOverlay-BuRmebp4.js",
+    "docs/assets/shutterUltra34PartsA-DJqCTcj_.js",
+    "docs/assets/shutterUltra34PartsB-_GgFhIBV.js",
+    "docs/assets/shutterUltra36PartsA-CmgDhveO.js",
+    "docs/assets/shutterUltra36PartsB-iyLyogPQ.js",
+    "docs/assets/shutterUltraAuditParts-6A7MJaE4.js",
+    "docs/assets/v2_unit_compiler-DzIEUGwI.js",
+    "docs/assets/welcome-C9px3JKW.js"
+  ],
+  "dirtyCount": 156,
   "skippedLarge": [],
   "artifacts": [
     {
@@ -691,45 +761,45 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/CadHelpers-B9eaiy9k.js",
-      "sha256": "bde267ac1d7ce399384000e2b23ac1f07061eeb32175e2266247900c8867965d",
-      "size": 7901,
+      "path": "docs/assets/CadHelpers-tfx5Gl1Y.js",
+      "sha256": "f47ad1184d7f5cf07f6a55044479d69abc06422ee37e40f96a884b31d3ea02b1",
+      "size": 7861,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/CadPlaygroundStudio-BSWt1Rib.js",
-      "sha256": "984afbc68520164f3d7f5a38d53f47eece8bda5ba5bb0d138414df91bc9adfa3",
-      "size": 169466,
+      "path": "docs/assets/CadPlaygroundStudio-DkrIh9PJ.js",
+      "sha256": "de0a054013046a982af1eac826c7865055c111542d8527178f9af230e99ad060",
+      "size": 177761,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/LensOpticsStudio-BnMZWxWk.js",
-      "sha256": "2192c96109931e25bce0e169b80c1db3038f1f3dc115ac2507b96cd0b35ae12a",
+      "path": "docs/assets/LensOpticsStudio-0NfAZPJp.js",
+      "sha256": "7ae25dfc7c9cced0a7307d8e77c3a11ca5cf32e5c229aa327d80a1c745ba685e",
       "size": 27165,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/MiraiLibraryStudio-DncoUr1n.js",
-      "sha256": "4e87997de75af4885b6be0b2759ede730d16ef0688228a2c00b32037f14ef4fe",
+      "path": "docs/assets/MiraiLibraryStudio-BQWVj9yn.js",
+      "sha256": "92b6f5cb82eff69bb9183436f0fe7c7ce36a796eebf54fddd048c0b645713682",
       "size": 19988,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/UltraDetailBuilders-lDidlJvj.js",
-      "sha256": "adf320e18fb93951c0e171d8b7ece18973e97549553da9393cd174a2c6fd57ef",
-      "size": 10821,
-      "mode": "100644"
-    },
-    {
-      "path": "docs/assets/battery-BAofaaN7.js",
-      "sha256": "5b43d4a6a9ee90306630d64134d7acbb5ebb4ab13968a0cdadaf5c813e904c6d",
-      "size": 65695,
+      "path": "docs/assets/UltraDetailBuilders-DxuAGld3.js",
+      "sha256": "8421c0cce2a8bf237b9e85d0d0872da46693bf9be34d0a1004289e2ab4810501",
+      "size": 10786,
       "mode": "100644"
     },
     {
       "path": "docs/assets/battery-Cw3gePVg.js",
       "sha256": "5fac4cc5f25581bec6f5930ba46c9ba2dfd4341466b1bf9e0f13ea8c7df3e205",
       "size": 411577,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/battery-ttYbz3MR.js",
+      "sha256": "00ebad81bd5800dcd1e89f63e91aca99c2c5d6e5962ded40e7c0fc0a21f547a2",
+      "size": 65654,
       "mode": "100644"
     },
     {
@@ -763,9 +833,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bionz-DTVuLTBu.js",
-      "sha256": "b13adca51e6f6e14d62f841849db52b0a61bff79bf1d3b8d54bee654db49896d",
-      "size": 94297,
+      "path": "docs/assets/bionz-DcRZ0Qwh.js",
+      "sha256": "91c84daaa855e40640d6f29614a34c7e232f102a505fd85d6dfe262ba911fd48",
+      "size": 94258,
       "mode": "100644"
     },
     {
@@ -793,9 +863,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bionz_v2-DsGzSEDr.js",
-      "sha256": "fd05aa79f10d89069e9f03af699f60022bcd727897a84a03ec0479e6a9b597e0",
-      "size": 124022,
+      "path": "docs/assets/bionz_v2-BttR-TH2.js",
+      "sha256": "c7786e3b5a9841136fe57022baa186bf04ca71b320088259190d97d26416660a",
+      "size": 123980,
       "mode": "100644"
     },
     {
@@ -805,15 +875,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/body-DYuOmmPC.js",
-      "sha256": "64dc501137d2419d920f5ef743c0221e6eb546da708f40d8d978d0f45774e227",
-      "size": 368486,
+      "path": "docs/assets/body-C8t7KuIV.js",
+      "sha256": "286b41bf4a9838a9f16f698314e7c8236b25c48d8928bc22abad39973bf0fa8d",
+      "size": 1433,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/body-L7KOBOnE.js",
-      "sha256": "c4e49751a608762af09bfdc40d422aa5fd3372a964e9fce3721fea47f4da2c22",
-      "size": 1471,
+      "path": "docs/assets/body-DYuOmmPC.js",
+      "sha256": "64dc501137d2419d920f5ef743c0221e6eb546da708f40d8d978d0f45774e227",
+      "size": 368486,
       "mode": "100644"
     },
     {
@@ -823,9 +893,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bodyMicroParts-Cfa0pj5V.js",
-      "sha256": "f4892a767537dc43f26432b0d8573ef9b96eeaeea8c89d32dd122bec496c375e",
-      "size": 12373,
+      "path": "docs/assets/bodyMicroParts-Chxz_K79.js",
+      "sha256": "f132eb3d144d81f014637828380d70878ad108f8b1cace8fd8ce63e2ed296cd7",
+      "size": 12336,
       "mode": "100644"
     },
     {
@@ -835,15 +905,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bodyNextGenParts-TjoQ5rOG.js",
-      "sha256": "e44ecdeebaae3848e7e60f68b5239842d25b574210b5e584e1329b6bb48fd02f",
-      "size": 16233,
+      "path": "docs/assets/bodyNextGenParts-uYs9R1sp.js",
+      "sha256": "d9dc6804afe9dab4f4a4d23afb3bba40d8844dcdd3f5310945cfa6afd5bc7d76",
+      "size": 16194,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bodyPhysicsOverlay-DP8ivRFG.js",
-      "sha256": "608ed4ccb008266915edc3910baf82409af37c939a0bd94ea940c4204183bf98",
-      "size": 37288,
+      "path": "docs/assets/bodyPhysicsOverlay-DEmyR-NJ.js",
+      "sha256": "d9f2cf9e94ae4cb7b0ea74ebe2a9f16eeecc1c15f6583baa5da5b6581e98823b",
+      "size": 37250,
       "mode": "100644"
     },
     {
@@ -853,15 +923,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bodyUltra25Parts-BRloitp_.js",
-      "sha256": "6f84a0706f3d6db9b300332ab821edc0a333be94d279d9eab67e7352f9c08fc6",
-      "size": 8135,
+      "path": "docs/assets/bodyUltra25Parts-C7rLK7MI.js",
+      "sha256": "ab710bc886e0b97180103f295faa8c24266f1d5dd82077001ee1bade3a3dfae8",
+      "size": 8096,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/bodyUltraAuditParts-NXNDnzAZ.js",
-      "sha256": "07eeb9116c5a1f817ddc6b3adba2fa7e12a3d73ff892a16cdca365789f0299b5",
-      "size": 9880,
+      "path": "docs/assets/bodyUltraAuditParts-BYdHIApJ.js",
+      "sha256": "ea113d204fea097aabab48da65b12b741b20b4a3c0265e0cc23b1c9ea37575de",
+      "size": 9841,
       "mode": "100644"
     },
     {
@@ -871,21 +941,21 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/camera_body-jv8lBNvf.js",
-      "sha256": "535dbb9a03825f9939fbd3e0f5855661f09131e39575b05a3110f6e8a0c35f18",
-      "size": 991,
+      "path": "docs/assets/camera_body-QwCQpzKy.js",
+      "sha256": "55ba73df58837d5908111f7b30aa1adf13bbb76c6172a68817a0055fad53760b",
+      "size": 953,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/camera_macro_shared-BSY8AR3y.js",
-      "sha256": "f4c3594fc40cbe2d2fefa48ef477749bc9bfe40a562a785eb1fa1c4fbb712064",
+      "path": "docs/assets/camera_macro_shared-DyosW61C.js",
+      "sha256": "480a4a1814362646ecd7c75fc73c1467c78d89e0a20412d3f3f9613058edadc9",
       "size": 7640,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/cfexpress-CG_-pnZM.js",
-      "sha256": "54133f95a1ff4372f4c9d3c0e1d56e2425dca1e30cfafe9055d93f55aa5defce",
-      "size": 155200,
+      "path": "docs/assets/cfexpress-CTshj5og.js",
+      "sha256": "c09d60fe8fec4a47c2b00d2573d3560a0e9ac2efe1874fbd0cd5b467c93703d1",
+      "size": 155159,
       "mode": "100644"
     },
     {
@@ -925,15 +995,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/drybox-D1IN4adj.js",
-      "sha256": "205e2064578a42734ed34899e04dee42615bf4f29e19cce60f1b108c76cd90eb",
-      "size": 556141,
+      "path": "docs/assets/drybox-CXI2XYtI.js",
+      "sha256": "a0f7312059eb0e84f18f860fcfee88e9a33a17a1cd4fa462d31cd6009665efc0",
+      "size": 114498,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/drybox-DvsXFKD8.js",
-      "sha256": "d224c1a7d82f4c27745adc7bf7455fb4cbf1d38ce267ab87d7bbbe256ddd3661",
-      "size": 114541,
+      "path": "docs/assets/drybox-D1IN4adj.js",
+      "sha256": "205e2064578a42734ed34899e04dee42615bf4f29e19cce60f1b108c76cd90eb",
+      "size": 556141,
       "mode": "100644"
     },
     {
@@ -979,15 +1049,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evf-BETQwoTg.js",
-      "sha256": "fd23d25d26c9636e8681ab5f5e6980e4b81cbd2a073c03151918d1b3d40f5f30",
-      "size": 350383,
+      "path": "docs/assets/evf-2vBxDyFd.js",
+      "sha256": "852b7c1280c8de8f3dc140e78079044eb769fef649a1fd1d00f2de7c3eac36ca",
+      "size": 1536,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evf-BZHf1SCp.js",
-      "sha256": "3c523e15ac272b6d36ef42abe7c484bab58053236233094e73022049839fc8ce",
-      "size": 1574,
+      "path": "docs/assets/evf-BETQwoTg.js",
+      "sha256": "fd23d25d26c9636e8681ab5f5e6980e4b81cbd2a073c03151918d1b3d40f5f30",
+      "size": 350383,
       "mode": "100644"
     },
     {
@@ -997,33 +1067,33 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evfMicroParts-8tuyJRls.js",
-      "sha256": "9deae8e0a07750ed6aae39f9edab51ba9402bf6714858bf70a3d48ed852ea81c",
-      "size": 49610,
+      "path": "docs/assets/evfMicroParts-BgyQMKXq.js",
+      "sha256": "76fcc281e3ba22e557cfb76ae3098d8dfefffa786c8d5745ff07c9eacd04bbfe",
+      "size": 49573,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evfParts-DmqcHOpz.js",
-      "sha256": "8d208bbdc7a015959fe35b061d7aa48989b9414d076fd9bb30ebc583971e0746",
-      "size": 75394,
+      "path": "docs/assets/evfParts-Bbt_olvr.js",
+      "sha256": "3364c860644430287f8cb4b4ed8de398057c6c654bea2d3839bc7c8afa8153da",
+      "size": 75359,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evfPhysicsOverlay-BI4k-pqw.js",
-      "sha256": "9f02aff2eac9924bd20dfa631e50f600ff811e08291af95e88b9cf7334488978",
+      "path": "docs/assets/evfPhysicsOverlay-A3VJjBoL.js",
+      "sha256": "5ff88eceb839598a863a872a899454837217780ec9f6a8e43a14e8995c71a7af",
       "size": 5878,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evfPrecisionParts-DYNGy9yF.js",
-      "sha256": "74cb86abd82cbf96099a277def6fd1f2bf89b62bac9fa3f89fd8c74b2d95129d",
-      "size": 35916,
+      "path": "docs/assets/evfPrecisionParts-6OHhzykp.js",
+      "sha256": "f58635367c016dba97cb6656e6e5d0b7da8beae1289caea3b977988261a7b995",
+      "size": 35879,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/evfUltraParts-DPhBhOs3.js",
-      "sha256": "12792646750d66229c5ef83ba4928de0a90b12fad8d2e7f4350bdb237f1b6048",
-      "size": 60675,
+      "path": "docs/assets/evfUltraParts-Yb_8w4ZS.js",
+      "sha256": "9d64d31c86897a9e57bcc3c615de63f902bc9ab7ecfa407a35934652a28aef9c",
+      "size": 60638,
       "mode": "100644"
     },
     {
@@ -1039,15 +1109,21 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/index-0vjjhyQs.js",
-      "sha256": "32a4ea2107c9836d534be9319bb36965d32f541656459acdb8f15c7fb68a28a5",
-      "size": 798631,
+      "path": "docs/assets/index-CSvfqhRk.js",
+      "sha256": "de9a6efc601b1aa8b8a9952cb2ae4fd376fb420201bf2036061dd106f300728e",
+      "size": 954470,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/index-Bo6YKrSK.css",
-      "sha256": "bcab538320a3f1a34c5a46816e92fc8e45814fc87f5777771b2829709ce92f1d",
-      "size": 90359,
+      "path": "docs/assets/index-UB10SVIH.css",
+      "sha256": "ad96f7ace3d55c35e1b0f2f878a54d167f96e33983c35fb392acc84fefe28766",
+      "size": 96985,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/integrated-B79_eQVp.js",
+      "sha256": "fb62284193504a3683f9c03c4909153c3375100dbd494b0d883d33a3c4155d7e",
+      "size": 951,
       "mode": "100644"
     },
     {
@@ -1057,9 +1133,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/integrated-TYzHqGMC.js",
-      "sha256": "ca5ff1f266ee97cbed42fca5839012d94f73e2a3b09b160e1a8fa7a4995fd950",
-      "size": 989,
+      "path": "docs/assets/lcd-BRJp3tG5.js",
+      "sha256": "d595e435747f945cf5c02d5df2719dfa963e64de17a88cf2a0b8d7c551a9e45c",
+      "size": 74524,
       "mode": "100644"
     },
     {
@@ -1069,26 +1145,20 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lcd-DNPEkZlp.js",
-      "sha256": "09f10cbd98e6bec4790cae7f2206029cc2c09da7c5e8a4a9bc7e0a74bcc1e963",
-      "size": 74564,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/lcdExplanations-DVJLFMAP.js",
       "sha256": "dd4b4f21384ed6219483225a829800d31a143abab57f398c0d5e999818a04a02",
       "size": 129,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lcdParts-DtYeQoON.js",
-      "sha256": "df5e3bde8c41d15730f789d8111ecc36b1ac001991961342f8aaf58aa80f8f68",
-      "size": 23707,
+      "path": "docs/assets/lcdParts-GdmJ-UbM.js",
+      "sha256": "3555ded507a60842be0d752d5505720830f15069a2b5f43eb005575892481e29",
+      "size": 23708,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lcdPhysicsOverlay-DXM-vJ31.js",
-      "sha256": "adc7e6ca117cc8be35d5647696c4e252a9ffeaf5065a38f4283fb7f315081146",
+      "path": "docs/assets/lcdPhysicsOverlay-CPXPU5qg.js",
+      "sha256": "6fa730a005bdebf8283b951b1d56dcbd296a044c8dac1c67a00e9b1f03e049a1",
       "size": 2795,
       "mode": "100644"
     },
@@ -1111,15 +1181,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lens-BMtso4WO.js",
-      "sha256": "72877bc8c142a57cf77562ab7fdd274a680812eb69579977dd54ebab912ea355",
-      "size": 1258,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/lens-DbGM9PCN.js",
       "sha256": "276290e13bc591b89d687271cec1c8e117848056f22edc24f12fc6ed9e8889e1",
       "size": 369303,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/lens-qMRCLBZO.js",
+      "sha256": "cb3ec0d69e1aa8a53632d7b1c0dfbb1dc4342846bf1335fd8752b8846aba35cd",
+      "size": 1220,
       "mode": "100644"
     },
     {
@@ -1129,27 +1199,33 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lensMicroParts-DFnDsXmg.js",
-      "sha256": "ca323a6081756a22092fbe5a78334b14d5c9712e51b69a4e5f276da01a790f90",
-      "size": 9805,
+      "path": "docs/assets/lensMicroParts-u7ce3YtL.js",
+      "sha256": "0e9912bb3fcff6ef1a3a749cf75e7beeeeb32429d8e0314fd01dfc9dd22a6326",
+      "size": 9768,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lensPhysicsOverlay-B9nED66W.js",
-      "sha256": "6e2fbcb1948d169b48c831b4f110f3c25e089997be7584616e4cb82a1b3a0421",
-      "size": 54836,
+      "path": "docs/assets/lensPhysicsOverlay-CaTWKlhw.js",
+      "sha256": "f70415784831f92e54045468492d8b49db6e64c686d15eea3b56b8b61ffc1463",
+      "size": 54802,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/lensUltraSplitParts-B6oPpRci.js",
-      "sha256": "4d70e8d8da75daeaf9862ec540bed75b008d5a91cb1ff56a7a6ae319b2bee095",
-      "size": 14906,
+      "path": "docs/assets/lensUltraSplitParts-CJ9xvOJ5.js",
+      "sha256": "19660b434b77f7c8d9b89257be2b8f6b3986a73e8f791a201193a4e4fd471204",
+      "size": 14869,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/macroParts-epKhOSzf.js",
-      "sha256": "aa8804ce10f4aeaef400d9cadb129570096919f3a9409ca7d5807535cd2968a5",
-      "size": 56339,
+      "path": "docs/assets/macroParts-Df-zdWSA.js",
+      "sha256": "d58992b0c0e6014d0e63a131fb6be01e00c994aa57f5a56c39f059c102a79724",
+      "size": 56304,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/mainboard-CkUAEgKO.js",
+      "sha256": "e1cf6ea49de8c103c60d2169e109e805b36ea3b731b782b8a4631abcf79ebb80",
+      "size": 1643,
       "mode": "100644"
     },
     {
@@ -1159,33 +1235,27 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mainboard-rBhssl0l.js",
-      "sha256": "9c4e2325ce934e197342584ffc6ff5c42e18a4371a1753f604f807035f9e57cf",
-      "size": 1676,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/mainboardExplanations-CFCwOEoo.js",
       "sha256": "493ddf32430cf7939b21b6c7e3d8455a97fcde5b2fd30a5b31beb6c20ddea332",
       "size": 141,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mainboardMicroParts-N4X7j2FL.js",
-      "sha256": "c9d6304a004edc481b949a33b19787448c850c4eb9e2fe57456f85a249a2c2a0",
-      "size": 12812,
+      "path": "docs/assets/mainboardMicroParts-Sg4MvbON.js",
+      "sha256": "50fc14ca4300120b0f55ee950ec6796c67b2e2265da09003c86b6427f9766e4a",
+      "size": 12774,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mainboardPhysicsOverlay-BZtLvZFE.js",
-      "sha256": "9227a0d0e6a429ad9f136aad58cb14378849624433051e73ecf70dcd8d2226d4",
-      "size": 30185,
+      "path": "docs/assets/mainboardPhysicsOverlay-BWxHfrFN.js",
+      "sha256": "c3cecf10b238e47c4c493da7044dc73314b32e45a8e5541be45f84db2d80b8ca",
+      "size": 30150,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mainboardUltraAuditParts-CKWjVBtm.js",
-      "sha256": "f3793d46093bef4743ff0c7ea37a4f343ec4b637237bb7b1527df33f704988e2",
-      "size": 3088,
+      "path": "docs/assets/mainboardUltraAuditParts-BEHGua3w.js",
+      "sha256": "578bcdf5e42ca95526e41f48e83b87a81a54aaed3988cc66ccb3247eb62cf013",
+      "size": 3051,
       "mode": "100644"
     },
     {
@@ -1201,9 +1271,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mi_shoe-CoOm-hOT.js",
-      "sha256": "affc5d09b201607287de3d8490ddfe9eda0046292433394e4e6b60a0ceceaa0c",
-      "size": 74660,
+      "path": "docs/assets/mi_shoe-88-lPAlr.js",
+      "sha256": "1ad934bc06bf4dc1c5c40f95db8e45747a4e3d29866a2879db6dae6b2d58f36d",
+      "size": 76086,
       "mode": "100644"
     },
     {
@@ -1213,15 +1283,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mic-BvY-FsFm.js",
-      "sha256": "61821160f6ebbcfbaa5b8f7a2244e54fc913606b603bc07560a60ced696d989e",
-      "size": 156552,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/mic-CwD_McdS.js",
       "sha256": "ea9784670665864c051c409abad46643a0d3e8204e4b7e4bcec98ff422775fdc",
       "size": 442771,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/mic-YGJwGEX4.js",
+      "sha256": "d38a49d9e22f720402d657fb6747aaa46b0b9e2c889f8b3fd9f201a2d06b7b1c",
+      "size": 156513,
       "mode": "100644"
     },
     {
@@ -1249,9 +1319,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/micro-Nw5WURVu.js",
-      "sha256": "6f72584f76c6efb59c375280ca3ab691271a60a54be2e171170cd447e3a400b0",
-      "size": 35340,
+      "path": "docs/assets/micro-CkK3c5ti.js",
+      "sha256": "8658af8ff0105f1eca094eef9b55a349bfd6dc93e4178cf332b5a4767691c591",
+      "size": 35300,
       "mode": "100644"
     },
     {
@@ -1279,9 +1349,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/micro_v2-BPW7RXvR.js",
-      "sha256": "5e58cbe899834bc3f1871ba07b8c553a2c5bca10a548e651e8218c50b6c34114",
-      "size": 58487,
+      "path": "docs/assets/micro_v2-B86F-68Y.js",
+      "sha256": "fb110bbb1769d8fa48f79f4df700ba5f5dd29a4bc5f08160948936f5514102c6",
+      "size": 58451,
       "mode": "100644"
     },
     {
@@ -1297,9 +1367,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mirai_2028-DsvDMaac.js",
-      "sha256": "982201dda687dbdeb5f0269c0b6099137387cfdd4d9df090f4c46f16a2e3e9a5",
-      "size": 66079,
+      "path": "docs/assets/mirai_2028-kjymRPtL.js",
+      "sha256": "c83d5aa66be55039f898d42552899729931fc710d5d7e6c1836717191eb971fb",
+      "size": 66043,
       "mode": "100644"
     },
     {
@@ -1309,15 +1379,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mount-Dj-c_mWf.js",
-      "sha256": "504b4ab1c67db36ea8f30570b790f43a69cfa2a0daa168246834521a97479739",
-      "size": 865,
+      "path": "docs/assets/mount-q1iHGCaI.js",
+      "sha256": "3a4ac8e0f514722530daa3b836635191e97f763180d4f992c4f374f5aa726eb0",
+      "size": 827,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountDeepAuditParts-2WhUpZNa.js",
-      "sha256": "b8c28ef8b7da193f32f74a734addc0ea705885a1a4c9c72ae45ea408b716a518",
-      "size": 6263,
+      "path": "docs/assets/mountDeepAuditParts-Dn2GADpi.js",
+      "sha256": "6d818a566bd33d07e8257b1ac52e5a281e94941b3ad4a0670d6fd0fde2130666",
+      "size": 6226,
       "mode": "100644"
     },
     {
@@ -1327,15 +1397,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountMicroParts-W-c90YEt.js",
-      "sha256": "0dbce21c7bed61596181fecfdf52160281b91e34ea5bf4e493707c2e13a72bdd",
-      "size": 8630,
+      "path": "docs/assets/mountMicroParts-DHCbOxk7.js",
+      "sha256": "ef2846acea9d2d7b21cd6dbae5b97b3963a94264e746f4fededb89dc4c396a1b",
+      "size": 8596,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountPhysicsOverlay-C4gA45tu.js",
-      "sha256": "db97fffa34f4ff15f47fce170374fdfcc2f6791952eaf16032c5bccb2810d02e",
-      "size": 23159,
+      "path": "docs/assets/mountPhysicsOverlay-B5GRysIG.js",
+      "sha256": "9b5203f6c8630cbdc4d054a2edcdfd8764e206ee4881026c8729f336e6927662",
+      "size": 23118,
       "mode": "100644"
     },
     {
@@ -1351,26 +1421,26 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountUltra34PartsA-CYkJ4tuu.js",
-      "sha256": "eb12b554593ab2822b05c07784e16e90b93a7e385f4274abbb8f54e8ecf68846",
-      "size": 15359,
+      "path": "docs/assets/mountUltra34PartsA-Bpwv6nrE.js",
+      "sha256": "2316b957b4192c1435a5207b30dcc77f3b7e8542e3302bcc5730ac77570046a9",
+      "size": 15322,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountUltra34PartsB-CCBpmMxC.js",
-      "sha256": "d832711d980acf79464a7d5464786ba7538ede3cb2c05b1052d71648204f971f",
-      "size": 15300,
+      "path": "docs/assets/mountUltra34PartsB-evbwT8fU.js",
+      "sha256": "d3af42b895b7f00b33c1d294add8fd8fd29791ab5167e995e7f2ce2e927666b9",
+      "size": 15263,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/mountUltraAuditParts-BfEoKwpd.js",
-      "sha256": "8e73d31a0e098e75326022a5a473cef67857a50b44fb6de313cba6d5a40a0f00",
-      "size": 3040,
+      "path": "docs/assets/mountUltraAuditParts-Bb0CpKZj.js",
+      "sha256": "8c0849681344c3ce26972ff79fffbf4bbd798b55cb30697fbae76aa5ea1e1048",
+      "size": 3002,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/physicsOverlay-DaeO7Xlq.js",
-      "sha256": "d6699143452ce93cabe9bc2bee11064f24a9a5882d73dfecf3ffe18c473257fa",
+      "path": "docs/assets/physicsOverlay-DS0f-bm7.js",
+      "sha256": "cc8b4a9421d8bec3188d526dc14c2ba83e029048371d7b162b8307dc26cce609",
       "size": 7622,
       "mode": "100644"
     },
@@ -1381,9 +1451,9 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/playground_templates-CAVJW7ER.js",
-      "sha256": "6b83f695aacfbd1ae6bf1ab7a6c7d79989507aa643b5fde6f3fe938dd5baac61",
-      "size": 470882,
+      "path": "docs/assets/playground_templates-P2zmwQPg.js",
+      "sha256": "803e141a0ca7b93cd9dc2e9822160e094b216f0ee8135298c314bc9aaffdd25f",
+      "size": 193992,
       "mode": "100644"
     },
     {
@@ -1393,15 +1463,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensor-B25HZGxb.js",
-      "sha256": "f7713ae1d67aa71767021903dd39c4ad9bb8469e58df9487bb93ee56636cd98d",
-      "size": 2568,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/sensor-CzpKrVee.js",
       "sha256": "8627dce01234d8863dfd572fa7de0c666312d389ff6bba010b9ee50e8b5cafc6",
       "size": 365746,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/sensor-DM2aKoBR.js",
+      "sha256": "6107a73ff0b10c91effa01a9c019697f538133d106e68c638f0b9d93bd6859e2",
+      "size": 2495,
       "mode": "100644"
     },
     {
@@ -1441,15 +1511,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensorMicroParts-D0-cToyz.js",
-      "sha256": "c2100dcf228a5af3b170b41ce1a08d2b91d4a8682ece1e143933f60c7900450b",
-      "size": 24751,
+      "path": "docs/assets/sensorMicroParts-CMtkxk1C.js",
+      "sha256": "3affb0d19882dc4a320c05b85f5459b034b1de8ee735e4233127b18602e45b8f",
+      "size": 24716,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensorMicroUltraAuditParts-D2wXRGU2.js",
-      "sha256": "3b395e03c0e37472abd9754a29a5ff294f4f4b8457da79ded6fa2928590cdf1d",
-      "size": 10005,
+      "path": "docs/assets/sensorMicroUltraAuditParts-BO1vir33.js",
+      "sha256": "1293fe44d121c0ce87c947c051bb50431559babb5fb806871d6b2982990208c5",
+      "size": 9968,
       "mode": "100644"
     },
     {
@@ -1459,15 +1529,21 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensorNextGenParts-Cont9Z0J.js",
-      "sha256": "7e6686f767b4d7d873653606269db4a0eeb6781642d0a6573347920108d9b3c6",
-      "size": 25584,
+      "path": "docs/assets/sensorNextGenParts-DYuI3IfJ.js",
+      "sha256": "0ba776c84d2b98d9f2b2d780c0181c36baed5246cddf016bd234909b24e4102e",
+      "size": 25548,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensorUltraPrecisionParts-B4a9cuJH.js",
-      "sha256": "4f4f9c489ea1cd34b556750713c518df049fc146264e15121230f78fe525fbdf",
-      "size": 22875,
+      "path": "docs/assets/sensorUltraPrecisionParts-Gbd8tD2M.js",
+      "sha256": "961c030ccfc3bbd3878a54006921dcb2b84da51130960eeb04f6e6c633d83482",
+      "size": 22841,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/sensor_fab-B8CnXRuN.js",
+      "sha256": "39ec9054a24b6f98b70004a8c6567ebefd1750275aab8360a959dd00e9214d9a",
+      "size": 189735,
       "mode": "100644"
     },
     {
@@ -1477,21 +1553,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/sensor_fab-cu2LyE5V.js",
-      "sha256": "fe54499ae604f4d87f12ae30850b67f174e21943e49e8ed205491cadc5c91d9d",
-      "size": 189777,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/shutter-DRF49fuH.js",
       "sha256": "066d36a49d97794953bffb7c78c8e9f09fe6f311645e7ba885aa2d42e2a5d0fe",
       "size": 489867,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutter-DukaTIU8.js",
-      "sha256": "2a3e5617a7a32afa9ecde1d2ac3322f3308c7962af186398ddff1e3429670885",
-      "size": 1058,
+      "path": "docs/assets/shutter-DbilurDf.js",
+      "sha256": "d8f6c06f1b3b26d97230560ffbf1b307a240428e2e1ac2c788e073aa62483d34",
+      "size": 1020,
       "mode": "100644"
     },
     {
@@ -1501,15 +1571,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterMicroParts-CIqYaNod.js",
-      "sha256": "24fb743c411e7c2691ecbfaea033d6de3210978779e83c498b4734c783828d51",
-      "size": 9250,
+      "path": "docs/assets/shutterMicroParts-BwMIaDIM.js",
+      "sha256": "d0f9effb2170ad1148d8b328b4b87119e16f9e862f1adaa36dbdb16aef5afa70",
+      "size": 9213,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterPhysicsOverlay-BuRmebp4.js",
-      "sha256": "5c35714a88a9eedcae670c36e603b61f9595f0b519262c1ce67a7ae74675fe92",
-      "size": 29376,
+      "path": "docs/assets/shutterPhysicsOverlay-B8z5tM_M.js",
+      "sha256": "9816c444a8a65f0599477662121250e7f1a43ef878c7fbb2449df637e743f25d",
+      "size": 29332,
       "mode": "100644"
     },
     {
@@ -1525,15 +1595,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterUltra34PartsA-DJqCTcj_.js",
-      "sha256": "2e857d7255985df8f3db3c85776e5e52fe546c723fef3f002181d240f34257a8",
-      "size": 20168,
+      "path": "docs/assets/shutterUltra34PartsA-Bn9AjmiB.js",
+      "sha256": "9610a6b5c984679af3dcb22fdee9f82adabd3a1def08ba8f2f10ac3193027c64",
+      "size": 20131,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterUltra34PartsB-_GgFhIBV.js",
-      "sha256": "352a060a8e3d40b0734f4470a9a3a5c8977df684c392d96a26a272d3beb49bc4",
-      "size": 17279,
+      "path": "docs/assets/shutterUltra34PartsB-45Yvb9OZ.js",
+      "sha256": "44fb592bddc5eae6dcdfd302918692795087c7052dd96919d3c76fa6c7668755",
+      "size": 17243,
       "mode": "100644"
     },
     {
@@ -1549,33 +1619,27 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterUltra36PartsA-CmgDhveO.js",
-      "sha256": "803a025cf0fc88e21927a6fc1fdbb494cb5157af852eaa728b1026809d5a525c",
-      "size": 16625,
+      "path": "docs/assets/shutterUltra36PartsA-CwBWDUap.js",
+      "sha256": "bb6f89e2130c558a581f1cf2ce7781c71cd3a71fc3578d0261ad62e52f02ebe6",
+      "size": 16588,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterUltra36PartsB-iyLyogPQ.js",
-      "sha256": "96335c239d9c29c59385f4a93563512c90a587bd039205c8b2fa5e037e3b1a60",
-      "size": 16831,
+      "path": "docs/assets/shutterUltra36PartsB-DQkqF32N.js",
+      "sha256": "1746454463da686fb9903921a9b44b209043308864e40437910746a2a40cedae",
+      "size": 16794,
       "mode": "100644"
     },
     {
-      "path": "docs/assets/shutterUltraAuditParts-6A7MJaE4.js",
-      "sha256": "b8580b8c1b59914c32fa4a39b0619d17859d403dab2bb3ceeceb5f6c3b2fe724",
-      "size": 11138,
+      "path": "docs/assets/shutterUltraAuditParts-54QLJUYs.js",
+      "sha256": "d5de235497a19d4a75abb9fc3ede13b614ef9183373a683ac7dc628688effbd7",
+      "size": 11101,
       "mode": "100644"
     },
     {
       "path": "docs/assets/unit_explanations-DhEhaoi2.js",
       "sha256": "bb7200a643ab5415c57fe1c98926ae54562d2e0b5c41820325de0c878d246064",
       "size": 465,
-      "mode": "100644"
-    },
-    {
-      "path": "docs/assets/v2_unit_compiler-DzIEUGwI.js",
-      "sha256": "9bb23e9af58f9edb5d0aeb5b99614f514fec6aae0c7a77fa79b2fe9085fabe69",
-      "size": 100633,
       "mode": "100644"
     },
     {
@@ -1627,15 +1691,15 @@
       "mode": "100644"
     },
     {
-      "path": "docs/assets/welcome-C9px3JKW.js",
-      "sha256": "c5dd113d29af81b6d5f42f87d456ce9cc98d9ac0b4f5185460e92a8138ee4a1a",
-      "size": 152987,
-      "mode": "100644"
-    },
-    {
       "path": "docs/assets/welcome-Ce7Ng2Al.js",
       "sha256": "4ad51eee6d6b35abb0510158d96e182f85fe8f1dfd6cb0f16f46f0c3bda8f378",
       "size": 575418,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/assets/welcome-cgnTE-DO.js",
+      "sha256": "83fa1569a8912b9afe4939c0a2005728a5479262c22ef373a67db02d59c86497",
+      "size": 152951,
       "mode": "100644"
     },
     {
@@ -1652,7 +1716,7 @@
     },
     {
       "path": "docs/index.html",
-      "sha256": "2547d88975d2368c92282125309dfee297bf2a74ea4f89af4e14fd9af3dcd2a2",
+      "sha256": "682b906aaf8a1d9b3cc8f4fad634e00d81613dd953588f99ac6df4a02b903f13",
       "size": 1110,
       "mode": "100644"
     },
@@ -1840,6 +1904,12 @@
       "path": "scripts/bench/verify_ultra_motion_and_hud.mjs",
       "sha256": "6ebd717af245cb28490003d40fed2af068dae293c0c787ee9e1df5dbda582275",
       "size": 11776,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/bench/verify_v3_kine_fast_ultra_ux.mjs",
+      "sha256": "4c0175b548e2d18ea02686b4e3e8a4c2aa85e5cbc7957c6b97136d310ba60586",
+      "size": 29870,
       "mode": "100644"
     },
     {
@@ -3506,8 +3576,8 @@
     },
     {
       "path": "src/main.ts",
-      "sha256": "4d4b7d19f13d41616437c633f4256ff4077731aa4226c31c4edd9c0dad5224fe",
-      "size": 81634,
+      "sha256": "47cd2d4bab7aed4c83270b13f9ea96fdec2da67294117b1c9cec8b65d20f604a",
+      "size": 83198,
       "mode": "100644"
     },
     {
@@ -3542,14 +3612,14 @@
     },
     {
       "path": "src/playground/playground_templates.json",
-      "sha256": "716677cd549228d05bbd267ef39d706444fc1f26fd601bbff507bd4004239d6b",
-      "size": 470815,
+      "sha256": "99924c4a10b52ea1cc1007d6c9553dde8d65a69c8d8053944f96d6bbec70241a",
+      "size": 193925,
       "mode": "100644"
     },
     {
       "path": "src/styles/main.css",
-      "sha256": "fcc74d39be3f18a9bc8e29cd5e4d6d53ecaed0e724acc244ae0d6d3aeb7eed33",
-      "size": 120556,
+      "sha256": "09ef8e0c334516b2234ce30d72a004c763099fb5797b94eadd421f735fdc599c",
+      "size": 130283,
       "mode": "100644"
     },
     {
@@ -3572,8 +3642,8 @@
     },
     {
       "path": "src/ui/ZeroTextControls.ts",
-      "sha256": "7c91ebb4585a59bec2ddce04fe3872e39cf3ba80fe6331dfe65babee06e61cad",
-      "size": 33590,
+      "sha256": "d0aea8ac50bb32a35a52890317c3ae1e93afc83c955c83c902aa5785021edeab",
+      "size": 34954,
       "mode": "100644"
     },
     {
