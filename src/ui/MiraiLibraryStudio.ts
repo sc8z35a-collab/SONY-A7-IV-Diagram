@@ -132,6 +132,9 @@ function fmtInline(raw: string): string {
 function get3dSubViewForFh(fhId: string): number | null {
   if (fhId === 'FH01') return 1;
   if (fhId === 'FH02') return 2;
+  if (fhId === 'FH08') return 3;
+  if (fhId === 'FH32') return 4;
+  if (fhId === 'FH25') return 5;
   return null;
 }
 

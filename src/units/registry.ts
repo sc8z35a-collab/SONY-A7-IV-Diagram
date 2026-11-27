@@ -171,7 +171,7 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
   // --- Phase FH: Future History MIRAI 2028 Prototype (FH01 SPAD/QIS 16p + FH02 3-Layer RGB 16p = 32p) ---
   mirai_2028: {
     unitId: 'mirai_2028',
-    declaredPartCount: 32,
+    declaredPartCount: 86,
     loadMeta: makeLazyJsonMetaLoader('mirai_2028', () => import('../data/mirai_2028.json')),
     load: async () => (await import('./mirai_2028')).createMirai2028Unit(),
   },

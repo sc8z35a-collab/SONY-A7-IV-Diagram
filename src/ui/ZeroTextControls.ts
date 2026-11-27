@@ -99,7 +99,7 @@ const ASSEMBLY_GROUPS: readonly AssemblyPaletteGroup[] = [
   {
     heading: 'Future History MIRAI 2028',
     items: [
-      { mode: 'mirai_2028', label: 'FH MIRAI 2028', sub: '未来技術48選・試作FH01/FH02', icon: ICONS.mirai },
+      { mode: 'mirai_2028', label: 'FH MIRAI 2028', sub: '未来技術48選・精密3D 5体', icon: ICONS.mirai },
     ],
   },
   {
@@ -232,7 +232,7 @@ export class ZeroTextControls {
   private fabStageRow: HTMLElement;
   private fabStageBtns = new Map<SensorFabStage, HTMLButtonElement>();
   private miraiSubBar: HTMLElement;
-  private miraiSubBtns: Record<1 | 2, HTMLButtonElement>;
+  private miraiSubBtns: Record<1 | 2 | 3 | 4 | 5, HTMLButtonElement>;
 
   private qualityBtns: Record<GraphicsQuality, HTMLButtonElement>;
   private camPresetBtns: Record<CameraPreset, HTMLButtonElement>;
@@ -453,10 +453,10 @@ export class ZeroTextControls {
     this.fabSubBar.append(fabVolRow, this.fabStageRow);
     this.rebuildFabStages(0);
 
-    // Future History MIRAI 2028 contextual sub-bar (FH01 / FH02 prototype switcher + Library Studio launchers)
+    // Future History MIRAI 2028 contextual sub-bar (5 Watchmaker 3D Structures + Library Studio launchers)
     this.miraiSubBar = document.createElement('div');
     this.miraiSubBar.className = 'studio-subbar mirai-subbar is-hidden';
-    const makeMiraiSub = (sv: 1 | 2, label: string, tip: string) => {
+    const makeMiraiSub = (sv: 1 | 2 | 3 | 4 | 5, label: string, tip: string) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = `studio-sub-btn mirai-sub-struct${sv === 1 ? ' is-active' : ''}`;
@@ -469,8 +469,11 @@ export class ZeroTextControls {
       return b;
     };
     this.miraiSubBtns = {
-      1: makeMiraiSub(1, 'FH01 SPAD/QIS', 'FH01 フルサイズ単一光子SPAD/QIS 3D積層センサー（16パーツ精密試作）'),
-      2: makeMiraiSub(2, 'FH02 3層RGB', 'FH02 ペロブスカイト/OPF 3層垂直RGBセンサー（16パーツ精密試作）'),
+      1: makeMiraiSub(1, 'FH01 SPAD', 'FH01 フルサイズ単一光子SPAD/QIS 3D積層センサー（16パーツ）'),
+      2: makeMiraiSub(2, 'FH02 3層RGB', 'FH02 ペロブスカイト/OPF 3層垂直RGBセンサー（16パーツ）'),
+      3: makeMiraiSub(3, 'FH08 メタ50/1.4', 'FH08 ASI逆設計 28mm・180g 50mm F1.4 自由曲面メタ光学レンズ（18パーツ）'),
+      4: makeMiraiSub(4, 'FH32 MEMS空冷', 'FH32 IP68水密隔離・超音波MEMSソリッドステート空冷モジュール（18パーツ）'),
+      5: makeMiraiSub(5, 'FH25 3万nit EVF', 'FH25 30,000ニット・240Hz True-RGBタンデム パンケーキEVF（18パーツ）'),
     };
     const miraiSep = document.createElement('span');
     miraiSep.className = 'mirai-subbar-sep';
@@ -485,6 +488,9 @@ export class ZeroTextControls {
     this.miraiSubBar.append(
       this.miraiSubBtns[1],
       this.miraiSubBtns[2],
+      this.miraiSubBtns[3],
+      this.miraiSubBtns[4],
+      this.miraiSubBtns[5],
       miraiSep,
       makeMiraiLib('reports', 'レポート'),
       makeMiraiLib('matrix', '48技術'),
@@ -769,9 +775,10 @@ export class ZeroTextControls {
   }
 
   public syncMiraiSubView(subView: number): void {
-    const active = subView === 2 ? 2 : 1;
-    this.miraiSubBtns[1].classList.toggle('is-active', active === 1);
-    this.miraiSubBtns[2].classList.toggle('is-active', active === 2);
+    const active = Math.max(1, Math.min(5, Math.round(subView || 1)));
+    ([1, 2, 3, 4, 5] as const).forEach((sv) => {
+      this.miraiSubBtns[sv].classList.toggle('is-active', active === sv);
+    });
   }
 
   public syncQuality(quality: GraphicsQuality): void {
