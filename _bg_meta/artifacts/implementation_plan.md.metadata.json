@@ -1,6 +1,0 @@
-{
-  "summary":  "Redesigned ultra-frugal (9,700 JPY hardware BOM, excluding battery cells & BB ammo) engineering & implementation plan for the 'Original' category and 'RIIMOS E1' (0.135J 8-barrel automatic-loading quadruped competition target robot). Uses mechanical coupling + Motorola moto g52j compute + Colab Pro L4 RL compensation to achieve all mission requirements under 10,000 JPY at 2.48 kg total mass and 3.86h continuous runtime, with 128-part V2 3D CAD, Physics live-kinematics demo, Ultra-HD SVG schematics, OriginalBlueprintStudio, Colab L4 MJX training pack, and full sp/pp/dx/bg verification gates.",
-  "updatedAt":  "2026-11-27T17:50:28.058677115Z",
-  "requestFeedback":  true,
-  "userFacing":  true
-}
