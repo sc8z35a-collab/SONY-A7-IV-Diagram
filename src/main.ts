@@ -537,7 +537,14 @@ window.addEventListener('keydown', (e) => {
     controls.syncLensSection(sec);
     syncRail();
   } else if (
-    (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4' || e.key === '5') &&
+    (e.key === '1' ||
+      e.key === '2' ||
+      e.key === '3' ||
+      e.key === '4' ||
+      e.key === '5' ||
+      e.key === '6' ||
+      e.key === '7' ||
+      e.key === '8') &&
     viewport.getMode() === 'mirai_2028' &&
     !e.ctrlKey &&
     !e.metaKey &&
@@ -2360,6 +2367,60 @@ if (preset === 'welcome') {
   viewport.setMode('mirai_2028', true);
   controls.syncMode('mirai_2028');
   controls.syncMiraiSubView(5);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh20') {
+  viewport.setMiraiSubView(6, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(6);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh20_exploded') {
+  viewport.setMiraiSubView(6, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(6);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh17') {
+  viewport.setMiraiSubView(7, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(7);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh17_exploded') {
+  viewport.setMiraiSubView(7, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(7);
+  viewport.setExplode(0.72, true);
+  controls.setExplodeValue(0.72);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh48') {
+  viewport.setMiraiSubView(8, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(8);
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'mirai_fh48_exploded') {
+  viewport.setMiraiSubView(8, true);
+  viewport.setMode('mirai_2028', true);
+  controls.syncMode('mirai_2028');
+  controls.syncMiraiSubView(8);
   viewport.setExplode(0.72, true);
   controls.setExplodeValue(0.72);
   viewport.setCameraPreset('iso', true);

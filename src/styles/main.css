@@ -6082,14 +6082,52 @@ body,
 }
 
 .mirai-subbar {
+  display: inline-flex;
+  align-items: center;
   flex-wrap: wrap;
   justify-content: center;
   row-gap: 4px;
-  max-width: min(100%, 960px);
+  column-gap: 4px;
+  max-width: min(100%, 1080px);
+}
+
+.mirai-struct-rail {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+}
+
+.mirai-lib-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 .mirai-subbar .studio-sub-btn {
   white-space: nowrap;
+  padding: 5px 8.5px;
+  font-size: 11px;
+}
+
+#app.has-drawer .mirai-subbar-sep {
+  display: none;
+}
+
+.mirai-subbar .mirai-sub-flagship {
+  border: 1px solid rgba(16, 185, 129, 0.36);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(245, 158, 11, 0.12));
+  color: #065f46;
+  font-weight: 800;
+}
+
+.mirai-subbar .mirai-sub-flagship.is-active {
+  background: linear-gradient(135deg, #047857 0%, #0d9488 62%, #d97706 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(15, 118, 110, 0.34);
 }
 
 @media (max-width: 767px) {
@@ -6119,13 +6157,57 @@ body,
   }
 
   .mirai-subbar {
-    padding: 3px 5px;
-    gap: 3px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    padding: 5px 6px;
+    gap: 5px;
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 14px;
   }
 
-  .mirai-subbar .studio-sub-btn {
-    font-size: 10px;
-    padding: 4px 6.5px;
+  .mirai-struct-rail {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    gap: 4px;
+    padding: 1px 2px;
+  }
+
+  .mirai-struct-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mirai-struct-rail .studio-sub-btn {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    font-size: 10.5px;
+    padding: 4.5px 8px;
+  }
+
+  .mirai-lib-group {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .mirai-lib-group .studio-sub-btn {
+    font-size: 10.5px;
+    padding: 4px 10px;
   }
 
   .mirai-subbar-sep {

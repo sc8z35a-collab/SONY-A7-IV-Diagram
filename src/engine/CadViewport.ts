@@ -347,7 +347,7 @@ export class CadViewport {
   }
 
   public setMiraiSubView(subView: number, immediateCamera = false): void {
-    const clamped = Math.max(1, Math.min(5, Math.round(subView || 1)));
+    const clamped = Math.max(1, Math.min(8, Math.round(subView || 1)));
     const changed = this.miraiSubView !== clamped;
     this.miraiSubView = clamped;
     if (this.mode !== 'mirai_2028') return;
@@ -598,6 +598,18 @@ export class CadViewport {
         // FH25: 48x38x46mm 30,000-nit True-RGB Tandem Pancake EVF (optical axis Z, right cutaway)
         d = 158 + e * 195;
         target = new THREE.Vector3(0, e * 3.0, 1.5 - e * 3.0);
+      } else if (this.miraiSubView === 6) {
+        // FH20: 42x42x6.4mm 2nm/A16 GAA + BSPDN 1,000 TOPS Heterogeneous Chiplet SoC (explodes along Y + optical fibers)
+        d = 132 + e * 145;
+        target = new THREE.Vector3(-1.5 + e * 2.0, 0.5 + e * 6.5, 0);
+      } else if (this.miraiSubView === 7) {
+        // FH17: 76x64x15.5mm Earth-Rotation + MagLev 10–11 Stop IBIS & ±2° Micro-Tilt (explodes along Z + IMU/Hall flanks)
+        d = 215 + e * 185;
+        target = new THREE.Vector3(-3.5, -1.5 * e, 0);
+      } else if (this.miraiSubView === 8) {
+        // FH48: 128x90x58mm Dec 2028 ~800g · 10–15W Post-Camera Integrated Flagship Machine
+        d = 304 + e * 250;
+        target = new THREE.Vector3(0, 6.0 + e * 4.0, 2.0);
       } else {
         d = 166 + e * 185;
         target = new THREE.Vector3(e * 3.0 + (1 - e) * 3.5, 0.2 + e * 2.5, e * 1.5);
@@ -763,6 +775,21 @@ export class CadViewport {
               const isoX = 0.68 + e * 0.14;
               const isoY = 0.30 - e * 0.06;
               const isoZ = 0.66 - e * 0.16;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else if (this.miraiSubView === 6) {
+              // FH20 2nm Chiplet SoC: overhead front-right 3/4 peering directly into cutaway IHS (NPU, BSPDN, HBM & optical fibers!)
+              offset = new THREE.Vector3(d * 0.58, d * 0.44, d * 0.68);
+            } else if (this.miraiSubView === 7) {
+              // FH17 MagLev IBIS: front 3/4 when assembled, swinging wider along X when exploded to showcase full Z gimbal stack
+              const isoX = 0.54 + e * 0.24;
+              const isoY = 0.26 - e * 0.04;
+              const isoZ = 0.80 - e * 0.22;
+              offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
+            } else if (this.miraiSubView === 8) {
+              // FH48 Post-Camera Flagship: classic mirrorless front-right 3/4 showcasing contactless mount, lattice cutaway, EVF & grip
+              const isoX = 0.55 + e * 0.16;
+              const isoY = 0.30 - e * 0.04;
+              const isoZ = 0.78 - e * 0.14;
               offset = new THREE.Vector3(d * isoX, d * isoY, d * isoZ);
             } else {
               offset = new THREE.Vector3(d * 0.56, d * 0.44, d * 0.70);
@@ -1085,6 +1112,30 @@ export class CadViewport {
         } else {
           minCoord = -22;
           maxCoord = 22;
+        }
+      } else if (this.miraiSubView === 6) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -34;
+          maxCoord = 34;
+        } else {
+          minCoord = -10;
+          maxCoord = 12;
+        }
+      } else if (this.miraiSubView === 7) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -52;
+          maxCoord = 46;
+        } else {
+          minCoord = -38;
+          maxCoord = 38;
+        }
+      } else if (this.miraiSubView === 8) {
+        if (this.sectionAxis === 'x') {
+          minCoord = -68;
+          maxCoord = 68;
+        } else {
+          minCoord = -46;
+          maxCoord = 62;
         }
       } else if (this.sectionAxis === 'x') {
         minCoord = -46;

@@ -152,9 +152,15 @@ export function miraiComparePill(x: number, y: number, w: number, text: string, 
 export function renderMiraiMonographSvg(spec: MiraiHdSpec): string {
   const p = spec.badge.toLowerCase().replace(/[^a-z0-9]/g, '_');
   const titleFs = fitFs(spec.title, 412, 13.8, 9.6);
-  const analogyFs = fitFs(`たとえると：${spec.analogy}`, 412, 10.2, 7.6);
+  const fullAnalogy = `たとえると：${spec.analogy}`;
+  const analogyFs = fitFs(fullAnalogy, 410, 10.2, 6.6);
+  const analogyEstW = visualUnits(fullAnalogy) * analogyFs * 1.04;
+  const analogyClamp = analogyEstW > 410 ? ' textLength="410" lengthAdjust="spacingAndGlyphs"' : '';
   const metricFs = fitFs(spec.metric, 168, 10.2, 7.4);
-  const tagFs = fitFs(spec.fhTag, 170, 8.6, 7.0);
+  const tagFs = fitFs(spec.fhTag, 174, 8.6, 6.8);
+  const scaleW = Math.max(170, Math.min(316, Math.ceil(visualUnits(spec.scaleLabel) * 7.6 + 20)));
+  const scaleX = 700 - scaleW;
+  const scaleFs = fitFs(spec.scaleLabel, scaleW - 14, 7.8, 6.2);
 
   const railHtml = MIRAI_ZONES.map((z, idx) => {
     const active = z.id === spec.zone;
@@ -257,7 +263,7 @@ export function renderMiraiMonographSvg(spec: MiraiHdSpec): string {
   <text x="52" y="47.5" text-anchor="middle" font-size="6.9" font-weight="800" fill="#ffffff" opacity="0.92">MIRAI 2028</text>
 
   <text x="94" y="31.5" font-size="${titleFs}" font-weight="800" fill="#0f172a">${escM(spec.title)}</text>
-  <text x="94" y="50.5" font-size="${analogyFs}" font-weight="700" fill="${spec.accent}">たとえると：${escM(spec.analogy)}</text>
+  <text x="94" y="50.5" font-size="${analogyFs}" font-weight="700" fill="${spec.accent}"${analogyClamp}>${escM(fullAnalogy)}</text>
 
   <rect x="518" y="15.5" width="182" height="22" rx="11" fill="${spec.accentSoft}" stroke="${spec.accent}" stroke-width="1.05"/>
   <text x="609" y="30" text-anchor="middle" font-size="${metricFs}" font-weight="800" fill="${spec.accent}">${escM(spec.metric)}</text>
@@ -274,8 +280,8 @@ export function renderMiraiMonographSvg(spec: MiraiHdSpec): string {
 
   ${spec.art(p)}
 
-  <rect x="530" y="336" width="170" height="15" rx="4" fill="#f8fafc" fill-opacity="0.94" stroke="#cbd5e1" stroke-width="0.85"/>
-  <text x="615" y="346.5" text-anchor="middle" font-size="7.8" font-weight="800" fill="#334155" style="font-family:${FONT_MONO};">${escM(spec.scaleLabel)}</text>
+  <rect x="${scaleX}" y="336" width="${scaleW}" height="15" rx="4" fill="#f8fafc" fill-opacity="0.95" stroke="#cbd5e1" stroke-width="0.85"/>
+  <text x="${scaleX + scaleW / 2}" y="346.5" text-anchor="middle" font-size="${scaleFs}" font-weight="800" fill="#334155" style="font-family:${FONT_MONO};">${escM(spec.scaleLabel)}</text>
 
   <!-- Zone 3: 3-Column Monograph Cards -->
   ${renderCard(c1, 12, '01', spec.accent)}

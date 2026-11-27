@@ -1331,4 +1331,325 @@ export const MIRAI_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> = {
       drawMicroFiducial(ctx, w - 54, h - 65, 14, '#e5b94c');
     },
   },
+
+  /** FH20 Core: 2nm/A16 GAA Nanosheet 1,000 TOPS NPU Systolic Array Die & Laser Floorplan */
+  fh20ChipletDieMap: {
+    bucket: 'silicon_hero',
+    width: 1024,
+    height: 1024,
+    baseColor: 0xffffff,
+    metalness: 0.78,
+    roughness: 0.2,
+    fallbackColor: 0x16263d,
+    painter: (ctx, w, h) => {
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#0f1c30');
+      grad.addColorStop(0.5, '#172b47');
+      grad.addColorStop(1, '#102138');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Gold perimeter I/O UCIe pad ring
+      ctx.strokeStyle = '#e2b648';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(24, 24, w - 48, h - 48);
+
+      // 4x4 high-density 2nm GAA NPU systolic tensor cores + SRAM macro banks
+      const pad = 64;
+      const cols = 4;
+      const rows = 4;
+      const cw = (w - pad * 2) / cols;
+      const ch = (h - pad * 2 - 96) / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = pad + c * cw + 10;
+          const y = pad + r * ch + 10;
+          const bw = cw - 20;
+          const bh = ch - 20;
+          ctx.fillStyle = (r + c) % 2 === 0 ? '#1d3657' : '#18304d';
+          ctx.fillRect(x, y, bw, bh);
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(x, y, bw, bh);
+
+          // Fine nanosheet MAC sub-tiles
+          for (let sr = 0; sr < 4; sr++) {
+            for (let sc = 0; sc < 4; sc++) {
+              ctx.fillStyle =
+                sr === 0
+                  ? 'rgba(16, 185, 129, 0.34)'
+                  : (sr + sc) % 2 === 0
+                    ? 'rgba(56, 189, 248, 0.25)'
+                    : 'rgba(245, 158, 11, 0.22)';
+              ctx.fillRect(
+                x + 10 + sc * ((bw - 20) / 4),
+                y + 10 + sr * ((bh - 20) / 4),
+                (bw - 20) / 4 - 4,
+                (bh - 20) / 4 - 4
+              );
+            }
+          }
+        }
+      }
+
+      // Copper UCIe bus highways between quadrants
+      ctx.strokeStyle = '#d98245';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(w * 0.5, pad);
+      ctx.lineTo(w * 0.5, h - pad - 96);
+      ctx.moveTo(pad, pad + ch * 2);
+      ctx.lineTo(w - pad, pad + ch * 2);
+      ctx.stroke();
+
+      // Bottom high-contrast laser telemetry banner
+      ctx.fillStyle = '#09111e';
+      ctx.fillRect(48, h - 122, w - 96, 74);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(48, h - 122, w - 96, 74);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '800 32px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('BIONZ MIRAI · 2nm/A16 GAA · 1000 TOPS', w * 0.5, h - 75);
+
+      drawMicroFiducial(ctx, 44, 44, 12, '#f8fafc');
+      drawMicroFiducial(ctx, w - 44, 44, 12, '#f8fafc');
+    },
+  },
+
+  /** FH20 Core: Backside Power Delivery Network (BSPDN PowerVia/SPR) Pure Copper Rail & Nano-TSV Grid */
+  fh20BspdnRailMap: {
+    bucket: 'copper_thermal',
+    width: 1024,
+    height: 1024,
+    baseColor: 0xffffff,
+    metalness: 0.86,
+    roughness: 0.24,
+    fallbackColor: 0xc9733e,
+    painter: (ctx, w, h) => {
+      ctx.fillStyle = '#241a15';
+      ctx.fillRect(0, 0, w, h);
+
+      // Thick alternating VDD (bright pure copper) & VSS (golden bronze) backside power rails
+      const rails = 18;
+      const pitch = h / rails;
+      for (let i = 0; i < rails; i++) {
+        const y = i * pitch + 6;
+        ctx.fillStyle = i % 2 === 0 ? '#df8448' : '#e6b850';
+        ctx.fillRect(28, y, w - 56, pitch - 14);
+        // Micro Nano-TSV copper landing vias along every rail
+        ctx.fillStyle = '#fff3db';
+        for (let x = 56; x < w - 56; x += 48) {
+          ctx.beginPath();
+          ctx.arc(x, y + (pitch - 14) * 0.5, 6.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Vertical super-power-rail cross-straps
+      for (let c = 0; c < 6; c++) {
+        const x = 96 + ((w - 192) * c) / 5;
+        ctx.fillStyle = 'rgba(218, 122, 60, 0.72)';
+        ctx.fillRect(x - 10, 20, 20, h - 40);
+      }
+
+      ctx.strokeStyle = '#f5d07a';
+      ctx.lineWidth = 10;
+      ctx.strokeRect(18, 18, w - 36, h - 36);
+    },
+  },
+
+  /** FH17 Core: Earth-Rotation Compensation (15.04"/s) Precision 3-Axis MEMS Gyro + GNSS IMU PCB */
+  fh17ImuGyroPcbMap: {
+    bucket: 'pcb_textured',
+    width: 1024,
+    height: 682,
+    baseColor: 0xffffff,
+    metalness: 0.28,
+    roughness: 0.42,
+    fallbackColor: 0x0f513d,
+    painter: (ctx, w, h) => {
+      ctx.fillStyle = '#0c4534';
+      ctx.fillRect(0, 0, w, h);
+
+      // Gold differential impedance-matched IMU & GNSS clock trace pairs
+      ctx.strokeStyle = 'rgba(229, 185, 76, 0.65)';
+      ctx.lineWidth = 3;
+      for (let i = 0; i < 14; i++) {
+        const y = 76 + i * 38;
+        ctx.beginPath();
+        ctx.moveTo(44, y);
+        ctx.lineTo(w * 0.36, y);
+        ctx.lineTo(w * 0.42, y + (i % 2 === 0 ? 14 : -14));
+        ctx.lineTo(w - 44, y + (i % 2 === 0 ? 14 : -14));
+        ctx.stroke();
+      }
+
+      // Central Earth-Rotation 15.04"/s compass rose & 3-axis MEMS gyro silkscreen diagram
+      const cx = w * 0.5;
+      const cy = h * 0.46;
+      ctx.fillStyle = '#0a2920';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 152, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(248, 250, 252, 0.85)';
+      ctx.lineWidth = 2;
+      for (let a = 0; a < 360; a += 15) {
+        const rad = (a * Math.PI) / 180;
+        const r0 = a % 45 === 0 ? 118 : 134;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(rad) * r0, cy + Math.sin(rad) * r0);
+        ctx.lineTo(cx + Math.cos(rad) * 148, cy + Math.sin(rad) * 148);
+        ctx.stroke();
+      }
+
+      // Crisp engineering silkscreen labels
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '800 28px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Ω_EARTH = 15.04"/s · GNSS+MAG IMU', cx, h - 54);
+      ctx.font = '700 20px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.fillStyle = '#6ee7b7';
+      ctx.fillText('6-DOF MAGLEV IBIS · ±2° TILT SERVO', cx, 52);
+
+      // Gold perimeter ground-stitching via array
+      ctx.fillStyle = '#e5b94c';
+      for (let x = 36; x <= w - 36; x += 36) {
+        ctx.beginPath();
+        ctx.arc(x, 22, 5.5, 0, Math.PI * 2);
+        ctx.arc(x, h - 22, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    },
+  },
+
+  /** FH48 Shell: Aerospace Twill CFRP Carbon-Fiber Composite + MIRAI 2028 800g Spec Engraving */
+  fh48CarbonLatticeMap: {
+    bucket: 'carbon_fiber',
+    width: 1024,
+    height: 1024,
+    baseColor: 0xffffff,
+    metalness: 0.22,
+    roughness: 0.42,
+    fallbackColor: 0x202631,
+    painter: (ctx, w, h) => {
+      ctx.fillStyle = '#1a202a';
+      ctx.fillRect(0, 0, w, h);
+
+      // Crisp 2x2 diagonal aerospace twill carbon-fiber weave
+      const tile = 16;
+      for (let y = 0; y < h; y += tile) {
+        for (let x = 0; x < w; x += tile) {
+          const phase = ((x / tile) + (y / tile)) % 4;
+          ctx.fillStyle =
+            phase === 0
+              ? '#273040'
+              : phase === 1
+                ? '#202836'
+                : phase === 2
+                  ? '#151b24'
+                  : '#1d2430';
+          ctx.fillRect(x, y, tile - 1, tile - 1);
+          if (phase === 0) {
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
+            ctx.fillRect(x + 2, y + 2, tile - 5, 4);
+          }
+        }
+      }
+
+      // Clean micro-engraved aerospace CFRP badge positioned cleanly right of the ergonomic grip (u=0.20..0.38)
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(204, 48, 176, 6);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+      ctx.fillRect(204, 58, 176, 38);
+      ctx.fillStyle = '#f1f5f9';
+      ctx.font = '800 22px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('FH48 · 800g', 292, 85);
+    },
+  },
+
+  /** FH48 Rear Display: Blue-PHOLED + Metasurface Naked-Eye 3D Live-View Telemetry Screen */
+  fh48RearDisplay3dMap: {
+    bucket: 'emissive_glow',
+    width: 1024,
+    height: 682,
+    baseColor: 0xffffff,
+    metalness: 0.08,
+    roughness: 0.14,
+    fallbackColor: 0x0f172a,
+    painter: (ctx, w, h) => {
+      // Rich twilight alpine horizon live-view gradient (demonstrates 22-stop DR HDR!)
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, '#0c1c3a');
+      bg.addColorStop(0.36, '#1e3a6e');
+      bg.addColorStop(0.62, '#0f766e');
+      bg.addColorStop(0.8, '#d97706');
+      bg.addColorStop(1, '#1e293b');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Stylized parallax mountain ridge silhouette (naked-eye 3D depth planes!)
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.72);
+      ctx.lineTo(w * 0.22, h * 0.42);
+      ctx.lineTo(w * 0.45, h * 0.62);
+      ctx.lineTo(w * 0.68, h * 0.36);
+      ctx.lineTo(w * 0.88, h * 0.56);
+      ctx.lineTo(w, h * 0.48);
+      ctx.lineTo(w, h);
+      ctx.lineTo(0, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Subtle metasurface 3D lightfield depth contour grid overlay
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.26)';
+      ctx.lineWidth = 1.5;
+      for (let i = 1; i < 6; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, (h * i) / 6);
+        ctx.lineTo(w, (h * i) / 6);
+        ctx.stroke();
+      }
+      for (let i = 1; i < 8; i++) {
+        ctx.beginPath();
+        ctx.moveTo((w * i) / 8, 0);
+        ctx.lineTo((w * i) / 8, h);
+        ctx.stroke();
+      }
+
+      // Top status bar: C2PA PQC Verified + Wi-Fi 8 / NTN + Thermal 11.8W/15W + ASSB 94%
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.78)';
+      ctx.fillRect(0, 0, w, 66);
+      ctx.fillStyle = '#34d399';
+      ctx.font = '800 22px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('● C2PA PQC  ·  3D LIGHTFIELD  ·  11.8W/15W', 26, 42);
+      ctx.fillStyle = '#38bdf8';
+      ctx.textAlign = 'right';
+      ctx.fillText('Wi-Fi 8 + NTN  ·  ASSB 94%', w - 26, 42);
+
+      // Center AI VWM green eye/subject tracking lock box
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(w * 0.42, h * 0.34, 160, 124);
+      ctx.fillStyle = '#34d399';
+      ctx.font = '700 18px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('VWM 1.58b · MAGLEV 11-STOP', w * 0.42, h * 0.32);
+
+      // Bottom exposure & 22-stop DR telemetry bar
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.84)';
+      ctx.fillRect(0, h - 72, w, 72);
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '800 26px ui-monospace, SFMono-Regular, Menlo, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('1/16000s   F1.4 META   22-STOP DR   RAW+PQC   120fps', w * 0.5, h - 26);
+    },
+  },
 };
