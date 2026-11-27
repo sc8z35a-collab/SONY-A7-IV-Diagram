@@ -20,6 +20,15 @@ function resolveMiShoeLiteBucket(bucket: MaterialBucketKey): MaterialBucketKey {
   return 'metal_hero';
 }
 import {
+  createMiShoeExtraBuildChunks,
+  MISHOE_EXTRA_HERO_EDGE_PARTS,
+  MiShoeInstPoolKey,
+} from '../assemblies/mishoe/miShoeExtraBuilders';
+import {
+  createMiShoeUltraBuildChunks,
+  MISHOE_ULTRA_HERO_EDGE_PARTS,
+} from '../assemblies/mishoe/miShoeUltraParts';
+import {
   OptimizedUnit,
   QualityTier,
   RaycastBatchedBinding,
@@ -89,6 +98,8 @@ const HERO_EDGE_PARTS = new Set<string>([
   'mi-top-deck-boss-seat',
   'mi-shoe-fix-plate',
   'mi-mainboard-zif-connector',
+  ...MISHOE_EXTRA_HERO_EDGE_PARTS,
+  ...MISHOE_ULTRA_HERO_EDGE_PARTS,
 ]);
 
 // =============================================================================
@@ -503,6 +514,24 @@ export class MiShoeUnit implements OptimizedUnit {
         },
         records: [],
       },
+      solder_fillets: {
+        bucket: 'solder_silver',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      ic_chips: {
+        bucket: 'ic_epoxy_dark',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
+      ceramic_caps: {
+        bucket: 'ceramic_alumina',
+        geoKey: 'mi:unit_box:1:1:1',
+        geoFactory: () => new THREE.BoxGeometry(1, 1, 1),
+        records: [],
+      },
     };
 
     const pIdx = (id: string): number => {
@@ -553,7 +582,7 @@ export class MiShoeUnit implements OptimizedUnit {
     };
 
     const addInst = (
-      poolName: keyof typeof instPoolsDraft,
+      poolName: MiShoeInstPoolKey,
       partId: string,
       localPos: [number, number, number],
       localRot: [number, number, number],
@@ -1159,6 +1188,26 @@ export class MiShoeUnit implements OptimizedUnit {
           addInst('smd_blocks', 'mi-mainboard-zif-connector', [sx, 1.1, 0], [0, 0, 0], [1.6, 1.2, 4.4], 0xd9e0e8, [0.85, 0.65, 2.25]);
         }
       },
+
+      // Chunks 9–17: MI33–MI71 (+39 Ultra-Dissection Precision Parts)
+      ...(() => {
+        const extraCtx = {
+          curveSegments: cfg.curveSegments,
+          radialSegments: cfg.radialSegments,
+          sphereSegments: cfg.sphereSegments,
+          pinPitch: PIN_PITCH,
+          pinX,
+          makeTransformedGeo,
+          makeHorizPlateGeo,
+          addBatchedPiece,
+          addInst,
+          pushPrecisionScrewInstances,
+        };
+        return [
+          ...createMiShoeExtraBuildChunks(extraCtx),
+          ...createMiShoeUltraBuildChunks(extraCtx),
+        ];
+      })(),
     ];
 
     // Execute all geometry build chunks within an 8ms per-frame time slice budget!
@@ -1682,6 +1731,66 @@ export class MiShoeUnit implements OptimizedUnit {
         fromOffset: [5.0, 1.5, 0],
         toPartIdx: idxOf('mi-pins-18to20-ttl-flash'),
         toOffset: [13.5, 0, 0],
+      },
+      {
+        colorHex: 0xf97316,
+        speed: 1.18,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-unreg-mosfet-load-switch'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-chip-fuse-16a-decouple'),
+        toOffset: [0, 1.1, 0],
+      },
+      {
+        colorHex: 0x3b82f6,
+        speed: 1.05,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-logic-vdd-315v-ldo'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-audio-mux-emi-choke'),
+        toOffset: [2.0, 1.0, 0],
+      },
+      {
+        colorHex: 0x0ea5e9,
+        speed: 1.4,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-digital-audio-pll-damping'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-pins-8to12-digital-audio'),
+        toOffset: [0, 0, 0],
+      },
+      {
+        colorHex: 0xf43f5e,
+        speed: 1.3,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-flash-bus-level-shifter'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-xsync-igbt-isolator'),
+        toOffset: [0, 1.0, 0],
+      },
+      {
+        colorHex: 0x22c55e,
+        speed: 1.12,
+        packetCount: 2,
+        dashed: true,
+        fromPartIdx: idxOf('mi-id-rc-debounce-gvif-mux'),
+        fromOffset: [0, 1.0, 0],
+        toPartIdx: idxOf('mi-id-resistor-adc-net'),
+        toOffset: [0, 0.9, 0],
+      },
+      {
+        colorHex: 0x38bdf8,
+        speed: 1.28,
+        packetCount: 2,
+        dashed: false,
+        fromPartIdx: idxOf('mi-fpc-ra-copper-hatched-gnd'),
+        fromOffset: [0, -3.5, 0],
+        toPartIdx: idxOf('mi-zif-dual-beam-cam-latch'),
+        toOffset: [0, 0.4, -1.2],
       },
     ];
 

@@ -2,7 +2,7 @@ import miShoeJson from '../../data/mi_shoe.json';
 import { PartExplanation } from '../types';
 
 /**
- * Phase 25B / V2 Pure Data Separation — Sony Multi Interface (MI) Shoe Explanations (32 Parts: MI01–MI32).
+ * Phase 25B / V2 Pure Data Separation — Sony Multi Interface (MI) Shoe Explanations (71 Parts: MI01–MI71).
  * Single source of truth loaded directly from `src/data/mi_shoe.json` so zero explanation text is duplicated.
  */
 export const MISHOE_EXPLANATIONS: Record<string, PartExplanation> = Object.fromEntries(
