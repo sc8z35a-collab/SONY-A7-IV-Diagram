@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensorFab/sensorFabParts.ts|unit=sensorFab|lines=2250|exports=buildSensorFabParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomePartEnrichment.ts|unit=welcome|lines=356|exports=WelcomeDiagramType,EnrichableWelcomeDef,enrichWelcomeDef
 import { PartExplanation } from '../types';
 
 export type WelcomeDiagramType =

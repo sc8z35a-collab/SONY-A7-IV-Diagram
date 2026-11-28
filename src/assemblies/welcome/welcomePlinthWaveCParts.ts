@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomePlinthWaveCParts.ts|unit=welcome|lines=1427|exports=WELCOME_PLINTH_WAVE_C_DEFS,buildWelcomePlinthWaveCParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

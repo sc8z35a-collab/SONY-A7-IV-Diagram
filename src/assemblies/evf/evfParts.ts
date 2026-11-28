@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfParts.ts|unit=evf|lines=3673|exports=EVF_OPTICAL_Y,EvfDynamicRig,buildEvfParts,buildEvfStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

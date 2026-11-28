@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountExplanations.ts|unit=mount|lines=7|exports=MOUNT_EXPLANATIONS
 import { PartExplanation } from '../types';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
 import unitData from '../../data/mount.json';

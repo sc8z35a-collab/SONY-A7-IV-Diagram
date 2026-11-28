@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeGlyphWaveDParts.ts|unit=welcome|lines=478|exports=WELCOME_GLYPH_WAVE_D_DEFS,buildWelcomeGlyphWaveDParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

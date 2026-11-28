@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxPhysicsOverlay.ts|unit=drybox|lines=386|exports=DryboxPhysicsOverlayController,createDryboxPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

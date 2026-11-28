@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeGeometry.ts|unit=welcome|lines=1537|exports=StrokePt,StrokeSpec,asStrokeList,CX_YO,CX_U,CX_KO
 import * as THREE from 'three';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';
 import { createRoundedRectShape } from '../../engine/CadHelpers';

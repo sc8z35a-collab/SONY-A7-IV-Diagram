@@ -43,7 +43,7 @@ function walkTreeStat(absDir, out) {
       walkTreeStat(full, out);
     } else if (ent.isFile()) {
       const ext = path.extname(ent.name);
-      if (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.mjs' || ext === '.json') {
+      if (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.mjs' || ext === '.json' || ext === '.tsv') {
         const st = fs.statSync(full);
         out.push(`${path.relative(ROOT, full)}:${st.size}:${Math.trunc(st.mtimeMs)}`);
       }

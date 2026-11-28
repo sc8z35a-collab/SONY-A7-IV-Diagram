@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mirai2028/miraiFh02Parts.ts|unit=mirai2028|lines=885|exports=buildMiraiFh02Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

@@ -21,6 +21,7 @@ import {
   createGpuExplodeDataTexture,
   quantizeGeometryPositionInPlace,
 } from '../core/v2_unit_compiler';
+import { getUnitPoseTable } from '../core/flow_pose_loader';
 
 function resolveMiShoeLiteFinishBit(bucket: MaterialBucketKey): number {
   const spec = MATERIAL_SPECS[bucket];
@@ -505,24 +506,32 @@ export class MiShoeUnit implements OptimizedUnit {
 
     const partLocalBoxes: THREE.Box3[] = [];
     const partBindingIndexSets: Array<Set<number>> = [];
+    const miPoseTable = getUnitPoseTable('mishoe');
 
     for (let i = 0; i < partCount; i++) {
       const pm = partMetas[i];
+      const po = miPoseTable?.[pm.id];
+      const ax = pm.assembledPos[0] + (po?.d?.[0] ?? 0);
+      const ay = pm.assembledPos[1] + (po?.d?.[1] ?? 0);
+      const az = pm.assembledPos[2] + (po?.d?.[2] ?? 0);
+      const ex = pm.explodeOffset[0] + (po?.e?.[0] ?? 0);
+      const ey = pm.explodeOffset[1] + (po?.e?.[1] ?? 0);
+      const ez = pm.explodeOffset[2] + (po?.e?.[2] ?? 0);
       this.partIdToIdx.set(pm.id, i);
       const o = i * 3;
-      this.assembledPosFlat[o] = pm.assembledPos[0];
-      this.assembledPosFlat[o + 1] = pm.assembledPos[1];
-      this.assembledPosFlat[o + 2] = pm.assembledPos[2];
-      this.explodeOffsetFlat[o] = pm.explodeOffset[0];
-      this.explodeOffsetFlat[o + 1] = pm.explodeOffset[1];
-      this.explodeOffsetFlat[o + 2] = pm.explodeOffset[2];
-      this.currentPosFlat[o] = pm.assembledPos[0];
-      this.currentPosFlat[o + 1] = pm.assembledPos[1];
-      this.currentPosFlat[o + 2] = pm.assembledPos[2];
+      this.assembledPosFlat[o] = ax;
+      this.assembledPosFlat[o + 1] = ay;
+      this.assembledPosFlat[o + 2] = az;
+      this.explodeOffsetFlat[o] = ex;
+      this.explodeOffsetFlat[o + 1] = ey;
+      this.explodeOffsetFlat[o + 2] = ez;
+      this.currentPosFlat[o] = ax;
+      this.currentPosFlat[o + 1] = ay;
+      this.currentPosFlat[o + 2] = az;
 
       const grp = new THREE.Group();
       grp.name = pm.id;
-      grp.position.set(pm.assembledPos[0], pm.assembledPos[1], pm.assembledPos[2]);
+      grp.position.set(ax, ay, az);
       setNodeStaticMatrix(grp);
 
       const part: CadPart = {
@@ -531,8 +540,8 @@ export class MiShoeUnit implements OptimizedUnit {
         order: pm.order,
         swatchColor: pm.swatchColor,
         group: grp,
-        assembledPos: new THREE.Vector3(pm.assembledPos[0], pm.assembledPos[1], pm.assembledPos[2]),
-        explodeOffset: new THREE.Vector3(pm.explodeOffset[0], pm.explodeOffset[1], pm.explodeOffset[2]),
+        assembledPos: new THREE.Vector3(ax, ay, az),
+        explodeOffset: new THREE.Vector3(ex, ey, ez),
         interactiveMeshes: [],
         edgeLines: [],
         explanation: toPartExplanation(pm),

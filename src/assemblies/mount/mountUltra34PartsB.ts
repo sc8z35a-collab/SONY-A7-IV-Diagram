@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountUltra34PartsB.ts|unit=mount|lines=1426|exports=buildMountUltra34PartsB
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

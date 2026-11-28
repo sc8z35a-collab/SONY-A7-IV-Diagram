@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/body/bodyPhysicsOverlay.ts|unit=body|lines=168|exports=BodyPhysicsOverlayController,createBodyPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLinePointsInPlace } from '../../engine/CadHelpers';

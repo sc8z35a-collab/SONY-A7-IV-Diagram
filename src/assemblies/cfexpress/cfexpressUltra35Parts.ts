@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/cfexpress/cfexpressUltra35Parts.ts|unit=cfexpress|lines=1897|exports=buildCfexpressUltra35Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensUltraSplitParts.ts|unit=lens|lines=1198|exports=buildLensUltraSplitParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfMacroDetailEnricher.ts|unit=evf|lines=1554|exports=enrichE01Eyecup,enrichE02Latch,enrichE03AntifogWindow,enrichE04EyeSensor,enrichE05IrLeds,enrichE06DichroicMirror
 import * as THREE from 'three';
 import { MaterialLibrary } from '../../engine/Materials';
 import { createFrameShape } from '../../engine/CadHelpers';

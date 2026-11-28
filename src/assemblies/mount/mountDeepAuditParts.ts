@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountDeepAuditParts.ts|unit=mount|lines=550|exports=buildMountDeepAuditParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

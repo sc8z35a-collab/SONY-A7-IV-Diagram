@@ -1,0 +1,115 @@
+{
+  "schema": "flow-os/v1",
+  "osVersion": "1.0.0",
+  "projectName": "SONY-A7-IV-Diagram",
+  "defaultBranch": "main",
+  "remote": "origin",
+  "adapter": "scripts/flow_adapters/sony_a7iv_cad/adapter.mjs",
+  "books": {
+    "envManual": "AGENTS.md",
+    "domainManual": "README.md",
+    "maxEnvTokens": 4500,
+    "maxDomainTokens": 5500,
+    "contentAssetDirs": [
+      "reports",
+      "blueprints",
+      "docs",
+      "node_modules",
+      "android",
+      "dist",
+      ".git"
+    ],
+    "requiredEnvTokens": [
+      "flow wake",
+      "flow inspect",
+      "flow heal",
+      "flow ship",
+      "flow park",
+      "flow finish",
+      "flow swarm",
+      "flow exec",
+      "flow human-report",
+      "TLX1-RECEIPT",
+      "BG-RECEIPT",
+      "FLOW-RECEIPT",
+      "SEC-01",
+      "SEC-12",
+      "scripts/exam.mjs",
+      "scripts/bg.mjs",
+      "scripts/pp.mjs",
+      "scripts/sokutei.mjs",
+      "scripts/sp.mjs",
+      "scripts/dx.mjs",
+      "HUMAN_REQUEST_ONLY"
+    ]
+  },
+  "budgets": {
+    "wake": 220,
+    "inspect": 300,
+    "heal": 400,
+    "ship": 350,
+    "park": 150,
+    "finish": 200,
+    "swarm": 300,
+    "exec": 400,
+    "security": 350,
+    "doc": 250
+  },
+  "security": {
+    "maxFileMb": 25,
+    "entropyThreshold": 4.65,
+    "entropyMinLen": 28,
+    "kernelSealPaths": [
+      "scripts/flow_os",
+      "scripts/exam"
+    ],
+    "forbidRootGlobs": [
+      "*.png",
+      "*.webp",
+      "*.jpg",
+      "*.jpeg",
+      "*.tmp",
+      "captures/**",
+      "tmp_*",
+      "debug_*",
+      "="
+    ],
+    "healLimits": {
+      "maxShiftMm": 3.0,
+      "maxChassisShiftMm": 0.6,
+      "maxVolumeDeltaPct": 5.0,
+      "forbidPartDeletion": true
+    }
+  },
+  "parallel": {
+    "leaseNamespace": "refs/bg-vault/leases",
+    "leaseTtlSec": 1800,
+    "wsBaseDir": "/tmp/flow_ws"
+  },
+  "policies": {
+    "worker": {
+      "protectedPaths": [
+        "src/units/registry.ts",
+        "src/assemblies/types.ts",
+        "src/core/**",
+        "src/ui/**",
+        "catalog/**",
+        "docs/**",
+        "scripts/exam/**",
+        "scripts/flow_os/**"
+      ],
+      "checks": [
+        "npx tsc --noEmit"
+      ]
+    },
+    "integrator": {
+      "protectedPaths": [],
+      "checks": [
+        "npm run catalog",
+        "npx tsc --noEmit",
+        "node scripts/validate_parts.mjs",
+        "npm run build"
+      ]
+    }
+  }
+}

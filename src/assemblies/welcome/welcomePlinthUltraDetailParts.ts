@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomePlinthUltraDetailParts.ts|unit=welcome|lines=1429|exports=WELCOME_PLINTH_ULTRA_DETAIL_DEFS,buildWelcomePlinthUltraDetailParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

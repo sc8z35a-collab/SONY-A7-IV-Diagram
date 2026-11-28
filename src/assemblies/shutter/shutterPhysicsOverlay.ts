@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/shutter/shutterPhysicsOverlay.ts|unit=shutter|lines=392|exports=ShutterPhysicsOverlayController,createShutterPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { ShutterDynamicRig } from './shutterParts';

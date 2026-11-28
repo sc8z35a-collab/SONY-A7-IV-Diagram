@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensPhysicsOverlay.ts|unit=lens|lines=489|exports=LensPhysicsOverlayController,createLensPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

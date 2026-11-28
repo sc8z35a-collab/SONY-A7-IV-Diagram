@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensorFab/sensorFabVol3PhysicsOverlay.ts|unit=sensorFab|lines=291|exports=SensorFabVol3PhysicsOverlayController,createSensorFabVol3PhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

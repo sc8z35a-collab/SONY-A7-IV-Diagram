@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/bionz/bionzPhysicsOverlay.ts|unit=bionz|lines=246|exports=BionzPhysicsOverlayController,createBionzPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

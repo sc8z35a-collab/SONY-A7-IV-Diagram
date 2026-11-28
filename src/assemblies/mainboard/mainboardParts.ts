@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mainboard/mainboardParts.ts|unit=mainboard|lines=2048|exports=MainboardDynamicRig,buildMainboardParts,buildMainboardStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

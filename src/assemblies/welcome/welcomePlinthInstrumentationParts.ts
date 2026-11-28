@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomePlinthInstrumentationParts.ts|unit=welcome|lines=1140|exports=WELCOME_PLINTH_INSTRUMENTATION_DEFS,buildWelcomePlinthInstrumentationParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

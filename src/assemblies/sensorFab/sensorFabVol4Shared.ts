@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensorFab/sensorFabVol4Shared.ts|unit=sensorFab|lines=181|exports=createVol4BoxGeo,finalizeVol4Part,makeVol4Plinth,makeIonImplantCannon,makeFurnaceTower,makeVol4Beam
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

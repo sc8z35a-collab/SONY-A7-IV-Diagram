@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mic/micUltra36Parts.ts|unit=mic|lines=72|exports=finalizeMicUltra36Part,makeTexturedHorizRect36,buildMicUltra36Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

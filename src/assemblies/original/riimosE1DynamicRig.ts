@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/original/riimosE1DynamicRig.ts|unit=original|lines=198|exports=RiimosE1DynamicRig,createRiimosE1DynamicRig
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { RiimosLauncherOpticsRigRefs } from './riimosE1LauncherOpticsBrainParts';

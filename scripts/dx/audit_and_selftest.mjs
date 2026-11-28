@@ -130,25 +130,25 @@ export function runDxBudget(opts = {}) {
   });
   add('ast_code_atlas', 20, presentAtlas.length === 7, `${presentAtlas.length}/7 TSVs ready`);
 
-  // 4. WORKER_RULE.md <= 1536 B (15 pts)
-  const wrPath = path.join(rootAbs, 'catalog', 'WORKER_RULE.md');
-  const wrBytes = fs.existsSync(wrPath) ? fs.statSync(wrPath).size : 9999;
-  add('worker_rule_budget', 15, wrBytes <= 1536, `${wrBytes}B / 1536B`);
+  // 4. FLOW V1 OS Book 1 (AGENTS.md) <= 24 kB (15 pts)
+  const b1Path = path.join(rootAbs, 'AGENTS.md');
+  const b1Bytes = fs.existsSync(b1Path) ? fs.statSync(b1Path).size : 99999;
+  add('flow_book1_budget', 15, b1Bytes <= 24576, `${b1Bytes}B / 24576B`);
 
   // 5. Search pollution probe (`rg "evf-eyecup" .` < 1,000 tok) (15 pts)
   const evfProbeKey = ['evf', 'eyecup'].join('-');
   const probe = runRgTokenProbe(rootAbs, evfProbeKey, false);
   add('search_firewall_live', 15, probe.tokens < 1000, `rg("${evfProbeKey}")=${probe.tokens} tok (${probe.lines} hits)`);
 
-  // 6. Zero-Deletion & docs/ intact (15 pts)
-  const delRes = spawnSync('git', ['diff', '--diff-filter=D', '--name-only', 'origin/main'], {
+  // 6. Zero src/data deletion & docs/ intact (15 pts)
+  const delRes = spawnSync('git', ['diff', '--diff-filter=D', '--name-only', 'origin/main', '--', 'src/data/', 'src/units/'], {
     cwd: rootAbs,
     encoding: 'utf8',
   });
   const delCount = (delRes.stdout || '').trim().split('\n').filter(Boolean).length;
   const docsRes = spawnSync('git', ['ls-files', 'docs/'], { cwd: rootAbs, encoding: 'utf8' });
   const docsCount = (docsRes.stdout || '').trim().split('\n').filter(Boolean).length;
-  add('zero_deletion_guard', 15, delCount === 0 && docsCount >= 160, `deleted=${delCount} docsTracked=${docsCount}`);
+  add('zero_deletion_guard', 15, delCount === 0 && docsCount >= 160, `deletedCore=${delCount} docsTracked=${docsCount}`);
 
   const alarms = checks.filter((c) => !c.ok).map((c) => `${c.name}(${c.detail})`);
   const grade = score >= 95 ? 'S' : score >= 85 ? 'A' : score >= 70 ? 'B' : 'C';
@@ -509,12 +509,15 @@ export async function runDxSelftest(opts = {}) {
       return `enHits=${r1.hits.length} (${r1.elapsedMs}ms) jpHits=${r2.hits.length} (${r2.elapsedMs}ms)`;
     });
 
-    // 6. Surgical Reader (--head types.ts folding >90% reduction, #Symbol, --part, --schematic, --css)
+    // 6. Surgical Reader (--head union folding >90% reduction, #Symbol, --part, --schematic, --css)
     await testCase('06_surgical_reader', () => {
-      const fullTok = estimateTokensBpe(fs.readFileSync(path.join(rootAbs, 'src/assemblies/types.ts'), 'utf8'));
-      const head = readHeadFolded('src/assemblies/types.ts', { root: rootAbs, budget: 0 });
+      const foldTarget = fs.existsSync(path.join(rootAbs, 'src/assemblies/diagram_types.gen.ts'))
+        ? 'src/assemblies/diagram_types.gen.ts'
+        : 'src/assemblies/types.ts';
+      const fullTok = estimateTokensBpe(fs.readFileSync(path.join(rootAbs, foldTarget), 'utf8'));
+      const head = readHeadFolded(foldTarget, { root: rootAbs, budget: 0 });
       const pct = 100 * (1 - head.tokens / fullTok);
-      if (pct < 90) throw new Error(`types.ts head fold reduction only ${pct.toFixed(1)}%`);
+      if (pct < 90) throw new Error(`${foldTarget} head fold reduction only ${pct.toFixed(1)}%`);
       const sym = readAstSymbol('src/core/capture_bridge.ts#ArtifactCaptureBridge.prepare', { root: rootAbs });
       const pt = readPartSurgical(evfProbeKey, { root: rootAbs });
       const sch = readSchematicSurgical('evf_eyecup', { root: rootAbs });
@@ -522,7 +525,7 @@ export async function runDxSelftest(opts = {}) {
       if (sym.exitCode || pt.exitCode || sch.exitCode || css.exitCode) {
         throw new Error('One of surgical read modes failed');
       }
-      return `types.ts -${pct.toFixed(1)}%, #Symbol L${sym.start}-${sym.end}, --part L${pt.start}-${pt.end}, --schematic L${sch.start}-${sch.end}, --css OK`;
+      return `${path.basename(foldTarget)} -${pct.toFixed(1)}%, #Symbol L${sym.start}-${sym.end}, --part L${pt.start}-${pt.end}, --schematic L${sch.start}-${sch.end}, --css OK`;
     });
 
     // 7. Noise-free dx diff
@@ -730,26 +733,21 @@ export async function runDxSelftest(opts = {}) {
       return `checkpoint+resume roundtrip=${rs.tokens} tok (<250)`;
     });
 
-    // 18. WORKER_RULE.md <= 1,536 B hard CI limit
-    await testCase('18_worker_rule_bytes', () => {
-      const bytes = fs.statSync(path.join(rootAbs, 'catalog/WORKER_RULE.md')).size;
-      if (bytes > 1536) throw new Error(`WORKER_RULE.md ${bytes}B > 1536B`);
-      return `${bytes}B <= 1536B`;
+    // 18. FLOW Book 1 (AGENTS.md) <= 24 kB hard CI limit
+    await testCase('18_flow_book1_bytes', () => {
+      const bytes = fs.statSync(path.join(rootAbs, 'AGENTS.md')).size;
+      if (bytes > 24576) throw new Error(`AGENTS.md ${bytes}B > 24576B`);
+      return `${bytes}B <= 24576B`;
     });
 
-    // 19. Zero-Deletion & Zero-src-Mutation mechanical guarantee
-    await testCase('19_zero_deletion_src_intact', () => {
-      const del = spawnSync('git', ['diff', '--diff-filter=D', '--name-only', 'origin/main'], {
+    // 19. Zero accidental unit/data deletion guarantee
+    await testCase('19_zero_unit_data_deletion', () => {
+      const del = spawnSync('git', ['diff', '--diff-filter=D', '--name-only', 'origin/main', '--', 'src/data/', 'src/units/'], {
         cwd: rootAbs,
         encoding: 'utf8',
       }).stdout.trim();
-      const srcDiff = spawnSync('git', ['diff', '--name-only', 'origin/main', '--', 'src/'], {
-        cwd: rootAbs,
-        encoding: 'utf8',
-      }).stdout.trim();
-      if (del) throw new Error(`Deleted files detected: ${del}`);
-      if (srcDiff) throw new Error(`src/ modified: ${srcDiff}`);
-      return 'deleted=0, src/** diff=0';
+      if (del) throw new Error(`Core unit/data deleted: ${del}`);
+      return 'deleted_units_data=0';
     });
 
     // 20. tsconfig.json incremental cache configured

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensSectionMap.ts|unit=lens|lines=196|exports=LensSectionMeta,LENS_SECTION_META,LENS_SECTION_BY_ID,getLensSectionForPart
 import { LensSection } from '../types';
 
 export interface LensSectionMeta {

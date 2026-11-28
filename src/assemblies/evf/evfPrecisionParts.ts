@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfPrecisionParts.ts|unit=evf|lines=2695|exports=buildEvfPrecisionParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

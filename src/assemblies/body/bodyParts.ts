@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/body/bodyParts.ts|unit=body|lines=2806|exports=BodyDynamicRig,buildBodyParts,buildBodyStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

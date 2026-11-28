@@ -127,6 +127,17 @@ function buildSourceLineMap(unitId) {
       }
     }
   }
+  const poseFile = path.join(ROOT, 'src/units', `${unitId}.pose.tsv`);
+  if (fs.existsSync(poseFile)) {
+    const rel = path.relative(ROOT, poseFile);
+    const lines = fs.readFileSync(poseFile, 'utf8').split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+      const t = lines[i].trim();
+      if (!t || t.startsWith('#')) continue;
+      const pid = t.split('\t')[0]?.trim();
+      if (pid && !map.has(pid)) map.set(pid, `${rel}:${i + 1}`);
+    }
+  }
   return map;
 }
 

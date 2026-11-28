@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountParts.ts|unit=mount|lines=1482|exports=MountDynamicRig,buildMountParts,buildMountStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

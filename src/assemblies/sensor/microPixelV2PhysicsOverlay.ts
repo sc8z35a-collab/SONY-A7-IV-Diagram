@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/microPixelV2PhysicsOverlay.ts|unit=sensor|lines=233|exports=MicroPixelV2PhysicsOverlayController,createMicroPixelV2PhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

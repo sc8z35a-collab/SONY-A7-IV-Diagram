@@ -71,10 +71,12 @@ function cmdHelp() {
   );
 }
 
+const TLX_RUNS_BASE = process.env.FLOW_TLX_RUNS_DIR || (process.env.FLOW_AGENT_WS ? path.join(process.env.FLOW_AGENT_WS, 'tlx_runs') : '/tmp/tlx_runs');
+
 function cmdQuery(runId, flags) {
   const dbPath = runId.endsWith('.ndjson')
     ? runId
-    : path.join('/tmp/tlx_runs', runId, 'results.ndjson');
+    : path.join(TLX_RUNS_BASE, runId, 'results.ndjson');
   if (!fs.existsSync(dbPath)) {
     process.stdout.write(`TLX1_QUERY_ERR|missing=${dbPath}\n`);
     process.exit(EXIT_ERROR);
@@ -231,7 +233,7 @@ async function main() {
   if (flags.playground) {
     const bpPath = path.resolve(flags.playground);
     const runId = flags.resume || `pg_${Date.now()}`;
-    const runDir = path.join('/tmp/tlx_runs', runId);
+    const runDir = path.join(TLX_RUNS_BASE, runId);
     const ir = await compilePlaygroundIr(bpPath, { runDir });
     const rep = await runSingleTarget({ ir, flags, runId, runDir, envCheck });
     process.exit(rep.exitCode);
@@ -242,7 +244,7 @@ async function main() {
     let worstExit = 0;
     for (const u of units) {
       const runId = `${u.unitId}_${Date.now()}`;
-      const runDir = path.join('/tmp/tlx_runs', runId);
+      const runDir = path.join(TLX_RUNS_BASE, runId);
       const ir = await compileUnitIr(u.unitId, { runDir, allTiers: true });
       const rep = await runSingleTarget({ ir, flags, runId, runDir, envCheck });
       if (rep.exitCode > worstExit) worstExit = rep.exitCode;
@@ -252,7 +254,7 @@ async function main() {
 
   const unitId = flags.unit || 'welcome';
   const runId = flags.resume || `${unitId}_${Date.now()}`;
-  const runDir = path.join('/tmp/tlx_runs', runId);
+  const runDir = path.join(TLX_RUNS_BASE, runId);
   const ir = await compileUnitIr(unitId, { runDir, allTiers: true, noCache: Boolean(flags['no-cache']) });
   const rep = await runSingleTarget({ ir, flags, runId, runDir, envCheck });
   process.exit(rep.exitCode);

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/cfexpress/cfexpressExplanations.ts|unit=cfexpress|lines=7|exports=CFEXPRESS_EXPLANATIONS
 import { PartExplanation } from '../types';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
 import unitData from '../../data/cfexpress.json';
