@@ -1,129 +1,129 @@
 id	code	name	group	pos	size	exp	mat
-orig-e1-bottom-skid-plate	OR01	底面 PETG/アルミ複合スキッドプレー	chassis_frame	0,85,0	210,2,124	0,-52,0	matte_black_anodized
-orig-e1-mid-deck-floor	OR02	中段 moto g52j 保護メインデッ	chassis_frame	0,129,0	194,2,78	0,-8,0	magnesium_cast
-orig-e1-mid-deck-ceiling	OR03	中段スマホ装甲天井隔壁	chassis_frame	0,149,0	194,2,78	0,8,0	magnesium_cast
-orig-e1-top-deck-bulkhead	OR04	上部電源／弾倉 構造仕切りデッキ板	chassis_frame	0,184,0	208,2,122	0,26,0	magnesium_cast
-orig-e1-front-faceplate	OR05	前面 4銃口＋上部円形カメラ 複合フェイ	chassis_frame	0,158.8,63.6	210.4,144.4,2.2	0,0,174	matte_black_anodized
-orig-e1-rear-faceplate	OR06	背面 4銃口＋上部円形カメラ 対称フェイ	chassis_frame	0,158.8,-63.6	210.4,144.4,2.2	0,0,-174	matte_black_anodized
-orig-e1-side-armor-left	OR07	左側面 ハニカム放熱サイドアーマーパネル	chassis_frame	-106.8,158.8,0	3.05,144,124	-132,0,0	matte_black_anodized
-orig-e1-side-armor-right	OR08	右側面 ハニカム放熱サイドアーマーパネル	chassis_frame	106.8,158.8,0	3.05,144,124	132,0,0	matte_black_anodized
-orig-e1-corner-pillars-inst	OR09	4隅 M3 ステンレス通し支柱タイロッド	chassis_frame	0,134.5,0	207.29,94,120.18	0,0,0	stainless_machined
+orig-e1-bottom-skid-plate	OR01	底面 PETG/アルミ複合スキッドプレー	chassis_frame	0,85,0	210,4.2,124	0,-52,0	matte_black_anodized
+orig-e1-mid-deck-floor	OR02	中段 moto g52j 保護メインデッ	chassis_frame	0,129,0	210,2,78	0,-8,0	magnesium_cast
+orig-e1-mid-deck-ceiling	OR03	中段スマホ装甲天井隔壁	chassis_frame	0,149,0	210,2,78	0,8,0	magnesium_cast
+orig-e1-top-deck-bulkhead	OR04	上部電源／弾倉 構造仕切りデッキ板	chassis_frame	0,184,0	210,2,124	0,26,0	magnesium_cast
+orig-e1-front-faceplate	OR05	前面 4銃口＋上部円形カメラ 複合フェイ	chassis_frame	0,158.8,63.6	210,148,2.2	0,0,174	matte_black_anodized
+orig-e1-rear-faceplate	OR06	背面 4銃口＋上部円形カメラ 対称フェイ	chassis_frame	0,158.8,-63.6	210,148,2.2	0,0,-174	matte_black_anodized
+orig-e1-side-armor-left	OR07	左側面 ハニカム放熱サイドアーマーパネル	chassis_frame	-106.8,158.8,0	3.04,148,124	-132,0,0	matte_black_anodized
+orig-e1-side-armor-right	OR08	右側面 ハニカム放熱サイドアーマーパネル	chassis_frame	106.8,158.8,0	3.04,148,124	132,0,0	matte_black_anodized
+orig-e1-corner-pillars-inst	OR09	4隅 M3 ステンレス通し支柱タイロッド	chassis_frame	0,134.5,0	207.29,96.92,120.18	0,0,0	stainless_machined
 orig-e1-hip-gusset-fl	OR10	左前 45°対称 脚部補強ヒップガセット	chassis_frame	-94,80.6,54	28.28,5.6,28.28	-36,-58,36	magnesium_cast
 orig-e1-hip-gusset-fr	OR11	右前 45°対称 脚部補強ヒップガセット	chassis_frame	94,80.6,54	28.28,5.6,28.28	36,-58,36	magnesium_cast
 orig-e1-hip-gusset-rl	OR12	左後 45°対称 脚部補強ヒップガセット	chassis_frame	-94,80.6,-54	28.28,5.6,28.28	-36,-58,-36	magnesium_cast
 orig-e1-hip-gusset-rr	OR13	右後 45°対称 脚部補強ヒップガセット	chassis_frame	94,80.6,-54	28.28,5.6,28.28	36,-58,-36	magnesium_cast
-orig-e1-top-deck-bridge	OR14	天面中央 分離隔壁構造ブリッジ	chassis_frame	9.6,206,-16	2.6,40,82	0,52,0	magnesium_cast
-orig-e1-chassis-bolts-inst	OR15	外装 M3×12 ステンレス六角穴付ボル	chassis_frame	0,158.8,0	220.6,124.37,116.16	0,0,0	stainless_machined
-orig-e1-vib-isolators-inst	OR16	中段スマホ用 TPU 95A 防振グロメ	chassis_frame	0,131.2,0	163.41,1.6,67.22	0,-6,0	pin_carrier_gloss
-orig-e1-battery-pack-cover	OR17	上部赤色 アルミ放熱バッテリーユニットカ	power_unit	58,230.2,-16	90,4.25,82	0,152,0	pin_carrier_gloss
-orig-e1-battery-tray-base	OR18	5S1P 21700 千鳥ハニカム	power_unit	58,186.7,-16	88.5,2.2,80.5	0,50,0	elastomer_rubber
-orig-e1-cell-21700-1	OR19	充電式 21700 リチウムイオン電池	power_unit	58,198.7,-42	70.4,19.89,19.39	0,84,0	pin_carrier_gloss
-orig-e1-cell-21700-2	OR20	充電式 21700 リチウムイオン電池	power_unit	58,198.7,-19	70.4,19.89,19.39	0,84,0	pin_carrier_gloss
-orig-e1-cell-21700-3	OR21	充電式 21700 リチウムイオン電池	power_unit	58,198.7,4	70.4,19.89,19.39	0,84,0	pin_carrier_gloss
-orig-e1-cell-21700-4	OR22	充電式 21700 リチウムイオン電池	power_unit	58,217.4,-30.5	70.4,19.89,19.39	0,118,0	pin_carrier_gloss
-orig-e1-cell-21700-5	OR23	充電式 21700 リチウムイオン電池	power_unit	58,217.4,-7.5	70.4,19.89,19.39	0,118,0	pin_carrier_gloss
-orig-e1-battery-busbars	OR24	5S 直列ニッケルタブ	power_unit	58,207.5,-19	76.2,34,68	0,100,0	gold_plating
-orig-e1-bms-5s40a	OR25	5S 40A 過充電／過放電／バランス保	power_unit	58,188.6,39	78,3.9,18	0,50,0	pcb_textured
-orig-e1-usbc-5s-charger	OR26	上面 USB-C PD 5S バランス昇	power_unit	34,195.5,42	28,5.7,18	0,74,0	matte_chassis
-orig-e1-dcdc-6v10a	OR27	脚 12軸・照準用 6V / 10A	power_unit	74,195.8,43	38,11.05,22	0,74,0	pcb_textured
-orig-e1-dcdc-5v5a-cap	OR28	頭脳・0.135J 上限固定 5V /	power_unit	34,206.5,42	28,8.1,18	0,102,0	matte_chassis
-orig-e1-safety-mosfet-fuse	OR29	40A ヒューズ	power_unit	74,211,42	36,9.3,18	0,106,0	pcb_textured
-orig-e1-estop-mushroom	OR30	天面赤色 物理緊急停止マッシュルームスイ	power_unit	74,240,42	42,21.55,28	0,178,0	matte_black_anodized
-orig-e1-mag-l-hatch	OR31	上部黒色スモーク透視 L字 300発弾倉	magazine_feed	0,230.2,0	109.56,2.6,111.56	0,150,0	glass_clear_housing
-orig-e1-mag-l-housing	OR32	L字 300発弾倉 3Dプリント内部ホッ	magazine_feed	0,0,0	110,42,112	0,50,0	matte_black_anodized
+orig-e1-top-deck-bridge	OR14	天面中央 分離隔壁構造ブリッジ	chassis_frame	9.6,206,-16	2.6,39.54,82	0,52,0	magnesium_cast
+orig-e1-chassis-bolts-inst	OR15	外装 M3×12 ステンレス六角穴付ボル	chassis_frame	0,158.8,0	214.22,129.92,3.84	0,0,0	stainless_machined
+orig-e1-vib-isolators-inst	OR16	中段スマホ用 TPU 95A 防振グロメ	chassis_frame	0,131.2,0	163.41,1.92,67.22	0,-6,0	pin_carrier_gloss
+orig-e1-battery-pack-cover	OR17	上部赤色 アルミ放熱バッテリーユニットカ	power_unit	58,230.2,-16	90,4.23,82	0,152,0	pin_carrier_gloss
+orig-e1-battery-tray-base	OR18	5S1P 21700 千鳥ハニカム	power_unit	58,186.7,-16	88,2.2,80	0,50,0	elastomer_rubber
+orig-e1-cell-21700-1	OR19	充電式 21700 リチウムイオン電池	power_unit	58,198.7,-42	70.46,19.89,19.39	0,84,0	pin_carrier_gloss
+orig-e1-cell-21700-2	OR20	充電式 21700 リチウムイオン電池	power_unit	58,198.7,-19	70.46,19.89,19.39	0,84,0	pin_carrier_gloss
+orig-e1-cell-21700-3	OR21	充電式 21700 リチウムイオン電池	power_unit	58,198.7,4	70.46,19.89,19.39	0,84,0	pin_carrier_gloss
+orig-e1-cell-21700-4	OR22	充電式 21700 リチウムイオン電池	power_unit	58,217.4,-30.5	70.46,19.89,19.39	0,118,0	pin_carrier_gloss
+orig-e1-cell-21700-5	OR23	充電式 21700 リチウムイオン電池	power_unit	58,217.4,-7.5	70.46,19.89,19.39	0,118,0	pin_carrier_gloss
+orig-e1-battery-busbars	OR24	5S 直列ニッケルタブ	power_unit	58,207.5,-19	74.14,37.3,68	0,100,0	gold_plating
+orig-e1-bms-5s40a	OR25	5S 40A 過充電／過放電／バランス保	power_unit	58,188.6,39	78,3.83,18	0,50,0	pcb_textured
+orig-e1-usbc-5s-charger	OR26	上面 USB-C PD 5S バランス昇	power_unit	34,195.5,42	28,5.63,18	0,74,0	matte_chassis
+orig-e1-dcdc-6v10a	OR27	脚 12軸・照準用 6V / 10A	power_unit	74,195.8,43	38,10.93,22	0,74,0	pcb_textured
+orig-e1-dcdc-5v5a-cap	OR28	頭脳・0.135J 上限固定 5V /	power_unit	34,206.5,42	28,8.03,18	0,102,0	matte_chassis
+orig-e1-safety-mosfet-fuse	OR29	40A ヒューズ	power_unit	74,211,42	36,9.23,18	0,106,0	pcb_textured
+orig-e1-estop-mushroom	OR30	天面赤色 物理緊急停止マッシュルームスイ	power_unit	74,240,42	42,20.99,28	0,178,0	matte_black_anodized
+orig-e1-mag-l-hatch	OR31	上部黒色スモーク透視 L字 300発弾倉	magazine_feed	0,230.2,0	109.2,2.6,111.2	0,150,0	glass_clear_housing
+orig-e1-mag-l-housing	OR32	L字 300発弾倉 3Dプリント内部ホッ	magazine_feed	0,0,0	110,42.34,112	0,50,0	matte_black_anodized
 orig-e1-mag-bb-pack	OR33	世界最安 6mm 0.12g プラスチッ	magazine_feed	0,0,0	76.96,21.24,64.1	0,108,0	magnesium_cast
-orig-e1-mag-agitator-wheel	OR34	電動撹拌インペラホイール	magazine_feed	-56,193,36	24.37,7,23.76	0,82,0	brass_precision
-orig-e1-mag-pusher-spring	OR35	定荷重スパイラル・フォロワープッシャー機	magazine_feed	-86,210,38	23.43,12,16	0,96,0	becu_spring
-orig-e1-mag-follower-balls	OR36	残弾ゼロ達成・非発射オレンジエラストマー	magazine_feed	0,206,42	52.96,5.64,5.5	0,116,0	pin_carrier_gloss
-orig-e1-mag-n20-diverter	OR37	正逆回転 N20 モーター	magazine_feed	-24,194.5,42	33.5,10,12	0,82,0	brass_precision
-orig-e1-mag-rotary-manifold	OR38	中央 8分岐ロータリー BB 分配マニホ	magazine_feed	-42,174,0	24.37,13.3,23.76	0,22,0	magnesium_cast
+orig-e1-mag-agitator-wheel	OR34	電動撹拌インペラホイール	magazine_feed	-56,193,36	29.88,7,29.88	0,82,0	magnesium_cast
+orig-e1-mag-pusher-spring	OR35	定荷重スパイラル・フォロワープッシャー機	magazine_feed	-86,210,38	26.96,12,16	0,96,0	becu_spring
+orig-e1-mag-follower-balls	OR36	残弾ゼロ達成・非発射オレンジエラストマー	magazine_feed	0,206,42	48.76,5.64,5.5	0,116,0	pin_carrier_gloss
+orig-e1-mag-n20-diverter	OR37	正逆回転 N20 モーター	magazine_feed	-24,194.5,42	33.03,10,12	0,82,0	brass_precision
+orig-e1-mag-rotary-manifold	OR38	中央 8分岐ロータリー BB 分配マニホ	magazine_feed	-42,174,0	24.37,13.03,23.76	0,22,0	magnesium_cast
 orig-e1-feed-tube-fl	OR39	前面左 低摩擦フレキシブル給弾コイルチュ	magazine_feed	-52,166,22	7.62,8.8,24	0,16,44	magnesium_cast
 orig-e1-feed-tube-fr	OR40	前面右 低摩擦フレキシブル給弾コイルチュ	magazine_feed	52,166,22	7.62,8.8,24	0,16,44	magnesium_cast
 orig-e1-feed-tube-rl	OR41	背面左 低摩擦フレキシブル給弾コイルチュ	magazine_feed	-52,166,-22	7.62,8.8,24	0,16,-44	magnesium_cast
 orig-e1-feed-tube-rr	OR42	背面右 低摩擦フレキシブル給弾コイルチュ	magazine_feed	52,166,-22	7.62,8.8,24	0,16,-44	magnesium_cast
-orig-e1-mag-empty-sensor	OR43	最終弾 光学フォトインタラプタ残弾ゼロ検	magazine_feed	-2,218,42	15,8,10	0,126,0	pcb_textured
+orig-e1-mag-empty-sensor	OR43	最終弾 光学フォトインタラプタ残弾ゼロ検	magazine_feed	-2,218,42	16.03,8,10	0,126,0	pcb_textured
 orig-e1-mag-latch-hinge	OR44	L字弾倉 クイック補給ヒンジ	magazine_feed	-104,224,14	3.2,7,18	-146,128,0	pin_carrier_gloss
-orig-e1-launcher-fl-top	OR45	前面・左上 主砲 #1 デュアルフライホ	launchers_8x	-78,166,34	24.42,20,31.3	0,8,108	elastomer_rubber
-orig-e1-launcher-fr-top	OR46	前面・右上 主砲 #2 デュアルフライホ	launchers_8x	78,166,34	24.42,20,31.3	0,8,108	elastomer_rubber
-orig-e1-launcher-fl-bot	OR47	前面・左下 主砲 #3 デュアルフライホ	launchers_8x	-78,114,34	24.42,20,31.3	0,-8,108	elastomer_rubber
-orig-e1-launcher-fr-bot	OR48	前面・右下 主砲 #4 デュアルフライホ	launchers_8x	78,114,34	24.42,20,31.3	0,-8,108	elastomer_rubber
-orig-e1-launcher-rl-top	OR49	背面・左上 迎撃/切替砲 #5	launchers_8x	-78,166,-34	24.42,20,31.3	0,8,-108	elastomer_rubber
-orig-e1-launcher-rr-top	OR50	背面・右上 迎撃/切替砲 #6	launchers_8x	78,166,-34	24.42,20,31.3	0,8,-108	elastomer_rubber
-orig-e1-launcher-rl-bot	OR51	背面・左下 迎撃/切替砲 #7	launchers_8x	-78,114,-34	24.42,20,31.3	0,-8,-108	elastomer_rubber
-orig-e1-launcher-rr-bot	OR52	背面・右下 迎撃/切替砲 #8	launchers_8x	78,114,-34	24.42,20,31.3	0,-8,-108	elastomer_rubber
-orig-e1-drive-shaft-fl	OR53	前面左ペア 縦列貫通共有シャフト	launchers_8x	-96.5,140,46	9.01,66,10.4	-76,0,0	stainless_machined
-orig-e1-drive-shaft-fr	OR54	前面右ペア 縦列貫通共有シャフト	launchers_8x	96.5,140,46	9.01,66,10.4	76,0,0	stainless_machined
-orig-e1-drive-shaft-rl	OR55	背面左ペア 縦列貫通共有シャフト	launchers_8x	-96.5,140,-46	9.01,66,10.4	-76,0,0	stainless_machined
-orig-e1-drive-shaft-rr	OR56	背面右ペア 縦列貫通共有シャフト	launchers_8x	96.5,140,-46	9.01,66,10.4	76,0,0	stainless_machined
-orig-e1-aim-frame-front	OR57	前面主砲 4丁連動 2軸照準ジンバルヨー	launchers_8x	0,140,57.5	176,54,3.6	0,0,138	magnesium_cast
-orig-e1-aim-frame-rear	OR58	背面迎撃 4丁連動 2軸照準ジンバルヨー	launchers_8x	0,140,-57.5	176,54,3.6	0,0,-138	magnesium_cast
-orig-e1-aim-servo-front-pan	OR59	前面主砲 パン 照準マイクロサーボ	launchers_8x	-38,140,48	12,22,12.5	0,0,116	pin_carrier_gloss
-orig-e1-aim-servo-front-tilt	OR60	前面主砲 チルト 照準マイクロサーボ	launchers_8x	38,140,48	12,22,12.5	0,0,116	pin_carrier_gloss
-orig-e1-aim-servo-rear-pan	OR61	背面迎撃 パン 照準マイクロサーボ	launchers_8x	-38,140,-48	12,22,12.5	0,0,-116	pin_carrier_gloss
-orig-e1-aim-servo-rear-tilt	OR62	背面迎撃 チルト 照準マイクロサーボ	launchers_8x	38,140,-48	12,22,12.5	0,0,-116	pin_carrier_gloss
+orig-e1-launcher-fl-top	OR45	前面・左上 主砲 #1 デュアルフライホ	launchers_8x	-78,166,34	24.42,20,29.03	0,8,108	elastomer_rubber
+orig-e1-launcher-fr-top	OR46	前面・右上 主砲 #2 デュアルフライホ	launchers_8x	78,166,34	24.42,20,29.03	0,8,108	elastomer_rubber
+orig-e1-launcher-fl-bot	OR47	前面・左下 主砲 #3 デュアルフライホ	launchers_8x	-78,114,34	24.42,20,29.03	0,-8,108	elastomer_rubber
+orig-e1-launcher-fr-bot	OR48	前面・右下 主砲 #4 デュアルフライホ	launchers_8x	78,114,34	24.42,20,29.03	0,-8,108	elastomer_rubber
+orig-e1-launcher-rl-top	OR49	背面・左上 迎撃/切替砲 #5	launchers_8x	-78,166,-34	24.42,20,29.03	0,8,-108	elastomer_rubber
+orig-e1-launcher-rr-top	OR50	背面・右上 迎撃/切替砲 #6	launchers_8x	78,166,-34	24.42,20,29.03	0,8,-108	elastomer_rubber
+orig-e1-launcher-rl-bot	OR51	背面・左下 迎撃/切替砲 #7	launchers_8x	-78,114,-34	24.42,20,29.03	0,-8,-108	elastomer_rubber
+orig-e1-launcher-rr-bot	OR52	背面・右下 迎撃/切替砲 #8	launchers_8x	78,114,-34	24.42,20,29.03	0,-8,-108	elastomer_rubber
+orig-e1-drive-shaft-fl	OR53	前面左ペア 縦列貫通共有シャフト	launchers_8x	-96.5,140,46	9.01,96.92,10.4	-76,0,0	stainless_machined
+orig-e1-drive-shaft-fr	OR54	前面右ペア 縦列貫通共有シャフト	launchers_8x	96.5,140,46	9.01,96.92,10.4	76,0,0	stainless_machined
+orig-e1-drive-shaft-rl	OR55	背面左ペア 縦列貫通共有シャフト	launchers_8x	-96.5,140,-46	9.01,96.92,10.4	-76,0,0	stainless_machined
+orig-e1-drive-shaft-rr	OR56	背面右ペア 縦列貫通共有シャフト	launchers_8x	96.5,140,-46	9.01,96.92,10.4	76,0,0	stainless_machined
+orig-e1-aim-frame-front	OR57	前面主砲 4丁連動 2軸照準ジンバルヨー	launchers_8x	0,140,57.5	176,54.08,3.6	0,0,138	magnesium_cast
+orig-e1-aim-frame-rear	OR58	背面迎撃 4丁連動 2軸照準ジンバルヨー	launchers_8x	0,140,-57.5	176,54.08,3.6	0,0,-138	magnesium_cast
+orig-e1-aim-servo-front-pan	OR59	前面主砲 パン 照準マイクロサーボ	launchers_8x	-38,140,48	12,22,12.23	0,0,116	pin_carrier_gloss
+orig-e1-aim-servo-front-tilt	OR60	前面主砲 チルト 照準マイクロサーボ	launchers_8x	38,140,48	12,22,12.23	0,0,116	pin_carrier_gloss
+orig-e1-aim-servo-rear-pan	OR61	背面迎撃 パン 照準マイクロサーボ	launchers_8x	-38,140,-48	12,22,12.23	0,0,-116	pin_carrier_gloss
+orig-e1-aim-servo-rear-tilt	OR62	背面迎撃 チルト 照準マイクロサーボ	launchers_8x	38,140,-48	12,22,12.23	0,0,-116	pin_carrier_gloss
 orig-e1-cam-sequencer-front	OR63	前面 4丁単発／リレー連射／斉射	launchers_8x	0,117,48	40,12,12	0,-14,88	brass_precision
 orig-e1-cam-sequencer-rear	OR64	背面 4丁迎撃／切替 ロータリー給弾カム	launchers_8x	0,117,-48	40,12,12	0,-14,-88	brass_precision
-orig-e1-hopup-buckings-8x	OR65	全8丁 固定シリコンホップアップパッキン	launchers_8x	0,140,0	163.97,61.2,45	0,0,0	pin_carrier_gloss
+orig-e1-hopup-buckings-8x	OR65	全8丁 固定シリコンホップアップパッキン	launchers_8x	0,140,0	163.97,61.2,63.92	0,0,0	pin_carrier_gloss
 orig-e1-muzzle-bezels-front	OR66	前面 4銃口 スクエア保護マズルベゼル	launchers_8x	0,140,66.8	190,83.6,3.2	0,0,198	matte_black_anodized
 orig-e1-muzzle-bezels-rear	OR67	背面 4銃口 スクエア保護マズルベゼル	launchers_8x	0,140,-66.8	190,83.6,3.2	0,0,-198	matte_black_anodized
-orig-e1-energy-cap-board	OR68	0.135J 物理上限固定・モーター定電	launchers_8x	0,103.5,48	34,8.2,14	0,-24,92	matte_chassis
+orig-e1-energy-cap-board	OR68	0.135J 物理上限固定・モーター定電	launchers_8x	0,103.5,48	34,8.03,14	0,-24,92	matte_chassis
 orig-e1-cam-front-ring	OR69	前面 円形カメラドーム外枠ベゼルリング	optics_120hz	0,167,67.5	37.2,37.2,4.57	0,20,208	matte_black_anodized
-orig-e1-cam-front-glass	OR70	前面 耐衝撃ポリカ保護光学ウィンドウ	optics_120hz	0,167,68.8	26,25.6,1.2	0,22,224	matte_chassis
-orig-e1-cam-front-pcb	OR71	前面 120Hz ネイティブ出力 UVC	optics_120hz	0,167,49.5	22,22,3.3	0,10,92	pcb_textured
-orig-e1-cam-front-lens	OR72	前面 M12 広角〜中望遠 低歪み光学レ	optics_120hz	0,167,58.6	14.04,13.69,11.3	0,14,128	matte_black_anodized
-orig-e1-cam-front-gimbal	OR73	前面 1軸物理ピッチ安定化 U字ジンバル	optics_120hz	0,167,56.5	28.8,22.6,7	0,12,112	magnesium_cast
-orig-e1-cam-front-servo	OR74	前面 ピッチ安定化	optics_120hz	25.8,167,56.5	15.15,22,12	24,12,114	pin_carrier_gloss
-orig-e1-cam-front-shutter	OR75	前面 トーションバネ連動 フェイルクロー	optics_120hz	0,167,71.6	26,3.81,4.4	0,26,242	pin_carrier_gloss
+orig-e1-cam-front-glass	OR70	前面 耐衝撃ポリカ保護光学ウィンドウ	optics_120hz	0,167,68.8	27.1,26.69,1.2	0,22,224	matte_chassis
+orig-e1-cam-front-pcb	OR71	前面 120Hz ネイティブ出力 UVC	optics_120hz	0,167,49.5	22,22,3.23	0,10,92	pcb_textured
+orig-e1-cam-front-lens	OR72	前面 M12 広角〜中望遠 低歪み光学レ	optics_120hz	0,167,58.6	14.04,13.69,11.23	0,14,128	matte_black_anodized
+orig-e1-cam-front-gimbal	OR73	前面 1軸物理ピッチ安定化 U字ジンバル	optics_120hz	0,167,56.5	26.88,22.44,7	0,12,112	magnesium_cast
+orig-e1-cam-front-servo	OR74	前面 ピッチ安定化	optics_120hz	25.8,167,56.5	15.13,22,12	24,12,114	pin_carrier_gloss
+orig-e1-cam-front-shutter	OR75	前面 トーションバネ連動 フェイルクロー	optics_120hz	0,167,71.6	25.63,3.81,4.4	0,26,242	pin_carrier_gloss
 orig-e1-cam-rear-ring	OR76	背面 円形カメラドーム外枠ベゼルリング	optics_120hz	0,167,-67.5	37.2,37.2,4.57	0,20,-208	matte_black_anodized
-orig-e1-cam-rear-glass	OR77	背面 耐衝撃ポリカ保護光学ウィンドウ	optics_120hz	0,167,-68.8	26,25.6,1.2	0,22,-224	matte_chassis
-orig-e1-cam-rear-pcb	OR78	背面 120Hz ネイティブ出力 UVC	optics_120hz	0,167,-49.5	22,22,3.3	0,10,-92	pcb_textured
-orig-e1-cam-rear-lens	OR79	背面 M12 広角〜中望遠 低歪み光学レ	optics_120hz	0,167,-58.6	14.04,13.69,11.3	0,14,-128	matte_black_anodized
-orig-e1-cam-rear-gimbal	OR80	背面 1軸物理ピッチ安定化 U字ジンバル	optics_120hz	0,167,-56.5	28.8,22.6,7	0,12,-112	magnesium_cast
-orig-e1-cam-rear-servo	OR81	背面 ピッチ安定化	optics_120hz	25.8,167,-56.5	15.15,22,12	24,12,-114	pin_carrier_gloss
-orig-e1-cam-rear-shutter	OR82	背面 トーションバネ連動 フェイルクロー	optics_120hz	0,167,-71.6	26,3.81,4.4	0,26,-242	pin_carrier_gloss
+orig-e1-cam-rear-glass	OR77	背面 耐衝撃ポリカ保護光学ウィンドウ	optics_120hz	0,167,-68.8	27.1,26.69,1.2	0,22,-224	matte_chassis
+orig-e1-cam-rear-pcb	OR78	背面 120Hz ネイティブ出力 UVC	optics_120hz	0,167,-49.5	22,22,3.23	0,10,-92	pcb_textured
+orig-e1-cam-rear-lens	OR79	背面 M12 広角〜中望遠 低歪み光学レ	optics_120hz	0,167,-58.6	14.04,13.69,11.23	0,14,-128	matte_black_anodized
+orig-e1-cam-rear-gimbal	OR80	背面 1軸物理ピッチ安定化 U字ジンバル	optics_120hz	0,167,-56.5	26.88,22.44,7	0,12,-112	magnesium_cast
+orig-e1-cam-rear-servo	OR81	背面 ピッチ安定化	optics_120hz	25.8,167,-56.5	15.13,22,12	24,12,-114	pin_carrier_gloss
+orig-e1-cam-rear-shutter	OR82	背面 トーションバネ連動 フェイルクロー	optics_120hz	0,167,-71.6	25.63,3.81,4.4	0,26,-242	pin_carrier_gloss
 orig-e1-cam-top-mast	OR83	頂上 360° 監視カメラ嵩上げマスト台	optics_120hz	-4,238,42	29.54,11.4,29.1	0,174,0	matte_black_anodized
 orig-e1-cam-top-pcb	OR84	上部 360° 監視用 GC0308	optics_120hz	-4,245.2,42	18,2,18	0,192,0	pcb_textured
-orig-e1-cam-top-fisheye	OR85	上部 170°+ 魚眼広角レンズユニット	optics_120hz	-4,249.4,42	13.26,8.1,12.93	0,206,0	matte_black_anodized
-orig-e1-cam-top-dome	OR86	上部 360° 透明保護ポリカドームカバ	optics_120hz	-4,256.8,42	27.43,5.62,27.72	0,228,0	matte_black_anodized
-orig-e1-brain-g52j-body	OR87	中核頭脳 Motorola moto	brain_spine	0,139.5,0	172.4,9.5,76.8	0,0,0	matte_black_anodized
-orig-e1-brain-g52j-shield	OR88	moto g52j 背面カメラ保護	brain_spine	0,146.1,0	168,2,74	0,4,0	silicon_hero
+orig-e1-cam-top-fisheye	OR85	上部 170°+ 魚眼広角レンズユニット	optics_120hz	-4,249.4,42	13.26,10.64,12.93	0,206,0	matte_black_anodized
+orig-e1-cam-top-dome	OR86	上部 360° 透明保護ポリカドームカバ	optics_120hz	-4,256.8,42	27.43,5.35,27.72	0,228,0	matte_black_anodized
+orig-e1-brain-g52j-body	OR87	中核頭脳 Motorola moto	brain_spine	0,139.5,0	172.43,9.43,76.8	0,0,0	matte_black_anodized
+orig-e1-brain-g52j-shield	OR88	moto g52j 背面カメラ保護	brain_spine	0,146.1,0	168,0.8,74	0,4,0	silicon_hero
 orig-e1-brain-g52j-sled	OR89	moto g52j クイックスライド防振	brain_spine	0,133.5,0	175,2,79	0,-3,0	matte_black_anodized
-orig-e1-brain-imu-datum	OR90	moto g52j 内蔵 400Hz	brain_spine	0,131.2,0	12,1.6,12	0,-6,0	gold_plating
+orig-e1-brain-imu-datum	OR90	moto g52j 内蔵 400Hz	brain_spine	0,131.2,0	12,1.92,12	0,-6,0	gold_plating
 orig-e1-brain-wifi-zone	OR91	5GHz Wi-Fi Direct	brain_spine	-91.5,139.5,0	2,14,32	-68,0,0	matte_chassis
-orig-e1-otg-pd-hub	OR92	USB-C PD パススルー対応	brain_spine	54,92.6,0	46,6.4,26.6	0,-24,0	matte_black_anodized
-orig-e1-esp32s3-spine	OR93	脊髄マイコン ESP32-S3	brain_spine	-52,91.6,0	24,4.9,18	0,-24,0	pcb_textured
-orig-e1-pca9685-pwm	OR94	PCA9685 16ch 12-bit	brain_spine	0,91.2,-16	60,6.7,22	0,-24,-10	pin_carrier_gloss
-orig-e1-mux-cd74hc4067	OR95	CD74HC4067 16ch アナログ	brain_spine	0,91.1,16	40,4.3,18	0,-24,10	pin_carrier_gloss
-orig-e1-spine-carrier-pcb	OR96	下段 脊髄キャリア	brain_spine	0,87.6,0	164,2,62	0,-38,0	pcb_textured
+orig-e1-otg-pd-hub	OR92	USB-C PD パススルー対応	brain_spine	54,92.6,0	46,6.4,26.43	0,-24,0	matte_black_anodized
+orig-e1-esp32s3-spine	OR93	脊髄マイコン ESP32-S3	brain_spine	-52,91.6,0	24,4.83,18	0,-24,0	pcb_textured
+orig-e1-pca9685-pwm	OR94	PCA9685 16ch 12-bit	brain_spine	0,91.2,-16	60,6.63,22	0,-24,-10	pin_carrier_gloss
+orig-e1-mux-cd74hc4067	OR95	CD74HC4067 16ch アナログ	brain_spine	0,91.1,16	40,4.23,18	0,-24,10	pin_carrier_gloss
+orig-e1-bus-carrier-pcb	OR96	下段 脊髄キャリア	brain_spine	0,87.6,0	164,2,62	0,-38,0	pcb_textured
 orig-e1-status-led-bar	OR97	運用モード＆安全ロック状態表示 RGB	brain_spine	0,92,66.8	44,3.6,2.6	0,-18,198	matte_chassis
 orig-e1-thermal-vent-duct	OR98	中段スマホ 側面アルミ放熱ヒートパスダク	brain_spine	91.5,139.5,0	2,14,32	68,0,0	copper_thermal
-orig-e1-leg-fl-coxa-servo	OR99	左前脚 股Yaw MG996R サーボ	leg_fl	-94,62.5,54	35.16,22.58,35.16	-56,-72,56	matte_black_anodized
-orig-e1-leg-fl-coxa-bracket	OR100	左前脚 股関節 Cブラケット	leg_fl	-111.32,62.5,71.32	21.57,30.3,21.57	-78,-84,78	magnesium_cast
-orig-e1-leg-fl-femur-servo	OR101	左前脚 股Pitch MG996R	leg_fl	-124.05,62.5,84.05	27.53,26.7,26.87	-100,-96,100	matte_black_anodized
+orig-e1-leg-fl-coxa-servo	OR99	左前脚 股Yaw MG996R サーボ	leg_fl	-94,62.5,54	35.19,23.18,35.19	-56,-72,56	matte_black_anodized
+orig-e1-leg-fl-coxa-bracket	OR100	左前脚 股関節 Cブラケット	leg_fl	-111.32,62.5,71.32	21.57,29.69,21.57	-78,-84,78	magnesium_cast
+orig-e1-leg-fl-femur-servo	OR101	左前脚 股Pitch MG996R	leg_fl	-124.05,62.5,84.05	27.38,26.63,26.87	-100,-96,100	matte_black_anodized
 orig-e1-leg-fl-femur-link	OR102	左前脚 軽量ツインスパー PETG	leg_fl	-151.98,57.8,111.98	52.66,16.72,52.66	-124,-108,124	matte_black_anodized
-orig-e1-leg-fl-tibia-servo	OR103	左前脚 膝Pitch MG996R	leg_fl	-180.27,53,140.27	27.53,26.7,26.87	-148,-122,148	matte_black_anodized
-orig-e1-leg-fl-tibia-foot	OR104	左前脚 強化 PETG 下腿	leg_fl	-190.17,28.5,150.17	26.49,56.46,26.49	-174,-142,174	carbon_fiber
-orig-e1-leg-fr-coxa-servo	OR105	右前脚 股Yaw MG996R サーボ	leg_fr	94,62.5,54	35.16,22.58,35.16	56,-72,56	matte_black_anodized
-orig-e1-leg-fr-coxa-bracket	OR106	右前脚 股関節 Cブラケット	leg_fr	111.32,62.5,71.32	21.57,30.3,21.57	78,-84,78	magnesium_cast
-orig-e1-leg-fr-femur-servo	OR107	右前脚 股Pitch MG996R	leg_fr	124.05,62.5,84.05	26.87,26.7,27.53	100,-96,100	matte_black_anodized
+orig-e1-leg-fl-tibia-servo	OR103	左前脚 膝Pitch MG996R	leg_fl	-180.27,53,140.27	27.38,26.63,26.87	-148,-122,148	matte_black_anodized
+orig-e1-leg-fl-tibia-foot	OR104	左前脚 強化 PETG 下腿	leg_fl	-190.17,28.5,150.17	26.21,63.12,26.21	-174,-142,174	carbon_fiber
+orig-e1-leg-fr-coxa-servo	OR105	右前脚 股Yaw MG996R サーボ	leg_fr	94,62.5,54	35.19,23.18,35.19	56,-72,56	matte_black_anodized
+orig-e1-leg-fr-coxa-bracket	OR106	右前脚 股関節 Cブラケット	leg_fr	111.32,62.5,71.32	21.57,29.69,21.57	78,-84,78	magnesium_cast
+orig-e1-leg-fr-femur-servo	OR107	右前脚 股Pitch MG996R	leg_fr	124.05,62.5,84.05	26.87,26.63,27.38	100,-96,100	matte_black_anodized
 orig-e1-leg-fr-femur-link	OR108	右前脚 軽量ツインスパー PETG	leg_fr	151.98,57.8,111.98	52.66,16.72,52.66	124,-108,124	matte_black_anodized
-orig-e1-leg-fr-tibia-servo	OR109	右前脚 膝Pitch MG996R	leg_fr	180.27,53,140.27	26.87,26.7,27.53	148,-122,148	matte_black_anodized
-orig-e1-leg-fr-tibia-foot	OR110	右前脚 強化 PETG 下腿	leg_fr	190.17,28.5,150.17	26.49,56.46,26.49	174,-142,174	carbon_fiber
-orig-e1-leg-rl-coxa-servo	OR111	左後脚 股Yaw MG996R サーボ	leg_rl	-94,62.5,-54	35.16,22.58,35.16	-56,-72,-56	matte_black_anodized
-orig-e1-leg-rl-coxa-bracket	OR112	左後脚 股関節 Cブラケット	leg_rl	-111.32,62.5,-71.32	21.57,30.3,21.57	-78,-84,-78	magnesium_cast
-orig-e1-leg-rl-femur-servo	OR113	左後脚 股Pitch MG996R	leg_rl	-124.05,62.5,-84.05	26.87,26.7,27.53	-100,-96,-100	matte_black_anodized
+orig-e1-leg-fr-tibia-servo	OR109	右前脚 膝Pitch MG996R	leg_fr	180.27,53,140.27	26.87,26.63,27.38	148,-122,148	matte_black_anodized
+orig-e1-leg-fr-tibia-foot	OR110	右前脚 強化 PETG 下腿	leg_fr	190.17,28.5,150.17	26.21,63.12,26.21	174,-142,174	carbon_fiber
+orig-e1-leg-rl-coxa-servo	OR111	左後脚 股Yaw MG996R サーボ	leg_rl	-94,62.5,-54	35.19,23.18,35.19	-56,-72,-56	matte_black_anodized
+orig-e1-leg-rl-coxa-bracket	OR112	左後脚 股関節 Cブラケット	leg_rl	-111.32,62.5,-71.32	21.57,29.69,21.57	-78,-84,-78	magnesium_cast
+orig-e1-leg-rl-femur-servo	OR113	左後脚 股Pitch MG996R	leg_rl	-124.05,62.5,-84.05	26.87,26.63,27.38	-100,-96,-100	matte_black_anodized
 orig-e1-leg-rl-femur-link	OR114	左後脚 軽量ツインスパー PETG	leg_rl	-151.98,57.8,-111.98	52.66,16.72,52.66	-124,-108,-124	matte_black_anodized
-orig-e1-leg-rl-tibia-servo	OR115	左後脚 膝Pitch MG996R	leg_rl	-180.27,53,-140.27	26.87,26.7,27.53	-148,-122,-148	matte_black_anodized
-orig-e1-leg-rl-tibia-foot	OR116	左後脚 強化 PETG 下腿	leg_rl	-190.17,28.5,-150.17	26.49,56.46,26.49	-174,-142,-174	carbon_fiber
-orig-e1-leg-rr-coxa-servo	OR117	右後脚 股Yaw MG996R サーボ	leg_rr	94,62.5,-54	35.16,22.58,35.16	56,-72,-56	matte_black_anodized
-orig-e1-leg-rr-coxa-bracket	OR118	右後脚 股関節 Cブラケット	leg_rr	111.32,62.5,-71.32	21.57,30.3,21.57	78,-84,-78	magnesium_cast
-orig-e1-leg-rr-femur-servo	OR119	右後脚 股Pitch MG996R	leg_rr	124.05,62.5,-84.05	27.53,26.7,26.87	100,-96,-100	matte_black_anodized
+orig-e1-leg-rl-tibia-servo	OR115	左後脚 膝Pitch MG996R	leg_rl	-180.27,53,-140.27	26.87,26.63,27.38	-148,-122,-148	matte_black_anodized
+orig-e1-leg-rl-tibia-foot	OR116	左後脚 強化 PETG 下腿	leg_rl	-190.17,28.5,-150.17	26.21,63.12,26.21	-174,-142,-174	carbon_fiber
+orig-e1-leg-rr-coxa-servo	OR117	右後脚 股Yaw MG996R サーボ	leg_rr	94,62.5,-54	35.19,23.18,35.19	56,-72,-56	matte_black_anodized
+orig-e1-leg-rr-coxa-bracket	OR118	右後脚 股関節 Cブラケット	leg_rr	111.32,62.5,-71.32	21.57,29.69,21.57	78,-84,-78	magnesium_cast
+orig-e1-leg-rr-femur-servo	OR119	右後脚 股Pitch MG996R	leg_rr	124.05,62.5,-84.05	27.38,26.63,26.87	100,-96,-100	matte_black_anodized
 orig-e1-leg-rr-femur-link	OR120	右後脚 軽量ツインスパー PETG	leg_rr	151.98,57.8,-111.98	52.66,16.72,52.66	124,-108,-124	matte_black_anodized
-orig-e1-leg-rr-tibia-servo	OR121	右後脚 膝Pitch MG996R	leg_rr	180.27,53,-140.27	27.53,26.7,26.87	148,-122,-148	matte_black_anodized
-orig-e1-leg-rr-tibia-foot	OR122	右後脚 強化 PETG 下腿	leg_rr	190.17,28.5,-150.17	26.49,56.46,26.49	174,-142,-174	carbon_fiber
+orig-e1-leg-rr-tibia-servo	OR121	右後脚 膝Pitch MG996R	leg_rr	180.27,53,-140.27	27.38,26.63,26.87	148,-122,-148	matte_black_anodized
+orig-e1-leg-rr-tibia-foot	OR122	右後脚 強化 PETG 下腿	leg_rr	190.17,28.5,-150.17	26.21,63.12,26.21	174,-142,-174	carbon_fiber
 orig-e1-spec-nameplate	OR123	RIIMOS E1 三原則・9	safety_l4_twin	-109.2,158.8,0	1.2,36,72	-158,0,0	matte_black_anodized
-orig-e1-bottom-service-hatch	OR124	底面クイックメンテナンス	safety_l4_twin	0,82.4,0	72,3,46	0,-78,0	magnesium_cast
-orig-e1-apriltag-target-ref	OR125	競技用 非人間 AprilTag	safety_l4_twin	0,82.4,42	36,2.3,20	0,-74,48	magnesium_cast
+orig-e1-bottom-service-hatch	OR124	底面クイックメンテナンス	safety_l4_twin	0,82.4,0	72,2.83,46	0,-78,0	magnesium_cast
+orig-e1-apriltag-target-ref	OR125	競技用 非人間 AprilTag	safety_l4_twin	0,82.4,42	36,2.23,20	0,-74,48	magnesium_cast
 orig-e1-wire-harness-front	OR126	前面 カメラ・照準・脚部 編組ケーブルハ	safety_l4_twin	0,96.5,34	92,3,4	0,-24,34	elastomer_rubber
 orig-e1-wire-harness-rear	OR127	背面 カメラ・照準・脚部 編組ケーブルハ	safety_l4_twin	0,96.5,-34	92,3,4	0,-24,-34	elastomer_rubber
 orig-e1-l4-cog-datum	OR128	世界重心＆ Google Colab	safety_l4_twin	0,121,0	16,12,16	0,-18,0	pin_carrier_gloss

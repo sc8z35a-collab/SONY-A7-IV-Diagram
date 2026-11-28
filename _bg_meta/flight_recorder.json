@@ -1,0 +1,14 @@
+{
+  "schema": "bg-flight/v1",
+  "sessionId": "feat-cert-all-21-v11-mx0ozzt1",
+  "branch": "feat/cert-all-21-v11",
+  "goal": "",
+  "completed": [],
+  "verifiedGates": [],
+  "knownPitfalls": [],
+  "nextStep": "awaiting_next_step",
+  "artifactsMirrored": [],
+  "updatedAt": "2026-11-28T17:36:58.045Z",
+  "vmHost": "devbox",
+  "baseSha": "68dadff9bdf1c09f7aaa12d8bf14f0d02b38600a"
+}

@@ -291,31 +291,31 @@ src/assemblies/mount/mountUltra34PartsA.ts	buildMountUltra34PartsA	func	89	1480	
 src/assemblies/mount/mountUltra34PartsB.ts	buildMountUltra34PartsB	func	57	1426	export function buildMountUltra34PartsB(mats: MaterialLibrary): CadPart[]
 src/assemblies/mount/mountUltraAuditExplanations.ts	MOUNT_ULTRA_AUDIT_EXPLANATIONS	const	5	5	MOUNT_ULTRA_AUDIT_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/mount/mountUltraAuditParts.ts	buildMountUltraAuditParts	func	60	275	export function buildMountUltraAuditParts(mats: MaterialLibrary): CadPart[]
-src/assemblies/original/originalShared.ts	E1_CHASSIS_W	const	32	32	E1_CHASSIS_W = 216
-src/assemblies/original/originalShared.ts	E1_CHASSIS_D	const	33	33	E1_CHASSIS_D = 130
-src/assemblies/original/originalShared.ts	E1_CHASSIS_Y0	const	34	34	E1_CHASSIS_Y0 = 84
-src/assemblies/original/originalShared.ts	E1_CHASSIS_Y1	const	35	35	E1_CHASSIS_Y1 = 232
-src/assemblies/original/originalShared.ts	E1_FEMUR_LEN	const	36	36	E1_FEMUR_LEN = 68
-src/assemblies/original/originalShared.ts	E1_TIBIA_LEN	const	37	37	E1_TIBIA_LEN = 88
-src/assemblies/original/originalShared.ts	InstanceTransform	interface	39	43	export interface InstanceTransform
-src/assemblies/original/originalShared.ts	finalizeOriginalPart	func	45	72	export function finalizeOriginalPart(
-src/assemblies/original/originalShared.ts	makeOrigInstanced	func	74	97	export function makeOrigInstanced( geo: THREE.BufferGeometry, mat: THREE.Material, transforms: readonly Insta…
-src/assemblies/original/originalShared.ts	makeBoxMesh	func	99	109	export function makeBoxMesh( w: number, h: number, d: number, mat: THREE.Material, uvTile = 24 ): THREE.Mesh
-src/assemblies/original/originalShared.ts	makePlanarTopBox	func	111	132	export function makePlanarTopBox( w: number, h: number, d: number, mat: THREE.Material ): THREE.Mesh
-src/assemblies/original/originalShared.ts	makeRoundedPlateY	func	134	153	export function makeRoundedPlateY( w: number, h: number, d: number, radius: number, mat: THREE.Material, plan…
-src/assemblies/original/originalShared.ts	makeCylMesh	func	155	164	export function makeCylMesh( rTop: number, rBot: number, h: number, mat: THREE.Material, baseSegs = 20 ): THR…
-src/assemblies/original/originalShared.ts	makeSphereMesh	func	166	170	export function makeSphereMesh(r: number, mat: THREE.Material, baseSegs = 14): THREE.Mesh
-src/assemblies/original/originalShared.ts	makeMuzzleFaceplateMesh	func	177	213	export function makeMuzzleFaceplateMesh( w: number, h: number, thickness: number, mat: THREE.Material, center…
-src/assemblies/original/originalShared.ts	makeLShapeMagGeometry	func	219	250	export function makeLShapeMagGeometry(height: number, inset = 0): THREE.BufferGeometry
-src/assemblies/original/originalShared.ts	buildMg996rServoSubGroup	func	256	286	export function buildMg996rServoSubGroup( mats: V2MaterialLibrary, withPotTap = true ): THREE.Group
-src/assemblies/original/originalShared.ts	ORIGINAL_HERO_SPECS	const	291	512	ORIGINAL_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> =
-src/assemblies/original/riimosE1ChassisPowerMagParts.ts	buildRiimosE1ChassisPowerMagParts	func	28	523	export function buildRiimosE1ChassisPowerMagParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[] ): …
+src/assemblies/original/originalShared.ts	E1_CHASSIS_W	const	31	31	E1_CHASSIS_W = 216
+src/assemblies/original/originalShared.ts	E1_CHASSIS_D	const	32	32	E1_CHASSIS_D = 130
+src/assemblies/original/originalShared.ts	E1_CHASSIS_Y0	const	33	33	E1_CHASSIS_Y0 = 84
+src/assemblies/original/originalShared.ts	E1_CHASSIS_Y1	const	34	34	E1_CHASSIS_Y1 = 232
+src/assemblies/original/originalShared.ts	E1_FEMUR_LEN	const	35	35	E1_FEMUR_LEN = 68
+src/assemblies/original/originalShared.ts	E1_TIBIA_LEN	const	36	36	E1_TIBIA_LEN = 88
+src/assemblies/original/originalShared.ts	InstanceTransform	interface	38	42	export interface InstanceTransform
+src/assemblies/original/originalShared.ts	finalizeOriginalPart	func	44	71	export function finalizeOriginalPart(
+src/assemblies/original/originalShared.ts	makeOrigInstanced	func	73	96	export function makeOrigInstanced( geo: THREE.BufferGeometry, mat: THREE.Material, transforms: readonly Insta…
+src/assemblies/original/originalShared.ts	makeBoxMesh	func	98	108	export function makeBoxMesh( w: number, h: number, d: number, mat: THREE.Material, uvTile = 24 ): THREE.Mesh
+src/assemblies/original/originalShared.ts	makePlanarTopBox	func	110	131	export function makePlanarTopBox( w: number, h: number, d: number, mat: THREE.Material ): THREE.Mesh
+src/assemblies/original/originalShared.ts	makeRoundedPlateY	func	158	177	export function makeRoundedPlateY( w: number, h: number, d: number, radius: number, mat: THREE.Material, plan…
+src/assemblies/original/originalShared.ts	makeCylMesh	func	179	188	export function makeCylMesh( rTop: number, rBot: number, h: number, mat: THREE.Material, baseSegs = 20 ): THR…
+src/assemblies/original/originalShared.ts	makeSphereMesh	func	190	194	export function makeSphereMesh(r: number, mat: THREE.Material, baseSegs = 14): THREE.Mesh
+src/assemblies/original/originalShared.ts	makeMuzzleFaceplateMesh	func	201	244	export function makeMuzzleFaceplateMesh( w: number, h: number, thickness: number, mat: THREE.Material, center…
+src/assemblies/original/originalShared.ts	makeLShapeMagGeometry	func	250	281	export function makeLShapeMagGeometry(height: number, inset = 0): THREE.BufferGeometry
+src/assemblies/original/originalShared.ts	buildMg996rServoSubGroup	func	287	319	export function buildMg996rServoSubGroup( mats: V2MaterialLibrary, withPotTap = true ): THREE.Group
+src/assemblies/original/originalShared.ts	ORIGINAL_HERO_SPECS	const	324	545	ORIGINAL_HERO_SPECS: Readonly<Record<string, HeroMaterialSpec>> =
+src/assemblies/original/riimosE1ChassisPowerMagParts.ts	buildRiimosE1ChassisPowerMagParts	func	28	532	export function buildRiimosE1ChassisPowerMagParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[] ): …
 src/assemblies/original/riimosE1DynamicRig.ts	RiimosE1DynamicRig	interface	16	19	export interface RiimosE1DynamicRig
 src/assemblies/original/riimosE1DynamicRig.ts	createRiimosE1DynamicRig	func	23	198	export function createRiimosE1DynamicRig( launcherOptics: RiimosLauncherOpticsRigRefs, legRigs: readonly Riim…
 src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts	RiimosLauncherOpticsRigRefs	interface	14	21	export interface RiimosLauncherOpticsRigRefs
-src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts	buildRiimosE1LauncherOpticsBrainParts	func	29	570	export function buildRiimosE1LauncherOpticsBrainParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[]…
+src/assemblies/original/riimosE1LauncherOpticsBrainParts.ts	buildRiimosE1LauncherOpticsBrainParts	func	29	569	export function buildRiimosE1LauncherOpticsBrainParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[]…
 src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts	RiimosLegRigRef	interface	14	36	export interface RiimosLegRigRef
-src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts	buildRiimosE1LegsAndAccessoriesParts	func	43	337	export function buildRiimosE1LegsAndAccessoriesParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[] …
+src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts	buildRiimosE1LegsAndAccessoriesParts	func	43	338	export function buildRiimosE1LegsAndAccessoriesParts( mats: V2MaterialLibrary, clippingPlanes: THREE.Plane[] …
 src/assemblies/sensor/explanations.ts	MACRO_EXPLANATIONS	const	7	8	MACRO_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(sensorJson)
 src/assemblies/sensor/explanations.ts	MICRO_EXPLANATIONS	const	10	11	MICRO_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(microJson)
 src/assemblies/sensor/macroParts.ts	buildMacroSensorParts	func	72	3879	export function buildMacroSensorParts(mats: MaterialLibrary, _includeStandalone = true): CadPart[]
