@@ -19,6 +19,7 @@ micro	individual	75	micro-	M12	M75	M76	src/units/micro.ts	src/data/micro.json	ca
 micro_v2	individual	55	pv2-	P2-01	P2-55	P2-56	src/units/micro_v2.ts	src/data/micro_v2.json	catalog/names/micro_v2.txt	catalog/spatial/micro_v2.tsv
 sensor_fab	individual	235	fab5-	F0-01	F5-38	F5-39	src/units/sensor_fab.ts	src/data/sensor_fab.json	catalog/names/sensor_fab.txt	catalog/spatial/sensor_fab.tsv
 mirai_2028	individual	140	mirai-	FH01-01	FH48-18	FH48-19	src/units/mirai_2028.ts	src/data/mirai_2028.json	catalog/names/mirai_2028.txt	catalog/spatial/mirai_2028.tsv
+original	individual	128	orig-	OR01	OR128	OR129	src/units/original.ts	src/data/original.json	catalog/names/original.txt	catalog/spatial/original.tsv
 integrated	composite	305	-	-	-	-	src/units/integrated.ts	src/data/integrated.json	catalog/names/integrated.txt	catalog/spatial/integrated.tsv
 camera_body	composite	231	-	-	-	-	src/units/camera_body.ts	src/data/camera_body.json	catalog/names/camera_body.txt	catalog/spatial/camera_body.tsv
-# total_individual_modes=20	total_individual_parts=2809	total_modes=22
+# total_individual_modes=21	total_individual_parts=2937	total_modes=23

@@ -26,6 +26,8 @@ export interface ZeroTextUIHandlers {
   onOpenPlayground?: () => void;
   onMiraiSubViewChange?: (subView: number) => void;
   onOpenMiraiStudio?: (tab: 'reports' | 'matrix' | 'glossary') => void;
+  onOriginalSubViewChange?: (subView: number) => void;
+  onOpenOriginalStudio?: (tab: 'principles' | 'bom' | 'power_rl') => void;
   onResetVisibility: () => void;
   onFullscreenToggle: () => void;
   onCameraPreset: (preset: CameraPreset) => void;
@@ -67,6 +69,7 @@ const ICONS = {
   mic: '<rect x="9" y="3.5" width="6" height="10" rx="3"/><path d="M6 11a6 6 0 0 0 12 0"/><line x1="12" y1="17" x2="12" y2="20.5"/><line x1="8.5" y1="20.5" x2="15.5" y2="20.5"/>',
   drybox: '<rect x="4" y="3.5" width="16" height="17" rx="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="16.5" cy="7.5" r="1.2"/>',
   mirai: '<path d="M12 2.8l7.6 4.4v9.6L12 21.2l-7.6-4.4V7.2z"/><path d="M12 7.2l3.8 2.2v4.4L12 16l-3.8-2.2V9.4z"/><circle cx="12" cy="11.6" r="1.3" fill="currentColor" stroke="none"/>',
+  original: '<rect x="5" y="5" width="14" height="9" rx="2"/><circle cx="12" cy="9" r="2"/><path d="M7 14l-3 6M10 14l-1.5 6M14 14l1.5 6M17 14l3 6"/>',
   playground: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
   chevronDown: '<polyline points="6 9 12 15 18 9"/>',
   assembled: '<rect x="7" y="7" width="10" height="10" rx="1.6"/>',
@@ -98,9 +101,20 @@ const ASSEMBLY_GROUPS: readonly AssemblyPaletteGroup[] = [
     ],
   },
   {
+    heading: 'Original（オリジナル実機展示）',
+    items: [
+      {
+        mode: 'original',
+        label: 'Original — RIIMOS E1',
+        sub: '実動作・9,700円極限最安・妥協不可能',
+        icon: ICONS.original,
+      },
+    ],
+  },
+  {
     heading: 'Future History MIRAI 2028',
     items: [
-      { mode: 'mirai_2028', label: 'FH MIRAI 2028', sub: '未来技術48選・精密3D 5体', icon: ICONS.mirai },
+      { mode: 'mirai_2028', label: 'FH MIRAI 2028', sub: '未来技術48選・精密3D 8体', icon: ICONS.mirai },
     ],
   },
   {
@@ -222,6 +236,7 @@ export class ZeroTextControls {
   private paletteBtns = new Map<ScaleMode, HTMLButtonElement>();
   private playgroundBtn: HTMLButtonElement;
   private miraiCtaBtn: HTMLButtonElement;
+  private originalCtaBtn: HTMLButtonElement;
 
   private subViewHost: HTMLElement;
   private lensSubBar: HTMLElement;
@@ -234,6 +249,9 @@ export class ZeroTextControls {
   private fabStageBtns = new Map<SensorFabStage, HTMLButtonElement>();
   private miraiSubBar: HTMLElement;
   private miraiSubBtns: Record<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8, HTMLButtonElement>;
+  private originalSubBar: HTMLElement;
+  private originalDemoBtn: HTMLButtonElement;
+  private originalPhysicsActive = false;
 
   private qualityBtns: Partial<Record<GraphicsQuality, HTMLButtonElement>>;
   private kineToggleBtn: HTMLButtonElement;
@@ -362,7 +380,26 @@ export class ZeroTextControls {
       }
     });
 
-    topLeft.append(selectorWrap, this.playgroundBtn, this.miraiCtaBtn);
+    // Original Real-World Manufacturable Showcase Quick-Launch CTA Pill
+    this.originalCtaBtn = document.createElement('button');
+    this.originalCtaBtn.type = 'button';
+    this.originalCtaBtn.className = 'orig-cta-pill';
+    this.originalCtaBtn.title = 'Original — #01 RIIMOS E1（実動作保証・9,700円極限最安・妥協不可能）';
+    this.originalCtaBtn.append(svgIcon(ICONS.original));
+    const origTxt = document.createElement('span');
+    origTxt.textContent = 'Original';
+    this.originalCtaBtn.append(origTxt);
+    this.originalCtaBtn.addEventListener('click', () => {
+      this.setPaletteOpen(false);
+      if (this.currentMode !== 'original') {
+        this.syncMode('original');
+        handlers.onModeChange('original');
+      } else {
+        this.handlers.onOpenOriginalStudio?.('principles');
+      }
+    });
+
+    topLeft.append(selectorWrap, this.playgroundBtn, this.miraiCtaBtn, this.originalCtaBtn);
 
     // --- CENTER: Contextual Sub-View Bar ---
     this.subViewHost = document.createElement('div');
@@ -517,7 +554,53 @@ export class ZeroTextControls {
     );
     this.miraiSubBar.append(miraiStructRail, miraiSep, miraiLibGroup);
 
-    this.subViewHost.append(this.lensSubBar, this.v2SubBar, this.fabSubBar, this.miraiSubBar);
+    // Original Real-World Showcase contextual sub-bar (#01 RIIMOS E1 + Blueprint Studio + Live Demo)
+    this.originalSubBar = document.createElement('div');
+    this.originalSubBar.className = 'studio-subbar orig-subbar is-hidden';
+    const origExhibitBtn = document.createElement('button');
+    origExhibitBtn.type = 'button';
+    origExhibitBtn.className = 'studio-sub-btn orig-sub-exhibit is-active';
+    origExhibitBtn.textContent = '#01 RIIMOS E1';
+    origExhibitBtn.title = 'RIIMOS E1 — 9,700円極限最安 0.135J 8丁機関銃 XYZ四足ロボット（128パーツ）';
+    origExhibitBtn.addEventListener('click', () => {
+      handlers.onOriginalSubViewChange?.(1);
+    });
+    const origSep = document.createElement('span');
+    origSep.className = 'mirai-subbar-sep';
+    const makeOrigStudioBtn = (tab: 'principles' | 'bom' | 'power_rl', label: string) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'studio-sub-btn orig-sub-studio';
+      b.textContent = label;
+      b.addEventListener('click', () => handlers.onOpenOriginalStudio?.(tab));
+      return b;
+    };
+    this.originalDemoBtn = document.createElement('button');
+    this.originalDemoBtn.type = 'button';
+    this.originalDemoBtn.className = 'studio-sub-btn orig-sub-demo';
+    this.originalDemoBtn.textContent = '▶ 稼働デモ';
+    this.originalDemoBtn.title = 'XYZカニ歩行・カメラジンバル安定化・主砲追尾・緊急遮光フード稼働デモ切替';
+    this.originalDemoBtn.addEventListener('click', () => {
+      const next = !this.originalPhysicsActive;
+      this.syncPhysics(next);
+      handlers.onPhysicsToggle(next);
+    });
+    this.originalSubBar.append(
+      origExhibitBtn,
+      origSep,
+      makeOrigStudioBtn('principles', '三原則・設計書'),
+      makeOrigStudioBtn('bom', '9,700円BOM'),
+      makeOrigStudioBtn('power_rl', '3.86h・L4学習'),
+      this.originalDemoBtn
+    );
+
+    this.subViewHost.append(
+      this.lensSubBar,
+      this.v2SubBar,
+      this.fabSubBar,
+      this.miraiSubBar,
+      this.originalSubBar
+    );
 
     // --- RIGHT: Minimalist 2-Tier Quality Switcher (LITE | ULTRA) ---
     // (STD & HIGH remain fully intact in the rendering engine & URL ?quality= API; buttons removed per UX design)
@@ -787,6 +870,8 @@ export class ZeroTextControls {
     if (mode === 'mirai_2028') {
       this.scrollActiveMiraiBtnIntoView(this.currentMiraiSubView);
     }
+    this.originalSubBar.classList.toggle('is-hidden', mode !== 'original');
+    this.originalCtaBtn.classList.toggle('is-active', mode === 'original');
   }
 
   public syncSectionAxis(axis: SectionAxis, value = 0.5): void {
@@ -797,8 +882,10 @@ export class ZeroTextControls {
     this.sectionSlider.value = String(Math.round(Math.max(0, Math.min(1, value)) * 100));
   }
 
-  public syncPhysics(_active: boolean): void {
-    // Physics button intentionally removed from HUD; API retained for compatibility.
+  public syncPhysics(active: boolean): void {
+    this.originalPhysicsActive = active;
+    this.originalDemoBtn.classList.toggle('is-active', active);
+    this.originalDemoBtn.textContent = active ? '■ 停止' : '▶ 稼働デモ';
   }
 
   public syncOpticsStudio(_active: boolean): void {

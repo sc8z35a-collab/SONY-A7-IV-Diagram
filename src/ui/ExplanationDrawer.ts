@@ -733,6 +733,7 @@ export class ExplanationDrawer {
 
     const syncSvg = cachedSchematicRenderer ? cachedSchematicRenderer(exp.diagramType) : '';
     const isHdDiagram = (svg: string) =>
+      svg.includes('data-original-hd="1"') ||
       svg.includes('data-mirai-hd="1"') ||
       svg.includes('data-evf-hd="1"') ||
       svg.includes('data-lcd-hd="1"') ||

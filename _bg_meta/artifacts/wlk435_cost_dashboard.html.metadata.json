@@ -1,5 +1,0 @@
-{
-  "summary":  "Interactive standalone Dual-Track BOM Cost Explorer dashboard for all 435 parts (W001–W435) of the SONY-A7-IV-Diagram Welcome unit (WLK-435), comparing Track A (Strict Genuine Spec Lowest Cost) vs Track B (Functional-Equivalent Ultra-VE Lowest Cost) with interactive PCBA & Shipping/Japan Tax toggles, 8-domain and 5-subassembly charts, Top-20 Pareto drivers, 25 shared pool audit, and searchable 435-part explorer.",
-  "updatedAt":  "2026-11-28T02:00:40.371238488Z",
-  "userFacing":  true
-}

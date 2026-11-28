@@ -78,6 +78,8 @@ export interface CaptureCustomOptions {
   readonly miraiSubView?: number;
   readonly miraiEdition?: 'beginner' | 'expert';
   readonly miraiStudioTab?: 'reports' | 'matrix' | 'glossary' | null;
+  readonly originalStudioTab?: 'principles' | 'bom' | 'power_rl' | null;
+  readonly physics?: boolean;
   readonly physicsActive?: boolean;
   readonly physicsTime?: number;
   readonly bgColor?: string | null;
@@ -128,6 +130,8 @@ export interface CaptureHostAdapter {
   setMiraiEdition?: (edition: 'beginner' | 'expert') => void;
   openMiraiStudio?: (tab: 'reports' | 'matrix' | 'glossary') => Promise<void>;
   closeMiraiStudio?: () => void;
+  openOriginalStudio?: (tab: 'principles' | 'bom' | 'power_rl') => Promise<void>;
+  closeOriginalStudio?: () => void;
   requestRenderFrame: () => void;
   // pp1.1 Hyper-Engine Hooks
   setCaptureControlled?: (enabled: boolean) => void;
@@ -456,6 +460,11 @@ export class ArtifactCaptureBridge {
     } else if (this.host.closeMiraiStudio) {
       this.host.closeMiraiStudio();
     }
+    if (options.originalStudioTab && this.host.openOriginalStudio) {
+      await this.host.openOriginalStudio(options.originalStudioTab);
+    } else if (this.host.closeOriginalStudio) {
+      this.host.closeOriginalStudio();
+    }
     if (!options.opticsStudio && this.host.closeOpticsStudio) {
       this.host.closeOpticsStudio();
     }
@@ -477,6 +486,7 @@ export class ArtifactCaptureBridge {
 
     // 3. Activate unit: 0-WebGL metadata path for non-3D modes OR single-pass atomic 3D activation!
     if (!options.playground) {
+      const wantPhysics = options.physicsActive ?? options.physics;
       if (!needs3d && this.host.hydrateMetaOnly) {
         await this.host.hydrateMetaOnly(targetUnit, targetQuality, targetSubView);
         metaOnly = this.host.isMetaOnlyActive ? this.host.isMetaOnlyActive() : true;
@@ -490,7 +500,7 @@ export class ArtifactCaptureBridge {
         await this.host.activateAtomic(targetUnit, targetQuality, {
           explode: targetExplode,
           renderMode: targetRenderMode,
-          physicsActive: Boolean(options.physicsActive),
+          physicsActive: Boolean(wantPhysics),
           sectionActive: Boolean(
             (options.sectionAxis && options.sectionAxis !== 'off') || options.clipPlane
           ),
@@ -559,8 +569,8 @@ export class ArtifactCaptureBridge {
           this.host.setIsolatedPart(options.isolatePart);
         }
 
-        if (typeof options.physicsActive === 'boolean' && this.host.setPhysicsActive) {
-          this.host.setPhysicsActive(options.physicsActive);
+        if (typeof wantPhysics === 'boolean' && this.host.setPhysicsActive) {
+          this.host.setPhysicsActive(wantPhysics);
         }
         if (typeof options.physicsTime === 'number' && this.host.stepPhysicsAtTime) {
           this.host.stepPhysicsAtTime(options.physicsTime);
