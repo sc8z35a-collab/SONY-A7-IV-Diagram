@@ -100,7 +100,7 @@ export function optimizeMaterialsForGpu(
   profile: GpuProfile
 ): { texturesOptimized: number; shadersSimplified: number } {
   const seenTextures = new Set<THREE.Texture>();
-  const texturesOptimized = 0;
+  let texturesOptimized = 0;
   let shadersSimplified = 0;
 
   const texSlots = [
@@ -120,6 +120,7 @@ export function optimizeMaterialsForGpu(
       if (!tex || seenTextures.has(tex)) continue;
       seenTextures.add(tex);
       tex.anisotropy = Math.min(tex.anisotropy || 1, profile.maxAnisotropy);
+      texturesOptimized++;
     }
 
     if (mat.userData.bumpChannel && std.bumpMap) {

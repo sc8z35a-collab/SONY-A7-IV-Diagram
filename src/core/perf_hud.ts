@@ -127,9 +127,12 @@ export class UnitPerfHud {
     this.fields.triangles.textContent = snap.triangles.toLocaleString('en-US');
     this.fields.geometries.textContent = String(snap.geometries);
     this.fields.textures.textContent = String(snap.textures);
-    this.fields.frameTime.textContent = `${snap.frameTimeMs.toFixed(2)} ms (avg ${snap.avgFrameTimeMs.toFixed(2)})`;
+    const safeFrameMs = Number.isFinite(snap.frameTimeMs) ? snap.frameTimeMs : 0;
+    const safeAvgMs = Number.isFinite(snap.avgFrameTimeMs) ? snap.avgFrameTimeMs : 0;
+    const safeDpr = Number.isFinite(snap.pixelRatio) ? snap.pixelRatio : 1;
+    this.fields.frameTime.textContent = `${safeFrameMs.toFixed(2)} ms (avg ${safeAvgMs.toFixed(2)})`;
     const stageStr = snap.motionStage ? snap.motionStage.toUpperCase() : snap.quality.toUpperCase();
-    this.fields.quality.textContent = `${snap.quality.toUpperCase()} → ${stageStr} · DPR ${snap.pixelRatio.toFixed(2)}`;
+    this.fields.quality.textContent = `${snap.quality.toUpperCase()} → ${stageStr} · DPR ${safeDpr.toFixed(2)}`;
 
     if (snap.kineStats) {
       const k = snap.kineStats;

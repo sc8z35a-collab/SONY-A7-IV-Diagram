@@ -303,6 +303,8 @@ export class CadPlaygroundStudio {
   private readonly pgCache = new ResourceCache();
 
   private active = false;
+  private openSessionToken = 0;
+  private historyBusy = false;
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private orbit: OrbitControls;
@@ -1625,6 +1627,7 @@ export class CadPlaygroundStudio {
 
   public async open(): Promise<void> {
     if (this.active) return;
+    const session = ++this.openSessionToken;
     this.active = true;
     this.rootEl.classList.add('is-open');
     this.rootEl.setAttribute('aria-hidden', 'false');
@@ -1719,10 +1722,11 @@ export class CadPlaygroundStudio {
     const dom = this.host.renderer.domElement;
     dom.addEventListener('pointerdown', this.boundPointerDown);
     dom.addEventListener('pointerup', this.boundPointerUp);
-    window.addEventListener('keydown', this.boundKeyDown);
+    window.addEventListener('keydown', this.boundKeyDown, true);
     window.addEventListener('resize', this.boundResize);
 
     const { units, entries } = await this.extractor.ensureCatalogLoaded();
+    if (session !== this.openSessionToken || !this.active) return;
     if (this.filteredIndices.length < entries.length) {
       this.filteredIndices = new Int32Array(entries.length);
     }
@@ -1731,6 +1735,7 @@ export class CadPlaygroundStudio {
 
     if (this.placed.length === 0) {
       await this.loadTemplate('a7iv');
+      if (session !== this.openSessionToken || !this.active) return;
     } else {
       this.refreshLiveBadge(false);
     }
@@ -1739,13 +1744,20 @@ export class CadPlaygroundStudio {
 
   public close(): void {
     if (!this.active) return;
+    this.openSessionToken++;
     this.active = false;
+    this.historyBusy = false;
     if (this.deferredRenderTimer) {
       window.clearTimeout(this.deferredRenderTimer);
       this.deferredRenderTimer = 0;
     }
+    if (this.toastTimer) {
+      window.clearTimeout(this.toastTimer);
+      this.toastTimer = 0;
+    }
     this.closeEvaluationReport();
     this.shortcutModalEl.classList.remove('is-open');
+    this.shortcutModalEl.setAttribute('aria-hidden', 'true');
     this.rootEl.classList.remove('is-open');
     this.rootEl.setAttribute('aria-hidden', 'true');
     this.orbit.enabled = false;
@@ -1768,7 +1780,7 @@ export class CadPlaygroundStudio {
     const dom = this.host.renderer.domElement;
     dom.removeEventListener('pointerdown', this.boundPointerDown);
     dom.removeEventListener('pointerup', this.boundPointerUp);
-    window.removeEventListener('keydown', this.boundKeyDown);
+    window.removeEventListener('keydown', this.boundKeyDown, true);
     window.removeEventListener('resize', this.boundResize);
 
     this.host.setCustomSceneRenderer(null);
@@ -3404,37 +3416,59 @@ export class CadPlaygroundStudio {
     const missingKeys = this.findMissingBlueprintKeys(state);
     if (missingKeys.length > 0) {
       await this.extractor.extractPartsBatch(missingKeys);
+      if (!this.active) return;
     }
     this.restoreSnapshotSync(state, false);
   }
 
   public async undo(): Promise<void> {
-    if (this.undoStack.length <= 1) return;
+    if (this.historyBusy || this.undoStack.length <= 1) return;
+    this.historyBusy = true;
     const current = this.undoStack.pop()!;
     this.redoStack.push(current);
-    const prev = this.undoStack[this.undoStack.length - 1];
-    const missing = this.findMissingBlueprintKeys(prev);
-    if (missing.length === 0) {
-      this.restoreSnapshotSync(prev, true);
-    } else {
-      await this.extractor.extractPartsBatch(missing);
-      this.restoreSnapshotSync(prev, true);
+    try {
+      const prev = this.undoStack[this.undoStack.length - 1];
+      const missing = this.findMissingBlueprintKeys(prev);
+      if (missing.length === 0) {
+        this.restoreSnapshotSync(prev, true);
+      } else {
+        await this.extractor.extractPartsBatch(missing);
+        if (!this.active) return;
+        this.restoreSnapshotSync(prev, true);
+      }
+      this.showToast('元に戻しました');
+    } catch {
+      // Restore stack if async geometry extraction failed
+      this.redoStack.pop();
+      this.undoStack.push(current);
+      this.showToast('元に戻す処理に失敗しました');
+    } finally {
+      this.historyBusy = false;
     }
-    this.showToast('元に戻しました');
   }
 
   public async redo(): Promise<void> {
-    if (this.redoStack.length === 0) return;
+    if (this.historyBusy || this.redoStack.length === 0) return;
+    this.historyBusy = true;
     const next = this.redoStack.pop()!;
     this.undoStack.push(next);
-    const missing = this.findMissingBlueprintKeys(next);
-    if (missing.length === 0) {
-      this.restoreSnapshotSync(next, true);
-    } else {
-      await this.extractor.extractPartsBatch(missing);
-      this.restoreSnapshotSync(next, true);
+    try {
+      const missing = this.findMissingBlueprintKeys(next);
+      if (missing.length === 0) {
+        this.restoreSnapshotSync(next, true);
+      } else {
+        await this.extractor.extractPartsBatch(missing);
+        if (!this.active) return;
+        this.restoreSnapshotSync(next, true);
+      }
+      this.showToast('やり直しました');
+    } catch {
+      this.undoStack.pop();
+      this.redoStack.push(next);
+      this.showToast('やり直し処理に失敗しました');
+    } finally {
+      this.historyBusy = false;
     }
-    this.showToast('やり直しました');
   }
 
   private downloadTextFile(filename: string, content: string, mime = 'text/plain;charset=utf-8'): void {
@@ -3443,8 +3477,11 @@ export class CadPlaygroundStudio {
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
   }
 
   private exportBlueprintJson(): void {
@@ -3454,32 +3491,85 @@ export class CadPlaygroundStudio {
       createdAt: new Date().toISOString(),
       parts: this.serializeWorkspace(),
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'custom-camera-cad-v1.1-blueprint.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    this.downloadTextFile(
+      'custom-camera-cad-v1.1-blueprint.json',
+      JSON.stringify(payload, null, 2),
+      'application/json'
+    );
     this.showToast('設計JSONブループリント (v1.1) を保存しました');
+  }
+
+  private sanitizeImportedParts(rawParts: unknown[]): SerializedPartState[] {
+    const MAX_IMPORT_PARTS = 500;
+    const clampVec3 = (
+      raw: unknown,
+      fallback: [number, number, number],
+      min: number,
+      max: number
+    ): [number, number, number] => {
+      if (!Array.isArray(raw) || raw.length < 3) return fallback;
+      const out: [number, number, number] = [fallback[0], fallback[1], fallback[2]];
+      for (let i = 0; i < 3; i++) {
+        const n = Number(raw[i]);
+        out[i] = Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback[i];
+      }
+      return out;
+    };
+
+    const sanitized: SerializedPartState[] = [];
+    const usedUids = new Set<string>();
+    const limit = Math.min(rawParts.length, MAX_IMPORT_PARTS);
+    for (let i = 0; i < limit; i++) {
+      const item = rawParts[i] as Record<string, unknown> | null;
+      if (!item || typeof item !== 'object') continue;
+      if (typeof item.key !== 'string' || item.key.trim().length === 0 || item.key.length > 256) continue;
+      const rawUid =
+        typeof item.uid === 'string' && item.uid.trim().length > 0 && item.uid.length <= 128
+          ? item.uid.trim()
+          : `imp-${i + 1}`;
+      let uid = rawUid;
+      let suffix = 1;
+      while (usedUids.has(uid)) {
+        uid = `${rawUid}-${++suffix}`;
+      }
+      usedUids.add(uid);
+      sanitized.push({
+        uid,
+        key: item.key,
+        pos: clampVec3(item.pos, [0, 0, 0], -2000, 2000),
+        rot: clampVec3(item.rot, [0, 0, 0], -3600, 3600),
+        scale: clampVec3(item.scale, [1, 1, 1], 0.05, 20),
+        hidden: Boolean(item.hidden),
+        locked: Boolean(item.locked),
+      });
+    }
+    return sanitized;
   }
 
   private async importBlueprintFile(file: File): Promise<void> {
     try {
       const text = await file.text();
+      if (!this.active) return;
       const parsed = JSON.parse(text) as {
         profile?: CameraDesignProfile;
-        parts?: SerializedPartState[];
+        parts?: unknown[];
       };
-      if (!Array.isArray(parsed.parts)) throw new Error('invalid');
+      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.parts)) {
+        throw new Error('invalid');
+      }
+      const cleanParts = this.sanitizeImportedParts(parsed.parts);
+      if (parsed.parts.length > 0 && cleanParts.length === 0) {
+        throw new Error('no valid parts');
+      }
       if (parsed.profile && parsed.profile in CAMERA_PROFILE_LABELS) {
         this.designProfile = parsed.profile;
         this.profileSelectEl.value = parsed.profile;
       }
-      await this.restoreSnapshot(parsed.parts);
+      await this.restoreSnapshot(cleanParts);
+      if (!this.active) return;
       this.pushHistorySnapshot();
       this.fitCameraToWorkspace();
-      this.showToast(`${parsed.parts.length}パーツの設計JSONを読み込みました`);
+      this.showToast(`${cleanParts.length}パーツの設計JSONを読み込みました`);
     } catch {
       this.showToast('設計JSONの読み込みに失敗しました');
     }
@@ -3656,6 +3746,8 @@ export class CadPlaygroundStudio {
     if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
 
     if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       if (this.shortcutModalEl.classList.contains('is-open')) {
         this.shortcutModalEl.classList.remove('is-open');
         this.shortcutModalEl.setAttribute('aria-hidden', 'true');
@@ -3709,9 +3801,19 @@ export class CadPlaygroundStudio {
 
   public dispose(): void {
     this.close();
+    if (this.toastTimer) {
+      window.clearTimeout(this.toastTimer);
+      this.toastTimer = 0;
+    }
     this.clearAllPartsInternal();
     this.disposePgFastBlitResources();
     this.overlayLines.geometry.dispose();
+    const overlayMat = this.overlayLines.material;
+    if (Array.isArray(overlayMat)) {
+      for (const m of overlayMat) m.dispose();
+    } else {
+      overlayMat.dispose();
+    }
     this.pgCache.disposeAll();
     this.extractor.dispose();
     this.transform.dispose();

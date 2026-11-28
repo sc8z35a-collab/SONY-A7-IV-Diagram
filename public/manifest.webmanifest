@@ -1,7 +1,7 @@
 {
-  "name": "SONY A7 IV 3D CAD — 627 Parts Interactive Anatomy",
+  "name": "SONY α7 IV 3D CAD Studio — 23-Unit Precision Anatomy",
   "short_name": "A7 IV 3D CAD",
-  "description": "Photorealistic 627-part Full-Frame Mirrorless Camera 3D CAD Anatomy & Semiconductor Viewer",
+  "description": "Photorealistic 23-unit Interactive 3D CAD Anatomy, Semiconductor Fab, MIRAI 2028 & Play Ground Studio",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

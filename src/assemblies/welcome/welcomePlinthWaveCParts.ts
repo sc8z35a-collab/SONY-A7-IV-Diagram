@@ -674,16 +674,16 @@ export const WELCOME_PLINTH_WAVE_C_DEFS: readonly WelcomeExpansionPartDef[] = [
       const g = new THREE.Group();
       const ql = qualityLevel();
       const housing = new THREE.Mesh(new THREE.BoxGeometry(6.0, 2.6, 0.42), m.gMasterRedBadge);
-      housing.position.set(66.2, -0.9, -13.48);
+      housing.position.set(66.2, -0.9, -13.18);
       const recess = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.5, 0.14), m.matteBlackAnodized);
-      recess.position.set(66.2, -0.9, -13.68);
+      recess.position.set(66.2, -0.9, -13.38);
       g.add(housing, recess);
       const levGeo = new THREE.BoxGeometry(0.82, 0.95, 0.22);
       const n = ql >= 1 ? 4 : 2;
       for (let i = 0; i < n; i++) {
         const lx = 64.4 + i * (3.6 / Math.max(1, n - 1));
         const lev = new THREE.Mesh(levGeo, m.ptfeCleanWhite);
-        lev.position.set(lx, i % 2 === 0 ? -0.68 : -1.12, -13.74);
+        lev.position.set(lx, i % 2 === 0 ? -0.68 : -1.12, -13.44);
         g.add(lev);
       }
       return g;
@@ -1026,19 +1026,19 @@ export const WELCOME_PLINTH_WAVE_C_DEFS: readonly WelcomeExpansionPartDef[] = [
       const ql = qualityLevel();
       const seg = Math.max(12, qRadialSegs(16, 12));
       const plate = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.6, 0.34), m.emiShieldCan);
-      plate.position.set(77.2, -0.9, -13.45);
+      plate.position.set(77.2, -0.9, -13.15);
       const port = new THREE.Mesh(
         new THREE.CylinderGeometry(0.92, 0.92, 0.22, seg).rotateX(Math.PI * 0.5),
         m.matteBlackAnodized
       );
-      port.position.set(77.2, -0.9, -13.64);
+      port.position.set(77.2, -0.9, -13.34);
       g.add(plate, port);
       if (ql >= 1) {
         const mesh = new THREE.Mesh(
           new THREE.CylinderGeometry(0.68, 0.68, 0.08, seg).rotateX(Math.PI * 0.5),
           m.micStainlessWovenMesh
         );
-        mesh.position.set(77.2, -0.9, -13.74);
+        mesh.position.set(77.2, -0.9, -13.44);
         g.add(mesh);
       }
       return g;

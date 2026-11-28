@@ -43,6 +43,7 @@ export class LensOpticsStudio {
   private isOpen = false;
   private isExpanded = false;
   private rafId = 0;
+  private clearDomTimer: number | null = null;
   private lastTime = 0;
   private animElapsed = 0;
 
@@ -97,6 +98,10 @@ export class LensOpticsStudio {
   }
 
   public open(scenario?: OpticalScenarioId, highlightPartId?: string): void {
+    if (this.clearDomTimer !== null) {
+      clearTimeout(this.clearDomTimer);
+      this.clearDomTimer = null;
+    }
     if (scenario) {
       this.sim.setScenario(scenario);
     }
@@ -126,6 +131,7 @@ export class LensOpticsStudio {
     this.sim.setStudioOpen(false);
     this.sim.setHoveredElement(null);
     cancelAnimationFrame(this.rafId);
+    this.rafId = 0;
     this.canvasResizeObserver?.disconnect();
     this.canvasResizeObserver = null;
 
@@ -135,7 +141,9 @@ export class LensOpticsStudio {
     this.handlers.onOpenChange(false);
 
     // Clear all DOM text after slide-out animation so zero text exists in pure CAD view
-    window.setTimeout(() => {
+    if (this.clearDomTimer !== null) clearTimeout(this.clearDomTimer);
+    this.clearDomTimer = window.setTimeout(() => {
+      this.clearDomTimer = null;
       if (!this.isOpen) {
         this.panelEl.replaceChildren();
         this.benchCanvas = null;
@@ -182,7 +190,12 @@ export class LensOpticsStudio {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'optics-tab-btn';
-      btn.innerHTML = `<span class="optics-tab-num">${sc.badge}</span><span>${sc.shortTitle}</span>`;
+      const numSpan = document.createElement('span');
+      numSpan.className = 'optics-tab-num';
+      numSpan.textContent = sc.badge;
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = sc.shortTitle;
+      btn.append(numSpan, titleSpan);
       btn.addEventListener('click', () => {
         this.sim.setScenario(sc.id);
         this.syncControlsUi();
@@ -295,7 +308,9 @@ export class LensOpticsStudio {
       input.step = step;
       input.value = val;
       input.addEventListener('input', () => {
-        onInput(Number(input.value));
+        const parsed = Number(input.value);
+        if (!Number.isFinite(parsed)) return;
+        onInput(parsed);
         this.syncControlsUi();
         this.handlers.onRequestRenderFrame();
       });
@@ -508,13 +523,18 @@ export class LensOpticsStudio {
 
     if (this.captionEl) {
       const desc = this.sim.getScenarioDescriptor();
-      const nextCaptionHtml = `
-        <div class="optics-caption-head" style="color:${desc.accentColor}">${desc.fullTitle}</div>
-        <p class="optics-caption-text">${desc.getDynamicCaption(this.sim)}</p>
-      `;
-      if (this.captionEl.dataset.lastHtml !== nextCaptionHtml) {
-        this.captionEl.dataset.lastHtml = nextCaptionHtml;
-        this.captionEl.innerHTML = nextCaptionHtml;
+      const dynamicText = desc.getDynamicCaption(this.sim);
+      const captionKey = `${desc.accentColor}|${desc.fullTitle}|${dynamicText}`;
+      if (this.captionEl.dataset.lastHtml !== captionKey) {
+        this.captionEl.dataset.lastHtml = captionKey;
+        const headEl = document.createElement('div');
+        headEl.className = 'optics-caption-head';
+        headEl.style.color = desc.accentColor;
+        headEl.textContent = desc.fullTitle;
+        const textEl = document.createElement('p');
+        textEl.className = 'optics-caption-text';
+        textEl.textContent = dynamicText;
+        this.captionEl.replaceChildren(headEl, textEl);
       }
     }
 
@@ -526,10 +546,21 @@ export class LensOpticsStudio {
         const hoveredEl = OPTICAL_ELEMENTS.find((e) => e.partId === this.sim.hoveredElementId);
         if (hoveredEl) {
           this.hoverInfoEl.style.opacity = '1';
-          this.hoverInfoEl.innerHTML = `
-            <strong>${hoveredEl.code} ${hoveredEl.jaName}</strong>
-            <span>n<sub>d</sub>=${hoveredEl.nd.toFixed(3)} · ν<sub>d</sub>=${hoveredEl.vd.toFixed(1)} — ${hoveredEl.role}</span>
-          `;
+          const titleEl = document.createElement('strong');
+          titleEl.textContent = `${hoveredEl.code} ${hoveredEl.jaName}`;
+          const metaEl = document.createElement('span');
+          const sub1 = document.createElement('sub');
+          sub1.textContent = 'd';
+          const sub2 = document.createElement('sub');
+          sub2.textContent = 'd';
+          metaEl.append(
+            'n',
+            sub1,
+            `=${hoveredEl.nd.toFixed(3)} · ν`,
+            sub2,
+            `=${hoveredEl.vd.toFixed(1)} — ${hoveredEl.role}`
+          );
+          this.hoverInfoEl.replaceChildren(titleEl, metaEl);
         } else {
           this.hoverInfoEl.style.opacity = '0';
         }

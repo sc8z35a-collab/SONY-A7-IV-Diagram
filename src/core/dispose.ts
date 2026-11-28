@@ -250,6 +250,15 @@ export class VramLeakMonitor {
     return snap;
   }
 
+  public adjustBaselineDelta(deltaGeometries: number, deltaTextures: number): void {
+    if (!this.baseline) return;
+    this.baseline = {
+      ...this.baseline,
+      geometries: Math.max(0, this.baseline.geometries + deltaGeometries),
+      textures: Math.max(0, this.baseline.textures + deltaTextures),
+    };
+  }
+
   public recordActivePeak(renderer: THREE.WebGLRenderer): VramSnapshot {
     const snap: VramSnapshot = {
       geometries: renderer.info.memory.geometries,
@@ -303,7 +312,7 @@ export class VramLeakMonitor {
     this.lastVerification = result;
 
     if (!passed) {
-      console.warn('[MI Shoe V2 VRAM Leak Detector] Residual GPU/cache resources detected!', {
+      console.warn('[Unit V2 VRAM Leak Detector] Residual GPU/cache resources detected!', {
         ...result,
         cacheStats,
       });

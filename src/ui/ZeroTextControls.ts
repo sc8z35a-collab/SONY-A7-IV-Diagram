@@ -9,6 +9,11 @@ import {
   SensorFabStage,
   SensorFabVolume,
 } from '../assemblies/types';
+import { listRegisteredUnits } from '../units/registry';
+
+const DECLARED_PART_COUNT_BY_MODE = new Map<string, number>(
+  listRegisteredUnits().map((u) => [u.unitId, u.declaredPartCount])
+);
 
 export interface ZeroTextUIHandlers {
   onModeChange: (mode: ScaleMode) => void;
@@ -226,6 +231,11 @@ export class ZeroTextControls {
   private currentFabVol: SensorFabVolume = 0;
   private currentMiraiSubView: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 = 1;
   private paletteOpen = false;
+  private scrollRafId = 0;
+  private selectorWrapEl!: HTMLElement;
+  private boundDocClick: ((e: MouseEvent) => void) | null = null;
+  private boundKeyDown: ((e: KeyboardEvent) => void) | null = null;
+  private boundWindowReposition: (() => void) | null = null;
 
   // Top Bar Elements
   private assemblyTriggerBtn: HTMLButtonElement;
@@ -280,6 +290,7 @@ export class ZeroTextControls {
 
     const selectorWrap = document.createElement('div');
     selectorWrap.className = 'assembly-selector-wrap';
+    this.selectorWrapEl = selectorWrap;
 
     this.assemblyTriggerBtn = document.createElement('button');
     this.assemblyTriggerBtn.type = 'button';
@@ -306,7 +317,7 @@ export class ZeroTextControls {
       this.setPaletteOpen(!this.paletteOpen);
     });
 
-    // Categorized Assembly Palette Popover
+    // Categorized Assembly Palette Popover (mounted at root as fixed overlay so landscape overflow-x never clips it! BUG-01)
     this.paletteEl = document.createElement('div');
     this.paletteEl.className = 'assembly-palette-popover';
     this.paletteEl.setAttribute('aria-hidden', 'true');
@@ -330,7 +341,11 @@ export class ZeroTextControls {
         ic.appendChild(svgIcon(item.icon));
         const txt = document.createElement('span');
         txt.className = 'assembly-palette-txt';
-        txt.innerHTML = `<strong>${item.label}</strong><em>${item.sub}</em>`;
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = item.label;
+        const emEl = document.createElement('em');
+        emEl.textContent = item.sub;
+        txt.append(strongEl, emEl);
         btn.append(ic, txt);
         btn.addEventListener('click', () => {
           this.setPaletteOpen(false);
@@ -345,7 +360,7 @@ export class ZeroTextControls {
       this.paletteEl.appendChild(sec);
     }
 
-    selectorWrap.append(this.assemblyTriggerBtn, this.paletteEl);
+    selectorWrap.append(this.assemblyTriggerBtn);
 
     // Play Ground CAD Studio Button
     this.playgroundBtn = document.createElement('button');
@@ -739,24 +754,66 @@ export class ZeroTextControls {
 
     bottomDock.append(explodeCluster, secCluster, this.resetVisBtn);
 
-    // Close assembly palette on outside click or Escape
-    document.addEventListener('click', (e) => {
-      if (this.paletteOpen && !selectorWrap.contains(e.target as Node)) {
+    // Close assembly palette on outside click or Escape (bound for clean dispose())
+    this.boundDocClick = (e: MouseEvent) => {
+      const target = e.target as Node | null;
+      if (
+        this.paletteOpen &&
+        target &&
+        !this.selectorWrapEl.contains(target) &&
+        !this.paletteEl.contains(target)
+      ) {
         this.setPaletteOpen(false);
       }
-    });
-    window.addEventListener('keydown', (e) => {
+    };
+    this.boundKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && this.paletteOpen) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
         this.setPaletteOpen(false);
       }
-    });
+    };
+    this.boundWindowReposition = () => {
+      if (this.paletteOpen) this.positionPalette();
+    };
+    document.addEventListener('click', this.boundDocClick);
+    window.addEventListener('keydown', this.boundKeyDown, { capture: true });
+    window.addEventListener('resize', this.boundWindowReposition, { passive: true });
+    window.addEventListener('orientationchange', this.boundWindowReposition, { passive: true });
 
-    root.append(topBar, bottomDock);
+    root.append(topBar, this.paletteEl, bottomDock);
     this.syncMode('welcome');
+  }
+
+  public isPaletteOpen(): boolean {
+    return this.paletteOpen;
+  }
+
+  public closePalette(): void {
+    if (this.paletteOpen) {
+      this.setPaletteOpen(false);
+    }
+  }
+
+  private positionPalette(): void {
+    const r = this.assemblyTriggerBtn.getBoundingClientRect();
+    const vw = window.innerWidth || 1280;
+    const vh = window.innerHeight || 800;
+    const margin = 8;
+    const top = Math.min(vh - 120, Math.max(margin, Math.round(r.bottom + 8)));
+    const maxW = Math.min(520, vw - margin * 2);
+    const left = Math.max(margin, Math.min(vw - maxW - margin, Math.round(r.left)));
+    const maxH = Math.max(160, vh - top - margin);
+    this.paletteEl.style.top = `${top}px`;
+    this.paletteEl.style.left = `${left}px`;
+    this.paletteEl.style.maxHeight = `${maxH}px`;
   }
 
   private setPaletteOpen(open: boolean): void {
     this.paletteOpen = open;
+    if (open) {
+      this.positionPalette();
+    }
     this.paletteEl.classList.toggle('is-open', open);
     this.paletteEl.setAttribute('aria-hidden', open ? 'false' : 'true');
     this.assemblyTriggerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -815,7 +872,11 @@ export class ZeroTextControls {
     const btn = this.miraiSubBtns[active];
     const rail = btn?.parentElement;
     if (!btn || !rail) return;
-    requestAnimationFrame(() => {
+    if (this.scrollRafId !== 0) {
+      cancelAnimationFrame(this.scrollRafId);
+    }
+    this.scrollRafId = requestAnimationFrame(() => {
+      this.scrollRafId = 0;
       if (rail.scrollWidth > rail.clientWidth + 2) {
         const targetLeft = btn.offsetLeft - (rail.clientWidth - btn.offsetWidth) * 0.5;
         rail.scrollLeft = Math.max(0, Math.min(rail.scrollWidth - rail.clientWidth, targetLeft));
@@ -846,6 +907,10 @@ export class ZeroTextControls {
     const item = ITEM_BY_MODE.get(mode) ?? ITEM_BY_MODE.get('welcome')!;
     this.assemblyIconHost.replaceChildren(svgIcon(item.icon));
     this.assemblyLabelEl.textContent = item.label;
+    const declaredCount = DECLARED_PART_COUNT_BY_MODE.get(mode);
+    if (declaredCount && declaredCount > 0) {
+      this.assemblyCountEl.textContent = `${declaredCount}p`;
+    }
 
     for (const [m, btn] of this.paletteBtns.entries()) {
       btn.classList.toggle('is-active', m === mode);
@@ -897,7 +962,7 @@ export class ZeroTextControls {
   }
 
   public syncFullscreen(_active: boolean): void {
-    // Fullscreen button intentionally removed from HUD (auto-fullscreen on tap); API retained.
+    // Fullscreen button intentionally removed from HUD; API retained.
   }
 
   /**
@@ -912,12 +977,38 @@ export class ZeroTextControls {
     _isHidden: (id: string) => boolean,
     hasAnyHidden: boolean
   ): void {
-    this.assemblyCountEl.textContent = parts.length > 0 ? `${parts.length}p` : '';
+    if (parts.length > 0) {
+      this.assemblyCountEl.textContent = `${parts.length}p`;
+    } else {
+      const declared = DECLARED_PART_COUNT_BY_MODE.get(this.currentMode);
+      this.assemblyCountEl.textContent = declared && declared > 0 ? `${declared}p` : '';
+    }
     this.resetVisBtn.disabled = !hasAnyHidden;
     this.resetVisBtn.classList.toggle('is-hidden-btn', !hasAnyHidden);
   }
 
   public syncHighlight(_selectedId: string | null, _hoveredId: string | null): void {
     // No left-side layer rail to update
+  }
+
+  public dispose(): void {
+    if (this.scrollRafId !== 0) {
+      cancelAnimationFrame(this.scrollRafId);
+      this.scrollRafId = 0;
+    }
+    if (this.boundDocClick) {
+      document.removeEventListener('click', this.boundDocClick);
+      this.boundDocClick = null;
+    }
+    if (this.boundKeyDown) {
+      window.removeEventListener('keydown', this.boundKeyDown, { capture: true });
+      this.boundKeyDown = null;
+    }
+    if (this.boundWindowReposition) {
+      window.removeEventListener('resize', this.boundWindowReposition);
+      window.removeEventListener('orientationchange', this.boundWindowReposition);
+      this.boundWindowReposition = null;
+    }
+    this.paletteEl.remove();
   }
 }

@@ -185,9 +185,12 @@ export class MiraiLibraryStudio {
   private matrixData: MatrixPayload | null = null;
   private glossaryData: GlossaryPayload | null = null;
   private volumeCache = new Map<number, VolumePayload>();
+  private openSeq = 0;
+  private pulseTimer: number | null = null;
   private boundKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && this.isOpenFlag) {
       e.preventDefault();
+      e.stopImmediatePropagation();
       this.close();
     }
   };
@@ -218,6 +221,7 @@ export class MiraiLibraryStudio {
     glossaryId?: string;
     edition?: MiraiEdition;
   }): Promise<void> {
+    const seq = ++this.openSeq;
     if (opts?.tab) this.activeTab = opts.tab;
     if (opts?.volume && opts.volume >= 1 && opts.volume <= 8) this.activeVol = opts.volume;
     if (opts?.fhId) {
@@ -239,12 +243,18 @@ export class MiraiLibraryStudio {
     this.ensureMounted();
     this.isOpenFlag = true;
     await this.ensureDataForCurrentTab();
+    if (seq !== this.openSeq || !this.isOpenFlag || !this.root) return;
     this.render();
     this.scrollToFocusedTarget();
   }
 
   public close(): void {
+    this.openSeq++;
     this.isOpenFlag = false;
+    if (this.pulseTimer !== null) {
+      clearTimeout(this.pulseTimer);
+      this.pulseTimer = null;
+    }
     window.removeEventListener('keydown', this.boundKeyDown);
     if (this.root) {
       this.root.remove();
@@ -315,11 +325,16 @@ export class MiraiLibraryStudio {
         : null;
     if (!targetId) return;
     requestAnimationFrame(() => {
-      const el = this.root?.querySelector(`#${CSS.escape(targetId)}`) as HTMLElement | null;
+      if (!this.isOpenFlag || !this.root) return;
+      const el = this.root.querySelector(`#${CSS.escape(targetId)}`) as HTMLElement | null;
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         el.classList.add('mirai-focus-pulse');
-        setTimeout(() => el.classList.remove('mirai-focus-pulse'), 1800);
+        if (this.pulseTimer !== null) clearTimeout(this.pulseTimer);
+        this.pulseTimer = window.setTimeout(() => {
+          this.pulseTimer = null;
+          el.classList.remove('mirai-focus-pulse');
+        }, 1800);
       }
     });
   }
