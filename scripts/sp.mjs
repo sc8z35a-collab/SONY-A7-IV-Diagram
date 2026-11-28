@@ -175,32 +175,70 @@ function formatAuditSummaryLine(r) {
 }
 
 /**
- * Parallel LPT work-stealing worker_threads batch runner for multi-unit / multi-tier audits.
+ * Parallel LPT work-stealing worker_threads batch runner for multi-unit / multi-tier audits,
+ * with optional atomic per-task checkpointing (--resume-dir=DIR).
  */
-async function runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, quiet = false) {
+async function runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, quiet = false, resumeDir = null) {
   // Pre-build unified V2 runtime bundle once on main thread so all workers share cached ESM file (~10ms import)
   ensureUnifiedV2RuntimeBundlePath();
+  if (resumeDir) fs.mkdirSync(resumeDir, { recursive: true });
+
+  const taskFile = (item) =>
+    resumeDir ? path.join(resumeDir, `${item.target.unitId}__${item.target.subViewTag}__${item.quality}.json`) : null;
 
   // LPT scheduling: run heaviest units first to minimize tail latency
   const weightOf = (unitId) => {
     if (unitId === 'integrated') return 1000;
     if (unitId === 'camera_body') return 900;
+    if (unitId === 'lcd') return 880;
+    if (unitId === 'cfexpress') return 850;
+    if (unitId === 'evf') return 820;
     if (unitId === 'drybox') return 800;
     if (unitId === 'shutter') return 750;
-    if (unitId === 'cfexpress') return 700;
-    if (unitId === 'lcd' || unitId === 'mic') return 650;
-    if (unitId === 'lens' || unitId === 'battery' || unitId === 'original') return 600;
-    if (unitId === 'sensor' || unitId === 'body' || unitId === 'evf') return 500;
+    if (unitId === 'mic') return 700;
+    if (unitId === 'sensor') return 680;
+    if (unitId === 'battery') return 650;
+    if (unitId === 'lens' || unitId === 'mount' || unitId === 'original') return 600;
+    if (unitId === 'body' || unitId === 'mishoe') return 500;
     return 300;
   };
-  const indexed = tasks.map((t, origIdx) => ({ ...t, origIdx, weight: weightOf(t.target.unitId) }));
-  indexed.sort((a, b) => b.weight - a.weight || a.origIdx - b.origIdx);
-
-  const nWorkers = Math.max(1, Math.min(workerCount, indexed.length));
+  const allIndexed = tasks.map((t, origIdx) => ({ ...t, origIdx, weight: weightOf(t.target.unitId) }));
   const results = new Array(tasks.length);
   const errors = [];
-  let cursor = 0;
+  const indexed = [];
   let completed = 0;
+
+  for (const item of allIndexed) {
+    const tf = taskFile(item);
+    if (tf && fs.existsSync(tf)) {
+      try {
+        results[item.origIdx] = JSON.parse(fs.readFileSync(tf, 'utf8'));
+        completed++;
+        continue;
+      } catch {}
+    }
+    indexed.push(item);
+  }
+  indexed.sort((a, b) => b.weight - a.weight || a.origIdx - b.origIdx);
+
+  if (indexed.length === 0) {
+    if (!quiet) process.stderr.write(`  [resume] All ${tasks.length} tasks loaded from ${resumeDir}\n`);
+    return { results: results.filter(Boolean), errors };
+  }
+  if (completed > 0 && !quiet) {
+    process.stderr.write(`  [resume] Reused ${completed}/${tasks.length} cached tasks from ${resumeDir}; running remaining ${indexed.length}\n`);
+  }
+
+  const saveTaskCheckpoint = (item, res) => {
+    const tf = taskFile(item);
+    if (!tf) return;
+    const tmp = `${tf}.${process.pid}.${Math.random().toString(36).slice(2, 7)}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(res), 'utf8');
+    fs.renameSync(tmp, tf);
+  };
+
+  const nWorkers = Math.max(1, Math.min(workerCount, indexed.length));
+  let cursor = 0;
 
   if (nWorkers === 1) {
     for (let i = 0; i < indexed.length; i++) {
@@ -218,12 +256,13 @@ async function runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, qui
         res.loadMs = sc.loadMs;
         res.fromCache = sc.fromCache;
         results[item.origIdx] = res;
+        saveTaskCheckpoint(item, res);
       } catch (err) {
         errors.push({ target: item.target, quality: item.quality, error: err?.message || String(err) });
       }
       completed++;
       if (!quiet) {
-        process.stderr.write(`  [${completed}/${indexed.length}] ${item.target.unitId}:${item.target.subViewTag} (${item.quality}) done\n`);
+        process.stderr.write(`  [${completed}/${tasks.length}] ${item.target.unitId}:${item.target.subViewTag} (${item.quality}) done\n`);
       }
     }
     return { results: results.filter(Boolean), errors };
@@ -234,12 +273,14 @@ async function runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, qui
     let alive = nWorkers;
     for (let w = 0; w < nWorkers; w++) {
       const worker = new Worker(workerUrl);
+      const itemByTaskId = new Map();
       const dispatch = () => {
         if (cursor >= indexed.length) {
           worker.terminate();
           return;
         }
         const item = indexed[cursor++];
+        itemByTaskId.set(item.origIdx, item);
         worker.postMessage({
           cmd: 'run',
           taskId: item.origIdx,
@@ -252,19 +293,22 @@ async function runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, qui
 
       worker.on('message', (msg) => {
         completed++;
+        const item = itemByTaskId.get(msg.taskId);
+        itemByTaskId.delete(msg.taskId);
         if (msg.ok) {
           results[msg.taskId] = msg.result;
+          if (item) saveTaskCheckpoint(item, msg.result);
           if (!quiet) {
             const r = msg.result;
             process.stderr.write(
-              `  [${completed}/${indexed.length}] ${r.unitId}:${r.subViewTag} (${r.quality}) ` +
+              `  [${completed}/${tasks.length}] ${r.unitId}:${r.subViewTag} (${r.quality}) ` +
               `${r.partCount}p col=${r.collisions.length} flt=${r.floating.length} isl=${r.disconnectedIslands.length} ` +
               `exp=${r.explodeCollisions.length} (${r.elapsedMs}ms)\n`
             );
           }
         } else {
           errors.push({ target: msg.target, quality: msg.quality, error: msg.error });
-          process.stderr.write(`  [ERR ${completed}/${indexed.length}] ${msg.target.unitId}:${msg.target.subViewTag} (${msg.quality}): ${msg.error}\n`);
+          process.stderr.write(`  [ERR ${completed}/${tasks.length}] ${msg.target.unitId}:${msg.target.subViewTag} (${msg.quality}): ${msg.error}\n`);
         }
         dispatch();
       });
@@ -478,8 +522,8 @@ async function main() {
       process.exit(SP_EXIT_PASS);
     }
 
-    // Batch audit mode: --all-non-welcome OR --subview=all OR --all-tiers
-    if (mode === 'audit' && (flags['all-non-welcome'] || subViewFlag === 'all' || flags['all-tiers'])) {
+    // Batch audit mode: --all-non-welcome OR --units=... OR --subview=all OR --all-tiers
+    if (mode === 'audit' && (flags['all-non-welcome'] || flags.units || subViewFlag === 'all' || flags['all-tiers'])) {
       const t0 = performance.now();
       const auditOpts = buildAuditOptsFromFlags(flags);
       const includeUiSubViews = !flags['no-ui-subviews'];
@@ -487,6 +531,10 @@ async function main() {
       let targets;
       if (flags['all-non-welcome']) {
         targets = listAllNonWelcomeAuditTargets({ includeUiSubViews });
+      } else if (flags.units) {
+        const wanted = String(flags.units).split(',').map((s) => s.trim()).filter(Boolean);
+        targets = [];
+        for (const u of wanted) targets.push(...listUnitAuditTargets(u, { includeUiSubViews }));
       } else if (subViewFlag === 'all') {
         targets = listUnitAuditTargets(unitId, { includeUiSubViews });
       } else {
@@ -509,13 +557,14 @@ async function main() {
       const defaultWorkers = Math.max(1, Math.min(os.cpus().length, 6));
       const workerCount = flags.workers !== undefined ? Math.max(1, Number(flags.workers)) : (tasks.length >= 4 ? defaultWorkers : 1);
       const quietProgress = Boolean(flags.json && !flags['out-json']);
+      const resumeDir = flags['resume-dir'] || null;
       if (!quietProgress && tasks.length > 4) {
         process.stderr.write(
-          `[sp audit batch] targets=${targets.length} (${targets.filter((t) => t.physicalAssembly).length} physical) × tiers=${tiers.length} = ${tasks.length} tasks | workers=${workerCount} | tol=${auditOpts.tolMm ?? (auditOpts.strict ? 0.0001 : 0.002)}mm\n`
+          `[sp audit batch] targets=${targets.length} (${targets.filter((t) => t.physicalAssembly).length} physical) × tiers=${tiers.length} = ${tasks.length} tasks | workers=${workerCount} | tol=${auditOpts.tolMm ?? (auditOpts.strict ? 0.0001 : 0.002)}mm${resumeDir ? ` | resume=${resumeDir}` : ''}\n`
         );
       }
 
-      const { results, errors } = await runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, quietProgress);
+      const { results, errors } = await runParallelAuditBatch(tasks, noCache, auditOpts, workerCount, quietProgress, resumeDir);
       const batchReport = summarizeBatchAudit(targets, tiers, results, errors, auditOpts, performance.now() - t0);
 
       if (flags['out-json']) {
