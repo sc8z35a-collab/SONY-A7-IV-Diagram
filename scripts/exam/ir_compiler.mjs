@@ -39,38 +39,43 @@ export const PART_FLAGS = Object.freeze({
 
 function inferPartFlags(part, sceneMinY, meta) {
   const hay = `${part.id} ${part.title || ''} ${meta?.subtitle || ''} ${meta?.category || ''} ${part.role || ''}`.toLowerCase();
+  const tok = (rx) => rx.test(hay);
   let flags = 0;
 
   // Ground datum: bottom-most resting feet/base within 1.2mm of global lowest Y
-  if (part.box[1] <= sceneMinY + 1.2 || /rubber-feet|foot|feet|base-pad|tripod-socket|bottom-weight|leveling/.test(hay)) {
+  if (part.box[1] <= sceneMinY + 1.2 || tok(/(?<![a-z])(rubber-feet|foot|feet|base-pad|tripod-socket|bottom-weight|leveling)(?![a-z])/)) {
     if (part.box[1] <= sceneMinY + 2.5) flags |= PART_FLAGS.GROUNDED;
   }
-  if (/chassis|frame|housing|shell|bezel|cover|plate|base|plinth|bulkhead|barrel|mount|cradle|endcap|beam|backplate|dock|socket|bracket|carrier/.test(hay)) {
+  if (tok(/(?<![a-z])(chassis|frame|housing|shell|bezel|cover|plate|base|plinth|bulkhead|barrel|mount|cradle|endcap|beam|backplate|dock|socket|bracket|carrier)(?![a-z])/)) {
     flags |= PART_FLAGS.CHASSIS;
   }
-  if (/screw|bolt|washer|nut|pin|dowel|rivet|clip|spring|clamp|fastener|collar|dovetail|retainer|shim|snap/.test(hay)) {
-    flags |= PART_FLAGS.FASTENER;
-  }
-  if (/pcb|board|mainboard|mcpcb|substrate|fpc|flex/.test(hay) && !/shield|can/.test(hay)) {
+  if (tok(/(?<![a-z])(pcb|board|mainboard|mcpcb|substrate|fpc|flex)(?![a-z])/) && !tok(/(?<![a-z])(shield|can)(?![a-z])/)) {
     flags |= PART_FLAGS.PCB;
   }
-  if (/led-array|led|bionz|isp|npu|mcu|cortex|pmic|charger|amp|dac|driver|sensor-die|cmos|laser|heater|motor|servo/.test(hay)) {
-    flags |= PART_FLAGS.HEAT_SOURCE;
-  }
-  if (/gasket|seal|oring|o-ring|rubber|boot|damper|foam|elastomer|tim|thermal-pad|foot|feet|eyecup|grip/.test(hay)) {
-    flags |= PART_FLAGS.ELASTOMER;
-  }
-  if (/lens|glass|quartz|sapphire|prism|lgp|diffuser|window|filter|olpf|mirror|bef|polarizer|optical|ed-|xa-|led-array/.test(hay)) {
-    flags |= PART_FLAGS.OPTICAL;
-  }
-  if (/busbar|harness|wire|cable|coax|pogo|contact|terminal|trace|copper|fpc|antenna|wifi|ble|nfc|usbc|usb-c|hdmi|connector|canfd|fuse|inductor|supercap|battery|lifepo4|cell/.test(hay)) {
+  if (tok(/(?<![a-z])(busbar|busbars|harness|wire|wires|cable|cables|coax|pogo|contact|contacts|terminal|terminals|trace|traces|copper|fpc|antenna|wifi|ble|nfc|usbc|usb-c|hdmi|connector|connectors|canfd|fuse|inductor|supercap|battery|lifepo4|cell|cells)(?![a-z])/)) {
     flags |= PART_FLAGS.CONDUCTOR;
   }
-  if (/shutter-blade|dial|ring|hinge|tilt|lever|button|switch|toggle|leg|joint|servo|rotor|gear|focus-group|ibis-stage|actuator/.test(hay)) {
+  if (
+    tok(/(?<![a-z])(screw|screws|bolt|bolts|washer|washers|nut|nuts|pin|pins|dowel|dowels|rivet|rivets|clip|clips|spring|springs|clamp|clamps|fastener|fasteners|collar|collars|dovetail|retainer|shim|shims|snap)(?![a-z])/) &&
+    !(flags & (PART_FLAGS.PCB | PART_FLAGS.CONDUCTOR)) &&
+    !/(shutter|spine|busbar)/.test(part.id.toLowerCase())
+  ) {
+    flags |= PART_FLAGS.FASTENER;
+  }
+  if (tok(/(?<![a-z])(led-array|led|leds|microled|bionz|isp|npu|mcu|cortex|pmic|charger|amp|dac|driver|sensor-die|cmos|laser|heater|motor|motors|gearmotor|servo|servos)(?![a-z])/)) {
+    flags |= PART_FLAGS.HEAT_SOURCE;
+  }
+  if (tok(/(?<![a-z])(gasket|gaskets|seal|seals|oring|o-ring|rubber|silicone|bucking|buckings|boot|damper|dampers|foam|elastomer|tim|thermal-pad|foot|feet|eyecup|grip)(?![a-z])/)) {
+    flags |= PART_FLAGS.ELASTOMER;
+  }
+  if (tok(/(?<![a-z])(lens|lenses|glass|quartz|sapphire|prism|lgp|diffuser|window|filter|olpf|mirror|bef|polarizer|optical|ed-glass|xa-glass|led-array)(?![a-z])/)) {
+    flags |= PART_FLAGS.OPTICAL;
+  }
+  if (tok(/(?<![a-z])(shutter-blade|dial|hinge|tilt|lever|button|switch|toggle|leg|joint|servo|rotor|gear|focus-group|ibis-stage|actuator)(?![a-z])/)) {
     flags |= PART_FLAGS.MOVABLE;
   }
-  if (/ic|mcu|pmic|canfd|dac|amp|sensor|tof|lux|tcxo|rtc|eeprom|flash|esd|tvs|shunt|fuse|mlcc|inductor|resistor|capacitor|diode|mosfet|regulator|ferrite|transceiver/.test(hay)) {
-    if (!(flags & PART_FLAGS.PCB) && !(flags & PART_FLAGS.CHASSIS)) {
+  if (tok(/(?<![a-z])(ic|ics|mcu|pmic|canfd|dac|amp|sensor|tof|lux|tcxo|rtc|eeprom|flash|esd|tvs|shunt|fuse|mlcc|inductor|resistor|capacitor|diode|mosfet|regulator|ferrite|transceiver)(?![a-z])/)) {
+    if (!(flags & PART_FLAGS.PCB) && !(flags & PART_FLAGS.CHASSIS) && !(flags & PART_FLAGS.MOVABLE)) {
       flags |= PART_FLAGS.SMT;
     }
   }
@@ -82,18 +87,26 @@ function inferPartPowerW(part, flags, unitId) {
   if (!(flags & PART_FLAGS.HEAT_SOURCE)) return 0.0;
   if (unitId === 'welcome') {
     if (/led-array/.test(hay)) return 1.55;
-    if (/pmic|pd-controller|charger/.test(hay)) return 0.85;
-    if (/cortex-m7|mcu/.test(hay)) return 0.65;
+    if (/(?<![a-z])(pmic|pd-controller|charger)(?![a-z])/.test(hay)) return 0.85;
+    if (/(?<![a-z])(cortex-m7|mcu)(?![a-z])/.test(hay)) return 0.65;
     if (/pwm-driver|led-driver/.test(hay)) return 0.25;
-    if (/amp|dac/.test(hay)) return 0.20;
+    if (/(?<![a-z])(amp|dac)(?![a-z])/.test(hay)) return 0.20;
     return 0.12;
   }
-  if (/bionz|isp|npu|soc/.test(hay)) return 3.2;
-  if (/sensor-die|cmos/.test(hay)) return 1.4;
-  if (/pmic|charger|power/.test(hay)) return 0.9;
-  if (/oled|lcd|backlight/.test(hay)) return 0.7;
-  if (/servo|motor|actuator/.test(hay)) return 1.2;
-  if (/led/.test(hay)) return 0.5;
+  if (unitId === 'original') {
+    // Authentic RIIMOS E1 steady-state continuous thermal dissipation (~9.0W: 12 external leg servos at 25% crawl duty cycle + 6 SG90s + charger/DCDC/electronics)
+    if (/(sg90|aim-servo|cam-front-servo|cam-rear-servo)/.test(hay)) return 0.18;
+    if (/(?<![a-z])(servo|motor|gearmotor|actuator)(?![a-z])/.test(hay)) return 0.42;
+    if (/(?<![a-z])(pmic|charger|power)(?![a-z])/.test(hay)) return 0.90;
+    if (/(?<![a-z])(led|leds|microled)(?![a-z])/.test(hay)) return 0.50;
+    return 0.15;
+  }
+  if (/(?<![a-z])(bionz|isp|npu|soc)(?![a-z])/.test(hay)) return 3.2;
+  if (/(?<![a-z])(sensor-die|cmos)(?![a-z])/.test(hay)) return 1.4;
+  if (/(?<![a-z])(pmic|charger|power)(?![a-z])/.test(hay)) return 0.9;
+  if (/(?<![a-z])(oled|lcd|backlight)(?![a-z])/.test(hay)) return 0.7;
+  if (/(?<![a-z])(servo|motor|gearmotor|actuator)(?![a-z])/.test(hay)) return 1.2;
+  if (/(?<![a-z])(led|leds|microled)(?![a-z])/.test(hay)) return 0.5;
   return 0.15;
 }
 
@@ -238,7 +251,7 @@ export async function compileUnitIr(unitId, opts = {}) {
   const parts = scene.parts.map((p, idx) => {
     const meta = metaById.get(p.id) || {};
     const firstMesh = scene.meshes[p.meshStart];
-    const matKey = firstMesh?.materialKey || '';
+    const matKey = firstMesh?.matKey || firstMesh?.materialKey || '';
     const mat = resolveMaterialPhysics(matKey, p.id, p.title || meta.title || '');
     const flags = inferPartFlags(p, gMinY, meta);
     // Real physics mass from signed volume (mm³ -> cm³ = /1000) * authentic material density (g/cm³)
@@ -301,7 +314,7 @@ export async function compileUnitIr(unitId, opts = {}) {
   // Nominal electrical bus voltage per unit domain
   const busVoltageV =
     unitId === 'welcome' ? 12.0
-    : unitId === 'original' ? 7.4
+    : unitId === 'original' ? 18.5
     : unitId === 'drybox' ? 24.0
     : 7.2;
 

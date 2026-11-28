@@ -305,8 +305,8 @@ internalField uniform 101325;
 boundaryField
 {
     heatedDevice { type fixedFluxPressure; value uniform 101325; }
-    topOutlet { type prghTotalPressure; p0 uniform 101325; value uniform 101325; }
-    sideInlets { type prghTotalPressure; p0 uniform 101325; value uniform 101325; }
+    topOutlet { type totalPressure; p0 uniform 101325; value uniform 101325; }
+    sideInlets { type totalPressure; p0 uniform 101325; value uniform 101325; }
     frontBack { type fixedFluxPressure; value uniform 101325; }
 }
 """)

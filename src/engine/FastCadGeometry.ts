@@ -45,17 +45,18 @@ function resampleCurvePathPoints(
   toleranceMm: number,
   maxCircleSegs: number
 ): THREE.Vector2[] {
-  const out: THREE.Vector2[] = [];
+  const raw: THREE.Vector2[] = [];
+  const minDistSq = 1e-4; // 0.01mm minimum vertex spacing prevents degenerate/sliver bevel faces
   const pushUnique = (pt: THREE.Vector2) => {
-    if (out.length === 0) {
-      out.push(pt);
+    if (raw.length === 0) {
+      raw.push(pt);
       return;
     }
-    const prev = out[out.length - 1];
+    const prev = raw[raw.length - 1];
     const dx = pt.x - prev.x;
     const dy = pt.y - prev.y;
-    if (dx * dx + dy * dy > 1e-5) {
-      out.push(pt);
+    if (dx * dx + dy * dy > minDistSq) {
+      raw.push(pt);
     }
   };
 
@@ -65,6 +66,7 @@ function resampleCurvePathPoints(
       pushUnique(curve.v2.clone());
     } else if (curve instanceof THREE.EllipseCurve) {
       const r = Math.max(curve.xRadius, curve.yRadius);
+      if (r < 1e-4) continue;
       let span = curve.aEndAngle - curve.aStartAngle;
       if (curve.aClockwise) {
         if (span > 0) span -= Math.PI * 2;
@@ -76,35 +78,63 @@ function resampleCurvePathPoints(
       const absSpan = Math.abs(span);
       const isFullCircle = absSpan > Math.PI * 1.85;
       const isQuarterArc = absSpan <= Math.PI * 0.6;
-      const minSegs = isFullCircle ? (r < 1.0 ? 5 : r < 2.5 ? 6 : 8) : isQuarterArc ? 2 : 3;
+      const minSegs = isFullCircle ? (r < 1.0 ? 6 : r < 2.5 ? 8 : 10) : isQuarterArc ? 2 : 3;
+      // Tangent-height-safe quarter-arc cap: prevents Earcut from spanning long plate edges to sub-0.04mm arc chords (aspect > 5000)
+      const quarterCap = r < 2.0 ? 2 : r < 6.0 ? 3 : 5;
       const maxSegs = isFullCircle
         ? maxCircleSegs
         : isQuarterArc
-          ? Math.min(4, Math.max(2, Math.round(maxCircleSegs * 0.18)))
+          ? Math.min(quarterCap, Math.max(2, Math.round(maxCircleSegs * 0.22)))
           : Math.min(maxCircleSegs, Math.max(5, Math.round((absSpan / (Math.PI * 2)) * maxCircleSegs)));
 
       const segs = sagittaSegmentsForArc(r, absSpan, toleranceMm, minSegs, maxSegs);
-      for (let i = 0; i <= segs; i++) {
+      const endIdx = isFullCircle ? segs - 1 : segs;
+      for (let i = 0; i <= endIdx; i++) {
         pushUnique(curve.getPoint(i / segs));
       }
     } else {
-      const segs = Math.max(3, Math.min(7, Math.round(maxCircleSegs * 0.25)));
+      const segs = Math.max(3, Math.min(8, Math.round(maxCircleSegs * 0.25)));
       const pts = curve.getPoints(segs);
       for (const p of pts) pushUnique(p);
     }
   }
 
-  if (out.length > 2) {
-    const first = out[0];
-    const last = out[out.length - 1];
+  while (raw.length > 2) {
+    const first = raw[0];
+    const last = raw[raw.length - 1];
     const dx = first.x - last.x;
     const dy = first.y - last.y;
-    if (dx * dx + dy * dy <= 1e-5) {
-      out.pop();
+    if (dx * dx + dy * dy <= minDistSq) {
+      raw.pop();
+    } else {
+      break;
     }
   }
 
-  return out;
+  // Always strip collinear intermediate vertices (prevents Earcut T-junctions and zero-height bevel slivers!)
+  if (raw.length > 3) {
+    const clean: THREE.Vector2[] = [];
+    const n = raw.length;
+    for (let i = 0; i < n; i++) {
+      const prev = raw[(i - 1 + n) % n];
+      const cur = raw[i];
+      const next = raw[(i + 1) % n];
+      const ax = cur.x - prev.x;
+      const ay = cur.y - prev.y;
+      const bx = next.x - cur.x;
+      const by = next.y - cur.y;
+      const la = Math.hypot(ax, ay);
+      const lb = Math.hypot(bx, by);
+      if (la < 1e-4 || lb < 1e-4) continue;
+      const cross = Math.abs(ax * by - ay * bx);
+      const dot = ax * bx + ay * by;
+      if (dot > 0 && cross <= 1e-4 * la * lb) continue;
+      clean.push(cur);
+    }
+    if (clean.length >= 3) return clean;
+  }
+
+  return raw;
 }
 
 export function resampleShapeSagitta(
@@ -124,9 +154,11 @@ export function resampleShapeSagitta(
 
   const outerPts = resampleCurvePathPoints(shape.curves, toleranceMm, maxCircleSegs);
   if (outerPts.length < 3) return shape;
+  if (THREE.ShapeUtils.isClockWise(outerPts)) outerPts.reverse();
 
+  // Do NOT call .closePath() — THREE.ExtrudeGeometry closes the ring implicitly; closePath() adds a duplicate
+  // end vertex that creates zero-length edges and bevel miter folds!
   const resampled = new THREE.Shape(outerPts);
-  resampled.closePath();
 
   if (shape.holes && shape.holes.length > 0) {
     for (const hole of shape.holes) {
@@ -141,8 +173,8 @@ export function resampleShapeSagitta(
       }
       const holePts = resampleCurvePathPoints(hole.curves, toleranceMm, maxCircleSegs);
       if (holePts.length >= 3) {
+        if (!THREE.ShapeUtils.isClockWise(holePts)) holePts.reverse();
         const newHole = new THREE.Path(holePts);
-        newHole.closePath();
         resampled.holes.push(newHole);
       }
     }
@@ -150,6 +182,87 @@ export function resampleShapeSagitta(
 
   (resampled as THREE.Shape & { __hasCurves?: boolean }).__hasCurves = hasCurvedSeg;
   return resampled;
+}
+
+/**
+ * Watertight end-cap builder for an open-ended THREE.TubeGeometry:
+ * Appends exact start and end disk triangle fans sharing the tube's end rings so CGAL sees
+ * zero border edges (closed watertight manifold) with zero degenerate triangles.
+ */
+export function capOpenTubeGeometry(
+  tube: THREE.TubeGeometry,
+  tubularSegments: number,
+  radialSegments: number
+): THREE.BufferGeometry {
+  const posAttr = tube.getAttribute('position');
+  const idxAttr = tube.getIndex();
+  if (!posAttr || !idxAttr) return tube;
+
+  const ringStride = radialSegments + 1;
+  const origVertCount = posAttr.count;
+  const newPos = new Float32Array((origVertCount + 2) * 3);
+  newPos.set(posAttr.array as Float32Array, 0);
+
+  // Start cap center (average of ring 0)
+  let sx = 0, sy = 0, sz = 0;
+  for (let j = 0; j < radialSegments; j++) {
+    sx += posAttr.getX(j);
+    sy += posAttr.getY(j);
+    sz += posAttr.getZ(j);
+  }
+  const startCenterIdx = origVertCount;
+  newPos[startCenterIdx * 3] = sx / radialSegments;
+  newPos[startCenterIdx * 3 + 1] = sy / radialSegments;
+  newPos[startCenterIdx * 3 + 2] = sz / radialSegments;
+
+  // End cap center (average of last ring)
+  const endRingOff = tubularSegments * ringStride;
+  let ex = 0, ey = 0, ez = 0;
+  for (let j = 0; j < radialSegments; j++) {
+    ex += posAttr.getX(endRingOff + j);
+    ey += posAttr.getY(endRingOff + j);
+    ez += posAttr.getZ(endRingOff + j);
+  }
+  const endCenterIdx = origVertCount + 1;
+  newPos[endCenterIdx * 3] = ex / radialSegments;
+  newPos[endCenterIdx * 3 + 1] = ey / radialSegments;
+  newPos[endCenterIdx * 3 + 2] = ez / radialSegments;
+
+  const origIdx = idxAttr.array;
+  const capTriIndices = radialSegments * 2 * 3;
+  const newIdx = new Uint32Array(origIdx.length + capTriIndices);
+  newIdx.set(origIdx, 0);
+
+  let off = origIdx.length;
+  // Start cap (outward normal opposite tangent)
+  for (let j = 0; j < radialSegments; j++) {
+    newIdx[off++] = startCenterIdx;
+    newIdx[off++] = j + 1;
+    newIdx[off++] = j;
+  }
+  // End cap (outward normal along tangent)
+  for (let j = 0; j < radialSegments; j++) {
+    newIdx[off++] = endCenterIdx;
+    newIdx[off++] = endRingOff + j;
+    newIdx[off++] = endRingOff + j + 1;
+  }
+
+  const uvAttr = tube.getAttribute('uv');
+  const out = new THREE.BufferGeometry();
+  out.setAttribute('position', new THREE.BufferAttribute(newPos, 3));
+  if (uvAttr) {
+    const newUv = new Float32Array((origVertCount + 2) * 2);
+    newUv.set(uvAttr.array as Float32Array, 0);
+    newUv[startCenterIdx * 2] = 0;
+    newUv[startCenterIdx * 2 + 1] = 0.5;
+    newUv[endCenterIdx * 2] = 1;
+    newUv[endCenterIdx * 2 + 1] = 0.5;
+    out.setAttribute('uv', new THREE.BufferAttribute(newUv, 2));
+  }
+  out.setIndex(new THREE.BufferAttribute(newIdx, 1));
+  out.computeVertexNormals();
+  tube.dispose();
+  return out;
 }
 
 // =============================================================================

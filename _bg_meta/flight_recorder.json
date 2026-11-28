@@ -5,11 +5,12 @@
   "goal": "Achieve 530/530 PASS TLX1-RECEIPT on Wave 1 (welcome, original) + Wave 2 (mount, shutter, body, evf, lcd, lens, mainboard, sensor)",
   "completed": [
     "THE LAST EXAM V1 complete (36 engines, 530 tests, 16 real external solvers, 75/75 selftest PASS) + PLYA V2 core solvers implemented",
-    "Completed PLYA V2 EXAM-inherited Playground UI/WebWorker/3D overlays/4-format export + tsc/validate/build PASS"
+    "Completed PLYA V2 EXAM-inherited Playground UI/WebWorker/3D overlays/4-format export + tsc/validate/build PASS",
+    "Step 2.0 geometry hygiene + IR/OpenFOAM hydrostatic fix + original 530/530 TLX1-RECEIPT (selftest 75/75)"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Run full EXAM V1 baseline across Wave 1+2 (10 units) and execute physical fixes",
+  "nextStep": "Remediate welcome (435p) to 530/530 TLX1-RECEIPT",
   "artifactsMirrored": [
     {
       "name": "exam_v1_mandate_and_all_21_phases_plan.md",
@@ -42,7 +43,7 @@
       "size": 409
     }
   ],
-  "updatedAt": "2026-11-28T07:18:38.999Z",
+  "updatedAt": "2026-11-28T08:15:45.409Z",
   "vmHost": "devbox",
-  "baseSha": "a53b3a5cfd2e00e6fb199c19d6029b2b8d86c888"
+  "baseSha": "a133db01151ca6844bd426d9949c8de7ae64a8cd"
 }

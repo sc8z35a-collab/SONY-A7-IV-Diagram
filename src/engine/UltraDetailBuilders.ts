@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
+import { capOpenTubeGeometry, resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
 import { GPU_PROFILE } from './GpuOptimizer';
 import {
   getActiveBuildQuality,
@@ -19,8 +19,8 @@ export function markHiRes<T extends THREE.BufferGeometry>(geo: T): T {
 
 /**
  * High-resolution CNC-chamfered extrusion centered on Z ([-depth/2, +depth/2]).
- * Scales cleanly across STD (sagitta-resampled + macro chamfer only), HIGH (sagitta + 1-step bevel),
- * and ULTRA (full multi-step specular-catching bevels).
+ * Applies curvature-adaptive deduplicated Sagitta resampling across ALL 4 tiers (including ultra)
+ * so THREE.ExtrudeGeometry never emits duplicate-seam miter folds, degenerate triangles, or slivers.
  */
 export function extrudeHiRes(
   shape: THREE.Shape,
@@ -33,30 +33,27 @@ export function extrudeHiRes(
   const quality = getActiveBuildQuality();
   const qScale = getActiveGeometryScale();
   const effCurve = qScale
-    ? scaleCurveSegmentsForQuality(curveSegments, 4)
+    ? scaleCurveSegmentsForQuality(curveSegments, 6)
     : GPU_PROFILE.isMobile
       ? Math.max(8, Math.round(curveSegments * 0.5))
       : curveSegments;
 
-  let targetShape = shape;
-  let finalCurveSegs = effCurve;
+  let targetShape: THREE.Shape;
   let effBevelSegs: number;
 
   if (quality === 'standard_lite') {
     targetShape = resampleShapeSagitta(shape, 0.58, Math.max(6, effCurve));
-    finalCurveSegs = 1;
     effBevelSegs = 0;
   } else if (quality === 'standard') {
     targetShape = resampleShapeSagitta(shape, 0.42, Math.max(8, effCurve));
-    finalCurveSegs = 1;
     effBevelSegs =
       bevelSize >= 0.14 && bevelThickness >= 0.12 && depth >= 2.2 ? 1 : 0;
   } else if (quality === 'high') {
     targetShape = resampleShapeSagitta(shape, 0.24, Math.max(10, effCurve));
-    finalCurveSegs = 1;
     effBevelSegs =
       bevelSize > 0.005 && bevelThickness > 0.005 && depth >= 0.9 ? 1 : 0;
   } else {
+    targetShape = resampleShapeSagitta(shape, 0.08, Math.max(12, effCurve));
     effBevelSegs =
       bevelSize > 0.005 && bevelThickness > 0.005
         ? qScale
@@ -67,17 +64,19 @@ export function extrudeHiRes(
         : 0;
   }
 
-  const hasBevel = effBevelSegs > 0;
-  const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
+  const hasBevel = effBevelSegs > 0 && depth > 0.08;
+  const safeBevelThick = hasBevel ? Math.min(bevelThickness, depth * 0.36) : 0;
+  const safeBevelSize = hasBevel ? Math.min(bevelSize, depth * 0.42) : 0;
+  const bodyDepth = hasBevel ? Math.max(0.04, depth - safeBevelThick * 2) : depth;
 
   const geo = new THREE.ExtrudeGeometry(targetShape, {
     depth: bodyDepth,
     bevelEnabled: hasBevel,
-    bevelSegments: effBevelSegs,
+    bevelSegments: hasBevel ? effBevelSegs : 0,
     steps: 1,
-    bevelSize,
-    bevelThickness,
-    curveSegments: finalCurveSegs,
+    bevelSize: safeBevelSize,
+    bevelThickness: safeBevelThick,
+    curveSegments: 1,
   });
   geo.translate(0, 0, -bodyDepth * 0.5);
   smoothCreaseNormals(geo, 36);
@@ -301,12 +300,13 @@ export function createChamferedBoxGeo(
   const rw = w;
   const rh = axis === 'y' ? d : h;
 
-  // Sub-12mm blocks in STD LITE, sub-5.5mm in STD, and sub-2.0mm in HIGH look crisp as boxes
-  // while cutting triangle count by 30x-100x!
+  // Sub-12mm blocks in STD LITE, sub-5.5mm in STD, sub-2.0mm in HIGH, and sub-1.2mm micro-SMDs in ULTRA
+  // look crisp as boxes while preventing 1000-tri micro-capacitor GPU memory explosions!
   if (
     (quality === 'standard_lite' && (maxDim < 12.0 || bevel < 0.25)) ||
     (quality === 'standard' && maxDim < 5.5) ||
-    (quality === 'high' && maxDim < 2.0)
+    (quality === 'high' && maxDim < 2.0) ||
+    (quality === 'ultra' && maxDim < 1.2)
   ) {
     const box = new THREE.BoxGeometry(w, h, d);
     if (axis === 'y') {
@@ -321,18 +321,27 @@ export function createChamferedBoxGeo(
   const thick = axis === 'y' ? h : d;
   const hw = rw * 0.5;
   const hh = rh * 0.5;
-  const r = Math.min(cornerR, hw * 0.45, hh * 0.45);
-  shape.moveTo(-hw + r, -hh);
-  shape.lineTo(hw - r, -hh);
-  shape.absarc(hw - r, -hh + r, r, -Math.PI / 2, 0, false);
-  shape.lineTo(hw, hh - r);
-  shape.absarc(hw - r, hh - r, r, 0, Math.PI / 2, false);
-  shape.lineTo(-hw + r, hh);
-  shape.absarc(-hw + r, hh - r, r, Math.PI / 2, Math.PI, false);
-  shape.lineTo(-hw, -hh + r);
-  shape.absarc(-hw + r, -hh + r, r, Math.PI, Math.PI * 1.5, false);
-  const effBevel = Math.min(bevel, thick * 0.35, rw * 0.15, rh * 0.15);
-  const geo = extrudeHiRes(shape, thick, effBevel, effBevel, 2, 12);
+  const r = Math.max(0, Math.min(cornerR, hw * 0.45, hh * 0.45));
+  if (r <= 1e-3) {
+    shape.moveTo(-hw, -hh);
+    shape.lineTo(hw, -hh);
+    shape.lineTo(hw, hh);
+    shape.lineTo(-hw, hh);
+  } else {
+    shape.moveTo(-hw + r, -hh);
+    if (hw - r > 1e-4) shape.lineTo(hw - r, -hh);
+    shape.absarc(hw - r, -hh + r, r, -Math.PI / 2, 0, false);
+    if (hh - r > 1e-4) shape.lineTo(hw, hh - r);
+    shape.absarc(hw - r, hh - r, r, 0, Math.PI / 2, false);
+    if (hw - r > 1e-4) shape.lineTo(-hw + r, hh);
+    shape.absarc(-hw + r, hh - r, r, Math.PI / 2, Math.PI, false);
+    if (hh - r > 1e-4) shape.lineTo(-hw, -hh + r);
+    shape.absarc(-hw + r, -hh + r, r, Math.PI, Math.PI * 1.5, false);
+  }
+  const effBevel = Math.min(bevel, thick * 0.32, rw * 0.14, rh * 0.14);
+  const effBevSegs = maxDim < 4.5 ? 1 : 2;
+  const effCurveSegs = maxDim < 4.5 ? 8 : 12;
+  const geo = extrudeHiRes(shape, thick, effBevel, effBevel, effBevSegs, effCurveSegs);
   if (axis === 'y') {
     geo.rotateX(-Math.PI / 2);
     applyPlanarUVs(geo, rw, rh, 'xz');
@@ -398,14 +407,12 @@ export function buildChipPackage(opts: ChipPackageOptions): THREE.Group {
     g.add(sub);
   }
 
-  // Optional recessed laser-marked top plate or silicon die inlay
+  // Optional recessed laser-marked top plate or silicon die inlay (watertight closed 3D micro-plate)
   if (topAccentMat) {
-    const topPlate = new THREE.Mesh(
-      markHiRes(new THREE.PlaneGeometry(w * 0.88, d * 0.88)),
-      topAccentMat
-    );
-    topPlate.rotation.x = -Math.PI / 2;
-    topPlate.position.y = body.position.y + bodyH * 0.5 + 0.025;
+    const plateGeo = markHiRes(new THREE.BoxGeometry(w * 0.88, 0.04, d * 0.88));
+    applyPlanarUVs(plateGeo, w * 0.88, d * 0.88, 'xz');
+    const topPlate = new THREE.Mesh(plateGeo, topAccentMat);
+    topPlate.position.y = body.position.y + bodyH * 0.5 + 0.022;
     topPlate.userData.noEdges = true;
     g.add(topPlate);
   }
@@ -837,18 +844,51 @@ export function buildPhillipsScrew(
   const g = new THREE.Group();
   const quality = getActiveBuildQuality();
 
-  // Domed pan head turned via LatheGeometry (ordered bottom -headH -> top 0 for outward CCW normals)
-  const headPts: THREE.Vector2[] = [
-    new THREE.Vector2(0.02, -headH),
-    new THREE.Vector2(headR * 0.72, -headH * 0.94),
-    new THREE.Vector2(headR * 0.96, -headH * 0.65),
-    new THREE.Vector2(headR * 1.04, -headH * 0.22),
-    new THREE.Vector2(headR * 1.04, 0),
-    new THREE.Vector2(shankR, 0),
-  ];
+  // Watertight closed domed pan head (exact pole vertices at -headH and 0 -> zero border edges!)
   const headSegs =
-    quality === 'standard_lite' ? 6 : quality === 'standard' ? 10 : quality === 'high' ? 16 : 24;
-  const headGeo = markHiRes(new THREE.LatheGeometry(headPts, headSegs));
+    quality === 'standard_lite' ? 6 : quality === 'standard' ? 10 : quality === 'high' ? 14 : 20;
+  const ringProfile: Array<[number, number]> = [
+    [headR * 0.72, -headH * 0.94],
+    [headR * 0.96, -headH * 0.65],
+    [headR * 1.04, -headH * 0.22],
+    [headR * 1.04, 0],
+  ];
+  const nR = ringProfile.length;
+  const hPos = new Float32Array((2 + nR * headSegs) * 3);
+  hPos[0] = 0; hPos[1] = -headH; hPos[2] = 0;
+  hPos[3] = 0; hPos[4] = 0; hPos[5] = 0;
+  for (let ri = 0; ri < nR; ri++) {
+    const [r, y] = ringProfile[ri];
+    for (let j = 0; j < headSegs; j++) {
+      const a = (j / headSegs) * Math.PI * 2;
+      const vi = 2 + ri * headSegs + j;
+      hPos[vi * 3] = Math.cos(a) * r;
+      hPos[vi * 3 + 1] = y;
+      hPos[vi * 3 + 2] = Math.sin(a) * r;
+    }
+  }
+  const hIdx: number[] = [];
+  for (let j = 0; j < headSegs; j++) {
+    const jn = (j + 1) % headSegs;
+    hIdx.push(0, 2 + j, 2 + jn);
+  }
+  for (let ri = 0; ri < nR - 1; ri++) {
+    const a0 = 2 + ri * headSegs;
+    const b0 = 2 + (ri + 1) * headSegs;
+    for (let j = 0; j < headSegs; j++) {
+      const jn = (j + 1) % headSegs;
+      hIdx.push(a0 + j, b0 + j, b0 + jn);
+      hIdx.push(a0 + j, b0 + jn, a0 + jn);
+    }
+  }
+  const topBase = 2 + (nR - 1) * headSegs;
+  for (let j = 0; j < headSegs; j++) {
+    const jn = (j + 1) % headSegs;
+    hIdx.push(1, topBase + jn, topBase + j);
+  }
+  const headGeo = markHiRes(new THREE.BufferGeometry());
+  headGeo.setAttribute('position', new THREE.BufferAttribute(hPos, 3));
+  headGeo.setIndex(hIdx);
   headGeo.computeVertexNormals();
   const head = new THREE.Mesh(headGeo, headMat);
   g.add(head);
@@ -867,26 +907,33 @@ export function buildPhillipsScrew(
   shank.position.y = shankL * 0.5;
   g.add(shank);
 
-  // Continuous helical thread ridge spiraling up the shank (omitted in STD / STD LITE to save ~720 tris/screw)
-  if (quality !== 'standard_lite' && quality !== 'standard') {
-    const turns = Math.max(6, Math.round(shankL * 1.1));
-    const steps = turns * 10;
-    const pts: THREE.Vector3[] = [];
-    for (let i = 0; i <= steps; i++) {
-      const t = i / steps;
-      const ang = t * turns * Math.PI * 2;
-      const y = 0.55 + t * (shankL - 1.1);
-      const r = shankR * (1.03 - t * 0.14);
-      pts.push(new THREE.Vector3(Math.cos(ang) * r, y, Math.sin(ang) * r));
+  // Continuous pitch-safe watertight helical thread ridge spiraling up the shank
+  if (quality !== 'standard_lite' && quality !== 'standard' && shankL >= 1.4) {
+    const margin = Math.min(0.45, shankL * 0.18);
+    const span = Math.max(0.4, shankL - margin * 2);
+    const threadR = Math.max(0.03, Math.min(shankR * 0.14, span * 0.08));
+    const maxSafeTurns = Math.floor(span / (threadR * 2.85));
+    const turns = Math.max(2, Math.min(maxSafeTurns, Math.round(shankL * 1.05)));
+    if (turns >= 2 && span / turns >= threadR * 2.6) {
+      const steps = turns * 8;
+      const pts: THREE.Vector3[] = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const ang = t * turns * Math.PI * 2;
+        const y = margin + t * span;
+        const r = shankR * (1.02 - t * 0.12);
+        pts.push(new THREE.Vector3(Math.cos(ang) * r, y, Math.sin(ang) * r));
+      }
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const tubeSegs =
+        quality === 'high' ? Math.min(Math.round(steps * 0.6), 36) : Math.min(steps, 64);
+      const tubeRadSegs = quality === 'high' ? 4 : 5;
+      const rawTube = new THREE.TubeGeometry(curve, tubeSegs, threadR, tubeRadSegs, false);
+      const threadGeo = markHiRes(capOpenTubeGeometry(rawTube, tubeSegs, tubeRadSegs));
+      const threadMesh = new THREE.Mesh(threadGeo, threadMat);
+      threadMesh.userData.noEdges = true;
+      g.add(threadMesh);
     }
-    const curve = new THREE.CatmullRomCurve3(pts);
-    const tubeSegs =
-      quality === 'high' ? Math.min(Math.round(steps * 0.45), 32) : Math.min(steps, 72);
-    const tubeRadSegs = quality === 'high' ? 4 : 5;
-    const threadGeo = markHiRes(new THREE.TubeGeometry(curve, tubeSegs, shankR * 0.16, tubeRadSegs, false));
-    const threadMesh = new THREE.Mesh(threadGeo, threadMat);
-    threadMesh.userData.noEdges = true;
-    g.add(threadMesh);
   }
 
   return g;
@@ -934,9 +981,10 @@ export function buildGoldWirebondLoop(
   const wireTubSegs =
     quality === 'standard_lite' ? 4 : quality === 'standard' ? 6 : quality === 'high' ? 10 : 14;
   const wireRadSegs =
-    quality === 'standard_lite' || quality === 'standard' ? 3 : quality === 'high' ? 4 : 6;
+    quality === 'standard_lite' || quality === 'standard' ? 4 : quality === 'high' ? 5 : 6;
+  const rawWire = new THREE.TubeGeometry(curve, wireTubSegs, radius, wireRadSegs, false);
   const tube = new THREE.Mesh(
-    markHiRes(new THREE.TubeGeometry(curve, wireTubSegs, radius, wireRadSegs, false)),
+    markHiRes(capOpenTubeGeometry(rawWire, wireTubSegs, wireRadSegs)),
     mat
   );
   tube.userData.noEdges = true;

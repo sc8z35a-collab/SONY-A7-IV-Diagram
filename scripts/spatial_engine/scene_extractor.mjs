@@ -16,7 +16,7 @@ import { buildFlatBvh, computeMeshSignedVolumeAndCentroid, createEmptyBox } from
 const require = createRequire(import.meta.url);
 const ROOT = process.cwd();
 const CACHE_DIR = path.join(os.tmpdir(), 'sp_cache');
-const CACHE_MAGIC = 'SPB3';
+const CACHE_MAGIC = 'SPB4';
 
 // Material density table (g / cm³) for realistic mass / CoG / tipping calculations
 const MATERIAL_DENSITY_G_CM3 = {
@@ -210,12 +210,20 @@ function computeUnitSourceHash(unitInfo, quality) {
     unitInfo.jsonPath,
     path.join(ROOT, 'src/core/geometry_quality.ts'),
     path.join(ROOT, 'src/engine/CadHelpers.ts'),
-    path.join(ROOT, 'src/assemblies/UltraDetailBuilders.ts'),
+    path.join(ROOT, 'src/engine/FastCadGeometry.ts'),
+    path.join(ROOT, 'src/engine/UltraDetailBuilders.ts'),
+    path.join(ROOT, 'src/units/camera_macro_shared.ts'),
+    path.join(ROOT, 'scripts/spatial_engine/scene_extractor.mjs'),
   ];
-  const asmDir = path.join(ROOT, 'src/assemblies', unitInfo.unitId === 'mishoe' ? 'mi_shoe' : unitInfo.unitId);
-  if (fs.existsSync(asmDir) && fs.statSync(asmDir).isDirectory()) {
-    for (const f of fs.readdirSync(asmDir).sort()) {
-      if (f.endsWith('.ts')) candidates.push(path.join(asmDir, f));
+  const subDirs = unitInfo.unitId === 'camera_body' || unitInfo.unitId === 'integrated'
+    ? ['body', 'mount', 'shutter', 'sensor', 'mainboard', 'evf', 'lcd', 'lens', 'battery', 'cfexpress', 'mi_shoe']
+    : [unitInfo.unitId === 'mishoe' ? 'mi_shoe' : unitInfo.unitId];
+  for (const sub of subDirs) {
+    const asmDir = path.join(ROOT, 'src/assemblies', sub);
+    if (fs.existsSync(asmDir) && fs.statSync(asmDir).isDirectory()) {
+      for (const f of fs.readdirSync(asmDir).sort()) {
+        if (f.endsWith('.ts')) candidates.push(path.join(asmDir, f));
+      }
     }
   }
   // Fallback: hash mtimes+sizes of unit file & assemblies directory
@@ -291,6 +299,9 @@ function readSpb3Cache(cachePath) {
     if (buf.length < 8 || buf.subarray(0, 4).toString('ascii') !== CACHE_MAGIC) return null;
     const hLen = buf.readUInt32LE(4);
     const header = JSON.parse(buf.subarray(8, 8 + hLen).toString('utf8'));
+    if (!Array.isArray(header.parts) || header.parts.length === 0 || !Array.isArray(header.meshes) || header.meshes.length === 0) {
+      return null;
+    }
     let byteOff = 8 + hLen;
     const meshes = new Array(header.meshes.length);
     for (let i = 0; i < header.meshes.length; i++) {

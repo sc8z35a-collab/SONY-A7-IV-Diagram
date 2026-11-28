@@ -14,6 +14,7 @@ import {
   hiResCyl,
 } from '../../engine/UltraDetailBuilders';
 import {
+  getActiveBuildQuality,
   scaleCurveSegmentsForQuality,
   scaleRadialSegmentsForQuality,
 } from '../../core/geometry_quality';
@@ -138,9 +139,15 @@ export function makeRoundedPlateY(
   mat: THREE.Material,
   planarTop = false
 ): THREE.Mesh {
-  const shape = createRoundedRectShape(w, d, Math.min(radius, Math.min(w, d) * 0.42));
+  const q = getActiveBuildQuality();
+  const hasBev = q === 'ultra' || q === 'high' || (q === 'standard' && h >= 2.2);
+  const bev = hasBev ? Math.min(0.22, h * 0.32) : 0;
+  const effW = Math.max(2.0, w - bev * 2);
+  const effD = Math.max(2.0, d - bev * 2);
+  const effR = Math.max(0.2, Math.min(radius - bev, Math.min(effW, effD) * 0.42));
+  const shape = createRoundedRectShape(effW, effD, effR);
   const segs = scaleCurveSegmentsForQuality(10);
-  const geo = extrudeHiRes(shape, h, 0.25, 0.25, 1, segs);
+  const geo = extrudeHiRes(shape, h, bev, bev, 1, segs);
   geo.rotateX(-Math.PI / 2);
   geo.center();
   if (planarTop) {
@@ -180,16 +187,26 @@ export function makeMuzzleFaceplateMesh(
   mat: THREE.Material,
   centerY: number
 ): THREE.Mesh {
-  const shape = createRoundedRectShape(w, h, 4.5);
+  const q = getActiveBuildQuality();
+  const hasBev = q === 'ultra' || q === 'high' || (q === 'standard' && thickness >= 2.2);
+  const bev = hasBev ? Math.min(0.18, thickness * 0.30) : 0;
+  const shape = createRoundedRectShape(w - bev * 2, h - bev * 2, Math.max(0.5, 4.5 - bev));
 
   const addRectHole = (cx: number, cyWorld: number, hw: number, hh: number) => {
     const cy = cyWorld - centerY;
-    const hole = new THREE.Path();
-    hole.moveTo(cx - hw, cy - hh);
-    hole.lineTo(cx + hw, cy - hh);
-    hole.lineTo(cx + hw, cy + hh);
-    hole.lineTo(cx - hw, cy + hh);
-    hole.closePath();
+    const cr = 1.5;
+    const hwe = hw + bev;
+    const hhe = hh + bev;
+    const hole = new THREE.Path([
+      new THREE.Vector2(cx - hwe + cr, cy - hhe),
+      new THREE.Vector2(cx - hwe, cy - hhe + cr),
+      new THREE.Vector2(cx - hwe, cy + hhe - cr),
+      new THREE.Vector2(cx - hwe + cr, cy + hhe),
+      new THREE.Vector2(cx + hwe - cr, cy + hhe),
+      new THREE.Vector2(cx + hwe, cy + hhe - cr),
+      new THREE.Vector2(cx + hwe, cy - hhe + cr),
+      new THREE.Vector2(cx + hwe - cr, cy - hhe),
+    ]);
     shape.holes.push(hole);
   };
 
@@ -201,11 +218,11 @@ export function makeMuzzleFaceplateMesh(
 
   // Upper-center circular camera dome cutout (R=17.5mm at X=0, Y=167)
   const camHole = new THREE.Path();
-  camHole.absarc(0, 167 - centerY, 17.5, 0, Math.PI * 2, true);
+  camHole.absarc(0, 167 - centerY, 17.5 + bev, 0, Math.PI * 2, true);
   shape.holes.push(camHole);
 
   const segs = scaleCurveSegmentsForQuality(14);
-  const geo = extrudeHiRes(shape, thickness, 0.2, 0.2, 1, segs);
+  const geo = extrudeHiRes(shape, thickness, bev, bev, 1, segs);
   geo.center();
   applyBoxUVs(geo, 32);
   return new THREE.Mesh(geo, mat);
@@ -216,9 +233,6 @@ export function makeMuzzleFaceplateMesh(
  * Extruded along Y, centered at its bounding box center in X/Z/Y.
  */
 export function makeLShapeMagGeometry(height: number, inset = 0): THREE.BufferGeometry {
-  // World-space L polygon in XZ plane (X in [-102, +8], Z in [-56, +56]):
-  // Rear-left main leg: X in [-102, -8], Z in [-56, +56]
-  // Front-center L-wing: X in [-8, +8], Z in [+29, +56] (clears red battery Z in [-56, +25] by 4mm!)
   const xMin = -102 + inset;
   const xMid = -8 - inset;
   const xMax = 8 - inset;
@@ -236,9 +250,8 @@ export function makeLShapeMagGeometry(height: number, inset = 0): THREE.BufferGe
   shape.closePath();
 
   const segs = scaleCurveSegmentsForQuality(8);
-  const geo = extrudeHiRes(shape, height, 0.18, 0.18, 1, segs);
+  const geo = extrudeHiRes(shape, height, 0.16, 0.16, 1, segs);
   geo.rotateX(-Math.PI / 2);
-  // Shift Y so bottom is at -height/2 and top is at +height/2; keep XZ in exact world offsets
   geo.computeBoundingBox();
   if (geo.boundingBox) {
     const midY = (geo.boundingBox.min.y + geo.boundingBox.max.y) * 0.5;
@@ -249,36 +262,39 @@ export function makeLShapeMagGeometry(height: number, inset = 0): THREE.BufferGe
 }
 
 /**
- * Build a compact MG996R metal-gear servo body (40.7 x 19.7 x 42.9 mm scaled cleanly to 38 x 19 x 34 mm envelope)
- * centered at local (0, 0, 0) with output spline hub protruding along +Y.
+ * Build a compact MG996R metal-gear servo body with clean 0.03mm non-overlapping submesh contacts
+ * (zero thin internal overlap pockets for CGAL SDF, zero floating submeshes!).
  */
 export function buildMg996rServoSubGroup(
   mats: V2MaterialLibrary,
   withPotTap = true
 ): THREE.Group {
   const g = new THREE.Group();
-  // Main black nylon-glass body
-  const body = makeBoxMesh(34, 24, 18.5, mats.matteBlackAnodized, 18);
+  // Main black nylon-glass body (PA66-GF30 dielectric shell)
+  const body = makeBoxMesh(34, 24, 18.5, mats.pa66ThermalBreak, 18);
   g.add(body);
-  // Side mounting flanges
-  const flange = makeBoxMesh(44, 2.4, 18.5, mats.shutterChassis, 16);
-  flange.position.set(0, 6.5, 0);
-  g.add(flange);
-  // Metal gearbox top cap (MG996R signature)
-  const cap = makeBoxMesh(33.2, 4.2, 17.8, mats.stainlessMachined, 16);
-  cap.position.set(0, 14.1, 0);
+  // Left & right side mounting ears seated 0.03mm outside body X=±17.0 (outer edge ±22.0)
+  const earL = makeBoxMesh(4.97, 2.4, 18.5, mats.pa66ThermalBreak, 14);
+  earL.position.set(-19.515, 6.5, 0);
+  const earR = makeBoxMesh(4.97, 2.4, 18.5, mats.pa66ThermalBreak, 14);
+  earR.position.set(19.515, 6.5, 0);
+  g.add(earL, earR);
+  // Metal gearbox top cap seated 0.03mm above body Y=+12.0 (Y: 12.03..16.23)
+  const cap = makeBoxMesh(33.2, 4.2, 17.8, mats.pa66ThermalBreak, 16);
+  cap.position.set(0, 14.13, 0);
   g.add(cap);
-  // Brass 25T output spline + aluminum round servo horn
+  // Brass 25T output spline seated 0.03mm above cap Y=16.23 (Y: 16.26..19.86)
   const spline = makeCylMesh(3.2, 3.2, 3.6, mats.brassGear, 14);
-  spline.position.set(8.5, 17.6, 0);
+  spline.position.set(8.5, 18.06, 0);
   g.add(spline);
-  const horn = makeCylMesh(8.2, 8.2, 2.2, mats.mountRedIndexDot, 16);
-  horn.position.set(8.5, 20.1, 0);
+  // Round servo horn seated 0.03mm above spline Y=19.86 (Y: 19.89..22.09)
+  const horn = makeCylMesh(8.2, 8.2, 2.2, mats.pa66ThermalBreak, 16);
+  horn.position.set(8.5, 20.99, 0);
   g.add(horn);
-  // 90-yen internal potentiometer 4th feedback wire tap (orange lead)
+  // 90-yen internal potentiometer 4th feedback wire tap seated 0.03mm outside body X=-17.0
   if (withPotTap) {
-    const tap = makeBoxMesh(3.2, 2.4, 2.4, mats.sonyAlphaCinnabar, 10);
-    tap.position.set(-18.2, -7.5, 0);
+    const tap = makeBoxMesh(3.2, 2.4, 2.4, mats.epdmGasket, 10);
+    tap.position.set(-18.63, -7.5, 0);
     g.add(tap);
   }
   return g;

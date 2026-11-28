@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GPU_PROFILE, scaleSegments } from './GpuOptimizer';
-import { resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
+import { capOpenTubeGeometry, resampleShapeSagitta, smoothCreaseNormals } from './FastCadGeometry';
 import {
   getActiveGeometryScale,
   scaleCurveSegmentsForQuality,
@@ -8,22 +8,30 @@ import {
 } from '../core/geometry_quality';
 
 /**
- * Create a 2D rounded rectangle Shape centered at (0, 0).
+ * Create a 2D rounded rectangle Shape centered at (0, 0) without duplicate corner points.
  */
 export function createRoundedRectShape(width: number, height: number, radius: number): THREE.Shape {
   const s = new THREE.Shape();
   const hw = width / 2;
   const hh = height / 2;
-  const r = Math.min(radius, hw, hh);
+  const r = Math.max(0, Math.min(radius, hw - 1e-3, hh - 1e-3));
+
+  if (r <= 1e-3) {
+    s.moveTo(-hw, -hh);
+    s.lineTo(hw, -hh);
+    s.lineTo(hw, hh);
+    s.lineTo(-hw, hh);
+    return s;
+  }
 
   s.moveTo(-hw + r, -hh);
-  s.lineTo(hw - r, -hh);
+  if (hw - r > 1e-4) s.lineTo(hw - r, -hh);
   s.absarc(hw - r, -hh + r, r, -Math.PI / 2, 0, false);
-  s.lineTo(hw, hh - r);
+  if (hh - r > 1e-4) s.lineTo(hw, hh - r);
   s.absarc(hw - r, hh - r, r, 0, Math.PI / 2, false);
-  s.lineTo(-hw + r, hh);
+  if (hw - r > 1e-4) s.lineTo(-hw + r, hh);
   s.absarc(-hw + r, hh - r, r, Math.PI / 2, Math.PI, false);
-  s.lineTo(-hw, -hh + r);
+  if (hh - r > 1e-4) s.lineTo(-hw, -hh + r);
   s.absarc(-hw + r, -hh + r, r, Math.PI, Math.PI * 1.5, false);
 
   return s;
@@ -46,17 +54,24 @@ export function createFrameShape(
   const hole = new THREE.Path();
   const hw = innerW / 2;
   const hh = innerH / 2;
-  const r = Math.min(innerR, hw, hh);
+  const r = Math.max(0, Math.min(innerR, hw - 1e-3, hh - 1e-3));
 
-  hole.moveTo(holeOffsetX - hw + r, holeOffsetY - hh);
-  hole.lineTo(holeOffsetX + hw - r, holeOffsetY - hh);
-  hole.absarc(holeOffsetX + hw - r, holeOffsetY - hh + r, r, -Math.PI / 2, 0, false);
-  hole.lineTo(holeOffsetX + hw, holeOffsetY + hh - r);
-  hole.absarc(holeOffsetX + hw - r, holeOffsetY + hh - r, r, 0, Math.PI / 2, false);
-  hole.lineTo(holeOffsetX - hw + r, holeOffsetY + hh);
-  hole.absarc(holeOffsetX - hw + r, holeOffsetY + hh - r, r, Math.PI / 2, Math.PI, false);
-  hole.lineTo(holeOffsetX - hw, holeOffsetY - hh + r);
-  hole.absarc(holeOffsetX - hw + r, holeOffsetY - hh + r, r, Math.PI, Math.PI * 1.5, false);
+  if (r <= 1e-3) {
+    hole.moveTo(holeOffsetX - hw, holeOffsetY - hh);
+    hole.lineTo(holeOffsetX + hw, holeOffsetY - hh);
+    hole.lineTo(holeOffsetX + hw, holeOffsetY + hh);
+    hole.lineTo(holeOffsetX - hw, holeOffsetY + hh);
+  } else {
+    hole.moveTo(holeOffsetX - hw + r, holeOffsetY - hh);
+    if (hw - r > 1e-4) hole.lineTo(holeOffsetX + hw - r, holeOffsetY - hh);
+    hole.absarc(holeOffsetX + hw - r, holeOffsetY - hh + r, r, -Math.PI / 2, 0, false);
+    if (hh - r > 1e-4) hole.lineTo(holeOffsetX + hw, holeOffsetY + hh - r);
+    hole.absarc(holeOffsetX + hw - r, holeOffsetY + hh - r, r, 0, Math.PI / 2, false);
+    if (hw - r > 1e-4) hole.lineTo(holeOffsetX - hw + r, holeOffsetY + hh);
+    hole.absarc(holeOffsetX - hw + r, holeOffsetY + hh - r, r, Math.PI / 2, Math.PI, false);
+    if (hh - r > 1e-4) hole.lineTo(holeOffsetX - hw, holeOffsetY - hh + r);
+    hole.absarc(holeOffsetX - hw + r, holeOffsetY - hh + r, r, Math.PI, Math.PI * 1.5, false);
+  }
 
   shape.holes.push(hole);
   return shape;
@@ -93,12 +108,14 @@ export function extrudeCentered(
     bevelSize > 0 &&
     bevelThickness > 0 &&
     ((depth >= 3.2 && bevelSize >= 0.22) || bevelSize >= 0.28);
-  const bodyDepth = hasBevel ? Math.max(0.02, depth - bevelThickness * 2) : depth;
+  const safeBevelThick = hasBevel ? Math.min(bevelThickness, depth * 0.38) : 0;
+  const safeBevelSize = hasBevel ? Math.min(bevelSize, depth * 0.45) : 0;
+  const bodyDepth = hasBevel ? Math.max(0.04, depth - safeBevelThick * 2) : depth;
   const baseSagitta = GPU_PROFILE.isMobile ? 0.40 : 0.32;
   const sagittaTol = qScale ? baseSagitta * qScale.sagittaMultiplier : baseSagitta;
   const maxCircleSegs = qScale
-    ? scaleCurveSegmentsForQuality(Math.min(curveSegments, 44), 4)
-    : scaleSegments(Math.min(curveSegments, 24), 5);
+    ? scaleCurveSegmentsForQuality(Math.min(curveSegments, 44), 6)
+    : scaleSegments(Math.min(curveSegments, 24), 6);
   const adaptedShape = resampleShapeSagitta(shape, sagittaTol, maxCircleSegs);
 
   const geo = new THREE.ExtrudeGeometry(adaptedShape, {
@@ -106,8 +123,8 @@ export function extrudeCentered(
     bevelEnabled: hasBevel,
     bevelSegments: hasBevel ? 1 : 0,
     steps: 1,
-    bevelSize,
-    bevelThickness,
+    bevelSize: safeBevelSize,
+    bevelThickness: safeBevelThick,
     curveSegments: 1, // Already Sagitta-resampled into exact LineCurves!
   });
   geo.translate(0, 0, -bodyDepth / 2);
@@ -179,30 +196,34 @@ export function createSpurGearGeometry(
 }
 
 /**
- * Build a helical compression spring along Z axis (Sagitta-optimal steps & smooth wire).
+ * Build a watertight capped helical compression spring along Z axis with pitch-safe wire radius.
  */
 export function createHelicalSpringGeometry(
   coilRadius: number,
   length: number,
   turns: number,
   wireRadius: number
-): THREE.TubeGeometry {
+): THREE.BufferGeometry {
+  const safeTurns = Math.max(1, turns);
+  const pitch = length / safeTurns;
+  const safeWireR = Math.max(0.03, Math.min(wireRadius, pitch * 0.36, coilRadius * 0.38));
   const points: THREE.Vector3[] = [];
-  const perTurn = coilRadius < 1.0 ? 5 : GPU_PROFILE.isMobile ? 5 : 6;
-  const wireSides = wireRadius < 0.25 ? 3 : 4;
-  const steps = Math.max(8, Math.round(turns * perTurn));
+  const perTurn = coilRadius < 1.0 ? 6 : GPU_PROFILE.isMobile ? 6 : 8;
+  const wireSides = safeWireR < 0.25 ? 4 : 5;
+  const steps = Math.max(10, Math.round(safeTurns * perTurn));
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    const angle = t * turns * Math.PI * 2;
+    const angle = t * safeTurns * Math.PI * 2;
     const z = (t - 0.5) * length;
     points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
   }
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps, wireRadius, wireSides, false);
+  const tube = new THREE.TubeGeometry(curve, steps, safeWireR, wireSides, false);
+  return capOpenTubeGeometry(tube, steps, wireSides);
 }
 
 /**
- * Build a precision torsion spring with straight tang legs (used to fire shutter curtains).
+ * Build a watertight capped precision torsion spring with smooth tang legs (pitch-safe, zero coil self-overlap).
  */
 export function createTorsionSpringGeometry(
   coilRadius: number,
@@ -210,21 +231,26 @@ export function createTorsionSpringGeometry(
   turns: number,
   wireRadius: number,
   legLength: number
-): THREE.TubeGeometry {
+): THREE.BufferGeometry {
+  const safeTurns = Math.max(1, turns);
+  const pitch = length / safeTurns;
+  const safeWireR = Math.max(0.03, Math.min(wireRadius, pitch * 0.36, coilRadius * 0.38));
   const points: THREE.Vector3[] = [];
   points.push(new THREE.Vector3(coilRadius, -legLength, -length * 0.5));
-  const perTurn = coilRadius < 1.0 ? 5 : GPU_PROFILE.isMobile ? 5 : 6;
-  const wireSides = wireRadius < 0.25 ? 3 : 4;
-  const steps = Math.max(8, Math.round(turns * perTurn));
+  const perTurn = coilRadius < 1.0 ? 6 : GPU_PROFILE.isMobile ? 6 : 8;
+  const wireSides = safeWireR < 0.25 ? 4 : 5;
+  const steps = Math.max(10, Math.round(safeTurns * perTurn));
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    const angle = t * turns * Math.PI * 2;
+    const angle = t * safeTurns * Math.PI * 2;
     const z = (t - 0.5) * length;
     points.push(new THREE.Vector3(Math.cos(angle) * coilRadius, Math.sin(angle) * coilRadius, z));
   }
   points.push(new THREE.Vector3(coilRadius + legLength * 0.85, legLength * 0.35, length * 0.5));
   const curve = new THREE.CatmullRomCurve3(points);
-  return new THREE.TubeGeometry(curve, steps + 4, wireRadius, wireSides, false);
+  const tubSegs = steps + 4;
+  const tube = new THREE.TubeGeometry(curve, tubSegs, safeWireR, wireSides, false);
+  return capOpenTubeGeometry(tube, tubSegs, wireSides);
 }
 
 const screwGeoPool = new Map<string, THREE.BufferGeometry>();
@@ -241,25 +267,11 @@ function getPooledScrewHead(headRadius: number, headHeight: number): THREE.Buffe
   return g;
 }
 
-function getPooledScrewCrossSlot(span: number, width: number): THREE.BufferGeometry {
-  const key = `CSL:${Math.round(span * 100)}:${Math.round(width * 100)}`;
+function getPooledScrewCrossBar(span: number, width: number, depth: number): THREE.BufferGeometry {
+  const key = `CB:${Math.round(span * 100)}:${Math.round(width * 100)}:${Math.round(depth * 100)}`;
   let g = screwGeoPool.get(key);
   if (!g) {
-    const hs = span * 0.5;
-    const hw = width * 0.5;
-    // Two perpendicular flat recessed cross quads (4 triangles total instead of two 12-tri 3D boxes = -83% tris!)
-    const pos = new Float32Array([
-      -hs, -hw, 0,  hs, -hw, 0,  hs, hw, 0,  -hs, hw, 0,
-      -hw, -hs, 0.004,  hw, -hs, 0.004,  hw, hs, 0.004,  -hw, hs, 0.004,
-    ]);
-    const norm = new Float32Array([
-      0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1,
-      0, 0, 1,  0, 0, 1,  0, 0, 1,  0, 0, 1,
-    ]);
-    g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    g.setAttribute('normal', new THREE.BufferAttribute(norm, 3));
-    g.setIndex([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7]);
+    g = new THREE.BoxGeometry(span, width, depth);
     g.userData.__pooled = true;
     screwGeoPool.set(key, g);
   }
@@ -270,7 +282,8 @@ function getPooledScrewShaft(r: number, len: number): THREE.BufferGeometry {
   const key = `SH:${Math.round(r * 100)}:${Math.round(len * 100)}`;
   let g = screwGeoPool.get(key);
   if (!g) {
-    g = new THREE.CylinderGeometry(r, r, len, 4, 1, true);
+    // Watertight closed cylinder shaft (openEnded = false) so CGAL sees zero open border edges!
+    g = new THREE.CylinderGeometry(r, r, len, 6, 1, false);
     g.rotateX(Math.PI / 2);
     g.userData.__pooled = true;
     screwGeoPool.set(key, g);
@@ -279,8 +292,7 @@ function getPooledScrewShaft(r: number, len: number): THREE.BufferGeometry {
 }
 
 /**
- * Build a precision machine screw group aligned along Z (head at +Z, shaft toward -Z).
- * Uses pooled geometries + 2-quad cross slot decal to eliminate duplicate screw VBO allocations & excess triangles!
+ * Build a precision watertight machine screw group aligned along Z (head at +Z, shaft toward -Z).
  */
 export function createPrecisionScrew(
   headRadius: number,
@@ -295,13 +307,18 @@ export function createPrecisionScrew(
   head.userData.noEdges = true;
   group.add(head);
 
-  const crossSlot = new THREE.Mesh(
-    getPooledScrewCrossSlot(headRadius * 1.15, headRadius * 0.24),
-    material
-  );
-  crossSlot.position.z = headHeight + 0.015;
-  crossSlot.userData.noEdges = true;
-  group.add(crossSlot);
+  const slotDepth = Math.max(0.04, headHeight * 0.14);
+  const slotBarGeo = getPooledScrewCrossBar(headRadius * 1.15, Math.max(0.08, headRadius * 0.24), slotDepth);
+  const slotH = new THREE.Mesh(slotBarGeo, material);
+  slotH.position.z = headHeight + slotDepth * 0.5 + 0.002;
+  slotH.userData.noEdges = true;
+  group.add(slotH);
+
+  const slotV = new THREE.Mesh(slotBarGeo, material);
+  slotV.rotation.z = Math.PI / 2;
+  slotV.position.z = headHeight + slotDepth * 0.5 + 0.004;
+  slotV.userData.noEdges = true;
+  group.add(slotV);
 
   if (shaftLength > 0) {
     const shaft = new THREE.Mesh(getPooledScrewShaft(headRadius * 0.52, shaftLength), material);
@@ -358,8 +375,8 @@ export function tagPartMeshes(group: THREE.Object3D, partId: string): void {
 }
 
 /**
- * Create a rotationally symmetric precision optical lens element centered along the Z axis.
- * Uses Sagitta-calibrated smooth profile steps & radial segments (~75% fewer triangles, silky optics!).
+ * Create a watertight rotationally symmetric precision optical lens element centered along the Z axis.
+ * Uses exact single-vertex optical axis poles with triangle fans (zero open pinholes, zero sliver tris!).
  */
 export function createOpticalLensGeometry(
   radius: number,
@@ -378,27 +395,81 @@ export function createOpticalLensGeometry(
   const effRadial = qScale
     ? scaleRadialSegmentsForQuality(Math.max(14, Math.round(radialSegments * 0.6)), 10)
     : Math.max(16, Math.min(GPU_PROFILE.isMobile ? 20 : 26, Math.round(radialSegments * 0.48)));
-  const halfEdge = edgeThickness * 0.5;
-  const pts: THREE.Vector2[] = [];
+  const halfEdge = Math.max(0.16, edgeThickness * 0.5);
 
-  for (let i = 0; i <= effSteps; i++) {
+  // Build clean rings: front rings u=1/effSteps..1 (effSteps rings) + rear rings u=1..1/effSteps (effSteps rings)
+  const ringProfile: Array<[number, number]> = [];
+  for (let i = 1; i <= effSteps; i++) {
     const u = i / effSteps;
-    const r = Math.max(0.0001, u * radius);
+    const r = u * radius;
     const r2 = u * u;
     const zF = halfEdge + sagFront * (1 - r2) + asphericFront * r2 * (1 - r2);
-    pts.push(new THREE.Vector2(r, zF));
+    ringProfile.push([r, zF]);
   }
-
-  for (let i = effSteps; i >= 0; i--) {
+  for (let i = effSteps; i >= 1; i--) {
     const u = i / effSteps;
-    const r = Math.max(0.0001, u * radius);
+    const r = u * radius;
     const r2 = u * u;
     const zR = -halfEdge - sagRear * (1 - r2) - asphericRear * r2 * (1 - r2);
-    pts.push(new THREE.Vector2(r, zR));
+    ringProfile.push([r, zR]);
   }
 
-  const geo = new THREE.LatheGeometry(pts, effRadial);
-  geo.rotateX(Math.PI / 2);
+  const numRings = ringProfile.length;
+  const frontPoleZ = halfEdge + sagFront;
+  const rearPoleZ = -halfEdge - sagRear;
+
+  const vertCount = 2 + numRings * effRadial;
+  const positions = new Float32Array(vertCount * 3);
+  const uvs = new Float32Array(vertCount * 2);
+
+  // Vertex 0: front center pole (+Z), Vertex 1: rear center pole (-Z)
+  positions[0] = 0; positions[1] = 0; positions[2] = frontPoleZ;
+  uvs[0] = 0.5; uvs[1] = 0.5;
+  positions[3] = 0; positions[4] = 0; positions[5] = rearPoleZ;
+  uvs[2] = 0.5; uvs[3] = 0.5;
+
+  for (let ri = 0; ri < numRings; ri++) {
+    const [r, z] = ringProfile[ri];
+    for (let j = 0; j < effRadial; j++) {
+      const a = (j / effRadial) * Math.PI * 2;
+      const vi = 2 + ri * effRadial + j;
+      const x = Math.cos(a) * r;
+      const y = Math.sin(a) * r;
+      positions[vi * 3] = x;
+      positions[vi * 3 + 1] = y;
+      positions[vi * 3 + 2] = z;
+      uvs[vi * 2] = x / (2 * radius) + 0.5;
+      uvs[vi * 2 + 1] = y / (2 * radius) + 0.5;
+    }
+  }
+
+  const indices: number[] = [];
+  // Front pole cap (outward normal +Z -> CCW in XY)
+  for (let j = 0; j < effRadial; j++) {
+    const jNext = (j + 1) % effRadial;
+    indices.push(0, 2 + j, 2 + jNext);
+  }
+  // Ring strips from front rim -> edge -> rear rim
+  for (let ri = 0; ri < numRings - 1; ri++) {
+    const baseA = 2 + ri * effRadial;
+    const baseB = 2 + (ri + 1) * effRadial;
+    for (let j = 0; j < effRadial; j++) {
+      const jNext = (j + 1) % effRadial;
+      indices.push(baseA + j, baseB + j, baseB + jNext);
+      indices.push(baseA + j, baseB + jNext, baseA + jNext);
+    }
+  }
+  // Rear pole cap (outward normal -Z -> CW in XY)
+  const lastBase = 2 + (numRings - 1) * effRadial;
+  for (let j = 0; j < effRadial; j++) {
+    const jNext = (j + 1) % effRadial;
+    indices.push(1, lastBase + jNext, lastBase + j);
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  geo.setIndex(indices);
   geo.computeVertexNormals();
   return geo;
 }
