@@ -1,17 +1,28 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T05:35:30.555Z",
+  "createdAt": "2026-11-28T06:13:00.759Z",
   "slug": "feat-feat-the-last-exam-v1",
   "branch": "feat/feat-the-last-exam-v1",
   "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039",
   "vmHost": "devbox",
-  "reason": "branch_start",
-  "fingerprint": "0dee2ad534956c7f74a82cc45f14cc64ed90235b55eca2003df70fd1fb82d686",
-  "fileCount": 831,
+  "reason": "snap",
+  "fingerprint": "0a2ae355b57c9f83a777e21f3da28d74b1be63d65a6457ffcf7c3e99258808f1",
+  "fileCount": 865,
   "deletedFiles": [],
-  "dirtyCount": 2,
+  "dirtyCount": 40,
   "skippedLarge": [],
-  "artifacts": [],
+  "artifacts": [
+    {
+      "name": "the_last_exam_v1_plan.md",
+      "sha256": "5a762d5770947a8eeb93928ec6e2bbd1be18c0c0e0637ad55fdf304976c5ffb8",
+      "size": 47121
+    },
+    {
+      "name": "the_last_exam_v1_plan.md.metadata.json",
+      "sha256": "977b014694d9a9409037302cda9db383c8d3280581e612f0ff75f4b0337a6ceb",
+      "size": 693
+    }
+  ],
   "files": [
     {
       "path": ".agents/environment.json",
@@ -63,8 +74,8 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "b43e73feec1257c2f0948ad53fea58cc2e7af97f9927790ae4d5bcf69b6c76bd",
-      "size": 8659,
+      "sha256": "5d427d27dbcef2b95247bf1624e2db0d9e5fcfcbc50ea060f207cb3bf4e984e7",
+      "size": 10350,
       "mode": "100644"
     },
     {
@@ -1767,8 +1778,8 @@
     },
     {
       "path": "package.json",
-      "sha256": "e295ab0a169b7b560e66448e2d98f2cbe02e3548ec924293484961ea59afae2f",
-      "size": 1341,
+      "sha256": "56d2b47309463fed388e198915987622dca267daebaf7c666a2425b4379b31a9",
+      "size": 1554,
       "mode": "100644"
     },
     {
@@ -1919,6 +1930,12 @@
       "path": "scripts/SPATIAL_SIM_GUIDE.md",
       "sha256": "6181d3757f6b43f28a3724f53b504ad6e481a7dce238a8f0c042bad6d6195fa7",
       "size": 3286,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/THE_LAST_EXAM_V1_MANUAL.md",
+      "sha256": "a9ff007f6cbcac041944271ae710d9d8341ae2427194cf51a2d447439c7ce554",
+      "size": 8274,
       "mode": "100644"
     },
     {
@@ -2084,10 +2101,178 @@
       "mode": "100644"
     },
     {
-      "path": "scripts/exam_setup.sh",
-      "sha256": "edac8804d53dba612ecebd24a9279de26db129265acbb3809f67f35b1ec8d39c",
-      "size": 8443,
+      "path": "scripts/exam.mjs",
+      "sha256": "313a47652c9fe2f0925ebac3e206edc2521595069cdbd1e5cfc08fe99f4c360d",
+      "size": 10362,
+      "mode": "100755"
+    },
+    {
+      "path": "scripts/exam/engines/__pycache__/py_calculix_gmsh.cpython-312.pyc",
+      "sha256": "04109c341b929a1acf0533d8e212c67f1c041ecee786d098cb8c06829c7a30c0",
+      "size": 26331,
       "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/__pycache__/py_openfoam_cfd.cpython-312.pyc",
+      "sha256": "46fe63adb62e8aba3941ddea7e1648889c4d79108f4427fe55458162187ae708",
+      "size": 17711,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/cross_solver_lock.mjs",
+      "sha256": "9f6c89147c2bd8d78b4ea1af7650593fe06ce3faf1a7c9cd7992ecf6e3c5a8dc",
+      "size": 5380,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p01_geometry_contact.mjs",
+      "sha256": "e6e63304b7660a65c803400b5de5e502f8915ba420cd7a6f790dc8de2f2a4fea",
+      "size": 34466,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p02_fea_multibody.mjs",
+      "sha256": "05032ba00cc89c774f63c4e04321fd53be070bf3c499daeca55dc5395bf6f2b1",
+      "size": 26891,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p03_dfm_dfa_fasteners.mjs",
+      "sha256": "8869a1d86381703166ae8c3ad8b2141c30c174d05870d7fb23fb428757a683e1",
+      "size": 22738,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p04_cfd_spice_wiring_emc.mjs",
+      "sha256": "9b29492b05c972fce7157fe231016e9f30fbbf50204aaca31014c9fe217595d6",
+      "size": 23514,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p05_optics_acoustics.mjs",
+      "sha256": "7e2c3246105244dfb7db0124c760690e2dbc856bd6563b90e009d471fc5ecff5",
+      "size": 13471,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/p06_formal_fsm_chem_visual.mjs",
+      "sha256": "473c796b903820fc80bb38db796c79334939ac704211f8a6c338f3296fb8b8a6",
+      "size": 31248,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_calculix_gmsh.py",
+      "sha256": "b4581b652f516661e75bc8fb55b97c008c4c2ffc1ba3b8f5e90218294c993dac",
+      "size": 17496,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_dfm_vdi2230.py",
+      "sha256": "fefc9e415efa697b45473ebb0ba22a4bda27b02c498389dc34e22fe2b1b4583a",
+      "size": 8860,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_geom_statics_vision.py",
+      "sha256": "634651cf4c17fd4117ae8e9ac8fc0037abbbbf515a987e9997b54608a9e93951",
+      "size": 12194,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_openfoam_cfd.py",
+      "sha256": "7f4991a6d2073b34c9e1b67dda55f0239b0f2365faca9fef215ee7928e0a0fec",
+      "size": 13662,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_optics_acoustics_formal_chem.py",
+      "sha256": "2525181b08b5f677b1324f5a042b34614efd7bdde6196dd12214cd059816a28a",
+      "size": 14309,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/py_spice_kicad_emc.py",
+      "sha256": "d8c93ed77ba6b4779562988e62dfc8d58ec3eb7edef32fe7e127b5dd5328a351",
+      "size": 25174,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/selftest_oracle.mjs",
+      "sha256": "203d0381b3d7355fc686875056aadb164fec74a32d7ae0548e93e4abe03c1a4e",
+      "size": 15829,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/engines/solver_exec.mjs",
+      "sha256": "fac653a13c5a41bd7966182cc1a5899167ad90e0d2fd931d4c9aa312147e7311",
+      "size": 4255,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/ir_compiler.mjs",
+      "sha256": "39a75a1141d035f378cd7c1342f042431bf5fc95f618320d7546fabb0d468f23",
+      "size": 20190,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/native/src/bullet_ode_multibody.cpp",
+      "sha256": "1e025fc314ad06432bf4602f06fe7b10351a9c4f28a3fc9417ff098b51d12248",
+      "size": 19913,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/native/src/cgal_geom_kernel.cpp",
+      "sha256": "acd29bb46e96f720c73a7197e1ec9df524e4c206592f7f281bfd842b0a8d64e0",
+      "size": 13526,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/native/src/fcl_ccd_router.cpp",
+      "sha256": "39c5713cb6815714a4102d1dacab70a6f5500ab57056c73396028556490295b6",
+      "size": 22822,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/native/src/occt_step_analyzer.cpp",
+      "sha256": "e25bbab27e8e939d67cfb93723cfff0553e0d4b05ae5ed4eaa921941806c758f",
+      "size": 9584,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/native/src/tlxm_reader.hpp",
+      "sha256": "6d9d780a5914eb985231108663d40589c44969fafa4ae54a446910b87d4e6c52",
+      "size": 3536,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/scheduler.mjs",
+      "sha256": "a8d8ee648600e8dfdc1b6f12d8eb531af2c3659bfd6215b8924f386e04f8be87",
+      "size": 5783,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/shared/material_physics_db.mjs",
+      "sha256": "109b4a71fae167746487c6821ef68b6d31586a366dc84de4f49de1331202c17d",
+      "size": 18642,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/test_registry.mjs",
+      "sha256": "47fe07289f875eac3de0febdeaaddf10e8f741128146776498a14dffd08ae40f",
+      "size": 63872,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam/tlx1_protocol.mjs",
+      "sha256": "8b4cd30a2cdf7bf252cc9172584e4bcd3139a5e65c060cb6a71b5456f3eb834e",
+      "size": 9839,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/exam_setup.sh",
+      "sha256": "71f4bb6fc726fee59612632c2699cd5ab1bfd3a0227d5ab70d5e9b56af287e70",
+      "size": 8471,
+      "mode": "100755"
     },
     {
       "path": "scripts/generate_catalogs.mjs",
@@ -2189,6 +2374,12 @@
       "path": "scripts/verify_wlk220_industrial.mjs",
       "sha256": "6db59019945eb071006794ccd2eb0d97279f24963a9efeb2b71a055b0f310f6c",
       "size": 19641,
+      "mode": "100644"
+    },
+    {
+      "path": "spooles.out",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
       "mode": "100644"
     },
     {
@@ -3903,8 +4094,8 @@
     },
     {
       "path": "src/playground/CameraEngineeringGrader.ts",
-      "sha256": "5b0e7bebb2e3524f4a544954217ebdab831b0edb8c9701adb1a02f3ac07a4a0e",
-      "size": 50554,
+      "sha256": "ad6aeaca3a93ffc8040d970099880c120fc27f3b9bd4c9e38bc8b7284df57e2d",
+      "size": 50754,
       "mode": "100644"
     },
     {
@@ -3915,8 +4106,32 @@
     },
     {
       "path": "src/playground/PlyaVerificationPipeline.ts",
-      "sha256": "2d264f1016cb16d30d70d10bbb61413a95066f99a0b0712c24d5be90b8e0c7a6",
-      "size": 61809,
+      "sha256": "6011d68309f223b2201758903407f13285debc97bb51b00811a52cbfd5cca7a7",
+      "size": 24170,
+      "mode": "100644"
+    },
+    {
+      "path": "src/playground/exam_core/BrowserPhysicsSolvers.ts",
+      "sha256": "83b90ac94ee451e4d9ae7076e13ecfedfbe1e8b5ad3b5cf5f8cdc7e28adfcd65",
+      "size": 86880,
+      "mode": "100644"
+    },
+    {
+      "path": "src/playground/exam_core/ExactMeshBvh.ts",
+      "sha256": "93313fd041a11aeac0293146367c41d77d466d261a746d66e8e8bdebc16ab6c0",
+      "size": 23231,
+      "mode": "100644"
+    },
+    {
+      "path": "src/playground/exam_core/ExamPlaygroundWorker.ts",
+      "sha256": "0aa92c29b62ab460051445b3bd8ad904cb59821d1c794f49db95bd1b82e99ff7",
+      "size": 921,
+      "mode": "100644"
+    },
+    {
+      "path": "src/playground/exam_core/MaterialPhysicsDb.ts",
+      "sha256": "da580066e923663be2aa50f92edca76ed206c6dd23697509fefafda0f27cf246",
+      "size": 11094,
       "mode": "100644"
     },
     {

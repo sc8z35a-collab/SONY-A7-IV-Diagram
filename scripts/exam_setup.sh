@@ -30,6 +30,7 @@ if [[ "${SKIP_APT}" != "1" ]]; then
     # 3. Dual SPICE Circuit Simulators & Industrial EDA
     ngspice
     gnucap
+    gnucap-default-plugins0
     kicad
     # 4. Multiphysics PDE FEM (Electromagnetics, Acoustics, Thermal)
     freefem++
@@ -91,7 +92,7 @@ compile_harness() {
     return 0
   fi
   echo "[TLX-SETUP] Compiling C++ native harness: ${name}..."
-  g++ -O3 -std=c++17 -DNDEBUG "${src}" -o "${out}" "$@"
+  g++ -O3 -DNDEBUG "${src}" -o "${out}" "$@" -std=c++17
   chmod +x "${out}"
 }
 
