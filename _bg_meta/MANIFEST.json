@@ -1,12 +1,12 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T01:27:35.297Z",
+  "createdAt": "2026-11-28T01:32:22.998Z",
   "slug": "main",
   "branch": "main",
   "baseSha": "ef7b83d662408f9bec7a1cfca6c51ab468bae4d6",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "8d3ac819f4593ea5e1cd31ff392d1518ed28fafdd64df6792a5d7aeede289533",
+  "fingerprint": "41313ad1b0038327b465a0f4f66135a4b71f77e6698efafb5c01d056779ff656",
   "fileCount": 813,
   "deletedFiles": [],
   "dirtyCount": 0,
@@ -24,13 +24,13 @@
     },
     {
       "name": "implementation_plan.md",
-      "sha256": "ce1236c0d0df26f7eaa9f1b42743b9174c963d364a24252ebb72d046b1239f68",
-      "size": 15855
+      "sha256": "898b189318875695729a1a5daee68bc03c6a61a7e588dd23b8b336aad5107cf7",
+      "size": 11396
     },
     {
       "name": "implementation_plan.md.metadata.json",
-      "sha256": "e9e43132f8d1229ea9a8b5e34bf8dbd597ed0d593da54dc92376d314da601486",
-      "size": 391
+      "sha256": "57abb0d605092c8b2536d74840e5aa0ff7266ca99e69b885635523ddf7a1cf0e",
+      "size": 353
     },
     {
       "name": "walkthrough.md",
