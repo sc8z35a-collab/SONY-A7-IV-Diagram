@@ -12,5 +12,5 @@
 - Add project-specific module tables, data schemas, and adapter hooks (`adapter` field in `.flowrc.json`) here in terse pipe-delimited `FLOW-SPEC/v1.1` format.
 
 ## @VERIFICATION_CONTRACT
-- Self-proof: `node scripts/flow_os/flow.mjs selftest` (runs `SEC-12` 46-attack Red-Team + `permit selftest` + `sandbox selftest` + `swarm selftest` + `macro selftest` + `doc audit --strict`).
+- Self-proof: `node scripts/flow_os/flow.mjs selftest` (runs `SEC-12` 48-attack Red-Team + `permit` + `sandbox` + `oidc` + `swarm` + `macro` + `doc audit --strict`).
 - Automation: `node scripts/flow_os/flow.mjs auto list` & `node scripts/flow_os/flow.mjs macro list`.
