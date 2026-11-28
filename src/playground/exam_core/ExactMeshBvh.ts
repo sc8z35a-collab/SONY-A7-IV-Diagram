@@ -509,6 +509,26 @@ export function queryMeshPairExact(
     }
   }
 
+  if (!colliding) {
+    const ovX = Math.min(A.box[3], B.box[3]) - Math.max(A.box[0], B.box[0]);
+    const ovY = Math.min(A.box[4], B.box[4]) - Math.max(A.box[1], B.box[1]);
+    const ovZ = Math.min(A.box[5], B.box[5]) - Math.max(A.box[2], B.box[2]);
+    if (ovX > 0.4 && ovY > 0.4 && ovZ > 0.4) {
+      const cAx = 0.5 * (A.box[0] + A.box[3]);
+      const cAy = 0.5 * (A.box[1] + A.box[4]);
+      const cAz = 0.5 * (A.box[2] + A.box[5]);
+      const cBx = 0.5 * (B.box[0] + B.box[3]);
+      const cBy = 0.5 * (B.box[1] + B.box[4]);
+      const cBz = 0.5 * (B.box[2] + B.box[5]);
+      if (pointInsideMeshBvh(B, cAx, cAy, cAz) || pointInsideMeshBvh(A, cBx, cBy, cBz)) {
+        colliding = true;
+        bestDistSq = 0;
+        pA[0] = cAx; pA[1] = cAy; pA[2] = cAz;
+        pB[0] = cBx; pB[1] = cBy; pB[2] = cBz;
+      }
+    }
+  }
+
   const dx = pB[0] - pA[0], dy = pB[1] - pA[1], dz = pB[2] - pA[2];
   const dl = Math.hypot(dx, dy, dz);
   const nx = dl > 1e-6 ? dx / dl : 0;
@@ -522,6 +542,72 @@ export function queryMeshPairExact(
     pointB: pB,
     normal: [nx, ny, nz],
   };
+}
+
+/**
+ * Odd-even Jordan ray-parity test for watertight solid containment.
+ */
+function pointInsideMeshBvh(bvh: WorldMeshBvh, ox: number, oy: number, oz: number): boolean {
+  if (bvh.triCount < 4) return false;
+  if (
+    ox < bvh.box[0] || ox > bvh.box[3] ||
+    oy < bvh.box[1] || oy > bvh.box[4] ||
+    oz < bvh.box[2] || oz > bvh.box[5]
+  ) {
+    return false;
+  }
+  // Irrational oblique direction avoids hitting edges/vertices simultaneously
+  const dx = 0.731058, dy = 0.517213, dz = 0.444991;
+  const invX = 1.0 / dx, invY = 1.0 / dy, invZ = 1.0 / dz;
+  let hits = 0;
+  const stack = new Int32Array(64);
+  let sp = 0;
+  stack[sp++] = 0;
+
+  while (sp > 0) {
+    const ni = stack[--sp];
+    const bo = ni * 6;
+    const t1 = (bvh.nodeBounds[bo] - ox) * invX;
+    const t2 = (bvh.nodeBounds[bo + 3] - ox) * invX;
+    const t3 = (bvh.nodeBounds[bo + 1] - oy) * invY;
+    const t4 = (bvh.nodeBounds[bo + 4] - oy) * invY;
+    const t5 = (bvh.nodeBounds[bo + 2] - oz) * invZ;
+    const t6 = (bvh.nodeBounds[bo + 5] - oz) * invZ;
+    const tEnter = Math.max(Math.min(t1, t2), Math.min(t3, t4), Math.min(t5, t6));
+    const tExit = Math.min(Math.max(t1, t2), Math.max(t3, t4), Math.max(t5, t6));
+    if (tExit < 1e-4 || tExit < tEnter) continue;
+
+    const left = bvh.nodeLeft[ni];
+    if (left < 0) {
+      const start = -left - 1, cnt = bvh.nodeRight[ni];
+      for (let i = 0; i < cnt; i++) {
+        const o = bvh.triOrder[start + i] * 9;
+        const ax = bvh.tris[o], ay = bvh.tris[o + 1], az = bvh.tris[o + 2];
+        const e1x = bvh.tris[o + 3] - ax, e1y = bvh.tris[o + 4] - ay, e1z = bvh.tris[o + 5] - az;
+        const e2x = bvh.tris[o + 6] - ax, e2y = bvh.tris[o + 7] - ay, e2z = bvh.tris[o + 8] - az;
+        const hx = dy * e2z - dz * e2y;
+        const hy = dz * e2x - dx * e2z;
+        const hz = dx * e2y - dy * e2x;
+        const a = e1x * hx + e1y * hy + e1z * hz;
+        if (Math.abs(a) < 1e-9) continue;
+        const f = 1.0 / a;
+        const sx = ox - ax, sy = oy - ay, sz = oz - az;
+        const u = f * (sx * hx + sy * hy + sz * hz);
+        if (u < 0 || u > 1) continue;
+        const qx = sy * e1z - sz * e1y;
+        const qy = sz * e1x - sx * e1z;
+        const qz = sx * e1y - sy * e1x;
+        const v = f * (dx * qx + dy * qy + dz * qz);
+        if (v < 0 || u + v > 1) continue;
+        const t = f * (e2x * qx + e2y * qy + e2z * qz);
+        if (t > 1e-4) hits++;
+      }
+    } else if (sp + 2 <= stack.length) {
+      stack[sp++] = left;
+      stack[sp++] = bvh.nodeRight[ni];
+    }
+  }
+  return (hits & 1) === 1;
 }
 
 /**

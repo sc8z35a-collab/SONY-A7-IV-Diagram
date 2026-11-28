@@ -20,7 +20,7 @@ import crypto from 'node:crypto';
 import { buildBoxMesh } from '../../spatial_engine/exact_geometry.mjs';
 import { PART_FLAGS, writeTlxmBinary } from '../ir_compiler.mjs';
 import { resolveMaterialPhysics } from '../shared/material_physics_db.mjs';
-import { ENGINES } from '../test_registry.mjs';
+import { ENGINES, TESTS_BY_ENGINE } from '../test_registry.mjs';
 import { runEngineDag } from '../scheduler.mjs';
 import { evaluateCrossSolverLocks } from './cross_solver_lock.mjs';
 
@@ -167,8 +167,15 @@ export async function runSelfTestOracle(runners) {
     const r = healthyRes[eng.id];
     const hasErr = Boolean(r?.error);
     const critFails = (r?.tests || []).filter((t) => t.status === 'FAIL' || t.status === 'ERR');
-    rec(`HEALTHY_${eng.id}`, 'PASS', (!hasErr && critFails.length === 0) ? 'PASS' : 'FAIL',
-      hasErr ? r.error.slice(0, 120) : critFails.map((f) => `${f.id}:${f.metric}=${f.actual}`).slice(0, 3).join(','));
+    const expectedIds = (TESTS_BY_ENGINE[eng.id] || []).map((t) => t.id);
+    const emittedIds = (r?.tests || []).map((t) => t.id);
+    const idsAligned = expectedIds.length === emittedIds.length && expectedIds.every((id, i) => id === emittedIds[i]);
+    rec(`HEALTHY_${eng.id}`, 'PASS', (!hasErr && critFails.length === 0 && idsAligned) ? 'PASS' : 'FAIL',
+      hasErr
+        ? r.error.slice(0, 120)
+        : !idsAligned
+          ? `id_mismatch(${emittedIds[0]}..${emittedIds.at(-1)} vs ${expectedIds[0]}..${expectedIds.at(-1)})`
+          : critFails.map((f) => `${f.id}:${f.metric}=${f.actual}`).slice(0, 3).join(','));
   }
   for (const lk of healthyLocks) {
     rec(`HEALTHY_LOCK_${lk.id}`, 'PASS', lk.ok ? 'PASS' : 'FAIL', `${lk.aVal} vs ${lk.bVal} rel=${lk.relErrPct}%`);
@@ -212,9 +219,9 @@ export async function runSelfTestOracle(runners) {
     rec('INJECT_FLOAT_GAP_T026', 'FAIL', byId.get('T026')?.status, `gap=${byId.get('T026')?.actual}`);
     rec('INJECT_FLOAT_BULLET_T147', 'FAIL', byId.get('T147')?.status, `fall=${byId.get('T147')?.actual}`);
     rec('INJECT_FLOAT_ODE_T153', 'FAIL', byId.get('T153')?.status, `fall=${byId.get('T153')?.actual}`);
-    rec('INJECT_FLOAT_TIM_T272', 'FAIL', byId.get('T272')?.status, `tim=${byId.get('T272')?.actual}`);
-    rec('INJECT_FLOAT_OPEN_T290', 'FAIL', byId.get('T290')?.status, `open=${byId.get('T290')?.actual}`);
-    rec('INJECT_FLOAT_Z3_T475', 'FAIL', byId.get('T475')?.status, `gnd=${byId.get('T475')?.actual}`);
+    rec('INJECT_FLOAT_TIM_T290', 'FAIL', byId.get('T290')?.status, `tim=${byId.get('T290')?.actual}`);
+    rec('INJECT_FLOAT_OPEN_T308', 'FAIL', byId.get('T308')?.status, `open=${byId.get('T308')?.actual}`);
+    rec('INJECT_FLOAT_Z3_T435', 'FAIL', byId.get('T435')?.status, `gnd=${byId.get('T435')?.actual}`);
   }
 
   // Defect 3: Bare Magnesium AZ91D directly seated against Bare Copper C1100 (ΔE° = 1.25V!)
@@ -224,8 +231,8 @@ export async function runSelfTestOracle(runners) {
     specs[4].matKey = 'copperHeatSpreader';
     specs[5].matKey = 'copperHeatSpreader'; // direct bridge touching Mg base
     const { byId } = await runDefect('galvanic', specs, ['EX01', 'EX02', 'EX29', 'EX15', 'EX34']);
-    rec('INJECT_GALV_SEV_T495', 'FAIL', byId.get('T495')?.status, `sev=${byId.get('T495')?.actual}`);
-    rec('INJECT_GALV_MGCU_T496', 'FAIL', byId.get('T496')?.status, `mgcu=${byId.get('T496')?.actual}`);
+    rec('INJECT_GALV_SEV_T455', 'FAIL', byId.get('T455')?.status, `sev=${byId.get('T455')?.actual}`);
+    rec('INJECT_GALV_MGCU_T456', 'FAIL', byId.get('T456')?.status, `mgcu=${byId.get('T456')?.actual}`);
   }
 
   // Defect 4: 0.12mm razor-thin CNC metal wall + inside-out inverted shell
@@ -267,7 +274,7 @@ export async function runSelfTestOracle(runners) {
   {
     const specs = goldenHealthySpecs();
     const { byId } = await runDefect('bom', specs, ['EX23'], { declaredPartCount: 99 });
-    rec('INJECT_BOM_MISMATCH_T439', 'FAIL', byId.get('T439')?.status, `cnt=${byId.get('T439')?.actual}`);
+    rec('INJECT_BOM_MISMATCH_T495', 'FAIL', byId.get('T495')?.status, `cnt=${byId.get('T495')?.actual}`);
   }
 
   const passed = checks.filter((c) => c.pass).length;

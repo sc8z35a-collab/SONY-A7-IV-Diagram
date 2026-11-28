@@ -37,7 +37,7 @@ export async function ensureThermalSpiceEda(ctx) {
 }
 
 // ============================================================================
-// EX29 (T329..T346): OpenFOAM 1912 3D CFD Natural Convection Thermal-Fluid
+// EX29 (T267..T284): OpenFOAM 1912 3D CFD Natural Convection Thermal-Fluid
 // ============================================================================
 export async function runEX29(ctx) {
   const cfd = await ensureCfdResult(ctx);
@@ -49,24 +49,24 @@ export async function runEX29(ctx) {
   const dp = Number(cfd.louverDpPa ?? 0);
 
   const tests = [
-    makeTestResult('T329', cfd.meshOk ? 'PASS' : 'FAIL', { metric: 'of_mesh_ok', actual: cfd.meshOk ? 1 : 0, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T330', cfd.solverConverged ? 'PASS' : 'FAIL', { metric: 'of_converged', actual: cfd.solverConverged ? 1 : 0, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T331', tAir <= 55.0 ? 'PASS' : 'FAIL', { metric: 'of_air_max_c', actual: tAir, op: '<=', limit: 55.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T332', plume >= 0.02 ? 'PASS' : 'FAIL', { metric: 'of_plume_ms', actual: plume, op: '>=', limit: 0.02, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T333', dp <= 15.0 ? 'PASS' : 'FAIL', { metric: 'of_louver_dp_pa', actual: dp, op: '<=', limit: 15.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T334', balErr <= 5.0 ? 'PASS' : 'FAIL', { metric: 'of_heat_err_pct', actual: balErr, op: '<=', limit: 5.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T335', hEff >= 4.0 && hEff <= 35.0 ? 'PASS' : 'FAIL', { metric: 'of_heff_wm2k', actual: hEff, op: '>=', limit: 4.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T336', tAir <= 60.0 ? 'PASS' : 'FAIL', { metric: 'of_stagnation_c', actual: tAir, op: '<=', limit: 60.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T337', plume > 0 ? 'PASS' : 'FAIL', { metric: 'of_fin_flow_ok', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T338', true ? 'PASS' : 'FAIL', { metric: 'of_recirc_0', actual: 0, op: '==', limit: 0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T339', tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'of_tsurf_c', actual: tSurf, op: '<=', limit: 48.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T340', Number(cfd.tSurf40C || 99) <= 58.0 ? 'PASS' : 'FAIL', { metric: 'of_tsurf40_c', actual: Number(cfd.tSurf40C || 99), op: '<=', limit: 58.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T341', Number(cfd.finalContErr || 0) <= 1e-2 ? 'PASS' : 'FAIL', { metric: 'of_cont_err', actual: Number(cfd.finalContErr || 0), op: '<=', limit: 1e-2, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T342', cfd.solverConverged ? 'PASS' : 'FAIL', { metric: 'of_stable', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T343', Number(cfd.hRadWm2K || 0) > 1.0 ? 'PASS' : 'FAIL', { metric: 'of_hrad_wm2k', actual: Number(cfd.hRadWm2K || 0), op: '>', limit: 1.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T344', plume < 3.0 ? 'PASS' : 'FAIL', { metric: 'of_whistle_ms', actual: plume, op: '<', limit: 3.0, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T345', hEff > 0 ? 'PASS' : 'FAIL', { metric: 'of_htc_export', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
-    makeTestResult('T346', Number(cfd.maxNonOrthoDeg || 0) <= 75.0 ? 'PASS' : 'FAIL', { metric: 'of_nonortho_deg', actual: Number(cfd.maxNonOrthoDeg || 0), op: '<=', limit: 75.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T267', cfd.meshOk ? 'PASS' : 'FAIL', { metric: 'of_mesh_ok', actual: cfd.meshOk ? 1 : 0, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T268', cfd.solverConverged ? 'PASS' : 'FAIL', { metric: 'of_converged', actual: cfd.solverConverged ? 1 : 0, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T269', tAir <= 55.0 ? 'PASS' : 'FAIL', { metric: 'of_air_max_c', actual: tAir, op: '<=', limit: 55.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T270', plume >= 0.02 ? 'PASS' : 'FAIL', { metric: 'of_plume_ms', actual: plume, op: '>=', limit: 0.02, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T271', dp <= 15.0 ? 'PASS' : 'FAIL', { metric: 'of_louver_dp_pa', actual: dp, op: '<=', limit: 15.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T272', balErr <= 5.0 ? 'PASS' : 'FAIL', { metric: 'of_heat_err_pct', actual: balErr, op: '<=', limit: 5.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T273', hEff >= 4.0 && hEff <= 35.0 ? 'PASS' : 'FAIL', { metric: 'of_heff_wm2k', actual: hEff, op: '>=', limit: 4.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T274', tAir <= 60.0 ? 'PASS' : 'FAIL', { metric: 'of_stagnation_c', actual: tAir, op: '<=', limit: 60.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T275', plume > 0 ? 'PASS' : 'FAIL', { metric: 'of_fin_flow_ok', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T276', true ? 'PASS' : 'FAIL', { metric: 'of_recirc_0', actual: 0, op: '==', limit: 0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T277', tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'of_tsurf_c', actual: tSurf, op: '<=', limit: 48.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T278', Number(cfd.tSurf40C || 99) <= 58.0 ? 'PASS' : 'FAIL', { metric: 'of_tsurf40_c', actual: Number(cfd.tSurf40C || 99), op: '<=', limit: 58.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T279', Number(cfd.finalContErr || 0) <= 1e-2 ? 'PASS' : 'FAIL', { metric: 'of_cont_err', actual: Number(cfd.finalContErr || 0), op: '<=', limit: 1e-2, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T280', cfd.solverConverged ? 'PASS' : 'FAIL', { metric: 'of_stable', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T281', Number(cfd.hRadWm2K || 0) > 1.0 ? 'PASS' : 'FAIL', { metric: 'of_hrad_wm2k', actual: Number(cfd.hRadWm2K || 0), op: '>', limit: 1.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T282', plume < 3.0 ? 'PASS' : 'FAIL', { metric: 'of_whistle_ms', actual: plume, op: '<', limit: 3.0, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T283', hEff > 0 ? 'PASS' : 'FAIL', { metric: 'of_htc_export', actual: 1, op: '==', limit: 1, sv: 'OPENFOAM_1912' }),
+    makeTestResult('T284', Number(cfd.maxNonOrthoDeg || 0) <= 75.0 ? 'PASS' : 'FAIL', { metric: 'of_nonortho_deg', actual: Number(cfd.maxNonOrthoDeg || 0), op: '<=', limit: 75.0, sv: 'OPENFOAM_1912' }),
   ];
 
   return {
@@ -78,7 +78,7 @@ export async function runEX29(ctx) {
 }
 
 // ============================================================================
-// EX15 (T267..T282): CalculiX *HEAT TRANSFER 3D FEA + Air-Gap Thermal Matrix
+// EX15 (T285..T300): CalculiX *HEAT TRANSFER 3D FEA + Air-Gap Thermal Matrix
 // ============================================================================
 export async function runEX15(ctx) {
   const tse = await ensureThermalSpiceEda(ctx);
@@ -93,22 +93,22 @@ export async function runEX15(ctx) {
   const cfdDelta = Math.abs(tSurf - Number(cfd.tSurfC ?? tSurf));
 
   const tests = [
-    makeTestResult('T267', th.ccxConverged ? 'PASS' : 'FAIL', { metric: 'ccx_heat_conv', actual: th.ccxConverged ? 1 : 0, op: '==', limit: 1, sv: 'CCX_2.21' }),
-    makeTestResult('T268', tj <= 65.0 ? 'PASS' : 'FAIL', { metric: 'tj_nom_c', actual: tj, op: '<=', limit: 65.0, fix: tj > 65 ? 'THERM:heatsink:tim_gap<=0.04' : 'NONE', sv: 'CCX+SCIPY' }),
-    makeTestResult('T269', tj45 <= 85.0 ? 'PASS' : 'FAIL', { metric: 'tj_45c_amb', actual: tj45, op: '<=', limit: 85.0, sv: 'CCX+SCIPY' }),
-    makeTestResult('T270', tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'tsurf_iec_c', actual: tSurf, op: '<=', limit: 48.0, sv: 'CCX+OPENFOAM' }),
-    makeTestResult('T271', tBatt <= 45.0 ? 'PASS' : 'FAIL', { metric: 'tbatt_c', actual: tBatt, op: '<=', limit: 45.0, sv: 'SCIPY' }),
-    makeTestResult('T272', floatTim === 0 ? 'PASS' : 'FAIL', { metric: 'float_tim_hs', actual: floatTim, op: '==', limit: 0, fix: floatTim > 0 ? 'THERM:tim:seat_gap<=0.08' : 'NONE', sv: 'FCL+SCIPY' }),
-    makeTestResult('T273', floatTim === 0 ? 'PASS' : 'FAIL', { metric: 'heatpipe_seat', actual: floatTim === 0 ? 1 : 0, op: '==', limit: 1, sv: 'FCL+SCIPY' }),
-    makeTestResult('T274', tBatt <= 45.0 ? 'PASS' : 'FAIL', { metric: 'sens_temp_c', actual: tBatt, op: '<=', limit: 45.0, sv: 'SCIPY' }),
-    makeTestResult('T275', (tj + 12.0) <= 85.0 ? 'PASS' : 'FAIL', { metric: 'peak_burst_tj', actual: Number((tj + 12.0).toFixed(1)), op: '<=', limit: 85.0, sv: 'SCIPY' }),
-    makeTestResult('T276', true ? 'PASS' : 'FAIL', { metric: 'fin_eta', actual: 0.88, op: '>=', limit: 0.75, sv: 'CCX_2.21' }),
-    makeTestResult('T277', tj <= 100.0 ? 'PASS' : 'FAIL', { metric: 'pcb_hotspot_c', actual: tj, op: '<=', limit: 100.0, sv: 'SCIPY' }),
-    makeTestResult('T278', eErr <= 0.1 ? 'PASS' : 'FAIL', { metric: 'th_energy_err', actual: eErr, op: '<=', limit: 0.1, sv: 'SCIPY' }),
-    makeTestResult('T279', tj <= 85.0 ? 'PASS' : 'FAIL', { metric: 'no_runaway', actual: 1, op: '==', limit: 1, sv: 'SCIPY' }),
-    makeTestResult('T280', tSurf <= 70.0 ? 'PASS' : 'FAIL', { metric: 'optic_temp_c', actual: tSurf, op: '<=', limit: 70.0, sv: 'SCIPY' }),
-    makeTestResult('T281', cfdDelta <= 12.0 ? 'PASS' : 'WARN', { metric: 'cfd_fea_dT_c', actual: Number(cfdDelta.toFixed(2)), op: '<=', limit: 12.0, sv: 'OPENFOAM+CCX' }),
-    makeTestResult('T282', tj <= 65.0 && tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'cont_runtime_m', actual: tj <= 65.0 ? 180 : 45, op: '>=', limit: 120, sv: 'SCIPY' }),
+    makeTestResult('T285', th.ccxConverged ? 'PASS' : 'FAIL', { metric: 'ccx_heat_conv', actual: th.ccxConverged ? 1 : 0, op: '==', limit: 1, sv: 'CCX_2.21' }),
+    makeTestResult('T286', tj <= 65.0 ? 'PASS' : 'FAIL', { metric: 'tj_nom_c', actual: tj, op: '<=', limit: 65.0, fix: tj > 65 ? 'THERM:heatsink:tim_gap<=0.04' : 'NONE', sv: 'CCX+SCIPY' }),
+    makeTestResult('T287', tj45 <= 85.0 ? 'PASS' : 'FAIL', { metric: 'tj_45c_amb', actual: tj45, op: '<=', limit: 85.0, sv: 'CCX+SCIPY' }),
+    makeTestResult('T288', tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'tsurf_iec_c', actual: tSurf, op: '<=', limit: 48.0, sv: 'CCX+OPENFOAM' }),
+    makeTestResult('T289', tBatt <= 45.0 ? 'PASS' : 'FAIL', { metric: 'tbatt_c', actual: tBatt, op: '<=', limit: 45.0, sv: 'SCIPY' }),
+    makeTestResult('T290', floatTim === 0 ? 'PASS' : 'FAIL', { metric: 'float_tim_hs', actual: floatTim, op: '==', limit: 0, fix: floatTim > 0 ? 'THERM:tim:seat_gap<=0.08' : 'NONE', sv: 'FCL+SCIPY' }),
+    makeTestResult('T291', floatTim === 0 ? 'PASS' : 'FAIL', { metric: 'heatpipe_seat', actual: floatTim === 0 ? 1 : 0, op: '==', limit: 1, sv: 'FCL+SCIPY' }),
+    makeTestResult('T292', tBatt <= 45.0 ? 'PASS' : 'FAIL', { metric: 'sens_temp_c', actual: tBatt, op: '<=', limit: 45.0, sv: 'SCIPY' }),
+    makeTestResult('T293', (tj + 12.0) <= 85.0 ? 'PASS' : 'FAIL', { metric: 'peak_burst_tj', actual: Number((tj + 12.0).toFixed(1)), op: '<=', limit: 85.0, sv: 'SCIPY' }),
+    makeTestResult('T294', true ? 'PASS' : 'FAIL', { metric: 'fin_eta', actual: 0.88, op: '>=', limit: 0.75, sv: 'CCX_2.21' }),
+    makeTestResult('T295', tj <= 100.0 ? 'PASS' : 'FAIL', { metric: 'pcb_hotspot_c', actual: tj, op: '<=', limit: 100.0, sv: 'SCIPY' }),
+    makeTestResult('T296', eErr <= 0.1 ? 'PASS' : 'FAIL', { metric: 'th_energy_err', actual: eErr, op: '<=', limit: 0.1, sv: 'SCIPY' }),
+    makeTestResult('T297', tj <= 85.0 ? 'PASS' : 'FAIL', { metric: 'no_runaway', actual: 1, op: '==', limit: 1, sv: 'SCIPY' }),
+    makeTestResult('T298', tSurf <= 70.0 ? 'PASS' : 'FAIL', { metric: 'optic_temp_c', actual: tSurf, op: '<=', limit: 70.0, sv: 'SCIPY' }),
+    makeTestResult('T299', cfdDelta <= 12.0 ? 'PASS' : 'WARN', { metric: 'cfd_fea_dT_c', actual: Number(cfdDelta.toFixed(2)), op: '<=', limit: 12.0, sv: 'OPENFOAM+CCX' }),
+    makeTestResult('T300', tj <= 65.0 && tSurf <= 48.0 ? 'PASS' : 'FAIL', { metric: 'cont_runtime_m', actual: tj <= 65.0 ? 180 : 45, op: '>=', limit: 120, sv: 'SCIPY' }),
   ];
 
   return {
@@ -120,7 +120,7 @@ export async function runEX15(ctx) {
 }
 
 // ============================================================================
-// EX16 (T283..T300): Dual SPICE (ngspice 42 + gnucap) PDN, IR Drop, UPS, MC
+// EX16 (T301..T318): Dual SPICE (ngspice 42 + gnucap) PDN, IR Drop, UPS, MC
 // ============================================================================
 export async function runEX16(ctx) {
   const tse = await ensureThermalSpiceEda(ctx);
@@ -134,24 +134,24 @@ export async function runEX16(ctx) {
   const dualErrPct = Math.abs((sp.ngVfar || 0) - (sp.gcVfar || 0)) / Math.max(0.1, sp.ngVfar || 1) * 100.0;
 
   const tests = [
-    makeTestResult('T283', sp.ngConverged ? 'PASS' : 'FAIL', { metric: 'ngspice_conv', actual: sp.ngConverged ? 1 : 0, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T284', sp.gcConverged ? 'PASS' : 'FAIL', { metric: 'gnucap_conv', actual: sp.gcConverged ? 1 : 0, op: '==', limit: 1, sv: 'GNUCAP' }),
-    makeTestResult('T285', irMv <= 250.0 ? 'PASS' : 'FAIL', { metric: 'ir_drop_mv', actual: irMv, op: '<=', limit: 250.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T286', vFar >= vBus * 0.94 ? 'PASS' : 'FAIL', { metric: 'vfar_v', actual: vFar, op: '>=', limit: Number((vBus * 0.94).toFixed(2)), sv: 'NGSPICE_42' }),
-    makeTestResult('T287', v3v3 >= 3.22 ? 'PASS' : 'FAIL', { metric: 'v3v3_min_v', actual: v3v3, op: '>=', limit: 3.22, sv: 'NGSPICE_42' }),
-    makeTestResult('T288', Number(sp.ngVfarMin ?? 0) >= vBus * 0.90 ? 'PASS' : 'FAIL', { metric: 'ups_min_v', actual: Number(sp.ngVfarMin ?? 0), op: '>=', limit: Number((vBus * 0.90).toFixed(2)), sv: 'NGSPICE_42' }),
-    makeTestResult('T289', ripMv <= 60.0 ? 'PASS' : 'FAIL', { metric: 'pwm_rip_mvpp', actual: ripMv, op: '<=', limit: 60.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T290', openC === 0 ? 'PASS' : 'FAIL', { metric: 'open_conductors', actual: openC, op: '==', limit: 0, fix: openC > 0 ? 'SHIFT:conductor:seat<=0.08' : 'NONE', sv: 'FCL+NGSPICE' }),
-    makeTestResult('T291', irMv <= 250.0 ? 'PASS' : 'FAIL', { metric: 'z_pdn_ohm', actual: Number((irMv / 1000.0).toFixed(4)), op: '<=', limit: 0.25, sv: 'NGSPICE_42' }),
-    makeTestResult('T292', true ? 'PASS' : 'FAIL', { metric: 'inrush_ratio', actual: 1.8, op: '<=', limit: 2.5, sv: 'NGSPICE_42' }),
-    makeTestResult('T293', (vFar / Math.max(1, vBus)) >= 0.82 ? 'PASS' : 'FAIL', { metric: 'eff_pct', actual: Number(((vFar / Math.max(1, vBus)) * 100).toFixed(1)), op: '>=', limit: 82.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T294', Number(sp.mcPassPct ?? 0) >= 99.0 ? 'PASS' : 'FAIL', { metric: 'spice_mc100_pct', actual: Number(sp.mcPassPct ?? 0), op: '>=', limit: 99.0, sv: 'NGSPICE+NUMPY', expandedCount: 100 }),
-    makeTestResult('T295', v3v3 >= 3.22 ? 'PASS' : 'FAIL', { metric: 'temp_sweep_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T296', true ? 'PASS' : 'FAIL', { metric: 'curr_dens_amm2', actual: 1.8, op: '<=', limit: 5.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T297', true ? 'PASS' : 'FAIL', { metric: 'decoup_esr_ohm', actual: 0.015, op: '<=', limit: 0.5, sv: 'NGSPICE_42' }),
-    makeTestResult('T298', true ? 'PASS' : 'FAIL', { metric: 'pwr_sum_match', actual: sp.spicePowerW, op: '>', limit: 0, sv: 'NGSPICE_42' }),
-    makeTestResult('T299', true ? 'PASS' : 'FAIL', { metric: 'quiescent_mw', actual: 12.0, op: '<=', limit: 100.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T300', dualErrPct <= 2.0 ? 'PASS' : 'FAIL', { metric: 'dual_spice_err', actual: Number(dualErrPct.toFixed(4)), op: '<=', limit: 2.0, sv: 'NGSPICE+GNUCAP' }),
+    makeTestResult('T301', sp.ngConverged ? 'PASS' : 'FAIL', { metric: 'ngspice_conv', actual: sp.ngConverged ? 1 : 0, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T302', sp.gcConverged ? 'PASS' : 'FAIL', { metric: 'gnucap_conv', actual: sp.gcConverged ? 1 : 0, op: '==', limit: 1, sv: 'GNUCAP' }),
+    makeTestResult('T303', irMv <= 250.0 ? 'PASS' : 'FAIL', { metric: 'ir_drop_mv', actual: irMv, op: '<=', limit: 250.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T304', vFar >= vBus * 0.94 ? 'PASS' : 'FAIL', { metric: 'vfar_v', actual: vFar, op: '>=', limit: Number((vBus * 0.94).toFixed(2)), sv: 'NGSPICE_42' }),
+    makeTestResult('T305', v3v3 >= 3.22 ? 'PASS' : 'FAIL', { metric: 'v3v3_min_v', actual: v3v3, op: '>=', limit: 3.22, sv: 'NGSPICE_42' }),
+    makeTestResult('T306', Number(sp.ngVfarMin ?? 0) >= vBus * 0.90 ? 'PASS' : 'FAIL', { metric: 'ups_min_v', actual: Number(sp.ngVfarMin ?? 0), op: '>=', limit: Number((vBus * 0.90).toFixed(2)), sv: 'NGSPICE_42' }),
+    makeTestResult('T307', ripMv <= 60.0 ? 'PASS' : 'FAIL', { metric: 'pwm_rip_mvpp', actual: ripMv, op: '<=', limit: 60.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T308', openC === 0 ? 'PASS' : 'FAIL', { metric: 'open_conductors', actual: openC, op: '==', limit: 0, fix: openC > 0 ? 'SHIFT:conductor:seat<=0.08' : 'NONE', sv: 'FCL+NGSPICE' }),
+    makeTestResult('T309', irMv <= 250.0 ? 'PASS' : 'FAIL', { metric: 'z_pdn_ohm', actual: Number((irMv / 1000.0).toFixed(4)), op: '<=', limit: 0.25, sv: 'NGSPICE_42' }),
+    makeTestResult('T310', true ? 'PASS' : 'FAIL', { metric: 'inrush_ratio', actual: 1.8, op: '<=', limit: 2.5, sv: 'NGSPICE_42' }),
+    makeTestResult('T311', (vFar / Math.max(1, vBus)) >= 0.82 ? 'PASS' : 'FAIL', { metric: 'eff_pct', actual: Number(((vFar / Math.max(1, vBus)) * 100).toFixed(1)), op: '>=', limit: 82.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T312', Number(sp.mcPassPct ?? 0) >= 99.0 ? 'PASS' : 'FAIL', { metric: 'spice_mc100_pct', actual: Number(sp.mcPassPct ?? 0), op: '>=', limit: 99.0, sv: 'NGSPICE+NUMPY', expandedCount: 100 }),
+    makeTestResult('T313', v3v3 >= 3.22 ? 'PASS' : 'FAIL', { metric: 'temp_sweep_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T314', true ? 'PASS' : 'FAIL', { metric: 'curr_dens_amm2', actual: 1.8, op: '<=', limit: 5.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T315', true ? 'PASS' : 'FAIL', { metric: 'decoup_esr_ohm', actual: 0.015, op: '<=', limit: 0.5, sv: 'NGSPICE_42' }),
+    makeTestResult('T316', true ? 'PASS' : 'FAIL', { metric: 'pwr_sum_match', actual: sp.spicePowerW, op: '>', limit: 0, sv: 'NGSPICE_42' }),
+    makeTestResult('T317', true ? 'PASS' : 'FAIL', { metric: 'quiescent_mw', actual: 12.0, op: '<=', limit: 100.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T318', dualErrPct <= 2.0 ? 'PASS' : 'FAIL', { metric: 'dual_spice_err', actual: Number(dualErrPct.toFixed(4)), op: '<=', limit: 2.0, sv: 'NGSPICE+GNUCAP' }),
   ];
 
   return {
@@ -163,7 +163,7 @@ export async function runEX16(ctx) {
 }
 
 // ============================================================================
-// EX17 (T301..T314): Real KiCad 7.0 ERC/DRC/Gerber & IEC 62368-1 3D Creepage
+// EX17 (T319..T332): Real KiCad 7.0 ERC/DRC/Gerber & IEC 62368-1 3D Creepage
 // ============================================================================
 export async function runEX17(ctx) {
   const { ir } = ctx;
@@ -185,20 +185,20 @@ export async function runEX17(ctx) {
   }
 
   const tests = [
-    makeTestResult('T301', kd.ercExit === 0 && kd.ercErrors === 0 ? 'PASS' : 'FAIL', { metric: 'kicad_erc_err', actual: kd.ercErrors ?? 99, op: '==', limit: 0, sv: 'KICAD_7.0' }),
-    makeTestResult('T302', kd.drcExit === 0 && kd.drcErrors === 0 ? 'PASS' : 'FAIL', { metric: 'kicad_drc_err', actual: kd.drcErrors ?? 99, op: '==', limit: 0, sv: 'KICAD_7.0' }),
-    makeTestResult('T303', (kd.gerberCount || 0) >= 2 ? 'PASS' : 'FAIL', { metric: 'gerber_files', actual: kd.gerberCount || 0, op: '>=', limit: 2, sv: 'KICAD_7.0' }),
-    makeTestResult('T304', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'iec_clear_ok', actual: chassisShorts === 0 ? 0.65 : 0.0, op: '>=', limit: 0.40, sv: 'CGAL+FCL' }),
-    makeTestResult('T305', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'iec_creep_mm', actual: chassisShorts === 0 ? 1.25 : 0.0, op: '>=', limit: 0.80, sv: 'CGAL' }),
-    makeTestResult('T306', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'chassis_shorts', actual: chassisShorts, op: '==', limit: 0, sv: 'FCL' }),
-    makeTestResult('T307', unseatedSmt.length === 0 ? 'PASS' : 'FAIL', { metric: 'unseated_smt', actual: unseatedSmt.length, op: '==', limit: 0, parts: unseatedSmt[0] ? [unseatedSmt[0].id] : [], src: unseatedSmt[0]?.srcLoc || '-', sv: 'FCL' }),
-    makeTestResult('T308', true ? 'PASS' : 'FAIL', { metric: 'trace_ampacity_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
-    makeTestResult('T309', true ? 'PASS' : 'FAIL', { metric: 'via_annular_mm', actual: 0.15, op: '>=', limit: 0.125, sv: 'KICAD_7.0' }),
-    makeTestResult('T310', (kd.drcErrors ?? 0) === 0 ? 'PASS' : 'FAIL', { metric: 'silk_overlap', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
-    makeTestResult('T311', (kd.drcErrors ?? 0) === 0 ? 'PASS' : 'FAIL', { metric: 'unconn_nets', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
-    makeTestResult('T312', true ? 'PASS' : 'FAIL', { metric: 'edge_cu_mm', actual: 0.50, op: '>=', limit: 0.30, sv: 'KICAD_7.0' }),
-    makeTestResult('T313', true ? 'PASS' : 'FAIL', { metric: 'refdes_uniq', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
-    makeTestResult('T314', true ? 'PASS' : 'FAIL', { metric: 'netlist_sync', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T319', kd.ercExit === 0 && kd.ercErrors === 0 ? 'PASS' : 'FAIL', { metric: 'kicad_erc_err', actual: kd.ercErrors ?? 99, op: '==', limit: 0, sv: 'KICAD_7.0' }),
+    makeTestResult('T320', kd.drcExit === 0 && kd.drcErrors === 0 ? 'PASS' : 'FAIL', { metric: 'kicad_drc_err', actual: kd.drcErrors ?? 99, op: '==', limit: 0, sv: 'KICAD_7.0' }),
+    makeTestResult('T321', (kd.gerberCount || 0) >= 2 ? 'PASS' : 'FAIL', { metric: 'gerber_files', actual: kd.gerberCount || 0, op: '>=', limit: 2, sv: 'KICAD_7.0' }),
+    makeTestResult('T322', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'iec_clear_ok', actual: chassisShorts === 0 ? 0.65 : 0.0, op: '>=', limit: 0.40, sv: 'CGAL+FCL' }),
+    makeTestResult('T323', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'iec_creep_mm', actual: chassisShorts === 0 ? 1.25 : 0.0, op: '>=', limit: 0.80, sv: 'CGAL' }),
+    makeTestResult('T324', chassisShorts === 0 ? 'PASS' : 'FAIL', { metric: 'chassis_shorts', actual: chassisShorts, op: '==', limit: 0, sv: 'FCL' }),
+    makeTestResult('T325', unseatedSmt.length === 0 ? 'PASS' : 'FAIL', { metric: 'unseated_smt', actual: unseatedSmt.length, op: '==', limit: 0, parts: unseatedSmt[0] ? [unseatedSmt[0].id] : [], src: unseatedSmt[0]?.srcLoc || '-', sv: 'FCL' }),
+    makeTestResult('T326', true ? 'PASS' : 'FAIL', { metric: 'trace_ampacity_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T327', true ? 'PASS' : 'FAIL', { metric: 'via_annular_mm', actual: 0.15, op: '>=', limit: 0.125, sv: 'KICAD_7.0' }),
+    makeTestResult('T328', (kd.drcErrors ?? 0) === 0 ? 'PASS' : 'FAIL', { metric: 'silk_overlap', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
+    makeTestResult('T329', (kd.drcErrors ?? 0) === 0 ? 'PASS' : 'FAIL', { metric: 'unconn_nets', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
+    makeTestResult('T330', true ? 'PASS' : 'FAIL', { metric: 'edge_cu_mm', actual: 0.50, op: '>=', limit: 0.30, sv: 'KICAD_7.0' }),
+    makeTestResult('T331', true ? 'PASS' : 'FAIL', { metric: 'refdes_uniq', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T332', true ? 'PASS' : 'FAIL', { metric: 'netlist_sync', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
   ];
 
   return {
@@ -210,7 +210,7 @@ export async function runEX17(ctx) {
 }
 
 // ============================================================================
-// EX30 (T347..T364): FCL 3D A* Obstacle-Avoiding Wiring + FreeFEM++ Transmission Line
+// EX30 (T333..T350): FCL 3D A* Obstacle-Avoiding Wiring + FreeFEM++ Transmission Line
 // ============================================================================
 export async function runEX30(ctx) {
   const fcl = await ensureFclResult(ctx);
@@ -223,28 +223,28 @@ export async function runEX30(ctx) {
   const zDiff = Number(ff.zDiffOhm || 95);
 
   const tests = [
-    makeTestResult('T347', failedRoutes.length === 0 ? 'PASS' : 'FAIL', {
+    makeTestResult('T333', failedRoutes.length === 0 ? 'PASS' : 'FAIL', {
       metric: 'unroutable_nets', actual: failedRoutes.length, op: '==', limit: 0,
       parts: failedRoutes[0] ? [ctx.ir.parts[failedRoutes[0].a]?.id, ctx.ir.parts[failedRoutes[0].b]?.id].filter(Boolean) : [],
       sv: 'FCL_ASTAR', expandedCount: Math.max(1, routes.length),
     }),
-    makeTestResult('T348', failedRoutes.length === 0 ? 'PASS' : 'FAIL', { metric: 'wall_pierce_0', actual: failedRoutes.length, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T349', badBend.length === 0 ? 'PASS' : 'WARN', { metric: 'tight_bend_nets', actual: badBend.length, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T350', maxRouted <= 320.0 ? 'PASS' : 'WARN', { metric: 'max_route_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 320.0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T351', maxRouted <= 350.0 ? 'PASS' : 'WARN', { metric: 'pcie_route_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 350.0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T352', maxRouted <= 500.0 ? 'PASS' : 'FAIL', { metric: 'canfd_len_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 500.0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T353', true ? 'PASS' : 'FAIL', { metric: 'pin_polarity_err', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
-    makeTestResult('T354', true ? 'PASS' : 'FAIL', { metric: 'net_short_0', actual: 0, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
-    makeTestResult('T355', ff.converged && zDiff >= 60.0 && zDiff <= 135.0 ? 'PASS' : 'FAIL', { metric: 'ff_zdiff_ohm', actual: zDiff, op: '>=', limit: 60.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T356', ff.converged ? 'PASS' : 'FAIL', { metric: 'ff_z0_ok', actual: Number((zDiff * 0.52).toFixed(1)), op: '>=', limit: 35.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T357', ff.converged ? 'PASS' : 'FAIL', { metric: 'xtalk_db', actual: -36.5, op: '<=', limit: -30.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T358', true ? 'PASS' : 'FAIL', { metric: 'diff_skew_ps', actual: 1.8, op: '<=', limit: 5.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T359', true ? 'PASS' : 'FAIL', { metric: 'conn_mate_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
-    makeTestResult('T360', true ? 'PASS' : 'FAIL', { metric: 'strain_rlf_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
-    makeTestResult('T361', true ? 'PASS' : 'FAIL', { metric: 'gnd_loop_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T362', true ? 'PASS' : 'FAIL', { metric: 'fpc_edge_clr', actual: 1, op: '==', limit: 1, sv: 'FCL_ASTAR' }),
-    makeTestResult('T363', true ? 'PASS' : 'FAIL', { metric: 'slack_10pct', actual: 1, op: '==', limit: 1, sv: 'FCL_ASTAR' }),
-    makeTestResult('T364', true ? 'PASS' : 'FAIL', { metric: 'awg_ampacity', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T334', failedRoutes.length === 0 ? 'PASS' : 'FAIL', { metric: 'wall_pierce_0', actual: failedRoutes.length, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T335', badBend.length === 0 ? 'PASS' : 'WARN', { metric: 'tight_bend_nets', actual: badBend.length, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T336', maxRouted <= 320.0 ? 'PASS' : 'WARN', { metric: 'max_route_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 320.0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T337', maxRouted <= 350.0 ? 'PASS' : 'WARN', { metric: 'pcie_route_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 350.0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T338', maxRouted <= 500.0 ? 'PASS' : 'FAIL', { metric: 'canfd_len_mm', actual: Number(maxRouted.toFixed(1)), op: '<=', limit: 500.0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T339', true ? 'PASS' : 'FAIL', { metric: 'pin_polarity_err', actual: 0, op: '==', limit: 0, sv: 'KICAD_7.0' }),
+    makeTestResult('T340', true ? 'PASS' : 'FAIL', { metric: 'net_short_0', actual: 0, op: '==', limit: 0, sv: 'FCL_ASTAR' }),
+    makeTestResult('T341', ff.converged && zDiff >= 60.0 && zDiff <= 135.0 ? 'PASS' : 'FAIL', { metric: 'ff_zdiff_ohm', actual: zDiff, op: '>=', limit: 60.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T342', ff.converged ? 'PASS' : 'FAIL', { metric: 'ff_z0_ok', actual: Number((zDiff * 0.52).toFixed(1)), op: '>=', limit: 35.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T343', ff.converged ? 'PASS' : 'FAIL', { metric: 'xtalk_db', actual: -36.5, op: '<=', limit: -30.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T344', true ? 'PASS' : 'FAIL', { metric: 'diff_skew_ps', actual: 1.8, op: '<=', limit: 5.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T345', true ? 'PASS' : 'FAIL', { metric: 'conn_mate_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T346', true ? 'PASS' : 'FAIL', { metric: 'strain_rlf_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
+    makeTestResult('T347', true ? 'PASS' : 'FAIL', { metric: 'gnd_loop_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T348', true ? 'PASS' : 'FAIL', { metric: 'fpc_edge_clr', actual: 1, op: '==', limit: 1, sv: 'FCL_ASTAR' }),
+    makeTestResult('T349', true ? 'PASS' : 'FAIL', { metric: 'slack_10pct', actual: 1, op: '==', limit: 1, sv: 'FCL_ASTAR' }),
+    makeTestResult('T350', true ? 'PASS' : 'FAIL', { metric: 'awg_ampacity', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
   ];
 
   return {
@@ -256,7 +256,7 @@ export async function runEX30(ctx) {
 }
 
 // ============================================================================
-// EX31 (T365..T380): Real ngspice Fault Injection FMEA / NetworkX FTA SPOF
+// EX31 (T351..T366): Real ngspice Fault Injection FMEA / NetworkX FTA SPOF
 // ============================================================================
 export async function runEX31(ctx) {
   const tse = await ensureThermalSpiceEda(ctx);
@@ -268,22 +268,22 @@ export async function runEX31(ctx) {
   const spof = Number(flt.unprotSpof ?? 0);
 
   const tests = [
-    makeTestResult('T365', ovpV <= 15.5 ? 'PASS' : 'FAIL', { metric: 'flt_ovp_clamp_v', actual: ovpV, op: '<=', limit: 15.5, sv: 'NGSPICE_42' }),
-    makeTestResult('T366', fuseI2t < wireI2t * 0.5 ? 'PASS' : 'FAIL', { metric: 'flt_short_i2t', actual: fuseI2t, op: '<', limit: wireI2t * 0.5, sv: 'NGSPICE_42' }),
-    makeTestResult('T367', revV <= 0.15 ? 'PASS' : 'FAIL', { metric: 'flt_rev_v', actual: revV, op: '<=', limit: 0.15, sv: 'NGSPICE_42' }),
-    makeTestResult('T368', ovpV <= 15.5 ? 'PASS' : 'FAIL', { metric: 'flt_esd_8kv_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T369', true ? 'PASS' : 'FAIL', { metric: 'flt_cell_open_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T370', true ? 'PASS' : 'FAIL', { metric: 'flt_cell_short_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T371', true ? 'PASS' : 'FAIL', { metric: 'flt_therm_cut_c', actual: 95.0, op: '<', limit: 105.0, sv: 'NGSPICE_42' }),
-    makeTestResult('T372', true ? 'PASS' : 'FAIL', { metric: 'flt_load_open_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T373', fuseI2t < wireI2t * 0.5 ? 'PASS' : 'FAIL', { metric: 'fuse_wire_ratio', actual: Number((fuseI2t / wireI2t).toFixed(3)), op: '<', limit: 0.5, sv: 'NGSPICE_42' }),
-    makeTestResult('T374', spof === 0 ? 'PASS' : 'FAIL', { metric: 'fta_unprot_spof', actual: spof, op: '==', limit: 0, sv: 'NX_FTA' }),
-    makeTestResult('T375', true ? 'PASS' : 'FAIL', { metric: 'flt_clk_fallback', actual: 1, op: '==', limit: 1, sv: 'NX_FTA' }),
-    makeTestResult('T376', true ? 'PASS' : 'FAIL', { metric: 'flt_bus_stuck_ok', actual: 1, op: '==', limit: 1, sv: 'NX_FTA' }),
-    makeTestResult('T377', true ? 'PASS' : 'FAIL', { metric: 'flt_gnd_lift_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T378', true ? 'PASS' : 'FAIL', { metric: 'flt_bor_clean', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
-    makeTestResult('T379', true ? 'PASS' : 'FAIL', { metric: 'fmea_max_rpn', actual: 42, op: '<=', limit: 80, sv: 'NX_FTA' }),
-    makeTestResult('T380', true ? 'PASS' : 'FAIL', { metric: 'bleed_cap_s', actual: 0.35, op: '<=', limit: 1.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T351', ovpV <= 15.5 ? 'PASS' : 'FAIL', { metric: 'flt_ovp_clamp_v', actual: ovpV, op: '<=', limit: 15.5, sv: 'NGSPICE_42' }),
+    makeTestResult('T352', fuseI2t < wireI2t * 0.5 ? 'PASS' : 'FAIL', { metric: 'flt_short_i2t', actual: fuseI2t, op: '<', limit: wireI2t * 0.5, sv: 'NGSPICE_42' }),
+    makeTestResult('T353', revV <= 0.15 ? 'PASS' : 'FAIL', { metric: 'flt_rev_v', actual: revV, op: '<=', limit: 0.15, sv: 'NGSPICE_42' }),
+    makeTestResult('T354', ovpV <= 15.5 ? 'PASS' : 'FAIL', { metric: 'flt_esd_8kv_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T355', true ? 'PASS' : 'FAIL', { metric: 'flt_cell_open_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T356', true ? 'PASS' : 'FAIL', { metric: 'flt_cell_short_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T357', true ? 'PASS' : 'FAIL', { metric: 'flt_therm_cut_c', actual: 95.0, op: '<', limit: 105.0, sv: 'NGSPICE_42' }),
+    makeTestResult('T358', true ? 'PASS' : 'FAIL', { metric: 'flt_load_open_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T359', fuseI2t < wireI2t * 0.5 ? 'PASS' : 'FAIL', { metric: 'fuse_wire_ratio', actual: Number((fuseI2t / wireI2t).toFixed(3)), op: '<', limit: 0.5, sv: 'NGSPICE_42' }),
+    makeTestResult('T360', spof === 0 ? 'PASS' : 'FAIL', { metric: 'fta_unprot_spof', actual: spof, op: '==', limit: 0, sv: 'NX_FTA' }),
+    makeTestResult('T361', true ? 'PASS' : 'FAIL', { metric: 'flt_clk_fallback', actual: 1, op: '==', limit: 1, sv: 'NX_FTA' }),
+    makeTestResult('T362', true ? 'PASS' : 'FAIL', { metric: 'flt_bus_stuck_ok', actual: 1, op: '==', limit: 1, sv: 'NX_FTA' }),
+    makeTestResult('T363', true ? 'PASS' : 'FAIL', { metric: 'flt_gnd_lift_ok', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T364', true ? 'PASS' : 'FAIL', { metric: 'flt_bor_clean', actual: 1, op: '==', limit: 1, sv: 'NGSPICE_42' }),
+    makeTestResult('T365', true ? 'PASS' : 'FAIL', { metric: 'fmea_max_rpn', actual: 42, op: '<=', limit: 80, sv: 'NX_FTA' }),
+    makeTestResult('T366', true ? 'PASS' : 'FAIL', { metric: 'bleed_cap_s', actual: 0.35, op: '<=', limit: 1.0, sv: 'NGSPICE_42' }),
   ];
 
   return {

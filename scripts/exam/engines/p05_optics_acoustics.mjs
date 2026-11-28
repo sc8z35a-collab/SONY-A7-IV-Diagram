@@ -29,7 +29,7 @@ export async function ensureOptAcFormChem(ctx) {
 }
 
 // ============================================================================
-// EX18 (T315..T328): FreeFEM++ EMC Shielding, Slot λ/20 & RF Clearance
+// EX18 (T367..T380): FreeFEM++ EMC Shielding, Slot λ/20 & RF Clearance
 // ============================================================================
 export async function runEX18(ctx) {
   const { ir } = ctx;
@@ -42,23 +42,23 @@ export async function runEX18(ctx) {
   const maxGap = ctx.cache.ex02Summary?.maxGapMm ?? 0;
 
   const tests = [
-    makeTestResult('T315', ff.converged ? 'PASS' : 'FAIL', { metric: 'ff_emc_conv', actual: ff.converged ? 1 : 0, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T316', seDb >= 40.0 ? 'PASS' : 'FAIL', { metric: 'shield_se_db', actual: seDb, op: '>=', limit: 40.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T317', maxGap <= 6.25 ? 'PASS' : 'FAIL', { metric: 'slot_len_mm', actual: Number(maxGap.toFixed(3)), op: '<=', limit: 6.25, sv: 'FREEFEM+FCL' }),
-    makeTestResult('T318', floatEmi.length === 0 ? 'PASS' : 'FAIL', {
+    makeTestResult('T367', ff.converged ? 'PASS' : 'FAIL', { metric: 'ff_emc_conv', actual: ff.converged ? 1 : 0, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T368', seDb >= 40.0 ? 'PASS' : 'FAIL', { metric: 'shield_se_db', actual: seDb, op: '>=', limit: 40.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T369', maxGap <= 6.25 ? 'PASS' : 'FAIL', { metric: 'slot_len_mm', actual: Number(maxGap.toFixed(3)), op: '<=', limit: 6.25, sv: 'FREEFEM+FCL' }),
+    makeTestResult('T370', floatEmi.length === 0 ? 'PASS' : 'FAIL', {
       metric: 'ungrounded_emi', actual: floatEmi.length, op: '==', limit: 0,
       parts: floatEmi[0] ? [floatEmi[0].id] : [], src: floatEmi[0]?.srcLoc || '-', sv: 'FCL+NX',
     }),
-    makeTestResult('T319', true ? 'PASS' : 'FAIL', { metric: 'rf_radome_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
-    makeTestResult('T320', true ? 'PASS' : 'FAIL', { metric: 'rf_detune_pct', actual: 1.2, op: '<=', limit: 3.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T321', true ? 'PASS' : 'FAIL', { metric: 'cispr32_margin_db', actual: 8.5, op: '>=', limit: 3.0, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T322', floatEmi.length === 0 ? 'PASS' : 'FAIL', { metric: 'gnd_imp_mohm', actual: floatEmi.length === 0 ? 12.0 : 999.0, op: '<=', limit: 25.0, sv: 'NX' }),
-    makeTestResult('T323', true ? 'PASS' : 'FAIL', { metric: 'esd_path_ok', actual: 1, op: '==', limit: 1, sv: 'NX' }),
-    makeTestResult('T324', true ? 'PASS' : 'FAIL', { metric: 'mag_stray_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T325', true ? 'PASS' : 'FAIL', { metric: 'cm_choke_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
-    makeTestResult('T326', true ? 'PASS' : 'FAIL', { metric: 'clk_io_sep_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
-    makeTestResult('T327', true ? 'PASS' : 'FAIL', { metric: 'rf_pitch_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
-    makeTestResult('T328', true ? 'PASS' : 'FAIL', { metric: 'shield_cov_pct', actual: 90, op: '>=', limit: 80, sv: 'FCL' }),
+    makeTestResult('T371', true ? 'PASS' : 'FAIL', { metric: 'rf_radome_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
+    makeTestResult('T372', true ? 'PASS' : 'FAIL', { metric: 'rf_detune_pct', actual: 1.2, op: '<=', limit: 3.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T373', true ? 'PASS' : 'FAIL', { metric: 'cispr32_margin_db', actual: 8.5, op: '>=', limit: 3.0, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T374', floatEmi.length === 0 ? 'PASS' : 'FAIL', { metric: 'gnd_imp_mohm', actual: floatEmi.length === 0 ? 12.0 : 999.0, op: '<=', limit: 25.0, sv: 'NX' }),
+    makeTestResult('T375', true ? 'PASS' : 'FAIL', { metric: 'esd_path_ok', actual: 1, op: '==', limit: 1, sv: 'NX' }),
+    makeTestResult('T376', true ? 'PASS' : 'FAIL', { metric: 'mag_stray_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T377', true ? 'PASS' : 'FAIL', { metric: 'cm_choke_ok', actual: 1, op: '==', limit: 1, sv: 'KICAD_7.0' }),
+    makeTestResult('T378', true ? 'PASS' : 'FAIL', { metric: 'clk_io_sep_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
+    makeTestResult('T379', true ? 'PASS' : 'FAIL', { metric: 'rf_pitch_ok', actual: 1, op: '==', limit: 1, sv: 'FREEFEM_4.13' }),
+    makeTestResult('T380', true ? 'PASS' : 'FAIL', { metric: 'shield_cov_pct', actual: 90, op: '>=', limit: 80, sv: 'FCL' }),
   ];
 
   return {

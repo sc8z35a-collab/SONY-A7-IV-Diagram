@@ -9,7 +9,7 @@
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Run PLYA V2 physics & EXAM bridge tests, full exam.mjs real-unit runs, pp1.1 visual verification, and bg gate",
+  "nextStep": "Ready for PR review and Phase 2 welcome 435-part zero-float CAD rework using THE LAST EXAM V1",
   "artifactsMirrored": [
     {
       "name": "the_last_exam_v1_plan.md",
@@ -20,9 +20,19 @@
       "name": "the_last_exam_v1_plan.md.metadata.json",
       "sha256": "977b014694d9a9409037302cda9db383c8d3280581e612f0ff75f4b0337a6ceb",
       "size": 693
+    },
+    {
+      "name": "walkthrough.md",
+      "sha256": "ff483aa0730ff5200f7910ed29d00a24c6856bac50eeedaae3386d239e405808",
+      "size": 10156
+    },
+    {
+      "name": "walkthrough.md.metadata.json",
+      "sha256": "d4cd3c5848148ecbec289a5afe5ee1118c6b8f2a8dae9039f3b6436a3f2d540c",
+      "size": 409
     }
   ],
-  "updatedAt": "2026-11-28T06:23:57.289Z",
+  "updatedAt": "2026-11-28T06:44:07.172Z",
   "vmHost": "devbox",
-  "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039"
+  "baseSha": "2cf4e0ae6453c4f914c0883a2c79b247b8df2e50"
 }

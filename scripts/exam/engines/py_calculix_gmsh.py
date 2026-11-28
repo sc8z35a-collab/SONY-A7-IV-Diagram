@@ -129,7 +129,7 @@ def parse_ccx_dat(dat_path):
 def run_ccx(job_base, inp_text):
     with open(job_base + ".inp", "w", encoding="utf-8") as f:
         f.write(inp_text)
-    p = subprocess.run(["ccx", "-i", job_base], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=180)
+    p = subprocess.run(["ccx", "-i", job_base], cwd=os.path.dirname(job_base), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=180)
     dat = parse_ccx_dat(job_base + ".dat")
     dat["exitCode"] = p.returncode
     dat["converged"] = (p.returncode == 0) and ("Job finished" in p.stdout)

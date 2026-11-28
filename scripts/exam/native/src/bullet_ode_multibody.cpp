@@ -159,10 +159,10 @@ OrientationResult runBulletOrientation(
     startTf.setIdentity();
     startTf.setOrigin(initPosM[i]);
 
-    double realMassKg = std::max(0.0005, p.massG * 0.001);
+    double realMassKg = std::max(1e-6, p.massG * 0.001);
     totalWeightN += realMassKg * gMag;
     // Seated grounded assembly acts as rigid fastened datum; any floating/ungrounded part is a free dynamic body!
-    double simMassKg = isGroundedComp[i] ? 0.0 : realMassKg;
+    double simMassKg = isGroundedComp[i] ? 0.0 : std::max(1e-4, realMassKg);
     btVector3 inertia(0, 0, 0);
     if (simMassKg > 0.0) shape->calculateLocalInertia(simMassKg, inertia);
 
@@ -225,7 +225,7 @@ BulletRunSummary runBulletSuite(const tlxm::SceneBin& scene, double contactBindM
   BulletRunSummary sum;
   double mSum = 0.0, cx = 0.0, cy = 0.0, cz = 0.0;
   for (const auto& p : scene.parts) {
-    double m = std::max(0.0005, p.massG * 0.001);
+    double m = std::max(1e-6, p.massG * 0.001);
     mSum += m;
     cx += p.cog[0] * m;
     cy += p.cog[1] * m;
@@ -351,7 +351,7 @@ OdeCrossCheck runOdeIndependentCrossCheck(const tlxm::SceneBin& scene, double co
   double mSum = 0.0, cx = 0.0, cy = 0.0, cz = 0.0;
   for (size_t i = 0; i < n; ++i) {
     const auto& p = scene.parts[i];
-    double mKg = std::max(0.0005, p.massG * 0.001);
+    double mKg = std::max(1e-6, p.massG * 0.001);
     mSum += mKg;
     cx += p.cog[0] * mKg;
     cy += p.cog[1] * mKg;
@@ -367,7 +367,7 @@ OdeCrossCheck runOdeIndependentCrossCheck(const tlxm::SceneBin& scene, double co
 
     bodies[i] = dBodyCreate(world);
     dMass dm;
-    dMassSetBoxTotal(&dm, mKg, lx, ly, lz);
+    dMassSetBoxTotal(&dm, std::max(1e-4, mKg), lx, ly, lz);
     dBodySetMass(bodies[i], &dm);
     dBodySetPosition(bodies[i], px, py, pz);
     dBodySetLinearDamping(bodies[i], 0.05);

@@ -632,11 +632,10 @@ export async function runEX05(ctx) {
     ir.runDir,
   ]);
 
-  const emptyParts = ir.parts.filter((p) => {
-    let t = 0;
-    for (let k = 0; k < p.meshCount; k++) t += ir.meshes[p.meshStart + k]?.triCount || 0;
-    return t < 4;
-  });
+  const emptyParts = (cgal.parts || [])
+    .filter((cp) => (cp.tris || 0) < 4)
+    .map((cp) => ir.parts[cp.partIdx])
+    .filter(Boolean);
   const openStruct = (cgal.parts || []).filter((cp) => {
     const p = ir.parts[cp.partIdx];
     return p && (p.flags & PART_FLAGS.CHASSIS) && !cp.closed && cp.borderEdges > 24;

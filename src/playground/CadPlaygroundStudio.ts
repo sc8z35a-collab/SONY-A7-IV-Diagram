@@ -1197,14 +1197,14 @@ export class CadPlaygroundStudio {
 
         <div class="pg-topbar-right">
           <label class="pg-snap-field pg-profile-field" title="カメラ設計プロファイル（採点基準を自由に切替）">
-            <span>設計目標</span>
+            <span>目標</span>
             <select data-field="profileSelect">${profileOptions}</select>
           </label>
           <label class="pg-snap-field pg-strictness-field" title="PLYA V2 (THE LAST EXAM V1継承) 厳格度モード">
-            <span>EXAM基準</span>
+            <span>EXAM</span>
             <select data-field="strictnessSelect">
-              <option value="design" selected>標準設計</option>
-              <option value="exam_strict">EXAM極限</option>
+              <option value="design" selected>標準</option>
+              <option value="exam_strict">極限</option>
             </select>
           </label>
           <label class="pg-snap-field pg-template-field" title="スターターカメラ構成を読込">
@@ -1284,11 +1284,11 @@ export class CadPlaygroundStudio {
       </nav>
 
       <div class="pg-report-modal" data-field="reportModal" aria-hidden="true">
-        <div class="pg-report-card" role="dialog" aria-modal="true" aria-label="PLYA 一括検証 & 1000点採点レポート">
+        <div class="pg-report-card" role="dialog" aria-modal="true" aria-label="PLYA V2 EXAM継承 16ソルバ / 128項目 評価レポート">
           <div class="pg-report-head">
             <div>
-              <div class="pg-report-kicker">PLYA FAST MULTI-ENGINE PIPELINE · PLAY GROUND 1.1</div>
-              <h2 class="pg-report-title">PLYA 全8種ツール一括検証 ＆ 1,000点満点評価レポート</h2>
+              <div class="pg-report-kicker">THE LAST EXAM V1 INHERITED ENGINE · PLAY GROUND 1.1</div>
+              <h2 class="pg-report-title">PLYA V2 全16ソルバ / 128項目 実3D物理検証 ＆ 1,000点満点評価レポート</h2>
             </div>
             <button type="button" class="pg-btn pg-btn-icon" data-action="closeReport" aria-label="閉じる">
               <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>

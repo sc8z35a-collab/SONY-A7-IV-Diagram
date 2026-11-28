@@ -154,7 +154,7 @@ def build_thermal_network_and_ccx(meta, fcl, cfd, run_dir):
     job = os.path.join(ccx_th_dir, "heat3d")
     with open(job + ".inp", "w", encoding="utf-8") as f:
         f.write("\n".join(inp) + "\n")
-    pr = subprocess.run(["ccx", "-i", job], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=120)
+    pr = subprocess.run(["ccx", "-i", job], cwd=ccx_th_dir, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=120)
     ccx_conv = (pr.returncode == 0) and ("Job finished" in pr.stdout)
     ccx_temps = []
     if os.path.exists(job + ".dat"):
@@ -205,6 +205,9 @@ def run_dual_spice_and_faults(meta, fcl, run_dir):
     r_bus = 0.025 + span_mm * 0.00042 + (50.0 if open_conductors > 0 else 0.0)
 
     # 1. Nominal Berkeley ngspice-42 deck (DC + 0ms UPS transient + 32kHz PWM + AC PDN)
+    # Uses the exact same passive resistive load R_LOAD at DC OP as GNU gnucap so both SPICE engines
+    # solve identical physics (never driving negative voltage on open-circuit faults!) plus zero-DC burst & PWM.
+    r_load_eq = max(0.5, v_bus / max(0.05, i_load))
     cir_path = os.path.join(spice_dir, "tlx_pdn.cir")
     cir_txt = f"""* THE LAST EXAM V1 EX16 — Berkeley ngspice-42 Real PDN + 0ms UPS + 32kHz PWM
 V_USB v_usb 0 DC {v_bus:.3f}
@@ -215,7 +218,8 @@ D_UPS v_ups v_bus DIDEAL
 R_BUS v_bus v_far {r_bus:.5f}
 C_BULK v_far c_esr 470u IC={v_bus:.3f}
 R_ESR c_esr 0 0.015
-I_LOAD v_far 0 PULSE({i_load:.4f} {(i_load*1.35):.4f} 1.0m 20u 20u 0.5m 2.0m)
+R_LOAD v_far 0 {r_load_eq:.4f}
+I_BURST v_far 0 PULSE(0 {(i_load*0.35):.4f} 1.0m 20u 20u 0.5m 2.0m)
 I_PWM v_far 0 SIN(0 {(i_load*0.18):.4f} 32000)
 
 * 3.3V Logic LDO
@@ -258,7 +262,6 @@ quit
 
     # 2. Independent GNU gnucap DC cross-verification of the exact same linear power network
     gc_path = os.path.join(spice_dir, "tlx_gnucap.ckt")
-    r_load_eq = max(0.5, v_bus / max(0.05, i_load))
     gc_txt = f"""* THE LAST EXAM V1 EX16 — Independent GNU gnucap Cross-Verification
 V_USB v_usb 0 {v_bus:.3f}
 R_OR v_usb v_bus 0.018
@@ -286,8 +289,8 @@ R_LOAD v_far 0 {r_load_eq:.4f}
     rng = np.random.default_rng(20261128)
     v_mc = v_bus * rng.uniform(0.98, 1.02, 100)
     r_mc = r_bus * rng.uniform(0.95, 1.05, 100)
-    i_mc = i_load * rng.uniform(0.90, 1.10, 100)
-    v_far_mc = v_mc - i_mc * (0.018 + r_mc)
+    r_ld_mc = r_load_eq * rng.uniform(0.90, 1.10, 100)
+    v_far_mc = v_mc * (r_ld_mc / (r_ld_mc + 0.018 + r_mc))
     mc_pass_pct = float(np.mean(v_far_mc >= v_bus * 0.90)) * 100.0
 
     # 4. EX31 Real ngspice Fault Injection Suite (20V OVP, 10mOhm Short, Reverse Polarity)
