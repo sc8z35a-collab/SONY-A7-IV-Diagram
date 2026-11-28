@@ -140,73 +140,73 @@ export function buildSensorFabVol3DesignParts(mats: MaterialLibrary): CadPart[] 
   {
     const g = new THREE.Group();
 
-    // Upper Design Studio Deck (Blocks 2-A, 2-B, 2-C): Y top = -0.8 (local y = +0.8), Z = -38..+14
+    // Upper Design Studio Deck (Blocks 2-A, 2-B, 2-C): flush at world Y = -0.97 (local y top = +0.63)
     const upperDeck = new THREE.Mesh(
       createVol3BoxGeo(122, 1.6, 52, 1.4, 0.24, 'y'),
       mats.ultra.fab3Phase2StudioDeck
     );
-    upperDeck.position.set(0, 0, -12.0);
+    upperDeck.position.set(0, -0.17, -12.0);
     g.add(upperDeck);
 
     // Upper stainless perimeter guard trim
     for (const sz of [-38.1, 14.1]) {
       const rail = new THREE.Mesh(new THREE.BoxGeometry(122.4, 0.36, 0.45), matSteel);
-      rail.position.set(0, 0.65, sz);
+      rail.position.set(0, 0.48, sz);
       rail.userData.noEdges = true;
       g.add(rail);
     }
 
     // Architectural Cleanroom Step-Drop Wall at Z = +14.0 with Encrypted Tape-Out Fiber Conduits
     const stepWall = new THREE.Mesh(
-      createVol3BoxGeo(122, 9.4, 1.2, 0.3, 0.1, 'z'),
+      createVol3BoxGeo(122, 9.55, 1.2, 0.3, 0.1, 'z'),
       matDark
     );
-    stepWall.position.set(0, -4.7, 14.0);
+    stepWall.position.set(0, -4.945, 14.0);
     g.add(stepWall);
 
     // 9 Glowing Fiber-Optic Conduit Pipes descending from Upper Deck (2-C) into Lower Mask Fab (2-D)
     for (let i = -4; i <= 4; i++) {
       const pipe = new THREE.Mesh(hiResCyl(0.28, 0.28, 8.6, 10), i % 2 === 0 ? matBlue : matAmber);
-      pipe.position.set(i * 12.0, -4.6, 14.7);
+      pipe.position.set(i * 12.0, -4.9, 14.7);
       pipe.userData.noEdges = true;
       g.add(pipe);
     }
 
-    // Lower Stepped Photomask Cleanroom Terrace (Blocks 2-D & 2-E): Y top = -10.0 (local y = -8.4), Z = +14..+52
+    // Lower Stepped Photomask Cleanroom Terrace (Blocks 2-D & 2-E): lane top flush at world Y = -10.17 (local y = -8.57)
     const lowerDeck = new THREE.Mesh(
       createVol3BoxGeo(122, 1.6, 38, 1.4, 0.24, 'y'),
       mats.stainlessMachined
     );
-    lowerDeck.position.set(0, -9.2, 33.0);
+    lowerDeck.position.set(0, -9.52, 33.0);
     g.add(lowerDeck);
 
     // Lower deck cleanroom lane guide strips (2-D Cyan at Z=24.5, 2-E Emerald at Z=42.5)
     const lane2D = new THREE.Mesh(new THREE.BoxGeometry(116, 0.12, 14.8), matBlue);
-    lane2D.position.set(0, -8.34, 24.5);
+    lane2D.position.set(0, -8.66, 24.5);
     lane2D.userData.noEdges = true;
     g.add(lane2D);
 
     const lane2DInner = new THREE.Mesh(new THREE.BoxGeometry(114.6, 0.14, 13.6), matDark);
-    lane2DInner.position.set(0, -8.32, 24.5);
+    lane2DInner.position.set(0, -8.64, 24.5);
     lane2DInner.userData.noEdges = true;
     g.add(lane2DInner);
 
     const lane2E = new THREE.Mesh(new THREE.BoxGeometry(116, 0.12, 15.8), matGreen);
-    lane2E.position.set(0, -8.34, 42.5);
+    lane2E.position.set(0, -8.66, 42.5);
     lane2E.userData.noEdges = true;
     g.add(lane2E);
 
     const lane2EInner = new THREE.Mesh(new THREE.BoxGeometry(114.6, 0.14, 14.6), matDark);
-    lane2EInner.position.set(0, -8.32, 42.5);
+    lane2EInner.position.set(0, -8.64, 42.5);
     lane2EInner.userData.noEdges = true;
     g.add(lane2EInner);
 
     // Under-chassis heavy seismic isolation piers supporting the stepped terrace
-    const pierGeo = hiResCyl(1.1, 1.4, 9.2, 12);
+    const pierGeo = hiResCyl(1.1, 1.4, 9.35, 12);
     for (const sx of [-55, -18, 18, 55]) {
       for (const sz of [-33, 8]) {
         const pier = new THREE.Mesh(pierGeo, matDark);
-        pier.position.set(sx, -5.4, sz);
+        pier.position.set(sx, -5.645, sz);
         g.add(pier);
       }
     }

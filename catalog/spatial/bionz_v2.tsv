@@ -10,11 +10,11 @@ xv2-ru-mo-m0-tracks	X2-08	最下層M0/M1極細21nmピッチルテニ	#001-030	0,
 xv2-beol-metal-temp-sensor	X2-09	ISSCC 2026 Samsung	#001-030	-12.6,9.41,11.2	8.6,0.92,8.6	-15.75,60,14	silicon_hero
 xv2-shpmim-decap	X2-10	TSMC N2P採用超高密度3Dトレンチ	#001-030	12.6,10.22,11.2	9.4,2.06,9.4	15.75,60,14	cucu_hybrid_copper
 xv2-em-reservoir-via	X2-11	エレクトロマイグレーション防止コバルトキ	#001-030	0,10.69,-13.2	14.1,2.05,2.88	0,60,-16.5	cucu_hybrid_copper
-xv2-gaa-si-nanosheets	X2-12	2nm / A16世代4段水平積層シリコ	#001-030	0,-2.83,0	16.8,2.73,6.29	0,3,0	silicon_wafer_dark
-xv2-hkmg-all-around	X2-13	360°全周包み込みHigh-k	#001-030	0,-2.83,0	6.4,4.33,6.2	0,8,-14	stainless_machined
-xv2-hk-dipole-vth	X2-14	原子1層ランタン／アルミニウム界面ダイポ	#001-030	0,-2.83,0	6.1,3.06,0.31	0,6,16	pin_carrier_gloss
-xv2-sige-inner-spacer	X2-15	GAA必須の極微細部品三日月型	#001-030	0,-2.83,0	8.35,3.33,8.1	-18,4,12	silicon_dielectric
-xv2-sd-epi-strain	X2-16	結晶ひずみエンジニアリング{111}ダイ	#001-030	0,-2.83,0	19.88,3.85,7.86	20,3,0	membrane_translucent
+xv2-gaa-si-nanosheets	X2-12	2nm / A16世代4段水平積層シリコ	#001-030	0,-2.83,0	8.8,2.71,6.4	0,3,0	silicon_wafer_dark
+xv2-hkmg-all-around	X2-13	360°全周包み込みHigh-k	#001-030	0,-2.83,0	5.96,4.3,6.15	0,8,-14	stainless_machined
+xv2-hk-dipole-vth	X2-14	原子1層ランタン／アルミニウム界面ダイポ	#001-030	0,-2.83,0	5.5,3.02,0.26	0,6,16	pin_carrier_gloss
+xv2-sige-inner-spacer	X2-15	GAA必須の極微細部品三日月型	#001-030	0,-2.83,0	8.4,3.3,7.6	-18,4,12	silicon_dielectric
+xv2-sd-epi-strain	X2-16	結晶ひずみエンジニアリング{111}ダイ	#001-030	0,-2.83,0	19.76,3.76,7.86	20,3,0	membrane_translucent
 xv2-mol-silicide-contact	X2-17	MOL極低抵抗ラップアラウンド	#001-030	0,-2.69,0	18.8,1.64,7.8	-20,10,0	solder_silver
 xv2-monolithic-cfet	X2-18	次世代究極トランジスタモノリシックCFE	#001-030	15.2,-2.29,0	8.2,5.12,4.85	20.52,4,0	cucu_hybrid_copper
 xv2-xbit-sram-cell	X2-19	ISSCC 2026 MediaTekx	#001-030	-0.1,1.94,-5.3	9.12,1.98,7.52	-0.13,22,-7.16	pin_carrier_gloss

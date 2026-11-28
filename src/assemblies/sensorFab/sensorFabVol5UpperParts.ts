@@ -156,33 +156,43 @@ export function buildSensorFabVol5UpperParts(mats: MaterialLibrary): CadPart[] {
     }
 
     // Architectural Step Wall at Z = +14.0 with 9 glowing copper/cyan hybrid-bonding conduits
-    const stepWall = new THREE.Mesh(createVol5BoxGeo(126, 9.2, 1.4, 0.25, 0.08, 'z'), matDark);
-    stepWall.position.set(0, -4.6, 14.0);
+    const stepWall = new THREE.Mesh(createVol5BoxGeo(126, 9.48, 1.4, 0.25, 0.08, 'z'), matDark);
+    stepWall.position.set(0, -4.74, 14.0);
     g.add(stepWall);
     for (let i = -4; i <= 4; i++) {
       const conduit = new THREE.Mesh(
         hiResCyl(0.28, 0.28, 8.6, 10),
         i % 2 === 0 ? matCopper : matBlue
       );
-      conduit.position.set(i * 13.5, -4.6, 14.85);
+      conduit.position.set(i * 13.5, -4.74, 14.85);
       conduit.userData.noEdges = true;
       g.add(conduit);
     }
 
-    // Lower Forward-Stepped Cleanroom Terrace (Block 4-E Cu-Cu Hybrid Bonding Showcase): 126 x 1.6 x 30 centered at Z = +29.0 (top Y = -10.0)
+    // Lower Forward-Stepped Cleanroom Terrace (Block 4-E Cu-Cu Hybrid Bonding Showcase): hbInner top flush at world Y = -10.00 (local y = -8.40)
     const lowerDeck = new THREE.Mesh(createVol5BoxGeo(126, 1.6, 30, 1.4, 0.24, 'y'), matSteel);
-    lowerDeck.position.set(0, -9.2, 29.0);
+    lowerDeck.position.set(0, -9.48, 29.0);
     g.add(lowerDeck);
     const lowerLane = new THREE.Mesh(createVol5BoxGeo(120, 0.24, 15.6, 0.6, 0.04, 'y'), matDark);
-    lowerLane.position.set(0, -8.36, 29.0);
+    lowerLane.position.set(0, -8.64, 29.0);
     lowerLane.userData.noEdges = true;
     const hbStrip = new THREE.Mesh(new THREE.BoxGeometry(118, 0.14, 14.6), matGreen);
-    hbStrip.position.set(0, -8.22, 29.0);
+    hbStrip.position.set(0, -8.50, 29.0);
     hbStrip.userData.noEdges = true;
     const hbInner = new THREE.Mesh(new THREE.BoxGeometry(116.8, 0.16, 13.4), matDark);
-    hbInner.position.set(0, -8.20, 29.0);
+    hbInner.position.set(0, -8.48, 29.0);
     hbInner.userData.noEdges = true;
     g.add(lowerLane, hbStrip, hbInner);
+
+    // Heavy seismic cleanroom support piers under upper BEOL terrace (matching Vol.3 / Vol.4)
+    const pierGeo = hiResCyl(1.1, 1.4, 9.48, 12);
+    for (const sx of [-57, -19, 19, 57]) {
+      for (const sz of [-33, 8]) {
+        const pier = new THREE.Mesh(pierGeo, matDark);
+        pier.position.set(sx, -5.54, sz);
+        g.add(pier);
+      }
+    }
 
     parts.push(
       finalizeVol5Part(

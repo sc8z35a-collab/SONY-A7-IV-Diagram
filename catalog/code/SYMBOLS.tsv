@@ -8,7 +8,7 @@ src/assemblies/battery/batteryUltra27Parts.ts	buildBatteryUltra27Parts	func	62	1
 src/assemblies/battery/batteryUltra30Explanations.ts	BATTERY_ULTRA30_EXPLANATIONS	const	4	4	BATTERY_ULTRA30_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/battery/batteryUltra30Parts.ts	buildBatteryUltra30Parts	func	61	1303	export function buildBatteryUltra30Parts(mats: MaterialLibrary): CadPart[]
 src/assemblies/battery/batteryUltra31Explanations.ts	BATTERY_ULTRA31_EXPLANATIONS	const	4	4	BATTERY_ULTRA31_EXPLANATIONS: Record<string, PartExplanation> =
-src/assemblies/battery/batteryUltra31Parts.ts	buildBatteryUltra31Parts	func	68	1277	export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/battery/batteryUltra31Parts.ts	buildBatteryUltra31Parts	func	68	1281	export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[]
 src/assemblies/bionz/bionzExplanations.ts	BIONZ_EXPLANATIONS	const	6	6	BIONZ_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
 src/assemblies/bionz/bionzExtraExplanations.ts	BIONZ_EXTRA_EXPLANATIONS	const	2	2	BIONZ_EXTRA_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/bionz/bionzExtraParts.ts	buildBionzExtraParts	func	234	1552	export function buildBionzExtraParts(mats: MaterialLibrary): CadPart[]
@@ -130,8 +130,8 @@ src/assemblies/evf/evfMicroExplanations.ts	EVF_MICRO_EXPLANATIONS	const	4	4	EVF_
 src/assemblies/evf/evfMicroParts.ts	buildEvfMicroParts	func	269	3446	export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/evf/evfParts.ts	EVF_OPTICAL_Y	const	67	67	EVF_OPTICAL_Y = 39.5
 src/assemblies/evf/evfParts.ts	EvfDynamicRig	interface	69	76	export interface EvfDynamicRig
-src/assemblies/evf/evfParts.ts	buildEvfParts	func	311	3658	export function buildEvfParts( mats: MaterialLibrary, _includeStandalone = true ):
-src/assemblies/evf/evfParts.ts	buildEvfStandaloneParts	func	3660	3672	export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/evf/evfParts.ts	buildEvfParts	func	311	3666	export function buildEvfParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/evf/evfParts.ts	buildEvfStandaloneParts	func	3668	3680	export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
 src/assemblies/evf/evfPhysicsOverlay.ts	EvfPhysicsOverlayController	interface	10	16	export interface EvfPhysicsOverlayController
 src/assemblies/evf/evfPhysicsOverlay.ts	createEvfPhysicsOverlay	func	34	470	export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysicsOverlayController
 src/assemblies/evf/evfPrecisionParts.ts	buildEvfPrecisionParts	func	108	2694	export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[]
@@ -155,7 +155,7 @@ src/assemblies/lcd/lcdParts.ts	buildLcdParts	func	78	1659	export function buildL
 src/assemblies/lcd/lcdPhysicsOverlay.ts	LcdPhysicsOverlayController	interface	6	12	export interface LcdPhysicsOverlayController
 src/assemblies/lcd/lcdPhysicsOverlay.ts	createLcdPhysicsOverlay	func	20	235	export function createLcdPhysicsOverlay( clippingPlanes: THREE.Plane[] ): LcdPhysicsOverlayController
 src/assemblies/lcd/lcdUltraDeepExplanations.ts	LCD_ULTRA_DEEP_EXPLANATIONS	const	2	2	LCD_ULTRA_DEEP_EXPLANATIONS: Record<string, PartExplanation> =
-src/assemblies/lcd/lcdUltraDeepParts.ts	buildLcdUltraDeepParts	func	61	1605	export function buildLcdUltraDeepParts( mats: MaterialLibrary ):
+src/assemblies/lcd/lcdUltraDeepParts.ts	buildLcdUltraDeepParts	func	61	1607	export function buildLcdUltraDeepParts( mats: MaterialLibrary ):
 src/assemblies/lcd/lcdUltraOemExplanations.ts	LCD_ULTRA_OEM_EXPLANATIONS	const	2	2	LCD_ULTRA_OEM_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/lcd/lcdUltraOemParts.ts	buildLcdUltraOemParts	func	57	1395	export function buildLcdUltraOemParts( mats: MaterialLibrary ):
 src/assemblies/lcd/lcdUltraTechExplanations.ts	LCD_ULTRA_TECH_EXPLANATIONS	const	2	2	LCD_ULTRA_TECH_EXPLANATIONS: Record<string, PartExplanation> =
@@ -351,7 +351,7 @@ src/assemblies/sensorFab/sensorFabVol1Parts.ts	buildSensorFabVol1Parts	func	189	
 src/assemblies/sensorFab/sensorFabVol1PhysicsOverlay.ts	SensorFabVol1PhysicsOverlayController	interface	5	11	export interface SensorFabVol1PhysicsOverlayController
 src/assemblies/sensorFab/sensorFabVol1PhysicsOverlay.ts	createSensorFabVol1PhysicsOverlay	func	28	221	export function createSensorFabVol1PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol1PhysicsOverl…
 src/assemblies/sensorFab/sensorFabVol2Explanations.ts	SENSOR_FAB_VOL2_EXPLANATIONS	const	4	4	SENSOR_FAB_VOL2_EXPLANATIONS: Record<string, PartExplanation> =
-src/assemblies/sensorFab/sensorFabVol2Parts.ts	buildSensorFabVol2Parts	func	166	2268	export function buildSensorFabVol2Parts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol2Parts.ts	buildSensorFabVol2Parts	func	166	2269	export function buildSensorFabVol2Parts(mats: MaterialLibrary): CadPart[]
 src/assemblies/sensorFab/sensorFabVol2PhysicsOverlay.ts	SensorFabVol2PhysicsOverlayController	interface	5	11	export interface SensorFabVol2PhysicsOverlayController
 src/assemblies/sensorFab/sensorFabVol2PhysicsOverlay.ts	createSensorFabVol2PhysicsOverlay	func	31	240	export function createSensorFabVol2PhysicsOverlay( clippingPlanes: THREE.Plane[] ): SensorFabVol2PhysicsOverl…
 src/assemblies/sensorFab/sensorFabVol3DesignParts.ts	buildSensorFabVol3DesignParts	func	22	1503	export function buildSensorFabVol3DesignParts(mats: MaterialLibrary): CadPart[]
@@ -396,7 +396,7 @@ src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeVol5Plinth	func	83	98	export
 src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeVol5Beam	func	101	110	export function makeVol5Beam( rTop: number, rBot: number, h: number, mat: THREE.Material ): THREE.Mesh
 src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeCmpHead	func	113	130	export function makeCmpHead( padRadius: number, mats: MaterialLibrary, accentMat: THREE.Material, yPos = 4.3 …
 src/assemblies/sensorFab/sensorFabVol5Shared.ts	makeEcdTank	func	133	148	export function makeEcdTank( w: number, d: number, h: number, mats: MaterialLibrary ): THREE.Group
-src/assemblies/sensorFab/sensorFabVol5UpperParts.ts	buildSensorFabVol5UpperParts	func	22	700	export function buildSensorFabVol5UpperParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/sensorFab/sensorFabVol5UpperParts.ts	buildSensorFabVol5UpperParts	func	22	710	export function buildSensorFabVol5UpperParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/shutter/shutterExplanations.ts	SHUTTER_EXPLANATIONS	const	6	6	SHUTTER_EXPLANATIONS: Record<string, PartExplanation> = explanationsFromUnitJson(unitData)
 src/assemblies/shutter/shutterMicroExplanations.ts	SHUTTER_MICRO_EXPLANATIONS	const	4	4	SHUTTER_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
 src/assemblies/shutter/shutterMicroParts.ts	buildShutterMicroParts	func	51	824	export function buildShutterMicroParts(mats: MaterialLibrary): CadPart[]

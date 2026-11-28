@@ -460,25 +460,26 @@ export function buildLcdUltraDeepParts(
   // D121: Side-View 0.4 mm White LED Internal Package Anatomy (InGaN Die, Au Wire, EMC Cavity, Cu Leadframe)
   {
     const g = new THREE.Group();
+    const inner = new THREE.Group();
     const emcBack = new THREE.Mesh(createChamferedBoxGeo(14.0, 5.2, 2.2, 0.35, 0.08, 'z'), mats.ceramicAlumina);
     emcBack.position.z = 1.2;
-    g.add(emcBack);
+    inner.add(emcBack);
     for (const sy of [-1, 1]) {
       const wall = new THREE.Mesh(createChamferedBoxGeo(14.0, 1.1, 3.6, 0.2, 0.05, 'z'), mats.ceramicAlumina);
       wall.position.set(0, sy * 2.1, -0.2);
-      g.add(wall);
+      inner.add(wall);
     }
     // Internal silver-plated copper leadframe island + external gull-wing solder pads
     const centerPad = new THREE.Mesh(createChamferedBoxGeo(9.6, 2.8, 0.35, 0.15, 0.03, 'z'), mats.sinteredSilver);
     centerPad.position.set(0, 0, 0.1);
-    g.add(centerPad);
+    inner.add(centerPad);
 
     for (const sx of [-1, 1]) {
       const lead = new THREE.Mesh(createChamferedBoxGeo(3.6, 2.8, 0.9, 0.15, 0.05, 'z'), mats.silverElectrode);
       lead.position.set(sx * 7.6, 0, 0.8);
       const solder = new THREE.Mesh(createChamferedBoxGeo(2.2, 2.6, 0.45, 0.15, 0.04, 'z'), mats.goldPlating);
       solder.position.set(sx * 8.4, 0, 1.35);
-      g.add(lead, solder);
+      inner.add(lead, solder);
     }
     // Dual blue 450 nm InGaN sapphire-substrate LED chips + 20 μm 99.99% Gold wirebond arches + Zener ESD die
     for (const dx of [-2.8, 2.8]) {
@@ -487,17 +488,18 @@ export function buildLcdUltraDeepParts(
       const wire = new THREE.Mesh(hiResTorus(1.4, 0.14, 10, 22, Math.PI), mats.goldPlating);
       wire.position.set(dx + 0.8, 0, -0.45);
       wire.rotation.x = Math.PI * 0.5;
-      g.add(die, wire);
+      inner.add(die, wire);
     }
     const zener = new THREE.Mesh(createChamferedBoxGeo(1.1, 1.1, 0.45, 0.08, 0.03, 'z'), mats.icEpoxy);
     zener.position.set(0, 0, -0.1);
-    g.add(zener);
+    inner.add(zener);
 
     // Warm pink-gold KSF (K2SiF6:Mn4+) + β-SiAlON phosphor silicone encapsulant window
     const phos = new THREE.Mesh(createChamferedBoxGeo(11.4, 3.0, 0.7, 0.2, 0.04, 'z'), mats.tantalumCapYellow);
     phos.position.set(0, 0, -1.65);
-    g.add(phos);
-    g.scale.setScalar(0.46);
+    inner.add(phos);
+    inner.scale.setScalar(0.46);
+    g.add(inner);
 
     pushPart(
       finalizeLcdDeepPart(

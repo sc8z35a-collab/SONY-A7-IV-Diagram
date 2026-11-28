@@ -175,7 +175,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         1,
         '#d97736',
         g,
-        new THREE.Vector3(0, 16.16, 0),
+        new THREE.Vector3(0, 11.598, 0),
         new THREE.Vector3(0, 72, 0),
         cp,
         0.22
@@ -260,7 +260,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         2,
         '#0ea5e9',
         g,
-        new THREE.Vector3(0, 14.88, -7.8),
+        new THREE.Vector3(0, -16.321, 0),
         new THREE.Vector3(0, 62, -26),
         cp,
         0.24
@@ -314,7 +314,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         3,
         '#2563eb',
         g,
-        new THREE.Vector3(0, 14.88, 8.8),
+        new THREE.Vector3(8.2, -15.211, -13),
         new THREE.Vector3(0, 62, 28),
         cp,
         0.24
@@ -390,7 +390,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         4,
         '#38bdf8',
         g,
-        new THREE.Vector3(0, 13.57, 0),
+        new THREE.Vector3(0, -17.761, 0),
         new THREE.Vector3(-34, 52, 0),
         cp,
         0.2
@@ -458,7 +458,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         5,
         '#ec4899',
         g,
-        new THREE.Vector3(-8.4, 11.55, 0),
+        new THREE.Vector3(-13, -15.261, 0),
         new THREE.Vector3(-34, 42, 18),
         cp,
         0.24
@@ -504,7 +504,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         6,
         '#06b6d4',
         g,
-        new THREE.Vector3(8.4, 11.55, 0),
+        new THREE.Vector3(13, -15.261, 0),
         new THREE.Vector3(34, 42, -18),
         cp,
         0.24
@@ -565,7 +565,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         7,
         '#ea580c',
         g,
-        new THREE.Vector3(0, 10.34, 0),
+        new THREE.Vector3(0, 8.348, 0),
         new THREE.Vector3(0, 34, 0),
         cp,
         0.24
@@ -613,7 +613,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         8,
         '#94a3b8',
         g,
-        new THREE.Vector3(0, 7, 0),
+        new THREE.Vector3(0, 4.573, 0),
         new THREE.Vector3(0, 21, 0),
         cp,
         0.24
@@ -665,7 +665,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         9,
         '#ef4444',
         g,
-        new THREE.Vector3(-10.2, 7.68, 10.2),
+        new THREE.Vector3(-12.6, 9.413, 11.2),
         new THREE.Vector3(-34, 28, 24),
         cp,
         0.24
@@ -699,7 +699,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         10,
         '#8b5cf6',
         g,
-        new THREE.Vector3(10.2, 8.49, 10.2),
+        new THREE.Vector3(12.6, 10.223, 11.2),
         new THREE.Vector3(34, 28, 24),
         cp,
         0.24
@@ -736,7 +736,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         11,
         '#f59e0b',
         g,
-        new THREE.Vector3(0, 8.96, -10.8),
+        new THREE.Vector3(0, 10.688, -13.2),
         new THREE.Vector3(0, 28, -32),
         cp,
         0.24
@@ -754,18 +754,18 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
     // 4 precision vertically stacked horizontal crystalline silicon ribbons spanning Source (-X) <-> Drain (+X)!
     const sheetY = [-2.1, -0.7, 0.7, 2.1];
     sheetY.forEach((sy, idx) => {
-      const sheetGeo = createChamferedBoxGeo(16.8, 0.68, 6.2, 0.14, 0.08, 'y');
-      applyPlanarUVs(sheetGeo, 16.8, 6.2, 'xz');
+      const sheetGeo = createChamferedBoxGeo(8.8, 0.64, 6.2, 0.14, 0.06, 'y');
+      applyPlanarUVs(sheetGeo, 8.8, 6.2, 'xz');
       const sheet = new THREE.Mesh(sheetGeo, u.v2BionzGaaNanosheet);
       sheet.position.set(0, sy, 0);
       g.add(sheet);
 
       // Subtle glowing electron-mobility center-lane guide strips along front cutaway face (+Z) of each nanosheet
       const edgeRibbon = new THREE.Mesh(
-        createChamferedBoxGeo(16.6, 0.18, 0.14, 0.03, 0.02, 'z'),
+        createChamferedBoxGeo(8.6, 0.16, 0.12, 0.03, 0.02, 'z'),
         idx % 2 === 0 ? mats.fluorineCoatCyan : mats.goldPlating
       );
-      edgeRibbon.position.set(0, sy, 3.12);
+      edgeRibbon.position.set(0, sy, 3.24);
       edgeRibbon.userData.noEdges = true;
       g.add(edgeRibbon);
     });
@@ -776,7 +776,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         12,
         '#0ea5e9',
         g,
-        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -2.832, 0),
         new THREE.Vector3(0, 2, 0),
         cp,
         0.26
@@ -791,18 +791,18 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
 
     // Cutaway Gate Metal Body wrapping rear/top/bottom & weaving THROUGH all 3 gaps between the 4 nanosheets!
     // Cleanly recessed away from the front (+Z) viewer face so ALL 4 nanosheets + concentric HfO2 + WFM sleeves shine!
-    const gateTopCap = new THREE.Mesh(createChamferedBoxGeo(6.4, 1.25, 5.6, 0.14, 0.1, 'y'), mats.stainlessMachined);
+    const gateTopCap = new THREE.Mesh(createChamferedBoxGeo(5.96, 1.15, 5.4, 0.14, 0.06, 'y'), mats.stainlessMachined);
     gateTopCap.position.set(0, 3.42, -1.6);
-    const gateBackWall = new THREE.Mesh(createChamferedBoxGeo(6.4, 7.6, 1.6, 0.12, 0.08, 'z'), mats.stainlessMachined);
-    gateBackWall.position.set(0, 0.2, -4.1);
-    const gateBotBase = new THREE.Mesh(createChamferedBoxGeo(6.4, 0.92, 5.6, 0.12, 0.08, 'y'), mats.stainlessMachined);
+    const gateBackWall = new THREE.Mesh(createChamferedBoxGeo(5.96, 7.6, 1.4, 0.12, 0.06, 'z'), mats.stainlessMachined);
+    gateBackWall.position.set(0, 0.2, -4.15);
+    const gateBotBase = new THREE.Mesh(createChamferedBoxGeo(5.96, 0.92, 5.4, 0.12, 0.06, 'y'), mats.stainlessMachined);
     gateBotBase.position.set(0, -3.22, -1.6);
     g.add(gateTopCap, gateBackWall, gateBotBase);
 
     // Inter-sheet Metal Gate Fingers weaving completely between every nanosheet pair (true Gate-All-Around!)
     for (const gy of [-1.4, 0.0, 1.4]) {
       const metalFill = new THREE.Mesh(
-        createChamferedBoxGeo(6.1, 0.48, 5.4, 0.06, 0.04, 'y'),
+        createChamferedBoxGeo(5.88, 0.44, 5.4, 0.06, 0.04, 'y'),
         mats.tungstenGrid
       );
       metalFill.position.set(0, gy, -1.4);
@@ -810,16 +810,16 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
     }
 
     // Concentric 270° cutaway High-k HfO2 (1.5nm cyan) + TiN/TiAl Work-Function Metal (gold) sleeves around ALL 4 nanosheets!
-    const hkFrameShape = createGateCutawayFrame(7.35, 1.14, 6.36, 0.72);
-    const wfmFrameShape = createGateCutawayFrame(7.85, 1.38, 7.36, 1.14);
+    const hkFrameShape = createGateCutawayFrame(7.30, 1.12, 6.52, 0.84);
+    const wfmFrameShape = createGateCutawayFrame(7.76, 1.32, 7.36, 1.16);
     for (const sy of sheetY) {
-      const hkGeo = extrudeHiRes(hkFrameShape, 6.1, 0.04, 0.04, 1, 8);
+      const hkGeo = extrudeHiRes(hkFrameShape, 5.96, 0.04, 0.04, 1, 8);
       hkGeo.rotateY(Math.PI / 2);
       const hkSleeve = new THREE.Mesh(hkGeo, mats.fluorineCoatCyan);
       hkSleeve.position.set(0, sy, 0);
       hkSleeve.userData.noEdges = true;
 
-      const wfmGeo = extrudeHiRes(wfmFrameShape, 5.85, 0.04, 0.04, 1, 8);
+      const wfmGeo = extrudeHiRes(wfmFrameShape, 5.84, 0.04, 0.04, 1, 8);
       wfmGeo.rotateY(Math.PI / 2);
       const wfmSleeve = new THREE.Mesh(wfmGeo, mats.goldPlating);
       wfmSleeve.position.set(0, sy, 0);
@@ -833,7 +833,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         13,
         '#f59e0b',
         g,
-        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -2.832, 0),
         new THREE.Vector3(0, 11, -18),
         cp,
         0.24
@@ -845,25 +845,25 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
   {
     const g = new THREE.Group();
     const sheetY = [-2.1, -0.7, 0.7, 2.1];
-    const atomGeo = hiResSphere(0.19, 10, 8);
+    const atomGeo = hiResSphere(0.16, 10, 8);
     // Discrete glowing Lanthanum (La, nMOS) & Aluminum (Al, pMOS) atomic dipole chains encircling every nanosheet!
     for (const sy of sheetY) {
       for (let k = -4; k <= 4; k++) {
-        const ax = k * 0.68;
+        const ax = k * 0.65;
         const aTop = new THREE.Mesh(atomGeo, k % 2 === 0 ? mats.bodyRecRed : mats.mountShimBlue);
-        aTop.position.set(ax, sy + 0.44, 3.22);
+        aTop.position.set(ax, sy + 0.44, 3.55);
         aTop.userData.noEdges = true;
         const aBot = new THREE.Mesh(atomGeo, k % 2 === 0 ? mats.mountShimBlue : mats.bodyRecRed);
-        aBot.position.set(ax, sy - 0.44, 3.22);
+        aBot.position.set(ax, sy - 0.44, 3.55);
         aBot.userData.noEdges = true;
         g.add(aTop, aBot);
       }
       // Subtle atomic monolayer band ribbon
       const band = new THREE.Mesh(
-        createChamferedBoxGeo(6.1, 0.09, 0.22, 0.02, 0.01, 'z'),
+        createChamferedBoxGeo(5.5, 0.09, 0.18, 0.02, 0.01, 'z'),
         mats.loficDielectric
       );
-      band.position.set(0, sy + 0.44, 3.22);
+      band.position.set(0, sy + 0.44, 3.55);
       band.userData.noEdges = true;
       g.add(band);
     }
@@ -874,7 +874,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         14,
         '#a855f7',
         g,
-        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -2.832, 0),
         new THREE.Vector3(0, 7, 24),
         cp,
         0.2
@@ -887,26 +887,26 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
     // 3 vertical levels between the 4 nanosheets × Left & Right gate edges = 6 precision crescent-scalloped SiBCN plugs!
     // Plus 2 tall outer Si3N4 gate sidewall spacers flanking the top gate cap!
-    for (const sx of [-3.65, 3.65]) {
+    for (const sx of [-3.73, 3.73]) {
       for (const gy of [-1.4, 0.0, 1.4]) {
         const innerPlug = new THREE.Mesh(
-          createChamferedBoxGeo(1.05, 0.66, 6.6, 0.14, 0.1, 'z'),
+          createChamferedBoxGeo(0.94, 0.52, 6.2, 0.10, 0.06, 'z'),
           mats.aluminaHighKFilm
         );
         innerPlug.position.set(sx, gy, 0);
         g.add(innerPlug);
 
         // Crescent indent bead highlighting selective SiGe lateral cavity etch!
-        const bead = new THREE.Mesh(hiResCyl(0.24, 0.24, 6.65, 12), mats.quartzOlpf);
+        const bead = new THREE.Mesh(hiResCyl(0.18, 0.18, 6.25, 12), mats.quartzOlpf);
         bead.rotation.x = Math.PI / 2;
-        bead.position.set(sx - Math.sign(sx) * 0.42, gy, 0);
+        bead.position.set(sx - Math.sign(sx) * 0.32, gy, 0);
         bead.userData.noEdges = true;
         g.add(bead);
       }
 
       // Tall upper outer Si3N4 gate sidewall spacer
       const outerSp = new THREE.Mesh(
-        createChamferedBoxGeo(1.05, 1.75, 8.1, 0.12, 0.08, 'y'),
+        createChamferedBoxGeo(0.94, 1.75, 7.6, 0.10, 0.06, 'y'),
         mats.aluminaHighKFilm
       );
       outerSp.position.set(sx, 3.35, -0.4);
@@ -919,7 +919,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         15,
         '#6366f1',
         g,
-        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -2.832, 0),
         new THREE.Vector3(-24, 4, 18),
         cp,
         0.24
@@ -930,19 +930,19 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
   // X2-16. Crystal-Faceted {111} Diamond-Shaped Epitaxial SiGe (pMOS) & SiP (nMOS) Source/Drain Stressors
   {
     const g = new THREE.Group();
-    const epiShape = createFacetedEpiShape(5.2, 6.4);
-    const epiGeo = extrudeHiRes(epiShape, 7.6, 0.24, 0.24, 2, 12);
+    const epiShape = createFacetedEpiShape(5.0, 6.4);
+    const epiGeo = extrudeHiRes(epiShape, 7.6, 0.16, 0.16, 2, 12);
 
     // Left Source: Compressive SiGe Epitaxial Crystal Block (deep emerald-teal diamond prism!)
     const srcEpi = new THREE.Mesh(epiGeo, mats.siliconPhotodiode);
-    srcEpi.position.set(-7.1, 0.0, 0);
+    srcEpi.position.set(-7.22, 0.0, 0);
     // Right Drain: Tensile SiP Epitaxial Crystal Block (sapphire-blue diamond prism!)
     const drnEpi = new THREE.Mesh(epiGeo, mats.mountShimBlue);
-    drnEpi.position.set(7.1, 0.0, 0);
+    drnEpi.position.set(7.22, 0.0, 0);
     g.add(srcEpi, drnEpi);
 
     // Crystal-strain chevron indicator ribs along the {111} diamond faces showing lattice compression/tension!
-    for (const sx of [-7.1, 7.1]) {
+    for (const sx of [-7.22, 7.22]) {
       for (const sy of [-1.6, 0.0, 1.6]) {
         const rib = new THREE.Mesh(
           createChamferedBoxGeo(3.6, 0.22, 0.36, 0.04, 0.03, 'z'),
@@ -960,7 +960,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         16,
         '#14b8a6',
         g,
-        new THREE.Vector3(0, 0.2, 0),
+        new THREE.Vector3(0, -2.832, 0),
         new THREE.Vector3(28, 2, 0),
         cp,
         0.24
@@ -1000,7 +1000,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         17,
         '#cbd5e1',
         g,
-        new THREE.Vector3(0, 0.45, 0),
+        new THREE.Vector3(0, -2.692, 0),
         new THREE.Vector3(-28, 12, 0),
         cp,
         0.24
@@ -1046,7 +1046,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         18,
         '#7c3aed',
         g,
-        new THREE.Vector3(12.8, 0.2, 10.6),
+        new THREE.Vector3(15.2, -2.293, 0),
         new THREE.Vector3(36, 2, 28),
         cp,
         0.24
@@ -1112,7 +1112,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         19,
         '#3b82f6',
         g,
-        new THREE.Vector3(-10.2, -6.46, -10.8),
+        new THREE.Vector3(-0.096, 1.943, -5.3),
         new THREE.Vector3(-36, -24, -28),
         cp,
         0.24
@@ -1157,7 +1157,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         20,
         '#8b5cf6',
         g,
-        new THREE.Vector3(9.8, -6.4, -10.4),
+        new THREE.Vector3(9.8, 1.898, -5.3),
         new THREE.Vector3(36, -24, -28),
         cp,
         0.24
@@ -1200,7 +1200,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         21,
         '#10b981',
         g,
-        new THREE.Vector3(-10.2, -7.37, 10.2),
+        new THREE.Vector3(-10.296, 1.761, 5.3),
         new THREE.Vector3(-36, -24, 28),
         cp,
         0.24
@@ -1246,7 +1246,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         22,
         '#0284c7',
         g,
-        new THREE.Vector3(5.2, -6.98, 10.2),
+        new THREE.Vector3(-9.896, 1.753, -5.3),
         new THREE.Vector3(24, -24, 28),
         cp,
         0.24
@@ -1304,7 +1304,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         23,
         '#f97316',
         g,
-        new THREE.Vector3(-5.6, -7.64, -0.4),
+        new THREE.Vector3(0.354, 1.792, 5.3),
         new THREE.Vector3(-24, -24, 0),
         cp,
         0.24
@@ -1361,7 +1361,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         24,
         '#0ea5e9',
         g,
-        new THREE.Vector3(6.4, -6.23, 0.4),
+        new THREE.Vector3(10.65, 1.993, 5.3),
         new THREE.Vector3(36, -24, 0),
         cp,
         0.24
@@ -1425,7 +1425,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         25,
         '#d97706',
         g,
-        new THREE.Vector3(0, -9.22, 0),
+        new THREE.Vector3(0, -5.873, 0),
         new THREE.Vector3(0, -34, 0),
         cp,
         0.24
@@ -1468,7 +1468,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         26,
         '#f59e0b',
         g,
-        new THREE.Vector3(0, -12.14, 0),
+        new THREE.Vector3(0, -8.02, 0),
         new THREE.Vector3(0, -44, 0),
         cp,
         0.24
@@ -1522,7 +1522,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         27,
         '#b45309',
         g,
-        new THREE.Vector3(0, -16.08, 0),
+        new THREE.Vector3(0, -11.231, 0),
         new THREE.Vector3(0, -60, 0),
         cp,
         0.24
@@ -1567,7 +1567,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         28,
         '#eab308',
         g,
-        new THREE.Vector3(0, -14.94, 0),
+        new THREE.Vector3(0, -10.071, 0),
         new THREE.Vector3(34, -52, 14),
         cp,
         0.24
@@ -1626,7 +1626,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         29,
         '#ef4444',
         g,
-        new THREE.Vector3(0, -20.23, 0),
+        new THREE.Vector3(0, 13.588, 0),
         new THREE.Vector3(-34, -70, -14),
         cp,
         0.22
@@ -1712,7 +1712,7 @@ export function buildBionzV2Parts(mats: MaterialLibrary): CadPart[] {
         30,
         '#14b8a6',
         g,
-        new THREE.Vector3(0, -4.61, 0),
+        new THREE.Vector3(0, 1.128, 0),
         new THREE.Vector3(0, -14, 0),
         cp,
         0.24

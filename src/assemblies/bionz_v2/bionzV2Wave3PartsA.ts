@@ -373,7 +373,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         86,
         '#06b6d4',
         g,
-        new THREE.Vector3(-14.2, 0.8, -20),
+        new THREE.Vector3(-15.4, -3.873, 0),
         new THREE.Vector3(-43, 2.5, -56),
         cp,
         0.22
@@ -491,7 +491,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         87,
         '#8b5cf6',
         g,
-        new THREE.Vector3(0, 0.8, -20),
+        new THREE.Vector3(-15.4, -3.873, -6.6),
         new THREE.Vector3(0, 2.5, -58),
         cp,
         0.22
@@ -615,7 +615,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         88,
         '#f43f5e',
         g,
-        new THREE.Vector3(14.2, 0.8, -20),
+        new THREE.Vector3(2.754, 2.438, 14.5),
         new THREE.Vector3(43, 2.5, -56),
         cp,
         0.22
@@ -730,7 +730,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         89,
         '#38bdf8',
         g,
-        new THREE.Vector3(-13.8, 8.2, 20),
+        new THREE.Vector3(-14.5, 6.073, 14.2),
         new THREE.Vector3(-42, 28, 56),
         cp,
         0.22
@@ -816,7 +816,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         90,
         '#f59e0b',
         g,
-        new THREE.Vector3(-6.9, 8.2, 20),
+        new THREE.Vector3(-4.8, 6.073, 14.2),
         new THREE.Vector3(-21, 28, 56),
         cp,
         0.22
@@ -950,7 +950,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         91,
         '#10b981',
         g,
-        new THREE.Vector3(0, 8.2, 20),
+        new THREE.Vector3(14.8, 10.213, -5.6),
         new THREE.Vector3(0, 28, 58),
         cp,
         0.22
@@ -1051,7 +1051,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         92,
         '#ec4899',
         g,
-        new THREE.Vector3(6.9, 8.2, 20),
+        new THREE.Vector3(14.8, 10.213, 0.8),
         new THREE.Vector3(21, 28, 56),
         cp,
         0.22
@@ -1151,7 +1151,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         93,
         '#d97706',
         g,
-        new THREE.Vector3(13.8, 8.2, 20),
+        new THREE.Vector3(14.8, 10.213, -12.8),
         new THREE.Vector3(42, 28, 56),
         cp,
         0.22
@@ -1260,7 +1260,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         94,
         '#14b8a6',
         g,
-        new THREE.Vector3(-13.8, 14.8, 20),
+        new THREE.Vector3(0, -14.621, 0),
         new THREE.Vector3(-42, 56, 56),
         cp,
         0.22
@@ -1382,7 +1382,7 @@ export function buildBionzV2Wave3PartsA(mats: MaterialLibrary): CadPart[] {
         95,
         '#6366f1',
         g,
-        new THREE.Vector3(-6.9, 14.8, 20),
+        new THREE.Vector3(0, -14.681, 4.5),
         new THREE.Vector3(-21, 56, 56),
         cp,
         0.22

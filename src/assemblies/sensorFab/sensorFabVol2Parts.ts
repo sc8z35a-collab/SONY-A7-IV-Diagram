@@ -275,12 +275,13 @@ export function buildSensorFabVol2Parts(mats: MaterialLibrary): CadPart[] {
       createChamferedBoxGeo(112.0, 1.8, 60.0, 1.6, 0.22, 'y'),
       mats.stainlessMachined
     );
+    deck.position.y = -0.22;
     g.add(deck);
 
     const topMatGeo = new THREE.PlaneGeometry(110.0, 58.0);
     topMatGeo.rotateX(-Math.PI / 2);
     const topBlueprint = new THREE.Mesh(topMatGeo, mats.ultra.fab2Phase1PlantDeck);
-    topBlueprint.position.y = 0.92;
+    topBlueprint.position.y = 0.69;
     topBlueprint.userData.noEdges = true;
     g.add(topBlueprint);
 
@@ -288,34 +289,34 @@ export function buildSensorFabVol2Parts(mats: MaterialLibrary): CadPart[] {
     const railGeo = new THREE.BoxGeometry(108.0, 0.24, 0.34);
     for (const rz of [-11.8, 8.0]) {
       const rail = new THREE.Mesh(railGeo, mats.mountShimBlue);
-      rail.position.set(0, 1.04, rz);
+      rail.position.set(0, 0.81, rz);
       rail.userData.noEdges = true;
       g.add(rail);
     }
 
     // 4 heavy shock-isolated structural legs down to lower metrology bay
-    const legGeo = hiResCyl(1.4, 1.75, 11.2, 12);
+    const legGeo = hiResCyl(1.4, 1.75, 11.27, 12);
     for (const sx of [-52, 52]) {
       for (const sz of [-26, 26]) {
         const leg = new THREE.Mesh(legGeo, mats.matteBlackAnodized);
-        leg.position.set(sx, -6.5, sz);
+        leg.position.set(sx, -6.755, sz);
         g.add(leg);
       }
     }
 
-    // Lower metrology bay sub-platform carrying Block 1-G (F2-32–F2-36)
+    // Lower metrology bay sub-platform carrying Block 1-G (F2-32–F2-36), flush at world Y = -13.81
     const subDeck = new THREE.Mesh(
       createChamferedBoxGeo(102.0, 1.1, 18.5, 1.2, 0.16, 'y'),
       mats.matteBlackAnodized
     );
-    subDeck.position.set(0, -12.6, 10.0);
+    subDeck.position.set(0, -12.94, 10.0);
     g.add(subDeck);
 
     const subTrim = new THREE.Mesh(
       new THREE.BoxGeometry(99.0, 0.18, 16.5),
       mats.ultra.fabCleanroomProcessDeck
     );
-    subTrim.position.set(0, -11.96, 10.0);
+    subTrim.position.set(0, -12.30, 10.0);
     subTrim.userData.noEdges = true;
     g.add(subTrim);
 

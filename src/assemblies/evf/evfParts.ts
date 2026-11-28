@@ -513,15 +513,23 @@ export function buildEvfParts(
       eyecupLatchGroup.add(topStop);
 
       // Sculpted pivoting spring-steel locking claw with chamfered wedge catch tooth & pivot pin
+      // Build mirrored CCW shape directly for sx < 0 so scale determinant stays +1 (no inverted normals)
       const clawShape = new THREE.Shape();
-      clawShape.moveTo(-1.05, -2.1);
-      clawShape.lineTo(1.15, -2.1);
-      clawShape.lineTo(1.4, 0.6);
-      clawShape.lineTo(0.4, 2.1);
-      clawShape.lineTo(-1.05, 2.1);
+      if (sx > 0) {
+        clawShape.moveTo(-1.05, -2.1);
+        clawShape.lineTo(1.15, -2.1);
+        clawShape.lineTo(1.4, 0.6);
+        clawShape.lineTo(0.4, 2.1);
+        clawShape.lineTo(-1.05, 2.1);
+      } else {
+        clawShape.moveTo(1.05, -2.1);
+        clawShape.lineTo(1.05, 2.1);
+        clawShape.lineTo(-0.4, 2.1);
+        clawShape.lineTo(-1.4, 0.6);
+        clawShape.lineTo(-1.15, -2.1);
+      }
       clawShape.closePath();
       const claw = new THREE.Mesh(extrudeHiRes(clawShape, 0.72, 0.05, 0.05, 1, 12), mats.mountSpringSteel);
-      claw.scale.x = sx;
       claw.position.set(sx * 14.8, -4.4, -0.14);
       eyecupLatchGroup.add(claw);
 

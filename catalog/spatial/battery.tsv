@@ -112,14 +112,14 @@ bat-solid-polymer-peo-bridge	P110	セラミック・PEO複合 柔軟ハイブリ
 bat-fbg-optical-fiber-sensor	P111	セル内蔵 0.125 mm 光ファイバー	#091-120	-9,10.5,2.2	5.8,6.5,1.12	-159,51.5,39.8	ic_epoxy_dark
 bat-ultrasonic-phased-ct-2026	P112	超音波フェーズドアレイバッテリーCT内部	#091-120	-9.6,5.2,2.6	6,5.8,1.06	-168.4,24.8,53.4	ic_epoxy_dark
 bat-acoustic-emission-crack-mic	P113	アコースティック・エミッション電極微細ク	#091-120	-10,-0.5,2	4.68,4.66,2.18	-172,-1.5,14	ic_epoxy_dark
-bat-h2-co-voc-offgas-mems	P114	GB 38031-2025準拠 水素	#091-120	-9.5,-6,2.4	5.48,1.04,5.48	-168.5,-28,51.6	gold_plating
+bat-h2-co-voc-offgas-mems	P114	GB 38031-2025準拠 水素	#091-120	-9.5,-6,2.4	5.48,5.48,1.04	-168.5,-28,51.6	gold_plating
 bat-ac-pulse-selfheat-core	P115	高周波ACパルス内部自己発熱ウォームアッ	#091-120	-8.8,-12,2.2	5.8,5.8,1.32	-157.2,-56,31.8	pcb_textured
 bat-hybrid-supercap-pulse-buf	P116	-40°C対応 ハイブリッド・スーパーキ	#091-120	-9,10,-2.4	5.6,6.31,2.33	-159,48,-29.6	ic_epoxy_dark
 bat-hall-magnetic-flux-shunt	P117	非接触・ゼロ損失 TMR / ホール磁気	#091-120	-9.5,4.5,-2.8	5.8,4.92,4.37	-168.5,19.5,-53.2	iron_magnetic
 bat-laser-tabless-petal-weld	P118	タブレス花びらクラウン 360°全周リン	#091-120	-9.8,-1.8,-2	4.9,4.9,0.85	-172.2,-10.2,-16	copper_thermal
 bat-jellyroll-axial-spring-pad	P119	ジェリーロール軸方向呼吸膨張吸収ウェーブ	#091-120	-9.2,-7.8,-2.6	4.6,4.6,1.23	-166.8,-38.2,-51.4	becu_spring
 bat-ceramic-arc-quench-vent	P120	多孔質セラミック＋ステンレス消炎スパーク	#091-120	-8.4,-13.6,-2.2	4.78,4.76,0.85	-153.6,-64.4,-29.8	stainless_machined
-bat-kalman-ekf-soc-dsp	P121	拡張カルマンフィルタ	#121-130	-6.2,15.8,1.8	5.88,3.2,5.88	-109.8,-127.8,50.2	silicon_hero
+bat-kalman-ekf-soc-dsp	P121	拡張カルマンフィルタ	#121-130	-6.2,15.8,1.8	5.88,5.88,3.2	-109.8,-127.8,50.2	silicon_hero
 bat-ai-cloud-soh-telemetry	P122	2026 エッジAI 劣化余命予測	#121-130	-3,16.4,2	5.8,5.2,0.99	-71,-134.4,60	pcb_textured
 bat-dual-redundant-afe-adc	P123	ISO機能安全 16-bit 二重冗長Δ	#121-130	0.2,16.2,1.8	6,4.8,0.99	-34.2,-138.2,20.2	pcb_textured
 bat-active-emi-cm-choke	P124	USB-C / 2 MHz GaN	#121-130	3.4,16,2	5.09,4.8,2.32	28.6,-138,60	copper_coil

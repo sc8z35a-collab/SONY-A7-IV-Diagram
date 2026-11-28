@@ -633,6 +633,7 @@ export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[] {
   // P114. 2026 GB 38031-2025 H2 / CO / VOC Thermal-Runaway Early-Warning MEMS Chip
   {
     const g = new THREE.Group();
+    const body = new THREE.Group();
     const pkg = buildChipPackage({
       w: 5.0,
       d: 5.0,
@@ -653,8 +654,9 @@ export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[] {
     const moxHeater = new THREE.Mesh(hiResCyl(0.82, 0.82, 0.12, 20), mats.evfIrEmitter);
     moxHeater.position.y = 0.54;
     moxHeater.userData.noEdges = true;
-    g.add(pkg, capFrame, moxHeater);
-    g.rotation.x = Math.PI / 2;
+    body.add(pkg, capFrame, moxHeater);
+    body.rotation.x = Math.PI / 2;
+    g.add(body);
 
     parts.push(
       finalizeBatteryUltra31Part(
@@ -898,6 +900,7 @@ export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[] {
   // P121. Extended Kalman Filter (EKF) & Digital-Twin 1% SoC Estimator DSP Core
   {
     const g = new THREE.Group();
+    const body = new THREE.Group();
     const pkg = buildChipPackage({
       w: 5.4,
       d: 5.4,
@@ -914,8 +917,9 @@ export function buildBatteryUltra31Parts(mats: MaterialLibrary): CadPart[] {
     );
     dieTop.position.y = 0.52;
     dieTop.userData.noEdges = true;
-    g.add(pkg, dieTop);
-    g.rotation.x = Math.PI / 2;
+    body.add(pkg, dieTop);
+    body.rotation.x = Math.PI / 2;
+    g.add(body);
 
     parts.push(
       finalizeBatteryUltra31Part(

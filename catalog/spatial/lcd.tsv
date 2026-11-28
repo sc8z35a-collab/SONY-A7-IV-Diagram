@@ -119,7 +119,7 @@ lcd-anti-newton-spacer	D117	アンチニュートンリング微細シリカビ�
 lcd-cog-tuffy-resin	D118	COGガラス張り出し部 UV硬化シリコー	#091-120	6,-26.4,-33.48	63.2,5.4,0.93	-146,76,-60	gold_plating
 lcd-dummy-pixel-ring	D119	パネル外周ダミー画素ガードリング	#091-120	6,-7,-33.58	66.6,42.6,0.41	-146,16,-60	silicon_wafer_dark
 lcd-laser-repair-ring	D120	工場歩留まり救済 レーザーリペア冗長バス	#091-120	6,-7,-33.52	67.8,43.8,0.52	-146,-24,-60	gold_plating
-lcd-side-led-anatomy	D121	0.4 mm超薄サイドビュー白色LED内	#121-150	6,-27.5,-32.75	19,5.3,4.3	146,-60,-64	solder_silver
+lcd-side-led-anatomy	D121	0.4 mm超薄サイドビュー白色LED内	#121-150	6,-27.5,-32.75	8.74,2.44,1.98	146,-60,-64	solder_silver
 lcd-lgp-dot-gradient	D122	導光板底面 レーザー微細ドット密度勾配パ	#121-150	6,-7,-32.68	67.4,43.4,0.47	166,58,-42	optical_glass_clear
 lcd-lgp-matte-esd	D123	導光板上面 パウダーブラスト微細マット処	#121-150	6,-7,-32.86	67.4,45.5,0.26	146,8,-32	emi_shield_metal
 lcd-lcm-shading-tape	D124	液晶セル〜BLU間 黒色全周遮光両面テー	#121-150	6,-7,-33.24	68.6,46.2,0.42	146,-32,-32	foam_felt_matte
