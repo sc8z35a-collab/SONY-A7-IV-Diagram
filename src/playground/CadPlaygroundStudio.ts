@@ -22,11 +22,17 @@ import {
   renderEngineeringRadarSvg,
 } from './CameraEngineeringGrader';
 import {
+  buildPlyaReportFromDeepPhysics,
+  ExamStrictnessMode,
+  generatePlaygroundCalculiXDeck,
+  generatePlaygroundExamWorkspaceJson,
   generatePlaygroundKiCadSchematic,
   generatePlaygroundNgspiceNetlist,
   PlyaPipelineReport,
   runPlyaVerificationPipeline,
+  serializeSnapshotsForExamEngine,
 } from './PlyaVerificationPipeline';
+import type { ExamWorkerRequest, ExamWorkerResponse } from './exam_core/ExamPlaygroundWorker';
 
 export interface PlaygroundHostBridge {
   readonly renderer: THREE.WebGLRenderer;
@@ -92,7 +98,7 @@ const ROLE_FILTER_CHIPS: ReadonlyArray<{ readonly key: RoleFilterKey; readonly l
 const MAX_UNDO_STEPS = 60;
 const CATALOG_ROW_HEIGHT = 44;
 const CATALOG_POOL_SIZE = 16;
-const OVERLAY_MAX_SEGMENTS = 520;
+const OVERLAY_MAX_SEGMENTS = 1200;
 
 // Module-scoped zero-GC scratch objects (never allocated inside interaction / render / pick loops)
 const _pgMat = new THREE.Matrix4();
@@ -364,16 +370,22 @@ export class CadPlaygroundStudio {
   private partsGroupMatrixDirty = true;
   private lastEvaluatedEpoch = -1;
   private lastEvaluatedProfile: CameraDesignProfile | null = null;
+  private lastEvaluatedStrictness: ExamStrictnessMode | null = null;
   private lastReport: CameraEngineeringReport | null = null;
   private lastPlyaReport: PlyaPipelineReport | null = null;
   private cogPos: [number, number, number] = [0, 0, 0];
 
   private designProfile: CameraDesignProfile = 'auto';
+  private examStrictness: ExamStrictnessMode = 'design';
   private shadingMode: PlaygroundShadingMode = 'solid';
   private showDiagnostics3D = true;
   private showOpticalAxis = true;
   private showCogMarker = true;
   private showGrid = true;
+
+  private examWorker: Worker | null = null;
+  private workerRequestEpoch = 0;
+  private workerDebounceTimer = 0;
 
   private undoStack: SerializedPartState[][] = [];
   private redoStack: SerializedPartState[][] = [];
@@ -411,6 +423,7 @@ export class CadPlaygroundStudio {
   private shortcutModalEl!: HTMLElement;
   private scoreBadgeEl!: HTMLElement;
   private profileSelectEl!: HTMLSelectElement;
+  private strictnessSelectEl!: HTMLSelectElement;
   private templateSelectEl!: HTMLSelectElement;
   private statusToastEl!: HTMLElement;
   private loadingOverlayEl!: HTMLElement;
@@ -548,6 +561,7 @@ export class CadPlaygroundStudio {
         this.syncInstanceMatrix(sel);
         this.markSceneDirty();
         this.rebuildOverlayLines(false);
+        this.scheduleWorkerEvaluation();
       }
       this.refreshInspectorValues();
       this.host.requestRender();
@@ -555,7 +569,7 @@ export class CadPlaygroundStudio {
     // TransformControls helper is mounted lazily ONLY while a part is selected (saves 67 meshes / 22 mats / 14 DCs / 0.45MB VBO!)
     this.transformHelper = this.transform.getHelper();
 
-    // 2. Unified 1-DC Split Static+Dynamic Overlay LineSegments (Grid + Optical Axis + Cone Ribs + Flange + CoG + Selection + Diagnostics!)
+    // 2. Unified 1-DC Split Static+Dynamic Overlay LineSegments (Grid + Optical Axis + Cone Ribs + Flange + CoG + Hull + Repair Vectors + Diagnostics!)
     const maxVerts = OVERLAY_MAX_SEGMENTS * 2;
     this.overlayPosArr = new Float32Array(maxVerts * 3);
     this.overlayColArr = new Uint8Array(maxVerts * 3);
@@ -591,6 +605,7 @@ export class CadPlaygroundStudio {
     this.rootEl.setAttribute('aria-hidden', 'true');
     this.buildDom();
     appRoot.appendChild(this.rootEl);
+    this.initExamWorker();
   }
 
   private markSceneDirty(): void {
@@ -755,7 +770,7 @@ export class CadPlaygroundStudio {
 
     const dynStartVert = this.staticOverlayVertCount;
 
-    // 3. Industrial 3D Center-of-Gravity (CoG) Crosshair + Diamond Ring
+    // 3. Industrial 3D Center-of-Gravity (CoG) Crosshair + Diamond Ring + 2D Convex-Hull Support Polygon
     if (this.showCogMarker && this.placed.length > 0) {
       const [gx, gy, gz] = this.cogPos;
       this.pushOverlaySeg(gx - 10, gy, gz, gx + 10, gy, gz, 217, 119, 6);
@@ -772,6 +787,25 @@ export class CadPlaygroundStudio {
         px = nx;
         py = ny;
       }
+
+      const overlays = this.lastPlyaReport?.deepReport.overlays;
+      if (overlays && overlays.supportHullXZ.length >= 3) {
+        const sy = overlays.supportMinY + 0.15;
+        const tipDeg = this.lastPlyaReport?.industrialMetrics.tippingAngleDeg ?? 30;
+        const hr = tipDeg >= 20 ? 16 : tipDeg >= 10 ? 245 : 239;
+        const hg = tipDeg >= 20 ? 185 : tipDeg >= 10 ? 158 : 68;
+        const hb = tipDeg >= 20 ? 129 : tipDeg >= 10 ? 11 : 68;
+        const hull = overlays.supportHullXZ;
+        for (let i = 0; i < hull.length; i++) {
+          const a = hull[i];
+          const b = hull[(i + 1) % hull.length];
+          this.pushOverlaySeg(a[0], sy, a[1], b[0], sy, b[1], hr, hg, hb);
+        }
+        // CoG vertical plumb line down to support polygon plane + landing cross
+        this.pushOverlaySeg(gx, gy, gz, gx, sy, gz, hr, hg, hb);
+        this.pushOverlaySeg(gx - 5, sy, gz, gx + 5, sy, gz, hr, hg, hb);
+        this.pushOverlaySeg(gx, sy, gz - 5, gx, sy, gz + 5, hr, hg, hb);
+      }
     }
 
     const snapFresh = this.lastEvaluatedEpoch === this.sceneEpoch;
@@ -783,9 +817,10 @@ export class CadPlaygroundStudio {
       this.pushOverlayBox(box, 0, 102, 255);
     }
 
-    // 5. Diagnostic 3D Red / Amber Wireframe Boxes
+    // 5. Diagnostic 3D Red / Amber Wireframe Boxes + EXAM Minimum Repair Shift Vectors
     if (this.showDiagnostics3D && this.lastReport) {
       const diagMap = this.lastReport.partDiagnostics;
+      const repairMap = this.lastPlyaReport?.deepReport.overlays.repairShiftsMm;
       for (let i = 0; i < this.placed.length; i++) {
         const inst = this.placed[i];
         if (inst.hidden) continue;
@@ -796,6 +831,19 @@ export class CadPlaygroundStudio {
           this.pushOverlayBox(box, 239, 68, 68);
         } else {
           this.pushOverlayBox(box, 245, 158, 11);
+        }
+        const shift = repairMap?.[inst.uid];
+        if (shift && (Math.abs(shift[0]) > 0.02 || Math.abs(shift[1]) > 0.02 || Math.abs(shift[2]) > 0.02)) {
+          const cx = 0.5 * (box.min.x + box.max.x);
+          const cy = 0.5 * (box.min.y + box.max.y);
+          const cz = 0.5 * (box.min.z + box.max.z);
+          const tx = cx + shift[0];
+          const ty = cy + shift[1];
+          const tz = cz + shift[2];
+          this.pushOverlaySeg(cx, cy, cz, tx, ty, tz, 6, 182, 212);
+          this.pushOverlaySeg(tx - 3.5, ty, tz, tx + 3.5, ty, tz, 6, 182, 212);
+          this.pushOverlaySeg(tx, ty - 3.5, tz, tx, ty + 3.5, tz, 6, 182, 212);
+          this.pushOverlaySeg(tx, ty, tz - 3.5, tx, ty, tz + 3.5, 6, 182, 212);
         }
       }
     }
@@ -1152,6 +1200,13 @@ export class CadPlaygroundStudio {
             <span>設計目標</span>
             <select data-field="profileSelect">${profileOptions}</select>
           </label>
+          <label class="pg-snap-field pg-strictness-field" title="PLYA V2 (THE LAST EXAM V1継承) 厳格度モード">
+            <span>EXAM基準</span>
+            <select data-field="strictnessSelect">
+              <option value="design" selected>標準設計</option>
+              <option value="exam_strict">EXAM極限</option>
+            </select>
+          </label>
           <label class="pg-snap-field pg-template-field" title="スターターカメラ構成を読込">
             <span>雛形</span>
             <select data-field="templateSelect">
@@ -1164,15 +1219,15 @@ export class CadPlaygroundStudio {
           </label>
           <button type="button" class="pg-btn pg-btn-sm" data-action="exportJson" title="設計JSONを保存">保存</button>
           <button type="button" class="pg-btn pg-btn-sm" data-action="importJson" title="設計JSONを読込">読込</button>
-          <button type="button" class="pg-btn pg-btn-grade pg-btn-plya" data-action="evaluate" title="PLYA一括検査（KiCad・光線・3D干渉・熱・電源・EMC 全8ツール高速実行＆1000点採点）">
+          <button type="button" class="pg-btn pg-btn-grade pg-btn-plya" data-action="evaluate" title="PLYA V2 一括検査（THE LAST EXAM V1継承 · 実3D三角形BVH・FEA・接触熱・MNA・2000光線MC 全16ソルバ / 128項目＆1000点採点）">
             <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>PLYA</span>
+            <span>PLYA V2</span>
             <strong class="pg-score-pill" data-field="scoreBadge">-- / 1000</strong>
           </button>
         </div>
       </header>
 
-      <button type="button" class="pg-viewport-alert" data-field="viewportAlert" title="クリックでPLYA詳細レポートを表示"></button>
+      <button type="button" class="pg-viewport-alert" data-field="viewportAlert" title="クリックでPLYA V2 (EXAM継承) 詳細レポートを表示"></button>
 
       <aside class="pg-left-panel" aria-label="全パーツカタログ">
         <div class="pg-panel-head">
@@ -1283,6 +1338,7 @@ export class CadPlaygroundStudio {
     this.shortcutModalEl = this.rootEl.querySelector('[data-field="shortcutModal"]') as HTMLElement;
     this.scoreBadgeEl = this.rootEl.querySelector('[data-field="scoreBadge"]') as HTMLElement;
     this.profileSelectEl = this.rootEl.querySelector('[data-field="profileSelect"]') as HTMLSelectElement;
+    this.strictnessSelectEl = this.rootEl.querySelector('[data-field="strictnessSelect"]') as HTMLSelectElement;
     this.templateSelectEl = this.rootEl.querySelector('[data-field="templateSelect"]') as HTMLSelectElement;
     this.statusToastEl = this.rootEl.querySelector('[data-field="toast"]') as HTMLElement;
     this.loadingOverlayEl = this.rootEl.querySelector('[data-field="loading"]') as HTMLElement;
@@ -1331,6 +1387,9 @@ export class CadPlaygroundStudio {
 
     this.profileSelectEl.addEventListener('change', () => {
       this.setDesignProfile(this.profileSelectEl.value as CameraDesignProfile);
+    });
+    this.strictnessSelectEl.addEventListener('change', () => {
+      this.setExamStrictness(this.strictnessSelectEl.value as ExamStrictnessMode);
     });
     this.templateSelectEl.addEventListener('change', () => {
       const tpl = this.templateSelectEl.value as PlaygroundTemplateId;
@@ -1805,6 +1864,116 @@ export class CadPlaygroundStudio {
     }
     this.showToast(`設計目標プロファイル: ${CAMERA_PROFILE_LABELS[profile]}`);
     return rep;
+  }
+
+  public setExamStrictness(mode: ExamStrictnessMode): CameraEngineeringReport {
+    this.examStrictness = mode;
+    if (this.strictnessSelectEl) this.strictnessSelectEl.value = mode;
+    const rep = this.runEngineeringEvaluation(true);
+    if (this.reportModalEl.classList.contains('is-open')) {
+      this.renderReportModal(rep, this.lastPlyaReport);
+    }
+    this.showToast(
+      mode === 'exam_strict'
+        ? 'PLYA V2: EXAM極限モード（THE LAST EXAM V1厳格閾値）へ切替'
+        : 'PLYA V2: 標準設計モードへ切替'
+    );
+    return rep;
+  }
+
+  public applyExamAutoRepair(): number {
+    if (!this.lastPlyaReport) {
+      this.runEngineeringEvaluation(true);
+    }
+    const shifts = this.lastPlyaReport?.deepReport.overlays.repairShiftsMm;
+    if (!shifts) {
+      this.showToast('自動修復対象の浮き・干渉シフトはありません');
+      return 0;
+    }
+    let repairedCount = 0;
+    for (let i = 0; i < this.placed.length; i++) {
+      const inst = this.placed[i];
+      if (inst.locked) continue;
+      const vec = shifts[inst.uid];
+      if (!vec) continue;
+      if (Math.abs(vec[0]) < 0.01 && Math.abs(vec[1]) < 0.01 && Math.abs(vec[2]) < 0.01) continue;
+      inst.anchor.position.x += vec[0];
+      inst.anchor.position.y += vec[1];
+      inst.anchor.position.z += vec[2];
+      inst.anchor.updateMatrixWorld();
+      inst.transformEpoch++;
+      this.syncInstanceMatrix(inst);
+      repairedCount++;
+    }
+    if (repairedCount === 0) {
+      this.showToast('ロックされていない修復対象パーツがありません');
+      return 0;
+    }
+    this.markSceneDirty();
+    this.pushHistorySnapshot();
+    this.refreshInspectorValues();
+    const rep = this.runEngineeringEvaluation(true);
+    if (this.reportModalEl.classList.contains('is-open')) {
+      this.renderReportModal(rep, this.lastPlyaReport);
+    }
+    const plya = this.lastPlyaReport;
+    this.showToast(
+      `EXAM自動修復完了: ${repairedCount}部品を着座/分離 → ${rep.totalScore}/1000 (${plya ? `${plya.assertionPassCount}/${plya.assertionTotalCount}` : '--'}項目PASS)`
+    );
+    this.host.requestRender();
+    return repairedCount;
+  }
+
+  private initExamWorker(): void {
+    if (typeof Worker === 'undefined') return;
+    try {
+      const worker = new Worker(new URL('./exam_core/ExamPlaygroundWorker.ts', import.meta.url), {
+        type: 'module',
+      });
+      worker.onmessage = (ev: MessageEvent<ExamWorkerResponse>) => {
+        const { epoch, report } = ev.data;
+        // Drop stale responses if user kept moving parts or synchronous eval already superseded it
+        if (epoch !== this.workerRequestEpoch || this.lastEvaluatedEpoch === this.sceneEpoch) return;
+        const snaps = this.buildSnapshots();
+        const plya = buildPlyaReportFromDeepPhysics(snaps, this.designProfile, report);
+        this.applyPlyaReport(plya, snaps, true);
+        if (this.reportModalEl.classList.contains('is-open')) {
+          this.renderReportModal(plya.engineeringReport, plya);
+        }
+      };
+      worker.onerror = () => {
+        // Fallback gracefully to synchronous evaluation if module worker fails
+        this.examWorker = null;
+      };
+      this.examWorker = worker;
+    } catch {
+      this.examWorker = null;
+    }
+  }
+
+  private scheduleWorkerEvaluation(): void {
+    if (!this.examWorker || !this.active || this.placed.length === 0) return;
+    if (this.workerDebounceTimer) {
+      window.clearTimeout(this.workerDebounceTimer);
+    }
+    this.workerDebounceTimer = window.setTimeout(() => {
+      this.workerDebounceTimer = 0;
+      if (!this.examWorker || !this.active || this.lastEvaluatedEpoch === this.sceneEpoch) return;
+      const snaps = this.buildSnapshots();
+      const serialized = serializeSnapshotsForExamEngine(snaps);
+      const epoch = ++this.workerRequestEpoch;
+      const req: ExamWorkerRequest = {
+        epoch,
+        strictness: this.examStrictness,
+        parts: serialized,
+        webCtx: {
+          isOnline: typeof navigator !== 'undefined' ? navigator.onLine !== false : true,
+          webgl2: this.host.renderer.capabilities.isWebGL2,
+          totalTriangles: this.estimateSceneTriangles(),
+        },
+      };
+      this.examWorker.postMessage(req);
+    }, 140);
   }
 
   public setShadingMode(mode: PlaygroundShadingMode): void {
@@ -2932,6 +3101,8 @@ export class CadPlaygroundStudio {
       snap.position.copy(p.anchor.position);
       snap.rotationEuler.copy(p.anchor.rotation);
       snap.scale.copy(p.anchor.scale);
+      snap.blueprint = p.blueprint;
+      snap.worldMatrixElements = p.anchor.matrixWorld.elements;
       out[i] = snap;
     }
     return out;
@@ -2966,28 +3137,17 @@ export class CadPlaygroundStudio {
     return true;
   }
 
-  public runEngineeringEvaluation(force = false, deferRender = false): CameraEngineeringReport {
-    if (
-      !force &&
-      this.lastReport &&
-      this.lastPlyaReport &&
-      this.lastEvaluatedEpoch === this.sceneEpoch &&
-      this.lastEvaluatedProfile === this.designProfile
-    ) {
-      return this.lastReport;
-    }
-
-    const snaps = this.buildSnapshots();
-    const plya = runPlyaVerificationPipeline(snaps, this.designProfile, {
-      isOnline: typeof navigator !== 'undefined' ? navigator.onLine !== false : true,
-      webgl2: this.host.renderer.capabilities.isWebGL2,
-      totalTriangles: this.estimateSceneTriangles(),
-    });
+  private applyPlyaReport(
+    plya: PlyaPipelineReport,
+    snaps: readonly PlacedPartSnapshot[],
+    deferRender: boolean
+  ): CameraEngineeringReport {
     const report = plya.engineeringReport;
     this.lastPlyaReport = plya;
     this.lastReport = report;
     this.lastEvaluatedEpoch = this.sceneEpoch;
     this.lastEvaluatedProfile = this.designProfile;
+    this.lastEvaluatedStrictness = this.examStrictness;
 
     // Update 3D Center-of-Gravity position & Unified 1-DC Dynamic Overlays + O(changed) Error/Selection Colors
     const [gx, gy, gz] = report.telemetry.centerOfGravityMm;
@@ -3015,13 +3175,13 @@ export class CadPlaygroundStudio {
       nextAlertCls = 'pg-viewport-alert';
     } else if (errorPartCount > 0) {
       nextAlertCls = 'pg-viewport-alert is-visible is-error';
-      nextAlertText = `🔴 エラー部品 ${errorPartCount}個を赤色表示中 — クリックでPLYA修正ヒントを表示`;
+      nextAlertText = `🔴 PLYA V2 (EXAM): エラー部品 ${errorPartCount}個 · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目PASS — クリックで詳細＆自動修復`;
     } else if (warnPartCount > 0 || plya.failCount > 0) {
       nextAlertCls = 'pg-viewport-alert is-visible is-warn';
-      nextAlertText = `⚠️ 注意部品 ${warnPartCount}個 / 要確認 ${plya.failCount + plya.warnCount}項目 — PLYAで詳細確認`;
+      nextAlertText = `⚠️ PLYA V2 (EXAM): 注意 ${warnPartCount}部品 / ${plya.passCount}/16ソルバ (${plya.assertionPassCount}/${plya.assertionTotalCount}項目) — クリックで詳細確認`;
     } else {
       nextAlertCls = 'pg-viewport-alert is-visible is-ok';
-      nextAlertText = `✅ PLYA 全8ツール合格 · ${report.totalScore}/1000 (${report.rank})`;
+      nextAlertText = `✅ PLYA V2 全16ソルバ / ${plya.assertionPassCount}/${plya.assertionTotalCount}項目合格 · ${report.totalScore}/1000 (${report.rank})`;
     }
     if (nextAlertCls !== this.lastAlertCls) {
       this.lastAlertCls = nextAlertCls;
@@ -3054,6 +3214,32 @@ export class CadPlaygroundStudio {
     return report;
   }
 
+  public runEngineeringEvaluation(force = false, deferRender = false): CameraEngineeringReport {
+    if (
+      !force &&
+      this.lastReport &&
+      this.lastPlyaReport &&
+      this.lastEvaluatedEpoch === this.sceneEpoch &&
+      this.lastEvaluatedProfile === this.designProfile &&
+      this.lastEvaluatedStrictness === this.examStrictness
+    ) {
+      return this.lastReport;
+    }
+
+    const snaps = this.buildSnapshots();
+    const plya = runPlyaVerificationPipeline(
+      snaps,
+      this.designProfile,
+      {
+        isOnline: typeof navigator !== 'undefined' ? navigator.onLine !== false : true,
+        webgl2: this.host.renderer.capabilities.isWebGL2,
+        totalTriangles: this.estimateSceneTriangles(),
+      },
+      this.examStrictness
+    );
+    return this.applyPlyaReport(plya, snaps, deferRender);
+  }
+
   public runPlyaPipeline(openModal = true): PlyaPipelineReport {
     this.runEngineeringEvaluation(false);
     const plya = this.lastPlyaReport!;
@@ -3063,7 +3249,7 @@ export class CadPlaygroundStudio {
       this.reportModalEl.setAttribute('aria-hidden', 'false');
     }
     this.showToast(
-      `PLYA完了 (${plya.totalDurationMs.toFixed(1)}ms): ${plya.passCount}/8合格 · ${plya.engineeringReport.totalScore}点`
+      `PLYA V2完了 (${plya.totalDurationMs.toFixed(1)}ms): ${plya.passCount}/16ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目 · ${plya.engineeringReport.totalScore}点`
     );
     return plya;
   }
@@ -3097,11 +3283,24 @@ export class CadPlaygroundStudio {
     const cogText = `(${r.telemetry.centerOfGravityMm.map((v) => v.toFixed(0)).join(', ')}) mm`;
     const radarSvg = renderEngineeringRadarSvg(r);
 
+    const repairCount = plya
+      ? Object.values(plya.deepReport.overlays.repairShiftsMm).filter(
+          (v) => Math.abs(v[0]) > 0.01 || Math.abs(v[1]) > 0.01 || Math.abs(v[2]) > 0.01
+        ).length
+      : 0;
+    const repairBtnHtml =
+      repairCount > 0
+        ? `<button type="button" class="pg-btn pg-btn-repair" data-action="applyExamRepair" title="EXAM V1接触グラフから算出した最小修復ベクトルで浮き・干渉部品を1クリック自動修正">⚡ EXAM自動修復 (${repairCount}部品)</button>`
+        : '';
+
     const headlineHtml = plya
       ? `
       <div class="pg-plya-headline ${verdictClass}">
         <span>${escapeHtml(plya.simpleHeadline)}</span>
-        <span class="pg-plya-speed">PLYA ${plya.totalDurationMs.toFixed(1)}ms · 全8ツール</span>
+        <div class="pg-plya-head-right">
+          ${repairBtnHtml}
+          <span class="pg-plya-speed">PLYA V2 (EXAM継承) · ${plya.totalDurationMs.toFixed(1)}ms · ${plya.passCount}/16ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目</span>
+        </div>
       </div>`
       : '';
 
@@ -3113,21 +3312,39 @@ export class CadPlaygroundStudio {
             const ico = t.status === 'pass' ? '✅' : t.status === 'warn' ? '⚠️' : '❌';
             const focusBtn =
               t.flaggedUids.length > 0
-                ? `<button type="button" class="pg-plya-focus-btn" data-focus-uid="${escapeHtml(t.flaggedUids[0])}">赤い部品を3Dで見る</button>`
+                ? `<button type="button" class="pg-plya-focus-btn" data-focus-uid="${escapeHtml(t.flaggedUids[0])}">対象部品を3Dで見る</button>`
                 : '';
+            const aPass = t.assertions.filter((a) => a.status === 'pass').length;
+            const assertRows = t.assertions
+              .map((a) => {
+                const aIco = a.status === 'pass' ? '✓' : a.status === 'warn' ? '!' : '✕';
+                return `
+                  <div class="pg-plya-assert-row is-${a.status}">
+                    <span class="pg-plya-assert-id">${escapeHtml(a.id)}</span>
+                    <span class="pg-plya-assert-ico">${aIco}</span>
+                    <span class="pg-plya-assert-lbl">${escapeHtml(a.labelJa)}</span>
+                    <span class="pg-plya-assert-val">${escapeHtml(a.actual)} <em>(${escapeHtml(a.limit)})</em></span>
+                  </div>`;
+              })
+              .join('');
             return `
             <div class="pg-plya-tool is-${t.status}">
               <div class="pg-plya-tool-head">
                 <span class="pg-plya-tool-icon">${ico}</span>
                 <span class="pg-plya-tool-name">${escapeHtml(t.toolName)}</span>
-                <span class="pg-plya-tool-domain">${escapeHtml(t.domainJa)}</span>
+                <span class="pg-plya-exam-tag">${escapeHtml(t.examSource)}</span>
                 <span class="pg-plya-tool-badge">${escapeHtml(t.metricBadge)}</span>
               </div>
+              <div class="pg-plya-tool-sub">${escapeHtml(t.domainJa)} · ${t.score}/100 · ${t.durationMs.toFixed(1)}ms</div>
               <div class="pg-plya-tool-verdict">${escapeHtml(t.plainVerdict)}</div>
               <div class="pg-plya-tool-foot">
                 <span class="pg-plya-tool-fix">${t.status === 'pass' ? '✓ ' : '→ '}${escapeHtml(t.fixHint)}</span>
                 ${focusBtn}
               </div>
+              <details class="pg-plya-assertions">
+                <summary>原子テスト ${aPass}/${t.assertions.length} PASS（クリックで詳細展開）</summary>
+                <div class="pg-plya-assert-list">${assertRows}</div>
+              </details>
             </div>`;
           })
           .join('')}
@@ -3137,10 +3354,10 @@ export class CadPlaygroundStudio {
     const quickFixes = plya?.quickFixes ?? r.topActions;
     const actionsHtml =
       quickFixes.length > 0
-        ? `<div class="pg-rep-actions"><h4>ここだけ直せばOK（優先チェック）</h4><ul>${quickFixes
+        ? `<div class="pg-rep-actions"><h4>ここだけ直せばOK（EXAM V1 優先修正リスト）</h4><ul>${quickFixes
             .map((a) => `<li>${escapeHtml(a)}</li>`)
             .join('')}</ul></div>`
-        : '<div class="pg-rep-actions is-ok"><h4>全検査クリア！そのまま作れる設計です</h4><p>KiCad電気配線・光線追跡・3D干渉・熱解析・電源・EMCのすべてで合格ラインを達成しています。</p></div>';
+        : '<div class="pg-rep-actions is-ok"><h4>全16ソルバ / 128項目クリア！そのまま量産・EXAM V1へ投入できる設計です</h4><p>実3D三角形BVH干渉・ゼロ浮き・重心転倒・FEA構造・接触熱回路・MNA電源・3D配線・2,000光線光学・電食・MTBFのすべてで合格基準を達成しています。</p></div>';
 
     const catHtml = r.categories
       .map(
@@ -3156,6 +3373,21 @@ export class CadPlaygroundStudio {
     `
       )
       .join('');
+
+    const im = plya?.industrialMetrics;
+    const extraTelemetryHtml = im
+      ? `
+        <div><span>重心 / 転倒限界角</span><strong>${cogText} · θ=${im.tippingAngleDeg.toFixed(1)}°</strong></div>
+        <div><span>FEA安全率 / たわみ / f1</span><strong>SF ${im.feaSafetyFactor.toFixed(1)} · ${im.maxDeflectionUm.toFixed(1)}µm · ${im.modalF1Hz.toFixed(0)}Hz</strong></div>
+        <div><span>接触熱 Tj / 外装Tsurf</span><strong>${im.socJunctionC.toFixed(1)}°C / ${im.chassisSurfaceC.toFixed(1)}°C</strong></div>
+        <div><span>MNA IRドロップ / 3.3V</span><strong>${im.spiceIrDropMv.toFixed(0)}mV / ${im.spiceMcu3v3MinV.toFixed(2)}V</strong></div>
+        <div><span>最大浮き / 3D配線長</span><strong>${im.maxSeatGapMm.toFixed(2)}mm · ${im.maxWiringRouteMm.toFixed(0)}mm</strong></div>
+        <div><span>電食ペア / 推定MTBF</span><strong>${im.galvanicSevereCount}組 · ${(im.mtbfHours / 1000).toFixed(1)}kh</strong></div>
+      `
+      : `
+        <div><span>3D重心 (CoG)</span><strong>${cogText}</strong></div>
+        <div><span>ピント距離 / ズレ</span><strong>${ffdText} / ${eccText}</strong></div>
+      `;
 
     this.reportContentEl.innerHTML = `
       ${headlineHtml}
@@ -3177,13 +3409,10 @@ export class CadPlaygroundStudio {
             <div class="pg-rep-verdict-pill ${verdictClass}">${escapeHtml(r.operationalVerdict)}</div>
             <div class="pg-rep-profile-pill">設計モード: ${escapeHtml(r.resolvedProfileLabel)}</div>
           </div>
-          <div class="pg-rep-telemetry pg-rep-telemetry-v11">
-            <div><span>構成 / 重さ</span><strong>${r.metrics.partCount}点 · ${r.telemetry.estimatedMassG} g</strong></div>
-            <div><span>3D重心 (CoG)</span><strong>${cogText}</strong></div>
-            <div><span>ピント距離 / ズレ</span><strong>${ffdText} / ${eccText}</strong></div>
-            <div><span>光束ケラレ率</span><strong>${r.telemetry.vignettingPct}%</strong></div>
-            <div><span>電力 / 撮影枚数</span><strong>${r.telemetry.peakPowerW.toFixed(1)}W · 約${r.telemetry.estimatedBatteryShots}枚</strong></div>
-            <div><span>4K耐熱 / ぶつかり</span><strong>${r.telemetry.thermal4k60pMin >= 120 ? '120分+' : `${r.telemetry.thermal4k60pMin}分`} · ${r.metrics.severeCollisionCount}件</strong></div>
+          <div class="pg-rep-telemetry pg-rep-telemetry-v11 pg-rep-telemetry-v2">
+            <div><span>構成 / 実体積質量</span><strong>${r.metrics.partCount}点 · ${r.telemetry.estimatedMassG} g</strong></div>
+            <div><span>ピント / 2000光線ケラレ</span><strong>${ffdText} (${eccText}) · ${r.telemetry.vignettingPct}%</strong></div>
+            ${extraTelemetryHtml}
           </div>
         </div>
       </div>
@@ -3192,9 +3421,11 @@ export class CadPlaygroundStudio {
       ${
         plya
           ? `<div class="pg-eda-export-row">
-              <span class="pg-eda-export-label">実産業ツール連携出力（WLK-220検証ノウハウ適用）：</span>
-              <button type="button" class="pg-btn pg-btn-sm" data-action="exportKiCad">KiCad回路図 (.kicad_sch) 出力</button>
-              <button type="button" class="pg-btn pg-btn-sm" data-action="exportSpice">ngspice回路ネットリスト (.cir) 出力</button>
+              <span class="pg-eda-export-label">実産業ツール＆THE LAST EXAM V1連携出力（4形式）：</span>
+              <button type="button" class="pg-btn pg-btn-sm" data-action="exportKiCad">KiCad (.kicad_sch)</button>
+              <button type="button" class="pg-btn pg-btn-sm" data-action="exportSpice">ngspice (.cir)</button>
+              <button type="button" class="pg-btn pg-btn-sm" data-action="exportCalculix">CalculiX FEA (.inp)</button>
+              <button type="button" class="pg-btn pg-btn-sm pg-btn-exam-export" data-action="exportExamWorkspace">THE LAST EXAM V1 (.tlx.json)</button>
             </div>`
           : ''
       }
@@ -3204,19 +3435,36 @@ export class CadPlaygroundStudio {
       </details>
     `;
 
+    this.reportContentEl.querySelector('[data-action="applyExamRepair"]')?.addEventListener('click', () => {
+      this.applyExamAutoRepair();
+    });
     this.reportContentEl.querySelector('[data-action="exportKiCad"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const sch = generatePlaygroundKiCadSchematic(snaps, plya);
-      this.downloadTextFile('playground-v11-custom.kicad_sch', sch, 'text/plain;charset=utf-8');
+      this.downloadTextFile('playground-v2-exam.kicad_sch', sch, 'text/plain;charset=utf-8');
       this.showToast('実KiCad 7.0 回路図 (.kicad_sch) を出力しました');
     });
     this.reportContentEl.querySelector('[data-action="exportSpice"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const cir = generatePlaygroundNgspiceNetlist(snaps, plya);
-      this.downloadTextFile('playground-v11-power-thermal.cir', cir, 'text/plain;charset=utf-8');
+      this.downloadTextFile('playground-v2-power-thermal.cir', cir, 'text/plain;charset=utf-8');
       this.showToast('実ngspice 電源・連成熱解析ネットリスト (.cir) を出力しました');
+    });
+    this.reportContentEl.querySelector('[data-action="exportCalculix"]')?.addEventListener('click', () => {
+      if (!plya) return;
+      const snaps = this.buildSnapshots();
+      const inp = generatePlaygroundCalculiXDeck(snaps, plya);
+      this.downloadTextFile('playground-v2-fea.inp', inp, 'text/plain;charset=utf-8');
+      this.showToast('実CalculiX C3D8 3D構造FEAデッキ (.inp) を出力しました');
+    });
+    this.reportContentEl.querySelector('[data-action="exportExamWorkspace"]')?.addEventListener('click', () => {
+      if (!plya) return;
+      const snaps = this.buildSnapshots();
+      const json = generatePlaygroundExamWorkspaceJson(snaps, plya);
+      this.downloadTextFile('playground-v2-exam.tlx.json', json, 'application/json;charset=utf-8');
+      this.showToast('EXAM V1 ワークスペース出力完了 → node scripts/exam.mjs --playground=playground-v2-exam.tlx.json');
     });
 
     this.reportContentEl.querySelectorAll<HTMLButtonElement>('[data-focus-uid]').forEach((btn) => {
@@ -3228,7 +3476,7 @@ export class CadPlaygroundStudio {
           this.closeEvaluationReport();
           this.selectInstance(uid);
           this.focusOnInstance(inst);
-          this.showToast(`赤色エラー部品へフォーカス: ${inst.entry.title}`);
+          this.showToast(`対象部品へフォーカス: ${inst.entry.title}`);
         }
       });
     });
@@ -3804,6 +4052,14 @@ export class CadPlaygroundStudio {
     if (this.toastTimer) {
       window.clearTimeout(this.toastTimer);
       this.toastTimer = 0;
+    }
+    if (this.workerDebounceTimer) {
+      window.clearTimeout(this.workerDebounceTimer);
+      this.workerDebounceTimer = 0;
+    }
+    if (this.examWorker) {
+      this.examWorker.terminate();
+      this.examWorker = null;
     }
     this.clearAllPartsInternal();
     this.disposePgFastBlitResources();

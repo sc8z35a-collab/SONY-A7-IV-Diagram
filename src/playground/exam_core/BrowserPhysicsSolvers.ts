@@ -10,7 +10,7 @@
  * Runs identically on the main thread OR inside ExamPlaygroundWorker (WebWorker).
  */
 
-import type { CatalogPartEntry, EngineeringRole } from '../PartGeometryExtractor';
+import type { CatalogPartEntry } from '../PartGeometryExtractor';
 import {
   computeGalvanicDeltaV,
   MaterialPhysicsRecord,

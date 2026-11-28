@@ -4,11 +4,12 @@
   "branch": "feat/feat-the-last-exam-v1",
   "goal": "Build THE LAST EXAM V1 (36 engines, 530 tests, 16 external solvers, AI-first TLX1) and overhaul Playground grading to PLYA V2",
   "completed": [
-    "THE LAST EXAM V1 complete (36 engines, 530 tests, 16 real external solvers, 75/75 selftest PASS) + PLYA V2 core solvers implemented"
+    "THE LAST EXAM V1 complete (36 engines, 530 tests, 16 real external solvers, 75/75 selftest PASS) + PLYA V2 core solvers implemented",
+    "Completed PLYA V2 EXAM-inherited Playground UI/WebWorker/3D overlays/4-format export + tsc/validate/build PASS"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Integrate PLYA V2 UI/3D overlays/WebWorker/auto-repair into CadPlaygroundStudio.ts & CSS, then run full EXAM V1 + pp1.1 + build verification",
+  "nextStep": "Run PLYA V2 physics & EXAM bridge tests, full exam.mjs real-unit runs, pp1.1 visual verification, and bg gate",
   "artifactsMirrored": [
     {
       "name": "the_last_exam_v1_plan.md",
@@ -21,7 +22,7 @@
       "size": 693
     }
   ],
-  "updatedAt": "2026-11-28T06:13:00.748Z",
+  "updatedAt": "2026-11-28T06:23:57.289Z",
   "vmHost": "devbox",
   "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039"
 }

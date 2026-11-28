@@ -581,333 +581,358 @@ html, body, #app, #viewport	-	9	19	6
 .pg-plya-tool.is-warn .pg-plya-tool-fix	-	4684	4686	1
 .pg-plya-focus-btn	-	4688	4699	10
 .pg-plya-focus-btn:hover	-	4701	4703	1
-.pg-eda-export-row	-	4705	4714	8
-.pg-eda-export-label	-	4716	4721	4
-.pg-rep-details	-	4723	4728	4
-.pg-rep-details summary	-	4730	4737	6
-.pg-rep-details[open] summary	-	4739	4741	1
-.pg-plya-tools-grid	@media (max-width: 720px)	4744	4746	1
-#app[data-capture-mode], #app[data-capture-mode] *, #app[data-capture-mode] *::before, #app[data-capture-mode] *::after	-	4752	4759	3
-#app[data-capture-mode="ui"]	-	4761	4763	1
-#app[data-capture-cad="0"] #viewport	-	4765	4768	2
-#app[data-capture-ui="0"] .studio-topbar, #app[data-capture-ui="0"] .studio-bottom-dock, #app[data-capture-ui="0"] .unit-v2-perf-toggle, #a…	-	4770	4775	1
-#app[data-capture-perf="0"] .unit-v2-perf-toggle, #app[data-capture-perf="0"] .unit-v2-perf-panel	-	4777	4780	1
-#app[data-capture-drawer="0"] .explanation-drawer, #app[data-capture-drawer="0"] .schematic-lightbox	-	4782	4785	1
-#app[data-capture-mode="diagram"] .explanation-drawer, #app[data-capture-mode="explanation"] .explanation-drawer	-	4787	4797	8
-#app[data-capture-mode="diagram"] .explanation-drawer .drawer-toolbar, #app[data-capture-mode="diagram"] .explanation-drawer .drawer-view-t…	-	4799	4804	1
-#app[data-capture-mode="diagram"] .explanation-drawer .drawer-body	-	4806	4809	2
-.studio-topbar	@media (max-width: 768px)	4815	4821	5
-#app.has-drawer .studio-topbar	@media (max-width: 768px)	4823	4825	1
-.studio-topbar-left	@media (max-width: 768px)	4827	4830	2
-.studio-topbar-right	@media (max-width: 768px)	4832	4835	2
-.assembly-trigger-pill	@media (max-width: 768px)	4837	4842	4
-.assembly-trigger-label	@media (max-width: 768px)	4844	4848	3
-.playground-cta-pill	@media (max-width: 768px)	4850	4854	3
-.studio-seg-pill	@media (max-width: 768px)	4856	4860	3
-.studio-seg-item	@media (max-width: 768px)	4862	4866	3
-.assembly-palette-grid	@media (max-width: 768px)	4868	4870	1
-.unit-v2-perf-toggle	@media (max-width: 768px)	4872	4875	2
-.studio-bottom-dock	@media (max-width: 768px)	4877	4888	10
-#app.has-drawer .studio-bottom-dock	@media (max-width: 768px)	4890	4892	1
-.dock-explode	@media (max-width: 768px)	4894	4896	1
-.dock-explode .dock-slider	@media (max-width: 768px)	4898	4901	2
-.explanation-drawer	@media (max-width: 768px)	4904	4913	8
-.explanation-drawer.is-open	@media (max-width: 768px)	4915	4917	1
-.drawer-mobile-handle	@media (max-width: 768px)	4919	4926	6
-.explanation-drawer .drawer-body	@media (max-width: 768px)	4928	4930	1
-.schematic-stage.exp-diagram-box	@media (max-width: 768px)	4933	4940	6
-.schematic-stage .exp-diagram-content	@media (max-width: 768px)	4942	4944	1
-.schematic-lightbox	@media (max-width: 768px)	4947	4949	1
-.schematic-lightbox-panel	@media (max-width: 768px)	4951	4955	3
-.schematic-lightbox-canvas	@media (max-width: 768px)	4957	4959	1
-.schematic-lightbox-panel.is-rotated .schematic-lightbox-canvas	@media (max-width: 768px)	4961	4963	1
-.pg-left-panel	@media (max-width: 768px)	4966	4973	6
-.pg-right-panel	@media (max-width: 768px)	4975	4977	1
-.pg-rep-hero	@media (max-width: 768px)	4979	4982	2
-.pg-rep-telemetry	@media (max-width: 768px)	4984	4986	1
-.pg-rep-cats	@media (max-width: 768px)	4988	4990	1
-.mirai-cta-pill	-	4998	5015	16
-.mirai-cta-pill svg	-	5017	5025	7
-.mirai-cta-pill:hover	-	5027	5031	3
-.mirai-cta-pill.is-active	-	5033	5036	2
-.mirai-subbar .mirai-sub-struct.is-active	-	5038	5042	3
-.mirai-subbar-sep	-	5044	5049	4
-.mirai-subbar .mirai-sub-lib	-	5051	5054	2
-.mirai-subbar .mirai-sub-lib:hover	-	5056	5058	1
-.mirai-drawer-top	-	5061	5072	10
-.mirai-drawer-meta-pills	-	5074	5079	4
-.mirai-fh-code	-	5081	5092	10
-.mirai-badge	-	5094	5101	6
-.mirai-badge.badge-demo	-	5103	5107	3
-.mirai-badge.badge-asi	-	5109	5113	3
-.mirai-badge.badge-wish	-	5115	5119	3
-.mirai-eta-pill	-	5121	5126	4
-.mirai-edition-toggle	-	5128	5136	7
-.mirai-ed-btn	-	5138	5149	10
-.mirai-ed-btn.active	-	5151	5155	3
-.mirai-ed-btn:not(.active):hover	-	5157	5160	2
-.mirai-drawer-score-card, .mirai-score-card	-	5163	5171	6
-.mirai-drawer-score-head, .mirai-score-head	-	5173	5180	5
-.mirai-score-lbl	-	5182	5186	3
-.mirai-score-sub	-	5188	5192	3
-.mirai-score-big	-	5194	5200	5
-.mirai-score-big span	-	5202	5206	3
-.mirai-axes-list	-	5208	5212	3
-.mirai-axis-row	-	5214	5220	5
-.mirai-axis-lbl	-	5222	5225	2
-.mirai-axis-track	-	5227	5232	4
-.mirai-axis-fill	-	5234	5238	3
-.mirai-axis-val	-	5240	5245	4
-.mirai-score-rationale	-	5247	5254	6
-.mirai-caution-box	-	5257	5265	7
-.mirai-compare-table	-	5267	5274	6
-.mirai-compare-table th	-	5276	5283	6
-.mirai-compare-table td	-	5285	5291	5
-.mirai-compare-table td.mirai-td-future	-	5293	5297	3
-.mirai-glossary-chips	-	5300	5304	3
-.mirai-gloss-chip	-	5306	5317	10
-.mirai-gloss-chip:hover	-	5319	5322	2
-.mirai-drawer-actions	-	5324	5329	4
-.mirai-drawer-cta	-	5331	5343	11
-.mirai-drawer-cta:hover	-	5345	5348	2
-.mirai-drawer-cta.is-primary	-	5350	5354	3
-.mirai-drawer-cta.is-primary:hover	-	5356	5358	1
-.mirai-source-list	-	5360	5368	7
-.mirai-source-list a	-	5370	5375	4
-.mirai-studio-backdrop	-	5381	5392	10
-.mirai-studio-modal	-	5394	5405	10
-.mirai-studio-header	-	5407	5415	7
-.mirai-studio-brand	-	5417	5421	3
-.mirai-studio-emblem	-	5423	5434	10
-.mirai-studio-titles h2	-	5436	5441	4
-.mirai-studio-titles p	-	5443	5447	3
-.mirai-studio-header-right	-	5449	5453	3
-.mirai-studio-close	-	5455	5466	10
-.mirai-studio-close:hover	-	5468	5471	2
-.mirai-studio-tabs	-	5473	5479	5
-.mirai-tab-btn	-	5481	5491	9
-.mirai-tab-btn.active	-	5493	5497	3
-.mirai-studio-body	-	5499	5503	3
-.mirai-vol-strip	-	5505	5511	5
-.mirai-vol-pill	-	5513	5525	11
-.mirai-vol-pill.active	-	5527	5531	3
-.mirai-vol-num	-	5533	5537	3
-.mirai-vol-theme	-	5539	5542	2
-.mirai-vol-intro-card	-	5544	5550	5
-.mirai-vol-intro-tag	-	5552	5557	4
-.mirai-vol-intro-card h3	-	5559	5563	3
-.mirai-preamble-details summary	-	5565	5570	4
-.mirai-preamble-body	-	5572	5577	4
-.mirai-tech-list	-	5579	5583	3
-.mirai-tech-article	-	5585	5591	5
-.mirai-tech-article.mirai-focus-pulse, .mirai-gloss-card.mirai-focus-pulse	-	5593	5597	2
-.mirai-tech-id-row	-	5599	5605	5
-.mirai-3d-jump-btn, .mirai-3d-mini-btn	-	5607	5618	9
-.mirai-3d-jump-btn:hover, .mirai-3d-mini-btn:hover	-	5620	5623	1
-.mirai-3d-soon-pill	-	5625	5632	6
-.mirai-base-jump-btn, .mirai-read-mini-btn	-	5634	5645	9
-.mirai-base-jump-btn:hover, .mirai-read-mini-btn:hover	-	5647	5651	2
-.mirai-tech-title	-	5653	5658	4
-.mirai-tech-oneliner	-	5660	5668	7
-.mirai-tech-grid	-	5670	5675	4
-.mirai-subsec	-	5677	5679	1
-.mirai-subsec h4	-	5681	5686	4
-.mirai-feature-list	-	5688	5697	8
-.mirai-procon-grid	-	5699	5704	4
-.mirai-pc-box	-	5706	5713	6
-.mirai-pc-box.pc-pro	-	5715	5718	2
-.mirai-pc-box.pc-con	-	5720	5723	2
-.mirai-pc-box p	-	5725	5727	1
-.mirai-filter-bar	-	5730	5735	4
-.mirai-search-input	-	5737	5745	7
-.mirai-select	-	5747	5755	7
-.mirai-matrix-meta	-	5757	5761	3
-.mirai-matrix-wrap	-	5763	5768	4
-.mirai-matrix-table	-	5770	5774	3
-.mirai-matrix-table th	-	5776	5783	6
-.mirai-matrix-table td	-	5785	5789	3
-.mirai-matrix-title-btn	-	5791	5801	9
-.mirai-matrix-title-btn:hover	-	5803	5806	2
-.mirai-matrix-score	-	5808	5811	2
-.mirai-gloss-mode-group	-	5813	5816	2
-.mirai-gm-btn	-	5818	5828	9
-.mirai-gm-btn.active	-	5830	5834	3
-.mirai-gloss-grid	-	5836	5840	3
-.mirai-gloss-card	-	5842	5847	4
-.mirai-gloss-card-head	-	5849	5855	5
-.mirai-gloss-num	-	5857	5862	4
-.mirai-gloss-card-head h4	-	5864	5869	4
-.mirai-gloss-reading	-	5871	5874	2
-.mirai-gloss-ch	-	5876	5884	7
-.mirai-gloss-oneline, .mirai-gloss-analogy, .mirai-gloss-impact	-	5886	5893	4
-.mirai-gloss-links	-	5895	5900	4
-.mirai-fh-mini-chip	-	5902	5913	10
-.mirai-fh-mini-chip:hover	-	5915	5918	2
-.mirai-loading	-	5920	5925	4
-.mirai-tech-grid	@media (max-width: 900px)	5928	5930	1
-.mirai-procon-grid	@media (max-width: 900px)	5932	5934	1
-.mirai-cta-pill	@media (max-width: 767px)	5938	5942	3
-.mirai-subbar	@media (max-width: 767px)	5944	5948	3
-.mirai-studio-backdrop	@media (max-width: 767px)	5950	5952	1
-.mirai-studio-modal	@media (max-width: 767px)	5954	5958	3
-.mirai-studio-header	@media (max-width: 767px)	5960	5963	2
-.mirai-studio-titles p	@media (max-width: 767px)	5965	5967	1
-.mirai-studio-tabs	@media (max-width: 767px)	5969	5972	2
-.mirai-studio-body	@media (max-width: 767px)	5974	5976	1
-.mirai-gloss-grid	@media (max-width: 767px)	5978	5980	1
-.explanation-drawer .drawer-body > *	-	5989	5991	1
-.schematic-stage.exp-diagram-box	-	5993	5996	2
-.assembly-trigger-label, .playground-cta-pill span, .mirai-cta-pill span	-	5999	6003	1
-#app.has-drawer .studio-topbar, .studio-topbar:has(.mirai-subbar:not(.is-hidden))	-	6006	6011	3
-#app.has-drawer .studio-topbar-center, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center	-	6013	6022	7
-#app.has-drawer .studio-topbar-center > *, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center > *	-	6024	6027	1
-.mirai-subbar	-	6029	6037	7
-.mirai-struct-rail	-	6039	6045	5
-.mirai-lib-group	-	6047	6052	4
-.mirai-subbar .studio-sub-btn	-	6054	6058	3
-#app.has-drawer .mirai-subbar-sep	-	6060	6062	1
-.mirai-subbar .mirai-sub-flagship	-	6064	6069	4
-.mirai-subbar .mirai-sub-flagship.is-active	-	6071	6076	4
-.studio-topbar-left	@media (max-width: 767px)	6079	6082	2
-.assembly-trigger-pill	@media (max-width: 767px)	6084	6089	4
-.assembly-trigger-badge	@media (max-width: 767px)	6091	6094	2
-.playground-cta-pill, .mirai-cta-pill	@media (max-width: 767px)	6096	6102	4
-.mirai-subbar	@media (max-width: 767px)	6104	6116	11
-.mirai-struct-rail	@media (max-width: 767px)	6118	6132	13
-.mirai-struct-rail::-webkit-scrollbar	@media (max-width: 767px)	6134	6136	1
-.mirai-struct-rail .studio-sub-btn	@media (max-width: 767px)	6138	6143	4
-.mirai-lib-group	@media (max-width: 767px)	6145	6151	5
-.mirai-lib-group .studio-sub-btn	@media (max-width: 767px)	6153	6156	2
-.mirai-subbar-sep	@media (max-width: 767px)	6158	6160	1
-.kine-toggle-pill	-	6169	6191	21
-.kine-toggle-pill:hover	-	6193	6197	3
-.kine-toggle-pill:active	-	6199	6201	1
-.kine-toggle-dot	-	6203	6210	6
-.kine-toggle-pill.is-active	-	6212	6217	4
-.kine-toggle-pill.is-active .kine-toggle-dot	-	6219	6222	2
-.explanation-drawer.is-open .drawer-swatch-pill	-	6225	6227	1
-.kine-toggle-pill	@media (max-width: 768px)	6230	6235	4
-.studio-topbar	@media (orientation: landscape) and (max-height: 540px)	6246	6254	7
-#app.has-drawer .studio-topbar	@media (orientation: landscape) and (max-height: 540px)	6256	6259	2
-.studio-topbar-left	@media (orientation: landscape) and (max-height: 540px)	6261	6270	8
-.studio-topbar-left::-webkit-scrollbar	@media (orientation: landscape) and (max-height: 540px)	6272	6274	1
-.studio-topbar-center	@media (orientation: landscape) and (max-height: 540px)	6276	6278	1
-.studio-topbar-right	@media (orientation: landscape) and (max-height: 540px)	6280	6285	4
-.assembly-trigger-pill	@media (orientation: landscape) and (max-height: 540px)	6287	6293	5
-.assembly-trigger-badge	@media (orientation: landscape) and (max-height: 540px)	6295	6298	2
-.playground-cta-pill, .mirai-cta-pill	@media (orientation: landscape) and (max-height: 540px)	6300	6307	5
-#app.has-drawer .playground-cta-pill span, #app.has-drawer .mirai-cta-pill span	@media (orientation: landscape) and (max-height: 540px)	6309	6312	1
-.kine-toggle-pill	@media (orientation: landscape) and (max-height: 540px)	6314	6320	5
-.studio-seg-pill	@media (orientation: landscape) and (max-height: 540px)	6322	6326	3
-.studio-seg-item	@media (orientation: landscape) and (max-height: 540px)	6328	6333	4
-.studio-bottom-dock	@media (orientation: landscape) and (max-height: 540px)	6336	6348	11
-.studio-bottom-dock::-webkit-scrollbar	@media (orientation: landscape) and (max-height: 540px)	6350	6352	1
-#app.has-drawer .studio-bottom-dock	@media (orientation: landscape) and (max-height: 540px)	6354	6357	2
-.dock-explode	@media (orientation: landscape) and (max-height: 540px)	6359	6364	4
-.dock-explode .dock-slider	@media (orientation: landscape) and (max-height: 540px)	6366	6369	2
-.dock-pct-badge	@media (orientation: landscape) and (max-height: 540px)	6371	6374	2
-.explanation-drawer, .explanation-drawer.is-wide	@media (orientation: landscape) and (max-height: 540px)	6377	6389	10
-.explanation-drawer.is-open, .explanation-drawer.is-wide.is-open	@media (orientation: landscape) and (max-height: 540px)	6391	6394	1
-.drawer-mobile-handle	@media (orientation: landscape) and (max-height: 540px)	6396	6398	1
-.explanation-drawer .drawer-toolbar	@media (orientation: landscape) and (max-height: 540px)	6400	6403	2
-.explanation-drawer .icon-btn	@media (orientation: landscape) and (max-height: 540px)	6405	6409	3
-.explanation-drawer .icon-btn svg	@media (orientation: landscape) and (max-height: 540px)	6411	6414	2
-.explanation-drawer .drawer-tab-bar	@media (orientation: landscape) and (max-height: 540px)	6416	6419	2
-.explanation-drawer .drawer-tab-btn	@media (orientation: landscape) and (max-height: 540px)	6421	6424	2
-.explanation-drawer .drawer-body	@media (orientation: landscape) and (max-height: 540px)	6426	6429	2
-.explanation-drawer .exp-category	@media (orientation: landscape) and (max-height: 540px)	6431	6433	1
-.explanation-drawer .exp-title	@media (orientation: landscape) and (max-height: 540px)	6435	6439	3
-.explanation-drawer .exp-subtitle	@media (orientation: landscape) and (max-height: 540px)	6441	6444	2
-.explanation-drawer .exp-summary, .explanation-drawer .exp-list li, .explanation-drawer .exp-analogy-text, .explanation-drawer .exp-innovat…	@media (orientation: landscape) and (max-height: 540px)	6446	6452	2
-.explanation-drawer .exp-analogy, .explanation-drawer .exp-innovation, .explanation-drawer .exp-formula	@media (orientation: landscape) and (max-height: 540px)	6454	6458	1
-.explanation-drawer .exp-section	@media (orientation: landscape) and (max-height: 540px)	6460	6463	2
-.explanation-drawer .schematic-stage.exp-diagram-box	@media (orientation: landscape) and (max-height: 540px)	6465	6472	6
-.explanation-drawer .exp-diagram-actions	@media (orientation: landscape) and (max-height: 540px)	6474	6477	2
-.explanation-drawer .exp-diagram-action-btn	@media (orientation: landscape) and (max-height: 540px)	6479	6482	2
-.schematic-lightbox	@media (orientation: landscape) and (max-height: 540px)	6485	6487	1
-.schematic-lightbox-panel, .schematic-lightbox-card	@media (orientation: landscape) and (max-height: 540px)	6489	6495	4
-.schematic-lightbox-header	@media (orientation: landscape) and (max-height: 540px)	6497	6502	4
-.schematic-lightbox-title	@media (orientation: landscape) and (max-height: 540px)	6504	6506	1
-.schematic-lightbox-stage, .schematic-lightbox-viewport	@media (orientation: landscape) and (max-height: 540px)	6508	6511	1
-.schematic-lightbox-canvas	@media (orientation: landscape) and (max-height: 540px)	6513	6516	2
-.schematic-lightbox-controls	@media (orientation: landscape) and (max-height: 540px)	6518	6522	3
-.lb-ctrl-btn	@media (orientation: landscape) and (max-height: 540px)	6524	6527	2
-.orig-cta-pill	-	6535	6552	16
-.orig-cta-pill svg	-	6554	6562	7
-.orig-cta-pill:hover	-	6564	6568	3
-.orig-cta-pill.is-active	-	6570	6573	2
-.orig-subbar	-	6575	6577	1
-.orig-subbar .orig-sub-exhibit.is-active	-	6579	6583	3
-.orig-subbar .orig-sub-studio	-	6585	6588	2
-.orig-subbar .orig-sub-studio:hover	-	6590	6592	1
-.orig-subbar .orig-sub-demo	-	6594	6598	3
-.orig-subbar .orig-sub-demo.is-active	-	6600	6603	2
-.orig-studio-backdrop	-	6605	6615	9
-.orig-studio-backdrop.is-open	-	6617	6619	1
-.orig-studio-modal	-	6621	6632	10
-.orig-studio-header	-	6634	6642	7
-.orig-studio-brand	-	6644	6648	3
-.orig-studio-badge	-	6650	6661	10
-.orig-studio-header h2	-	6663	6668	4
-.orig-studio-header p	-	6670	6674	3
-.orig-studio-close	-	6676	6687	10
-.orig-studio-close:hover	-	6689	6691	1
-.orig-studio-tabs	-	6693	6700	6
-.orig-studio-tab	-	6702	6713	10
-.orig-studio-tab.is-active	-	6715	6719	3
-.orig-studio-body	-	6721	6727	5
-.orig-pillars	-	6729	6733	3
-.orig-pillar	-	6735	6740	4
-.orig-pillar-k	-	6742	6747	4
-.orig-pillar h3	-	6749	6753	3
-.orig-pillar p	-	6755	6760	4
-.orig-safety-banner	-	6762	6767	4
-.orig-safety-banner h4	-	6769	6774	4
-.orig-safety-banner ul	-	6776	6782	5
-.orig-sec-title	-	6784	6789	4
-.orig-hacks-grid	-	6791	6795	3
-.orig-hack-card	-	6797	6802	4
-.orig-hack-card > strong	-	6804	6809	4
-.orig-hack-card p	-	6811	6816	4
-.orig-kpi-strip	-	6818	6822	3
-.orig-kpi	-	6824	6832	7
-.orig-kpi span	-	6834	6838	3
-.orig-kpi strong	-	6840	6844	3
-.orig-kpi em	-	6846	6851	4
-.orig-table-wrap	-	6853	6857	3
-.orig-bom-table	-	6859	6863	3
-.orig-bom-table th, .orig-bom-table td	-	6865	6871	4
-.orig-bom-table th	-	6873	6878	4
-.orig-bom-table .num	-	6880	6884	3
-.orig-bom-table .price	-	6886	6889	2
-.orig-bom-extra td	-	6891	6894	2
-.orig-bom-total td	-	6896	6899	2
-.orig-bom-total .price	-	6901	6904	2
-.orig-tag	-	6906	6915	8
-.orig-tag.muted	-	6917	6920	2
-.orig-part-link	-	6922	6934	11
-.orig-two-col	-	6936	6940	3
-.orig-card	-	6942	6950	7
-.orig-card h3	-	6952	6956	3
-.orig-muted	-	6958	6963	4
-.orig-bar-row	-	6965	6971	5
-.orig-bar-row > div	-	6973	6978	4
-.orig-bar-row > div > i	-	6980	6984	3
-.orig-result-box	-	6986	6993	6
-.orig-result-box span	-	6995	7000	4
-.orig-result-box.purple	-	7002	7006	3
-.orig-rl-list	-	7008	7014	5
-.orig-note	-	7016	7020	3
-.studio-topbar-left	@media (max-width: 768px)	7023	7030	6
-.studio-topbar-left::-webkit-scrollbar	@media (max-width: 768px)	7031	7033	1
-.studio-topbar-center	@media (max-width: 768px)	7034	7037	2
-.orig-cta-pill	@media (max-width: 768px)	7038	7044	5
-.orig-subbar	@media (max-width: 768px)	7045	7052	6
-.orig-subbar::-webkit-scrollbar	@media (max-width: 768px)	7053	7055	1
-.orig-subbar .studio-sub-btn	@media (max-width: 768px)	7056	7060	3
-.orig-pillars, .orig-hacks-grid, .orig-kpi-strip, .orig-two-col	@media (max-width: 768px)	7061	7066	1
-.orig-studio-backdrop	@media (max-width: 768px)	7067	7069	1
-.orig-studio-modal	@media (max-width: 768px)	7070	7073	2
-.orig-studio-header h2	@media (max-width: 768px)	7074	7076	1
-.orig-studio-header p	@media (max-width: 768px)	7077	7079	1
-.orig-bar-row	@media (max-width: 768px)	7080	7082	1
+.pg-plya-head-right	-	4705	4711	5
+.pg-btn-repair	-	4713	4725	11
+.pg-btn-repair:hover	-	4727	4729	1
+.pg-plya-exam-tag	-	4731	4741	9
+.pg-plya-tool-sub	-	4743	4748	4
+.pg-plya-assertions	-	4750	4754	3
+.pg-plya-assertions summary	-	4756	4762	5
+.pg-plya-assert-list	-	4764	4769	4
+.pg-plya-assert-row	-	4771	4780	8
+.pg-plya-assert-row.is-fail	-	4782	4785	2
+.pg-plya-assert-row.is-warn	-	4787	4790	2
+.pg-plya-assert-id	-	4792	4796	3
+.pg-plya-assert-ico	-	4798	4801	2
+.pg-plya-assert-row.is-pass .pg-plya-assert-ico	-	4803	4805	1
+.pg-plya-assert-row.is-fail .pg-plya-assert-ico	-	4807	4809	1
+.pg-plya-assert-lbl	-	4811	4817	5
+.pg-plya-assert-val	-	4819	4823	3
+.pg-plya-assert-val em	-	4825	4829	3
+.pg-rep-telemetry-v2	-	4831	4833	1
+.pg-btn-exam-export	-	4835	4840	4
+.pg-btn-exam-export:hover	-	4842	4844	1
+.pg-strictness-field select	-	4846	4848	1
+.pg-eda-export-row	-	4850	4859	8
+.pg-eda-export-label	-	4861	4866	4
+.pg-rep-details	-	4868	4873	4
+.pg-rep-details summary	-	4875	4882	6
+.pg-rep-details[open] summary	-	4884	4886	1
+.pg-plya-tools-grid	@media (max-width: 720px)	4889	4891	1
+.pg-plya-headline	@media (max-width: 720px)	4892	4895	2
+.pg-plya-assert-row	@media (max-width: 720px)	4896	4898	1
+.pg-plya-assert-val	@media (max-width: 720px)	4899	4902	2
+#app[data-capture-mode], #app[data-capture-mode] *, #app[data-capture-mode] *::before, #app[data-capture-mode] *::after	-	4908	4915	3
+#app[data-capture-mode="ui"]	-	4917	4919	1
+#app[data-capture-cad="0"] #viewport	-	4921	4924	2
+#app[data-capture-ui="0"] .studio-topbar, #app[data-capture-ui="0"] .studio-bottom-dock, #app[data-capture-ui="0"] .unit-v2-perf-toggle, #a…	-	4926	4931	1
+#app[data-capture-perf="0"] .unit-v2-perf-toggle, #app[data-capture-perf="0"] .unit-v2-perf-panel	-	4933	4936	1
+#app[data-capture-drawer="0"] .explanation-drawer, #app[data-capture-drawer="0"] .schematic-lightbox	-	4938	4941	1
+#app[data-capture-mode="diagram"] .explanation-drawer, #app[data-capture-mode="explanation"] .explanation-drawer	-	4943	4953	8
+#app[data-capture-mode="diagram"] .explanation-drawer .drawer-toolbar, #app[data-capture-mode="diagram"] .explanation-drawer .drawer-view-t…	-	4955	4960	1
+#app[data-capture-mode="diagram"] .explanation-drawer .drawer-body	-	4962	4965	2
+.studio-topbar	@media (max-width: 768px)	4971	4977	5
+#app.has-drawer .studio-topbar	@media (max-width: 768px)	4979	4981	1
+.studio-topbar-left	@media (max-width: 768px)	4983	4986	2
+.studio-topbar-right	@media (max-width: 768px)	4988	4991	2
+.assembly-trigger-pill	@media (max-width: 768px)	4993	4998	4
+.assembly-trigger-label	@media (max-width: 768px)	5000	5004	3
+.playground-cta-pill	@media (max-width: 768px)	5006	5010	3
+.studio-seg-pill	@media (max-width: 768px)	5012	5016	3
+.studio-seg-item	@media (max-width: 768px)	5018	5022	3
+.assembly-palette-grid	@media (max-width: 768px)	5024	5026	1
+.unit-v2-perf-toggle	@media (max-width: 768px)	5028	5031	2
+.studio-bottom-dock	@media (max-width: 768px)	5033	5044	10
+#app.has-drawer .studio-bottom-dock	@media (max-width: 768px)	5046	5048	1
+.dock-explode	@media (max-width: 768px)	5050	5052	1
+.dock-explode .dock-slider	@media (max-width: 768px)	5054	5057	2
+.explanation-drawer	@media (max-width: 768px)	5060	5069	8
+.explanation-drawer.is-open	@media (max-width: 768px)	5071	5073	1
+.drawer-mobile-handle	@media (max-width: 768px)	5075	5082	6
+.explanation-drawer .drawer-body	@media (max-width: 768px)	5084	5086	1
+.schematic-stage.exp-diagram-box	@media (max-width: 768px)	5089	5096	6
+.schematic-stage .exp-diagram-content	@media (max-width: 768px)	5098	5100	1
+.schematic-lightbox	@media (max-width: 768px)	5103	5105	1
+.schematic-lightbox-panel	@media (max-width: 768px)	5107	5111	3
+.schematic-lightbox-canvas	@media (max-width: 768px)	5113	5115	1
+.schematic-lightbox-panel.is-rotated .schematic-lightbox-canvas	@media (max-width: 768px)	5117	5119	1
+.pg-left-panel	@media (max-width: 768px)	5122	5129	6
+.pg-right-panel	@media (max-width: 768px)	5131	5133	1
+.pg-rep-hero	@media (max-width: 768px)	5135	5138	2
+.pg-rep-telemetry	@media (max-width: 768px)	5140	5142	1
+.pg-rep-cats	@media (max-width: 768px)	5144	5146	1
+.mirai-cta-pill	-	5154	5171	16
+.mirai-cta-pill svg	-	5173	5181	7
+.mirai-cta-pill:hover	-	5183	5187	3
+.mirai-cta-pill.is-active	-	5189	5192	2
+.mirai-subbar .mirai-sub-struct.is-active	-	5194	5198	3
+.mirai-subbar-sep	-	5200	5205	4
+.mirai-subbar .mirai-sub-lib	-	5207	5210	2
+.mirai-subbar .mirai-sub-lib:hover	-	5212	5214	1
+.mirai-drawer-top	-	5217	5228	10
+.mirai-drawer-meta-pills	-	5230	5235	4
+.mirai-fh-code	-	5237	5248	10
+.mirai-badge	-	5250	5257	6
+.mirai-badge.badge-demo	-	5259	5263	3
+.mirai-badge.badge-asi	-	5265	5269	3
+.mirai-badge.badge-wish	-	5271	5275	3
+.mirai-eta-pill	-	5277	5282	4
+.mirai-edition-toggle	-	5284	5292	7
+.mirai-ed-btn	-	5294	5305	10
+.mirai-ed-btn.active	-	5307	5311	3
+.mirai-ed-btn:not(.active):hover	-	5313	5316	2
+.mirai-drawer-score-card, .mirai-score-card	-	5319	5327	6
+.mirai-drawer-score-head, .mirai-score-head	-	5329	5336	5
+.mirai-score-lbl	-	5338	5342	3
+.mirai-score-sub	-	5344	5348	3
+.mirai-score-big	-	5350	5356	5
+.mirai-score-big span	-	5358	5362	3
+.mirai-axes-list	-	5364	5368	3
+.mirai-axis-row	-	5370	5376	5
+.mirai-axis-lbl	-	5378	5381	2
+.mirai-axis-track	-	5383	5388	4
+.mirai-axis-fill	-	5390	5394	3
+.mirai-axis-val	-	5396	5401	4
+.mirai-score-rationale	-	5403	5410	6
+.mirai-caution-box	-	5413	5421	7
+.mirai-compare-table	-	5423	5430	6
+.mirai-compare-table th	-	5432	5439	6
+.mirai-compare-table td	-	5441	5447	5
+.mirai-compare-table td.mirai-td-future	-	5449	5453	3
+.mirai-glossary-chips	-	5456	5460	3
+.mirai-gloss-chip	-	5462	5473	10
+.mirai-gloss-chip:hover	-	5475	5478	2
+.mirai-drawer-actions	-	5480	5485	4
+.mirai-drawer-cta	-	5487	5499	11
+.mirai-drawer-cta:hover	-	5501	5504	2
+.mirai-drawer-cta.is-primary	-	5506	5510	3
+.mirai-drawer-cta.is-primary:hover	-	5512	5514	1
+.mirai-source-list	-	5516	5524	7
+.mirai-source-list a	-	5526	5531	4
+.mirai-studio-backdrop	-	5537	5548	10
+.mirai-studio-modal	-	5550	5561	10
+.mirai-studio-header	-	5563	5571	7
+.mirai-studio-brand	-	5573	5577	3
+.mirai-studio-emblem	-	5579	5590	10
+.mirai-studio-titles h2	-	5592	5597	4
+.mirai-studio-titles p	-	5599	5603	3
+.mirai-studio-header-right	-	5605	5609	3
+.mirai-studio-close	-	5611	5622	10
+.mirai-studio-close:hover	-	5624	5627	2
+.mirai-studio-tabs	-	5629	5635	5
+.mirai-tab-btn	-	5637	5647	9
+.mirai-tab-btn.active	-	5649	5653	3
+.mirai-studio-body	-	5655	5659	3
+.mirai-vol-strip	-	5661	5667	5
+.mirai-vol-pill	-	5669	5681	11
+.mirai-vol-pill.active	-	5683	5687	3
+.mirai-vol-num	-	5689	5693	3
+.mirai-vol-theme	-	5695	5698	2
+.mirai-vol-intro-card	-	5700	5706	5
+.mirai-vol-intro-tag	-	5708	5713	4
+.mirai-vol-intro-card h3	-	5715	5719	3
+.mirai-preamble-details summary	-	5721	5726	4
+.mirai-preamble-body	-	5728	5733	4
+.mirai-tech-list	-	5735	5739	3
+.mirai-tech-article	-	5741	5747	5
+.mirai-tech-article.mirai-focus-pulse, .mirai-gloss-card.mirai-focus-pulse	-	5749	5753	2
+.mirai-tech-id-row	-	5755	5761	5
+.mirai-3d-jump-btn, .mirai-3d-mini-btn	-	5763	5774	9
+.mirai-3d-jump-btn:hover, .mirai-3d-mini-btn:hover	-	5776	5779	1
+.mirai-3d-soon-pill	-	5781	5788	6
+.mirai-base-jump-btn, .mirai-read-mini-btn	-	5790	5801	9
+.mirai-base-jump-btn:hover, .mirai-read-mini-btn:hover	-	5803	5807	2
+.mirai-tech-title	-	5809	5814	4
+.mirai-tech-oneliner	-	5816	5824	7
+.mirai-tech-grid	-	5826	5831	4
+.mirai-subsec	-	5833	5835	1
+.mirai-subsec h4	-	5837	5842	4
+.mirai-feature-list	-	5844	5853	8
+.mirai-procon-grid	-	5855	5860	4
+.mirai-pc-box	-	5862	5869	6
+.mirai-pc-box.pc-pro	-	5871	5874	2
+.mirai-pc-box.pc-con	-	5876	5879	2
+.mirai-pc-box p	-	5881	5883	1
+.mirai-filter-bar	-	5886	5891	4
+.mirai-search-input	-	5893	5901	7
+.mirai-select	-	5903	5911	7
+.mirai-matrix-meta	-	5913	5917	3
+.mirai-matrix-wrap	-	5919	5924	4
+.mirai-matrix-table	-	5926	5930	3
+.mirai-matrix-table th	-	5932	5939	6
+.mirai-matrix-table td	-	5941	5945	3
+.mirai-matrix-title-btn	-	5947	5957	9
+.mirai-matrix-title-btn:hover	-	5959	5962	2
+.mirai-matrix-score	-	5964	5967	2
+.mirai-gloss-mode-group	-	5969	5972	2
+.mirai-gm-btn	-	5974	5984	9
+.mirai-gm-btn.active	-	5986	5990	3
+.mirai-gloss-grid	-	5992	5996	3
+.mirai-gloss-card	-	5998	6003	4
+.mirai-gloss-card-head	-	6005	6011	5
+.mirai-gloss-num	-	6013	6018	4
+.mirai-gloss-card-head h4	-	6020	6025	4
+.mirai-gloss-reading	-	6027	6030	2
+.mirai-gloss-ch	-	6032	6040	7
+.mirai-gloss-oneline, .mirai-gloss-analogy, .mirai-gloss-impact	-	6042	6049	4
+.mirai-gloss-links	-	6051	6056	4
+.mirai-fh-mini-chip	-	6058	6069	10
+.mirai-fh-mini-chip:hover	-	6071	6074	2
+.mirai-loading	-	6076	6081	4
+.mirai-tech-grid	@media (max-width: 900px)	6084	6086	1
+.mirai-procon-grid	@media (max-width: 900px)	6088	6090	1
+.mirai-cta-pill	@media (max-width: 767px)	6094	6098	3
+.mirai-subbar	@media (max-width: 767px)	6100	6104	3
+.mirai-studio-backdrop	@media (max-width: 767px)	6106	6108	1
+.mirai-studio-modal	@media (max-width: 767px)	6110	6114	3
+.mirai-studio-header	@media (max-width: 767px)	6116	6119	2
+.mirai-studio-titles p	@media (max-width: 767px)	6121	6123	1
+.mirai-studio-tabs	@media (max-width: 767px)	6125	6128	2
+.mirai-studio-body	@media (max-width: 767px)	6130	6132	1
+.mirai-gloss-grid	@media (max-width: 767px)	6134	6136	1
+.explanation-drawer .drawer-body > *	-	6145	6147	1
+.schematic-stage.exp-diagram-box	-	6149	6152	2
+.assembly-trigger-label, .playground-cta-pill span, .mirai-cta-pill span	-	6155	6159	1
+#app.has-drawer .studio-topbar, .studio-topbar:has(.mirai-subbar:not(.is-hidden))	-	6162	6167	3
+#app.has-drawer .studio-topbar-center, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center	-	6169	6178	7
+#app.has-drawer .studio-topbar-center > *, .studio-topbar:has(.mirai-subbar:not(.is-hidden)) .studio-topbar-center > *	-	6180	6183	1
+.mirai-subbar	-	6185	6193	7
+.mirai-struct-rail	-	6195	6201	5
+.mirai-lib-group	-	6203	6208	4
+.mirai-subbar .studio-sub-btn	-	6210	6214	3
+#app.has-drawer .mirai-subbar-sep	-	6216	6218	1
+.mirai-subbar .mirai-sub-flagship	-	6220	6225	4
+.mirai-subbar .mirai-sub-flagship.is-active	-	6227	6232	4
+.studio-topbar-left	@media (max-width: 767px)	6235	6238	2
+.assembly-trigger-pill	@media (max-width: 767px)	6240	6245	4
+.assembly-trigger-badge	@media (max-width: 767px)	6247	6250	2
+.playground-cta-pill, .mirai-cta-pill	@media (max-width: 767px)	6252	6258	4
+.mirai-subbar	@media (max-width: 767px)	6260	6272	11
+.mirai-struct-rail	@media (max-width: 767px)	6274	6288	13
+.mirai-struct-rail::-webkit-scrollbar	@media (max-width: 767px)	6290	6292	1
+.mirai-struct-rail .studio-sub-btn	@media (max-width: 767px)	6294	6299	4
+.mirai-lib-group	@media (max-width: 767px)	6301	6307	5
+.mirai-lib-group .studio-sub-btn	@media (max-width: 767px)	6309	6312	2
+.mirai-subbar-sep	@media (max-width: 767px)	6314	6316	1
+.kine-toggle-pill	-	6325	6347	21
+.kine-toggle-pill:hover	-	6349	6353	3
+.kine-toggle-pill:active	-	6355	6357	1
+.kine-toggle-dot	-	6359	6366	6
+.kine-toggle-pill.is-active	-	6368	6373	4
+.kine-toggle-pill.is-active .kine-toggle-dot	-	6375	6378	2
+.explanation-drawer.is-open .drawer-swatch-pill	-	6381	6383	1
+.kine-toggle-pill	@media (max-width: 768px)	6386	6391	4
+.studio-topbar	@media (orientation: landscape) and (max-height: 540px)	6402	6410	7
+#app.has-drawer .studio-topbar	@media (orientation: landscape) and (max-height: 540px)	6412	6415	2
+.studio-topbar-left	@media (orientation: landscape) and (max-height: 540px)	6417	6426	8
+.studio-topbar-left::-webkit-scrollbar	@media (orientation: landscape) and (max-height: 540px)	6428	6430	1
+.studio-topbar-center	@media (orientation: landscape) and (max-height: 540px)	6432	6434	1
+.studio-topbar-right	@media (orientation: landscape) and (max-height: 540px)	6436	6441	4
+.assembly-trigger-pill	@media (orientation: landscape) and (max-height: 540px)	6443	6449	5
+.assembly-trigger-badge	@media (orientation: landscape) and (max-height: 540px)	6451	6454	2
+.playground-cta-pill, .mirai-cta-pill	@media (orientation: landscape) and (max-height: 540px)	6456	6463	5
+#app.has-drawer .playground-cta-pill span, #app.has-drawer .mirai-cta-pill span	@media (orientation: landscape) and (max-height: 540px)	6465	6468	1
+.kine-toggle-pill	@media (orientation: landscape) and (max-height: 540px)	6470	6476	5
+.studio-seg-pill	@media (orientation: landscape) and (max-height: 540px)	6478	6482	3
+.studio-seg-item	@media (orientation: landscape) and (max-height: 540px)	6484	6489	4
+.studio-bottom-dock	@media (orientation: landscape) and (max-height: 540px)	6492	6504	11
+.studio-bottom-dock::-webkit-scrollbar	@media (orientation: landscape) and (max-height: 540px)	6506	6508	1
+#app.has-drawer .studio-bottom-dock	@media (orientation: landscape) and (max-height: 540px)	6510	6513	2
+.dock-explode	@media (orientation: landscape) and (max-height: 540px)	6515	6520	4
+.dock-explode .dock-slider	@media (orientation: landscape) and (max-height: 540px)	6522	6525	2
+.dock-pct-badge	@media (orientation: landscape) and (max-height: 540px)	6527	6530	2
+.explanation-drawer, .explanation-drawer.is-wide	@media (orientation: landscape) and (max-height: 540px)	6533	6545	10
+.explanation-drawer.is-open, .explanation-drawer.is-wide.is-open	@media (orientation: landscape) and (max-height: 540px)	6547	6550	1
+.drawer-mobile-handle	@media (orientation: landscape) and (max-height: 540px)	6552	6554	1
+.explanation-drawer .drawer-toolbar	@media (orientation: landscape) and (max-height: 540px)	6556	6559	2
+.explanation-drawer .icon-btn	@media (orientation: landscape) and (max-height: 540px)	6561	6565	3
+.explanation-drawer .icon-btn svg	@media (orientation: landscape) and (max-height: 540px)	6567	6570	2
+.explanation-drawer .drawer-tab-bar	@media (orientation: landscape) and (max-height: 540px)	6572	6575	2
+.explanation-drawer .drawer-tab-btn	@media (orientation: landscape) and (max-height: 540px)	6577	6580	2
+.explanation-drawer .drawer-body	@media (orientation: landscape) and (max-height: 540px)	6582	6585	2
+.explanation-drawer .exp-category	@media (orientation: landscape) and (max-height: 540px)	6587	6589	1
+.explanation-drawer .exp-title	@media (orientation: landscape) and (max-height: 540px)	6591	6595	3
+.explanation-drawer .exp-subtitle	@media (orientation: landscape) and (max-height: 540px)	6597	6600	2
+.explanation-drawer .exp-summary, .explanation-drawer .exp-list li, .explanation-drawer .exp-analogy-text, .explanation-drawer .exp-innovat…	@media (orientation: landscape) and (max-height: 540px)	6602	6608	2
+.explanation-drawer .exp-analogy, .explanation-drawer .exp-innovation, .explanation-drawer .exp-formula	@media (orientation: landscape) and (max-height: 540px)	6610	6614	1
+.explanation-drawer .exp-section	@media (orientation: landscape) and (max-height: 540px)	6616	6619	2
+.explanation-drawer .schematic-stage.exp-diagram-box	@media (orientation: landscape) and (max-height: 540px)	6621	6628	6
+.explanation-drawer .exp-diagram-actions	@media (orientation: landscape) and (max-height: 540px)	6630	6633	2
+.explanation-drawer .exp-diagram-action-btn	@media (orientation: landscape) and (max-height: 540px)	6635	6638	2
+.schematic-lightbox	@media (orientation: landscape) and (max-height: 540px)	6641	6643	1
+.schematic-lightbox-panel, .schematic-lightbox-card	@media (orientation: landscape) and (max-height: 540px)	6645	6651	4
+.schematic-lightbox-header	@media (orientation: landscape) and (max-height: 540px)	6653	6658	4
+.schematic-lightbox-title	@media (orientation: landscape) and (max-height: 540px)	6660	6662	1
+.schematic-lightbox-stage, .schematic-lightbox-viewport	@media (orientation: landscape) and (max-height: 540px)	6664	6667	1
+.schematic-lightbox-canvas	@media (orientation: landscape) and (max-height: 540px)	6669	6672	2
+.schematic-lightbox-controls	@media (orientation: landscape) and (max-height: 540px)	6674	6678	3
+.lb-ctrl-btn	@media (orientation: landscape) and (max-height: 540px)	6680	6683	2
+.orig-cta-pill	-	6691	6708	16
+.orig-cta-pill svg	-	6710	6718	7
+.orig-cta-pill:hover	-	6720	6724	3
+.orig-cta-pill.is-active	-	6726	6729	2
+.orig-subbar	-	6731	6733	1
+.orig-subbar .orig-sub-exhibit.is-active	-	6735	6739	3
+.orig-subbar .orig-sub-studio	-	6741	6744	2
+.orig-subbar .orig-sub-studio:hover	-	6746	6748	1
+.orig-subbar .orig-sub-demo	-	6750	6754	3
+.orig-subbar .orig-sub-demo.is-active	-	6756	6759	2
+.orig-studio-backdrop	-	6761	6771	9
+.orig-studio-backdrop.is-open	-	6773	6775	1
+.orig-studio-modal	-	6777	6788	10
+.orig-studio-header	-	6790	6798	7
+.orig-studio-brand	-	6800	6804	3
+.orig-studio-badge	-	6806	6817	10
+.orig-studio-header h2	-	6819	6824	4
+.orig-studio-header p	-	6826	6830	3
+.orig-studio-close	-	6832	6843	10
+.orig-studio-close:hover	-	6845	6847	1
+.orig-studio-tabs	-	6849	6856	6
+.orig-studio-tab	-	6858	6869	10
+.orig-studio-tab.is-active	-	6871	6875	3
+.orig-studio-body	-	6877	6883	5
+.orig-pillars	-	6885	6889	3
+.orig-pillar	-	6891	6896	4
+.orig-pillar-k	-	6898	6903	4
+.orig-pillar h3	-	6905	6909	3
+.orig-pillar p	-	6911	6916	4
+.orig-safety-banner	-	6918	6923	4
+.orig-safety-banner h4	-	6925	6930	4
+.orig-safety-banner ul	-	6932	6938	5
+.orig-sec-title	-	6940	6945	4
+.orig-hacks-grid	-	6947	6951	3
+.orig-hack-card	-	6953	6958	4
+.orig-hack-card > strong	-	6960	6965	4
+.orig-hack-card p	-	6967	6972	4
+.orig-kpi-strip	-	6974	6978	3
+.orig-kpi	-	6980	6988	7
+.orig-kpi span	-	6990	6994	3
+.orig-kpi strong	-	6996	7000	3
+.orig-kpi em	-	7002	7007	4
+.orig-table-wrap	-	7009	7013	3
+.orig-bom-table	-	7015	7019	3
+.orig-bom-table th, .orig-bom-table td	-	7021	7027	4
+.orig-bom-table th	-	7029	7034	4
+.orig-bom-table .num	-	7036	7040	3
+.orig-bom-table .price	-	7042	7045	2
+.orig-bom-extra td	-	7047	7050	2
+.orig-bom-total td	-	7052	7055	2
+.orig-bom-total .price	-	7057	7060	2
+.orig-tag	-	7062	7071	8
+.orig-tag.muted	-	7073	7076	2
+.orig-part-link	-	7078	7090	11
+.orig-two-col	-	7092	7096	3
+.orig-card	-	7098	7106	7
+.orig-card h3	-	7108	7112	3
+.orig-muted	-	7114	7119	4
+.orig-bar-row	-	7121	7127	5
+.orig-bar-row > div	-	7129	7134	4
+.orig-bar-row > div > i	-	7136	7140	3
+.orig-result-box	-	7142	7149	6
+.orig-result-box span	-	7151	7156	4
+.orig-result-box.purple	-	7158	7162	3
+.orig-rl-list	-	7164	7170	5
+.orig-note	-	7172	7176	3
+.studio-topbar-left	@media (max-width: 768px)	7179	7186	6
+.studio-topbar-left::-webkit-scrollbar	@media (max-width: 768px)	7187	7189	1
+.studio-topbar-center	@media (max-width: 768px)	7190	7193	2
+.orig-cta-pill	@media (max-width: 768px)	7194	7200	5
+.orig-subbar	@media (max-width: 768px)	7201	7208	6
+.orig-subbar::-webkit-scrollbar	@media (max-width: 768px)	7209	7211	1
+.orig-subbar .studio-sub-btn	@media (max-width: 768px)	7212	7216	3
+.orig-pillars, .orig-hacks-grid, .orig-kpi-strip, .orig-two-col	@media (max-width: 768px)	7217	7222	1
+.orig-studio-backdrop	@media (max-width: 768px)	7223	7225	1
+.orig-studio-modal	@media (max-width: 768px)	7226	7229	2
+.orig-studio-header h2	@media (max-width: 768px)	7230	7232	1
+.orig-studio-header p	@media (max-width: 768px)	7233	7235	1
+.orig-bar-row	@media (max-width: 768px)	7236	7238	1

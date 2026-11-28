@@ -7,7 +7,6 @@
  * extracted directly from each placed part's `ExtractedPartBlueprint` (`QuantizedGeoPack`).
  */
 
-import type * as THREE from 'three';
 import type { ExtractedPartBlueprint, QuantizedGeoPack } from '../PartGeometryExtractor';
 
 export interface LocalMeshSummary {
