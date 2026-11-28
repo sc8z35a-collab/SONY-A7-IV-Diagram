@@ -1,12 +1,12 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T01:32:22.998Z",
+  "createdAt": "2026-11-28T02:01:43.185Z",
   "slug": "main",
   "branch": "main",
   "baseSha": "ef7b83d662408f9bec7a1cfca6c51ab468bae4d6",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "41313ad1b0038327b465a0f4f66135a4b71f77e6698efafb5c01d056779ff656",
+  "fingerprint": "41b06c6c9d52aa883b6dbf9d60c81e13f52552498957b5c7b95af9193f4e4958",
   "fileCount": 813,
   "deletedFiles": [],
   "dirtyCount": 0,
@@ -34,13 +34,28 @@
     },
     {
       "name": "walkthrough.md",
-      "sha256": "6171e487f0ca881dafa0963ee7eca03b030b6ace4ac4ce94980fc7e376368cba",
-      "size": 8014
+      "sha256": "a7a89f88bd3406ce8e56b3c3894a4b542f087bec318d135892e712bd5232ecce",
+      "size": 10917
     },
     {
       "name": "walkthrough.md.metadata.json",
       "sha256": "522577a3d09e9a33c6e7611d8b5802d7474d57a9690e8ab157ef64bbf006af6a",
       "size": 306
+    },
+    {
+      "name": "wlk435_cost_dashboard.html.metadata.json",
+      "sha256": "ba5e6dac26baa920c570fc3946070a16d7a91b4986e4a7908c719849ad749d01",
+      "size": 510
+    },
+    {
+      "name": "wlk435_cost_report.md",
+      "sha256": "51c17cbb46e4806df6f45d36314c5995dff5d50d97f203612d146a03021b1aab",
+      "size": 160595
+    },
+    {
+      "name": "wlk435_cost_report.md.metadata.json",
+      "sha256": "fd85a8d3b3c00fea44d49f43efc024359c05e45174b5e7080831b95f5c512daf",
+      "size": 454
     },
     {
       "name": "wlk435_part_inventory.md",

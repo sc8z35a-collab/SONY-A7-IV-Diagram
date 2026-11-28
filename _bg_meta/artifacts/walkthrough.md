@@ -88,3 +88,25 @@
 - **Production Build (`npm run build`)**: `dist/` → `docs/` 更新完了
 - **PR #58 (`origin/main`) 統合**: ソース競合ゼロ、生成物（`catalog/*`・`docs/*`）を最新並列基盤上で再生成・再検証済
 - **PR #59 マージ**: `bg gate --policy=integrator` 8/8 PASS → `bg land --merge-pr` にて `main` (`ef7b83d`) へ安全マージ完了
+
+---
+
+## 4. WLK-435 全435部品 世界最安・実費積算（Dual-Track BOM 調査完了）
+
+**前提**: 2026年11月27日実測為替（`1 USD = 159.3 JPY`）・1台試作最安実費（Qty=1 Prototype Outlay）・25共有調達プールによる二重MOQゼロ化（共有二次118点はMOQ実費 `\$0.00` 処理）・リポジトリ無改変（`git status` クリーン）。
+
+| コスト区分 | Track A（厳密正規仕様・世界最安） | Track B（機能100%維持・極限VE最安） | VE削減効果 |
+|---|---:|---:|---:|
+| **① 全435部品 BOM + 加工費（MOQ実費）** | **¥1,007,651**（`\$6,325.49`） | **¥195,337**（`\$1,226.22`） | **-¥812,314 (-80.6%)** |
+| └ *参考：1台正味消費按分（余剰MOQ除外）* | *¥785,191*（`\$4,929.01`） | *¥178,121*（`\$1,118.15`） | *-¥607,070* |
+| **② PCBA SMT実装費（JLCPCB 別枠）** | ¥31,361（`\$196.87`） | ¥14,499（`\$91.02`） | -¥16,862 (-53.8%) |
+| **③ 国際送料 + 輸入消費税10% + 通関費（別枠）** | ¥152,887（`\$959.74`） | ¥35,575（`\$223.32`） | -¥117,312 (-76.7%) |
+| **合計（日本着・完全実装 1台試作総実費）** | **¥1,191,899**（`\$7,482.10`） | **¥245,411**（`\$1,540.56`） | **-¥946,488 (-79.4%)** |
+
+### 成果物・7項目自動監査結果（7/7 PASS）
+- [wlk435_cost_report.md](file:///home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/76419f02-f40b-4479-b55c-8c6e8877c700/wlk435_cost_report.md) — 全435部品のドメイン別/サブアセンブリ別集計、Top-25パレート分析、PCBA・送料/税別枠積算、25共有プール一覧、全435点明細テーブル
+- [wlk435_bom_full.csv](file:///home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/76419f02-f40b-4479-b55c-8c6e8877c700/wlk435_bom_full.csv) — Excel/スプレッドシート直開対応（UTF-8 BOM付・全435行×33列）
+- [wlk435_cost_dashboard.html](file:///home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/76419f02-f40b-4479-b55c-8c6e8877c700/wlk435_cost_dashboard.html) — 全435部品インタラクティブ検索・比較・トグル試算・CSV出力対応ダッシュボード
+- [wlk435_part_inventory.md](file:///home/antigravity/.gemini/jetski/brain/v1/default/jetski_remote_agents_3p_devbox/76419f02-f40b-4479-b55c-8c6e8877c700/wlk435_part_inventory.md) — 現状435部品の完全リスト
+- **自動監査 (`verify_bom_435.mjs`) 7/7 PASS**: (1) `welcome.json` 435/435 1:1一致、(2) NaN/負値/空欄ゼロ、(3) 25共有プール参照整合・二重MOQゼロ、(4) 全435行 `Track B <= Track A` & `Net <= MOQ`、(5) CSV=JSON=8ドメイン=5サブアセンブリ=レポート総額完全一致（総質量 `358.44 g`）、(6) `git status` 完全クリーン、(7) HTMLダッシュボードJS構文＆埋込JSON435行＆KaTeX安全検証PASS。
+
