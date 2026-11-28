@@ -26,9 +26,9 @@ export const TOOL_SPECS = Object.freeze({
   ].join('\n'),
 
   security: [
-    'TOOL|security (FLOW Security 13-Layer Fortress + 46-Attack Red-Team Oracle + Containment Recovery)',
-    'USAGE|flow security audit [--full] | flow security selftest | flow security recover [--agent=ID] | flow security sandbox-selftest',
-    'LAYERS|SEC-01 Secrets+Entropy | SEC-02 Chained Receipt+Ed25519 | SEC-03 PI/Bidi/TLX11-Spoof | SEC-04 Sandbox+env-i | SEC-05 Realpath | SEC-06 SupplyChain+.git/config+6-Bins | SEC-07 SAST | SEC-08 AntiCheat+Salami+CoreImmutable | SEC-09 AuditLedger | SEC-10 Permit+Quarantine | SEC-11 Hygiene | SEC-12 46-Attack Oracle | SEC-13 Macro+V11Cert Guard',
+    'TOOL|security (FLOW Security 13-Layer Fortress + 48-Attack Red-Team Oracle + Keyless OIDC/Sigstore + Containment)',
+    'USAGE|flow security audit [--full] | selftest | recover [--agent=ID] | sandbox-selftest | attest-status | verify-oidc <file> [--bundle=F]',
+    'LAYERS|SEC-01 Secrets+Entropy | SEC-02 Chained Receipt+OIDC/Sigstore+Ed25519 | SEC-03 PI/Bidi/TLX11-Spoof | SEC-04 Sandbox+env-i | SEC-05 Realpath | SEC-06 SupplyChain+.git/config+6-Bins | SEC-07 SAST | SEC-08 AntiCheat+Salami+CoreImmutable | SEC-09 AuditLedger | SEC-10 Permit+Quarantine | SEC-11 Hygiene | SEC-12 48-Attack Oracle | SEC-13 Macro+V11Cert Guard',
   ].join('\n'),
 
   exam: [

@@ -24,9 +24,9 @@ FLOW-V1.1-OS 1.1.0 | modes=23(21+2) | parts=2937/3473 | EXAM=12p/48e/1080t/48sv/
 - `flow verify [--parallel] [--cached|--no-cache] [--suite=build|selftest|all]` (cache OFF on `finish`/`ship`/`V1.1証明`) | `flow cache <status|clear>`.
 - `flow ship --unit=<U> [--policy=P] [--full-exam] [--visual]` | `flow park [--checkpoint|--next=N]` | `flow finish [--policy=P] [--pr|--merge]`.
 - `flow macro <register|run|list|inspect|verify|suggest|remove|selftest>` (`ai-*` deletable; core locked) | `flow cert <status|verify|selftest>` | `flow swarm <plan|status|selftest>`.
-- `flow security <audit [--full]|selftest|recover|sandbox-selftest>` | `flow doc <audit --strict|sync|tool <n>|section <1|2> <TAG>>` | `flow slice` | `flow exec <t>` | `flow human-report` | `flow selftest`.
+- `flow security <audit [--full]|selftest|recover|sandbox-selftest|attest-status|verify-oidc>` | `flow doc <audit --strict|sync|tool <n>|section <1|2> <TAG>>` | `flow slice` | `flow exec <t>` | `flow human-report` | `flow selftest`.
 
-## @SECURITY_AND_V2 (SEC-01..SEC-13 | 46 ATTACKS | EXIT 6)
-- `SEC-01` Secrets/Entropy(0 inline bypass) | `SEC-02` `FLOW-RECEIPT`+Kernel Closure+Ed25519 | `SEC-03` PI/Bidi/Spoof | `SEC-04` `shell:false`+`env -i`+UserNS/NetNS+Docker `:ro` | `SEC-05` Realpath | `SEC-06` Lockfile+`.git/config`+6-Bin SHA | `SEC-07` SAST | `SEC-08` Anti-Cheat+Salami+Core Lock | `SEC-09` Ledger | `SEC-10` Worker+Permit+Quarantine | `SEC-11` Hygiene | `SEC-12` 46-Attack Oracle | `SEC-13` Macro+`V1.1証明`.
+## @SECURITY_AND_V2 (SEC-01..SEC-13 | 48 ATTACKS | EXIT 6)
+- `SEC-01` Secrets/Entropy(0 inline bypass) | `SEC-02` `FLOW-RECEIPT`+Kernel Closure+OIDC/Sigstore(keyless)+Ed25519 | `SEC-03` PI/Bidi/Spoof | `SEC-04` `shell:false`+`env -i`+UserNS/NetNS+Docker `:ro` | `SEC-05` Realpath | `SEC-06` Lockfile+`.git/config`+6-Bin SHA | `SEC-07` SAST | `SEC-08` Anti-Cheat+Salami+Core Lock | `SEC-09` Ledger | `SEC-10` Worker+Permit+Quarantine | `SEC-11` Hygiene | `SEC-12` 48-Attack Oracle | `SEC-13` Macro+`V1.1証明`.
 - Parallel: `FLOW_AGENT_ID`->`/tmp/flow_ws/<id>/`; worker edits ONLY `src/units/<U>.{ts,pose.tsv}`, `src/data/<U>.json`, `src/assemblies/<U>/**`.
 - V2: G=`pose.tsv`, M=`assemblies/<U>/*.ts` (`ResourceCache` 38 buckets, Instanced/Batched, 0-GC, `JSON==3D`), L=1-line `data/<U>.json`. Protected: `reports/fh_mirai_2028/*.md`, `blueprints/riimos_e1/`.

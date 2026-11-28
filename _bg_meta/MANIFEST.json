@@ -1,13 +1,13 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T13:19:52.047Z",
+  "createdAt": "2026-11-28T13:50:20.105Z",
   "slug": "main",
   "branch": "main",
-  "baseSha": "4586e9b1ca41b190c1d7b53ab440761256bc08e6",
+  "baseSha": "68dadff9bdf1c09f7aaa12d8bf14f0d02b38600a",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "1a08992b2ed008b9956834df3aa6b4ddef604dfcc944985b2699df9d86d2b108",
-  "fileCount": 907,
+  "fingerprint": "058a88635cf4e3361dcf8711e1605f485231653a87cf8503e9bf00f65f6e928f",
+  "fileCount": 908,
   "deletedFiles": [],
   "dirtyCount": 0,
   "skippedLarge": [],
@@ -21,6 +21,26 @@
       "name": "PR_65_FLOW_Security_and_Speedup.url.json.metadata.json",
       "sha256": "5e713f6ae00461bec6b74adc6ca13adb5247834a7b940de9400932369670b1cc",
       "size": 210
+    },
+    {
+      "name": "PR_66_Keyless_OIDC_Sigstore.url.json",
+      "sha256": "47168493e6a47a27871ee9c3dc0299bb3dcb5be89c90f031f78868438b155ef8",
+      "size": 405
+    },
+    {
+      "name": "PR_66_Keyless_OIDC_Sigstore.url.json.metadata.json",
+      "sha256": "c7f49d672c31992244f12ad02a694a1282fe132f5a5c7e22b2520995f08e0a35",
+      "size": 242
+    },
+    {
+      "name": "Sigstore_Attestation_73454559.url.json",
+      "sha256": "b21a8d701363ff82c14533e27d9d5072058f369d22272f5a25b604cd28d0e927",
+      "size": 317
+    },
+    {
+      "name": "Sigstore_Attestation_73454559.url.json.metadata.json",
+      "sha256": "d6f45c8ba77591f7e144bdceb2bd9bbf13c6458be7ae38ab9ab18c681a9e7717",
+      "size": 177
     },
     {
       "name": "flow_security_plan.md",
@@ -96,8 +116,8 @@
     },
     {
       "path": ".github/workflows/flow-security.yml",
-      "sha256": "d18d7ccc0fa1d507fb2a36efdae8db1137c998212c30f3ac2f19d084bea6eb73",
-      "size": 2707,
+      "sha256": "a174bbb33e5d49a6d74e3de130dad13665d32353401c2d68bab2f2927c933104",
+      "size": 4244,
       "mode": "100644"
     },
     {
@@ -120,14 +140,14 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "b62394cdefcef298fd8ebf6379d55cfe3a1380dc0baa7a974aaaa0b0ba904494",
-      "size": 4322,
+      "sha256": "7ae505f30a524bcf689a0a3c58b102edb8a4ff07117e15d994bcacb124b46578",
+      "size": 4371,
       "mode": "100644"
     },
     {
       "path": "README.md",
-      "sha256": "1ebb0b5b6c80f46af96109831d365db20469cc4b96ccbbfd0d2ff3835586af15",
-      "size": 9540,
+      "sha256": "3c2bc50b91385103afc9299e1c09cac96f9a629b33ca770575875389998a4743",
+      "size": 9640,
       "mode": "100644"
     },
     {
@@ -510,7 +530,7 @@
     },
     {
       "path": "catalog/code/MAP.tsv",
-      "sha256": "57a2916d785e7fbd531e920581ad592c3c2507ab53844b3189c86b5ba019d42b",
+      "sha256": "cead91d67831bf3802ba911f1e99abe8696d1582d7c509f216a9a9bf46a37bbf",
       "size": 5893,
       "mode": "100644"
     },
@@ -2394,8 +2414,8 @@
     },
     {
       "path": "scripts/flow_os/core_immutable_manifest.json",
-      "sha256": "83cf325abf1438326b4c1fa2ba76c4b98df0658951c42ad55202ace8aa3184f5",
-      "size": 2337,
+      "sha256": "b63efa12095b27e350dc3fcc6a60f4082b1cb47078b01c8efb4e9b34cc71a9ed",
+      "size": 2385,
       "mode": "100644"
     },
     {
@@ -2418,8 +2438,8 @@
     },
     {
       "path": "scripts/flow_os/flow.mjs",
-      "sha256": "760e5a6b5e1a66b94214c72010fbb8f842e5a160291429a2d0043caca119cfd1",
-      "size": 53551,
+      "sha256": "6725309e6fe3afc73d93a10bf4e62100ce178d01c23630f9830af2a7e4336b02",
+      "size": 55772,
       "mode": "100644"
     },
     {
@@ -2478,8 +2498,14 @@
     },
     {
       "path": "scripts/flow_os/security_selftest.mjs",
-      "sha256": "2fefca529390ebd6f128dcdcca7aae1f383d83f5ba949da1c7ffc30a2faa2c2e",
-      "size": 21284,
+      "sha256": "97843a85297e9e26d5c4079366564bd95d1ed92ac3a997c5a38a874deb3bb075",
+      "size": 22389,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/flow_os/sigstore_attestation.mjs",
+      "sha256": "702c06362ed3798b7a964b5de5e46ad55d7f8921c94e15e08f36f29cf4fe113a",
+      "size": 16161,
       "mode": "100644"
     },
     {
@@ -2502,14 +2528,14 @@
     },
     {
       "path": "scripts/flow_os/templates/AGENTS.tmpl.md",
-      "sha256": "1f413e5c005a560f95fab681a52235d721a4aabeeba1624d1d7ec33bb65f7027",
-      "size": 3419,
+      "sha256": "6694231956ed766c1fabd1856dee3e26e11d26a1deba64287101281bf8a5d163",
+      "size": 3461,
       "mode": "100644"
     },
     {
       "path": "scripts/flow_os/templates/README.tmpl.md",
-      "sha256": "56d181cfe6ec27c34833ceac744abccc52ef133605f287273b7441a7cb392703",
-      "size": 888,
+      "sha256": "67190402f5ba27e5bcddbf47e886bdaa95f7c53843ee92bace385a70af3c43ec",
+      "size": 861,
       "mode": "100644"
     },
     {
@@ -2520,8 +2546,8 @@
     },
     {
       "path": "scripts/flow_os/tool_specs.mjs",
-      "sha256": "7b25bce97968876efc422d95cb482842433176c4973c44ccf074596fec764242",
-      "size": 5213,
+      "sha256": "7ff7979d197aca459880a3460f2ec7fdebe0aa87a5c28d118ff2e7f5448bfeae",
+      "size": 5250,
       "mode": "100644"
     },
     {

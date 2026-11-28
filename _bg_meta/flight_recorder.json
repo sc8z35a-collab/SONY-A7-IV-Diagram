@@ -6,7 +6,7 @@
   "completed": [],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Human configures B-1 Branch Protection and B-2 Ed25519 CI Secrets",
+  "nextStep": "Class C complete (B-1 Ruleset + Keyless GitHub OIDC/Sigstore active on main)",
   "artifactsMirrored": [
     {
       "name": "PR_65_FLOW_Security_and_Speedup.url.json",
@@ -17,6 +17,26 @@
       "name": "PR_65_FLOW_Security_and_Speedup.url.json.metadata.json",
       "sha256": "5e713f6ae00461bec6b74adc6ca13adb5247834a7b940de9400932369670b1cc",
       "size": 210
+    },
+    {
+      "name": "PR_66_Keyless_OIDC_Sigstore.url.json",
+      "sha256": "47168493e6a47a27871ee9c3dc0299bb3dcb5be89c90f031f78868438b155ef8",
+      "size": 405
+    },
+    {
+      "name": "PR_66_Keyless_OIDC_Sigstore.url.json.metadata.json",
+      "sha256": "c7f49d672c31992244f12ad02a694a1282fe132f5a5c7e22b2520995f08e0a35",
+      "size": 242
+    },
+    {
+      "name": "Sigstore_Attestation_73454559.url.json",
+      "sha256": "b21a8d701363ff82c14533e27d9d5072058f369d22272f5a25b604cd28d0e927",
+      "size": 317
+    },
+    {
+      "name": "Sigstore_Attestation_73454559.url.json.metadata.json",
+      "sha256": "d6f45c8ba77591f7e144bdceb2bd9bbf13c6458be7ae38ab9ab18c681a9e7717",
+      "size": 177
     },
     {
       "name": "flow_security_plan.md",
@@ -59,7 +79,7 @@
       "size": 400
     }
   ],
-  "updatedAt": "2026-11-28T13:19:51.953Z",
+  "updatedAt": "2026-11-28T13:50:20.098Z",
   "vmHost": "devbox",
-  "baseSha": "4586e9b1ca41b190c1d7b53ab440761256bc08e6"
+  "baseSha": "68dadff9bdf1c09f7aaa12d8bf14f0d02b38600a"
 }
