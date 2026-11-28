@@ -71,7 +71,7 @@ evf-ir-leds	#69	視線入力AF用 850nm赤外線リングL	evf	0,39.5,-27.55	24.
 evf-dichroic-mirror	#70	45° ダイクロイック・ホットミラー	evf	0,39.5,-23.6	24.35,6.8,6.8	0,0,-16	becu_spring
 evf-gaze-camera	#71	視線入力AF 30.7万画素 赤外CMO	evf	0,25.05,-23.6	14.8,3.04,10.3	0,-18,-16	ic_epoxy_dark
 evf-lens-rear	#72	後群 大口径両面非球面 接眼レンズ	evf	0,39.5,-15.4	23.68,23.73,3.7	0,0,-2	magnesium_cast
-evf-lens-ed-doublet	#73	視度補正可動群：ED低分散＋高屈折ランタ	evf	0,39.5,-9.4	31.07,20.84,4.86	0,0,12	matte_chassis
+evf-lens-ed-doublet	#73	視度補正可動群：ED低分散＋高屈折ランタ	evf	0,39.5,-9.4	31,20.84,4.86	0,0,12	matte_chassis
 evf-diopter-rails	#74	視度可動レンズ 2軸センタレス研磨ガイド	evf	0,39.5,-9	25.76,16.56,9.92	-28,-14,12	stainless_machined
 evf-diopter-helicoid	#75	スパイラルカム溝ヘリコイド鏡筒スリーブ	evf	0,39.5,-9.4	23.21,23.13,6.42	30,8,12	stainless_machined
 evf-diopter-mech	#76	精密ヘリコイド視度調整ダイヤル	evf	-19.2,39.5,-15.6	10.27,8.74,17.49	16,-24,12	magnesium_cast

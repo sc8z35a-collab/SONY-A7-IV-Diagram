@@ -3573,6 +3573,14 @@ export class CompiledV2Unit implements OptimizedUnit {
       }
     }
 
+    if (syncRig && this.rigSkeletonRoot && this.quality !== 'standard_lite') {
+      if (force) {
+        this.rigSkeletonRoot.traverse((obj) => obj.updateMatrix());
+      }
+      this.rigSkeletonRoot.updateMatrixWorld(true);
+      this.syncDynamicRigMatrices();
+    }
+
     for (let b = 0; b < this.gpuExplodeBindings.length; b++) {
       this.gpuExplodeBindings[b].gpuExplodeFactor = clamped;
     }
@@ -3976,6 +3984,9 @@ export class CompiledV2Unit implements OptimizedUnit {
           const st = states[e.partIndex];
           if (!st.visible || st.kineCulled) {
             pool.mesh.setMatrixAt(i, _zeroMatrix);
+          } else if (e.dynamicNode) {
+            _scratchMat.multiplyMatrices(e.dynamicNode.matrixWorld, e.baseLocalMatrix);
+            pool.mesh.setMatrixAt(i, _scratchMat);
           } else {
             _scratchMat.copy(e.baseLocalMatrix);
             _scratchMat.elements[12] += useGpuPos ? st.assembledPos.x : st.curX;
@@ -4122,6 +4133,9 @@ export class CompiledV2Unit implements OptimizedUnit {
           const e = pool.entries[ref.entryIdx];
           if (!effVis) {
             pool.mesh.setMatrixAt(ref.entryIdx, _zeroMatrix);
+          } else if (e.dynamicNode) {
+            _scratchMat.multiplyMatrices(e.dynamicNode.matrixWorld, e.baseLocalMatrix);
+            pool.mesh.setMatrixAt(ref.entryIdx, _scratchMat);
           } else {
             _scratchMat.copy(e.baseLocalMatrix);
             _scratchMat.elements[12] += useGpuPos && pool.gpuExplodeTex ? st.assembledPos.x : st.curX;
@@ -4241,7 +4255,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const st = states[e.partIndex];
-        if (!st.visible) {
+        if (!st.visible || st.kineCulled) {
           pool.mesh.setMatrixAt(i, _zeroMatrix);
         } else if (e.dynamicNode) {
           _scratchMat.multiplyMatrices(e.dynamicNode.matrixWorld, e.baseLocalMatrix);
@@ -4258,7 +4272,7 @@ export class CompiledV2Unit implements OptimizedUnit {
       for (let i = 0; i < entries.length; i++) {
         const e = entries[i];
         const st = states[e.partIndex];
-        if (st.visible && e.dynamicNode) {
+        if (st.visible && !st.kineCulled && e.dynamicNode) {
           if (e.quantScale !== 1 || e.quantCx !== 0 || e.quantCy !== 0 || e.quantCz !== 0) {
             const s = e.quantScale;
             const qm = _scratchMat2.elements;

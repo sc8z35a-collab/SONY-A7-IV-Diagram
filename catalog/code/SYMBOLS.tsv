@@ -127,19 +127,19 @@ src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE29DesiccantBreather	func	139
 src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE30AmbientPd	func	1448	1511	export function enrichE30AmbientPd(g: THREE.Group, mats: MaterialLibrary): void
 src/assemblies/evf/evfMacroDetailEnricher.ts	enrichE31DiopterDetent	func	1514	1553	export function enrichE31DiopterDetent(g: THREE.Group, mats: MaterialLibrary): void
 src/assemblies/evf/evfMicroExplanations.ts	EVF_MICRO_EXPLANATIONS	const	4	4	EVF_MICRO_EXPLANATIONS: Record<string, PartExplanation> =
-src/assemblies/evf/evfMicroParts.ts	buildEvfMicroParts	func	269	3446	export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfMicroParts.ts	buildEvfMicroParts	func	269	3447	export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/evf/evfParts.ts	EVF_OPTICAL_Y	const	67	67	EVF_OPTICAL_Y = 39.5
 src/assemblies/evf/evfParts.ts	EvfDynamicRig	interface	69	76	export interface EvfDynamicRig
-src/assemblies/evf/evfParts.ts	buildEvfParts	func	311	3666	export function buildEvfParts( mats: MaterialLibrary, _includeStandalone = true ):
-src/assemblies/evf/evfParts.ts	buildEvfStandaloneParts	func	3668	3680	export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
+src/assemblies/evf/evfParts.ts	buildEvfParts	func	311	3664	export function buildEvfParts( mats: MaterialLibrary, _includeStandalone = true ):
+src/assemblies/evf/evfParts.ts	buildEvfStandaloneParts	func	3666	3678	export async function buildEvfStandaloneParts(mats: MaterialLibrary): Promise<CadPart[]>
 src/assemblies/evf/evfPhysicsOverlay.ts	EvfPhysicsOverlayController	interface	10	16	export interface EvfPhysicsOverlayController
 src/assemblies/evf/evfPhysicsOverlay.ts	createEvfPhysicsOverlay	func	34	470	export function createEvfPhysicsOverlay(clippingPlanes: THREE.Plane[]): EvfPhysicsOverlayController
-src/assemblies/evf/evfPrecisionParts.ts	buildEvfPrecisionParts	func	108	2694	export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[]
-src/assemblies/evf/evfUltraMechParts.ts	buildEvfUltraMechParts	func	167	2008	export function buildEvfUltraMechParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfPrecisionParts.ts	buildEvfPrecisionParts	func	108	2695	export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfUltraMechParts.ts	buildEvfUltraMechParts	func	167	2010	export function buildEvfUltraMechParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/evf/evfUltraParts.ts	buildEvfUltraParts	func	18	20	export function buildEvfUltraParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/evf/evfUltraSemiParts.ts	finalizeStandaloneEvfUltraPart	func	28	56	export function finalizeStandaloneEvfUltraPart(
 src/assemblies/evf/evfUltraSemiParts.ts	createUltraRingGeo	func	58	71	export function createUltraRingGeo( innerR: number, outerR: number, depth: number, bevel = 0.03, segs = 40 ):…
-src/assemblies/evf/evfUltraSemiParts.ts	buildEvfUltraSemiParts	func	77	1914	export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[]
+src/assemblies/evf/evfUltraSemiParts.ts	buildEvfUltraSemiParts	func	77	1915	export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[]
 src/assemblies/lazyExplanations.ts	lazyExplanationStub	func	23	25	export function lazyExplanationStub(_partId?: string): PartExplanation
 src/assemblies/lazyExplanations.ts	isLazyExplanationStub	func	27	29	export function isLazyExplanationStub(exp: PartExplanation | undefined | null): boolean
 src/assemblies/lazyExplanations.ts	resolvePartExplanation	func	275	286	export async function resolvePartExplanation(part: CadPart): Promise<PartExplanation>
@@ -739,27 +739,27 @@ src/core/v2_unit_compiler.ts	createGpuExplodeDataTexture	func	1477	1499	export f
 src/core/v2_unit_compiler.ts	bindGpuExplodeToMaterial	func	1501	1521	export function bindGpuExplodeToMaterial( mat: THREE.Material, tex: THREE.DataTexture | null, texW: number, e…
 src/core/v2_unit_compiler.ts	buildFlatPartBvh	func	1529	1634	export function buildFlatPartBvh(parts: readonly RaycastPartBounds[]):
 src/core/v2_unit_compiler.ts	adoptOverlaySubtreeToCache	func	1702	1776	export function adoptOverlaySubtreeToCache( root: THREE.Object3D, cache: ResourceCache, unitId: string, clipp…
-src/core/v2_unit_compiler.ts	CompiledV2Unit	class	1845	4358	export class CompiledV2Unit implements OptimizedUnit
+src/core/v2_unit_compiler.ts	CompiledV2Unit	class	1845	4372	export class CompiledV2Unit implements OptimizedUnit
 src/core/v2_unit_compiler.ts	CompiledV2Unit.getMeta	method	1910	1912	public getMeta(): UnitMeta
 src/core/v2_unit_compiler.ts	CompiledV2Unit.build	method	1914	3366	public async build( quality: QualityTier, cache: ResourceCache, options: UnitBuildOptions =
 src/core/v2_unit_compiler.ts	CompiledV2Unit.setSubView	method	3368	3386	public setSubView(subView: number): void
 src/core/v2_unit_compiler.ts	CompiledV2Unit.getActiveParts	method	3388	3401	public getActiveParts(): CadPart[]
 src/core/v2_unit_compiler.ts	CompiledV2Unit.isPartCulledBySubView	method	3403	3406	public isPartCulledBySubView(partId: string): boolean
 src/core/v2_unit_compiler.ts	CompiledV2Unit.writeBatchEntryMatrix	method	3408	3434	private writeBatchEntryMatrix( mesh: THREE.BatchedMesh, e: CompiledBatchedEntry, tx: number, ty: number, tz: …
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplode	method	3440	3601	public updateExplode(t: number, force = false): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.syncBatchedEdgePositions	method	3603	3643	private syncBatchedEdgePositions(forceAll = true): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.refreshRaycastBounds	method	3645	3676	private refreshRaycastBounds(): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setVisualState	method	3678	4078	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
-src/core/v2_unit_compiler.ts	CompiledV2Unit.getKineOccluders	method	4080	4082	public getKineOccluders(): readonly KineOccluderSpec[]
-src/core/v2_unit_compiler.ts	CompiledV2Unit.applyKineCulling	method	4089	4167	public applyKineCulling(culledMask: Uint8Array | null): number
-src/core/v2_unit_compiler.ts	CompiledV2Unit.needsContinuousAnimation	method	4169	4172	public needsContinuousAnimation(physicsActive: boolean): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setPhysicsVisible	method	4174	4184	public setPhysicsVisible(visible: boolean): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplodeGuides	method	4186	4201	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.updatePhysics	method	4203	4233	public updatePhysics( elapsed: number, explodeFactor: number, active: boolean, delta = 0.016 ): boolean
-src/core/v2_unit_compiler.ts	CompiledV2Unit.syncDynamicRigMatrices	method	4235	4277	private syncDynamicRigMatrices(): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.setClippingPlanes	method	4279	4282	public setClippingPlanes(planes: THREE.Plane[]): void
-src/core/v2_unit_compiler.ts	CompiledV2Unit.dispose	method	4284	4357	public dispose(cache: ResourceCache): void
-src/core/v2_unit_compiler.ts	disposeSharedRawBuildCache	func	4363	4374	export function disposeSharedRawBuildCache( sharedCache: Map<string,
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplode	method	3440	3609	public updateExplode(t: number, force = false): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncBatchedEdgePositions	method	3611	3651	private syncBatchedEdgePositions(forceAll = true): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.refreshRaycastBounds	method	3653	3684	private refreshRaycastBounds(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setVisualState	method	3686	4089	public setVisualState( selectedId: string | null, hoveredId: string | null, hiddenIds: ReadonlySet<string>, i…
+src/core/v2_unit_compiler.ts	CompiledV2Unit.getKineOccluders	method	4091	4093	public getKineOccluders(): readonly KineOccluderSpec[]
+src/core/v2_unit_compiler.ts	CompiledV2Unit.applyKineCulling	method	4100	4181	public applyKineCulling(culledMask: Uint8Array | null): number
+src/core/v2_unit_compiler.ts	CompiledV2Unit.needsContinuousAnimation	method	4183	4186	public needsContinuousAnimation(physicsActive: boolean): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setPhysicsVisible	method	4188	4198	public setPhysicsVisible(visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updateExplodeGuides	method	4200	4215	public updateExplodeGuides(explodeFactor: number, visible: boolean): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.updatePhysics	method	4217	4247	public updatePhysics( elapsed: number, explodeFactor: number, active: boolean, delta = 0.016 ): boolean
+src/core/v2_unit_compiler.ts	CompiledV2Unit.syncDynamicRigMatrices	method	4249	4291	private syncDynamicRigMatrices(): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.setClippingPlanes	method	4293	4296	public setClippingPlanes(planes: THREE.Plane[]): void
+src/core/v2_unit_compiler.ts	CompiledV2Unit.dispose	method	4298	4371	public dispose(cache: ResourceCache): void
+src/core/v2_unit_compiler.ts	disposeSharedRawBuildCache	func	4377	4388	export function disposeSharedRawBuildCache( sharedCache: Map<string,
 src/engine/CadHelpers.ts	createRoundedRectShape	func	13	30	export function createRoundedRectShape(width: number, height: number, radius: number): THREE.Shape
 src/engine/CadHelpers.ts	createFrameShape	func	35	63	export function createFrameShape( outerW: number, outerH: number, outerR: number, innerW: number, innerH: num…
 src/engine/CadHelpers.ts	addCircleHoles	func	68	74	export function addCircleHoles(shape: THREE.Shape, positions: Array<[number, number, number]>): void

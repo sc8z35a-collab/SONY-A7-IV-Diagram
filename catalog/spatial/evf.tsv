@@ -7,7 +7,7 @@ evf-ir-leds	#05	視線入力AF用 850nm赤外線リングL	#001-030	0,39.5,-27.5
 evf-dichroic-mirror	#06	45° ダイクロイック・ホットミラー	#001-030	0,39.5,-23.6	24.35,6.8,6.8	0,0,-16	becu_spring
 evf-gaze-camera	#07	視線入力AF 30.7万画素 赤外CMO	#001-030	0,25.05,-23.6	14.8,3.04,10.3	0,-18,-16	ic_epoxy_dark
 evf-lens-rear	#08	後群 大口径両面非球面 接眼レンズ	#001-030	0,39.5,-15.4	23.68,23.73,3.7	0,0,-2	magnesium_cast
-evf-lens-ed-doublet	#09	視度補正可動群：ED低分散＋高屈折ランタ	#001-030	0,39.5,-9.4	31.07,20.84,4.86	0,0,12	matte_chassis
+evf-lens-ed-doublet	#09	視度補正可動群：ED低分散＋高屈折ランタ	#001-030	0,39.5,-9.4	31,20.84,4.86	0,0,12	matte_chassis
 evf-diopter-rails	#10	視度可動レンズ 2軸センタレス研磨ガイド	#001-030	0,39.5,-9	25.76,16.56,9.92	-28,-14,12	stainless_machined
 evf-diopter-helicoid	#11	スパイラルカム溝ヘリコイド鏡筒スリーブ	#001-030	0,39.5,-9.4	23.21,23.13,6.42	30,8,12	stainless_machined
 evf-diopter-mech	#12	精密ヘリコイド視度調整ダイヤル	#001-030	-19.2,39.5,-15.6	10.27,8.74,17.49	16,-24,12	magnesium_cast
@@ -66,7 +66,7 @@ evf-tcon-mems-clock	E64	240Hz EVF専用 低ジッタ水晶	#061-090	-7.2,37.3,7.
 evf-ir-led-driver-safety	E65	視線入力AF 850nm赤外LEDパルス	#061-090	7.2,44.5,7.22	6.8,5.2,0.8	42,22,62	gold_plating
 evf-eyepiece-fluorine-coat	E66	接眼最外保護面 フッ素撥水・撥油防汚ナノ	#061-090	0,39.5,-32.85	21.8,16.8,0.43	0,22,-52	optical_glass_ed
 evf-lens-retaining-spanner	E67	接眼後群レンズ 精密ネジ込みカニ目押さえ	#061-090	0,39.5,-17.3	23.42,23.42,1.04	-36,-24,-10	titanium_machined
-evf-doublet-uv-cement	E68	視度可動ダブレット 屈折率整合UV光学バ	#061-090	0,39.5,-9.4	17.92,17.92,1.43	0,-32,12	optical_glass_ed
+evf-doublet-uv-cement	E68	視度可動ダブレット 屈折率整合UV光学バ	#061-090	0,39.5,-9.4	17.75,17.75,1.39	0,-32,12	optical_glass_ed
 evf-lens-active-uv-pockets	E69	接眼レンズ群 6軸アクティブ調心UV硬化	#061-090	0,39.5,-2.42	22.84,22.87,1.58	36,16,26	titanium_machined
 evf-barrel-internal-baffles	E70	EVF鏡筒内壁 多段鋸歯ナイフエッジ遮光	#061-090	0,39.5,-18.68	24.2,23.56,1.46	38,24,-18	matte_black_anodized
 evf-diopter-cam-followers	E71	視度ヘリコイド 低摩擦ガラス強化POMカ	#061-090	0,39.5,-9.4	22.98,24.15,0.87	44,6,18	becu_spring
@@ -86,7 +86,7 @@ evf-tcon-ldo-gamma-ref	E84	超低ノイズアナログLDO	#061-090	0,39.85,7.22	
 evf-tcon-ferrite-absorber	E85	高周波焼結Ni-Znフェライト磁性EMI	#061-090	0,39.5,10.4	22.8,17.6,0.22	0,16,62	optical_ar_iridescent
 evf-thermal-graphite-bridge	E86	Sony純正 Ref.454パイロリティ	#061-090	0,39.2,15.02	26.4,19.8,0.32	0,-14,88	copper_thermal
 evf-chassis-permalloy-shield	E87	Sony純正 Ref.352高透磁率パー	#061-090	0,24.78,-10	22.4,0.67,13	0,-38,-8	stainless_machined
-evf-dichroic-kinematic-clips	E88	45°ダイクロイックミラー用 3点キネマ	#061-090	0,39.5,-23.6	27.41,5.5,5.3	-28,4,-20	matte_black_anodized
+evf-dichroic-kinematic-clips	E88	45°ダイクロイックミラー用 3点キネマ	#061-090	0,39.5,-23.6	26.87,5.5,5.3	-28,4,-20	matte_black_anodized
 evf-pupil-glare-stop	E89	ナイフエッジ射出瞳リオグレアストップ絞り	#061-090	0,39.5,-19.95	22.48,21.61,0.18	24,14,-18	titanium_machined
 evf-eyepiece-ito-defogger	E90	結露防止 透明ITO導電マイクロヒーター	#061-090	0,39.5,-30.75	23.2,17.63,0.13	-26,-12,-42	solder_silver
 evf-barrel-n2-purge-valve	E91	光学室気密 乾燥窒素パージポートバルブ	#091-105	-15.12,46.2,-23.4	2.1,3.44,3.44	36,18,-24	titanium_machined

@@ -1301,7 +1301,7 @@ export function buildEvfParts(
     driveArm.position.set(-11.45, 0, 0.15);
     lensEdGroup.add(driveArm);
 
-    const nutYoke = createSteppedLensCell(2.04, 2.45, 2.2, mats.brassGear, undefined, 0);
+    const nutYoke = createSteppedLensCell(2.04, 2.38, 2.2, mats.brassGear, undefined, 0);
     nutYoke.position.set(-14.8, 0, 0.15);
     lensEdGroup.add(nutYoke);
 
@@ -1315,7 +1315,7 @@ export function buildEvfParts(
     mainGusset.rotation.z = -0.54;
     const mainSleeve = createSteppedLensCell(0.82, 1.24, 3.3, mats.stainlessMachined, undefined, 0);
     mainSleeve.position.set(-11.4, 6.8, 0.15);
-    const ptfeLiner = createSteppedLensCell(0.7, 0.8, 3.6, mats.lcdDiffuserMatte, undefined, 0);
+    const ptfeLiner = createSteppedLensCell(0.7, 0.8, 3.46, mats.lcdDiffuserMatte, undefined, 0);
     ptfeLiner.position.set(-11.4, 6.8, 0.15);
     lensEdGroup.add(mainGusset, mainSleeve, ptfeLiner);
 
@@ -2437,10 +2437,8 @@ export function buildEvfParts(
       mats.mountStainlessFlange
     );
     irPortRing.position.set(0, -11.96, -11.1);
-    const irVelvet = new THREE.Mesh(
-      hiResCyl(4.02, 4.02, 0.96, 32, true),
-      mats.velvetFlockTrap
-    );
+    const irVelvet = createSteppedLensCell(4.00, 4.24, 0.96, mats.velvetFlockTrap, undefined, 0);
+    irVelvet.rotation.x = Math.PI / 2;
     irVelvet.position.set(0, -12.52, -11.1);
     housingGroup.add(irPortRing, irVelvet);
 
