@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  attestations: write
 
 concurrency:
   group: flow-security-${{ github.ref }}
@@ -36,7 +38,7 @@ jobs:
       - name: Enable unprivileged Linux userns for kernel solver sandbox (Ubuntu 24.04 runner)
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
 
-      - name: FLOW OS Complete Self-Proof (SEC-12 46/46 + Permit + Sandbox + Swarm + Macro + 2-Book)
+      - name: FLOW OS Complete Self-Proof (SEC-12 48/48 + Permit + Sandbox + OIDC + Swarm + Macro + 2-Book)
         run: FLOW_NO_CACHE=1 npm run flow -- selftest --raw
 
       - name: 13-Layer Security Fortress Full Audit
@@ -52,7 +54,38 @@ jobs:
           FLOW_NO_CACHE=1 node scripts/validate_parts.mjs --ai
           FLOW_NO_CACHE=1 npm run build
 
-      - name: Verify V1.1証明 Certificates & Optional Ed25519 CI Attestation
+      - name: Build Canonical FLOW CI Attestation Manifest
+        run: node scripts/flow_os/sigstore_attestation.mjs build-manifest --out=/tmp/flow-ci-manifest.json
+
+      - name: Keyless GitHub OIDC + Sigstore Attestation (Fulcio + Rekor, Zero Static Keys)
+        id: attest
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/attest-build-provenance@v4.2.2
+        with:
+          subject-path: '/tmp/flow-ci-manifest.json'
+
+      - name: Self-Verify Keyless OIDC + Sigstore Attestation Bundle
+        if: steps.attest.outputs.bundle-path != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh attestation verify /tmp/flow-ci-manifest.json \
+            --bundle "${{ steps.attest.outputs.bundle-path }}" \
+            --repo "${{ github.repository }}" \
+            --signer-workflow "${{ github.repository }}/.github/workflows/flow-security.yml"
+          echo "OIDC_SIGSTORE_ATTESTED|id=${{ steps.attest.outputs.attestation-id }}|url=${{ steps.attest.outputs.attestation-url }}"
+
+      - name: Upload Attested Manifest & Sigstore Bundle Artifact
+        if: steps.attest.outputs.bundle-path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: flow-oidc-sigstore-attestation-${{ github.run_id }}
+          retention-days: 30
+          path: |
+            /tmp/flow-ci-manifest.json
+            ${{ steps.attest.outputs.bundle-path }}
+
+      - name: Optional Ed25519 Secondary Attestation (if static secret provisioned)
         env:
           FLOW_ED25519_PRIVATE_KEY_PEM: ${{ secrets.FLOW_ED25519_PRIVATE_KEY_PEM }}
         run: |
@@ -60,11 +93,11 @@ jobs:
             import('./scripts/flow_os/crypto_attestation.mjs').then(({ signWithExternalEd25519, verifyEd25519Attestation, loadPinnedPublicKey }) => {
               const payload = { commit: process.env.GITHUB_SHA || 'local', ref: process.env.GITHUB_REF || 'local' };
               const signed = signWithExternalEd25519('CI_GATE', payload);
-              console.log('CI_ATTEST|' + JSON.stringify({ status: signed.attestation, attestedBy: signed.attestedBy }));
+              console.log('ED25519_OPT|' + JSON.stringify({ status: signed.attestation, attestedBy: signed.attestedBy }));
               const pinned = loadPinnedPublicKey(process.cwd());
               if (signed.attestation === 'CI_ATTESTED' && pinned) {
                 const v = verifyEd25519Attestation('CI_GATE', { ...payload, ed25519Signature: signed.ed25519Signature }, { repoRoot: process.cwd() });
-                console.log('CI_VERIFY|' + JSON.stringify(v));
+                console.log('ED25519_VERIFY|' + JSON.stringify(v));
                 if (!v.ok) process.exit(6);
               }
             });

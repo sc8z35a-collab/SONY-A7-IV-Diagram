@@ -46,6 +46,7 @@
     "scripts/flow_os/permit_manager.mjs",
     "scripts/flow_os/solver_sandbox.mjs",
     "scripts/flow_os/crypto_attestation.mjs",
+    "scripts/flow_os/sigstore_attestation.mjs",
     "scripts/flow_os/macro_engine.mjs",
     "scripts/flow_os/macro_registry.mjs",
     "scripts/flow_os/builtin_pipelines.mjs",

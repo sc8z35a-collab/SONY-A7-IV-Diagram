@@ -97,6 +97,7 @@ import {
 } from './permit_manager.mjs';
 import { runSandboxSelftest } from './solver_sandbox.mjs';
 import { signWithExternalEd25519 } from './crypto_attestation.mjs';
+import { inspectAttestationPolicy, runSigstoreSelftest, verifyKeylessAttestation } from './sigstore_attestation.mjs';
 import { runParallelChecks } from './parallel_runner.mjs';
 import { clearTestCache, readTestCache } from './test_cache.mjs';
 
@@ -493,6 +494,50 @@ async function main() {
       const targetAgent = flags.agent || pos[1] || agent.agentId;
       const rec = recoverQuarantinedAgent(ctx, { agentId: targetAgent, allowDirty: Boolean(flags['allow-dirty']) });
       return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines: rec.lines, exitCode: rec.exitCode, flags, legacyTokens: 800 });
+    }
+    if (sub === 'attest-status') {
+      const pol = inspectAttestationPolicy(ctx.repoRoot);
+      const lines = [
+        formatFlowHeader({
+          cmd: 'security:attest-status',
+          status: pol.oidcConfigured ? 'KEYLESS_OIDC_READY' : 'LOCAL_ONLY',
+          model: pol.primaryModel,
+          env: pol.currentEnvAttestation,
+          zero_keys: pol.zeroStaticPrivateKeys ? '1' : '0',
+          ci_verify: pol.hasCiVerifyStep ? '1' : '0',
+          ed25519_opt: pol.optionalEd25519Pinned ? '1' : '0',
+        }),
+        `SIGNER_WORKFLOW|${pol.signerWorkflow}`,
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 800 });
+    }
+    if (sub === 'verify-oidc') {
+      const targetFile = pos[1] || flags.file;
+      if (!targetFile) {
+        return finalizeOutput({
+          ctx, agent, cmd: 'security', args: rawArgv,
+          lines: [formatFlowHeader({ cmd: 'security:verify-oidc', status: 'ERR', msg: 'usage: flow security verify-oidc <file> [--bundle=F] [--repo=o/r]' })],
+          exitCode: EXIT_ERROR, flags, legacyTokens: 500,
+        });
+      }
+      const ver = verifyKeylessAttestation(targetFile, {
+        repoRoot: ctx.repoRoot,
+        repo: flags.repo || null,
+        signerWorkflow: flags['signer-workflow'] || null,
+        bundlePath: flags.bundle || null,
+        offline: Boolean(flags.offline),
+      });
+      const lines = [
+        formatFlowHeader({
+          cmd: 'security:verify-oidc',
+          status: ver.status,
+          ok: ver.ok ? '1' : '0',
+          repo: ver.repo || '-',
+          sha: String(ver.subjectSha256 || '').slice(0, 16),
+          ...(ver.reason ? { reason: ver.reason } : { count: ver.verifiedCount || 1 }),
+        }),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines, exitCode: ver.exitCode, flags, legacyTokens: 1200 });
     }
     const fort = runSecurityFortress(ctx, {
       full: Boolean(flags.full),
@@ -1182,16 +1227,17 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // SELFTEST: Portable OS Complete Self-Proof (SEC-12/13 46/46 + Permit + Sandbox + Swarm + Macro + 2-Book)
+  // SELFTEST: Portable OS Complete Self-Proof (SEC-12/13 48/48 + Permit + Sandbox + OIDC + Swarm + Macro + 2-Book)
   // -------------------------------------------------------------------------
   if (cmd === 'selftest') {
     const sec = runSecuritySelftest();
     const perm = runPermitSelftest();
     const sbx = runSandboxSelftest();
+    const oidc = await runSigstoreSelftest(ctx.repoRoot);
     const sw = runSwarmSelftest();
     const mac = await runMacroSelftest();
     const doc = await auditTwoBooks(ctx, { strict: true });
-    const ok = sec.ok && perm.ok && sbx.ok && sw.ok && mac.ok && doc.ok;
+    const ok = sec.ok && perm.ok && sbx.ok && oidc.ok && sw.ok && mac.ok && doc.ok;
     const lines = [
       formatFlowHeader({
         cmd: 'selftest',
@@ -1199,6 +1245,7 @@ async function main() {
         sec13: `${sec.passed}/${sec.total}`,
         permit: `${perm.passed}/${perm.total}`,
         sandbox: `${sbx.passed}/${sbx.total}`,
+        oidc: `${oidc.passed}/${oidc.total}`,
         swarm: `${sw.passed}/${sw.total}`,
         macro: `${mac.passed}/${mac.total}`,
         books: `${doc.bookCount}/2(${doc.totalTokens}tok)`,
@@ -1206,6 +1253,7 @@ async function main() {
       ...sec.failed.map((f) => `SEC_FAIL|${f.id}|${f.detail}`),
       ...perm.failed.map((f) => `PERMIT_FAIL|${f.id}|${f.detail}`),
       ...sbx.failed.map((f) => `SBX_FAIL|${f.id}|${f.detail}`),
+      ...oidc.failed.map((f) => `OIDC_FAIL|${f.id}|${f.detail}`),
       ...sw.failed.map((f) => `SW_FAIL|${f.id}|${f.detail}`),
       ...mac.failed.map((f) => `MACRO_FAIL|${f.id}|${f.detail}`),
       ...doc.violations.map((v) => `DOC_FAIL|${v}`),

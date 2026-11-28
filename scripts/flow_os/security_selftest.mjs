@@ -1,7 +1,7 @@
 /**
- * FLOW V1.1 OS — SEC-12 Red-Team 46-Attack Chaos Self-Test Oracle (`SEC-01`..`SEC-13`)
- * Runs 46 genuine adversarial attacks inside an isolated `/tmp/flow_sec_selftest_*` sandbox
- * and mathematically proves 46/46 (100%) are hard-blocked with EXIT_SECURITY_BLOCKED (6).
+ * FLOW V1.1 OS — SEC-12 Red-Team 48-Attack Chaos Self-Test Oracle (`SEC-01`..`SEC-13`)
+ * Runs 48 genuine adversarial attacks inside an isolated `/tmp/flow_sec_selftest_*` sandbox
+ * and mathematically proves 48/48 (100%) are hard-blocked with EXIT_SECURITY_BLOCKED (6).
  */
 
 import fs from 'node:fs';
@@ -40,6 +40,7 @@ import {
 import { issuePermit, runPermitSelftest } from './permit_manager.mjs';
 import { runSandboxSelftest } from './solver_sandbox.mjs';
 import { runCryptoAttestSelftest } from './crypto_attestation.mjs';
+import { inspectAttestationPolicy, verifySigstoreBundleStructure } from './sigstore_attestation.mjs';
 import { validateMacroVars } from './macro_engine.mjs';
 import { registerMacro, removeRegisteredMacro } from './macro_registry.mjs';
 
@@ -369,6 +370,26 @@ export function runSecuritySelftest() {
       'SEC-02',
       a46.ok && a46.local === 'LOCAL_UNATTESTED' && a46.ci === 'CI_ATTESTED' && a46.tampered === 'FORGED_SIGNATURE',
       `Ed25519 attestation selftest (${a46.local}/${a46.ci}/${a46.tampered})`
+    );
+
+    // ATK47: Forged / unsigned Sigstore bundle rejected before verification
+    const fakeSigBundle = path.join(sandbox, 'fake_sigstore.jsonl');
+    fs.writeFileSync(fakeSigBundle, JSON.stringify({
+      mediaType: 'application/vnd.dev.sigstore.bundle+json;version=0.2',
+      verificationMaterial: {},
+      dsseEnvelope: { payload: 'ZmFrZQ==', signatures: [] },
+    }) + '\n');
+    const a47 = verifySigstoreBundleStructure(fakeSigBundle);
+    check('ATK47', 'SEC-02', !a47.ok && a47.status === 'FORGED_OR_INCOMPLETE_BUNDLE', 'Forged unsigned Sigstore bundle rejected');
+
+    // ATK48: Local VM refuses to fabricate OIDC_SIGSTORE_ATTESTED (zero static private keys)
+    const a48 = inspectAttestationPolicy(sandbox);
+    check(
+      'ATK48',
+      'SEC-02',
+      a48.zeroStaticPrivateKeys &&
+        (a48.hasRealOidcEnv ? a48.currentEnvAttestation === 'OIDC_ELIGIBLE_CI' : a48.currentEnvAttestation === 'LOCAL_UNATTESTED'),
+      `Keyless OIDC policy honest (${a48.currentEnvAttestation})`
     );
   } finally {
     fs.rmSync(sandbox, { recursive: true, force: true });
