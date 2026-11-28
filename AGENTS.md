@@ -92,3 +92,25 @@ npm run sp -- thermal-cog --unit=welcome --ai
 - **瞬間検証・差分ゲート・視覚プリジャッジ**: `node scripts/dx.mjs preflight --unit=<mode> --ai` / `node scripts/dx.mjs check --changed --ai` / `node scripts/pp.mjs --preset=audit --fast --sheet --audit-metrics --ai --out=/tmp/pp_out`
 - **圧縮出力ラッパ・自己監査**: `node scripts/dx.mjs run -- <cmd>` / `node scripts/dx.mjs budget --ai` / `node scripts/dx.mjs selftest --ai`
 
+## 6. 極限製造・全物理統合検証には必ず「THE LAST EXAM V1 (`exam`)」を使うこと（必須）
+設計完了前・製造適合証明・全物理矛盾/衝突/浮遊/配線/回路/CFD/FEA/動力学/フォーマル証明の一括監査には、**10 柱・36 大エンジン・530 固定テスト（展開 750〜1,400+ チェック）・16 系統本物外部産業ソルバ統合・完全 AI 最適化 `TLX1` 出力** の単一コマンド **`node scripts/exam.mjs`** を使用すること（AI 専用仕様書: `scripts/THE_LAST_EXAM_V1_MANUAL.md`）：
+```bash
+# 1. 初回環境構築（16系統外部産業ソルバ導入＋4本C++ネイティブハーネスビルド＋32/32検証）
+node scripts/exam.mjs setup
+
+# 2. 全36エンジン・16クロスソルバ保存則・7大欠陥注入アンチチート自己証明オラクル
+node scripts/exam.mjs selftest
+
+# 3. たった1コマンドで全36エンジン・530固定テスト一括極限監査（完全AI向けTLX1出力）
+node scripts/exam.mjs --unit=welcome
+node scripts/exam.mjs --playground=/tmp/exported.tlx.json
+
+# 4. 修復後の外科的再検証・チェックポイント再開・詳細証跡クエリ
+node scripts/exam.mjs --unit=welcome --only=EX01,EX02,EX15
+node scripts/exam.mjs --unit=welcome --resume=<runId>
+node scripts/exam.mjs query <runId> --status=FAIL
+```
+- 終了コード: `0=ALL PASS (TLX1-RECEIPT発行)` / `1=ERR` / `2=FAIL` / `3=WARN` / `4=CROSS_SOLVER_INVARIANT_MISMATCH` / `5=SOLVER_MISSING`。
+- 全 36 エンジン無省略完走＆16/16 クロスソルバ保存則一致で発行される **`TLX1-RECEIPT`** なしに「製造欠陥 0% 検証済」と報告してはならない。
+
+
