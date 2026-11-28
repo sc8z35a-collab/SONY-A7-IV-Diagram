@@ -1,12 +1,12 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-27T18:53:52.843Z",
+  "createdAt": "2026-11-28T01:27:35.297Z",
   "slug": "main",
   "branch": "main",
   "baseSha": "ef7b83d662408f9bec7a1cfca6c51ab468bae4d6",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "c7d17c8e80180e01f4bf0d9858b8ed5b6d3b9decaca1e073449fa2e2ff13403d",
+  "fingerprint": "8d3ac819f4593ea5e1cd31ff392d1518ed28fafdd64df6792a5d7aeede289533",
   "fileCount": 813,
   "deletedFiles": [],
   "dirtyCount": 0,
@@ -23,6 +23,16 @@
       "size": 161
     },
     {
+      "name": "implementation_plan.md",
+      "sha256": "ce1236c0d0df26f7eaa9f1b42743b9174c963d364a24252ebb72d046b1239f68",
+      "size": 15855
+    },
+    {
+      "name": "implementation_plan.md.metadata.json",
+      "sha256": "e9e43132f8d1229ea9a8b5e34bf8dbd597ed0d593da54dc92376d314da601486",
+      "size": 391
+    },
+    {
       "name": "walkthrough.md",
       "sha256": "6171e487f0ca881dafa0963ee7eca03b030b6ace4ac4ce94980fc7e376368cba",
       "size": 8014
@@ -31,6 +41,11 @@
       "name": "walkthrough.md.metadata.json",
       "sha256": "522577a3d09e9a33c6e7611d8b5802d7474d57a9690e8ab157ef64bbf006af6a",
       "size": 306
+    },
+    {
+      "name": "wlk435_part_inventory.md",
+      "sha256": "25e0601f1ee7c74857e0e25521d148da3d6586667301b02c8e2d0afe3055cde5",
+      "size": 107737
     }
   ],
   "files": [
