@@ -9,8 +9,18 @@
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Ready for PR review and Phase 2 welcome 435-part zero-float CAD rework using THE LAST EXAM V1",
+  "nextStep": "Awaiting user approval on exam_v1_mandate_and_all_21_phases_plan.md",
   "artifactsMirrored": [
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md",
+      "sha256": "0d90e903004d4e167ac10b1b9933d3fdae5e628e7d18fd99e9d4c205bd22b935",
+      "size": 24781
+    },
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md.metadata.json",
+      "sha256": "045f7d0205a17a03984843d2bba134a95782222036826fb1734d9326d253b34a",
+      "size": 767
+    },
     {
       "name": "the_last_exam_v1_plan.md",
       "sha256": "5a762d5770947a8eeb93928ec6e2bbd1be18c0c0e0637ad55fdf304976c5ffb8",
@@ -32,7 +42,7 @@
       "size": 409
     }
   ],
-  "updatedAt": "2026-11-28T06:44:07.172Z",
+  "updatedAt": "2026-11-28T06:55:52.644Z",
   "vmHost": "devbox",
   "baseSha": "2cf4e0ae6453c4f914c0883a2c79b247b8df2e50"
 }

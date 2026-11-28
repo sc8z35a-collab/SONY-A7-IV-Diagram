@@ -1,0 +1,6 @@
+{
+  "summary":  "Two-stage implementation plan: (Stage 1) Mandate EXAM V1-exclusive verification & mandatory full 32/32 external solver download in AGENTS.md/manual, fix the 3 pre-merge EXAM V1 multi-unit bugs (scene_extractor async ctx, CGAL per-submesh coplanar false-positive, 6 telemetry predicates), and merge feat/feat-the-last-exam-v1 to main; (Stage 2) Execute maximum-level THE LAST EXAM V1 (36 engines / 530 tests / 16 conservation locks / Chrome pp1.1) on all 21 non-excluded units (excluding mirai_2028 [FH] & sensor_fab [センサー製造工程]), fix 100% of FAILs across 5 dependency-ordered waves to achieve 21/21 TLX1-RECEIPT, and merge to main.",
+  "updatedAt":  "2026-11-28T06:55:34.215044084Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

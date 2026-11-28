@@ -1,17 +1,27 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T06:44:07.270Z",
+  "createdAt": "2026-11-28T06:55:52.650Z",
   "slug": "feat-feat-the-last-exam-v1",
   "branch": "feat/feat-the-last-exam-v1",
   "baseSha": "2cf4e0ae6453c4f914c0883a2c79b247b8df2e50",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "73e3a09b7fe89c4c233e03bb3c0d4c3a312df4cd9db664a0133f5b5503fe8185",
+  "fingerprint": "c3a7ab8397bf2f64490ab97bbe6db19d554284bba358f2b76730eef445c8ae2d",
   "fileCount": 863,
   "deletedFiles": [],
   "dirtyCount": 0,
   "skippedLarge": [],
   "artifacts": [
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md",
+      "sha256": "0d90e903004d4e167ac10b1b9933d3fdae5e628e7d18fd99e9d4c205bd22b935",
+      "size": 24781
+    },
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md.metadata.json",
+      "sha256": "045f7d0205a17a03984843d2bba134a95782222036826fb1734d9326d253b34a",
+      "size": 767
+    },
     {
       "name": "the_last_exam_v1_plan.md",
       "sha256": "5a762d5770947a8eeb93928ec6e2bbd1be18c0c0e0637ad55fdf304976c5ffb8",
