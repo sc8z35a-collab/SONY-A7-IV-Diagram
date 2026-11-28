@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/sensorNextGenParts.ts|unit=sensor|lines=1801|exports=buildSensorNextGenParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

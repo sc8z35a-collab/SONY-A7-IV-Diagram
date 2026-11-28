@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/battery/batteryPhysicsOverlay.ts|unit=battery|lines=153|exports=BatteryPhysicsOverlayController,createBatteryPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';

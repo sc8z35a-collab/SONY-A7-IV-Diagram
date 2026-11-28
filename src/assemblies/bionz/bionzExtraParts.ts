@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/bionz/bionzExtraParts.ts|unit=bionz|lines=1553|exports=buildBionzExtraParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

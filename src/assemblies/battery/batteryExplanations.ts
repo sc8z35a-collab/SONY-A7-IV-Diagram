@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/battery/batteryExplanations.ts|unit=battery|lines=7|exports=BATTERY_EXPLANATIONS
 import { PartExplanation } from '../types';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
 import unitData from '../../data/battery.json';

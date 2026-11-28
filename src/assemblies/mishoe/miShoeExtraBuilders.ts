@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mishoe/miShoeExtraBuilders.ts|unit=mishoe|lines=690|exports=MiShoeInstPoolKey,MiShoeExtraBuildContext,MISHOE_EXTRA_HERO_EDGE_PARTS,createMiShoeExtraBuildChunks
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { createFrameShape, createRoundedRectShape } from '../../engine/CadHelpers';

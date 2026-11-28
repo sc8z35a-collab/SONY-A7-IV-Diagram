@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensParts.ts|unit=lens|lines=3631|exports=LensDynamicRig,buildLensParts,buildLensStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

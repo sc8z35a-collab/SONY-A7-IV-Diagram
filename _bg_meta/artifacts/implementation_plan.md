@@ -1,281 +1,361 @@
-# 実装計画書: 左上ボタン無反応・フリーズ根絶 / システム実在バグ 68 件重大度順修正 / 「ようこそ (`welcome`)」0.001 mm 100% 完璧化
-
-## Goal Description
-
-本計画は以下の 3 大目標を、最小トークン消費（`dx` / ローカルスクリプト / `sp` / `pp1.1` 活用）かつ **ゼロ妥協** で完遂するための設計書です。
-
-1. **左上ボタン群の「押しても反応しない」「押すと固まって動かなくなる」問題の完全根絶**
-   - 実ブラウザ（Chrome CDP デスクトップ 1280×800・縦スマホ 390×844・横スマホ 844×390）で以下 6 系統の直接原因を再現特定済み：
-     1. 横向き・低身長画面（`max-height: 540px`）で `.studio-topbar-left` に `overflow-x: auto` が設定され、ドロップダウン `.assembly-palette-popover` が 40px 枠内に完全クリップされてクリック不能（`itemActuallyClickable: false`）
-     2. `window` の `pointerdown` capture で発火する `ensureAutoFullscreenOnTap` が左上ボタン押下時にも `requestFullscreen()` と `resize` を割り込ませ、`click` 消滅およびリサイズ連鎖を誘発
-     3. 起動・モード切替時にデフォルト `ULTRA` が「`ULTRA` 本体＋`STD LITE` プロキシ＋`FAST` プロキシ＋全シェーダー同期コンパイル＋`PMREM` 同期ベイク」を一括実行し、実測 **9,000 ms 超のメインスレッド完全凍結**（`TIMEOUT:Runtime.evaluate`）が発生
-     4. 非同期チャンク `import()` キャッシュ Promise 5 箇所（`Play Ground` / `FH 2028` / `Original` / `Optics` / `Schematics`）が 1 回失敗すると永久に rejected Promise を保持してボタンが文鎮化
-     5. `CadViewport.setMode()` がロード完了前に `this.mode` を確定するため、失敗・中断後に同一ユニットを再選択しても無視される
-     6. 左上 CTA ボタン間（`Play Ground` / `FH 2028` / `Original`）のモーダル排他・連打ガード・非同期キャンセル欠如
-2. **システム全体の実在バグ 68 件（S0: 14件 / S1: 20件 / S2: 20件 / S3: 14件）の重大度順修正**
-   - 無限ループフリーズ要因（`FastCadGeometry` / `v2_unit_compiler` / `unit_v2_runtime`）、毎切替 203 参照の VRAM リーク、BVH スタック境界超過、`MIRAI 2028` SubView 6–8 切替不能、`welcome` 断面カット範囲欠落、Play Ground の Undo/Redo レース・JSON Import 未検証・XSS、イベントリスナー/タイマーリーク、キーボードショートカット暴発、モバイル CSS 崩れ等を全件修正します。
-3. **「ようこそ (`welcome`)」全 435 パーツの 0.001 mm 厳密無干渉・無突出・位置異常ゼロ化**
-   - `npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai` の実測で、**全 4 品質ティアにおいて 1,037〜1,087 件のソリッド干渉（100% が W01〜W220 同士、最大貫通 3.40 mm）・61〜70 件の爆発軌道衝突・40 件のニアミス・9〜10 件の SMT 着座異常**、さらに `sp thermal-cog` で **8 件の熱近接（最小 0.287 mm）**、および `pp1.1` 多角度確認で背面・端面からの不自然な突出を検出済みです。
-   - `sp`（`0.001 mm` 厳密三角形・内包・爆発・浮遊・視界・熱重心監査）と `pp1.1`（全方向・接写視覚確認）を用い、全 435 パーツで **全 4 ティア `collisions = 0` / `explodeHits = 0` / `floating = 0` / `nearMiss = 0` / `smtSeat = 0` / `ray occluded = 0%` / 異常突出 0 件** の 100% 完璧状態を達成します。
-
----
-
-## User Review Required
+# FLOW V1 OS — 最終確定版 実装計画書（完全移行・全権委任マスターブループリント）
 
 > [!IMPORTANT]
-> **1. 自動フルスクリーン (`ensureAutoFullscreenOnTap`) の挙動変更について**
-> 現在 [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L539-L563) の `pointerdown` capture リスナーが左上のボタンを含むあらゆるタップで強制 `requestFullscreen()` を発火しており、ボタンの `click` 消滅・レイアウト急変・フリーズの直接引き金になっています。
-> - **推奨変更**: UI 操作（トップバー・ドック・ボタン・ドロワー・モーダル）ではフルスクリーンを一切発火させず、フルスクリーン切替は `F` キー等の明示操作のみ（強制自動フルスクリーン撤廃）とします。もし「3D キャンバス背景タップ時のみ自動フルスクリーン」を維持したい場合はご指示ください。
-
-> [!IMPORTANT]
-> **2. `ULTRA` 起動・切替時のプロキシ遅延構築（見た目劣化 0% でのフリーズ解消）について**
-> 現在 `ULTRA` 切替時に `ULTRA` 本体の直後に `STD LITE` + `FAST` モーションプロキシまで同期的に直列ビルドし、全シェーダーを一括同期コンパイルするため最大 9 秒超のフリーズが発生します。
-> - **推奨変更**: `ULTRA` の描画品質は **100% 無劣化のまま**、①まずアクティブな `ULTRA` 本体だけをフレーム分割ビルドして即座に操作・描画可能にし、②`STD LITE` / `FAST` モーションプロキシは描画開始後のアイドル時間へ非同期遅延構築、③ビルド中でも左上ボタンによる即座のキャンセル＆切替（中断時 0 リーク保証）を可能にします。
-
-> [!WARNING]
-> **3. 「ようこそ (`welcome`)」W01〜W220 の大規模空間再設計とカタログ再生成**
-> `welcome` の 1,087 件の干渉を 0.001 mm 完全にゼロ化するため、台座メインシャーシ（`W173`）の中空バスタブ＋I/O 窓カットアウト化、4 文字積層レイヤーの Z クリアランス再設計、サブストローク・石英柱・ドック・ボルト・スピーカーエンクロージャの再配置、および爆発軌道ベクトルの単調再設計を行います。その後 `npm run catalog`・`npm run build` により `catalog/**` と `docs/**` を完全同期します。外観デザイン（「ようこそ」の書体シルエット・高級光学装置造形・全 435 パーツ構成）は維持しつつ、すべての食い込み・飛び出し・位置ズレを物理的に正しい構造へ修正します。
+> **最終確定ステータス（未決事項ゼロ）**
+> - ご承認いただいた「従来の手動EXAM修正ループの完全撤廃」および「全領域の最適設計・全面改編権限」を大前提として、すべての設計判断・追加強化案を**最高効率・最小トークン・最大堅牢性の最終仕様へ一本化確定**しました。
+> - 本計画書のみ**人間が最終承認のために読みやすい日本語**で記載しています。実装する2冊の説明書・`FLOW1` ワイヤプロトコル・再構築コードベースは、**AIエージェント（単体＆並列）が最小トークン・最大機械解釈精度で駆動する専用OS仕様**で構築します。
+> - 承認（「Proceed」または実行指示）をいただくまで、リポジトリ内のファイルは引き続き**一行も変更しません**。
 
 ---
 
-## Open Questions
+## Goal Description（最終確定アーキテクチャの全体像と変革効果）
 
-1. 自動フルスクリーンは **完全手動化（推奨：左上ボタン無反応を根本防止）** で進めてよいでしょうか？（それとも 3D キャンバス単体タップ時のみ残しますか？）
-2. `bg boot` で過去の別ブランチの孤立 Vault が 2 件検出されています（`feat-feat-hyper-opt-v3-fast-kine-ultra-aa` と `feat-feat-original-riimos-e1`）。現在の `main` はクリーン（`behind=0 ahead=0 dirty=0`）なので、本作業は最新 `origin/main` から新しいフィーチャーブランチ（`npm run bg -- start fix-ui-bugs-welcome-zero-collision`）を切って進める方針で問題ないでしょうか？
+### 1. 現状の根本課題と「FLOW V1 OS」による破壊的ブレイクスルー
+
+リポジトリ全458ファイル（`src/` 498,991行・29.27MB、`scripts/` 32,260行・1.37MB、分散説明書10冊・188KB、全23モード・2,937独自パーツ）の精密調査により確定した現状ボトルネックと、最終確定した変革目標は以下の通りです。
+
+| 対象領域 | 現状（旧体制の実測値） | FLOW V1 OS 最終確定仕様 | 定量効果 |
+|---|---|---|---|
+| **説明書体系** | 10冊・188 KB（約55,000 tok）に分散・重複・陳腐化 | **厳密2冊のみ**（`AGENTS.md`＝作業環境説明書 ＋ `README.md`＝ドメイン説明書）AI専用言語 `FLOW-SPEC/v1`、旧8冊を完全削除 | 総トークン **-85%以上**<br>起動時自動読込 **<= 3,800 tok** |
+| **EXAM V1 不合格修正** | 手動ループ（代表1件のみ出力→300〜600行査読→推測編集→別パーツ衝突→何十ループ） | **手動ループ完全廃止 → `flow heal` 0トークン連立多物理自動修復**（全10柱/36エンジン横断の因果クラスタ＋40ms差分BVH＋FCL/SP_F64/Z3/QP同時解法＋残余Tier-B専用250tok欠陥カプセル） | 修正トークン **-98.5%〜-99.5%**<br>修正速度 **30倍〜100倍** |
+| **コードベース全体** | `src/data/*.json` 196,010行、`assemblies` 173,328行（日本語散文＋座標＋幾何混在）、`types.ts` 2,520行 | **AI最適3層直交分離**（Layer G 1行1パーツ `pose.tsv`＋相対拘束 / Layer M 散文ゼロ純粋幾何＋`types.ts` 94%削減 / Layer L 1行1パーツJSON）※ `mi_shoe.ts` 含む全23/23ユニット対応 | JSON行数 **-98%**<br>物理作業時の散文読込 **0バイト** |
+| **コマンド＆並列運用** | 7系統CLIを1タスク10〜18回手動連鎖、並列AI間の `pp1.1`/キャッシュ競合あり | **7大OSスーパーコマンド `flow`**（5〜7コマンドを1発統合）＋ **並列AI専用カーネル**（排他リース・`FLOW_AGENT_WS` 完全隔離・`flow swarm` 自動統合） | コマンド数 **-70%**<br>並列競合 **0%** |
+| **セキュリティ** | 基本正規表現スキャン＋単一ワーカーglobのみ | **12層多層防御セキュリティ要塞（`SEC-01`〜`SEC-12`）**＋暗号連鎖 `FLOW-RECEIPT`＋30攻撃Red-Team自己証明オラクル | 攻撃遮断率 **30/30 (100%)**<br>改ざん・チート **0%** |
+| **汎用化＆人間計測** | リポ密着スクリプト群、リアルタイム集計手段なし | **汎用コアOS（`scripts/flow_os/`）と固有アダプタ完全分離**（他リポ30秒移植）＋**ヒューマン専用コマンド `flow human-report`**（要求時のみリアルタイム全統計MD生成） | 他リポ導入 **< 30秒**<br>統計誤差 **0%** |
 
 ---
 
-## 重大度順 実在バグ全 68 件マスターカタログ
-
-調査で確認した **全 68 件の実在バグ** を重大度（`S0` → `S3`）順に整理します。すべて修正対象とします。
-
-### S0: 致命的 — 左上ボタン無反応・ブラウザ完全フリーズ・無限ループ（14 件）
-
-| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
-|---|---|---|---|
-| **BUG-01** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L6335-L6344) | 横向き/低身長（`max-height: 540px`）で `.studio-topbar-left` に `overflow-x: auto` が掛かり `overflow-y` もクリップ化 → `.assembly-palette-popover` が 40px 内に切り取られ**左上メニューが押しても出ずクリック不能**（CDP 再現済） | `.assembly-palette-popover` を `position: fixed`（トリガー矩形から動的座標配置）またはポータル配置し、`overflow` クリップから完全解放 |
-| **BUG-02** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L539-L563) | `ensureAutoFullscreenOnTap` が `window` の `pointerdown` capture で左上ボタン押下時も `requestFullscreen()` を暴発 → `pointerdown`〜`pointerup` 間に遷移・リサイズが割り込み `click` 消滅・フリーズ誘発（CDP 再現済） | UI 要素上の自動フルスクリーンを完全廃止（推奨：自動強制フルスクリーン自体を撤廃し明示操作のみに統一） |
-| **BUG-03** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L860-L1078) | 起動・モード切替時に `ULTRA` + `STD LITE` + `FAST` の 3 重ビルドと同期 `warmupShaders()` / `PMREM` が連続実行され、**最大 9 秒超メインスレッド完全凍結**（CDP 再現済） | `ULTRA` 本体優先描画＋フレーム分割ビルド、モーションプロキシ（`LITE`/`FAST`）の非同期アイドル遅延構築、チャンク間 `yield` 徹底、進行中ビルド即時中断対応 |
-| **BUG-04** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1378) | `while (nextCap < needed) nextCap = Math.min(65535, ...)` が `needed > 65535` で **`nextCap === 65535` のまま無限ループ（タブ永久フリーズ）** | `needed` を `65535` 上限クランプ＋ループ脱出条件 `nextCap >= 65535` 追加＋ページ分割閾値を厳密化 |
-| **BUG-05** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L519) | `while (gl.getError() !== gl.NO_ERROR) {}` に反復回数上限がなく、コンテキストロスト/ドライバ異常時に無限ループ化 | 最大 32 回の反復ガード＋`gl.isContextLost()` チェック追加 |
-| **BUG-06** | [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L763), [L907](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L907), [L1281](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L1281), [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L161) | `while (cap < minCap) cap <<= 1;` が 32bit 符号付き左シフト超過（`>= 2^30`）または `NaN` で無限ループ | 安全な上限 `1 << 28` ガード・`Number.isFinite` 検証・乗算 `cap *= 2` へ変更 |
-| **BUG-07** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L310), [L407](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L407), [L1456](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1456), [L1662](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1662), [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L800), [L931](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L931), [L1334](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L1334) | 全 7 箇所のオープンアドレスハッシュ `while (true)` にプローブ上限がなく、テーブル満杯・退化入力時に無限ループフリーズ | 全 7 箇所に `for (let probe = 0; probe < tableSize; probe++)` 上限ガードを導入 |
-| **BUG-08** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L60), [L328](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L328), [L389](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L389), [L442](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L442), [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L102) | 遅延 `import()` キャッシュ Promise 5 箇所が reject 時にリセットされず、一時エラー後に **Play Ground / FH 2028 / Original / Optics / 図説が永久に無反応化** | `.catch((err) => { loadPromise = null; throw err; })` を全 5 箇所に実装し即リトライ可能化 |
-| **BUG-09** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L689-L709) | `setMode()` がロード完了前に `this.mode` と `initialActivated = true` を固定するため、失敗・中断後の同一ユニット再押下が無視され無反応になる | ロード失敗/未完了 (`!this.v2Runtime.isReady() && !this.v2Runtime.isBuilding(nextMode)`) の場合は再起動を許可 |
-| **BUG-10** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L886-L986) | 非同期ビルド中の連続切替で前ユニットのキャッシュ 203 参照が未解放のまま次切替＋`verifyAfterDispose()` が走り、毎切替 VRAM リーク警告（22 回連続再現）＆GPU リソース競合 | `inFlightBuildPromise` を直列待機（abort → 解放完了を確認してから次ユニットの `verifyAfterDispose` / `captureBaseline` / `build` を開始） |
-| **BUG-11** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L346-L471) | 左上 CTA 群（`Play Ground` / `FH 2028` / `Original`）にモーダル排他がなく、`Original`（`z:420`）を開いたまま `Play Ground`（`z:45`）を開くと画面が覆われ操作不能（CDP 再現済） | 相互排他ヘルパ `closeOtherOverlays(except)` を導入し、いずれかを開く際に他モーダル・パレット・ドロワー・光学スタジオを確実クローズ |
-| **BUG-12** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L348-L358) | `playgroundApi.open()` に多重呼び出しガードがなく、連打時に二重 `open()` が競合しイベント・レンダラー登録が破綻 | `playgroundOpening` 進行中ガード＋完了後の状態整合チェックを追加 |
-| **BUG-13** | [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts#L214-L253) | `open()` の `await ensureDataForCurrentTab()` 中に `close()` されたり連打されると、閉じた後に DOM 復活や `null` 例外が発生 | `openSeq` トークンを導入し、`await` 後に `seq !== this.openSeq || !this.isOpenFlag || !this.root` なら即中止 |
-| **BUG-14** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L1626-L1780) | `open()` の非同期処理中に「戻る」や `Esc` で `close()` しても後続の `setCustomSceneRenderer` / テンプレート構築が走りメイン画面が固着 | `openSessionToken` を導入し、各 `await` 直後にキャンセル検証を徹底 |
-
-### S1: 重大 — 3D 空間干渉・GPU/メモリリーク・境界破壊・セキュリティ（20 件）
-
-| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
-|---|---|---|---|
-| **BUG-15** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts#L75-L2852), [welcomeGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGeometry.ts) | `welcome` W01〜W220 に **1,037〜1,087 件の 0.001 mm ソリッド干渉・内包**（最大貫通 3.40 mm、4 品質ティア全 FAIL） | 下記「`welcome` 100% 完璧化設計」により全 4 ティア 0 件化 |
-| **BUG-16** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts) | `welcome` の爆発分解軌道上で **61〜70 件の部品貫通衝突（`explodeHits`）** | 全パーツの `explodeOffset` を層順・半径順に厳密単調再設計し 0 件化 |
-| **BUG-17** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts) 他 `welcome*Parts.ts` | `welcome` に **40 件のニアミス・10 件の SMT 着座異常・8 件の熱近接（最小 0.287 mm）・背面/端面の異常突出** | `sp` 全 435 パーツ座標監査＋クリアランス確保・突出回収で全 0 件化 |
-| **BUG-18** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L300), [L383](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L383) | `activateAtomic` / `hydrateMetaOnly` で `miraiSubView` が旧上限 `Math.min(5, ...)` にクランプされ **SubView 6〜8（FH20/FH17/FH48）が切替不能** | 上限を `8` へ修正し定数 `MIRAI_SUBVIEW_MAX = 8` で一元化 |
-| **BUG-19** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L1915-L2050) | `updateClippingPlane()` に `'welcome'`（X: `[-92.4, +92.4]`）の専用範囲がなく `-48..48` にフォールバックし「よ」「そ」が切断不能 | `welcome` 専用範囲（X:`[-96, 96]`, Y:`[-24, 28]`）を追加 |
-| **BUG-20** | [raycast_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts#L174-L184), [L999-L1011](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts#L999-L1011) | 固定長 BVH スタック（`128`）にプッシュ境界チェックがなく深いツリーで範囲外書込・破損 | スタック深さ上限ガード（満杯時はリーフ化／安全スキップ）と動的上限保護を追加 |
-| **BUG-21** | [kine_culling_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/kine_culling_engine.ts#L227-L276) | `_kineBvhStack` / `_kineBvhInside`（固定長 `128`）に境界チェックがなくスタック超過時にパーツ消失（誤カリング） | `sp + 2 <= _kineBvhStack.length` ガード＋超過時は安全に非カリングフォールバック |
-| **BUG-22** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1370-L1505) | `Uint16Array` 頂点溶接ページで `uniqueTotal >= 65535` 超過ガードがなくインデックス折り返しでメッシュ爆散 | `MAX_PAGE_UNIQUE_VERTS` 厳密チェック＆オーバーフロー時のページ自動分割フォールバック |
-| **BUG-23** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1066-L1072), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L908-L918) | 切替中〜ビルド完了まで左上パーツ数バッジが空 `""` になり（23 モード中 19 モードで再現）、読み込み中か無反応か判別不能 | `registry` の `declaredPartCount` を即時表示＋ビルド中スピナー/状態クラス `.is-loading` 付与 |
-| **BUG-24** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3411-L3438) | `undo()` / `redo()` が `pop()` 後に `await extractPartsBatch()` するため連打で履歴スタック破壊・`close()` 後クラッシュ | `historyBusy` 直列ロック＋`!this.active` ガード追加 |
-| **BUG-25** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3467-L3486) | `importBlueprintFile()` が JSON 内座標/回転/スケール/キー/件数を未検証のまま復元し `NaN`/`Infinity`/DoS で破損 | 厳密スキーマサニタイザ（上限件数・有限数クランプ・実在キー検証・`fileInput.value = ''` リセット）実装 |
-| **BUG-26** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L2594), [L2625](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L2625), [L3148](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3148) | JSON 由来ラベル・レポート文言を `innerHTML` へ無エスケープ挿入（DOM XSS） | 共通 `escapeHtml()` をすべての動的補間へ適用 |
-| **BUG-27** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L333), [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L185), [L517](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L517), [L529](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L529) | テンプレート `innerHTML` への未エスケープ文字列挿入 | DOM API（`createElement` + `textContent`）または `escapeHtml()` へ置換 |
-| **BUG-28** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2137-L2215), [L2476-L2493](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2476-L2493) | `dispose()` で `pointerdown`/`move`/`leave`/`up`/`wheel`/`touchstart` の 6 リスナーが未解除でリーク | バインド済みハンドラを保持し `dispose()` で全解除 |
-| **BUG-29** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L1740-L1776), [L3710-L3720](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3710-L3720) | `close()`/`dispose()` で遅延描画・トーストタイマーおよび `overlayLines.material` の解放漏れ | `clearTimeout` 確実化＋`overlayLines.material.dispose()` 追加 |
-| **BUG-30** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L524-L535) | `tryPersistBakedPmrem` の `gl.readPixels` 例外時に `renderer.setRenderTarget(prevRt)` が戻らず描画固着 | `try { ... } finally { this.renderer.setRenderTarget(prevRt); }` で確実復帰 |
-| **BUG-31** | [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts#L350-L490) | `renderUltraStationary` 内で例外発生時に `camera.clearViewOffset()` / `setRenderTarget(null)` が復帰せず画面が白飛び・オフセット固着 | `try ... finally` で必ず `camera.clearViewOffset()` と `setRenderTarget(null)` を復元 |
-| **BUG-32** | [dispose.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/dispose.ts#L269-L312) | 全 23 ユニット共通監視なのに旧称 `[MI Shoe V2 VRAM Leak Detector]` 固定＋非同期切替中の誤警告 | ラベルを `[Unit V2 VRAM Leak Detector]` へ適正化し、完了済み dispose 基準でのみ厳密判定 |
-| **BUG-33** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2147), [L2171](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2171) | `cachedDomRect` が `scroll` やドロワー開閉時に陳腐化し、クリック・ホバー位置がズレて別パーツが誤選択される | `scroll` 時の無効化＋`pointerdown`/`pointerup` 時は最新 `getBoundingClientRect()` を取得 |
-| **BUG-34** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L14-L15) | `#app` / `#viewport` への無ガード `!` アサーション | 明示的存在検証と診断エラーメッセージを追加 |
-
-### S2: 中 — UI 競合・キーボード暴発・レース・数値異常・モバイル崩れ（20 件）
-
-| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
-|---|---|---|---|
-| **BUG-35** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L570-L670) | グローバル `keydown` にフォーム要素除外がなく、入力中に `f`/`u`/`k`/`v`/`p`/`1..8` が暴発 | `INPUT`/`TEXTAREA`/`SELECT`/`isContentEditable` 時は即 return |
-| **BUG-36** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L572-L581), [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L412), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L748) | `Escape` 優先度制御がなく、ライトボックスや左上パレット閉鎖時に下層のパーツ選択・光学スタジオまで連鎖的に閉じる | `isLightboxOpen()` / `isPaletteOpen()` 確認＋`stopImmediatePropagation` で最前面の 1 層のみ閉鎖 |
-| **BUG-37** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L6143-L6168), [L7096-L7111](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L7096-L7111) | 縦スマホ（390px）で `.orig-cta-pill` が縮小対象から漏れ 2 行目に折り返しトップバー高さ 121px に肥大（CDP 再現済） | 4 ボタンを 390px 幅に綺麗に収まるコンパクト設計（または 1 行スクロール可能＆パレット `fixed` 分離）へ統一 |
-| **BUG-38** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L841), [L2508](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L2508) | `.studio-topbar` と `.explanation-drawer` が同じ `z-index: 30` のためドロワーが左上ボタンの上に被る | `.studio-topbar` を `z-index: 34`、`.assembly-palette-popover` を `z-index: 70`、`.explanation-drawer` を `z-index: 30` に明確階層化 |
-| **BUG-39** | [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L412), [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts#L197), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L743-L752) | 匿名関数でグローバルリスナーを登録し `dispose()` 未実装 | バインドメソッド保持＋`dispose()` 実装 |
-| **BUG-40** | [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L1077-L1108) | `hide()` の 360ms `setTimeout` が未追跡で直後の再 `show()` と競合 | `hideTimer` フィールド化し `show()` 時に `clearTimeout` |
-| **BUG-41** | [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L138-L145) | `close()` の 360ms `setTimeout` が未追跡で連続開閉時に新規 DOM を破壊 | `clearDomTimer` フィールド化し `open()` 時に `clearTimeout` |
-| **BUG-42** | [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L298) | スライダー `Number(input.value)` に `Number.isFinite` ガードなし | `const v = Number(input.value); if (Number.isFinite(v)) onInput(v);` |
-| **BUG-43** | [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts#L1145-L1146) | `dt <= 0` のフレームで `(st.dzA - prevDzA) / dt` が `NaN`/`Infinity` 化 | `const safeDt = Math.max(1e-4, dt)` で除算保護 |
-| **BUG-44** | [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts#L896-L906) | Secant 法反復で `yNext` 発散・`NaN` 時の保護なし | `Number.isFinite(yNext)` 確認＋有効径 `[-28, 28]` クランプ |
-| **BUG-45** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3440-L3465) | `a.click()` 直後の同期 `URL.revokeObjectURL` で Safari/モバイルのダウンロード失敗 | `document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500);` |
-| **BUG-46** | [PartGeometryExtractor.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PartGeometryExtractor.ts#L613) | プリベイク取得失敗時の無音 `.catch(() => {})` で原因追跡不能 | 警告ログ記録＋安全フォールバック状態管理 |
-| **BUG-47** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1109-L1181) | `setQuality()` 完了後に `activationToken` 検証がなく、同一ユニット再切替時に古い選択状態を上書き | 開始時トークン比較で陳腐化した復元をスキップ |
-| **BUG-48** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1183-L1197) | ビルド進行中の `setSubView()` が完了後の実ユニットへ反映されない（`initialState.subView` で上書き） | `activate()` 内で `initialState.subView` ではなく最新の `this.subView` を適用 |
-| **BUG-49** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L945), [L1005](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1005) | ビルド進行中の `syncSectionPlane()` / `syncVisualState()` 変更が古いローカル変数 `planes` で上書きされる | 完了適用時に最新の `this.sectionActive ? [this.clippingPlane] : []` を再評価 |
-| **BUG-50** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L249), [L764](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L764), [L2262](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2262) | `void this.v2Runtime.activate/setQuality/handleContextRestored` の未処理 Rejection リスク | `.catch()` でエラー捕捉・UI リトライ可能な状態へ復帰 |
-| **BUG-51** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L278-L295), [L515-L520](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L515-L520) | 非同期スタジオ起動ハンドラ群にエラー捕捉がなく失敗時にサイレント停止 | 共通 `runAsyncAction` ラッパでエラーログ＋トースト/状態復旧 |
-| **BUG-52** | [capture_bridge.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/capture_bridge.ts#L264-L275) | `waitUntilReady` がタイムアウトしても暗黙正常終了して未完成フレームを返す | タイムアウト時に警告・`ready: false` 状態を明示返却 |
-| **BUG-53** | [fast_proxy_builder.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/fast_proxy_builder.ts#L174-L181) | `batchedMesh === null` かつ `gpuExplodeTex !== null` の場合に `gpuExplodeTex.dispose()` が漏れる | `gpuExplodeTex` を `batchedMesh` の有無と独立して確実に解放 |
-| **BUG-54** | [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts#L1184) | `canvas.getContext('2d')` が `null` の場合にクラッシュするリスク | `if (!ctx)` 時の安全なフォールバック `DataTexture` 返却 |
-
-### S3: 低〜中 — メタデータ・アクセシビリティ・CSS 整理・統計/境界ガード（14 件）
-
-| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
-|---|---|---|---|
-| **BUG-55** | [manifest.webmanifest](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/public/manifest.webmanifest#L2-L4) | 旧名称 `"627 Parts"` のまま（現行は 23 ユニット・3,400+ パーツ） | 最新構成に整合する名称・説明へ更新 |
-| **BUG-56** | [index.html](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/index.html#L4-L18) | `maximum-scale=1.0, user-scalable=no` によるズーム阻害＋`<title>◉</title>` の識別不能 | `user-scalable` 制限解除（3D 操作はキャンバス `touch-action: none` で制御）＋適切なタイトル付与 |
-| **BUG-57** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css)（8 組重複セレクタ） | `.exp-diagram-action-btn` / `.pg-right-panel` / `.mirai-subbar` 等 8 組のトップレベル重複定義による意図しない上書き | 重複セレクタを単一定義へ統合・整理 |
-| **BUG-58** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L698-L727) | `#app.is-zen-fullscreen` が廃止済み旧クラス名のみ参照し現行 HUD に効かない | 現行 `.studio-topbar` / `.studio-bottom-dock` 向けへ更新 |
-| **BUG-59** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L844-L875) | 切替直後のパーツ数バッジ消失によるボタン幅ガタつき | `syncMode()` で登録パーツ数を仮表示＋ローディング状態表示 |
-| **BUG-60** | [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts#L322) | 1800ms パルス解除 `setTimeout` 未追跡 | `pulseTimer` 保持し `close()`/`render()` 時に `clearTimeout` |
-| **BUG-61** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L818-L823) | `scrollActiveMiraiBtnIntoView` の `rAF` 重複実行 | `scrollRafId` で前回分を `cancelAnimationFrame` |
-| **BUG-62** | [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts#L120-L131) | モーダル開閉時の `aria-hidden` 未同期 | `open`/`close` で `aria-hidden` を厳密同期 |
-| **BUG-63** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2266-L2272) | タブ非表示時に進行中 `rafId` を即時キャンセルしていない | `if (this.pageHidden && this.rafId !== 0) { cancelAnimationFrame(this.rafId); this.rafId = 0; }` |
-| **BUG-64** | [GpuOptimizer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts#L103), [L154](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts#L154) | `texturesOptimized` が `const = 0` のまま常に `0` を返す | `let texturesOptimized = 0` に変更し最適化テクスチャ数を正確にカウント |
-| **BUG-65** | [perf_hud.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/perf_hud.ts#L127-L130) | `frameTimeMs`/`avgFrameTimeMs` 非有限値時の `"NaN ms"` 表示 | `Number.isFinite` ガード追加 |
-| **BUG-66** | [CameraEngineeringGrader.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CameraEngineeringGrader.ts#L293), [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts#L309) | 正規化 `1 / len` の極小値ガード強化＋空ワークスペース時の重心/転倒角エッジケース保護 | `len > 1e-9` 厳密ガード＋0 パーツ時の確定デフォルト値返却 |
-| **BUG-67** | [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts#L1347-L1348) | SPICE ネットリスト生成時の `busV <= 0` / 負 `loadW` によるゼロ除算・異常値出力 | `Math.max(1.0, busV)` / `Math.max(0.05, loadW)` ガード追加 |
-| **BUG-68** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L714-L765) | `ArtifactCaptureBridge` の `setMode` 呼出時に開いているモーダル・パレットを閉じず撮影結果へ混入するリスク | `captureBridge.setMode` 実行時に開いているモーダル・パレットを確実クローズ |
-
----
-
-## Proposed Changes
-
-依存関係の順序に従い、以下の 5 コンポーネントに分けて安全に実装します（作業開始時に必ず `npm run bg -- start fix-ui-bugs-welcome-zero-collision` で最新 `origin/main` からフィーチャーブランチを作成し、マイルストーン毎に `bg snap` を実行します）。
-
----
-
-### Component 1: 左上ボタン無反応・フリーズ根絶 & コアランタイム高速・無リーク化（BUG-01〜14, 18〜23, 28, 30〜33, 47〜54, 63〜65）
+### 2. FLOW V1 OS 全体システム構成図
 
 ```mermaid
 flowchart TD
-    Click["左上ボタン押下"] --> NoFS["pointerdown自動FS撤廃(BUG-02)"]
-    Click --> FixedPop["Fixedポータル配置で横向きクリップ解消(BUG-01)"]
-    Click --> Exclusive["他モーダル排他＋連打ガード(BUG-11..14)"]
-    Click --> Switch["ユニット切替要求"]
-    Switch --> AbortWait["進行中ビルドをAbort＆完全解放待機(BUG-10)"]
-    AbortWait --> BuildUltra["ULTRA本体フレーム分割ビルド＋即時描画(BUG-03)"]
-    BuildUltra --> IdleProxy["アイドル時にLITE/FASTプロキシ遅延構築(BUG-03)"]
-    BuildUltra --> Badge["登録パーツ数即時表示＋ローディング表示(BUG-23,59)"]
+    subgraph BOOKS["AI専用 厳密2冊マニュアル (FLOW-SPEC/v1)"]
+        B1["Book 1: AGENTS.md (作業環境説明書)\n全ツール手順 / 全鉄則 / 7+1コマンド / 12層セキュリティ / 並列規約"]
+        B2["Book 2: README.md (ドメイン説明書)\nV2/V3設計 / 全23ユニット / 3層コード構造 / 座標・材料規約 / 履歴"]
+    end
+
+    subgraph KERNEL["FLOW V1 OS 汎用コア (scripts/flow_os/ — 外部npm依存0・他リポ30秒流用可)"]
+        CLI["flow 統合スーパーCLI\nwake / inspect / heal / ship / park / finish / exec / swarm / init / export-template"]
+        HREP["ヒューマン専用コマンド: flow human-report\nAI自律実行厳禁 / 人間要求時のみリアルタイム全統計MD出力"]
+        BUDGET["FLOW1 プロトコル ＆ FLOW-BUDGET トークン上限ガバナー"]
+        PAR["並列AIカーネル\n排他リース (refs/bg-vault/leases) + FLOW_AGENT_WS 完全隔離 + Swarm統合"]
+        FORT["12層セキュリティ要塞 (SEC-01..SEC-12)\n暗号連鎖 FLOW-RECEIPT + プロンプト注入遮断 + SAST + 30攻撃Red-Team"]
+        VAULT["ゼロロス永続化 (bg v1統合) ＆ 外科アトラス (dx統合)"]
+    end
+
+    subgraph ADAPTER["SONY-A7-IV ドメインアダプタ (scripts/flow_adapters/sony_a7iv_cad/)"]
+        HEAL["flow heal 0トークン連立自動修復エンジン\n因果クラスタ + EX-DELTA 40ms BVH + FCL/SP_F64/Z3/QP/CBC + Tier-Bカプセル"]
+        TOOLS["既存産業ツール全統合 (無劣化・無妥協)\nEXAM V1 (36Eng/530Test/16Lock) + pp1.1 + sokutei + sp"]
+        MIG["AI最適3層コードマイグレータ (全23ユニット無劣化変換)"]
+    end
+
+    subgraph CODE["AI最適 3層直交コードベース (src/)"]
+        LG["Layer G: src/units/<u >.pose.tsv (1行1パーツ座標・爆発・相対拘束)"]
+        LM["Layer M: 純粋幾何カーネル + cad_primitives.ts + 軽量 types.ts"]
+        LL["Layer L: src/data/<u >.json (1行1パーツ正規化JSON・解説隔離)"]
+    end
+
+    BOOKS --> CLI
+    CLI --> BUDGET
+    CLI --> PAR
+    CLI --> FORT
+    CLI --> VAULT
+    CLI --> ADAPTER
+    HEAL <--> TOOLS
+    HEAL <--> LG
+    MIG --> CODE
 ```
 
-#### [MODIFY] [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts)
-- `ensureAutoFullscreenOnTap` による左上ボタン・UI 押下時の強制 `requestFullscreen()` 割り込みを撤廃（BUG-02）。
-- 動的 `import()` キャッシュ Promise 4 箇所に `.catch()` 自己リセットを追加（BUG-08）。
-- `closeOtherOverlays(except)` 排他制御・`playgroundOpening` 二重起動防止・全非同期ボタンハンドラのエラーハンドリング追加（BUG-11, 12, 51, 68）。
-- グローバル `keydown` のフォーム要素除外と `Escape` 最前面単層クローズ制御（BUG-35, 36）。
-- `#app`/`#viewport` 存在検証（BUG-34）。
+---
 
-#### [MODIFY] [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts)
-- `.assembly-palette-popover` を `position: fixed` でボタン位置基準に動的配置し、`overflow-x: auto` 親要素にクリップされない構造へ変更（BUG-01）。
-- パレット開閉状態照会 `isPaletteOpen()`・`closePalette()`・`setLoadingState(loading, expectedCount)`・`dispose()` を追加し、未エスケープ `innerHTML` を安全な DOM 構築へ置換（BUG-23, 27, 36, 39, 59, 61）。
+## User Review Required（最終決定に伴う重要事項の確認）
 
-#### [MODIFY] [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts)
-- `inFlightActivationPromise` による前ビルドの完全中断＆解放待機を実装し、203 参照 VRAM リーク警告と競合を根絶（BUG-10）。
-- `ULTRA` アクティベーション時にまず `ULTRA` 本体を完了・即座に表示・操作可能にし、`STD LITE` / `FAST` モーションプロキシは `requestIdleCallback` / 遅延フレームでバックグラウンド構築（キャンセル可能）することで **9 秒フリーズを根絶**（BUG-03）。
-- `while (gl.getError() !== gl.NO_ERROR)` の上限ガード、WebGL2 `readPixels` の `finally` 復帰、`setQuality` トークン比較、進行中 `subView`/`sectionActive` の最新状態適用（BUG-05, 30, 47, 48, 49）。
+> [!IMPORTANT]
+> **確定した5大アーキテクチャ決定事項**
+> 1. **厳密2冊の説明書配置**: Book 1 = `AGENTS.md`（作業環境説明書・AI自動読込0コスト）、Book 2 = `README.md`（ドメイン・設計説明書）。旧分散マニュアル8冊（`CLAUDE.md`, `HANDOFF_HYPER_OPTIMIZATION.md`, `catalog/WORKER_RULE.md`, `scripts/BUCHIGIRE_GUARD_GUIDE.md`, `scripts/THE_LAST_EXAM_V1_MANUAL.md`, `scripts/PP1_1_MANUAL.md`, `scripts/SOKUTEI_MANUAL.md`, `scripts/SPATIAL_SIM_GUIDE.md`）は情報移行の機械テスト通過後に完全削除します。（アプリ展示データ本体である `reports/fh_mirai_2028/*.md` および `blueprints/riimos_e1/README_RIIMOS_E1.md` は展示コンテンツとして保護維持します。）
+> 2. **従来の手動EXAM修正ループの完全撤廃**: 人間/AIによる「1件ずつ確認→数百行読込→数値推測→再EXAM何十ループ」を廃止し、全10柱/36エンジン対応の **0トークン連立修復エンジン `flow heal`**＋**Tier-B 250トークン超圧縮欠陥カプセル**へ完全一本化します。
+> 3. **コードベース全体のAI最適3層直交再構築**: `mi_shoe.ts` を含む全23ユニットに Layer G（`pose.tsv`＋相対拘束）、Layer M（散文ゼロ純粋幾何＋`types.ts` 2,520行→約140行分離）、Layer L（1行1パーツJSON、196,010行→約3,600行）を自動適用し、WebGL2描画・`pp1.1` ピクセルSSIM=1.000・`EXAM V1` 530/530の完全無劣化を機械証明します。
+> 4. **追加強化案4種をすべて標準搭載**: `EX-DELTA` 40ms増分BVH、相対拘束アノテーション（`@flow:seat`/`@flow:clear`/`@flow:cone`）、並列AIオーケストレータ `flow swarm`＋`FLOW_AGENT_WS` 隔離、BPEトークン上限ガバナー `FLOW-BUDGET` をすべて標準実装します。
+> 5. **ヒューマン専用コマンド `flow human-report`**: AIの自律実行を機械的に禁止し、人間要求時のみリアルタイム実測MDを `/tmp/flow_reports/HUMAN_REPORT_<YYYYMMDD_HHMMSS>.md`（およびアーティファクト領域）へ保存して渡します（リポジトリ作業ツリーを一切汚しません）。
 
-#### [MODIFY] [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts)
-- `setMode()` の失敗・未完了時再試行許可、`miraiSubView` クランプ `5 → 8` 修正、`welcome` 専用断面範囲追加、`cachedDomRect` 更新、`dispose()` 全 6 リスナー解除、タブ非表示時 `rAF` 停止、非同期呼出 `.catch()` 保護（BUG-09, 18, 19, 28, 33, 50, 63）。
-
-#### [MODIFY] [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts), [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts), [raycast_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts), [kine_culling_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/kine_culling_engine.ts), [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts), [dispose.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/dispose.ts), [fast_proxy_builder.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/fast_proxy_builder.ts), [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts), [capture_bridge.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/capture_bridge.ts), [perf_hud.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/perf_hud.ts), [GpuOptimizer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts)
-- 全無限ループ要因（`nextCap < needed`, `cap <<= 1`, 7 箇所のハッシュ `while (true)`）の完全ガード、BVH スタック 128 境界チェック、`Uint16` 頂点上限ガード、`finally` 復帰、解放漏れ・統計バグ・NaN 表示の修正（BUG-04, 06, 07, 20, 21, 22, 31, 32, 52, 53, 54, 64, 65）。
+> [!CAUTION]
+> **絶対不変の物理・検証品質保証（アンチチート鉄則）**
+> - `EXAM V1` の物理閾値・全36エンジン・全530固定テスト・16クロスソルバ保存則・32外部ソルバ完全導入ルールは **1ミリも緩和・省略しません**。
+> - `flow heal` は並進・爆発ベクトル・安全範囲の絶縁/メタデータ整合のみを厳格上限付き（`SEC-08`）で解き、パーツ削除や形状破壊を物理遮断します。すべての完了報告は必ず無省略フル `EXAM V1` の **`TLX1-RECEIPT`** ＋ `bg` の **`BG-RECEIPT`** ＋ 12層セキュリティの **`SEC-RECEIPT`** を結合した改ざん不能 **`FLOW-RECEIPT`** で証明します。
 
 ---
 
-### Component 2: UI スタジオ群・光学シミュレータ・CSS・PWA 修正（BUG-08, 13, 27, 36〜44, 55〜62）
-
-#### [MODIFY] [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts), [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts), [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts), [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts), [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts)
-- `schematicLoadPromise` リセット、`isLightboxOpen()` 公開、タイマー追跡＆`dispose()`、`MiraiLibraryStudio` 非同期 `openSeq` キャンセルガード、`OriginalBlueprintStudio` `aria-hidden` 同期＆`dispose()`、`LensOpticsStudio` エスケープ＆数値ガード、`lensOpticalSim` ゼロ除算・Secant 発散保護。
-
-#### [MODIFY] [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css), [index.html](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/index.html), [manifest.webmanifest](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/public/manifest.webmanifest)
-- 横向きトップバーのパレットクリップ解消・縦スマホ 390px の 4 ボタン 1 行収容・`z-index` 階層統一（topbar 34 / drawer 30 / palette 70）・8 組の重複セレクタ統合・`is-zen-fullscreen` の現行クラス対応・アクセシビリティ＆マニフェスト更新。
+## Proposed Changes（コンポーネント別・最終確定詳細設計）
 
 ---
 
-### Component 3: Play Ground CAD Studio & Grader & PLYA 修正（BUG-14, 24〜26, 29, 45, 46, 66, 67）
+### Component 1: AIエージェント専用・厳密2冊統合マニュアル体系（`FLOW-SPEC/v1`）
 
-#### [MODIFY] [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts), [PartGeometryExtractor.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PartGeometryExtractor.ts), [CameraEngineeringGrader.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CameraEngineeringGrader.ts), [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts)
-- `openSessionToken` キャンセル・`historyBusy` Undo/Redo 直列化・JSON Import 厳密バリデーション・`escapeHtml` 適用・遅延 `URL.revokeObjectURL`・タイマー＆マテリアル解放・ゼロ除算＆空ワークスペース境界保護。
+#### 設計仕様
+- **言語・構文**: LLMのBPEトークン密度が最大化する **ASCII構造化英語＋パイプ区切り決定表＋状態遷移規則（`FLOW-SPEC/v1`）** を採用。日本語散文・装飾記号・冗長なMarkdown枠線・重複記述を全廃。
+- **機械検証**: `scripts/flow_os/doc_compiler.mjs` により、①運用/設計MDファイル数が厳密2冊であること、②既存全ツール（`exam`, `bg`, `pp1.1`, `sokutei`, `sp`, `dx`, `validate`, `catalog`, `build`）と全鉄則（`bg` 5鉄則、`EXAM` 5鉄則、12層セキュリティ、並列規約、ヒューマン専用コマンドロック）が100%記載されていること、③トークン予算上限（Book 1 `<= 4,200 tok`、Book 2 `<= 5,200 tok`）を自動検証。
+
+#### 変更ファイル
+- #### [MODIFY] [AGENTS.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/AGENTS.md)
+  - **Book 1: 作業環境説明書（`FLOW_V1_OS_ENV`）** として全面再構築（目標 **12〜15 KB / ~3,500 tok**）。
+  - 収録セクション（全10ブロック、重複0）：
+    1. `@HEADER`（OSバージョン・アダプタ・トークン契約・終了コード `0/1/2/3/4/5/6`）
+    2. `@IRON_LAWS`（`I01..I12`: `flow wake` 必須起動、ブランチ厳守、15分退避、待機前 `flow park`、`EXAM V1` 単独検証権威、32/32外部ソルバ必須導入、`FLOW-RECEIPT` 義務、アンチチート、`flow human-report` AI自律実行禁止ロック）
+    3. `@SUPER_COMMANDS`（7大OSコマンド `wake / inspect / heal / ship / park / finish / exec` ＋ `swarm` ＋ ヒューマン専用 `human-report` の正確な構文・置換元・トークン上限）
+    4. `@HEAL_WORKFLOW`（旧手動ループ完全廃止宣言と、`flow heal` → Tier-B 250tokカプセル外科修正 → `flow ship --full-exam` の標準3ステップ）
+    5. `@LEGACY_TOOL_COOKBOOK`（`exam` / `bg` / `pp1.1` / `sokutei` / `sp` / `dx` 全コマンド・全主要フラグ・全終了コード・全運用規則を圧縮完全網羅）
+    6. `@PARALLEL_KERNEL`（`worker` vs `integrator` 権限境界、ファイルリース、隔離 `FLOW_AGENT_WS`、`flow swarm` 並列プロトコル）
+    7. `@SECURITY_FORTRESS`（`SEC-01..SEC-12` 判定条件・`EXIT 6` 解除手順・監査台帳契約）
+    8. `@CODE_EDIT_RULES`（Layer G `pose.tsv` 優先編集、巨大JSON丸読み禁止、V2 0GC・Solid 100dc・38マテリアルバケット規約）
+    9. `@RECOVERY_PLAYBOOK`（VM突然死3-way復旧・スクリプト暴走復元・`EXIT 2/4/5/6` 即応マトリクス）
+    10. `@PORTABLE_EXPORT`（他リポジトリ30秒流用 `flow export-template` / `flow init` 手順）
+- #### [MODIFY] [README.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/README.md)
+  - **Book 2: それ以外の説明書（`FLOW_V1_DOMAIN_SPEC`）** として全面再構築（目標 **14〜18 KB / ~4,200 tok**）。
+  - 収録セクション：
+    1. `@PROJECT_MAP`（SONY-A7-IV 3D CAD + Play Ground 1.1 + RIIMOS E1 + FH MIRAI 2028 + Sensor Fab + Capacitor Android APK 全体構成）
+    2. `@RENDER_V2_V3_ARCH`（Universal V2コンパイラ・STD LITE v2 Dual-Atlas・ULTRA AA・KINE 3層カリング・F1.2 Bokeh・16x Zoom・モバイル横画面仕様・4品質ティア契約）
+    3. `@UNIT_REGISTRY`（全23モード一覧：`unitId`, `kind`, `parts`, `slug_prefix`, `code_range`, `examActive`, 座標系原点、特殊サブビュー）
+    4. `@CODE_3LAYER_SPEC`（Layer G `pose.tsv` 文法＆拘束式、Layer M 純粋幾何カーネル＆`cad_primitives.ts`、Layer L 1行1パーツJSON、SVG 720×470図説レジストリ、展示データ `reports/` & `blueprints/` 保護規定）
+    5. `@EXAM_DOMAIN_MAP`（10柱・36エンジン・530テスト・16クロスソルバ保存則・各ユニット固有の物理条件/光線プリセット一覧）
+    6. `@PERF_BASELINE_AND_HISTORY`（V3実測ベンチマーク基準値、Phase 12〜39・PR #53〜#62 の1行圧縮履歴）
+- #### [DELETE] 旧分散マニュアル8ファイル＋ルートゴミ
+  - `CLAUDE.md`
+  - `HANDOFF_HYPER_OPTIMIZATION.md`
+  - `catalog/WORKER_RULE.md`
+  - `scripts/BUCHIGIRE_GUARD_GUIDE.md`
+  - `scripts/THE_LAST_EXAM_V1_MANUAL.md`
+  - `scripts/PP1_1_MANUAL.md`
+  - `scripts/SOKUTEI_MANUAL.md`
+  - `scripts/SPATIAL_SIM_GUIDE.md`
+  - `=`（ルート直下の0バイト誤生成ファイル）
 
 ---
 
-### Component 4: 「ようこそ (`welcome`)」435 パーツ `0.001 mm` 完全無干渉・無突出・爆発軌道無衝突化（BUG-15, 16, 17）
+### Component 2: ★核心革新★ 全10柱横断・0トークン自動修復エンジン「`flow heal`」
 
-現状の `sp` 厳密監査結果：
-- 干渉 1,087 件の内訳：**100.0% が W01〜W220 同士**（`oldOld=1087, oldNew=0, newNew=0`）
-  - 文字内部干渉：892 件（4 文字共通積層＋各文字サブストローク交差・石英柱）
-  - 台座内部干渉：111 件（中実 `W173`・中実 `W215`・内部モジュール重なり）
-  - 文字↔台座ドック干渉：84 件（文字下部↔`W187/189/191/193` ドックソケット↔`W174` データム板）
-- 爆発衝突：61〜70 件 / ニアミス：40 件 / SMT 着座異常：9〜10 件 / 熱近接：8 件
+#### 従来の手動修正ループとの決定的な違い（全10柱/36エンジン連成攻略）
+EXAM V1 の詳細調査により、**1件の幾何・接触・材質欠陥が最大10個以上のエンジンへ連鎖波及する構造**（例：1パーツの `>0.08mm` 浮遊が `EX02` だけでなく `EX06 T083`, `EX07 T102`, `EX12 T194`, `EX15 T290`, `EX18 T370`, `EX22 OpenCV islands`, `EX25 Bullet/ODE`, `EX32 T435` を同時FAILさせる）が明確になりました。
+
+`flow heal` はこの連成構造を逆手に取り、**LLMトークンを一切消費せずローカルCPU上の産業ソルバ群（FCL 0.7 + SP_F64 + SciPy QP/LP + COIN-OR CBC + Z3 + OpenCASCADE）で全欠陥を同時連立解法**します。
 
 ```mermaid
 flowchart LR
-    W1["Step W1: 全435パーツ実AABB突出・配置全数監査"] --> W2["Step W2: 文字共通Z層スタック＆ポケット厳密分離 (~700件解消)"]
-    W2 --> W3["Step W3: サブストローク端点トリム＆石英柱座ぐり調整 (~190件解消)"]
-    W3 --> W4["Step W4: 台座W173中空バスタブ＆I/O窓カットアウト＋ドック段差 (~195件解消)"]
-    W4 --> W5["Step W5: 全435パーツ爆発軌道単調化・熱離隔・ニアミス/突出ゼロ化"]
-    W5 --> W6["Step W6: sp --all-tiers PASS(0/0/0/0) + ray + thermal-cog + pp1.1全方位視覚確認"]
+    RUN["1. EXAM 欠陥全数抽出\n(FCL / SP_F64 4Tier / CGAL / Thermal / RayCone / Chem / BOM)"] --> CLU["2. 因果ルートコーズ解析\n連結成分(島)分解 + 親ズレ連鎖特定\nTier-A(85-95%) vs Tier-B(5-15%)分類"]
+    CLU --> SOLVE["3. ローカル多物理連立ソルバ (0 LLMトークン)\n重み付きQP + Z3/CBC + EX-DELTA 40ms BVH\n最大25反復で4ティア0衝突・0浮遊・熱・視界・CCD同時収束"]
+    SOLVE --> GUARD["4. SEC-08 アンチチート検査\n移動上限 / 体積不変 / パーツ削除0 / 閾値無変更"]
+    GUARD --> WRITE["5. pose.tsv 原子書込\n(全23ユニット即反映・オプションでTSへAST焼戻し)"]
+    CLU --> CAP["6. 残余Tier-B専用カプセル\n<=250 tok/件 (AABB+近傍+ASCII断面+散文除去15行AST)"]
+    WRITE --> FULL["7. flow ship --full-exam\n無省略36エンジン/530テスト -> TLX1-RECEIPT確定"]
 ```
 
-#### [MODIFY] [welcomeGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGeometry.ts)
-- `buildPlinthRoundedSlab` / 新規 `buildHollowPlinthChassis`（`W173` 用 CNC 削り出し中空バスタブ＋底面/背面/側面 I/O 窓カットアウト：USB-C・トグルスイッチ・ロータリーダイヤル・照度センサ・ステータスバー・ドック開口を物理的に切り抜き、`CONTAINMENT` を構造レベルで完全消滅）。
-- `buildHollowCncChassis` の内部ポケット壁・深さを Z 層スタックと厳密整合化（各レイヤー間に `≥ 0.05 mm` 実クリアランス）。
-- `buildSpeakerEnclosure` の中空バッフル箱化（`W214` と `W215` の内包解消）。
-- `buildQuartzColumnPart` の端面クリアランス調整・`buildDovetailMount` / `buildPogoPinBlock` の厳密嵌合段差設計。
+#### 全10柱（P01〜P10）に対する `flow heal` 攻略マトリクス
 
-#### [MODIFY] [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts)（および必要に応じ突出・熱近接・爆発調整のため `welcome*Parts.ts`）
-- **4 文字共通スタック（W01〜W172 のコア部）**: 背面 3D 放熱フィン → サーマルパッド → LED MCPCB → LED チップ → 反射シート → LGP 導光板 → BEF フィルム → 光学バッフル → IP65 ガスケット → CNC シャーシ → チタンベゼル → サファイア前面レンズの Z 座標を `0.001 mm` 厳密非干渉配置へ整理。
-- **内部電子ベイ・M2 ボルト・ダウエルピン・FPC/ZIF**: `sp pockets` で算出した空きキャビティ座標へ精密配置し、LGP/MCPCB/シャーシ貫通をゼロ化。
-- **サブストローク接合部**: 「よ」横棒・ループ、「う」冠・石英柱、「こ」上棒・左右石英柱、「そ」Z1/Z2/Z3 斜めフレーム・コーナーブラケットの端点を厳密トリムし重複貫通 0 mm 化。
-- **台座内部（W173〜W220）＆ドック（W187〜W194）**: センタービーム・バッテリー・BMS・ヒートパイプ・放熱フィン・ハーネス・底板ウェイト・ゴム足・M3 ねじ・ドックソケットの干渉を全解消し、熱近接 8 件（`W262`, `W246`, `W247` 等）も安全距離（`≥ 1.5 mm` 目標）へ改善。
-- **全 435 パーツの飛び出し・異常配置チェック**: 全 435 パーツの実メッシュ頂点 AABB を検査し、文字シルエット外・台座外周・底面ゴム足以下に不自然に飛び出している・本来あるべき位置からズレている部品を 1 つ残らず正規収容位置へ修正（同時に W221〜W435 との二次干渉 0 件を `sp` で常時検証）。
-- **爆発軌道 (`explodeOffset`)**: 全 435 パーツの爆発ベクトルを層順・方向別に厳密単調化し、全 8 ステップ（`t = 0.125..1.0`）の `explodeHits = 0` を達成。
+| 柱・エンジン | 主な不合格原因 | `flow heal` における自動解決方式（0 LLMトークン） | Tier-B時のAIカプセル支援 |
+|---|---|---|---|
+| **P01: EX01/EX02/EX03/EX04/EX05** | 4ティア衝突・弦落ち・浮遊(`>0.08mm`)・転倒・シルエット分離・非多様体 | 全ペア抽出→QP連立最適化で **全4ティア同時 `sep>=+0.008mm`** ＋ **接地スパニング木 `0.001..0.055mm`** ＋ **CoG支持多角形内収束** を同時計算 | 非多様体穴・自己交差(`EX05`)や並進不能形状は250tokカプセル＋3軸断面図で1ターン修正 |
+| **P02/P03: EX06/EX07/EX08/EX09/EX10/EX25/EX26** | 非接地による剛体0Hzモード(`T102`)・未拘束タイ(`T083`)・Bullet/ODE落下・公差干渉 | P01の接地スパニング木収束により `T083/T102/EX25` が連鎖解消。公差干渉(`EX09`)はクリアランス下限を `0.008 + RSS_3sigma` へ自動引き上げ再計算 | 剛性不足・座屈・応力超過(`EX06/07/08/10`)は高応力部位と推奨板厚増分を150tokで提示 |
+| **P04: EX11/EX12/EX13/EX14/EX27/EX28** | 爆発CCD衝突(`EX11`)・空中ファスナー(`EX12`)・シール未圧縮(`EX14`)・薄肉DFM(`EX13`) | **爆発ベクトル `explodeOffset` の自動衝突回避最適化**、ファスナー2点以上接触制約、ガスケット着座圧縮制約をQPへ同時組み込み | 薄肉壁(`EX13`)・工具干渉はCGAL SDF最小肉厚位置と対象15行のみ抽出 |
+| **P05: EX29/EX15** | TIM/ヒートシンク浮遊(`T290/291`)による空気層断熱→ジャンクション過熱(`T286`) | 発熱体〜TIM〜ヒートシンク間の距離制約 **`<=0.035mm`** を強制着座させて熱抵抗を物理的に解消 | 放熱フィン面積不足時はCFD対流係数を添えて150tok設計提案 |
+| **P06: EX16/EX17/EX30/EX31** | 3Dハーネス貫通・沿面距離不足・SPICE/KiCadメタ不整合 | 配線クリアランス制約・導電部離隔制約を連立適用 | 回路トポロジ変更が必要な場合のみ該当ネット限定カプセル出力 |
+| **P07: EX18/EX19/EX20/EX21** | 非接地EMIシールド(`T370/374`)・光漏れ隙間(`T384`)・ToF/Lux/RF視界コーン遮蔽(`EX20`) | EMI缶接地強制、光学カバー密着強制、**`RAY_PRESETS` 3D円錐からの自動退避制約**を同時連立解法 | 光学レンズ・導光板の形状変更のみTier-Bカプセル化 |
+| **P08: EX32/EX33** | Z3接地公理(`T435`)・シール公理(`T436`)・BOM基数(`T439`)・RTL FSM | 上記物理収束＋BOMメタデータ整合自動同期により連鎖PASS | Z3反例モデル（最小unsat core 5行）のみ抽出 |
+| **P09: EX34/EX35** | 異種金属直接接触（特に Mg–Cu 電食 `T455/456`）・耐熱超過 | 接触グラフ上の高ΔE°ペアを自動検出し、絶縁ギャップ確保または非電食メッキ/PTFEシム挿入候補を自動生成 | 材質仕様書更新が必要な場合のみ最小差分提示 |
+| **P10: EX22/EX23/EX24/EX36** | Chrome OpenCV浮遊島(`EX22`)・BOM/JSON/カタログズレ(`EX23`)・WebGL予算(`EX24`) | 接地収束でOpenCV浮遊島を同時解消、`catalog`/`declaredPartCount`/メタ不整合を原子自動同期 | ドローコール超過時のみ最大消費バケット特定レポート出力 |
 
-#### [MODIFY] `catalog/**` & `docs/**`（自動生成）
-- 修正後に `npm run catalog` および `npm run build` を実行し、全カタログとビルド成果物を完全同期します。
+#### `EX-DELTA` 40ms 差分BVHエンジン ＆ 全23ユニット対応 `pose.tsv` 仕様
+- **対象ファイル**: `src/units/<unitId>.pose.tsv`（全23ユニットで統一形式）
+  ```tsv
+  # FLOW_POSE_V1 unit=welcome frame=world_delta
+  # id	dx,dy,dz	rx,ry,rz	sx,sy,sz	exp_dx,dy,dz	mat_override	constraints
+  welcome-yo-sapphire-ito-esd-clip	0.000,-0.142,0.028	0,0,0	1,1,1	0,0,0	-	seat:welcome-yo-ti-protective-bezel:+Z:0.02;clear:welcome-yo-cnc-chassis:0.015
+  ```
+- **相対拘束自動伝播（`@flow:seat` / `@flow:clear` / `@flow:cone`）**:
+  - 親パーツ（例：シャーシ）が板厚増加や位置調整で動いた際、`constraints` 列の依存DAGをトポロジカル走査し、ぶら下がる子パーツ群を **0 LLMトークン・50ms以内** で連鎖追従させます。
+- **全23ユニット網羅（重要発見の反映）**:
+  - `CompiledV2Unit`（22ユニット共通）と独自実装の `src/units/mi_shoe.ts`（`mishoe` ユニット）および `scripts/spatial_engine/scene_extractor.mjs` の **3箇所すべて** で共通ローダ `src/core/flow_pose_loader.ts` を呼び出し、WebGL2実描画・`pp1.1`・`sp`・`EXAM V1` の座標完全一致（0.000mm誤差）を保証します。
+- **`flow bake-pose --unit=<U>`**: `pose.tsv` の確定補正値を元のTS/JSONへ直接焼き戻す機能も標準搭載し、必要時に `pose.tsv` をゼロ化可能にします。
+
+#### 変更ファイル
+- #### [NEW] `src/core/flow_pose_loader.ts` — ゼロGC・全23ユニット共通 `pose.tsv` パーサ＆変換適用器（Vite `?raw` 静的インポート対応、未存在時は完全ノーオペ）
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/defect_clusterer.mjs` — EXAM全数欠陥抽出＋因果ルートコーズ・クラスタ分類
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/solver_bridge.mjs` — `EX-DELTA` 差分BVH管理・Python連立ソルバ連携・4ティア `SP_F64` 厳密検証ループ
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/coupled_solver.py` — SciPy SLSQP/LP + COIN-OR CBC + Z3 + FCL 同時連立多物理最適化エンジン
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/pose_manager.mjs` — `pose.tsv` 原子書込・相対拘束DAG伝播・`SEC-08` アンチチート検査・AST焼き戻し
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/defect_capsule.mjs` — Tier-B専用 <=250トークン欠陥カプセル＋3軸ASCII断面スライス＋散文除去ASTスライサ
+- #### [MODIFY] [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts) — `buildRaw` 直後に `applyUnitPoseTable()` を1フック追加（ゼロGC）
+- #### [MODIFY] [mi_shoe.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/units/mi_shoe.ts) — 同じく `applyUnitPoseTable()` を1フック追加し全23/23ユニット統一対応
+- #### [MODIFY] [scene_extractor.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/scene_extractor.mjs) — `pose.tsv` 適用反映＋`EX-DELTA` インメモリBVH葉ノード差分更新API追加＋`FLOW_AGENT_WS` 隔離キャッシュ対応
+- #### [MODIFY] [ir_compiler.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/ir_compiler.mjs) — `pose.tsv` 由来パーツの正確な `src=` 位置解決のみ追加（※物理評価ロジック・閾値は一切不変）
 
 ---
 
-## Verification Plan
+### Component 3: コードベース全体のAIエージェント最適3層直交再構築
 
-### Automated Tests
+人間向けの長大な縦長整形・重複解説・巨大ユニオンをすべて AI 最適構造へ再構築します（実行時機能・WebGL2品質・UI表示・EXAM 530テストは **100%無劣化**）。
 
-1. **空間厳密監査（`0.001 mm` — 必須全 PASS）**
-   ```bash
-   npm run sp -- selftest --ai
-   npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai
-   npm run sp -- ray --unit=welcome --preset=welcome-tof,welcome-lux,welcome-rf --ai
-   npm run sp -- thermal-cog --unit=welcome --ai
-   ```
-   - **合格基準**: `standard_lite` / `standard` / `high` / `ultra` の全 4 ティアで `VERDICT=PASS (exit=0)`、`collisions=0`、`smtSeat=0`、`nearMiss=0`、`floating=0`、`explodeHits=0`、`ray occluded=0%`、熱近接 `[TIGHT_THERMAL]` ゼロ（または設計許容範囲内）、かつ全 435 パーツの突出/異常配置スクリプト検査 0 件。
+#### 4大構造改革
+1. **`src/data/*.json`（全23ユニット）の「1パーツ = 1行」正規化JSON化**
+   - 現行 **196,010行（12.46 MB）→ 約3,600行（約7.2 MB、行数 -98.1%）**。
+   - 有効な標準JSON形式（先頭メタ1行、`"parts":[`、各パーツ厳密1行、末尾 `]}`）を維持するため、Vite/TypeScriptの `import welcomeJson from '../data/welcome.json'` が1行の変更もなく動作し、AIは `flow inspect` や `rg` で**該当パーツ厳密1行だけ**を抽出可能になります。
+2. **`src/assemblies/types.ts` の 94% スリム化**
+   - 2,520行（88 KB）を占めていた巨大文字列リテラルユニオン（`diagramType` 等）を自動生成ファイル `src/assemblies/diagram_types.gen.ts` へ分離し、`types.ts` 本体を **約140行（約4 KB）** へ凝縮。
+3. **3Dビルダー（`src/assemblies/*/*.ts`）からの日本語解説散文完全剥離 ＆ `@FLOW_MAP` 先頭索引付与**
+   - `welcomeParts.ts` や `welcomeGlyphWaveCParts.ts` 等で `src/data/*.json` と二重持ちされていた日本語解説テキスト（`plainAnalogy`, `summary`, `opticsAndPhysics`, `references`, `specs` 等）をすべて `lazyExplanationStub` / Layer L 参照へ統一（重複削除により `assemblies/` のAI読込トークンを **-55%〜-70%** 削減）。
+   - 全 `.ts` ビルダー先頭に自動生成の5行機械索引ヘッダ `//@FLOW_MAP|unit=...|parts=...|fn=...` を付与。
+   - 重複している共通機械要素（六角ボルト、ワッシャー、Oリング、QFN IC、SMDチップ抵抗/MLCC、ポゴピン、シールド缶等）を `src/core/cad_primitives.ts` へ集約。
+4. **無劣化自動マイグレータによるユニット単位安全移行（`migrate_codebase.mjs`）**
+   - 1ユニット変換するごとに自動アサーションを実行：
+     - 変換前後で **全パーツID・順序・JSON解説フィールド全文字列がビット一致**
+     - 変換前後で **4品質ティア全メッシュの頂点数・AABB・体積・CoGが誤差 `0.0000mm` 一致**
+     - `pp1.1 --diff` でピクセル **SSIM >= 0.9999**、`EXAM V1` 無省略合格を確認
 
-2. **実ブラウザ自動 E2E 回帰テスト（Chrome CDP: デスクトップ 1280×800 / 縦スマホ 390×844 / 横スマホ 844×390）**
-   - 左上 4 ボタン（アセンブリ選択・Play Ground・FH 2028・Original）の実クリック＆タップ応答計測（`< 150ms`、フリーズ 0 件、横向きパレット `itemActuallyClickable: true`、意図しないフルスクリーン発火 0 件）。
-   - 全 23 ユニット連続切替＋連打中断テスト：**コンソールエラー 0 件 / VRAM リーク警告 0 件（`Δg=0, Δt=0, totalRefs=0`）**。
-   - Play Ground 開閉・Undo/Redo 連打・不正 JSON インポート耐性・XSS 無害化・モーダル排他・`Esc` 単層クローズ・`MIRAI 2028` SubView 1〜8 切替・`welcome` 断面スライダー検証。
+#### 変更ファイル
+- #### [NEW] `src/assemblies/diagram_types.gen.ts` — 自動生成図説ユニオン型（`catalog` / `atlas` で自動同期）
+- #### [NEW] `src/core/cad_primitives.ts` — AI最適パラメトリック共通機械要素ライブラリ
+- #### [NEW] `scripts/flow_adapters/sony_a7iv_cad/migrate_codebase.mjs` — 無劣化検証付き3層自動マイグレータ
+- #### [MODIFY] [types.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/types.ts) — 2,520行 → 約140行へスリム化（`diagram_types.gen.ts` 再エクスポートで完全後方互換）
+- #### [MODIFY] `src/data/*.json`（全23ユニット） — 1パーツ1行正規化JSONへ変換
+- #### [MODIFY] `src/assemblies/*/*.ts` — 重複解説散文の完全分離＋`@FLOW_MAP` 先頭索引付与＋`pose.tsv` 抽出
+- #### [MODIFY] [generate_catalogs.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/generate_catalogs.mjs) & [atlas_builder.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/dx/atlas_builder.mjs) — 1行JSON・`pose.tsv`・`DEFECT_MAP.tsv`・`diagram_types.gen.ts` 自動生成対応
 
-3. **リポジトリ公式品質ゲート（10/10 PASS）**
-   ```bash
-   npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build
-   ```
+---
 
-4. **超高速 6-DoF 視覚確認（`pp1.1`）**
-   ```bash
-   npm run pp -- --warm --mode=cad --unit=welcome --quality=ultra --ortho-pack --contact-sheet=3 --out=/tmp/pp_welcome_after
-   npm run pp -- --warm --mode=cad --unit=welcome --quality=ultra --turntable=8 --contact-sheet=4 --out=/tmp/pp_welcome_turn
-   npm run pp -- --warm --preset=mobile --out=/tmp/pp_mobile_after
-   npm run pp -- --warm --preset=audit --out=/tmp/pp_audit_after
-   npm run pp -- --daemon=stop
-   ```
-   - 正面・背面・左右・上面・底面・斜め・ターンテーブル 8 方向およびスマホ画面を目視監査し、飛び出し・めり込み・UI 重なりが 0 件であることを確認します。
+### Component 4: 統合スーパーCLI（`flow`）＆ 並列AIエージェント専用カーネル
 
-5. **完了ゲート（`bg gate`）**
-   ```bash
-   npm run bg -- gate --policy=integrator --run-checks --require-checks --ai
-   ```
-   - `BG-RECEIPT` を取得・検証してから完了報告します。
+#### 1. 全7+1+1 コマンド体系（`scripts/flow_os/flow.mjs`）
 
-### Manual Verification
-- ユーザー様の実端末（PC / スマホ縦・横）にて、起動直後から左上のアセンブリ切替・Play Ground・FH 2028・Original を連続操作し、即応性・無フリーズ・全パレット選択可否をご確認ください。
-- 「ようこそ」を全方位回転・拡大・爆発スライダー（0%→100%）・断面カット（X/Y）で確認し、干渉や不自然な飛び出しがないことをご確認ください。
+| コマンド | 1コマンド統合内容（従来 5〜7コマンド置換） | 出力上限 (`FLOW-BUDGET`) |
+|---|---|---:|
+| **`flow wake [slug] [--unit=U] [--role=worker\|integrator] [--goal=G]`** | `bg boot`（孤立Vault検査）→ 任意 `bg start` → 排他リース取得＋隔離 `FLOW_AGENT_WS` 初期化 → `exam setup --verify-only` → `dx atlas` 差分更新 → 超圧縮文脈 `FLOW1` 出力 | **<= 220 tok** |
+| **`flow inspect <target> [--defect] [--slice] [--budget=N]`** | 対象自動判別（unit / partId / symbol / CSS / schematic / EXAM runId）→ Layer G行・AST抜粋・欠陥カプセルのみ返却（散文自動除去） | **<= 300 tok** |
+| **`flow heal --unit=<U> [--apply] [--max-iter=25] [--bake]`** | EXAM全数欠陥抽出 → 因果クラスタ分解 → 0トークン連立ソルバ（`EX-DELTA` + QP/Z3/FCL/SP）→ `SEC-08` 検査 → `pose.tsv` 原子反映 → 残余Tier-B 250tokカプセル出力 | **<= 400 tok** |
+| **`flow ship --unit=<U> [--policy=P] [--full-exam] [--visual]`** | `catalog` + `atlas` → `tsc --noEmit` → `validate_parts` → `vite build` → **無省略フル `EXAM V1`（36Eng/530Test/16Lock → `TLX1-RECEIPT`）** → 任意 `pp1.1` シート撮影＆隔離デーモン停止 → `bg snap` | **<= 350 tok** |
+| **`flow park [--next=N] [--artifacts=DIR]`** | 自エージェント隔離 `pp1.1` 停止 → `dx checkpoint` 記憶保存 → `bg seal` リモート `ls-remote` 裏取り封印 → リース維持更新 | **<= 150 tok** |
+| **`flow finish [--policy=P] [--pr] [--merge] [--title=T]`** | 12層セキュリティ全監査 (`SEC-RECEIPT`) → `TLX1-RECEIPT` Tree-SHA鮮度一致確認 → `bg gate` (`BG-RECEIPT`) → 3者暗号連鎖 **`FLOW-RECEIPT`** 発行 → 任意PR作成/マージ＆リース解放＆Vault GC | **<= 200 tok** |
+| **`flow swarm <plan\|status\|merge> [--units=all]`** | 複数並列AIワーカーへのユニット別タスク記述子（<=120tok/件）自動分割・進捗監視・署名済み `FLOW-RECEIPT` バンドル回収・トポロジ順自動統合 | **<= 300 tok** |
+| **`flow exec <exam\|bg\|pp\|sokutei\|sp\|dx> [args...]`** | 全既存ツールの透過実行＋`FLOW-BUDGET` トークン上限自動圧縮（超過ログは `/tmp/flow_ws/<id>/spill_*.log` 退避）＋セキュリティ前処理 | **<= 400 tok** |
+| **`flow human-report [--out=PATH]`** | **【ヒューマン専用・AI自律実行厳禁】** 人間要求時のみ起動し、キャッシュゼロで全リアルタイム統計を人間可読MD保存して渡す | 保存MDパス返却 |
+
+#### 2. 並列AIエージェント完全隔離（`FLOW_AGENT_WS`）
+- `scripts/pp.mjs` のデーモンポート・PIDファイル・Chromeプロファイルパスを `process.env.FLOW_AGENT_WS` 単位で分離（`EX22` 完了時の `--daemon=stop` が他ワーカーのChromeを巻き添え停止する競合バグを根絶）。
+- `scripts/exam.mjs` の `/tmp/tlx_runs` および `scripts/spatial_engine/scene_extractor.mjs` の `/tmp/sp_cache` も `FLOW_AGENT_WS` 配下オーバーレイへ自動分離。
+- `scripts/flow_os/lease_manager.mjs` が `refs/bg-vault/leases/<unit>.json`＋ローカル排他flockでユニット単位の書き込みロックを管理し、ワーカー権限越境を物理遮断。
+
+---
+
+### Component 5: 超強固・12層多層防御セキュリティ要塞（`SEC-01`〜`SEC-12`）
+
+Pure Node.js 22（外部npm依存ゼロ＝サプライチェーン攻撃面最小）で実装し、違反時は専用終了コード **`EXIT 6 (SECURITY_BLOCKED)`** で即座に物理遮断します。
+
+| 層 | ID | 防御内容（標準レベルを超える多層要塞設計） |
+|---|---|---|
+| **入力・AI脅威防衛** | `SEC-03` | **プロンプトインジェクション＆Trojan Source遮断**: 外部テキスト・JSON・MD・`.tlx.json`・コミットログ内の間接プロンプト注入、偽造レシート文字列、双方向Unicode (`U+202A..202E`, `U+2066..2069`)、ゼロ幅ステガノグラフィ、ANSI端末乗っ取りを全数検知・無害化 |
+| **入力・パス防衛** | `SEC-05` | **ケイパビリティ型パス閉じ込め＆Symlink脱出防御**: 全I/O直前に `fs.realpathSync` 正規化し `../` トラバーサル・Symlink脱出・`.git/hooks` / `~/.ssh` / `/opt/antigravity/tokens` 参照を完全封鎖 |
+| **実行時防衛** | `SEC-04` | **コマンド実行サンドボックス＆破壊操作インターロック**: `rm -rf` / 保護ブランチ `--force` / `git reset --hard` / `curl\|sh` を遮断。全子プロセス `shell: false` 配列起動を強制し危険操作前は自動Vault退避 |
+| **並列被害隔離** | `SEC-10` | **並列ワーカー自動検疫**: 1ワーカーのセキュリティ違反時に該当ブランチ・リースを即座に検疫（マージロック）し、他ワーカーへの波及を0%に封じ込め |
+| **漏洩防衛** | `SEC-01` | **二重エンジン秘密情報＆Shannon高エントロピー遮断**: 正規表現＋Shannonエントロピー解析＋JWT/Base64/Basic認証URL検出＋stdout/Vault送信前の強制マスキング |
+| **サプライチェーン** | `SEC-06` | **Lockfile SHA-512＆ネイティブハーネス署名検証**: `package-lock.json` 整合性・不審 `postinstall` 監視・C++17ネイティブ4本＋`exam_setup.sh` のSHA-256マニフェスト照合 |
+| **静的コード監査** | `SEC-07` | **マルチ言語 SAST**: TS/JS/Python/C++ の `eval`/`new Function`・`innerHTML` XSS・`subprocess(shell=True)`/`pickle`/`yaml.load`・プロトタイプ汚染・ReDoS正規表現を自動検出 |
+| **物理アンチチート** | `SEC-08` | **EXAM＆`flow heal` 改ざん物理遮断**: EXAM閾値編集・テストスキップ・パーツ削除・体積5%超無断縮小・材質偽装をブロック。検証/OSカーネル変更時は `exam selftest` (75/75) + `security selftest` (30/30) を必須強制 |
+| **暗号レシート鎖** | `SEC-02` | **3者暗号連鎖 `FLOW-RECEIPT`**: `BG-RECEIPT` + `TLX1-RECEIPT` + `SEC-RECEIPT` を現Git Tree-SHA＋`scripts/exam/**` SHA-256＋`scripts/flow_os/**` SHA-256で結合封印 |
+| **フォレンジック** | `SEC-09` | **ハッシュ連鎖・追記専用監査台帳**: 全 `flow` 操作・パッチ・リース・検証結果を前レコードSHA-256連鎖JSONL（`.git/flow_audit.jsonl` → リモートVault同期）で改ざん不能記録 |
+| **リポ衛生防衛** | `SEC-11` | **バイナリ肥大・ルートゴミ・不正構文遮断**: ルート直下画像/ゴミ（`=` 等）・巨大バイナリ・破損JSON/TSV・不可視制御文字を完全ブロック |
+| **Red-Team自己証明** | `SEC-12` | **30項目カオス自己攻撃オラクル (`flow security selftest`)**: 隔離 `/tmp` で30種の実攻撃を実際に仕掛け、**30/30 (100%) が `EXIT 6` で遮断されること**を数学的に継続証明 |
+
+---
+
+### Component 6: ヒューマン専用リアルタイム統計コマンド（`flow human-report`）
+
+- **アクセス制御**: Book 1 `@INVARIANT|I08` およびコマンド内メタフラグにより、AIエージェントの自律実行を禁止。**人間ユーザーから明示要求があった時のみ** AIが `npm run flow -- human-report` を1発実行。
+- **リアルタイム完全計測項目（キャッシュ一切不使用）**:
+  1. **全プログラムコード行数（LOC）**: 全ファイル実走査（`node_modules`/`.git`/`dist` 除外、`docs/` 別枠）による言語別（`.ts`, `.mjs`, `.js`, `.py`, `.cpp`, `.css`, `.json`, `.tsv`, `.sh`, `.html`, `.xml`, `.md`）およびディレクトリ/サブシステム別の「ファイル数・総行数・実行コード行・コメント行・空行・容量」。
+  2. **プロジェクト・モード・エンジン数**: 全23登録ユニット（個別21＋統合2）、展示サブプロジェクト（RIIMOS E1 / FH MIRAI 2028 / Sensor Fab 6巻 / Play Ground / Android APK）、FLOW V1 OSモジュール数、EXAM V1 36エンジン/530テスト/32外部ソルバ稼働数。
+  3. **全パーツ数明細**: 全23ユニットごとの宣言数・実JSON数・コード範囲・`pose.tsv` 適用数・独自総計・統合含む延べ総計。
+  4. **容量＆AIトークン効率**: リポジトリ全体・各ディレクトリ・`.git`・ビルド出力・gzipサイズ、および2冊説明書サイズ・旧体制比トークン削減率・`flow heal` 累計自動修復実績。
+- **保存と受渡し**: 人間が読みやすい日本語Markdownを `/tmp/flow_reports/HUMAN_REPORT_<YYYYMMDD_HHMMSS>.md`（および指定時はアーティファクト領域）へ保存し、AIがその保存済みMDを人間へ直接引き渡します。
+
+---
+
+### Component 7: 他リポジトリ30秒流用・汎用OSテンプレート設計
+
+- **完全分離**: `scripts/flow_os/`（100%リポジトリ非依存・外部依存ゼロ）と `scripts/flow_adapters/sony_a7iv_cad/`（本プロジェクト固有アダプタ）を厳密分離。
+- **自動初期化**: `flow export-template --out=<dir>` で純粋OS雛型一式を生成し、任意の別リポジトリ（Node/TS/Python/Go/Rust/C++）で `node scripts/flow_os/flow.mjs init` を実行すると、言語・ビルド・テストコマンド・デフォルトブランチを自動検出し、2冊のAI説明書雛型・`.flowrc.json`・12層セキュリティ・並列リース・ヒューマン専用レポートを **30秒以内** で導入完了します。
+
+---
+
+### Component 8: 全ファイル変更一覧 ＆ 4フェーズ一気通貫実行ロードマップ
+
+承認後、以下の順序で安全かつ一気に全フェーズを遂行します（各フェーズごとに `flow park` オフVM退避＋検証通過を徹底）：
+
+1. **Phase 0（OSコア・12層セキュリティ・7+1コマンド・2冊説明書統合）**
+   - `[NEW]` `.flowrc.json`
+   - `[NEW]` `scripts/flow_os/{flow,kernel_config,wire_protocol,lease_manager,swarm_orchestrator,security_fortress,security_selftest,receipt_chain,audit_ledger,human_report,doc_compiler,template_exporter}.mjs`
+   - `[NEW]` `scripts/flow_os/templates/{AGENTS.tmpl.md,README.tmpl.md,.flowrc.tmpl.json}`
+   - `[NEW]` `scripts/flow_adapters/sony_a7iv_cad/adapter.mjs`
+   - `[MODIFY]` `package.json`, `scripts/pp.mjs` (`FLOW_AGENT_WS` 隔離), `scripts/exam.mjs` (`FLOW_AGENT_WS` 隔離)
+   - `[MODIFY]` `AGENTS.md` (Book 1), `README.md` (Book 2)
+   - `[DELETE]` 旧8マニュアル＋ルートゴミ `=`
+2. **Phase 1（0トークン連立修復エンジン `flow heal` ＋ 全23ユニット `pose.tsv` 実装）**
+   - `[NEW]` `src/core/flow_pose_loader.ts`
+   - `[NEW]` `scripts/flow_adapters/sony_a7iv_cad/{defect_clusterer,solver_bridge,pose_manager,defect_capsule}.mjs`, `coupled_solver.py`
+   - `[MODIFY]` `src/core/v2_unit_compiler.ts`, `src/units/mi_shoe.ts`, `scripts/spatial_engine/scene_extractor.mjs`, `scripts/exam/ir_compiler.mjs`
+3. **Phase 2（コードベース全体のAI最適3層直交再構築・無劣化自動移行）**
+   - `[NEW]` `src/core/cad_primitives.ts`, `src/assemblies/diagram_types.gen.ts`, `scripts/flow_adapters/sony_a7iv_cad/migrate_codebase.mjs`
+   - `[MODIFY]` `src/assemblies/types.ts` (2,520行→約140行), `src/data/*.json` (全23ファイル1行JSON化), `src/assemblies/*/*.ts` (重複解説剥離＋`@FLOW_MAP` 先頭索引), `scripts/generate_catalogs.mjs`, `scripts/dx/atlas_builder.mjs`
+4. **Phase 3（全検証・Red-Team 30/30・EXAM 530/530・他リポ移植試験・`sokutei` 定量証明）**
+   - 隔離 `/tmp` での30秒他リポ移植テスト・並列Swarm競合テスト・Before/Afterトークン＆速度ベンチマーク確定・Walkthrough作成・`FLOW-RECEIPT` 発行。
+
+---
+
+## Verification Plan（無省略・最大レベル検証計画）
+
+### Automated Tests（すべて `exit 0` 必須）
+
+```bash
+# 1. 12層セキュリティ 30項目 Red-Team カオス自己攻撃オラクル (30/30 PASS)
+npm run flow -- security selftest
+
+# 2. 厳密2冊説明書・全ツール網羅・トークン上限監査
+npm run flow -- doc audit --strict
+
+# 3. flow heal カオス欠陥注入(衝突50+浮遊30+TIM5+視界3+Tier-B2) 0トークン収束オラクル
+npm run flow -- heal selftest
+
+# 4. 並列AIエージェント隔離・リース排他・Swarm統合自己テスト
+npm run flow -- swarm selftest
+
+# 5. 汎用OSコア 他リポジトリ30秒移植＆独立動作証明
+npm run flow -- export-template --out=/tmp/flow_portable_check && node /tmp/flow_portable_check/scripts/flow_os/flow.mjs selftest
+
+# 6. 既存ツール全自己テスト ＋ ビルド・カタログ整合性
+npm run bg -- selftest && node scripts/dx.mjs selftest && npm run sp -- selftest
+npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build
+
+# 7. THE LAST EXAM V1: 32/32外部ソルバ確認 + 75/75アンチチート自己証明 + 最大レベル無省略本番検証(530/530 + 16/16ロック -> TLX1-RECEIPT)
+node scripts/exam.mjs setup --verify-only
+node scripts/exam.mjs selftest
+npm run flow -- ship --unit=welcome --policy=integrator --full-exam --visual
+
+# 8. Phase 2 コード再構築前後の無劣化ピクセル証明 (pp1.1 SSIM >= 0.9999) + sokutei 速度計測
+npm run pp -- --warm --preset=audit --diff=/tmp/pp_before_flow --json --out=/tmp/pp_after_flow && npm run pp -- --daemon=stop
+npm run sokutei -- --target=build,v2_unit,validate,catalog,bg_bench --compare=/tmp/sokutei_before_flow.json --md=/tmp/sokutei_flow_diff.md
+
+# 9. 最終完了ゲート (BG-RECEIPT + TLX1-RECEIPT + SEC-RECEIPT -> 3者暗号連鎖 FLOW-RECEIPT 発行)
+npm run flow -- finish --policy=integrator
+```
+
+### Manual Verification（完了後のユーザー最終確認）
+1. ユーザー様から明示的に `flow human-report` の実行をご指示いただき、リアルタイム算出されたMarkdownレポート（総行数・プロジェクト数・全23ユニットパーツ数・容量・トークン削減実績）の正確性をご確認いただきます。
+2. 説明書が厳密に `AGENTS.md`（作業環境説明書）と `README.md`（ドメイン説明書）の2冊に統合されていること、および `pp1.1` 比較シートで3D描画・UI・図説に一切の劣化がないことをご確認いただきます。
+
+### 最終合格KPI基準
+
+| KPI項目 | 現状ベースライン | 最終確定 合格ライン |
+|---|---:|---:|
+| 運用/設計説明書ファイル数・総トークン | 10冊 / 約55,000 tok | **厳密2冊 / <= 9,400 tok（-83%以上）** |
+| セッション起動時AI読込トークン | 12,000〜25,000 tok | **<= 4,000 tok（Book 1 + `flow wake`）** |
+| 1タスクあたりのAIコマンド回数 | 10〜18コマンド | **2〜4コマンド（-70%以上）** |
+| EXAM不合格50パーツ修正の消費トークン | 80万〜150万 tok | **<= 1.2万 tok（-98.5%以上）** |
+| `src/data/*.json` 総行数 / `types.ts` 行数 | 196,010行 / 2,520行 | **<= 3,800行 (-98%) / <= 180行 (-93%)** |
+| 12層セキュリティ Red-Team 遮断率 | 未検証 | **30 / 30 攻撃 100%遮断** |
+| EXAM V1 物理・外部ソルバ検証妥協度 | 0% | **0%（36Eng/530Test/16Lock/32Solver 完全無省略）** |

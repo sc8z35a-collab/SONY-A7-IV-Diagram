@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountPhysicsOverlay.ts|unit=mount|lines=405|exports=MountPhysicsOverlayController,createMountPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import {

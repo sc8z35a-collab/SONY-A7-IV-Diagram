@@ -1,5 +1,0 @@
-{
-  "url": "https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/61",
-  "title": "PR #61: fix(ui,core,welcome): eliminate top-left freezes, fix 70 system bugs, and achieve 0.001mm 0-collision across all 4 tiers on welcome (435p)",
-  "description": "Merged squash commit ce21c23 into main (BG-RECEIPT:ef4fa934:origin/feat/fix-ui-bugs-welcome-zero-collision:integrator:242c729a)"
-}

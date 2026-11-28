@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountUltraAuditParts.ts|unit=mount|lines=275|exports=buildMountUltraAuditParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/shutter/shutterParts.ts|unit=shutter|lines=2065|exports=ShutterDynamicRig,buildShutterParts,buildShutterStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

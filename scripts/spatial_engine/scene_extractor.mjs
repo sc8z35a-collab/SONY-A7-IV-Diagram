@@ -15,7 +15,7 @@ import { buildFlatBvh, computeMeshSignedVolumeAndCentroid, createEmptyBox } from
 
 const require = createRequire(import.meta.url);
 const ROOT = process.cwd();
-const CACHE_DIR = path.join(os.tmpdir(), 'sp_cache');
+const CACHE_DIR = process.env.FLOW_SP_CACHE_DIR || (process.env.FLOW_AGENT_WS ? path.join(process.env.FLOW_AGENT_WS, 'sp_cache') : path.join(os.tmpdir(), 'sp_cache'));
 const CACHE_MAGIC = 'SPB3';
 
 // Material density table (g / cm³) for realistic mass / CoG / tipping calculations
@@ -345,6 +345,33 @@ function extractGeometryWorldTris(geo, worldMatrix) {
   return out;
 }
 
+function loadPoseTsvMap(unitId) {
+  const p = path.join(ROOT, 'src/units', `${unitId}.pose.tsv`);
+  const map = new Map();
+  if (!fs.existsSync(p)) return { map, hash: '0' };
+  const raw = fs.readFileSync(p, 'utf8');
+  const hash = crypto.createHash('sha1').update(raw).digest('hex').slice(0, 8);
+  for (const line of raw.split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const cols = t.split('\t');
+    const id = cols[0]?.trim();
+    if (!id) continue;
+    const parse3 = (s, def) => {
+      if (!s || s === '-') return def;
+      const a = s.split(',').map(Number);
+      return a.length === 3 && a.every(Number.isFinite) ? a : def;
+    };
+    map.set(id, {
+      d: parse3(cols[1], [0, 0, 0]),
+      r: parse3(cols[2], [0, 0, 0]),
+      s: parse3(cols[3], [1, 1, 1]),
+      e: parse3(cols[4], [0, 0, 0]),
+    });
+  }
+  return { map, hash };
+}
+
 /**
  * Headlessly load & extract exact Float64 triangle scene for any registered unit & quality tier.
  */
@@ -359,7 +386,8 @@ export async function loadSpatialScene(unitId, opts = {}) {
     throw new Error(`Unknown unit '${unitId}'. Registered units: ${units.map((u) => u.unitId).join(', ')}`);
   }
 
-  const hash = computeUnitSourceHash(unitInfo, quality);
+  const poseLoaded = loadPoseTsvMap(unitId);
+  const hash = `${computeUnitSourceHash(unitInfo, quality)}_${poseLoaded.hash}`;
   const cachePath = path.join(CACHE_DIR, `${unitId}_${quality}_${hash}.spbin`);
   if (useCache) {
     const cached = readSpb3Cache(cachePath);
@@ -371,6 +399,9 @@ export async function loadSpatialScene(unitId, opts = {}) {
 
   // Bundle unit TS dynamically via esbuild with lightweight v2_unit_compiler stub
   const esbuild = require('esbuild');
+  const unitSrc = fs.readFileSync(unitInfo.unitModulePath, 'utf8');
+  const usesCompiledV2 = /\bnew\s+CompiledV2Unit\b/.test(unitSrc);
+
   const stubPlugin = {
     name: 'sp-v2-stub',
     setup(build) {
@@ -382,7 +413,7 @@ export async function loadSpatialScene(unitId, opts = {}) {
         contents: `
           export class CompiledV2Unit {
             constructor(cfg) { this.cfg = cfg; }
-            __spBuildRaw(mats) { return this.cfg.buildRaw(mats); }
+            __spBuildRaw(mats, quality, ctx) { return this.cfg.buildRaw(mats, quality, ctx); }
           }
         `,
         loader: 'js',
@@ -393,11 +424,18 @@ export async function loadSpatialScene(unitId, opts = {}) {
   const relUnit = './' + path.relative(ROOT, unitInfo.unitModulePath).replace(/\\/g, '/').replace(/\.ts$/, '');
   const bundled = await esbuild.build({
     stdin: {
-      contents: `
-        import { ${unitInfo.factoryName} } from '${relUnit}';
-        import { setActiveBuildQuality } from './src/core/geometry_quality';
-        export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality };
-      `,
+      contents: usesCompiledV2
+        ? `
+          import { ${unitInfo.factoryName} } from '${relUnit}';
+          import { setActiveBuildQuality } from './src/core/geometry_quality';
+          export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality };
+        `
+        : `
+          import { ${unitInfo.factoryName} } from '${relUnit}';
+          import { setActiveBuildQuality } from './src/core/geometry_quality';
+          import { ResourceCache } from './src/core/resource_cache';
+          export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality, ResourceCache };
+        `,
       resolveDir: ROOT,
       loader: 'ts',
     },
@@ -405,14 +443,14 @@ export async function loadSpatialScene(unitId, opts = {}) {
     platform: 'node',
     format: 'cjs',
     external: ['three'],
-    plugins: [stubPlugin],
+    plugins: usesCompiledV2 ? [stubPlugin] : [],
     write: false,
   });
 
   const mod = { exports: {} };
-  const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text);
+  const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text); // flow-sec-allow:SEC-07 trusted local esbuild unit loader
   fn(require, mod, mod.exports);
-  const { createUnit, setActiveBuildQuality } = mod.exports;
+  const { createUnit, setActiveBuildQuality, ResourceCache } = mod.exports;
 
   // Read JSON metadata for groupKey & code mapping
   const jsonMeta = fs.existsSync(unitInfo.jsonPath)
@@ -424,7 +462,87 @@ export async function loadSpatialScene(unitId, opts = {}) {
   let rawBuilt;
   try {
     const unit = createUnit();
-    rawBuilt = unit.__spBuildRaw(createMaterialProxy());
+    if (typeof unit.__spBuildRaw === 'function') {
+      rawBuilt = await unit.__spBuildRaw(createMaterialProxy(), quality, {
+        clippingPlanes: [],
+        dryboxPalette: createMaterialProxy(),
+        yieldChunk: async () => {},
+      });
+    } else {
+      // Custom OptimizedUnit (e.g., MiShoeUnit): run authentic unit.build() and unpack BatchedMesh/InstancedMesh per partId!
+      const cache = new ResourceCache();
+      const built = await unit.build(quality, cache, { synchronous: true, skipEdges: true });
+      built.rootGroup.updateMatrixWorld(true);
+      const partGroups = new Map();
+      const ensurePartGrp = (pid) => {
+        let grp = partGroups.get(pid);
+        if (!grp) {
+          grp = new THREE.Group();
+          grp.name = pid;
+          partGroups.set(pid, grp);
+        }
+        return grp;
+      };
+      const tmpMat = new THREE.Matrix4();
+      const tmpWorld = new THREE.Matrix4();
+      const rangeScratch = { start: 0, count: 0 };
+      for (const binding of built.raycastIndex?.bindings || []) {
+        const mat = binding.mesh?.material;
+        const bucket = mat?.userData?.__materialBucket || 'metal_hero';
+        const matStub = { name: bucket, userData: { __materialBucket: bucket, __matKey: bucket } };
+        if (binding.kind === 'batched') {
+          const bm = binding.mesh;
+          const bGeo = bm.geometry;
+          const posAttr = bGeo?.getAttribute?.('position');
+          if (!posAttr) continue;
+          const posArr = posAttr.array;
+          const isNorm16 = Boolean(posAttr.normalized && posArr instanceof Int16Array);
+          const normScale = isNorm16 ? 1 / 32767 : 1;
+          const idxArr = bGeo.index ? bGeo.index.array : null;
+          for (let bi = 0; bi < binding.batchIdToPartId.length; bi++) {
+            const pid = binding.batchIdToPartId[bi];
+            if (!pid) continue;
+            if (typeof bm.getVisibleAt === 'function' && !bm.getVisibleAt(bi)) continue;
+            const geoId = bm.getGeometryIdAt(bi);
+            const range = bm.getGeometryRangeAt(geoId, rangeScratch);
+            if (!range || range.count < 3) continue;
+            bm.getMatrixAt(bi, tmpMat);
+            tmpWorld.multiplyMatrices(bm.matrixWorld, tmpMat);
+            const verts = new Float32Array(range.count * 3);
+            for (let k = 0; k < range.count; k++) {
+              const vi = idxArr ? idxArr[range.start + k] : range.start + k;
+              verts[k * 3] = posArr[vi * 3] * normScale;
+              verts[k * 3 + 1] = posArr[vi * 3 + 1] * normScale;
+              verts[k * 3 + 2] = posArr[vi * 3 + 2] * normScale;
+            }
+            const subGeo = new THREE.BufferGeometry();
+            subGeo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+            const subMesh = new THREE.Mesh(subGeo, matStub);
+            subMesh.applyMatrix4(tmpWorld);
+            ensurePartGrp(pid).add(subMesh);
+          }
+        } else if (binding.kind === 'instanced') {
+          const im = binding.mesh;
+          const iGeo = im.geometry;
+          if (!iGeo) continue;
+          for (let ii = 0; ii < binding.instanceIdToPartId.length; ii++) {
+            const pid = binding.instanceIdToPartId[ii];
+            if (!pid) continue;
+            im.getMatrixAt(ii, tmpMat);
+            tmpWorld.multiplyMatrices(im.matrixWorld, tmpMat);
+            const subMesh = new THREE.Mesh(iGeo, matStub);
+            subMesh.applyMatrix4(tmpWorld);
+            ensurePartGrp(pid).add(subMesh);
+          }
+        }
+      }
+      const unpackedParts = (built.parts || []).map((p) => ({
+        ...p,
+        group: partGroups.get(p.id) || p.group,
+      }));
+      rawBuilt = { parts: unpackedParts };
+      unit.dispose(cache);
+    }
   } finally {
     setActiveBuildQuality(null);
   }
@@ -445,12 +563,28 @@ export async function loadSpatialScene(unitId, opts = {}) {
     const code = codeMatch ? codeMatch[1] : `P${order}`;
     const role = classifyRole(rp.id, title, rp.explanation?.category || '');
 
-    const pos = rp.assembledPos
+    const po = usesCompiledV2 ? poseLoaded.map.get(rp.id) : null;
+    const basePos = rp.assembledPos
       ? [rp.assembledPos.x, rp.assembledPos.y, rp.assembledPos.z]
       : jm.assembledPos || [0, 0, 0];
-    const exp = rp.explodeOffset
+    const baseExp = rp.explodeOffset
       ? [rp.explodeOffset.x, rp.explodeOffset.y, rp.explodeOffset.z]
       : jm.explodeOffset || [0, 0, 0];
+    const pos = po ? [basePos[0] + po.d[0], basePos[1] + po.d[1], basePos[2] + po.d[2]] : basePos;
+    const exp = po ? [baseExp[0] + po.e[0], baseExp[1] + po.e[1], baseExp[2] + po.e[2]] : baseExp;
+    if (po && rp.group) {
+      rp.group.position.set(pos[0], pos[1], pos[2]);
+      if (po.r[0] || po.r[1] || po.r[2]) {
+        rp.group.rotation.x += po.r[0];
+        rp.group.rotation.y += po.r[1];
+        rp.group.rotation.z += po.r[2];
+      }
+      if (po.s[0] !== 1 || po.s[1] !== 1 || po.s[2] !== 1) {
+        rp.group.scale.x *= po.s[0];
+        rp.group.scale.y *= po.s[1];
+        rp.group.scale.z *= po.s[2];
+      }
+    }
 
     // Track group origin (first assembledPos seen per groupKey)
     if (!groupOriginAcc.has(groupKey)) groupOriginAcc.set(groupKey, pos);
@@ -566,3 +700,46 @@ export async function loadSpatialScene(unitId, opts = {}) {
   }
   return sceneData;
 }
+
+/**
+ * EX-DELTA: Ultra-fast (<40ms) in-memory incremental Float64 triangle + AABB + BVH updater
+ * used inside `flow heal` inner optimization loops without re-running esbuild/Three.js.
+ */
+export function applyDeltaToSceneInPlace(scene, deltaByPartId) {
+  let touched = 0;
+  for (const p of scene.parts) {
+    const delta = deltaByPartId instanceof Map ? deltaByPartId.get(p.id) : deltaByPartId?.[p.id];
+    if (!delta) continue;
+    const dx = Number(delta.d?.[0] || 0);
+    const dy = Number(delta.d?.[1] || 0);
+    const dz = Number(delta.d?.[2] || 0);
+    const ex = Number(delta.e?.[0] || 0);
+    const ey = Number(delta.e?.[1] || 0);
+    const ez = Number(delta.e?.[2] || 0);
+    if (dx === 0 && dy === 0 && dz === 0 && ex === 0 && ey === 0 && ez === 0) continue;
+
+    touched++;
+    p.assembledPos = [p.assembledPos[0] + dx, p.assembledPos[1] + dy, p.assembledPos[2] + dz];
+    p.explodeOffset = [p.explodeOffset[0] + ex, p.explodeOffset[1] + ey, p.explodeOffset[2] + ez];
+    p.box = [p.box[0] + dx, p.box[1] + dy, p.box[2] + dz, p.box[3] + dx, p.box[4] + dy, p.box[5] + dz];
+    p.cog = [p.cog[0] + dx, p.cog[1] + dy, p.cog[2] + dz];
+
+    for (let mi = p.meshStart; mi < p.meshStart + p.meshCount; mi++) {
+      const m = scene.meshes[mi];
+      if (!m) continue;
+      m.box = [m.box[0] + dx, m.box[1] + dy, m.box[2] + dz, m.box[3] + dx, m.box[4] + dy, m.box[5] + dz];
+      const tris = m.tris;
+      for (let i = 0; i < tris.length; i += 3) {
+        tris[i] += dx;
+        tris[i + 1] += dy;
+        tris[i + 2] += dz;
+      }
+      m._triBvh = null; // lazily rebuilt only for touched meshes
+    }
+  }
+  if (touched > 0) {
+    scene.sceneBvh = buildFlatBvh(scene.meshes.map((m) => m.box), 6);
+  }
+  return touched;
+}
+

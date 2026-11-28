@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mainboard/mainboardPhysicsOverlay.ts|unit=mainboard|lines=269|exports=MainboardPhysicsOverlayController,createMainboardPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';

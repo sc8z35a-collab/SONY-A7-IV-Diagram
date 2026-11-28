@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/cfexpress/cfexpressPhysicsOverlay.ts|unit=cfexpress|lines=158|exports=CfexpressPhysicsOverlayController,createCfexpressPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides } from '../../engine/CadHelpers';

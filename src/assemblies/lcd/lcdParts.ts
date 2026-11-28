@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lcd/lcdParts.ts|unit=lcd|lines=1660|exports=LCD_CENTER_X,LCD_CENTER_Y,LCD_WIDTH,LCD_HEIGHT,LcdDynamicRig,buildLcdParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

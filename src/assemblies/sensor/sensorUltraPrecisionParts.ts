@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/sensorUltraPrecisionParts.ts|unit=sensor|lines=1885|exports=buildSensorUltraPrecisionParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

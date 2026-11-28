@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeGlyphPrecisionParts.ts|unit=welcome|lines=1000|exports=WelcomeDiagramType,WelcomeExpansionPartDef,buildExpansionCadParts,buildBreatherDesiccantPack,buildCurvedEndMirrorCap,buildStrokeEmiFingerstock
 import * as THREE from 'three';
 import { CadPart, PartExplanation } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

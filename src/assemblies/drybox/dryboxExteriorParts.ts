@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxExteriorParts.ts|unit=drybox|lines=845|exports=buildDryboxExteriorParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import {

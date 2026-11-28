@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lcd/lcdUltraOemParts.ts|unit=lcd|lines=1396|exports=buildLcdUltraOemParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

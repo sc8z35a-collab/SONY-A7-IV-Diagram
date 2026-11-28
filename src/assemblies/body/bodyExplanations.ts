@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/body/bodyExplanations.ts|unit=body|lines=7|exports=BODY_EXPLANATIONS
 import { PartExplanation } from '../types';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
 import unitData from '../../data/body.json';

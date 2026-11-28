@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/microPixelDeepAuditParts.ts|unit=sensor|lines=655|exports=buildMicroPixelDeepAuditParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

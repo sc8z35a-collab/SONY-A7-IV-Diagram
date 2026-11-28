@@ -1,59 +1,45 @@
 {
   "schema": "bg-flight/v1",
-  "sessionId": "feat-fix-ui-bugs-welcome-zero-collision-mwzrep3o",
+  "sessionId": "feat-feat-flow-v1-os-mx07ga27",
   "branch": "main",
-  "goal": "Fix top-left button freeze/unresponsive, 68 real bugs by severity, and achieve 0.001mm zero-collision/zero-protrusion perfection for welcome (435p)",
-  "completed": [
-    "Components 1-3: Fixed top-left button freeze/unresponsive bugs + 65 system bugs across core/engine/ui/playground/css (10/10 validate_parts PASS)",
-    "Component 4: welcome (435 parts) achieved 100% 0.001mm zero-collision, zero-smtSeat, zero-kiss, zero-floating, zero-explodeHits across all 4 tiers (exit=0 PASS)",
-    "Fixed 69 system bugs (incl. BUG-69 overlay abort leak) + welcome 0.001mm 4-tier 0-collision + eliminated all 10 visual floating/protruding artifacts"
-  ],
+  "goal": "THE LAST EXAM V1.1, V1.1 Seal, PLYA V2.1 & FLOW V1.1 Hyper-Automation",
+  "completed": [],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Awaiting user approval of sim20_and_welcome_zero_float_plan.md before starting feat/sim20-welcome-manufacturable",
+  "nextStep": "PR #64 merged on main (9fbc1aa); ready for next task",
   "artifactsMirrored": [
     {
-      "name": "PR_61_Merged.url.json",
-      "sha256": "1cd1abf59667e35e701415d59ce84ca2dd0d6547f91c7c2ca2a244f70ac004ff",
-      "size": 385
-    },
-    {
-      "name": "PR_61_Merged.url.json.metadata.json",
-      "sha256": "a7704b4169e57c9f75ef0fa8abcb2f74809fd7d0d9c322c7177ff0b130dc1b2f",
-      "size": 211
-    },
-    {
       "name": "implementation_plan.md",
-      "sha256": "d0605d24345f7fe2742a67382885ea44b24e3aaaf83e37fb8f17697a08c872cf",
-      "size": 51488
+      "sha256": "f15f710db2bb582bf262c986b37953e523d6836a96eca3f20bdd152d0aac62df",
+      "size": 41442
     },
     {
       "name": "implementation_plan.md.metadata.json",
-      "sha256": "ca1edb14eeedd2b810e8f5d54754af9989ad8a1d7cb0a6369a117a747fa24969",
-      "size": 418
+      "sha256": "a59c418574c31c34a4ecd2e498de81bc13672fa9af2df351f2c759660d52bdb5",
+      "size": 1551
     },
     {
-      "name": "sim20_and_welcome_zero_float_plan.md",
-      "sha256": "6e4bcf161c6dd16e76bfec1dc123b98e67e021c6bf17060f0ea76ea103f0b9d1",
-      "size": 31705
+      "name": "v1_1_upgrade_plan.md",
+      "sha256": "b836d4a2a3becd3c35cf276bc4de98855b1cdbd0be2ba87e8fdf18fc11cfe0f1",
+      "size": 44232
     },
     {
-      "name": "sim20_and_welcome_zero_float_plan.md.metadata.json",
-      "sha256": "bb1397188c4e342b96a2efeaae0e688d105b22eb3bbe2f88e7886cbca2d3b4f6",
-      "size": 438
+      "name": "v1_1_upgrade_plan.md.metadata.json",
+      "sha256": "369682096537b64bd75720cb42fe94d77196b8c6946eea89cc301e03ea99b8c6",
+      "size": 650
     },
     {
       "name": "walkthrough.md",
-      "sha256": "ed1af7fab52129a47b10880a79d360c8ff1556854fd25949be02e92873c05101",
-      "size": 23975
+      "sha256": "7b11907910956df42a33930cd15e0681be06730d50873a75d9fec17959d31790",
+      "size": 10661
     },
     {
       "name": "walkthrough.md.metadata.json",
-      "sha256": "c28e02711d8514cfc0e1557c9f61bce6442203d9bd17a8d4e8f78d7bda8da3e1",
-      "size": 355
+      "sha256": "03ff9d2a7c3a9801eafd3418bdae13a606a3f7cdd18598bab5f0eecddf4dcd1d",
+      "size": 555
     }
   ],
-  "updatedAt": "2026-11-28T04:09:01.214Z",
+  "updatedAt": "2026-11-28T11:39:12.109Z",
   "vmHost": "devbox",
-  "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039"
+  "baseSha": "9fbc1aa02f3b42ddf20372953438e5cbf4887200"
 }

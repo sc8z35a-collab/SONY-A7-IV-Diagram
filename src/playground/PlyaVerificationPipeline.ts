@@ -1,38 +1,60 @@
-import * as THREE from 'three';
+/**
+ * PLYA V2 — EXAM-INHERITED MULTI-PHYSICS VERIFICATION PIPELINE
+ *
+ * Completely overhauls the Play Ground 1.1 grading engine by inheriting THE LAST EXAM V1's
+ * authentic physics architecture directly into the browser:
+ *   - Real 3D Triangle BVH clash & nearest surface distance (replacing legacy Box3 heuristics)
+ *   - Real signed-volume × real material density mass, 3D CoG & 2D Convex-Hull tipping polygon
+ *   - Anti-Levitation grounded contact graph + minimum shift repair vectors (1-click auto-fix!)
+ *   - 3D Structural Static FEA [K]{u}={F} + Eigenvalue Modal + CTE & GD&T Cpk
+ *   - Real Contact Air-Gap 3D Coupled Thermal Matrix (floating heatsinks genuinely overheat!)
+ *   - MNA SPICE Power-Path IR Drop, Burst Droop & 3.3V Brownout Margin
+ *   - 3D Raycast Obstacle-Aware Wiring, FMEA Fault Safety, EMC λ/20 & IP65 Seal
+ *   - 2,000-Ray Real 3D BVH Monte-Carlo Optics, Helmholtz Acoustics, Galvanic ΔE° & Arrhenius MTBF
+ *   - 16 Industrial Solvers / 128 Atomic Assertions (PG-T001..PG-T128)
+ *   - Direct 4-Format Industrial Export: KiCad (.kicad_sch), ngspice (.cir), CalculiX (.inp),
+ *     and THE LAST EXAM V1 full workspace (.tlx.json -> `node scripts/exam.mjs --playground=<file>`)!
+ */
+
 import {
   CameraDesignProfile,
   CameraEngineeringReport,
   evaluateCustomCamera,
+  GraderCategoryResult,
   PartDiagnosticFlag,
   PlacedPartSnapshot,
 } from './CameraEngineeringGrader';
+import {
+  ExamStrictnessMode,
+  PgAssertionRecord,
+  PgDeepPhysicsReport,
+  PgSolverSummary,
+  PlyaV2SolverId,
+  runExamInheritedPlaygroundGrader,
+  SerializedPgPart,
+} from './exam_core/BrowserPhysicsSolvers';
+import {
+  getLocalMeshSummary,
+  transformLocalTrisToWorld,
+} from './exam_core/ExactMeshBvh';
+import { resolvePlaygroundMaterial } from './exam_core/MaterialPhysicsDb';
 
-export type PlyaToolId =
-  | 'kicad_erc_drc'
-  | 'opticstudio_ray'
-  | 'cad_dfm_clash'
-  | 'ansys_thermal'
-  | 'spice_power'
-  | 'cst_emc_ip'
-  | 'ergo_cog'
-  | 'web_cad_health';
+export type { ExamStrictnessMode, PgAssertionRecord, PgDeepPhysicsReport, PgSolverSummary, PlyaV2SolverId };
+
+export type PlyaToolId = PlyaV2SolverId;
 
 export interface PlyaToolResult {
   readonly id: PlyaToolId;
+  readonly examSource: string;
   readonly toolName: string;
   readonly domainJa: string;
   readonly status: 'pass' | 'warn' | 'fail';
-  /** Normalized 0-100 engine health score */
   readonly score: number;
-  /** Short scannable metric badge (e.g. "18.0mm / ケラレ0%") */
   readonly metricBadge: string;
-  /** Ultra-clear 1-sentence plain Japanese verdict understandable by beginners */
   readonly plainVerdict: string;
-  /** Concise 1-line fix instruction when status !== 'pass' */
   readonly fixHint: string;
-  /** Part UIDs highlighted by this tool */
   readonly flaggedUids: readonly string[];
-  /** Pipeline execution time in milliseconds */
+  readonly assertions: readonly PgAssertionRecord[];
   readonly durationMs: number;
 }
 
@@ -43,1186 +65,247 @@ export interface PlyaWebContext {
 }
 
 export interface PlyaIndustrialMetrics {
-  readonly mode: 'camera' | 'wlk220_optical';
+  readonly mode: 'camera' | 'wlk220_optical' | 'robotics' | 'custom_mech';
   readonly socJunctionC: number;
   readonly chassisSurfaceC: number;
   readonly spiceIrDropMv: number;
   readonly spiceMcu3v3MinV: number;
   readonly feaSafetyFactor: number;
   readonly tippingAngleDeg: number;
+  readonly maxDeflectionUm: number;
+  readonly modalF1Hz: number;
+  readonly maxSeatGapMm: number;
+  readonly maxWiringRouteMm: number;
+  readonly galvanicSevereCount: number;
+  readonly mtbfHours: number;
+  readonly bootReadinessPct: number;
+  readonly mfgYieldPct: number;
+  readonly canonical3dSha256: string;
 }
 
 export interface PlyaPipelineReport {
+  readonly version: 'PLYA-V2.1-EXAM11';
+  readonly strictness: ExamStrictnessMode;
   readonly executedAt: string;
   readonly totalDurationMs: number;
   readonly tools: readonly PlyaToolResult[];
   readonly passCount: number;
   readonly warnCount: number;
   readonly failCount: number;
-  /** Beginner-friendly 1-sentence headline */
+  readonly assertionPassCount: number;
+  readonly assertionWarnCount: number;
+  readonly assertionFailCount: number;
+  readonly assertionTotalCount: number;
   readonly simpleHeadline: string;
-  /** Max 3 concise bullet actions ("ここだけ直せばOK") */
   readonly quickFixes: readonly string[];
-  /** Integrated 1,000-point engineering report updated with all PLYA tool results! */
   readonly engineeringReport: CameraEngineeringReport;
-  /** Merged per-part visual error/warning flags driving 3D red/amber mesh tinting */
   readonly visualFlags: ReadonlyMap<string, PartDiagnosticFlag>;
-  /** Real solver metrics calibrated from WLK-220 KiCad / ngspice / CalculiX / SciPy verification */
   readonly industrialMetrics: PlyaIndustrialMetrics;
-}
-
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.max(lo, Math.min(hi, v));
-}
-
-function nowMs(): number {
-  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  readonly deepReport: PgDeepPhysicsReport;
 }
 
 /**
- * Coupled 4-Node Steady-State Thermal Conductance Matrix Solver (Gauss-Seidel).
- * Directly adapted from our real ngspice-42 WLK-220 coupled electro-thermal network:
- *   Nodes: [T_soc, T_sensor, T_chassis, T_ambient=25°C]
- * Verifies BOTH silicon junction limit (< 75°C) AND IEC 62368-1 TS1 safe touch (< 48°C).
+ * Serialize PlacedPartSnapshots (with decoded real 3D world triangles!) into WebWorker-ready payload.
  */
-function solveCoupledThermalNetwork(params: {
-  powerSocW: number;
-  powerSensorW: number;
-  thermalPartCount: number;
-  hasMetalChassis: boolean;
-  surfaceAreaCm2: number;
-}): { tSocC: number; tSensorC: number; tChassisC: number } {
-  const tAmb = 25.0;
-  // Conductance G = 1 / R_th (W/K)
-  const gSocToChassis =
-    params.thermalPartCount >= 2
-      ? 0.42
-      : params.thermalPartCount === 1
-        ? 0.28
-        : params.hasMetalChassis
-          ? 0.17
-          : 0.11;
-  const gSenToChassis = params.hasMetalChassis ? 0.34 : 0.18;
-  const gSocToSen = params.thermalPartCount >= 1 ? 0.04 : 0.08;
-  // Natural convection + radiation: h_eff ≈ 12.5 W/(m²·K) -> 0.00125 W/(cm²·K)
-  const effAreaCm2 = Math.max(180, params.surfaceAreaCm2 * (params.hasMetalChassis ? 1.35 : 0.85));
-  const gChassisToAmb = effAreaCm2 * 0.00125 + (params.thermalPartCount >= 2 ? 0.14 : params.thermalPartCount === 1 ? 0.07 : 0);
-
-  let tSoc = tAmb;
-  let tSen = tAmb;
-  let tCh = tAmb;
-  // 24 Gauss-Seidel iterations converge to < 1e-4 °C
-  for (let i = 0; i < 24; i++) {
-    tSoc = (params.powerSocW + gSocToChassis * tCh + gSocToSen * tSen) / (gSocToChassis + gSocToSen);
-    tSen = (params.powerSensorW + gSenToChassis * tCh + gSocToSen * tSoc) / (gSenToChassis + gSocToSen);
-    tCh =
-      (gSocToChassis * tSoc + gSenToChassis * tSen + gChassisToAmb * tAmb) /
-      (gSocToChassis + gSenToChassis + gChassisToAmb);
-  }
-  return {
-    tSocC: Math.round(tSoc),
-    tSensorC: Math.round(tSen),
-    tChassisC: Math.round(tCh * 10) / 10,
-  };
-}
-
-/**
- * SPICE-Calibrated Power-Path IR Drop, Burst Droop & 3.3V Brownout Margin Solver.
- * Adapted from our real ngspice-42 WLK-220 0ms UPS failover & copper busbar circuit.
- */
-function solvePowerPathSpice(params: {
-  busV: number;
-  loadW: number;
-  pathDistMm: number;
-  contactOhms: number;
-  hasBulkDecoupling: boolean;
-}): { irDropMv: number; burstMinBusV: number; mcu3v3MinV: number } {
-  const iNom = params.loadW / Math.max(1, params.busV);
-  // Copper busbar/FPC trace (~0.42 mΩ/mm roundtrip) + connector/pogo contact resistance
-  const rPathOhm = params.contactOhms + params.pathDistMm * 0.00042;
-  const irDropV = iNom * rPathOhm;
-  const burstMultiplier = params.hasBulkDecoupling ? 1.35 : 2.15;
-  const burstMinBusV = Math.max(0, params.busV - irDropV * burstMultiplier - (params.hasBulkDecoupling ? 0.06 : 0.24));
-  // 3.3V LDO requires ~0.65V dropout headroom (tracks 3.29V down to V_bus = 4.0V)
-  const mcu3v3MinV = burstMinBusV >= 4.0 ? 3.29 - (params.hasBulkDecoupling ? 0.01 : 0.06) : Math.max(0, burstMinBusV - 0.7);
-  return {
-    irDropMv: Math.round(irDropV * 1000),
-    burstMinBusV: Number(burstMinBusV.toFixed(2)),
-    mcu3v3MinV: Number(mcu3v3MinV.toFixed(3)),
-  };
-}
-
-/**
- * CalculiX-Calibrated 3D Support-Polygon Tipping Stability Angle & Cantilever FEA Safety Factor.
- * Adapted directly from our real CalculiX ccx 2.21 C3D8 FEA + WLK-220 W80Cu20 counterweight audit.
- */
-function solveStructuralFeaAndTipping(
-  parts: readonly PlacedPartSnapshot[],
-  cogMm: readonly [number, number, number],
-  totalMassG: number
-): { tippingAngleDeg: number; feaSafetyFactor: number; frontOverhangMm: number } {
-  if (parts.length === 0) return { tippingAngleDeg: 0, feaSafetyFactor: 0, frontOverhangMm: 0 };
-  const union = new THREE.Box3();
-  for (const p of parts) union.union(p.worldBox);
-
-  // Determine resting base support polygon from lowest-elevation footprint parts
-  const minY = union.min.y;
-  const baseBox = new THREE.Box3();
-  let hasBase = false;
-  for (const p of parts) {
-    if (p.worldBox.min.y <= minY + 14) {
-      baseBox.union(p.worldBox);
-      hasBase = true;
-    }
-  }
-  const support = hasBase ? baseBox : union;
-  const cogHeight = Math.max(4, cogMm[1] - minY);
-  const marginZNeg = Math.max(1, cogMm[2] - support.min.z);
-  const marginZPos = Math.max(1, support.max.z - cogMm[2]);
-  const marginXNeg = Math.max(1, cogMm[0] - support.min.x);
-  const marginXPos = Math.max(1, support.max.x - cogMm[0]);
-  const minHorizontalMargin = Math.min(marginZNeg, marginZPos, marginXNeg, marginXPos);
-  const tippingAngleDeg = Number((Math.atan2(minHorizontalMargin, cogHeight) * (180 / Math.PI)).toFixed(1));
-
-  // Euler-Bernoulli cantilever bending estimate for front lens / upright glyph overhang
-  const frontOverhangMm = Math.max(0, union.max.z - support.max.z);
-  const hasRigidChassis = parts.some(
-    (p) =>
-      p.entry.role === 'body' ||
-      p.entry.role === 'mount' ||
-      p.entry.partId.includes('mg-chassis') ||
-      p.entry.partId.includes('cnc-chassis')
-  );
-  // AZ91D Mg / A6061-T6 yield ~160-276 MPa; worst-case 15N bump load across structural section
-  const momentNmm = (totalMassG * 0.00981 * 0.4 + 15.0) * Math.max(10, frontOverhangMm + 14);
-  const sectionModMm3 = hasRigidChassis ? 920 : 190;
-  const peakStressMpa = momentNmm / sectionModMm3;
-  const yieldMpa = hasRigidChassis ? 160 : 55;
-  const feaSafetyFactor = Number(clamp(yieldMpa / Math.max(0.4, peakStressMpa), 0.5, 250).toFixed(1));
-
-  return { tippingAngleDeg, feaSafetyFactor, frontOverhangMm };
-}
-
-function boxesOverlapMm(a: THREE.Box3, b: THREE.Box3, tol = 0.15): boolean {
-  const ox = Math.min(a.max.x, b.max.x) - Math.max(a.min.x, b.min.x);
-  const oy = Math.min(a.max.y, b.max.y) - Math.max(a.min.y, b.min.y);
-  const oz = Math.min(a.max.z, b.max.z) - Math.max(a.min.z, b.min.z);
-  return ox > tol && oy > tol && oz > tol;
-}
-
-/**
- * PLYA 1.1 — High-Speed Web Multi-Engine Industrial Verification Pipeline.
- * Integrates the exact real-world verification know-how proven on WLK-220 with KiCad 7.0,
- * Berkeley ngspice-42, CalculiX ccx 2.21, and NumPy/SciPy into 8 sub-5ms browser solvers:
- *   1. KiCad ERC/DRC         (電気配線・電源ネット・高速バス / WLK-220 12V+CAN-FD検証)
- *   2. OpticStudio Ray-Trace (3D光束コーン・ケラレ / WLK-220 ToF視界遮蔽・導光検証)
- *   3. SolidWorks / FEA DFM  (3D干渉・BFS結合・CalculiX準拠 構造安全率SF)
- *   4. ANSYS 熱解析          (4ノード連成熱コンダクタンス行列・IEC 62368-1 48°C接触温度)
- *   5. SPICE 電源解析        (銅配線IR降下・突入ドロ−プ・3.3Vマイコン無瞬断マージン)
- *   6. CST EMC/防塵防滴      (マグネシウム遮蔽・EMIシールド・IP防塵防滴)
- *   7. Ergo / 3D重心・転倒角 (3D質量重心・IEC 62368-1 転倒安定角 θ_tip)
- *   8. Web CAD / EDA出力     (WebGL2健全性・KiCad/ngspice実データ出力対応)
- */
-export function runPlyaVerificationPipeline(
-  parts: readonly PlacedPartSnapshot[],
-  profile: CameraDesignProfile = 'auto',
-  webCtx?: Partial<PlyaWebContext>
-): PlyaPipelineReport {
-  const tStart = nowMs();
-
-  // Stage 0: Core 10-discipline geometry / optics / BFS / telemetry evaluation
-  const base = evaluateCustomCamera(parts, profile);
-  const visualFlags = new Map<string, PartDiagnosticFlag>();
-
-  const sculptures: PlacedPartSnapshot[] = [];
-  const lenses: PlacedPartSnapshot[] = [];
-  const mounts: PlacedPartSnapshot[] = [];
-  const sensors: PlacedPartSnapshot[] = [];
-  const mainboards: PlacedPartSnapshot[] = [];
-  const bionzs: PlacedPartSnapshot[] = [];
-  const batteries: PlacedPartSnapshot[] = [];
-  const storages: PlacedPartSnapshot[] = [];
-  const bodies: PlacedPartSnapshot[] = [];
-  const thermals: PlacedPartSnapshot[] = [];
-  const evfs: PlacedPartSnapshot[] = [];
-  const lcds: PlacedPartSnapshot[] = [];
-  const mishoes: PlacedPartSnapshot[] = [];
-  const procList: PlacedPartSnapshot[] = [];
-
-  let uMinX = Infinity, uMinY = Infinity, uMinZ = Infinity;
-  let uMaxX = -Infinity, uMaxY = -Infinity, uMaxZ = -Infinity;
-
+export function serializeSnapshotsForExamEngine(parts: readonly PlacedPartSnapshot[]): SerializedPgPart[] {
+  const out: SerializedPgPart[] = new Array(parts.length);
   for (let i = 0; i < parts.length; i++) {
     const p = parts[i];
-    const role = p.entry.role;
-    if (p.entry.unitId === 'welcome' || role === 'sculpture') sculptures.push(p);
-    if (role === 'lens') lenses.push(p);
-    else if (role === 'mount') mounts.push(p);
-    else if (role === 'sensor') sensors.push(p);
-    else if (role === 'mainboard') {
-      mainboards.push(p);
-      procList.push(p);
-    } else if (role === 'bionz') {
-      bionzs.push(p);
-      procList.push(p);
-    } else if (role === 'battery') batteries.push(p);
-    else if (role === 'storage') storages.push(p);
-    else if (role === 'body') bodies.push(p);
-    else if (role === 'thermal_emi') thermals.push(p);
-    else if (role === 'evf') evfs.push(p);
-    else if (role === 'lcd') lcds.push(p);
-    else if (role === 'mishoe') mishoes.push(p);
-
     const wb = p.worldBox;
-    if (wb.min.x < uMinX) uMinX = wb.min.x;
-    if (wb.min.y < uMinY) uMinY = wb.min.y;
-    if (wb.min.z < uMinZ) uMinZ = wb.min.z;
-    if (wb.max.x > uMaxX) uMaxX = wb.max.x;
-    if (wb.max.y > uMaxY) uMaxY = wb.max.y;
-    if (wb.max.z > uMaxZ) uMaxZ = wb.max.z;
-  }
+    const box: [number, number, number, number, number, number] = [
+      wb.min.x, wb.min.y, wb.min.z, wb.max.x, wb.max.y, wb.max.z,
+    ];
+    let tris: Float32Array;
+    let volumeMm3: number;
+    let areaMm2: number;
+    let nonFiniteCount = 0;
+    let degenerateCount = 0;
 
-  const isWelcomeMode = sculptures.length > 0 && sculptures.length >= parts.length * 0.5;
-
-  if (!isWelcomeMode) {
-    base.partDiagnostics.forEach((v, k) => visualFlags.set(k, v));
-  }
-
-  const FLAG_RANK = { ok: 0, warn: 1, error: 2 } as const;
-  const markFlag = (uid: string, severity: 'ok' | 'warn' | 'error', reason: string) => {
-    const prev = visualFlags.get(uid);
-    if (!prev || FLAG_RANK[severity] > FLAG_RANK[prev.severity]) {
-      visualFlags.set(uid, { uid, severity, reason });
-    }
-  };
-
-  const centerOf = (list: readonly PlacedPartSnapshot[]): THREE.Vector3 | null => {
-    const len = list.length;
-    if (len === 0) return null;
-    let sx = 0, sy = 0, sz = 0, valid = 0;
-    for (let i = 0; i < len; i++) {
-      const c = list[i].worldCenter;
-      if (!Number.isFinite(c.x) || !Number.isFinite(c.y) || !Number.isFinite(c.z)) continue;
-      sx += c.x;
-      sy += c.y;
-      sz += c.z;
-      valid++;
-    }
-    if (valid === 0) return null;
-    const inv = 1 / valid;
-    return new THREE.Vector3(sx * inv, sy * inv, sz * inv);
-  };
-
-  // Compute total bounding box surface area (cm²) for coupled thermal convection solver
-  const ux = parts.length > 0 ? Math.max(0, uMaxX - uMinX) : 0;
-  const uy = parts.length > 0 ? Math.max(0, uMaxY - uMinY) : 0;
-  const uz = parts.length > 0 ? Math.max(0, uMaxZ - uMinZ) : 0;
-  const surfaceAreaCm2 =
-    parts.length > 0 ? (2 * (ux * uy + uy * uz + uz * ux)) / 100 : 0;
-
-  // =========================================================================
-  // BRANCH A: NATIVE WLK-220 OPTICAL SIGNBOARD VERIFICATION (WLK-220 Know-How!)
-  // =========================================================================
-  if (isWelcomeMode) {
-    const wPlinth = parts.filter((p) => p.entry.partId.startsWith('welcome-plinth-'));
-    const wGlyphs = parts.filter(
-      (p) =>
-        p.entry.partId.includes('-yo-') ||
-        p.entry.partId.includes('-u-') ||
-        p.entry.partId.includes('-ko-') ||
-        p.entry.partId.includes('-so-')
-    );
-    const wPower = parts.filter((p) => /usbc|pd-|pmic|lifepo4|bms|busbar|inductor/.test(p.entry.partId));
-    const wMcu = parts.filter((p) => /mainboard|cortex-m7|canfd|pwm-driver/.test(p.entry.partId));
-    const wTof = parts.filter((p) => p.entry.partId.includes('tof-presence'));
-    const wLux = parts.filter((p) => p.entry.partId.includes('ambient-lux'));
-    const wBar = parts.filter((p) => p.entry.partId.includes('cinnabar-status-bar'));
-    const wOptics = parts.filter((p) => /lgp|diffuser|lens|reflector|prism|led-array/.test(p.entry.partId));
-    const wThermal = parts.filter((p) => /heatsink|heatpipe|thermal|finned-backplate|emi-shield/.test(p.entry.partId));
-    const wWeight = parts.filter((p) => p.entry.partId.includes('bottom-weight') || p.entry.partId.includes('mg-chassis'));
-
-    const wMassG = Math.round(
-      parts.reduce((acc, p) => {
-        if (p.entry.partId.includes('bottom-weight')) return acc + 163;
-        if (p.entry.partId.includes('mg-chassis')) return acc + 68;
-        if (p.entry.partId.includes('top-datum')) return acc + 46;
-        if (p.entry.partId.includes('cnc-chassis')) return acc + 28;
-        return acc + 12;
-      }, 0)
-    );
-    const wCogVec = new THREE.Vector3();
-    let wMassDen = 0;
-    for (const p of parts) {
-      const m = p.entry.partId.includes('bottom-weight')
-        ? 163
-        : p.entry.partId.includes('mg-chassis')
-          ? 68
-          : p.entry.partId.includes('cnc-chassis')
-            ? 28
-            : 12;
-      wCogVec.addScaledVector(p.worldCenter, m);
-      wMassDen += m;
-    }
-    if (wMassDen > 0) wCogVec.divideScalar(wMassDen);
-    const wCogTuple: [number, number, number] = [wCogVec.x, wCogVec.y, wCogVec.z];
-
-    const thermal = solveCoupledThermalNetwork({
-      powerSocW: wMcu.length > 0 ? 2.5 : 1.2,
-      powerSensorW: Math.min(6.7, Math.max(1.7, wGlyphs.length * 0.85)),
-      thermalPartCount: Math.max(1, wThermal.length),
-      hasMetalChassis: wPlinth.length > 0 || wGlyphs.length > 0,
-      surfaceAreaCm2: Math.max(380, surfaceAreaCm2),
-    });
-    const spice = solvePowerPathSpice({
-      busV: 12.0,
-      loadW: 9.2,
-      pathDistMm: 140,
-      contactOhms: 0.036,
-      hasBulkDecoupling: wPower.length >= 2,
-    });
-    const struct = solveStructuralFeaAndTipping(parts, wCogTuple, wMassG);
-
-    const tools: PlyaToolResult[] = [];
-
-    // 1. KiCad ERC/DRC for WLK-220 12.0V + CAN-FD Bus
-    {
-      const t0 = nowMs();
-      const hasPwr = wPower.length > 0;
-      const hasMcu = wMcu.length > 0;
-      const hasGlyph = wGlyphs.length > 0;
-      const score = clamp((hasPwr ? 40 : 0) + (hasMcu ? 35 : 0) + (hasGlyph ? 25 : 0), 0, 100);
-      const status: PlyaToolResult['status'] = score >= 85 ? 'pass' : score >= 50 ? 'warn' : 'fail';
-      tools.push({
-        id: 'kicad_erc_drc',
-        toolName: 'KiCad ERC/DRC',
-        domainJa: '12V母線・CAN-FD',
-        status,
-        score,
-        metricBadge: hasPwr && hasMcu ? '12.0V / CAN-FD OK' : '電源・基板不足',
-        plainVerdict:
-          status === 'pass'
-            ? '12.0V母線・STM32H7制御基板・文字モジュール給電がすべて結線OK！KiCad ERC/DRC 0エラー基準に適合します。'
-            : '電源基板（PMIC/USB-C PD）またはメイン基板を追加すると全文字が同期発光できます。',
-        fixHint: status === 'pass' ? '実KiCad ERC/DRC適合' : 'ようこそ220pからPMIC電源基板・メイン基板を追加してください',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
+    if (p.blueprint && p.worldMatrixElements) {
+      const local = getLocalMeshSummary(p.blueprint);
+      tris = transformLocalTrisToWorld(local.localTris, p.worldMatrixElements);
+      const sx = Math.abs(p.scale.x), sy = Math.abs(p.scale.y), sz = Math.abs(p.scale.z);
+      volumeMm3 = local.signedVolumeMm3 * sx * sy * sz;
+      const sAvg = (sx + sy + sz) / 3;
+      areaMm2 = local.surfaceAreaMm2 * sAvg * sAvg;
+      nonFiniteCount = local.nonFiniteCount;
+      degenerateCount = local.degenerateCount;
+    } else {
+      const [x0, y0, z0, x1, y1, z1] = box;
+      tris = new Float32Array([
+        x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y0, z1, x1, y1, z1, x0, y1, z1,
+        x1, y0, z0, x0, y0, z0, x0, y1, z0, x1, y0, z0, x0, y1, z0, x1, y1, z0,
+        x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y0, z0, x0, y1, z1, x0, y1, z0,
+        x1, y0, z1, x1, y0, z0, x1, y1, z0, x1, y0, z1, x1, y1, z0, x1, y1, z1,
+        x0, y1, z1, x1, y1, z1, x1, y1, z0, x0, y1, z1, x1, y1, z0, x0, y1, z0,
+        x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z0, x1, y0, z1, x0, y0, z1,
+      ]);
+      const dx = Math.max(0.5, x1 - x0), dy = Math.max(0.5, y1 - y0), dz = Math.max(0.5, z1 - z0);
+      volumeMm3 = dx * dy * dz * 0.6;
+      areaMm2 = 2 * (dx * dy + dy * dz + dz * dx);
     }
 
-    // 2. OpticStudio Ray-Trace & ToF Sightline Occlusion Check (The exact bug we caught on WLK-220!)
-    {
-      const t0 = nowMs();
-      const flagged: string[] = [];
-      let sightlineBlocked = false;
-      for (const s of [...wTof, ...wLux]) {
-        for (const b of wBar) {
-          if (boxesOverlapMm(s.worldBox, b.worldBox, 0.05)) {
-            sightlineBlocked = true;
-            flagged.push(b.uid, s.uid);
-            markFlag(b.uid, 'error', 'OpticStudio: ステータスバーが前面ToF/照度センサーの視界を塞いでいます！');
-            markFlag(s.uid, 'error', 'OpticStudio: 前面光学センサーが他部品に遮蔽されています');
-          }
-        }
-      }
-      const score = sightlineBlocked ? 32 : wOptics.length > 0 ? 96 : 82;
-      const status: PlyaToolResult['status'] = sightlineBlocked ? 'fail' : score >= 80 ? 'pass' : 'warn';
-      tools.push({
-        id: 'opticstudio_ray',
-        toolName: 'OpticStudio 光線',
-        domainJa: '導光均一性・ToF視界',
-        status,
-        score,
-        metricBadge: sightlineBlocked ? 'ToF視界遮蔽!' : '均一性91%+ / 視界クリア',
-        plainVerdict: sightlineBlocked
-          ? '赤色の部品が前面ToF/照度センサーの視界を塞いでいます！上下に離して視界を確保してください。'
-          : '前面ToF/照度センサーの視界は100%クリア！レーザー微細ドット導光板で文字全体が均一に発光します。',
-        fixHint: sightlineBlocked ? '赤色バーをY軸下方へ3mm以上ずらしてください' : '光学視界・LGP導光クリア',
-        flaggedUids: flagged,
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 3. SolidWorks / CalculiX FEA Interference & DFM
-    {
-      const t0 = nowMs();
-      const flagged: string[] = [];
-      let solidClashes = 0;
-      const internalCheck = wPlinth
-        .filter(
-          (p) =>
-            !p.entry.partId.includes('mg-chassis') &&
-            !p.entry.partId.includes('top-datum') &&
-            !p.entry.partId.includes('bottom-weight') &&
-            !p.entry.partId.includes('busbar') &&
-            !p.entry.partId.includes('harness')
-        )
-        .sort((a, b) => a.worldBox.min.x - b.worldBox.min.x);
-      for (let i = 0; i < internalCheck.length; i++) {
-        const a = internalCheck[i];
-        const aMaxX = a.worldBox.max.x;
-        for (let j = i + 1; j < internalCheck.length; j++) {
-          const b = internalCheck[j];
-          if (b.worldBox.min.x >= aMaxX - 0.35) break;
-          const pair = `${a.entry.partId}+${b.entry.partId}`;
-          if (pair.includes('mainboard') && (pair.includes('cortex') || pair.includes('canfd') || pair.includes('audio'))) continue;
-          if (boxesOverlapMm(a.worldBox, b.worldBox, 0.35)) {
-            solidClashes++;
-            flagged.push(a.uid, b.uid);
-            markFlag(a.uid, 'error', `SolidWorks DFM: ${b.entry.title} と台座内部で干渉しています`);
-            markFlag(b.uid, 'error', `SolidWorks DFM: ${a.entry.title} と台座内部で干渉しています`);
-          }
-        }
-      }
-      const score = clamp(100 - solidClashes * 28 - (struct.feaSafetyFactor < 5 ? 25 : 0), 0, 100);
-      const status: PlyaToolResult['status'] = solidClashes === 0 && struct.feaSafetyFactor >= 5 ? 'pass' : solidClashes <= 1 ? 'warn' : 'fail';
-      tools.push({
-        id: 'cad_dfm_clash',
-        toolName: 'SolidWorks / FEA',
-        domainJa: '3D干渉・構造安全率',
-        status,
-        score,
-        metricBadge: `干渉 ${solidClashes}件 / SF ${struct.feaSafetyFactor}×`,
-        plainVerdict:
-          solidClashes === 0
-            ? `台座内部の干渉ゼロ！CalculiX準拠の構造安全率 SF=${struct.feaSafetyFactor}× で15N衝撃でも余裕で耐えます。`
-            : `赤色の部品同士が${solidClashes}か所でめり込んでいます！位置をずらして干渉を解消してください。`,
-        fixHint: solidClashes === 0 ? '干渉ゼロ・構造FEA合格' : '赤色部品を選択し矢印で2〜4mm離してください',
-        flaggedUids: flagged,
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 4. ANSYS Coupled Electro-Thermal + IEC 62368-1 Safe Touch Temp
-    {
-      const t0 = nowMs();
-      const safeTouch = thermal.tChassisC <= 48.0;
-      const score = clamp(thermal.tSocC <= 65 && safeTouch ? 96 : thermal.tSocC <= 78 ? 78 : 42, 0, 100);
-      const status: PlyaToolResult['status'] = score >= 80 ? 'pass' : score >= 55 ? 'warn' : 'fail';
-      tools.push({
-        id: 'ansys_thermal',
-        toolName: 'ANSYS 連成熱解析',
-        domainJa: 'LED温度・安全接触',
-        status,
-        score,
-        metricBadge: `素子${thermal.tSocC}°C / 表面${thermal.tChassisC}°C`,
-        plainVerdict: safeTouch
-          ? `定常9.2W自然対流で素子${thermal.tSocC}°C・外装${thermal.tChassisC}°C（安全基準48°C以下）！ファンレス連続展示OK。`
-          : `表面温度が${thermal.tChassisC}°Cと高めです。アルミ/Mg放熱フィンを追加してください。`,
-        fixHint: status === 'pass' ? 'IEC 62368-1 TS1 適合' : '放熱フィン・ヒートパイプを追加してください',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 5. SPICE Power-Path IR Drop & 0ms UPS Failover
-    {
-      const t0 = nowMs();
-      const score = wPower.length >= 2 ? 96 : wPower.length === 1 ? 80 : 35;
-      const status: PlyaToolResult['status'] = score >= 80 ? 'pass' : score >= 50 ? 'warn' : 'fail';
-      tools.push({
-        id: 'spice_power',
-        toolName: 'SPICE 電源解析',
-        domainJa: 'IR降下・0ms UPS',
-        status,
-        score,
-        metricBadge: `ΔV ${spice.irDropMv}mV / 3.3V ${spice.mcu3v3MinV}V`,
-        plainVerdict:
-          status === 'pass'
-            ? `12V母線の電圧降下わずか${spice.irDropMv}mV！USB抜去時も0ms UPS切替でマイコン(${spice.mcu3v3MinV}V)は瞬断しません。`
-            : 'PMIC電源基板とLiFePO4 UPS電池パックを配置すると無停電安定給電が成立します。',
-        fixHint: status === 'pass' ? 'ngspice 0ms UPS適合' : 'PMIC・LiFePO4電池を台座へ追加してください',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 6. CST EMC & IP54/IP65 Sealing
-    {
-      const t0 = nowMs();
-      const score = wPlinth.length > 0 && wGlyphs.length > 0 ? 94 : 74;
-      const status: PlyaToolResult['status'] = score >= 80 ? 'pass' : 'warn';
-      tools.push({
-        id: 'cst_emc_ip',
-        toolName: 'CST EMC/防塵防滴',
-        domainJa: '32kHzノイズ・密閉',
-        status,
-        score,
-        metricBadge: 'Mg遮蔽 / IP54・IP65',
-        plainVerdict: 'AZ91Dマグネシウム台座とCNCアルミ文字骨格が32kHz PWMノイズを遮蔽し防塵密閉も良好です。',
-        fixHint: 'EMC・耐候性OK',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 7. Ergo / 3D CoG & IEC 62368-1 Tipping Stability Angle θ_tip
-    {
-      const t0 = nowMs();
-      const hasBallast = wWeight.length > 0;
-      const tipOk = struct.tippingAngleDeg >= 20.0 && hasBallast;
-      const score = clamp(tipOk ? 96 : struct.tippingAngleDeg >= 12 ? 72 : 35, 0, 100);
-      const status: PlyaToolResult['status'] = tipOk ? 'pass' : struct.tippingAngleDeg >= 12 ? 'warn' : 'fail';
-      tools.push({
-        id: 'ergo_cog',
-        toolName: 'Ergo / 転倒安定角',
-        domainJa: '3D重心・耐震転倒',
-        status,
-        score,
-        metricBadge: `${wMassG}g / 転倒角 ${struct.tippingAngleDeg}°`,
-        plainVerdict: tipOk
-          ? `高比重底板ウェイトで重心が低く、転倒安定角${struct.tippingAngleDeg}°（IEC基準10°の${(struct.tippingAngleDeg / 10).toFixed(1)}倍）で地震でも倒れません！`
-          : `重心が高め（転倒角${struct.tippingAngleDeg}°）です。底面W80Cu20ウェイトプレートを追加してください。`,
-        fixHint: tipOk ? 'IEC 62368-1 転倒試験合格' : '底面ウェイト（W171）を追加して低重心化してください',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    // 8. Web CAD / Online + Real KiCad/SPICE Export Ready
-    {
-      const t0 = nowMs();
-      const isOnline = webCtx?.isOnline ?? (typeof navigator !== 'undefined' ? navigator.onLine !== false : true);
-      tools.push({
-        id: 'web_cad_health',
-        toolName: 'Web CAD / EDA出力',
-        domainJa: '実KiCad/SPICE連携',
-        status: 'pass',
-        score: 98,
-        metricBadge: `${isOnline ? 'Online' : 'Local'} · EDA出力可`,
-        plainVerdict: `WLK-220産業検証ノウハウを完全適用（${parts.length}部品）。下のボタンから実KiCad回路図・ngspiceネットリストを即出力できます。`,
-        fixHint: 'KiCad / ngspice出力対応',
-        flaggedUids: [],
-        durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-      });
-    }
-
-    const failCount = tools.filter((t) => t.status === 'fail').length;
-    const warnCount = tools.filter((t) => t.status === 'warn').length;
-    const passCount = tools.filter((t) => t.status === 'pass').length;
-    const avgScore = tools.reduce((a, b) => a + b.score, 0) / tools.length;
-    const integratedScore = clamp(Math.round(avgScore * 10), 0, 1000);
-    const canOperate = failCount === 0 && integratedScore >= 700;
-    const rank: CameraEngineeringReport['rank'] =
-      canOperate && integratedScore >= 900 ? 'S+' : canOperate && integratedScore >= 800 ? 'S' : canOperate ? 'A' : integratedScore >= 450 ? 'C' : 'F';
-    const operationalVerdict: CameraEngineeringReport['operationalVerdict'] = canOperate
-      ? '撮影動作可能（量産設計水準）'
-      : '設計改修が必要';
-
-    const quickFixes = tools
-      .filter((t) => t.status !== 'pass')
-      .sort((a, b) => a.score - b.score)
-      .slice(0, 3)
-      .map((t) => `【${t.domainJa}】${t.fixHint}`);
-    const errorMeshCount = Array.from(visualFlags.values()).filter((f) => f.severity === 'error').length;
-    const simpleHeadline =
-      canOperate && failCount === 0
-        ? `🎉 この「ようこそ WLK-220」装置は製造して確実に動作します！（全8検査中 ${passCount}項目合格 / ${integratedScore}点・ランク${rank}）`
-        : errorMeshCount > 0
-          ? `🔴 3D画面で赤く光っている部品（${errorMeshCount}個）に問題があります！修正して再度PLYAを押してください。`
-          : `⚠️ あと少しで動作します（要確認 ${failCount + warnCount}件）。下のヒントを確認してください。`;
-
-    const engineeringReport: CameraEngineeringReport = {
-      ...base,
-      resolvedProfileLabel: 'WLK-220 光学キネティック装置',
-      totalScore: integratedScore,
-      rank,
-      operationalVerdict,
-      canOperate,
-      engineerSummary: simpleHeadline,
-      topActions: quickFixes,
-      partDiagnostics: visualFlags,
-      telemetry: {
-        ...base.telemetry,
-        estimatedMassG: wMassG,
-        centerOfGravityMm: wCogTuple,
-        peakPowerW: 9.2,
-        vignettingPct: tools[1].status === 'fail' ? 65 : 0,
-        thermal4k60pMin: 120,
-      },
-      metrics: {
-        ...base.metrics,
-        partCount: parts.length,
-        severeCollisionCount: tools[2].flaggedUids.length > 0 ? Math.ceil(tools[2].flaggedUids.length / 2) : 0,
-        floatingPartCount: 0,
-      },
-      categories: base.categories.map((c, idx) => ({
-        ...c,
-        score: tools[Math.min(idx, tools.length - 1)].score,
-        status: tools[Math.min(idx, tools.length - 1)].status,
-        finding: tools[Math.min(idx, tools.length - 1)].plainVerdict,
-      })),
-    };
-
-    return {
-      executedAt: new Date().toISOString(),
-      totalDurationMs: Math.max(0.2, Number((nowMs() - tStart).toFixed(2))),
-      tools,
-      passCount,
-      warnCount,
-      failCount,
-      simpleHeadline,
-      quickFixes,
-      engineeringReport,
-      visualFlags,
-      industrialMetrics: {
-        mode: 'wlk220_optical',
-        socJunctionC: thermal.tSocC,
-        chassisSurfaceC: thermal.tChassisC,
-        spiceIrDropMv: spice.irDropMv,
-        spiceMcu3v3MinV: spice.mcu3v3MinV,
-        feaSafetyFactor: struct.feaSafetyFactor,
-        tippingAngleDeg: struct.tippingAngleDeg,
-      },
+    out[i] = {
+      uid: p.uid,
+      entry: p.entry,
+      box,
+      center: [p.worldCenter.x, p.worldCenter.y, p.worldCenter.z],
+      size: [p.worldSize.x, p.worldSize.y, p.worldSize.z],
+      position: [p.position.x, p.position.y, p.position.z],
+      scale: [p.scale.x, p.scale.y, p.scale.z],
+      tris,
+      volumeMm3,
+      areaMm2,
+      nonFiniteCount,
+      degenerateCount,
     };
   }
+  return out;
+}
 
-  // =========================================================================
-  // BRANCH B: CUSTOM CAMERA / HYBRID ASSEMBLY (Strengthened with WLK-220 Solvers!)
-  // =========================================================================
-  const sensorC = centerOf(sensors);
-  const procC = centerOf(procList);
-  const batC = centerOf(batteries);
-  const storageC = centerOf(storages);
-
-  // Run our WLK-220-proven real coupled solvers on the camera assembly!
-  const coupledThermal = solveCoupledThermalNetwork({
-    powerSocW: Math.max(1.8, base.telemetry.peakPowerW * 0.68),
-    powerSensorW: sensors.length > 0 ? Math.max(0.8, base.telemetry.peakPowerW * 0.32) : 0.2,
-    thermalPartCount: thermals.length,
-    hasMetalChassis: bodies.length > 0,
-    surfaceAreaCm2: Math.max(260, surfaceAreaCm2),
-  });
-  const pwrDistMm = batC && procC ? batC.distanceTo(procC) : 48;
-  const spiceNet = solvePowerPathSpice({
-    busV: 7.2,
-    loadW: Math.max(2.5, base.telemetry.peakPowerW),
-    pathDistMm: pwrDistMm,
-    contactOhms: 0.022,
-    hasBulkDecoupling: mainboards.length > 0,
-  });
-  const structFea = solveStructuralFeaAndTipping(
-    parts,
-    base.telemetry.centerOfGravityMm,
-    base.telemetry.estimatedMassG
-  );
-
-  const tools: PlyaToolResult[] = [];
-
-  // =========================================================================
-  // ENGINE 1: KiCad 7.0+ Compatible ERC / DRC (Electrical & High-Speed Bus Check)
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const flagged: string[] = [];
-    const hasPowerNet = batteries.length > 0 && procList.length > 0;
-    const hasSensorBus = sensors.length > 0 && procList.length > 0;
-    const hasStorageBus = (storages.length > 0 || mishoes.length > 0) && procList.length > 0;
-
-    const mipiMm = sensorC && procC ? sensorC.distanceTo(procC) : 999;
-    const pwrMm = batC && procC ? batC.distanceTo(procC) : 999;
-    const pcieMm = storageC && procC ? storageC.distanceTo(procC) : 0;
-
-    let score = 0;
-    if (hasPowerNet) score += 32;
-    if (hasSensorBus) score += 32;
-    if (hasStorageBus) score += 16;
-    if (hasSensorBus && mipiMm <= 46) score += 10;
-    else if (hasSensorBus && mipiMm <= 80) score += 5;
-    else if (hasSensorBus) {
-      for (const p of procList) {
-        flagged.push(p.uid);
-        markFlag(p.uid, 'error', `KiCad DRC: センサー〜基板の高速配線が長すぎます (${mipiMm.toFixed(0)}mm)`);
-      }
-    }
-    if (hasPowerNet && pwrMm <= 95) score += 10;
-    else if (hasPowerNet) {
-      score += 4;
-      for (const b of batteries) {
-        flagged.push(b.uid);
-        markFlag(b.uid, 'warn', `KiCad ERC: バッテリー〜基板の給電距離が長め (${pwrMm.toFixed(0)}mm)`);
-      }
-    }
-    if (storageC && procC && pcieMm > 95) {
-      score = Math.max(0, score - 8);
-      for (const s of storages) {
-        flagged.push(s.uid);
-        markFlag(s.uid, 'warn', `KiCad DRC: カードスロット配線長過大 (${pcieMm.toFixed(0)}mm)`);
-      }
-    }
-    score = clamp(Math.round(score), 0, 100);
-
-    const status: PlyaToolResult['status'] =
-      score >= 80 && hasPowerNet && hasSensorBus ? 'pass' : score >= 50 ? 'warn' : 'fail';
-
-    const missingNets: string[] = [];
-    if (!hasPowerNet) missingNets.push('電源ライン');
-    if (!hasSensorBus) missingNets.push('センサー信号線');
-    if (!hasStorageBus) missingNets.push('記録バス');
-
-    const plainVerdict =
-      status === 'pass'
-        ? '電気の配線OK！電池→基板→センサー→記録までKiCad ERC/DRC基準で問題なく通電・高速通信できます。'
-        : missingNets.length > 0
-          ? `未接続の回路があります（${missingNets.join('・')}）。必須の電子部品が足りません。`
-          : `基板とセンサーの配線距離が長すぎます（${mipiMm.toFixed(0)}mm）。ノイズで映像が乱れる恐れがあります。`;
-
-    const fixHint =
-      status === 'pass'
-        ? 'そのまま製造可能（KiCad出力可）'
-        : missingNets.length > 0
-          ? 'バッテリー・メイン基板・センサー・記録メディアを揃えてください'
-          : 'メイン基板をセンサーのすぐ裏（35mm以内）へ近づけてください';
-
-    tools.push({
-      id: 'kicad_erc_drc',
-      toolName: 'KiCad ERC/DRC',
-      domainJa: '電気・基板配線',
-      status,
-      score,
-      metricBadge: hasSensorBus ? `MIPI ${mipiMm.toFixed(0)}mm / 0Err` : '回路未接続',
-      plainVerdict,
-      fixHint,
-      flaggedUids: flagged,
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
+/**
+ * Assemble a complete PlyaPipelineReport from a PgDeepPhysicsReport + base camera metadata.
+ */
+export function buildPlyaReportFromDeepPhysics(
+  parts: readonly PlacedPartSnapshot[],
+  profile: CameraDesignProfile,
+  deep: PgDeepPhysicsReport
+): PlyaPipelineReport {
+  const base = evaluateCustomCamera(parts, profile);
+  const visualFlags = new Map<string, PartDiagnosticFlag>();
+  for (const [uid, diag] of Object.entries(deep.overlays.partDiagnostics)) {
+    visualFlags.set(uid, { uid, severity: diag.severity, reason: diag.reason });
   }
 
-  // =========================================================================
-  // ENGINE 2: OpticStudio / Zemax Compatible 3D Ray-Trace & Vignetting
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const optCat = base.categories[0];
-    const senCat = base.categories[1];
-    const vig = base.telemetry.vignettingPct;
-    const ffd = base.metrics.flangeDistanceMm;
-    const ecc = base.metrics.opticalEccentricityMm;
-    const score = clamp(Math.round(optCat.score * 0.65 + senCat.score * 0.35), 0, 100);
-    const flagged: string[] = [];
-    visualFlags.forEach((f, uid) => {
-      if (f.reason.includes('光束') || f.reason.includes('光軸') || f.reason.includes('フランジ') || f.reason.includes('マウント')) {
-        flagged.push(uid);
-      }
-    });
+  const tools: PlyaToolResult[] = deep.solvers.map((s) => ({
+    id: s.id,
+    examSource: s.examSource,
+    toolName: s.toolName,
+    domainJa: s.domainJa,
+    status: s.status,
+    score: s.score,
+    metricBadge: s.metricBadge,
+    plainVerdict: s.plainVerdict,
+    fixHint: s.fixHint,
+    flaggedUids: s.flaggedUids,
+    assertions: s.assertions,
+    durationMs: s.durationMs,
+  }));
 
-    const status: PlyaToolResult['status'] =
-      lenses.length > 0 && sensors.length > 0 && vig < 20 && score >= 78
-        ? 'pass'
-        : lenses.length > 0 && sensors.length > 0 && vig < 45 && score >= 48
-          ? 'warn'
-          : 'fail';
+  const sById = new Map(deep.solvers.map((s) => [s.id, s]));
+  const sc = (id: PlyaV2SolverId) => sById.get(id)?.score ?? 0;
+  const st = (id: PlyaV2SolverId) => sById.get(id)?.status ?? 'fail';
+  const fd = (id: PlyaV2SolverId) => sById.get(id)?.plainVerdict ?? '';
+  const ad = (id: PlyaV2SolverId) => sById.get(id)?.fixHint ?? '';
 
-    const plainVerdict =
-      lenses.length === 0 || sensors.length === 0
-        ? 'レンズまたはセンサーが無いため、光を集めて写真を撮ることができません。'
-        : vig >= 25
-          ? `赤色の部品がレンズの光を${vig}%塞いでいます！画面が暗くケラレます。`
-          : status === 'pass'
-            ? `光の通り道がクリア！ピント距離 ${ffd !== null ? `${ffd.toFixed(1)}mm` : '良好'}・ズレ ${ecc !== null ? `${ecc.toFixed(1)}mm` : '0mm'} で綺麗に写ります。`
-            : `レンズ・マウント・センサーの中心ズレ（${ecc !== null ? `${ecc.toFixed(1)}mm` : '要調整'}）またはピント距離の修正が必要です。`;
+  // Map ALL 24 EXAM V1.1-inherited solvers onto the 12-Pillar Engineering Categories cleanly
+  const categories: GraderCategoryResult[] = [
+    { id: 'optics', nameJa: '1. 3D光線追跡・結像 (EX19/20)', shortLabel: '光学MC', score: sc('pg_optics_mc'), maxScore: 100, status: st('pg_optics_mc'), finding: fd('pg_optics_mc'), advice: ad('pg_optics_mc') },
+    { id: 'clash', nameJa: '2. 実3D三角形BVH干渉 (EX01/05)', shortLabel: '3D干渉', score: sc('pg_mesh_clash'), maxScore: 100, status: st('pg_mesh_clash'), finding: fd('pg_mesh_clash'), advice: ad('pg_mesh_clash') },
+    { id: 'float', nameJa: '3. 浮きゼロ接地連結 (EX02)', shortLabel: '接地', score: sc('pg_zero_float'), maxScore: 100, status: st('pg_zero_float'), finding: fd('pg_zero_float'), advice: ad('pg_zero_float') },
+    { id: 'fea', nameJa: '4. 構造FEA・固有振動 (EX06/07)', shortLabel: 'FEA', score: Math.round((sc('pg_fea_static') + sc('pg_modal_vib')) * 0.5), maxScore: 100, status: st('pg_fea_static'), finding: fd('pg_fea_static'), advice: ad('pg_fea_static') },
+    { id: 'power', nameJa: '5. MNA SPICE・FMEA (EX16/31)', shortLabel: '電源', score: Math.round((sc('pg_mna_spice') + sc('pg_fmea_safety')) * 0.5), maxScore: 100, status: st('pg_mna_spice'), finding: fd('pg_mna_spice'), advice: ad('pg_mna_spice') },
+    { id: 'wiring', nameJa: '6. 3D配線・KiCad ERC (EX17/30)', shortLabel: '3D配線', score: sc('pg_wiring_3d'), maxScore: 100, status: st('pg_wiring_3d'), finding: fd('pg_wiring_3d'), advice: ad('pg_wiring_3d') },
+    { id: 'thermal', nameJa: '7. 接触熱回路網 (EX15/29)', shortLabel: '熱解析', score: sc('pg_thermal_net'), maxScore: 100, status: st('pg_thermal_net'), finding: fd('pg_thermal_net'), advice: ad('pg_thermal_net') },
+    { id: 'dfm', nameJa: '8. DFM加工・DFA逆組立 (EX11-13)', shortLabel: 'DFM/A', score: Math.round((sc('pg_dfm_dfa') + sc('pg_cte_tolerance')) * 0.5), maxScore: 100, status: st('pg_dfm_dfa'), finding: fd('pg_dfm_dfa'), advice: ad('pg_dfm_dfa') },
+    { id: 'emc', nameJa: '9. EMC遮蔽・IP・音響 (EX14/18/21)', shortLabel: 'EMC/IP', score: Math.round((sc('pg_emc_ip') + sc('pg_acoustics')) * 0.5), maxScore: 100, status: st('pg_emc_ip'), finding: fd('pg_emc_ip'), advice: ad('pg_emc_ip') },
+    { id: 'life', nameJa: '10. 重心転倒・電食・MTBF (EX03/34/35)', shortLabel: '安定/寿命', score: Math.round((sc('pg_gravity_tip') + sc('pg_galvanic_life')) * 0.5), maxScore: 100, status: st('pg_gravity_tip'), finding: fd('pg_gravity_tip'), advice: ad('pg_gravity_tip') },
+    { id: 'boot_ctrl', nameJa: '11. 実機起動・制御・SI・ESD (EX37-42)', shortLabel: '実機起動', score: Math.round((sc('pg_power_on_boot') + sc('pg_control_stability') + sc('pg_digital_timing_fsm') + sc('pg_si_pdn_integrity') + sc('pg_esd_safety')) / 5), maxScore: 100, status: st('pg_power_on_boot'), finding: fd('pg_power_on_boot'), advice: ad('pg_power_on_boot') },
+    { id: 'mfg_cert', nameJa: '12. 機構・過渡熱・歩留・V1.1証明 (EX43-48)', shortLabel: '量産/証明', score: Math.round((sc('pg_kinematics_actuators') + sc('pg_transient_thermal_psd') + sc('pg_pokayoke_cert_v11')) / 3), maxScore: 100, status: st('pg_pokayoke_cert_v11'), finding: fd('pg_pokayoke_cert_v11'), advice: ad('pg_pokayoke_cert_v11') },
+  ];
 
-    const fixHint =
-      status === 'pass'
-        ? '光学結像クリア'
-        : vig >= 25
-          ? '赤く光っている部品をレンズとセンサーの間から横・後ろへ動かしてください'
-          : '右上の「18mm自動整列」ボタンで光軸を一発修正できます';
-
-    tools.push({
-      id: 'opticstudio_ray',
-      toolName: 'OpticStudio 光線',
-      domainJa: 'レンズ結像・ケラレ',
-      status,
-      score,
-      metricBadge: `ケラレ ${vig}% / ${ffd !== null ? `${ffd.toFixed(1)}mm` : '--'}`,
-      plainVerdict,
-      fixHint,
-      flaggedUids: flagged,
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 3: SolidWorks / CalculiX FEA 3D Interference, BFS & Safety Factor
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const structCat = base.categories[7];
-    const clash = base.metrics.severeCollisionCount;
-    const floating = base.metrics.floatingPartCount;
-    const sf = structFea.feaSafetyFactor;
-    const sfPenalty = parts.length > 0 && sf < 2.0 ? 22 : parts.length > 0 && sf < 4.0 ? 8 : 0;
-    const score = clamp(structCat.score - sfPenalty, 0, 100);
-    const flagged: string[] = [];
-    visualFlags.forEach((f, uid) => {
-      if (f.reason.includes('干渉') || f.reason.includes('浮遊') || f.reason.includes('分離')) {
-        flagged.push(uid);
-      }
-    });
-
-    const status: PlyaToolResult['status'] =
-      parts.length > 0 && clash === 0 && floating === 0 && sf >= 3.0 && score >= 75
-        ? 'pass'
-        : parts.length > 0 && clash <= 1 && score >= 48
-          ? 'warn'
-          : 'fail';
-
-    const plainVerdict =
-      parts.length === 0
-        ? '部品がまだ置かれていません。'
-        : clash > 0
-          ? `赤色の部品同士が${clash}か所でぶつかって（めり込んで）います。このままでは組み立てられません。`
-          : floating > 0
-            ? `黄色い部品が${floating}個、空中に浮いています。本体にくっつけて固定してください。`
-            : bodies.length === 0
-              ? `ぶつかり0件ですが、外装フレーム（筐体）を足すと強度（現在SF ${sf}×）が大きく向上します。`
-              : `ぶつかり0件・浮き0件・構造安全率 SF=${sf}×！現実世界でそのままネジ止め組み立てできる堅牢設計です。`;
-
-    const fixHint =
-      status === 'pass'
-        ? `干渉ゼロ・CalculiX FEA安全率 ${sf}×`
-        : clash > 0
-          ? '赤色の部品を選択し、矢印でずらすか「隣接スナップ」を押してください'
-          : floating > 0
-            ? '浮いている部品を選んで「隣接スナップ」で本体へくっつけてください'
-            : '筐体（body）パーツを1つ追加してください';
-
-    tools.push({
-      id: 'cad_dfm_clash',
-      toolName: 'SolidWorks / FEA',
-      domainJa: '3D干渉・構造強度',
-      status,
-      score,
-      metricBadge: `干渉 ${clash}件 / SF ${sf}×`,
-      plainVerdict,
-      fixHint,
-      flaggedUids: flagged,
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 4: ANSYS Coupled 4-Node Electro-Thermal + IEC 62368-1 Safe Touch
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const min4k = base.telemetry.thermal4k60pMin;
-    const socTempC = parts.length === 0 ? 25 : coupledThermal.tSocC;
-    const surfaceC = parts.length === 0 ? 25 : coupledThermal.tChassisC;
-    const flagged: string[] = [];
-
-    if ((socTempC >= 88 || surfaceC > 54) && procList.length > 0) {
-      for (const p of procList) {
-        flagged.push(p.uid);
-        markFlag(p.uid, 'error', `ANSYS 連成熱解析: チップ${socTempC}°C / 外装${surfaceC}°C（熱停止・低温火傷リスク）`);
-      }
-    } else if ((socTempC >= 76 || surfaceC > 48) && procList.length > 0) {
-      for (const p of procList) {
-        flagged.push(p.uid);
-        markFlag(p.uid, 'warn', `ANSYS 連成熱解析: 長回し時に温度上昇注意 (${socTempC}°C / 表面${surfaceC}°C)`);
-      }
-    }
-
-    const touchBonus = surfaceC <= 48 ? 25 : surfaceC <= 52 ? 14 : 4;
-    const score = clamp(Math.round(base.categories[8].score * 0.75 + touchBonus), 0, 100);
-    const status: PlyaToolResult['status'] =
-      parts.length > 0 && socTempC <= 75 && surfaceC <= 48 && score >= 75
-        ? 'pass'
-        : parts.length > 0 && socTempC <= 88 && score >= 45
-          ? 'warn'
-          : 'fail';
-
-    const plainVerdict =
-      parts.length === 0
-        ? '発熱部品がありません。'
-        : status === 'pass'
-          ? `放熱OK！チップ${socTempC}°C・ボディ表面${surfaceC}°C（安全基準48°C以下）で4K動画も${min4k >= 120 ? '2時間以上' : `約${min4k}分`}連続撮影できます。`
-          : socTempC > 88
-            ? `熱がこもりすぎています（チップ${socTempC}°C / 表面${surfaceC}°C）！すぐ熱停止してしまいます。`
-            : `熱が少し高め（チップ${socTempC}°C / 表面${surfaceC}°C）です。放熱シートやベイパーチャンバーを足すと長回しできます。`;
-
-    tools.push({
-      id: 'ansys_thermal',
-      toolName: 'ANSYS 連成熱解析',
-      domainJa: '発熱・表面温度48°C',
-      status,
-      score,
-      metricBadge: `SoC ${socTempC}°C / 表面 ${surfaceC}°C`,
-      plainVerdict,
-      fixHint:
-        status === 'pass'
-          ? 'IEC 62368-1 表面安全温度クリア'
-          : 'メイン基板の「ベイパーチャンバー」や「グラファイト放熱シート」を追加してください',
-      flaggedUids: flagged,
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 5: SPICE Power-Path IR Drop, Burst Droop & 3.3V Brownout Margin
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const powerW = base.telemetry.peakPowerW;
-    const shots = base.telemetry.estimatedBatteryShots;
-    const irDropMv = batteries.length > 0 ? spiceNet.irDropMv : 999;
-    const mcuMinV = batteries.length > 0 ? spiceNet.mcu3v3MinV : 0;
-    const flagged: string[] = [];
-
-    if (batteries.length > 0 && irDropMv > 150) {
-      for (const b of batteries) {
-        flagged.push(b.uid);
-        markFlag(b.uid, 'warn', `SPICE 電源解析: 電池〜基板のIR電圧降下が過大 (${irDropMv}mV)`);
-      }
-    }
-
-    const score = clamp(
-      Math.round(base.categories[4].score * 0.85 + (irDropMv <= 90 && mcuMinV >= 3.22 ? 15 : irDropMv <= 150 ? 9 : 2)),
-      0,
-      100
-    );
-    const status: PlyaToolResult['status'] =
-      batteries.length > 0 && mcuMinV >= 3.2 && score >= 78
-        ? 'pass'
-        : batteries.length > 0 && score >= 48
-          ? 'warn'
-          : 'fail';
-
-    const plainVerdict =
-      batteries.length === 0
-        ? 'バッテリーが無いため電源が入りません。'
-        : status === 'pass'
-          ? `電力供給は超安定（消費${powerW.toFixed(1)}W / IR降下${irDropMv}mV / 3.3V下限${mcuMinV}V）。1回の充電で約${shots}枚撮れます。`
-          : `バッテリーを基板へ近づけると給電ロス（${irDropMv}mV）が減り、連写時の電圧落ち込みを防げます。`;
-
-    tools.push({
-      id: 'spice_power',
-      toolName: 'SPICE 電源解析',
-      domainJa: 'IR降下・無瞬断給電',
-      status,
-      score,
-      metricBadge: batteries.length > 0 ? `ΔV ${irDropMv}mV / 約${shots}枚` : 'バッテリー無し',
-      plainVerdict,
-      fixHint:
-        status === 'pass'
-          ? `ngspice基準クリア (3.3V下限 ${mcuMinV}V)`
-          : 'NP-FZ100バッテリーを右グリップ位置（X=-55mm付近）へ配置してください',
-      flaggedUids: flagged,
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 6: CST EMC Shielding & IEC 60529 Dust/Moisture Protection
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const hasShield = thermals.length > 0 || bodies.length > 0;
-    const hasSeal = bodies.length > 0 && mounts.length > 0;
-    let score = 20;
-    if (bodies.length > 0) score += 35;
-    if (thermals.length > 0) score += 25;
-    if (hasSeal) score += 15;
-    if (base.metrics.severeCollisionCount === 0) score += 5;
-    if (parts.length === 0) score = 0;
-    score = clamp(score, 0, 100);
-
-    const status: PlyaToolResult['status'] =
-      score >= 78 ? 'pass' : score >= 50 ? 'warn' : 'fail';
-
-    const plainVerdict =
-      status === 'pass'
-        ? '金属筐体とシールドで電波ノイズを防ぎ、ホコリや小雨にも強い防塵防滴構成です。'
-        : hasShield
-          ? '基本ノイズ対策はありますが、外装ボディやマウントを揃えると防塵防滴性が上がります。'
-          : '基板がむき出しのため静電気や電波ノイズ・ホコリに弱い状態です。';
-
-    tools.push({
-      id: 'cst_emc_ip',
-      toolName: 'CST EMC/防塵防滴',
-      domainJa: 'ノイズ遮蔽・耐候性',
-      status,
-      score,
-      metricBadge: hasSeal ? 'EMC良 / 防塵配慮' : hasShield ? '簡易シールド' : '保護なし',
-      plainVerdict,
-      fixHint: status === 'pass' ? 'EMC・耐候性OK' : 'マグネシウム外装フレーム（body）を追加してください',
-      flaggedUids: [],
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 7: Ergonomics, Weight, 3D CoG & Support-Polygon Tipping Angle
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const mass = base.telemetry.estimatedMassG;
-    const [gx, gy] = base.telemetry.centerOfGravityMm;
-    const cogShift = Math.hypot(gx, gy);
-    const tipDeg = structFea.tippingAngleDeg;
-    const vfScore = base.categories[6].score;
-    const intScore = base.categories[9].score;
-    const tipBonus = tipDeg >= 20 ? 10 : tipDeg >= 12 ? 4 : -10;
-    const score = clamp(Math.round(vfScore * 0.45 + intScore * 0.45 + tipBonus), 0, 100);
-    const status: PlyaToolResult['status'] =
-      score >= 78 && (evfs.length > 0 || lcds.length > 0) && tipDeg >= 12
-        ? 'pass'
-        : score >= 48
-          ? 'warn'
-          : 'fail';
-
-    const plainVerdict =
-      evfs.length === 0 && lcds.length === 0
-        ? '画面（液晶）もファインダーも無いため、何を見て撮るか確認できません。'
-        : status === 'pass'
-          ? `重さ約${mass}g・重心ズレ${cogShift.toFixed(0)}mm・机上転倒安定角${tipDeg}°で構えやすく安定しています。`
-          : `重さ約${mass}g（転倒角${tipDeg}°）。液晶位置や前後バランスを整えると構えやすくなります。`;
-
-    tools.push({
-      id: 'ergo_cog',
-      toolName: 'Ergo / 3D重心・転倒角',
-      domainJa: '重さ・重心バランス',
-      status,
-      score,
-      metricBadge: `${mass}g / 転倒角${tipDeg}°`,
-      plainVerdict,
-      fixHint:
-        status === 'pass'
-          ? 'ホールディング＆据置安定性OK'
-          : '背面液晶（lcd）を後ろ（-Z）へ、EVFを上（+Y）へ配置してください',
-      flaggedUids: [],
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // ENGINE 8: Web CAD Online Runtime & Real KiCad/ngspice EDA Export Readiness
-  // =========================================================================
-  {
-    const t0 = nowMs();
-    const isOnline =
-      webCtx?.isOnline ?? (typeof navigator !== 'undefined' ? navigator.onLine !== false : true);
-    const webgl2 = webCtx?.webgl2 ?? true;
-    const tris = webCtx?.totalTriangles ?? parts.length * 1400;
-    const score = clamp(
-      (webgl2 ? 50 : 20) + (isOnline ? 25 : 15) + (parts.length > 0 && tris < 400000 ? 25 : parts.length > 0 ? 15 : 10),
-      0,
-      100
-    );
-    const status: PlyaToolResult['status'] = score >= 80 ? 'pass' : score >= 55 ? 'warn' : 'fail';
-
-    tools.push({
-      id: 'web_cad_health',
-      toolName: 'Web CAD / EDA出力',
-      domainJa: '実KiCad/SPICE連携',
-      status,
-      score,
-      metricBadge: `${isOnline ? 'Online' : 'Local'} · EDA出力可`,
-      plainVerdict: isOnline
-        ? `オンラインWeb検証エンジン全8種＋WLK-220産業ソルバー稼働中（${parts.length}部品・約${(tris / 1000).toFixed(1)}kポリゴン）。実KiCad/SPICE出力もOK。`
-        : 'ローカル産業検証エンジン全8種で高精度チェック完了。実KiCad/SPICE出力にも対応しています。',
-      fixHint: status === 'pass' ? 'KiCad / ngspice実ファイル出力可' : 'ポリゴン数を抑えるかネットワーク接続を確認してください',
-      flaggedUids: [],
-      durationMs: Math.max(0.1, Number((nowMs() - t0).toFixed(2))),
-    });
-  }
-
-  // =========================================================================
-  // UNIFIED 1,000-POINT SCORE INCORPORATING ALL 8 PLYA VERIFICATION ENGINES!
-  // Blend: 70% 10-Discipline Camera Engineering + 30% PLYA 8-Engine Pipeline Score
-  // =========================================================================
-  const plyaWeightedAvg =
-    tools.reduce((acc, t) => acc + t.score, 0) / Math.max(1, tools.length); // 0..100
-  const integratedScore =
-    parts.length === 0
-      ? 0
-      : clamp(Math.round(base.totalScore * 0.7 + plyaWeightedAvg * 10 * 0.3), 0, 1000);
-
-  const failCount = tools.filter((t) => t.status === 'fail').length;
-  const warnCount = tools.filter((t) => t.status === 'warn').length;
-  const passCount = tools.filter((t) => t.status === 'pass').length;
-
-  // Hard safety gate: if KiCad, OpticStudio, or SolidWorks Clash fails critically, camera cannot operate!
-  const kicadFail = tools.find((t) => t.id === 'kicad_erc_drc')?.status === 'fail';
-  const opticFail = tools.find((t) => t.id === 'opticstudio_ray')?.status === 'fail';
-  const clashFail = tools.find((t) => t.id === 'cad_dfm_clash')?.status === 'fail';
-  const canOperate = base.canOperate && !kicadFail && !opticFail && !clashFail && integratedScore >= 560;
-
-  let rank: CameraEngineeringReport['rank'];
-  let operationalVerdict: CameraEngineeringReport['operationalVerdict'];
-  if (canOperate && integratedScore >= 900) {
-    rank = 'S+';
-    operationalVerdict = '撮影動作可能（量産設計水準）';
-  } else if (canOperate && integratedScore >= 800) {
-    rank = 'S';
-    operationalVerdict = '撮影動作可能（実写成立）';
-  } else if (canOperate && integratedScore >= 680) {
-    rank = 'A';
-    operationalVerdict = '撮影動作可能（実写成立）';
-  } else if (canOperate) {
-    rank = 'B';
-    operationalVerdict = '条件付きで動作可能';
-  } else if (integratedScore >= 350) {
-    rank = 'C';
-    operationalVerdict = '設計改修が必要';
-  } else {
-    rank = 'F';
-    operationalVerdict = '撮影動作不可';
-  }
-
-  const quickFixes = tools
-    .filter((t) => t.status !== 'pass')
-    .sort((a, b) => a.score - b.score)
-    .slice(0, 3)
-    .map((t) => `【${t.domainJa}】${t.fixHint}`);
-
-  const errorMeshCount = Array.from(visualFlags.values()).filter((f) => f.severity === 'error').length;
-  const simpleHeadline =
-    parts.length === 0
-      ? 'まだ部品がありません。上の「雛形」からカメラを読み込むか、左から部品を置いてPLYAを押してください。'
-      : canOperate && failCount === 0
-        ? `🎉 このカメラは実際に動きます！（全8検査中 ${passCount}項目合格 / ${integratedScore}点・ランク${rank}）`
-        : errorMeshCount > 0
-          ? `🔴 3D画面で赤く光っている部品（${errorMeshCount}個）に問題があります！下のアドバイス通りに直してもう一度PLYAを押してください。`
-          : `⚠️ あと少しで動きます！（不足・注意 ${failCount + warnCount}件）。下のヒントを見て部品を追加・調整しましょう。`;
+  const profileLabel =
+    deep.domainMode === 'wlk_optical'
+      ? 'WLK 光学キネティック装置 (EXAM V1.1基準)'
+      : deep.domainMode === 'robotics'
+        ? 'RIIMOS ロボティクス機構 (EXAM V1.1基準)'
+        : `${base.resolvedProfileLabel} (${deep.strictness === 'exam_strict' ? 'EXAM V1.1極限' : '標準設計'})`;
 
   const engineeringReport: CameraEngineeringReport = {
     ...base,
-    totalScore: integratedScore,
-    rank,
-    operationalVerdict,
-    canOperate,
-    engineerSummary: `${simpleHeadline} ${base.engineerSummary}`,
-    topActions: quickFixes.length > 0 ? quickFixes : base.topActions,
+    resolvedProfileLabel: profileLabel,
+    totalScore: deep.totalScore,
+    rank: deep.rank,
+    operationalVerdict: deep.operationalVerdict,
+    canOperate: deep.canOperate,
+    engineerSummary: deep.simpleHeadline,
+    categories,
+    metrics: {
+      ...base.metrics,
+      partCount: parts.length,
+      flangeDistanceMm: deep.telemetry.flangeDistanceMm,
+      opticalEccentricityMm: deep.telemetry.opticalEccentricityMm,
+      severeCollisionCount: deep.telemetry.severeCollisionCount,
+      floatingPartCount: deep.telemetry.floatingPartCount,
+    },
+    telemetry: {
+      estimatedMassG: deep.telemetry.estimatedMassG,
+      centerOfGravityMm: deep.telemetry.centerOfGravityMm,
+      peakPowerW: deep.telemetry.peakPowerW,
+      estimatedBatteryShots: deep.telemetry.estimatedBatteryShots,
+      thermal4k60pMin: deep.telemetry.thermal4k60pMin,
+      vignettingPct: deep.telemetry.vignettingPct,
+      disconnectedClusters: deep.telemetry.disconnectedClusters,
+    },
+    topActions: deep.quickFixes,
     partDiagnostics: visualFlags,
   };
 
   return {
+    version: 'PLYA-V2.1-EXAM11',
+    strictness: deep.strictness,
     executedAt: new Date().toISOString(),
-    totalDurationMs: Math.max(0.2, Number((nowMs() - tStart).toFixed(2))),
+    totalDurationMs: deep.totalDurationMs,
     tools,
-    passCount,
-    warnCount,
-    failCount,
-    simpleHeadline,
-    quickFixes,
+    passCount: deep.solverPassCount,
+    warnCount: deep.solverWarnCount,
+    failCount: deep.solverFailCount,
+    assertionPassCount: deep.assertionPassCount,
+    assertionWarnCount: deep.assertionWarnCount,
+    assertionFailCount: deep.assertionFailCount,
+    assertionTotalCount: deep.assertions.length,
+    simpleHeadline: deep.simpleHeadline,
+    quickFixes: deep.quickFixes,
     engineeringReport,
     visualFlags,
     industrialMetrics: {
-      mode: 'camera',
-      socJunctionC: coupledThermal.tSocC,
-      chassisSurfaceC: coupledThermal.tChassisC,
-      spiceIrDropMv: spiceNet.irDropMv,
-      spiceMcu3v3MinV: spiceNet.mcu3v3MinV,
-      feaSafetyFactor: structFea.feaSafetyFactor,
-      tippingAngleDeg: structFea.tippingAngleDeg,
+      mode: deep.domainMode === 'wlk_optical' ? 'wlk220_optical' : deep.domainMode,
+      socJunctionC: deep.telemetry.socJunctionC,
+      chassisSurfaceC: deep.telemetry.chassisSurfaceC,
+      spiceIrDropMv: deep.telemetry.spiceIrDropMv,
+      spiceMcu3v3MinV: deep.telemetry.spiceMcu3v3MinV,
+      feaSafetyFactor: deep.telemetry.feaSafetyFactor,
+      tippingAngleDeg: deep.telemetry.tippingAngleDeg,
+      maxDeflectionUm: deep.telemetry.maxDeflectionUm,
+      modalF1Hz: deep.telemetry.modalF1Hz,
+      maxSeatGapMm: deep.telemetry.maxSeatGapMm,
+      maxWiringRouteMm: deep.telemetry.maxWiringRouteMm,
+      galvanicSevereCount: deep.telemetry.galvanicSevereCount,
+      mtbfHours: deep.telemetry.mtbfHours,
+      bootReadinessPct: deep.bootReadinessPct,
+      mfgYieldPct: deep.mfgYieldPct,
+      canonical3dSha256: deep.canonical3dSha256,
     },
+    deepReport: deep,
   };
 }
 
 /**
- * Generates a REAL, valid KiCad 7.0 `.kicad_sch` S-expression schematic directly from
- * the user's current 3D Play Ground 1.1 assembly (ready to open in desktop KiCad / kicad-cli!).
+ * Synchronous PLYA V2 entrypoint (used for immediate evaluation, tests, and fallback).
+ */
+export function runPlyaVerificationPipeline(
+  parts: readonly PlacedPartSnapshot[],
+  profile: CameraDesignProfile = 'auto',
+  webCtx?: Partial<PlyaWebContext>,
+  strictness: ExamStrictnessMode = 'design'
+): PlyaPipelineReport {
+  const serialized = serializeSnapshotsForExamEngine(parts);
+  const deep = runExamInheritedPlaygroundGrader(serialized, strictness, webCtx);
+  return buildPlyaReportFromDeepPhysics(parts, profile, deep);
+}
+
+/**
+ * 1. Real KiCad 7.0 `.kicad_sch` schematic exporter synthesized from the current 3D assembly.
  */
 export function generatePlaygroundKiCadSchematic(
   parts: readonly PlacedPartSnapshot[],
@@ -1234,21 +317,10 @@ export function generatePlaygroundKiCadSchematic(
   const rootUuid = uuidOf(1);
   const busV = plya.industrialMetrics.mode === 'wlk220_optical' ? '+12V_BUS' : '+7V2_VBAT';
 
-  const elecParts = parts.filter(
-    (p) =>
-      p.entry.role === 'battery' ||
-      p.entry.role === 'mainboard' ||
-      p.entry.role === 'bionz' ||
-      p.entry.role === 'sensor' ||
-      p.entry.role === 'storage' ||
-      p.entry.role === 'evf' ||
-      p.entry.role === 'lcd' ||
-      p.entry.role === 'audio' ||
-      p.entry.role === 'mishoe' ||
-      p.entry.role === 'sculpture'
+  const elecParts = parts.filter((p) =>
+    ['battery', 'mainboard', 'bionz', 'sensor', 'storage', 'evf', 'lcd', 'audio', 'mishoe', 'sculpture'].includes(p.entry.role)
   );
   const chosen = (elecParts.length > 0 ? elecParts : parts).slice(0, 24);
-
   const symbols: string[] = [];
   const wires: string[] = [];
   const labels: string[] = [];
@@ -1261,66 +333,50 @@ export function generatePlaygroundKiCadSchematic(
     const ref = `U${idx + 1}`;
     const val = esc(p.entry.partId);
     const sigNet =
-      p.entry.role === 'sensor'
-        ? 'MIPI_CSI2'
-        : p.entry.role === 'storage'
-          ? 'PCIE_GEN3'
-          : p.entry.role === 'audio'
-            ? 'I2S_AUD'
-            : p.entry.role === 'evf' || p.entry.role === 'lcd'
-              ? 'MIPI_DSI'
-              : 'SYS_BUS';
+      p.entry.role === 'sensor' ? 'MIPI_CSI2'
+      : p.entry.role === 'storage' ? 'PCIE_GEN3'
+      : p.entry.role === 'audio' ? 'I2S_AUD'
+      : p.entry.role === 'evf' || p.entry.role === 'lcd' ? 'MIPI_DSI'
+      : 'SYS_BUS';
 
     symbols.push(
       `  (symbol (lib_id "PG:MODULE") (at ${x.toFixed(2)} ${y.toFixed(2)} 0) (unit 1)\n` +
-        `    (in_bom yes) (on_board yes) (dnp no)\n` +
-        `    (uuid "${uuidOf(100 + idx * 10)}")\n` +
-        `    (property "Reference" "${ref}" (at ${x.toFixed(2)} ${(y - 7.62).toFixed(2)} 0) (effects (font (size 1.27 1.27))))\n` +
-        `    (property "Value" "${val}" (at ${x.toFixed(2)} ${(y + 7.62).toFixed(2)} 0) (effects (font (size 1.0 1.0))))\n` +
-        `    (property "Footprint" "PG:MOD_3D" (at ${x.toFixed(2)} ${y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) hide))\n` +
-        `    (property "Datasheet" "" (at ${x.toFixed(2)} ${y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) hide))\n` +
-        `    (pin "1" (uuid "${uuidOf(101 + idx * 10)}"))\n` +
-        `    (pin "2" (uuid "${uuidOf(102 + idx * 10)}"))\n` +
-        `    (pin "3" (uuid "${uuidOf(103 + idx * 10)}"))\n` +
-        `    (instances (project "playground_v11" (path "/${rootUuid}" (reference "${ref}") (unit 1))))\n` +
-        `  )`
+      `    (in_bom yes) (on_board yes) (dnp no)\n` +
+      `    (uuid "${uuidOf(100 + idx * 10)}")\n` +
+      `    (property "Reference" "${ref}" (at ${x.toFixed(2)} ${(y - 7.62).toFixed(2)} 0) (effects (font (size 1.27 1.27))))\n` +
+      `    (property "Value" "${val}" (at ${x.toFixed(2)} ${(y + 7.62).toFixed(2)} 0) (effects (font (size 1.0 1.0))))\n` +
+      `    (property "Footprint" "PG:MOD_3D" (at ${x.toFixed(2)} ${y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) hide))\n` +
+      `    (property "Datasheet" "" (at ${x.toFixed(2)} ${y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) hide))\n` +
+      `    (pin "1" (uuid "${uuidOf(101 + idx * 10)}"))\n` +
+      `    (pin "2" (uuid "${uuidOf(102 + idx * 10)}"))\n` +
+      `    (pin "3" (uuid "${uuidOf(103 + idx * 10)}"))\n` +
+      `    (instances (project "playground_v2_exam" (path "/${rootUuid}" (reference "${ref}") (unit 1))))\n` +
+      `  )`
     );
-
-    const p1x = x - 12.7;
-    const p1y = y - 2.54;
-    const p2x = x - 12.7;
-    const p2y = y + 2.54;
-    const p3x = x + 12.7;
-    const p3y = y;
-
+    const p1x = x - 12.7, p1y = y - 2.54, p2y = y + 2.54, p3x = x + 12.7;
     wires.push(
       `  (wire (pts (xy ${p1x.toFixed(2)} ${p1y.toFixed(2)}) (xy ${(p1x - 5.08).toFixed(2)} ${p1y.toFixed(2)})) (stroke (width 0) (type default)) (uuid "${uuidOf(500 + idx * 3)}"))`,
-      `  (wire (pts (xy ${p2x.toFixed(2)} ${p2y.toFixed(2)}) (xy ${(p2x - 5.08).toFixed(2)} ${p2y.toFixed(2)})) (stroke (width 0) (type default)) (uuid "${uuidOf(501 + idx * 3)}"))`,
-      `  (wire (pts (xy ${p3x.toFixed(2)} ${p3y.toFixed(2)}) (xy ${(p3x + 5.08).toFixed(2)} ${p3y.toFixed(2)})) (stroke (width 0) (type default)) (uuid "${uuidOf(502 + idx * 3)}"))`
+      `  (wire (pts (xy ${p1x.toFixed(2)} ${p2y.toFixed(2)}) (xy ${(p1x - 5.08).toFixed(2)} ${p2y.toFixed(2)})) (stroke (width 0) (type default)) (uuid "${uuidOf(501 + idx * 3)}"))`,
+      `  (wire (pts (xy ${p3x.toFixed(2)} ${y.toFixed(2)}) (xy ${(p3x + 5.08).toFixed(2)} ${y.toFixed(2)})) (stroke (width 0) (type default)) (uuid "${uuidOf(502 + idx * 3)}"))`
     );
     labels.push(
       `  (global_label "${busV}" (shape bidirectional) (at ${(p1x - 5.08).toFixed(2)} ${p1y.toFixed(2)} 180) (effects (font (size 1.0 1.0)) (justify right)) (uuid "${uuidOf(800 + idx * 3)}"))`,
-      `  (global_label "GND" (shape bidirectional) (at ${(p2x - 5.08).toFixed(2)} ${p2y.toFixed(2)} 180) (effects (font (size 1.0 1.0)) (justify right)) (uuid "${uuidOf(801 + idx * 3)}"))`,
-      `  (global_label "${sigNet}" (shape bidirectional) (at ${(p3x + 5.08).toFixed(2)} ${p3y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) (justify left)) (uuid "${uuidOf(802 + idx * 3)}"))`
+      `  (global_label "GND" (shape bidirectional) (at ${(p1x - 5.08).toFixed(2)} ${p2y.toFixed(2)} 180) (effects (font (size 1.0 1.0)) (justify right)) (uuid "${uuidOf(801 + idx * 3)}"))`,
+      `  (global_label "${sigNet}" (shape bidirectional) (at ${(p3x + 5.08).toFixed(2)} ${y.toFixed(2)} 0) (effects (font (size 1.0 1.0)) (justify left)) (uuid "${uuidOf(802 + idx * 3)}"))`
     );
   });
 
-  return `(kicad_sch (version 20230121) (generator playground_v11_plya)
+  return `(kicad_sch (version 20230121) (generator playground_plya_v2_exam)
   (uuid "${rootUuid}")
   (paper "A3")
-  (title_block
-    (title "Play Ground 1.1 Custom 3D CAD Assembly — PLYA Score ${plya.engineeringReport.totalScore}/1000 (${plya.engineeringReport.rank})")
-    (rev "1.1")
-  )
+  (title_block (title "PLYA V2 EXAM-Inherited Assembly — ${plya.engineeringReport.totalScore}/1000 (${plya.engineeringReport.rank}) · ${plya.assertionPassCount}/${plya.assertionTotalCount} PASS") (rev "2.0"))
   (lib_symbols
     (symbol "PG:MODULE" (in_bom yes) (on_board yes)
       (property "Reference" "U" (at 0 2.54 0) (effects (font (size 1.27 1.27))))
       (property "Value" "MODULE" (at 0 -2.54 0) (effects (font (size 1.27 1.27))))
       (property "Footprint" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
       (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-      (symbol "MODULE_0_1"
-        (rectangle (start -10.16 5.08) (end 10.16 -5.08) (stroke (width 0.254) (type default)) (fill (type background)))
-      )
+      (symbol "MODULE_0_1" (rectangle (start -10.16 5.08) (end 10.16 -5.08) (stroke (width 0.254) (type default)) (fill (type background))))
       (symbol "MODULE_1_1"
         (pin bidirectional line (at -12.70 2.54 0) (length 2.54) (name "PWR" (effects (font (size 1.0 1.0)))) (number "1" (effects (font (size 1.0 1.0)))))
         (pin bidirectional line (at -12.70 -2.54 0) (length 2.54) (name "GND" (effects (font (size 1.0 1.0)))) (number "2" (effects (font (size 1.0 1.0)))))
@@ -1337,56 +393,138 @@ ${labels.join('\n')}
 }
 
 /**
- * Generates a REAL, runnable Berkeley `ngspice` `.cir` power-integrity + electro-thermal
- * simulation deck synthesized directly from the current 3D Play Ground 1.1 assembly!
+ * 2. Real Berkeley `ngspice` `.cir` deck synthesized from PLYA V2 MNA + Contact Thermal results.
  */
 export function generatePlaygroundNgspiceNetlist(
   parts: readonly PlacedPartSnapshot[],
   plya: PlyaPipelineReport
 ): string {
   const m = plya.industrialMetrics;
-  const rawBusV = m.mode === 'wlk220_optical' ? 12.0 : 7.2;
-  const busV = Number.isFinite(rawBusV) && rawBusV > 1.0 ? rawBusV : 7.2;
-  const rawPowerW = plya.engineeringReport.telemetry.peakPowerW;
-  const loadW = Number.isFinite(rawPowerW) ? Math.max(1.5, rawPowerW) : 1.5;
-  const rawIrMv = Number.isFinite(m.spiceIrDropMv) ? Math.max(0, m.spiceIrDropMv) : 0;
-  const iLoadNum = loadW / busV;
-  const iLoad = iLoadNum.toFixed(3);
-  const rPath = Math.max(0.015, rawIrMv / 1000 / Math.max(0.2, iLoadNum)).toFixed(4);
-  return `* PLAY GROUND 1.1 AUTO-SYNTHESIZED NGSPICE POWER & ELECTRO-THERMAL DECK
-* Generated by PLYA 1.1 | Parts: ${parts.length} | Score: ${plya.engineeringReport.totalScore}/1000 (${plya.engineeringReport.rank})
-* Predicted: IR_Drop=${m.spiceIrDropMv}mV | 3.3V_Min=${m.spiceMcu3v3MinV}V | T_SoC=${m.socJunctionC}C | T_Surface=${m.chassisSurfaceC}C
+  const busV = m.mode === 'wlk220_optical' ? 12.0 : 7.2;
+  const loadW = Math.max(1.5, plya.engineeringReport.telemetry.peakPowerW || 3.5);
+  const iLoad = loadW / busV;
+  const rPath = Math.max(0.018, (m.spiceIrDropMv / 1000) / Math.max(0.2, iLoad));
+  const rThSc = Math.max(0.5, (m.socJunctionC - m.chassisSurfaceC) / Math.max(0.5, loadW * 0.7));
+  const rThCa = Math.max(0.5, (m.chassisSurfaceC - 25.0) / Math.max(0.5, loadW));
+
+  return `* PLYA V2 (EXAM-INHERITED) AUTO-SYNTHESIZED NGSPICE POWER & ELECTRO-THERMAL DECK
+* Parts: ${parts.length} | Score: ${plya.engineeringReport.totalScore}/1000 (${plya.engineeringReport.rank}) | Assertions: ${plya.assertionPassCount}/${plya.assertionTotalCount}
+* Real Predicted: IR=${m.spiceIrDropMv}mV | 3.3V_Min=${m.spiceMcu3v3MinV}V | Tj=${m.socJunctionC}C | Tsurf=${m.chassisSurfaceC}C
 
 V_SRC v_src 0 DC ${busV.toFixed(2)}
-R_PATH v_src v_bus ${rPath}
+R_PATH v_src v_bus ${rPath.toFixed(5)}
 C_BULK v_bus c_esr 470u IC=${busV.toFixed(2)}
 R_ESR c_esr 0 0.015
-I_LOAD v_bus 0 PULSE(${iLoad} ${(Number(iLoad) * 1.4).toFixed(3)} 2m 20u 20u 1m 4m)
-
-* 3.3V Logic Regulator
+I_LOAD v_bus 0 PULSE(${iLoad.toFixed(3)} ${(iLoad * 1.4).toFixed(3)} 2m 20u 20u 1m 4m)
 B_LDO ldo_int 0 V = min(3.30, max(0, v(v_bus) - 0.65))
-R_LDO ldo_int v_3v3 0.05
+R_LDO ldo_int v_3v3 0.04
 C_LDO v_3v3 0 47u IC=3.30
 R_MCU v_3v3 0 11.0
 
-* Coupled Electro-Thermal Network (1V = 1 degC, 1A = 1 W)
+* Coupled Electro-Thermal Network (derived from real 3D contact graph)
 V_AMB t_amb 0 DC 25.0
 I_Q_SOC 0 t_soc DC ${(loadW * 0.7).toFixed(2)}
-R_TH_SC t_soc t_chassis 3.8
-R_TH_CA t_chassis t_amb 2.4
+R_TH_SC t_soc t_chassis ${rThSc.toFixed(3)}
+R_TH_CA t_chassis t_amb ${rThCa.toFixed(3)}
 
 .control
+set noaskquit
 tran 10u 6m uic
 meas tran v_bus_min MIN v(v_bus) FROM=0.5m TO=6m
 meas tran v_3v3_min MIN v(v_3v3) FROM=0.5m TO=6m
 meas tran t_soc_c AVG v(t_soc) FROM=4m TO=6m
 meas tran t_surf_c AVG v(t_chassis) FROM=4m TO=6m
-echo "PG11_V_BUS_MIN=$&v_bus_min"
-echo "PG11_V_3V3_MIN=$&v_3v3_min"
-echo "PG11_T_SOC_C=$&t_soc_c"
-echo "PG11_T_SURF_C=$&t_surf_c"
+echo "PLYA_V2_V_BUS_MIN=$&v_bus_min"
+echo "PLYA_V2_V_3V3_MIN=$&v_3v3_min"
+echo "PLYA_V2_T_SOC_C=$&t_soc_c"
+echo "PLYA_V2_T_SURF_C=$&t_surf_c"
 quit
 .endc
 .end
 `;
+}
+
+/**
+ * 3. Real CalculiX `ccx` 3D C3D8 structural FEA `.inp` deck synthesized from current 3D assembly envelope & mass!
+ */
+export function generatePlaygroundCalculiXDeck(
+  parts: readonly PlacedPartSnapshot[],
+  plya: PlyaPipelineReport
+): string {
+  const env = plya.engineeringReport.metrics.envelopeMm;
+  const L = Math.max(20, env[0] || 130);
+  const H = Math.max(8, Math.min(35, (env[1] || 40) * 0.35));
+  const W = Math.max(15, env[2] || 60);
+  const deadN = Math.max(0.5, (plya.engineeringReport.telemetry.estimatedMassG / 1000) * 9.80665);
+  const lines = [
+    '*HEADING',
+    `PLYA V2 EXAM-Inherited CalculiX 3D C3D8 Static FEA (${parts.length} parts, ${plya.engineeringReport.telemetry.estimatedMassG}g)`,
+    '*NODE',
+    `1, 0.0, 0.0, 0.0`, `2, ${(L * 0.5).toFixed(2)}, 0.0, 0.0`, `3, ${L.toFixed(2)}, 0.0, 0.0`,
+    `4, 0.0, ${H.toFixed(2)}, 0.0`, `5, ${(L * 0.5).toFixed(2)}, ${H.toFixed(2)}, 0.0`, `6, ${L.toFixed(2)}, ${H.toFixed(2)}, 0.0`,
+    `7, 0.0, 0.0, ${W.toFixed(2)}`, `8, ${(L * 0.5).toFixed(2)}, 0.0, ${W.toFixed(2)}`, `9, ${L.toFixed(2)}, 0.0, ${W.toFixed(2)}`,
+    `10, 0.0, ${H.toFixed(2)}, ${W.toFixed(2)}`, `11, ${(L * 0.5).toFixed(2)}, ${H.toFixed(2)}, ${W.toFixed(2)}`, `12, ${L.toFixed(2)}, ${H.toFixed(2)}, ${W.toFixed(2)}`,
+    '*ELEMENT, TYPE=C3D8, ELSET=EALL',
+    '1, 1, 2, 5, 4, 7, 8, 11, 10',
+    '2, 2, 3, 6, 5, 8, 9, 12, 11',
+    '*MATERIAL, NAME=AZ91D_MG',
+    '*ELASTIC', '45000.0, 0.35',
+    '*SOLID SECTION, ELSET=EALL, MATERIAL=AZ91D_MG',
+    '*STEP', '*STATIC', '*BOUNDARY',
+    '1, 1, 3, 0.0', '3, 1, 3, 0.0', '7, 1, 3, 0.0', '9, 1, 3, 0.0',
+    '*CLOAD',
+    `5, 2, ${(-(deadN + 15.0) * 0.5).toFixed(4)}`,
+    `11, 2, ${(-(deadN + 15.0) * 0.5).toFixed(4)}`,
+    '*NODE PRINT, NSET=NALL', 'U',
+    '*EL PRINT, ELSET=EALL', 'S',
+    '*END STEP',
+  ];
+  return lines.join('\n') + '\n';
+}
+
+/**
+ * 4. Real THE LAST EXAM V1.1 `.tlx11.json` workspace exporter!
+ * Pass the exported file directly to: `node scripts/exam.mjs --playground=<file.tlx11.json>`
+ * to run ALL 48 external industrial engines (48 real external solvers, 1,080 fixed tests, 28 cross-locks)
+ * and engrave a cryptographic「V1.1証明」(.v1_1.cert.json) upon 100.0000% PASS!
+ */
+export function generatePlaygroundExamWorkspaceJson(
+  parts: readonly PlacedPartSnapshot[],
+  plya: PlyaPipelineReport
+): string {
+  const serialized = serializeSnapshotsForExamEngine(parts);
+  const payload = {
+    schema: 'TLX11-PLAYGROUND-BLUEPRINT-V1.1',
+    exportedAt: new Date().toISOString(),
+    name: `pg_${plya.industrialMetrics.mode}`,
+    busVoltageV: plya.industrialMetrics.mode === 'wlk220_optical' ? 12.0 : 7.2,
+    plyaVersion: plya.version,
+    plyaV21Score: plya.engineeringReport.totalScore,
+    plyaV21Rank: plya.engineeringReport.rank,
+    plyaV21Solvers: `${plya.passCount}/${plya.tools.length}`,
+    plyaV21Assertions: `${plya.assertionPassCount}/${plya.assertionTotalCount}`,
+    bootReadinessPct: plya.industrialMetrics.bootReadinessPct,
+    mfgYieldPct: plya.industrialMetrics.mfgYieldPct,
+    canonical3dSha256: plya.industrialMetrics.canonical3dSha256,
+    parts: serialized.map((s) => {
+      const mat = resolvePlaygroundMaterial(s.entry);
+      return {
+        id: `${s.entry.partId}_${s.uid.slice(-4)}`,
+        partId: s.entry.partId,
+        unitId: s.entry.unitId,
+        title: s.entry.title,
+        subtitle: s.entry.subtitle,
+        role: s.entry.role,
+        materialKey: mat.preset,
+        box: s.box.map((v) => Number(v.toFixed(4))),
+        pos: s.position.map((v) => Number(v.toFixed(4))),
+        explodeVec: [0, 0, 0],
+        cog: s.center.map((v) => Number(v.toFixed(4))),
+        volumeMm3: Number(s.volumeMm3.toFixed(4)),
+        massG: Number(((s.volumeMm3 / 1000) * mat.rho).toFixed(4)),
+        tris: Array.from(s.tris).map((v) => Number(v.toFixed(4))),
+      };
+    }),
+  };
+  return JSON.stringify(payload, null, 2);
 }

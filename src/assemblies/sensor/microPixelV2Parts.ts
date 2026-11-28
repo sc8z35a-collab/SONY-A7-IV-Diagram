@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/microPixelV2Parts.ts|unit=sensor|lines=1929|exports=buildMicroPixelV2Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

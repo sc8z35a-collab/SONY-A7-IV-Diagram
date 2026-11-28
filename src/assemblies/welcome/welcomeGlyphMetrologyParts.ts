@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeGlyphMetrologyParts.ts|unit=welcome|lines=902|exports=WELCOME_GLYPH_METROLOGY_DEFS,buildWelcomeGlyphMetrologyParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

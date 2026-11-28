@@ -262,7 +262,7 @@ export function compilePartDsl(dslText) {
 export function validateV2Part(part, contextLabel = 'part') {
   const errors = [];
   if (!part || typeof part !== 'object') return [`${contextLabel}: must be an object`];
-  if (!part.id || typeof part.id !== 'string' || !/^[a-z0-9][a-z0-9_-]*$/.test(part.id)) {
+  if (!part.id || typeof part.id !== 'string' || !/^[a-z0-9][a-zA-Z0-9_-]*$/.test(part.id)) {
     errors.push(`${contextLabel}: invalid/missing kebab id '${part.id}'`);
   }
 

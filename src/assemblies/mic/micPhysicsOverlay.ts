@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mic/micPhysicsOverlay.ts|unit=mic|lines=307|exports=MicPhysicsOverlayController,createMicPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { createRadialTrajectoryGuides, updateLine2PtsInPlace } from '../../engine/CadHelpers';

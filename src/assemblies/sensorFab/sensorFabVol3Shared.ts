@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensorFab/sensorFabVol3Shared.ts|unit=sensorFab|lines=286|exports=createVol3BoxGeo,finalizeVol3Part,makeVol3Plinth,makeEdaConsole,makeSixInchReticlePlate,makePrecisionGantry
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

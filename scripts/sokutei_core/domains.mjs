@@ -973,7 +973,7 @@ async function runWlk220Domain(ctx) {
         bundle: true, platform: 'node', format: 'cjs', write: false, external: ['three'],
       });
       const mod = { exports: {} };
-      new Function('exports', 'require', 'module', res.outputFiles[0].text)(
+      new Function('exports', 'require', 'module', res.outputFiles[0].text)( // flow-sec-allow:SEC-07 (audited local esbuild CJS loader)
         mod.exports, (id) => (id === 'three' ? THREE : require(id)), mod
       );
       const dummyMat = new THREE.MeshBasicMaterial();

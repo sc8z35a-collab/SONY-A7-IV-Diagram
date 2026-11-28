@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfMicroParts.ts|unit=evf|lines=3447|exports=buildEvfMicroParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

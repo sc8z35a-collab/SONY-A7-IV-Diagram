@@ -647,7 +647,7 @@ if (tscRes.skipped) {
 }
 
 // -----------------------------------------------------------------------------
-// 5. 3-Tier Part Catalog Freshness Check (L0 / L1 / L2 + WORKER_RULE.md)
+// 5. 3-Tier Part Catalog Freshness Check (L0 / L1 / L2 + FLOW 2-Book Manuals)
 // -----------------------------------------------------------------------------
 if (SKIP_CATALOG) {
   pass('5-1 Catalog Freshness', 'Skipped via --skip-catalog flag');
@@ -656,20 +656,22 @@ if (SKIP_CATALOG) {
     const catErrors = [];
     const indexPath = path.join(ROOT, 'catalog/INDEX.tsv');
     const allNamesPath = path.join(ROOT, 'catalog/ALL_NAMES.txt');
-    const workerRulePath = path.join(ROOT, 'catalog/WORKER_RULE.md');
+    const book1Path = path.join(ROOT, 'AGENTS.md');
+    const book2Path = path.join(ROOT, 'README.md');
 
     for (const [label, p] of [
       ['catalog/INDEX.tsv', indexPath],
       ['catalog/ALL_NAMES.txt', allNamesPath],
-      ['catalog/WORKER_RULE.md', workerRulePath],
+      ['AGENTS.md', book1Path],
+      ['README.md', book2Path],
     ]) {
       if (!fs.existsSync(p)) catErrors.push(`Missing required file ${label}`);
     }
 
-    if (fs.existsSync(workerRulePath)) {
-      const ruleBytes = fs.statSync(workerRulePath).size;
-      if (ruleBytes > 1536) {
-        catErrors.push(`catalog/WORKER_RULE.md exceeds 1.5 kB budget (${ruleBytes} bytes > 1536)`);
+    if (fs.existsSync(book1Path)) {
+      const b1Bytes = fs.statSync(book1Path).size;
+      if (b1Bytes > 24576) {
+        catErrors.push(`AGENTS.md (FLOW Book 1) exceeds 24 kB budget (${b1Bytes} bytes)`);
       }
     }
 
@@ -769,10 +771,10 @@ if (SKIP_CATALOG) {
       }
 
       if (catErrors.length === 0) {
-        const ruleBytes = fs.statSync(workerRulePath).size;
+        const b1Bytes = fs.statSync(book1Path).size;
         pass(
           '5-1 Catalog Freshness',
-          `All ${checkedModes} modes L0/L1/L2 100% synchronized with src/data/*.json, WORKER_RULE.md=${ruleBytes}B (<=1.5 kB)`
+          `All ${checkedModes} modes L0/L1/L2 100% synchronized with src/data/*.json, FLOW Book1(AGENTS.md)=${b1Bytes}B`
         );
       } else {
         fail(

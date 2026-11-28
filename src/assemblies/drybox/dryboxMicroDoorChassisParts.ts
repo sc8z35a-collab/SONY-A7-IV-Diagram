@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxMicroDoorChassisParts.ts|unit=drybox|lines=818|exports=buildDryboxMicroDoorChassisParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import {

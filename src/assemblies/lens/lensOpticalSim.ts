@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensOpticalSim.ts|unit=lens|lines=1412|exports=OpticalScenarioId,OpticalGlassKind,OpticalElementSpec,OpticalPoint,TracedRay,FloatingStrokes
 /**
  * Real-Time 14-Element / 10-Group Physical Snell's-Law Optical Ray-Tracing &
  * Floating-Focus Kinematic Simulation Engine for the 50mm F1.2 Flagship Prime Lens.

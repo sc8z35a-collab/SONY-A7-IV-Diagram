@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/original/originalShared.ts|unit=original|lines=512|exports=E1_CHASSIS_W,E1_CHASSIS_D,E1_CHASSIS_Y0,E1_CHASSIS_Y1,E1_FEMUR_LEN,E1_TIBIA_LEN
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

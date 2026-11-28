@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/sensorMicroUltraAuditParts.ts|unit=sensor|lines=774|exports=buildSensorUltraAuditParts,buildMicroUltraAuditParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

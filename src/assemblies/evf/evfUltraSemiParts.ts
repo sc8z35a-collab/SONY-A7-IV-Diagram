@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfUltraSemiParts.ts|unit=evf|lines=1915|exports=finalizeStandaloneEvfUltraPart,createUltraRingGeo,buildEvfUltraSemiParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

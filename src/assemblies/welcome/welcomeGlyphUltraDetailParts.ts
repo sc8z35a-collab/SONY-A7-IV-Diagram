@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeGlyphUltraDetailParts.ts|unit=welcome|lines=729|exports=WELCOME_GLYPH_ULTRA_DETAIL_DEFS,buildWelcomeGlyphUltraDetailParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

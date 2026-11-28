@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxPartsShared.ts|unit=drybox|lines=147|exports=DB_DIM,DryboxPalette,finalizeDryboxPart,makeHorizBoxPlate,makeCabinetBolt,DryboxPartBuilderCtx
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/macroParts.ts|unit=sensor|lines=3893|exports=buildMacroSensorParts,buildSensorStandaloneParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
