@@ -243,15 +243,21 @@ export function runSandboxSelftest() {
   check('SBX02', nnp.status === 0 && /NoNewPrivs:\s+1/.test(nnp.stdout || ''), `NoNewPrivs=1 enforced (${(nnp.stdout || '').trim()})`);
 
   // S3: Network namespace completely isolated (cannot reach external IP)
-  const netTest = execSandboxedSync(
-    'node',
-    ['-e', 'const net=require("net");const s=net.connect({host:"1.1.1.1",port:443,timeout:800});s.on("connect",()=>{console.log("LEAK");process.exit(0)});s.on("error",(e)=>{console.log("BLOCKED:"+e.code);process.exit(0)});'],
-    { timeoutMs: 5000 }
-  );
+  let netBlocked = false;
+  let netDetail = 'UNSHARE_NET_UNAVAILABLE';
+  if (caps.hasUnshareNet) {
+    const netTest = execSandboxedSync(
+      'node',
+      ['-e', 'const net=require("net");const s=net.connect({host:"1.1.1.1",port:443,timeout:800});s.on("connect",()=>{console.log("LEAK");process.exit(0)});s.on("error",(e)=>{console.log("BLOCKED:"+e.code);process.exit(0)});'],
+      { timeoutMs: 5000 }
+    );
+    netDetail = (netTest.stdout || '').trim() || `exit=${netTest.status}`;
+    netBlocked = netDetail.includes('BLOCKED:');
+  }
   check(
     'SBX03',
-    caps.hasUnshareNet && (netTest.stdout || '').includes('BLOCKED:'),
-    `Network egress physically blocked in netns (${(netTest.stdout || '').trim()})`
+    caps.hasUnshareNet && netBlocked,
+    `Network egress physically blocked in netns (${netDetail})`
   );
 
   const passed = checks.filter((c) => c.ok).length;
