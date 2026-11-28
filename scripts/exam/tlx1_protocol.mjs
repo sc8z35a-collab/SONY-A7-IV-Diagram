@@ -96,7 +96,8 @@ export function emitTlx1Report({
   fullRun,
   solversReady,
   solversTotal,
-  maxFails = 120,
+  maxFails = 40,
+  verbose = false,
   certOutPath = null,
 }) {
   fs.mkdirSync(runDir, { recursive: true });
@@ -176,9 +177,30 @@ export function emitTlx1Report({
     skipCount,
   });
 
+  // Compute diff vs last saved unit fail-set (enables zero-waste delta reporting!)
+  const prevStateFile = path.join(path.dirname(runDir), `last_state_${ir.unitId}.json`);
+  const curFailIds = normalized.filter((t) => t.status !== 'PASS').map((t) => t.id);
+  let diffLine = null;
+  try {
+    if (fs.existsSync(prevStateFile)) {
+      const prev = JSON.parse(fs.readFileSync(prevStateFile, 'utf8'));
+      const prevSet = new Set(prev.failIds || []);
+      const curSet = new Set(curFailIds);
+      const fixed = [...prevSet].filter((id) => !curSet.has(id));
+      const regressed = [...curSet].filter((id) => !prevSet.has(id));
+      diffLine = `DIFF|prev=${prev.runId || '-'}|fixed=${fixed.length}|regressed=${regressed.length}${regressed.length > 0 ? `|new=${regressed.slice(0, 8).join(',')}` : ''}`;
+    }
+    if (ir.sourceKind !== 'selftest') {
+      fs.writeFileSync(prevStateFile, JSON.stringify({ runId, verdict, failIds: curFailIds, at: new Date().toISOString() }));
+    }
+  } catch {
+    // ignore cache diff error
+  }
+
   // Automatic「V1.1証明」Seal Engraving on 100.0000% PASS, or Instant Revocation if previously engraved and now failing/drifted!
   let certStatus = 'UNVERIFIED';
   let certId = 'NONE';
+  let attestation = 'LOCAL_UNATTESTED';
   if (verdict === 'PASS' && fullRun && receipt !== 'NONE') {
     const engRes = engraveV11Certificate({
       ir,
@@ -202,6 +224,7 @@ export function emitTlx1Report({
     if (engRes.issued) {
       certStatus = 'CERTIFIED';
       certId = engRes.certId;
+      attestation = engRes.attestation || 'LOCAL_UNATTESTED';
     }
   } else if (ir.sourceKind !== 'selftest') {
     const existingCertPath = path.join(CERT_DIR, `${ir.unitId}.v1_1.cert.json`);
@@ -220,34 +243,43 @@ export function emitTlx1Report({
     }
   }
 
+  const verificationMode = ir.verificationMode || (ir.sourceKind === 'real_project' ? 'REAL_ARTIFACT' : 'CAD_PROXY');
   const lines = [];
-  // 1. Header line (TLX11 v=1.1 — backward compatible with TLX1 parsers via rcpt= & verdict=)
+  // 1. Header line (compact AI-native wire protocol — FAIL/WARN/DIFF-only by default -> -95% tokens on PASS!)
   lines.push(
-    `TLX1|u=${cleanField(ir.unitId)}|v=1.1|verdict=${verdict}|pass=${passCount}|fail=${failCount}|warn=${warnCount}|err=${errCount}|skip=${skipCount}|total=${totalExpected}|exp=${expandedCount}|zdp=${zdp.toFixed(4)}|dur_s=${durationSec.toFixed(2)}|ir=${ir.irSha}|sv=${solversReady}/${solversTotal}|rcpt=${receipt}|v11_cert=${certId}`
+    `TLX1|u=${cleanField(ir.unitId)}|v=1.1|mode=${verificationMode}|verdict=${verdict}|pass=${passCount}|fail=${failCount}|warn=${warnCount}|err=${errCount}|skip=${skipCount}|total=${totalExpected}|exp=${expandedCount}|zdp=${zdp.toFixed(4)}|dur_s=${durationSec.toFixed(2)}|ir=${ir.irSha}|sv=${solversReady}/${solversTotal}|rcpt=${receipt}|v11_cert=${certId}`
   );
-  lines.push(`V11_SEAL|unit=${cleanField(ir.unitId)}|status=${certStatus}|cert=${certId}`);
+  lines.push(`V11_SEAL|unit=${cleanField(ir.unitId)}|status=${certStatus}|attest=${attestation}|mode=${verificationMode}|cert=${certId}`);
+  if (diffLine) lines.push(diffLine);
 
-  // 2. Pillar rollup lines (10 lines max)
+  // 2. Pillar rollup lines (ONLY non-PASS pillars by default, or all 12 on --verbose)
   for (const pil of PILLARS) {
     const pTests = normalized.filter((t) => t.pillar === pil.id);
     if (pTests.length === 0) continue;
     const pPass = pTests.filter((t) => t.status === 'PASS').length;
     const pFail = pTests.filter((t) => t.status === 'FAIL' || t.status === 'ERR').length;
+    if (!verbose && pPass === pTests.length) continue;
     const pMs = ENGINES.filter((e) => e.pillar === pil.id).reduce((s, e) => s + (engineResults[e.id]?.ms || 0), 0);
     lines.push(`P|${pil.id}|${pil.code}|${pPass}/${pTests.length}|fail=${pFail}|ms=${Math.round(pMs)}`);
   }
 
-  // 3. Engine summary lines (1 line per engine — compresses 530 PASS tests into 36 compact lines!)
-  for (const eng of ENGINES) {
-    const er = engineResults[eng.id];
-    if (!er) continue;
-    const eTests = normalized.filter((t) => t.engine === eng.id);
-    const ePass = eTests.filter((t) => t.status === 'PASS').length;
-    const kv = Object.entries(er.metrics || {})
-      .slice(0, 8)
-      .map(([k, v]) => `${k}=${cleanField(v)}`)
-      .join(',');
-    lines.push(`E|${eng.id}|${ePass}/${eTests.length}|sv=${(er.solvers || eng.solvers).join('+')}|ms=${Math.round(er.ms || 0)}|${kv}`);
+  // 3. Engine summary lines (ONLY non-PASS engines by default, or all 48 on --verbose -> saves ~1,350 tok on PASS!)
+  const engPassTotal = Object.keys(engineResults).length;
+  if (!verbose && enginesPassed === engPassTotal) {
+    lines.push(`E_SUM|pass=${enginesPassed}/${engPassTotal}|all_ok=1`);
+  } else {
+    for (const eng of ENGINES) {
+      const er = engineResults[eng.id];
+      if (!er) continue;
+      const eTests = normalized.filter((t) => t.engine === eng.id);
+      const ePass = eTests.filter((t) => t.status === 'PASS').length;
+      if (!verbose && ePass === eTests.length) continue;
+      const kv = Object.entries(er.metrics || {})
+        .slice(0, 6)
+        .map(([k, v]) => `${k}=${cleanField(v)}`)
+        .join(',');
+      lines.push(`E|${eng.id}|${ePass}/${eTests.length}|sv=${(er.solvers || eng.solvers).join('+')}|ms=${Math.round(er.ms || 0)}|${kv}`);
+    }
   }
 
   // 4. FAIL / ERR / WARN detail lines (sorted by severity CRIT > HIGH > MED)
@@ -267,15 +299,15 @@ export function emitTlx1Report({
     );
   }
   if (bad.length > shown.length) {
-    lines.push(`F_TRUNC|shown=${shown.length}|total_bad=${bad.length}|query=node scripts/exam.mjs query ${runId} --status=FAIL`);
+    lines.push(`F_TRUNC|shown=${shown.length}|total_bad=${bad.length}|query=flow exec exam query ${runId} --status=FAIL`);
   }
 
-  // 5. Cross-solver physical invariant locks (X01..X16)
+  // 5. Cross-solver physical invariant locks (X01..X28)
   const lockOkCount = crossLocks.filter((x) => x.ok).length;
   lines.push(`X_SUM|ok=${lockOkCount}/${crossLocks.length}`);
   for (const lk of crossLocks) {
-    if (!lk.ok || locksFailed.length > 0) {
-      lines.push(`X|${lk.id}|a=${cleanField(lk.aVal)}|b=${cleanField(lk.bVal)}|rel=${Number(lk.relErrPct || 0).toFixed(3)}%|lim=${lk.maxRelErrPct}%|ok=${lk.ok ? 1 : 0}`);
+    if (!lk.ok) {
+      lines.push(`X|${lk.id}|a=${cleanField(lk.aVal)}|b=${cleanField(lk.bVal)}|rel=${Number(lk.relErrPct || 0).toFixed(3)}%|lim=${lk.maxRelErrPct}%|ok=0`);
     }
   }
 

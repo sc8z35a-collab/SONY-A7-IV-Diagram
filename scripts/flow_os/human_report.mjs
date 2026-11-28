@@ -274,7 +274,7 @@ export async function generateHumanReport(ctx, adapter, opts = {}) {
     ? await adapter.collectHumanReportMetrics()
     : null;
 
-  const docAudit = auditTwoBooks(ctx);
+  const docAudit = await auditTwoBooks(ctx);
   const receipts = readReceiptStore(ctx.stateDir);
   const telemetry = readTokenTelemetry(ctx.stateDir);
 

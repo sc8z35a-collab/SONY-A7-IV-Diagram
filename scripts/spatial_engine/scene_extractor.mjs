@@ -447,10 +447,19 @@ export async function loadSpatialScene(unitId, opts = {}) {
     write: false,
   });
 
-  const mod = { exports: {} };
-  const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text); // flow-sec-allow:SEC-07 trusted local esbuild unit loader
-  fn(require, mod, mod.exports);
-  const { createUnit, setActiveBuildQuality, ResourceCache } = mod.exports;
+  const cacheDir = path.join(ROOT, 'node_modules/.cache/sp_loader');
+  fs.mkdirSync(cacheDir, { recursive: true });
+  const tmpCjs = path.join(cacheDir, `unit_${unitId}_${process.pid}_${Date.now()}.cjs`);
+  let loadedExports;
+  try {
+    fs.writeFileSync(tmpCjs, bundled.outputFiles[0].text, 'utf8');
+    delete require.cache[tmpCjs];
+    loadedExports = require(tmpCjs);
+  } finally {
+    delete require.cache[tmpCjs];
+    try { fs.unlinkSync(tmpCjs); } catch { /* ignore */ }
+  }
+  const { createUnit, setActiveBuildQuality, ResourceCache } = loadedExports;
 
   // Read JSON metadata for groupKey & code mapping
   const jsonMeta = fs.existsSync(unitInfo.jsonPath)

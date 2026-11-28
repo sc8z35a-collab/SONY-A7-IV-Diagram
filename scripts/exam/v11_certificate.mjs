@@ -17,6 +17,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { computeFullExamKernelClosure } from './kernel_closure.mjs';
+import { signWithExternalEd25519 } from '../flow_os/crypto_attestation.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(__dirname, '../..');
@@ -93,27 +95,12 @@ export function computeAllTiers3dSha256(ir) {
 }
 
 /**
- * Compute SHA-256 of the entire EXAM V1.1 verification kernel so any threshold relaxation
- * automatically invalidates previously issued certificates!
+ * Compute full transitive SHA-256 of the ENTIRE EXAM V1.1 verification kernel
+ * (all scripts/exam/** engines/python/C++17 src & binaries + spatial_engine + shared CAD core primitives)
+ * so ANY hidden dependency or threshold change automatically invalidates previously issued certificates!
  */
 export function computeExamKernelSha256(repoRoot = REPO_ROOT) {
-  const files = [
-    'scripts/exam.mjs',
-    'scripts/exam/test_registry.mjs',
-    'scripts/exam/tlx1_protocol.mjs',
-    'scripts/exam/v11_certificate.mjs',
-    'scripts/exam/engines/cross_solver_lock.mjs',
-    'scripts/exam/engines/solver_exec.mjs',
-  ];
-  const h = crypto.createHash('sha256');
-  for (const rel of files) {
-    const abs = path.join(repoRoot, rel);
-    if (fs.existsSync(abs)) {
-      h.update(rel + '\n');
-      h.update(fs.readFileSync(abs));
-    }
-  }
-  return h.digest('hex');
+  return computeFullExamKernelClosure(repoRoot).sha256;
 }
 
 /**
@@ -195,11 +182,14 @@ export function engraveV11Certificate({
   const solverManifestSha256 = fs.existsSync(manifestPath)
     ? crypto.createHash('sha256').update(fs.readFileSync(manifestPath)).digest('hex')
     : 'MISSING';
+  const verificationMode = ir.verificationMode || (ir.sourceKind === 'real_project' ? 'REAL_ARTIFACT' : 'CAD_PROXY');
 
   const payload = {
-    schema: 'v1.1-cert/1.0',
-    sealTitleJa: 'THE LAST EXAM V1.1 製造・実機起動保証証明',
+    schema: 'v1.1-cert/1.1',
+    sealTitleJa: 'THE LAST EXAM V1.1 設計事前検証保証証明 (Verification)',
     sealBadge: 'V1.1証明',
+    verificationMode,
+    boundaryNoteJa: 'ソフトウェア48産業ソルバー事前検証(Verification)の100%合格保証。実機量産出荷には別途実機計測・法規認証(Validation)が必要。',
     unitId: ir.unitId,
     sourceKind: ir.sourceKind || 'unit',
     partCount: ir.parts.length,
@@ -221,7 +211,8 @@ export function engraveV11Certificate({
   };
   const signature = signV11CertificatePayload(payload);
   const certId = formatV11CertId(payload, signature);
-  const cert = { ...payload, signature, certId, status: 'CERTIFIED' };
+  const attest = signWithExternalEd25519('V11_CERT', { ...payload, signature, certId });
+  const cert = { ...payload, signature, certId, ...attest, status: 'CERTIFIED' };
 
   if (writeToDisk) {
     const outPath = certOutPath || path.join(CERT_DIR, `${ir.unitId}.v1_1.cert.json`);
@@ -232,7 +223,7 @@ export function engraveV11Certificate({
     }
   }
 
-  return { issued: true, status: 'CERTIFIED', certId, cert };
+  return { issued: true, status: 'CERTIFIED', certId, attestation: attest.attestation, cert };
 }
 
 /**
@@ -240,7 +231,7 @@ export function engraveV11Certificate({
  * ANY 0.0001mm geometry change or kernel tamper IMMEDIATELY returns `REVOKED_*`!
  */
 export function verifyV11CertificateAgainstScene(cert, liveSceneOrIr, opts = {}) {
-  if (!cert || cert.schema !== 'v1.1-cert/1.0') {
+  if (!cert || (cert.schema !== 'v1.1-cert/1.0' && cert.schema !== 'v1.1-cert/1.1')) {
     return { valid: false, status: 'UNVERIFIED', reason: 'NO_CERTIFICATE' };
   }
   const expectedSig = signV11CertificatePayload(cert);

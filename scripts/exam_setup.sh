@@ -9,9 +9,42 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 NATIVE_SRC="${ROOT_DIR}/scripts/exam/native/src"
 NATIVE_BIN="${ROOT_DIR}/scripts/exam/native/bin"
 MANIFEST_PATH="/tmp/tlx_env_manifest.json"
+CACHE_DIR="${TLX_CACHE_DIR:-/opt/tlx_env}"
+if [[ ! -d "${CACHE_DIR}" && ! -w "$(dirname "${CACHE_DIR}")" ]]; then
+  CACHE_DIR="${HOME}/.cache/tlx_env"
+fi
 SKIP_APT="${TLX_SKIP_APT:-0}"
+FORCE_REBUILD=0
+EXPORT_PREBUILD=""
+IMPORT_PREBUILD=""
 
-mkdir -p "${NATIVE_BIN}"
+for arg in "$@"; do
+  case "$arg" in
+    --force-rebuild) FORCE_REBUILD=1 ;;
+    --skip-apt) SKIP_APT=1 ;;
+    --export-prebuild=*) EXPORT_PREBUILD="${arg#*=}" ;;
+    --import-prebuild=*) IMPORT_PREBUILD="${arg#*=}" ;;
+  esac
+done
+
+mkdir -p "${NATIVE_BIN}" "${CACHE_DIR}/bin"
+
+if [[ -n "${IMPORT_PREBUILD}" && -f "${IMPORT_PREBUILD}" ]]; then
+  echo "[TLX-SETUP] Restoring prebuilt C++17 harnesses from ${IMPORT_PREBUILD}..."
+  tar -xzf "${IMPORT_PREBUILD}" -C "${NATIVE_BIN}"
+  cp -f "${NATIVE_BIN}"/* "${CACHE_DIR}/bin/" 2>/dev/null || true
+fi
+
+if [[ "${SKIP_APT}" != "1" && "${FORCE_REBUILD}" != "1" ]]; then
+  if command -v ccx >/dev/null && command -v getdp >/dev/null && command -v cvc5 >/dev/null && \
+     command -v boolector >/dev/null && command -v octave-cli >/dev/null && command -v maxima >/dev/null && \
+     command -v kicad-cli >/dev/null && command -v FreeFem++ >/dev/null && command -v verilator >/dev/null && \
+     command -v ghdl >/dev/null && command -v nextpnr-ice40 >/dev/null && command -v admesh >/dev/null && \
+     [[ -f /usr/include/dart/config.hpp && -f /usr/include/nlopt.h ]]; then
+    echo "[TLX-SETUP] 48 system packages already present (skipping apt-get; pass --force-rebuild to force)."
+    SKIP_APT="1"
+  fi
+fi
 
 if [[ "${SKIP_APT}" != "1" ]]; then
   echo "[TLX-SETUP] Updating apt package index..."
@@ -107,14 +140,33 @@ compile_harness() {
   local name="$1"
   local src="${NATIVE_SRC}/${name}.cpp"
   local out="${NATIVE_BIN}/${name}"
+  local hash_file="${NATIVE_BIN}/.${name}.src.sha256"
+  local cache_bin="${CACHE_DIR}/bin/${name}"
+  local cache_hash="${CACHE_DIR}/bin/.${name}.src.sha256"
   shift
   if [[ ! -f "${src}" ]]; then
     echo "[TLX-SETUP] WARN: ${src} not yet created; skipping build."
     return 0
   fi
-  echo "[TLX-SETUP] Compiling C++17 native harness: ${name}..."
-  g++ -O3 -DNDEBUG "${src}" -o "${out}" "$@" -std=c++17
+  local cur_hash
+  cur_hash="$(sha256sum "${src}" | awk '{print $1}')"
+  if [[ "${FORCE_REBUILD}" != "1" && -x "${out}" && -f "${hash_file}" && "$(cat "${hash_file}")" == "${cur_hash}" ]]; then
+    echo "[TLX-SETUP] CACHE_HIT C++17 harness: ${name} (${cur_hash:0:10})"
+    return 0
+  fi
+  if [[ "${FORCE_REBUILD}" != "1" && -x "${cache_bin}" && -f "${cache_hash}" && "$(cat "${cache_hash}")" == "${cur_hash}" ]]; then
+    echo "[TLX-SETUP] RESTORE_CACHE C++17 harness: ${name} (${cur_hash:0:10})"
+    cp -f "${cache_bin}" "${out}"
+    chmod +x "${out}"
+    echo "${cur_hash}" > "${hash_file}"
+    return 0
+  fi
+  echo "[TLX-SETUP] Compiling hardened C++17 native harness: ${name}..."
+  g++ -O3 -DNDEBUG -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now "${src}" -o "${out}" "$@" -std=c++17
   chmod +x "${out}"
+  echo "${cur_hash}" > "${hash_file}"
+  cp -f "${out}" "${cache_bin}" 2>/dev/null || true
+  echo "${cur_hash}" > "${cache_hash}" 2>/dev/null || true
 }
 
 if [[ -d "${NATIVE_SRC}" ]]; then
@@ -153,6 +205,29 @@ if [[ -d "${NATIVE_SRC}" ]]; then
   GTS_LIBS="$(pkg-config --libs gts glib-2.0 fftw3 nlopt 2>/dev/null || echo '-lgts -lglib-2.0 -lfftw3 -lnlopt -lm')"
   # shellcheck disable=SC2086
   compile_harness spectral_gts_nlopt ${GTS_CFLAGS} ${GTS_LIBS} -lm -lpthread
+
+  if [[ -n "${EXPORT_PREBUILD}" ]]; then
+    tar -czf "${EXPORT_PREBUILD}" -C "${NATIVE_BIN}" .
+    echo "[TLX-SETUP] Exported 6 prebuilt C++17 harnesses -> ${EXPORT_PREBUILD}"
+  fi
+
+  # Sync all 6 compiled binary SHA-256 digests to FLOW Security SEC-06 manifest
+  if [[ -d "${ROOT_DIR}/.git" ]]; then
+    mkdir -p "${ROOT_DIR}/.git/flow_os"
+    /usr/bin/python3 - "${NATIVE_BIN}" "${ROOT_DIR}/.git/flow_os/native_bins_sha256.json" <<'PYSHA'
+import hashlib, json, os, sys
+bdir, outp = sys.argv[1], sys.argv[2]
+data = {}
+for fn in sorted(os.listdir(bdir)):
+    if fn.startswith('.'): continue
+    fp = os.path.join(bdir, fn)
+    if os.path.isfile(fp):
+        data[fn] = hashlib.sha256(open(fp, 'rb').read()).hexdigest()
+with open(outp, 'w', encoding='utf-8') as f:
+    json.dump(data, f, indent=2)
+    f.write('\n')
+PYSHA
+  fi
 fi
 
 # Verify and emit deterministic JSON manifest of all 48 real external solver toolchains

@@ -109,9 +109,11 @@ export function registerMacro(ctx, spec, meta = {}) {
   atomicWriteSync(macroAbs, content);
 
   const reg = readMacroRegistry(ctx.repoRoot);
+  const origin = normalized.name.startsWith('ai-') ? 'ai-custom' : 'core-protected';
   reg.macros[normalized.name] = {
     name: normalized.name,
     file: macroRel,
+    origin,
     description: normalized.description,
     version: normalized.version,
     steps: normalized.steps.length,
@@ -132,6 +134,7 @@ export function registerMacro(ctx, spec, meta = {}) {
         cmd: 'macro:register',
         status: 'REGISTERED',
         name: normalized.name,
+        origin,
         steps: normalized.steps.length,
         waves: val.waves.length,
         sha: sha256.slice(0, 12),
@@ -175,14 +178,15 @@ export function verifyAllRegisteredMacros(repoRoot) {
       findings.push({ layer: 'SEC-13', rule: 'MACRO_FILE_MISSING', file: rel, line: 1, msg: `Registered macro missing on disk` });
       continue;
     }
-    const raw = fs.readFileSync(abs, 'utf8');
-    const actualSha = crypto.createHash('sha256').update(raw).digest('hex');
+    // Single-buffer read prevents TOCTOU drift between hash verify and JSON parse
+    const rawBuf = fs.readFileSync(abs);
+    const actualSha = crypto.createHash('sha256').update(rawBuf).digest('hex');
     if (actualSha !== entry.sha256) {
       findings.push({ layer: 'SEC-13', rule: 'MACRO_SHA_TAMPERED', file: rel, line: 1, msg: `SHA mismatch (${actualSha.slice(0, 10)} != ${String(entry.sha256).slice(0, 10)})` });
       continue;
     }
     try {
-      const parsed = JSON.parse(raw);
+      const parsed = JSON.parse(rawBuf.toString('utf8'));
       const val = validateMacroSpec(parsed, repoRoot);
       if (!val.ok) {
         for (const v of val.violations) {
@@ -207,7 +211,7 @@ export function verifyAllRegisteredMacros(repoRoot) {
 }
 
 /**
- * Execute a registered macro by name after verifying SHA-256 + SEC-13 rules.
+ * Execute a registered macro by name using TOCTOU-free single-read buffer verification!
  */
 export async function runRegisteredMacro(ctx, agent, name, opts = {}) {
   const reg = readMacroRegistry(ctx.repoRoot);
@@ -227,8 +231,8 @@ export async function runRegisteredMacro(ctx, agent, name, opts = {}) {
       lines: [formatFlowHeader({ cmd: 'macro:run', status: 'SEC_BLOCK', rule: 'MACRO_FILE_MISSING', name })],
     };
   }
-  const raw = fs.readFileSync(abs, 'utf8');
-  const actualSha = crypto.createHash('sha256').update(raw).digest('hex');
+  const rawBuf = fs.readFileSync(abs);
+  const actualSha = crypto.createHash('sha256').update(rawBuf).digest('hex');
   if (actualSha !== entry.sha256) {
     return {
       ok: false,
@@ -239,15 +243,42 @@ export async function runRegisteredMacro(ctx, agent, name, opts = {}) {
       ],
     };
   }
-  const spec = JSON.parse(raw);
+  const spec = JSON.parse(rawBuf.toString('utf8'));
   return executeMacroDag(spec, ctx, agent, opts);
 }
 
+/**
+ * Deletion Privilege Control: ONLY AI-created custom macros (`ai-*` / `origin === 'ai-custom'`)
+ * may be removed! Existing core/built-in macros are unconditionally protected (`EXIT 6`).
+ */
 export function removeRegisteredMacro(ctx, name) {
+  const builtinNames = new Set(listBuiltinPipelines().map((b) => b.key));
+  if (builtinNames.has(name) || String(name).startsWith('auto-')) {
+    return {
+      ok: false,
+      exitCode: EXIT_SECURITY_BLOCKED,
+      lines: [formatFlowHeader({ cmd: 'macro:remove', status: 'SEC_BLOCK', rule: 'CORE_MACRO_DELETE_FORBIDDEN', name })],
+    };
+  }
   const reg = readMacroRegistry(ctx.repoRoot);
   const entry = reg.macros?.[name];
   if (!entry) {
     return { ok: false, exitCode: EXIT_ERROR, lines: [formatFlowHeader({ cmd: 'macro:remove', status: 'NOT_FOUND', name })] };
+  }
+  if (!String(name).startsWith('ai-') && entry.origin !== 'ai-custom') {
+    return {
+      ok: false,
+      exitCode: EXIT_SECURITY_BLOCKED,
+      lines: [
+        formatFlowHeader({
+          cmd: 'macro:remove',
+          status: 'SEC_BLOCK',
+          rule: 'PROTECTED_MACRO_DELETE_FORBIDDEN',
+          name,
+          hint: 'Only AI-created macros prefixed `ai-` may be deleted',
+        }),
+      ],
+    };
   }
   const abs = path.join(ctx.repoRoot, entry.file);
   if (fs.existsSync(abs)) fs.unlinkSync(abs);

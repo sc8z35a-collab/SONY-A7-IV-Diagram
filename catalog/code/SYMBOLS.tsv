@@ -1189,7 +1189,7 @@ src/ui/OriginalBlueprintStudio.ts	OriginalBlueprintStudio.dispose	method	145	154
 src/ui/OriginalBlueprintStudio.ts	OriginalBlueprintStudio.ensureDom	method	156	222	private ensureDom(): void
 src/ui/OriginalBlueprintStudio.ts	OriginalBlueprintStudio.renderTab	method	224	360	private renderTab(): void
 src/ui/ZeroTextControls.ts	ZeroTextUIHandlers	interface	22	46	export interface ZeroTextUIHandlers
-src/ui/ZeroTextControls.ts	ZeroTextControls	class	232	1101	export class ZeroTextControls
+src/ui/ZeroTextControls.ts	ZeroTextControls	class	232	1102	export class ZeroTextControls
 src/ui/ZeroTextControls.ts	ZeroTextControls.isPaletteOpen	method	805	807	public isPaletteOpen(): boolean
 src/ui/ZeroTextControls.ts	ZeroTextControls.closePalette	method	809	813	public closePalette(): void
 src/ui/ZeroTextControls.ts	ZeroTextControls.positionPalette	method	815	827	private positionPalette(): void
@@ -1205,15 +1205,15 @@ src/ui/ZeroTextControls.ts	ZeroTextControls.syncKineMode	method	910	914	public s
 src/ui/ZeroTextControls.ts	ZeroTextControls.setExplodeValue	method	916	920	public setExplodeValue(v: number): void
 src/ui/ZeroTextControls.ts	ZeroTextControls.syncMode	method	922	958	public syncMode(mode: ScaleMode): void
 src/ui/ZeroTextControls.ts	ZeroTextControls.syncV11Seal	method	960	974	public syncV11Seal(seal: V11SealVerification): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.openV11WarrantyModal	method	976	1025	private openV11WarrantyModal(): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncSectionAxis	method	1027	1033	public syncSectionAxis(axis: SectionAxis, value = 0.5): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncPhysics	method	1035	1039	public syncPhysics(active: boolean): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncOpticsStudio	method	1041	1043	public syncOpticsStudio(_active: boolean): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncPlaygroundActive	method	1045	1047	public syncPlaygroundActive(active: boolean): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncFullscreen	method	1049	1051	public syncFullscreen(_active: boolean): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.renderLayerRail	method	1058	1073	public renderLayerRail( parts: CadPart[], _selectedId: string | null, _hoveredId: string | null, _isHidden: (…
-src/ui/ZeroTextControls.ts	ZeroTextControls.syncHighlight	method	1075	1077	public syncHighlight(_selectedId: string | null, _hoveredId: string | null): void
-src/ui/ZeroTextControls.ts	ZeroTextControls.dispose	method	1079	1100	public dispose(): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.openV11WarrantyModal	method	976	1026	private openV11WarrantyModal(): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncSectionAxis	method	1028	1034	public syncSectionAxis(axis: SectionAxis, value = 0.5): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncPhysics	method	1036	1040	public syncPhysics(active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncOpticsStudio	method	1042	1044	public syncOpticsStudio(_active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncPlaygroundActive	method	1046	1048	public syncPlaygroundActive(active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncFullscreen	method	1050	1052	public syncFullscreen(_active: boolean): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.renderLayerRail	method	1059	1074	public renderLayerRail( parts: CadPart[], _selectedId: string | null, _hoveredId: string | null, _isHidden: (…
+src/ui/ZeroTextControls.ts	ZeroTextControls.syncHighlight	method	1076	1078	public syncHighlight(_selectedId: string | null, _hoveredId: string | null): void
+src/ui/ZeroTextControls.ts	ZeroTextControls.dispose	method	1080	1101	public dispose(): void
 src/ui/bionzSchematicsExtra.ts	renderBionzExtraSvg	func	8	1223	export function renderBionzExtraSvg( type: PartExplanation['diagramType'] ): string | null
 src/ui/bionzSchematicsLower.ts	renderBionzLowerSvg	func	13	1120	export function renderBionzLowerSvg(type: PartExplanation['diagramType']): string | null
 src/ui/bionzSchematicsMid.ts	renderBionzMidSvg	func	12	1190	export function renderBionzMidSvg(type: PartExplanation['diagramType']): string | null
@@ -1456,6 +1456,6 @@ src/units/sensor.ts	createSensorUnit	func	82	133	export function createSensorUni
 src/units/sensor_fab.ts	createSensorFabUnit	func	86	173	export function createSensorFabUnit(): OptimizedUnit
 src/units/shutter.ts	createShutterUnit	func	17	63	export function createShutterUnit(): OptimizedUnit
 src/units/v1_1_certificates.gen.ts	V11CertificateRecord	interface	4	22	export interface V11CertificateRecord
-src/units/v1_1_certificates.gen.ts	V11_EXAM_KERNEL_SHA256	const	24	24	V11_EXAM_KERNEL_SHA256 = "4b7e5a5a4ed08202e019919d1a8ac88d5ead18463091e63e38229dfc9994a3a7"
+src/units/v1_1_certificates.gen.ts	V11_EXAM_KERNEL_SHA256	const	24	24	V11_EXAM_KERNEL_SHA256 = "7f9cf661e2b3c047d845aa1d1f2d42bfa57ac7e313467eb1d237d40bd5219186"
 src/units/v1_1_certificates.gen.ts	V11_CERTIFICATES	const	26	26	V11_CERTIFICATES: Readonly<Record<string, V11CertificateRecord>> = Object.freeze(
 src/units/welcome.ts	createWelcomeUnit	func	25	47	export function createWelcomeUnit(): OptimizedUnit

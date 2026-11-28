@@ -39,6 +39,7 @@ import {
   estimateTokens,
   formatFlowHeader,
   formatRecord,
+  purgeAgentSpillLogs,
   recordTokenTelemetry,
 } from './wire_protocol.mjs';
 import { appendAuditRecord } from './audit_ledger.mjs';
@@ -70,6 +71,8 @@ import {
   runSwarmSelftest,
 } from './swarm_orchestrator.mjs';
 import { auditTwoBooks, readBookSection } from './doc_compiler.mjs';
+import { syncTwoBooks } from './doc_sync.mjs';
+import { getToolSpec, TOOL_SPECS } from './tool_specs.mjs';
 import { generateHumanReport } from './human_report.mjs';
 import { exportFlowTemplate, initFlowRepo } from './template_exporter.mjs';
 import { executeMacroDag, validateMacroSpec } from './macro_engine.mjs';
@@ -83,6 +86,44 @@ import {
   suggestMacrosFromLedger,
   verifyAllRegisteredMacros,
 } from './macro_registry.mjs';
+import {
+  installPermitGitHooks,
+  issuePermit,
+  readPermit,
+  recoverQuarantinedAgent,
+  revokePermit,
+  runPermitSelftest,
+  verifyPermit,
+} from './permit_manager.mjs';
+import { runSandboxSelftest } from './solver_sandbox.mjs';
+import { signWithExternalEd25519 } from './crypto_attestation.mjs';
+import { runParallelChecks } from './parallel_runner.mjs';
+import { clearTestCache, readTestCache } from './test_cache.mjs';
+
+const FORBIDDEN_BYPASS_FLAGS = Object.freeze([
+  'no-exam',
+  'no-checks',
+  'skip-build',
+  'no-snap',
+  'ignore-orphans',
+  'allow-secrets-unsafe',
+  'no-security',
+  'skip-chrome',
+  'skip-exam',
+]);
+
+const EXEC_FORBIDDEN_ARGS = Object.freeze([
+  /^--only(?:=|$)/i,
+  /^--allow-main$/i,
+  /^--force$/i,
+  /^--ignore-orphans$/i,
+  /^--local-only$/i,
+  /^--skip-/i,
+  /^--no-(?:exam|checks|verify|security|snap|build)/i,
+  /^--allow-secrets-unsafe$/i,
+  /^--hard$/i,
+  /\bhuman-report\b/i,
+]);
 
 function parseCli(argv) {
   const dashIdx = argv.indexOf('--');
@@ -112,18 +153,21 @@ function printHelp() {
       `FLOW1_HELP|os=FLOW-V1.1-OS-${FLOW_OS_VERSION}|exit=0:OK,1:ERR,2:BLOCK,3:WARN,4:XFAIL,5:NO_SOLVER,6:SEC_BLOCK`,
       `CMD|auto <bootstrap|research|dev|certify|fabricate|factory|list> [--unit=U] [--target=T] [--dry-run]`,
       `CMD|macro <register|run|list|inspect|verify|suggest|remove|selftest> [name] [--spec=F] [--dry-run]`,
+      `CMD|permit <issue|status|verify|revoke|install-hooks|selftest> [--unit=U] [--elevate-integrator --reason=R]`,
       `CMD|cert <status|verify|selftest> [--unit=U]`,
       `CMD|wake [slug] [--unit=U] [--role=worker|integrator] [--goal=G]`,
       `CMD|inspect <unit|part|symbol|query> [--defect] [--slice] [--budget=N]`,
       `CMD|heal [--unit=U] [--apply] [--max-iter=25] [--bake] | heal selftest`,
+      `CMD|verify [--parallel] [--cached|--no-cache] [--suite=build|selftest|all]`,
+      `CMD|cache <status|clear>`,
       `CMD|ship [--unit=U] [--policy=worker|integrator] [--full-exam] [--visual]`,
       `CMD|park [--next=N] [--artifacts=DIR]`,
       `CMD|finish [--policy=worker|integrator] [--pr] [--merge] [--title=T]`,
       `CMD|swarm <plan|status|selftest> [--units=active|all|u1,u2] [--workers=N]`,
       `CMD|exec <exam|bg|pp|sokutei|sp|dx> [args...]`,
       `CMD|human-report [--out=PATH] [--artifacts=DIR]  # HUMAN_REQUEST_ONLY`,
-      `CMD|security <audit [--full]|selftest>  # 13 layers, 36 attacks`,
-      `CMD|doc <audit [--strict]|section <1|2> <TAG|toc>>`,
+      `CMD|security <audit [--full]|selftest|recover|sandbox-selftest>  # 13 layers, 46 attacks`,
+      `CMD|doc <audit [--strict]|sync|tool <name>|section <1|2> <TAG|toc>>`,
       `CMD|slice <path> <start>-<end>`,
       `CMD|init [--project-name=N] [--force] | export-template --out=DIR | selftest`,
     ].join('\n') + '\n'
@@ -153,13 +197,14 @@ function finalizeOutput({ ctx, agent, cmd, args, lines, exitCode, budgetKey, fla
       });
       if (cmd !== 'security' && cmd !== 'selftest' && cmd !== 'slice') {
         const git = getGitMeta(ctx.repoRoot);
+        // Structured sanitized audit record (ZERO untrusted raw stdout strings)
         appendAuditRecord(ctx.stateDir, {
           agentId: agent.agentId,
           cmd,
-          args: args.slice(0, 8),
+          args: args.slice(0, 8).map((a) => String(a).replace(/[\r\n\x00-\x1f]/g, '').slice(0, 64)),
           treeSha: git.head,
           exitCode,
-          detail: enforced.text.split('\n')[0].slice(0, 180),
+          status: exitCode === 0 ? 'OK' : `EXIT_${exitCode}`,
         });
       }
     } catch {
@@ -171,6 +216,26 @@ function finalizeOutput({ ctx, agent, cmd, args, lines, exitCode, budgetKey, fla
   process.exit(exitCode);
 }
 
+function resolveAuthorizedRole(ctx, agent, flags, cmd) {
+  const requested = String(flags.role || flags.policy || (flags['elevate-integrator'] ? 'integrator' : 'worker'));
+  if (requested !== 'integrator') return { ok: true, role: 'worker' };
+  // Permit command handles its own strict elevation check inside issuePermit
+  if (cmd === 'permit') return { ok: true, role: 'integrator' };
+  // Check if agent already holds a valid active integrator Edit Permit OR passed explicit elevation + reason
+  const existing = readPermit(ctx.stateDir, agent.agentId);
+  const hasIntegratorPermit = existing && !existing.corrupted && existing.role === 'integrator' && Date.parse(existing.expiresAt) > Date.now();
+  const explicitElev = Boolean(flags['elevate-integrator']) && String(flags.reason || '').trim().length >= 6;
+  if (hasIntegratorPermit || explicitElev) {
+    return { ok: true, role: 'integrator' };
+  }
+  return {
+    ok: false,
+    role: 'worker',
+    rule: 'SELF_ELEVATION_BLOCKED',
+    msg: 'Default role is worker. Integrator requires an active integrator Edit Permit (`flow permit issue --role=integrator --elevate-integrator --reason="..."`) or `--elevate-integrator --reason="..."`.',
+  };
+}
+
 async function main() {
   const rawArgv = process.argv.slice(2);
   const { cmd, pos, flags, tail } = parseCli(rawArgv);
@@ -178,6 +243,14 @@ async function main() {
   if (cmd === 'help' || (flags.help && pos.length === 0)) {
     printHelp();
     process.exit(EXIT_OK);
+  }
+
+  // Hard-block removed legacy bypass flags across all FLOW commands
+  for (const bf of FORBIDDEN_BYPASS_FLAGS) {
+    if (flags[bf] !== undefined) {
+      process.stdout.write(`FLOW1|cmd=${cmd}|status=SEC_BLOCK|layer=SEC-04|rule=BYPASS_FLAG_FORBIDDEN|flag=--${bf}\n`);
+      process.exit(EXIT_SECURITY_BLOCKED);
+    }
   }
 
   // Standalone commands that may run outside an existing git repo
@@ -213,7 +286,14 @@ async function main() {
   const ctx = loadFlowConfig(flags.cwd ? path.resolve(flags.cwd) : process.cwd());
   const agent = resolveAgentContext(ctx.cfg, { agentId: flags.agent, agentWs: flags.ws });
   const adapter = await loadDomainAdapter(ctx);
-  const role = String(flags.role || flags.policy || 'integrator');
+  const roleCheck = resolveAuthorizedRole(ctx, agent, flags, cmd);
+  if (!roleCheck.ok) {
+    process.stdout.write(
+      formatFlowHeader({ cmd, status: 'SEC_BLOCK', layer: 'SEC-10', rule: roleCheck.rule, hint: roleCheck.msg }) + '\n'
+    );
+    process.exit(EXIT_SECURITY_BLOCKED);
+  }
+  const role = roleCheck.role;
 
   // -------------------------------------------------------------------------
   // SLICE: Exact line range extraction (SEC-05 path confined)
@@ -248,7 +328,136 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // SECURITY: 12-Layer Fortress Audit or 30-Attack Red-Team Selftest
+  // PERMIT: Edit Permit Gate (`issue|status|verify|revoke|install-hooks|selftest`)
+  // -------------------------------------------------------------------------
+  if (cmd === 'permit') {
+    const sub = pos[0] || 'status';
+    if (sub === 'selftest') {
+      const st = runPermitSelftest();
+      const lines = [
+        formatFlowHeader({ cmd: 'permit:selftest', status: st.ok ? 'PASS' : 'FAIL', pass: `${st.passed}/${st.total}`, ms: st.elapsedMs }),
+        ...st.failed.map((f) => formatRecord('PERMIT_FAIL', { id: f.id, detail: f.detail })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'permit', args: rawArgv, lines, exitCode: st.exitCode, flags, legacyTokens: 1500 });
+    }
+    if (sub === 'install-hooks') {
+      const res = installPermitGitHooks(ctx);
+      return finalizeOutput({ ctx, agent, cmd: 'permit', args: rawArgv, lines: res.lines, exitCode: res.exitCode, flags, legacyTokens: 500 });
+    }
+    if (sub === 'issue') {
+      const reqRole = flags.role || (flags['elevate-integrator'] ? 'integrator' : 'worker');
+      const res = issuePermit(ctx, {
+        agentId: agent.agentId,
+        unit: flags.unit || null,
+        role: reqRole,
+        elevateIntegrator: Boolean(flags['elevate-integrator']),
+        reason: String(flags.reason || ''),
+        ttlSec: Number(flags.ttl || 1800),
+      });
+      return finalizeOutput({ ctx, agent, cmd: 'permit', args: rawArgv, lines: res.lines, exitCode: res.exitCode, flags, legacyTokens: 1000 });
+    }
+    if (sub === 'revoke') {
+      const targetAgent = flags.agent || pos[1] || agent.agentId;
+      const res = revokePermit(ctx, targetAgent, String(flags.reason || 'manual_revoke'));
+      return finalizeOutput({
+        ctx, agent, cmd: 'permit', args: rawArgv,
+        lines: [formatFlowHeader({ cmd: 'permit:revoke', status: res.revoked ? 'REVOKED' : 'NONE', agent: targetAgent })],
+        exitCode: EXIT_OK, flags, legacyTokens: 500,
+      });
+    }
+    if (sub === 'verify') {
+      const res = verifyPermit(ctx, {
+        agentId: flags.agent || agent.agentId,
+        requirePermit: true,
+        autoContain: flags['no-contain'] ? false : true,
+      });
+      const lines = [
+        formatFlowHeader({
+          cmd: 'permit:verify',
+          status: res.ok ? res.status : 'SEC_BLOCK',
+          agent: flags.agent || agent.agentId,
+          ...(res.permit ? { id: res.permit.permitId, role: res.permit.role, branch: res.permit.bgBranch } : { rule: res.rule, msg: res.msg }),
+        }),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'permit', args: rawArgv, lines, exitCode: res.exitCode, flags, legacyTokens: 1000 });
+    }
+    // status
+    const p = readPermit(ctx.stateDir, flags.agent || agent.agentId);
+    const lines = [
+      p && !p.corrupted
+        ? formatFlowHeader({
+            cmd: 'permit:status',
+            status: Date.parse(p.expiresAt) > Date.now() ? 'ACTIVE' : 'EXPIRED',
+            id: p.permitId,
+            agent: p.agentId,
+            role: p.role,
+            branch: p.bgBranch,
+            unit: p.unit || 'all',
+            exp: p.expiresAt,
+          })
+        : formatFlowHeader({ cmd: 'permit:status', status: p?.corrupted ? 'CORRUPTED' : 'NONE', agent: flags.agent || agent.agentId }),
+    ];
+    return finalizeOutput({ ctx, agent, cmd: 'permit', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 500 });
+  }
+
+  // -------------------------------------------------------------------------
+  // VERIFY & CACHE: Parallel Verification Orchestrator & Content-Hash Cache
+  // -------------------------------------------------------------------------
+  if (cmd === 'cache') {
+    const sub = pos[0] || 'status';
+    if (sub === 'clear') {
+      clearTestCache(ctx.stateDir);
+      return finalizeOutput({
+        ctx, agent, cmd: 'cache', args: rawArgv,
+        lines: [formatFlowHeader({ cmd: 'cache:clear', status: 'OK' })],
+        exitCode: EXIT_OK, flags, legacyTokens: 300,
+      });
+    }
+    const store = readTestCache(ctx.stateDir);
+    const entries = Object.entries(store.entries || {});
+    const lines = [
+      formatFlowHeader({ cmd: 'cache:status', status: 'OK', entries: entries.length }),
+      ...entries.map(([k, v]) => formatRecord('CACHE', { sub: k, sha: String(v.sha || '').slice(0, 12), ms: v.ms, at: v.recordedAt })),
+    ];
+    return finalizeOutput({ ctx, agent, cmd: 'cache', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 500 });
+  }
+
+  if (cmd === 'verify') {
+    const suite = String(flags.suite || pos[0] || 'build');
+    const buildJobs = ['catalog', 'dx_atlas', 'tsc', 'validate_parts'];
+    const selftestJobs = ['bg_selftest', 'dx_selftest', 'sp_selftest', 'flow_selftest'];
+    const jobs = suite === 'selftest'
+      ? selftestJobs
+      : suite === 'all'
+        ? [...buildJobs, ...selftestJobs]
+        : suite.includes(',')
+          ? suite.split(',').map((s) => s.trim()).filter(Boolean)
+          : buildJobs;
+    const allowCache = Boolean(flags.cached) && !flags['no-cache'] && process.env.FLOW_NO_CACHE !== '1';
+    const conc = flags.concurrency ? Number(flags.concurrency) : (flags.parallel === false ? 1 : null);
+    const res = await runParallelChecks(ctx, agent, jobs, { allowCache, concurrency: conc });
+    const lines = [
+      formatFlowHeader({
+        cmd: 'verify',
+        status: res.ok ? 'PASS' : 'FAIL',
+        suite,
+        cached: allowCache ? 'on' : 'off',
+        hits: `${res.cacheHits}/${res.results.length}`,
+        ms: res.elapsedMs,
+      }),
+      ...res.results.map((r) =>
+        formatRecord('JOB', {
+          name: r.name,
+          status: r.ok ? (r.cached ? 'CACHE_HIT' : 'PASS') : `FAIL(${r.exit ?? 1})`,
+          ms: r.ms,
+        })
+      ),
+    ];
+    return finalizeOutput({ ctx, agent, cmd: 'verify', args: rawArgv, lines, exitCode: res.exitCode, flags, legacyTokens: 4500 });
+  }
+
+  // -------------------------------------------------------------------------
+  // SECURITY: 13-Layer Fortress Audit, 46-Attack Red-Team, Sandbox & Recovery
   // -------------------------------------------------------------------------
   if (cmd === 'security') {
     const sub = pos[0] || 'audit';
@@ -264,6 +473,26 @@ async function main() {
         ...st.failed.map((f) => formatRecord('SEC_ST_FAIL', { id: f.id, layer: f.layer, detail: f.detail })),
       ];
       return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines, exitCode: st.exitCode, flags, legacyTokens: 2500 });
+    }
+    if (sub === 'sandbox-selftest') {
+      const st = runSandboxSelftest();
+      const lines = [
+        formatFlowHeader({
+          cmd: 'security:sandbox-selftest',
+          status: st.ok ? 'PASS' : 'FAIL',
+          pass: `${st.passed}/${st.total}`,
+          userns: st.caps.userNs ? '1' : '0',
+          docker: st.caps.docker ? '1' : '0',
+          ms: st.elapsedMs,
+        }),
+        ...st.failed.map((f) => formatRecord('SBX_FAIL', { id: f.id, detail: f.detail })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines, exitCode: st.exitCode, flags, legacyTokens: 1500 });
+    }
+    if (sub === 'recover') {
+      const targetAgent = flags.agent || pos[1] || agent.agentId;
+      const rec = recoverQuarantinedAgent(ctx, { agentId: targetAgent, allowDirty: Boolean(flags['allow-dirty']) });
+      return finalizeOutput({ ctx, agent, cmd: 'security', args: rawArgv, lines: rec.lines, exitCode: rec.exitCode, flags, legacyTokens: 800 });
     }
     const fort = runSecurityFortress(ctx, {
       full: Boolean(flags.full),
@@ -297,10 +526,34 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // DOC: Strict 2-Book Audit or Surgical Section Lookup
+  // DOC: Strict 2-Book Audit, SSOT Auto-Sync, On-Demand Tool Spec & Section Reader
   // -------------------------------------------------------------------------
   if (cmd === 'doc') {
     const sub = pos[0] || 'audit';
+    if (sub === 'sync') {
+      const res = await syncTwoBooks(ctx);
+      const lines = [
+        formatFlowHeader({
+          cmd: 'doc:sync',
+          status: res.ok ? 'OK' : 'ERR',
+          updated: res.updated.join(',') || 'none',
+          parts: res.metrics.units?.uniqueParts ?? 0,
+          engines: res.metrics.exam?.engineCount ?? 0,
+          tests: res.metrics.exam?.testCount ?? 0,
+          solvers: res.metrics.exam?.solverCount ?? 0,
+        }),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'doc', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 4000 });
+    }
+    if (sub === 'tool') {
+      const toolName = pos[1] || 'list';
+      const spec = getToolSpec(toolName);
+      const lines = [
+        formatFlowHeader({ cmd: `doc:tool:${spec.name}`, status: spec.ok ? 'OK' : 'ERR' }),
+        spec.text,
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'doc', args: rawArgv, lines, exitCode: spec.ok ? EXIT_OK : EXIT_ERROR, flags, legacyTokens: 2500 });
+    }
     if (sub === 'section') {
       const bookNum = pos[1] || '1';
       const tag = pos[2] || 'toc';
@@ -311,7 +564,7 @@ async function main() {
       ];
       return finalizeOutput({ ctx, agent, cmd: 'doc', args: rawArgv, lines, exitCode: sec.ok ? EXIT_OK : EXIT_ERROR, flags, legacyTokens: 4500 });
     }
-    const res = auditTwoBooks(ctx, { strict: Boolean(flags.strict) });
+    const res = await auditTwoBooks(ctx, { strict: Boolean(flags.strict) });
     const lines = [
       formatFlowHeader({
         cmd: 'doc:audit',
@@ -319,6 +572,7 @@ async function main() {
         books: `${res.bookCount}/2`,
         tok: res.totalTokens,
         bytes: res.totalBytes,
+        auto_blocks: res.checkedAutoBlocks ?? 0,
       }),
       ...Object.entries(res.stats).map(([f, s]) =>
         formatRecord('BOOK', { file: f, lines: s.lines, bytes: s.bytes, tok: s.tokens })
@@ -420,13 +674,24 @@ async function main() {
 
     // 2. Domain wake hook (bg boot / start / solver probe / atlas / brief)
     const wakeInfo = adapter?.onWake
-      ? await adapter.onWake({ slug, unit, role, goal: flags.goal, next: flags.next, ignoreOrphans: Boolean(flags['ignore-orphans']), agent })
+      ? await adapter.onWake({ slug, unit, role, goal: flags.goal, next: flags.next, agent })
       : { bootExit: 0, bootSummary: 'no_adapter', solvers: 'n/a', briefLines: [] };
 
     if (wakeInfo.bootExit === 3 && !slug) exitCode = EXIT_WARN;
     if (wakeInfo.solversMissing) exitCode = 5;
 
     const git = getGitMeta(ctx.repoRoot);
+    let permitTag = 'none(on_default_branch)';
+    if (git.branch && git.branch !== (ctx.cfg.defaultBranch || 'main') && git.branch !== 'main' && git.branch !== 'master') {
+      const pRes = issuePermit(ctx, {
+        agentId: agent.agentId,
+        unit,
+        role,
+        elevateIntegrator: Boolean(flags['elevate-integrator']),
+        reason: String(flags.reason || ''),
+      });
+      permitTag = pRes.ok ? `${pRes.permit.permitId}(${pRes.permit.role})` : `denied(${pRes.reason})`;
+    }
     lines.push(
       formatFlowHeader({
         cmd: 'wake',
@@ -437,6 +702,7 @@ async function main() {
         head: git.head,
         dirty: git.dirtyCount,
         lease: leaseInfo,
+        permit: permitTag,
         ws: agent.agentWs,
         sv: wakeInfo.solvers || 'n/a',
       })
@@ -495,7 +761,7 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // SHIP: catalog + atlas + tsc + validate + build + FULL EXAM V1 + pp + snap
+  // SHIP: catalog + atlas + tsc + validate + build + FULL EXAM V1.1 + pp + snap
   // -------------------------------------------------------------------------
   if (cmd === 'ship') {
     const unit = flags.unit || 'welcome';
@@ -503,9 +769,8 @@ async function main() {
       ? await adapter.onShip({
           unit,
           policy: role,
-          fullExam: Boolean(flags['full-exam'] || !flags['no-exam']),
+          fullExam: true,
           visual: Boolean(flags.visual),
-          skipBuild: Boolean(flags['skip-build']),
           artifacts: flags.artifacts || null,
           agent,
         })
@@ -526,13 +791,14 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // PARK: Stop isolated pp daemon + checkpoint + bg seal + lease heartbeat
+  // PARK: Stop isolated pp daemon + checkpoint + bg seal + lease heartbeat + spill purge
   // -------------------------------------------------------------------------
   if (cmd === 'park') {
     const res = adapter?.onPark
       ? await adapter.onPark({ next: flags.next || 'awaiting_next_step', artifacts: flags.artifacts || null, checkpointOnly: Boolean(flags.checkpoint), agent })
       : { exitCode: EXIT_OK, lines: ['FLOW1|cmd=park|status=OK|adapter=none'] };
 
+    const purged = purgeAgentSpillLogs(agent.agentWs);
     // Refresh active leases held by this agent
     const { active } = listLeases(ctx.stateDir);
     let refreshed = 0;
@@ -542,19 +808,28 @@ async function main() {
         refreshed++;
       }
     }
-    const lines = [...res.lines, `PARK_LEASES|agent=${agent.agentId}|refreshed=${refreshed}`];
+    const lines = [...res.lines, `PARK_LEASES|agent=${agent.agentId}|refreshed=${refreshed}|spills_purged=${purged}`];
     return finalizeOutput({ ctx, agent, cmd: 'park', args: rawArgv, lines, exitCode: res.exitCode, flags, legacyTokens: 3000 });
   }
 
   // -------------------------------------------------------------------------
-  // FINISH: 12-Layer Security + Fresh Domain Receipt + bg gate -> FLOW-RECEIPT
+  // FINISH: Permit Gate + 13-Layer Security + Doc Sync + Uncached Gate -> FLOW-RECEIPT
   // -------------------------------------------------------------------------
   if (cmd === 'finish') {
-    const policy = String(flags.policy || role || 'integrator');
+    const policy = role;
     const unit = flags.unit || null;
     const treeSha = computeTreeFingerprint(ctx.repoRoot);
 
-    // 1. Run 12-layer Security Fortress
+    // 0. Verify Edit Permit (auto-contains on tampered/expired/out-of-scope or dirty without permit)
+    const pCheck = verifyPermit(ctx, { agentId: agent.agentId, requirePermit: false, autoContain: true });
+    if (!pCheck.ok) {
+      const lines = [
+        formatFlowHeader({ cmd: 'finish', status: 'SEC_BLOCK', layer: 'SEC-10', rule: pCheck.rule, msg: pCheck.msg }),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'finish', args: rawArgv, lines, exitCode: EXIT_SECURITY_BLOCKED, flags, legacyTokens: 3000 });
+    }
+
+    // 1. Run 13-layer Security Fortress (always UNCACHED!)
     const fort = runSecurityFortress(ctx, {
       full: Boolean(flags.full),
       role: policy,
@@ -577,6 +852,16 @@ async function main() {
       layersTotal: fort.totalCount,
     });
 
+    // 1b. Strict 2-book + @FLOW_AUTO SSOT drift check (EXIT 2 on any drift!)
+    const docCheck = await auditTwoBooks(ctx, { strict: true });
+    if (!docCheck.ok) {
+      const lines = [
+        formatFlowHeader({ cmd: 'finish', status: 'DOC_DRIFT_BLOCKED', violations: docCheck.violations.length, fix: 'npm run flow -- doc sync' }),
+        ...docCheck.violations.slice(0, 8).map((v) => `DOC_FAIL|${v}`),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'finish', args: rawArgv, lines, exitCode: EXIT_BLOCKED, flags, legacyTokens: 4000 });
+    }
+
     // 2. Check domain receipt freshness if required or present
     const store = readReceiptStore(ctx.stateDir);
     let domainReceipt = 'NONE';
@@ -592,14 +877,14 @@ async function main() {
         formatFlowHeader({
           cmd: 'finish',
           status: 'BLOCKED',
-          reason: matchedDom ? 'STALE_TLX1_RECEIPT_AFTER_EDIT' : 'MISSING_TLX1_RECEIPT',
+          reason: matchedDom ? 'STALE_TLX11_RECEIPT_AFTER_EDIT' : 'MISSING_TLX11_RECEIPT',
           fix: `npm run flow -- ship --unit=${unit || 'welcome'} --policy=${policy} --full-exam`,
         }),
       ];
       return finalizeOutput({ ctx, agent, cmd: 'finish', args: rawArgv, lines, exitCode: EXIT_BLOCKED, flags, legacyTokens: 4000 });
     }
 
-    // 3. Run adapter durability gate (`bg gate` / optional `bg land`)
+    // 3. Run adapter durability gate (`bg gate` / optional `bg land`, ALWAYS UNCACHED!)
     const gateRes = adapter?.onFinish
       ? await adapter.onFinish({
           policy,
@@ -607,7 +892,6 @@ async function main() {
           merge: Boolean(flags.merge),
           title: flags.title || null,
           body: flags.body || null,
-          runChecks: !flags['no-checks'],
           agent,
         })
       : { exitCode: EXIT_OK, bgReceipt: `BG-LOCAL:${treeSha.slice(0, 8)}:${policy}`, lines: [] };
@@ -620,7 +904,7 @@ async function main() {
       return finalizeOutput({ ctx, agent, cmd: 'finish', args: rawArgv, lines, exitCode: gateRes.exitCode, flags, legacyTokens: 5000 });
     }
 
-    // 4. Forge cryptographic 3-way chained FLOW-RECEIPT
+    // 4. Forge cryptographic 3-way chained FLOW-RECEIPT + Honest External Ed25519 Attestation
     const chained = buildChainedFlowReceipt({
       treeSha,
       kernelSha: fort.kernelSha,
@@ -629,16 +913,32 @@ async function main() {
       domainReceipt: domainFresh ? domainReceipt : 'NONE',
       policy,
     });
+    const edAttest = signWithExternalEd25519('FLOW_RECEIPT', {
+      receipt: chained.receipt,
+      treeSha,
+      kernelSha: fort.kernelSha,
+      policy,
+    });
     store.bg = { receipt: gateRes.bgReceipt, treeSha, recordedAt: new Date().toISOString() };
-    store.flow = { receipt: chained.receipt, treeSha, kernelSha: fort.kernelSha, recordedAt: new Date().toISOString() };
+    store.flow = {
+      receipt: chained.receipt,
+      treeSha,
+      kernelSha: fort.kernelSha,
+      attestation: edAttest.attestation,
+      attestedBy: edAttest.attestedBy,
+      ed25519Signature: edAttest.ed25519Signature,
+      recordedAt: new Date().toISOString(),
+    };
     writeReceiptStore(ctx.stateDir, store);
 
+    purgeAgentSpillLogs(agent.agentWs);
     const released = releaseAllAgentLeases(ctx, agent.agentId);
     const lines = [
       formatFlowHeader({
         cmd: 'finish',
         status: 'PASS',
         policy,
+        attest: edAttest.attestation,
         flow_rcpt: chained.receipt,
         leases_released: released,
       }),
@@ -652,7 +952,7 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // EXEC: Passthrough for legacy tools with SEC-04 + FLOW-BUDGET + FLOW_AGENT_WS
+  // EXEC: Passthrough for legacy tools with Strict Arg Whitelist + SEC-04 + FLOW-BUDGET
   // -------------------------------------------------------------------------
   if (cmd === 'exec') {
     const tool = pos[0];
@@ -661,6 +961,16 @@ async function main() {
     for (const [k, v] of Object.entries(flags)) {
       if (k === 'budget' || k === 'raw' || k === 'agent' || k === 'ws' || k === 'cwd') continue;
       passArgs.push(v === true ? `--${k}` : `--${k}=${v}`);
+    }
+    // Block bypass/dangerous flags passed through `flow exec`
+    for (const arg of passArgs) {
+      const sArg = String(arg);
+      for (const rx of EXEC_FORBIDDEN_ARGS) {
+        if (rx.test(sArg)) {
+          process.stdout.write(`FLOW1|cmd=exec:${tool}|status=SEC_BLOCK|layer=SEC-04|rule=EXEC_BYPASS_FLAG_BLOCKED|arg=${sArg.slice(0, 48)}\n`);
+          process.exit(EXIT_SECURITY_BLOCKED);
+        }
+      }
     }
     const toolMap = {
       exam: ['node', 'scripts/exam.mjs'],
@@ -703,7 +1013,7 @@ async function main() {
     }
     const vars = {};
     for (const [k, v] of Object.entries(flags)) {
-      if (['budget', 'raw', 'agent', 'ws', 'cwd', 'dry-run', 'concurrency'].includes(k)) continue;
+      if (['budget', 'raw', 'agent', 'ws', 'cwd', 'dry-run', 'concurrency', 'verbose'].includes(k)) continue;
       vars[k] = v === true ? 'true' : String(v);
     }
     if (pos[1] && !vars.target && !vars.unit) {
@@ -723,7 +1033,8 @@ async function main() {
       vars,
       dryRun: Boolean(flags['dry-run']),
       concurrency: flags.concurrency ? Number(flags.concurrency) : undefined,
-      autoSnap: !flags['no-snap'],
+      verbose: Boolean(flags.verbose),
+      autoSnap: true,
     });
     return finalizeOutput({
       ctx, agent, cmd: 'auto', args: rawArgv,
@@ -871,24 +1182,30 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // SELFTEST: Portable OS Complete Self-Proof (SEC-12/13 + Swarm + Macro + 2-Book)
+  // SELFTEST: Portable OS Complete Self-Proof (SEC-12/13 46/46 + Permit + Sandbox + Swarm + Macro + 2-Book)
   // -------------------------------------------------------------------------
   if (cmd === 'selftest') {
     const sec = runSecuritySelftest();
+    const perm = runPermitSelftest();
+    const sbx = runSandboxSelftest();
     const sw = runSwarmSelftest();
     const mac = await runMacroSelftest();
-    const doc = auditTwoBooks(ctx, { strict: true });
-    const ok = sec.ok && sw.ok && mac.ok && doc.ok;
+    const doc = await auditTwoBooks(ctx, { strict: true });
+    const ok = sec.ok && perm.ok && sbx.ok && sw.ok && mac.ok && doc.ok;
     const lines = [
       formatFlowHeader({
         cmd: 'selftest',
         status: ok ? 'PASS' : 'FAIL',
         sec13: `${sec.passed}/${sec.total}`,
+        permit: `${perm.passed}/${perm.total}`,
+        sandbox: `${sbx.passed}/${sbx.total}`,
         swarm: `${sw.passed}/${sw.total}`,
         macro: `${mac.passed}/${mac.total}`,
         books: `${doc.bookCount}/2(${doc.totalTokens}tok)`,
       }),
       ...sec.failed.map((f) => `SEC_FAIL|${f.id}|${f.detail}`),
+      ...perm.failed.map((f) => `PERMIT_FAIL|${f.id}|${f.detail}`),
+      ...sbx.failed.map((f) => `SBX_FAIL|${f.id}|${f.detail}`),
       ...sw.failed.map((f) => `SW_FAIL|${f.id}|${f.detail}`),
       ...mac.failed.map((f) => `MACRO_FAIL|${f.id}|${f.detail}`),
       ...doc.violations.map((v) => `DOC_FAIL|${v}`),

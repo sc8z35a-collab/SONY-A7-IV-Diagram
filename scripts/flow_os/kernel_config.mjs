@@ -30,17 +30,20 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
   books: {
     envManual: 'AGENTS.md',
     domainManual: 'README.md',
-    maxEnvTokens: 4500,
+    maxEnvTokens: 2200,
     maxDomainTokens: 5500,
     contentAssetDirs: ['reports', 'blueprints', 'docs', 'node_modules', 'dist', 'build', '.git', 'vendor', 'target'],
     requiredEnvTokens: [
       'flow wake',
+      'flow permit',
       'flow inspect',
       'flow ship',
       'flow park',
       'flow finish',
       'flow auto',
       'flow macro',
+      'flow verify',
+      'flow doc tool',
       'flow human-report',
       'FLOW-RECEIPT',
       'SEC-01',
@@ -50,6 +53,7 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
   },
   budgets: {
     wake: 220,
+    permit: 150,
     inspect: 300,
     heal: 400,
     ship: 350,
@@ -62,6 +66,8 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
     auto: 550,
     macro: 400,
     cert: 300,
+    verify: 300,
+    cache: 150,
   },
   security: {
     maxFileMb: 25,
@@ -205,10 +211,11 @@ export function resolveGitDir(repoRoot) {
 }
 
 export function resolveAgentContext(cfg, opts = {}) {
-  const rawId = opts.agentId || process.env.FLOW_AGENT_ID || `${os.hostname()}-${process.pid}`;
+  const rawId = opts.agentId || process.env.FLOW_AGENT_ID || `default-${os.hostname()}`;
   const agentId = String(rawId).replace(/[^A-Za-z0-9_.-]/g, '_').slice(0, 48);
   const wsBase = cfg.parallel?.wsBaseDir || '/tmp/flow_ws';
-  const agentWs = opts.agentWs || process.env.FLOW_AGENT_WS || path.join(wsBase, agentId);
+  const sameAgentAsEnv = !opts.agentId || opts.agentId === process.env.FLOW_AGENT_ID;
+  const agentWs = opts.agentWs || (sameAgentAsEnv ? process.env.FLOW_AGENT_WS : null) || path.join(wsBase, agentId);
   fs.mkdirSync(agentWs, { recursive: true });
   return {
     agentId,
