@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation and full-scope spatial audit plan to upgrade existing tools (sp 0.0001 mm precision, all 22 non-welcome modes / 34 physical assemblies / 3,038 parts, 4 quality tiers, explode sweeps, floating/island/protrusion/coordinate-drift/alignment detectors, and pp1.1 miraiSubView 1..8 fix) and generate an exhaustive Remediation Report without modifying 3D CAD models yet.",
+  "updatedAt":  "2026-11-28T01:57:12.185503151Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

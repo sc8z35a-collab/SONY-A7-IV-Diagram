@@ -1,0 +1,25 @@
+{
+  "schema": "bg-flight/v1",
+  "sessionId": "main-mwzrftgw",
+  "branch": "feat/feat-spatial-audit-0001mm",
+  "goal": "Upgrade sp/pp1.1 for 0.0001mm 22-mode spatial audit and produce master remediation report",
+  "completed": [],
+  "verifiedGates": [],
+  "knownPitfalls": [],
+  "nextStep": "Upgrade hyper_cache, scene_extractor, exact_geometry, audit_physics, sp.mjs, CadViewport, pp.mjs",
+  "artifactsMirrored": [
+    {
+      "name": "implementation_plan.md",
+      "sha256": "481af6a760e6e7add8d2e6d80b03e258ab7eb7cdf6303362bccfcd38ca6f22e5",
+      "size": 24853
+    },
+    {
+      "name": "implementation_plan.md.metadata.json",
+      "sha256": "dcb05018fd30140a4ba27a1af32bf5164afdcbafbf9b143cc2980ae91220d0f9",
+      "size": 499
+    }
+  ],
+  "updatedAt": "2026-11-28T01:58:38.410Z",
+  "vmHost": "devbox",
+  "baseSha": "41fe472fb0655a5f59a32d510f60cbeb7983bc1b"
+}
