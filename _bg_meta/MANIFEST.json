@@ -1,12 +1,12 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T03:53:20.437Z",
+  "createdAt": "2026-11-28T04:09:01.219Z",
   "slug": "main",
   "branch": "main",
   "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "62199e6e98fbc14f901ac993d103c9cc743c0c8130b39a83d9ef892ec4d4e707",
+  "fingerprint": "3462c5945fad993b44a65ecfa660a8bbefe332ed632d287955bd7a4eae4b42b1",
   "fileCount": 830,
   "deletedFiles": [],
   "dirtyCount": 0,
@@ -31,6 +31,16 @@
       "name": "implementation_plan.md.metadata.json",
       "sha256": "ca1edb14eeedd2b810e8f5d54754af9989ad8a1d7cb0a6369a117a747fa24969",
       "size": 418
+    },
+    {
+      "name": "sim20_and_welcome_zero_float_plan.md",
+      "sha256": "6e4bcf161c6dd16e76bfec1dc123b98e67e021c6bf17060f0ea76ea103f0b9d1",
+      "size": 31705
+    },
+    {
+      "name": "sim20_and_welcome_zero_float_plan.md.metadata.json",
+      "sha256": "bb1397188c4e342b96a2efeaae0e688d105b22eb3bbe2f88e7886cbca2d3b4f6",
+      "size": 438
     },
     {
       "name": "walkthrough.md",

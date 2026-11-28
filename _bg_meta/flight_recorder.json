@@ -10,7 +10,7 @@
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Merged PR #61 into main (ce21c23)",
+  "nextStep": "Awaiting user approval of sim20_and_welcome_zero_float_plan.md before starting feat/sim20-welcome-manufacturable",
   "artifactsMirrored": [
     {
       "name": "PR_61_Merged.url.json",
@@ -33,6 +33,16 @@
       "size": 418
     },
     {
+      "name": "sim20_and_welcome_zero_float_plan.md",
+      "sha256": "6e4bcf161c6dd16e76bfec1dc123b98e67e021c6bf17060f0ea76ea103f0b9d1",
+      "size": 31705
+    },
+    {
+      "name": "sim20_and_welcome_zero_float_plan.md.metadata.json",
+      "sha256": "bb1397188c4e342b96a2efeaae0e688d105b22eb3bbe2f88e7886cbca2d3b4f6",
+      "size": 438
+    },
+    {
       "name": "walkthrough.md",
       "sha256": "ed1af7fab52129a47b10880a79d360c8ff1556854fd25949be02e92873c05101",
       "size": 23975
@@ -43,7 +53,7 @@
       "size": 355
     }
   ],
-  "updatedAt": "2026-11-28T03:53:20.400Z",
+  "updatedAt": "2026-11-28T04:09:01.214Z",
   "vmHost": "devbox",
   "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039"
 }
