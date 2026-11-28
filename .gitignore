@@ -4,4 +4,6 @@ dist/
 *.log
 scripts/exam/native/bin/
 spooles.out
+__pycache__/
+*.pyc
 
