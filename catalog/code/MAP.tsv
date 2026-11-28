@@ -34,7 +34,7 @@ scripts	scripts/exam	7	3174	192183	ir_compiler.mjs,kernel_closure.mjs,real_artif
 scripts	scripts/exam/engines	12	3799	238548	cross_solver_lock.mjs,p01_geometry_contact.mjs,p02_fea_multibody.mjs,p03_dfm_dfa_fasteners.mjs
 scripts	scripts/exam/shared	1	368	18642	material_physics_db.mjs
 scripts	scripts/flow_adapters/sony_a7iv_cad	6	2031	76401	adapter.mjs,defect_capsule.mjs,defect_clusterer.mjs,migrate_codebase.mjs
-scripts	scripts/flow_os	22	7057	294673	audit_ledger.mjs,builtin_pipelines.mjs,crypto_attestation.mjs,doc_compiler.mjs
+scripts	scripts/flow_os	22	7063	294857	audit_ledger.mjs,builtin_pipelines.mjs,crypto_attestation.mjs,doc_compiler.mjs
 scripts	scripts/lib	3	661	23988	catalog_worker.mjs,hyper_cache.mjs,validate_worker.mjs
 scripts	scripts/sokutei_core	3	1835	67732	domains.mjs,stats.mjs,telemetry.mjs
 scripts	scripts/spatial_engine	5	3218	120326	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
