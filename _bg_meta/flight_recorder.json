@@ -1,85 +1,35 @@
 {
   "schema": "bg-flight/v1",
-  "sessionId": "feat-feat-flow-v1-os-mx07ga27",
+  "sessionId": "main-mx0pmb2s",
   "branch": "main",
-  "goal": "THE LAST EXAM V1.1, V1.1 Seal, PLYA V2.1 & FLOW V1.1 Hyper-Automation",
+  "goal": "",
   "completed": [],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Class C complete (B-1 Ruleset + Keyless GitHub OIDC/Sigstore active on main)",
+  "nextStep": "PR#67 merged to main (835ba1f); ready for next task",
   "artifactsMirrored": [
     {
-      "name": "PR_65_FLOW_Security_and_Speedup.url.json",
-      "sha256": "803a28adcaa839ec20e141167222989de7e8b255c17792f1d3102a30661336c3",
-      "size": 425
-    },
-    {
-      "name": "PR_65_FLOW_Security_and_Speedup.url.json.metadata.json",
-      "sha256": "5e713f6ae00461bec6b74adc6ca13adb5247834a7b940de9400932369670b1cc",
-      "size": 210
-    },
-    {
-      "name": "PR_66_Keyless_OIDC_Sigstore.url.json",
-      "sha256": "47168493e6a47a27871ee9c3dc0299bb3dcb5be89c90f031f78868438b155ef8",
-      "size": 405
-    },
-    {
-      "name": "PR_66_Keyless_OIDC_Sigstore.url.json.metadata.json",
-      "sha256": "c7f49d672c31992244f12ad02a694a1282fe132f5a5c7e22b2520995f08e0a35",
-      "size": 242
-    },
-    {
-      "name": "Sigstore_Attestation_73454559.url.json",
-      "sha256": "b21a8d701363ff82c14533e27d9d5072058f369d22272f5a25b604cd28d0e927",
-      "size": 317
-    },
-    {
-      "name": "Sigstore_Attestation_73454559.url.json.metadata.json",
-      "sha256": "d6f45c8ba77591f7e144bdceb2bd9bbf13c6458be7ae38ab9ab18c681a9e7717",
-      "size": 177
-    },
-    {
-      "name": "flow_security_plan.md",
-      "sha256": "89db8b0a32accbb738b08823bdf1c193ad7530dc6e86b4d7b6b83379b12f08f1",
-      "size": 43013
-    },
-    {
-      "name": "flow_security_plan.md.metadata.json",
-      "sha256": "ade97586b11ef76e0408c2e857ee3dde01dde0179fe104ec1208c09facee31c0",
-      "size": 597
-    },
-    {
       "name": "implementation_plan.md",
-      "sha256": "f15f710db2bb582bf262c986b37953e523d6836a96eca3f20bdd152d0aac62df",
-      "size": 41442
+      "sha256": "4e51bb989d3b9e35269a6db1c3060be53ad9cdcb9ca80af9afe301a032f00906",
+      "size": 24476
     },
     {
       "name": "implementation_plan.md.metadata.json",
-      "sha256": "a59c418574c31c34a4ecd2e498de81bc13672fa9af2df351f2c759660d52bdb5",
-      "size": 1551
-    },
-    {
-      "name": "v1_1_upgrade_plan.md",
-      "sha256": "b836d4a2a3becd3c35cf276bc4de98855b1cdbd0be2ba87e8fdf18fc11cfe0f1",
-      "size": 44232
-    },
-    {
-      "name": "v1_1_upgrade_plan.md.metadata.json",
-      "sha256": "369682096537b64bd75720cb42fe94d77196b8c6946eea89cc301e03ea99b8c6",
-      "size": 650
+      "sha256": "aa27e2916825f09bd3fe103eac1666f7fc45ad8f459f4dca242b2632b58abd7d",
+      "size": 431
     },
     {
       "name": "walkthrough.md",
-      "sha256": "b18f35d1fe384743d59d4c6cb2f34c8fc76da5889a8563e27cdbd45e411156a0",
-      "size": 10460
+      "sha256": "7b8402ac7754810c7957c677889fcbd82b1aa00206c3bf2875efe31a37134e6d",
+      "size": 9380
     },
     {
       "name": "walkthrough.md.metadata.json",
-      "sha256": "27c57d3cee65550593b1eae8d6ad7a42f77fa1ec4ba1f94ae076f55fd8adb3ba",
-      "size": 400
+      "sha256": "1918f6268dc1a7c899d1337a9e9014bb28cca7504a85c9cbf6ab63cfa4e819c6",
+      "size": 359
     }
   ],
-  "updatedAt": "2026-11-28T13:50:20.098Z",
+  "updatedAt": "2026-11-28T17:54:18.993Z",
   "vmHost": "devbox",
-  "baseSha": "68dadff9bdf1c09f7aaa12d8bf14f0d02b38600a"
+  "baseSha": "835ba1f8de3f341955dc4e192c43b3bfbf131c11"
 }

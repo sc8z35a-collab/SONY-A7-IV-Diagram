@@ -175,11 +175,11 @@ function classifyRole(id, title = '', category = '') {
 }
 
 function inferMaterialKey(mat) {
-  if (!mat) return 'welcomeCoreSlate';
-  if (mat.name && MATERIAL_DENSITY_G_CM3[mat.name]) return mat.name;
+  if (!mat) return '';
   if (mat.userData?.v2Tag?.key) return mat.userData.v2Tag.key;
   if (mat.userData?.catalogKey) return mat.userData.catalogKey;
-  return 'welcomeCoreSlate';
+  if (mat.name && MATERIAL_DENSITY_G_CM3[mat.name]) return mat.name;
+  return '';
 }
 
 function createMaterialProxy() {

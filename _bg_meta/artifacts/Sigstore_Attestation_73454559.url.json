@@ -1,5 +1,0 @@
-{
-  "url": "https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/attestations/73454559",
-  "title": "Sigstore Attestation #73454559 (Keyless OIDC + Fulcio + Rekor)",
-  "description": "Live SLSA Build Provenance v1 + Sigstore Rekor attestation minted by GitHub Actions OIDC on PR #66 with zero static private keys."
-}

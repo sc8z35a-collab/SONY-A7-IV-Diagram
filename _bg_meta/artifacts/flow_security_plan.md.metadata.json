@@ -1,6 +1,0 @@
-{
-  "summary":  "Comprehensive Step 2 Empirical Audit Report (A/B/C security defect classification, AGENTS/README bypass & drift audit, quantitative token telemetry, Web App WASM vs API solver feasibility) and Step 3 Actionable Design Plan (FLOW Security with Edit Permit Gate & Ed25519 key custody, Document Autonomy & 60-95% Token Reduction, and EXAM Real-Artifact Pipeline & Commercial CAE boundary), strictly separating local-VM deliverables from external human-provisioned infrastructure.",
-  "updatedAt":  "2026-11-28T11:45:10.591081781Z",
-  "requestFeedback":  true,
-  "userFacing":  true
-}

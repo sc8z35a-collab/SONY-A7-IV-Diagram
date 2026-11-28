@@ -1,86 +1,36 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T13:50:20.105Z",
+  "createdAt": "2026-11-28T17:54:19.087Z",
   "slug": "main",
   "branch": "main",
-  "baseSha": "68dadff9bdf1c09f7aaa12d8bf14f0d02b38600a",
+  "baseSha": "835ba1f8de3f341955dc4e192c43b3bfbf131c11",
   "vmHost": "devbox",
   "reason": "seal_pre_idle",
-  "fingerprint": "058a88635cf4e3361dcf8711e1605f485231653a87cf8503e9bf00f65f6e928f",
-  "fileCount": 908,
+  "fingerprint": "474a85d610c0cada0c09c4495a2549e9f92f69c8f35300b5b3f1f42587b07ce9",
+  "fileCount": 910,
   "deletedFiles": [],
   "dirtyCount": 0,
   "skippedLarge": [],
   "artifacts": [
     {
-      "name": "PR_65_FLOW_Security_and_Speedup.url.json",
-      "sha256": "803a28adcaa839ec20e141167222989de7e8b255c17792f1d3102a30661336c3",
-      "size": 425
-    },
-    {
-      "name": "PR_65_FLOW_Security_and_Speedup.url.json.metadata.json",
-      "sha256": "5e713f6ae00461bec6b74adc6ca13adb5247834a7b940de9400932369670b1cc",
-      "size": 210
-    },
-    {
-      "name": "PR_66_Keyless_OIDC_Sigstore.url.json",
-      "sha256": "47168493e6a47a27871ee9c3dc0299bb3dcb5be89c90f031f78868438b155ef8",
-      "size": 405
-    },
-    {
-      "name": "PR_66_Keyless_OIDC_Sigstore.url.json.metadata.json",
-      "sha256": "c7f49d672c31992244f12ad02a694a1282fe132f5a5c7e22b2520995f08e0a35",
-      "size": 242
-    },
-    {
-      "name": "Sigstore_Attestation_73454559.url.json",
-      "sha256": "b21a8d701363ff82c14533e27d9d5072058f369d22272f5a25b604cd28d0e927",
-      "size": 317
-    },
-    {
-      "name": "Sigstore_Attestation_73454559.url.json.metadata.json",
-      "sha256": "d6f45c8ba77591f7e144bdceb2bd9bbf13c6458be7ae38ab9ab18c681a9e7717",
-      "size": 177
-    },
-    {
-      "name": "flow_security_plan.md",
-      "sha256": "89db8b0a32accbb738b08823bdf1c193ad7530dc6e86b4d7b6b83379b12f08f1",
-      "size": 43013
-    },
-    {
-      "name": "flow_security_plan.md.metadata.json",
-      "sha256": "ade97586b11ef76e0408c2e857ee3dde01dde0179fe104ec1208c09facee31c0",
-      "size": 597
-    },
-    {
       "name": "implementation_plan.md",
-      "sha256": "f15f710db2bb582bf262c986b37953e523d6836a96eca3f20bdd152d0aac62df",
-      "size": 41442
+      "sha256": "4e51bb989d3b9e35269a6db1c3060be53ad9cdcb9ca80af9afe301a032f00906",
+      "size": 24476
     },
     {
       "name": "implementation_plan.md.metadata.json",
-      "sha256": "a59c418574c31c34a4ecd2e498de81bc13672fa9af2df351f2c759660d52bdb5",
-      "size": 1551
-    },
-    {
-      "name": "v1_1_upgrade_plan.md",
-      "sha256": "b836d4a2a3becd3c35cf276bc4de98855b1cdbd0be2ba87e8fdf18fc11cfe0f1",
-      "size": 44232
-    },
-    {
-      "name": "v1_1_upgrade_plan.md.metadata.json",
-      "sha256": "369682096537b64bd75720cb42fe94d77196b8c6946eea89cc301e03ea99b8c6",
-      "size": 650
+      "sha256": "aa27e2916825f09bd3fe103eac1666f7fc45ad8f459f4dca242b2632b58abd7d",
+      "size": 431
     },
     {
       "name": "walkthrough.md",
-      "sha256": "b18f35d1fe384743d59d4c6cb2f34c8fc76da5889a8563e27cdbd45e411156a0",
-      "size": 10460
+      "sha256": "7b8402ac7754810c7957c677889fcbd82b1aa00206c3bf2875efe31a37134e6d",
+      "size": 9380
     },
     {
       "name": "walkthrough.md.metadata.json",
-      "sha256": "27c57d3cee65550593b1eae8d6ad7a42f77fa1ec4ba1f94ae076f55fd8adb3ba",
-      "size": 400
+      "sha256": "1918f6268dc1a7c899d1337a9e9014bb28cca7504a85c9cbf6ab63cfa4e819c6",
+      "size": 359
     }
   ],
   "files": [
@@ -98,8 +48,8 @@
     },
     {
       "path": ".flowrc.json",
-      "sha256": "322e9058dd21c8732b5eb2f816e5c5a1a41ab5bcdcd9571d9f791cb0de4d2630",
-      "size": 2408,
+      "sha256": "37007cd11109a7983dd037dabbe38553db58f8ae365985243da27b3a2d7df632",
+      "size": 2471,
       "mode": "100644"
     },
     {
@@ -140,14 +90,14 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "7ae505f30a524bcf689a0a3c58b102edb8a4ff07117e15d994bcacb124b46578",
-      "size": 4371,
+      "sha256": "d2cc628f40c1857a9a81c64dd597f19ecf46a72658e5ba4e1fe4c9269f23eb33",
+      "size": 6563,
       "mode": "100644"
     },
     {
       "path": "README.md",
-      "sha256": "3c2bc50b91385103afc9299e1c09cac96f9a629b33ca770575875389998a4743",
-      "size": 9640,
+      "sha256": "d7c6e89fb7d7a0a64285608d4e2be1fbc40fa91b69fb2e15101d42567430f9d7",
+      "size": 17816,
       "mode": "100644"
     },
     {
@@ -505,6 +455,12 @@
       "mode": "100644"
     },
     {
+      "path": "catalog/UNIT_HEALTH.tsv",
+      "sha256": "00921c36a9846428533003b08e8d54aaf12b0a454da3530f900e7b7074486549",
+      "size": 1690,
+      "mode": "100644"
+    },
+    {
       "path": "catalog/code/CSS_INDEX.tsv",
       "sha256": "e8583b840a29c142ddf3f5c2caeb55d3fb320c5964e3d0be4d855398e0e65ceb",
       "size": 43950,
@@ -530,7 +486,7 @@
     },
     {
       "path": "catalog/code/MAP.tsv",
-      "sha256": "cead91d67831bf3802ba911f1e99abe8696d1582d7c509f216a9a9bf46a37bbf",
+      "sha256": "8b953d1ca09b72f572b761faccb05482b21f045f23b5a1f07a6c47f8602f1fbc",
       "size": 5893,
       "mode": "100644"
     },
@@ -2264,8 +2220,8 @@
     },
     {
       "path": "scripts/exam/ir_compiler.mjs",
-      "sha256": "a454fcb7a1e1365b19469b58a2cf2d3f93eebf76d1a1fc495da7dc42cea5ca19",
-      "size": 21100,
+      "sha256": "04050c817318945578b6f3d19864051d2df9839eb2b4fa6622b4ab2ed23e4238",
+      "size": 21485,
       "mode": "100644"
     },
     {
@@ -2354,14 +2310,14 @@
     },
     {
       "path": "scripts/exam_setup.sh",
-      "sha256": "c587d545f37e56bfdc6a9de13d1f84d9e10bb4174a2e0dc52099d15dd400c69e",
-      "size": 14152,
+      "sha256": "165f4fbdbd8f482d65e908bf974b3b4012df06836b50ca7ee6b8a3c830b8fef7",
+      "size": 14285,
       "mode": "100755"
     },
     {
       "path": "scripts/flow_adapters/sony_a7iv_cad/adapter.mjs",
-      "sha256": "689205e65457b2b5c42e490f9e5e17db22eabe6058638c862f60405867a0cf64",
-      "size": 17128,
+      "sha256": "f0a23dffb220f10cd10e12616378033dabf2d74f4fa3b262578b87ab9e0106db",
+      "size": 22155,
       "mode": "100644"
     },
     {
@@ -2401,6 +2357,12 @@
       "mode": "100644"
     },
     {
+      "path": "scripts/flow_adapters/sony_a7iv_cad/unit_health.mjs",
+      "sha256": "7481dfa3d493892ce19d943c07a230784aa7e3a9f8be9e919f09c368601fc8c9",
+      "size": 18092,
+      "mode": "100644"
+    },
+    {
       "path": "scripts/flow_os/audit_ledger.mjs",
       "sha256": "cae020e4ad1a60020fe9a319954bfcb59f26a77754acd8857f5251498fd1e141",
       "size": 3317,
@@ -2426,20 +2388,20 @@
     },
     {
       "path": "scripts/flow_os/doc_compiler.mjs",
-      "sha256": "b98d5e866c26dd82e4ca017515d82bf0abb5b9117a374e101e40afd8a36bb2ff",
-      "size": 5703,
+      "sha256": "4158bfb60d53874b5d6d1ae09f22d395f430816d61c7b7956623eca3d38f8337",
+      "size": 7455,
       "mode": "100644"
     },
     {
       "path": "scripts/flow_os/doc_sync.mjs",
-      "sha256": "bc5b9460ed65da7396cf305c1d00652ae35623916a8001f4e9136fcfed3f3df4",
-      "size": 8983,
+      "sha256": "42feb0fe5f8bfc7987fc99ca6300e227cdf0184410fa4c8beb567dc37032ee16",
+      "size": 13002,
       "mode": "100644"
     },
     {
       "path": "scripts/flow_os/flow.mjs",
-      "sha256": "6725309e6fe3afc73d93a10bf4e62100ce178d01c23630f9830af2a7e4336b02",
-      "size": 55772,
+      "sha256": "0d918bcc7e272fa7ab439c7abe7192766f9242050253dbdc076bd8b5c0cae3fd",
+      "size": 58824,
       "mode": "100644"
     },
     {
@@ -2450,8 +2412,8 @@
     },
     {
       "path": "scripts/flow_os/kernel_config.mjs",
-      "sha256": "379e83bb062bc7d4e7c9242e1ef62b3ba9eeb1128b04c2cbb5a61005c4671d76",
-      "size": 9966,
+      "sha256": "75c15d47971a9c25ee0eba64dee4855ee33b1e9991fdc674170ef189763fd926",
+      "size": 10027,
       "mode": "100644"
     },
     {
@@ -2510,8 +2472,8 @@
     },
     {
       "path": "scripts/flow_os/solver_sandbox.mjs",
-      "sha256": "faf2a347a459e54503345853ce83cb0ee7c99432d175dff5648e4c122d5c28d5",
-      "size": 10796,
+      "sha256": "b1f6923e4bdb9859594b738e4ca82705417c9616ef7b249accf7d4295a438100",
+      "size": 11144,
       "mode": "100644"
     },
     {
@@ -2528,8 +2490,8 @@
     },
     {
       "path": "scripts/flow_os/templates/AGENTS.tmpl.md",
-      "sha256": "6694231956ed766c1fabd1856dee3e26e11d26a1deba64287101281bf8a5d163",
-      "size": 3461,
+      "sha256": "e5fde48f2a214a59c05dc659a02cd6240f254360ef8e1559d46b29ca7b3b44d5",
+      "size": 3892,
       "mode": "100644"
     },
     {
@@ -2540,14 +2502,14 @@
     },
     {
       "path": "scripts/flow_os/test_cache.mjs",
-      "sha256": "97989d4f365d38001085d85f4d0fd40e1fee26ec53b1bf2e61c16e8578442b1f",
-      "size": 5390,
+      "sha256": "e7f76a2f4a9979d9aa6b2f5e13c4585a164ad59a09ee92b783a1513e21b7ce5a",
+      "size": 5417,
       "mode": "100644"
     },
     {
       "path": "scripts/flow_os/tool_specs.mjs",
-      "sha256": "7ff7979d197aca459880a3460f2ec7fdebe0aa87a5c28d118ff2e7f5448bfeae",
-      "size": 5250,
+      "sha256": "26a98be78630e1c4539ef0656cfc66c2b5ce22532aa254926d94b8632d0bec35",
+      "size": 5646,
       "mode": "100644"
     },
     {
@@ -2636,8 +2598,8 @@
     },
     {
       "path": "scripts/spatial_engine/scene_extractor.mjs",
-      "sha256": "0f7b785e20de5d581e0044c56e347d1ae9ffabba79279fe39131fad4999addcc",
-      "size": 26937,
+      "sha256": "277d1eafa6391cfc4782c37868962d1b56dff8d402a86ba6ed7e70e2669053a0",
+      "size": 26905,
       "mode": "100644"
     },
     {

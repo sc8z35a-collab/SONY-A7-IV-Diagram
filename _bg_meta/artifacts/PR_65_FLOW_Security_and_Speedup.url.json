@@ -1,5 +1,0 @@
-{
-  "url": "https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/65",
-  "title": "PR #65: feat(flow-os): FLOW Security hardening, SSOT doc autonomy, real-artifact pipeline & 4-pillar speedup",
-  "description": "FLOW Security (46-attack Red-Team, Edit Permit Gate, 2ms kernel solver sandbox, Ed25519 external CI attestation), @FLOW_AUTO SSOT docs (-57.8% AGENTS.md), real-artifact EXAM pipeline, and 4-pillar speedup."
-}

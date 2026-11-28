@@ -30,10 +30,12 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
   books: {
     envManual: 'AGENTS.md',
     domainManual: 'README.md',
-    maxEnvTokens: 2200,
-    maxDomainTokens: 5500,
+    maxEnvTokens: 2850,
+    maxDomainTokens: 8000,
     contentAssetDirs: ['reports', 'blueprints', 'docs', 'node_modules', 'dist', 'build', '.git', 'vendor', 'target'],
     requiredEnvTokens: [
+      'NO_INFRA_DIVE',
+      'flow status',
       'flow wake',
       'flow permit',
       'flow inspect',
@@ -52,6 +54,7 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
     ],
   },
   budgets: {
+    status: 450,
     wake: 220,
     permit: 150,
     inspect: 300,

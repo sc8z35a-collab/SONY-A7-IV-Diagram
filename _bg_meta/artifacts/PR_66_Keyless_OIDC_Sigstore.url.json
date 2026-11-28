@@ -1,5 +1,0 @@
-{
-  "url": "https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/66",
-  "title": "PR #66: feat(security): keyless GitHub Actions OIDC + Sigstore attestation (zero static keys, 48-attack oracle)",
-  "description": "Upgrades FLOW Security external CI attestation to Keyless GitHub Actions OIDC + Sigstore (actions/attest-build-provenance@v4.2.2 + gh attestation verify + 48-attack Red-Team oracle)."
-}

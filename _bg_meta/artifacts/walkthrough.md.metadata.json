@@ -1,5 +1,5 @@
 {
-  "summary":  "Complete verification walkthrough for FLOW Security hardening, SSOT document autonomy, real-artifact EXAM pipeline, and 4-pillar speedup on feat/flow-security-speed with Before/After measured benchmarks, 46/46 Red-Team & 111/111 sandboxed EXAM V1.1 proofs, exact FLOW-RECEIPT, and B-1/B-2 human setup guide.",
-  "updatedAt":  "2026-11-28T12:45:15.818957455Z",
+  "summary":  "PR#67（AI 1発環境把握・0ソース読み・170ms コールドスタート改革、8,000 tok 完全 README 説明書、EX02 <=0.08mm 未接地計測、および実バグ 4 件修正）の実装・検証・CI 通過・main マージ完了ウォークスルー。",
+  "updatedAt":  "2026-11-28T17:54:15.750799358Z",
   "userFacing":  true
 }

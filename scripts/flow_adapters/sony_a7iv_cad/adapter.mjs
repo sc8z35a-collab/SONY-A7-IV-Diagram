@@ -5,6 +5,7 @@
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import {
   EXIT_BLOCKED,
@@ -14,8 +15,71 @@ import {
 } from '../../flow_os/kernel_config.mjs';
 import { safeSpawnSync } from '../../flow_os/security_fortress.mjs';
 import { formatFlowHeader, formatRecord } from '../../flow_os/wire_protocol.mjs';
+import { readPermit } from '../../flow_os/permit_manager.mjs';
+import { syncTwoBooks } from '../../flow_os/doc_sync.mjs';
+import {
+  EXCLUDED_EXAM_UNITS,
+  formatCompactHealthLines,
+  readUnitHealthCatalog,
+  refreshUnitHealthCatalog,
+} from './unit_health.mjs';
 
-const EXCLUDED_EXAM_UNITS = new Set(['mirai_2028', 'sensor_fab']);
+const NATIVE_HARNESS_BINS = [
+  'bullet_ode_multibody',
+  'cgal_geom_kernel',
+  'dart_kinematics_dynamics',
+  'fcl_ccd_router',
+  'occt_step_analyzer',
+  'spectral_gts_nlopt',
+];
+
+function probeChromeFast() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+  ].filter(Boolean);
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return 'OK';
+  }
+  return 'MISSING';
+}
+
+function probeSolversFast() {
+  const manPath = '/tmp/tlx_env_manifest.json';
+  if (!fs.existsSync(manPath)) return { text: '0/48', ready: 0, total: 48, missing: true };
+  try {
+    const m = JSON.parse(fs.readFileSync(manPath, 'utf8'));
+    const ready = Number(m.ok_count ?? m.ready ?? 0);
+    const total = Number(m.total_count ?? m.total ?? 48);
+    return { text: `${ready}/${total}`, ready, total, missing: ready < total || total < 48 };
+  } catch {
+    return { text: '0/48', ready: 0, total: 48, missing: true };
+  }
+}
+
+function probePrebuildCacheFast(repoRoot) {
+  const dirs = [
+    path.join(repoRoot, 'scripts/exam/native/bin'),
+    process.env.TLX_CACHE_DIR ? path.join(process.env.TLX_CACHE_DIR, 'bin') : '/opt/tlx_env/bin',
+    path.join(os.homedir(), '.cache/tlx_env/bin'),
+  ];
+  let best = 0;
+  for (const dir of dirs) {
+    if (!fs.existsSync(dir)) continue;
+    let cnt = 0;
+    for (const bin of NATIVE_HARNESS_BINS) {
+      if (fs.existsSync(path.join(dir, bin))) cnt++;
+    }
+    if (cnt > best) best = cnt;
+    if (best === NATIVE_HARNESS_BINS.length) break;
+  }
+  if (best === NATIVE_HARNESS_BINS.length) return `READY(${best}/${NATIVE_HARNESS_BINS.length})`;
+  if (best > 0) return `PARTIAL(${best}/${NATIVE_HARNESS_BINS.length})`;
+  return 'COLD';
+}
 
 function readTsvRows(absPath) {
   if (!fs.existsSync(absPath)) return [];
@@ -69,9 +133,50 @@ export function createAdapter(ctx) {
     listUnits,
 
     /**
+     * `flow status`: <300ms toolchain + certification scorecard + dependency DAG + 21-unit health map
+     */
+    async onStatus({ unit = null, refreshHealth = false } = {}) {
+      let refreshMeta = null;
+      if (refreshHealth) {
+        const ref = await refreshUnitHealthCatalog(ctx, { unit });
+        if (!ref.ok) {
+          return {
+            ok: false,
+            exitCode: EXIT_BLOCKED,
+            chrome: probeChromeFast(),
+            solvers: probeSolversFast().text,
+            prebuildCache: probePrebuildCacheFast(root),
+            lines: [`HEALTH_ERR|msg=${ref.error}`],
+          };
+        }
+        refreshMeta = { refreshed: ref.refreshed, refreshMs: ref.elapsedMs };
+      }
+
+      const chrome = probeChromeFast();
+      const sv = probeSolversFast();
+      const prebuildCache = probePrebuildCacheFast(root);
+      const summary = readUnitHealthCatalog(ctx);
+      const lines = [];
+      if (refreshMeta) {
+        lines.push(`REFRESH|units=${refreshMeta.refreshed}|ms=${refreshMeta.refreshMs}|file=catalog/UNIT_HEALTH.tsv`);
+      }
+      lines.push(...formatCompactHealthLines(summary, { unit }));
+      return {
+        ok: true,
+        exitCode: EXIT_OK,
+        chrome,
+        solvers: sv.text,
+        prebuildCache,
+        lines,
+        summary,
+        refreshMeta,
+      };
+    },
+
+    /**
      * `flow wake`: bg boot + optional bg start + solver manifest probe + incremental atlas + unit brief
      */
-    async onWake({ slug, unit, role, goal, next, agent }) {
+    async onWake({ slug, unit, role, goal, next, brief = false, agent }) {
       const boot = runNode('scripts/bg.mjs', ['boot', '--ai'], agent, 60_000);
       const bootLine = (boot.stdout || '').split('\n').find((l) => l.includes('[bg boot]')) || (boot.stdout || '').trim().split('\n')[0] || '';
       const briefLines = [];
@@ -89,20 +194,9 @@ export function createAdapter(ctx) {
       }
 
       // Fast 0-download solver readiness check from /tmp/tlx_env_manifest.json
-      let solvers = '0/48(run:flow exec exam setup)';
-      let solversMissing = true;
-      const manPath = '/tmp/tlx_env_manifest.json';
-      if (fs.existsSync(manPath)) {
-        try {
-          const m = JSON.parse(fs.readFileSync(manPath, 'utf8'));
-          const ready = Number(m.ok_count ?? m.ready ?? 0);
-          const total = Number(m.total_count ?? m.total ?? 48);
-          solvers = `${ready}/${total}`;
-          solversMissing = ready < total || total < 48;
-        } catch {
-          solversMissing = true;
-        }
-      }
+      const svProbe = probeSolversFast();
+      const solvers = svProbe.missing && svProbe.ready === 0 ? '0/48(run:flow exec exam setup)' : svProbe.text;
+      const solversMissing = svProbe.missing;
 
       // Ensure code atlas exists (sub-second)
       if (!fs.existsSync(path.join(root, 'catalog/code/SYMBOLS.tsv'))) {
@@ -134,6 +228,19 @@ export function createAdapter(ctx) {
             books: 'AGENTS.md+README.md',
           })
         );
+      }
+
+      if (brief) {
+        const summary = readUnitHealthCatalog(ctx);
+        if (summary.exists) {
+          if (unit) {
+            briefLines.push(...formatCompactHealthLines(summary, { unit }));
+          } else {
+            briefLines.push(
+              `HEALTH|cert=${summary.certifiedUnits.length}/${summary.examRows.length}|clean=${summary.cleanUnits.length}|dirty=${summary.dirtyUnits.length}|stale=${summary.staleUnits.length}|chrome=${probeChromeFast()}|cache=${probePrebuildCacheFast(root)}`
+            );
+          }
+        }
       }
 
       return {
@@ -218,7 +325,23 @@ export function createAdapter(ctx) {
       const mod = await import(`file://${bridgePath}`);
       if (opts.selftest) return mod.runHealSelftest(ctx);
       if (opts.bake) return mod.bakePoseToSource(ctx, opts.unit, { apply: opts.apply });
-      return mod.runFlowHeal(ctx, opts);
+      const res = await mod.runFlowHeal(ctx, opts);
+
+      // Keep catalog/UNIT_HEALTH.tsv fresh ONLY under integrator privilege (respecting SEC-10 worker confinement!)
+      if (opts.apply && res.exitCode !== 6 && fs.existsSync(path.join(root, 'catalog/UNIT_HEALTH.tsv'))) {
+        const activePerm = opts.agent?.agentId ? readPermit(ctx.stateDir, opts.agent.agentId) : null;
+        const canEditCatalog = opts.role === 'integrator' || (activePerm && !activePerm.corrupted && activePerm.role === 'integrator');
+        if (canEditCatalog) {
+          const ref = await refreshUnitHealthCatalog(ctx, { unit: opts.unit });
+          if (ref.ok) {
+            await syncTwoBooks(ctx);
+            res.lines = [...(res.lines || []), `HEALTH_SYNC|unit=${opts.unit}|ms=${ref.elapsedMs}|books=synced`];
+          }
+        } else {
+          res.lines = [...(res.lines || []), `HEALTH_HINT|worker_isolated=1|integrator_sync=npm run flow -- status --refresh-health --unit=${opts.unit}`];
+        }
+      }
+      return res;
     },
 
     /**
@@ -282,6 +405,14 @@ export function createAdapter(ctx) {
         const ppOut = path.join(agent.agentWs, `pp_ship_${unit}`);
         runStep('pp_visual', 'node', ['scripts/pp.mjs', '--warm', '--mode=cad', `--unit=${unit}`, '--quality=high', '--ortho-pack', '--contact-sheet=3', `--out=${ppOut}`], 180_000);
         runStep('pp_stop', 'node', ['scripts/pp.mjs', '--daemon=stop'], 30_000);
+      }
+
+      // Refresh single-unit health row + SSOT docs under integrator policy before snapshot
+      if (policy === 'integrator' && fs.existsSync(path.join(root, 'catalog/UNIT_HEALTH.tsv'))) {
+        const tH = performance.now();
+        const ref = await refreshUnitHealthCatalog(ctx, { unit });
+        if (ref.ok) await syncTwoBooks(ctx);
+        steps.push({ name: 'health_sync', ok: ref.ok, exit: ref.ok ? 0 : 1, ms: Math.round(performance.now() - tH), out: '', err: '' });
       }
 
       // Off-VM snapshot via bg snap

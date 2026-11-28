@@ -101,6 +101,57 @@ export async function auditTwoBooks(ctx, { strict = false } = {}) {
 }
 
 /**
+ * Ultra-fast (<15ms) 2-book structural & budget probe for `flow status`
+ * (skips importing `test_registry.mjs` and parsing 23 JSON files; full drift verification remains in `auditTwoBooks`).
+ */
+export function auditTwoBooksFast(ctx) {
+  const books = ctx.cfg.books || {};
+  const envRel = books.envManual || 'AGENTS.md';
+  const domRel = books.domainManual || 'README.md';
+  const maxEnvTok = Number(books.maxEnvTokens || 2850);
+  const maxDomTok = Number(books.maxDomainTokens || 8000);
+  const requiredTokens = books.requiredEnvTokens || [];
+
+  const envAbs = path.join(ctx.repoRoot, envRel);
+  const domAbs = path.join(ctx.repoRoot, domRel);
+  const envExists = fs.existsSync(envAbs);
+  const domExists = fs.existsSync(domAbs);
+  const bookCount = (envExists ? 1 : 0) + (domExists ? 1 : 0);
+
+  const violations = [];
+  if (!envExists) violations.push(`MISSING:${envRel}`);
+  if (!domExists) violations.push(`MISSING:${domRel}`);
+
+  let envTok = 0;
+  let domTok = 0;
+  if (envExists) {
+    const raw = fs.readFileSync(envAbs, 'utf8');
+    envTok = estimateTokens(raw);
+    if (envTok > maxEnvTok) violations.push(`ENV_TOK_OVER:${envTok}>${maxEnvTok}`);
+    for (const tok of requiredTokens) {
+      if (!raw.includes(tok)) violations.push(`ENV_MISSING:${tok}`);
+    }
+  }
+  if (domExists) {
+    const raw = fs.readFileSync(domAbs, 'utf8');
+    domTok = estimateTokens(raw);
+    if (domTok > maxDomTok) violations.push(`DOM_TOK_OVER:${domTok}>${maxDomTok}`);
+    if (raw.includes('pending `npm run flow -- status --refresh-health`')) {
+      violations.push('DOC_DRIFT:UNIT_HEALTH_SUMMARY');
+    }
+  }
+
+  return {
+    ok: violations.length === 0,
+    bookCount,
+    envTok,
+    domTok,
+    totalTokens: envTok + domTok,
+    violations,
+  };
+}
+
+/**
  * Surgical section reader for Book 1 or Book 2 by `@SECTION_TAG` (< 250 tokens).
  */
 export function readBookSection(ctx, bookNum, tag) {

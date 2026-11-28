@@ -1,72 +1,63 @@
-# FLOW Security・文書自律化・EXAM 構造改善・4本柱高速化 — 完了検証レポート
+# Walkthrough — PR#67: AI 1発環境把握・0ソース読み・8,000 tok 完全説明書改革 ＆ EXAM 重大バグ修正
 
-- **対象ブランチ / コミット**: `feat/flow-security-speed` (`a4262c1`, pushed to `origin/feat/flow-security-speed`)
-- **最終ゲート結果**: **100% PASS（キャッシュ完全無効・UNCACHED 実測）**
-  - `FLOW-RECEIPT`: `FLOW-RECEIPT:e10908f4:d520765f:d96635b8:integrator:6b17b056c39c`
-  - `BG-RECEIPT`: `BG-RECEIPT:f82f4124:origin/feat/flow-security-speed:integrator:990c0fa7`
-  - `SEC-RECEIPT`: `SEC-RECEIPT:e10908f4:12/12:b4428dfb`
-  - `Ed25519 Attestation`: `LOCAL_UNATTESTED`（ローカル VM には秘密鍵を絶対に置かない正直な設計。B-2 完了後に GitHub Actions 上で `CI_ATTESTED` 署名が付与されます）
+- **Pull Request**: https://github.com/sc8z35a-collab/SONY-A7-IV-Diagram/pull/67
+- **Merged Commit (`main`)**: `835ba1f8de`（Squash & Merge、作業ブランチ `feat/instant-comprehension-os` 削除済み）
+- **GitHub Actions CI**: `FLOW Security Gate` **PASS（1m 29s）**（48 攻撃オラクル・13 層監査・厳格 2 冊 SSOT・非キャッシュビルド・Keyless OIDC + Sigstore 署名検証）
+- **FLOW-RECEIPT**: `FLOW-RECEIPT:84ff0a44:151bcbd8:d96635b8:integrator:e559a1f037bc`（`BG-RECEIPT:f766d70c:origin/feat/instant-comprehension-os:integrator:1fded457` + `SEC-RECEIPT:84ff0a44:12/12:a5c09274`）
 
 ---
 
-## 1. Before / After 実測ベンチマーク（実行時間 & 消費トークン）
+## 1. 実装した改革内容（18 ファイル変更）
 
-### 実行時間の高速化（Linux 6.18.57 / 2 vCPU 環境 実測値）
+### ① Book 1（[AGENTS.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/AGENTS.md)：`2,812 / 2,850 tok`）＆ テンプレート
+- **`I00 NO_INFRA_DIVE`** を `@IRON_LAWS` 最上部に新設：`/plan`・ユニット実装・**EXAM FAIL デバッグのいずれにおいても** `scripts/flow_os/*`, `scripts/exam/*`, `scripts/buchigire_guard/*`, `scripts/spatial_engine/*`, `src/core/*`, `.github/workflows/*` のソース読み込みと 21 ユニット生 `sp audit` ループを明示禁止。
+- **`@CONTRACTS_QUICKREF`** を新設：Permit（`SEC-10`）・`SEC-08` 数値上限（`3.0mm / 0.6mm / 5.0%`・不変コア）・`flow heal` Tier-A/B 仕様・`flow auto` 6 種 DAG・Sandbox / Keyless OIDC / CI 仕様をソース逆引き不要で完結記載。
+- ポータブルテンプレート [AGENTS.tmpl.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/templates/AGENTS.tmpl.md) および [.flowrc.json](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/.flowrc.json) / [kernel_config.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/kernel_config.mjs) を更新（`maxEnvTokens: 2850`, `maxDomainTokens: 8000`, `budgets.status: 450`, `requiredEnvTokens` に `NO_INFRA_DIVE`, `flow status` 追加）。
 
-| 項目 | Before（改修前） | After（改修後・実測） | 改善率 / 備考 |
-|---|---:|---:|---|
-| 48 ソルバー＋6 C++17 ハーネス構築 (`exam setup`) | ~120s+（毎回 apt + 再ビルド） | **4.36s**（ソースハッシュキャッシュ全 6/6 HIT） / verify-only **193ms** | **約 28x 高速化**（`-fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now` 硬化済み） |
-| ビルド検証 4 ジョブ (`catalog`+`dx_atlas`+`tsc`+`validate_parts`) | 23.1s（直列） | **474ms**（`flow verify --parallel --suite=build --cached` 4/4 HIT） | **48.7x 高速化**（最終ゲート `FLOW_NO_CACHE=1` 時は強制無効） |
-| セルフトテスト 4 ジョブ (`bg`+`dx`+`sp`+`flow`) | 12.33s（直列） | **23ms**（`flow verify --parallel --suite=selftest --cached` 4/4 HIT） / Cold 12.38s | **538x 高速化**（`FLOW_NO_CACHE=1 --cached` で `0/4 HIT / 12.68s` となりバイパス不能を実証） |
-| `EXAM V1.1` フルセルフトテスト (`111/111`, 48 実ソルバー) | 35.66s（サンドボックスなし） | **35.24s** (`dur_s=35.02s`, 2ms Linux UserNS/NetNS サンドボックス常時 ON) | **速度低下ゼロ（-0.42s）**。`unshare --net` + loopback-only `lo`（外部通信 0）＋`NoNewPrivs=1`＋`prlimit`＋`env -i` |
+### ② Book 2（[README.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/README.md)：`7,892 / 8,000 tok` — 完全ゼロ逆引き説明書）
+- **`@UNIT_DEPENDENCY_DAG`**：Stage 1（独立 19 ユニット・並列可）→ Stage 2（コンポジット 2 ユニット `camera_body` [7 依存]・`integrated` [8 依存] via `camera_macro_shared.ts`）・EXAM 除外 2 ユニット（`mirai_2028`, `sensor_fab`）。
+- **`<!-- @FLOW_AUTO:UNIT_HEALTH_SUMMARY -->`**：[doc_sync.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/doc_sync.mjs) により `catalog/UNIT_HEALTH.tsv` + `verification/certificates/` + `src/units/*.pose.tsv` から SSOT 自動生成（ドリフト時は `EXIT 2`）。
+- **`@EXAM_CERT_AND_PASS_CONTRACT`**：`V1.1証明` の厳格発行条件（`FAIL=0 & WARN=0 & ERR=0 & SKIP=0`、`0.0001mm` 自動失効）・全 12 柱/48 エンジンの数値閾値・VM 所要時間目安。
+- **`@EXAM_IR_FLAGS_AND_MATERIAL_DB`**：全 10 種 `PART_FLAGS` 正規表現・`powerW` 規定値・`matKey` 解決順・金属/絶縁体プリセット物性表（`rho/E/sy/eGalv/mfgClass`）・ガルバニック腐食 `dV` ルール。
+- **`@EXAM_DEBUG_PLAYBOOK`**：7 枚のスクショで AI が 8 分以上ソースを掘りに行った全 9 カテゴリの修正レシピを網羅（`EX02 <=0.08mm` 200 項目連鎖法則、CalculiX `hasCompliant`、`EX13` DFM 肉厚、`EX22-36` GPU `<=64MB`、`EX47` Hertz `minYieldMpa` 罠、`EX48` screw pierce AABB 重複＆`igraph` 1 連結成分、`exam query` デバッグ手順）。
 
-### トークン削減・文書自律化（実測値）
-
-| 対象 | Before | After | 削減率 / 保証 |
-|---|---:|---:|---|
-| [AGENTS.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/AGENTS.md)（毎ターン読込） | 4,368 tok | **1,844 tok** | **-57.8%**（フラグ詳細は `flow doc tool <name>` へオンデマンド移管、直接バイパス案内を全廃） |
-| [README.md](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/README.md) | 4,562 tok（手書き乖離あり） | **4,110 tok** | **-9.9%** ＋ `@FLOW_AUTO:*` 3 ブロック完全自動同期（1 桁でもズレると `flow doc audit --strict` が `EXIT 2` で停止） |
-| `flow auto research --target=mishoe`（14 ステップ並列） | ~1,800+ tok | **4 行 (~120 tok)** | **-93%**（PASS ステップを `PASS_SUM` 1 行に自動圧縮、`--verbose` で全展開） |
-| `EXAM V1.1` PASS 出力 (`tlx1_protocol.mjs`) | ~1,400 tok（48 行 `E\|`） | **~70 tok**（`E_SUM`＋`DIFF` のみ） | **-95%**（FAIL/WARN/DIFF のみ出力、完全ログは `results.ndjson` へ無損失保存） |
-
----
-
-## 2. 実装と検証の全体像
-
-### A. FLOW Security（13 層要塞＋46 攻撃レッドチーム＋カーネル隔離）
-- **Edit Permit Gate & 権限分離** ([permit_manager.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/permit_manager.mjs), [flow.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/flow.mjs)):
-  - デフォルトロールを `worker` に引き下げ、`--policy=integrator` の自己昇格を `EXIT 6 (SELF_ELEVATION_BLOCKED)` で即時拒否。`integrator` は明示的な `--elevate-integrator --reason="<6文字以上>"` の Edit Permit 発行が必須。
-  - スコープ外編集・改ざん・無許可編集時は自動隔離（Quarantine）＋ Permit 失効＋ `flow security recover` によるクリーン復帰フローを実装。
-- **高速デュアルティア・ソルバー隔離** ([solver_sandbox.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/solver_sandbox.mjs), [Dockerfile.sandbox](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/Dockerfile.sandbox), [solver_exec.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/engines/solver_exec.mjs)):
-  - 常時有効な 2ms Linux カーネル隔離（`unshare --user --map-root-user --net` で外部 NIC・デフォルトルート完全遮断、OpenMPI/GetDP 用に `lo` のみ有効化＋`setpriv --no-new-privs`＋`prlimit`＋`env -i` 汚染環境変数除去）と、1 ラン 1 コンテナ `:ro` マウント型 `SolverSandboxSession` を実装。
-- **Ed25519 非対称署名と正直なローカル未署名表示** ([crypto_attestation.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/crypto_attestation.mjs)):
-  - 秘密鍵を VM/Git に一切置かず、外部環境変数 `FLOW_ED25519_PRIVATE_KEY_PEM` のみから署名。ローカル実行時は正直に `LOCAL_UNATTESTED` を明示。
-- **全バイパス経路・動的コード評価の根絶**:
-  - `--no-exam` / `--no-checks` / `--skip-build` / `--no-snap` / `--ignore-orphans` / `allowSecretsUnsafe` / インライン `bg-ignore-secret` & `flow-sec-allow:*` を全廃。
-  - `flow exec` の引数ホワイトリスト検査（`--only`, `--force`, `--allow-main` 等を `EXIT 6` 遮断）。
-  - [scene_extractor.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/scene_extractor.mjs) と [domains.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/sokutei_core/domains.mjs) から `new Function` を完全撤去（インライン例外コメント 0 件で `SEC-07` 全件合格）。
-  - 推移的 EXAM カーネル閉包 ([kernel_closure.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/kernel_closure.mjs))、サラミ累積ドリフト検知 (`SEC-08`)、不変コア削除ロック ([core_immutable_manifest.json](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/core_immutable_manifest.json) — 既存コア・`T001..T1080`・組込パイプライン削除は `EXIT 6`、AI 作成の `ai-*` マクロのみ削除可)、`.git/config` 危険ディレクティブ監査、6 バイナリ SHA-256 検証、`0o600` spill ログ自動消去を実装。
-- **外部 CI ゲート** ([flow-security.yml](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/.github/workflows/flow-security.yml)): PR / `main` push 時に 46 攻撃テスト・13 層監査・`@FLOW_AUTO` ドリフト検査・非キャッシュビルド・Ed25519 CI 署名を自動実行。
-
-### B. EXAM 構造改善（実製造成果物ダイレクト経路＋Verification/Validation 境界明示）
-- [real_artifact_loader.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/real_artifact_loader.mjs) & [exam.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam.mjs): `--project=<exam.project.json>` (`schema: "tlx11-real-project/v1"`) により本物の STEP / KiCad / SPICE / Verilog / BOM を外部ソルバーへ直接入力。不足ドメインは捏造せず正直に `MISSING_REAL_ARTIFACT` (`EXIT 2`) を返却することを実テストで確認済み。
-- [v11_certificate.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/v11_certificate.mjs) & [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts): 証明書および UI 保証モーダルに `CAD_PROXY` vs `REAL_ARTIFACT` および「ソフトウェア事前検証 (Verification) であり、実機量産出荷には別途実機計測・法規認証 (Validation) が必要」である境界を明記。
-
-### C. 全自動検証スイート実測結果
-- `npm run flow -- selftest --raw`: **`PASS | sec13=46/46 | permit=6/6 | sandbox=3/3 | swarm=8/8 | macro=12/12 | books=2/2(5954tok)`**
-- `npm run flow -- security audit --full --raw --role=integrator`: **`PASS | layers=12/12 | findings=0`**
-- `node scripts/exam.mjs selftest`: **`PASS | pass=111/111 | engines=48 | tests=1080 | locks=28 | dur_s=35.02 | sv=48/48`**
-- `node scripts/exam/v11_certificate.mjs selftest`: **`PASS | refuse99=NOT_ELIGIBLE | intact=CERTIFIED | drift001mm=REVOKED_GEOMETRY_DRIFT | forged=REVOKED_FORGED_SIGNATURE`**
-- `npm run bg -- selftest --ai`: **`20/20 PASS`** / `node scripts/dx.mjs selftest --ai`: **`22/22 PASS`** / `npm run sp -- selftest --ai`: **`20/20 PASS`**
-- 汎用ポータブル出力 (`flow export-template` -> 新規空リポジトリで実行): **`PASS | sec13=46/46 | permit=6/6 | sandbox=3/3 | swarm=8/8 | macro=12/12 | books=2/2(1744tok)`**
-- `@FLOW_AUTO` 負のドリフトテスト（`2937` -> `2936` の 1 桁改変）: **`EXIT 2 (DOC_DRIFT:AGENTS.md:ENV_HEADER)`** を検出し、`flow doc sync` で自動復旧を確認。
-- 非キャッシュ本番ビルド (`catalog` + `tsc --noEmit` + `validate_parts` + `npm run build`): **`PASS`（0 エラー）**
+### ③ `<180ms`・`371 tok` スピル 0 の `flow status` ＆ `catalog/UNIT_HEALTH.tsv`
+- [unit_health.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_adapters/sony_a7iv_cad/unit_health.mjs) ＆ [UNIT_HEALTH.tsv](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/catalog/UNIT_HEALTH.tsv)（全 23 モード初回計測済み）を新設。
+- [flow.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/flow.mjs) / [adapter.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_adapters/sony_a7iv_cad/adapter.mjs) / [doc_compiler.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/doc_compiler.mjs) / [solver_sandbox.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/solver_sandbox.mjs) / [tool_specs.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/tool_specs.mjs) / [test_cache.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/flow_os/test_cache.mjs) を統合：
+  - `flow status`：**内部 `166〜179ms` / `371 tok`（予算 450 以内・スピル 0）** で Git・Permit・OIDC・Sandbox・Books・VM・Chrome・48 ソルバー・6/6 プリビルドキャッシュ・認証数・DAG・全 21 ユニットの正確な衝突/`EX02 >0.08mm` 未接地/SMT/展開干渉を一撃出力。
+  - `flow wake --brief` に対応。
+  - `flow heal --apply` / `flow ship` 時の `catalog/UNIT_HEALTH.tsv` 自動更新＋`doc sync` は **`integrator` 実行時のみ** 発火（`SEC-10` の `worker` パス隔離を厳守）。
 
 ---
 
-## 3. 境界の明確化（VM 内完結 vs 人間側外部インフラ設定）
+## 2. 調査過程で発見・同時修正した重大バグ（欠点・やばい点 4 件）
 
-| 区分 | 項目 | 現状と到達レベル |
+1. **[ir_compiler.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/ir_compiler.mjs#L262) ＆ [scene_extractor.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/spatial_engine/scene_extractor.mjs#L177) — 全 23 実 CAD ユニットの `matKey` サイレント欠落バグ**
+   - `scene_extractor.mjs` は `matKey` を出力していたのに、`ir_compiler.mjs` が `firstMesh?.materialKey || ''` を参照していたため、全 23 ユニットで PBR カタログ材質が 100% 捨てられていた（`selftest_oracle.mjs` は合成メッシュで `materialKey` を渡していたためテストをすり抜けていた）。
+   - さらに `scene_extractor.mjs` の `inferMaterialKey` が未タグ材質を誤って `'welcomeCoreSlate'`（アルミ `a6061_t6`）扱いしていた点も同時修正。
+   - **修正後実証**：`original` で `0 -> 128/128 (100%)`、`battery` で `0 -> 91/130` の実 PBR `matKey` 伝搬を確認。
+2. **[ir_compiler.mjs](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam/ir_compiler.mjs#L104) — `buildSourceLineMap` のディレクトリ解決バグ**
+   - `mishoe` を存在しない `src/assemblies/mi_shoe` にマップし、`sensor_fab` / `mirai_2028` / `micro` / `micro_v2` / `camera_body` / `integrated` のソース行解決が欠落していた問題を修正。
+3. **`sp_float (>4.0mm)` と `EX02 (<=0.08mm)` の盲点解消**
+   - 従来の `sp` 監査だけでは `welcome` と `original` が「clean（0 欠陥）」に見えながら EXAM `EX02` で 200+ 件連鎖 FAIL する罠があった。
+   - `unit_health.mjs` に `EX02` 準拠の `<=0.08mm` 接地 BFS 計測（`ex02_gap08`）を追加し、`welcome:207g`・`original:104g`・`bionz_v2:54g`・`micro_v2:11g` を `flow status` と `UNIT_HEALTH.tsv` で即可視化。
+4. **[exam_setup.sh](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/scripts/exam_setup.sh#L24) — `--verify-only` 直接実行時の `apt-get` 暴発バグ**
+   - `bash scripts/exam_setup.sh --verify-only` を直接叩くと `--verify-only` が無視されて 66 パッケージの `apt-get` と C++ ビルドが走る不具合を修正（`3.8s` で `48/48 READY` 検証のみ実行）。
+
+---
+
+## 3. 検証結果サマリー（全件非キャッシュ PASS）
+
+| 検証項目 | コマンド | 結果 |
 |---|---|---|
-| **A. VM 内完結（本 PR で 100% 実装・実証済み）** | Edit Permit Gate / デフォルト `worker` / 2ms カーネル隔離 (UserNS/NetNS/NoNewPrivs/prlimit/env -i) / 1-container Docker `:ro` セッション / 46 攻撃 Red-Team / Salami & コア削除ロック / `@FLOW_AUTO` 自動同期 / Real-Artifact 経路 / 4 本柱高速化 | **Class B（ローカル強制・誤操作＆プロンプトインジェクション抑止）達成済み**。ローカル VM では `sudo`/`git` 権限上、完全な強制境界ではない点を正直に明記。 |
-| **B. 人間側・外部インフラ設定（真の Class C 境界）** | **B-1**: GitHub `main` Branch Protection（`flow-security-gate` 必須化・force push 禁止）<br>**B-2**: Ed25519 秘密鍵の GitHub Actions Secrets 登録＋公開鍵の `verification/keys/flow_v11_pub.pem` 配置 | PR マージ後、人間側の最短操作（約 2 分）で **Class C（VM 侵害下でも破れない外部暗号・ブランチ保護境界）** が完成します。 |
+| `flow status` 速度・容量 | `npm run flow -- status` | **PASS**（内部 `166〜179ms`, **`371 tok <= 450`**, スピル 0） |
+| 2 冊 SSOT 厳格監査 | `FLOW_NO_CACHE=1 npm run flow -- doc audit --strict --raw` | **PASS**（`2/2`, `auto_blocks=4`, `AGENTS.md=2812`, `README.md=7892`） |
+| FLOW OS 完全セルフテスト | `FLOW_NO_CACHE=1 npm run flow -- selftest --raw` | **PASS**（`sec13=48/48`, `permit=6/6`, `sandbox=3/3`, `oidc=4/4`, `swarm=8/8`, `macro=12/12`, `books=2/2`） |
+| 13 層セキュリティフル監査 | `FLOW_NO_CACHE=1 npm run flow -- security audit --full --raw` | **PASS**（`12/12`, `findings=0`） |
+| 空間エンジン数学オラクル | `FLOW_NO_CACHE=1 npm run flow -- exec sp selftest --raw` | **PASS**（`20/20`） |
+| EXAM V1.1 111/111 セルフテスト | `FLOW_NO_CACHE=1 npm run flow -- exec exam selftest --raw` | **PASS**（`111/111`, `48e/1080t/28x/48sv`, `32.31s`） |
+| `exam_setup.sh --verify-only` | `bash scripts/exam_setup.sh --verify-only` | **PASS**（`48/48 READY`, `3.82s`） |
+| カタログ・型・整合・ビルド | `catalog` + `tsc --noEmit` + `validate_parts` + `npm run build` | **PASS**（`UNIT_HEALTH.tsv` 保持確認済み） |
+| ポータブルテンプレート互換 | `export-template /tmp/flow_ic_test` → 空リポジトリ `selftest` + `status` | **PASS**（`48/48` + `40ms status`） |
+| `flow wake --brief` | `npm run flow -- wake --brief --raw` | **PASS**（`CLEAN_READY`, `HEALTH` 行統合出力） |
+| GitHub Actions CI + OIDC/Sigstore | PR #67 `FLOW Security Gate` | **PASS**（`1m 29s`） |
