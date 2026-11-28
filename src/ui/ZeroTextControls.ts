@@ -1007,11 +1007,12 @@ export class ZeroTextControls {
         <p class="v11-cert-reason">${s.reason}</p>
         <div class="v11-cert-grid">
           <div class="v11-cert-kv"><span>対象ユニット</span><strong>${s.unitId}</strong></div>
-          <div class="v11-cert-kv"><span>検証基準</span><strong>12柱 / 48エンジン / 1,080項目 / 48外部ソルバー / 28ロック</strong></div>
+          <div class="v11-cert-kv"><span>検証基準 (Verification)</span><strong>12柱 / 48エンジン / 1,080項目 / 48外部ソルバー / 28ロック</strong></div>
           <div class="v11-cert-kv"><span>証明書ID</span><code>${cert?.certId ?? '未発行 (NONE)'}</code></div>
           <div class="v11-cert-kv"><span>3D形状SHA-256 (0.0001mm)</span><code>${cert?.primarySha256?.slice(0, 32) ?? (s.livePrimarySha256.slice(0, 32) || '-')}</code></div>
           <div class="v11-cert-kv"><span>発行日時</span><strong>${cert?.issuedAt ?? '-'}</strong></div>
-          <div class="v11-cert-kv"><span>改ざん保護規則</span><strong>0.0001mm・1頂点・材質・JSONの変更で即時自動剥奪（再100%合格まで再刻印不可）</strong></div>
+          <div class="v11-cert-kv"><span>改ざん保護規則</span><strong>0.0001mm・1頂点・材質・JSON・カーネル変更で即時自動剥奪（再100%合格まで再刻印不可）</strong></div>
+          <div class="v11-cert-kv"><span>保証境界 (Verification / Validation)</span><strong>本証明は48産業ソルバー事前検証(Verification)の100%合格保証であり、実機量産出荷には別途実機試験・法規認証(Validation)が必要です。</strong></div>
         </div>
       </div>
     `;

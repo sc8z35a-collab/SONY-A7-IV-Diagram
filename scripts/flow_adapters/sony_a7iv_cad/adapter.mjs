@@ -71,14 +71,13 @@ export function createAdapter(ctx) {
     /**
      * `flow wake`: bg boot + optional bg start + solver manifest probe + incremental atlas + unit brief
      */
-    async onWake({ slug, unit, role, goal, next, ignoreOrphans, agent }) {
+    async onWake({ slug, unit, role, goal, next, agent }) {
       const boot = runNode('scripts/bg.mjs', ['boot', '--ai'], agent, 60_000);
       const bootLine = (boot.stdout || '').split('\n').find((l) => l.includes('[bg boot]')) || (boot.stdout || '').trim().split('\n')[0] || '';
       const briefLines = [];
 
       if (slug) {
         const sArgs = ['start', slug, '--ai'];
-        if (ignoreOrphans) sArgs.push('--ignore-orphans');
         if (goal) sArgs.push(`--goal=${goal}`);
         if (next) sArgs.push(`--next=${next}`);
         const st = runNode('scripts/bg.mjs', sArgs, agent, 60_000);
@@ -223,15 +222,17 @@ export function createAdapter(ctx) {
     },
 
     /**
-     * `flow ship`: catalog + atlas + tsc + validate + build + FULL unskipped EXAM V1 + optional pp1.1 + bg snap
+     * `flow ship`: catalog + atlas + tsc + validate + build + FULL unskipped EXAM V1.1 + optional pp1.1 + bg snap
+     * ALWAYS runs uncached (`FLOW_NO_CACHE=1`) and NEVER skips build or EXAM.
      */
-    async onShip({ unit, policy, fullExam, visual, skipBuild, artifacts, agent }) {
+    async onShip({ unit, policy, fullExam, visual, artifacts, agent }) {
       const steps = [];
+      const localTsc = path.join(root, 'node_modules/.bin/tsc');
       const runStep = (name, bin, args, timeoutMs = 600_000) => {
         const t0 = performance.now();
         const r = safeSpawnSync(bin, args, {
           cwd: root,
-          env: { ...process.env, ...(agent?.envOverlay || {}) },
+          env: { ...process.env, ...(agent?.envOverlay || {}), FLOW_NO_CACHE: '1' },
           timeoutMs,
         });
         const ms = Math.round(performance.now() - t0);
@@ -239,17 +240,17 @@ export function createAdapter(ctx) {
         return r;
       };
 
-      if (!skipBuild) {
-        if (policy === 'integrator') {
-          if (runStep('catalog', 'node', ['scripts/generate_catalogs.mjs']).status !== 0) return failShip(unit, steps);
-          runStep('atlas', 'node', ['scripts/dx.mjs', 'atlas', '--ai']);
-        }
-        if (runStep('tsc', 'npx', ['tsc', '--noEmit']).status !== 0) return failShip(unit, steps);
-        const valArgs = policy === 'worker' ? ['scripts/validate_parts.mjs', `--unit=${unit}`, '--ai'] : ['scripts/validate_parts.mjs', '--ai'];
-        if (runStep('validate', 'node', valArgs).status !== 0) return failShip(unit, steps);
-        if (policy === 'integrator') {
-          if (runStep('vite_build', 'npm', ['run', 'build']).status !== 0) return failShip(unit, steps);
-        }
+      if (policy === 'integrator') {
+        if (runStep('catalog', 'node', ['scripts/generate_catalogs.mjs']).status !== 0) return failShip(unit, steps);
+        runStep('atlas', 'node', ['scripts/dx.mjs', 'atlas', '--ai']);
+      }
+      if (runStep('tsc', fs.existsSync(localTsc) ? localTsc : 'npx', fs.existsSync(localTsc) ? ['--noEmit'] : ['tsc', '--noEmit']).status !== 0) {
+        return failShip(unit, steps);
+      }
+      const valArgs = policy === 'worker' ? ['scripts/validate_parts.mjs', `--unit=${unit}`, '--ai'] : ['scripts/validate_parts.mjs', '--ai'];
+      if (runStep('validate', 'node', valArgs).status !== 0) return failShip(unit, steps);
+      if (policy === 'integrator') {
+        if (runStep('vite_build', 'npm', ['run', 'build']).status !== 0) return failShip(unit, steps);
       }
 
       let domainReceipt = 'NONE';
@@ -323,15 +324,16 @@ export function createAdapter(ctx) {
     },
 
     /**
-     * `flow finish`: bg gate (+ optional bg land) returning verified BG-RECEIPT
+     * `flow finish`: bg gate (+ optional bg land) returning verified BG-RECEIPT (ALWAYS UNCACHED!)
      */
-    async onFinish({ policy, pr, merge, title, body, runChecks, agent }) {
+    async onFinish({ policy, pr, merge, title, body, agent }) {
+      const noCacheAgent = { ...(agent || {}), envOverlay: { ...(agent?.envOverlay || {}), FLOW_NO_CACHE: '1' } };
       if (pr || merge) {
         const args = ['land', `--policy=${policy}`, '--ai'];
         if (title) args.push(`--title=${title}`);
         if (body) args.push(`--body=${body}`);
         if (merge) args.push('--merge-pr');
-        const r = runNode('scripts/bg.mjs', args, agent, 300_000);
+        const r = runNode('scripts/bg.mjs', args, noCacheAgent, 300_000);
         const m = (r.stdout || '').match(/BG-RECEIPT:[^\s|]+/);
         return {
           exitCode: r.status ?? 1,
@@ -340,9 +342,8 @@ export function createAdapter(ctx) {
         };
       }
 
-      const args = ['gate', `--policy=${policy}`, '--ai'];
-      if (runChecks) args.push('--run-checks', '--require-checks');
-      const r = runNode('scripts/bg.mjs', args, agent, 300_000);
+      const args = ['gate', `--policy=${policy}`, '--run-checks', '--require-checks', '--ai'];
+      const r = runNode('scripts/bg.mjs', args, noCacheAgent, 300_000);
       const m = (r.stdout || '').match(/BG-RECEIPT:[^\s|]+/);
       return {
         exitCode: r.status ?? 1,
@@ -397,7 +398,9 @@ export function createAdapter(ctx) {
       if (fs.existsSync('/tmp/tlx_env_manifest.json')) {
         try {
           const m = JSON.parse(fs.readFileSync('/tmp/tlx_env_manifest.json', 'utf8'));
-          solversStr = `${m.ready}/${m.total} READY`;
+          const okCnt = m.ok_count ?? m.ready ?? 0;
+          const totCnt = m.total_count ?? m.total ?? 48;
+          solversStr = `${okCnt}/${totCnt} READY`;
         } catch { /* ignore */ }
       }
 
@@ -409,8 +412,8 @@ export function createAdapter(ctx) {
         compositeParts,
         totalPartEntries: uniqueParts + compositeParts,
         parityOk,
-        subProjects: ['Play Ground 1.1', 'RIIMOS E1', 'FH MIRAI 2028', 'Sensor Fab 6巻', 'Android APK'],
-        toolSummary: `FLOW V1 OS (12層セキュリティ + 0トークン自動修復 flow heal) / EXAM V1 (10柱・36エンジン・530固定テスト・16クロスロック・外部ソルバ ${solversStr}) / bg v1 / pp1.1 / sokutei / sp / dx`,
+        subProjects: ['Play Ground 2.1', 'RIIMOS E1', 'FH MIRAI 2028', 'Sensor Fab 6巻', 'Android APK'],
+        toolSummary: `FLOW V1.1 OS (13層セキュリティ46攻撃 + Edit Permit Gate + 0トークン自動修復 flow heal) / THE LAST EXAM V1.1 (12柱・48エンジン・1,080固定テスト・28クロスロック・外部ソルバ ${solversStr}) / bg v1 / pp1.1 / sokutei / sp / dx`,
         units: detailed,
       };
     },

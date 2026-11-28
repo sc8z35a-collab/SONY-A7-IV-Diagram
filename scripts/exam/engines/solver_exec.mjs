@@ -8,6 +8,7 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { scrubEnv, wrapUserNsSandbox } from '../../flow_os/solver_sandbox.mjs';
 
 const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -51,13 +52,13 @@ export function resolveOpenFoamEnv() {
       }
     }
   }
-  const env = { ...process.env };
+  const env = scrubEnv({});
   if (foamRoot && binDir) {
     const libDir = path.join(foamRoot, 'platforms/linux64GccDPInt32Opt/lib');
     env.WM_PROJECT_DIR = foamRoot;
     env.FOAM_ETC = path.join(foamRoot, 'etc');
     env.PATH = `${binDir}:${env.PATH || ''}`;
-    env.LD_LIBRARY_PATH = `${libDir}:${path.join(libDir, 'dummy')}:${path.join(libDir, 'openmpi-system')}:${env.LD_LIBRARY_PATH || ''}`;
+    env.LD_LIBRARY_PATH = `${libDir}:${path.join(libDir, 'dummy')}:${path.join(libDir, 'openmpi-system')}`;
   }
   return { found: Boolean(binDir), foamRoot, binDir, env };
 }
@@ -65,10 +66,22 @@ export function resolveOpenFoamEnv() {
 export async function runExternal(cmd, args, opts = {}) {
   const timeout = (opts.timeoutSec || 180) * 1000;
   const maxBuffer = opts.maxBuffer || 32 * 1024 * 1024;
+  // Scrub poison runtime vars (NODE_OPTIONS, LD_PRELOAD, PYTHONPATH) while preserving OpenFOAM lib path if explicitly constructed
+  const baseEnv = opts.env ? scrubEnv(opts.env, opts.env) : scrubEnv({});
+  if (opts.env?.WM_PROJECT_DIR && opts.env?.LD_LIBRARY_PATH) {
+    baseEnv.LD_LIBRARY_PATH = opts.env.LD_LIBRARY_PATH;
+    if (opts.env.PATH) baseEnv.PATH = opts.env.PATH;
+  }
+  const wrapped = opts.disableSandbox
+    ? { bin: cmd, args }
+    : wrapUserNsSandbox(cmd, args, {
+        timeoutMs: timeout,
+        allowNetwork: Boolean(opts.allowNetwork),
+      });
   try {
-    const { stdout, stderr } = await execFileAsync(cmd, args, {
+    const { stdout, stderr } = await execFileAsync(wrapped.bin, wrapped.args, {
       cwd: opts.cwd || REPO_ROOT,
-      env: opts.env || process.env,
+      env: baseEnv,
       timeout,
       maxBuffer,
       encoding: 'utf8',

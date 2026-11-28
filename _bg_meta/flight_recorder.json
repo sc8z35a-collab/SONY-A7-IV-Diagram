@@ -6,8 +6,18 @@
   "completed": [],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Awaiting user review/approval of flow_security_plan.md before implementation",
+  "nextStep": "Human configures B-1 Branch Protection and B-2 Ed25519 CI Secrets",
   "artifactsMirrored": [
+    {
+      "name": "PR_65_FLOW_Security_and_Speedup.url.json",
+      "sha256": "803a28adcaa839ec20e141167222989de7e8b255c17792f1d3102a30661336c3",
+      "size": 425
+    },
+    {
+      "name": "PR_65_FLOW_Security_and_Speedup.url.json.metadata.json",
+      "sha256": "5e713f6ae00461bec6b74adc6ca13adb5247834a7b940de9400932369670b1cc",
+      "size": 210
+    },
     {
       "name": "flow_security_plan.md",
       "sha256": "89db8b0a32accbb738b08823bdf1c193ad7530dc6e86b4d7b6b83379b12f08f1",
@@ -40,16 +50,16 @@
     },
     {
       "name": "walkthrough.md",
-      "sha256": "7b11907910956df42a33930cd15e0681be06730d50873a75d9fec17959d31790",
-      "size": 10661
+      "sha256": "b18f35d1fe384743d59d4c6cb2f34c8fc76da5889a8563e27cdbd45e411156a0",
+      "size": 10460
     },
     {
       "name": "walkthrough.md.metadata.json",
-      "sha256": "03ff9d2a7c3a9801eafd3418bdae13a606a3f7cdd18598bab5f0eecddf4dcd1d",
-      "size": 555
+      "sha256": "27c57d3cee65550593b1eae8d6ad7a42f77fa1ec4ba1f94ae076f55fd8adb3ba",
+      "size": 400
     }
   ],
-  "updatedAt": "2026-11-28T11:45:45.528Z",
+  "updatedAt": "2026-11-28T13:19:51.953Z",
   "vmHost": "devbox",
-  "baseSha": "9fbc1aa02f3b42ddf20372953438e5cbf4887200"
+  "baseSha": "4586e9b1ca41b190c1d7b53ab440761256bc08e6"
 }

@@ -963,22 +963,28 @@ async function runWlk220Domain(ctx) {
   } else {
     // Baseline measurement of Engine 5 (exact same esbuild + buildWelcomeParts + 220-part DFM logic)
     const inlineCode = `
+      import fs from 'node:fs';
       import path from 'node:path';
       import { createRequire } from 'node:module';
       const require = createRequire(path.resolve('package.json'));
       const esbuild = require('esbuild');
       const THREE = require('three');
-      const res = esbuild.buildSync({
+      const cacheDir = path.resolve('node_modules/.cache/sokutei_loader');
+      fs.mkdirSync(cacheDir, { recursive: true });
+      const tmpCjs = path.join(cacheDir, 'wlk_' + process.pid + '_' + Date.now() + '.cjs');
+      esbuild.buildSync({
         entryPoints: [path.resolve('src/assemblies/welcome/welcomeParts.ts')],
-        bundle: true, platform: 'node', format: 'cjs', write: false, external: ['three'],
+        bundle: true, platform: 'node', format: 'cjs', outfile: tmpCjs, external: ['three'],
       });
-      const mod = { exports: {} };
-      new Function('exports', 'require', 'module', res.outputFiles[0].text)( // flow-sec-allow:SEC-07 (audited local esbuild CJS loader)
-        mod.exports, (id) => (id === 'three' ? THREE : require(id)), mod
-      );
+      let modExports;
+      try {
+        modExports = require(tmpCjs);
+      } finally {
+        try { fs.unlinkSync(tmpCjs); } catch {}
+      }
       const dummyMat = new THREE.MeshBasicMaterial();
       const mats = new Proxy({}, { get: () => dummyMat });
-      const parts = mod.exports.buildWelcomeParts(mats);
+      const parts = modExports.buildWelcomeParts(mats);
       const root = new THREE.Group();
       for (const p of parts) root.add(p.group);
       root.updateMatrixWorld(true);

@@ -224,9 +224,9 @@ export function createSnapshot(ctx, opts = {}) {
     const { liveFiles, deletedFiles, skippedLarge } = listWorkingFiles(ctx.repoRoot, ctx.cfg);
     const status = getPorcelainStatus(ctx.repoRoot);
 
-    // BG-18: Zero-leak secret scan BEFORE anything leaves the VM
+    // BG-18: Unconditional zero-leak secret scan BEFORE anything leaves the VM
     const secretFindings = scanSecrets(ctx.repoRoot, liveFiles);
-    if (secretFindings.length > 0 && !opts.allowSecretsUnsafe) {
+    if (secretFindings.length > 0) {
       return {
         exitCode: EXIT_BLOCKED,
         verdict: 'BLOCKED_SECRET_LEAK',

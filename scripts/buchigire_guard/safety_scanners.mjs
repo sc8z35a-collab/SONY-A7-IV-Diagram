@@ -119,7 +119,6 @@ export function scanSecrets(repoRoot, files) {
     const lines = text.split('\n');
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.includes('bg-ignore-secret')) continue;
       for (const rule of SECRET_RULES) {
         if (rule.rx.test(line)) {
           findings.push({

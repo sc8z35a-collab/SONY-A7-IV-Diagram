@@ -10,21 +10,32 @@
  *   6. factory    (30 steps) — Multi-unit parallel swarm factory orchestrator (LPT sharding + batch audit + build + SEC-13)
  */
 
+import { execFileSync } from 'node:child_process';
 import { MACRO_SCHEMA } from './macro_engine.mjs';
+
+function detectSrcDirty() {
+  try {
+    const out = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return out.split('\n').some((l) => /^\s*[MADRCU?]{1,2}\s+src\//.test(l));
+  } catch {
+    return false;
+  }
+}
 
 export function buildBuiltinPipelines(vars = {}) {
   const unit = String(vars.unit || vars.target || 'welcome');
   const query = String(vars.query || vars.target || unit);
-  const policy = String(vars.policy || 'integrator');
+  const policy = String(vars.policy || 'worker');
   const workers = String(vars.workers || '4');
   const unitsList = String(vars.units || 'welcome,mi_shoe,evf,shutter,battery').split(',').map((s) => s.trim()).filter(Boolean).slice(0, 6);
+  const srcChanged = detectSrcDirty();
 
   return {
-    // 1. BOOTSTRAP — 16 Steps across 5 waves
+    // 1. BOOTSTRAP — 16 Steps across 5 waves (always UNCACHED!)
     bootstrap: {
       schema: MACRO_SCHEMA,
       name: 'auto-bootstrap',
-      description: '16-step full VM/repo environment bootstrap, 48-solver verification, catalog/atlas, and complete selftest proof',
+      description: '16-step full VM/repo environment bootstrap, 48-solver verification, catalog/atlas, and complete uncached selftest proof',
       mutates: true,
       concurrency: 4,
       defaults: { policy },
@@ -74,14 +85,14 @@ export function buildBuiltinPipelines(vars = {}) {
       ],
     },
 
-    // 3. DEV — 18 Steps Guarded Development Loop
+    // 3. DEV — 18 Steps Diff-Aware Guarded Development Loop (keeps warm pp daemon until flow park!)
     dev: {
       schema: MACRO_SCHEMA,
       name: 'auto-dev',
-      description: '18-step guarded dev cycle: boot -> pre-snap -> inspect -> heal -> catalog/atlas/tsc/validate/build -> optional pp -> SEC-13 -> park',
+      description: '18-step diff-aware guarded dev cycle: boot -> snap -> inspect -> heal -> cached parallel build/validate -> conditional visual (src/** only) -> SEC-13 -> park',
       mutates: true,
       concurrency: 4,
-      defaults: { unit, policy, visual: 'false', heal: 'false' },
+      defaults: { unit, policy, visual: srcChanged ? 'true' : 'false', heal: 'false', src_dirty: srcChanged ? 'true' : 'false' },
       steps: [
         { id: 'git_status', primitive: 'git.status', args: [] },
         { id: 'bg_boot', primitive: 'bg.boot', args: [], onFail: 'continue' },
@@ -90,11 +101,11 @@ export function buildBuiltinPipelines(vars = {}) {
         { id: 'inspect_u', primitive: 'flow.inspect', args: ['${vars.unit}', '--raw'], deps: ['snap_pre'], onFail: 'continue' },
         { id: 'cert_pre', primitive: 'flow.cert', args: ['status', '--raw'], deps: ['snap_pre'], onFail: 'continue' },
         { id: 'heal_opt', primitive: 'flow.heal', args: ['--unit=${vars.unit}', '--apply', '--raw'], deps: ['inspect_u'], when: '${vars.heal}' },
-        { id: 'catalog', primitive: 'npm.catalog', args: [], deps: ['heal_opt'] },
-        { id: 'atlas', primitive: 'dx.atlas', args: [], deps: ['catalog'] },
+        { id: 'catalog', primitive: 'npm.catalog', args: [], deps: ['heal_opt'], when: '${vars.src_dirty}' },
+        { id: 'atlas', primitive: 'dx.atlas', args: [], deps: ['catalog'], when: '${vars.src_dirty}' },
         { id: 'tsc', primitive: 'npm.tsc', args: [], deps: ['atlas'] },
-        { id: 'validate', primitive: 'npm.validate', args: ['--ai'], deps: ['atlas'] },
-        { id: 'build', primitive: 'npm.build', args: [], deps: ['tsc', 'validate'] },
+        { id: 'validate', primitive: 'npm.validate', args: ['--ai'], deps: ['atlas'], when: '${vars.src_dirty}' },
+        { id: 'build', primitive: 'npm.build', args: [], deps: ['tsc', 'validate'], when: '${vars.src_dirty}' },
         { id: 'pp_vis', primitive: 'pp.capture', args: ['--warm', '--mode=cad', '--unit=${vars.unit}', '--quality=high', '--out=/tmp/flow_ws/pp_dev'], deps: ['build'], when: '${vars.visual}' },
         { id: 'pp_stop', primitive: 'pp.stop', args: [], deps: ['pp_vis'], when: '${vars.visual}', onFail: 'continue' },
         { id: 'doc_audit', primitive: 'flow.doc', args: ['audit', '--strict', '--raw'], deps: ['build'] },

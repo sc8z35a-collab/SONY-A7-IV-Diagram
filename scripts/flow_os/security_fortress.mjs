@@ -20,6 +20,8 @@ import {
 } from './kernel_config.mjs';
 import { verifyAuditLedger } from './audit_ledger.mjs';
 import { computeKernelSeal, computeTreeFingerprint } from './receipt_chain.mjs';
+import { scrubEnv } from './solver_sandbox.mjs';
+import { verifyEd25519Attestation } from './crypto_attestation.mjs';
 
 const BINARY_EXTS = new Set([
   '.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico', '.pdf', '.zip', '.gz',
@@ -120,7 +122,6 @@ export function runSec01Secrets(repoRoot, files, cfg) {
     const lines = buf.toString('utf8').split('\n');
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.includes('bg-ignore-secret') || line.includes('flow-sec-allow:SEC-01')) continue;
       let hit = false;
       for (const rule of SECRET_RULES) {
         if (rule.rx.test(line)) {
@@ -163,12 +164,12 @@ const ANSI_HIJACK_RX = /\x1b\](?:52|0|2);|\x1b\[[0-9;]*[ABCDHJKh]/;
 const PROMPT_INJECTION_RXS = [
   { id: 'PI_IGNORE_INSTR', rx: /ignore\s+(?:all\s+)?(?:previous|prior|above)\s+(?:instructions|directives|rules)/i },
   { id: 'PI_SYSTEM_OVERRIDE', rx: /disregard\s+(?:system\s+prompt|all\s+security|agents\.md)/i },
-  { id: 'PI_BYPASS_EXAM', rx: /(?:skip|bypass|disable)\s+(?:the\s+last\s+exam|exam\s+v1|sec-0[1-9]|security\s+fortress)/i },
+  { id: 'PI_BYPASS_EXAM', rx: /(?:skip|bypass|disable)\s+(?:the\s+last\s+exam|exam\s+v1(?:\.1)?|sec-0[1-9]|sec-1[0-3]|security\s+fortress|flow\s+security)/i },
   { id: 'PI_EXFIL_TOKENS', rx: /(?:cat|print|curl|exfiltrate|send)\s+[^\n]*\/opt\/antigravity\/tokens/i },
 ];
-// Forged receipts embedded in code/data/PR payloads
+// Forged receipts & certificates embedded in code/data/PR payloads (covers TLX1, TLX11, V11-CERT, BG, FLOW, SEC)
 const SPOOFED_RECEIPT_RX = new RegExp(
-  '(?:TLX1-RECEIPT|BG-RECEIPT|FLOW-RECEIPT|SEC-RECEIPT):[0-9a-f]{6,}:[A-Za-z0-9_.:/-]{4,}'
+  '(?:TLX11?-RECEIPT|BG-RECEIPT|FLOW-RECEIPT|SEC-RECEIPT):[0-9a-f]{6,}:[A-Za-z0-9_.:/-]{4,}|V11-CERT:[A-Za-z0-9_-]+:[0-9a-f]{8,}:[0-9a-f]{6,}'
 );
 
 export function scanUntrustedText(text, sourceLabel = '<input>') {
@@ -176,7 +177,6 @@ export function scanUntrustedText(text, sourceLabel = '<input>') {
   const lines = String(text ?? '').split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.includes('flow-sec-allow:SEC-03')) continue;
     if (BIDI_TROJAN_RX.test(line)) {
       findings.push({ layer: 'SEC-03', rule: 'TROJAN_SOURCE_BIDI', file: sourceLabel, line: i + 1, msg: 'Bidi control override detected' });
     }
@@ -193,7 +193,7 @@ export function scanUntrustedText(text, sourceLabel = '<input>') {
       }
     }
     if (SPOOFED_RECEIPT_RX.test(line)) {
-      findings.push({ layer: 'SEC-03', rule: 'SPOOFED_RECEIPT_LITERAL', file: sourceLabel, line: i + 1, msg: 'Hardcoded/forged receipt detected' });
+      findings.push({ layer: 'SEC-03', rule: 'SPOOFED_RECEIPT_LITERAL', file: sourceLabel, line: i + 1, msg: 'Hardcoded/forged receipt or V11-CERT detected' });
     }
     if (findings.length >= 25) break;
   }
@@ -204,6 +204,8 @@ export function runSec03PromptAndUnicode(repoRoot, files) {
   const findings = [];
   for (const rel of files) {
     if (SCANNER_SELF_PATHS.has(rel)) continue;
+    // Allow authentic generated/issued certificate artifacts (audited by SEC-13 cryptographic check instead)
+    if (rel === 'src/units/v1_1_certificates.gen.ts' || rel.startsWith('verification/certificates/')) continue;
     const abs = path.join(repoRoot, rel);
     let st;
     try {
@@ -255,7 +257,7 @@ export function validateCommandSafety(cmdOrArgv, opts = {}) {
 }
 
 /**
- * Hardened shell:false subprocess executor enforcing SEC-04.
+ * Hardened shell:false subprocess executor enforcing SEC-04 + env -i poison scrubbing.
  */
 export function safeSpawnSync(bin, args = [], opts = {}) {
   const check = validateCommandSafety([bin, ...args], opts);
@@ -267,9 +269,10 @@ export function safeSpawnSync(bin, args = [], opts = {}) {
       blocked: true,
     };
   }
+  const cleanEnv = scrubEnv(opts.env || {}, opts.env || process.env);
   return spawnSync(bin, args, {
     cwd: opts.cwd || process.cwd(),
-    env: opts.env || process.env,
+    env: cleanEnv,
     encoding: 'utf8',
     shell: false,
     maxBuffer: opts.maxBuffer || 32 * 1024 * 1024,
@@ -383,11 +386,14 @@ export function runSec06SupplyChain(repoRoot) {
     }
   }
 
-  // Verify native harness binary manifest if EXAM native binaries exist
+  // Verify native harness binary manifest if EXAM native binaries exist (all non-dot binaries!)
   const binDir = path.join(repoRoot, 'scripts/exam/native/bin');
   if (fs.existsSync(binDir)) {
     const manifestPath = path.join(repoRoot, '.git/flow_os/native_bins_sha256.json');
-    const bins = fs.readdirSync(binDir).filter((f) => fs.statSync(path.join(binDir, f)).isFile()).sort();
+    const bins = fs
+      .readdirSync(binDir)
+      .filter((f) => !f.startsWith('.') && fs.statSync(path.join(binDir, f)).isFile())
+      .sort();
     const cur = {};
     for (const b of bins) {
       cur[b] = crypto.createHash('sha256').update(fs.readFileSync(path.join(binDir, b))).digest('hex');
@@ -396,15 +402,38 @@ export function runSec06SupplyChain(repoRoot) {
       try {
         const prev = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         for (const [b, h] of Object.entries(cur)) {
-          if (prev[b] && prev[b] !== h) {
+          if (!prev[b]) {
+            findings.push({ layer: 'SEC-06', rule: 'NATIVE_BIN_UNTRACKED', file: `scripts/exam/native/bin/${b}`, line: 1, msg: 'Unregistered native binary detected (run exam setup to sync SHA manifest)' });
+          } else if (prev[b] !== h) {
             findings.push({ layer: 'SEC-06', rule: 'NATIVE_BIN_DRIFT', file: `scripts/exam/native/bin/${b}`, line: 1, msg: 'Compiled binary SHA changed unexpectedly' });
           }
         }
       } catch {
-        // ignore corrupt local cache
+        findings.push({ layer: 'SEC-06', rule: 'NATIVE_BIN_MANIFEST_CORRUPT', file: '.git/flow_os/native_bins_sha256.json', line: 1, msg: 'Corrupt native binary SHA manifest' });
       }
     } else if (bins.length > 0 && fs.existsSync(path.join(repoRoot, '.git'))) {
       atomicWriteSync(manifestPath, JSON.stringify(cur, null, 2) + '\n');
+    }
+  }
+
+  // Audit .git/config for dangerous code-execution hooks (`fsmonitor`, `sshCommand`, external `hooksPath`, shell alias)
+  const gitCfgPath = path.join(repoRoot, '.git', 'config');
+  if (fs.existsSync(gitCfgPath)) {
+    try {
+      const gcfg = fs.readFileSync(gitCfgPath, 'utf8');
+      const badKeys = [
+        { rule: 'GIT_CONFIG_FSMONITOR', rx: /^\s*fsmonitor\s*=\s*(?!false\s*$)(\S.+)$/im },
+        { rule: 'GIT_CONFIG_SSH_CMD', rx: /^\s*sshcommand\s*=\s*(\S.+)$/im },
+        { rule: 'GIT_CONFIG_EXTERNAL_HOOKS', rx: /^\s*hookspath\s*=\s*(?!scripts\/flow_os\/git_hooks\s*$)(\S.+)$/im },
+        { rule: 'GIT_CONFIG_SHELL_ALIAS', rx: /^\s*[a-z0-9_-]+\s*=\s*!\s*.*(?:curl|wget|bash|sh|python|nc|rm\s+-rf)/im },
+      ];
+      for (const bk of badKeys) {
+        if (bk.rx.test(gcfg)) {
+          findings.push({ layer: 'SEC-06', rule: bk.rule, file: '.git/config', line: 1, msg: `Dangerous git config directive (${bk.rule})` });
+        }
+      }
+    } catch {
+      // ignore unreadable git config
     }
   }
 
@@ -448,7 +477,6 @@ export function runSec07Sast(repoRoot, files) {
     const lines = fs.readFileSync(abs, 'utf8').split('\n');
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      if (line.includes('flow-sec-allow:SEC-07')) continue;
       const trimmed = line.trim();
       if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('#')) continue;
       for (const r of rules) {
@@ -464,7 +492,7 @@ export function runSec07Sast(repoRoot, files) {
 }
 
 // ---------------------------------------------------------------------------
-// SEC-08: Anti-Cheat & Physics Integrity Guard (Heal Bounds + Threshold Seal)
+// SEC-08: Anti-Cheat, Salami Cumulative-Drift Guard & Core Immutable Protection
 // ---------------------------------------------------------------------------
 export function validateHealProposal(proposal, cfg) {
   const lim = cfg.security?.healLimits || { maxShiftMm: 3.0, maxChassisShiftMm: 0.6, maxVolumeDeltaPct: 5.0, forbidPartDeletion: true };
@@ -489,8 +517,70 @@ export function validateHealProposal(proposal, cfg) {
   return { ok: violations.length === 0, violations };
 }
 
-export function runSec08AntiCheat(repoRoot, dirtyFiles, opts = {}) {
+/**
+ * Salami-Attack Guard: compares current part positions/volumes against the immutable unit baseline
+ * (not just single-step delta vs HEAD!) so sequential small edits cannot accumulate past limits.
+ */
+export function validateCumulativeDrift(baselineParts = [], currentParts = [], cfg = {}) {
+  const lim = cfg.security?.healLimits || { maxShiftMm: 3.0, maxChassisShiftMm: 0.6, maxVolumeDeltaPct: 5.0, forbidPartDeletion: true };
+  const violations = [];
+  const curById = new Map(currentParts.map((p) => [p.id, p]));
+  for (const bp of baselineParts) {
+    const cp = curById.get(bp.id);
+    if (!cp) {
+      if (lim.forbidPartDeletion) {
+        violations.push({ layer: 'SEC-08', rule: 'SALAMI_PART_DELETED', part: bp.id, msg: `Baseline part '${bp.id}' deleted` });
+      }
+      continue;
+    }
+    if (Array.isArray(bp.pos) && Array.isArray(cp.pos)) {
+      const mag = Math.hypot(
+        Number(cp.pos[0] || 0) - Number(bp.pos[0] || 0),
+        Number(cp.pos[1] || 0) - Number(bp.pos[1] || 0),
+        Number(cp.pos[2] || 0) - Number(bp.pos[2] || 0)
+      );
+      const cap = bp.isChassis ? lim.maxChassisShiftMm : lim.maxShiftMm;
+      if (mag > cap + 1e-6) {
+        violations.push({ layer: 'SEC-08', rule: 'SALAMI_CUMULATIVE_SHIFT', part: bp.id, msg: `cumulative shift=${mag.toFixed(3)}mm > ${cap}mm vs baseline` });
+      }
+    }
+    if (Number(bp.volumeMm3) > 0 && Number.isFinite(Number(cp.volumeMm3))) {
+      const volDeltaPct = (Math.abs(Number(cp.volumeMm3) - Number(bp.volumeMm3)) / Number(bp.volumeMm3)) * 100;
+      if (volDeltaPct > lim.maxVolumeDeltaPct + 1e-6) {
+        violations.push({ layer: 'SEC-08', rule: 'SALAMI_CUMULATIVE_VOLUME_SHRINK', part: bp.id, msg: `cumulative volDelta=${volDeltaPct.toFixed(2)}% > ${lim.maxVolumeDeltaPct}% vs baseline` });
+      }
+    }
+  }
+  return { ok: violations.length === 0, violations };
+}
+
+/**
+ * Immutable Core Deletion Protection: unconditionally blocks deletion of core EXAM engines,
+ * core fixed tests (T001..T1080), built-in pipelines, or FLOW OS kernel files regardless of role!
+ */
+export function runSec08CoreImmutableCheck(repoRoot) {
   const findings = [];
+  const manifestPath = path.join(repoRoot, 'scripts/flow_os/core_immutable_manifest.json');
+  if (!fs.existsSync(manifestPath)) return findings;
+  let man;
+  try {
+    man = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  } catch {
+    return [{ layer: 'SEC-08', rule: 'CORE_MANIFEST_CORRUPT', file: 'scripts/flow_os/core_immutable_manifest.json', line: 1, msg: 'Invalid immutable manifest JSON' }];
+  }
+  // Check only when this repository actually contains EXAM core (portable repos without EXAM skip EXAM files)
+  const hasExam = fs.existsSync(path.join(repoRoot, 'scripts/exam.mjs'));
+  for (const rel of man.protectedCoreFiles || []) {
+    if (!hasExam && rel.startsWith('scripts/exam')) continue;
+    if (!fs.existsSync(path.join(repoRoot, rel))) {
+      findings.push({ layer: 'SEC-08', rule: 'CORE_IMMUTABLE_DELETED', file: rel, line: 1, msg: `Protected core file deleted: ${rel}` });
+    }
+  }
+  return findings;
+}
+
+export function runSec08AntiCheat(repoRoot, dirtyFiles, opts = {}) {
+  const findings = [...runSec08CoreImmutableCheck(repoRoot)];
   const examEdited = dirtyFiles.filter((f) => f.startsWith('scripts/exam/engines/') || f === 'scripts/exam/test_registry.mjs');
   if (examEdited.length > 0 && opts.role === 'worker') {
     findings.push({
@@ -498,7 +588,7 @@ export function runSec08AntiCheat(repoRoot, dirtyFiles, opts = {}) {
       rule: 'WORKER_EXAM_TAMPER',
       file: examEdited[0],
       line: 1,
-      msg: 'Workers are strictly forbidden from modifying EXAM V1 engines/thresholds',
+      msg: 'Workers are strictly forbidden from modifying EXAM V1.1 engines/thresholds',
     });
   }
   // Check JSON part shrinkage vs HEAD
@@ -529,6 +619,23 @@ export function runSec08AntiCheat(repoRoot, dirtyFiles, opts = {}) {
       }
     } catch {
       // new file or non-git
+    }
+  }
+  // Check cumulative drift against any unit baseline files (`verification/baselines/*.baseline.json`)
+  const baseDir = path.join(repoRoot, 'verification/baselines');
+  if (fs.existsSync(baseDir) && opts.unitPosesByUnit) {
+    for (const [u, curParts] of Object.entries(opts.unitPosesByUnit)) {
+      const bp = path.join(baseDir, `${u}.baseline.json`);
+      if (!fs.existsSync(bp)) continue;
+      try {
+        const base = JSON.parse(fs.readFileSync(bp, 'utf8'));
+        const res = validateCumulativeDrift(base.parts || [], curParts, opts.cfg || {});
+        for (const v of res.violations) {
+          findings.push({ layer: 'SEC-08', rule: v.rule, file: `src/units/${u}.pose.tsv`, line: 1, msg: v.msg });
+        }
+      } catch {
+        // ignore invalid baseline
+      }
     }
   }
   return findings;
@@ -797,6 +904,12 @@ export function runSec13MacroAndCertGuard(repoRoot) {
           c.solversReady === c.solversTotal && c.solversTotal >= 48;
         if (!scoreOk || c.signature !== expectedSig || c.certId !== expectedId) {
           findings.push({ layer: 'SEC-13', rule: 'V11_CERT_FORGERY_BLOCKED', file: rel, line: 1, msg: 'Forged or invalid V1.1証明 certificate detected' });
+        }
+        if (c.ed25519Signature) {
+          const edCheck = verifyEd25519Attestation('V11_CERT', c, { repoRoot });
+          if (edCheck.status === 'FORGED_SIGNATURE' || edCheck.status === 'KEY_FINGERPRINT_MISMATCH') {
+            findings.push({ layer: 'SEC-13', rule: 'V11_CERT_ED25519_INVALID', file: rel, line: 1, msg: `Ed25519 attestation failed (${edCheck.status})` });
+          }
         }
       } catch (err) {
         findings.push({ layer: 'SEC-13', rule: 'V11_CERT_CORRUPTED', file: rel, line: 1, msg: err.message });
