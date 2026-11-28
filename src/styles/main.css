@@ -695,6 +695,7 @@ body,
 }
 
 /* Zen Fullscreen fallback (when Fullscreen API is restricted in embedded preview iframes) */
+#app.is-zen-fullscreen .studio-topbar,
 #app.is-zen-fullscreen .view-cluster,
 #app.is-zen-fullscreen .quality-cluster,
 #app.is-zen-fullscreen .lens-section-bar,
@@ -717,11 +718,13 @@ body,
   transform: translate(-18px, -50%);
 }
 
+#app.is-zen-fullscreen .studio-bottom-dock,
 #app.is-zen-fullscreen .cad-dock {
   bottom: 12px;
   opacity: 0.78;
 }
 
+#app.is-zen-fullscreen .studio-bottom-dock:hover,
 #app.is-zen-fullscreen .cad-dock:hover {
   opacity: 1;
 }
@@ -1111,55 +1114,6 @@ body,
   flex-wrap: wrap;
 }
 
-.exp-diagram-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4.5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.11);
-  background: #f8fafc;
-  color: #334155;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 140ms ease, color 140ms ease, border-color 140ms ease, transform 120ms ease;
-}
-
-.exp-diagram-action-btn svg {
-  width: 13px;
-  height: 13px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.exp-diagram-action-btn:hover {
-  background: #e2e8f0;
-  color: #0f172a;
-}
-
-.exp-diagram-action-btn.is-primary {
-  background: #0f172a;
-  border-color: #0f172a;
-  color: #ffffff;
-}
-
-.exp-diagram-action-btn.is-primary:hover,
-.exp-diagram-box:hover .exp-diagram-action-btn.is-primary {
-  background: #0284c7;
-  border-color: #0284c7;
-  color: #ffffff;
-}
-
-.exp-diagram-action-btn.is-active {
-  background: #0369a1;
-  border-color: #0369a1;
-  color: #ffffff;
-}
-
 /* ============================================================================
    FULLSCREEN INTERACTIVE SCHEMATIC ATLAS LIGHTBOX
    ============================================================================ */
@@ -1248,14 +1202,6 @@ body,
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.schematic-lightbox-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
 }
 
 .schematic-zoom-cluster {
@@ -1368,29 +1314,8 @@ body,
   cursor: grabbing;
 }
 
-.schematic-lightbox-canvas {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform-origin: center center;
-  will-change: transform;
-  transition: transform 110ms ease-out;
-}
-
 .schematic-lightbox-stage.is-panning .schematic-lightbox-canvas {
   transition: none;
-}
-
-.schematic-lightbox-canvas svg {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
-  border-radius: 12px;
-  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.12);
 }
 
 /* Collapsible Side-by-Side Monograph Spec Inspector */
@@ -2505,7 +2430,7 @@ body,
   top: 14px;
   left: 16px;
   right: 16px;
-  z-index: 30;
+  z-index: 34;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2622,12 +2547,12 @@ body,
   transform: rotate(180deg);
 }
 
-/* Categorized Assembly Palette Popover */
+/* Categorized Assembly Palette Popover (fixed root portal immune to landscape overflow clipping) */
 .assembly-palette-popover {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  width: min(520px, calc(100vw - 32px));
+  position: fixed;
+  top: 62px;
+  left: 16px;
+  width: min(520px, calc(100vw - 16px));
   max-height: min(74vh, 620px);
   overflow-y: auto;
   padding: 14px;
@@ -2638,7 +2563,8 @@ body,
   display: none;
   flex-direction: column;
   gap: 12px;
-  z-index: 60;
+  z-index: 70;
+  pointer-events: auto;
 }
 
 .assembly-palette-popover.is-open {
@@ -3141,11 +3067,30 @@ body,
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease, transform 120ms ease;
+}
+
+.exp-diagram-action-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .exp-diagram-action-btn.is-primary {
   background: #0f172a;
   border-color: #0f172a;
+  color: #ffffff;
+}
+
+.exp-diagram-action-btn.is-primary:hover,
+.exp-diagram-box:hover .exp-diagram-action-btn.is-primary {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+.exp-diagram-action-btn.is-active {
+  background: #0369a1;
+  border-color: #0369a1;
   color: #ffffff;
 }
 
@@ -3196,6 +3141,7 @@ body,
   justify-content: center;
   transform-origin: center center;
   will-change: transform;
+  transition: transform 110ms ease-out;
 }
 
 .schematic-lightbox-panel.is-rotated .schematic-lightbox-canvas {
@@ -3601,7 +3547,7 @@ body,
   height: 40px;
   box-sizing: border-box;
   will-change: transform;
-  contain: strict;
+  contain: layout style paint;
 }
 
 .pg-catalog-count {
@@ -3679,9 +3625,9 @@ body,
   appearance: none;
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 4px;
   width: 100%;
-  padding: 6px 8px;
+  padding: 2px 4px;
   border-radius: 8px;
   border: 1px solid transparent;
   background: #f8fafc;
@@ -4246,13 +4192,6 @@ body,
   font-weight: 800;
   color: #0f172a;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-
-.pg-placed-item {
-  display: flex !important;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 4px !important;
 }
 
 .pg-placed-item.is-hidden {
@@ -5094,10 +5033,6 @@ body,
 .mirai-cta-pill.is-active {
   background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.28), 0 8px 20px rgba(15, 118, 110, 0.28);
-}
-
-.mirai-subbar {
-  gap: 4px;
 }
 
 .mirai-subbar .mirai-sub-struct.is-active {
@@ -6230,15 +6165,6 @@ body,
    Electric-Blue Selection Swatch, & Smartphone Landscape Fullscreen Detail UI
    ============================================================================ */
 
-/* Play Ground Virtualized Catalog Strict Containment (Eliminates Keystroke Reflow) */
-.pg-catalog-list {
-  contain: strict;
-}
-
-.pg-cat-vrow {
-  contain: layout style paint;
-}
-
 /* Standalone KINE Mode ON/OFF Toggle Pill (sibling of .quality-pill) */
 .kine-toggle-pill {
   appearance: none;
@@ -7095,18 +7021,26 @@ body,
 
 @media (max-width: 768px) {
   .studio-topbar-left {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .studio-topbar-left::-webkit-scrollbar {
+    display: none;
   }
   .studio-topbar-center {
     width: 100%;
     align-items: stretch;
   }
   .orig-cta-pill {
-    height: 34px;
-    padding: 0 9px;
-    font-size: 11px;
+    height: 36px;
+    padding: 0 8px;
+    gap: 4px;
+    font-size: 10.5px;
+    flex-shrink: 0;
   }
   .orig-subbar {
     width: 100%;

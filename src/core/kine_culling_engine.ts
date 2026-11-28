@@ -267,12 +267,18 @@ export class KineCullingEngine {
         } else {
           const leftIdx = leftOrFirst;
           const rightIdx = -countOrRight;
-          _kineBvhStack[sp] = rightIdx;
-          _kineBvhInside[sp] = fullyInside;
-          sp++;
-          _kineBvhStack[sp] = leftIdx;
-          _kineBvhInside[sp] = fullyInside;
-          sp++;
+          if (sp + 2 <= _kineBvhStack.length) {
+            _kineBvhStack[sp] = rightIdx;
+            _kineBvhInside[sp] = fullyInside;
+            sp++;
+            _kineBvhStack[sp] = leftIdx;
+            _kineBvhInside[sp] = fullyInside;
+            sp++;
+          } else {
+            // Safe conservative fallback on pathological deep BVH: keep all parts visible
+            cFlags.fill(1, 0, n);
+            break;
+          }
         }
       }
     } else {

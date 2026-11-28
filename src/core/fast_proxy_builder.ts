@@ -174,6 +174,8 @@ export class FastProxyBundle {
   public dispose(cache: ResourceCache): void {
     if (this.batchedMesh && this.gpuExplodeTex) {
       bindGpuExplodeToMaterial(this.batchedMesh.material as THREE.Material, null, 1, 0);
+    }
+    if (this.gpuExplodeTex) {
       this.gpuExplodeTex.dispose();
       this.gpuExplodeTex = null;
     }

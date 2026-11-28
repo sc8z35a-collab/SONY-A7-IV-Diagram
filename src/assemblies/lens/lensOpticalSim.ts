@@ -895,15 +895,17 @@ export function findChiefEntryY(
   let f1 = traceYAtIrisOnly(y1, zStart, dy0, dz0, dzA, dzB);
   for (let k = 0; k < 6; k++) {
     const denom = f1 - f0;
-    if (Math.abs(denom) < 1e-12) break;
-    const yNext = y1 - f1 * ((y1 - y0) / denom);
+    if (!Number.isFinite(denom) || Math.abs(denom) < 1e-12) break;
+    const rawNext = y1 - f1 * ((y1 - y0) / denom);
+    if (!Number.isFinite(rawNext)) break;
+    const yNext = Math.max(-28, Math.min(28, rawNext));
     y0 = y1;
     f0 = f1;
     y1 = yNext;
     f1 = traceYAtIrisOnly(y1, zStart, dy0, dz0, dzA, dzB);
-    if (Math.abs(f1) < 1e-6) break;
+    if (!Number.isFinite(f1) || Math.abs(f1) < 1e-6) break;
   }
-  return y1;
+  return Number.isFinite(y1) ? y1 : angleDeg * 0.96;
 }
 
 const ED_HEIGHTS = [-19.2, -11.5, 0, 11.5, 19.2] as const;
@@ -1142,8 +1144,9 @@ export class LensOpticalSim {
 
     // Instantaneous Group A & B velocities for electromagnetic Lorentz indicators
     const st = this.getFloatingStrokes();
-    this.focusVelocityA = (st.dzA - this.prevDzA) / dt;
-    this.focusVelocityB = (st.dzB - this.prevDzB) / dt;
+    const safeDt = Math.max(1e-4, dt);
+    this.focusVelocityA = (st.dzA - this.prevDzA) / safeDt;
+    this.focusVelocityB = (st.dzB - this.prevDzB) / safeDt;
     this.prevDzA = st.dzA;
     this.prevDzB = st.dzB;
   }

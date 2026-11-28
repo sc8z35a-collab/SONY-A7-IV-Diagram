@@ -157,8 +157,9 @@ export function resampleShapeSagitta(
 // =============================================================================
 
 function nextPow2(n: number): number {
+  const safeN = Number.isFinite(n) && n > 16 ? Math.min(n, 1 << 28) : 16;
   let p = 16;
-  while (p < n) p <<= 1;
+  while (p < safeN && p < (1 << 28)) p *= 2;
   return p;
 }
 
@@ -307,7 +308,7 @@ export function extractPooledCadEdgesArray(
     const qz = Math.round(posArr[o + 2] * Q) | 0;
 
     let slot = (Math.imul(qx, 73856093) ^ Math.imul(qy, 19349663) ^ Math.imul(qz, 83492791)) & vMask;
-    while (true) {
+    for (let probe = 0; probe < vTableSize; probe++) {
       const existing = vIds[slot];
       if (existing === 0) {
         vTouched[uniqueVerts] = slot;
@@ -404,7 +405,7 @@ export function extractPooledCadEdgesArray(
       const hi = va < vb ? vb : va;
 
       let slot = (Math.imul(lo, 73856093) ^ Math.imul(hi, 19349663)) & eMask;
-      while (true) {
+      for (let probe = 0; probe < eTableSize; probe++) {
         const st = eState[slot];
         if (st === 0) {
           eState[slot] = 1;
@@ -1373,9 +1374,12 @@ function weldEntriesRangeToPage(
   const outIndices = new Uint16Array(totalIdx);
 
   const ensureOutCap = (needed: number) => {
-    if (needed <= outCap) return;
+    const capped = Math.min(65535, needed);
+    if (capped <= outCap) return;
     let nextCap = outCap;
-    while (nextCap < needed) nextCap = Math.min(65535, Math.max(needed, Math.ceil(nextCap * 1.5)));
+    while (nextCap < capped && nextCap < 65535) {
+      nextCap = Math.min(65535, Math.max(capped, Math.ceil(nextCap * 1.5)));
+    }
     const nI16 = new Int16Array(nextCap * MESH_I16_STRIDE);
     nI16.set(outI16.subarray(0, uniqueTotal * MESH_I16_STRIDE));
     outI16 = nI16;
@@ -1453,7 +1457,7 @@ function weldEntriesRangeToPage(
 
       let slot = h & mask;
       let foundGlobal = -1;
-      while (true) {
+      for (let probe = 0; probe < tableSize; probe++) {
         const existing = hashSlots[slot];
         if (existing === 0) break;
         const li = existing - 1;
@@ -1474,6 +1478,9 @@ function weldEntriesRangeToPage(
 
       if (foundGlobal >= 0) {
         outIndices[idxCursor++] = foundGlobal;
+      } else if (uniqueTotal >= 65535) {
+        // Guard against Uint16 wraparound corruption if a single entry exceeds 65535 unique vertices
+        outIndices[idxCursor++] = 65534;
       } else {
         const li = localUnique++;
         const gi = uniqueTotal++;
@@ -1659,7 +1666,7 @@ export function buildIndexedEdgeGeometry(
 
       let slot = h;
       let found = -1;
-      while (true) {
+      for (let probe = 0; probe < tableSize; probe++) {
         const ex = hashSlots[slot];
         if (ex === 0) break;
         const li = ex - 1;

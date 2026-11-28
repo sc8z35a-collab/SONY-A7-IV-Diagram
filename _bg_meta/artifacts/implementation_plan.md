@@ -1,356 +1,281 @@
-# 予算 1,000 円チャレンジ #01 — 完全エンジニアリング設計書
-## **PICO-LAB 1000（型式：`PL1K-2354B`）**
-> **純粋部品代 ¥982（@150円/USD）／¥994（@155円/USD）で実現する**
-> **「400 MSPS 16ch ロジアナ＆パターン発生器 ＋ 200 MHz ±1.5 ppm 3ch RF ジェネレータ ＋ 35 MSPS 10-bit 同時 MSO オシロスコープ ＋ 200 MHz SWR 反射計 ＋ 100 MHz+ 周波数カウンタ」5-in-1 極限ポケットラボ**
+# 実装計画書: 左上ボタン無反応・フリーズ根絶 / システム実在バグ 68 件重大度順修正 / 「ようこそ (`welcome`)」0.001 mm 100% 完璧化
+
+## Goal Description
+
+本計画は以下の 3 大目標を、最小トークン消費（`dx` / ローカルスクリプト / `sp` / `pp1.1` 活用）かつ **ゼロ妥協** で完遂するための設計書です。
+
+1. **左上ボタン群の「押しても反応しない」「押すと固まって動かなくなる」問題の完全根絶**
+   - 実ブラウザ（Chrome CDP デスクトップ 1280×800・縦スマホ 390×844・横スマホ 844×390）で以下 6 系統の直接原因を再現特定済み：
+     1. 横向き・低身長画面（`max-height: 540px`）で `.studio-topbar-left` に `overflow-x: auto` が設定され、ドロップダウン `.assembly-palette-popover` が 40px 枠内に完全クリップされてクリック不能（`itemActuallyClickable: false`）
+     2. `window` の `pointerdown` capture で発火する `ensureAutoFullscreenOnTap` が左上ボタン押下時にも `requestFullscreen()` と `resize` を割り込ませ、`click` 消滅およびリサイズ連鎖を誘発
+     3. 起動・モード切替時にデフォルト `ULTRA` が「`ULTRA` 本体＋`STD LITE` プロキシ＋`FAST` プロキシ＋全シェーダー同期コンパイル＋`PMREM` 同期ベイク」を一括実行し、実測 **9,000 ms 超のメインスレッド完全凍結**（`TIMEOUT:Runtime.evaluate`）が発生
+     4. 非同期チャンク `import()` キャッシュ Promise 5 箇所（`Play Ground` / `FH 2028` / `Original` / `Optics` / `Schematics`）が 1 回失敗すると永久に rejected Promise を保持してボタンが文鎮化
+     5. `CadViewport.setMode()` がロード完了前に `this.mode` を確定するため、失敗・中断後に同一ユニットを再選択しても無視される
+     6. 左上 CTA ボタン間（`Play Ground` / `FH 2028` / `Original`）のモーダル排他・連打ガード・非同期キャンセル欠如
+2. **システム全体の実在バグ 68 件（S0: 14件 / S1: 20件 / S2: 20件 / S3: 14件）の重大度順修正**
+   - 無限ループフリーズ要因（`FastCadGeometry` / `v2_unit_compiler` / `unit_v2_runtime`）、毎切替 203 参照の VRAM リーク、BVH スタック境界超過、`MIRAI 2028` SubView 6–8 切替不能、`welcome` 断面カット範囲欠落、Play Ground の Undo/Redo レース・JSON Import 未検証・XSS、イベントリスナー/タイマーリーク、キーボードショートカット暴発、モバイル CSS 崩れ等を全件修正します。
+3. **「ようこそ (`welcome`)」全 435 パーツの 0.001 mm 厳密無干渉・無突出・位置異常ゼロ化**
+   - `npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai` の実測で、**全 4 品質ティアにおいて 1,037〜1,087 件のソリッド干渉（100% が W01〜W220 同士、最大貫通 3.40 mm）・61〜70 件の爆発軌道衝突・40 件のニアミス・9〜10 件の SMT 着座異常**、さらに `sp thermal-cog` で **8 件の熱近接（最小 0.287 mm）**、および `pp1.1` 多角度確認で背面・端面からの不自然な突出を検出済みです。
+   - `sp`（`0.001 mm` 厳密三角形・内包・爆発・浮遊・視界・熱重心監査）と `pp1.1`（全方向・接写視覚確認）を用い、全 435 パーツで **全 4 ティア `collisions = 0` / `explodeHits = 0` / `floating = 0` / `nearMiss = 0` / `smtSeat = 0` / `ray occluded = 0%` / 異常突出 0 件** の 100% 完璧状態を達成します。
 
 ---
 
-## 1. ゴールと設計哲学（なぜ「純部品代 ¥1,000」で市販 10 万〜20 万円級を殴れるのか）
-
-本設計書は、**発注費・送料・継続的管理費・外装費を除外した純粋部品代 1,000 円以内**という制約下において、**部品選定の極致**と**高速信号伝送（SI）・RF・混載基板の配線トポロジ**を物理限界まで突き詰め、**1 台で電子工作ラボの主要計測器 5 台分を統合**する実機製作向け完全設計計画です。
-
-### 1.1 到達スペック一覧 ＆ 市販計測器との比較
-
-| 搭載計測機能 | `PL1K-2354B` 設計目標スペック | 実現するハードウェア極限ハック | 市販単体機相当レンジ |
-|---|---|---|---|
-| **① 高速ロジックアナライザ＆パターン発生器** | **16ch・最大 300–400 MSPS**（8ch時 40万+サンプル / RLE圧縮で数千万サイクル）<br>Bank A (CH0–7): **1.2V〜5.5V 双方向レベル変換**<br>Bank B (CH8–15): **3.3V/5V トレラント双方向** | `RP2354B`（A4・E9修正済）PIO0 動的OC（1.30V）＋ `74LVC8T245` / `74LVC245A` ＋ 0.3pF ESD (`SRV05-4`) ＋ 47Ω 黄金整合 ＋ **GSGS 1:1 交互GND配列** | 3万〜8万円級<br>(Saleae Logic 8 / Kingst LA2016 級) |
-| **② 高精度 3ch RF / クロックジェネレータ** | **2.5 kHz 〜 200 MHz**（高調波利用で 600 MHz+）<br>周波数確度 **±1.5 ppm**（200 MHz時 ±300 Hz）<br>3ch 独立/位相差（90° I/Q対応）・50 Ω 出力 | `MS5351M`（Si5351A互換）＋ **KDS 26MHz ±1.5ppm TCXO** ＋ 偶数整数分周（超低ジッタ）＋ 3 dB 50 Ω Pi パッド ＋ 7次チェビシェフ LPF（切替式） | 3万〜10万円級<br>(簡易RF SG + TCXO基準器) |
-| **③ リアルタイム・デジタルオシロ＆IFスペアナ** | **10-bit・35 MSPS リアルタイム**（アナログ入力帯域 **135 MHz IF アンダーサンプリング対応**）<br>1 MΩ // 12 pF（1:1 / 10:1 補償切替）・**16chロジック同時 MSO キャプチャ** | `MS9280`（10-bit 35 MSPS パイプライン ADC）＋ `SGM8052`（250 MHz・130 V/µs AFE）＋ `RP2354B` PIO1 (`GPIOBASE=16`) 独立専用バス ＋ `CLK2` TCXO ロック同期サンプリング | 2万〜5万円級<br>(USB 10bit MSO) |
-| **④ 1–200 MHz スカラー SWR / アンテナ計** | **1 MHz 〜 200 MHz** リターンロス / VSWR（1.05:1〜10:1）自動掃引・OSLソフト校正 | `CLK1` 励起 ＋ `49.9Ω 0.1% × 3` ウィートストン反射ブリッジ ＋ `BAT54S` ゼロバルン浮動差動ショットキー検波 ＋ `RP2354B` 12-bit 内部 ADC | 1万〜2万円級<br>(簡易アンテナアナライザ) |
-| **⑤ レシプロカル周波数カウンタ＆補助計** | **0.1 Hz 〜 100 MHz+**（7〜8桁分解能・±1.5ppm基準）＋ 6ch 12-bit 電圧/VREF自動監視 | `PIO2` ハードウェア相互計数カウンタ（TCXO 由来ゲート基準）＋ `RP2354B` 8ch 内部 ADC (`GPIO40..47`) | 1万〜3万円級 |
-| **表示・UI・電源** | PC / Android スマホ（Chrome **WebUSB / WebSerial** ＋ **sigrok / PulseView** 互換） | 既存 PC/スマホ＆USB 5V 給電を **¥0 流用** | — |
-
----
-
-## 2. User Review Required（承認・確認いただきたい重要設計判断）
+## User Review Required
 
 > [!IMPORTANT]
-> **判断事項 ①：物理実装形態（4層カスタムPCB 推奨 vs 変換基板＋銅箔ベタ実装）**
-> 本設計は **JLCPCB 4層インピーダンス制御基板（JLC04161H-7628）** へのリフロー／手ハンダ実装を最優先設計としています（「発注費除く」ルールのため、基板代は BOM 外）。`RP2354B`（QFN-80・0.4mm ピッチ）と `MS5351M`（MSOP-10・0.5mm ピッチ）を含むため、ホットプレート／リフローオーブンまたはフラックス＋ドラッグはんだ技術が必要です。もし「完全手ハンダ容易性（DIP/SOIC中心）」を優先したい場合は、下位互換の **Option B（`RP2350-Zero` 既製モジュールベース）** へ構成変更可能です（ただし GPIO 30本制約により 16ch ロジックと 10-bit ADC の同時 MSO は排他切替になります）。
+> **1. 自動フルスクリーン (`ensureAutoFullscreenOnTap`) の挙動変更について**
+> 現在 [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L539-L563) の `pointerdown` capture リスナーが左上のボタンを含むあらゆるタップで強制 `requestFullscreen()` を発火しており、ボタンの `click` 消滅・レイアウト急変・フリーズの直接引き金になっています。
+> - **推奨変更**: UI 操作（トップバー・ドック・ボタン・ドロワー・モーダル）ではフルスクリーンを一切発火させず、フルスクリーン切替は `F` キー等の明示操作のみ（強制自動フルスクリーン撤廃）とします。もし「3D キャンバス背景タップ時のみ自動フルスクリーン」を維持したい場合はご指示ください。
+
+> [!IMPORTANT]
+> **2. `ULTRA` 起動・切替時のプロキシ遅延構築（見た目劣化 0% でのフリーズ解消）について**
+> 現在 `ULTRA` 切替時に `ULTRA` 本体の直後に `STD LITE` + `FAST` モーションプロキシまで同期的に直列ビルドし、全シェーダーを一括同期コンパイルするため最大 9 秒超のフリーズが発生します。
+> - **推奨変更**: `ULTRA` の描画品質は **100% 無劣化のまま**、①まずアクティブな `ULTRA` 本体だけをフレーム分割ビルドして即座に操作・描画可能にし、②`STD LITE` / `FAST` モーションプロキシは描画開始後のアイドル時間へ非同期遅延構築、③ビルド中でも左上ボタンによる即座のキャンセル＆切替（中断時 0 リーク保証）を可能にします。
 
 > [!WARNING]
-> **判断事項 ②：オーバークロック運用（300–400 MSPS）と定格運用の切り替え**
-> `RP2354B` の公式保証クロックは 150 MHz です。300–400 MSPS モードはコア内蔵レギュレータを `1.10 V → 1.30 V` へ動的昇圧して実行するオーバークロック領域であり（`gusmanb/logicanalyzer V6` で広範に動作実証済）、ファームウェア側で **「定格 150 MSPS（常時安全）」「ターボ 300 MSPS（1.20 V）」「極限 400 MSPS（1.30 V・短時間バースト）」** の 3 段階プロファイルを切替可能にする設計としています。
-
-> [!CAUTION]
-> **判断事項 ③：`RP2354B` 内部 ADC ピン（`GPIO40–47`）の 3.3 V 厳守**
-> `RP2354B` は `GPIO0–39` が 5 V トレラント（VDD=3.3V動作時）である一方、**ADC 兼用ピン `GPIO40–47` は 3.3 V 上限（非 5V トレラント）** です。本回路ではすべての ADC 入力に抵抗分圧＋`BAT54S` レールクランプを必須配置しています。
+> **3. 「ようこそ (`welcome`)」W01〜W220 の大規模空間再設計とカタログ再生成**
+> `welcome` の 1,087 件の干渉を 0.001 mm 完全にゼロ化するため、台座メインシャーシ（`W173`）の中空バスタブ＋I/O 窓カットアウト化、4 文字積層レイヤーの Z クリアランス再設計、サブストローク・石英柱・ドック・ボルト・スピーカーエンクロージャの再配置、および爆発軌道ベクトルの単調再設計を行います。その後 `npm run catalog`・`npm run build` により `catalog/**` と `docs/**` を完全同期します。外観デザイン（「ようこそ」の書体シルエット・高級光学装置造形・全 435 パーツ構成）は維持しつつ、すべての食い込み・飛び出し・位置ズレを物理的に正しい構造へ修正します。
 
 ---
 
-## 3. 部品選定の極限トレードオフ研究（なぜこの石なのか）
+## Open Questions
 
-### 3.1 コア MCU 比較：なぜ **`RP2354B`（秋月電子 ¥280）** が宇宙最強なのか
-
-| 比較候補 | 実勢価格 | GPIO / ADC | SRAM / Flash | PIO / 最大 LA 速度 | 選定判定 ＆ 決定打 |
-|---|---:|---|---|---|---|
-| **RP2354B (QFN-80)** *(採用)* | **¥280** (秋月 `131441`) | **48 GPIO** / **8ch ADC** | **520 KB** / **2 MB 内蔵** | **3 PIO (12 SM)** / **400 MSPS** | **圧倒的優勝**。外付け QSPI Flash (`P25Q16` ¥70 / `W25Q16` ¥192) が不要でトータル最安！しかも **A4 ステッピング確定で E9 エラッタ完全修正済**。48 GPIO により 16ch ロジック＋10-bit ADC を一切ピン共有せず**真の同時 MSO** が成立。 |
-| `RP2350B` + 外付け Flash | ¥220 + ¥70〜192 = **¥290〜412** | 48 GPIO / 8ch ADC | 520 KB / 外付け 2 MB | 3 PIO / 400 MSPS | Flash 代を含めると `RP2354B` より高く、QSPI 配線 6 本と実装面積も増える。 |
-| `RP2354A` (QFN-60) | ¥250 (秋月 `131439`) | 30 GPIO / 4ch ADC | 520 KB / 2 MB 内蔵 | 3 PIO / 400 MSPS | ¥30 安いが、16ch LA と 10-bit ADC がピン競合し同時 MSO 不可＆高速バスにスタブ容量が乗る。**+¥30 で 18 本の専用 GPIO と 4ch 追加 ADC を買える `RP2354B` が圧倒的コスパ。** |
-| `RP2040` + 外付け Flash | ¥160 + ¥70 = ¥230 | 30 GPIO / 4ch ADC | 264 KB / 外付け 2 MB | 2 PIO / 120–240 MSPS | SRAM 半減・PIO 2基・ADC 同時制御不可。 |
-| `CY7C68013A` (FX2LP) | ¥350〜450 | 16 GPIO | 16 KB | なし / 最大 24 MSPS | 連続ストリーミングは可能だが最大 24 MSPS 止まり。RF/オシロ統合も不可。 |
-
-### 3.2 高速 ADC・AFE・RF・レベル変換の極限選定理由
-
-1. **RF シンセサイザ：`MS5351M`（LCSC `C1509083`・`$0.848` ≈ ¥127） vs `Si5351A-B-GT`（`$1.20` ≈ ¥180）**
-   - Hangzhou Ruimeng Tech `MS5351M` は `Si5351A` とピン完全互換・I2C レジスタ完全互換（アドレス `0x60`）でありながら、**¥53 低価格**かつ 2.5 kHz〜200 MHz で 0 ppm 誤差合成・独立 `VDDO`・高 PSRR を実現。浮いた ¥53 を **±1.5 ppm TCXO（`KDS 1XXD26000MAA`）** に全額再投資することで、水晶版 `Si5351A` より **20〜30 倍高い周波数確度** を達成。
-2. **基準発振器：`KDS 1XXD26000MAA`（26 MHz ±1.5 ppm TCXO・LCSC `C135223`・`$0.613` ≈ ¥92）**
-   - 安価な 25 MHz 水晶（±30〜50 ppm）では 200 MHz 出力時に ±6〜10 kHz ズレてしまい、無線・狭帯域フィルタ計測に使えない。**¥92 の TCXO 投資**で 200 MHz 時 **±300 Hz 以内** のラボ基準器クラスへ昇華。
-3. **高速オシロ ADC：`MS9280`（10-bit 35 MSPS パイプライン ADC・LCSC `C1509021`・`$1.437` ≈ ¥216）**
-   - RP2354B 内蔵 ADC（500 kSPS）の **70 倍** の実時間サンプリング速度。さらにフロントエンドのサンプル＆ホールド入力帯域が **135 MHz（IF アンダーサンプリング対応）** あるため、帯域制限フィルタと組み合わせれば 35 MSPS で **最大 135 MHz の RF 信号波形／スペクトルを直接サンプリング可能**。
-4. **オシロ AFE オペアンプ：`SGM8052XS`（250 MHz・130 V/µs デュアル RRO・LCSC `C91288`・約 `$0.18` ≈ ¥27）**
-   - TI `OPA2354`（1個 ¥500 超）と同等クラスの **250 MHz 帯域・130 V/µs スルーレート・0.1 dB フラットネス 37 MHz** をわずか ¥27 で実現。**重要注意点**：RRO（出力のみ Rail-to-Rail）のため、入力同相電圧範囲（`0 V 〜 V+ - 1.2 V`）の余裕を確保すべく **LC フィルタ経由のクリーン 5.0 V 電源** で駆動し、`MS9280` のフルスケール `0.5 V – 2.5 V`（中心 `1.50 V`）を歪みゼロでドライブする。
-5. **ロジックレベル変換の非対称デュアルドメイン最適化（`74LVC8T245` ＋ `74LVC245A` = 計 ¥39）**
-   - Bank A (CH0–7) に **2電源 1.2V–5.5V 双方向 `74LVC8T245PW`**（¥27）を割り当てて最新 1.2V/1.8V SoC・カメラセンサ・eMMC バスまで網羅。Bank B (CH8–15) に **単電源 3.3V / 5V トレラント `74LVC245APW`**（¥12）を割り当てることで、部品代を ¥15 削減しつつ **異なる電圧系（例：1.8V SPI ＋ 5V UART）の同時計測** を可能にする。しかも双方のプッシュプル出力が `RP2354B` ピンを低インピーダンス駆動するため、万一古い A2 ロットの RP2350B を流用しても E9 エラッタを物理的に完全封殺。
-6. **ESD 保護：`TECH PUBLIC SRV05-4`（0.3 pF 超低容量 4ch TVS・LCSC `C558418`・¥4 × 4 = ¥16）**
-   - 通常のツェナーや `BAT54S`（10 pF）を高速ロジック入力に入れると 100 MHz 信号が丸まって壊滅する。`SRV05-4` は **ライン容量わずか 0.3 pF（3 GHz まで挿入損失ゼロ）** で IEC 61000-4-2 接触 ±25 kV / 気中 ±30 kV を全 16ch 保護。
-7. **RF/Scope コネクタの物理最適解（`BWSMA-KE-Z001` × 1 ＋ `U.FL (IPEX-1)` ＋ `3P GND-SIG-GND`）**
-   - 200 MHz RF 主出力（`J2`）には **6 GHz 50 Ω エッジマウント SMA-J**（`C496549`・¥58）を実装。
-   - オシロ入力兼 SWR ポート（`J3`）には **6 GHz U.FL（¥9）** と **3-pin `GND-SIG-GND` オシロプローブ直刺しソケット（¥3）** を超短距離並列配置。SMA-BNC 変換アダプタなしで標準 10:1 オシロプローブのグラウンドスプリングを最短 2 mm で接地でき（ループインダクタンス < 1.5 nH）、50 Ω SWR 計測時は手持ち U.FL–SMA ピッグテールで即接続可能。これで **¥49 節約しつつ実測の使い勝手と波形品質を両方向上**。
+1. 自動フルスクリーンは **完全手動化（推奨：左上ボタン無反応を根本防止）** で進めてよいでしょうか？（それとも 3D キャンバス単体タップ時のみ残しますか？）
+2. `bg boot` で過去の別ブランチの孤立 Vault が 2 件検出されています（`feat-feat-hyper-opt-v3-fast-kine-ultra-aa` と `feat-feat-original-riimos-e1`）。現在の `main` はクリーン（`behind=0 ahead=0 dirty=0`）なので、本作業は最新 `origin/main` から新しいフィーチャーブランチ（`npm run bg -- start fix-ui-bugs-welcome-zero-collision`）を切って進める方針で問題ないでしょうか？
 
 ---
 
-## 4. 完全検証済 BOM 原価表（純部品代 ≤ ¥1,000 厳守）
+## 重大度順 実在バグ全 68 件マスターカタログ
 
-> 換算レート：標準 **1 USD = ¥150**（および保守検証 **1 USD = ¥155** の両方で ¥1,000 未満を証明）。発注費・送料・PCB 製造費・外装費・手持ち PC/スマホ/USB ケーブルはルール通り除外。
+調査で確認した **全 68 件の実在バグ** を重大度（`S0` → `S3`）順に整理します。すべて修正対象とします。
 
-| # | 機能ブロック | Ref | 型番 / 仕様 | 調達先 / 品番 | USD単価 (1+) | 数量 | 小計 (@150) | 小計 (@155) |
-|---|---|---|---|---|---:|---:|---:|---:|
-| 1 | Core MCU | `U1` | **RP2354B** (QFN-80, **2MB Flash内蔵, A4**, 48 GPIO, 520KB SRAM, 3×PIO, 8ch ADC) | 秋月電子 `131441` (税込確定) | — | 1 | **¥280** | **¥280** |
-| 2 | Core Clk | `Y1` | 12.000 MHz 水晶振動子 (3225 4P ±10ppm, 12pF, USB BOOTSEL保証) | LCSC `C9002` (YXC) | `$0.060` | 1 | **¥9** | **¥9** |
-| 3 | Power | `U2a,U2b` | **ME6211C33M5G-N** (3.3V 500mA LDO, `DVDD`/`AVDD` 完全分離2系統) | LCSC `C82942` (検証済) | `$0.055` | 2 | **¥17** | **¥17** |
-| 4 | Power | `L1` | 3.3 µH シールドパワーインダクタ (2520, 1.5A, RP2354B内蔵VREG用) | LCSC (Sunlord/Cjiang) | `$0.040` | 1 | **¥6** | **¥6** |
-| 5 | USB I/F | `J1` | **TYPE-C-31-M-12** (USB Type-C 16P レセプタクル) | LCSC `C165948` (検証済) | `$0.174` | 1 | **¥26** | **¥27** |
-| 6 | Control | `SW1,SW2` | SMD タクトスイッチ 3×4mm (`BOOTSEL` / `RUN`) | LCSC | `$0.015` | 2 | **¥5** | **¥5** |
-| 7 | RF Gen | `U3` | **MS5351M** (2.5kHz–200MHz 3ch PLLシンセサイザ, Si5351A互換, MSOP-10) | LCSC `C1509083` (検証済) | `$0.848` | 1 | **¥127** | **¥131** |
-| 8 | RF Ref | `Y2` | **KDS 1XXD26000MAA** (**26.000 MHz ±1.5 ppm TCXO**, 1.7–3.6V, 1.5mA) | LCSC `C135223` (検証済) | `$0.613` | 1 | **¥92** | **¥95** |
-| 9 | RF Conn | `J2` | **BAT WIRELESS BWSMA-KE-Z001** (6GHz 50Ω エッジマウント SMA-J, `CLK0`出力) | LCSC `C496549` (検証済) | `$0.388` | 1 | **¥58** | **¥60** |
-| 10 | Scope/SWR | `J3` | **U.FL (IPEX-1) 6GHz 同軸レセプタクル** ＋ 3P `GND-SIG-GND` プローブ端子 | LCSC `C88373` 相当 | `$0.060` | 1 | **¥9** | **¥9** |
-| 11 | SWR Brdg | `D5,D6` | **BAT54S** (デュアル直列ショットキーダイオード, SWR浮動差動検波＆クランプ) | LCSC `C83935` (検証済) | `$0.019` | 2 | **¥6** | **¥6** |
-| 12 | Scope ADC | `U6` | **MS9280** (**10-bit 35 MSPS パイプライン ADC**, 135 MHz IF入力帯域, SSOP-28) | LCSC `C1509021` (検証済) | `$1.437` | 1 | **¥216** | **¥223** |
-| 13 | Scope AFE | `U7` | **SGM8052XS** (**250 MHz・130 V/µs** デュアル RRO オペアンプ, SOIC-8) | LCSC `C91288` (仕様検証済) | `$0.180` | 1 | **¥27** | **¥28** |
-| 14 | Logic A | `U4` | **74LVC8T245PW** (8bit **1.2V–5.5V** 2電源双方向トランシーバ, TSSOP-24) | LCSC `C22356907` (仕様検証済) | `$0.180` | 1 | **¥27** | **¥28** |
-| 15 | Logic B | `U5` | **74LVC245APW** (8bit **3.3V / 5Vトレラント** 双方向トランシーバ, TSSOP-24) | LCSC (AiP/TI/Nexperia) | `$0.080` | 1 | **¥12** | **¥12** |
-| 16 | ESD Prot | `D1..D4` | **TECH PUBLIC SRV05-4** (**0.3 pF** 超低容量 4ch ESD TVS, ±25kV, SOT-23-6) | LCSC `C558418` (仕様検証済) | `$0.025` | 4 | **¥15** | **¥16** |
-| 17 | Headers | `J4..J6` | 2.54mm 2×10 ピンヘッダ×2（16ch信号＋16本GND交互配列）＋ 1×6 RF/Auxピン | LCSC / 秋月 | `$0.040` | 3 | **¥18** | **¥19** |
-| 18 | Passives | `R,C,L,FB` | 0402/0603受動部品一式（47Ω×16入力整合、22Ω×16ソース終端、49.9Ω 0.1%×4 SWRブリッジ、300Ω/18Ω 3dBパッド、7次LPF用C0G＆0603インダクタ×7、AFE 909kΩ/100kΩ/トリマ補償C、0.1µF×20/10µF×6、フェライトビーズ×3、5.1kΩ×2 CC抵抗） | LCSC / 秋月案分 | — | 一式 | **¥32** | **¥33** |
-| | | | **純粋部品代 BOM 総合計** | | | | **¥982** | **¥994** |
-| | | | **予算 ¥1,000 に対する予備費（マージン）** | | | | **残 ¥18** | **残 ¥6** |
+### S0: 致命的 — 左上ボタン無反応・ブラウザ完全フリーズ・無限ループ（14 件）
+
+| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
+|---|---|---|---|
+| **BUG-01** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L6335-L6344) | 横向き/低身長（`max-height: 540px`）で `.studio-topbar-left` に `overflow-x: auto` が掛かり `overflow-y` もクリップ化 → `.assembly-palette-popover` が 40px 内に切り取られ**左上メニューが押しても出ずクリック不能**（CDP 再現済） | `.assembly-palette-popover` を `position: fixed`（トリガー矩形から動的座標配置）またはポータル配置し、`overflow` クリップから完全解放 |
+| **BUG-02** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L539-L563) | `ensureAutoFullscreenOnTap` が `window` の `pointerdown` capture で左上ボタン押下時も `requestFullscreen()` を暴発 → `pointerdown`〜`pointerup` 間に遷移・リサイズが割り込み `click` 消滅・フリーズ誘発（CDP 再現済） | UI 要素上の自動フルスクリーンを完全廃止（推奨：自動強制フルスクリーン自体を撤廃し明示操作のみに統一） |
+| **BUG-03** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L860-L1078) | 起動・モード切替時に `ULTRA` + `STD LITE` + `FAST` の 3 重ビルドと同期 `warmupShaders()` / `PMREM` が連続実行され、**最大 9 秒超メインスレッド完全凍結**（CDP 再現済） | `ULTRA` 本体優先描画＋フレーム分割ビルド、モーションプロキシ（`LITE`/`FAST`）の非同期アイドル遅延構築、チャンク間 `yield` 徹底、進行中ビルド即時中断対応 |
+| **BUG-04** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1378) | `while (nextCap < needed) nextCap = Math.min(65535, ...)` が `needed > 65535` で **`nextCap === 65535` のまま無限ループ（タブ永久フリーズ）** | `needed` を `65535` 上限クランプ＋ループ脱出条件 `nextCap >= 65535` 追加＋ページ分割閾値を厳密化 |
+| **BUG-05** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L519) | `while (gl.getError() !== gl.NO_ERROR) {}` に反復回数上限がなく、コンテキストロスト/ドライバ異常時に無限ループ化 | 最大 32 回の反復ガード＋`gl.isContextLost()` チェック追加 |
+| **BUG-06** | [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L763), [L907](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L907), [L1281](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L1281), [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L161) | `while (cap < minCap) cap <<= 1;` が 32bit 符号付き左シフト超過（`>= 2^30`）または `NaN` で無限ループ | 安全な上限 `1 << 28` ガード・`Number.isFinite` 検証・乗算 `cap *= 2` へ変更 |
+| **BUG-07** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L310), [L407](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L407), [L1456](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1456), [L1662](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1662), [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L800), [L931](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L931), [L1334](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts#L1334) | 全 7 箇所のオープンアドレスハッシュ `while (true)` にプローブ上限がなく、テーブル満杯・退化入力時に無限ループフリーズ | 全 7 箇所に `for (let probe = 0; probe < tableSize; probe++)` 上限ガードを導入 |
+| **BUG-08** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L60), [L328](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L328), [L389](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L389), [L442](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L442), [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L102) | 遅延 `import()` キャッシュ Promise 5 箇所が reject 時にリセットされず、一時エラー後に **Play Ground / FH 2028 / Original / Optics / 図説が永久に無反応化** | `.catch((err) => { loadPromise = null; throw err; })` を全 5 箇所に実装し即リトライ可能化 |
+| **BUG-09** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L689-L709) | `setMode()` がロード完了前に `this.mode` と `initialActivated = true` を固定するため、失敗・中断後の同一ユニット再押下が無視され無反応になる | ロード失敗/未完了 (`!this.v2Runtime.isReady() && !this.v2Runtime.isBuilding(nextMode)`) の場合は再起動を許可 |
+| **BUG-10** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L886-L986) | 非同期ビルド中の連続切替で前ユニットのキャッシュ 203 参照が未解放のまま次切替＋`verifyAfterDispose()` が走り、毎切替 VRAM リーク警告（22 回連続再現）＆GPU リソース競合 | `inFlightBuildPromise` を直列待機（abort → 解放完了を確認してから次ユニットの `verifyAfterDispose` / `captureBaseline` / `build` を開始） |
+| **BUG-11** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L346-L471) | 左上 CTA 群（`Play Ground` / `FH 2028` / `Original`）にモーダル排他がなく、`Original`（`z:420`）を開いたまま `Play Ground`（`z:45`）を開くと画面が覆われ操作不能（CDP 再現済） | 相互排他ヘルパ `closeOtherOverlays(except)` を導入し、いずれかを開く際に他モーダル・パレット・ドロワー・光学スタジオを確実クローズ |
+| **BUG-12** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L348-L358) | `playgroundApi.open()` に多重呼び出しガードがなく、連打時に二重 `open()` が競合しイベント・レンダラー登録が破綻 | `playgroundOpening` 進行中ガード＋完了後の状態整合チェックを追加 |
+| **BUG-13** | [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts#L214-L253) | `open()` の `await ensureDataForCurrentTab()` 中に `close()` されたり連打されると、閉じた後に DOM 復活や `null` 例外が発生 | `openSeq` トークンを導入し、`await` 後に `seq !== this.openSeq || !this.isOpenFlag || !this.root` なら即中止 |
+| **BUG-14** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L1626-L1780) | `open()` の非同期処理中に「戻る」や `Esc` で `close()` しても後続の `setCustomSceneRenderer` / テンプレート構築が走りメイン画面が固着 | `openSessionToken` を導入し、各 `await` 直後にキャンセル検証を徹底 |
+
+### S1: 重大 — 3D 空間干渉・GPU/メモリリーク・境界破壊・セキュリティ（20 件）
+
+| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
+|---|---|---|---|
+| **BUG-15** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts#L75-L2852), [welcomeGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGeometry.ts) | `welcome` W01〜W220 に **1,037〜1,087 件の 0.001 mm ソリッド干渉・内包**（最大貫通 3.40 mm、4 品質ティア全 FAIL） | 下記「`welcome` 100% 完璧化設計」により全 4 ティア 0 件化 |
+| **BUG-16** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts) | `welcome` の爆発分解軌道上で **61〜70 件の部品貫通衝突（`explodeHits`）** | 全パーツの `explodeOffset` を層順・半径順に厳密単調再設計し 0 件化 |
+| **BUG-17** | [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts) 他 `welcome*Parts.ts` | `welcome` に **40 件のニアミス・10 件の SMT 着座異常・8 件の熱近接（最小 0.287 mm）・背面/端面の異常突出** | `sp` 全 435 パーツ座標監査＋クリアランス確保・突出回収で全 0 件化 |
+| **BUG-18** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L300), [L383](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L383) | `activateAtomic` / `hydrateMetaOnly` で `miraiSubView` が旧上限 `Math.min(5, ...)` にクランプされ **SubView 6〜8（FH20/FH17/FH48）が切替不能** | 上限を `8` へ修正し定数 `MIRAI_SUBVIEW_MAX = 8` で一元化 |
+| **BUG-19** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L1915-L2050) | `updateClippingPlane()` に `'welcome'`（X: `[-92.4, +92.4]`）の専用範囲がなく `-48..48` にフォールバックし「よ」「そ」が切断不能 | `welcome` 専用範囲（X:`[-96, 96]`, Y:`[-24, 28]`）を追加 |
+| **BUG-20** | [raycast_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts#L174-L184), [L999-L1011](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts#L999-L1011) | 固定長 BVH スタック（`128`）にプッシュ境界チェックがなく深いツリーで範囲外書込・破損 | スタック深さ上限ガード（満杯時はリーフ化／安全スキップ）と動的上限保護を追加 |
+| **BUG-21** | [kine_culling_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/kine_culling_engine.ts#L227-L276) | `_kineBvhStack` / `_kineBvhInside`（固定長 `128`）に境界チェックがなくスタック超過時にパーツ消失（誤カリング） | `sp + 2 <= _kineBvhStack.length` ガード＋超過時は安全に非カリングフォールバック |
+| **BUG-22** | [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts#L1370-L1505) | `Uint16Array` 頂点溶接ページで `uniqueTotal >= 65535` 超過ガードがなくインデックス折り返しでメッシュ爆散 | `MAX_PAGE_UNIQUE_VERTS` 厳密チェック＆オーバーフロー時のページ自動分割フォールバック |
+| **BUG-23** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1066-L1072), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L908-L918) | 切替中〜ビルド完了まで左上パーツ数バッジが空 `""` になり（23 モード中 19 モードで再現）、読み込み中か無反応か判別不能 | `registry` の `declaredPartCount` を即時表示＋ビルド中スピナー/状態クラス `.is-loading` 付与 |
+| **BUG-24** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3411-L3438) | `undo()` / `redo()` が `pop()` 後に `await extractPartsBatch()` するため連打で履歴スタック破壊・`close()` 後クラッシュ | `historyBusy` 直列ロック＋`!this.active` ガード追加 |
+| **BUG-25** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3467-L3486) | `importBlueprintFile()` が JSON 内座標/回転/スケール/キー/件数を未検証のまま復元し `NaN`/`Infinity`/DoS で破損 | 厳密スキーマサニタイザ（上限件数・有限数クランプ・実在キー検証・`fileInput.value = ''` リセット）実装 |
+| **BUG-26** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L2594), [L2625](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L2625), [L3148](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3148) | JSON 由来ラベル・レポート文言を `innerHTML` へ無エスケープ挿入（DOM XSS） | 共通 `escapeHtml()` をすべての動的補間へ適用 |
+| **BUG-27** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L333), [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L185), [L517](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L517), [L529](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L529) | テンプレート `innerHTML` への未エスケープ文字列挿入 | DOM API（`createElement` + `textContent`）または `escapeHtml()` へ置換 |
+| **BUG-28** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2137-L2215), [L2476-L2493](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2476-L2493) | `dispose()` で `pointerdown`/`move`/`leave`/`up`/`wheel`/`touchstart` の 6 リスナーが未解除でリーク | バインド済みハンドラを保持し `dispose()` で全解除 |
+| **BUG-29** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L1740-L1776), [L3710-L3720](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3710-L3720) | `close()`/`dispose()` で遅延描画・トーストタイマーおよび `overlayLines.material` の解放漏れ | `clearTimeout` 確実化＋`overlayLines.material.dispose()` 追加 |
+| **BUG-30** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L524-L535) | `tryPersistBakedPmrem` の `gl.readPixels` 例外時に `renderer.setRenderTarget(prevRt)` が戻らず描画固着 | `try { ... } finally { this.renderer.setRenderTarget(prevRt); }` で確実復帰 |
+| **BUG-31** | [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts#L350-L490) | `renderUltraStationary` 内で例外発生時に `camera.clearViewOffset()` / `setRenderTarget(null)` が復帰せず画面が白飛び・オフセット固着 | `try ... finally` で必ず `camera.clearViewOffset()` と `setRenderTarget(null)` を復元 |
+| **BUG-32** | [dispose.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/dispose.ts#L269-L312) | 全 23 ユニット共通監視なのに旧称 `[MI Shoe V2 VRAM Leak Detector]` 固定＋非同期切替中の誤警告 | ラベルを `[Unit V2 VRAM Leak Detector]` へ適正化し、完了済み dispose 基準でのみ厳密判定 |
+| **BUG-33** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2147), [L2171](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2171) | `cachedDomRect` が `scroll` やドロワー開閉時に陳腐化し、クリック・ホバー位置がズレて別パーツが誤選択される | `scroll` 時の無効化＋`pointerdown`/`pointerup` 時は最新 `getBoundingClientRect()` を取得 |
+| **BUG-34** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L14-L15) | `#app` / `#viewport` への無ガード `!` アサーション | 明示的存在検証と診断エラーメッセージを追加 |
+
+### S2: 中 — UI 競合・キーボード暴発・レース・数値異常・モバイル崩れ（20 件）
+
+| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
+|---|---|---|---|
+| **BUG-35** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L570-L670) | グローバル `keydown` にフォーム要素除外がなく、入力中に `f`/`u`/`k`/`v`/`p`/`1..8` が暴発 | `INPUT`/`TEXTAREA`/`SELECT`/`isContentEditable` 時は即 return |
+| **BUG-36** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L572-L581), [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L412), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L748) | `Escape` 優先度制御がなく、ライトボックスや左上パレット閉鎖時に下層のパーツ選択・光学スタジオまで連鎖的に閉じる | `isLightboxOpen()` / `isPaletteOpen()` 確認＋`stopImmediatePropagation` で最前面の 1 層のみ閉鎖 |
+| **BUG-37** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L6143-L6168), [L7096-L7111](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L7096-L7111) | 縦スマホ（390px）で `.orig-cta-pill` が縮小対象から漏れ 2 行目に折り返しトップバー高さ 121px に肥大（CDP 再現済） | 4 ボタンを 390px 幅に綺麗に収まるコンパクト設計（または 1 行スクロール可能＆パレット `fixed` 分離）へ統一 |
+| **BUG-38** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L841), [L2508](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L2508) | `.studio-topbar` と `.explanation-drawer` が同じ `z-index: 30` のためドロワーが左上ボタンの上に被る | `.studio-topbar` を `z-index: 34`、`.assembly-palette-popover` を `z-index: 70`、`.explanation-drawer` を `z-index: 30` に明確階層化 |
+| **BUG-39** | [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L412), [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts#L197), [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L743-L752) | 匿名関数でグローバルリスナーを登録し `dispose()` 未実装 | バインドメソッド保持＋`dispose()` 実装 |
+| **BUG-40** | [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts#L1077-L1108) | `hide()` の 360ms `setTimeout` が未追跡で直後の再 `show()` と競合 | `hideTimer` フィールド化し `show()` 時に `clearTimeout` |
+| **BUG-41** | [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L138-L145) | `close()` の 360ms `setTimeout` が未追跡で連続開閉時に新規 DOM を破壊 | `clearDomTimer` フィールド化し `open()` 時に `clearTimeout` |
+| **BUG-42** | [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts#L298) | スライダー `Number(input.value)` に `Number.isFinite` ガードなし | `const v = Number(input.value); if (Number.isFinite(v)) onInput(v);` |
+| **BUG-43** | [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts#L1145-L1146) | `dt <= 0` のフレームで `(st.dzA - prevDzA) / dt` が `NaN`/`Infinity` 化 | `const safeDt = Math.max(1e-4, dt)` で除算保護 |
+| **BUG-44** | [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts#L896-L906) | Secant 法反復で `yNext` 発散・`NaN` 時の保護なし | `Number.isFinite(yNext)` 確認＋有効径 `[-28, 28]` クランプ |
+| **BUG-45** | [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts#L3440-L3465) | `a.click()` 直後の同期 `URL.revokeObjectURL` で Safari/モバイルのダウンロード失敗 | `document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500);` |
+| **BUG-46** | [PartGeometryExtractor.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PartGeometryExtractor.ts#L613) | プリベイク取得失敗時の無音 `.catch(() => {})` で原因追跡不能 | 警告ログ記録＋安全フォールバック状態管理 |
+| **BUG-47** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1109-L1181) | `setQuality()` 完了後に `activationToken` 検証がなく、同一ユニット再切替時に古い選択状態を上書き | 開始時トークン比較で陳腐化した復元をスキップ |
+| **BUG-48** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1183-L1197) | ビルド進行中の `setSubView()` が完了後の実ユニットへ反映されない（`initialState.subView` で上書き） | `activate()` 内で `initialState.subView` ではなく最新の `this.subView` を適用 |
+| **BUG-49** | [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L945), [L1005](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts#L1005) | ビルド進行中の `syncSectionPlane()` / `syncVisualState()` 変更が古いローカル変数 `planes` で上書きされる | 完了適用時に最新の `this.sectionActive ? [this.clippingPlane] : []` を再評価 |
+| **BUG-50** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L249), [L764](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L764), [L2262](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2262) | `void this.v2Runtime.activate/setQuality/handleContextRestored` の未処理 Rejection リスク | `.catch()` でエラー捕捉・UI リトライ可能な状態へ復帰 |
+| **BUG-51** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L278-L295), [L515-L520](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L515-L520) | 非同期スタジオ起動ハンドラ群にエラー捕捉がなく失敗時にサイレント停止 | 共通 `runAsyncAction` ラッパでエラーログ＋トースト/状態復旧 |
+| **BUG-52** | [capture_bridge.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/capture_bridge.ts#L264-L275) | `waitUntilReady` がタイムアウトしても暗黙正常終了して未完成フレームを返す | タイムアウト時に警告・`ready: false` 状態を明示返却 |
+| **BUG-53** | [fast_proxy_builder.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/fast_proxy_builder.ts#L174-L181) | `batchedMesh === null` かつ `gpuExplodeTex !== null` の場合に `gpuExplodeTex.dispose()` が漏れる | `gpuExplodeTex` を `batchedMesh` の有無と独立して確実に解放 |
+| **BUG-54** | [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts#L1184) | `canvas.getContext('2d')` が `null` の場合にクラッシュするリスク | `if (!ctx)` 時の安全なフォールバック `DataTexture` 返却 |
+
+### S3: 低〜中 — メタデータ・アクセシビリティ・CSS 整理・統計/境界ガード（14 件）
+
+| ID | 対象ファイル・行 | 現象・根本原因 | 修正方針 |
+|---|---|---|---|
+| **BUG-55** | [manifest.webmanifest](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/public/manifest.webmanifest#L2-L4) | 旧名称 `"627 Parts"` のまま（現行は 23 ユニット・3,400+ パーツ） | 最新構成に整合する名称・説明へ更新 |
+| **BUG-56** | [index.html](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/index.html#L4-L18) | `maximum-scale=1.0, user-scalable=no` によるズーム阻害＋`<title>◉</title>` の識別不能 | `user-scalable` 制限解除（3D 操作はキャンバス `touch-action: none` で制御）＋適切なタイトル付与 |
+| **BUG-57** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css)（8 組重複セレクタ） | `.exp-diagram-action-btn` / `.pg-right-panel` / `.mirai-subbar` 等 8 組のトップレベル重複定義による意図しない上書き | 重複セレクタを単一定義へ統合・整理 |
+| **BUG-58** | [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css#L698-L727) | `#app.is-zen-fullscreen` が廃止済み旧クラス名のみ参照し現行 HUD に効かない | 現行 `.studio-topbar` / `.studio-bottom-dock` 向けへ更新 |
+| **BUG-59** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L844-L875) | 切替直後のパーツ数バッジ消失によるボタン幅ガタつき | `syncMode()` で登録パーツ数を仮表示＋ローディング状態表示 |
+| **BUG-60** | [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts#L322) | 1800ms パルス解除 `setTimeout` 未追跡 | `pulseTimer` 保持し `close()`/`render()` 時に `clearTimeout` |
+| **BUG-61** | [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts#L818-L823) | `scrollActiveMiraiBtnIntoView` の `rAF` 重複実行 | `scrollRafId` で前回分を `cancelAnimationFrame` |
+| **BUG-62** | [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts#L120-L131) | モーダル開閉時の `aria-hidden` 未同期 | `open`/`close` で `aria-hidden` を厳密同期 |
+| **BUG-63** | [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts#L2266-L2272) | タブ非表示時に進行中 `rafId` を即時キャンセルしていない | `if (this.pageHidden && this.rafId !== 0) { cancelAnimationFrame(this.rafId); this.rafId = 0; }` |
+| **BUG-64** | [GpuOptimizer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts#L103), [L154](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts#L154) | `texturesOptimized` が `const = 0` のまま常に `0` を返す | `let texturesOptimized = 0` に変更し最適化テクスチャ数を正確にカウント |
+| **BUG-65** | [perf_hud.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/perf_hud.ts#L127-L130) | `frameTimeMs`/`avgFrameTimeMs` 非有限値時の `"NaN ms"` 表示 | `Number.isFinite` ガード追加 |
+| **BUG-66** | [CameraEngineeringGrader.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CameraEngineeringGrader.ts#L293), [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts#L309) | 正規化 `1 / len` の極小値ガード強化＋空ワークスペース時の重心/転倒角エッジケース保護 | `len > 1e-9` 厳密ガード＋0 パーツ時の確定デフォルト値返却 |
+| **BUG-67** | [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts#L1347-L1348) | SPICE ネットリスト生成時の `busV <= 0` / 負 `loadW` によるゼロ除算・異常値出力 | `Math.max(1.0, busV)` / `Math.max(0.05, loadW)` ガード追加 |
+| **BUG-68** | [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts#L714-L765) | `ArtifactCaptureBridge` の `setMode` 呼出時に開いているモーダル・パレットを閉じず撮影結果へ混入するリスク | `captureBridge.setMode` 実行時に開いているモーダル・パレットを確実クローズ |
 
 ---
 
-## 5. システム全体アーキテクチャ ＆ `RP2354B` 48-GPIO 完全割当
+## Proposed Changes
 
-### 5.1 システムブロック図（5-in-1 並列混載アーキテクチャ）
+依存関係の順序に従い、以下の 5 コンポーネントに分けて安全に実装します（作業開始時に必ず `npm run bg -- start fix-ui-bugs-welcome-zero-collision` で最新 `origin/main` からフィーチャーブランチを作成し、マイルストーン毎に `bg snap` を実行します）。
+
+---
+
+### Component 1: 左上ボタン無反応・フリーズ根絶 & コアランタイム高速・無リーク化（BUG-01〜14, 18〜23, 28, 30〜33, 47〜54, 63〜65）
+
+```mermaid
+flowchart TD
+    Click["左上ボタン押下"] --> NoFS["pointerdown自動FS撤廃(BUG-02)"]
+    Click --> FixedPop["Fixedポータル配置で横向きクリップ解消(BUG-01)"]
+    Click --> Exclusive["他モーダル排他＋連打ガード(BUG-11..14)"]
+    Click --> Switch["ユニット切替要求"]
+    Switch --> AbortWait["進行中ビルドをAbort＆完全解放待機(BUG-10)"]
+    AbortWait --> BuildUltra["ULTRA本体フレーム分割ビルド＋即時描画(BUG-03)"]
+    BuildUltra --> IdleProxy["アイドル時にLITE/FASTプロキシ遅延構築(BUG-03)"]
+    BuildUltra --> Badge["登録パーツ数即時表示＋ローディング表示(BUG-23,59)"]
+```
+
+#### [MODIFY] [main.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/main.ts)
+- `ensureAutoFullscreenOnTap` による左上ボタン・UI 押下時の強制 `requestFullscreen()` 割り込みを撤廃（BUG-02）。
+- 動的 `import()` キャッシュ Promise 4 箇所に `.catch()` 自己リセットを追加（BUG-08）。
+- `closeOtherOverlays(except)` 排他制御・`playgroundOpening` 二重起動防止・全非同期ボタンハンドラのエラーハンドリング追加（BUG-11, 12, 51, 68）。
+- グローバル `keydown` のフォーム要素除外と `Escape` 最前面単層クローズ制御（BUG-35, 36）。
+- `#app`/`#viewport` 存在検証（BUG-34）。
+
+#### [MODIFY] [ZeroTextControls.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ZeroTextControls.ts)
+- `.assembly-palette-popover` を `position: fixed` でボタン位置基準に動的配置し、`overflow-x: auto` 親要素にクリップされない構造へ変更（BUG-01）。
+- パレット開閉状態照会 `isPaletteOpen()`・`closePalette()`・`setLoadingState(loading, expectedCount)`・`dispose()` を追加し、未エスケープ `innerHTML` を安全な DOM 構築へ置換（BUG-23, 27, 36, 39, 59, 61）。
+
+#### [MODIFY] [unit_v2_runtime.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/unit_v2_runtime.ts)
+- `inFlightActivationPromise` による前ビルドの完全中断＆解放待機を実装し、203 参照 VRAM リーク警告と競合を根絶（BUG-10）。
+- `ULTRA` アクティベーション時にまず `ULTRA` 本体を完了・即座に表示・操作可能にし、`STD LITE` / `FAST` モーションプロキシは `requestIdleCallback` / 遅延フレームでバックグラウンド構築（キャンセル可能）することで **9 秒フリーズを根絶**（BUG-03）。
+- `while (gl.getError() !== gl.NO_ERROR)` の上限ガード、WebGL2 `readPixels` の `finally` 復帰、`setQuality` トークン比較、進行中 `subView`/`sectionActive` の最新状態適用（BUG-05, 30, 47, 48, 49）。
+
+#### [MODIFY] [CadViewport.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/CadViewport.ts)
+- `setMode()` の失敗・未完了時再試行許可、`miraiSubView` クランプ `5 → 8` 修正、`welcome` 専用断面範囲追加、`cachedDomRect` 更新、`dispose()` 全 6 リスナー解除、タブ非表示時 `rAF` 停止、非同期呼出 `.catch()` 保護（BUG-09, 18, 19, 28, 33, 50, 63）。
+
+#### [MODIFY] [FastCadGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/FastCadGeometry.ts), [v2_unit_compiler.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/v2_unit_compiler.ts), [raycast_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/raycast_engine.ts), [kine_culling_engine.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/kine_culling_engine.ts), [ultra_post_pipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/ultra_post_pipeline.ts), [dispose.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/dispose.ts), [fast_proxy_builder.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/fast_proxy_builder.ts), [resource_cache.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/resource_cache.ts), [capture_bridge.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/capture_bridge.ts), [perf_hud.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/core/perf_hud.ts), [GpuOptimizer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/engine/GpuOptimizer.ts)
+- 全無限ループ要因（`nextCap < needed`, `cap <<= 1`, 7 箇所のハッシュ `while (true)`）の完全ガード、BVH スタック 128 境界チェック、`Uint16` 頂点上限ガード、`finally` 復帰、解放漏れ・統計バグ・NaN 表示の修正（BUG-04, 06, 07, 20, 21, 22, 31, 32, 52, 53, 54, 64, 65）。
+
+---
+
+### Component 2: UI スタジオ群・光学シミュレータ・CSS・PWA 修正（BUG-08, 13, 27, 36〜44, 55〜62）
+
+#### [MODIFY] [ExplanationDrawer.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/ExplanationDrawer.ts), [MiraiLibraryStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/MiraiLibraryStudio.ts), [OriginalBlueprintStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts), [LensOpticsStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/LensOpticsStudio.ts), [lensOpticalSim.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/lens/lensOpticalSim.ts)
+- `schematicLoadPromise` リセット、`isLightboxOpen()` 公開、タイマー追跡＆`dispose()`、`MiraiLibraryStudio` 非同期 `openSeq` キャンセルガード、`OriginalBlueprintStudio` `aria-hidden` 同期＆`dispose()`、`LensOpticsStudio` エスケープ＆数値ガード、`lensOpticalSim` ゼロ除算・Secant 発散保護。
+
+#### [MODIFY] [main.css](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/styles/main.css), [index.html](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/index.html), [manifest.webmanifest](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/public/manifest.webmanifest)
+- 横向きトップバーのパレットクリップ解消・縦スマホ 390px の 4 ボタン 1 行収容・`z-index` 階層統一（topbar 34 / drawer 30 / palette 70）・8 組の重複セレクタ統合・`is-zen-fullscreen` の現行クラス対応・アクセシビリティ＆マニフェスト更新。
+
+---
+
+### Component 3: Play Ground CAD Studio & Grader & PLYA 修正（BUG-14, 24〜26, 29, 45, 46, 66, 67）
+
+#### [MODIFY] [CadPlaygroundStudio.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CadPlaygroundStudio.ts), [PartGeometryExtractor.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PartGeometryExtractor.ts), [CameraEngineeringGrader.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/CameraEngineeringGrader.ts), [PlyaVerificationPipeline.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/playground/PlyaVerificationPipeline.ts)
+- `openSessionToken` キャンセル・`historyBusy` Undo/Redo 直列化・JSON Import 厳密バリデーション・`escapeHtml` 適用・遅延 `URL.revokeObjectURL`・タイマー＆マテリアル解放・ゼロ除算＆空ワークスペース境界保護。
+
+---
+
+### Component 4: 「ようこそ (`welcome`)」435 パーツ `0.001 mm` 完全無干渉・無突出・爆発軌道無衝突化（BUG-15, 16, 17）
+
+現状の `sp` 厳密監査結果：
+- 干渉 1,087 件の内訳：**100.0% が W01〜W220 同士**（`oldOld=1087, oldNew=0, newNew=0`）
+  - 文字内部干渉：892 件（4 文字共通積層＋各文字サブストローク交差・石英柱）
+  - 台座内部干渉：111 件（中実 `W173`・中実 `W215`・内部モジュール重なり）
+  - 文字↔台座ドック干渉：84 件（文字下部↔`W187/189/191/193` ドックソケット↔`W174` データム板）
+- 爆発衝突：61〜70 件 / ニアミス：40 件 / SMT 着座異常：9〜10 件 / 熱近接：8 件
 
 ```mermaid
 flowchart LR
-    USB["USB Type-C J1\n5V VBUS / D+ D-\n(PC/スマホ WebUSB)"] --> PWR["電源分離ツリー\nU2a DVDD 3.3V\nU2b AVDD 3.3V\nLC Filter 5V_AFE"]
-    USB <--> MCU["RP2354B U1\nQFN-80 / A4 / 48 GPIO\n520KB SRAM 10 Banks\n2MB Built-in Flash"]
-
-    subgraph LOGIC["高速 16ch ロジック & パターン発生部 (PIO0: GPIOBASE=0)"]
-        HDR["2x10 GSGS ヘッダ\nCH0-15 + 16x GND"] --> ESD["SRV05-4 x4\n0.3pF ESD TVS"]
-        ESD --> R47["47Ω 整合・保護抵抗 x16"]
-        R47 <--> U4["U4: 74LVC8T245\nCH0-7 (1.2V-5.5V)"]
-        R47 <--> U5["U5: 74LVC245A\nCH8-15 (3.3V/5V)"]
-        U4 <--> R22A["22Ω 等長バス"]
-        U5 <--> R22B["22Ω 等長バス"]
-    end
-    R22A <-->|"GPIO0..7"| MCU
-    R22B <-->|"GPIO8..15"| MCU
-
-    subgraph SCOPE["35 MSPS 10-bit オシロ & 135MHz IF部 (PIO1: GPIOBASE=16)"]
-        J3["J3: U.FL + 3P Probe\nGND-SIG-GND"] --> ATT["1MΩ // 12pF 補償減衰器\n1:1 / 10:1 切替"]
-        ATT --> AFE["U7: SGM8052 250MHz\n130V/us AFE + 1.5V Offset"]
-        AFE --> ADC["U6: MS9280\n10-bit 35 MSPS ADC\n135MHz IF BW"]
-    end
-    ADC -->|"GPIO16..26 D0..D9+OTR"| MCU
-
-    subgraph RF["200 MHz ±1.5ppm 3ch RF & SWR部 (I2C0 + PIO2 + 内部ADC)"]
-        TCXO["Y2: KDS 26MHz TCXO\n±1.5 ppm (10nF AC結合)"] --> U3["U3: MS5351M\n2.5kHz-200MHz 3ch PLL"]
-        U3 -->|"CLK0"| PAD["3dB 50Ω Pi Pad\n+ 7次チェビシェフ LPF"]
-        PAD --> J2["J2: 6GHz SMA-J 50Ω"]
-        U3 -->|"CLK1"| SWR["49.9Ωx3 反射ブリッジ\n+ BAT54S 浮動差動検波"]
-        SWR <--> J3
-        U3 -->|"CLK2 (33Ω共有)"| ADC
-    end
-    MCU <-->|"GPIO28..29 I2C0"| U3
-    MCU <-->|"GPIO27 CLK共有"| ADC
-    SWR -->|"GPIO40..42 12-bit ADC"| MCU
+    W1["Step W1: 全435パーツ実AABB突出・配置全数監査"] --> W2["Step W2: 文字共通Z層スタック＆ポケット厳密分離 (~700件解消)"]
+    W2 --> W3["Step W3: サブストローク端点トリム＆石英柱座ぐり調整 (~190件解消)"]
+    W3 --> W4["Step W4: 台座W173中空バスタブ＆I/O窓カットアウト＋ドック段差 (~195件解消)"]
+    W4 --> W5["Step W5: 全435パーツ爆発軌道単調化・熱離隔・ニアミス/突出ゼロ化"]
+    W5 --> W6["Step W6: sp --all-tiers PASS(0/0/0/0) + ray + thermal-cog + pp1.1全方位視覚確認"]
 ```
 
-### 5.2 `RP2354B`（48 GPIO）衝突ゼロ・完全ピン割当表
+#### [MODIFY] [welcomeGeometry.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeGeometry.ts)
+- `buildPlinthRoundedSlab` / 新規 `buildHollowPlinthChassis`（`W173` 用 CNC 削り出し中空バスタブ＋底面/背面/側面 I/O 窓カットアウト：USB-C・トグルスイッチ・ロータリーダイヤル・照度センサ・ステータスバー・ドック開口を物理的に切り抜き、`CONTAINMENT` を構造レベルで完全消滅）。
+- `buildHollowCncChassis` の内部ポケット壁・深さを Z 層スタックと厳密整合化（各レイヤー間に `≥ 0.05 mm` 実クリアランス）。
+- `buildSpeakerEnclosure` の中空バッフル箱化（`W214` と `W215` の内包解消）。
+- `buildQuartzColumnPart` の端面クリアランス調整・`buildDovetailMount` / `buildPogoPinBlock` の厳密嵌合段差設計。
 
-> **RP2354B ハードウェア固有ルール遵守**：各 PIO ブロックは `GPIOBASE = 0`（`GP0..31`）または `GPIOBASE = 16`（`GP16..47`）の 32 ピン窓を参照。内部 12-bit ADC は **`GPIO40..47`**（3.3 V 専用）。
+#### [MODIFY] [welcomeParts.ts](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/assemblies/welcome/welcomeParts.ts)（および必要に応じ突出・熱近接・爆発調整のため `welcome*Parts.ts`）
+- **4 文字共通スタック（W01〜W172 のコア部）**: 背面 3D 放熱フィン → サーマルパッド → LED MCPCB → LED チップ → 反射シート → LGP 導光板 → BEF フィルム → 光学バッフル → IP65 ガスケット → CNC シャーシ → チタンベゼル → サファイア前面レンズの Z 座標を `0.001 mm` 厳密非干渉配置へ整理。
+- **内部電子ベイ・M2 ボルト・ダウエルピン・FPC/ZIF**: `sp pockets` で算出した空きキャビティ座標へ精密配置し、LGP/MCPCB/シャーシ貫通をゼロ化。
+- **サブストローク接合部**: 「よ」横棒・ループ、「う」冠・石英柱、「こ」上棒・左右石英柱、「そ」Z1/Z2/Z3 斜めフレーム・コーナーブラケットの端点を厳密トリムし重複貫通 0 mm 化。
+- **台座内部（W173〜W220）＆ドック（W187〜W194）**: センタービーム・バッテリー・BMS・ヒートパイプ・放熱フィン・ハーネス・底板ウェイト・ゴム足・M3 ねじ・ドックソケットの干渉を全解消し、熱近接 8 件（`W262`, `W246`, `W247` 等）も安全距離（`≥ 1.5 mm` 目標）へ改善。
+- **全 435 パーツの飛び出し・異常配置チェック**: 全 435 パーツの実メッシュ頂点 AABB を検査し、文字シルエット外・台座外周・底面ゴム足以下に不自然に飛び出している・本来あるべき位置からズレている部品を 1 つ残らず正規収容位置へ修正（同時に W221〜W435 との二次干渉 0 件を `sp` で常時検証）。
+- **爆発軌道 (`explodeOffset`)**: 全 435 パーツの爆発ベクトルを層順・方向別に厳密単調化し、全 8 ステップ（`t = 0.125..1.0`）の `explodeHits = 0` を達成。
 
-| GPIO 範囲 | 担当ペリフェラル | 接続先・機能 | 電気仕様・備考 |
-|---|---|---|---|
-| **`GPIO0 .. GPIO7`** | **PIO0 (`GPIOBASE=0`)** | Logic Bank A `CH0–CH7` (`U4: 74LVC8T245` A側) | 22 Ω ソース終端・等長 $\Delta L \le 1.5\,\text{mm}$ |
-| **`GPIO8 .. GPIO15`** | **PIO0 (`GPIOBASE=0`)** | Logic Bank B `CH8–CH15` (`U5: 74LVC245A` A側) | 22 Ω ソース終端・`IN PINS, 16` 1命令一括取得 |
-| **`GPIO16 .. GPIO25`** | **PIO1 (`GPIOBASE=16`)** | `U6: MS9280` パラレルデータ `D0..D9` (10-bit) | 専用バス（ロジックと完全分離→同時 MSO 実現） |
-| **`GPIO26`** | **PIO1 (`GPIOBASE=16`)** | `U6: MS9280` `OTR`（オーバーレンジ検出フラグ） | `IN PINS, 11` でデータと同時にクリッピング検知 |
-| **`GPIO27`** | **PIO1 (`GPIOBASE=16`)** | `MS9280 CLK`（兼 `MS5351M CLK2` 33 Ω 共有バス） | TCXO ロック同期時=入力、PIO 直接駆動時=出力 |
-| **`GPIO28, GPIO29`** | **`I2C0` (SDA / SCL)** | `U3: MS5351M` 制御バス（400 kHz Fast Mode） | 2.2 kΩ プルアップ to `DVDD_3V3` |
-| **`GPIO30, GPIO31`** | GPIO 出力 | `U4` 制御：`/OE_A`（Hi-Z）, `DIR_A`（0=LA入力 / 1=PG出力） | 10 kΩ プルアップで起動時安全 Hi-Z |
-| **`GPIO32, GPIO33`** | GPIO 出力 | `U5` 制御：`/OE_B`（Hi-Z）, `DIR_B`（0=LA入力 / 1=PG出力） | 同上 |
-| **`GPIO34`** | GPIO 出力 | `U6: MS9280` `PWDN`（未使用時省電力シャットダウン） | オシロ OFF 時 90 mW 節電＆発熱ゼロ化 |
-| **`GPIO35, GPIO36`** | GPIO 出力 | 予約（外部リレー/アナログスイッチ拡張・同期トリガ出力） | 1×6 Aux ヘッダへ引出 |
-| **`GPIO37`** | **PIO2 (`GPIOBASE=16`)** | **外部高速トリガ入力 / 100 MHz+ 周波数カウンタ入力** | 5V トレラント・`SRV05-4` 保護 |
-| **`GPIO38`** | **PIO2 (`GPIOBASE=16`)** | **TCXO ゲート基準入力**（`MS5351M CLK2` 分周同期用） | レシプロカルカウンタ ±1.5 ppm 基準 |
-| **`GPIO39`** | PWM / GPIO | ステータス LED / 1 kHz オシロプローブ校正方形波出力 | プローブ 10:1 位相補償調整用（3.3 Vpp 1 kHz） |
-| **`GPIO40` (`ADC0`)** | 内部 12-bit ADC | SWR ブリッジ 浮動差動検波 `V_DET+` | 10 kΩ RF 絶縁＋`BAT54S` 3.3V クランプ |
-| **`GPIO41` (`ADC1`)** | 内部 12-bit ADC | SWR ブリッジ 浮動差動検波 `V_DET-` | `ADC0 - ADC1` で $|V_R - V_L|$ をバルンレス直読 |
-| **`GPIO42` (`ADC2`)** | 内部 12-bit ADC | SWR ブリッジ 励起振幅基準 `V_TOP` | $|\Gamma| = 2|V_R - V_L| / |V_{\text{top}}|$ 正規化用 |
-| **`GPIO43` (`ADC3`)** | 内部 12-bit ADC | DUT Bank A `VREF_A` 自動電圧監視（1:2 分圧） | 1.2V〜5.5V レンジを UI 自動表示・保護 |
-| **`GPIO44` (`ADC4`)** | 内部 12-bit ADC | USB `VBUS` 5V レール監視（1:2 分圧） | OC 時の電源ドロップ検知（< 4.5V で警告） |
-| **`GPIO45..47`** | 内部 12-bit ADC | 汎用 3ch 補助低速電圧計 / 導通・ダイオード Vf テスタ | 10 kΩ 保護抵抗＋クランプ付で Aux ヘッダへ |
+#### [MODIFY] `catalog/**` & `docs/**`（自動生成）
+- 修正後に `npm run catalog` および `npm run build` を実行し、全カタログとビルド成果物を完全同期します。
 
 ---
 
-## 6. 極限回路設計 ＆ 物理計算の裏付け（妥協ゼロの数式立証）
+## Verification Plan
 
-### 6.1 16ch 400 MSPS ロジック入力：なぜ **`47 Ω` が物理的黄金値** なのか
-高速デジタル入力に保護抵抗 $R_s$ を入れると、入力寄生容量 $C_{\text{in}}$ との RC ローパスフィルタが形成されます：
-- $C_{\text{in}} = C_{\text{TVS}}(\text{SRV05-4}: 0.3\,\text{pF}) + C_{\text{IC}}(\text{74LVC8T245}: 4.0\,\text{pF}) + C_{\text{pad}}(\text{PCB}: 1.5\,\text{pF}) \approx 5.8\,\text{pF}$
-- **$R_s = 47\,\Omega$ のとき**：
-  $$f_{-3\text{dB}} = \frac{1}{2\pi R_s C_{\text{in}}} = \frac{1}{2\pi \cdot 47 \cdot 5.8 \times 10^{-12}} \approx \mathbf{584\,\text{MHz}}$$
-  立ち上がり時間 $t_r \approx 0.35 / f_{-3\text{dB}} \approx \mathbf{0.60\,\text{ns}}$。400 MSPS（サンプリング周期 $2.5\,\text{ns}$）に対し 4 倍以上のアナログ帯域マージンを確保！
-- **同時成立する 3 つの効果**：
-  1. **50 Ω 伝送線路整合**：プローブ同軸／ツイストペアの特性インピーダンス（50–70 Ω）と整合し、高速エッジの反射リンギングを抑制。
-  2. **過電圧・短絡保護**：誤って 12 V を印加しても `SRV05-4` へのクランプ電流を制限でき、さらに **パターン発生器出力モード (`DIR=H`) で DUT と出力衝突しても短絡電流を $3.3 / 47 \approx 70\,\text{mA}$ に制限**（IC 焼損防止）。
-  3. **次段 22 Ω ソース終端**：`74LVC8T245`（出力インピーダンス約 20–25 Ω）→ `22 Ω` → `RP2354B` の合計約 45–50 Ω が 50 Ω 基板配線と完全一致し、オーバーシュート < 5% を達成。
+### Automated Tests
 
-### 6.2 `MS5351M` 超低ジッタ RF 出力 ＆ 7次チェビシェフ LPF・50 Ω 整合回路
-1. **Integer Multisynth レジスタ最適則（ジッタ最小化）**
-   - `Y2 = 26.000000 MHz` から内部 VCO（$f_{\text{VCO}} \in [600, 900]\,\text{MHz}$）を分数フィードバック $(a + b/c)$ で生成し、**出力分周器 `MS0` は必ず偶数整数 $d \in \{4, 6, 8, \dots, 900\}$ に固定**します。
-   - 出力分周を整数固定にすることで、分数分周特有の決定論的ジッタ（Deterministic Jitter）と近傍スプリアスを $-20\,\text{dB}$ 以上低減（RMS ジッタ $\approx 40\text{--}60\,\text{ps}$）。
-   - 例：$f_{\text{out}} = 100.000000\,\text{MHz}$ の場合、$d = 8$（偶数整数）、$f_{\text{VCO}} = 800.000000\,\text{MHz}$、PLL 倍率 $800 / 26 = 30 + \frac{10}{13}$（誤差 **0.000000 Hz**、確度は TCXO 依存の **±1.5 ppm = ±150 Hz**！）。
-2. **3 dB 50 Ω 抵抗 Pi 整合パッド（VSWR 安定化＆短絡保護）**
-   - `CLK0`（CMOS 8 mA 駆動、出力インピーダンス $\approx 48\,\Omega$）→ `100 nF` C0G DC ブロック → **3 dB 50 Ω Pi パッド**：
-     $$R_{\text{shunt}} = 50 \cdot \frac{K+1}{K-1} = 292.4\,\Omega \rightarrow \mathbf{300\,\Omega}, \qquad R_{\text{series}} = 50 \cdot \frac{K^2-1}{2K} = 17.6\,\Omega \rightarrow \mathbf{18\,\Omega} \quad (K = 10^{3/20} = 1.4125)$$
-   - これにより出力インピーダンスを全帯域で $50\,\Omega \pm 5\%$ に固定しつつ、出力電力約 $+7\,\text{dBm}$ を安定供給。
-3. **7次チェビシェフ LPF（$f_c = 35\,\text{MHz}$・リップル $0.1\,\text{dB}$・$Z_0 = 50\,\Omega$・0 Ω / ジャンパでバイパス切替可）**
-   - HF 全域（1–30 MHz）で純粋な正弦波を生成するため、3次高調波を $-45\,\text{dBc}$ 以下へ減衰させる LPF 定数（標準 E12/E24 値最適化）：
-     - $C_1 = C_7 = \mathbf{100\,\text{pF}}$ (C0G)、$L_2 = L_6 = \mathbf{330\,\text{nH}}$ (0603 空芯/セラミック Q>30)、$C_3 = C_5 = \mathbf{180\,\text{pF}}$ (C0G)、$L_4 = \mathbf{390\,\text{nH}}$。
-   - **バイパス経路**：ジャンパ切替で LPF をバイパスすれば 2.5 kHz 〜 200 MHz（3次/5次高調波で 600 MHz）の広帯域高速クロック／RF 出力へ即切替。
+1. **空間厳密監査（`0.001 mm` — 必須全 PASS）**
+   ```bash
+   npm run sp -- selftest --ai
+   npm run sp -- audit --unit=welcome --all-tiers --explode-steps=8 --check-floating --ai
+   npm run sp -- ray --unit=welcome --preset=welcome-tof,welcome-lux,welcome-rf --ai
+   npm run sp -- thermal-cog --unit=welcome --ai
+   ```
+   - **合格基準**: `standard_lite` / `standard` / `high` / `ultra` の全 4 ティアで `VERDICT=PASS (exit=0)`、`collisions=0`、`smtSeat=0`、`nearMiss=0`、`floating=0`、`explodeHits=0`、`ray occluded=0%`、熱近接 `[TIGHT_THERMAL]` ゼロ（または設計許容範囲内）、かつ全 435 パーツの突出/異常配置スクリプト検査 0 件。
 
-### 6.3 35 MSPS 10-bit オシロ AFE（`SGM8052` ＋ `MS9280`）＆ コヒーレント同期サンプリング
-1. **補償型 1 MΩ // 12 pF フロントエンド（1:1 / 10:1 切替）**
-   - 10:1 減衰時：$R_1 = 909\,\text{k}\Omega$（並列に位相補償トリマ $C_1 \approx 2.2\text{--}10\,\text{pF}$）、$R_2 = 100\,\text{k}\Omega$（並列に $C_2 \approx 27\,\text{pF}$）。条件 $R_1 C_1 = R_2 (C_2 + C_{\text{amp}})$ を `GPIO39` の 1 kHz 校正方形波で追い込むことで DC〜35 MHz までの平坦なステップ応答を獲得。
-   - 50 Ω 終端ジャンパ（IF アンダーサンプリング／RF 計測モード時）：`J3` 直近に `49.9 Ω` 終端を投入して 135 MHz までの RF 入力を無反射受電。
-2. **2段 `SGM8052` 構成（5.0 V クリーン電源駆動で入力クリップ回避！）**
-   - **Stage 1（`U7A`）**：ゲイン $+1$（ユニティバッファ、帯域 250 MHz）。
-   - **Stage 2（`U7B`）**：反転／非反転加算で **DC 中心電圧 $V_{\text{CM}} = 1.50\,\text{V}$** を加算し、$V_{\text{in}} \in [-1.0, +1.0]\,\text{V}$（10:1 時 $\pm 10\,\text{V}$！）を **`MS9280` のフルスケール $[0.50, 2.50]\,\text{V}$** へ厳密マッピング。
-   - 出力に `47 Ω` ＋ `15 pF`（1次アンチエイリアシング＋ADC サンプルホールドのキックバック吸収用チャージバケット）＋ `BAT54S`（`AVDD_3V3` クランプ）を挿入し、`MS9280 AIN` を絶対定格内に完全保護。
-3. **アパーチャジッタと TCXO ロック同期サンプリングの優位性**
-   - アパーチャジッタ $t_{j,\text{rms}}$ による理論 SNR 上限：
-     $$\text{SNR}_{\text{jitter}} = -20\log_{10}\!\left(2\pi f_{\text{in}}\, t_{j,\text{rms}}\right)$$
-   - `MS9280` のクロックを MCU 汎用クロックではなく **`MS5351M CLK2`（±1.5 ppm TCXO 駆動・整数分周 $t_j \approx 50\,\text{ps}$）** で直接供給すると、$f_{\text{in}} = 10\,\text{MHz}$ で $\text{SNR}_j \approx \mathbf{50.1\,\text{dB}}$（約 8.0 ENOB）、さらに **PIO1 が `GPIO27 (CLK2)` の立ち上がりエッジに同期（`WAIT 1 PIN`）して `D0..D9` を取り込む** ことで、FFT 解析時のスペクトル漏れ（リーケージ）が劇的に減少！
+2. **実ブラウザ自動 E2E 回帰テスト（Chrome CDP: デスクトップ 1280×800 / 縦スマホ 390×844 / 横スマホ 844×390）**
+   - 左上 4 ボタン（アセンブリ選択・Play Ground・FH 2028・Original）の実クリック＆タップ応答計測（`< 150ms`、フリーズ 0 件、横向きパレット `itemActuallyClickable: true`、意図しないフルスクリーン発火 0 件）。
+   - 全 23 ユニット連続切替＋連打中断テスト：**コンソールエラー 0 件 / VRAM リーク警告 0 件（`Δg=0, Δt=0, totalRefs=0`）**。
+   - Play Ground 開閉・Undo/Redo 連打・不正 JSON インポート耐性・XSS 無害化・モーダル排他・`Esc` 単層クローズ・`MIRAI 2028` SubView 1〜8 切替・`welcome` 断面スライダー検証。
 
-### 6.4 ゼロバルン・1–200 MHz スカラー SWR 反射ブリッジ（追加部品代 ¥10）
-- `CLK1` → `100 nF` → 3 本の `49.9 Ω 0.1%` 精密抵抗でウィートストンブリッジを構成（左辺中点 $V_L = V_s / 2$、右辺中点 $V_R = V_s \frac{Z_{\text{DUT}}}{Z_{\text{DUT}} + 50}$）。
-- ブリッジ対角間 $(V_R - V_L)$ に `100 nF` AC 結合 ＋ `BAT54S`（`D5`）＋ `10 nF` ホールドコンデンサを**浮動配置**し、両端を **RF アイソレーション抵抗 `10 kΩ × 2`** 経由で `RP2354B` の `ADC0 (GPIO40)` と `ADC1 (GPIO41)` で差動読み出し：
-  $$V_{\text{bridge,dc}} = V(\text{ADC0}) - V(\text{ADC1}) \approx \left|\frac{V_s}{2}\,\Gamma\right| - V_f, \qquad \Gamma = \frac{Z_{\text{DUT}} - 50}{Z_{\text{DUT}} + 50}$$
-- 同時に励起振幅 $V_{\text{top}}$ を `D6` (`BAT54S`) 経由で `ADC2 (GPIO42)` で常時測定し、起動時に **Open / Short / 50Ω Load（OSL）** の 3 基準値で $V_f$ 非線形性と浮遊容量をソフト校正することで、フェライトトランス（バルン）なし・1 MHz〜200 MHz フラットな **リターンロス（dB）＆ VSWR** を計測可能：
-  $$\text{VSWR} = \frac{1 + |\Gamma|}{1 - |\Gamma|}, \qquad \text{RL [dB]} = -20\log_{10}|\Gamma|$$
+3. **リポジトリ公式品質ゲート（10/10 PASS）**
+   ```bash
+   npm run catalog && npx tsc --noEmit && node scripts/validate_parts.mjs && npm run build
+   ```
 
----
+4. **超高速 6-DoF 視覚確認（`pp1.1`）**
+   ```bash
+   npm run pp -- --warm --mode=cad --unit=welcome --quality=ultra --ortho-pack --contact-sheet=3 --out=/tmp/pp_welcome_after
+   npm run pp -- --warm --mode=cad --unit=welcome --quality=ultra --turntable=8 --contact-sheet=4 --out=/tmp/pp_welcome_turn
+   npm run pp -- --warm --preset=mobile --out=/tmp/pp_mobile_after
+   npm run pp -- --warm --preset=audit --out=/tmp/pp_audit_after
+   npm run pp -- --daemon=stop
+   ```
+   - 正面・背面・左右・上面・底面・斜め・ターンテーブル 8 方向およびスマホ画面を目視監査し、飛び出し・めり込み・UI 重なりが 0 件であることを確認します。
 
-## 7. 極限配線・基板トポロジ設計（性能の 7 割を決めるレイアウト設計書）
+5. **完了ゲート（`bg gate`）**
+   ```bash
+   npm run bg -- gate --policy=integrator --run-checks --require-checks --ai
+   ```
+   - `BG-RECEIPT` を取得・検証してから完了報告します。
 
-### 7.1 推奨 4 層スタックアップ（JLCPCB JLC04161H-7628 準拠・板厚 1.6 mm）
-
-| 層 | 銅厚 | 役割 | 極限 SI / RF 設計ルール |
-|---|---|---|---|
-| **L1 (Top)** | 1 oz (35 µm) | 高速信号・RF CPWG・全 SMD 部品 | **50 Ω CPWG**（$W = 0.30\,\text{mm}$、GND ギャップ $G = 0.15\,\text{mm}$、両脇 2.5 mm ピッチ GND ビアフェンス）。ロジック 16ch バスは等長蛇行 $\Delta L \le 1.5\,\text{mm}$（スキュー $\le 10\,\text{ps}$）。 |
-| **L2 (Inner 1)** | 0.5 oz (17.5 µm) | **完全無分断ソリッド GND プレーン** | **スリット・分割を一切禁止（Henry Ott 黄金則）**。L1 と L2 の層間距離 $H = 0.2104\,\text{mm}$ により、高周波リターン電流は信号線直下 $\pm 0.6\,\text{mm}$ に自動閉じ込められ、デジタルと RF/アナログが物理ゾーニングだけで完全分離される。 |
-| **L3 (Inner 2)** | 0.5 oz (17.5 µm) | 領域分離電源プレーン（島分け） | `DVDD_3V3`（東・中央）、`AVDD_3V3`（北西 RF/ADC）、`5V_AFE`（西 AFE）、`VREF_A`（北東 Bank A）の 4 島を**互いに重ならないよう 1 mm 以上離隔**。 |
-| **L4 (Bottom)** | 1 oz (35 µm) | 低速制御線・テストパッド・ベタ GND | L2 と高密度スティッチングビア（4 mm 格子）で縫合し、RF セクションを上下シールド。 |
-
-### 7.2 物理ゾーニング・フロアプラン（基板サイズ目安：`68 mm × 42 mm` 名刺サイズ未満！）
-
-```
-+----------------------------------------------------------------------+
-| [NORTH-WEST: RF ISLAND (AVDD)]       | [NORTH-EAST: LOGIC BANK A]    |
-|  Y2 (26MHz TCXO) -> U3 (MS5351M)     |  J4 (2x10 GSGS CH0-7 + VREF)  |
-|   -> CLK0: PiPad -> 7th LPF -> J2 SMA|  D1,D2 (SRV05-4) -> 47Ω x8    |
-|   -> CLK1: 49.9Ωx3 SWR Bridge + D5,6 |  U4 (74LVC8T245) -> 22Ω x8    |
-|   -> CLK2: 33Ω -> MS9280 & GPIO27    |                               |
-|--------------------------------------+-------------------------------|
-| [WEST: SCOPE AFE & ADC (5V/AVDD)]    | [CENTER: DIGITAL CORE (DVDD)] |
-|  J3 (U.FL + 3P Probe)                |   U1: RP2354B (QFN-80)        |
-|   -> 1MΩ//12pF Atten -> U7 (SGM8052) |   L1 (3.3uH VREG) + Y1 (12MHz)|
-|   -> 47Ω+15pF -> U6 (MS9280 SSOP-28) |   (GPIO16..26 -> 左へ直結)     |
-|                                      |   (GPIO0..15  -> 右・上へ直結) |
-|--------------------------------------+-------------------------------|
-| [SOUTH-WEST: POWER & USB-C]          | [SOUTH-EAST: LOGIC BANK B]    |
-|  J1 (USB-C 16P) -> U2a (DVDD 3.3V)   |  J5 (2x10 GSGS CH8-15)        |
-|                 -> U2b (AVDD 3.3V)   |  D3,D4 (SRV05-4) -> 47Ω x8    |
-|                 -> LC Filter 5V_AFE  |  U5 (74LVC245A) -> 22Ω x8     |
-|  SW1(BOOTSEL) / SW2(RUN) / J6(Aux)   |                               |
-+----------------------------------------------------------------------+
-```
-
-### 7.3 高速信号配線の 7 大絶対ルール（実機性能を決定する細部）
-1. **ESD TVS はコネクタピンから 2 mm 以内に「フロースルー配線」**：分岐スタブ（T字分岐）を作らず、信号パターンが `SRV05-4` のパッド上を真っ直ぐ通過するトポロジにする（寄生インダクタンス < 0.5 nH）。
-2. **デカップリングコンデンサの超短ループ配置**：`RP2354B` の各 `IOVDD` / `DVDD` ピン、`MS5351M` の `VDD`/`VDDO`、`MS9280` の `AVDD`/`DRVDD` には、0402 `0.1 µF` をピンから **1.5 mm 以内** に配置し、GND パッド直横に L2 GND 直結ビアを 2 本打つ。
-3. **2×10 ヘッダ「GSGS 1:1 交互リターン配列」**：
-   - 奇数ピン（上段）：`CH0, CH1, CH2, ..., CH7, VREF_A, NC`
-   - 偶数ピン（下段）：`GND, GND, GND, ..., GND, GND, GND`
-   - デュポン線を 2 本ツイストペア（1信号＋1GND）で DUT へ引き出すことで、安価なジャンパ線でも **100 MHz 級デジタル信号を反射・クロストーク最小で捕獲** できる。
-4. **TCXO → `MS5351M` 配線**：全長 $\le 5\,\text{mm}$、`10 nF` C0G 直列、周囲を GND ガードリングで包囲し、`RP2354B` の 12 MHz 水晶とは基板対角（30 mm 以上離隔）に配置してビートスプリアスを防止。
-5. **アナログ AFE（`U7: SGM8052`）の反フィードバック容量対策**：`U7` の反転入力ピン（`-IN`）直下の **L2 GND プレーンのみ局所的にくり抜き（GND Keep-out `2 mm × 2 mm`）**、反転ノードの浮遊容量を $< 0.5\,\text{pF}$ に抑えて 250 MHz オペアンプのピーキング・発振を完全防止！
-6. **`MS9280` データバス（`GPIO16..25`）の低容量直結**：`U6` のデータピンと `RP2354B` の左辺（`GPIO16..26`）を正面対向配置し、長さ 10–15 mm のストレート配線で最小容量・最小同時スイッチングノイズ（SSN）を実現。
-7. **付録（Option B：カスタム PCB なし「銅張基板デッドバグ／マンハッタン実装」で組む場合）**：
-   - 片面生銅張基板を全面 GND プレーンとし、`RP2354B`・`MS9280`・`MS5351M` のみ変換基板で島配置。RF 経路と AFE 入力は空中配線＋リード長 $\le 3\,\text{mm}$、同軸ケーブル（RG174/1.13mm）外被を銅箔へ 5 mm 間隔でベタはんだ接地することで 200 MHz 帯域を確保可能。
-
----
-
-## 8. ファームウェア ＆ ホスト UI アーキテクチャ（ゼロコスト完全設計）
-
-### 8.1 `RP2354B` 10-Bank SRAM ゼロ競合マッピング ＆ 動的オーバークロック
-`RP2354B` の 520 KB SRAM（10 バンク）を役割ごとに分離し、**PIO0（ロジック 16ch）と PIO1（10-bit ADC 35 MSPS）の同時 DMA 転送でバス競合ゼロ**を実現します：
-
-- **Bank 0–5（312 KB）**：PIO0 ロジックキャプチャ用リングバッファ（DMA Ch0/Ch1 ピンポン転送）
-  - 8ch モード：最大 **319,488 サンプル**（400 MSPS で 798 µs 連続生捕捉 / RLE 圧縮時 数十 ms〜秒）
-  - 16ch モード：最大 **159,744 サンプル**（300–400 MSPS で 400–532 µs 連続生捕捉）
-- **Bank 6–8（156 KB）**：PIO1 `MS9280` 10-bit オシロ用バッファ（16-bit 格納で **79,872 サンプル** @ 35 MSPS = **2.28 ms** 連続捕捉！FFT 分解能 $35\,\text{MHz} / 65536 = \mathbf{534\,\text{Hz}}$！）
-- **Bank 9（52 KB）**：Core0（USB CDC/WebUSB 通信・I2C `MS5351M` 制御・SWR 計算）＆ Core1（高速トリガ・RLE 圧縮・プローブ校正）ワーク領域
-
-### 8.2 極限 PIO アセンブリ設計（3 ブロック同時協調）
-
-```asm
-; =============================================================================
-; PIO0 (GPIOBASE = 0): 400 MSPS 16ch ロジックキャプチャ (1命令=1サイクル!)
-; 事前設定: autopush=ON (threshold=32), shift_right=ON, IN_BASE=GPIO0
-; =============================================================================
-.program la_capture_16ch
-    wait 1 irq 4            ; PIO間同期トリガ (MSO時はPIO1と厳密同一クロック開始!)
-.wrap_target
-    in pins, 16             ; 1サイクルで GPIO0..15 を一括ラッチ (2サンプルで32bit DMAへ)
-.wrap
-
-; =============================================================================
-; PIO1 (GPIOBASE = 16): 35 MSPS 10-bit MS9280 キャプチャ (TCXO CLK2 同期版)
-; 事前設定: autopush=ON (threshold=32), IN_BASE=GPIO16 (D0..D9 + OTR = 11bit)
-; =============================================================================
-.program adc_capture_coherent
-    wait 1 irq 4            ; PIO0 と同一クロックで同時スタート (真の MSO 同期!)
-.wrap_target
-    wait 1 gpio 27          ; MS5351M CLK2 (TCXOロック) 立ち上がり待ち
-    in pins, 16             ; GPIO16..26 (D0..D9 + OTR) を16bitパック取得
-    wait 0 gpio 27          ; 次サイクル待機 (sys_clk=280MHz時 35MSPSを余裕で追従)
-.wrap
-
-; =============================================================================
-; PIO2 (GPIOBASE = 16): 100 MHz+ レシプロカル周波数カウンタ (ゲート計測)
-; =============================================================================
-.program freq_counter_gate
-    wait 0 gpio 37          ; 入力エッジ同期
-    wait 1 gpio 37
-    ; X=入力パルス計数, Y=TCXO基準クロック計数 -> f_in = f_ref * (N_in / N_ref)
-```
-
-### 8.3 動的電圧・クロックプロファイル制御（`hardware/vreg.h`）
-- **Mode ECO（150 MHz / `1.10 V`）**：標準 150 MSPS LA ＋ 35 MSPS MSO ＋ 200 MHz RF ＋ SWR（常時連続運用・発熱極小）
-- **Mode TURBO（300 MHz / `1.20 V`）**：300 MSPS 16ch LA ＋ 同時 35 MSPS MSO（USB 48 MHz は `PLL_USB` 独立固定のため USB 通信断ゼロ！）
-- **Mode EXTREME（400 MHz / `1.30 V`）**：400 MSPS バースト LA（取得完了後に自動で 150 MHz / 1.10 V へ戻すサーマル保護付）
-
-### 8.4 ホスト UI（完全 ¥0・インストール不要のデュアル対応）
-1. **既存プロツール互換**：`gusmanb/logicanalyzer` V6 / `sigrok (SUMP / PulseView)` プロトコル互換モードを搭載し、SPI / I2C / UART / I2S / CAN / USB / SWD など 100 種以上のデコーダを即利用可能。
-2. **統合 WebUSB / WebSerial コックピット（単一 HTML アプリ）**：Chrome ブラウザ（PC / Android OTG）から直接接続し、**ロジアナ波形・35 MSPS オシロ＋64K点 FFT スペアナ・200 MHz 3ch RF シンセサイザ制御・1–200 MHz SWR グラフ** を 1 画面で統合操作。
-
----
-
-## 9. 検証計画（外部高額測定器なし！「自己ループバック」完全立証プロトコル）
-
-本機の最大の強みは、**自身に 200 MHz ±1.5 ppm 信号発生器と 400 MSPS ロジアナと 35 MSPS オシロと SWR 計をすべて内蔵しているため、他の高額計測器なしで自身の全性能を自己検証できる** 点です。
-
-### 9.1 段階的ブリングアップ（通電・煙出しゼロ手順）
-1. **電源単体確認（MCU 未書込・電流制限 100 mA USB 電源）**
-   - `DVDD_3V3` = `3.30 V ± 2%`、`AVDD_3V3` = `3.30 V ± 2%`、`5V_AFE` = `4.80–5.00 V`、`RP2354B` コア `VREG` = `1.10 V`。
-2. **USB BOOTSEL ＆ ファームウェア書込**
-   - `SW1 (BOOTSEL)` 押下しながら USB-C 接続 → PC に `RP2350` マスストレージ出現 → `.uf2` ドラッグ＆ドロップで書込完了確認。
-3. **I2C ＆ TCXO / `MS5351M` 生存確認**
-   - I2C スキャンで `0x60` (`MS5351M`) 応答確認、`CLK0` を 10.000000 MHz 設定。
-
-### 9.2 自己ループバック定量的性能実証テスト（全 6 項目）
-
-| テスト項目 | 接続方法（自己ループバック） | 合格基準（実測ターゲット） |
-|---|---|---|
-| **T1. 16ch ロジック＆スキュー検証** | `CLK0`（10 / 50 / 100 MHz）→ `CH0..CH15` 並列接続 | 400 MSPS キャプチャで全 16ch デューティ比 50% ± 2%、チャネル間スキュー $\le 1$ サンプル（2.5 ns）、誤トリガ 0 回 |
-| **T2. デュアル電圧レベル変換検証** | `VREF_A` に 1.8 V（分圧）印加、Bank A で 1.8V 信号、Bank B で 5V 信号を同時投入 | `ADC3` が `1.80 V ± 0.05 V` を自動認識し、1.8V / 5V 混在信号が同時デコード成功 |
-| **T3. パターン発生器ループバック** | Bank A (`DIR=H` 出力) → Bank B (`DIR=L` 入力) へ 10 MHz SPI パターン送出 | `PulseView` SPI デコーダで 100,000 バイト連続誤りゼロ |
-| **T4. オシロ 35 MSPS ＆ 135 MHz IF 検証** | `CLK0` (LPF 経由 1 / 5 / 10 MHz 正弦波 ＋ LPF バイパス 50 / 100 MHz) → `J3` (50 Ω 終端) | 10 MHz 正弦波 64K-FFT で **ENOB ≥ 7.8 bit / SFDR ≥ 50 dBc**、100 MHz 入力がエイリアス周波数 5 MHz（$f_s = 35\,\text{MHz}$ の第 3 ナイキスト領域）に明瞭観測されること |
-| **T5. 同時 MSO 位相同期検証** | `CLK0` (1 MHz) を `J3`（オシロ）と `CH0`（ロジック）へ同時分岐 | PIO0 と PIO1 の同時キャプチャでデジタル立ち上がりエッジとアナログ 50% クロス点の時間差が **±1 サンプル以内** で完全一致 |
-| **T6. 1–200 MHz SWR ブリッジ校正検証** | `J3` に Open / Short / 50 Ω 終端抵抗 / 100 Ω 抵抗を接続し 1–200 MHz 掃引 | 50 Ω 負荷で **RL > 20 dB (VSWR < 1.22)**、100 Ω 負荷で **VSWR = 2.00 ± 0.15** を全帯域で再現 |
-
----
-
-## 10. 次のアクション（この設計書をご承認いただいた後の展開）
-
-本設計書（`/plan`）をご確認・ご承認いただけましたら、ご希望に応じて以下のいずれか（または複数）へ直ちに進めます：
-
-1. **実機製造パッケージ一式の生成**：KiCad 回路図ネットリスト・4層 PCB レイアウト設計ルール（DRC/スタックアップ）・`RP2354B` C/PIO ファームウェア（CMake + `pico-sdk`）・単一 HTML WebUSB/WebSerial 統合UI の実装。
-2. **本リポジトリ「Original」展示 #02 への統合**：[`original.ts`](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/units/original.ts) の `originalSubView = 2` として、0.001 mm 精密 3D CAD モデル・HD SVG 回路図／スタックアップ図説・[`OriginalBlueprintStudio.ts`](file:///home/antigravity/sc8z35a-collab/SONY-A7-IV-Diagram/src/ui/OriginalBlueprintStudio.ts) の 982 円 BOM＆SI 物理証明タブを完全統合。
-3. **インタラクティブ物理・回路シミュレータ（HTML アーティファクト）の作成**：LPF 周波数応答・50 Ω CPWG 計算・MS5351M レジスタ自動計算・SWR ブリッジ＆アパーチャジッタ計算をブラウザ上で即実験できるツールを作成。
+### Manual Verification
+- ユーザー様の実端末（PC / スマホ縦・横）にて、起動直後から左上のアセンブリ切替・Play Ground・FH 2028・Original を連続操作し、即応性・無フリーズ・全パレット選択可否をご確認ください。
+- 「ようこそ」を全方位回転・拡大・爆発スライダー（0%→100%）・断面カット（X/Y）で確認し、干渉や不自然な飛び出しがないことをご確認ください。

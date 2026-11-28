@@ -99,10 +99,15 @@ let schematicLoadPromise: Promise<SchematicRendererFn> | null = null;
 function loadSchematicRenderer(): Promise<SchematicRendererFn> {
   if (cachedSchematicRenderer) return Promise.resolve(cachedSchematicRenderer);
   if (!schematicLoadPromise) {
-    schematicLoadPromise = import('./schematicsRegistry').then((mod) => {
-      cachedSchematicRenderer = mod.renderSchematicSvg;
-      return cachedSchematicRenderer;
-    });
+    schematicLoadPromise = import('./schematicsRegistry')
+      .then((mod) => {
+        cachedSchematicRenderer = mod.renderSchematicSvg;
+        return cachedSchematicRenderer;
+      })
+      .catch((err) => {
+        schematicLoadPromise = null;
+        throw err;
+      });
   }
   return schematicLoadPromise;
 }
@@ -241,6 +246,8 @@ export class ExplanationDrawer {
   private dragLastX = 0;
   private dragLastY = 0;
   private lastTapMs = 0;
+  private hideTimer: number | null = null;
+  private boundKeyDown: ((ev: KeyboardEvent) => void) | null = null;
 
   constructor(root: HTMLElement, handlers: ExplanationDrawerHandlers) {
     this.handlers = handlers;
@@ -409,11 +416,14 @@ export class ExplanationDrawer {
     this.lightboxEl.addEventListener('click', (ev) => {
       if (ev.target === this.lightboxEl) this.closeLightbox();
     });
-    window.addEventListener('keydown', (ev) => {
+    this.boundKeyDown = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape' && this.lightboxEl.classList.contains('is-open')) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
         this.closeLightbox();
       }
-    });
+    };
+    window.addEventListener('keydown', this.boundKeyDown, { capture: true });
     root.appendChild(this.lightboxEl);
   }
 
@@ -1073,7 +1083,15 @@ export class ExplanationDrawer {
     }
   }
 
+  public isLightboxOpen(): boolean {
+    return this.lightboxEl.classList.contains('is-open');
+  }
+
   public show(part: CadPart, isIsolated: boolean): void {
+    if (this.hideTimer !== null) {
+      clearTimeout(this.hideTimer);
+      this.hideTimer = null;
+    }
     const seq = ++this.renderSeq;
     this.swatchEl.style.backgroundColor = part.swatchColor;
     this.isolateBtn.classList.toggle('is-active', isIsolated);
@@ -1100,10 +1118,25 @@ export class ExplanationDrawer {
     this.closeLightbox();
     this.drawerEl.classList.remove('is-open');
     this.drawerEl.setAttribute('aria-hidden', 'true');
-    window.setTimeout(() => {
+    if (this.hideTimer !== null) clearTimeout(this.hideTimer);
+    this.hideTimer = window.setTimeout(() => {
+      this.hideTimer = null;
       if (!this.drawerEl.classList.contains('is-open')) {
         this.bodyEl.replaceChildren();
       }
     }, 360);
+  }
+
+  public dispose(): void {
+    if (this.hideTimer !== null) {
+      clearTimeout(this.hideTimer);
+      this.hideTimer = null;
+    }
+    if (this.boundKeyDown) {
+      window.removeEventListener('keydown', this.boundKeyDown, { capture: true });
+      this.boundKeyDown = null;
+    }
+    this.drawerEl.remove();
+    this.lightboxEl.remove();
   }
 }

@@ -11,8 +11,11 @@ import type { CadPlaygroundStudio } from './playground/CadPlaygroundStudio';
 import type { MiraiEdition, MiraiLibraryStudio, MiraiStudioTab } from './ui/MiraiLibraryStudio';
 import type { OriginalBlueprintStudio, OriginalStudioTab } from './ui/OriginalBlueprintStudio';
 
-const appRoot = document.getElementById('app')!;
-const viewportEl = document.getElementById('viewport')!;
+const appRoot = document.getElementById('app');
+const viewportEl = document.getElementById('viewport');
+if (!appRoot || !viewportEl) {
+  throw new Error('[SONY A7 IV CAD] Required mount nodes (#app, #viewport) are missing in DOM.');
+}
 
 let hoveredPartId: string | null = null;
 let currentSectionAxis: SectionAxis = 'off';
@@ -26,10 +29,17 @@ let opticsStudioLoadPromise: Promise<LensOpticsStudio> | null = null;
 let pendingOpticsOpen = false;
 let realPlayground: CadPlaygroundStudio | null = null;
 let playgroundLoadPromise: Promise<CadPlaygroundStudio> | null = null;
+let playgroundOpening = false;
 let realMiraiStudio: MiraiLibraryStudio | null = null;
 let miraiStudioLoadPromise: Promise<MiraiLibraryStudio> | null = null;
 let realOriginalStudio: OriginalBlueprintStudio | null = null;
 let originalStudioLoadPromise: Promise<OriginalBlueprintStudio> | null = null;
+
+const runAsyncUiAction = (label: string, fn: () => Promise<void>): void => {
+  void fn().catch((err) => {
+    console.error(`[UI Action:${label}] Failed:`, err);
+  });
+};
 
 const handleOpticsOpenChange = (open: boolean) => {
   controls.syncOpticsStudio(open);
@@ -57,23 +67,28 @@ const handleOpticsOpenChange = (open: boolean) => {
 const ensureRealOpticsStudio = (): Promise<LensOpticsStudio> => {
   if (realOpticsStudio) return Promise.resolve(realOpticsStudio);
   if (!opticsStudioLoadPromise) {
-    opticsStudioLoadPromise = import('./ui/LensOpticsStudio').then((mod) => {
-      realOpticsStudio = new mod.LensOpticsStudio(appRoot, {
-        onOpenChange: handleOpticsOpenChange,
-        onHoverPart: (partId) => {
-          hoveredPartId = partId;
-          viewport.setHoveredPartFromUI(partId);
-          controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
-        },
-        onSelectPart: (partId) => {
-          viewport.selectPart(partId, false);
-        },
-        onRequestRenderFrame: () => {
-          viewport.requestRenderFrame();
-        },
+    opticsStudioLoadPromise = import('./ui/LensOpticsStudio')
+      .then((mod) => {
+        realOpticsStudio = new mod.LensOpticsStudio(appRoot, {
+          onOpenChange: handleOpticsOpenChange,
+          onHoverPart: (partId) => {
+            hoveredPartId = partId;
+            viewport.setHoveredPartFromUI(partId);
+            controls.syncHighlight(viewport.getSelectedPart()?.id ?? null, hoveredPartId);
+          },
+          onSelectPart: (partId) => {
+            viewport.selectPart(partId, false);
+          },
+          onRequestRenderFrame: () => {
+            viewport.requestRenderFrame();
+          },
+        });
+        return realOpticsStudio;
+      })
+      .catch((err) => {
+        opticsStudioLoadPromise = null;
+        throw err;
       });
-      return realOpticsStudio;
-    });
   }
   return opticsStudioLoadPromise;
 };
@@ -92,9 +107,17 @@ const opticsStudio = {
     if (highlightPartId !== undefined) sharedLensOpticalSim.setHoveredElement(highlightPartId);
     sharedLensOpticalSim.setStudioOpen(true);
     handleOpticsOpenChange(true);
-    void ensureRealOpticsStudio().then((inst) => {
-      if (pendingOpticsOpen) {
-        inst.open(scenario, resolvedPartId);
+    runAsyncUiAction('opticsStudio.open', async () => {
+      try {
+        const inst = await ensureRealOpticsStudio();
+        if (pendingOpticsOpen) {
+          inst.open(scenario, resolvedPartId);
+        }
+      } catch (err) {
+        pendingOpticsOpen = false;
+        sharedLensOpticalSim.setStudioOpen(false);
+        handleOpticsOpenChange(false);
+        throw err;
       }
     });
   },
@@ -276,7 +299,7 @@ controls = new ZeroTextControls(appRoot, {
     opticsStudio.toggle();
   },
   onOpenPlayground: () => {
-    void playgroundApi.open();
+    runAsyncUiAction('playground.open', () => playgroundApi.open());
   },
   onMiraiSubViewChange: (subView) => {
     viewport.setMiraiSubView(subView, false);
@@ -284,20 +307,20 @@ controls = new ZeroTextControls(appRoot, {
     syncRail();
   },
   onOpenMiraiStudio: (tab) => {
-    void miraiStudioApi.open({ tab });
+    runAsyncUiAction('miraiStudio.open', () => miraiStudioApi.open({ tab }));
   },
   onOriginalSubViewChange: (subView) => {
     viewport.setOriginalSubView(subView, false);
     syncRail();
   },
   onOpenOriginalStudio: (tab) => {
-    void originalStudioApi.open(tab);
+    runAsyncUiAction('originalStudio.open', () => originalStudioApi.open(tab));
   },
   onResetVisibility: () => {
     viewport.resetAllVisibility();
   },
   onFullscreenToggle: () => {
-    void toggleFullscreen();
+    runAsyncUiAction('toggleFullscreen', () => toggleFullscreen());
   },
   onCameraPreset: (preset) => {
     viewport.setCameraPreset(preset);
@@ -322,23 +345,36 @@ controls = new ZeroTextControls(appRoot, {
   },
 });
 
+const closeOtherOverlays = (except?: 'playground' | 'mirai' | 'original' | 'optics'): void => {
+  controls.closePalette();
+  if (except !== 'optics' && opticsStudio.getIsOpen()) opticsStudio.close();
+  if (except !== 'mirai' && miraiStudioApi.isOpen()) miraiStudioApi.close();
+  if (except !== 'original' && originalStudioApi.isOpen()) originalStudioApi.close();
+  if (except !== 'playground' && playgroundApi.isOpen()) playgroundApi.close();
+};
+
 const ensurePlayground = (): Promise<CadPlaygroundStudio> => {
   if (realPlayground) return Promise.resolve(realPlayground);
   if (!playgroundLoadPromise) {
-    playgroundLoadPromise = import('./playground/CadPlaygroundStudio').then((mod) => {
-      realPlayground = new mod.CadPlaygroundStudio(appRoot, {
-        renderer: viewport.getRenderer(),
-        container: viewport.getContainer(),
-        setCustomSceneRenderer: (fn) => viewport.setCustomSceneRenderer(fn),
-        requestRender: () => viewport.requestRenderFrame(),
-        onClosePlayground: () => {
-          appRoot.classList.remove('is-playground');
-          controls.syncPlaygroundActive(false);
-          viewport.handleResize();
-        },
+    playgroundLoadPromise = import('./playground/CadPlaygroundStudio')
+      .then((mod) => {
+        realPlayground = new mod.CadPlaygroundStudio(appRoot, {
+          renderer: viewport.getRenderer(),
+          container: viewport.getContainer(),
+          setCustomSceneRenderer: (fn) => viewport.setCustomSceneRenderer(fn),
+          requestRender: () => viewport.requestRenderFrame(),
+          onClosePlayground: () => {
+            appRoot.classList.remove('is-playground');
+            controls.syncPlaygroundActive(false);
+            viewport.handleResize();
+          },
+        });
+        return realPlayground;
+      })
+      .catch((err) => {
+        playgroundLoadPromise = null;
+        throw err;
       });
-      return realPlayground;
-    });
   }
   return playgroundLoadPromise;
 };
@@ -346,17 +382,33 @@ const ensurePlayground = (): Promise<CadPlaygroundStudio> => {
 const playgroundApi = {
   isOpen: () => realPlayground?.isOpen() ?? false,
   open: async (showReport = false): Promise<void> => {
-    if (opticsStudio.getIsOpen()) opticsStudio.close();
-    viewport.selectPart(null, false);
-    const pg = await ensurePlayground();
-    appRoot.classList.add('is-playground');
-    controls.syncPlaygroundActive(true);
-    await pg.open();
-    if (showReport) {
-      pg.openEvaluationReport();
+    if (playgroundOpening) return;
+    playgroundOpening = true;
+    try {
+      closeOtherOverlays('playground');
+      viewport.selectPart(null, false);
+      const pg = await ensurePlayground();
+      appRoot.classList.add('is-playground');
+      controls.syncPlaygroundActive(true);
+      await pg.open();
+      if (!pg.isOpen()) {
+        appRoot.classList.remove('is-playground');
+        controls.syncPlaygroundActive(false);
+        return;
+      }
+      if (showReport) {
+        pg.openEvaluationReport();
+      }
+    } catch (err) {
+      appRoot.classList.remove('is-playground');
+      controls.syncPlaygroundActive(false);
+      throw err;
+    } finally {
+      playgroundOpening = false;
     }
   },
   close: (): void => {
+    playgroundOpening = false;
     realPlayground?.close();
     appRoot.classList.remove('is-playground');
     controls.syncPlaygroundActive(false);
@@ -386,31 +438,36 @@ const playgroundApi = {
 const ensureMiraiStudio = (): Promise<MiraiLibraryStudio> => {
   if (realMiraiStudio) return Promise.resolve(realMiraiStudio);
   if (!miraiStudioLoadPromise) {
-    miraiStudioLoadPromise = import('./ui/MiraiLibraryStudio').then((mod) => {
-      realMiraiStudio = new mod.MiraiLibraryStudio({
-        onJumpTo3d: (subView) => {
-          if (opticsStudio.getIsOpen()) opticsStudio.close();
-          viewport.setMiraiSubView(subView, true);
-          viewport.setMode('mirai_2028', true);
-          viewport.setMiraiSubView(subView, true);
-          controls.syncMode('mirai_2028');
-          controls.syncMiraiSubView(subView);
-          controls.setExplodeValue(viewport.getExplode());
-          syncRail();
-        },
-        onJumpToBaseline: (mode) => {
-          if (opticsStudio.getIsOpen()) opticsStudio.close();
-          viewport.setMode(mode, true);
-          controls.syncMode(mode);
-          controls.setExplodeValue(viewport.getExplode());
-          syncRail();
-        },
-        onEditionChange: (edition) => {
-          drawer.setMiraiEdition(edition, false);
-        },
+    miraiStudioLoadPromise = import('./ui/MiraiLibraryStudio')
+      .then((mod) => {
+        realMiraiStudio = new mod.MiraiLibraryStudio({
+          onJumpTo3d: (subView) => {
+            if (opticsStudio.getIsOpen()) opticsStudio.close();
+            viewport.setMiraiSubView(subView, true);
+            viewport.setMode('mirai_2028', true);
+            viewport.setMiraiSubView(subView, true);
+            controls.syncMode('mirai_2028');
+            controls.syncMiraiSubView(subView);
+            controls.setExplodeValue(viewport.getExplode());
+            syncRail();
+          },
+          onJumpToBaseline: (mode) => {
+            if (opticsStudio.getIsOpen()) opticsStudio.close();
+            viewport.setMode(mode, true);
+            controls.syncMode(mode);
+            controls.setExplodeValue(viewport.getExplode());
+            syncRail();
+          },
+          onEditionChange: (edition) => {
+            drawer.setMiraiEdition(edition, false);
+          },
+        });
+        return realMiraiStudio;
+      })
+      .catch((err) => {
+        miraiStudioLoadPromise = null;
+        throw err;
       });
-      return realMiraiStudio;
-    });
   }
   return miraiStudioLoadPromise;
 };
@@ -424,6 +481,7 @@ const miraiStudioApi = {
     glossaryId?: string;
     edition?: MiraiEdition;
   }): Promise<void> => {
+    closeOtherOverlays('mirai');
     const studio = await ensureMiraiStudio();
     await studio.open({ ...opts, edition: opts?.edition ?? drawer.getMiraiEdition() });
   },
@@ -439,22 +497,27 @@ const miraiStudioApi = {
 const ensureOriginalStudio = (): Promise<OriginalBlueprintStudio> => {
   if (realOriginalStudio) return Promise.resolve(realOriginalStudio);
   if (!originalStudioLoadPromise) {
-    originalStudioLoadPromise = import('./ui/OriginalBlueprintStudio').then((mod) => {
-      realOriginalStudio = new mod.OriginalBlueprintStudio({
-        onJumpToPart: (partId) => {
-          viewport.setOriginalSubView(1, false);
-          viewport.setMode('original', false);
-          controls.syncMode('original');
-          viewport.selectPart(partId, false);
-          syncRail();
-        },
-        onTogglePhysics: (active) => {
-          viewport.setPhysicsActive(active);
-          controls.syncPhysics(active);
-        },
+    originalStudioLoadPromise = import('./ui/OriginalBlueprintStudio')
+      .then((mod) => {
+        realOriginalStudio = new mod.OriginalBlueprintStudio({
+          onJumpToPart: (partId) => {
+            viewport.setOriginalSubView(1, false);
+            viewport.setMode('original', false);
+            controls.syncMode('original');
+            viewport.selectPart(partId, false);
+            syncRail();
+          },
+          onTogglePhysics: (active) => {
+            viewport.setPhysicsActive(active);
+            controls.syncPhysics(active);
+          },
+        });
+        return realOriginalStudio;
+      })
+      .catch((err) => {
+        originalStudioLoadPromise = null;
+        throw err;
       });
-      return realOriginalStudio;
-    });
   }
   return originalStudioLoadPromise;
 };
@@ -462,6 +525,7 @@ const ensureOriginalStudio = (): Promise<OriginalBlueprintStudio> => {
 const originalStudioApi = {
   isOpen: () => realOriginalStudio?.isOpen() ?? false,
   open: async (tab: OriginalStudioTab = 'principles'): Promise<void> => {
+    closeOtherOverlays('original');
     const studio = await ensureOriginalStudio();
     studio.open(tab);
   },
@@ -513,10 +577,10 @@ drawer = new ExplanationDrawer(appRoot, {
     syncRail();
   },
   onOpenMiraiReport: (fhId) => {
-    void miraiStudioApi.open({ tab: 'reports', fhId });
+    runAsyncUiAction('miraiStudio.report', () => miraiStudioApi.open({ tab: 'reports', fhId }));
   },
   onOpenMiraiGlossary: (glossaryId) => {
-    void miraiStudioApi.open({ tab: 'glossary', glossaryId });
+    runAsyncUiAction('miraiStudio.glossary', () => miraiStudioApi.open({ tab: 'glossary', glossaryId }));
   },
   onMiraiEditionChange: (edition) => {
     realMiraiStudio?.setEdition(edition, false);
@@ -534,33 +598,9 @@ document.addEventListener('webkitfullscreenchange', () => {
 
 const urlParams = new URLSearchParams(window.location.search);
 
-// Auto-enter native fullscreen on screen tap whenever NOT currently in fullscreen (A3 confirmed).
-// Gracefully skips form inputs/selects, capture mode, and unsupported/denied environments.
-const ensureAutoFullscreenOnTap = (e: PointerEvent): void => {
-  if (!e.isTrusted || isNativeFullscreen()) return;
-  if (document.fullscreenEnabled === false) return;
-  if (urlParams.has('pp') || (window as unknown as { __PP_CAPTURE__?: boolean }).__PP_CAPTURE__) return;
-  const target = e.target as HTMLElement | null;
-  const tag = target?.tagName;
-  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || tag === 'OPTION') return;
-
-  const rootEl = document.documentElement as HTMLElement & {
-    webkitRequestFullscreen?: () => Promise<void> | void;
-  };
-  try {
-    const req = rootEl.requestFullscreen
-      ? rootEl.requestFullscreen()
-      : rootEl.webkitRequestFullscreen?.();
-    if (req && typeof (req as Promise<void>).catch === 'function') {
-      (req as Promise<void>).catch(() => {
-        // Ignore browser rejection without toggling fallback chrome
-      });
-    }
-  } catch {
-    // Ignore unsupported fullscreen environments
-  }
-};
-window.addEventListener('pointerdown', ensureAutoFullscreenOnTap, { capture: true, passive: true });
+// Auto-fullscreen on pointerdown capture removed (BUG-02): interrupting pointerdown->pointerup
+// with requestFullscreen() cancelled top-left clicks and triggered synchronous resize freezes.
+// Explicit fullscreen toggle remains available via the `F` keyboard shortcut.
 
 const setQuality = (q: GraphicsQuality): void => {
   viewport.setQuality(q);
@@ -569,10 +609,22 @@ const setQuality = (q: GraphicsQuality): void => {
 
 window.addEventListener('keydown', (e) => {
   if (playgroundApi.isOpen() || miraiStudioApi.isOpen() || originalStudioApi.isOpen()) return;
+  const target = e.target as HTMLElement | null;
+  const tag = target?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable) return;
   if (e.key === 'Escape') {
+    if (controls.isPaletteOpen()) {
+      controls.closePalette();
+      return;
+    }
+    if (drawer.isLightboxOpen()) {
+      drawer.setLightboxOpen(false);
+      return;
+    }
     if (zenFullscreen) {
       zenFullscreen = false;
       syncFullscreenState();
+      return;
     }
     if (viewport.getSelectedPart()) {
       viewport.selectPart(null, false);
@@ -714,6 +766,7 @@ const v2InspectApi = {
 const captureBridge = new ArtifactCaptureBridge({
   appRoot,
   setMode: (mode, immediate) => {
+    closeOtherOverlays();
     viewport.setMode(mode, immediate);
     controls.syncMode(mode);
     syncRail();
@@ -750,6 +803,7 @@ const captureBridge = new ArtifactCaptureBridge({
   requestRenderFrame: () => viewport.requestRenderFrame(),
   setCaptureControlled: (enabled) => viewport.setCaptureControlled(enabled),
   activateAtomic: async (mode, quality, opts) => {
+    closeOtherOverlays();
     await viewport.activateAtomic(mode, quality, opts);
     controls.syncMode(mode);
     controls.syncQuality(quality);

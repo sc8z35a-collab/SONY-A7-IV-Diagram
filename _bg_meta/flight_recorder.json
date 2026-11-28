@@ -1,35 +1,49 @@
 {
   "schema": "bg-flight/v1",
-  "sessionId": "main-mwzuddvx",
+  "sessionId": "feat-fix-ui-bugs-welcome-zero-collision-mwzrep3o",
   "branch": "main",
-  "goal": "",
-  "completed": [],
+  "goal": "Fix top-left button freeze/unresponsive, 68 real bugs by severity, and achieve 0.001mm zero-collision/zero-protrusion perfection for welcome (435p)",
+  "completed": [
+    "Components 1-3: Fixed top-left button freeze/unresponsive bugs + 65 system bugs across core/engine/ui/playground/css (10/10 validate_parts PASS)",
+    "Component 4: welcome (435 parts) achieved 100% 0.001mm zero-collision, zero-smtSeat, zero-kiss, zero-floating, zero-explodeHits across all 4 tiers (exit=0 PASS)",
+    "Fixed 69 system bugs (incl. BUG-69 overlay abort leak) + welcome 0.001mm 4-tier 0-collision + eliminated all 10 visual floating/protruding artifacts"
+  ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Await user review and approval of PICO-LAB 1500 ULTRA (PL15K-2354B) 1,500 JPY 13-in-1 design plan",
+  "nextStep": "Merged PR #61 into main (ce21c23)",
   "artifactsMirrored": [
     {
+      "name": "PR_61_Merged.url.json",
+      "sha256": "1cd1abf59667e35e701415d59ce84ca2dd0d6547f91c7c2ca2a244f70ac004ff",
+      "size": 385
+    },
+    {
+      "name": "PR_61_Merged.url.json.metadata.json",
+      "sha256": "a7704b4169e57c9f75ef0fa8abcb2f74809fd7d0d9c322c7177ff0b130dc1b2f",
+      "size": 211
+    },
+    {
       "name": "implementation_plan.md",
-      "sha256": "c7223c7997fcf5cdf2422872276b511b448e0e5a80ee92823c5bfe9d09413457",
-      "size": 42078
+      "sha256": "d0605d24345f7fe2742a67382885ea44b24e3aaaf83e37fb8f17697a08c872cf",
+      "size": 51488
     },
     {
       "name": "implementation_plan.md.metadata.json",
-      "sha256": "be77e73b1a0cc8712fe07ded41b0952f9b4992d6a9970329c6df461a2f7f4d5a",
-      "size": 967
+      "sha256": "ca1edb14eeedd2b810e8f5d54754af9989ad8a1d7cb0a6369a117a747fa24969",
+      "size": 418
     },
     {
-      "name": "implementation_plan_1500.md",
-      "sha256": "4c2153a6d6e8a4e41a6af36d3acb540ac1eaa8ce290584da385eb5b03169995b",
-      "size": 33899
+      "name": "walkthrough.md",
+      "sha256": "ed1af7fab52129a47b10880a79d360c8ff1556854fd25949be02e92873c05101",
+      "size": 23975
     },
     {
-      "name": "implementation_plan_1500.md.metadata.json",
-      "sha256": "ecc3e69f2fd347426b097b5fc67c59e58cb47b88d8c64a8fb3a2593d32531129",
-      "size": 1102
+      "name": "walkthrough.md.metadata.json",
+      "sha256": "c28e02711d8514cfc0e1557c9f61bce6442203d9bd17a8d4e8f78d7bda8da3e1",
+      "size": 355
     }
   ],
-  "updatedAt": "2026-11-28T03:38:57.541Z",
+  "updatedAt": "2026-11-28T03:53:20.400Z",
   "vmHost": "devbox",
-  "baseSha": "41fe472fb0655a5f59a32d510f60cbeb7983bc1b"
+  "baseSha": "ce21c2330c10c8bfa41fa448018ffb85bb7ec039"
 }

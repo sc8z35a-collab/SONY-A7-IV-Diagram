@@ -1175,32 +1175,38 @@ export class ResourceCache {
     let tex: THREE.Texture;
     if (typeof document !== 'undefined') {
       const maxDim = QUALITY_TIER_CONFIG[quality].maxHeroTextureDim;
-      const scale = Math.min(1, maxDim / Math.max(1, spec.width, spec.height));
-      const cw = Math.max(32, Math.round(spec.width * scale));
-      const ch = Math.max(32, Math.round(spec.height * scale));
+      const safeW = Math.max(1, spec.width);
+      const safeH = Math.max(1, spec.height);
+      const scale = Math.min(1, maxDim / Math.max(1, safeW, safeH));
+      const cw = Math.max(32, Math.round(safeW * scale));
+      const ch = Math.max(32, Math.round(safeH * scale));
       const canvas = document.createElement('canvas');
       canvas.width = cw;
       canvas.height = ch;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.save();
-        ctx.scale(cw / spec.width, ch / spec.height);
-        spec.painter(ctx, spec.width, spec.height);
-        ctx.restore();
-        const cTex = new THREE.CanvasTexture(canvas);
-        cTex.colorSpace = THREE.SRGBColorSpace;
-        cTex.minFilter = THREE.LinearMipmapLinearFilter;
-        cTex.magFilter = THREE.LinearFilter;
-        cTex.anisotropy = quality === 'ultra' ? 16 : quality === 'high' ? 4 : 1;
-        if (spec.wrapRepeat) {
-          cTex.wrapS = THREE.RepeatWrapping;
-          cTex.wrapT = THREE.RepeatWrapping;
+        try {
+          ctx.save();
+          ctx.scale(cw / safeW, ch / safeH);
+          spec.painter(ctx, safeW, safeH);
+          ctx.restore();
+          const cTex = new THREE.CanvasTexture(canvas);
+          cTex.colorSpace = THREE.SRGBColorSpace;
+          cTex.minFilter = THREE.LinearMipmapLinearFilter;
+          cTex.magFilter = THREE.LinearFilter;
+          cTex.anisotropy = quality === 'ultra' ? 16 : quality === 'high' ? 4 : 1;
+          if (spec.wrapRepeat) {
+            cTex.wrapS = THREE.RepeatWrapping;
+            cTex.wrapT = THREE.RepeatWrapping;
+          }
+          if (spec.repeatX || spec.repeatY) {
+            cTex.repeat.set(spec.repeatX ?? 1, spec.repeatY ?? 1);
+          }
+          cTex.needsUpdate = true;
+          tex = cTex;
+        } catch {
+          tex = buildFallbackHeroDataTexture(texKey, spec.fallbackColor ?? spec.baseColor ?? 0x8899aa);
         }
-        if (spec.repeatX || spec.repeatY) {
-          cTex.repeat.set(spec.repeatX ?? 1, spec.repeatY ?? 1);
-        }
-        cTex.needsUpdate = true;
-        tex = cTex;
       } else {
         tex = buildFallbackHeroDataTexture(texKey, spec.fallbackColor ?? spec.baseColor ?? 0x8899aa);
       }

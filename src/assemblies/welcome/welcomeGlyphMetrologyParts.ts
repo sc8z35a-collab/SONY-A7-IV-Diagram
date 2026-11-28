@@ -9,6 +9,7 @@ import {
   CX_YO,
   KO_BOT,
   KO_TOP,
+  RENDER_STROKE_MAP,
   SO_BOWL,
   U_ARC,
   buildHollowPerimeterRing,
@@ -115,12 +116,12 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
       const g = new THREE.Group();
-      const hood = new THREE.Mesh(new THREE.BoxGeometry(1.15, 2.1, 1.35), m.matteBlackAnodized);
-      hood.position.set(5.32, 2.5, 0.55);
-      const prism = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 1.05, 3).rotateY(Math.PI * 0.25), m.welcomeOpticalEd);
-      prism.position.set(5.12, 2.5, 0.55);
-      const holder = new THREE.Mesh(new THREE.BoxGeometry(0.36, 2.25, 1.5), m.brassPrecision);
-      holder.position.set(6.02, 2.5, 0.55);
+      const hood = new THREE.Mesh(new THREE.BoxGeometry(0.56, 1.9, 1.25), m.matteBlackAnodized);
+      hood.position.set(4.44, 2.5, 0.55);
+      const prism = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.30, 0.95, 3).rotateY(Math.PI * 0.25), m.welcomeOpticalEd);
+      prism.position.set(4.42, 2.5, 0.55);
+      const holder = new THREE.Mesh(new THREE.BoxGeometry(0.24, 2.05, 1.38), m.brassPrecision);
+      holder.position.set(4.88, 2.5, 0.55);
       g.add(hood, prism, holder);
       return g;
     },
@@ -195,12 +196,12 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
       const g = new THREE.Group();
-      for (const dy of [-3.35, 3.35]) {
-        const sp = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.28, 0.14), m.beCuSpring);
-        sp.position.set(9.4, 11.4 + dy, 4.06);
+      for (const dy of [-2.20, 2.20]) {
+        const sp = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.26, 0.14), m.beCuSpring);
+        sp.position.set(11.0, 11.55 + dy, 4.06);
         sp.rotation.z = 0.11;
-        const sl = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.20, 0.12), m.epdmGasket);
-        sl.position.set(9.4, 11.4 + dy * 1.07, 4.02);
+        const sl = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.18, 0.12), m.epdmGasket);
+        sl.position.set(11.0, 11.55 + dy * 1.08, 4.02);
         sl.rotation.z = 0.11;
         g.add(sp, sl);
       }
@@ -242,15 +243,9 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
     diagramType: 'welcome_glyph_layer',
     build: (m) =>
       buildArcRetainerClaws(
-        [
-          { x: -14.2, y: -9.8 },
-          { x: -13.6, y: -4.2 },
-          { x: -7.4, y: -1.6 },
-          { x: 2.2, y: -2.4 },
-          { x: 13.6, y: -7.8 },
-        ],
-        3.55,
-        4.26,
+        RENDER_STROKE_MAP.yo_loop[0],
+        2.08,
+        4.18,
         5,
         m
       ),
@@ -409,7 +404,7 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       'JIS G 4305 SUS304 Precision Formed Optical Clip Spring Stress Limits',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildArcRetainerClaws(U_ARC, 3.62, 4.58, 6, m),
+    build: (m) => buildArcRetainerClaws(RENDER_STROKE_MAP.u_arc[0], 2.48, 4.54, 6, m),
   },
   {
     id: 'welcome-u-dovetail-ball-detent',
@@ -688,7 +683,7 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       'JIS G 4305 SUS304 Optical Clip Spring Properties',
     ],
     diagramType: 'welcome_glyph_layer',
-    build: (m) => buildArcRetainerClaws(KO_BOT, 3.62, 4.64, 5, m),
+    build: (m) => buildArcRetainerClaws(RENDER_STROKE_MAP.ko_bot[0], 2.48, 4.42, 5, m),
   },
 
   // --- 「そ」 Wave B (W331 - W335) ---
@@ -851,14 +846,14 @@ export const WELCOME_GLYPH_METROLOGY_DEFS: readonly WelcomeExpansionPartDef[] = 
       const g = new THREE.Group();
       const seg = qRadialSegs(8, 6);
       const pts: Array<[number, number]> = [
-        [13.6, 21.4],
-        [-17.2, 5.8],
+        [8.2, 20.3],
+        [-8.6, 8.8],
       ];
       for (const [px, py] of pts) {
-        const blk = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.2, 0.42), m.brassPrecision);
-        blk.position.set(px, py, 3.50);
-        const scr = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.65, seg).rotateZ(Math.PI * 0.5), m.stainlessMachined);
-        scr.position.set(px + (px > 0 ? 0.65 : -0.65), py, 3.50);
+        const blk = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.55, 0.36), m.brassPrecision);
+        blk.position.set(px, py, 4.18);
+        const scr = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.55, seg).rotateZ(Math.PI * 0.5), m.stainlessMachined);
+        scr.position.set(px + (px > 0 ? 0.52 : -0.52), py, 4.18);
         g.add(blk, scr);
       }
       return g;

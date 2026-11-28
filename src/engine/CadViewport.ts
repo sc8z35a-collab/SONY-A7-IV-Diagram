@@ -109,6 +109,15 @@ export class CadViewport {
 
   private resizeObserver: ResizeObserver | null = null;
   private boundHandleResize = () => this.handleResize();
+  private boundInvalidateRect = () => {
+    this.cachedDomRect = null;
+  };
+  private boundPointerDown: ((e: PointerEvent) => void) | null = null;
+  private boundPointerMove: ((e: PointerEvent) => void) | null = null;
+  private boundPointerLeave: (() => void) | null = null;
+  private boundPointerUp: ((e: PointerEvent) => void) | null = null;
+  private boundWheel: (() => void) | null = null;
+  private boundTouchStart: (() => void) | null = null;
 
   // WebGL context-loss & visibility lifecycle
   private contextLost = false;
@@ -128,6 +137,7 @@ export class CadViewport {
   private customSceneRenderer:
     | ((renderer: THREE.WebGLRenderer, dt: number) => boolean | void)
     | null = null;
+  private customRendererMemBefore: { geometries: number; textures: number } | null = null;
 
   constructor(container: HTMLElement, callbacks: ViewportCallbacks) {
     this.container = container;
@@ -246,14 +256,18 @@ export class CadViewport {
     this.metaOnlyParts = [];
     this.metaOnlyPartById.clear();
     const mode = this.mode;
-    void this.v2Runtime.activate(mode, this.quality, this.camera, {
-      explode: this.currentExplode,
-      renderMode: this.renderMode,
-      physicsActive: this.physicsActive,
-      sectionActive: this.isSectionActive(),
-      subView: this.getActiveSubViewForMode(mode),
-      integratedMode: mode === 'integrated' || mode === 'camera_body',
-    });
+    void this.v2Runtime
+      .activate(mode, this.quality, this.camera, {
+        explode: this.currentExplode,
+        renderMode: this.renderMode,
+        physicsActive: this.physicsActive,
+        sectionActive: this.isSectionActive(),
+        subView: this.getActiveSubViewForMode(mode),
+        integratedMode: mode === 'integrated' || mode === 'camera_body',
+      })
+      .catch((err) => {
+        console.error(`[CadViewport] Failed to activate mode '${mode}':`, err);
+      });
   }
 
   /**
@@ -297,7 +311,7 @@ export class CadViewport {
       } else if (nextMode === 'sensor_fab') {
         this.sensorFabVolume = Math.max(0, Math.min(5, Math.round(opts.subView))) as SensorFabVolume;
       } else if (nextMode === 'mirai_2028') {
-        this.miraiSubView = Math.max(1, Math.min(5, Math.round(opts.subView)));
+        this.miraiSubView = Math.max(1, Math.min(8, Math.round(opts.subView)));
       }
     } else if (nextMode === 'lens' && this.mode !== 'lens') {
       this.lensSection = 1;
@@ -380,7 +394,7 @@ export class CadViewport {
       } else if (nextMode === 'sensor_fab') {
         this.sensorFabVolume = Math.max(0, Math.min(5, Math.round(subView))) as SensorFabVolume;
       } else if (nextMode === 'mirai_2028') {
-        this.miraiSubView = Math.max(1, Math.min(5, Math.round(subView)));
+        this.miraiSubView = Math.max(1, Math.min(8, Math.round(subView)));
       }
     }
     this.mode = nextMode;
@@ -687,7 +701,12 @@ export class CadViewport {
   }
 
   public setMode(nextMode: ScaleMode, immediateCamera = false): void {
-    if (this.mode === nextMode && this.initialActivated) return;
+    const alreadyActiveOrLoading =
+      this.mode === nextMode &&
+      this.initialActivated &&
+      !this.v2Runtime.hasBuildFailed() &&
+      (this.v2Runtime.isReady() || this.v2Runtime.isBuilding(nextMode));
+    if (alreadyActiveOrLoading) return;
     this.mode = nextMode;
     if (nextMode === 'lens') {
       this.lensSection = 1;
@@ -758,10 +777,14 @@ export class CadViewport {
   }
 
   public setQuality(quality: GraphicsQuality): void {
-    if (this.quality === quality) return;
+    if (this.quality === quality && !this.v2Runtime.hasBuildFailed()) return;
     this.quality = quality;
     if (this.initialActivated) {
-      void this.v2Runtime.setQuality(quality, this.camera, this.sectionAxis !== 'off');
+      void this.v2Runtime
+        .setQuality(quality, this.camera, this.sectionAxis !== 'off')
+        .catch((err) => {
+          console.error(`[CadViewport] Failed to switch quality to '${quality}':`, err);
+        });
     }
     this.callbacks.onQualityChanged?.(quality);
     this.markDirty(2);
@@ -1928,7 +1951,15 @@ export class CadViewport {
 
     let minCoord = -48;
     let maxCoord = 48;
-    if (this.mode === 'micro') {
+    if (this.mode === 'welcome') {
+      if (this.sectionAxis === 'x') {
+        minCoord = -96;
+        maxCoord = 96;
+      } else {
+        minCoord = -24;
+        maxCoord = 28;
+      }
+    } else if (this.mode === 'micro') {
       minCoord = -13;
       maxCoord = 13;
     } else if (this.mode === 'micro_v2') {
@@ -2134,14 +2165,16 @@ export class CadViewport {
       this.markDirty(2);
     });
 
-    dom.addEventListener('pointerdown', (e) => {
+    this.boundPointerDown = (e: PointerEvent) => {
       if (this.customSceneRenderer) return;
+      this.cachedDomRect = dom.getBoundingClientRect();
       this.pointerDownPos.set(e.clientX, e.clientY);
       this.camAnimActive = false;
       this.markDirty();
-    });
+    };
+    dom.addEventListener('pointerdown', this.boundPointerDown);
 
-    dom.addEventListener('pointermove', (e) => {
+    this.boundPointerMove = (e: PointerEvent) => {
       if (this.customSceneRenderer) return;
       if (e.pointerType === 'touch') return;
       const rect = this.cachedDomRect ?? (this.cachedDomRect = dom.getBoundingClientRect());
@@ -2150,9 +2183,10 @@ export class CadViewport {
       this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       this.hoverRaycastPending = true;
       this.wakeLoop();
-    });
+    };
+    dom.addEventListener('pointermove', this.boundPointerMove);
 
-    dom.addEventListener('pointerleave', () => {
+    this.boundPointerLeave = () => {
       if (this.customSceneRenderer) return;
       this.hoverRaycastPending = false;
       if (this.hoveredPartId !== null) {
@@ -2161,14 +2195,15 @@ export class CadViewport {
         this.applyVisibilityAndStyles();
         this.callbacks.onHoverPart(null);
       }
-    });
+    };
+    dom.addEventListener('pointerleave', this.boundPointerLeave);
 
-    dom.addEventListener('pointerup', (e) => {
+    this.boundPointerUp = (e: PointerEvent) => {
       if (this.customSceneRenderer) return;
       const dist = Math.hypot(e.clientX - this.pointerDownPos.x, e.clientY - this.pointerDownPos.y);
       if (dist > 5) return;
 
-      const rect = this.cachedDomRect ?? (this.cachedDomRect = dom.getBoundingClientRect());
+      const rect = (this.cachedDomRect = dom.getBoundingClientRect());
       if (rect.width <= 0 || rect.height <= 0) return;
       this.pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       this.pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -2185,28 +2220,29 @@ export class CadViewport {
       } else if (this.selectedPartId) {
         this.selectPart(null, false);
       }
-    });
+    };
+    dom.addEventListener('pointerup', this.boundPointerUp);
 
-    dom.addEventListener(
-      'wheel',
-      () => {
-        if (!this.customSceneRenderer) {
-          this.wheelMotionFrames = 2;
-          if (this.quality === 'ultra' && this.v2Runtime.getMotionStage() === 'ultra') {
-            this.v2Runtime.setMotionStage('lite');
-          }
+    this.boundWheel = () => {
+      if (!this.customSceneRenderer) {
+        this.wheelMotionFrames = 2;
+        if (this.quality === 'ultra' && this.v2Runtime.getMotionStage() === 'ultra') {
+          this.v2Runtime.setMotionStage('lite');
         }
-        this.markDirty(2);
-      },
-      { passive: true }
-    );
-    dom.addEventListener('touchstart', () => this.wakeLoop(), { passive: true });
+      }
+      this.markDirty(2);
+    };
+    dom.addEventListener('wheel', this.boundWheel, { passive: true });
+
+    this.boundTouchStart = () => this.wakeLoop();
+    dom.addEventListener('touchstart', this.boundTouchStart, { passive: true });
 
     dom.addEventListener('webglcontextlost', this.boundContextLost, false);
     dom.addEventListener('webglcontextrestored', this.boundContextRestored, false);
     document.addEventListener('visibilitychange', this.boundVisibilityChange);
 
     window.addEventListener('resize', this.boundHandleResize);
+    window.addEventListener('scroll', this.boundInvalidateRect, { passive: true, capture: true });
     document.addEventListener('fullscreenchange', this.boundHandleResize);
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(this.boundHandleResize);
@@ -2234,7 +2270,21 @@ export class CadViewport {
         this.v2Runtime.deactivate();
         this.initialActivated = false;
       }
+      if (!this.customRendererMemBefore) {
+        this.customRendererMemBefore = {
+          geometries: this.renderer.info.memory.geometries,
+          textures: this.renderer.info.memory.textures,
+        };
+      }
     } else {
+      if (this.customRendererMemBefore) {
+        const dGeo = this.renderer.info.memory.geometries - this.customRendererMemBefore.geometries;
+        const dTex = this.renderer.info.memory.textures - this.customRendererMemBefore.textures;
+        this.customRendererMemBefore = null;
+        if (this.v2Runtime.isActive() && (dGeo !== 0 || dTex !== 0)) {
+          this.v2Runtime.adjustExternalVramBaseline(dGeo, dTex);
+        }
+      }
       this.prevCamPos.copy(this.camera.position);
       this.prevCamQuat.copy(this.camera.quaternion);
       this.prevCamInitialized = true;
@@ -2259,13 +2309,20 @@ export class CadViewport {
     this.contextLost = false;
     this.recoveryOverlay.classList.remove('is-visible');
     this.cachedDomRect = this.renderer.domElement.getBoundingClientRect();
-    void this.v2Runtime.handleContextRestored(this.camera, this.sectionAxis !== 'off');
+    void this.v2Runtime.handleContextRestored(this.camera, this.sectionAxis !== 'off').catch((err) => {
+      console.error('[CadViewport] Failed to restore WebGL context:', err);
+    });
     this.markDirty(2);
   }
 
   private handleVisibilityChange(): void {
     this.pageHidden = document.hidden;
-    if (!this.pageHidden && !this.contextLost) {
+    if (this.pageHidden) {
+      if (this.rafId !== 0) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = 0;
+      }
+    } else if (!this.contextLost) {
       this.clock.getDelta();
       this.markDirty(3);
     }
@@ -2480,10 +2537,17 @@ export class CadViewport {
       this.rafId = 0;
     }
     const dom = this.renderer.domElement;
+    if (this.boundPointerDown) dom.removeEventListener('pointerdown', this.boundPointerDown);
+    if (this.boundPointerMove) dom.removeEventListener('pointermove', this.boundPointerMove);
+    if (this.boundPointerLeave) dom.removeEventListener('pointerleave', this.boundPointerLeave);
+    if (this.boundPointerUp) dom.removeEventListener('pointerup', this.boundPointerUp);
+    if (this.boundWheel) dom.removeEventListener('wheel', this.boundWheel);
+    if (this.boundTouchStart) dom.removeEventListener('touchstart', this.boundTouchStart);
     dom.removeEventListener('webglcontextlost', this.boundContextLost);
     dom.removeEventListener('webglcontextrestored', this.boundContextRestored);
     document.removeEventListener('visibilitychange', this.boundVisibilityChange);
     window.removeEventListener('resize', this.boundHandleResize);
+    window.removeEventListener('scroll', this.boundInvalidateRect, { capture: true });
     document.removeEventListener('fullscreenchange', this.boundHandleResize);
     this.resizeObserver?.disconnect();
     this.v2Runtime.dispose();

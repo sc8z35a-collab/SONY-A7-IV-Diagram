@@ -1000,13 +1000,13 @@ export const WELCOME_PLINTH_INSTRUMENTATION_DEFS: readonly WelcomeExpansionPartD
     diagramType: 'welcome_tof_audio_hmi',
     build: (m) => {
       const g = new THREE.Group();
-      const seg = Math.max(12, qRadialSegs(24, 12));
-      // r = 5.85 mm with >=12 segs (inner chord >= 5.36 mm) clears W217 dial (r = 4.80 mm) across ALL tiers incl. V3 LITE v2!
+      const seg = Math.max(16, qRadialSegs(24, 16));
+      // r = 5.22 mm, tube = 0.22 mm with >=16 segs (inner apothem 4.90 mm > W217 dial 4.67 mm; X_max 96.94 <= right endcap 96.95!)
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(5.85, 0.28, 6, seg).rotateX(Math.PI * 0.5),
+        new THREE.TorusGeometry(5.22, 0.22, 6, seg).rotateX(Math.PI * 0.5),
         m.blue450Glow
       );
-      ring.position.set(91.5, 4.78, 0);
+      ring.position.set(91.5, 4.68, 0);
       g.add(ring);
       return g;
     },

@@ -170,6 +170,12 @@ function rebuildFlatPartBvhInPlace(index: UnitRaycastIndex): void {
       leftCount = count >> 1;
     }
 
+    if (sp + 2 > _bvhBuildFirst.length) {
+      nodes[off + 6] = first;
+      nodes[off + 7] = count;
+      continue;
+    }
+
     // Push right then left so left is popped first
     _bvhBuildFirst[sp] = first + leftCount;
     _bvhBuildCount[sp] = count - leftCount;
@@ -997,17 +1003,19 @@ export class TwoStageRaycaster {
             bvhNodes[rOff + 3], bvhNodes[rOff + 4], bvhNodes[rOff + 5]
           );
           if (tL >= 0 && tR >= 0) {
-            if (tL <= tR) {
-              _bvhStack[sp++] = rightIdx;
-              _bvhStack[sp++] = leftIdx;
-            } else {
-              _bvhStack[sp++] = leftIdx;
-              _bvhStack[sp++] = rightIdx;
+            if (sp + 2 <= _bvhStack.length) {
+              if (tL <= tR) {
+                _bvhStack[sp++] = rightIdx;
+                _bvhStack[sp++] = leftIdx;
+              } else {
+                _bvhStack[sp++] = leftIdx;
+                _bvhStack[sp++] = rightIdx;
+              }
             }
           } else if (tL >= 0) {
-            _bvhStack[sp++] = leftIdx;
+            if (sp < _bvhStack.length) _bvhStack[sp++] = leftIdx;
           } else if (tR >= 0) {
-            _bvhStack[sp++] = rightIdx;
+            if (sp < _bvhStack.length) _bvhStack[sp++] = rightIdx;
           }
         }
       }

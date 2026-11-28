@@ -273,9 +273,9 @@ export const WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = 
       const g = new THREE.Group();
       const seg = qRadialSegs(12, 6);
       const sleeveGeo = new THREE.CylinderGeometry(0.95, 0.95, 0.42, seg).rotateX(Math.PI * 0.5);
-      for (const dx of [-6.2, 6.2]) {
+      for (const [dx, dy] of [[-6.2, -11.4], [0.5, -10.8]] as const) {
         const s = new THREE.Mesh(sleeveGeo, m.aluminaCeramic);
-        s.position.set(dx, -12.6, -5.85);
+        s.position.set(dx, dy, -5.85);
         g.add(s);
       }
       return g;
@@ -651,7 +651,7 @@ export const WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = 
     category: '「こ」モジュール / 石英支柱緩衝',
     swatchColor: '#4b5563',
     assembledPos: [CX_KO, 4, 0],
-    explodeOffset: [4, 6, 4],
+    explodeOffset: [10, 6, 4],
     plainAnalogy: '「こ」の上の棒と下の棒を繋ぐ2本の透明石英柱に衝撃や温度変化が直接伝わらないよう、付け根を守る弾性緩衝リングです。',
     summary: '「こ」の上下2チャンバー間を架橋する左右石英ポストの上下接合部背面へ実装された耐UVシリコーン緩衝カラー群。輸送時の衝撃加速度50Gから石英柱を保護します。',
     opticsAndPhysics: [
@@ -828,7 +828,7 @@ export const WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = 
     category: '「そ」モジュール / 鋭角光学折返し',
     swatchColor: '#dbe4ee',
     assembledPos: [CX_SO, 4, 0],
-    explodeOffset: [28, 18, -34],
+    explodeOffset: [24, 18, -38],
     plainAnalogy: '「そ」の上部の鋭いZ字カーブ2箇所にあるプリズムの裏側へ銀ミラー押え板を重ね、光が後ろへ逃げずに完璧に折れ曲がるようにする部品です。',
     summary: '「そ」Z字第1・第2鋭角部（W167/W168）の背面外角へ独立マウントされた保護銀ミラー裏打ち板＆SUS301定圧押えクリップ対。全反射臨界角外の大角度光線も回収します。',
     opticsAndPhysics: [
@@ -854,15 +854,15 @@ export const WELCOME_GLYPH_PRECISION_DEFS: readonly WelcomeExpansionPartDef[] = 
     build: (m) => {
       const g = new THREE.Group();
       const pts: Array<[number, number, number]> = [
-        [9.6, 21.4, -0.6],
-        [-13.2, 5.8, 0.6],
+        [8.2, 19.1, -0.58],
+        [-10.2, 7.3, 0.58],
       ];
       for (const [px, py, rz] of pts) {
-        const plate = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.2, 0.30), m.vipSilverFoil);
-        plate.position.set(px, py, -5.80);
+        const plate = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.2, 0.28), m.vipSilverFoil);
+        plate.position.set(px, py, -5.78);
         plate.rotation.z = rz;
-        const clip = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.75, 0.14), m.stainlessMachined);
-        clip.position.set(px, py, -6.02);
+        const clip = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.50, 0.14), m.stainlessMachined);
+        clip.position.set(px, py, -5.98);
         clip.rotation.z = rz;
         g.add(plate, clip);
       }
