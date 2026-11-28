@@ -3,8 +3,11 @@
 
 ## @PROJECT_MAP
 - App: Sony A7 IV Full-Frame Mirrorless Camera + Special Showcases (`welcome` WLK-435 CNC optical signboard, `original` Exhibit #01 RIIMOS E1 9,700 JPY quadruped, `mirai_2028` 2028 Frontier concepts, `sensor_fab` 6-vol semiconductor fab) 3D CAD WebGL2 Technical Anatomy + Play Ground 1.1 Studio (`PLYA V2.1`).
-- Stack: TypeScript 5.8 strict + Three.js 0.174 + Vite 6.2 (`dist/` -> `docs/` GitHub Pages) + Capacitor 7.6 Android APK (`android/`).
-- Scale: 23 modes (21 individual + 2 composite `integrated`, `camera_body`), 2,937 unique individual parts (3,473 entries incl. composites), 720x470 HD SVG schematics (`src/ui/schematicsRegistry.ts`), 60fps physics rigs.
+<!-- @FLOW_AUTO:PROJECT_METRICS -->
+- Stack: TypeScript 5.8.2 + Three.js 0.174.0 + Vite 6.2.0 (`dist/` -> `docs/`) + Capacitor 7.6.10 (`android/`).
+- Scale: 23 modes (21 individual + 2 composite), 2,937 unique individual parts (3,473 total entries incl. composites), PLYA V2.1 (24 browser solvers / 256 assertions).
+<!-- /@FLOW_AUTO:PROJECT_METRICS -->
+- Schematics & Rigs: 720x470 HD SVG schematics (`src/ui/schematicsRegistry.ts`), 60fps physics rigs.
 - Protected Content Assets (NOT operational manuals): `reports/fh_mirai_2028/*.md` (compiled by `scripts/build_mirai_content.mjs`) and `blueprints/riimos_e1/` (RIIMOS E1 MJCF/Colab/blueprint assets).
 
 ## @RENDER_V2_V3_AND_PLYA_V21
@@ -47,22 +50,17 @@
 - Indexes (`catalog/`): `INDEX.tsv`, `names/<U>.txt`, `ALL_NAMES.txt`, `spatial/<U>.tsv`, `code/{MAP,SYMBOLS,GRAPH,MATERIALS,HELPERS,SCHEMATICS,CSS_INDEX,DEFECT_MAP}.tsv`.
 - Coordinates: Right-handed Y-up, 1 unit = 1 mm; grounded feet near global `minY`; optical axis `+Z`.
 
-## @EXAM_V11_DOMAIN (12 PILLARS / 48 ENGINES / 1,080 TESTS / 48 REAL SOLVERS / 28 CROSS-LOCKS)
-- P01 Geom/Contact(120): EX01 4-tier 0.001mm clash/SMT(FCL+SP+CGAL), EX02 anti-levitation <=0.08mm(FCL+NX+SP), EX03 6-pose eq(Qhull+HiGHS+OCCT), EX04 6-dir silhouette(CGAL+OpenCV), EX05 manifold/tet(CGAL+Gmsh) + V1.1 deep checks (`T531..T804`).
-- P02 FEA(122): EX06 C3D8 static(CCX), EX07 Lanczos modal 10-4000Hz(CCX), EX08 CTE -20/+85C(CCX), EX09 GD&T MILP/Z3/10k MC(CBC+Z3), EX10 30G shock/1m drop/buckle(CCX+Bullet).
-- P03 Multibody/Fatigue(46): EX25 Bullet+ODE 3D dynamics, EX26 S-N/ISTA-3A/SAC305 Coffin-Manson.
-- P04 DFM/DFA/Fasteners(136): EX11 CCD explode+Z3 DAG, EX12 fasteners >=2 contacts, EX13 CGAL SDF DFM, EX14 IP54-67 seal, EX27 VDI 2230 bolted joints, EX28 DFR/DFS/DFT.
-- P05 Thermal/CFD(50): EX29 OpenFOAM 1912 buoyantSimpleFoam CFD, EX15 CCX heat transfer + TIM gap matrix.
-- P06 Power/EDA/Wiring/FMEA(98): EX16 ngspice+gnucap PDN/UPS/MC, EX17 KiCad 7.0 ERC/DRC/Gerber/creepage, EX30 FCL 3D A* harness+FreeFEM Z_diff, EX31 ngspice fault inj+FTA.
-- P07 EMC/Optics/Acoustics(90): EX18 FreeFEM EMC SE>=40dB, EX19 100k-ray Fresnel/TIR MC, EX20 sightline cones, EX21 Helmholtz acoustics+louver dP.
-- P08 Formal/RTL(46): EX32 Z3 16-axiom proof, EX33 Yosys+Verilator+Icarus power/UPS FSM.
-- P09 Chem/Rel(42): EX34 galvanic dE/Mg-Cu/dewpoint/outgas, EX35 MIL-HDBK-217F MTBF>=50kh + 5yr Arrhenius.
-- P10 Vision/BOM/GPU/Domain(54): EX22 Chrome pp1.1+OpenCV floating islands, EX23 BOM/JSON/validate_parts, EX24 4-tier monotonicity/VRAM=0/build, EX36 KLayout/Netgen-LVS/mission.
-- P11 Real-World Boot/Control/SI/ESD(138, `T805..T942`): EX37 cold-start -20C/+60C power-on inrush & brownout(ngspice+gnucap), EX38 closed-loop Bode/Nyquist/Routh control stability(Octave+Maxima), EX39 digital timing/CDC/FPGA place-route/VHDL(Yosys+nextpnr-ice40+Verilator+Icarus+GHDL), EX40 triple-SMT/SAT safety proof(Z3+CVC5+Boolector+MiniSat), EX41 3D PDN/SI/eye-diagram/FEM EM(Gmsh+GetDP+FreeFEM), EX42 IEC 61000-4-2 8kV/15kV ESD + surge + reverse-polarity(ngspice+KiCad+GetDP).
-- P12 Mfg/Tribology/Kinematics/Cert(138, `T943..T1080`): EX43 articulated multibody inverse dynamics & torque(DART 6.13 C++17+Bullet+ODE+CVXOPT), EX44 transient thermal 30min burn-in + 1000-cycle CTE shock(CCX+OpenFOAM+SciPy), EX45 MIL-STD-810H random vibration PSD + FFT spectral EMI(FFTW3 C++17+GTS+CCX), EX46 triple-watertight CAD + Six-Sigma Cpk>=1.33 + 99.5% yield(CGAL+OCCT+ADMesh+GTS+R-tree+statsmodels), EX47 Hertz contact + Archard 10k-cycle wear + Pint SI + 100-digit mpmath(NLopt C++17+Pint+SymPy+Maxima+mpmath), EX48 Poka-Yoke assembly graph + EOL BIST + 0.0001mm cryptographic **`V1.1証明`** seal(igraph+NetworkX+VTK).
-- 48 Real Solvers & 6 C++17 Harnesses: `fcl_collision_check`, `cgal_mesh_audit`, `bullet_ode_dynamics`, `occt_step_kernel`, `dart_kinematics_dynamics`, `spectral_gts_nlopt` + 42 verified industrial binaries/Python solvers.
-- 28 Cross-Solver Conservation Locks `X01..X28`: X01..X16 (core V1 conservation) + X17(ngspice=gnucap inrush<=3%), X18(Octave=Maxima Routh=0), X19(Verilator=Icarus=GHDL RTL=0), X20(Z3=CVC5=Boolector=MiniSat UNSAT=0), X21(GetDP=FreeFEM EM/SI<=5%), X22(ngspice=GetDP ESD<=5%), X23(DART=Bullet=ODE torque<=3%), X24(CVXOPT=HiGHS LP<=1%), X25(CCX=OpenFOAM transient T<=8%), X26(FFTW3=SciPy PSD<=2%), X27(CGAL=OCCT=ADMesh=GTS vol<=2%), X28(Pint=SymPy=Maxima=mpmath SI<=0.01%).
+## @EXAM_V11_DOMAIN (SSOT Auto-Synced from `scripts/exam/test_registry.mjs`)
+<!-- @FLOW_AUTO:EXAM_METRICS -->
+- Live Totals (SSOT `test_registry.mjs`): **12 Pillars / 48 Engines / 1080 Fixed Tests (`T001..T1080`) / 48 Real Solvers / 28 Cross-Locks (`X01..X28`)**.
+- Per-Pillar Counts: `P01:112t(5e) P02:114t(5e) P03:44t(2e) P04:136t(6e) P05:49t(2e) P06:96t(4e) P07:90t(4e) P08:44t(2e) P09:40t(2e) P10:79t(4e) P11:138t(6e) P12:138t(6e)`.
+- C++17 Native Harnesses (6): `bullet_ode_multibody`, `cgal_geom_kernel`, `dart_kinematics_dynamics`, `fcl_ccd_router`, `occt_step_analyzer`, `spectral_gts_nlopt`.
+- Wire Protocol: `TLX1|u=...|v=1.1|mode=CAD_PROXY|REAL_ARTIFACT|...|rcpt=TLX11-RECEIPT:...|v11_cert=...`, `V11_SEAL|unit=...|status=...|attest=CI_ATTESTED|LOCAL_UNATTESTED`.
+<!-- /@FLOW_AUTO:EXAM_METRICS -->
+- Pillars Overview: P01 Geom/Contact (EX01-05), P02 FEA (EX06-10), P03 Multibody/Fatigue (EX25-26), P04 DFM/DFA/Fasteners (EX11-14, EX27-28), P05 Thermal/CFD (EX29, EX15), P06 Power/EDA/Wiring/FMEA (EX16-17, EX30-31), P07 EMC/Optics/Acoustics (EX18-21), P08 Formal/RTL (EX32-33), P09 Chem/Rel (EX34-35), P10 Vision/BOM/GPU/Domain (EX22-24, EX36), P11 Real-World Boot/Control/SI/ESD (EX37-42), P12 Mfg/Tribology/Kinematics/Cert (EX43-48).
+- Execution Modes: `MODE=CAD_PROXY` (3D CAD model verification) vs `MODE=REAL_ARTIFACT` (`--project=<exam.project.json>` real STEP/KiCad/SPICE/RTL/BOM; missing artifacts fail honestly as `MISSING_REAL_ARTIFACT`, ZERO fabrication). Verification vs Validation boundary is explicitly displayed in certificates and UI modal.
+- 28 Cross-Solver Conservation Locks `X01..X28`: X01..X16 (core conservation) + X17(ngspice=gnucap inrush<=3%), X18(Octave=Maxima Routh=0), X19(Verilator=Icarus=GHDL RTL=0), X20(Z3=CVC5=Boolector=MiniSat UNSAT=0), X21(GetDP=FreeFEM EM/SI<=5%), X22(ngspice=GetDP ESD<=5%), X23(DART=Bullet=ODE torque<=3%), X24(CVXOPT=HiGHS LP<=1%), X25(CCX=OpenFOAM transient T<=8%), X26(FFTW3=SciPy PSD<=2%), X27(CGAL=OCCT=ADMesh=GTS vol<=2%), X28(Pint=SymPy=Maxima=mpmath SI<=0.01%).
 
 ## @PERF_AND_HISTORY
 - V3 Baselines: Play Ground 1.1 `40.05x` avg speedup / `0.0 draws/s` idle; STD LITE v2 `14.45x` arith / `3.23x` geo, `welcome/lite=2dc/38.2k tris`, `integrated/lite=8dc/135.5k tris`, `maxLeakedCacheRefs=0`.
-- History: P12-39 core 23 units -> PR#53-62 V3 Hyper-Opt, `dx`, `sp`, `pp1.1`, `sokutei`, RIIMOS E1, EXAM V1 -> PR#63 FLOW V1 OS (2-book AI OS, 12-layer security, `flow heal`, 3-layer code, parallel kernel, portable core) -> **V1.1 Upgrade** (THE LAST EXAM V1.1 12p/48e/1,080t/48sv/28x + cryptographic `V1.1証明` 0.0001mm instant revocation + `PLYA V2.1` 24s/256t Playground + `FLOW V1.1 OS` `flow auto` 14-30s DAGs / `flow macro` signed registry / `SEC-13` 36-attack oracle).
+- History: P12-39 core 23 units -> PR#53-62 V3 Hyper-Opt, `dx`, `sp`, `pp1.1`, `sokutei`, RIIMOS E1, EXAM V1 -> PR#63 FLOW V1 OS -> PR#64 V1.1 Upgrade (THE LAST EXAM V1.1 + `V1.1証明` + `PLYA V2.1` + `flow auto`/`flow macro`) -> **FLOW Security & Speedup Hardening** (Edit Permit Gate, 2ms UserNS/NetNS + 1-container Docker `:ro` sandbox, Ed25519 external CI attestation, 46-attack Red-Team oracle, transitive kernel closure, Salami drift & core deletion locks, `@FLOW_AUTO` SSOT docs + -60% slim `AGENTS.md`, real-artifact pipeline, 4-pillar prebuild/test-cache/incremental/parallel speedup).

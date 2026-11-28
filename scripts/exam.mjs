@@ -185,7 +185,8 @@ async function runSingleTarget({ ir, flags, runId, runDir, envCheck }) {
     fullRun: fullRun && !flags['skip-chrome'] && !flags['skip-repo'],
     solversReady: envCheck.ready,
     solversTotal: envCheck.total,
-    maxFails: flags['max-fails'] ? Number(flags['max-fails']) : 120,
+    maxFails: flags['max-fails'] ? Number(flags['max-fails']) : 40,
+    verbose: Boolean(flags.verbose),
     certOutPath: flags['cert-out'] || null,
   });
 
@@ -210,8 +211,29 @@ async function main() {
       if (!sv.ok) process.stdout.write(`MISSING|${sv.missing.join(',')}\n`);
       process.exit(sv.ok ? EXIT_PASS : EXIT_SOLVER_MISSING);
     }
-    const r = spawnSync('bash', [path.join(REPO_ROOT, 'scripts/exam_setup.sh')], { stdio: 'inherit' });
+    const sArgs = [path.join(REPO_ROOT, 'scripts/exam_setup.sh')];
+    if (flags['force-rebuild']) sArgs.push('--force-rebuild');
+    if (flags['skip-apt']) sArgs.push('--skip-apt');
+    if (flags['export-prebuild']) sArgs.push(`--export-prebuild=${flags['export-prebuild']}`);
+    if (flags['import-prebuild']) sArgs.push(`--import-prebuild=${flags['import-prebuild']}`);
+    const r = spawnSync('bash', sArgs, { stdio: 'inherit' });
     process.exit(r.status ?? 1);
+  }
+
+  if (flags.project) {
+    const { runRealArtifactDirectChecks } = await import('./exam/real_artifact_loader.mjs');
+    const res = runRealArtifactDirectChecks(String(flags.project));
+    if (res.error) {
+      process.stdout.write(`TLX11_REAL|status=ERR|msg=${res.error}\n`);
+      process.exit(EXIT_ERROR);
+    }
+    process.stdout.write(
+      `TLX11_REAL|project=${res.projectId}|mode=${res.verificationMode}|complete=${res.complete ? 1 : 0}|missing=${res.missingArtifacts.join(',') || 'none'}|sha=${res.bundleSha256.slice(0, 16)}\n`
+    );
+    for (const [dom, info] of Object.entries(res.domains)) {
+      process.stdout.write(`REAL_DOM|${dom}|status=${info.status}|detail=${JSON.stringify(info)}\n`);
+    }
+    process.exit(res.ok ? EXIT_PASS : 2);
   }
 
   if (sub === 'list') {

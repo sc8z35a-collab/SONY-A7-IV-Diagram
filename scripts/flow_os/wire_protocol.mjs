@@ -89,9 +89,10 @@ export function enforceFlowBudget(text, {
     };
   }
 
-  fs.mkdirSync(agentWs, { recursive: true });
+  fs.mkdirSync(agentWs, { recursive: true, mode: 0o700 });
   const spillPath = path.join(agentWs, `spill_${cmd}_${Date.now()}.log`);
-  fs.writeFileSync(spillPath, fullText, 'utf8');
+  fs.writeFileSync(spillPath, fullText, { encoding: 'utf8', mode: 0o600 });
+  try { fs.chmodSync(spillPath, 0o600); } catch {}
 
   const lines = fullText.split('\n');
   const reserve = 36; // space for spill footer
@@ -115,6 +116,20 @@ export function enforceFlowBudget(text, {
     spilled: true,
     spillPath,
   };
+}
+
+/**
+ * Purge temporary spill & DAG logs inside agentWs on park/finish (prevents stale log leaks).
+ */
+export function purgeAgentSpillLogs(agentWs) {
+  if (!agentWs || !fs.existsSync(agentWs)) return 0;
+  let removed = 0;
+  for (const fn of fs.readdirSync(agentWs)) {
+    if (fn.startsWith('spill_') || fn.startsWith('dag_')) {
+      try { fs.unlinkSync(path.join(agentWs, fn)); removed++; } catch {}
+    }
+  }
+  return removed;
 }
 
 /**

@@ -1,0 +1,24 @@
+# FLOW Security — Persistent Read-Only Solver Sandbox Image (`tlx11-sandbox:latest`)
+# Build once: `docker build -t tlx11-sandbox:latest -f scripts/exam/Dockerfile.sandbox .`
+# Used by `scripts/flow_os/solver_sandbox.mjs` as a single persistent container per EXAM run
+# (`--network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges -v <repo>:/repo:ro`).
+
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
+    ca-certificates bash coreutils \
+    calculix-ccx gmsh python3-gmsh tetgen netgen openfoam \
+    ngspice gnucap gnucap-default-plugins0 kicad \
+    freefem++ getdp z3 python3-z3 cvc5 minisat boolector coinor-cbc glpk-utils python3-pulp \
+    libbullet-dev libode-dev libdart-dev libfcl-dev libcgal-dev \
+    libocct-foundation-dev libocct-modeling-data-dev libocct-modeling-algorithms-dev libocct-data-exchange-dev \
+    libeigen3-dev qhull-bin admesh libgts-dev libfftw3-dev libnlopt-dev \
+    yosys nextpnr-ice40 verilator iverilog ghdl octave maxima klayout magic netgen-lvs \
+    python3 python3-numpy python3-scipy python3-sympy python3-networkx python3-opencv \
+    python3-vtk9 python3-cvxopt python3-nlopt python3-rtree python3-igraph python3-pint \
+    python3-statsmodels python3-mpmath \
+  && rm -rf /var/lib/apt/lists/*
+
+USER 65534:65534
+WORKDIR /work

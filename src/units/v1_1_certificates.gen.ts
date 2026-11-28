@@ -21,6 +21,6 @@ export interface V11CertificateRecord {
   readonly signature: string;
 }
 
-export const V11_EXAM_KERNEL_SHA256 = "4b7e5a5a4ed08202e019919d1a8ac88d5ead18463091e63e38229dfc9994a3a7";
+export const V11_EXAM_KERNEL_SHA256 = "7f9cf661e2b3c047d845aa1d1f2d42bfa57ac7e313467eb1d237d40bd5219186";
 
 export const V11_CERTIFICATES: Readonly<Record<string, V11CertificateRecord>> = Object.freeze({});

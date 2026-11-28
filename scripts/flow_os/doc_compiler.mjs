@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { EXIT_BLOCKED, EXIT_OK } from './kernel_config.mjs';
 import { estimateTokens } from './wire_protocol.mjs';
+import { verifyAutoDocBlocks } from './doc_sync.mjs';
 
 function walkMarkdown(dirAbs, rootAbs, skipDirs, out = []) {
   if (!fs.existsSync(dirAbs)) return out;
@@ -30,7 +31,7 @@ function walkMarkdown(dirAbs, rootAbs, skipDirs, out = []) {
   return out;
 }
 
-export function auditTwoBooks(ctx, { strict = false } = {}) {
+export async function auditTwoBooks(ctx, { strict = false } = {}) {
   const books = ctx.cfg.books || {};
   const envRel = books.envManual || 'AGENTS.md';
   const domRel = books.domainManual || 'README.md';
@@ -76,6 +77,12 @@ export function auditTwoBooks(ctx, { strict = false } = {}) {
   if (missingRequired.length > 0) violations.push(`ENV_MISSING_KEYS:${missingRequired.join(',')}`);
   if (strict && mdFiles.length !== 2) violations.push(`STRICT_BOOK_COUNT:${mdFiles.length}!=2`);
 
+  // Autonomous code-vs-doc metric drift verification (`@FLOW_AUTO:*` markers -> EXIT 2 on ANY mismatch!)
+  const driftRes = await verifyAutoDocBlocks(ctx);
+  if (!driftRes.ok) {
+    for (const d of driftRes.drifts) violations.push(d);
+  }
+
   return {
     ok: violations.length === 0,
     exitCode: violations.length === 0 ? EXIT_OK : EXIT_BLOCKED,
@@ -85,6 +92,7 @@ export function auditTwoBooks(ctx, { strict = false } = {}) {
     extraManuals,
     missingBooks,
     missingRequired,
+    checkedAutoBlocks: driftRes.checkedBlocks,
     stats,
     totalTokens: stats[envRel].tokens + stats[domRel].tokens,
     totalBytes: stats[envRel].bytes + stats[domRel].bytes,

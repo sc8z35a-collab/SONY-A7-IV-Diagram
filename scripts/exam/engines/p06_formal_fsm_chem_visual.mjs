@@ -310,7 +310,7 @@ export async function runEX22(ctx) {
     const rOrtho = await runExternal('node', [
       path.join(REPO_ROOT, 'scripts/pp.mjs'),
       '--mode=cad', `--unit=${ir.unitId}`, '--quality=high', '--ortho-pack', `--out=${ppDir}`,
-    ], { timeoutSec: 180 });
+    ], { timeoutSec: 180, allowNetwork: true });
     ppOk = rOrtho.ok;
     // Analyze rendered PNGs with Python OpenCV + scikit-image
     const cvScript = `
@@ -348,7 +348,7 @@ print(json.dumps(out))
       } catch { /* keep fallback */ }
     }
     // Always stop pp daemon cleanly
-    await runExternal('node', [path.join(REPO_ROOT, 'scripts/pp.mjs'), '--daemon=stop'], { timeoutSec: 30 });
+    await runExternal('node', [path.join(REPO_ROOT, 'scripts/pp.mjs'), '--daemon=stop'], { timeoutSec: 30, allowNetwork: true });
   } else if (ctx.cache.silhouette) {
     // Use EX04 OpenCV exact geometry depth-buffer islands for playground / selftest scenes
     const sv = ctx.cache.silhouette.views || {};
@@ -451,7 +451,10 @@ export async function runEX24(ctx) {
 
   let tscOk = true;
   if (ir.sourceKind === 'unit' && !ctx.opts.skipRepoChecks) {
-    const rTsc = await runExternal('npx', ['tsc', '--noEmit'], { timeoutSec: 120 });
+    const localTsc = path.join(REPO_ROOT, 'node_modules/.bin/tsc');
+    const rTsc = fs.existsSync(localTsc)
+      ? await runExternal(localTsc, ['--noEmit'], { timeoutSec: 120 })
+      : await runExternal('npx', ['tsc', '--noEmit'], { timeoutSec: 120 });
     tscOk = rTsc.ok;
   }
 

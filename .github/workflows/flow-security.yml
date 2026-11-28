@@ -1,0 +1,68 @@
+name: FLOW Security & Integrity Gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flow-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flow-security-gate:
+    name: FLOW Security Gate (46-Attack Oracle, 13-Layer Audit, SSOT Docs, Build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies (frozen lockfile)
+        run: npm ci
+
+      - name: FLOW OS Complete Self-Proof (SEC-12 46/46 + Permit + Sandbox + Swarm + Macro + 2-Book)
+        run: FLOW_NO_CACHE=1 npm run flow -- selftest --raw
+
+      - name: 13-Layer Security Fortress Full Audit
+        run: FLOW_NO_CACHE=1 npm run flow -- security audit --full --raw
+
+      - name: Strict 2-Book & @FLOW_AUTO SSOT Drift Gate
+        run: FLOW_NO_CACHE=1 npm run flow -- doc audit --strict --raw
+
+      - name: Uncached Catalog + TypeScript + Parts Parity + Production Build
+        run: |
+          FLOW_NO_CACHE=1 npm run catalog
+          FLOW_NO_CACHE=1 ./node_modules/.bin/tsc --noEmit
+          FLOW_NO_CACHE=1 node scripts/validate_parts.mjs --ai
+          FLOW_NO_CACHE=1 npm run build
+
+      - name: Verify V1.1証明 Certificates & Optional Ed25519 CI Attestation
+        env:
+          FLOW_ED25519_PRIVATE_KEY_PEM: ${{ secrets.FLOW_ED25519_PRIVATE_KEY_PEM }}
+        run: |
+          node -e "
+            import('./scripts/flow_os/crypto_attestation.mjs').then(({ signWithExternalEd25519, verifyEd25519Attestation, loadPinnedPublicKey }) => {
+              const payload = { commit: process.env.GITHUB_SHA || 'local', ref: process.env.GITHUB_REF || 'local' };
+              const signed = signWithExternalEd25519('CI_GATE', payload);
+              console.log('CI_ATTEST|' + JSON.stringify({ status: signed.attestation, attestedBy: signed.attestedBy }));
+              const pinned = loadPinnedPublicKey(process.cwd());
+              if (signed.attestation === 'CI_ATTESTED' && pinned) {
+                const v = verifyEd25519Attestation('CI_GATE', { ...payload, ed25519Signature: signed.ed25519Signature }, { repoRoot: process.cwd() });
+                console.log('CI_VERIFY|' + JSON.stringify(v));
+                if (!v.ok) process.exit(6);
+              }
+            });
+          "

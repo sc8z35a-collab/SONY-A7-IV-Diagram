@@ -28,6 +28,7 @@ import {
   validateCommandSafety,
 } from './security_fortress.mjs';
 import { formatFlowHeader, formatRecord } from './wire_protocol.mjs';
+import { scrubEnv } from './solver_sandbox.mjs';
 
 export const MACRO_SCHEMA = 'flow-macro/v1.1';
 export const MAX_MACRO_STEPS = 40;
@@ -260,9 +261,10 @@ function spawnAsyncSafe(bin, args, { cwd, env, timeoutMs = 600_000 }) {
   }
 
   return new Promise((resolve) => {
+    const safeEnv = scrubEnv(env || {}, env || process.env);
     const child = spawn(bin, args, {
       cwd,
-      env,
+      env: safeEnv,
       shell: false,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
@@ -325,28 +327,44 @@ function runInternalScaffoldUnit(ctx, args) {
   };
 }
 
+const SAFE_MACRO_VAR_RX = /^[A-Za-z0-9_.,:/-]{0,128}$/;
+
+export function validateMacroVars(vars = {}) {
+  const violations = [];
+  for (const [k, rawVal] of Object.entries(vars || {})) {
+    const v = String(rawVal ?? '');
+    if (!SAFE_MACRO_VAR_RX.test(v) || /\s--/.test(v) || v.startsWith('--') || v.includes('..') || /\bhuman-report\b/i.test(v)) {
+      violations.push({ layer: 'SEC-13', rule: 'MACRO_VAR_INJECTION', msg: `Unsafe macro var '${k}=${v.slice(0, 48)}'` });
+    }
+  }
+  return violations;
+}
+
 /**
  * Execute a validated Macro / Auto Pipeline DAG with wave-level parallelism,
- * pre-mutation `bg snap`, conditional branching, and bounded spill-log reporting.
+ * pre-mutation `bg snap`, conditional branching, strict variable typing, and wave-compressed output.
  */
 export async function executeMacroDag(spec, ctx, agent, opts = {}) {
   const t0 = performance.now();
   const val = validateMacroSpec(spec, ctx.repoRoot);
-  if (!val.ok) {
+  const vars = { ...(spec.defaults || {}), ...(opts.vars || {}) };
+  const varViolations = validateMacroVars(vars);
+  if (!val.ok || varViolations.length > 0) {
+    const allV = [...val.violations, ...varViolations];
     return {
       ok: false,
       exitCode: EXIT_SECURITY_BLOCKED,
       lines: [
-        formatFlowHeader({ cmd: `dag:${spec?.name || 'invalid'}`, status: 'SEC_BLOCK', violations: val.violations.length }),
-        ...val.violations.map((v) => formatRecord('SEC_FAIL', { layer: v.layer, rule: v.rule, msg: v.msg })),
+        formatFlowHeader({ cmd: `dag:${spec?.name || 'invalid'}`, status: 'SEC_BLOCK', violations: allV.length }),
+        ...allV.map((v) => formatRecord('SEC_FAIL', { layer: v.layer, rule: v.rule, msg: v.msg })),
       ],
       stepResults: [],
       elapsedMs: Math.round(performance.now() - t0),
     };
   }
 
-  const vars = { ...(spec.defaults || {}), ...(opts.vars || {}) };
   const dryRun = Boolean(opts.dryRun);
+  const verbose = Boolean(opts.verbose);
   const concurrency = Math.max(1, Math.min(8, Number(opts.concurrency || spec.concurrency || 4)));
 
   if (dryRun) {
@@ -490,18 +508,29 @@ export async function executeMacroDag(spec, ctx, agent, opts = {}) {
   const runId = `${spec.name}_${Date.now()}`;
   const spillLog = path.join(agent.agentWs, `dag_${runId}.log`);
   atomicWriteSync(spillLog, logChunks.join('\n\n') + '\n');
+  try { fs.chmodSync(spillLog, 0o600); } catch {}
 
   const elapsedMs = Math.round(performance.now() - t0);
-  const passCnt = stepResults.filter((r) => r.status === 'PASS').length;
+  const passSteps = stepResults.filter((r) => r.status === 'PASS');
   const skipCnt = stepResults.filter((r) => r.status === 'SKIP').length;
   const failCnt = stepResults.filter((r) => r.status === 'FAIL' || r.status === 'SEC_BLOCK').length;
   const warnCnt = stepResults.filter((r) => r.status === 'WARN').length;
+
+  // Token-compressed output: collapse PASS steps into 1 rollup line by default (emit details for WARN/FAIL or --verbose)
+  const detailLines = verbose
+    ? stepResults.map((r) => formatRecord('STEP', { id: r.id, st: r.status, ms: r.ms, out: r.summary }))
+    : [
+        ...(passSteps.length > 0 ? [formatRecord('PASS_SUM', { count: passSteps.length, ids: passSteps.map((p) => p.id).join(',') })] : []),
+        ...stepResults
+          .filter((r) => r.status !== 'PASS' && r.status !== 'SKIP')
+          .map((r) => formatRecord('STEP', { id: r.id, st: r.status, ms: r.ms, out: r.summary })),
+      ];
 
   const lines = [
     formatFlowHeader({
       cmd: `dag:${spec.name}`,
       status: finalExit === 0 ? (warnCnt > 0 ? 'PASS_WARN' : 'PASS') : (finalExit === EXIT_SECURITY_BLOCKED ? 'SEC_BLOCK' : 'FAIL'),
-      steps: `${passCnt}/${spec.steps.length}`,
+      steps: `${passSteps.length}/${spec.steps.length}`,
       skip: skipCnt,
       warn: warnCnt,
       fail: failCnt,
@@ -509,9 +538,7 @@ export async function executeMacroDag(spec, ctx, agent, opts = {}) {
       ms: elapsedMs,
       log: spillLog,
     }),
-    ...stepResults.map((r) =>
-      formatRecord('STEP', { id: r.id, st: r.status, ms: r.ms, out: r.summary })
-    ),
+    ...detailLines,
   ];
 
   return {

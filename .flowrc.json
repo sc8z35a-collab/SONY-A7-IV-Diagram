@@ -8,7 +8,7 @@
   "books": {
     "envManual": "AGENTS.md",
     "domainManual": "README.md",
-    "maxEnvTokens": 4500,
+    "maxEnvTokens": 2200,
     "maxDomainTokens": 5500,
     "contentAssetDirs": [
       "reports",
@@ -21,6 +21,7 @@
     ],
     "requiredEnvTokens": [
       "flow wake",
+      "flow permit",
       "flow inspect",
       "flow heal",
       "flow ship",
@@ -28,8 +29,9 @@
       "flow finish",
       "flow auto",
       "flow macro",
+      "flow verify",
       "flow swarm",
-      "flow exec",
+      "flow doc tool",
       "flow human-report",
       "TLX11-RECEIPT",
       "V1.1証明",
@@ -37,17 +39,12 @@
       "FLOW-RECEIPT",
       "SEC-01",
       "SEC-13",
-      "scripts/exam.mjs",
-      "scripts/bg.mjs",
-      "scripts/pp.mjs",
-      "scripts/sokutei.mjs",
-      "scripts/sp.mjs",
-      "scripts/dx.mjs",
       "HUMAN_REQUEST_ONLY"
     ]
   },
   "budgets": {
     "wake": 220,
+    "permit": 150,
     "inspect": 300,
     "heal": 400,
     "ship": 350,
@@ -59,7 +56,9 @@
     "doc": 250,
     "auto": 550,
     "macro": 400,
-    "cert": 300
+    "cert": 300,
+    "verify": 300,
+    "cache": 150
   },
   "security": {
     "maxFileMb": 25,
