@@ -446,8 +446,13 @@ export async function compilePlaygroundIr(blueprintPath, opts = {}) {
     });
 
     const mat = resolveMaterialPhysics(rp.materialKey || '', rp.id || rp.partId || '', rp.title || '');
-    const volMm3 = Math.max(0.05, rp.volumeMm3 || ((maxX - minX) * (maxY - minY) * (maxZ - minZ)));
-    const massG = Math.max(0.05, rp.massG || ((volMm3 / 1000.0) * mat.rho));
+    const isV11Blueprint = raw.schema === 'TLX11-PLAYGROUND-BLUEPRINT-V1.1';
+    const volMm3 = Number.isFinite(rp.volumeMm3) ? rp.volumeMm3 : Math.max(0.05, (maxX - minX) * (maxY - minY) * (maxZ - minZ));
+    const massG = Number.isFinite(rp.massG) ? rp.massG : Math.max(0.05, (volMm3 / 1000.0) * mat.rho);
+    const canonicalBox = Array.isArray(rp.box) && rp.box.length === 6 ? rp.box : [minX, minY, minZ, maxX, maxY, maxZ];
+    const explodeVec = Array.isArray(rp.explodeVec) && rp.explodeVec.length === 3
+      ? rp.explodeVec
+      : isV11Blueprint ? [0, 0, 0] : [0, (i + 1) * 8, 0];
     parts.push({
       idx: i,
       id: rp.id || rp.partId || `pg_${i}`,
@@ -458,17 +463,17 @@ export async function compilePlaygroundIr(blueprintPath, opts = {}) {
       subtitle: rp.subtitle || '',
       category: rp.role || 'playground',
       role: rp.role || 'mechanical',
-      matKey: mat.key,
+      matKey: rp.materialKey || mat.key,
       mat,
       flags: 0,
       powerW: rp.powerW || 0,
       volumeMm3: volMm3,
       massG,
       cog: rp.cog || [0.5 * (minX + maxX), 0.5 * (minY + maxY), 0.5 * (minZ + maxZ)],
-      box: [minX, minY, minZ, maxX, maxY, maxZ],
+      box: canonicalBox,
       assembledPos: rp.pos || [0, 0, 0],
-      explodeVec: rp.explodeVec || [0, (i + 1) * 8, 0],
-      explodeOffset: rp.explodeVec || [0, (i + 1) * 8, 0],
+      explodeVec,
+      explodeOffset: explodeVec,
       meshStart,
       meshCount: 1,
       srcLoc: `${path.basename(blueprintPath)}#${i}`,
@@ -490,12 +495,13 @@ export async function compilePlaygroundIr(blueprintPath, opts = {}) {
   const ir = {
     unitId,
     sourceKind: 'playground',
+    expectedPlaygroundSha256: typeof raw.canonical3dSha256 === 'string' ? raw.canonical3dSha256 : null,
     irSha: hash,
     runDir,
     primaryTier: 'ultra',
     declaredPartCount: parts.length,
     maxDrawCallsBudget: 64,
-    unitJson: { unitId, declaredPartCount: parts.length, parts: parts.map((p) => ({ id: p.id, title: p.title, subtitle: p.subtitle, category: p.category, summary: p.title, specs: [], references: ['PG-V2', 'TLX1', 'IEC62368'] })) },
+    unitJson: { unitId, declaredPartCount: parts.length, parts: parts.map((p) => ({ id: p.id, title: p.title, subtitle: p.subtitle, category: p.category, summary: p.title, specs: [], references: ['PG-V2.1', 'TLX11', 'IEC62368'] })) },
     unitInfo: null,
     bbox: [gMinX, gMinY, gMinZ, gMaxX, gMaxY, gMaxZ],
     envelopeMm: [gMaxX - gMinX, gMaxY - gMinY, gMaxZ - gMinZ],

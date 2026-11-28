@@ -32,6 +32,12 @@ import {
   runPlyaVerificationPipeline,
   serializeSnapshotsForExamEngine,
 } from './PlyaVerificationPipeline';
+import { resolvePlaygroundMaterial } from './exam_core/MaterialPhysicsDb';
+import {
+  V11SealVerification,
+  verifyPlaygroundV11Seal,
+} from '../core/v11_seal_verifier';
+import type { V11CertificateRecord } from '../units/v1_1_certificates.gen';
 import type { ExamWorkerRequest, ExamWorkerResponse } from './exam_core/ExamPlaygroundWorker';
 
 export interface PlaygroundHostBridge {
@@ -463,6 +469,11 @@ export class CadPlaygroundStudio {
   private lastScoreText = '';
   private lastScoreStatus = '';
   private lastLiveStripSig = '';
+  private lastV11BadgeSig = '';
+  private importedV11Cert: (V11CertificateRecord & { solverManifestSha256?: string }) | null = null;
+  private lastV11Seal: V11SealVerification | null = null;
+  private v11SealBadgeEl!: HTMLButtonElement;
+  private certFileInputEl!: HTMLInputElement;
   private savedShadowEnabled = false;
   private savedToneMapping: THREE.ToneMapping = THREE.ACESFilmicToneMapping;
   private savedPixelRatio = 1.0;
@@ -476,6 +487,8 @@ export class CadPlaygroundStudio {
     ffd: HTMLElement;
     vig: HTMLElement;
     col: HTMLElement;
+    boot: HTMLElement;
+    yieldPct: HTMLElement;
   } | null = null;
   private placedRowByUid = new Map<string, HTMLElement>();
   private lastPlacedStructureSig = '';
@@ -610,6 +623,9 @@ export class CadPlaygroundStudio {
 
   private markSceneDirty(): void {
     this.sceneEpoch++;
+    if (this.importedV11Cert) {
+      this.refreshPlaygroundV11Seal(this.buildSnapshots(), true);
+    }
   }
 
   private scheduleDeferredRender(delayMs = 12): void {
@@ -1200,7 +1216,7 @@ export class CadPlaygroundStudio {
             <span>目標</span>
             <select data-field="profileSelect">${profileOptions}</select>
           </label>
-          <label class="pg-snap-field pg-strictness-field" title="PLYA V2 (THE LAST EXAM V1継承) 厳格度モード">
+          <label class="pg-snap-field pg-strictness-field" title="PLYA V2.1 (THE LAST EXAM V1.1継承 · 24ソルバ / 256項目) 厳格度モード">
             <span>EXAM</span>
             <select data-field="strictnessSelect">
               <option value="design" selected>標準</option>
@@ -1218,16 +1234,20 @@ export class CadPlaygroundStudio {
             </select>
           </label>
           <button type="button" class="pg-btn pg-btn-sm" data-action="exportJson" title="設計JSONを保存">保存</button>
-          <button type="button" class="pg-btn pg-btn-sm" data-action="importJson" title="設計JSONを読込">読込</button>
-          <button type="button" class="pg-btn pg-btn-grade pg-btn-plya" data-action="evaluate" title="PLYA V2 一括検査（THE LAST EXAM V1継承 · 実3D三角形BVH・FEA・接触熱・MNA・2000光線MC 全16ソルバ / 128項目＆1000点採点）">
+          <button type="button" class="pg-btn pg-btn-sm" data-action="importJson" title="設計JSON / V1.1証明書を読込">読込</button>
+          <button type="button" class="v11-seal-pill pg-v11-seal-pill" data-field="v11SealBadge" data-status="UNVERIFIED" title="クリックで V1.1証明 (.v1_1.cert.json) を読込・検証（3D編集で即時剥奪）">
+            <span class="v11-seal-dot"></span>
+            <span data-field="v11SealText">V1.1 未刻印</span>
+          </button>
+          <button type="button" class="pg-btn pg-btn-grade pg-btn-plya" data-action="evaluate" title="PLYA V2.1 一括検査（THE LAST EXAM V1.1継承 · 実3D三角形BVH・起動シーケンス・制御安定・SI/ESD・量産Cpk 全24ソルバ / 256項目＆1000点採点）">
             <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>PLYA V2</span>
+            <span>PLYA V2.1</span>
             <strong class="pg-score-pill" data-field="scoreBadge">-- / 1000</strong>
           </button>
         </div>
       </header>
 
-      <button type="button" class="pg-viewport-alert" data-field="viewportAlert" title="クリックでPLYA V2 (EXAM継承) 詳細レポートを表示"></button>
+      <button type="button" class="pg-viewport-alert" data-field="viewportAlert" title="クリックでPLYA V2.1 (EXAM V1.1継承) 詳細レポートを表示"></button>
 
       <aside class="pg-left-panel" aria-label="全パーツカタログ">
         <div class="pg-panel-head">
@@ -1284,11 +1304,11 @@ export class CadPlaygroundStudio {
       </nav>
 
       <div class="pg-report-modal" data-field="reportModal" aria-hidden="true">
-        <div class="pg-report-card" role="dialog" aria-modal="true" aria-label="PLYA V2 EXAM継承 16ソルバ / 128項目 評価レポート">
+        <div class="pg-report-card" role="dialog" aria-modal="true" aria-label="PLYA V2.1 EXAM V1.1継承 24ソルバ / 256項目 評価レポート">
           <div class="pg-report-head">
             <div>
-              <div class="pg-report-kicker">THE LAST EXAM V1 INHERITED ENGINE · PLAY GROUND 1.1</div>
-              <h2 class="pg-report-title">PLYA V2 全16ソルバ / 128項目 実3D物理検証 ＆ 1,000点満点評価レポート</h2>
+              <div class="pg-report-kicker">THE LAST EXAM V1.1 INHERITED ENGINE · 12 PILLARS · PLAY GROUND 1.1</div>
+              <h2 class="pg-report-title">PLYA V2.1 全24ソルバ / 256項目 実3D物理検証・実機起動保証 ＆ 1,000点評価レポート</h2>
             </div>
             <button type="button" class="pg-btn pg-btn-icon" data-action="closeReport" aria-label="閉じる">
               <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -1322,6 +1342,7 @@ export class CadPlaygroundStudio {
       <div class="pg-toast" data-field="toast"></div>
       <div class="pg-loading" data-field="loading"><span>3D CADジオメトリ抽出中...</span></div>
       <input type="file" accept=".json,application/json" style="display:none" data-field="fileInput" />
+      <input type="file" accept=".json,.cert.json,application/json" style="display:none" data-field="certFileInput" />
     `;
 
     this.catalogListEl = this.rootEl.querySelector('[data-field="catalogList"]') as HTMLElement;
@@ -1337,6 +1358,7 @@ export class CadPlaygroundStudio {
     this.reportContentEl = this.rootEl.querySelector('[data-field="reportContent"]') as HTMLElement;
     this.shortcutModalEl = this.rootEl.querySelector('[data-field="shortcutModal"]') as HTMLElement;
     this.scoreBadgeEl = this.rootEl.querySelector('[data-field="scoreBadge"]') as HTMLElement;
+    this.v11SealBadgeEl = this.rootEl.querySelector('[data-field="v11SealBadge"]') as HTMLButtonElement;
     this.profileSelectEl = this.rootEl.querySelector('[data-field="profileSelect"]') as HTMLSelectElement;
     this.strictnessSelectEl = this.rootEl.querySelector('[data-field="strictnessSelect"]') as HTMLSelectElement;
     this.templateSelectEl = this.rootEl.querySelector('[data-field="templateSelect"]') as HTMLSelectElement;
@@ -1360,6 +1382,7 @@ export class CadPlaygroundStudio {
     this.undoBtn = this.rootEl.querySelector('[data-action="undo"]') as HTMLButtonElement;
     this.redoBtn = this.rootEl.querySelector('[data-action="redo"]') as HTMLButtonElement;
     const fileInput = this.rootEl.querySelector('[data-field="fileInput"]') as HTMLInputElement;
+    this.certFileInputEl = this.rootEl.querySelector('[data-field="certFileInput"]') as HTMLInputElement;
 
     // Initialize fixed-pool 24-row virtualized catalog scroller (ZERO DOM rebuilds per keystroke!)
     this.initVirtualCatalog();
@@ -1406,6 +1429,18 @@ export class CadPlaygroundStudio {
       const file = fileInput.files?.[0];
       if (file) void this.importBlueprintFile(file);
       fileInput.value = '';
+    });
+    this.v11SealBadgeEl.addEventListener('click', () => {
+      if (this.importedV11Cert) {
+        this.runPlyaPipeline(true);
+      } else {
+        this.certFileInputEl.click();
+      }
+    });
+    this.certFileInputEl.addEventListener('change', () => {
+      const file = this.certFileInputEl.files?.[0];
+      if (file) void this.importV11CertificateFile(file);
+      this.certFileInputEl.value = '';
     });
     this.rootEl.querySelector('[data-action="evaluate"]')?.addEventListener('click', () => {
       this.runPlyaPipeline(true);
@@ -1875,8 +1910,8 @@ export class CadPlaygroundStudio {
     }
     this.showToast(
       mode === 'exam_strict'
-        ? 'PLYA V2: EXAM極限モード（THE LAST EXAM V1厳格閾値）へ切替'
-        : 'PLYA V2: 標準設計モードへ切替'
+        ? 'PLYA V2.1: EXAM極限モード（THE LAST EXAM V1.1厳格閾値）へ切替'
+        : 'PLYA V2.1: 標準設計モードへ切替'
     );
     return rep;
   }
@@ -2683,8 +2718,11 @@ export class CadPlaygroundStudio {
 
   private renderLiveTelemetryStrip(r: CameraEngineeringReport): void {
     const ffd = r.metrics.flangeDistanceMm !== null ? `${r.metrics.flangeDistanceMm.toFixed(1)}mm` : '--';
+    const im = this.lastPlyaReport?.industrialMetrics;
+    const bootTxt = im ? `${im.bootReadinessPct.toFixed(0)}%` : '--';
+    const yieldTxt = im ? `${im.mfgYieldPct.toFixed(1)}%` : '--';
     const cls = r.canOperate ? 'pg-live-top is-pass' : 'pg-live-top is-fail';
-    const sig = `${cls}|${r.totalScore}|${r.rank}|${r.resolvedProfileLabel}|${r.telemetry.estimatedMassG}|${ffd}|${r.telemetry.vignettingPct}|${r.metrics.severeCollisionCount}`;
+    const sig = `${cls}|${r.totalScore}|${r.rank}|${r.resolvedProfileLabel}|${r.telemetry.estimatedMassG}|${ffd}|${r.telemetry.vignettingPct}|${r.metrics.severeCollisionCount}|${bootTxt}|${yieldTxt}`;
     if (this.liveStripRefs && sig === this.lastLiveStripSig) return;
     this.lastLiveStripSig = sig;
     if (!this.liveStripRefs) {
@@ -2697,6 +2735,8 @@ export class CadPlaygroundStudio {
         <div class="pg-live-grid">
           <div><span>質量</span><strong data-ls="mass"></strong></div>
           <div><span>フランジ</span><strong data-ls="ffd"></strong></div>
+          <div><span>起動確実</span><strong data-ls="boot"></strong></div>
+          <div><span>量産歩留</span><strong data-ls="yieldPct"></strong></div>
           <div><span>ケラレ</span><strong data-ls="vig"></strong></div>
           <div><span>干渉</span><strong data-ls="col"></strong></div>
         </div>
@@ -2710,6 +2750,8 @@ export class CadPlaygroundStudio {
         ffd: this.liveStripEl.querySelector('[data-ls="ffd"]') as HTMLElement,
         vig: this.liveStripEl.querySelector('[data-ls="vig"]') as HTMLElement,
         col: this.liveStripEl.querySelector('[data-ls="col"]') as HTMLElement,
+        boot: this.liveStripEl.querySelector('[data-ls="boot"]') as HTMLElement,
+        yieldPct: this.liveStripEl.querySelector('[data-ls="yieldPct"]') as HTMLElement,
       };
     }
     const refs = this.liveStripRefs;
@@ -2719,6 +2761,8 @@ export class CadPlaygroundStudio {
     refs.prof.textContent = r.resolvedProfileLabel;
     refs.mass.textContent = `${r.telemetry.estimatedMassG}g`;
     refs.ffd.textContent = ffd;
+    refs.boot.textContent = bootTxt;
+    refs.yieldPct.textContent = yieldTxt;
     refs.vig.textContent = `${r.telemetry.vignettingPct}%`;
     refs.col.textContent = `${r.metrics.severeCollisionCount}件`;
   }
@@ -3169,19 +3213,20 @@ export class CadPlaygroundStudio {
     this.rebuildOverlayLines(false);
 
     // Shadow-string diff cache eliminates redundant DOM style/text writes on every PLYA tick!
+    const solverTotal = plya.tools.length;
     let nextAlertCls = 'pg-viewport-alert';
     let nextAlertText = '';
     if (snaps.length === 0) {
       nextAlertCls = 'pg-viewport-alert';
     } else if (errorPartCount > 0) {
       nextAlertCls = 'pg-viewport-alert is-visible is-error';
-      nextAlertText = `🔴 PLYA V2 (EXAM): エラー部品 ${errorPartCount}個 · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目PASS — クリックで詳細＆自動修復`;
+      nextAlertText = `🔴 PLYA V2.1 (EXAM V1.1): エラー部品 ${errorPartCount}個 · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目 · 起動${plya.industrialMetrics.bootReadinessPct.toFixed(0)}% — クリックで詳細＆自動修復`;
     } else if (warnPartCount > 0 || plya.failCount > 0) {
       nextAlertCls = 'pg-viewport-alert is-visible is-warn';
-      nextAlertText = `⚠️ PLYA V2 (EXAM): 注意 ${warnPartCount}部品 / ${plya.passCount}/16ソルバ (${plya.assertionPassCount}/${plya.assertionTotalCount}項目) — クリックで詳細確認`;
+      nextAlertText = `⚠️ PLYA V2.1 (EXAM V1.1): 注意 ${warnPartCount}部品 / ${plya.passCount}/${solverTotal}ソルバ (${plya.assertionPassCount}/${plya.assertionTotalCount}項目) · 起動${plya.industrialMetrics.bootReadinessPct.toFixed(0)}%`;
     } else {
       nextAlertCls = 'pg-viewport-alert is-visible is-ok';
-      nextAlertText = `✅ PLYA V2 全16ソルバ / ${plya.assertionPassCount}/${plya.assertionTotalCount}項目合格 · ${report.totalScore}/1000 (${report.rank})`;
+      nextAlertText = `✅ PLYA V2.1 全${solverTotal}ソルバ / ${plya.assertionPassCount}/${plya.assertionTotalCount}項目合格 · 起動${plya.industrialMetrics.bootReadinessPct.toFixed(0)}% · ${report.totalScore}/1000 (${report.rank})`;
     }
     if (nextAlertCls !== this.lastAlertCls) {
       this.lastAlertCls = nextAlertCls;
@@ -3203,6 +3248,7 @@ export class CadPlaygroundStudio {
       this.scoreBadgeEl.dataset.status = nextScoreStatus;
     }
 
+    this.refreshPlaygroundV11Seal(snaps, true, plya.industrialMetrics.canonical3dSha256);
     this.renderLiveTelemetryStrip(report);
     this.renderPlacedList();
     this.renderInspector();
@@ -3212,6 +3258,100 @@ export class CadPlaygroundStudio {
       this.host.requestRender();
     }
     return report;
+  }
+
+  public getV11SealStatus(): V11SealVerification {
+    if (!this.lastV11Seal) {
+      return this.refreshPlaygroundV11Seal(this.buildSnapshots(), false);
+    }
+    return this.lastV11Seal;
+  }
+
+  public importV11Certificate(
+    cert: V11CertificateRecord & { solverManifestSha256?: string }
+  ): V11SealVerification {
+    this.importedV11Cert = cert;
+    const res = this.refreshPlaygroundV11Seal(this.buildSnapshots(), false);
+    if (res.valid) {
+      this.showToast(`✅ V1.1証明 刻印確認 (${cert.certId.slice(0, 32)}...) — 3D変更時は即時剥奪されます`);
+    } else {
+      this.showToast(`⚠️ V1.1証明 検証NG [${res.status}]: ${res.reason}`);
+    }
+    if (this.reportModalEl.classList.contains('is-open') && this.lastReport) {
+      this.renderReportModal(this.lastReport, this.lastPlyaReport);
+    }
+    return res;
+  }
+
+  private async importV11CertificateFile(file: File): Promise<void> {
+    try {
+      const text = await file.text();
+      if (!this.active) return;
+      const parsed = JSON.parse(text) as V11CertificateRecord & {
+        schema?: string;
+        solverManifestSha256?: string;
+      };
+      if (!parsed || typeof parsed !== 'object' || !parsed.certId || !parsed.primarySha256) {
+        throw new Error('not a V1.1 certificate');
+      }
+      this.importV11Certificate(parsed);
+    } catch {
+      this.showToast('V1.1証明ファイル (.v1_1.cert.json) の形式が正しくありません');
+    }
+  }
+
+  private refreshPlaygroundV11Seal(
+    snaps: readonly PlacedPartSnapshot[],
+    notifyOnRevoke = true,
+    precomputedSha?: string
+  ): V11SealVerification {
+    const prevStatus = this.lastV11Seal?.status ?? 'UNVERIFIED';
+    let verification: V11SealVerification;
+    if (!this.importedV11Cert && precomputedSha) {
+      verification = {
+        status: 'UNVERIFIED',
+        valid: false,
+        unitId: 'playground',
+        badgeLabel: 'V1.1 未刻印',
+        reason: 'EX48(.tlx11.json)出力 → EXAM V1.1 100%合格 → 証明書読込で刻印',
+        livePrimarySha256: precomputedSha,
+        cert: null,
+      };
+    } else {
+      const serialized = serializeSnapshotsForExamEngine(snaps);
+      const canonParts = serialized.map((s) => {
+        const mat = resolvePlaygroundMaterial(s.entry);
+        return {
+          id: `${s.entry.partId}_${s.uid.slice(-4)}`,
+          matKey: mat.preset,
+          assembledPos: s.position,
+          explodeOffset: [0, 0, 0] as const,
+          box: s.box,
+          tris: s.tris,
+          volumeMm3: s.volumeMm3,
+          massG: (s.volumeMm3 / 1000) * mat.rho,
+        };
+      });
+      verification = verifyPlaygroundV11Seal(this.importedV11Cert, canonParts);
+    }
+
+    this.lastV11Seal = verification;
+    const sig = `${verification.status}|${verification.badgeLabel}`;
+    if (this.v11SealBadgeEl && sig !== this.lastV11BadgeSig) {
+      this.lastV11BadgeSig = sig;
+      this.v11SealBadgeEl.dataset.status = verification.status;
+      this.v11SealBadgeEl.title = `${verification.badgeLabel} — ${verification.reason}`;
+      const txtEl = this.v11SealBadgeEl.querySelector('[data-field="v11SealText"]');
+      if (txtEl) txtEl.textContent = verification.badgeLabel;
+    }
+
+    // INSTANT AUTOMATIC REVOCATION ALERT: whenever an active CERTIFIED seal drifts even by 0.0001mm!
+    if (notifyOnRevoke && prevStatus === 'CERTIFIED' && verification.status === 'REVOKED_GEOMETRY_DRIFT') {
+      this.showToast(
+        '⚠️ 3Dデータ変更検知 — V1.1証明を即時剥奪しました！再刻印には EXAM V1.1 全1,080項目 100%合格が必要です'
+      );
+    }
+    return verification;
   }
 
   public runEngineeringEvaluation(force = false, deferRender = false): CameraEngineeringReport {
@@ -3249,7 +3389,7 @@ export class CadPlaygroundStudio {
       this.reportModalEl.setAttribute('aria-hidden', 'false');
     }
     this.showToast(
-      `PLYA V2完了 (${plya.totalDurationMs.toFixed(1)}ms): ${plya.passCount}/16ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目 · ${plya.engineeringReport.totalScore}点`
+      `PLYA V2.1完了 (${plya.totalDurationMs.toFixed(1)}ms): ${plya.passCount}/${plya.tools.length}ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目 · 起動${plya.industrialMetrics.bootReadinessPct.toFixed(0)}% · ${plya.engineeringReport.totalScore}点`
     );
     return plya;
   }
@@ -3282,6 +3422,8 @@ export class CadPlaygroundStudio {
         : '未計測';
     const cogText = `(${r.telemetry.centerOfGravityMm.map((v) => v.toFixed(0)).join(', ')}) mm`;
     const radarSvg = renderEngineeringRadarSvg(r);
+    const solverTotal = plya?.tools.length ?? 24;
+    const v11Seal = this.getV11SealStatus();
 
     const repairCount = plya
       ? Object.values(plya.deepReport.overlays.repairShiftsMm).filter(
@@ -3290,7 +3432,7 @@ export class CadPlaygroundStudio {
       : 0;
     const repairBtnHtml =
       repairCount > 0
-        ? `<button type="button" class="pg-btn pg-btn-repair" data-action="applyExamRepair" title="EXAM V1接触グラフから算出した最小修復ベクトルで浮き・干渉部品を1クリック自動修正">⚡ EXAM自動修復 (${repairCount}部品)</button>`
+        ? `<button type="button" class="pg-btn pg-btn-repair" data-action="applyExamRepair" title="EXAM V1.1接触グラフから算出した最小修復ベクトルで浮き・干渉部品を1クリック自動修正">⚡ EXAM自動修復 (${repairCount}部品)</button>`
         : '';
 
     const headlineHtml = plya
@@ -3299,10 +3441,22 @@ export class CadPlaygroundStudio {
         <span>${escapeHtml(plya.simpleHeadline)}</span>
         <div class="pg-plya-head-right">
           ${repairBtnHtml}
-          <span class="pg-plya-speed">PLYA V2 (EXAM継承) · ${plya.totalDurationMs.toFixed(1)}ms · ${plya.passCount}/16ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目</span>
+          <span class="pg-plya-speed">PLYA V2.1 (EXAM V1.1継承) · ${plya.totalDurationMs.toFixed(1)}ms · ${plya.passCount}/${solverTotal}ソルバ · ${plya.assertionPassCount}/${plya.assertionTotalCount}項目</span>
         </div>
       </div>`
       : '';
+
+    const v11BannerHtml = `
+      <div class="pg-v11-cert-banner" data-status="${escapeHtml(v11Seal.status)}">
+        <div class="pg-v11-cert-left">
+          <span class="v11-seal-pill" data-status="${escapeHtml(v11Seal.status)}"><span class="v11-seal-dot"></span>${escapeHtml(v11Seal.badgeLabel)}</span>
+          <span class="pg-v11-cert-reason">${escapeHtml(v11Seal.reason)}</span>
+        </div>
+        <div class="pg-v11-cert-meta">
+          <code>3D-SHA256: ${(v11Seal.livePrimarySha256 || plya?.industrialMetrics.canonical3dSha256 || '--').slice(0, 16)}</code>
+          <button type="button" class="pg-btn pg-btn-sm" data-action="importV11Cert">V1.1証明 読込 (.v1_1.cert.json)</button>
+        </div>
+      </div>`;
 
     const plyaToolsHtml = plya
       ? `
@@ -3354,10 +3508,10 @@ export class CadPlaygroundStudio {
     const quickFixes = plya?.quickFixes ?? r.topActions;
     const actionsHtml =
       quickFixes.length > 0
-        ? `<div class="pg-rep-actions"><h4>ここだけ直せばOK（EXAM V1 優先修正リスト）</h4><ul>${quickFixes
+        ? `<div class="pg-rep-actions"><h4>ここだけ直せばOK（EXAM V1.1 優先修正リスト）</h4><ul>${quickFixes
             .map((a) => `<li>${escapeHtml(a)}</li>`)
             .join('')}</ul></div>`
-        : '<div class="pg-rep-actions is-ok"><h4>全16ソルバ / 128項目クリア！そのまま量産・EXAM V1へ投入できる設計です</h4><p>実3D三角形BVH干渉・ゼロ浮き・重心転倒・FEA構造・接触熱回路・MNA電源・3D配線・2,000光線光学・電食・MTBFのすべてで合格基準を達成しています。</p></div>';
+        : `<div class="pg-rep-actions is-ok"><h4>全${solverTotal}ソルバ / ${plya?.assertionTotalCount ?? 256}項目クリア！実機製造＆EXAM V1.1「V1.1証明」刻印へ投入可能です</h4><p>実3D三角形BVH干渉・ゼロ浮き・電源コールド起動・閉ループ制御・デジタルタイミング・SI/ESD・過渡熱・輸送PSD・Six-Sigma歩留り・ヘルツ摩耗・ポカヨケの全12分野で合格基準を達成しています。</p></div>`;
 
     const catHtml = r.categories
       .map(
@@ -3377,6 +3531,7 @@ export class CadPlaygroundStudio {
     const im = plya?.industrialMetrics;
     const extraTelemetryHtml = im
       ? `
+        <div><span>実機起動確実性 / 量産歩留り</span><strong>${im.bootReadinessPct.toFixed(1)}% · ${im.mfgYieldPct.toFixed(2)}%</strong></div>
         <div><span>重心 / 転倒限界角</span><strong>${cogText} · θ=${im.tippingAngleDeg.toFixed(1)}°</strong></div>
         <div><span>FEA安全率 / たわみ / f1</span><strong>SF ${im.feaSafetyFactor.toFixed(1)} · ${im.maxDeflectionUm.toFixed(1)}µm · ${im.modalF1Hz.toFixed(0)}Hz</strong></div>
         <div><span>接触熱 Tj / 外装Tsurf</span><strong>${im.socJunctionC.toFixed(1)}°C / ${im.chassisSurfaceC.toFixed(1)}°C</strong></div>
@@ -3391,6 +3546,7 @@ export class CadPlaygroundStudio {
 
     this.reportContentEl.innerHTML = `
       ${headlineHtml}
+      ${v11BannerHtml}
       <div class="pg-rep-hero pg-rep-hero-v11">
         <div class="pg-rep-dial ${verdictClass}" style="--pg-pct:${pct}%">
           <div class="pg-rep-dial-inner">
@@ -3421,16 +3577,17 @@ export class CadPlaygroundStudio {
       ${
         plya
           ? `<div class="pg-eda-export-row">
-              <span class="pg-eda-export-label">実産業ツール＆THE LAST EXAM V1連携出力（4形式）：</span>
+              <span class="pg-eda-export-label">実産業ツール＆THE LAST EXAM V1.1連携（5操作）：</span>
               <button type="button" class="pg-btn pg-btn-sm" data-action="exportKiCad">KiCad (.kicad_sch)</button>
               <button type="button" class="pg-btn pg-btn-sm" data-action="exportSpice">ngspice (.cir)</button>
               <button type="button" class="pg-btn pg-btn-sm" data-action="exportCalculix">CalculiX FEA (.inp)</button>
-              <button type="button" class="pg-btn pg-btn-sm pg-btn-exam-export" data-action="exportExamWorkspace">THE LAST EXAM V1 (.tlx.json)</button>
+              <button type="button" class="pg-btn pg-btn-sm pg-btn-exam-export" data-action="exportExamWorkspace">THE LAST EXAM V1.1 (.tlx11.json)</button>
+              <button type="button" class="pg-btn pg-btn-sm" data-action="importV11CertRow">V1.1証明 読込</button>
             </div>`
           : ''
       }
       <details class="pg-rep-details">
-        <summary>詳細データ：技術者 10分野スコア内訳 (クリックで展開)</summary>
+        <summary>詳細データ：技術者 12分野スコア内訳 (クリックで展開)</summary>
         <div class="pg-rep-cats">${catHtml}</div>
       </details>
     `;
@@ -3438,33 +3595,39 @@ export class CadPlaygroundStudio {
     this.reportContentEl.querySelector('[data-action="applyExamRepair"]')?.addEventListener('click', () => {
       this.applyExamAutoRepair();
     });
+    this.reportContentEl.querySelector('[data-action="importV11Cert"]')?.addEventListener('click', () => {
+      this.certFileInputEl.click();
+    });
+    this.reportContentEl.querySelector('[data-action="importV11CertRow"]')?.addEventListener('click', () => {
+      this.certFileInputEl.click();
+    });
     this.reportContentEl.querySelector('[data-action="exportKiCad"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const sch = generatePlaygroundKiCadSchematic(snaps, plya);
-      this.downloadTextFile('playground-v2-exam.kicad_sch', sch, 'text/plain;charset=utf-8');
+      this.downloadTextFile('playground-v21-exam.kicad_sch', sch, 'text/plain;charset=utf-8');
       this.showToast('実KiCad 7.0 回路図 (.kicad_sch) を出力しました');
     });
     this.reportContentEl.querySelector('[data-action="exportSpice"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const cir = generatePlaygroundNgspiceNetlist(snaps, plya);
-      this.downloadTextFile('playground-v2-power-thermal.cir', cir, 'text/plain;charset=utf-8');
+      this.downloadTextFile('playground-v21-power-thermal.cir', cir, 'text/plain;charset=utf-8');
       this.showToast('実ngspice 電源・連成熱解析ネットリスト (.cir) を出力しました');
     });
     this.reportContentEl.querySelector('[data-action="exportCalculix"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const inp = generatePlaygroundCalculiXDeck(snaps, plya);
-      this.downloadTextFile('playground-v2-fea.inp', inp, 'text/plain;charset=utf-8');
+      this.downloadTextFile('playground-v21-fea.inp', inp, 'text/plain;charset=utf-8');
       this.showToast('実CalculiX C3D8 3D構造FEAデッキ (.inp) を出力しました');
     });
     this.reportContentEl.querySelector('[data-action="exportExamWorkspace"]')?.addEventListener('click', () => {
       if (!plya) return;
       const snaps = this.buildSnapshots();
       const json = generatePlaygroundExamWorkspaceJson(snaps, plya);
-      this.downloadTextFile('playground-v2-exam.tlx.json', json, 'application/json;charset=utf-8');
-      this.showToast('EXAM V1 ワークスペース出力完了 → node scripts/exam.mjs --playground=playground-v2-exam.tlx.json');
+      this.downloadTextFile('playground-v21-exam.tlx11.json', json, 'application/json;charset=utf-8');
+      this.showToast('EXAM V1.1 出力完了 → node scripts/exam.mjs --playground=playground-v21-exam.tlx11.json');
     });
 
     this.reportContentEl.querySelectorAll<HTMLButtonElement>('[data-focus-uid]').forEach((btn) => {
@@ -3799,9 +3962,16 @@ export class CadPlaygroundStudio {
       const text = await file.text();
       if (!this.active) return;
       const parsed = JSON.parse(text) as {
+        schema?: string;
+        certId?: string;
+        primarySha256?: string;
         profile?: CameraDesignProfile;
         parts?: unknown[];
       };
+      if (parsed && typeof parsed === 'object' && parsed.certId && parsed.primarySha256 && !Array.isArray(parsed.parts)) {
+        this.importV11Certificate(parsed as unknown as V11CertificateRecord & { solverManifestSha256?: string });
+        return;
+      }
       if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.parts)) {
         throw new Error('invalid');
       }

@@ -9,9 +9,9 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 
-export const FLOW_OS_VERSION = '1.0.0';
+export const FLOW_OS_VERSION = '1.1.0';
 
-// Deterministic OS Exit Code Contract (compatible with bg & EXAM V1 + SEC)
+// Deterministic OS Exit Code Contract (compatible with bg & EXAM V1.1 + SEC-13)
 export const EXIT_OK = 0;
 export const EXIT_ERROR = 1;
 export const EXIT_BLOCKED = 2;
@@ -21,7 +21,7 @@ export const EXIT_SOLVER_MISSING = 5;
 export const EXIT_SECURITY_BLOCKED = 6;
 
 export const DEFAULT_FLOW_CONFIG = Object.freeze({
-  schema: 'flow-os/v1',
+  schema: 'flow-os/v1.1',
   osVersion: FLOW_OS_VERSION,
   projectName: 'unknown-repo',
   defaultBranch: 'main',
@@ -39,10 +39,12 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
       'flow ship',
       'flow park',
       'flow finish',
+      'flow auto',
+      'flow macro',
       'flow human-report',
       'FLOW-RECEIPT',
       'SEC-01',
-      'SEC-12',
+      'SEC-13',
       'HUMAN_REQUEST_ONLY',
     ],
   },
@@ -57,6 +59,9 @@ export const DEFAULT_FLOW_CONFIG = Object.freeze({
     exec: 400,
     security: 350,
     doc: 250,
+    auto: 550,
+    macro: 400,
+    cert: 300,
   },
   security: {
     maxFileMb: 25,

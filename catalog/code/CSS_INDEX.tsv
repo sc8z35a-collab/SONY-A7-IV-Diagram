@@ -938,3 +938,39 @@ html, body, #app, #viewport	-	9	19	6
 .orig-studio-header h2	@media (max-width: 768px)	7239	7241	1
 .orig-studio-header p	@media (max-width: 768px)	7242	7244	1
 .orig-bar-row	@media (max-width: 768px)	7245	7247	1
+.v11-seal-pill	-	7251	7266	14
+.v11-seal-pill:hover	-	7267	7267	1
+.v11-seal-pill.is-certified	-	7268	7273	4
+.v11-seal-pill.is-revoked	-	7274	7279	4
+.v11-seal-pill.is-unverified	-	7280	7284	3
+.v11-cert-backdrop	-	7285	7295	9
+.v11-cert-modal	-	7296	7304	7
+.v11-cert-modal.is-certified	-	7305	7305	1
+.v11-cert-modal.is-revoked	-	7306	7306	1
+.v11-cert-header	-	7307	7314	6
+.v11-cert-modal.is-certified .v11-cert-header	-	7315	7317	1
+.v11-cert-modal.is-revoked .v11-cert-header	-	7318	7320	1
+.v11-cert-eyebrow	-	7321	7326	4
+.v11-cert-title	-	7327	7331	3
+.v11-cert-close	-	7332	7341	8
+.v11-cert-body	-	7342	7344	1
+.v11-cert-reason	-	7345	7350	4
+.v11-cert-grid	-	7351	7355	3
+.v11-cert-kv	-	7356	7365	8
+.v11-cert-kv span	-	7366	7369	2
+.v11-cert-kv code	-	7370	7375	4
+.pg-v11-seal-pill	-	7376	7381	4
+.pg-v11-cert-banner	-	7382	7394	11
+.pg-v11-cert-banner[data-status="CERTIFIED"]	-	7395	7398	2
+.pg-v11-cert-banner[data-status^="REVOKED_"]	-	7399	7402	2
+.pg-v11-cert-left, .pg-v11-cert-meta	-	7403	7409	4
+.pg-v11-cert-reason	-	7410	7413	2
+.pg-v11-cert-meta code	-	7414	7421	6
+.pg-brand-title	@media (max-width: 1480px)	7423	7423	1
+.pg-topbar	@media (max-width: 1480px)	7424	7424	2
+.pg-topbar-left, .pg-topbar-right	@media (max-width: 1480px)	7425	7425	1
+.pg-btn	@media (max-width: 1480px)	7426	7426	2
+.pg-snap-field	@media (max-width: 1480px)	7427	7427	2
+.pg-snap-field select	@media (max-width: 1480px)	7428	7428	1
+.pg-v11-seal-pill	@media (max-width: 1480px)	7429	7429	2
+.pg-sep	@media (max-width: 1480px)	7430	7430	1

@@ -1,7 +1,7 @@
 /**
- * FLOW V1 OS — SEC-12 Red-Team 30-Attack Chaos Self-Test Oracle
- * Runs 30 genuine adversarial attacks inside an isolated `/tmp/flow_sec_selftest_*` sandbox
- * and mathematically proves 30/30 (100%) are hard-blocked with EXIT_SECURITY_BLOCKED (6).
+ * FLOW V1.1 OS — SEC-12 Red-Team 36-Attack Chaos Self-Test Oracle (`SEC-01`..`SEC-13`)
+ * Runs 36 genuine adversarial attacks inside an isolated `/tmp/flow_sec_selftest_*` sandbox
+ * and mathematically proves 36/36 (100%) are hard-blocked with EXIT_SECURITY_BLOCKED (6).
  */
 
 import fs from 'node:fs';
@@ -27,11 +27,13 @@ import {
   runSec08AntiCheat,
   runSec10ParallelScope,
   runSec11Hygiene,
+  runSec13MacroAndCertGuard,
   runSecurityFortress,
   safeSpawnSync,
   scanUntrustedText,
   validateCommandSafety,
   validateHealProposal,
+  validateMacroSpecSec13,
 } from './security_fortress.mjs';
 
 export function runSecuritySelftest() {
@@ -191,6 +193,77 @@ export function runSecuritySelftest() {
         isAgentQuarantined(stateDir, 'rogue_w1'),
       'Worker scope breach auto-quarantines & conflict/junk blocked'
     );
+
+    // --- SEC-13 (Attacks 31..36: Macro Governance & V1.1証明 Forgery Guard) ---
+    // ATK31: Shell injection primitive (`sh -c` / `rm -rf`) inside macro
+    const a31 = validateMacroSpecSec13({
+      name: 'evil-shell',
+      steps: [{ id: 's1', primitive: 'bash', args: ['-c', 'rm -rf /'] }],
+    }, sandbox);
+    check('ATK31', 'SEC-13', a31.some((x) => x.rule === 'MACRO_FORBIDDEN_PRIMITIVE'), 'Macro shell injection primitive blocked');
+
+    // ATK32: EXAM / security bypass flag (`--skip-chrome` / `--no-exam`) inside macro
+    const a32 = validateMacroSpecSec13({
+      name: 'evil-bypass',
+      steps: [{ id: 's1', primitive: 'exam.run', args: ['--unit=welcome', '--skip-chrome'] }],
+    }, sandbox);
+    check('ATK32', 'SEC-13', a32.some((x) => x.rule === 'MACRO_BYPASS_SKIP_FLAG'), 'Macro --skip-* EXAM bypass blocked');
+
+    // ATK33: Iron Law I10 violation (`human-report` smuggled inside autonomous macro)
+    const a33 = validateMacroSpecSec13({
+      name: 'evil-i10',
+      steps: [{ id: 's1', primitive: 'flow.inspect', args: ['human-report'] }],
+    }, sandbox);
+    check('ATK33', 'SEC-13', a33.some((x) => x.rule === 'MACRO_I10_HUMAN_REPORT_BLOCK'), 'Autonomous human-report inside macro blocked (I10)');
+
+    // ATK34: Tampered registered macro file on disk (SHA-256 mismatch)
+    write('.flow/macros/legit.macro.json', JSON.stringify({ name: 'legit', steps: [{ id: 's1', primitive: 'noop', args: ['tampered'] }] }));
+    write('.flow/macros/registry.json', JSON.stringify({
+      schema: 'flow-macro-registry/v1.1',
+      macros: { legit: { name: 'legit', file: '.flow/macros/legit.macro.json', sha256: '0000000000000000000000000000000000000000000000000000000000000000' } },
+    }));
+    const a34 = runSec13MacroAndCertGuard(sandbox);
+    check('ATK34', 'SEC-13', a34.some((x) => x.rule === 'MACRO_SHA_TAMPERED'), 'Tampered .macro.json SHA-256 mismatch blocked');
+
+    // ATK35: Cyclic DAG, >40 steps, and path traversal inside macro
+    const cyclic = validateMacroSpecSec13({
+      name: 'evil-cycle',
+      steps: [
+        { id: 'a', primitive: 'noop', args: ['--out=../../etc/passwd'], deps: ['b'] },
+        { id: 'b', primitive: 'noop', args: [], deps: ['a'] },
+      ],
+    }, sandbox);
+    const huge = validateMacroSpecSec13({
+      name: 'evil-huge',
+      steps: Array.from({ length: 42 }, (_, i) => ({ id: `s${i}`, primitive: 'noop', args: [] })),
+    }, sandbox);
+    check(
+      'ATK35',
+      'SEC-13',
+      cyclic.some((x) => x.rule === 'MACRO_DAG_CYCLE') &&
+        cyclic.some((x) => x.rule === 'MACRO_PATH_ESCAPE') &&
+        huge.some((x) => x.rule === 'MACRO_MAX_STEPS_EXCEEDED'),
+      'Cyclic DAG, >40 steps & path escape in macro blocked'
+    );
+
+    // ATK36: Forged V1.1証明 certificate in verification/certificates/
+    write('verification/certificates/forged.v1_1.cert.json', JSON.stringify({
+      schema: 'THE_LAST_EXAM_V1.1_CERT',
+      certId: 'V11-CERT:forged:deadbeef1234:abcd1234:1080/1080:0000000000000000',
+      unitId: 'forged',
+      primarySha256: 'deadbeef1234'.padEnd(64, '0'),
+      allTiersSha256: '0'.repeat(64),
+      examKernelSha256: 'abcd1234'.padEnd(64, '0'),
+      solverManifestSha256: '1'.repeat(64),
+      enginesPassed: 48, enginesTotal: 48,
+      testsPassed: 1080, testsTotal: 1080,
+      locksPassed: 28, locksTotal: 28,
+      solversReady: 48, solversTotal: 48,
+      tlxReceipt: 'TLX11-RECEIPT:FAKE',
+      signature: 'f'.repeat(64),
+    }));
+    const a36 = runSec13MacroAndCertGuard(sandbox);
+    check('ATK36', 'SEC-13', a36.some((x) => x.rule === 'V11_CERT_FORGERY_BLOCKED'), 'Forged V1.1証明 certificate blocked');
   } finally {
     fs.rmSync(sandbox, { recursive: true, force: true });
   }

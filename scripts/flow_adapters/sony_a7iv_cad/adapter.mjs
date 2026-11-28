@@ -90,16 +90,16 @@ export function createAdapter(ctx) {
       }
 
       // Fast 0-download solver readiness check from /tmp/tlx_env_manifest.json
-      let solvers = '0/32(run:flow exec exam setup)';
+      let solvers = '0/48(run:flow exec exam setup)';
       let solversMissing = true;
       const manPath = '/tmp/tlx_env_manifest.json';
       if (fs.existsSync(manPath)) {
         try {
           const m = JSON.parse(fs.readFileSync(manPath, 'utf8'));
-          const ready = Number(m.ready ?? 0);
-          const total = Number(m.total ?? 32);
+          const ready = Number(m.ok_count ?? m.ready ?? 0);
+          const total = Number(m.total_count ?? m.total ?? 48);
           solvers = `${ready}/${total}`;
-          solversMissing = ready < total;
+          solversMissing = ready < total || total < 48;
         } catch {
           solversMissing = true;
         }
@@ -254,11 +254,13 @@ export function createAdapter(ctx) {
 
       let domainReceipt = 'NONE';
       let tlxHeader = '';
+      let v11CertLine = '';
       if (fullExam) {
         const ex = runStep('exam_full', 'node', ['scripts/exam.mjs', `--unit=${unit}`], 900_000);
         const outLines = (ex.stdout || '').split('\n');
-        tlxHeader = outLines.find((l) => l.startsWith('TLX1|')) || '';
-        const mRcpt = tlxHeader.match(/rcpt=(TLX1-RECEIPT:[^\s|]+)/);
+        tlxHeader = outLines.find((l) => l.startsWith('TLX11|') || l.startsWith('TLX1|')) || '';
+        v11CertLine = outLines.find((l) => l.startsWith('V11_CERT|')) || '';
+        const mRcpt = tlxHeader.match(/rcpt=(TLX11?-RECEIPT:[^\s|]+)/);
         if (mRcpt) domainReceipt = mRcpt[1];
         if (ex.status !== 0) {
           const fails = outLines.filter((l) => l.startsWith('F|') || l.startsWith('X|') || l.startsWith('S|')).slice(0, 12);
@@ -268,6 +270,7 @@ export function createAdapter(ctx) {
             lines: [
               formatFlowHeader({ cmd: 'ship', status: `EXAM_EXIT_${ex.status}`, unit, policy }),
               tlxHeader,
+              ...(v11CertLine ? [v11CertLine] : []),
               ...fails,
             ],
           };

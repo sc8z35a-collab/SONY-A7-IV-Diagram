@@ -4169,7 +4169,7 @@ body,
 
 .pg-live-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
 }
 
@@ -7246,3 +7246,189 @@ body,
     grid-template-columns: 120px 1fr 48px;
   }
 }
+
+/* THE LAST EXAM V1.1 — Tamper-Evident「V1.1証明」Seal Pill & Warranty Certificate Modal */
+.v11-seal-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+  white-space: nowrap;
+}
+.v11-seal-pill:hover { transform: translateY(-1px); }
+.v11-seal-pill.is-certified {
+  background: linear-gradient(135deg, #047857 0%, #b45309 100%);
+  color: #fffbeb;
+  border-color: rgba(251, 191, 36, 0.7);
+  box-shadow: 0 2px 12px rgba(4, 120, 87, 0.35);
+}
+.v11-seal-pill.is-revoked {
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+  color: #fef2f2;
+  border-color: rgba(248, 113, 113, 0.75);
+  box-shadow: 0 2px 12px rgba(185, 28, 28, 0.4);
+}
+.v11-seal-pill.is-unverified {
+  background: rgba(255, 255, 255, 0.78);
+  color: #475569;
+  border-color: rgba(15, 23, 42, 0.14);
+}
+.v11-cert-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9800;
+  background: rgba(15, 23, 42, 0.54);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.v11-cert-modal {
+  width: min(560px, 96vw);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  border: 2px solid #cbd5e1;
+  overflow: hidden;
+}
+.v11-cert-modal.is-certified { border-color: #059669; }
+.v11-cert-modal.is-revoked { border-color: #dc2626; }
+.v11-cert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #f8fafc;
+}
+.v11-cert-modal.is-certified .v11-cert-header {
+  background: linear-gradient(135deg, #065f46 0%, #92400e 100%);
+}
+.v11-cert-modal.is-revoked .v11-cert-header {
+  background: linear-gradient(135deg, #991b1b 0%, #450a0a 100%);
+}
+.v11-cert-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+.v11-cert-title {
+  margin: 4px 0 0;
+  font-size: 17px;
+  font-weight: 800;
+}
+.v11-cert-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.v11-cert-body {
+  padding: 18px 20px;
+}
+.v11-cert-reason {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #334155;
+}
+.v11-cert-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.v11-cert-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 11.5px;
+}
+.v11-cert-kv span {
+  color: #64748b;
+  font-size: 10.5px;
+}
+.v11-cert-kv code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  word-break: break-all;
+  color: #0f172a;
+}
+.pg-v11-seal-pill {
+  height: 28px;
+  padding: 0 9px;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+.pg-v11-cert-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  font-size: 11.5px;
+}
+.pg-v11-cert-banner[data-status="CERTIFIED"] {
+  background: linear-gradient(90deg, #ecfdf5 0%, #fffbeb 100%);
+  border-color: #059669;
+}
+.pg-v11-cert-banner[data-status^="REVOKED_"] {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+.pg-v11-cert-left,
+.pg-v11-cert-meta {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pg-v11-cert-reason {
+  color: #334155;
+  font-weight: 600;
+}
+.pg-v11-cert-meta code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+@media (max-width: 1480px) {
+  .pg-brand-title { display: none; }
+  .pg-topbar { padding: 0 7px; gap: 3px; }
+  .pg-topbar-left, .pg-topbar-right { gap: 3px; }
+  .pg-btn { padding: 0 6px; font-size: 10.5px; }
+  .pg-snap-field { padding: 0 4px; font-size: 10px; }
+  .pg-snap-field select { font-size: 10px; }
+  .pg-v11-seal-pill { padding: 0 7px; font-size: 10px; }
+  .pg-sep { display: none; }
+}
+
+
+

@@ -110,13 +110,16 @@ export function loadEnvManifest() {
   }
 }
 
+export const REQUIRED_SOLVER_COUNT = 48;
+
 export function assertAllSolversReady() {
   const m = loadEnvManifest();
-  if (!m || !m.all_ready) {
+  if (!m || !m.all_ready || (m.total_count || 0) < REQUIRED_SOLVER_COUNT || (m.ok_count || 0) < REQUIRED_SOLVER_COUNT) {
     const missing = m?.solvers
       ? Object.entries(m.solvers).filter(([, v]) => !v.ok).map(([k]) => k)
       : ['manifest_missing'];
-    return { ok: false, ready: m?.ok_count || 0, total: m?.total_count || 32, missing };
+    if (m && (m.total_count || 0) < REQUIRED_SOLVER_COUNT) missing.push(`need_${REQUIRED_SOLVER_COUNT}_solvers`);
+    return { ok: false, ready: m?.ok_count || 0, total: Math.max(REQUIRED_SOLVER_COUNT, m?.total_count || REQUIRED_SOLVER_COUNT), missing };
   }
   return { ok: true, ready: m.ok_count, total: m.total_count, missing: [] };
 }

@@ -78,10 +78,13 @@ export interface PlyaIndustrialMetrics {
   readonly maxWiringRouteMm: number;
   readonly galvanicSevereCount: number;
   readonly mtbfHours: number;
+  readonly bootReadinessPct: number;
+  readonly mfgYieldPct: number;
+  readonly canonical3dSha256: string;
 }
 
 export interface PlyaPipelineReport {
-  readonly version: 'PLYA-V2-EXAM';
+  readonly version: 'PLYA-V2.1-EXAM11';
   readonly strictness: ExamStrictnessMode;
   readonly executedAt: string;
   readonly totalDurationMs: number;
@@ -128,7 +131,6 @@ export function serializeSnapshotsForExamEngine(parts: readonly PlacedPartSnapsh
       nonFiniteCount = local.nonFiniteCount;
       degenerateCount = local.degenerateCount;
     } else {
-      // Fallback 12-triangle box mesh when snapshot came from unit test without GPU blueprint
       const [x0, y0, z0, x1, y1, z1] = box;
       tris = new Float32Array([
         x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y0, z1, x1, y1, z1, x0, y1, z1,
@@ -163,7 +165,6 @@ export function serializeSnapshotsForExamEngine(parts: readonly PlacedPartSnapsh
 
 /**
  * Assemble a complete PlyaPipelineReport from a PgDeepPhysicsReport + base camera metadata.
- * Shared identically by both synchronous evaluation and asynchronous WebWorker completion!
  */
 export function buildPlyaReportFromDeepPhysics(
   parts: readonly PlacedPartSnapshot[],
@@ -197,7 +198,7 @@ export function buildPlyaReportFromDeepPhysics(
   const fd = (id: PlyaV2SolverId) => sById.get(id)?.plainVerdict ?? '';
   const ad = (id: PlyaV2SolverId) => sById.get(id)?.fixHint ?? '';
 
-  // Map the 16 EXAM-inherited solvers onto the 10-Axis Engineering Radar categories cleanly
+  // Map ALL 24 EXAM V1.1-inherited solvers onto the 12-Pillar Engineering Categories cleanly
   const categories: GraderCategoryResult[] = [
     { id: 'optics', nameJa: '1. 3D光線追跡・結像 (EX19/20)', shortLabel: '光学MC', score: sc('pg_optics_mc'), maxScore: 100, status: st('pg_optics_mc'), finding: fd('pg_optics_mc'), advice: ad('pg_optics_mc') },
     { id: 'clash', nameJa: '2. 実3D三角形BVH干渉 (EX01/05)', shortLabel: '3D干渉', score: sc('pg_mesh_clash'), maxScore: 100, status: st('pg_mesh_clash'), finding: fd('pg_mesh_clash'), advice: ad('pg_mesh_clash') },
@@ -209,14 +210,16 @@ export function buildPlyaReportFromDeepPhysics(
     { id: 'dfm', nameJa: '8. DFM加工・DFA逆組立 (EX11-13)', shortLabel: 'DFM/A', score: Math.round((sc('pg_dfm_dfa') + sc('pg_cte_tolerance')) * 0.5), maxScore: 100, status: st('pg_dfm_dfa'), finding: fd('pg_dfm_dfa'), advice: ad('pg_dfm_dfa') },
     { id: 'emc', nameJa: '9. EMC遮蔽・IP・音響 (EX14/18/21)', shortLabel: 'EMC/IP', score: Math.round((sc('pg_emc_ip') + sc('pg_acoustics')) * 0.5), maxScore: 100, status: st('pg_emc_ip'), finding: fd('pg_emc_ip'), advice: ad('pg_emc_ip') },
     { id: 'life', nameJa: '10. 重心転倒・電食・MTBF (EX03/34/35)', shortLabel: '安定/寿命', score: Math.round((sc('pg_gravity_tip') + sc('pg_galvanic_life')) * 0.5), maxScore: 100, status: st('pg_gravity_tip'), finding: fd('pg_gravity_tip'), advice: ad('pg_gravity_tip') },
+    { id: 'boot_ctrl', nameJa: '11. 実機起動・制御・SI・ESD (EX37-42)', shortLabel: '実機起動', score: Math.round((sc('pg_power_on_boot') + sc('pg_control_stability') + sc('pg_digital_timing_fsm') + sc('pg_si_pdn_integrity') + sc('pg_esd_safety')) / 5), maxScore: 100, status: st('pg_power_on_boot'), finding: fd('pg_power_on_boot'), advice: ad('pg_power_on_boot') },
+    { id: 'mfg_cert', nameJa: '12. 機構・過渡熱・歩留・V1.1証明 (EX43-48)', shortLabel: '量産/証明', score: Math.round((sc('pg_kinematics_actuators') + sc('pg_transient_thermal_psd') + sc('pg_pokayoke_cert_v11')) / 3), maxScore: 100, status: st('pg_pokayoke_cert_v11'), finding: fd('pg_pokayoke_cert_v11'), advice: ad('pg_pokayoke_cert_v11') },
   ];
 
   const profileLabel =
     deep.domainMode === 'wlk_optical'
-      ? 'WLK 光学キネティック装置 (EXAM基準)'
+      ? 'WLK 光学キネティック装置 (EXAM V1.1基準)'
       : deep.domainMode === 'robotics'
-        ? 'RIIMOS ロボティクス機構 (EXAM基準)'
-        : `${base.resolvedProfileLabel} (${deep.strictness === 'exam_strict' ? 'EXAM極限' : '標準設計'})`;
+        ? 'RIIMOS ロボティクス機構 (EXAM V1.1基準)'
+        : `${base.resolvedProfileLabel} (${deep.strictness === 'exam_strict' ? 'EXAM V1.1極限' : '標準設計'})`;
 
   const engineeringReport: CameraEngineeringReport = {
     ...base,
@@ -249,7 +252,7 @@ export function buildPlyaReportFromDeepPhysics(
   };
 
   return {
-    version: 'PLYA-V2-EXAM',
+    version: 'PLYA-V2.1-EXAM11',
     strictness: deep.strictness,
     executedAt: new Date().toISOString(),
     totalDurationMs: deep.totalDurationMs,
@@ -279,6 +282,9 @@ export function buildPlyaReportFromDeepPhysics(
       maxWiringRouteMm: deep.telemetry.maxWiringRouteMm,
       galvanicSevereCount: deep.telemetry.galvanicSevereCount,
       mtbfHours: deep.telemetry.mtbfHours,
+      bootReadinessPct: deep.bootReadinessPct,
+      mfgYieldPct: deep.mfgYieldPct,
+      canonical3dSha256: deep.canonical3dSha256,
     },
     deepReport: deep,
   };
@@ -477,10 +483,10 @@ export function generatePlaygroundCalculiXDeck(
 }
 
 /**
- * 4. Real THE LAST EXAM V1 `.tlx.json` workspace exporter!
- * Pass the exported file directly to: `node scripts/exam.mjs --playground=<file.tlx.json>`
- * to run ALL 36 external industrial engines (CalculiX, OpenFOAM, Bullet+ODE, ngspice, KiCad, Z3, CGAL, FCL)
- * and 530 fixed tests on the user's custom Play Ground 3D build!
+ * 4. Real THE LAST EXAM V1.1 `.tlx11.json` workspace exporter!
+ * Pass the exported file directly to: `node scripts/exam.mjs --playground=<file.tlx11.json>`
+ * to run ALL 48 external industrial engines (48 real external solvers, 1,080 fixed tests, 28 cross-locks)
+ * and engrave a cryptographic「V1.1証明」(.v1_1.cert.json) upon 100.0000% PASS!
  */
 export function generatePlaygroundExamWorkspaceJson(
   parts: readonly PlacedPartSnapshot[],
@@ -488,13 +494,18 @@ export function generatePlaygroundExamWorkspaceJson(
 ): string {
   const serialized = serializeSnapshotsForExamEngine(parts);
   const payload = {
-    schema: 'TLX1-PLAYGROUND-BLUEPRINT-V1',
+    schema: 'TLX11-PLAYGROUND-BLUEPRINT-V1.1',
     exportedAt: new Date().toISOString(),
     name: `pg_${plya.industrialMetrics.mode}`,
     busVoltageV: plya.industrialMetrics.mode === 'wlk220_optical' ? 12.0 : 7.2,
-    plyaV2Score: plya.engineeringReport.totalScore,
-    plyaV2Rank: plya.engineeringReport.rank,
-    plyaV2Assertions: `${plya.assertionPassCount}/${plya.assertionTotalCount}`,
+    plyaVersion: plya.version,
+    plyaV21Score: plya.engineeringReport.totalScore,
+    plyaV21Rank: plya.engineeringReport.rank,
+    plyaV21Solvers: `${plya.passCount}/${plya.tools.length}`,
+    plyaV21Assertions: `${plya.assertionPassCount}/${plya.assertionTotalCount}`,
+    bootReadinessPct: plya.industrialMetrics.bootReadinessPct,
+    mfgYieldPct: plya.industrialMetrics.mfgYieldPct,
+    canonical3dSha256: plya.industrialMetrics.canonical3dSha256,
     parts: serialized.map((s) => {
       const mat = resolvePlaygroundMaterial(s.entry);
       return {
@@ -505,12 +516,13 @@ export function generatePlaygroundExamWorkspaceJson(
         subtitle: s.entry.subtitle,
         role: s.entry.role,
         materialKey: mat.preset,
-        box: s.box,
-        pos: s.position,
-        cog: s.center,
-        volumeMm3: Number(s.volumeMm3.toFixed(3)),
-        massG: Number(((s.volumeMm3 / 1000) * mat.rho).toFixed(3)),
-        tris: Array.from(s.tris).map((v) => Number(v.toFixed(3))),
+        box: s.box.map((v) => Number(v.toFixed(4))),
+        pos: s.position.map((v) => Number(v.toFixed(4))),
+        explodeVec: [0, 0, 0],
+        cog: s.center.map((v) => Number(v.toFixed(4))),
+        volumeMm3: Number(s.volumeMm3.toFixed(4)),
+        massG: Number(((s.volumeMm3 / 1000) * mat.rho).toFixed(4)),
+        tris: Array.from(s.tris).map((v) => Number(v.toFixed(4))),
       };
     }),
   };
