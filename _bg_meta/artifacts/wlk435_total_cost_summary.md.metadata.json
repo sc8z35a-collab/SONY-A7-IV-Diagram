@@ -1,0 +1,5 @@
+{
+  "summary":  "WLK-435 (435-part Welcome unit) definitive Total Cost Detailed Breakdown & Master Summary Markdown (Japanese). Covers all 3 cost layers (Layer 1 435-part BOM + Custom Fab, Layer 2 JLCPCB PCBA SMT Assembly, Layer 3 International Shipping + 0% ITA Duty + 10% CIF Japan Import Tax + Carrier Fees) across Track A (¥1,191,899 / $7,482.10) vs Track B (¥245,411 / $1,540.56), Electronics vs Mechanical structural split, 8-domain × 5-subassembly cross-matrix, 4-Wave evolution (WLK-220 → WLK-435), Top-40 Track A & Top-15 Track B Pareto breakdowns, 5-tier Hybrid scenarios (Track A / C3 / C2 / C1 Recommended ¥368,053 / B), 25 zero-double-count shared pools (+¥755,893 avoided), MOQ surplus inventory, price-trap avoidance log, Hub ordering roadmap, FX sensitivity, Qty=1/2/10/100 scaling, and full automated audit provenance.",
+  "updatedAt":  "2026-11-28T02:17:57.283745813Z",
+  "userFacing":  true
+}
