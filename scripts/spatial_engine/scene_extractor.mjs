@@ -371,6 +371,9 @@ export async function loadSpatialScene(unitId, opts = {}) {
 
   // Bundle unit TS dynamically via esbuild with lightweight v2_unit_compiler stub
   const esbuild = require('esbuild');
+  const unitSrc = fs.readFileSync(unitInfo.unitModulePath, 'utf8');
+  const usesCompiledV2 = /\bnew\s+CompiledV2Unit\b/.test(unitSrc);
+
   const stubPlugin = {
     name: 'sp-v2-stub',
     setup(build) {
@@ -382,7 +385,7 @@ export async function loadSpatialScene(unitId, opts = {}) {
         contents: `
           export class CompiledV2Unit {
             constructor(cfg) { this.cfg = cfg; }
-            __spBuildRaw(mats) { return this.cfg.buildRaw(mats); }
+            __spBuildRaw(mats, quality, ctx) { return this.cfg.buildRaw(mats, quality, ctx); }
           }
         `,
         loader: 'js',
@@ -393,11 +396,18 @@ export async function loadSpatialScene(unitId, opts = {}) {
   const relUnit = './' + path.relative(ROOT, unitInfo.unitModulePath).replace(/\\/g, '/').replace(/\.ts$/, '');
   const bundled = await esbuild.build({
     stdin: {
-      contents: `
-        import { ${unitInfo.factoryName} } from '${relUnit}';
-        import { setActiveBuildQuality } from './src/core/geometry_quality';
-        export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality };
-      `,
+      contents: usesCompiledV2
+        ? `
+          import { ${unitInfo.factoryName} } from '${relUnit}';
+          import { setActiveBuildQuality } from './src/core/geometry_quality';
+          export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality };
+        `
+        : `
+          import { ${unitInfo.factoryName} } from '${relUnit}';
+          import { setActiveBuildQuality } from './src/core/geometry_quality';
+          import { ResourceCache } from './src/core/resource_cache';
+          export { ${unitInfo.factoryName} as createUnit, setActiveBuildQuality, ResourceCache };
+        `,
       resolveDir: ROOT,
       loader: 'ts',
     },
@@ -405,14 +415,14 @@ export async function loadSpatialScene(unitId, opts = {}) {
     platform: 'node',
     format: 'cjs',
     external: ['three'],
-    plugins: [stubPlugin],
+    plugins: usesCompiledV2 ? [stubPlugin] : [],
     write: false,
   });
 
   const mod = { exports: {} };
   const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text);
   fn(require, mod, mod.exports);
-  const { createUnit, setActiveBuildQuality } = mod.exports;
+  const { createUnit, setActiveBuildQuality, ResourceCache } = mod.exports;
 
   // Read JSON metadata for groupKey & code mapping
   const jsonMeta = fs.existsSync(unitInfo.jsonPath)
@@ -424,7 +434,87 @@ export async function loadSpatialScene(unitId, opts = {}) {
   let rawBuilt;
   try {
     const unit = createUnit();
-    rawBuilt = unit.__spBuildRaw(createMaterialProxy());
+    if (typeof unit.__spBuildRaw === 'function') {
+      rawBuilt = await unit.__spBuildRaw(createMaterialProxy(), quality, {
+        clippingPlanes: [],
+        dryboxPalette: createMaterialProxy(),
+        yieldChunk: async () => {},
+      });
+    } else {
+      // Custom OptimizedUnit (e.g., MiShoeUnit): run authentic unit.build() and unpack BatchedMesh/InstancedMesh per partId!
+      const cache = new ResourceCache();
+      const built = await unit.build(quality, cache, { synchronous: true, skipEdges: true });
+      built.rootGroup.updateMatrixWorld(true);
+      const partGroups = new Map();
+      const ensurePartGrp = (pid) => {
+        let grp = partGroups.get(pid);
+        if (!grp) {
+          grp = new THREE.Group();
+          grp.name = pid;
+          partGroups.set(pid, grp);
+        }
+        return grp;
+      };
+      const tmpMat = new THREE.Matrix4();
+      const tmpWorld = new THREE.Matrix4();
+      const rangeScratch = { start: 0, count: 0 };
+      for (const binding of built.raycastIndex?.bindings || []) {
+        const mat = binding.mesh?.material;
+        const bucket = mat?.userData?.__materialBucket || 'metal_hero';
+        const matStub = { name: bucket, userData: { __materialBucket: bucket, __matKey: bucket } };
+        if (binding.kind === 'batched') {
+          const bm = binding.mesh;
+          const bGeo = bm.geometry;
+          const posAttr = bGeo?.getAttribute?.('position');
+          if (!posAttr) continue;
+          const posArr = posAttr.array;
+          const isNorm16 = Boolean(posAttr.normalized && posArr instanceof Int16Array);
+          const normScale = isNorm16 ? 1 / 32767 : 1;
+          const idxArr = bGeo.index ? bGeo.index.array : null;
+          for (let bi = 0; bi < binding.batchIdToPartId.length; bi++) {
+            const pid = binding.batchIdToPartId[bi];
+            if (!pid) continue;
+            if (typeof bm.getVisibleAt === 'function' && !bm.getVisibleAt(bi)) continue;
+            const geoId = bm.getGeometryIdAt(bi);
+            const range = bm.getGeometryRangeAt(geoId, rangeScratch);
+            if (!range || range.count < 3) continue;
+            bm.getMatrixAt(bi, tmpMat);
+            tmpWorld.multiplyMatrices(bm.matrixWorld, tmpMat);
+            const verts = new Float32Array(range.count * 3);
+            for (let k = 0; k < range.count; k++) {
+              const vi = idxArr ? idxArr[range.start + k] : range.start + k;
+              verts[k * 3] = posArr[vi * 3] * normScale;
+              verts[k * 3 + 1] = posArr[vi * 3 + 1] * normScale;
+              verts[k * 3 + 2] = posArr[vi * 3 + 2] * normScale;
+            }
+            const subGeo = new THREE.BufferGeometry();
+            subGeo.setAttribute('position', new THREE.BufferAttribute(verts, 3));
+            const subMesh = new THREE.Mesh(subGeo, matStub);
+            subMesh.applyMatrix4(tmpWorld);
+            ensurePartGrp(pid).add(subMesh);
+          }
+        } else if (binding.kind === 'instanced') {
+          const im = binding.mesh;
+          const iGeo = im.geometry;
+          if (!iGeo) continue;
+          for (let ii = 0; ii < binding.instanceIdToPartId.length; ii++) {
+            const pid = binding.instanceIdToPartId[ii];
+            if (!pid) continue;
+            im.getMatrixAt(ii, tmpMat);
+            tmpWorld.multiplyMatrices(im.matrixWorld, tmpMat);
+            const subMesh = new THREE.Mesh(iGeo, matStub);
+            subMesh.applyMatrix4(tmpWorld);
+            ensurePartGrp(pid).add(subMesh);
+          }
+        }
+      }
+      const unpackedParts = (built.parts || []).map((p) => ({
+        ...p,
+        group: partGroups.get(p.id) || p.group,
+      }));
+      rawBuilt = { parts: unpackedParts };
+      unit.dispose(cache);
+    }
   } finally {
     setActiveBuildQuality(null);
   }

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CatalogPartEntry, EngineeringRole } from './PartGeometryExtractor';
+import { CatalogPartEntry, EngineeringRole, ExtractedPartBlueprint } from './PartGeometryExtractor';
 
 export type CameraDesignProfile =
   | 'auto'
@@ -27,6 +27,9 @@ export interface PlacedPartSnapshot {
   readonly position: THREE.Vector3;
   readonly rotationEuler: THREE.Euler;
   readonly scale: THREE.Vector3;
+  /** Optional real 3D mesh blueprint & world matrix for PLYA V2 EXAM-inherited BVH physics */
+  blueprint?: ExtractedPartBlueprint;
+  worldMatrixElements?: ArrayLike<number>;
 }
 
 export interface GraderCategoryResult {
