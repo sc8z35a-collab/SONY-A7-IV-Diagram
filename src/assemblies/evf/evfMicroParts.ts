@@ -2790,9 +2790,9 @@ export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[] {
     const tickGeo = new THREE.BoxGeometry(0.035, 0.14, 0.56);
 
     for (const [lz, r, w] of lensSpecs) {
-      // Matte carbon-black Sumi-Nuri cylindrical rim coating
+      // Matte carbon-black Sumi-Nuri cylindrical rim coating (watertight hollow annulus)
       const inkBand = new THREE.Mesh(
-        hiResCyl(r, r, w, 48, true).rotateX(Math.PI / 2),
+        createHiResRingCellGeo(r - 0.015, r + 0.035, w, 0.008, 48),
         mats.velvetFlockTrap
       );
       inkBand.position.z = lz;
@@ -3158,9 +3158,9 @@ export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[] {
     spreadSpring.userData.noEdges = true;
     g.add(spreadSpring);
 
-    // Glossy translucent PFPE/PTFE fluorinated optical damping grease film + rounded end meniscus collars
+    // Glossy translucent PFPE/PTFE fluorinated optical damping grease film (watertight hollow annulus clearing shaft!)
     const greaseFilm = new THREE.Mesh(
-      hiResCyl(1.12, 1.12, 4.05, 24, true).rotateX(Math.PI / 2),
+      createHiResRingCellGeo(1.06, 1.14, 4.05, 0.012, 24),
       mats.opticalCementClear
     );
     greaseFilm.userData.noEdges = true;
@@ -3428,6 +3428,7 @@ export function buildEvfMicroParts(mats: MaterialLibrary): CadPart[] {
       g.add(gf);
     }
 
+    for (const ch of g.children) ch.position.z -= 0.06;
     parts.push(
       finalizeStandaloneEvfMicroPart(
         'evf-mipi-ferrite-shield-fpc',

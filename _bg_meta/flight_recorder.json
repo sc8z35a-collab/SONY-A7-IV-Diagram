@@ -7,11 +7,12 @@
     "Completed Component 1 (sp 0.0001mm 7-axis engine + all 23 units extractor, 27/27 selftest PASS, 10.4x speedup) and Component 2 (CadViewport miraiSubView 1..8 + pp1.1 + hyper_cache)",
     "Stage 1 complete: all 22 non-welcome modes (34 physical assemblies, 38 view states, 3,038 parts, 0 zero-mesh, 0 errors) audited across all 4 tiers at 0.0001mm + Stage 2 source reverse-index completed",
     "Full 22-mode (34 assemblies, 3038 parts) 0.0001mm 7-axis audit, 36-sheet+39-macro pp1.1 visual inspection, and Master Remediation Report complete",
-    "Wave 0 P0 remediation complete & 0.0001mm + pp1.1 verified (coordDrifts 132->0, meshHealth 3->0, sensor_fab 133->0, bionz_v2 7->0, lcd -38)"
+    "Wave 0 P0 remediation complete & 0.0001mm + pp1.1 verified (coordDrifts 132->0, meshHealth 3->0, sensor_fab 133->0, bionz_v2 7->0, lcd -38)",
+    "Wave 1A: V2 dynamicNode rig transform sync fix (cleared camera_body rear LCD joystick, front sensor mount plunger, shutter aperture charge gear) + EVF ULTRA 0/0 PASS (10/10 CI)"
   ],
   "verifiedGates": [],
   "knownPitfalls": [],
-  "nextStep": "Wave 1: shared camera subsystems (evf, mainboard, body, lens, mount, sensor, shutter, lcd)",
+  "nextStep": "Wave 1B: body hollow grip, top sub-LCD/dial clearance, top antenna recess, and hub collision cleanup",
   "artifactsMirrored": [
     {
       "name": "audit_summary_all22_0001mm.json",
@@ -29,7 +30,7 @@
       "size": 586
     }
   ],
-  "updatedAt": "2026-11-28T04:18:25.633Z",
+  "updatedAt": "2026-11-28T05:01:20.362Z",
   "vmHost": "devbox",
-  "baseSha": "376aeb7312b02651a8b876f99295bf3ab5feca60"
+  "baseSha": "458d8b79c4a7318de29d66f227f480c3b2149642"
 }

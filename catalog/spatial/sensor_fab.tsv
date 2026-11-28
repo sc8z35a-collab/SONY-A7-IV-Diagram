@@ -64,7 +64,7 @@ fab1-wafer-fullframe-48	F1-30	300mmウェーハ比較③ フルサイズ一眼	V
 fab1-wafer-mediumformat-26	F1-31	300mmウェーハ比較④ 中判	Vol.1	28,-13.5,13	10.8,6,9.8	30,-26,24	pin_carrier_gloss
 fab1-stacked-yield-multiply	F1-32	積層歩留まりの掛け算の罠	Vol.1	43,-13.5,6	10.8,5.74,9.6	50,-24,14	silicon_wafer_dark
 fab2-hero-purity-mirror-monument	#65	11N純度＆Ra＜0.1nm 超平坦鏡の	Vol.2	0,18.2,-2	23.98,5.47,17.48	0,14,0	matte_chassis
-fab2-phase1-plant-deck	#66	フェーズ1 全60工程・7ブロック立体製	Vol.2	0,-1.6,0	112,14.31,60	0,-12,0	matte_chassis
+fab2-phase1-plant-deck	#66	フェーズ1 全60工程・7ブロック立体製	Vol.2	0,-1.6,0	112,14.42,60	0,-12,0	matte_chassis
 fab2-quartzite-mine-crusher	#67	高純度珪石の採掘	Vol.2	-48,0.5,-21.5	9.58,6.71,9.2	-12,8,-14	matte_black_anodized
 fab2-carbon-reductant-blender	#68	還元用低灰分炭材の調合	Vol.2	-36,0.5,-21.5	9.4,9.22,9.2	-8,9,-14	matte_black_anodized
 fab2-submerged-arc-furnace	#69	サブマージドアーク炉・2・000℃炭素熱	Vol.2	-24,0.5,-21.5	9.6,11.41,9.4	-4,11,-14	stainless_machined
@@ -100,7 +100,7 @@ fab2-vpd-icpms-edge-check	#98	VPD-ICP-MS重金属分析・μ	Vol.2	0,-12.5,10	14
 fab2-fosb-25wafer-clean-load	#99	ISOクラス1〜2 ロボット収納	Vol.2	20,-12.5,10	14,8.35,12	6,-12,12	matte_chassis
 fab2-controlled-logistics-fab-bridge	#100	防振・温湿度管理輸送とセンサー工場受入	Vol.2	40,-12.5,10	14,8.12,12	12,-10,12	stainless_machined
 fab3-hero-reticle-96set-monument	F3-01	6インチ合成石英フォトマスク	Vol.3	0,18.2,-9.5	23.14,10.6,22.28	0,34,-8	matte_chassis
-fab3-phase2-design-mask-deck	F3-02	フェーズ2 2層段差式・設計スタジオ	Vol.3	0,-1.6,0	122.4,10.83,90.32	0,-26,0	matte_chassis
+fab3-phase2-design-mask-deck	F3-02	フェーズ2 2層段差式・設計スタジオ	Vol.3	0,-1.6,0	122.4,10.98,90.32	0,-26,0	matte_chassis
 fab3-p01-product-spec	F3-03	[P02-001] センサー製品企画	Vol.3	-51.75,0.4,-29	9.2,6.95,8.8	-20,14,-22	ic_epoxy_dark
 fab3-p02-pixel-arch-select	F3-04	[P02-002] 画素アーキテクチャ選	Vol.3	-40.25,0.4,-29	9.2,5.77,8.8	-15,16,-22	stainless_machined
 fab3-p03-process-tcad-3d	F3-05	[P02-003] 3次元プロセスTCA	Vol.3	-28.75,0.4,-29	9.2,7.97,8.8	-11,18,-22	ic_epoxy_dark
@@ -152,7 +152,7 @@ fab3-p48-starlight-post-pellicle	F3-50	[P02-048] ペリクル貼付後	Vol.3	21,
 fab3-p49-reticle-smif-pod	F3-51	[P02-049] レチクルポッド収納	Vol.3	35,-8.8,42.5	11.6,6,9.6	15,-12,20	matte_chassis
 fab3-p50-stocker-96set-bridge	F3-52	[P02-050] 全96枚マスクセット	Vol.3	49,-8.8,42.5	11.8,14.49,9.6	22,-13,22	gold_plating
 fab4-hero-feol-pixel-heart	F4-01	完成4T-PPD画素の心臓部・超高精細3	Vol.4	0,18.8,-10.5	25.95,11.08,23.44	0,34,-8	matte_chassis
-fab4-phase3-feol-terrace-deck	F4-02	フェーズ3 2層段差式・画素FEOLクリ	Vol.4	0,-1.6,0	126.4,10.83,90.32	0,-26,0	stainless_machined
+fab4-phase3-feol-terrace-deck	F4-02	フェーズ3 2層段差式・画素FEOLクリ	Vol.4	0,-1.6,0	126.4,10.98,90.32	0,-26,0	stainless_machined
 fab4-p001-incoming-rca-clean	F4-03	ロット受入・レーザーID読取	Vol.4	-56.1,0.4,-29	8.6,5.15,8.6	-22,14,-22	matte_chassis
 fab4-p004-initial-pad-oxide	F4-04	初期パッド熱酸化	Vol.4	-45.9,0.4,-29	8.6,6.5,8.6	-18,15,-22	stainless_machined
 fab4-m01-zero-layer-align	F4-05	ゼロ層・基準アライメントマーク形成	Vol.4	-35.7,0.4,-29	8.6,6.67,8.6	-14,16,-22	stainless_machined
@@ -197,7 +197,7 @@ fab4-p379-salicide-cosi-nisi	F4-43	自己整合シリサイド形成	Vol.4	0,-8.
 fab4-p380-h2-sinter-feol-wat	F4-44	水素シンタリング	Vol.4	22.5,-8.8,42.5	18,6.68,9.94	11,-12,20	matte_chassis
 fab4-feol-380-to-vol5-beol	F4-45	累計490工程達成ポータル → 第5巻	Vol.4	45,-8.8,42.5	18.2,13.15,9.6	22,-13,22	gold_plating
 fab5-hero-beol-5floor-highway	F5-01	5階建て銅の立体高速道路	Vol.5	0,19.2,-10.5	26.15,9.34,23.84	0,34,-8	stainless_machined
-fab5-phase4-beol-terrace-deck	F5-02	フェーズ4 2層段差式・BEOL銅立体配	Vol.5	0,-1.6,0	126,10.9,82.28	0,-26,0	matte_chassis
+fab5-phase4-beol-terrace-deck	F5-02	フェーズ4 2層段差式・BEOL銅立体配	Vol.5	0,-1.6,0	126,11.18,82.28	0,-26,0	matte_chassis
 fab5-p001-cesl-sin-stopper	F5-03	コンタクトエッチストップ膜成膜	Vol.5	-55,0.4,-29	9.6,4.28,8.8	-22,14,-22	ic_epoxy_dark
 fab5-p002-pmd-bpsg-cmp	F5-04	PMD層間絶縁膜成膜・緻密化・CMP平坦	Vol.5	-44,0.4,-29	9.6,7.23,8.8	-18,15,-22	matte_chassis
 fab5-p005-pmd-clean-metro	F5-05	PMDポストCMP超洗浄	Vol.5	-33,0.4,-29	9.6,6,8.8	-14,16,-22	matte_chassis

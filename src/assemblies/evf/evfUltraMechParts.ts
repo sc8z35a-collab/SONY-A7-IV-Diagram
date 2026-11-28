@@ -269,6 +269,7 @@ export function buildEvfUltraMechParts(mats: MaterialLibrary): CadPart[] {
       g.add(bead);
     }
 
+    for (const ch of g.children) ch.position.x -= 0.06;
     parts.push(
       finalizeStandaloneEvfUltraPart(
         'evf-barrel-n2-purge-valve',
@@ -1663,6 +1664,7 @@ export function buildEvfUltraMechParts(mats: MaterialLibrary): CadPart[] {
       g.add(tp);
     }
 
+    for (const ch of g.children) ch.position.y -= 0.06;
     parts.push(
       finalizeStandaloneEvfUltraPart(
         'evf-oem-sh1035-top-flex',

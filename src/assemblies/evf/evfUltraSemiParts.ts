@@ -597,6 +597,7 @@ export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[] {
       g.add(ear, arr, rib);
     }
 
+    for (const ch of g.children) ch.position.z -= 0.022;
     parts.push(
       finalizeStandaloneEvfUltraPart(
         'evf-oled-oca-laminate',
@@ -1617,7 +1618,7 @@ export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[] {
 
       // Bifurcated dual-finger 0.6N CuBe2 stress-free leaf spring angled at 45° with rolled gold contact tips!
       const springPivot = new THREE.Group();
-      springPivot.position.set(sx * 13.32, 0, 0);
+      springPivot.position.set(sx * 13.08, 0, 0);
       springPivot.rotation.x = Math.PI / 4;
       for (const fz of [-0.34, 0.34]) {
         const finger = new THREE.Mesh(leafFingerGeo, mats.beCuSpring);
@@ -1640,7 +1641,7 @@ export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[] {
         [-1.85, 1.65],
       ] as Array<[number, number]>) {
         const collar = new THREE.Mesh(lockCollarGeo, mats.brassGear);
-        collar.position.set(sx * 13.34, sy, sz);
+        collar.position.set(sx * 13.10, sy, sz);
         const scr = buildPhillipsScrew(
           0.52,
           0.22,
@@ -1651,7 +1652,7 @@ export function buildEvfUltraSemiParts(mats: MaterialLibrary): CadPart[] {
           mats.titaniumRivet
         );
         scr.rotation.z = sx > 0 ? Math.PI / 2 : -Math.PI / 2;
-        scr.position.set(sx * 13.47, sy, sz);
+        scr.position.set(sx * 13.20, sy, sz);
         g.add(collar, scr);
       }
     }

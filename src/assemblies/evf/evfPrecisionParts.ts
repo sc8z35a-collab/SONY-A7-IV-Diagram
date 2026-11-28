@@ -1737,9 +1737,9 @@ export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[] {
     const g = new THREE.Group();
 
     const lensR = 9.0;
-    const maxR = 8.92;
+    const maxR = 8.85;
     const steps = 18;
-    const thick = 0.052;
+    const thick = 0.034;
     const zCurve = (r: number): number => {
       const u = r / lensR;
       return -0.245 + 1.4 * (1 - u * u);
@@ -1768,25 +1768,25 @@ export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[] {
       [5.75, mats.evfGlassEdgeRim],
       [7.85, mats.fluorineCoatCyan],
     ] as Array<[number, THREE.Material]>) {
-      const fringe = new THREE.Mesh(hiResTorus(frR, 0.024, 8, 48), mat);
+      const fringe = new THREE.Mesh(hiResTorus(frR, 0.014, 8, 48), mat);
       fringe.position.z = zCurve(frR);
       fringe.userData.noEdges = true;
       g.add(fringe);
     }
 
-    // Perimeter void-free optical meniscus edge fillet collar (R=8.93 < 9.00 glass rim!)
+    // Perimeter void-free optical meniscus edge fillet collar (R=8.87 < 9.00 glass rim!)
     const rimZ = zCurve(maxR);
-    const fillet = new THREE.Mesh(hiResTorus(maxR + 0.012, 0.026, 10, 48), mats.evfGlassEdgeRim);
+    const fillet = new THREE.Mesh(hiResTorus(maxR + 0.01, 0.014, 10, 48), mats.evfGlassEdgeRim);
     fillet.position.z = rimZ;
     fillet.userData.noEdges = true;
-    const innerEdge = new THREE.Mesh(hiResTorus(8.56, 0.022, 8, 48), mats.fluorineCoatCyan);
-    innerEdge.position.z = zCurve(8.56);
+    const innerEdge = new THREE.Mesh(hiResTorus(8.46, 0.014, 8, 48), mats.fluorineCoatCyan);
+    innerEdge.position.z = zCurve(8.46);
     innerEdge.userData.noEdges = true;
     g.add(fillet, innerEdge);
 
-    // 12x radial perimeter UV-cure polymerization witness dots + 4 optical centering datum ticks along R=8.55
-    const witnessGeo = hiResSphere(0.028, 8, 8);
-    const tickGeo = new THREE.BoxGeometry(0.08, 0.42, 0.026);
+    // 12x radial perimeter UV-cure polymerization witness dots + 4 optical centering datum ticks along R=8.42
+    const witnessGeo = hiResSphere(0.016, 8, 8);
+    const tickGeo = new THREE.BoxGeometry(0.08, 0.36, 0.014);
     const rWitness = 8.42;
     const zWitness = zCurve(rWitness);
     for (let i = 0; i < 12; i++) {
@@ -2264,6 +2264,7 @@ export function buildEvfPrecisionParts(mats: MaterialLibrary): CadPart[] {
     redDot.userData.noEdges = true;
     g.add(dotBezel, redDot);
 
+    for (const ch of g.children) ch.position.x -= 0.06;
     parts.push(
       finalizeStandaloneEvfPrecisionPart(
         'evf-diopter-endstop-index',
