@@ -1,0 +1,48 @@
+{
+  "schema": "bg-flight/v1",
+  "sessionId": "feat-feat-the-last-exam-v1-mwzz860l",
+  "branch": "feat/exam-v1-waves-1-2",
+  "goal": "Achieve 530/530 PASS TLX1-RECEIPT on Wave 1 (welcome, original) + Wave 2 (mount, shutter, body, evf, lcd, lens, mainboard, sensor)",
+  "completed": [
+    "THE LAST EXAM V1 complete (36 engines, 530 tests, 16 real external solvers, 75/75 selftest PASS) + PLYA V2 core solvers implemented",
+    "Completed PLYA V2 EXAM-inherited Playground UI/WebWorker/3D overlays/4-format export + tsc/validate/build PASS"
+  ],
+  "verifiedGates": [],
+  "knownPitfalls": [],
+  "nextStep": "Run full EXAM V1 baseline across Wave 1+2 (10 units) and execute physical fixes",
+  "artifactsMirrored": [
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md",
+      "sha256": "0d90e903004d4e167ac10b1b9933d3fdae5e628e7d18fd99e9d4c205bd22b935",
+      "size": 24781
+    },
+    {
+      "name": "exam_v1_mandate_and_all_21_phases_plan.md.metadata.json",
+      "sha256": "045f7d0205a17a03984843d2bba134a95782222036826fb1734d9326d253b34a",
+      "size": 767
+    },
+    {
+      "name": "the_last_exam_v1_plan.md",
+      "sha256": "5a762d5770947a8eeb93928ec6e2bbd1be18c0c0e0637ad55fdf304976c5ffb8",
+      "size": 47121
+    },
+    {
+      "name": "the_last_exam_v1_plan.md.metadata.json",
+      "sha256": "977b014694d9a9409037302cda9db383c8d3280581e612f0ff75f4b0337a6ceb",
+      "size": 693
+    },
+    {
+      "name": "walkthrough.md",
+      "sha256": "ff483aa0730ff5200f7910ed29d00a24c6856bac50eeedaae3386d239e405808",
+      "size": 10156
+    },
+    {
+      "name": "walkthrough.md.metadata.json",
+      "sha256": "d4cd3c5848148ecbec289a5afe5ee1118c6b8f2a8dae9039f3b6436a3f2d540c",
+      "size": 409
+    }
+  ],
+  "updatedAt": "2026-11-28T07:18:38.999Z",
+  "vmHost": "devbox",
+  "baseSha": "a53b3a5cfd2e00e6fb199c19d6029b2b8d86c888"
+}
