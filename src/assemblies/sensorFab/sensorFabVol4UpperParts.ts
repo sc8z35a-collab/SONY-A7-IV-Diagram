@@ -154,60 +154,60 @@ export function buildSensorFabVol4UpperParts(mats: MaterialLibrary): CadPart[] {
       createVol4BoxGeo(126, 1.6, 52, 1.4, 0.24, 'y'),
       mats.ultra.fab4Phase3FeolDeck
     );
-    upperDeck.position.set(0, 0, -12.0);
+    upperDeck.position.set(0, -0.17, -12.0);
     g.add(upperDeck);
 
     for (const sz of [-38.1, 14.1]) {
       const rail = new THREE.Mesh(new THREE.BoxGeometry(126.4, 0.36, 0.45), matSteel);
-      rail.position.set(0, 0.65, sz);
+      rail.position.set(0, 0.48, sz);
       rail.userData.noEdges = true;
       g.add(rail);
     }
 
     // Architectural Cleanroom Step Wall at Z = +14.0 with 9 glowing ion/thermal conduits
-    const stepWall = new THREE.Mesh(createVol4BoxGeo(126, 9.4, 1.2, 0.3, 0.1, 'z'), matDark);
-    stepWall.position.set(0, -4.7, 14.0);
+    const stepWall = new THREE.Mesh(createVol4BoxGeo(126, 9.55, 1.2, 0.3, 0.1, 'z'), matDark);
+    stepWall.position.set(0, -4.945, 14.0);
     g.add(stepWall);
     for (let i = -4; i <= 4; i++) {
       const pipe = new THREE.Mesh(hiResCyl(0.28, 0.28, 8.6, 10), i % 2 === 0 ? matViolet : matAmber);
-      pipe.position.set(i * 12.6, -4.6, 14.7);
+      pipe.position.set(i * 12.6, -4.9, 14.7);
       pipe.userData.noEdges = true;
       g.add(pipe);
     }
 
-    // Lower Forward-Stepped FEOL Terrace (Blocks 3-E & 3-F): 126 x 1.6 x 38 centered at Z = +33.0 (top Y = -10.0)
+    // Lower Forward-Stepped FEOL Terrace (Blocks 3-E & 3-F): lane top flush at world Y = -10.17 (local y = -8.57)
     const lowerDeck = new THREE.Mesh(
       createVol4BoxGeo(126, 1.6, 38, 1.4, 0.24, 'y'),
       matSteel
     );
-    lowerDeck.position.set(0, -9.2, 33.0);
+    lowerDeck.position.set(0, -9.52, 33.0);
     g.add(lowerDeck);
 
     // Lower deck cleanroom lane strips (3-E Crimson/Pink P+ Pinning at Z=24.5, 3-F Emerald/Gold SAB & H2 at Z=42.5)
     const lane3E = new THREE.Mesh(new THREE.BoxGeometry(120, 0.12, 14.8), matRed);
-    lane3E.position.set(0, -8.34, 24.5);
+    lane3E.position.set(0, -8.66, 24.5);
     lane3E.userData.noEdges = true;
     g.add(lane3E);
     const lane3EIn = new THREE.Mesh(new THREE.BoxGeometry(118.6, 0.14, 13.6), matDark);
-    lane3EIn.position.set(0, -8.32, 24.5);
+    lane3EIn.position.set(0, -8.64, 24.5);
     lane3EIn.userData.noEdges = true;
     g.add(lane3EIn);
 
     const lane3F = new THREE.Mesh(new THREE.BoxGeometry(120, 0.12, 15.8), matGreen);
-    lane3F.position.set(0, -8.34, 42.5);
+    lane3F.position.set(0, -8.66, 42.5);
     lane3F.userData.noEdges = true;
     g.add(lane3F);
     const lane3FIn = new THREE.Mesh(new THREE.BoxGeometry(118.6, 0.14, 14.6), matDark);
-    lane3FIn.position.set(0, -8.32, 42.5);
+    lane3FIn.position.set(0, -8.64, 42.5);
     lane3FIn.userData.noEdges = true;
     g.add(lane3FIn);
 
     // Heavy seismic cleanroom piers
-    const pierGeo = hiResCyl(1.1, 1.4, 9.2, 12);
+    const pierGeo = hiResCyl(1.1, 1.4, 9.35, 12);
     for (const sx of [-57, -19, 19, 57]) {
       for (const sz of [-33, 8]) {
         const pier = new THREE.Mesh(pierGeo, matDark);
-        pier.position.set(sx, -5.4, sz);
+        pier.position.set(sx, -5.645, sz);
         g.add(pier);
       }
     }

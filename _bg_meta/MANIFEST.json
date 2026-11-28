@@ -1,33 +1,17 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T03:39:05.170Z",
+  "createdAt": "2026-11-28T04:07:52.673Z",
   "slug": "feat-feat-spatial-audit-0001mm",
   "branch": "feat/feat-spatial-audit-0001mm",
   "baseSha": "52ddfb6b808913af1d6f8930ca263256a326b629",
   "vmHost": "devbox",
-  "reason": "seal_pre_idle",
-  "fingerprint": "76dc81aaa9a142b7786f6c5083c6821d4a47e01745e41f9c06ad20a5139b5202",
+  "reason": "pre_guard_exec:node",
+  "fingerprint": "28b24d279f1c8a95a6be79e442381acb3da172399a9f54ea2251eaf2090bb8d7",
   "fileCount": 830,
   "deletedFiles": [],
-  "dirtyCount": 0,
+  "dirtyCount": 10,
   "skippedLarge": [],
-  "artifacts": [
-    {
-      "name": "audit_summary_all22_0001mm.json",
-      "sha256": "85604368ece90713906abba42ef29b6556ebf82d4bfc062428ab5c74a9a46fe6",
-      "size": 480517
-    },
-    {
-      "name": "full_spatial_audit_remediation_report.md",
-      "sha256": "1ae74742ac1ecd8428ac64c49d5f655f288c2a0c9d24bcad6be1c382680f815a",
-      "size": 529293
-    },
-    {
-      "name": "full_spatial_audit_remediation_report.md.metadata.json",
-      "sha256": "7cc555eb08fc52aa9e8ce242d335059506a00d593e636051e3bbfa5867633d95",
-      "size": 586
-    }
-  ],
+  "artifacts": [],
   "files": [
     {
       "path": ".agents/environment.json",
@@ -2251,8 +2235,8 @@
     },
     {
       "path": "src/assemblies/battery/batteryUltra31Parts.ts",
-      "sha256": "2044da3757c7c10631f49ef7a8ab8da362116a9f347cdc502c557d0defd5ddf6",
-      "size": 39722,
+      "sha256": "e33ead9c3a0494221f497033858e0b3367f855f99774b2f3ad65690b615ffe0d",
+      "size": 39840,
       "mode": "100644"
     },
     {
@@ -2305,8 +2289,8 @@
     },
     {
       "path": "src/assemblies/bionz/bionzV2Parts.ts",
-      "sha256": "359e234adf5c223da343dce14574a17d818f6a52710f7b161688ad1069e08f87",
-      "size": 65393,
+      "sha256": "38b5c5886ab8e019ef876783f66b44c87ba97d99de6705bcac848609fe364945",
+      "size": 65402,
       "mode": "100644"
     },
     {
@@ -2611,8 +2595,8 @@
     },
     {
       "path": "src/assemblies/evf/evfParts.ts",
-      "sha256": "9dc04ba234b5d7c46288adce78b8cf8dcf8a28e790a19e76bb7264df318dad9d",
-      "size": 137262,
+      "sha256": "0d0deb110d35fbf825d61af764add26c23ac71796d8f696aea2adeda9ded266f",
+      "size": 137584,
       "mode": "100644"
     },
     {
@@ -2689,8 +2673,8 @@
     },
     {
       "path": "src/assemblies/lcd/lcdUltraDeepParts.ts",
-      "sha256": "931ebd460de1d69aef984a934781b3e637cad0db037ef67e19962ccb500f2722",
-      "size": 53753,
+      "sha256": "e2e866f5015a96115850663a5f83b417c4dc714d92a4fea8264f3eae74668e49",
+      "size": 53840,
       "mode": "100644"
     },
     {
@@ -3079,8 +3063,8 @@
     },
     {
       "path": "src/assemblies/original/riimosE1LegsAndAccessoriesParts.ts",
-      "sha256": "d5585cdd8307ad728077c4e8b0bc6a703969bf772b413c4020d4f5eb63a003dc",
-      "size": 11648,
+      "sha256": "acca97a68a0fb61c60d5c47b0593eeb156b51417138495f1f1a08102d88deb73",
+      "size": 11700,
       "mode": "100644"
     },
     {
@@ -3217,8 +3201,8 @@
     },
     {
       "path": "src/assemblies/sensorFab/sensorFabParts.ts",
-      "sha256": "c2345ba0e363f7e9b119a7be1f1d0eedbdd6d6aa0c69decbab4cc7ed7bf3d6ea",
-      "size": 76679,
+      "sha256": "fddde481297386744b0dde1c60f58c049a5aeebbb8418f6c389400c12331f476",
+      "size": 76731,
       "mode": "100644"
     },
     {
@@ -3253,8 +3237,8 @@
     },
     {
       "path": "src/assemblies/sensorFab/sensorFabVol2Parts.ts",
-      "sha256": "dafc7c42eb4372de36e57891d630ce8964052921a0639837f33ffbf299e66dd1",
-      "size": 83052,
+      "sha256": "5a15e63bd6448ecb69bada1a44b31f69a730eb4e4eb4204417aadbb8af8d709a",
+      "size": 83112,
       "mode": "100644"
     },
     {
@@ -3265,8 +3249,8 @@
     },
     {
       "path": "src/assemblies/sensorFab/sensorFabVol3DesignParts.ts",
-      "sha256": "4ba7c640fd559b19dfe83df22670c65fc8b0f100cbff690d59e67d3cc701eb51",
-      "size": 54708,
+      "sha256": "cec5f4d51e4d64fdd08584670d63d0047937181fab768a100c4c7dfea7d5370a",
+      "size": 54730,
       "mode": "100644"
     },
     {
@@ -3355,8 +3339,8 @@
     },
     {
       "path": "src/assemblies/sensorFab/sensorFabVol4UpperParts.ts",
-      "sha256": "32225dd934f3f2927e5cb4910c041e44b08fdd8c851a2090bb54a4974a94b5c1",
-      "size": 39350,
+      "sha256": "9e4f4a09df9cdb7281d3264743828a1b6bc281812df9915a67464b06e13fa00a",
+      "size": 39361,
       "mode": "100644"
     },
     {
@@ -3403,8 +3387,8 @@
     },
     {
       "path": "src/assemblies/sensorFab/sensorFabVol5UpperParts.ts",
-      "sha256": "62fef4153b6e917a2891fff49e2ef426f535d755a5cffab4616551e730152d55",
-      "size": 29630,
+      "sha256": "a61e9fca0e19bf6e49fda0bc6a0de7ef7756e9ca70fde27175b895153ce3c176",
+      "size": 29993,
       "mode": "100644"
     },
     {

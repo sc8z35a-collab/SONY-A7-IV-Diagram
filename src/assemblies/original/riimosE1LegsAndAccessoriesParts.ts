@@ -97,9 +97,9 @@ export function buildRiimosE1LegsAndAccessoriesParts(
     const az = leg.sz * 54.0;
 
     const pt = (r: number, y: number): [number, number, number] => [
-      ax + ux * r,
+      Math.round((ax + ux * r) * 100) / 100,
       y,
-      az + uz * r,
+      Math.round((az + uz * r) * 100) / 100,
     ];
 
     // +0: Coxa Yaw MG996R Servo (at r=0, Y=62.5; top horn at Y=76.7 -> 1.1mm below hip gusset 77.8)

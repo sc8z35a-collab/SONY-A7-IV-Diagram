@@ -1871,8 +1871,8 @@ export function buildSensorFabParts(mats: MaterialLibrary): CadPart[] {
 
   for (const l of lithoDefs) {
     const rad = (l.angleDeg * Math.PI) / 180;
-    const x = Math.cos(rad) * 41.0;
-    const z = Math.sin(rad) * 18.5;
+    const x = Math.round(Math.cos(rad) * 41.0 * 1000) / 1000;
+    const z = Math.round(Math.sin(rad) * 18.5 * 1000) / 1000;
     const g = new THREE.Group();
     g.add(makeStationPlinth(6.6, 5.8, 0.95, mats, mats.matteBlackAnodized));
     l.build(g);
