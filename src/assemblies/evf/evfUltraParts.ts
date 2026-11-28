@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfUltraParts.ts|unit=evf|lines=21|exports=buildEvfUltraParts
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildEvfUltraSemiParts } from './evfUltraSemiParts';

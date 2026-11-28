@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lcd/lcdUltraDeepParts.ts|unit=lcd|lines=1606|exports=buildLcdUltraDeepParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

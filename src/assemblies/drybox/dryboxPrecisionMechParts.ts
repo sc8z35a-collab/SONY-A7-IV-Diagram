@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxPrecisionMechParts.ts|unit=drybox|lines=799|exports=buildDryboxPrecisionMechParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import {

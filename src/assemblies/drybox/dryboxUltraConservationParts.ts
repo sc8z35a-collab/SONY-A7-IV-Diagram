@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/drybox/dryboxUltraConservationParts.ts|unit=drybox|lines=885|exports=buildDryboxUltraConservationParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import {

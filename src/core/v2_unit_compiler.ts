@@ -43,6 +43,7 @@ import {
   getV2MaterialTag,
   V2MaterialLibrary,
 } from './v2_material_catalog';
+import { applyPartPoseOverride, getUnitPoseTable } from './flow_pose_loader';
 
 // Module-scoped zero-allocation scratch objects (STRICT ZERO-GC in all hot paths)
 const _scratchMat = new THREE.Matrix4();
@@ -2088,6 +2089,7 @@ export class CompiledV2Unit implements OptimizedUnit {
 
     const rawParts = rawBuild.parts;
     const totalParts = rawParts.length;
+    const unitPoseTable = getUnitPoseTable(this.unitId);
 
     for (let pi = 0; pi < totalParts; pi++) {
       const rp = rawParts[pi];
@@ -2105,6 +2107,9 @@ export class CompiledV2Unit implements OptimizedUnit {
           ? meta.integratedExplodeOffset
           : meta.explodeOffset;
       const explodeOffset = new THREE.Vector3(offArr[0], offArr[1], offArr[2]);
+      if (unitPoseTable) {
+        applyPartPoseOverride(unitPoseTable[rp.id], assembledPos, explodeOffset, rp.group);
+      }
 
       const culledBySubView = this.cfg.isPartInSubView
         ? !this.cfg.isPartInSubView(meta, this.subView)

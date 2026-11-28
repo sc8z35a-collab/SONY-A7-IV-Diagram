@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomePlinthPrecisionParts.ts|unit=welcome|lines=1186|exports=buildMicroModuleBox,WELCOME_PLINTH_PRECISION_DEFS,buildWelcomePlinthPrecisionParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

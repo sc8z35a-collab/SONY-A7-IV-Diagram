@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mirai2028/miraiShared.ts|unit=mirai2028|lines=1656|exports=finalizeMiraiPart,InstanceTransform,makeMiraiInstanced,makeHorizCncPlate,createTerracedWaferShape,buildCurvedFpcRibbon
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

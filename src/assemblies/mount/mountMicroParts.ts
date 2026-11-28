@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mount/mountMicroParts.ts|unit=mount|lines=804|exports=buildMountMicroParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

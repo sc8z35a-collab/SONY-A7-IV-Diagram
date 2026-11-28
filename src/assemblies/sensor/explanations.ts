@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/explanations.ts|unit=sensor|lines=11|exports=MACRO_EXPLANATIONS,MICRO_EXPLANATIONS
 import sensorJson from '../../data/sensor.json';
 import microJson from '../../data/micro.json';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lazyExplanations.ts|unit=lazyExplanations.ts|lines=287|exports=lazyExplanationStub,isLazyExplanationStub,resolvePartExplanation
 import { CadPart, PartExplanation } from './types';
 
 /**

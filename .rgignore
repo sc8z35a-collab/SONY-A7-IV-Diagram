@@ -7,6 +7,7 @@ android/
 package-lock.json
 src/playground/playground_index.json
 src/playground/playground_templates.json
+src/data/*.json
 catalog/ALL_NAMES.txt
 catalog/code/
 catalog/spatial/integrated.tsv

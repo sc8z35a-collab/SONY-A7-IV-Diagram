@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/original/riimosE1ChassisPowerMagParts.ts|unit=original|lines=523|exports=buildRiimosE1ChassisPowerMagParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

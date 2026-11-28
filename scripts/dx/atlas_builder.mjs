@@ -327,26 +327,32 @@ function extractSchematicsIndex(rootAbs, uiTsFiles) {
     }
   }
 
-  // Extract all declared diagramType union literals from src/assemblies/types.ts
-  const declaredTypes = new Map(); // diagramType -> line in types.ts
-  const typesPath = path.join(rootAbs, 'src/assemblies/types.ts');
+  // Extract all declared diagramType union literals from diagram_types.gen.ts (or legacy types.ts)
+  const declaredTypes = new Map(); // diagramType -> line
+  const genTypesPath = path.join(rootAbs, 'src/assemblies/diagram_types.gen.ts');
+  const typesPath = fs.existsSync(genTypesPath) ? genTypesPath : path.join(rootAbs, 'src/assemblies/types.ts');
   if (fs.existsSync(typesPath)) {
     const text = fs.readFileSync(typesPath, 'utf8');
-    const sf = ts.createSourceFile('src/assemblies/types.ts', text, ts.ScriptTarget.Latest, true);
+    const sf = ts.createSourceFile(path.basename(typesPath), text, ts.ScriptTarget.Latest, true);
+    const collectUnion = (uNode) => {
+      for (const member of uNode.types) {
+        if (ts.isLiteralTypeNode(member) && ts.isStringLiteral(member.literal)) {
+          const line = sf.getLineAndCharacterOfPosition(member.getStart(sf)).line + 1;
+          declaredTypes.set(member.literal.text, line);
+        }
+      }
+    };
     function findDiagramUnion(node) {
-      if (
+      if (ts.isTypeAliasDeclaration(node) && node.name.text === 'DiagramType' && ts.isUnionTypeNode(node.type)) {
+        collectUnion(node.type);
+      } else if (
         ts.isPropertySignature(node) &&
         node.name &&
         node.name.getText(sf) === 'diagramType' &&
         node.type &&
         ts.isUnionTypeNode(node.type)
       ) {
-        for (const member of node.type.types) {
-          if (ts.isLiteralTypeNode(member) && ts.isStringLiteral(member.literal)) {
-            const line = sf.getLineAndCharacterOfPosition(member.getStart(sf)).line + 1;
-            declaredTypes.set(member.literal.text, line);
-          }
-        }
+        collectUnion(node.type);
       }
       ts.forEachChild(node, findDiagramUnion);
     }
@@ -797,6 +803,33 @@ export function buildCodeAtlas(opts = {}) {
     cssRows.push([r.selector, r.media, r.start, r.end, r.props_count].join('\t'));
   }
 
+  // 8. DEFECT_MAP.tsv (O(1) partId -> unit, json_line, pose_file for FLOW V1 OS)
+  const defectRows = ['part_id\tunit\tcode\tjson_loc\tpose_file'];
+  const dataDirAbs = path.join(rootAbs, 'src/data');
+  if (fs.existsSync(dataDirAbs)) {
+    const jsonFiles = fs.readdirSync(dataDirAbs).filter((f) => f.endsWith('.json')).sort();
+    for (const jf of jsonFiles) {
+      const abs = path.join(dataDirAbs, jf);
+      const raw = fs.readFileSync(abs, 'utf8');
+      let parsed;
+      try { parsed = JSON.parse(raw); } catch { continue; }
+      if (!parsed?.unitId || !Array.isArray(parsed.parts)) continue;
+      const lines = raw.split('\n');
+      const lineById = new Map();
+      for (let i = 0; i < lines.length; i++) {
+        const m = lines[i].match(/"id"\s*:\s*"([^"]+)"/);
+        if (m && !lineById.has(m[1])) lineById.set(m[1], i + 1);
+      }
+      const poseRel = `src/units/${parsed.unitId}.pose.tsv`;
+      const hasPose = fs.existsSync(path.join(rootAbs, poseRel));
+      for (const p of parsed.parts) {
+        const ln = lineById.get(p.id) || 1;
+        const codeM = String(p.title || '').match(/^([A-Z0-9-]+)\./);
+        defectRows.push([p.id, parsed.unitId, codeM ? codeM[1] : '-', `src/data/${jf}:${ln}`, hasPose ? poseRel : '-'].join('\t'));
+      }
+    }
+  }
+
   const outputs = [
     ['MAP.tsv', `${mapRows.join('\n')}\n`],
     ['SYMBOLS.tsv', `${symbolRows.join('\n')}\n`],
@@ -805,6 +838,7 @@ export function buildCodeAtlas(opts = {}) {
     ['HELPERS.tsv', `${helperRows.join('\n')}\n`],
     ['SCHEMATICS.tsv', `${schemRows.join('\n')}\n`],
     ['CSS_INDEX.tsv', `${cssRows.join('\n')}\n`],
+    ['DEFECT_MAP.tsv', `${defectRows.join('\n')}\n`],
   ];
 
   const fileStats = {};

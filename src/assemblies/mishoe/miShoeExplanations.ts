@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/mishoe/miShoeExplanations.ts|unit=mishoe|lines=32|exports=MISHOE_EXPLANATIONS
 import miShoeJson from '../../data/mi_shoe.json';
 import { PartExplanation } from '../types';
 

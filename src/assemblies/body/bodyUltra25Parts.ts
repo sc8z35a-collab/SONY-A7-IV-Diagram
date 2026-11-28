@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/body/bodyUltra25Parts.ts|unit=body|lines=654|exports=buildBodyUltra25Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

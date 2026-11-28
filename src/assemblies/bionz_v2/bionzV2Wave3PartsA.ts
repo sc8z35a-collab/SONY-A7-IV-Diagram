@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/bionz_v2/bionzV2Wave3PartsA.ts|unit=bionz_v2|lines=1395|exports=finalizeWave3Part,makeBondStrut,addVectorArrow,createHexShape,createTrapezoidShape,addMetrologyPedestal
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

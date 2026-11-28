@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/bionz/bionzExplanations.ts|unit=bionz|lines=7|exports=BIONZ_EXPLANATIONS
 import { PartExplanation } from '../types';
 import { explanationsFromUnitJson } from '../../core/unit_explanations';
 import unitData from '../../data/bionz.json';

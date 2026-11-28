@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/shutter/shutterUltra36PartsA.ts|unit=shutter|lines=1423|exports=buildShutterUltra36PartsA
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfDetailHelpers.ts|unit=evf|lines=493|exports=createDin6799EClipGeo,createTrueWaveSpringGeo,createKnurledCollarGeo,createThreadedRingLatheGeo,createSplitScarfRingGeo,addOrientedPhillipsScrew
 import * as THREE from 'three';
 import { MaterialLibrary } from '../../engine/Materials';
 import {

@@ -8,7 +8,7 @@
  * 6 Capture Modes (--mode or comma-separated --modes):
  *   ui | cad | diagram | explanation | full | custom
  *
- * Full AI Agent Manual: scripts/PP1_1_MANUAL.md
+ * Full AI Agent Manual: AGENTS.md (FLOW V1 OS Book 1)
  */
 
 import fs from 'node:fs';
@@ -2088,6 +2088,11 @@ async function runDirectCapture(opts, existingDaemon = null) {
 // ============================================================================
 function getDaemonStatePath(staticDir) {
   const hash = crypto.createHash('sha1').update(path.resolve(staticDir)).digest('hex').slice(0, 10);
+  const wsDir = process.env.FLOW_PP_DAEMON_DIR || (process.env.FLOW_AGENT_WS ? path.join(process.env.FLOW_AGENT_WS, 'pp_daemon') : null);
+  if (wsDir) {
+    fs.mkdirSync(wsDir, { recursive: true });
+    return path.join(wsDir, `antigravity-pp-daemon-v1-${hash}.json`);
+  }
   return `/tmp/antigravity-pp-daemon-v1-${hash}.json`;
 }
 

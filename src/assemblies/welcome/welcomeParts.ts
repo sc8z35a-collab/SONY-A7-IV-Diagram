@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/welcome/welcomeParts.ts|unit=welcome|lines=2941|exports=WelcomePartDef,WELCOME_PART_DEFS,buildWelcomeParts
 import * as THREE from 'three';
 import { CadPart, PartExplanation } from '../types';
 import { V2MaterialLibrary } from '../../core/v2_material_catalog';

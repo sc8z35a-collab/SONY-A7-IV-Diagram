@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lens/lensMicroParts.ts|unit=lens|lines=938|exports=buildLensMicroParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

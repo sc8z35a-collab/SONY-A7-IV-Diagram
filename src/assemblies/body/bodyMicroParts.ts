@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/body/bodyMicroParts.ts|unit=body|lines=1069|exports=buildBodyMicroParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

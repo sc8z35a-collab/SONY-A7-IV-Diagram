@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/battery/batteryUltra31Parts.ts|unit=battery|lines=1278|exports=buildBatteryUltra31Parts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

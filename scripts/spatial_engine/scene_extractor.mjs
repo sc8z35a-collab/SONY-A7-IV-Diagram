@@ -15,7 +15,7 @@ import { buildFlatBvh, computeMeshSignedVolumeAndCentroid, createEmptyBox } from
 
 const require = createRequire(import.meta.url);
 const ROOT = process.cwd();
-const CACHE_DIR = path.join(os.tmpdir(), 'sp_cache');
+const CACHE_DIR = process.env.FLOW_SP_CACHE_DIR || (process.env.FLOW_AGENT_WS ? path.join(process.env.FLOW_AGENT_WS, 'sp_cache') : path.join(os.tmpdir(), 'sp_cache'));
 const CACHE_MAGIC = 'SPB3';
 
 // Material density table (g / cm³) for realistic mass / CoG / tipping calculations
@@ -345,6 +345,33 @@ function extractGeometryWorldTris(geo, worldMatrix) {
   return out;
 }
 
+function loadPoseTsvMap(unitId) {
+  const p = path.join(ROOT, 'src/units', `${unitId}.pose.tsv`);
+  const map = new Map();
+  if (!fs.existsSync(p)) return { map, hash: '0' };
+  const raw = fs.readFileSync(p, 'utf8');
+  const hash = crypto.createHash('sha1').update(raw).digest('hex').slice(0, 8);
+  for (const line of raw.split(/\r?\n/)) {
+    const t = line.trim();
+    if (!t || t.startsWith('#')) continue;
+    const cols = t.split('\t');
+    const id = cols[0]?.trim();
+    if (!id) continue;
+    const parse3 = (s, def) => {
+      if (!s || s === '-') return def;
+      const a = s.split(',').map(Number);
+      return a.length === 3 && a.every(Number.isFinite) ? a : def;
+    };
+    map.set(id, {
+      d: parse3(cols[1], [0, 0, 0]),
+      r: parse3(cols[2], [0, 0, 0]),
+      s: parse3(cols[3], [1, 1, 1]),
+      e: parse3(cols[4], [0, 0, 0]),
+    });
+  }
+  return { map, hash };
+}
+
 /**
  * Headlessly load & extract exact Float64 triangle scene for any registered unit & quality tier.
  */
@@ -359,7 +386,8 @@ export async function loadSpatialScene(unitId, opts = {}) {
     throw new Error(`Unknown unit '${unitId}'. Registered units: ${units.map((u) => u.unitId).join(', ')}`);
   }
 
-  const hash = computeUnitSourceHash(unitInfo, quality);
+  const poseLoaded = loadPoseTsvMap(unitId);
+  const hash = `${computeUnitSourceHash(unitInfo, quality)}_${poseLoaded.hash}`;
   const cachePath = path.join(CACHE_DIR, `${unitId}_${quality}_${hash}.spbin`);
   if (useCache) {
     const cached = readSpb3Cache(cachePath);
@@ -420,7 +448,7 @@ export async function loadSpatialScene(unitId, opts = {}) {
   });
 
   const mod = { exports: {} };
-  const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text);
+  const fn = new Function('require', 'module', 'exports', bundled.outputFiles[0].text); // flow-sec-allow:SEC-07 trusted local esbuild unit loader
   fn(require, mod, mod.exports);
   const { createUnit, setActiveBuildQuality, ResourceCache } = mod.exports;
 
@@ -535,12 +563,28 @@ export async function loadSpatialScene(unitId, opts = {}) {
     const code = codeMatch ? codeMatch[1] : `P${order}`;
     const role = classifyRole(rp.id, title, rp.explanation?.category || '');
 
-    const pos = rp.assembledPos
+    const po = usesCompiledV2 ? poseLoaded.map.get(rp.id) : null;
+    const basePos = rp.assembledPos
       ? [rp.assembledPos.x, rp.assembledPos.y, rp.assembledPos.z]
       : jm.assembledPos || [0, 0, 0];
-    const exp = rp.explodeOffset
+    const baseExp = rp.explodeOffset
       ? [rp.explodeOffset.x, rp.explodeOffset.y, rp.explodeOffset.z]
       : jm.explodeOffset || [0, 0, 0];
+    const pos = po ? [basePos[0] + po.d[0], basePos[1] + po.d[1], basePos[2] + po.d[2]] : basePos;
+    const exp = po ? [baseExp[0] + po.e[0], baseExp[1] + po.e[1], baseExp[2] + po.e[2]] : baseExp;
+    if (po && rp.group) {
+      rp.group.position.set(pos[0], pos[1], pos[2]);
+      if (po.r[0] || po.r[1] || po.r[2]) {
+        rp.group.rotation.x += po.r[0];
+        rp.group.rotation.y += po.r[1];
+        rp.group.rotation.z += po.r[2];
+      }
+      if (po.s[0] !== 1 || po.s[1] !== 1 || po.s[2] !== 1) {
+        rp.group.scale.x *= po.s[0];
+        rp.group.scale.y *= po.s[1];
+        rp.group.scale.z *= po.s[2];
+      }
+    }
 
     // Track group origin (first assembledPos seen per groupKey)
     if (!groupOriginAcc.has(groupKey)) groupOriginAcc.set(groupKey, pos);
@@ -656,3 +700,46 @@ export async function loadSpatialScene(unitId, opts = {}) {
   }
   return sceneData;
 }
+
+/**
+ * EX-DELTA: Ultra-fast (<40ms) in-memory incremental Float64 triangle + AABB + BVH updater
+ * used inside `flow heal` inner optimization loops without re-running esbuild/Three.js.
+ */
+export function applyDeltaToSceneInPlace(scene, deltaByPartId) {
+  let touched = 0;
+  for (const p of scene.parts) {
+    const delta = deltaByPartId instanceof Map ? deltaByPartId.get(p.id) : deltaByPartId?.[p.id];
+    if (!delta) continue;
+    const dx = Number(delta.d?.[0] || 0);
+    const dy = Number(delta.d?.[1] || 0);
+    const dz = Number(delta.d?.[2] || 0);
+    const ex = Number(delta.e?.[0] || 0);
+    const ey = Number(delta.e?.[1] || 0);
+    const ez = Number(delta.e?.[2] || 0);
+    if (dx === 0 && dy === 0 && dz === 0 && ex === 0 && ey === 0 && ez === 0) continue;
+
+    touched++;
+    p.assembledPos = [p.assembledPos[0] + dx, p.assembledPos[1] + dy, p.assembledPos[2] + dz];
+    p.explodeOffset = [p.explodeOffset[0] + ex, p.explodeOffset[1] + ey, p.explodeOffset[2] + ez];
+    p.box = [p.box[0] + dx, p.box[1] + dy, p.box[2] + dz, p.box[3] + dx, p.box[4] + dy, p.box[5] + dz];
+    p.cog = [p.cog[0] + dx, p.cog[1] + dy, p.cog[2] + dz];
+
+    for (let mi = p.meshStart; mi < p.meshStart + p.meshCount; mi++) {
+      const m = scene.meshes[mi];
+      if (!m) continue;
+      m.box = [m.box[0] + dx, m.box[1] + dy, m.box[2] + dz, m.box[3] + dx, m.box[4] + dy, m.box[5] + dz];
+      const tris = m.tris;
+      for (let i = 0; i < tris.length; i += 3) {
+        tris[i] += dx;
+        tris[i + 1] += dy;
+        tris[i + 2] += dz;
+      }
+      m._triBvh = null; // lazily rebuilt only for touched meshes
+    }
+  }
+  if (touched > 0) {
+    scene.sceneBvh = buildFlatBvh(scene.meshes.map((m) => m.box), 6);
+  }
+  return touched;
+}
+

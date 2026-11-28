@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfPhysicsOverlay.ts|unit=evf|lines=471|exports=EvfPhysicsOverlayController,createEvfPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { EVF_OPTICAL_Y } from './evfParts';

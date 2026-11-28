@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/bionz_v2/bionzV2Wave3Parts.ts|unit=bionz_v2|lines=16|exports=buildBionzV2Wave3Parts
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
 import { buildBionzV2Wave3PartsA } from './bionzV2Wave3PartsA';

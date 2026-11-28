@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/evf/evfUltraMechParts.ts|unit=evf|lines=2009|exports=buildEvfUltraMechParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';

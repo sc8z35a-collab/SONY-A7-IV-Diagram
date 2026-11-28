@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/lcd/lcdPhysicsOverlay.ts|unit=lcd|lines=236|exports=LcdPhysicsOverlayController,createLcdPhysicsOverlay
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { LCD_CENTER_X, LCD_CENTER_Y, LCD_HEIGHT, LCD_WIDTH } from './lcdParts';

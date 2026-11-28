@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/battery/batteryUltra27Explanations.ts|unit=battery|lines=5|exports=BATTERY_ULTRA27_EXPLANATIONS
 import { PartExplanation } from '../types';
 
 /** Consolidated into pure JSON single source of truth (src/data/). */

@@ -1,3 +1,4 @@
+//@FLOW_MAP|file=src/assemblies/sensor/sensorMicroParts.ts|unit=sensor|lines=1875|exports=buildSensorMicroParts
 import * as THREE from 'three';
 import { CadPart } from '../types';
 import { MaterialLibrary } from '../../engine/Materials';
