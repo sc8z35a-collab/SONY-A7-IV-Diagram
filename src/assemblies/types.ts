@@ -22,7 +22,8 @@ export type ScaleMode =
   | 'mic'
   | 'sensor_fab'
   | 'drybox'
-  | 'mirai_2028';
+  | 'mirai_2028'
+  | 'original';
 export type MiraiStructureId = 'fh01' | 'fh02' | 'fh08' | 'fh32' | 'fh25' | 'fh20' | 'fh17' | 'fh48';
 export type SensorFabVolume = 0 | 1 | 2 | 3 | 4 | 5;
 export type SensorFabStage =
@@ -2431,7 +2432,18 @@ export interface PartExplanation {
     | 'mirai_fh48_io_usb4_optical_port'
     | 'mirai_fh48_rear_3d_display'
     | 'mirai_fh48_rear_cfrp_shell'
-    | 'mirai_fh48_titanium_baseplate';
+    | 'mirai_fh48_titanium_baseplate'
+    // Original Showcase #01: RIIMOS E1 (9,700 JPY Ultra-Frugal 0.135J 8-Barrel Quadruped — 10 Ultra-HD Schematics)
+    | 'orig_e1_chassis_layout'
+    | 'orig_e1_battery_5s21700'
+    | 'orig_e1_mag_zerowaste'
+    | 'orig_e1_launcher_8x'
+    | 'orig_e1_camera_120hz_estop'
+    | 'orig_e1_brain_g52j_spine'
+    | 'orig_e1_legs_xyz_mg996r'
+    | 'orig_e1_safety_interlock'
+    | 'orig_e1_power_3h_budget'
+    | 'orig_e1_colab_l4_rl';
 }
 
 export interface CadPart {
@@ -2457,7 +2469,8 @@ export interface CadPart {
     | 'mic'
     | 'sensor_fab'
     | 'drybox'
-    | 'mirai_2028';
+    | 'mirai_2028'
+    | 'original';
   order: number;
   swatchColor: string;
   /** Group root positioned at its assembled origin */
@@ -2481,6 +2494,8 @@ export interface CadPart {
   fabVolume?: SensorFabVolume;
   /** For FH MIRAI 2028 multi-structure encyclopedia: 1 = FH01 SPAD/QIS, 2 = FH02 3-Layer Perovskite RGB, ... */
   miraiSubView?: number;
+  /** For Original real-world manufacturable showcase: 1 = #01 RIIMOS E1, 2+ = future original builds */
+  originalSubView?: number;
 }
 
 export interface AssemblyController {

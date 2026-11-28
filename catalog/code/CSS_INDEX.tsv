@@ -842,3 +842,81 @@ html, body, #app, #viewport	-	9	19	6
 .schematic-lightbox-canvas	@media (orientation: landscape) and (max-height: 540px)	6587	6590	2
 .schematic-lightbox-controls	@media (orientation: landscape) and (max-height: 540px)	6592	6596	3
 .lb-ctrl-btn	@media (orientation: landscape) and (max-height: 540px)	6598	6601	2
+.orig-cta-pill	-	6609	6626	16
+.orig-cta-pill svg	-	6628	6636	7
+.orig-cta-pill:hover	-	6638	6642	3
+.orig-cta-pill.is-active	-	6644	6647	2
+.orig-subbar	-	6649	6651	1
+.orig-subbar .orig-sub-exhibit.is-active	-	6653	6657	3
+.orig-subbar .orig-sub-studio	-	6659	6662	2
+.orig-subbar .orig-sub-studio:hover	-	6664	6666	1
+.orig-subbar .orig-sub-demo	-	6668	6672	3
+.orig-subbar .orig-sub-demo.is-active	-	6674	6677	2
+.orig-studio-backdrop	-	6679	6689	9
+.orig-studio-backdrop.is-open	-	6691	6693	1
+.orig-studio-modal	-	6695	6706	10
+.orig-studio-header	-	6708	6716	7
+.orig-studio-brand	-	6718	6722	3
+.orig-studio-badge	-	6724	6735	10
+.orig-studio-header h2	-	6737	6742	4
+.orig-studio-header p	-	6744	6748	3
+.orig-studio-close	-	6750	6761	10
+.orig-studio-close:hover	-	6763	6765	1
+.orig-studio-tabs	-	6767	6774	6
+.orig-studio-tab	-	6776	6787	10
+.orig-studio-tab.is-active	-	6789	6793	3
+.orig-studio-body	-	6795	6801	5
+.orig-pillars	-	6803	6807	3
+.orig-pillar	-	6809	6814	4
+.orig-pillar-k	-	6816	6821	4
+.orig-pillar h3	-	6823	6827	3
+.orig-pillar p	-	6829	6834	4
+.orig-safety-banner	-	6836	6841	4
+.orig-safety-banner h4	-	6843	6848	4
+.orig-safety-banner ul	-	6850	6856	5
+.orig-sec-title	-	6858	6863	4
+.orig-hacks-grid	-	6865	6869	3
+.orig-hack-card	-	6871	6876	4
+.orig-hack-card > strong	-	6878	6883	4
+.orig-hack-card p	-	6885	6890	4
+.orig-kpi-strip	-	6892	6896	3
+.orig-kpi	-	6898	6906	7
+.orig-kpi span	-	6908	6912	3
+.orig-kpi strong	-	6914	6918	3
+.orig-kpi em	-	6920	6925	4
+.orig-table-wrap	-	6927	6931	3
+.orig-bom-table	-	6933	6937	3
+.orig-bom-table th, .orig-bom-table td	-	6939	6945	4
+.orig-bom-table th	-	6947	6952	4
+.orig-bom-table .num	-	6954	6958	3
+.orig-bom-table .price	-	6960	6963	2
+.orig-bom-extra td	-	6965	6968	2
+.orig-bom-total td	-	6970	6973	2
+.orig-bom-total .price	-	6975	6978	2
+.orig-tag	-	6980	6989	8
+.orig-tag.muted	-	6991	6994	2
+.orig-part-link	-	6996	7008	11
+.orig-two-col	-	7010	7014	3
+.orig-card	-	7016	7024	7
+.orig-card h3	-	7026	7030	3
+.orig-muted	-	7032	7037	4
+.orig-bar-row	-	7039	7045	5
+.orig-bar-row > div	-	7047	7052	4
+.orig-bar-row > div > i	-	7054	7058	3
+.orig-result-box	-	7060	7067	6
+.orig-result-box span	-	7069	7074	4
+.orig-result-box.purple	-	7076	7080	3
+.orig-rl-list	-	7082	7088	5
+.orig-note	-	7090	7094	3
+.studio-topbar-left	@media (max-width: 768px)	7097	7101	3
+.studio-topbar-center	@media (max-width: 768px)	7102	7105	2
+.orig-cta-pill	@media (max-width: 768px)	7106	7110	3
+.orig-subbar	@media (max-width: 768px)	7111	7118	6
+.orig-subbar::-webkit-scrollbar	@media (max-width: 768px)	7119	7121	1
+.orig-subbar .studio-sub-btn	@media (max-width: 768px)	7122	7126	3
+.orig-pillars, .orig-hacks-grid, .orig-kpi-strip, .orig-two-col	@media (max-width: 768px)	7127	7132	1
+.orig-studio-backdrop	@media (max-width: 768px)	7133	7135	1
+.orig-studio-modal	@media (max-width: 768px)	7136	7139	2
+.orig-studio-header h2	@media (max-width: 768px)	7140	7142	1
+.orig-studio-header p	@media (max-width: 768px)	7143	7145	1
+.orig-bar-row	@media (max-width: 768px)	7146	7148	1

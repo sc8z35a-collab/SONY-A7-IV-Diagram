@@ -9,6 +9,7 @@ import type { LensOpticsStudio } from './ui/LensOpticsStudio';
 import type { OpticalScenarioId } from './assemblies/lens/lensOpticalSim';
 import type { CadPlaygroundStudio } from './playground/CadPlaygroundStudio';
 import type { MiraiEdition, MiraiLibraryStudio, MiraiStudioTab } from './ui/MiraiLibraryStudio';
+import type { OriginalBlueprintStudio, OriginalStudioTab } from './ui/OriginalBlueprintStudio';
 
 const appRoot = document.getElementById('app')!;
 const viewportEl = document.getElementById('viewport')!;
@@ -27,6 +28,8 @@ let realPlayground: CadPlaygroundStudio | null = null;
 let playgroundLoadPromise: Promise<CadPlaygroundStudio> | null = null;
 let realMiraiStudio: MiraiLibraryStudio | null = null;
 let miraiStudioLoadPromise: Promise<MiraiLibraryStudio> | null = null;
+let realOriginalStudio: OriginalBlueprintStudio | null = null;
+let originalStudioLoadPromise: Promise<OriginalBlueprintStudio> | null = null;
 
 const handleOpticsOpenChange = (open: boolean) => {
   controls.syncOpticsStudio(open);
@@ -267,6 +270,7 @@ controls = new ZeroTextControls(appRoot, {
   },
   onPhysicsToggle: (active) => {
     viewport.setPhysicsActive(active);
+    controls.syncPhysics(active);
   },
   onOpticsStudioToggle: () => {
     opticsStudio.toggle();
@@ -281,6 +285,13 @@ controls = new ZeroTextControls(appRoot, {
   },
   onOpenMiraiStudio: (tab) => {
     void miraiStudioApi.open({ tab });
+  },
+  onOriginalSubViewChange: (subView) => {
+    viewport.setOriginalSubView(subView, false);
+    syncRail();
+  },
+  onOpenOriginalStudio: (tab) => {
+    void originalStudioApi.open(tab);
   },
   onResetVisibility: () => {
     viewport.resetAllVisibility();
@@ -425,6 +436,40 @@ const miraiStudioApi = {
   },
 };
 
+const ensureOriginalStudio = (): Promise<OriginalBlueprintStudio> => {
+  if (realOriginalStudio) return Promise.resolve(realOriginalStudio);
+  if (!originalStudioLoadPromise) {
+    originalStudioLoadPromise = import('./ui/OriginalBlueprintStudio').then((mod) => {
+      realOriginalStudio = new mod.OriginalBlueprintStudio({
+        onJumpToPart: (partId) => {
+          viewport.setOriginalSubView(1, false);
+          viewport.setMode('original', false);
+          controls.syncMode('original');
+          viewport.selectPart(partId, false);
+          syncRail();
+        },
+        onTogglePhysics: (active) => {
+          viewport.setPhysicsActive(active);
+          controls.syncPhysics(active);
+        },
+      });
+      return realOriginalStudio;
+    });
+  }
+  return originalStudioLoadPromise;
+};
+
+const originalStudioApi = {
+  isOpen: () => realOriginalStudio?.isOpen() ?? false,
+  open: async (tab: OriginalStudioTab = 'principles'): Promise<void> => {
+    const studio = await ensureOriginalStudio();
+    studio.open(tab);
+  },
+  close: (): void => {
+    realOriginalStudio?.close();
+  },
+};
+
 drawer = new ExplanationDrawer(appRoot, {
   onClose: () => viewport.selectPart(null, false),
   onPrev: () => viewport.stepSelectedPart(-1),
@@ -523,7 +568,7 @@ const setQuality = (q: GraphicsQuality): void => {
 };
 
 window.addEventListener('keydown', (e) => {
-  if (playgroundApi.isOpen() || miraiStudioApi.isOpen()) return;
+  if (playgroundApi.isOpen() || miraiStudioApi.isOpen() || originalStudioApi.isOpen()) return;
   if (e.key === 'Escape') {
     if (zenFullscreen) {
       zenFullscreen = false;
@@ -700,6 +745,8 @@ const captureBridge = new ArtifactCaptureBridge({
   setMiraiEdition: (ed) => miraiStudioApi.setEdition(ed),
   openMiraiStudio: (tab) => miraiStudioApi.open({ tab }),
   closeMiraiStudio: () => miraiStudioApi.close(),
+  openOriginalStudio: (tab) => originalStudioApi.open(tab),
+  closeOriginalStudio: () => originalStudioApi.close(),
   requestRenderFrame: () => viewport.requestRenderFrame(),
   setCaptureControlled: (enabled) => viewport.setCaptureControlled(enabled),
   activateAtomic: async (mode, quality, opts) => {
@@ -780,7 +827,7 @@ const captureBridge = new ArtifactCaptureBridge({
   getPartScreenAnnotations: (maxLabels) => viewport.getPartScreenAnnotations(maxLabels),
 });
 
-// Expose lightweight inspection, Play Ground 1.1, FH MIRAI 2028, and High-Speed Capture Engine (`pp`) hooks on window
+// Expose lightweight inspection, Play Ground 1.1, FH MIRAI 2028, Original Showcase, and High-Speed Capture Engine (`pp`) hooks on window
 (window as unknown as Record<string, unknown>).__cad = {
   viewport,
   controls,
@@ -788,6 +835,7 @@ const captureBridge = new ArtifactCaptureBridge({
   opticsStudio,
   playground: playgroundApi,
   miraiStudio: miraiStudioApi,
+  originalStudio: originalStudioApi,
   pp: captureBridge,
   capture: captureBridge,
   toggleFullscreen,
@@ -2554,6 +2602,28 @@ if (preset === 'welcome') {
   controls.syncMiraiSubView(1);
   syncRail();
   void miraiStudioApi.open({ tab: 'glossary' });
+} else if (preset === 'original' || preset === 'riimos_e1') {
+  viewport.setOriginalSubView(1, true);
+  viewport.setMode('original', true);
+  controls.syncMode('original');
+  viewport.setExplode(0, true);
+  controls.setExplodeValue(0);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'riimos_e1_exploded') {
+  viewport.setOriginalSubView(1, true);
+  viewport.setMode('original', true);
+  controls.syncMode('original');
+  viewport.setExplode(0.65, true);
+  controls.setExplodeValue(0.65);
+  viewport.setCameraPreset('iso', true);
+  syncRail();
+} else if (preset === 'riimos_e1_studio') {
+  viewport.setOriginalSubView(1, true);
+  viewport.setMode('original', true);
+  controls.syncMode('original');
+  syncRail();
+  void originalStudioApi.open('principles');
 }
 
 

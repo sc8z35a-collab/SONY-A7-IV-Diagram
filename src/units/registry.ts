@@ -175,6 +175,13 @@ const REGISTRY: Readonly<Record<string, RegisteredUnitEntry>> = Object.freeze({
     loadMeta: makeLazyJsonMetaLoader('mirai_2028', () => import('../data/mirai_2028.json')),
     load: async () => (await import('./mirai_2028')).createMirai2028Unit(),
   },
+  // --- Original Manufacturable Showcase (#01 RIIMOS E1 — 9,700 JPY Ultra-Frugal Quadruped = 128p) ---
+  original: {
+    unitId: 'original',
+    declaredPartCount: 128,
+    loadMeta: makeLazyJsonMetaLoader('original', () => import('../data/original.json')),
+    load: async () => (await import('./original')).createOriginalUnit(),
+  },
   // --- Phase C: Composite Macro Camera Modes (All 8 / 7 Core Subsystems) ---
   integrated: {
     unitId: 'integrated',

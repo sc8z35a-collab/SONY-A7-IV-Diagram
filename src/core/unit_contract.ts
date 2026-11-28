@@ -22,6 +22,7 @@ export interface UnitPartMeta {
   readonly lensSection?: 1 | 2 | 3;
   readonly fabVolume?: 0 | 1 | 2 | 3 | 4;
   readonly miraiSubView?: number;
+  readonly originalSubView?: number;
   readonly standaloneOnly?: boolean;
   readonly title: string;
   readonly subtitle: string;
