@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import {
   PRECISION_MM,
+  STRICT_PRECISION_MM,
   boxBoxMinDistSq,
   boxesOverlap,
   buildBoxMesh,
@@ -41,29 +42,395 @@ function isSmtSolderSeatPair(partA, partB, penMm) {
   return (isPcbSide(rA) && isCompSide(rB)) || (isPcbSide(rB) && isCompSide(rA));
 }
 
+function classifySeverity(penMm, isSmt) {
+  if (isSmt) return 'SMT_SEAT';
+  if (penMm >= 1.0) return 'S0_CRITICAL';
+  if (penMm >= 0.1) return 'S1_MAJOR';
+  if (penMm >= 0.01) return 'S2_MINOR';
+  return 'S3_MICRO';
+}
+
+function partPairExactMinDist(scene, partA, partB, maxDist = Infinity) {
+  const boxD2 = boxBoxMinDistSq(partA.box, partB.box);
+  if (boxD2 >= maxDist * maxDist) return Infinity;
+  let best = maxDist;
+  for (let i = partA.meshStart; i < partA.meshStart + partA.meshCount; i++) {
+    const mA = scene.meshes[i];
+    for (let j = partB.meshStart; j < partB.meshStart + partB.meshCount; j++) {
+      const mB = scene.meshes[j];
+      const d = exactMeshPairMinDistance(mA, mB, best);
+      if (d < best) {
+        best = d;
+        if (best <= 1e-7) return 0;
+      }
+    }
+  }
+  return best;
+}
+
+function isOuterShellCandidate(p) {
+  const s = `${p.id} ${p.title || ''} ${p.category || ''}`.toLowerCase();
+  if (/internal|inner|sub-frame|subframe|bracket|pcb|board|ic|chip|coil|motor|screw|bolt|pin|spring|gasket|seal|o-ring|damper|pad|shield-can|fpc|cable|harness|connector|led|sensor|blade/.test(s)) {
+    return false;
+  }
+  if (p.role === 'chassis') return true;
+  return /chassis|housing|shell|barrel|cabinet|enclosure|casing|monocoque|body-main|outer-frame|cover|case|bezel|door|hood|grip/.test(s);
+}
+
+function isInternalComponentCandidate(p) {
+  const s = `${p.id} ${p.title || ''} ${p.category || ''}`.toLowerCase();
+  if (isOuterShellCandidate(p)) return false;
+  if (/pcb|smt_ic|heat_source|thermal_sensitive|elastomer|fastener/.test(p.role || '')) return true;
+  return /inner|internal|pcb|ic|coil|motor|damper|spring|screw|bolt|baffle|board|chip|die|cell|actuator|magnet|fpc|ribbon|harness|heater|peltier|desiccant|fan|sensor|blade|mirror|prism|wafer|capacitor|resistor|inductor|gear|shaft|bearing/.test(s);
+}
+
+function isIntentionallyExposedExternal(p) {
+  const s = `${p.id} ${p.title || ''} ${p.category || ''}`.toLowerCase();
+  return /port|usb|hdmi|jack|terminal|button|dial|knob|wheel|switch|lever|foot|feet|pad-bottom|tripod|strap|eyelet|lug|mount-bayonet|bayonet|flange|hood|front-glass|front-element|eyecup|eyepiece|hotshoe|mi-shoe|shoe|antenna|radome|handle|latch|lock|hinge|window|display|screen|lcd|glass|grille|vent|speaker|mic-mesh|barrel-gun|muzzle|leg|paw|wheel-caster/.test(s);
+}
+
+function computeEnvelopeBox(shellParts) {
+  const env = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+  for (let i = 0; i < shellParts.length; i++) {
+    const b = shellParts[i].box;
+    if (!b || !Number.isFinite(b[0])) continue;
+    if (b[0] < env[0]) env[0] = b[0];
+    if (b[1] < env[1]) env[1] = b[1];
+    if (b[2] < env[2]) env[2] = b[2];
+    if (b[3] > env[3]) env[3] = b[3];
+    if (b[4] > env[4]) env[4] = b[4];
+    if (b[5] > env[5]) env[5] = b[5];
+  }
+  return Number.isFinite(env[0]) ? env : null;
+}
+
+function runProtrusionAudit(scene, activeParts, tolMm, nearestGapByPartId) {
+  const shellParts = activeParts.filter((p) => p.meshCount > 0 && isOuterShellCandidate(p));
+  const envelopeBox = computeEnvelopeBox(shellParts);
+  const envelopeProtrusions = [];
+  if (envelopeBox) {
+    for (let i = 0; i < activeParts.length; i++) {
+      const p = activeParts[i];
+      if (p.meshCount === 0 || !isInternalComponentCandidate(p)) continue;
+      const b = p.box;
+      const axes = [];
+      const dxNeg = envelopeBox[0] - b[0];
+      const dxPos = b[3] - envelopeBox[3];
+      const dyNeg = envelopeBox[1] - b[1];
+      const dyPos = b[4] - envelopeBox[4];
+      const dzNeg = envelopeBox[2] - b[2];
+      const dzPos = b[5] - envelopeBox[5];
+      if (dxNeg >= tolMm) axes.push({ axis: '-X', exceedMm: Number(dxNeg.toFixed(5)) });
+      if (dxPos >= tolMm) axes.push({ axis: '+X', exceedMm: Number(dxPos.toFixed(5)) });
+      if (dyNeg >= tolMm) axes.push({ axis: '-Y', exceedMm: Number(dyNeg.toFixed(5)) });
+      if (dyPos >= tolMm) axes.push({ axis: '+Y', exceedMm: Number(dyPos.toFixed(5)) });
+      if (dzNeg >= tolMm) axes.push({ axis: '-Z', exceedMm: Number(dzNeg.toFixed(5)) });
+      if (dzPos >= tolMm) axes.push({ axis: '+Z', exceedMm: Number(dzPos.toFixed(5)) });
+      if (axes.length > 0) {
+        const maxExceedMm = Math.max(...axes.map((a) => a.exceedMm));
+        envelopeProtrusions.push({
+          part: `${p.code} (${p.id})`,
+          partId: p.id,
+          code: p.code,
+          groupKey: p.groupKey,
+          role: p.role,
+          exposedExternalHint: isIntentionallyExposedExternal(p),
+          maxExceedMm: Number(maxExceedMm.toFixed(5)),
+          axes,
+          partBox: b.map((v) => Number(v.toFixed(4))),
+        });
+      }
+    }
+    envelopeProtrusions.sort((a, b) => b.maxExceedMm - a.maxExceedMm);
+  }
+
+  // IQR-based spatial outlier detection (flags any part far detached from unit median center)
+  const spatialOutliers = [];
+  const validParts = activeParts.filter((p) => p.meshCount > 0 && Number.isFinite(p.box[0]));
+  if (validParts.length >= 6) {
+    const xs = validParts.map((p) => (p.box[0] + p.box[3]) * 0.5).sort((a, b) => a - b);
+    const ys = validParts.map((p) => (p.box[1] + p.box[4]) * 0.5).sort((a, b) => a - b);
+    const zs = validParts.map((p) => (p.box[2] + p.box[5]) * 0.5).sort((a, b) => a - b);
+    const mid = Math.floor(validParts.length / 2);
+    const med = [xs[mid], ys[mid], zs[mid]];
+    const dists = validParts.map((p) => {
+      const cx = (p.box[0] + p.box[3]) * 0.5;
+      const cy = (p.box[1] + p.box[4]) * 0.5;
+      const cz = (p.box[2] + p.box[5]) * 0.5;
+      return { p, d: Math.hypot(cx - med[0], cy - med[1], cz - med[2]), c: [cx, cy, cz] };
+    });
+    const sortedD = dists.map((x) => x.d).sort((a, b) => a - b);
+    const q1 = sortedD[Math.floor(sortedD.length * 0.25)];
+    const q3 = sortedD[Math.floor(sortedD.length * 0.75)];
+    const iqr = q3 - q1;
+    const fence = q3 + 3.0 * Math.max(iqr, 5.0);
+    for (const item of dists) {
+      const gap = nearestGapByPartId?.get(item.p.id);
+      if (item.d > fence && (gap === undefined || gap > 2.0)) {
+        spatialOutliers.push({
+          part: `${item.p.code} (${item.p.id})`,
+          partId: item.p.id,
+          groupKey: item.p.groupKey,
+          distFromMedianMm: Number(item.d.toFixed(3)),
+          iqrFenceMm: Number(fence.toFixed(3)),
+          nearestGapMm: gap !== undefined ? Number(gap.toFixed(4)) : null,
+          centerWorld: item.c.map((v) => Number(v.toFixed(3))),
+        });
+      }
+    }
+    spatialOutliers.sort((a, b) => b.distFromMedianMm - a.distFromMedianMm);
+  }
+
+  return {
+    shellPartCount: shellParts.length,
+    envelopeBox: envelopeBox ? envelopeBox.map((v) => Number(v.toFixed(4))) : null,
+    envelopeProtrusions,
+    spatialOutliers,
+  };
+}
+
+function runAlignmentAudit(scene, activeParts, tolMm) {
+  const coordDrifts = [];
+  const doubleOffsetSuspects = [];
+  const meshHealthIssues = [];
+
+  for (let i = 0; i < activeParts.length; i++) {
+    const p = activeParts[i];
+    const ca = p.coordAudit;
+    if (p.meshCount === 0) {
+      meshHealthIssues.push({
+        type: 'EMPTY_MESH',
+        part: `${p.code} (${p.id})`,
+        partId: p.id,
+        groupKey: p.groupKey,
+      });
+    }
+    if (!ca) continue;
+    if (ca.nanTris > 0) {
+      meshHealthIssues.push({
+        type: 'NAN_TRIANGLES',
+        part: `${p.code} (${p.id})`,
+        partId: p.id,
+        nanTris: ca.nanTris,
+      });
+    }
+    if (ca.hasNegativeScale) {
+      meshHealthIssues.push({
+        type: 'NEGATIVE_SCALE_MATRIX',
+        part: `${p.code} (${p.id})`,
+        partId: p.id,
+      });
+    }
+    if (
+      ca.assembledPosDriftMm >= tolMm ||
+      ca.groupPosDriftMm >= tolMm ||
+      ca.rawGroupRotNonZero ||
+      ca.rawGroupScaleNonUnit
+    ) {
+      coordDrifts.push({
+        part: `${p.code} (${p.id})`,
+        partId: p.id,
+        groupKey: p.groupKey,
+        metaAssembledPos: p.assembledPos.map((v) => Number(v.toFixed(5))),
+        rawAssembledPos: ca.rawAssembledPos,
+        rawGroupPos: ca.rawGroupPos,
+        assembledPosDriftMm: ca.assembledPosDriftMm,
+        groupPosDriftMm: ca.groupPosDriftMm,
+        rawGroupRotNonZero: ca.rawGroupRotNonZero,
+        rawGroupScaleNonUnit: ca.rawGroupScaleNonUnit,
+      });
+    }
+    const apMag = Math.hypot(p.assembledPos[0], p.assembledPos[1], p.assembledPos[2]);
+    if (ca.localOriginEccMm > 1.0 && apMag > 0.5) {
+      const dot =
+        (ca.localCenter[0] * p.assembledPos[0] +
+          ca.localCenter[1] * p.assembledPos[1] +
+          ca.localCenter[2] * p.assembledPos[2]) /
+        (ca.localOriginEccMm * apMag);
+      doubleOffsetSuspects.push({
+        part: `${p.code} (${p.id})`,
+        partId: p.id,
+        groupKey: p.groupKey,
+        risk: dot > 0.75 ? 'DOUBLE_OFFSET_HIGH_RISK' : 'ECCENTRIC_LOCAL_ORIGIN',
+        assembledPos: p.assembledPos.map((v) => Number(v.toFixed(4))),
+        localCenter: ca.localCenter,
+        localOriginEccMm: ca.localOriginEccMm,
+        alignmentCos: Number(dot.toFixed(3)),
+      });
+    }
+  }
+  coordDrifts.sort((a, b) => Math.max(b.assembledPosDriftMm, b.groupPosDriftMm) - Math.max(a.assembledPosDriftMm, a.groupPosDriftMm));
+  doubleOffsetSuspects.sort((a, b) => b.localOriginEccMm - a.localOriginEccMm);
+
+  // Optical concentricity check for optical units (lens, mount, sensor, evf, integrated, camera_body, mirai FH08/FH25)
+  const opticalConcentricity = [];
+  const opticalUnits = new Set(['lens', 'mount', 'sensor', 'evf', 'integrated', 'camera_body']);
+  const isMiraiOptical = scene.unitId === 'mirai_2028' && (scene.subView === 3 || scene.subView === 5);
+  if (opticalUnits.has(scene.unitId) || isMiraiOptical) {
+    const optRx = /lens|element|glass|aspheric|xa|ed-glass|aperture|iris|baffle|hood|barrel|bayonet|mount-ring|flange|olpf|filter|eyepiece|diopter|oled-panel|pancake|meta-lens|metalens/i;
+    const opticalParts = activeParts.filter(
+      (p) => p.meshCount > 0 && optRx.test(`${p.id} ${p.title || ''}`) && !/screw|bolt|pin|motor|rail|coil|pcb|fpc|cable|contact|switch|button|lever|ring-gear|pinion|actuator|sensor-pcb/i.test(p.id)
+    );
+    if (opticalParts.length >= 2) {
+      // Reference optical axis (median X, Y of optical elements in the same optical train)
+      const isEvfPart = (p) => p.id.startsWith('evf-') || scene.unitId === 'evf' || (scene.unitId === 'mirai_2028' && scene.subView === 5);
+      const trains = [
+        { name: 'main_optical_axis', items: opticalParts.filter((p) => !isEvfPart(p)) },
+        { name: 'evf_optical_axis', items: opticalParts.filter((p) => isEvfPart(p)) },
+      ];
+      for (const tr of trains) {
+        if (tr.items.length < 2) continue;
+        const cxs = tr.items.map((p) => (p.box[0] + p.box[3]) * 0.5).sort((a, b) => a - b);
+        const cys = tr.items.map((p) => (p.box[1] + p.box[4]) * 0.5).sort((a, b) => a - b);
+        const refX = cxs[Math.floor(cxs.length / 2)];
+        const refY = cys[Math.floor(cys.length / 2)];
+        for (const p of tr.items) {
+          const cx = (p.box[0] + p.box[3]) * 0.5;
+          const cy = (p.box[1] + p.box[4]) * 0.5;
+          const radial = Math.hypot(cx - refX, cy - refY);
+          if (radial > 0.05) {
+            opticalConcentricity.push({
+              train: tr.name,
+              part: `${p.code} (${p.id})`,
+              partId: p.id,
+              centerXY: [Number(cx.toFixed(4)), Number(cy.toFixed(4))],
+              refXY: [Number(refX.toFixed(4)), Number(refY.toFixed(4))],
+              radialOffsetMm: Number(radial.toFixed(4)),
+            });
+          }
+        }
+      }
+      opticalConcentricity.sort((a, b) => b.radialOffsetMm - a.radialOffsetMm);
+    }
+  }
+
+  // Left/Right mirror symmetry check
+  const symmetryIssues = [];
+  const byId = new Map(activeParts.map((p) => [p.id, p]));
+  const seenSym = new Set();
+  const lrPatterns = [
+    [/(-|_)left($|-|_)/, '$1right$2'],
+    [/(-|_)l($|-|_)/, '$1r$2'],
+    [/Left/, 'Right'],
+  ];
+  for (const pL of activeParts) {
+    if (pL.meshCount === 0) continue;
+    for (const [rx, rep] of lrPatterns) {
+      if (!rx.test(pL.id)) continue;
+      const rId = pL.id.replace(rx, rep);
+      if (rId === pL.id || seenSym.has(`${pL.id}|${rId}`)) continue;
+      const pR = byId.get(rId);
+      if (!pR || pR.meshCount === 0) continue;
+      seenSym.add(`${pL.id}|${rId}`);
+      const cLx = (pL.box[0] + pL.box[3]) * 0.5, cLy = (pL.box[1] + pL.box[4]) * 0.5, cLz = (pL.box[2] + pL.box[5]) * 0.5;
+      const cRx = (pR.box[0] + pR.box[3]) * 0.5, cRy = (pR.box[1] + pR.box[4]) * 0.5, cRz = (pR.box[2] + pR.box[5]) * 0.5;
+      const xMirrorErr = Math.abs(cLx + cRx);
+      const yErr = Math.abs(cLy - cRy);
+      const zErr = Math.abs(cLz - cRz);
+      const sLx = pL.box[3] - pL.box[0], sLy = pL.box[4] - pL.box[1], sLz = pL.box[5] - pL.box[2];
+      const sRx = pR.box[3] - pR.box[0], sRy = pR.box[4] - pR.box[1], sRz = pR.box[5] - pR.box[2];
+      const sizeErr = Math.max(Math.abs(sLx - sRx), Math.abs(sLy - sRy), Math.abs(sLz - sRz));
+      const maxErr = Math.max(xMirrorErr, yErr, zErr, sizeErr);
+      if (maxErr > 0.05) {
+        symmetryIssues.push({
+          partL: `${pL.code} (${pL.id})`,
+          partR: `${pR.code} (${pR.id})`,
+          xMirrorErrMm: Number(xMirrorErr.toFixed(4)),
+          yErrMm: Number(yErr.toFixed(4)),
+          zErrMm: Number(zErr.toFixed(4)),
+          sizeErrMm: Number(sizeErr.toFixed(4)),
+          maxErrMm: Number(maxErr.toFixed(4)),
+        });
+      }
+      break;
+    }
+  }
+  symmetryIssues.sort((a, b) => b.maxErrMm - a.maxErrMm);
+
+  // Composite subsystem mating & E-mount 18.0 mm flange focal distance check (integrated / camera_body)
+  let compositeMating = null;
+  if (scene.unitId === 'integrated' || scene.unitId === 'camera_body') {
+    const subBoxes = {};
+    for (const p of activeParts) {
+      if (p.meshCount === 0) continue;
+      const prefix = p.id.split('-')[0];
+      const sub = prefix === 'mb' ? 'mainboard' : prefix;
+      if (!subBoxes[sub]) subBoxes[sub] = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+      const sb = subBoxes[sub];
+      for (let k = 0; k < 3; k++) {
+        if (p.box[k] < sb[k]) sb[k] = p.box[k];
+        if (p.box[k + 3] > sb[k + 3]) sb[k + 3] = p.box[k + 3];
+      }
+    }
+    const mountRing = activeParts.find((p) => /mount-.*(bayonet|flange|stainless-ring|front-ring)/i.test(p.id)) ||
+      activeParts.find((p) => p.id.startsWith('mount-'));
+    const sensorDie = activeParts.find((p) => /sensor-.*(cmos|silicon-die|imaging-die|die|photodiode)/i.test(p.id)) ||
+      activeParts.find((p) => p.id.startsWith('sensor-'));
+    let flangeBackCheck = null;
+    if (mountRing && sensorDie) {
+      const mountFrontZ = mountRing.box[5];
+      const sensorFrontZ = sensorDie.box[5];
+      const measuredMm = mountFrontZ - sensorFrontZ;
+      flangeBackCheck = {
+        mountPart: mountRing.id,
+        sensorPart: sensorDie.id,
+        mountFrontZ: Number(mountFrontZ.toFixed(4)),
+        sensorFrontZ: Number(sensorFrontZ.toFixed(4)),
+        measuredFlangeBackMm: Number(measuredMm.toFixed(4)),
+        nominalE_MountMm: 18.0,
+        deltaMm: Number((measuredMm - 18.0).toFixed(4)),
+      };
+    }
+    const subOrder = Object.keys(subBoxes).sort();
+    const subsystemBounds = {};
+    for (const k of subOrder) subsystemBounds[k] = subBoxes[k].map((v) => Number(v.toFixed(3)));
+    compositeMating = { flangeBackCheck, subsystemBounds };
+  }
+
+  return {
+    coordDrifts,
+    doubleOffsetSuspects,
+    meshHealthIssues,
+    opticalConcentricity,
+    symmetryIssues,
+    compositeMating,
+  };
+}
+
 /**
- * Full exact triangle-level static, explode-trajectory, and floating audit on a loaded scene.
+ * Full 7-axis exact triangle-level static, explode-trajectory, floating/island,
+ * envelope-protrusion & coordinate/optical alignment audit on a loaded scene.
  */
 export function runUnitAudit(scene, opts = {}) {
   const t0 = performance.now();
   const group = opts.group || null;
+  const strict = Boolean(opts.strict);
+  const tolMm = opts.tolMm !== undefined ? Number(opts.tolMm) : (strict ? STRICT_PRECISION_MM : 0.002);
+  const includeSmtAsFail = Boolean(opts.includeSmtAsFail);
   const nearMissMm = Number(opts.nearMissMm ?? 0.15);
   const explodeSteps = Math.max(0, Number(opts.explodeSteps ?? 0));
+  const explodeTolMm = opts.explodeTolMm !== undefined ? Number(opts.explodeTolMm) : (strict ? tolMm : 0.05);
   const checkFloating = Boolean(opts.checkFloating);
+  const floatTolMm = opts.floatTolMm !== undefined ? Number(opts.floatTolMm) : (strict ? 0.05 : 4.0);
+  const connectTolMm = Number(opts.connectTolMm ?? 0.10);
+  const checkProtrusion = Boolean(opts.checkProtrusion);
+  const checkAlignment = Boolean(opts.checkAlignment);
 
   // Filter parts & meshes by group if specified
   const partMask = new Set();
+  const activeParts = [];
   for (let i = 0; i < scene.parts.length; i++) {
-    if (!group || scene.parts[i].groupKey === group) partMask.add(i);
+    if (!group || scene.parts[i].groupKey === group) {
+      partMask.add(i);
+      activeParts.push(scene.parts[i]);
+    }
   }
   const activeMeshes = scene.meshes.filter((m) => partMask.has(m.partIdx));
   const activeBvh = buildFlatBvh(activeMeshes.map((m) => m.box), 6);
 
-  const collisions = [];
-  const smtSeating = [];
-  const nearMisses = [];
-  let kissingCount = 0;
-  const seenPairs = new Set();
+  // Axis 1: Full sub-mesh pair aggregation (NEVER early-drop after first sub-mesh pair!)
+  const pairStats = new Map();
+  const nearMissCandidates = new Map();
 
   for (let i = 0; i < activeMeshes.length; i++) {
     const mA = activeMeshes[i];
@@ -81,75 +448,278 @@ export function runUnitAudit(scene, opts = {}) {
       if (boxesOverlap(mA.box, mB.box, 0)) {
         const res = meshPairExactCheck(mA, mB, { computeMinDist: false });
         if (res.intersects) {
-          const pA = scene.parts[pLow];
-          const pB = scene.parts[pHigh];
-          if (res.penMm <= 0.002) {
-            kissingCount++;
-            continue;
+          let st = pairStats.get(pairKey);
+          if (!st) {
+            st = {
+              pLow,
+              pHigh,
+              maxPenMm: 0,
+              subMeshHits: 0,
+              totalVolMm3: 0,
+              worstCause: 'SOLID_PENETRATION',
+              worstContactType: res.contactType || 'COPLANAR_FLUSH',
+              worstCentroid: res.centroid,
+              coplanarSubHits: 0,
+            };
+            pairStats.set(pairKey, st);
           }
-          if (seenPairs.has(`COL:${pairKey}`)) continue;
-          seenPairs.add(`COL:${pairKey}`);
-
-          const record = {
-            cause: res.contained ? `CONTAINMENT_${res.contained}` : 'SOLID_PENETRATION',
-            partA: `${pA.code} (${pA.id})`,
-            partB: `${pB.code} (${pB.id})`,
-            penMm: res.penMm,
-            volMm3: res.volMm3,
-            centroidLocal: res.centroid,
-          };
-          if (isSmtSolderSeatPair(pA, pB, res.penMm)) {
-            smtSeating.push({ ...record, cause: 'SMT_SOLDER_SEAT' });
+          if (res.penMm >= tolMm) {
+            st.subMeshHits++;
+            st.totalVolMm3 += res.volMm3 || 0;
           } else {
-            collisions.push(record);
+            st.coplanarSubHits++;
+          }
+          if (res.penMm > st.maxPenMm || (st.maxPenMm === 0 && res.penMm === 0 && !st.worstCentroid)) {
+            st.maxPenMm = res.penMm;
+            st.worstCause = res.contained ? `CONTAINMENT_${res.contained}` : 'SOLID_PENETRATION';
+            st.worstContactType = res.contactType || 'PENETRATION';
+            st.worstCentroid = res.centroid;
           }
           continue;
         }
       }
 
-      if (nearMisses.length < 40 && !seenPairs.has(`NM:${pairKey}`) && !seenPairs.has(`COL:${pairKey}`)) {
+      if (!pairStats.has(pairKey) && nearMissCandidates.size < 120 && !nearMissCandidates.has(pairKey)) {
         const d = exactMeshPairMinDistance(mA, mB, nearMissMm);
-        if (d > 0.002 && d < nearMissMm) {
-          seenPairs.add(`NM:${pairKey}`);
-          const pA = scene.parts[pLow];
-          const pB = scene.parts[pHigh];
-          nearMisses.push({
-            partA: `${pA.code} (${pA.id})`,
-            partB: `${pB.code} (${pB.id})`,
-            gapMm: Number(d.toFixed(4)),
-          });
+        if (d > tolMm && d < nearMissMm) {
+          nearMissCandidates.set(pairKey, { pLow, pHigh, gapMm: Number(d.toFixed(5)) });
         }
       }
     }
   }
 
-  // Optional floating-part check: a part is floating if its distance to ALL other parts > 4.0 mm
+  const collisions = [];
+  const mechanicalCollisions = [];
+  const smtSeating = [];
+  let coplanarFlushCount = 0;
+  let subTolGrazeCount = 0;
+  const staticCollisionPairs = new Set();
+  const staticTouchOrOverlapPairs = new Set();
+  const severityCounts = { S0_CRITICAL: 0, S1_MAJOR: 0, S2_MINOR: 0, S3_MICRO: 0, SMT_SEAT: 0 };
+
+  for (const [pairKey, st] of pairStats.entries()) {
+    staticTouchOrOverlapPairs.add(pairKey);
+    const pA = scene.parts[st.pLow];
+    const pB = scene.parts[st.pHigh];
+
+    if (st.maxPenMm < tolMm) {
+      if (st.maxPenMm <= 1e-6) coplanarFlushCount++;
+      else subTolGrazeCount++;
+      continue;
+    }
+
+    staticCollisionPairs.add(pairKey);
+    const isSmt = isSmtSolderSeatPair(pA, pB, st.maxPenMm);
+    const severity = classifySeverity(st.maxPenMm, isSmt);
+    severityCounts[severity]++;
+
+    const record = {
+      cause: isSmt ? 'SMT_SOLDER_SEAT' : st.worstCause,
+      category: isSmt ? 'SMT_SOLDER_SEAT' : 'MECHANICAL_OPTICAL',
+      severity,
+      partA: `${pA.code} (${pA.id})`,
+      partB: `${pB.code} (${pB.id})`,
+      partIdA: pA.id,
+      partIdB: pB.id,
+      groupA: pA.groupKey,
+      groupB: pB.groupKey,
+      penMm: Number(st.maxPenMm.toFixed(5)),
+      volMm3: Number(st.totalVolMm3.toFixed(4)),
+      subMeshHits: st.subMeshHits,
+      centroidWorld: st.worstCentroid,
+      centroidLocal: st.worstCentroid,
+    };
+
+    if (isSmt) {
+      smtSeating.push(record);
+      if (includeSmtAsFail) collisions.push(record);
+    } else {
+      mechanicalCollisions.push(record);
+      collisions.push(record);
+    }
+  }
+
+  const nearMisses = [];
+  for (const [pairKey, nm] of nearMissCandidates.entries()) {
+    if (staticTouchOrOverlapPairs.has(pairKey)) continue;
+    const pA = scene.parts[nm.pLow];
+    const pB = scene.parts[nm.pHigh];
+    nearMisses.push({
+      partA: `${pA.code} (${pA.id})`,
+      partB: `${pB.code} (${pB.id})`,
+      gapMm: nm.gapMm,
+    });
+  }
+  nearMisses.sort((a, b) => a.gapMm - b.gapMm);
+
+  // Axis 3: Exact nearest-neighbor gap & Union-Find disconnected floating islands
   const floating = [];
-  if (checkFloating) {
-    const activeParts = scene.parts.filter((_p, idx) => partMask.has(idx));
-    const pBvh = buildFlatBvh(activeParts.map((p) => p.box), 6);
+  const floatingDetails = [];
+  const disconnectedIslands = [];
+  const nearestGapByPartId = new Map();
+
+  if (checkFloating && activeParts.length > 1) {
+    const validIdx = [];
     for (let i = 0; i < activeParts.length; i++) {
-      const p = activeParts[i];
-      if (p.meshCount === 0) continue;
-      const nearby = queryBvhBox(pBvh, p.box, 4.0, []);
-      let connected = false;
-      for (const ni of nearby) {
-        if (ni === i) continue;
-        if (boxBoxMinDistSq(p.box, activeParts[ni].box) <= 16.0) {
-          connected = true;
+      if (activeParts[i].meshCount > 0) validIdx.push(i);
+    }
+    const partIndexInScene = activeParts.map((p) => scene.parts.indexOf(p));
+
+    // Exact nearest-neighbor surface gap for every valid part (0 mm short-circuit via staticTouchOrOverlapPairs)
+    for (let ii = 0; ii < validIdx.length; ii++) {
+      const i = validIdx[ii];
+      const pA = activeParts[i];
+      const sIdxA = partIndexInScene[i];
+      let bestDist = Infinity;
+      let nearestPart = null;
+
+      // Fast check: if already touching/intersecting another active part -> gap is exact 0 mm
+      for (let jj = 0; jj < validIdx.length; jj++) {
+        if (jj === ii) continue;
+        const j = validIdx[jj];
+        const sIdxB = partIndexInScene[j];
+        const pk = `${Math.min(sIdxA, sIdxB)}:${Math.max(sIdxA, sIdxB)}`;
+        if (staticTouchOrOverlapPairs.has(pk)) {
+          bestDist = 0;
+          nearestPart = activeParts[j];
           break;
         }
       }
-      if (!connected) {
-        floating.push(`${p.code} (${p.id})`);
+
+      if (bestDist > 0) {
+        const order = [];
+        for (let jj = 0; jj < validIdx.length; jj++) {
+          if (jj === ii) continue;
+          const j = validIdx[jj];
+          const pB = activeParts[j];
+          order.push({ j, lb: Math.sqrt(boxBoxMinDistSq(pA.box, pB.box)) });
+        }
+        order.sort((a, b) => a.lb - b.lb);
+
+        for (let k = 0; k < order.length; k++) {
+          if (order[k].lb >= bestDist) break;
+          const pB = activeParts[order[k].j];
+          const d = partPairExactMinDist(scene, pA, pB, bestDist);
+          if (d < bestDist) {
+            bestDist = d;
+            nearestPart = pB;
+            if (bestDist <= 1e-7) break;
+          }
+        }
       }
+
+      nearestGapByPartId.set(pA.id, bestDist);
+      if (bestDist > floatTolMm) {
+        const band = bestDist > 4.0 ? 'MACRO_FLOAT' : bestDist > 1.0 ? 'MID_FLOAT' : 'MICRO_FLOAT';
+        floating.push(`${pA.code} (${pA.id})`);
+        floatingDetails.push({
+          part: `${pA.code} (${pA.id})`,
+          partId: pA.id,
+          code: pA.code,
+          groupKey: pA.groupKey,
+          role: pA.role,
+          nearestPart: nearestPart ? `${nearestPart.code} (${nearestPart.id})` : null,
+          nearestPartId: nearestPart ? nearestPart.id : null,
+          nearestGapMm: Number(bestDist.toFixed(4)),
+          band,
+          box: pA.box.map((v) => Number(v.toFixed(3))),
+        });
+      }
+    }
+    floatingDetails.sort((a, b) => b.nearestGapMm - a.nearestGapMm);
+
+    // Union-Find connected components at surface gap <= connectTolMm (detects multi-part floating islands!)
+    const nValid = validIdx.length;
+    const parent = new Int32Array(nValid);
+    for (let i = 0; i < nValid; i++) parent[i] = i;
+    const find = (x) => {
+      let r = x;
+      while (parent[r] !== r) r = parent[r];
+      while (parent[x] !== r) { const nx = parent[x]; parent[x] = r; x = nx; }
+      return r;
+    };
+    const unite = (a, b) => {
+      const ra = find(a), rb = find(b);
+      if (ra !== rb) parent[ra] = rb;
+    };
+
+    const validBoxes = validIdx.map((idx) => activeParts[idx].box);
+    const vBvh = buildFlatBvh(validBoxes, 6);
+    for (let ii = 0; ii < nValid; ii++) {
+      const pA = activeParts[validIdx[ii]];
+      const sIdxA = partIndexInScene[validIdx[ii]];
+      const nearby = queryBvhBox(vBvh, pA.box, connectTolMm, []);
+      for (let k = 0; k < nearby.length; k++) {
+        const jj = nearby[k];
+        if (jj <= ii) continue;
+        if (find(ii) === find(jj)) continue;
+        const pB = activeParts[validIdx[jj]];
+        const sIdxB = partIndexInScene[validIdx[jj]];
+        const pk = `${Math.min(sIdxA, sIdxB)}:${Math.max(sIdxA, sIdxB)}`;
+        if (staticTouchOrOverlapPairs.has(pk)) {
+          unite(ii, jj);
+        } else {
+          const d = partPairExactMinDist(scene, pA, pB, connectTolMm + 1e-6);
+          if (d <= connectTolMm) unite(ii, jj);
+        }
+      }
+    }
+
+    const compMap = new Map();
+    for (let ii = 0; ii < nValid; ii++) {
+      const r = find(ii);
+      if (!compMap.has(r)) compMap.set(r, []);
+      compMap.get(r).push(validIdx[ii]);
+    }
+    const comps = [...compMap.values()].sort((a, b) => b.length - a.length);
+    if (comps.length > 1) {
+      const mainComp = comps[0];
+      for (let ci = 1; ci < comps.length; ci++) {
+        const island = comps[ci];
+        // Compute exact minimum gap from this island to the main component
+        let minGapToMain = Infinity;
+        let nearestMainPartId = null;
+        let cx = 0, cy = 0, cz = 0;
+        for (const pIdx of island) {
+          const pI = activeParts[pIdx];
+          cx += (pI.box[0] + pI.box[3]) * 0.5;
+          cy += (pI.box[1] + pI.box[4]) * 0.5;
+          cz += (pI.box[2] + pI.box[5]) * 0.5;
+          for (const mIdx of mainComp) {
+            const pM = activeParts[mIdx];
+            const lb = Math.sqrt(boxBoxMinDistSq(pI.box, pM.box));
+            if (lb >= minGapToMain) continue;
+            const d = partPairExactMinDist(scene, pI, pM, minGapToMain);
+            if (d < minGapToMain) {
+              minGapToMain = d;
+              nearestMainPartId = pM.id;
+            }
+          }
+        }
+        disconnectedIslands.push({
+          islandIdx: ci,
+          size: island.length,
+          isMultiPartIsland: island.length >= 2,
+          partIds: island.map((idx) => activeParts[idx].id),
+          parts: island.map((idx) => `${activeParts[idx].code} (${activeParts[idx].id})`),
+          minGapToMainMm: Number(minGapToMain.toFixed(4)),
+          nearestMainPartId,
+          centroidWorld: [
+            Number((cx / island.length).toFixed(3)),
+            Number((cy / island.length).toFixed(3)),
+            Number((cz / island.length).toFixed(3)),
+          ],
+        });
+      }
+      disconnectedIslands.sort((a, b) => b.size - a.size || b.minGapToMainMm - a.minGapToMainMm);
     }
   }
 
-  // Optional explode-trajectory collision sweep (t = 1/N .. 1.0)
+  // Axis 2: Explode-trajectory collision sweep (t = 1/N .. 1.0)
   const explodeCollisions = [];
+  const explodeResidualAtT1 = [];
   if (explodeSteps > 0) {
-    const expSeen = new Set();
+    const expMap = new Map();
     for (let s = 1; s <= explodeSteps; s++) {
       const t = s / explodeSteps;
       const movedMeshes = activeMeshes.map((m) => {
@@ -157,6 +727,8 @@ export function runUnitAudit(scene, opts = {}) {
         return translateMesh(m, e[0] * t, e[1] * t, e[2] * t);
       });
       const mBvh = buildFlatBvh(movedMeshes.map((m) => m.box), 6);
+      const stepHitPairs = new Map();
+
       for (let i = 0; i < movedMeshes.length; i++) {
         const mA = movedMeshes[i];
         const hits = queryBvhBox(mBvh, mA.box, 0, []);
@@ -168,45 +740,121 @@ export function runUnitAudit(scene, opts = {}) {
           const pLow = Math.min(mA.partIdx, mB.partIdx);
           const pHigh = Math.max(mA.partIdx, mB.partIdx);
           const pairKey = `${pLow}:${pHigh}`;
-          if (seenPairs.has(`COL:${pairKey}`) || expSeen.has(pairKey)) continue;
           const res = meshPairExactCheck(mA, mB, { computeMinDist: false });
-          if (res.intersects && res.penMm > 0.05) {
-            expSeen.add(pairKey);
-            const pA = scene.parts[pLow];
-            const pB = scene.parts[pHigh];
-            explodeCollisions.push({
-              partA: `${pA.code} (${pA.id})`,
-              partB: `${pB.code} (${pB.id})`,
-              t: Number(t.toFixed(3)),
-              penMm: res.penMm,
-            });
+          if (res.intersects && res.penMm >= explodeTolMm) {
+            const prev = stepHitPairs.get(pairKey);
+            if (!prev || res.penMm > prev.penMm) {
+              stepHitPairs.set(pairKey, { pLow, pHigh, penMm: res.penMm });
+            }
           }
         }
       }
+
+      for (const [pairKey, hit] of stepHitPairs.entries()) {
+        const isStatic = staticCollisionPairs.has(pairKey);
+        if (s === explodeSteps) {
+          const pA = scene.parts[hit.pLow];
+          const pB = scene.parts[hit.pHigh];
+          explodeResidualAtT1.push({
+            partA: `${pA.code} (${pA.id})`,
+            partB: `${pB.code} (${pB.id})`,
+            partIdA: pA.id,
+            partIdB: pB.id,
+            penMm: Number(hit.penMm.toFixed(5)),
+            wasStaticCollision: isStatic,
+          });
+        }
+        if (isStatic) continue; // Separate new mid-flight crossing hits from pre-existing static collisions
+        let rec = expMap.get(pairKey);
+        if (!rec) {
+          const pA = scene.parts[hit.pLow];
+          const pB = scene.parts[hit.pHigh];
+          rec = {
+            partA: `${pA.code} (${pA.id})`,
+            partB: `${pB.code} (${pB.id})`,
+            partIdA: pA.id,
+            partIdB: pB.id,
+            t: Number(t.toFixed(4)),
+            tFirst: Number(t.toFixed(4)),
+            tWorst: Number(t.toFixed(4)),
+            penMm: Number(hit.penMm.toFixed(5)),
+            stillCollidingAtT1: s === explodeSteps,
+          };
+          expMap.set(pairKey, rec);
+        } else {
+          if (hit.penMm > rec.penMm) {
+            rec.penMm = Number(hit.penMm.toFixed(5));
+            rec.tWorst = Number(t.toFixed(4));
+          }
+          if (s === explodeSteps) rec.stillCollidingAtT1 = true;
+        }
+      }
     }
+    for (const rec of expMap.values()) explodeCollisions.push(rec);
+    explodeCollisions.sort((a, b) => b.penMm - a.penMm);
+    explodeResidualAtT1.sort((a, b) => b.penMm - a.penMm);
   }
 
+  // Axis 4: Outer-shell envelope protrusion & IQR spatial outliers
+  const protrusion = checkProtrusion
+    ? runProtrusionAudit(scene, activeParts, tolMm, nearestGapByPartId)
+    : null;
+
+  // Axis 5 & 6: Coordinate drift, double-offset, mesh health, optical concentricity, symmetry, composite mating
+  const alignment = checkAlignment
+    ? runAlignmentAudit(scene, activeParts, tolMm)
+    : null;
+
   collisions.sort((a, b) => b.penMm - a.penMm);
-  const failed = collisions.length > 0 || explodeCollisions.length > 0 || floating.length > 0;
+  mechanicalCollisions.sort((a, b) => b.penMm - a.penMm);
+  smtSeating.sort((a, b) => b.penMm - a.penMm);
+
+  const multiPartIslands = disconnectedIslands.filter((is) => is.isMultiPartIsland);
+  const nonExposedProtrusions = protrusion
+    ? protrusion.envelopeProtrusions.filter((p) => !p.exposedExternalHint)
+    : [];
+
+  const failed =
+    collisions.length > 0 ||
+    explodeCollisions.length > 0 ||
+    floating.length > 0 ||
+    (strict && disconnectedIslands.length > 0) ||
+    nonExposedProtrusions.length > 0 ||
+    (alignment && alignment.meshHealthIssues.length > 0);
+
   const elapsedMs = Number((performance.now() - t0).toFixed(1));
 
   return {
     verdict: failed ? 'FAIL' : 'PASS',
     exitCode: failed ? SP_EXIT_FAIL : SP_EXIT_PASS,
     unitId: scene.unitId,
+    subView: scene.subView ?? null,
+    subViewTag: scene.subViewTag || 'all',
     quality: scene.quality,
-    partCount: scene.parts.length,
+    partCount: activeParts.length,
     meshCount: activeMeshes.length,
     triCount: scene.totalTris,
-    precisionMm: PRECISION_MM,
+    precisionMm: tolMm,
+    strict,
+    extractionAudit: scene.extractionAudit || null,
     collisions,
+    mechanicalCollisionCount: mechanicalCollisions.length,
     smtSeating,
     smtSeatingCount: smtSeating.length,
-    nearMisses,
+    severityCounts,
+    coplanarFlushCount,
+    subTolGrazeCount,
+    kissingCount: coplanarFlushCount + subTolGrazeCount,
+    nearMisses: nearMisses.slice(0, 60),
     nearMissTotal: nearMisses.length,
-    kissingCount,
     floating,
+    floatingDetails,
+    disconnectedIslands,
+    multiPartIslandCount: multiPartIslands.length,
     explodeCollisions,
+    explodeResidualAtT1,
+    protrusion,
+    alignment,
     elapsedMs,
   };
 }
@@ -681,11 +1329,136 @@ export function runSpatialSelfTest() {
     assert(ev.outsideShell === true && ev.collisionFree === false, `outside shell missed: ${JSON.stringify(ev)}`);
   });
 
+  run('M21', '0.0001 mm (0.1 µm) exact penetration FAIL (zero false negative)', () => {
+    const a = buildBoxMesh([0, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 0, partId: 'a', code: 'A', groupKey: 'g', role: 'mechanical' });
+    const b = buildBoxMesh([9.9999, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 1, partId: 'b', code: 'B', groupKey: 'g', role: 'mechanical' });
+    const r = meshPairExactCheck(a, b);
+    assert(r.intersects && Math.abs(r.penMm - 0.0001) < 1e-5, `exactCheck got ${JSON.stringify(r)}`);
+    const mockScene = {
+      unitId: 'test', quality: 'ultra', totalTris: 24,
+      parts: [
+        { id: 'a', code: 'A', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: a.box, meshStart: 0, meshCount: 1 },
+        { id: 'b', code: 'B', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: b.box, meshStart: 1, meshCount: 1 },
+      ],
+      meshes: [a, b],
+    };
+    const au = runUnitAudit(mockScene, { strict: true, tolMm: STRICT_PRECISION_MM });
+    assert(au.verdict === 'FAIL' && au.collisions.length === 1 && Math.abs(au.collisions[0].penMm - 0.0001) < 2e-5, `audit got ${JSON.stringify(au)}`);
+  });
+
+  run('M22', '0.00009 mm exact separation PASS (zero false positive)', () => {
+    const a = buildBoxMesh([0, 0, 0], [10, 10, 10]);
+    const b = buildBoxMesh([10.00009, 0, 0], [10, 10, 10]);
+    const r = meshPairExactCheck(a, b, { computeMinDist: true });
+    assert(!r.intersects && Math.abs(r.minDistMm - 0.00009) < 1e-6, `got ${JSON.stringify(r)}`);
+  });
+
+  run('M23', '45° rotated boxes exact 0.0000 mm flush contact PASS (no aabbPen false positive)', () => {
+    const c45 = Math.SQRT1_2;
+    const a = buildBoxMesh([0, 0, 0], [10, 10, 10], [0, 45, 0], { partIdx: 0, partId: 'a', code: 'A', groupKey: 'g', role: 'mechanical' });
+    // Exact flush contact along rotated +X face normal (cos45, 0, -sin45) at distance 10.0000 mm
+    const bFlush = buildBoxMesh([10 * c45, 0, -10 * c45], [10, 10, 10], [0, 45, 0], { partIdx: 1, partId: 'b', code: 'B', groupKey: 'g', role: 'mechanical' });
+    const rFlush = meshPairExactCheck(a, bFlush);
+    assert(rFlush.penMm === 0 && rFlush.contactType === 'COPLANAR_FLUSH', `flush false positive: ${JSON.stringify(rFlush)}`);
+    const mockFlush = {
+      unitId: 'test', quality: 'ultra', totalTris: 24,
+      parts: [
+        { id: 'a', code: 'A', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: a.box, meshStart: 0, meshCount: 1 },
+        { id: 'b', code: 'B', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: bFlush.box, meshStart: 1, meshCount: 1 },
+      ],
+      meshes: [a, bFlush],
+    };
+    const auFlush = runUnitAudit(mockFlush, { strict: true, tolMm: STRICT_PRECISION_MM });
+    assert(auFlush.collisions.length === 0 && auFlush.coplanarFlushCount === 1, `audit flush failed: ${JSON.stringify(auFlush)}`);
+    // Verify 0.0001 mm overlap at 45° IS caught!
+    const bPen = buildBoxMesh([9.9999 * c45, 0, -9.9999 * c45], [10, 10, 10], [0, 45, 0]);
+    const rPen = meshPairExactCheck(a, bPen);
+    assert(rPen.intersects && rPen.penMm >= 0.00009, `rotated 0.0001mm overlap missed: ${JSON.stringify(rPen)}`);
+  });
+
+  run('M24', 'Vertex-free orthogonal cross-bar piercing FAIL (edge/face penetration)', () => {
+    const barX = buildBoxMesh([0, 0, 0], [20, 2, 2]);
+    const barY = buildBoxMesh([0, 0, 0], [2, 20, 2]);
+    const r = meshPairExactCheck(barX, barY);
+    assert(r.intersects && r.penMm >= 0.99, `cross-bar missed: ${JSON.stringify(r)}`);
+  });
+
+  run('M25', '2-part touching cluster floating 1.5 mm from main body caught as floating island FAIL', () => {
+    const m1 = buildBoxMesh([0, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 0, partId: 'main1', code: 'M1', groupKey: 'g', role: 'chassis' });
+    const m2 = buildBoxMesh([10, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 1, partId: 'main2', code: 'M2', groupKey: 'g', role: 'mechanical' });
+    const m3 = buildBoxMesh([-10, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 2, partId: 'main3', code: 'M3', groupKey: 'g', role: 'mechanical' });
+    // Floating 2-part island: touching each other at y = 0, but 1.5 mm above main body (y=5 -> y=6.5)
+    const f1 = buildBoxMesh([0, 7.5, 0], [4, 2, 4], [0, 0, 0], { partIdx: 3, partId: 'isl1', code: 'I1', groupKey: 'g', role: 'mechanical' });
+    const f2 = buildBoxMesh([4, 7.5, 0], [4, 2, 4], [0, 0, 0], { partIdx: 4, partId: 'isl2', code: 'I2', groupKey: 'g', role: 'mechanical' });
+    const mockScene = {
+      unitId: 'test', quality: 'ultra', totalTris: 60,
+      parts: [
+        { id: 'main1', code: 'M1', groupKey: 'g', role: 'chassis', explodeOffset: [0, 0, 0], box: m1.box, meshStart: 0, meshCount: 1 },
+        { id: 'main2', code: 'M2', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: m2.box, meshStart: 1, meshCount: 1 },
+        { id: 'main3', code: 'M3', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: m3.box, meshStart: 2, meshCount: 1 },
+        { id: 'isl1', code: 'I1', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: f1.box, meshStart: 3, meshCount: 1 },
+        { id: 'isl2', code: 'I2', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: f2.box, meshStart: 4, meshCount: 1 },
+      ],
+      meshes: [m1, m2, m3, f1, f2],
+    };
+    const au = runUnitAudit(mockScene, { strict: true, checkFloating: true, floatTolMm: 0.05 });
+    assert(
+      au.verdict === 'FAIL' &&
+      au.disconnectedIslands.length === 1 &&
+      au.disconnectedIslands[0].isMultiPartIsland === true &&
+      au.disconnectedIslands[0].size === 2 &&
+      Math.abs(au.disconnectedIslands[0].minGapToMainMm - 1.5) < 0.01,
+      `island missed: ${JSON.stringify(au.disconnectedIslands)}`
+    );
+  });
+
+  run('M26', '0.2 mm micro-floating part caught under --float-tol=0.05 FAIL', () => {
+    const base = buildBoxMesh([0, 0, 0], [10, 10, 10], [0, 0, 0], { partIdx: 0, partId: 'base', code: 'B1', groupKey: 'g', role: 'chassis' });
+    const microFloat = buildBoxMesh([0, 6.2, 0], [4, 2, 4], [0, 0, 0], { partIdx: 1, partId: 'flt', code: 'F1', groupKey: 'g', role: 'mechanical' }); // gap = 0.2 mm
+    const mockScene = {
+      unitId: 'test', quality: 'ultra', totalTris: 24,
+      parts: [
+        { id: 'base', code: 'B1', groupKey: 'g', role: 'chassis', explodeOffset: [0, 0, 0], box: base.box, meshStart: 0, meshCount: 1 },
+        { id: 'flt', code: 'F1', groupKey: 'g', role: 'mechanical', explodeOffset: [0, 0, 0], box: microFloat.box, meshStart: 1, meshCount: 1 },
+      ],
+      meshes: [base, microFloat],
+    };
+    const au = runUnitAudit(mockScene, { strict: true, checkFloating: true, floatTolMm: 0.05 });
+    assert(
+      au.verdict === 'FAIL' &&
+      au.floatingDetails.length === 2 &&
+      Math.abs(au.floatingDetails[0].nearestGapMm - 0.2) < 0.001 &&
+      au.floatingDetails[0].band === 'MICRO_FLOAT',
+      `micro-float missed: ${JSON.stringify(au.floatingDetails)}`
+    );
+  });
+
+  run('M27', 'Internal component protruding 0.001 mm outside outer chassis shell caught FAIL', () => {
+    const shell = buildBoxMesh([0, 0, 0], [20, 20, 20], [0, 0, 0], { partIdx: 0, partId: 'chassis-housing', code: 'CH', groupKey: 'g', role: 'chassis' });
+    const pcb = buildBoxMesh([6.001, 0, 0], [8, 4, 4], [0, 0, 0], { partIdx: 1, partId: 'internal-pcb', code: 'PC', groupKey: 'g', role: 'pcb' }); // x max = 10.001 vs shell 10.000
+    const mockScene = {
+      unitId: 'test', quality: 'ultra', totalTris: 24,
+      parts: [
+        { id: 'chassis-housing', code: 'CH', title: 'Chassis Housing', groupKey: 'g', role: 'chassis', explodeOffset: [0, 0, 0], box: shell.box, meshStart: 0, meshCount: 1 },
+        { id: 'internal-pcb', code: 'PC', title: 'Internal PCB', groupKey: 'g', role: 'pcb', explodeOffset: [0, 0, 0], box: pcb.box, meshStart: 1, meshCount: 1 },
+      ],
+      meshes: [shell, pcb],
+    };
+    const au = runUnitAudit(mockScene, { strict: true, tolMm: STRICT_PRECISION_MM, checkProtrusion: true });
+    assert(
+      au.verdict === 'FAIL' &&
+      au.protrusion &&
+      au.protrusion.envelopeProtrusions.length === 1 &&
+      Math.abs(au.protrusion.envelopeProtrusions[0].maxExceedMm - 0.001) < 1e-4,
+      `protrusion missed: ${JSON.stringify(au.protrusion)}`
+    );
+  });
+
   const passed = cases.filter((c) => c.ok).length;
   return {
     verdict: passed === cases.length ? 'PASS' : 'FAIL',
     exitCode: passed === cases.length ? SP_EXIT_PASS : SP_EXIT_FAIL,
-    precisionMm: PRECISION_MM,
+    precisionMm: STRICT_PRECISION_MM,
     passed,
     total: cases.length,
     elapsedMs: Number((performance.now() - t0).toFixed(1)),

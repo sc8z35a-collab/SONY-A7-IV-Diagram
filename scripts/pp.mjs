@@ -139,7 +139,7 @@ function listPartsCli(unitId, jsonMode) {
     title: p.title,
     category: p.category,
     groupKey: p.groupKey,
-    subView: p.miraiSubView ?? p.fabVolume ?? p.lensSection ?? null,
+    subView: p.miraiSubView ?? p.originalSubView ?? p.fabVolume ?? p.lensSection ?? null,
   }));
   if (jsonMode) {
     console.log(JSON.stringify({ engine: 'pp1.1', unitId, count: parts.length, parts }, null, 2));
@@ -206,7 +206,7 @@ Usage: npm run pp -- [options]
   --fab-stage=<stage>        Sensor Fab stage focus
   --optics-studio            Open Lens Optics Studio
   --optics-scenario=<id>     Lens Optics Studio scenario ID
-  --mirai-subview=1..5       FH MIRAI 2028 structure (1..5)
+  --mirai-subview=1..8       FH MIRAI 2028 structure (1..8)
   --mirai-edition=<ed>       beginner | expert
   --mirai-studio=<tab>       reports | matrix | glossary
   --playground --report      Open Play Ground 1.1 (+ 1000-pt Chief Engineer report)

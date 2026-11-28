@@ -297,7 +297,7 @@ export class CadViewport {
       } else if (nextMode === 'sensor_fab') {
         this.sensorFabVolume = Math.max(0, Math.min(5, Math.round(opts.subView))) as SensorFabVolume;
       } else if (nextMode === 'mirai_2028') {
-        this.miraiSubView = Math.max(1, Math.min(5, Math.round(opts.subView)));
+        this.miraiSubView = Math.max(1, Math.min(8, Math.round(opts.subView)));
       }
     } else if (nextMode === 'lens' && this.mode !== 'lens') {
       this.lensSection = 1;
@@ -380,7 +380,7 @@ export class CadViewport {
       } else if (nextMode === 'sensor_fab') {
         this.sensorFabVolume = Math.max(0, Math.min(5, Math.round(subView))) as SensorFabVolume;
       } else if (nextMode === 'mirai_2028') {
-        this.miraiSubView = Math.max(1, Math.min(5, Math.round(subView)));
+        this.miraiSubView = Math.max(1, Math.min(8, Math.round(subView)));
       }
     }
     this.mode = nextMode;

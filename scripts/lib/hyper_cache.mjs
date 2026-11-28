@@ -126,7 +126,7 @@ export async function loadCachedTsModule(entryRel, extraDirs) {
 export function ensureUnifiedV2RuntimeBundlePath() {
   ensureDirs();
   const fp = computeSrcFingerprint();
-  const slug = 'v2_unified_runtime';
+  const slug = 'v2_unified_runtime_v2';
   const outPath = path.join(BUNDLE_DIR, `${slug}.${fp}.mjs`);
   if (fs.existsSync(outPath)) {
     return outPath;
@@ -134,7 +134,7 @@ export function ensureUnifiedV2RuntimeBundlePath() {
 
   try {
     for (const f of fs.readdirSync(BUNDLE_DIR)) {
-      if (f.startsWith(`${slug}.`) && f.endsWith('.mjs')) {
+      if ((f.startsWith('v2_unified_runtime.') || f.startsWith(`${slug}.`)) && f.endsWith('.mjs')) {
         fs.rmSync(path.join(BUNDLE_DIR, f), { force: true });
       }
     }
@@ -146,7 +146,9 @@ export function ensureUnifiedV2RuntimeBundlePath() {
         "export * from './src/units/registry.ts';",
         "export { ResourceCache, QUALITY_TIER_CONFIG } from './src/core/resource_cache.ts';",
         "export { TwoStageRaycaster } from './src/core/raycast_engine.ts';",
-        "export { disposeSharedRawBuildCache } from './src/core/v2_unit_compiler.ts';",
+        "export { CompiledV2Unit, disposeSharedRawBuildCache } from './src/core/v2_unit_compiler.ts';",
+        "export { setActiveBuildQuality } from './src/core/geometry_quality.ts';",
+        "export { retessellatePrimitiveSagitta } from './src/engine/FastCadGeometry.ts';",
       ].join('\n'),
       resolveDir: ROOT,
       loader: 'ts',
