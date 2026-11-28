@@ -21,6 +21,7 @@
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import {
   EXIT_BLOCKED,
@@ -70,7 +71,7 @@ import {
   getSwarmStatus,
   runSwarmSelftest,
 } from './swarm_orchestrator.mjs';
-import { auditTwoBooks, readBookSection } from './doc_compiler.mjs';
+import { auditTwoBooks, auditTwoBooksFast, readBookSection } from './doc_compiler.mjs';
 import { syncTwoBooks } from './doc_sync.mjs';
 import { getToolSpec, TOOL_SPECS } from './tool_specs.mjs';
 import { generateHumanReport } from './human_report.mjs';
@@ -95,7 +96,7 @@ import {
   runPermitSelftest,
   verifyPermit,
 } from './permit_manager.mjs';
-import { runSandboxSelftest } from './solver_sandbox.mjs';
+import { detectSandboxCapabilities, runSandboxSelftest } from './solver_sandbox.mjs';
 import { signWithExternalEd25519 } from './crypto_attestation.mjs';
 import { inspectAttestationPolicy, runSigstoreSelftest, verifyKeylessAttestation } from './sigstore_attestation.mjs';
 import { runParallelChecks } from './parallel_runner.mjs';
@@ -152,11 +153,12 @@ function printHelp() {
   process.stdout.write(
     [
       `FLOW1_HELP|os=FLOW-V1.1-OS-${FLOW_OS_VERSION}|exit=0:OK,1:ERR,2:BLOCK,3:WARN,4:XFAIL,5:NO_SOLVER,6:SEC_BLOCK`,
+      `CMD|status [--unit=U] [--refresh-health] [--raw]  # <300ms 1-shot env+VM+sec+DAG+21u health`,
       `CMD|auto <bootstrap|research|dev|certify|fabricate|factory|list> [--unit=U] [--target=T] [--dry-run]`,
       `CMD|macro <register|run|list|inspect|verify|suggest|remove|selftest> [name] [--spec=F] [--dry-run]`,
       `CMD|permit <issue|status|verify|revoke|install-hooks|selftest> [--unit=U] [--elevate-integrator --reason=R]`,
       `CMD|cert <status|verify|selftest> [--unit=U]`,
-      `CMD|wake [slug] [--unit=U] [--role=worker|integrator] [--goal=G]`,
+      `CMD|wake [slug] [--unit=U] [--role=worker|integrator] [--brief] [--goal=G]`,
       `CMD|inspect <unit|part|symbol|query> [--defect] [--slice] [--budget=N]`,
       `CMD|heal [--unit=U] [--apply] [--max-iter=25] [--bake] | heal selftest`,
       `CMD|verify [--parallel] [--cached|--no-cache] [--suite=build|selftest|all]`,
@@ -167,7 +169,7 @@ function printHelp() {
       `CMD|swarm <plan|status|selftest> [--units=active|all|u1,u2] [--workers=N]`,
       `CMD|exec <exam|bg|pp|sokutei|sp|dx> [args...]`,
       `CMD|human-report [--out=PATH] [--artifacts=DIR]  # HUMAN_REQUEST_ONLY`,
-      `CMD|security <audit [--full]|selftest|recover|sandbox-selftest>  # 13 layers, 46 attacks`,
+      `CMD|security <audit [--full]|selftest|recover|sandbox-selftest>  # 13 layers, 48 attacks`,
       `CMD|doc <audit [--strict]|sync|tool <name>|section <1|2> <TAG|toc>>`,
       `CMD|slice <path> <start>-<end>`,
       `CMD|init [--project-name=N] [--force] | export-template --out=DIR | selftest`,
@@ -196,7 +198,7 @@ function finalizeOutput({ ctx, agent, cmd, args, lines, exitCode, budgetKey, fla
         legacyTokens: legacyTokens || enforced.rawTokens,
         ...(healStats || {}),
       });
-      if (cmd !== 'security' && cmd !== 'selftest' && cmd !== 'slice') {
+      if (cmd !== 'security' && cmd !== 'selftest' && cmd !== 'slice' && cmd !== 'status') {
         const git = getGitMeta(ctx.repoRoot);
         // Structured sanitized audit record (ZERO untrusted raw stdout strings)
         appendAuditRecord(ctx.stateDir, {
@@ -692,6 +694,82 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
+  // STATUS: 1-Shot <150ms / <=450tok Cold-Start Environment, VM, Security & 21-Unit Health Snapshot
+  // -------------------------------------------------------------------------
+  if (cmd === 'status') {
+    const t0 = performance.now();
+    const targetUnit = flags.unit || pos[0] || null;
+    const refreshHealth = Boolean(flags['refresh-health']);
+
+    const adapterStatus = adapter?.onStatus
+      ? await adapter.onStatus({ unit: targetUnit, refreshHealth, agent })
+      : { ok: true, exitCode: EXIT_OK, chrome: 'n/a', solvers: 'n/a', prebuildCache: 'n/a', lines: [] };
+
+    const git = getGitMeta(ctx.repoRoot);
+    const perm = readPermit(ctx.stateDir, flags.agent || agent.agentId);
+    const permActive = Boolean(perm && !perm.corrupted && Date.parse(perm.expiresAt) > Date.now());
+    const permitTag = permActive
+      ? `ACTIVE(${perm.role})`
+      : perm?.corrupted
+        ? 'CORRUPT'
+        : perm
+          ? 'EXPIRED'
+          : 'NONE';
+
+    const oidcPol = inspectAttestationPolicy(ctx.repoRoot);
+    const oidcTag = oidcPol.oidcConfigured ? 'OIDC_READY' : 'LOCAL';
+    const sbx = detectSandboxCapabilities({ checkDocker: false });
+    const sbxTag = `userns:${sbx.hasUnshareNet ? 1 : 0}`;
+    const doc = refreshHealth ? await auditTwoBooks(ctx, { strict: true }) : auditTwoBooksFast(ctx);
+    const booksTag = `${doc.bookCount}/2(${doc.ok ? 'PASS' : 'DRIFT'})`;
+
+    const cpu = os.cpus().length;
+    const ramGb = (os.totalmem() / 1073741824).toFixed(1);
+    let diskFreeGb = '?';
+    try {
+      const st = fs.statfsSync(ctx.repoRoot);
+      diskFreeGb = ((Number(st.bavail) * Number(st.bsize)) / 1073741824).toFixed(1);
+    } catch {
+      diskFreeGb = '?';
+    }
+
+    const elapsedMs = Math.round(performance.now() - t0);
+    const lines = [
+      formatFlowHeader({
+        cmd: 'status',
+        ok: adapterStatus.ok ? 1 : 0,
+        br: git.branch,
+        head: git.head,
+        dirty: git.dirtyCount,
+        perm: permitTag,
+        oidc: oidcTag,
+        sbx: sbxTag,
+        books: booksTag,
+        ms: elapsedMs,
+      }),
+      `VM|cpu=${cpu}|ram=${ramGb}G|disk=${diskFreeGb}G|chrome=${adapterStatus.chrome}|sv=${adapterStatus.solvers}|cache=${adapterStatus.prebuildCache}`,
+      ...(adapterStatus.lines || []),
+    ];
+    if (refreshHealth && !doc.ok) {
+      lines.push('SYNC_HINT|run=npm run flow -- doc sync');
+    }
+    lines.push(
+      `NEXT|NO_INFRA_DIVE(${elapsedMs}ms): NEVER read scripts/flow_os/* or scripts/exam/*. Use README.md + flow wake/exam query.`
+    );
+
+    return finalizeOutput({
+      ctx,
+      agent,
+      cmd: 'status',
+      args: rawArgv,
+      lines,
+      exitCode: adapterStatus.exitCode ?? EXIT_OK,
+      flags,
+      legacyTokens: 95000,
+    });
+  }
+
+  // -------------------------------------------------------------------------
   // WAKE: Replaces bg boot + bg start + lease + WS + solver probe + atlas + brief
   // -------------------------------------------------------------------------
   if (cmd === 'wake') {
@@ -719,7 +797,7 @@ async function main() {
 
     // 2. Domain wake hook (bg boot / start / solver probe / atlas / brief)
     const wakeInfo = adapter?.onWake
-      ? await adapter.onWake({ slug, unit, role, goal: flags.goal, next: flags.next, agent })
+      ? await adapter.onWake({ slug, unit, role, goal: flags.goal, next: flags.next, brief: Boolean(flags.brief), agent })
       : { bootExit: 0, bootSummary: 'no_adapter', solvers: 'n/a', briefLines: [] };
 
     if (wakeInfo.bootExit === 3 && !slug) exitCode = EXIT_WARN;
@@ -790,6 +868,7 @@ async function main() {
       maxIter: Number(flags['max-iter'] || 25),
       verify: Boolean(flags.verify),
       runId: flags.run || null,
+      role,
       agent,
     });
     return finalizeOutput({

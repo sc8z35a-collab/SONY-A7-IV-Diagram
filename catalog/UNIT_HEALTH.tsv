@@ -1,0 +1,25 @@
+unit	kind	exam	parts	pose_rows	cert	sp_clash	ex02_gap08	sp_float	sp_smt	sp_explode	deps	src_sha
+welcome	indiv	YES	435	0	UNVERIFIED	0	207	0	0	0	-	3f42501d7b12
+mishoe	indiv	YES	99	0	UNVERIFIED	395	0	0	1	87	-	f498f7da5888
+battery	indiv	YES	130	0	UNVERIFIED	813	0	0	17	129	-	8a9318c6e31d
+cfexpress	indiv	YES	170	0	UNVERIFIED	1563	0	0	8	116	-	01effccf46ff
+mic	indiv	YES	150	0	UNVERIFIED	394	2	0	0	209	-	7f5b057d83ba
+drybox	indiv	YES	186	0	UNVERIFIED	571	1	0	2	389	-	6862c278d878
+mount	indiv	YES	100	0	UNVERIFIED	684	0	0	2	129	-	2819362664db
+shutter	indiv	YES	180	0	UNVERIFIED	2194	0	0	0	129	-	9da798855fbc
+body	indiv	YES	116	0	UNVERIFIED	610	0	0	0	112	-	b667af7dd413
+evf	indiv	YES	105	0	UNVERIFIED	10	2	0	0	120	-	fc8577a30c0a
+lcd	indiv	YES	150	0	UNVERIFIED	3102	0	0	4	150	-	3b7daf29d0b4
+lens	indiv	YES	128	0	UNVERIFIED	674	0	0	5	502	-	50c690cece5f
+mainboard	indiv	YES	60	0	UNVERIFIED	119	0	0	1	21	-	54c7086e9800
+bionz	indiv	YES	70	0	UNVERIFIED	10	0	0	0	16	-	1fe7a55e07da
+bionz_v2	indiv	YES	105	0	UNVERIFIED	62	54	0	0	8	-	b99515c7c479
+sensor	indiv	YES	120	0	UNVERIFIED	572	0	0	26	107	-	2a9a1ca32ba1
+micro	indiv	YES	75	0	UNVERIFIED	243	0	0	0	42	-	5cfcfc72f94b
+micro_v2	indiv	YES	55	0	UNVERIFIED	52	11	0	0	4	-	741ba612c0b4
+sensor_fab	indiv	NO	235	0	EXCL	-	-	-	-	-	-	6f34f99a85f6
+mirai_2028	indiv	NO	140	0	EXCL	-	-	-	-	-	-	fa7932fc1052
+original	indiv	YES	128	0	UNVERIFIED	0	104	0	0	0	-	3870dc4da7d8
+integrated	comp	YES	305	0	UNVERIFIED	1029	0	0	8	2119	lens,mount,body,evf,shutter,sensor,mainboard,lcd	b9e9b89f06b7
+camera_body	comp	YES	231	0	UNVERIFIED	719	0	0	7	835	mount,body,evf,shutter,sensor,mainboard,lcd	5cd8f458c3ce
+# schema=flow-unit-health/v1.2	exam_units=21	clean=0	clash0=2	dirty_geom=21

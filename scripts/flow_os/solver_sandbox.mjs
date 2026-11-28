@@ -57,27 +57,36 @@ export function scrubEnv(extra = {}, baseEnv = process.env) {
 
 let _capabilitiesCache = null;
 
-export function detectSandboxCapabilities() {
-  if (_capabilitiesCache) return _capabilitiesCache;
-  const hasUnshareNet = spawnSync('unshare', ['--user', '--map-root-user', '--net', '/bin/true'], {
-    stdio: 'ignore',
-    timeout: 3000,
-  }).status === 0;
+export function detectSandboxCapabilities({ checkDocker = true } = {}) {
+  if (_capabilitiesCache && (!checkDocker || _capabilitiesCache._dockerChecked)) return _capabilitiesCache;
+  const hasUnshareNet = _capabilitiesCache
+    ? _capabilitiesCache.hasUnshareNet
+    : spawnSync('unshare', ['--user', '--map-root-user', '--net', '/bin/true'], {
+        stdio: 'ignore',
+        timeout: 1500,
+      }).status === 0;
   const hasSetpriv = fs.existsSync('/usr/bin/setpriv');
   const hasPrlimit = fs.existsSync('/usr/bin/prlimit');
 
   let hasDockerImage = false;
-  const dockerCheck = spawnSync('docker', ['image', 'inspect', 'tlx11-sandbox:latest'], {
-    stdio: 'ignore',
-    timeout: 3000,
-  });
-  if (dockerCheck.status === 0) hasDockerImage = true;
+  let dockerChecked = false;
+  if (checkDocker) {
+    dockerChecked = true;
+    if (fs.existsSync('/var/run/docker.sock')) {
+      const dockerCheck = spawnSync('docker', ['image', 'inspect', 'tlx11-sandbox:latest'], {
+        stdio: 'ignore',
+        timeout: 1500,
+      });
+      if (dockerCheck.status === 0) hasDockerImage = true;
+    }
+  }
 
   _capabilitiesCache = {
     hasDockerImage,
     hasUnshareNet,
     hasSetpriv,
     hasPrlimit,
+    _dockerChecked: dockerChecked,
     defaultMode: hasDockerImage ? 'docker_session' : (hasUnshareNet ? 'userns_netns' : 'env_scrub_only'),
   };
   return _capabilitiesCache;
