@@ -7,6 +7,7 @@ import {
   retessellatePrimitiveSagitta,
 } from '../engine/FastCadGeometry';
 import { disposeObject3D } from './dispose';
+import { verifyRegisteredUnitV11Seal } from './v11_seal_verifier';
 import {
   beginQualityAccessTracking,
   didQualityAccessChange,
@@ -1943,6 +1944,7 @@ export class CompiledV2Unit implements OptimizedUnit {
     rootGroup.name = `${this.unitId}-v2-root`;
     rootGroup.matrixAutoUpdate = false;
     rootGroup.updateMatrix();
+    rootGroup.userData.v11Certification = verifyRegisteredUnitV11Seal(this.unitId);
     this.rootGroup = rootGroup;
 
     let maxChunkMs = 0;

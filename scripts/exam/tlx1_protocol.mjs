@@ -17,6 +17,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { PILLARS, ENGINES, TEST_REGISTRY, TEST_BY_ID } from './test_registry.mjs';
+import {
+  engraveV11Certificate,
+  revokeUnitCertificate,
+  verifyV11CertificateAgainstScene,
+  CERT_DIR,
+} from './v11_certificate.mjs';
 
 export const EXIT_PASS = 0;
 export const EXIT_ERROR = 1;
@@ -63,21 +69,21 @@ export function makeTestResult(id, status, data = {}) {
 }
 
 /**
- * Compute tamper-evident TLX1-RECEIPT only when ALL 36 engines ran without omission,
- * 0 FAIL, 0 ERR, 0 SKIP, and all 16 cross-solver locks passed.
+ * Compute tamper-evident TLX11-RECEIPT only when ALL 48 engines ran without omission,
+ * 0 FAIL, 0 ERR, 0 WARN, 0 SKIP, and all 28 cross-solver locks passed.
  */
-export function computeReceipt({ irSha, unitId, passCount, totalCount, expandedCount, fullRun, locksOk, failCount, errCount, skipCount }) {
-  if (!fullRun || !locksOk || failCount > 0 || errCount > 0 || skipCount > 0 || passCount !== totalCount) {
+export function computeReceipt({ irSha, unitId, passCount, totalCount, expandedCount, fullRun, locksOk, failCount, errCount, warnCount = 0, skipCount }) {
+  if (!fullRun || !locksOk || failCount > 0 || errCount > 0 || warnCount > 0 || skipCount > 0 || passCount !== totalCount) {
     return 'NONE';
   }
-  const payload = `TLX1|${irSha}|${unitId}|${passCount}/${totalCount}|${expandedCount}|v1`;
+  const payload = `TLX11|${irSha}|${unitId}|${passCount}/${totalCount}|${expandedCount}|v1.1`;
   const sig = crypto.createHash('sha256').update(payload).digest('hex').slice(0, 10);
-  return `TLX1-RECEIPT:${irSha.slice(0, 8)}:${unitId}:${passCount}/${totalCount}:${expandedCount}:${sig}`;
+  return `TLX11-RECEIPT:${irSha.slice(0, 8)}:${unitId}:${passCount}/${totalCount}:${expandedCount}:${sig}`;
 }
 
 /**
  * Persist full NDJSON database to `/tmp/tlx_runs/<runId>/results.ndjson` and format
- * the hyper-dense AI-native `TLX1` stdout report.
+ * the hyper-dense AI-native `TLX11` stdout report (with V1.1証明 auto-engraving / revocation).
  */
 export function emitTlx1Report({
   ir,
@@ -91,6 +97,7 @@ export function emitTlx1Report({
   solversReady,
   solversTotal,
   maxFails = 120,
+  certOutPath = null,
 }) {
   fs.mkdirSync(runDir, { recursive: true });
   const dbPath = path.join(runDir, 'results.ndjson');
@@ -139,7 +146,12 @@ export function emitTlx1Report({
   const totalExpected = fullRun ? TEST_REGISTRY.length : normalized.length;
   const skipCount = Math.max(0, totalExpected - normalized.length);
   const locksOk = crossLocks.every((x) => x.ok);
+  const locksPassed = crossLocks.filter((x) => x.ok).length;
   const locksFailed = crossLocks.filter((x) => !x.ok);
+  const enginesPassed = Object.keys(engineResults).filter((eid) => {
+    const et = normalized.filter((t) => t.engine === eid);
+    return et.length > 0 && et.every((t) => t.status === 'PASS');
+  }).length;
 
   const zdp = totalExpected > 0 ? passCount / totalExpected : 0;
   const verdict =
@@ -160,14 +172,60 @@ export function emitTlx1Report({
     locksOk,
     failCount,
     errCount,
+    warnCount,
     skipCount,
   });
 
+  // Automatic「V1.1証明」Seal Engraving on 100.0000% PASS, or Instant Revocation if previously engraved and now failing/drifted!
+  let certStatus = 'UNVERIFIED';
+  let certId = 'NONE';
+  if (verdict === 'PASS' && fullRun && receipt !== 'NONE') {
+    const engRes = engraveV11Certificate({
+      ir,
+      enginesPassed,
+      enginesTotal: ENGINES.length,
+      testsPassed: passCount,
+      testsTotal: TEST_REGISTRY.length,
+      locksPassed,
+      locksTotal: crossLocks.length,
+      solversReady,
+      solversTotal,
+      fullRun,
+      failCount,
+      warnCount,
+      errCount,
+      skipCount,
+      tlxReceipt: receipt,
+      writeToDisk: ir.sourceKind !== 'selftest',
+      certOutPath,
+    });
+    if (engRes.issued) {
+      certStatus = 'CERTIFIED';
+      certId = engRes.certId;
+    }
+  } else if (ir.sourceKind !== 'selftest') {
+    const existingCertPath = path.join(CERT_DIR, `${ir.unitId}.v1_1.cert.json`);
+    if (fs.existsSync(existingCertPath)) {
+      try {
+        const cur = JSON.parse(fs.readFileSync(existingCertPath, 'utf8'));
+        const chk = verifyV11CertificateAgainstScene(cur, ir);
+        if (!chk.valid || verdict === 'FAIL' || verdict === 'INVARIANT_FAIL') {
+          revokeUnitCertificate(ir.unitId, chk.valid ? `EXAM_V11_${verdict}` : chk.reason);
+          certStatus = 'REVOKED';
+        }
+      } catch {
+        revokeUnitCertificate(ir.unitId, 'CORRUPT_CERT');
+        certStatus = 'REVOKED';
+      }
+    }
+  }
+
   const lines = [];
-  // 1. Header line
+  // 1. Header line (TLX11 v=1.1 — backward compatible with TLX1 parsers via rcpt= & verdict=)
   lines.push(
-    `TLX1|u=${cleanField(ir.unitId)}|v=1|verdict=${verdict}|pass=${passCount}|fail=${failCount}|warn=${warnCount}|err=${errCount}|skip=${skipCount}|total=${totalExpected}|exp=${expandedCount}|zdp=${zdp.toFixed(4)}|dur_s=${durationSec.toFixed(2)}|ir=${ir.irSha}|sv=${solversReady}/${solversTotal}|rcpt=${receipt}`
+    `TLX1|u=${cleanField(ir.unitId)}|v=1.1|verdict=${verdict}|pass=${passCount}|fail=${failCount}|warn=${warnCount}|err=${errCount}|skip=${skipCount}|total=${totalExpected}|exp=${expandedCount}|zdp=${zdp.toFixed(4)}|dur_s=${durationSec.toFixed(2)}|ir=${ir.irSha}|sv=${solversReady}/${solversTotal}|rcpt=${receipt}|v11_cert=${certId}`
   );
+  lines.push(`V11_SEAL|unit=${cleanField(ir.unitId)}|status=${certStatus}|cert=${certId}`);
 
   // 2. Pillar rollup lines (10 lines max)
   for (const pil of PILLARS) {

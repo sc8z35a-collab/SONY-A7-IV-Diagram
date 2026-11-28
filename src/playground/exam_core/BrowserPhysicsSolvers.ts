@@ -22,6 +22,7 @@ import {
   rayHitMeshBvh,
   WorldMeshBvh,
 } from './ExactMeshBvh';
+import { runV11BrowserSolversExtension } from './V11BrowserSolversExt';
 
 export type ExamStrictnessMode = 'design' | 'exam_strict';
 
@@ -41,7 +42,16 @@ export type PlyaV2SolverId =
   | 'pg_optics_mc'
   | 'pg_acoustics'
   | 'pg_galvanic_life'
-  | 'pg_web_exam_bridge';
+  | 'pg_web_exam_bridge'
+  // 8 New THE LAST EXAM V1.1 Inherited Browser Solvers (24 Solvers / 256 Atomic Assertions!)
+  | 'pg_power_on_boot'
+  | 'pg_control_stability'
+  | 'pg_digital_timing_fsm'
+  | 'pg_si_pdn_integrity'
+  | 'pg_esd_safety'
+  | 'pg_kinematics_actuators'
+  | 'pg_transient_thermal_psd'
+  | 'pg_pokayoke_cert_v11';
 
 export interface SerializedPgPart {
   readonly uid: string;
@@ -59,9 +69,9 @@ export interface SerializedPgPart {
 }
 
 export interface PgAssertionRecord {
-  readonly id: string;           // PG-T001..PG-T128
+  readonly id: string;           // PG-T001..PG-T256
   readonly solverId: PlyaV2SolverId;
-  readonly examRef: string;      // e.g. 'EX01/T001'
+  readonly examRef: string;      // e.g. 'EX01/T001' .. 'EX48/T1080'
   readonly labelJa: string;
   readonly status: 'pass' | 'warn' | 'fail';
   readonly actual: string;
@@ -71,7 +81,7 @@ export interface PgAssertionRecord {
 
 export interface PgSolverSummary {
   readonly id: PlyaV2SolverId;
-  readonly examSource: string;   // e.g. 'EX01/EX05'
+  readonly examSource: string;   // e.g. 'EX01/EX05' .. 'EX46/EX47/EX48'
   readonly toolName: string;
   readonly domainJa: string;
   readonly status: 'pass' | 'warn' | 'fail';
@@ -92,7 +102,7 @@ export interface PgPartVisualDiagnostic {
 }
 
 export interface PgDeepPhysicsReport {
-  readonly engineVersion: 'PLYA-V2-EXAM';
+  readonly engineVersion: 'PLYA-V2.1-EXAM11';
   readonly strictness: ExamStrictnessMode;
   readonly domainMode: 'camera' | 'wlk_optical' | 'robotics' | 'custom_mech';
   readonly totalDurationMs: number;
@@ -115,6 +125,9 @@ export interface PgDeepPhysicsReport {
     | '撮影動作不可';
   readonly simpleHeadline: string;
   readonly quickFixes: readonly string[];
+  readonly bootReadinessPct: number;
+  readonly mfgYieldPct: number;
+  readonly canonical3dSha256: string;
   readonly telemetry: {
     readonly estimatedMassG: number;
     readonly centerOfGravityMm: readonly [number, number, number];
@@ -1287,16 +1300,41 @@ export function runExamInheritedPlaygroundGrader(
     ];
     const score = n === 0 ? 0 : clamp((webgl2 ? 50 : 25) + (tris < 600000 ? 25 : 15) + (hasView ? 25 : 10), 0, 100);
     solvers.push({
-      id: 'pg_web_exam_bridge', examSource: 'EX23/EX24/EX36', toolName: 'EXAM V1 ブリッジ / EDA出力', domainJa: '4種産業ファイル連携',
-      status: score >= 80 ? 'pass' : 'warn', score, metricBadge: `${isOnline ? 'Online' : 'Local'} · 4形式出力可`,
-      plainVerdict: `PLYA V2 全16ソルバ・128項目実物理検証完了。KiCad/ngspice/CalculiX/EXAM V1(.tlx.json)をワンクリック出力可能です。`,
-      fixHint: '「.tlx.json出力」→ node scripts/exam.mjs --playground=<file> で530項目極限検証',
+      id: 'pg_web_exam_bridge', examSource: 'EX23/EX24/EX36', toolName: 'EXAM V1.1 ブリッジ / EDA出力', domainJa: '4種産業ファイル連携',
+      status: score >= 80 ? 'pass' : 'warn', score, metricBadge: `${isOnline ? 'Online' : 'Local'} · .tlx11出力可`,
+      plainVerdict: `PLYA V2.1 全24ソルバ・256項目実物理検証完了。KiCad/ngspice/CalculiX/EXAM V1.1(.tlx11.json)をワンクリック出力可能です。`,
+      fixHint: '「.tlx11.json出力」→ node scripts/exam.mjs --playground=<file> で全48エンジン/1,080項目検証＆V1.1証明取得',
       flaggedUids: [], assertions: as, durationMs: Number((nowMs() - t0).toFixed(2)),
     });
   }
 
   // =========================================================================
-  // AGGREGATE 1,000-POINT UNIFIED EXAM-INHERITED SCORE & RANK
+  // SOLVERS 17..24: THE LAST EXAM V1.1 PILLARS 11 & 12 (+128 ATOMIC ASSERTIONS -> 256 TOTAL!)
+  // =========================================================================
+  const v11Ext = runV11BrowserSolversExtension({
+    parts,
+    strictness,
+    domainMode,
+    collisionCount: collisions.length,
+    floatingCount: floatingUids.length,
+    maxSeatGapMm,
+    totalMassG,
+    totalPowerW,
+    socJunctionC,
+    chassisSurfaceC,
+    spiceIrDropMv,
+    spiceMcu3v3MinV,
+    modalF1Hz,
+    feaSafetyFactor,
+    maxWiringRouteMm,
+    galvanicSevereCount,
+    tippingAngleDeg,
+  });
+  solvers.push(...v11Ext.solvers);
+  allAssertions.push(...v11Ext.assertions);
+
+  // =========================================================================
+  // AGGREGATE 1,000-POINT UNIFIED EXAM V1.1-INHERITED SCORE & RANK
   // =========================================================================
   const solverPassCount = solvers.filter((s) => s.status === 'pass').length;
   const solverWarnCount = solvers.filter((s) => s.status === 'warn').length;
@@ -1308,10 +1346,10 @@ export function runExamInheritedPlaygroundGrader(
   const avgSolver = solvers.reduce((s, x) => s + x.score, 0) / Math.max(1, solvers.length);
   const totalScore = n === 0 ? 0 : clamp(Math.round(avgSolver * 10), 0, 1000);
 
-  // Critical physical gates inherited from THE LAST EXAM V1
+  // Critical physical gates inherited from THE LAST EXAM V1.1
   const clashFail = solvers[0].status === 'fail';
   const floatFail = strictness === 'exam_strict' && solvers[1].status === 'fail';
-  const powerFail = solvers[8].status === 'fail';
+  const powerFail = solvers[8].status === 'fail' || solvers[16].status === 'fail';
   const opticsFail = domainMode === 'camera' && solvers[12].status === 'fail';
   const canOperate = n > 0 && !clashFail && !floatFail && !powerFail && !opticsFail && totalScore >= 600;
 
@@ -1340,15 +1378,15 @@ export function runExamInheritedPlaygroundGrader(
   const errMeshCnt = Object.values(partDiag).filter((d) => d.severity === 'error').length;
   const simpleHeadline =
     n === 0
-      ? 'まだ部品がありません。テンプレートを読み込むか左のパーツ一覧から配置して「PLYA V2 極限検査」を押してください。'
+      ? 'まだ部品がありません。テンプレートを読み込むか左のパーツ一覧から配置して「PLYA V2.1 極限検査」を押してください。'
       : canOperate && solverFailCount === 0
-        ? `🎉 EXAM継承16物理ソルバ合格！（${assertionPassCount}/${allAssertions.length}項目PASS · ${totalScore}点 / RANK ${rank}）`
+        ? `🎉 EXAM V1.1継承24物理ソルバ合格！（${assertionPassCount}/${allAssertions.length}項目PASS · 起動確実性${v11Ext.bootReadinessPct}% · ${totalScore}点 / RANK ${rank}）`
         : errMeshCnt > 0
-          ? `🔴 3D実物理エラー ${errMeshCnt}部品検出（${assertionFailCount}項目FAIL）— 「EXAM自動修復」または下のヒントで修正してください`
-          : `⚠️ 物理要改善 ${solverFailCount + solverWarnCount}分野（${assertionPassCount}/${allAssertions.length}項目PASS · ${totalScore}点）`;
+          ? `🔴 3D実物理エラー ${errMeshCnt}部品検出（${assertionFailCount}項目FAIL · 起動確実性${v11Ext.bootReadinessPct}%）— 「EXAM自動修復」または下のヒントで修正してください`
+          : `⚠️ 物理要改善 ${solverFailCount + solverWarnCount}分野（${assertionPassCount}/${allAssertions.length}項目PASS · 起動確実性${v11Ext.bootReadinessPct}% · ${totalScore}点）`;
 
   return {
-    engineVersion: 'PLYA-V2-EXAM',
+    engineVersion: 'PLYA-V2.1-EXAM11',
     strictness,
     domainMode,
     totalDurationMs: Math.max(0.5, Number((nowMs() - tAllStart).toFixed(2))),
@@ -1366,6 +1404,9 @@ export function runExamInheritedPlaygroundGrader(
     operationalVerdict,
     simpleHeadline,
     quickFixes,
+    bootReadinessPct: v11Ext.bootReadinessPct,
+    mfgYieldPct: v11Ext.mfgYieldPct,
+    canonical3dSha256: v11Ext.canonical3dSha256,
     telemetry: {
       estimatedMassG: Math.round(totalMassG),
       centerOfGravityMm: [Number(cogX.toFixed(1)), Number(cogY.toFixed(1)), Number(cogZ.toFixed(1))],

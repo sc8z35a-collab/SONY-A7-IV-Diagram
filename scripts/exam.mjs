@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 /**
- * THE LAST EXAM V1 (`node scripts/exam.mjs`)
+ * THE LAST EXAM V1.1 (`node scripts/exam.mjs`)
  *
- * Single AI-native command running 10 Pillars / 36 Industrial Engines / 530 Fixed Atomic Tests
- * (750-1,400+ expanded checks) powered by 16 real external industrial toolchains:
+ * Single AI-native command running 12 Pillars / 48 Industrial Engines / 1,080 Fixed Atomic Tests
+ * (2,500-5,000+ expanded checks) powered by 48 real external industrial solvers & 6 C++17 harnesses:
  *   CalculiX ccx 2.21 · OpenFOAM 1912 · Gmsh 4.12 · TetGen · Berkeley ngspice 42 · GNU gnucap
- *   KiCad 7.0.11 · FreeFEM++ 4.13 · Microsoft Z3 4.8.12 · COIN-OR CBC · Bullet 3.24 · ODE
- *   FCL 0.7 · CGAL 5.6 · OpenCASCADE 7.6 · Yosys 0.33 · Verilator 5.020 · Icarus Verilog
- *   KLayout 0.28 · Netgen-LVS · NumPy/SciPy 100k MC · OpenCV/scikit-image · Chrome pp1.1 · sp Float64
+ *   KiCad 7.0.11 · FreeFEM++ 4.13 · GetDP 3.2 · Microsoft Z3 4.8 · Stanford CVC5 1.1 · Boolector · MiniSat
+ *   COIN-OR CBC · GLPK · Bullet 3.24 · ODE · DART 6.13 · FCL 0.7 · CGAL 5.6 · OpenCASCADE 7.6 · ADMesh · GTS
+ *   FFTW3 · NLopt · GNU Octave 8.4 · Maxima 5.46 · Yosys 0.33 · nextpnr-ice40 · Verilator 5.020 · Icarus · GHDL
+ *   KLayout 0.28 · Magic · Netgen-LVS · CVXOPT · R-Tree · igraph · Pint · statsmodels · mpmath · VTK · Chrome pp1.1
  *
- * Output protocol: `TLX1` (zero fluff, AI-first ultra-dense wire format).
- * Exit codes: 0=PASS(TLX1-RECEIPT) 1=ERR 2=FAIL 3=WARN 4=INVARIANT_MISMATCH 5=SOLVER_MISSING
+ * 100.0000% PASS (48/48 engines, 1,080/1,080 tests, 28/28 cross-locks, 48/48 solvers) engraves
+ * tamper-evident cryptographic「V1.1証明」(auto-revoked immediately upon any 0.0001mm 3D state drift).
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { discoverRegisteredUnits } from './spatial_engine/scene_extractor.mjs';
-import { ENGINES, PILLARS, TEST_REGISTRY } from './exam/test_registry.mjs';
+import { CROSS_SOLVER_LOCKS, ENGINES, PILLARS, TEST_REGISTRY } from './exam/test_registry.mjs';
 import { compileUnitIr, compilePlaygroundIr } from './exam/ir_compiler.mjs';
 import { runEngineDag } from './exam/scheduler.mjs';
 import {
@@ -33,10 +34,14 @@ import { runEX11, runEX12, runEX13, runEX14, runEX27, runEX28 } from './exam/eng
 import { runEX29, runEX15, runEX16, runEX17, runEX30, runEX31 } from './exam/engines/p04_cfd_spice_wiring_emc.mjs';
 import { runEX18, runEX19, runEX20, runEX21 } from './exam/engines/p05_optics_acoustics.mjs';
 import { runEX22, runEX23, runEX24, runEX32, runEX33, runEX34, runEX35, runEX36 } from './exam/engines/p06_formal_fsm_chem_visual.mjs';
+import { runEX37, runEX38, runEX39, runEX40, runEX41, runEX42 } from './exam/engines/p07_power_boot_control.mjs';
+import { runEX43, runEX44, runEX45, runEX46, runEX47, runEX48 } from './exam/engines/p08_mfg_reliability_cert.mjs';
+import { wrapWithV11DeepChecks } from './exam/engines/v11_deep_checks.mjs';
 import { evaluateCrossSolverLocks } from './exam/engines/cross_solver_lock.mjs';
 import { runSelfTestOracle } from './exam/engines/selftest_oracle.mjs';
+import { CERT_DIR, regenerateCertificatesTs, revokeUnitCertificate, verifyV11CertificateAgainstScene } from './exam/v11_certificate.mjs';
 
-const RUNNERS = Object.freeze({
+const BASE_RUNNERS = {
   EX01: runEX01, EX02: runEX02, EX03: runEX03, EX04: runEX04, EX05: runEX05,
   EX06: runEX06, EX07: runEX07, EX08: runEX08, EX09: runEX09, EX10: runEX10,
   EX11: runEX11, EX12: runEX12, EX13: runEX13, EX14: runEX14, EX15: runEX15,
@@ -45,6 +50,12 @@ const RUNNERS = Object.freeze({
   EX26: runEX26, EX27: runEX27, EX28: runEX28, EX29: runEX29, EX30: runEX30,
   EX31: runEX31, EX32: runEX32, EX33: runEX33, EX34: runEX34, EX35: runEX35,
   EX36: runEX36,
+};
+
+const RUNNERS = Object.freeze({
+  ...Object.fromEntries(Object.entries(BASE_RUNNERS).map(([k, fn]) => [k, wrapWithV11DeepChecks(k, fn)])),
+  EX37: runEX37, EX38: runEX38, EX39: runEX39, EX40: runEX40, EX41: runEX41, EX42: runEX42,
+  EX43: runEX43, EX44: runEX44, EX45: runEX45, EX46: runEX46, EX47: runEX47, EX48: runEX48,
 });
 
 function parseArgs(argv) {
@@ -64,10 +75,10 @@ function parseArgs(argv) {
 
 function cmdHelp() {
   process.stdout.write(
-    `TLX1_HELP|cmd=node scripts/exam.mjs|engines=36|tests=${TEST_REGISTRY.length}|locks=16\n` +
-    `USAGE|node scripts/exam.mjs --unit=<id> [--only=EX01,EX02] [--pillar=P01] [--resume=<runId>] [--max-fails=120] [--progress]\n` +
-    `USAGE|node scripts/exam.mjs --all-units | --playground=<file.tlx.json> | setup | selftest | query <runId> [--status=FAIL|--engine=EX02|--test=T021] | list\n` +
-    `EXIT|0=PASS_RECEIPT|1=ERR|2=FAIL|3=WARN|4=INVARIANT_MISMATCH|5=SOLVER_MISSING\n`
+    `TLX11_HELP|cmd=node scripts/exam.mjs|pillars=${PILLARS.length}|engines=${ENGINES.length}|tests=${TEST_REGISTRY.length}|locks=${CROSS_SOLVER_LOCKS.length}|solvers=48\n` +
+    `USAGE|node scripts/exam.mjs --unit=<id> [--only=EX01,EX37] [--pillar=P11] [--resume=<runId>] [--max-fails=120] [--progress]\n` +
+    `USAGE|node scripts/exam.mjs --all-units | --playground=<file.tlx11.json> | setup | selftest | cert-status | cert-verify --unit=<id> | query <runId> | list\n` +
+    `EXIT|0=PASS_RECEIPT_V11CERT|1=ERR|2=FAIL|3=WARN|4=INVARIANT_MISMATCH|5=SOLVER_MISSING\n`
   );
 }
 
@@ -175,6 +186,7 @@ async function runSingleTarget({ ir, flags, runId, runDir, envCheck }) {
     solversReady: envCheck.ready,
     solversTotal: envCheck.total,
     maxFails: flags['max-fails'] ? Number(flags['max-fails']) : 120,
+    certOutPath: flags['cert-out'] || null,
   });
 
   process.stdout.write(rep.formatted);
@@ -191,17 +203,71 @@ async function main() {
   }
 
   if (sub === 'setup') {
+    if (flags['verify-only'] || flags.verify) {
+      const sv = assertAllSolversReady();
+      const readyCnt = sv.ready ?? sv.okCount ?? (sv.total - sv.missing.length);
+      process.stdout.write(`TLX11_SOLVERS|ready=${readyCnt}/${sv.total}|missing=${sv.missing.length}|status=${sv.ok ? 'READY' : 'MISSING'}\n`);
+      if (!sv.ok) process.stdout.write(`MISSING|${sv.missing.join(',')}\n`);
+      process.exit(sv.ok ? EXIT_PASS : EXIT_SOLVER_MISSING);
+    }
     const r = spawnSync('bash', [path.join(REPO_ROOT, 'scripts/exam_setup.sh')], { stdio: 'inherit' });
     process.exit(r.status ?? 1);
   }
 
   if (sub === 'list') {
     const units = discoverRegisteredUnits(REPO_ROOT).map((u) => `${u.unitId}:${u.declaredPartCount}`).join(',');
-    process.stdout.write(`TLX1_LIST|pillars=${PILLARS.length}|engines=${ENGINES.length}|tests=${TEST_REGISTRY.length}|units=${units}\n`);
+    process.stdout.write(`TLX11_LIST|pillars=${PILLARS.length}|engines=${ENGINES.length}|tests=${TEST_REGISTRY.length}|locks=${CROSS_SOLVER_LOCKS.length}|solvers=48|units=${units}\n`);
     for (const e of ENGINES) {
       const nT = TEST_REGISTRY.filter((t) => t.engine === e.id).length;
       process.stdout.write(`ENG|${e.id}|${e.pillar}|t=${nT}|sv=${e.solvers.join('+')}|${e.name}\n`);
     }
+    process.exit(EXIT_PASS);
+  }
+
+  if (sub === 'cert-status') {
+    const units = discoverRegisteredUnits(REPO_ROOT);
+    let certCount = 0;
+    const rows = [];
+    for (const u of units) {
+      const cp = path.join(CERT_DIR, `${u.unitId}.v1_1.cert.json`);
+      if (fs.existsSync(cp)) {
+        try {
+          const c = JSON.parse(fs.readFileSync(cp, 'utf8'));
+          const chk = verifyV11CertificateAgainstScene(c, null, { checkKernel: true });
+          if (chk.valid && c.status === 'CERTIFIED') {
+            certCount++;
+            rows.push(`CERT|u=${u.unitId}|status=CERTIFIED|cert=${c.certId}|at=${c.issuedAt}`);
+          } else {
+            rows.push(`CERT|u=${u.unitId}|status=${chk.status}|reason=${chk.reason}`);
+          }
+        } catch {
+          rows.push(`CERT|u=${u.unitId}|status=REVOKED_CORRUPT`);
+        }
+      } else {
+        rows.push(`CERT|u=${u.unitId}|status=UNVERIFIED`);
+      }
+    }
+    process.stdout.write(`TLX11_CERT_STATUS|certified=${certCount}/${units.length}\n${rows.join('\n')}\n`);
+    process.exit(EXIT_PASS);
+  }
+
+  if (sub === 'cert-verify') {
+    const unitId = flags.unit || pos[1] || 'welcome';
+    const cp = path.join(CERT_DIR, `${unitId}.v1_1.cert.json`);
+    if (!fs.existsSync(cp)) {
+      process.stdout.write(`V11_CERT_VERIFY|u=${unitId}|status=UNVERIFIED|valid=0\n`);
+      process.exit(EXIT_PASS);
+    }
+    const cert = JSON.parse(fs.readFileSync(cp, 'utf8'));
+    const runDir = path.join(TLX_RUNS_BASE, `cert_verify_${unitId}_${Date.now()}`);
+    const ir = await compileUnitIr(unitId, { runDir, allTiers: true });
+    const chk = verifyV11CertificateAgainstScene(cert, ir, { checkKernel: true });
+    if (!chk.valid) {
+      revokeUnitCertificate(unitId, chk.reason);
+      process.stdout.write(`V11_CERT_VERIFY|u=${unitId}|status=${chk.status}|valid=0|revoked=1|reason=${chk.reason}\n`);
+      process.exit(2);
+    }
+    process.stdout.write(`V11_CERT_VERIFY|u=${unitId}|status=CERTIFIED|valid=1|cert=${cert.certId}\n`);
     process.exit(EXIT_PASS);
   }
 
@@ -210,11 +276,11 @@ async function main() {
     process.exit(EXIT_PASS);
   }
 
-  // Strict no-compromise gate: all 32 external solver toolchains & C++ harnesses MUST be installed!
+  // Strict no-compromise gate: all 48 external solver toolchains & 6 C++17 harnesses MUST be installed!
   const envCheck = assertAllSolversReady();
   if (!envCheck.ok) {
     process.stdout.write(
-      `TLX1|verdict=SOLVER_MISSING|sv=${envCheck.ready}/${envCheck.total}|missing=${envCheck.missing.join(',')}|fix=node scripts/exam.mjs setup\n`
+      `TLX1|v=1.1|verdict=SOLVER_MISSING|sv=${envCheck.ready}/${envCheck.total}|missing=${envCheck.missing.join(',')}|fix=node scripts/exam.mjs setup\n`
     );
     process.exit(EXIT_SOLVER_MISSING);
   }
@@ -222,7 +288,7 @@ async function main() {
   if (sub === 'selftest') {
     const st = await runSelfTestOracle(RUNNERS);
     process.stdout.write(
-      `TLX1_SELFTEST|verdict=${st.ok ? 'PASS' : 'FAIL'}|pass=${st.passed}/${st.total}|dur_s=${st.durS.toFixed(2)}|sv=${envCheck.ready}/${envCheck.total}\n`
+      `TLX11_SELFTEST|verdict=${st.ok ? 'PASS' : 'FAIL'}|pass=${st.passed}/${st.total}|engines=${ENGINES.length}|tests=${TEST_REGISTRY.length}|locks=${CROSS_SOLVER_LOCKS.length}|dur_s=${st.durS.toFixed(2)}|sv=${envCheck.ready}/${envCheck.total}\n`
     );
     for (const f of st.failed) {
       process.stdout.write(`ST_FAIL|${f.id}|expect=${f.expect}|actual=${f.actual}|${f.detail}\n`);
@@ -235,7 +301,8 @@ async function main() {
     const runId = flags.resume || `pg_${Date.now()}`;
     const runDir = path.join(TLX_RUNS_BASE, runId);
     const ir = await compilePlaygroundIr(bpPath, { runDir });
-    const rep = await runSingleTarget({ ir, flags, runId, runDir, envCheck });
+    const certOutPath = flags['cert-out'] || bpPath.replace(/(\.tlx11|\.tlx)?\.json$/i, '.v1_1.cert.json');
+    const rep = await runSingleTarget({ ir, flags: { ...flags, 'cert-out': certOutPath }, runId, runDir, envCheck });
     process.exit(rep.exitCode);
   }
 
@@ -249,6 +316,7 @@ async function main() {
       const rep = await runSingleTarget({ ir, flags, runId, runDir, envCheck });
       if (rep.exitCode > worstExit) worstExit = rep.exitCode;
     }
+    regenerateCertificatesTs(REPO_ROOT);
     process.exit(worstExit);
   }
 

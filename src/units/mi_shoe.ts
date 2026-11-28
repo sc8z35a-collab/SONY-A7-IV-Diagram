@@ -55,6 +55,7 @@ import {
   UnitMeta,
   UnitPartMeta,
 } from '../core/unit_contract';
+import { verifyRegisteredUnitV11Seal } from '../core/v11_seal_verifier';
 
 // =============================================================================
 // Module-scope zero-allocation scratch objects (NEVER allocate in updateExplode / updatePhysics!)
@@ -495,6 +496,7 @@ export class MiShoeUnit implements OptimizedUnit {
     const rootGroup = new THREE.Group();
     rootGroup.name = 'mishoe-v2-unit-root';
     setNodeStaticMatrix(rootGroup);
+    rootGroup.userData.v11Certification = verifyRegisteredUnitV11Seal('mishoe');
     this.rootGroup = rootGroup;
 
     // Flat typed arrays for zero-allocation explode math

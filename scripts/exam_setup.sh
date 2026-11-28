@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# THE LAST EXAM V1 — Automated Industrial Solver Provisioning & Native Harness Builder
-# Installs all 16 real external industrial verification/simulation toolchains on Ubuntu 24.04
-# and compiles 4 high-performance C++ native harnesses (CGAL, FCL, Bullet+ODE, OpenCASCADE).
+# THE LAST EXAM V1.1 — Automated Industrial Solver Provisioning & Native Harness Builder
+# Installs all 48 real external industrial verification/simulation toolchains on Ubuntu 24.04
+# and compiles 6 high-performance C++17 native harnesses (CGAL, FCL, Bullet+ODE, OpenCASCADE, DART, FFTW3+GTS+NLopt).
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 NATIVE_SRC="${ROOT_DIR}/scripts/exam/native/src"
@@ -32,18 +32,23 @@ if [[ "${SKIP_APT}" != "1" ]]; then
     gnucap
     gnucap-default-plugins0
     kicad
-    # 4. Multiphysics PDE FEM (Electromagnetics, Acoustics, Thermal)
+    # 4. Dual Multiphysics PDE FEM (Electromagnetics, SI/PI, ESD, Acoustics, Thermal)
     freefem++
-    # 5. Formal SMT Theorem Prover & MILP Optimizers
+    getdp
+    # 5. Dual SMT / SAT / Bit-Vector Formal Theorem Provers & MILP Optimizers
     z3
     python3-z3
+    cvc5
+    minisat
+    boolector
     coinor-cbc
     glpk-utils
     python3-pulp
-    # 6. Dual 3D Rigid-Body Multibody Physics Engines
+    # 6. Triple 3D Rigid-Body & Articulated Multibody Physics Engines (Bullet + ODE + DART)
     libbullet-dev
     libode-dev
-    # 7. Exact Computational Geometry, Continuous Collision Detection & B-Rep CAD
+    libdart-dev
+    # 7. Triple Exact Computational Geometry, CCD, Surface Quality & B-Rep CAD
     libfcl-dev
     libcgal-dev
     libocct-foundation-dev
@@ -52,15 +57,24 @@ if [[ "${SKIP_APT}" != "1" ]]; then
     libocct-data-exchange-dev
     libeigen3-dev
     qhull-bin
-    # 8. Digital Logic / Control FSM Formal & Cycle-Accurate Simulators
+    admesh
+    libgts-dev
+    libfftw3-dev
+    libnlopt-dev
+    # 8. Triple HDL Formal/Simulators & FPGA Static Timing Closure (Yosys + NextPNR + Verilator + Icarus + GHDL)
     yosys
+    nextpnr-ice40
     verilator
     iverilog
-    # 9. Semiconductor Layout DRC / LVS
+    ghdl
+    # 9. Control Theory LTI/Bode/Nyquist & Dual Symbolic Computer Algebra (Octave + Maxima)
+    octave
+    maxima
+    # 10. Semiconductor Layout DRC / LVS
     klayout
     magic
     netgen-lvs
-    # 10. Scientific Python Stack (Vectorized 100k MC Optics, Graph FTA, OpenCV Vision)
+    # 11. Scientific Python Stack (100k MC Optics, Convex SOCP, R-Tree, igraph, Pint, Six-Sigma, 100-digit, VTK)
     python3-numpy
     python3-scipy
     python3-sympy
@@ -70,6 +84,13 @@ if [[ "${SKIP_APT}" != "1" ]]; then
     python3-skimage
     python3-meshio
     python3-vtk9
+    python3-cvxopt
+    python3-nlopt
+    python3-rtree
+    python3-igraph
+    python3-pint
+    python3-statsmodels
+    python3-mpmath
     # Build tools
     pkg-config
     cmake
@@ -91,7 +112,7 @@ compile_harness() {
     echo "[TLX-SETUP] WARN: ${src} not yet created; skipping build."
     return 0
   fi
-  echo "[TLX-SETUP] Compiling C++ native harness: ${name}..."
+  echo "[TLX-SETUP] Compiling C++17 native harness: ${name}..."
   g++ -O3 -DNDEBUG "${src}" -o "${out}" "$@" -std=c++17
   chmod +x "${out}"
 }
@@ -120,9 +141,21 @@ if [[ -d "${NATIVE_SRC}" ]]; then
   OCCT_LIBS="-lTKernel -lTKMath -lTKG2d -lTKG3d -lTKGeomBase -lTKBRep -lTKTopAlgo -lTKMesh -lTKPrim -lTKSTL"
   # shellcheck disable=SC2086
   compile_harness occt_step_analyzer ${OCCT_INC} ${OCCT_LIBS} -lpthread
+
+  # 5. DART 6.13 Articulated Multibody Kinematics & Inverse Dynamics
+  DART_CFLAGS="$(pkg-config --cflags dart eigen3 2>/dev/null || echo '-I/usr/include/eigen3')"
+  DART_LIBS="$(pkg-config --libs dart 2>/dev/null || echo '-ldart -lassimp -lccd -lfcl -loctomap')"
+  # shellcheck disable=SC2086
+  compile_harness dart_kinematics_dynamics ${DART_CFLAGS} ${DART_LIBS} -lpthread
+
+  # 6. FFTW3 Spectral PSD/EMI + GTS Surface Quality + NLopt Hertz Tribology Optimizer
+  GTS_CFLAGS="$(pkg-config --cflags gts glib-2.0 fftw3 nlopt 2>/dev/null || echo '-I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include')"
+  GTS_LIBS="$(pkg-config --libs gts glib-2.0 fftw3 nlopt 2>/dev/null || echo '-lgts -lglib-2.0 -lfftw3 -lnlopt -lm')"
+  # shellcheck disable=SC2086
+  compile_harness spectral_gts_nlopt ${GTS_CFLAGS} ${GTS_LIBS} -lm -lpthread
 fi
 
-# Verify and emit deterministic JSON manifest of all 16 solver toolchains
+# Verify and emit deterministic JSON manifest of all 48 real external solver toolchains
 /usr/bin/python3 - "${NATIVE_BIN}" "${MANIFEST_PATH}" <<'PY'
 import json, os, shutil, subprocess, sys, time
 
@@ -157,7 +190,6 @@ def probe_openfoam():
     w = shutil.which("buoyantSimpleFoam") or shutil.which("simpleFoam") or shutil.which("blockMesh")
     if w:
         return {"ok": True, "path": w, "foam_root": os.path.dirname(os.path.dirname(w)), "version": "OpenFOAM"}
-    # Search /usr/lib/openfoam dynamically
     if os.path.isdir("/usr/lib/openfoam"):
         for root, _dirs, files in os.walk("/usr/lib/openfoam"):
             if "buoyantSimpleFoam" in files:
@@ -172,6 +204,7 @@ def probe_py_mod(mod):
         return {"ok": False, "version": str(e)}
 
 solvers = {
+    # Original 32 external industrial solvers (V1)
     "calculix_ccx": probe_cmd("ccx", ["-v"]),
     "gmsh": probe_cmd("gmsh", ["--version"]),
     "tetgen": probe_cmd("tetgen", ["-h"]),
@@ -204,10 +237,28 @@ solvers = {
     "native_fcl": probe_cmd(os.path.join(native_bin, "fcl_ccd_router"), ["--version"]),
     "native_bullet_ode": probe_cmd(os.path.join(native_bin, "bullet_ode_multibody"), ["--version"]),
     "native_occt": probe_cmd(os.path.join(native_bin, "occt_step_analyzer"), ["--version"]),
+    # 16 New V1.1 external industrial solvers (+2 C++17 native harnesses = 48 total!)
+    "getdp": probe_cmd("getdp", ["--version"]),
+    "cvc5": probe_cmd("cvc5", ["--version"]),
+    "minisat": probe_cmd("minisat", ["--help"]),
+    "boolector": probe_cmd("boolector", ["--version"]),
+    "ghdl": probe_cmd("ghdl", ["--version"]),
+    "nextpnr_ice40": probe_cmd("nextpnr-ice40", ["--version"]),
+    "octave": probe_cmd("octave-cli", ["--version"]),
+    "maxima": probe_cmd("maxima", ["--version"]),
+    "admesh": probe_cmd("admesh", ["--version"]),
+    "native_dart": probe_cmd(os.path.join(native_bin, "dart_kinematics_dynamics"), ["--version"]),
+    "native_spectral_gts": probe_cmd(os.path.join(native_bin, "spectral_gts_nlopt"), ["--version"]),
+    "py_cvxopt": probe_py_mod("cvxopt"),
+    "py_rtree": probe_py_mod("rtree"),
+    "py_igraph": probe_py_mod("igraph"),
+    "py_pint": probe_py_mod("pint"),
+    "py_statsmodels": probe_py_mod("statsmodels"),
 }
 
 ok_count = sum(1 for v in solvers.values() if v.get("ok"))
 manifest = {
+    "schema": "tlx_env_manifest/v1.1",
     "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "ok_count": ok_count,
     "total_count": len(solvers),

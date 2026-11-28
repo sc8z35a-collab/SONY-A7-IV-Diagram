@@ -72,6 +72,17 @@ import {
 import { auditTwoBooks, readBookSection } from './doc_compiler.mjs';
 import { generateHumanReport } from './human_report.mjs';
 import { exportFlowTemplate, initFlowRepo } from './template_exporter.mjs';
+import { executeMacroDag, validateMacroSpec } from './macro_engine.mjs';
+import { getBuiltinPipeline, listBuiltinPipelines } from './builtin_pipelines.mjs';
+import {
+  readMacroRegistry,
+  registerMacro,
+  removeRegisteredMacro,
+  runMacroSelftest,
+  runRegisteredMacro,
+  suggestMacrosFromLedger,
+  verifyAllRegisteredMacros,
+} from './macro_registry.mjs';
 
 function parseCli(argv) {
   const dashIdx = argv.indexOf('--');
@@ -98,7 +109,10 @@ function parseCli(argv) {
 function printHelp() {
   process.stdout.write(
     [
-      `FLOW1_HELP|os=FLOW-V1-OS-${FLOW_OS_VERSION}|exit=0:OK,1:ERR,2:BLOCK,3:WARN,4:XFAIL,5:NO_SOLVER,6:SEC_BLOCK`,
+      `FLOW1_HELP|os=FLOW-V1.1-OS-${FLOW_OS_VERSION}|exit=0:OK,1:ERR,2:BLOCK,3:WARN,4:XFAIL,5:NO_SOLVER,6:SEC_BLOCK`,
+      `CMD|auto <bootstrap|research|dev|certify|fabricate|factory|list> [--unit=U] [--target=T] [--dry-run]`,
+      `CMD|macro <register|run|list|inspect|verify|suggest|remove|selftest> [name] [--spec=F] [--dry-run]`,
+      `CMD|cert <status|verify|selftest> [--unit=U]`,
       `CMD|wake [slug] [--unit=U] [--role=worker|integrator] [--goal=G]`,
       `CMD|inspect <unit|part|symbol|query> [--defect] [--slice] [--budget=N]`,
       `CMD|heal [--unit=U] [--apply] [--max-iter=25] [--bake] | heal selftest`,
@@ -108,7 +122,7 @@ function printHelp() {
       `CMD|swarm <plan|status|selftest> [--units=active|all|u1,u2] [--workers=N]`,
       `CMD|exec <exam|bg|pp|sokutei|sp|dx> [args...]`,
       `CMD|human-report [--out=PATH] [--artifacts=DIR]  # HUMAN_REQUEST_ONLY`,
-      `CMD|security <audit [--full]|selftest>`,
+      `CMD|security <audit [--full]|selftest>  # 13 layers, 36 attacks`,
       `CMD|doc <audit [--strict]|section <1|2> <TAG|toc>>`,
       `CMD|slice <path> <start>-<end>`,
       `CMD|init [--project-name=N] [--force] | export-template --out=DIR | selftest`,
@@ -675,26 +689,211 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // SELFTEST: Portable OS Complete Self-Proof (SEC-12 + Swarm + 2-Book Doc)
+  // AUTO: 6 Built-In 14-30+ Step Parallel DAG Mega-Pipelines
+  // -------------------------------------------------------------------------
+  if (cmd === 'auto') {
+    const sub = pos[0] || 'list';
+    if (sub === 'list') {
+      const list = listBuiltinPipelines();
+      const lines = [
+        formatFlowHeader({ cmd: 'auto:list', status: 'OK', pipelines: list.length }),
+        ...list.map((p) => formatRecord('AUTO', { name: p.key, steps: p.steps, mutates: p.mutates, desc: p.description })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'auto', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 3000 });
+    }
+    const vars = {};
+    for (const [k, v] of Object.entries(flags)) {
+      if (['budget', 'raw', 'agent', 'ws', 'cwd', 'dry-run', 'concurrency'].includes(k)) continue;
+      vars[k] = v === true ? 'true' : String(v);
+    }
+    if (pos[1] && !vars.target && !vars.unit) {
+      vars.target = pos[1];
+      vars.unit = pos[1];
+    }
+    const spec = getBuiltinPipeline(sub, vars);
+    if (!spec) {
+      const valid = listBuiltinPipelines().map((p) => p.key).join(',');
+      return finalizeOutput({
+        ctx, agent, cmd: 'auto', args: rawArgv,
+        lines: [formatFlowHeader({ cmd: 'auto', status: 'ERR', msg: `unknown_pipeline:${sub}`, valid })],
+        exitCode: EXIT_ERROR, flags, legacyTokens: 500,
+      });
+    }
+    const res = await executeMacroDag(spec, ctx, agent, {
+      vars,
+      dryRun: Boolean(flags['dry-run']),
+      concurrency: flags.concurrency ? Number(flags.concurrency) : undefined,
+      autoSnap: !flags['no-snap'],
+    });
+    return finalizeOutput({
+      ctx, agent, cmd: 'auto', args: rawArgv,
+      lines: res.lines, exitCode: res.exitCode, flags,
+      legacyTokens: spec.steps.length * 1800,
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // MACRO: Formal AI Self-Registering Signed Automation Registry (SEC-13)
+  // -------------------------------------------------------------------------
+  if (cmd === 'macro') {
+    const sub = pos[0] || 'list';
+    if (sub === 'selftest') {
+      const st = await runMacroSelftest();
+      const lines = [
+        formatFlowHeader({ cmd: 'macro:selftest', status: st.ok ? 'PASS' : 'FAIL', pass: `${st.passed}/${st.total}`, ms: st.elapsedMs }),
+        ...st.failed.map((f) => formatRecord('MACRO_FAIL', { id: f.id, detail: f.detail })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines, exitCode: st.exitCode, flags, legacyTokens: 4000 });
+    }
+    if (sub === 'list') {
+      const reg = readMacroRegistry(ctx.repoRoot);
+      const custom = Object.values(reg.macros || {});
+      const builtins = listBuiltinPipelines();
+      const lines = [
+        formatFlowHeader({ cmd: 'macro:list', status: 'OK', custom: custom.length, builtins: builtins.length }),
+        ...custom.map((m) => formatRecord('MACRO', { name: m.name, steps: m.steps, waves: m.waves, sha: String(m.sha256 || '').slice(0, 12), desc: m.description })),
+        ...builtins.map((b) => formatRecord('BUILTIN', { cmd: `flow auto ${b.key}`, steps: b.steps })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 2000 });
+    }
+    if (sub === 'verify') {
+      const v = verifyAllRegisteredMacros(ctx.repoRoot);
+      const lines = [
+        formatFlowHeader({ cmd: 'macro:verify', status: v.ok ? 'PASS' : 'SEC_BLOCK', checked: v.checked, findings: v.findings.length }),
+        ...v.findings.map((f) => formatRecord('SEC_FAIL', { layer: f.layer, rule: f.rule, file: f.file, msg: f.msg })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines, exitCode: v.ok ? EXIT_OK : EXIT_SECURITY_BLOCKED, flags, legacyTokens: 1500 });
+    }
+    if (sub === 'suggest') {
+      const sug = suggestMacrosFromLedger(ctx.stateDir, Number(flags.min || 2));
+      const lines = [
+        formatFlowHeader({ cmd: 'macro:suggest', status: 'OK', ledger_events: sug.ledgerEvents, candidates: sug.suggestions.length }),
+        ...sug.suggestions.map((s) => formatRecord('SUGGEST', { name: s.suggestedName, count: s.occurrences, save_pct: s.estTokenSavingsPct, seq: s.sequence })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines, exitCode: EXIT_OK, flags, legacyTokens: 3000 });
+    }
+    if (sub === 'register') {
+      let spec = null;
+      if (flags.spec) {
+        const conf = assertPathConfined(String(flags.spec), [ctx.repoRoot, '/tmp/flow_ws', '/tmp']);
+        if (!conf.ok) {
+          return finalizeOutput({
+            ctx, agent, cmd: 'macro', args: rawArgv,
+            lines: [formatFlowHeader({ cmd: 'macro:register', status: 'SEC_BLOCK', rule: conf.rule })],
+            exitCode: EXIT_SECURITY_BLOCKED, flags, legacyTokens: 500,
+          });
+        }
+        spec = JSON.parse(fs.readFileSync(conf.canonical, 'utf8'));
+      } else if (flags.name && flags.steps) {
+        spec = {
+          name: String(flags.name),
+          description: String(flags.desc || 'AI registered macro'),
+          mutates: Boolean(flags.mutates),
+          steps: JSON.parse(String(flags.steps)),
+        };
+      } else {
+        return finalizeOutput({
+          ctx, agent, cmd: 'macro', args: rawArgv,
+          lines: [formatFlowHeader({ cmd: 'macro:register', status: 'ERR', msg: 'provide --spec=<file.json> or --name=<N> --steps=<json>' })],
+          exitCode: EXIT_ERROR, flags, legacyTokens: 500,
+        });
+      }
+      const res = registerMacro(ctx, spec, { agentId: agent.agentId });
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines: res.lines, exitCode: res.exitCode, flags, legacyTokens: 2000 });
+    }
+    if (sub === 'inspect') {
+      const name = pos[1] || flags.name;
+      const reg = readMacroRegistry(ctx.repoRoot);
+      const entry = reg.macros?.[name];
+      if (!entry) {
+        return finalizeOutput({
+          ctx, agent, cmd: 'macro', args: rawArgv,
+          lines: [formatFlowHeader({ cmd: 'macro:inspect', status: 'NOT_FOUND', name: name || '' })],
+          exitCode: EXIT_ERROR, flags, legacyTokens: 500,
+        });
+      }
+      const spec = JSON.parse(fs.readFileSync(path.join(ctx.repoRoot, entry.file), 'utf8'));
+      const val = validateMacroSpec(spec, ctx.repoRoot);
+      const lines = [
+        formatFlowHeader({ cmd: 'macro:inspect', status: val.ok ? 'OK' : 'SEC_BLOCK', name, steps: spec.steps.length, waves: val.waves.length, sha: entry.sha256.slice(0, 12) }),
+        ...val.waves.map((w, i) => formatRecord('WAVE', { n: i + 1, steps: w.map((s) => `${s.id}:${s.primitive}`).join(',') })),
+      ];
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines, exitCode: val.ok ? EXIT_OK : EXIT_SECURITY_BLOCKED, flags, legacyTokens: 1500 });
+    }
+    if (sub === 'remove') {
+      const name = pos[1] || flags.name;
+      const res = removeRegisteredMacro(ctx, name);
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines: res.lines, exitCode: res.exitCode, flags, legacyTokens: 500 });
+    }
+    if (sub === 'run') {
+      const name = pos[1] || flags.name;
+      const vars = {};
+      for (const [k, v] of Object.entries(flags)) {
+        if (['budget', 'raw', 'agent', 'ws', 'cwd', 'dry-run', 'name', 'concurrency'].includes(k)) continue;
+        vars[k] = v === true ? 'true' : String(v);
+      }
+      const res = await runRegisteredMacro(ctx, agent, name, { vars, dryRun: Boolean(flags['dry-run']) });
+      return finalizeOutput({ ctx, agent, cmd: 'macro', args: rawArgv, lines: res.lines, exitCode: res.exitCode, flags, legacyTokens: 8000 });
+    }
+    return finalizeOutput({
+      ctx, agent, cmd: 'macro', args: rawArgv,
+      lines: [formatFlowHeader({ cmd: 'macro', status: 'ERR', msg: `unknown_subcmd:${sub}` })],
+      exitCode: EXIT_ERROR, flags, legacyTokens: 500,
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // CERT: THE LAST EXAM V1.1 Cryptographic「V1.1証明」Status, Verify & Selftest
+  // -------------------------------------------------------------------------
+  if (cmd === 'cert') {
+    const sub = pos[0] || 'status';
+    const certScript = path.join(ctx.repoRoot, 'scripts/exam/v11_certificate.mjs');
+    if (!fs.existsSync(certScript)) {
+      return finalizeOutput({
+        ctx, agent, cmd: 'cert', args: rawArgv,
+        lines: [formatFlowHeader({ cmd: `cert:${sub}`, status: 'NO_CERT_MODULE', msg: 'EXAM V1.1 cert engine not present in repo' })],
+        exitCode: EXIT_OK, flags, legacyTokens: 500,
+      });
+    }
+    const cArgs = [certScript, sub];
+    if (flags.unit) cArgs.push(`--unit=${flags.unit}`);
+    if (pos[1]) cArgs.push(pos[1]);
+    const r = safeSpawnSync('node', cArgs, {
+      cwd: ctx.repoRoot,
+      env: { ...process.env, ...agent.envOverlay },
+    });
+    const out = `${r.stdout || ''}${r.stderr ? '\n' + r.stderr : ''}`.trim();
+    const lines = [
+      formatFlowHeader({ cmd: `cert:${sub}`, status: r.status === 0 ? 'OK' : `EXIT_${r.status}` }),
+      ...(out ? out.split('\n') : []),
+    ];
+    return finalizeOutput({ ctx, agent, cmd: 'cert', args: rawArgv, lines, exitCode: r.status ?? 1, flags, legacyTokens: 2000 });
+  }
+
+  // -------------------------------------------------------------------------
+  // SELFTEST: Portable OS Complete Self-Proof (SEC-12/13 + Swarm + Macro + 2-Book)
   // -------------------------------------------------------------------------
   if (cmd === 'selftest') {
     const sec = runSecuritySelftest();
     const sw = runSwarmSelftest();
+    const mac = await runMacroSelftest();
     const doc = auditTwoBooks(ctx, { strict: true });
-    const ok = sec.ok && sw.ok && doc.ok;
+    const ok = sec.ok && sw.ok && mac.ok && doc.ok;
     const lines = [
       formatFlowHeader({
         cmd: 'selftest',
         status: ok ? 'PASS' : 'FAIL',
-        sec12: `${sec.passed}/${sec.total}`,
+        sec13: `${sec.passed}/${sec.total}`,
         swarm: `${sw.passed}/${sw.total}`,
+        macro: `${mac.passed}/${mac.total}`,
         books: `${doc.bookCount}/2(${doc.totalTokens}tok)`,
       }),
       ...sec.failed.map((f) => `SEC_FAIL|${f.id}|${f.detail}`),
       ...sw.failed.map((f) => `SW_FAIL|${f.id}|${f.detail}`),
+      ...mac.failed.map((f) => `MACRO_FAIL|${f.id}|${f.detail}`),
       ...doc.violations.map((v) => `DOC_FAIL|${v}`),
     ];
-    return finalizeOutput({ ctx, agent, cmd: 'selftest', args: rawArgv, lines, exitCode: ok ? EXIT_OK : EXIT_BLOCKED, flags, legacyTokens: 5000 });
+    return finalizeOutput({ ctx, agent, cmd: 'selftest', args: rawArgv, lines, exitCode: ok ? EXIT_OK : EXIT_BLOCKED, flags, legacyTokens: 8000 });
   }
 
   process.stdout.write(`FLOW1|status=ERR|msg=unknown_cmd:${cmd}|hint=flow help\n`);

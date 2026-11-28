@@ -640,7 +640,176 @@ export function runSec11Hygiene(repoRoot, files, cfg) {
 }
 
 // ---------------------------------------------------------------------------
-// Unified 11-Layer Fortress Runner (`SEC-01`..`SEC-11`) -> `SEC-RECEIPT`
+// SEC-13: Macro Governance, Autonomous I10 Lock & V1.1 Certificate Forgery Guard
+// ---------------------------------------------------------------------------
+const SEC13_ALLOWED_PRIMITIVES = new Set([
+  'flow.wake', 'flow.inspect', 'flow.heal', 'flow.ship', 'flow.park', 'flow.finish',
+  'flow.security', 'flow.doc', 'flow.swarm', 'flow.cert', 'flow.selftest',
+  'exam.setup', 'exam.verify', 'exam.run', 'exam.selftest', 'exam.cert',
+  'bg.boot', 'bg.snap', 'bg.seal', 'bg.gate', 'bg.status', 'bg.selftest',
+  'dx.atlas', 'dx.brief', 'dx.find', 'dx.read', 'dx.selftest',
+  'sp.inspect', 'sp.thermal', 'sp.selftest', 'pp.capture', 'pp.stop',
+  'npm.catalog', 'npm.tsc', 'npm.validate', 'npm.build', 'npm.test',
+  'git.status', 'git.log', 'git.diffstat', 'scaffold.unit', 'noop',
+]);
+const SEC13_FORBID_ARGS = [
+  { rule: 'MACRO_I10_HUMAN_REPORT_BLOCK', rx: /\bhuman-report\b/i },
+  { rule: 'MACRO_BYPASS_SKIP_FLAG', rx: /^--(?:skip-|no-exam|no-security|no-checks|bypass|allow-fail|relax)/i },
+  { rule: 'MACRO_SHELL_METACHAR', rx: /[;&|`$]\(|&&|\|\||;\s*\w|\|\s*(?:sh|bash|zsh)\b/i },
+  { rule: 'MACRO_DANGEROUS_FLAG', rx: /^--(?:force|hard|no-verify)$/i },
+  { rule: 'MACRO_SENSITIVE_PATH', rx: /(?:^|\/)(?:\.git\/hooks|\/etc\/|\/opt\/antigravity\/tokens)/i },
+];
+const V11_SEAL_DOMAIN_TAG = 'THE_LAST_EXAM_V1.1_SEAL_WARRANTY_v1';
+
+export function validateMacroSpecSec13(spec, repoRoot) {
+  const findings = [];
+  const add = (rule, msg) => findings.push({ layer: 'SEC-13', rule, file: `.flow/macros/${spec?.name || 'spec'}.macro.json`, line: 1, msg });
+  if (!spec || typeof spec !== 'object' || !Array.isArray(spec.steps) || spec.steps.length === 0) {
+    add('MACRO_INVALID_SPEC', 'Macro spec must have non-empty steps[]');
+    return findings;
+  }
+  if (spec.steps.length > 40) {
+    add('MACRO_MAX_STEPS_EXCEEDED', `${spec.steps.length} steps exceeds cap 40`);
+  }
+  const byId = new Map();
+  for (const st of spec.steps) {
+    if (!st || typeof st !== 'object' || !st.id) {
+      add('MACRO_INVALID_STEP', 'Step missing id');
+      continue;
+    }
+    byId.set(st.id, st);
+    if (!SEC13_ALLOWED_PRIMITIVES.has(st.primitive)) {
+      add('MACRO_FORBIDDEN_PRIMITIVE', `Non-allowlisted primitive '${st.primitive}'`);
+    }
+    for (const rawArg of st.args || []) {
+      const a = String(rawArg);
+      for (const pat of SEC13_FORBID_ARGS) {
+        if (pat.rx.test(a)) add(pat.rule, `Blocked arg '${a.slice(0, 60)}'`);
+      }
+      if (a.includes('..') && (a.includes('/') || a.includes('\\'))) {
+        add('MACRO_PATH_ESCAPE', `Parent traversal in arg '${a}'`);
+      }
+      const pm = a.match(/^--(?:out|file|path|dir|spec)=(.+)$/);
+      if (pm && !pm[1].includes('${')) {
+        if (!assertPathConfined(pm[1], [repoRoot, '/tmp/flow_ws', '/tmp/flow_reports', '/tmp/tlx_runs']).ok) {
+          add('MACRO_PATH_ESCAPE', `Path '${pm[1]}' escapes allowed workspace`);
+        }
+      }
+    }
+  }
+  // Acyclic DAG verification (Kahn)
+  const inDeg = new Map([...byId.keys()].map((id) => [id, 0]));
+  const ch = new Map([...byId.keys()].map((id) => [id, []]));
+  for (const st of spec.steps) {
+    for (const d of st.deps || []) {
+      if (!byId.has(d)) { add('MACRO_UNKNOWN_DEP', `Unknown dep '${d}'`); continue; }
+      inDeg.set(st.id, (inDeg.get(st.id) || 0) + 1);
+      ch.get(d).push(st.id);
+    }
+  }
+  const q = [...inDeg.entries()].filter(([, deg]) => deg === 0).map(([id]) => id);
+  let vis = 0;
+  while (q.length > 0) {
+    const id = q.shift();
+    vis++;
+    for (const nxt of ch.get(id) || []) {
+      const nd = (inDeg.get(nxt) || 0) - 1;
+      inDeg.set(nxt, nd);
+      if (nd === 0) q.push(nxt);
+    }
+  }
+  if (vis !== byId.size) {
+    add('MACRO_DAG_CYCLE', 'Cyclic dependency graph detected in macro');
+  }
+  return findings;
+}
+
+export function runSec13MacroAndCertGuard(repoRoot) {
+  const findings = [];
+
+  // 1. Audit registered macros in .flow/macros/
+  const macroDir = path.join(repoRoot, '.flow/macros');
+  const regPath = path.join(macroDir, 'registry.json');
+  if (fs.existsSync(macroDir)) {
+    let reg = { macros: {} };
+    const regFiles = new Set();
+    if (fs.existsSync(regPath)) {
+      try {
+        reg = JSON.parse(fs.readFileSync(regPath, 'utf8'));
+      } catch (err) {
+        findings.push({ layer: 'SEC-13', rule: 'MACRO_REGISTRY_CORRUPTED', file: '.flow/macros/registry.json', line: 1, msg: err.message });
+      }
+    }
+    for (const [name, entry] of Object.entries(reg.macros || {})) {
+      const rel = entry.file || `.flow/macros/${name}.macro.json`;
+      regFiles.add(path.basename(rel));
+      const abs = path.join(repoRoot, rel);
+      if (!fs.existsSync(abs)) {
+        findings.push({ layer: 'SEC-13', rule: 'MACRO_FILE_MISSING', file: rel, line: 1, msg: 'Registered macro file missing' });
+        continue;
+      }
+      const raw = fs.readFileSync(abs, 'utf8');
+      const actualSha = crypto.createHash('sha256').update(raw).digest('hex');
+      if (actualSha !== entry.sha256) {
+        findings.push({ layer: 'SEC-13', rule: 'MACRO_SHA_TAMPERED', file: rel, line: 1, msg: `SHA mismatch (${actualSha.slice(0, 10)} != ${String(entry.sha256).slice(0, 10)})` });
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        for (const f of validateMacroSpecSec13(parsed, repoRoot)) findings.push(f);
+      } catch (err) {
+        findings.push({ layer: 'SEC-13', rule: 'MACRO_JSON_INVALID', file: rel, line: 1, msg: err.message });
+      }
+    }
+    for (const f of fs.readdirSync(macroDir)) {
+      if (f.endsWith('.macro.json') && !regFiles.has(f)) {
+        findings.push({ layer: 'SEC-13', rule: 'MACRO_UNREGISTERED_FILE', file: `.flow/macros/${f}`, line: 1, msg: 'Unregistered macro file detected' });
+      }
+    }
+  }
+
+  // 2. Audit V1.1証明 certificates in verification/certificates/*.v1_1.cert.json against forgery
+  const certDir = path.join(repoRoot, 'verification/certificates');
+  if (fs.existsSync(certDir)) {
+    for (const f of fs.readdirSync(certDir)) {
+      if (!f.endsWith('.v1_1.cert.json')) continue;
+      const rel = `verification/certificates/${f}`;
+      try {
+        const c = JSON.parse(fs.readFileSync(path.join(certDir, f), 'utf8'));
+        const canonical = [
+          V11_SEAL_DOMAIN_TAG,
+          c.unitId,
+          c.primarySha256,
+          c.allTiersSha256,
+          c.examKernelSha256,
+          c.solverManifestSha256,
+          `${c.enginesPassed}/${c.enginesTotal}`,
+          `${c.testsPassed}/${c.testsTotal}`,
+          `${c.locksPassed}/${c.locksTotal}`,
+          `${c.solversReady}/${c.solversTotal}`,
+          c.tlxReceipt,
+        ].join('|');
+        const expectedSig = crypto.createHash('sha256').update(canonical).digest('hex');
+        const expectedId = `V11-CERT:${c.unitId}:${String(c.primarySha256 || '').slice(0, 12)}:${String(c.examKernelSha256 || '').slice(0, 8)}:${c.testsPassed}/${c.testsTotal}:${expectedSig.slice(0, 16)}`;
+        const scoreOk =
+          c.enginesPassed === c.enginesTotal && c.enginesTotal >= 48 &&
+          c.testsPassed === c.testsTotal && c.testsTotal >= 1080 &&
+          c.locksPassed === c.locksTotal && c.locksTotal >= 28 &&
+          c.solversReady === c.solversTotal && c.solversTotal >= 48;
+        if (!scoreOk || c.signature !== expectedSig || c.certId !== expectedId) {
+          findings.push({ layer: 'SEC-13', rule: 'V11_CERT_FORGERY_BLOCKED', file: rel, line: 1, msg: 'Forged or invalid V1.1証明 certificate detected' });
+        }
+      } catch (err) {
+        findings.push({ layer: 'SEC-13', rule: 'V11_CERT_CORRUPTED', file: rel, line: 1, msg: err.message });
+      }
+    }
+  }
+
+  return findings;
+}
+
+// ---------------------------------------------------------------------------
+// Unified 12-Active-Layer Fortress Runner (`SEC-01`..`SEC-11` + `SEC-13`) -> `SEC-RECEIPT`
+// (`SEC-12` is the 36-attack Red-Team chaos oracle -> 13 Total Layers!)
 // ---------------------------------------------------------------------------
 export function runSecurityFortress(ctx, opts = {}) {
   const t0 = performance.now();
@@ -674,6 +843,7 @@ export function runSecurityFortress(ctx, opts = {}) {
 
   addLayer('SEC-10', runSec10ParallelScope(ctx, dirtyFiles, opts));
   addLayer('SEC-11', runSec11Hygiene(ctx.repoRoot, scanFiles, ctx.cfg));
+  addLayer('SEC-13', runSec13MacroAndCertGuard(ctx.repoRoot));
 
   // Quarantine rogue parallel worker automatically on any violation
   if (allFindings.length > 0 && opts.role === 'worker' && opts.agentId) {

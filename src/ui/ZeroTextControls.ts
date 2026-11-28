@@ -10,6 +10,10 @@ import {
   SensorFabVolume,
 } from '../assemblies/types';
 import { listRegisteredUnits } from '../units/registry';
+import {
+  V11SealVerification,
+  verifyRegisteredUnitV11Seal,
+} from '../core/v11_seal_verifier';
 
 const DECLARED_PART_COUNT_BY_MODE = new Map<string, number>(
   listRegisteredUnits().map((u) => [u.unitId, u.declaredPartCount])
@@ -247,6 +251,9 @@ export class ZeroTextControls {
   private playgroundBtn: HTMLButtonElement;
   private miraiCtaBtn: HTMLButtonElement;
   private originalCtaBtn: HTMLButtonElement;
+  private v11SealBtn: HTMLButtonElement;
+  private v11CertModalEl: HTMLElement | null = null;
+  private currentV11Seal: V11SealVerification | null = null;
 
   private subViewHost: HTMLElement;
   private lensSubBar: HTMLElement;
@@ -414,7 +421,17 @@ export class ZeroTextControls {
       }
     });
 
-    topLeft.append(selectorWrap, this.playgroundBtn, this.miraiCtaBtn, this.originalCtaBtn);
+    this.v11SealBtn = document.createElement('button');
+    this.v11SealBtn.type = 'button';
+    this.v11SealBtn.className = 'v11-seal-pill is-unverified';
+    this.v11SealBtn.textContent = 'V1.1 未刻印';
+    this.v11SealBtn.title = 'THE LAST EXAM V1.1 製造・実機起動保証証明（クリックで詳細）';
+    this.v11SealBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.openV11WarrantyModal();
+    });
+
+    topLeft.append(selectorWrap, this.v11SealBtn, this.playgroundBtn, this.miraiCtaBtn, this.originalCtaBtn);
 
     // --- CENTER: Contextual Sub-View Bar ---
     this.subViewHost = document.createElement('div');
@@ -937,6 +954,74 @@ export class ZeroTextControls {
     }
     this.originalSubBar.classList.toggle('is-hidden', mode !== 'original');
     this.originalCtaBtn.classList.toggle('is-active', mode === 'original');
+    this.syncV11Seal(verifyRegisteredUnitV11Seal(mode));
+  }
+
+  public syncV11Seal(seal: V11SealVerification): void {
+    this.currentV11Seal = seal;
+    this.v11SealBtn.classList.remove('is-certified', 'is-revoked', 'is-unverified');
+    if (seal.valid && seal.status === 'CERTIFIED') {
+      this.v11SealBtn.classList.add('is-certified');
+      this.v11SealBtn.textContent = '✦ V1.1証明';
+    } else if (seal.status.startsWith('REVOKED')) {
+      this.v11SealBtn.classList.add('is-revoked');
+      this.v11SealBtn.textContent = '✕ V1.1失効';
+    } else {
+      this.v11SealBtn.classList.add('is-unverified');
+      this.v11SealBtn.textContent = 'V1.1 未刻印';
+    }
+    this.v11SealBtn.title = `${seal.badgeLabel} — ${seal.reason}`;
+  }
+
+  private openV11WarrantyModal(): void {
+    if (this.v11CertModalEl) {
+      this.v11CertModalEl.remove();
+      this.v11CertModalEl = null;
+    }
+    const s = this.currentV11Seal ?? verifyRegisteredUnitV11Seal(this.currentMode);
+    const cert = s.cert;
+    const backdrop = document.createElement('div');
+    backdrop.className = 'v11-cert-backdrop';
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        backdrop.remove();
+        this.v11CertModalEl = null;
+      }
+    });
+
+    const card = document.createElement('div');
+    card.className = `v11-cert-modal is-${s.valid ? 'certified' : s.status.startsWith('REVOKED') ? 'revoked' : 'unverified'}`;
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+
+    const statusIcon = s.valid ? '✦' : s.status.startsWith('REVOKED') ? '✕' : '◇';
+    card.innerHTML = `
+      <div class="v11-cert-header">
+        <div>
+          <div class="v11-cert-eyebrow">THE LAST EXAM V1.1 · 実世界製造・起動保証制度</div>
+          <h3 class="v11-cert-title">${statusIcon} ${s.badgeLabel}</h3>
+        </div>
+        <button type="button" class="v11-cert-close" aria-label="閉じる">✕</button>
+      </div>
+      <div class="v11-cert-body">
+        <p class="v11-cert-reason">${s.reason}</p>
+        <div class="v11-cert-grid">
+          <div class="v11-cert-kv"><span>対象ユニット</span><strong>${s.unitId}</strong></div>
+          <div class="v11-cert-kv"><span>検証基準</span><strong>12柱 / 48エンジン / 1,080項目 / 48外部ソルバー / 28ロック</strong></div>
+          <div class="v11-cert-kv"><span>証明書ID</span><code>${cert?.certId ?? '未発行 (NONE)'}</code></div>
+          <div class="v11-cert-kv"><span>3D形状SHA-256 (0.0001mm)</span><code>${cert?.primarySha256?.slice(0, 32) ?? (s.livePrimarySha256.slice(0, 32) || '-')}</code></div>
+          <div class="v11-cert-kv"><span>発行日時</span><strong>${cert?.issuedAt ?? '-'}</strong></div>
+          <div class="v11-cert-kv"><span>改ざん保護規則</span><strong>0.0001mm・1頂点・材質・JSONの変更で即時自動剥奪（再100%合格まで再刻印不可）</strong></div>
+        </div>
+      </div>
+    `;
+    card.querySelector('.v11-cert-close')?.addEventListener('click', () => {
+      backdrop.remove();
+      this.v11CertModalEl = null;
+    });
+    backdrop.appendChild(card);
+    document.body.appendChild(backdrop);
+    this.v11CertModalEl = backdrop;
   }
 
   public syncSectionAxis(axis: SectionAxis, value = 0.5): void {
@@ -1009,6 +1094,8 @@ export class ZeroTextControls {
       window.removeEventListener('orientationchange', this.boundWindowReposition);
       this.boundWindowReposition = null;
     }
+    this.v11CertModalEl?.remove();
+    this.v11CertModalEl = null;
     this.paletteEl.remove();
   }
 }

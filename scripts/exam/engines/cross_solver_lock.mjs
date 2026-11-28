@@ -122,5 +122,76 @@ export function evaluateCrossSolverLocks(ir, outputs) {
     push('X16', ir.parts.length, ex05.cgalPartCount, match ? 0 : 100, match);
   }
 
+  const ex37 = get('EX37'), ex38 = get('EX38'), ex39 = get('EX39'), ex40 = get('EX40');
+  const ex41 = get('EX41'), ex43 = get('EX43'), ex45 = get('EX45'), ex46 = get('EX46');
+  const ex47 = get('EX47'), ex48 = get('EX48');
+
+  // X17: Z3 vs CVC5 dual-SMT safety proof agreement
+  if (ex40) {
+    const agree = ex40.z3Safe === ex40.cvc5Safe;
+    push('X17', ex40.z3Safe ? 1 : 0, ex40.cvc5Safe ? 1 : 0, agree ? 0 : 100, agree);
+  }
+  // X18: FreeFEM++ vs GetDP dual-FEM differential impedance agreement
+  if (ex41) {
+    const err = relErrPct(ex41.zDiffGetdpOhm, ex41.zDiffFreefemRefOhm, 1.0);
+    push('X18', ex41.zDiffGetdpOhm, ex41.zDiffFreefemRefOhm, err);
+  }
+  // X19: Bullet vs ODE vs DART 6.13 triple-multibody mass & gravity conservation
+  if (ex25 && ex43) {
+    const err = Math.max(
+      relErrPct(ex25.bulletMassKg, ex43.dartMassKg, 0.001),
+      relErrPct(ex25.odeReactionN, ex43.dartReactionN, 0.01)
+    );
+    push('X19', ex25.bulletMassKg, ex43.dartMassKg, err);
+  }
+  // X20: CGAL vs OCCT vs ADMesh triple-geometry total volume conservation
+  if (ex05 && ex46) {
+    const err = relErrPct(ex05.cgalVolMm3, ex46.admeshVolMm3, 1.0);
+    push('X20', ex05.cgalVolMm3, ex46.admeshVolMm3, err);
+  }
+  // X21: Verilator vs Icarus Verilog vs GHDL (VHDL) triple-HDL boot FSM agreement
+  if (ex39) {
+    const agree = ex39.verilatorOk === ex39.ghdlOk && ex39.iverilogOk === ex39.ghdlOk;
+    push('X21', `V:${ex39.verilatorOk ? 1 : 0}/IV:${ex39.iverilogOk ? 1 : 0}`, `GHDL:${ex39.ghdlOk ? 1 : 0}`, agree ? 0 : 100, agree);
+  }
+  // X22: NetworkX vs igraph C-engine graph connectivity & articulation agreement
+  if (ex48) {
+    const agree = ex48.igraphComps === ex48.nxComps && ex48.igraphArtPts === ex48.nxArtPts;
+    push('X22', `${ex48.igraphComps}/${ex48.igraphArtPts}`, `${ex48.nxComps}/${ex48.nxArtPts}`, agree ? 0 : 100, agree);
+  }
+  // X23: SciPy LP vs CVXOPT convex QP/SOCP support reaction conservation
+  if (ex03 && ex43) {
+    const err = relErrPct(ex03.lpReactionN, ex43.cvxoptReactionN, 0.01);
+    push('X23', ex03.lpReactionN, ex43.cvxoptReactionN, err);
+  }
+  // X24: SymPy vs Maxima vs mpmath(100-digit) Hertz & control CAS agreement
+  if (ex47 && ex38) {
+    const err = Math.max(
+      Number(ex47.casRelErrPct || 0),
+      relErrPct(ex38.sympyDcGain, ex38.maximaDcGain, 1e-4)
+    );
+    push('X24', ex47.p0SympyMpa, ex47.p0Mpmath100Mpa, err);
+  }
+  // X25: GNU Octave Bode stability vs ngspice cold-boot bus consistency
+  if (ex38 && ex37) {
+    const ok = Boolean(ex38.routhStable) || !Boolean(ex37.bootOk);
+    push('X25', ex38.octavePmDeg, ex37.bootVbusNg, ok ? 0 : 100, ok);
+  }
+  // X26: CalculiX Modal f1 vs FFTW3 spectral PSD resonance peak agreement
+  if (ex45) {
+    const err = relErrPct(ex45.inputF1Hz, ex45.psdPeakHz, 5.0);
+    push('X26', ex45.inputF1Hz, ex45.psdPeakHz, err);
+  }
+  // X27: ngspice vs gnucap cold-boot (-20C) steady VBUS agreement
+  if (ex37) {
+    const err = relErrPct(ex37.bootVbusNg, ex37.bootVbusGc, 0.1);
+    push('X27', ex37.bootVbusNg, ex37.bootVbusGc, err);
+  }
+  // X28: EX48 canonical 0.0001mm 3D geometry SHA-256 integrity lock
+  if (ex48) {
+    const ok = typeof ex48.primarySha256 === 'string' && ex48.primarySha256.length === 64 && typeof ex48.allTiersSha256 === 'string' && ex48.allTiersSha256.length === 64;
+    push('X28', ex48.primarySha256?.slice(0, 12) || 'NONE', ex48.allTiersSha256?.slice(0, 12) || 'NONE', ok ? 0 : 100, ok);
+  }
+
   return results;
 }

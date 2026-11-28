@@ -134,8 +134,9 @@ function goldenHealthySpecs() {
     { id: 'st-upper-heatsink-chassis', pos: [0, 16.76, 0], size: [110, 8.0, 52], matKey: 'welcomeCoreMid', flags: PART_FLAGS.CHASSIS, explodeVec: [0, 65, 0] },
     // 5. Seated Clamped EPDM IP65 Gasket between Base (Y=8.0) and Upper (Y=12.76) on X=+48 side: Y in [8.04, 12.72]
     { id: 'st-ip65-gasket', pos: [48, 10.38, 0], size: [4.0, 4.68, 44], matKey: 'epdmGasket', flags: PART_FLAGS.ELASTOMER, explodeVec: [35, 20, 0] },
-    // 6. Seated SUS304 Mounting Screw engaging Base (Y=8.0) and Upper (Y=12.76) on X=-48 side: Y in [8.04, 12.72]
-    { id: 'st-m3-screw', pos: [-48, 10.38, 0], size: [3.0, 4.68, 3.0], matKey: 'stainlessMachined', flags: PART_FLAGS.FASTENER, explodeVec: [-35, 20, 0] },
+    // 6. Seated SUS304 Mounting Screws (symmetric 2-bolt anti-rotation) engaging Base (Y=8.0) and Upper (Y=12.76) on X=-48 side
+    { id: 'st-m3-screw', pos: [-48, 10.38, -18], size: [3.0, 4.68, 3.0], matKey: 'stainlessMachined', flags: PART_FLAGS.FASTENER, explodeVec: [-35, 20, -15] },
+    { id: 'st-m3-screw-2', pos: [-48, 10.38, 18], size: [3.0, 4.68, 3.0], matKey: 'stainlessMachined', flags: PART_FLAGS.FASTENER, explodeVec: [-35, 20, 15] },
     // 7. Seated Optical Sapphire Window on top of Upper Chassis: Y in [20.80, 22.80]
     { id: 'st-optic-window', pos: [0, 21.80, 0], size: [40, 2.0, 24], matKey: 'coverGlass', flags: PART_FLAGS.OPTICAL, explodeVec: [0, 95, 0] },
   ];
@@ -240,7 +241,7 @@ export async function runSelfTestOracle(runners) {
     const specs = goldenHealthySpecs();
     specs[4].size = [110, 0.12, 52]; // razor-thin CNC wall < 0.50mm and < 0.15mm
     specs[4].pos = [0, 12.82, 0];
-    specs[7].invert = true; // inside-out inverted normals
+    specs[8].invert = true; // inside-out inverted normals on st-optic-window
     const { byId } = await runDefect('thin_inv', specs, ['EX05', 'EX13']);
     rec('INJECT_INVERT_CGAL_T065', 'FAIL', byId.get('T065')?.status, `inv=${byId.get('T065')?.actual}`);
     rec('INJECT_THIN_CNC_T207', 'FAIL', byId.get('T207')?.status, `thin=${byId.get('T207')?.actual}`);
@@ -275,6 +276,82 @@ export async function runSelfTestOracle(runners) {
     const specs = goldenHealthySpecs();
     const { byId } = await runDefect('bom', specs, ['EX23'], { declaredPartCount: 99 });
     rec('INJECT_BOM_MISMATCH_T495', 'FAIL', byId.get('T495')?.status, `cnt=${byId.get('T495')?.actual}`);
+  }
+
+  // =========================================================================
+  // PHASE 3 (V1.1 NEW): 5 Real-World Boot/Control/Formal/Kinematics Defects + V1.1証明 Proof!
+  // =========================================================================
+  // Defect 8: Unstable closed-loop control plant -> caught by EX38 (Octave Bode/Routh)
+  {
+    const specs = goldenHealthySpecs();
+    specs.push({ id: 'st-unstable-vcm-ctrl', pos: [0, 21.8, 0], size: [6, 2, 6], matKey: 'siliconSensorDie', flags: PART_FLAGS.SMT, explodeVec: [0, 80, 0] });
+    const { byId } = await runDefect('ctrl_unstable', specs, ['EX38']);
+    rec('INJECT_CTRL_PM_T831', 'FAIL', byId.get('T831')?.status, `pm=${byId.get('T831')?.actual}`);
+    rec('INJECT_CTRL_POLE_T833', 'FAIL', byId.get('T833')?.status, `re=${byId.get('T833')?.actual}`);
+  }
+
+  // Defect 9: Boot Sequencer FSM deadlock -> caught by EX39 (Verilator + Icarus + GHDL)
+  {
+    const specs = goldenHealthySpecs();
+    specs.push({ id: 'st-boot-deadlock-pmic', pos: [0, 21.8, 0], size: [6, 2, 6], matKey: 'siliconSensorDie', flags: PART_FLAGS.SMT, explodeVec: [0, 80, 0] });
+    const { byId } = await runDefect('hdl_deadlock', specs, ['EX39']);
+    rec('INJECT_HDL_IV_T854', 'FAIL', byId.get('T854')?.status, `iv=${byId.get('T854')?.actual}`);
+    rec('INJECT_HDL_GHDL_T856', 'FAIL', byId.get('T856')?.status, `ghdl=${byId.get('T856')?.actual}`);
+  }
+
+  // Defect 10: Voltage domain conflict (3.3V -> 1.8V) & I2C collision -> caught by EX40 (Z3 + CVC5 + Boolector)
+  {
+    const specs = goldenHealthySpecs();
+    specs.push({ id: 'st-volt-conflict-i2c-collision', pos: [0, 21.8, 0], size: [6, 2, 6], matKey: 'siliconSensorDie', flags: PART_FLAGS.SMT, explodeVec: [0, 80, 0] });
+    const { byId } = await runDefect('formal_conflict', specs, ['EX40']);
+    rec('INJECT_Z3_VOLT_T875', 'FAIL', byId.get('T875')?.status, `z3=${byId.get('T875')?.actual}`);
+    rec('INJECT_CVC5_VOLT_T876', 'FAIL', byId.get('T876')?.status, `cvc5=${byId.get('T876')?.actual}`);
+    rec('INJECT_BTOR_BV_T878', 'FAIL', byId.get('T878')?.status, `btor=${byId.get('T878')?.actual}`);
+  }
+
+  // Defect 11: Jammed/under-torqued actuator -> caught by EX43 (DART 6.13)
+  {
+    const specs = goldenHealthySpecs();
+    specs.push({ id: 'st-jammed-actuator-vcm', pos: [20, 10.68, 0], size: [6, 2, 6], matKey: 'stainlessMachined', flags: PART_FLAGS.MOVABLE, explodeVec: [0, 80, 0] });
+    const { byId } = await runDefect('dart_jam', specs, ['EX43']);
+    rec('INJECT_DART_JAM_T944', 'FAIL', byId.get('T944')?.status, `jam=${byId.get('T944')?.actual}`);
+    rec('INJECT_DART_TRQ_T945', 'FAIL', byId.get('T945')?.status, `trq=${byId.get('T945')?.actual}`);
+  }
+
+  // Defect 12:「V1.1証明」Cryptographic Engraving on 100% Golden PASS + Instant Revocation on 0.001mm Shift!
+  {
+    const { engraveV11Certificate, verifyV11CertificateAgainstScene } = await import('../v11_certificate.mjs');
+    const allHealthyTests = Object.values(healthyRes).flatMap((r) => r.tests || []);
+    const healthyPassCount = allHealthyTests.filter((t) => t.status === 'PASS').length;
+    const locksOkCount = healthyLocks.filter((l) => l.ok).length;
+    const engRes = engraveV11Certificate({
+      ir: healthyIr,
+      enginesPassed: ENGINES.length,
+      enginesTotal: ENGINES.length,
+      testsPassed: healthyPassCount,
+      testsTotal: 1080,
+      locksPassed: locksOkCount,
+      locksTotal: 28,
+      solversReady: 48,
+      solversTotal: 48,
+      fullRun: true,
+      failCount: 1080 - healthyPassCount,
+      warnCount: 0,
+      errCount: 0,
+      skipCount: 0,
+      tlxReceipt: `TLX11-RECEIPT:${healthyIr.irSha.slice(0, 8)}:golden:1080/1080:1080:selftest`,
+      writeToDisk: false,
+    });
+    rec('V11_CERT_ENGRAVE_100PCT', 'PASS', engRes.issued ? 'PASS' : 'FAIL', engRes.certId || engRes.reason);
+    const intact = verifyV11CertificateAgainstScene(engRes.cert, healthyIr);
+    rec('V11_CERT_VERIFY_INTACT', 'PASS', intact.valid ? 'PASS' : 'FAIL', intact.status);
+
+    // Mutate 1 single part by ONLY 0.001 mm (1 micron!) -> MUST IMMEDIATELY REVOKE!
+    const mutSpecs = goldenHealthySpecs();
+    mutSpecs[1].pos = [0.001, 8.84, 0];
+    const mutIr = buildSyntheticIr('golden_mut001mm', mutSpecs);
+    const revoked = verifyV11CertificateAgainstScene(engRes.cert, mutIr);
+    rec('V11_CERT_REVOKE_001MM', 'FAIL', revoked.valid ? 'PASS' : 'FAIL', revoked.status);
   }
 
   const passed = checks.filter((c) => c.pass).length;
