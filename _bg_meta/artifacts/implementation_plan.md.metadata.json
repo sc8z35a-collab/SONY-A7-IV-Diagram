@@ -1,0 +1,6 @@
+{
+  "summary":  "全権委任を前提に未決事項ゼロで最終決定した「FLOW V1 OS」完全実装計画書（最終確定版）。\n- 従来の手動EXAM修正ループを完全廃止し、全10柱/36エンジン横断の0トークン連立自動修復エンジン「flow heal」（因果クラスタ解析＋EX-DELTA 40ms増分BVH＋FCL/SP_F64/Z3/QP/CBC連立最適化＋Tier-B 250トークン超圧縮欠陥カプセル）へ全面刷新\n- 全10冊・188KBの説明書をAI最適言語FLOW-SPEC/v1の厳密2冊（Book 1: AGENTS.md / Book 2: README.md）へ完全統合し旧8冊を削除（トークン85%以上削減）\n- src/全体（49.9万行・全23ユニット・mi_shoe含む）をAI最適3層直交構造（Layer G pose.tsv / Layer M 散文ゼロ純粋幾何＋types.ts 94%軽量化 / Layer L 1行1パーツJSON）へ無劣化再構築\n- 5〜7コマンドを1発化する7大スーパーコマンド＋ヒューマン専用リアルタイム計測MDコマンド「flow human-report」\n- 並列AIエージェント完全隔離カーネル（FLOW_AGENT_WS・ファイルリース・flow swarm統合）\n- 標準を大きく超える12層セキュリティ要塞（SEC-01〜SEC-12・30攻撃Red-Team自己証明・3者暗号連鎖FLOW-RECEIPT）\n- 他リポジトリへ30秒で流用可能な汎用コアOS＋ドメインアダプタ完全分離設計\n- Phase 0〜3 の一気通貫・無劣化検証実行ロードマップ",
+  "updatedAt":  "2026-11-28T09:11:32.466219570Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
