@@ -15,6 +15,7 @@ if [[ ! -d "${CACHE_DIR}" && ! -w "$(dirname "${CACHE_DIR}")" ]]; then
 fi
 SKIP_APT="${TLX_SKIP_APT:-0}"
 FORCE_REBUILD=0
+VERIFY_ONLY=0
 EXPORT_PREBUILD=""
 IMPORT_PREBUILD=""
 
@@ -22,12 +23,15 @@ for arg in "$@"; do
   case "$arg" in
     --force-rebuild) FORCE_REBUILD=1 ;;
     --skip-apt) SKIP_APT=1 ;;
+    --verify-only) VERIFY_ONLY=1; SKIP_APT=1 ;;
     --export-prebuild=*) EXPORT_PREBUILD="${arg#*=}" ;;
     --import-prebuild=*) IMPORT_PREBUILD="${arg#*=}" ;;
   esac
 done
 
-mkdir -p "${NATIVE_BIN}" "${CACHE_DIR}/bin"
+if [[ "${VERIFY_ONLY}" != "1" ]]; then
+  mkdir -p "${NATIVE_BIN}" "${CACHE_DIR}/bin"
+fi
 
 if [[ -n "${IMPORT_PREBUILD}" && -f "${IMPORT_PREBUILD}" ]]; then
   echo "[TLX-SETUP] Restoring prebuilt C++17 harnesses from ${IMPORT_PREBUILD}..."
@@ -169,7 +173,7 @@ compile_harness() {
   echo "${cur_hash}" > "${cache_hash}" 2>/dev/null || true
 }
 
-if [[ -d "${NATIVE_SRC}" ]]; then
+if [[ "${VERIFY_ONLY}" != "1" && -d "${NATIVE_SRC}" ]]; then
   # 1. CGAL Exact Geometry Kernel
   compile_harness cgal_geom_kernel \
     -lgmp -lmpfr -lpthread

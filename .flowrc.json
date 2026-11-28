@@ -8,8 +8,8 @@
   "books": {
     "envManual": "AGENTS.md",
     "domainManual": "README.md",
-    "maxEnvTokens": 2200,
-    "maxDomainTokens": 5500,
+    "maxEnvTokens": 2850,
+    "maxDomainTokens": 8000,
     "contentAssetDirs": [
       "reports",
       "blueprints",
@@ -20,6 +20,8 @@
       ".git"
     ],
     "requiredEnvTokens": [
+      "NO_INFRA_DIVE",
+      "flow status",
       "flow wake",
       "flow permit",
       "flow inspect",
@@ -43,6 +45,7 @@
     ]
   },
   "budgets": {
+    "status": 450,
     "wake": 220,
     "permit": 150,
     "inspect": 300,

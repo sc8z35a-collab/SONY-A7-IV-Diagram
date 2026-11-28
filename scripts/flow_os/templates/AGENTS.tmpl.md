@@ -2,6 +2,7 @@
 > LANG=AI_NATIVE_MIN_BPE|BOOKS=2(Book1:AGENTS.md,Book2:README.md)|EXIT=0:OK,1:ERR,2:BLOCK,3:WARN,4:XFAIL,5:NO_SOLVER,6:SEC_BLOCK
 
 ## @IRON_LAWS
+- `I00|NO_INFRA_DIVE`: `scripts/flow_os/*` and `.github/workflows/*` are PRE-VERIFIED BLACK-BOX INFRA. NEVER read their source files during `/plan` or feature work unless explicitly asked to modify OS internals. Cold-start = Book 1 (`AGENTS.md`) + Book 2 (`README.md`) + ONE command (`flow status --raw`, <300ms).
 - `I01|BOOT`: Session first command MUST be `flow wake` or `flow auto bootstrap` (default role=`worker`).
 - `I02|PERMIT`: Never hold dirty edits on `{{DEFAULT_BRANCH}}`. Issue an Edit Permit (`flow permit issue --unit=<U>`) before editing; integrator elevation requires `--elevate-integrator --reason="..."`.
 - `I03|PARK`: Before waiting on human input or ending a turn, run `flow park --next="..." --artifacts=<DIR>`.
@@ -12,10 +13,11 @@
 ## @SUPER_COMMANDS (ALIAS: `flow` = `node scripts/flow_os/flow.mjs`)
 | CMD | USAGE | REPLACES | MAX_TOK |
 |---|---|---|---:|
+| `status` | `flow status [--unit=U] [--refresh-health] [--raw]` | 1-shot <300ms env+VM+sec+health | 450 |
 | `auto` | `flow auto <bootstrap\|research\|dev\|certify\|fabricate\|factory\|list>` | 14-30+ step parallel DAGs | 550 |
 | `macro` | `flow macro <register\|run\|list\|inspect\|verify\|suggest\|remove\|selftest>` | AI self-registered signed DAGs | 400 |
 | `permit` | `flow permit <issue\|status\|verify\|revoke\|install-hooks\|selftest>` | Edit Permit Gate + hooks | 150 |
-| `wake` | `flow wake [slug] [--unit=U] [--role=worker\|integrator]` | boot+branch+lease+ws+brief | 220 |
+| `wake` | `flow wake [slug] [--unit=U] [--role=worker\|integrator] [--brief]` | boot+branch+lease+ws+brief | 220 |
 | `inspect` | `flow inspect <target> [--slice]` | search+read+metadata | 300 |
 | `verify` | `flow verify [--parallel] [--cached\|--no-cache] [--suite=build\|selftest\|all]` | parallel checks + cache | 300 |
 | `ship` | `flow ship [--policy=P]` | uncached checks+build+snapshot | 350 |

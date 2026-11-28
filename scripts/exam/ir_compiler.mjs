@@ -103,9 +103,19 @@ function inferPartPowerW(part, flags, unitId) {
  */
 function buildSourceLineMap(unitId) {
   const map = new Map();
+  const dirMap = {
+    mishoe: ['mishoe'],
+    sensor_fab: ['sensorFab'],
+    mirai_2028: ['mirai2028'],
+    micro: ['sensor'],
+    micro_v2: ['sensor'],
+    camera_body: ['mount', 'body', 'evf', 'shutter', 'sensor', 'mainboard', 'lcd'],
+    integrated: ['lens', 'mount', 'body', 'evf', 'shutter', 'sensor', 'mainboard', 'lcd'],
+  };
+  const asmDirs = dirMap[unitId] || [unitId];
   const searchDirs = [
     path.join(ROOT, 'src/units'),
-    path.join(ROOT, 'src/assemblies', unitId === 'mishoe' ? 'mi_shoe' : unitId),
+    ...asmDirs.map((d) => path.join(ROOT, 'src/assemblies', d)),
   ];
   const files = [];
   for (const d of searchDirs) {
@@ -249,7 +259,7 @@ export async function compileUnitIr(unitId, opts = {}) {
   const parts = scene.parts.map((p, idx) => {
     const meta = metaById.get(p.id) || {};
     const firstMesh = scene.meshes[p.meshStart];
-    const matKey = firstMesh?.materialKey || '';
+    const matKey = firstMesh?.matKey || firstMesh?.materialKey || '';
     const mat = resolveMaterialPhysics(matKey, p.id, p.title || meta.title || '');
     const flags = inferPartFlags(p, gMinY, meta);
     // Real physics mass from signed volume (mm³ -> cm³ = /1000) * authentic material density (g/cm³)

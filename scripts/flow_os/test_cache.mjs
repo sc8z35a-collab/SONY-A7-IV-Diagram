@@ -21,7 +21,7 @@ const CACHE_FILE = 'test_cache.json';
 const CACHE_SCHEMA = 'flow-test-cache/v1.1';
 
 export const SUBSYSTEM_INPUT_PATHS = Object.freeze({
-  flow_selftest: ['scripts/flow_os', '.flowrc.json', 'AGENTS.md', 'README.md'],
+  flow_selftest: ['scripts/flow_os', '.flowrc.json', 'AGENTS.md', 'README.md', 'catalog/UNIT_HEALTH.tsv'],
   bg_selftest: ['scripts/bg.mjs', 'scripts/buchigire_guard'],
   dx_selftest: ['scripts/dx.mjs', 'scripts/dx_engine'],
   sp_selftest: ['scripts/sp.mjs', 'scripts/spatial_engine'],

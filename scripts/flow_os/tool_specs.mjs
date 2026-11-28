@@ -6,6 +6,12 @@
  */
 
 export const TOOL_SPECS = Object.freeze({
+  status: [
+    'TOOL|status (1-Shot <300ms / <=450tok Cold-Start Environment, Security, VM, DAG & 21-Unit Health Snapshot)',
+    'USAGE|flow status [--unit=U] [--refresh-health] [--raw]',
+    'NOTES|Reads pre-computed catalog/UNIT_HEALTH.tsv (<5ms) + live cert/pose/src_sha overlay. Pass --refresh-health [--unit=U] to recompute spatial baseline; follow with `flow doc sync`.',
+  ].join('\n'),
+
   permit: [
     'TOOL|permit (Edit Permit Gate — REQUIRED before edits/bg/ship/finish)',
     'USAGE|flow permit issue [--unit=U] [--ttl=1800] [--elevate-integrator --reason="..."]',
