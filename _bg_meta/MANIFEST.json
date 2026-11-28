@@ -1,15 +1,15 @@
 {
   "schema": "bg-manifest/v1",
-  "createdAt": "2026-11-28T02:08:54.886Z",
+  "createdAt": "2026-11-28T02:36:22.114Z",
   "slug": "feat-feat-spatial-audit-0001mm",
   "branch": "feat/feat-spatial-audit-0001mm",
   "baseSha": "41fe472fb0655a5f59a32d510f60cbeb7983bc1b",
   "vmHost": "devbox",
-  "reason": "branch_start",
-  "fingerprint": "894daefa45c65871731448955163ae97d68746047f5a7db25825b7cc3a997b70",
+  "reason": "snap",
+  "fingerprint": "e6822362f715493615a2be453d365f38f26ba05868eba71911bd95bb0ac7ae63",
   "fileCount": 830,
   "deletedFiles": [],
-  "dirtyCount": 0,
+  "dirtyCount": 7,
   "skippedLarge": [],
   "artifacts": [],
   "files": [
@@ -2097,8 +2097,8 @@
     },
     {
       "path": "scripts/lib/hyper_cache.mjs",
-      "sha256": "ab508558e939b717d561b3bc2259cf1b43b57269e104ba849a61390c319519a4",
-      "size": 7528,
+      "sha256": "c432ba873b169653ef6b569e1c369e377ce38e942c6c42fd35cc338e8a70482c",
+      "size": 7762,
       "mode": "100644"
     },
     {
@@ -2109,8 +2109,8 @@
     },
     {
       "path": "scripts/pp.mjs",
-      "sha256": "3d802e781b5c40f60af2bedb67896cf617daf15c99a1aa93d8ff5a6f8e06f468",
-      "size": 91013,
+      "sha256": "039e118f4d21175151fe5d30a1463c9b85d8d78dfd852e6c528f2d43ef97a754",
+      "size": 91034,
       "mode": "100755"
     },
     {
@@ -2139,20 +2139,20 @@
     },
     {
       "path": "scripts/sp.mjs",
-      "sha256": "11735281bc4727d2d144806ef520006ed0aa8aa2cf4f0fb0e966d838d5f75c23",
-      "size": 15044,
+      "sha256": "b576dbeb23b042c5ee2dbf12f26dd079c6e6d9ee951accd534284ce157115eb4",
+      "size": 29739,
       "mode": "100755"
     },
     {
       "path": "scripts/spatial_engine/audit_physics.mjs",
-      "sha256": "0fed1c754b9592bb63613a177cb73e8c4237ebe811a84e3d45b2b6685ba89069",
-      "size": 27523,
+      "sha256": "da6072e64b33380b5d1431ed198b773c3f08b438f4ce1e48dbe1d36d34cda927",
+      "size": 62255,
       "mode": "100644"
     },
     {
       "path": "scripts/spatial_engine/exact_geometry.mjs",
-      "sha256": "1ec867ba6db75a59fb0a0492c1485fab6c3c3a496567ca3b3205f522f98a14ff",
-      "size": 44515,
+      "sha256": "38fe4caceecd61f57b41935e332593ffb24d03990165436bbe02cb30dd9dc159",
+      "size": 70618,
       "mode": "100644"
     },
     {
@@ -2163,8 +2163,8 @@
     },
     {
       "path": "scripts/spatial_engine/scene_extractor.mjs",
-      "sha256": "6456a18a68cbd38ca29bb948ac44a95a4b9d50daf854a538e9dac60bde2a901a",
-      "size": 18854,
+      "sha256": "5d91d0d1d0ee0e78e6a7977ff03c539568ef8a41447b0f75d0dc94abb787349a",
+      "size": 38946,
       "mode": "100644"
     },
     {
@@ -3855,7 +3855,7 @@
     },
     {
       "path": "src/engine/CadViewport.ts",
-      "sha256": "a290a7949f89e4c94d88956e59cc61418580d000410b101197904cc2e3fda09f",
+      "sha256": "085dce47c4bc8343c30e0e44d5a08c7d34516bc1a81284a0e4e3cbaaa79f24cf",
       "size": 91364,
       "mode": "100644"
     },
