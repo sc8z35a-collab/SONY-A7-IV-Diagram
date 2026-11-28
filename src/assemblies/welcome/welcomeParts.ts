@@ -27,10 +27,13 @@ import {
   CX_KO,
   CX_SO,
   CX_U,
+  asStrokeList,
+  createHollowTubeY,
   CX_YO,
   extrudeRibbonGeo,
+  PlinthCutout,
   qualityLevel,
-  STROKE_MAP,
+  RENDER_STROKE_MAP,
   StrokeId,
 } from './welcomeGeometry';
 import { scaleRadialSegmentsForQuality as qRadialSegs } from '../../core/geometry_quality';
@@ -76,15 +79,19 @@ function makeCharCoreParts(
   spec: GlyphCharSpec,
   startCode: number
 ): WelcomePartDef[] {
-  const { slug, charJa, cx, mainStroke, mainW, bayPos, bayVertical = false, dockX, dockY, boltPts, pinPts, zifEnds } = spec;
-  const pts = STROKE_MAP[mainStroke];
+  const { slug, charJa, cx, mainStroke, mainW, bayPos, bayVertical = false, dockX, boltPts, pinPts, zifEnds } = spec;
+  const strokes = RENDER_STROKE_MAP[mainStroke];
+  const pts = strokes[0];
   const gk = `glyph_${slug}`;
   const expX = (cx / 66) * 26;
+  const expY = 6;
   const [bx, by] = bayPos;
-  const bayW = bayVertical ? 4.4 : 9.4;
-  const bayH = bayVertical ? 9.4 : 4.4;
+  const bayW = bayVertical ? 3.2 : 11.4;
+  const bayH = bayVertical ? 11.4 : 3.2;
   const axX = bayVertical ? 0 : 1;
   const axY = bayVertical ? 1 : 0;
+  const pxX = bayVertical ? 1 : 0;
+  const pxY = bayVertical ? 0 : 1;
   const code = (offset: number) => `W${String(startCode + offset).padStart(2, '0')}`;
   const pos: readonly [number, number, number] = [cx, 4, 0];
 
@@ -99,7 +106,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 構造・放熱筐体`,
       swatchColor: '#364152',
       assembledPos: pos,
-      explodeOffset: [expX, 6, 0],
+      explodeOffset: [expX, expY, 0],
       plainAnalogy: `「${charJa}」の内部基板・LED・導光板をすべて収める、アルミ塊から削り出した頑丈な骨格ケースです。`,
       summary: `A6061-T6アルミ合金ブロックを5軸CNC切削でポケット肉抜き加工した主構造体。内部補強リブとM2めねじボスを備え、LED発光熱を筐体全体へ均一拡散します。`,
       opticsAndPhysics: [
@@ -114,7 +121,7 @@ function makeCharCoreParts(
         { label: '熱伝導率', value: '167 W/(m·K)' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowCncChassis(pts, mainW, 5.2, 0, m.welcomeCoreSlate, m.stainlessMachined),
+      build: (m) => buildHollowCncChassis(strokes, mainW, 3.76, 0.28, m.welcomeCoreSlate, m.stainlessMachined),
     },
     // +1: AZ91D 3D Finned Magnesium Backplate
     {
@@ -126,7 +133,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 放熱・背面外装`,
       swatchColor: '#2a3446',
       assembledPos: pos,
-      explodeOffset: [expX * 1.1, 4, -28],
+      explodeOffset: [expX, expY, -34],
       plainAnalogy: `文字の裏側を密閉しながら、中のLEDが出す熱を細かい3Dフィンから空気中へ逃がす放熱フタです。`,
       summary: `チクソモールド成型のAZ91Dマグネシウム合金背面プレート。背面全面にストローク直交の3D放熱フィン列を備え、ファンレス無音で連続100%点灯の自然対流冷却を成立させます。`,
       opticsAndPhysics: [
@@ -139,7 +146,7 @@ function makeCharCoreParts(
         { label: '冷却方式', value: 'ファンレス自然対流3Dフィン' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildFinnedBackplate(pts, mainW * 0.96, -3.55, m.welcomeMagRear),
+      build: (m) => buildFinnedBackplate(strokes, mainW * 0.96, -4.78, m.welcomeMagRear),
     },
     // +2: Stepped Sapphire Optical Diffuser Front Cover Lens
     {
@@ -151,7 +158,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学出力面`,
       swatchColor: '#dbeafe',
       assembledPos: pos,
-      explodeOffset: [expX * 1.05, 8, 30],
+      explodeOffset: [expX, expY, 36],
       plainAnalogy: `LEDのまぶしい点光を、文字全体がムラなく上品に光るよう整えて表面を守る透明カバーレンズです。`,
       summary: `段付きフランジ嵌合とドーム状面取りを施した前面光学拡散カバー。表面AR反射防止コートと微細マット拡散構造により、明るい室内でも高コントラストな立体文字発光を実現します。`,
       opticsAndPhysics: [
@@ -164,7 +171,7 @@ function makeCharCoreParts(
         { label: '視野角', value: '170° 均一拡散' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildSteppedOpticalLens(pts, mainW * 0.90, 3.25, m.welcomeTitaniumFace, m.stainlessMachined),
+      build: (m) => buildSteppedOpticalLens(strokes, mainW * 0.82, 3.52, m.welcomeTitaniumFace, m.stainlessMachined),
     },
     // +3: IP65 Silicone O-Ring Perimeter Gasket
     {
@@ -176,7 +183,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 密閉・防塵防滴`,
       swatchColor: '#353840',
       assembledPos: pos,
-      explodeOffset: [expX * 1.05, 7, 23],
+      explodeOffset: [expX, expY, 26],
       plainAnalogy: `前面レンズとアルミ筐体のスキマをぐるっと一周ふさぎ、ホコリや湿気から内部基板を守るゴムパッキンです。`,
       summary: `筐体前面のCNCシール溝へ全周嵌合する硬度50Aシリコーンゴム製Oリング。結露や埃によるLED導光板の曇り・基板腐食を防ぎ、長期展示の信頼性を担保します。`,
       opticsAndPhysics: [
@@ -189,7 +196,7 @@ function makeCharCoreParts(
         { label: '硬度', value: 'Shore A 50' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(pts, mainW * 0.94, 0.65, 0.72, 2.38, m.epdmGasket, 0.14),
+      build: (m) => buildHollowPerimeterRing(strokes, mainW * 0.98, mainW * 0.16, 0.32, 2.36, m.epdmGasket, 0.06),
     },
     // +4: Titanium CNC Edge Protection Flange Bezel
     {
@@ -201,7 +208,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 外周構造・遮光`,
       swatchColor: '#cbd5e1',
       assembledPos: pos,
-      explodeOffset: [expX * 1.08, 9, 36],
+      explodeOffset: [expX, expY, 32],
       plainAnalogy: `レンズのフチをしっかり押さえ込み、側面への光漏れを防ぎつつ美しい金属輪郭を作るチタン枠です。`,
       summary: `64チタン（Ti-6Al-4V）から高精度削り出した外周フランジベゼル。前面レンズの機械的保持とエッジ部の不要な側面光漏れ（ハレーション）遮断を同時に担います。`,
       opticsAndPhysics: [
@@ -214,7 +221,7 @@ function makeCharCoreParts(
         { label: '枠幅', value: '0.85 mm 精密フランジ' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(pts, mainW * 1.02, 0.85, 1.05, 2.75, m.stainlessMachined, 0.16),
+      build: (m) => buildHollowPerimeterRing(strokes, mainW * 1.02, mainW * 0.13, 1.02, 3.09, m.stainlessMachined, 0.08),
     },
     // +5: 98% Micro-Foamed PET Back Reflector Sheet
     {
@@ -226,7 +233,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学導光系`,
       swatchColor: '#f1f5f9',
       assembledPos: pos,
-      explodeOffset: [expX, 5, 5],
+      explodeOffset: [expX, expY, 8],
       plainAnalogy: `LEDの後ろ側へ逃げる光を98%前へ跳ね返し、少ない電力でも文字を明るく光らせる白い鏡シートです。`,
       summary: `導光板背面に密着配置される超微細発泡PET反射フィルム。内部の無数のマイクロ気泡界面での多重散乱により可視光全域で98%以上の拡散反射率を発揮します。`,
       opticsAndPhysics: [
@@ -240,7 +247,7 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.72, 0.28, -0.55, 0, 14, 0), m.pztCeramic));
+        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.55, 0.26, 0.31, 0, 20, 0), m.pztCeramic));
         return g;
       },
     },
@@ -254,7 +261,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学導光系`,
       swatchColor: '#60a5fa',
       assembledPos: pos,
-      explodeOffset: [expX * 1.02, 6, 12],
+      explodeOffset: [expX, expY, 13],
       plainAnalogy: `端から入れたLED光を文字の形いっぱいにムラなく行き渡らせる、精密加工された透明アクリル導光プレートです。`,
       summary: `光学グレードPMMA（屈折率 n=1.49）にCO₂レーザー微細拡散ドットパターンと3Dプリズム溝を刻んだ導光板。全反射（TIR）で伝播した光を距離に応じたドット密度で均一取り出しします。`,
       opticsAndPhysics: [
@@ -268,7 +275,7 @@ function makeCharCoreParts(
         { label: '輝度均一性', value: '≥ 92%' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildLgpWaveguide(pts, mainW * 0.76, 0.55, m.welcomeOpticalEd),
+      build: (m) => buildLgpWaveguide(strokes, mainW * 0.55, 1.05, m.welcomeOpticalEd),
     },
     // +7: BEF Micro-Prism Brightness Enhancement Film
     {
@@ -280,7 +287,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学導光系`,
       swatchColor: '#93c5fd',
       assembledPos: pos,
-      explodeOffset: [expX * 1.04, 7, 18],
+      explodeOffset: [expX, expY, 20],
       plainAnalogy: `斜めへ逃げる光を正面へ集め直し、同じ電池持ちでも見た目の明るさを1.5倍以上に高める光学フィルムです。`,
       summary: `導光板と前面レンズの間に積層する頂角90°マイクロプリズム配列シート。臨界角外の光を正面方向へ屈折集光しつつ、広角成分を背面反射シートへ戻して再利用します。`,
       opticsAndPhysics: [
@@ -294,7 +301,7 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.75, 0.34, 1.55, 0, 14, 0), m.microlensGlass));
+        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.55, 0.30, 1.81, 0, 20, 0), m.microlensGlass));
         return g;
       },
     },
@@ -308,7 +315,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 発光回路基板`,
       swatchColor: '#1b5e47',
       assembledPos: pos,
-      explodeOffset: [expX, 4, -5],
+      explodeOffset: [expX, expY, -4],
       plainAnalogy: `LEDチップが熱くならないように、熱をよく逃がすアルミ板をベースにした専用の発光回路基板です。`,
       summary: `高熱伝導絶縁層（2.2 W/mK）とアルミベース板を積層した金属コアプリント基板（MCPCB）。ストローク曲線に沿って精密ルーター加工され、LED配列の電源・PWM配線を担います。`,
       opticsAndPhysics: [
@@ -322,7 +329,7 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.68, 0.58, -1.15, 0.05, 14, 0), m.sensorPcb));
+        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.62, 0.50, -0.75, 0.04, 20, 0), m.sensorPcb));
         return g;
       },
     },
@@ -336,7 +343,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 発光光源`,
       swatchColor: '#fbbf24',
       assembledPos: pos,
-      explodeOffset: [expX, 5, -1],
+      explodeOffset: [expX, expY, 4],
       plainAnalogy: `文字を内側から鮮やかに照らし出す、小さな高効率LED電球チップを曲線沿いにずらっと並べた心臓部です。`,
       summary: `赤色KSF蛍光体を採用した高演色Ra97・2835パッケージLED群をMCPCB上へ等間隔実装。色温度5000Kの純白光を高効率185 lm/Wで放射し、導光板へ均一入射します。`,
       opticsAndPhysics: [
@@ -348,7 +355,7 @@ function makeCharCoreParts(
         { label: '発光効率', value: '185 lm/W' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildLedArrayOnMcpcb(pts, mainW * 0.66, -0.78, m, true),
+      build: (m) => buildLedArrayOnMcpcb(strokes, mainW * 0.58, -0.18, m, true),
     },
     // +10: Silicone Thermal Gap Pad
     {
@@ -360,7 +367,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 熱設計・TIM`,
       swatchColor: '#7aa4b8',
       assembledPos: pos,
-      explodeOffset: [expX, 4, -10],
+      explodeOffset: [expX, expY, -8],
       plainAnalogy: `LED基板とアルミ筐体の微細なすき間をピッタリ埋めて、熱をスムーズに逃がす柔らかい放熱シートです。`,
       summary: `窒化ホウ素フィラー配合の熱伝導率 6.0 W/(m·K) 軟質シリコーンTIMシート。LED基板裏面とCNCアルミシャーシ間の空気層を排除し、熱抵抗を大幅に低減します。`,
       opticsAndPhysics: [
@@ -374,7 +381,7 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.62, 0.42, -1.78, 0, 12, 0), m.thermalPadTim));
+        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, mainW * 0.60, 0.22, -1.17, 0, 20, 0), m.thermalPadTim));
         return g;
       },
     },
@@ -388,7 +395,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 電子制御基板`,
       swatchColor: '#15803d',
       assembledPos: pos,
-      explodeOffset: [expX, 3, -15],
+      explodeOffset: [expX, expY, -18],
       plainAnalogy: `「${charJa}」1文字の明るさや光り方のアニメーションを自律的にコントロールする専用の頭脳基板です。`,
       summary: `文字背面ポケット内へ収容される4層FR-4制御基板。内層に全面GNDプレーンと12V電源プレーンを配し、CAN-FD通信・定電流PWM・温度監視回路を一体実装します。`,
       opticsAndPhysics: [
@@ -400,7 +407,7 @@ function makeCharCoreParts(
         { label: '通信バス', value: 'CAN-FD 5 Mbps' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildMiniPcbBoard(bayW, bayH, 0.82, bx, by, -2.02, m),
+      build: (m) => buildMiniPcbBoard(bayW, bayH, 0.54, bx, by, -2.53, m),
     },
     // +12: 16-bit PWM Constant-Current Driver IC + Node MCU
     {
@@ -412,7 +419,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 半導体IC`,
       swatchColor: '#1d2026',
       assembledPos: pos,
-      explodeOffset: [expX, 3, -19],
+      explodeOffset: [expX, expY, -22],
       plainAnalogy: `人間の目にはチラつきゼロで、65,536段階のなめらかな明るさ調整とウェーブ点灯を実行する半導体チップです。`,
       summary: `16bit解像度・32kHz高周波PWM定電流ドライバICと32bit ARM Cortex-M0+ノードMCUのQFN実装ペア。台座からのCAN-FD指令を受け取り、高精度ガンマ補正点灯を実行します。`,
       opticsAndPhysics: [
@@ -427,8 +434,8 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(buildQfnIcPackage(2.8, 2.8, 0.72, bx - 1.8 * axX, by - 1.8 * axY, -2.52, m));
-        g.add(buildQfnIcPackage(2.4, 2.4, 0.68, bx + 1.8 * axX, by + 1.8 * axY, -2.50, m));
+        g.add(buildQfnIcPackage(1.65, 1.65, 0.48, bx - 0.95 * axX, by - 0.95 * axY, -3.16, m));
+        g.add(buildQfnIcPackage(1.45, 1.45, 0.46, bx + 0.85 * axX, by + 0.85 * axY, -3.16, m));
         return g;
       },
     },
@@ -442,7 +449,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 着脱電気接点`,
       swatchColor: '#e2b648',
       assembledPos: pos,
-      explodeOffset: [expX, -14, 0],
+      explodeOffset: [0, 1, 0],
       plainAnalogy: `文字を台座へカチッと挿し込むだけで、ハンダ付けや配線なしで電気と信号が自動接続されるバネ式金接点です。`,
       summary: `LCP耐熱樹脂キャリアに6本の伸縮金メッキポゴピン（+12V×2・GND×2・CANH・CANL）を内蔵。台座側パッドへ0.8Nの接点圧で密着し、着脱メンテと低抵抗給電を実現します。`,
       opticsAndPhysics: [
@@ -454,7 +461,7 @@ function makeCharCoreParts(
         { label: '接触抵抗', value: '< 25 mΩ' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildPogoPinBlock(dockX, dockY - 1.2, 0, m, false),
+      build: (m) => buildPogoPinBlock(dockX, -17.26, 0, m, false),
     },
     // +14: Synchronous Buck DC-DC & Shielded Power Inductor
     {
@@ -466,7 +473,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 電源回路`,
       swatchColor: '#c97643',
       assembledPos: pos,
-      explodeOffset: [expX - 6, -4, -20],
+      explodeOffset: [expX, expY, -22],
       plainAnalogy: `台座から届く12Vの電気を、LEDとマイコンが使う安定した5V・3.3Vへ高効率に変換する小型変圧器です。`,
       summary: `閉磁路シールドインダクタと同期整流降圧レギュレータで構成されるローカル電源段。変換効率94%で発熱を抑えつつ、MCU・LEDドライバへ低リップル電源を供給します。`,
       opticsAndPhysics: [
@@ -478,7 +485,7 @@ function makeCharCoreParts(
         { label: '出力リップル', value: '< 15 mVpp' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildDcDcInductorModule(bx - 3.0 * axX, by - 3.0 * axY, -2.55, m),
+      build: (m) => buildDcDcInductorModule(bx - 3.55 * axX, by - 3.55 * axY, -3.18, m, bayVertical),
     },
     // +15: PTC Resettable Fuse & MLCC Decoupling Bank
     {
@@ -490,7 +497,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 電源保護・平滑`,
       swatchColor: '#9c7b58',
       assembledPos: pos,
-      explodeOffset: [expX + 6, -5, -21],
+      explodeOffset: [expX, expY, -22],
       plainAnalogy: `ショート時に自動で電気を遮断する復帰ヒューズと、LED点滅時の電圧ブレを吸収する貯水池コンデンサ群です。`,
       summary: `過電流保護用ポリマーPTCヒューズとX7R特性MLCCデカップリングコンデンサ群。PWMスイッチング瞬間のパルス電流を至近距離から供給し、電源ラインのリンギングを抑制します。`,
       opticsAndPhysics: [
@@ -502,7 +509,7 @@ function makeCharCoreParts(
         { label: '静電容量', value: '10 μF × 4 + 0.1 μF × 4' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildMlccPtcBank(bx + 0.2 * axX, by + 3.2 * axY, -2.45, 4, m),
+      build: (m) => buildMlccPtcBank(bx + 3.35 * axX, by + 3.35 * axY, -3.14, 2, m, bayVertical),
     },
     // +16: ESD TVS Diode Array & EMI Filter
     {
@@ -514,7 +521,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 静電気・EMC保護`,
       swatchColor: '#475569',
       assembledPos: pos,
-      explodeOffset: [expX + 8, -2, -23],
+      explodeOffset: [expX, expY, -22],
       plainAnalogy: `冬場に指で文字へ触れてバチッと静電気が起きても、内部の精密ICが壊れないよう逃がす避雷針部品です。`,
       summary: `ポゴピン入力直後に配置される超低容量TVSダイオードとコモンモードチョーク。IEC 61000-4-2 ±15kV気中放電サージをナノ秒未満でクランプし、CAN-FD通信障害を防ぎます。`,
       opticsAndPhysics: [
@@ -528,12 +535,21 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        const tvs = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 0.65), m.icEpoxy);
-        tvs.position.set(bx + 3.2 * axX, by + 3.2 * axY, -2.48);
-        const cmc = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 0.88), m.welcomeCoreMid);
-        cmc.position.set(bx - 3.2 * axX, by - 3.2 * axY, -2.52);
-        const wire = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.5, 0.94), m.copperCoil);
-        wire.position.set(bx - 3.2 * axX, by - 3.2 * axY, -2.52);
+        const tvs = new THREE.Mesh(
+          new THREE.BoxGeometry(bayVertical ? 0.60 : 0.85, bayVertical ? 0.85 : 0.60, 0.42),
+          m.icEpoxy
+        );
+        tvs.position.set(bx + 4.95 * axX - 0.62 * pxX, by + 4.95 * axY - 0.62 * pxY, -3.14);
+        const cmc = new THREE.Mesh(
+          new THREE.BoxGeometry(bayVertical ? 0.60 : 0.85, bayVertical ? 0.85 : 0.60, 0.44),
+          m.welcomeCoreMid
+        );
+        cmc.position.set(bx + 4.95 * axX + 0.62 * pxX, by + 4.95 * axY + 0.62 * pxY, -3.14);
+        const wire = new THREE.Mesh(
+          new THREE.BoxGeometry(bayVertical ? 0.28 : 0.64, bayVertical ? 0.64 : 0.28, 0.48),
+          m.copperCoil
+        );
+        wire.position.set(bx + 4.95 * axX + 0.62 * pxX, by + 4.95 * axY + 0.62 * pxY, -3.14);
         g.add(tvs, cmc, wire);
         return g;
       },
@@ -548,7 +564,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 熱安全監視`,
       swatchColor: '#b45309',
       assembledPos: pos,
-      explodeOffset: [expX - 8, 2, -22],
+      explodeOffset: [expX, expY, -22],
       plainAnalogy: `LEDや基板が熱くなりすぎないか常時見守り、夏場の高温環境では自動で電流を絞って安全を守る体温計です。`,
       summary: `MCPCB熱流直下に密着配置される10kΩ±1% NTCサーミスタ。MCU内蔵ADCが10Hzで温度計測し、筐体60℃超で滑らかにPWM電流をディレーティング制御します。`,
       opticsAndPhysics: [
@@ -563,10 +579,13 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        const bead = new THREE.Mesh(new THREE.SphereGeometry(0.58, 8, 6), m.copperCoil);
-        bead.position.set(bx - 1.2 * axX, by + 0.8 * axY, -2.40);
-        const pad = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 0.32), m.silverElectrode);
-        pad.position.set(bx - 1.2 * axX, by + 0.8 * axY, -2.22);
+        const bead = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), m.copperCoil);
+        bead.position.set(bx + 2.30 * axX + 1.08 * pxX, by + 2.30 * axY + 1.08 * pxY, -3.22);
+        const pad = new THREE.Mesh(
+          new THREE.BoxGeometry(bayVertical ? 0.56 : 0.82, bayVertical ? 0.82 : 0.56, 0.22),
+          m.silverElectrode
+        );
+        pad.position.set(bx + 2.30 * axX + 1.08 * pxX, by + 2.30 * axY + 1.08 * pxY, -3.02);
         g.add(bead, pad);
         return g;
       },
@@ -581,7 +600,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学計測`,
       swatchColor: '#0e94c8',
       assembledPos: pos,
-      explodeOffset: [expX, 10, 8],
+      explodeOffset: [expX, expY, 28],
       plainAnalogy: `文字自身の光り具合を内側から監視し、経年変化や温度で暗くなっても自動で4文字の明るさをピタッと揃える光センサーです。`,
       summary: `導光板の側面漏れ光をサンプリングする視感度補正シリコンフォトダイオード。4文字間の輝度バラツキを閉ループ補正し、出荷時と同じ均一な「ようこそ」発光を長期維持します。`,
       opticsAndPhysics: [
@@ -595,10 +614,10 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        const pkg = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.5, 0.65), m.pztCeramic);
-        pkg.position.set(bx + 1.2 * axX, by + 1.2 * axY, 0.35);
-        const win = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.9, 0.22), m.irCutGlass);
-        win.position.set(bx + 1.2 * axX, by + 1.2 * axY, 0.72);
+        const pkg = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.2, 0.54), m.pztCeramic);
+        pkg.position.set(bx + 0.8 * axX, by + 0.8 * axY, 2.35);
+        const win = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.78, 0.18), m.irCutGlass);
+        win.position.set(bx + 0.8 * axX, by + 0.8 * axY, 2.74);
         g.add(pkg, win);
         return g;
       },
@@ -613,7 +632,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 電磁遮蔽`,
       swatchColor: '#94a3b8',
       assembledPos: pos,
-      explodeOffset: [expX, 4, -24],
+      explodeOffset: [expX, expY, -26],
       plainAnalogy: `基板の高速スイッチング電波が外へ漏れてWi-Fiや無線機器にノイズを出さないよう覆う金属カバーです。`,
       summary: `ローカル制御基板上のDC-DCコンバータとPWMドライバICを覆う洋白（Cu-Ni-Zn）製EMIシールド缶。4辺GNDフレームへ全周接地し、FCC/VCCI Class B放射エミッション基準を満たします。`,
       opticsAndPhysics: [
@@ -625,7 +644,7 @@ function makeCharCoreParts(
         { label: '遮蔽効果', value: '> 28 dB (30MHz–1GHz)' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildEmiShieldCan(bayW - 0.5, bayH - 0.5, 1.55, bx, by, -2.72, m.midPlateSteel),
+      build: (m) => buildEmiShieldCan(bayW + 0.4, bayH + 0.4, 1.06, bx, by, -3.39, m.midPlateSteel, '-z'),
     },
     // +20: Internal Polyimide FPC & 10-Pin ZIF Lock Connector
     {
@@ -637,7 +656,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 内部配線接続`,
       swatchColor: '#c76414',
       assembledPos: pos,
-      explodeOffset: [expX + 4, 2, -12],
+      explodeOffset: [expX, expY, -14],
       plainAnalogy: `制御基板とLED発光基板を省スペースで確実に繋ぐ、しなやかなオレンジ色のフィルム配線とワンタッチロック端子です。`,
       summary: `耐熱ポリイミドFPCと0.5mmピッチ10極フリップロック式ZIFコネクタ。振動下でも抜け落ちない機械ロックレバーを備え、LED駆動電流とNTC/PDセンサー信号を一括伝送します。`,
       opticsAndPhysics: [
@@ -649,7 +668,7 @@ function makeCharCoreParts(
         { label: '基材', value: 'ポリイミド 25 μm + RA銅' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildZifConnectorAndFpc(zifEnds[0], zifEnds[1], -1.65, zifEnds[2], zifEnds[3], -1.65, m, 'both'),
+      build: (m) => buildZifConnectorAndFpc(zifEnds[0], zifEnds[1], -1.94, zifEnds[2], zifEnds[3], -1.94, m, 'both', false),
     },
     // +21: CNC Dovetail Docking Mount Foot
     {
@@ -661,7 +680,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 機械着脱機構`,
       swatchColor: '#4b586e',
       assembledPos: pos,
-      explodeOffset: [expX, -10, 0],
+      explodeOffset: [0, 4, 0],
       plainAnalogy: `台座のミゾにスライドさせてガッチリ固定でき、ガタつきゼロで文字を自立させる金属の台座ジョイントです。`,
       summary: `文字下端へ一体締結される台形断面（蟻溝・60°テーパ）CNCアルミドッキングフット。台座ソケットへ挿入するだけでX/Y/Z全方向の機械位置決めと転倒モーメント保持を完了します。`,
       opticsAndPhysics: [
@@ -673,7 +692,7 @@ function makeCharCoreParts(
         { label: '繰返し位置精度', value: '±0.03 mm' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildDovetailMount(dockX, dockY + 0.2, 0, 14.5, 4.2, 8.6, m, false),
+      build: (m) => buildDovetailMount(dockX, -16.36, 0, 11.2, 1.30, 8.4, m, false),
     },
     // +22: Elastomer Anti-Vibration Isolation Bushing
     {
@@ -685,7 +704,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 防振・音響絶縁`,
       swatchColor: '#246eb9',
       assembledPos: pos,
-      explodeOffset: [expX, -12, 6],
+      explodeOffset: [0, 2, 0],
       plainAnalogy: `台座のスピーカー音や机の振動が文字に伝わってビビリ音が出ないように吸収するクッションゴムです。`,
       summary: `ドッキングマウント座面へ挟み込む高減衰粘弾性エラストマーブッシュ。台座スピーカー再生時の共振鳴きと外部衝撃から文字内部の光学系・石英柱を守ります。`,
       opticsAndPhysics: [
@@ -699,9 +718,11 @@ function makeCharCoreParts(
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        const b1 = new THREE.Mesh(new THREE.BoxGeometry(15.2, 1.0, 9.2), m.antiVibRubber);
-        b1.position.set(dockX, dockY - 1.9, 0);
-        g.add(b1);
+        const bF = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.40, 2.0), m.antiVibRubber);
+        bF.position.set(dockX, -17.24, 3.1);
+        const bR = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.40, 2.0), m.antiVibRubber);
+        bR.position.set(dockX, -17.24, -3.1);
+        g.add(bF, bR);
         return g;
       },
     },
@@ -715,7 +736,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 光学遮光機構`,
       swatchColor: '#202328',
       assembledPos: pos,
-      explodeOffset: [expX, 6, 8],
+      explodeOffset: [expX, expY, 16],
       plainAnalogy: `文字のフチや基板のスキマから余計な光が漏れたり乱反射したりしないように仕切る、つや消し黒の遮光壁です。`,
       summary: `導光板外周と基板ポケット境界を分離する黒色無光沢アルマイト光学バッフル。反射率2%未満の微細マット面により不要な迷光・色滲みを徹底排除します。`,
       opticsAndPhysics: [
@@ -726,7 +747,7 @@ function makeCharCoreParts(
         { label: '表面反射率', value: '< 1.8% (可視光)' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(pts, mainW * 0.80, 0.52, 2.1, 0.35, m.pyroGraphite, 0),
+      build: (m) => buildHollowPerimeterRing(strokes, mainW * 0.71, mainW * 0.08, 1.90, 1.05, m.pyroGraphite, 0),
     },
     // +24: H7 Precision Ground Dowel Pins
     {
@@ -738,7 +759,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 精密締結・位置決め`,
       swatchColor: '#d4a948',
       assembledPos: pos,
-      explodeOffset: [expX * 1.12, 6, -14],
+      explodeOffset: [expX, expY, -24],
       plainAnalogy: `前面カバー・導光板・アルミ骨格・背面フタを0.01mmのズレもなくピッタリ重ね合わせる精密ガイドピンです。`,
       summary: `焼入れSUS440C研削仕上げのφ2.0mm H7公差ノックピン群。組立・分解を繰り返しても光学導光板とLEDアレイの相対位置精度を±0.015mm以内に保証します。`,
       opticsAndPhysics: [
@@ -750,7 +771,7 @@ function makeCharCoreParts(
         { label: '硬度', value: 'HRC 58 焼入れ研削' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildDowelPins(pinPts, 0.72, 6.2, m.brassGear, 'z'),
+      build: (m) => buildDowelPins(pinPts, 0.46, 2.20, m.brassGear, 'z'),
     },
     // +25: M2 Socket-Head Cap Bolts Array
     {
@@ -762,7 +783,7 @@ function makeCharCoreParts(
       category: `「${charJa}」モジュール / 精密締結`,
       swatchColor: '#98a2b0',
       assembledPos: pos,
-      explodeOffset: [expX * 1.15, 5, -34],
+      explodeOffset: [expX, expY, -28],
       plainAnalogy: `文字のすべての層を背面から均等な力でしっかり締め上げ、IP65の防水密閉と放熱密着を完成させる精密六角ボルトです。`,
       summary: `SUS304製M2×6mm六角穴付キャップボルトと真鍮平座金の締結群。規定トルク0.28 N·mで締め付けることでOリング圧縮とサーマルパッド密着を同時達成します。`,
       opticsAndPhysics: [
@@ -774,7 +795,7 @@ function makeCharCoreParts(
         { label: '締付トルク', value: '0.28 N·m' },
       ],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHexSocketBolts(boltPts, 0.68, 5.2, m, 'z'),
+      build: (m) => buildHexSocketBolts(boltPts, 0.54, 2.20, m, 'z', -1),
     },
   ];
   return defs;
@@ -800,7 +821,7 @@ function makeSubStrokeParts(opts: {
   boltPts: ReadonlyArray<readonly [number, number, number]>;
 }): WelcomePartDef[] {
   const { slug, charJa, subLabel, subEn, cx, groupKey, stroke, halfW, startCode, expBias, cinnabarFront, includeCopper, boltPts } = opts;
-  const pts = STROKE_MAP[stroke];
+  const strokes = RENDER_STROKE_MAP[stroke];
   const code = (o: number) => `W${String(startCode + o).padStart(2, '0')}`;
   const pos: readonly [number, number, number] = [cx, 4, 0];
   const [ex, ey, ez] = expBias;
@@ -822,7 +843,7 @@ function makeSubStrokeParts(opts: {
       nextGenInnovation: '分割モジュール化による高歩留まりアルミCNC造形。',
       specs: [{ label: '材質', value: 'A6061-T6 CNC削り出し' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowCncChassis(pts, halfW, 4.8, 0, m.welcomeCoreSlate, m.stainlessMachined),
+      build: (m) => buildHollowCncChassis(strokes, halfW, 3.61, 0.255, m.welcomeCoreSlate, m.stainlessMachined),
     },
     {
       id: `welcome-${slug}-optical-front`,
@@ -833,7 +854,7 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 光学出力面`,
       swatchColor: cinnabarFront ? '#e65a28' : '#e2eaf4',
       assembledPos: pos,
-      explodeOffset: [ex * 1.05, ey + 3, ez + 26],
+      explodeOffset: [ex, ey, ez + 30],
       plainAnalogy: cinnabarFront
         ? `白色LEDの光を美しいソニーαシナバーオレンジへ光学変換して正面へ放つカラー導光レンズです。`
         : `${subLabel}のLED光をムラなく柔らかく広げて保護する前面サファイア拡散カバーです。`,
@@ -844,7 +865,7 @@ function makeSubStrokeParts(opts: {
       nextGenInnovation: '光学染料マスターバッチ均一分散による無塗装・高耐候カラー導光レンズ。',
       specs: [{ label: '光学特性', value: cinnabarFront ? 'ピーク透過 610 nm シナバー' : '透過率 93.5% ARコート' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildSteppedOpticalLens(pts, halfW * 0.90, 3.1, cinnabarFront ? m.sonyAlphaCinnabar : m.welcomeTitaniumFace, m.stainlessMachined),
+      build: (m) => buildSteppedOpticalLens(strokes, halfW * 0.84, 3.38, cinnabarFront ? m.sonyAlphaCinnabar : m.welcomeTitaniumFace, m.stainlessMachined),
     },
     {
       id: `welcome-${slug}-led-mcpcb`,
@@ -862,7 +883,7 @@ function makeSubStrokeParts(opts: {
       nextGenInnovation: '曲線最適化MCPCBによるゼロデッドゾーン発光レイアウト。',
       specs: [{ label: '光源', value: 'CRI97 2835 LED / 32kHz PWM' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildLedArrayOnMcpcb(pts, halfW * 0.68, -0.75, m, false),
+      build: (m) => buildLedArrayOnMcpcb(strokes, halfW * 0.64, -0.45, m, false),
     },
     {
       id: `welcome-${slug}-lgp-reflector`,
@@ -873,7 +894,7 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 光学導光系`,
       swatchColor: '#60a5fa',
       assembledPos: pos,
-      explodeOffset: [ex, ey + 1, ez + 12],
+      explodeOffset: [ex, ey, ez + 12],
       plainAnalogy: `${subLabel}のLED光を端から端まで均一に広げ、後ろへ逃げる光も反射して活かす光学シート層です。`,
       summary: `3Dマイクロプリズム拡散溝を刻んだPMMA導光板と98%マイクロ発泡反射シートの光学ユニット。小面積ストロークでもドット粒感ゼロの滑らかな面発光を生み出します。`,
       opticsAndPhysics: ['全反射導光＋高拡散反射により光利用効率88%以上を達成。'],
@@ -881,8 +902,10 @@ function makeSubStrokeParts(opts: {
       specs: [{ label: '光利用効率', value: '≥ 88%' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildLgpWaveguide(pts, halfW * 0.74, 0.75, m.welcomeOpticalEd);
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, halfW * 0.70, 0.25, -0.25, 0, 12, 0), m.pztCeramic));
+        const g = buildLgpWaveguide(strokes, halfW * 0.64, 1.24, m.welcomeOpticalEd);
+        for (const seg of asStrokeList(strokes)) {
+          g.add(new THREE.Mesh(extrudeRibbonGeo(seg, halfW * 0.62, 0.22, 0.39, 0, 12, 0), m.pztCeramic));
+        }
         return g;
       },
     },
@@ -895,14 +918,14 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 放熱・背面外装`,
       swatchColor: '#2a3446',
       assembledPos: pos,
-      explodeOffset: [ex * 1.06, ey - 1, ez - 24],
+      explodeOffset: [ex, ey, ez - 32],
       plainAnalogy: `${subLabel}の裏面を塞ぎながら、立体フィンで熱を空気中へ逃がすマグネシウム製放熱カバーです。`,
       summary: `${subLabel}専用の3D冷却フィン付きAZ91Dマグネシウム背面カバー。内部LED基板からの熱をサーマルパッド経由で受け取り効率よく放散します。`,
       opticsAndPhysics: ['小型サブストロークでも独立放熱面積を確保し局所ホットスポットを防止。'],
       nextGenInnovation: 'チクソモールド一体3Dマイクロフィン放熱蓋。',
       specs: [{ label: '材質', value: 'AZ91D マグネシウム合金' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildFinnedBackplate(pts, halfW * 0.94, -3.35, m.welcomeMagRear),
+      build: (m) => buildFinnedBackplate(strokes, halfW * 0.94, -4.56, m.welcomeMagRear),
     },
     {
       id: `welcome-${slug}-ip65-gasket`,
@@ -913,14 +936,14 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 密閉・遮光`,
       swatchColor: '#353840',
       assembledPos: pos,
-      explodeOffset: [ex, ey + 2, ez + 19],
+      explodeOffset: [ex, ey, ez + 20],
       plainAnalogy: `${subLabel}のレンズ周囲を密閉してホコリと横漏れ光を同時に防ぐゴムパッキン＆黒色遮光リングです。`,
       summary: `シリコーン防塵Oリングと黒アルマイト迷光遮断リングの組み合わせ。湿気・粉塵侵入と隣接ストロークへの光滲みを同時にシャットアウトします。`,
       opticsAndPhysics: ['圧縮密閉シール＋低反射エッジ遮光により長期の光学クリーン度を維持。'],
       nextGenInnovation: '2色一体インサート成型シール＆遮光ガスケット。',
       specs: [{ label: '保護等級', value: 'IP65 相当' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(pts, halfW * 0.93, 0.58, 0.72, 2.22, m.epdmGasket, 0.12),
+      build: (m) => buildHollowPerimeterRing(strokes, halfW * 0.96, halfW * 0.16, 0.32, 2.26, m.epdmGasket, 0.06),
     },
     {
       id: `welcome-${slug}-ti-retainer`,
@@ -931,14 +954,14 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 外周保護`,
       swatchColor: '#cbd5e1',
       assembledPos: pos,
-      explodeOffset: [ex * 1.08, ey + 4, ez + 32],
+      explodeOffset: [ex, ey, ez + 26],
       plainAnalogy: `${subLabel}のレンズ外周を傷から守り、引き締まった金属エッジを作るチタン製枠パーツです。`,
       summary: `Ti-6Al-4V削り出しの外周リテーナーベゼル。前面レンズの脱落防止とエッジ剛性向上を担い、文字全体の精密機器クオリティを統一します。`,
       opticsAndPhysics: ['均一な外周面取りがスタジオ照明下でシャープな金属ハイライトを形成。'],
       nextGenInnovation: '精密CNC薄肉チタンプロテクター枠。',
       specs: [{ label: '材質', value: 'Ti-6Al-4V (Grade 5)' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(pts, halfW * 1.01, 0.78, 0.95, 2.62, m.stainlessMachined, 0.14),
+      build: (m) => buildHollowPerimeterRing(strokes, halfW * 1.01, halfW * 0.14, 0.96, 2.96, m.stainlessMachined, 0.08),
     },
     {
       id: `welcome-${slug}-bolts`,
@@ -949,14 +972,14 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 精密締結`,
       swatchColor: '#98a2b0',
       assembledPos: pos,
-      explodeOffset: [ex * 1.12, ey, ez - 31],
+      explodeOffset: [ex, ey, ez - 24],
       plainAnalogy: `${subLabel}のフレーム・基板・放熱フタをガッチリ締め付けて固定する六角ボルトと位置決めピンです。`,
       summary: `SUS304 M2六角穴付ボルトと精密H7ノックピンの締結セット。振動・熱サイクル下でもOリング密閉力とサーマル密着を確実に保持します。`,
       opticsAndPhysics: ['均等締付圧により薄肉導光板への応力複屈折（光ムラ）発生を防止。'],
       nextGenInnovation: '低軸力ばらつき精密光学締結ファスナ。',
       specs: [{ label: '規格', value: 'M2 SUS304 六角穴付' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHexSocketBolts(boltPts, 0.62, 4.6, m, 'z'),
+      build: (m) => buildHexSocketBolts(boltPts, 0.50, 1.10, m, 'z', -1),
     },
   ];
 
@@ -970,7 +993,7 @@ function makeSubStrokeParts(opts: {
       category: `「${charJa}」${subLabel} / 放熱伝導`,
       swatchColor: '#d07447',
       assembledPos: pos,
-      explodeOffset: [ex, ey - 1, ez - 13],
+      explodeOffset: [ex, ey, ez - 14],
       plainAnalogy: `LEDの熱をアルミの2倍以上のスピードで背面フィンへ橋渡しする純銅の放熱プレートです。`,
       summary: `熱伝導率 398 W/(m·K) のC1020無酸素銅ヒートスプレッダプレート。${subLabel}のLED発熱を瞬時に横方向へ拡散し、主骨格および背面フィンへ効率輸送します。`,
       opticsAndPhysics: ['高密度LED実装部の局所温度ピークを約11℃低減。'],
@@ -979,7 +1002,9 @@ function makeSubStrokeParts(opts: {
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(pts, halfW * 0.60, 0.65, -1.95, 0.05, 12, 0), m.copperHeatSpreader));
+        for (const seg of asStrokeList(strokes)) {
+          g.add(new THREE.Mesh(extrudeRibbonGeo(seg, halfW * 0.62, 0.65, -2.02, 0.04, 12, 0), m.copperHeatSpreader));
+        }
         return g;
       },
     });
@@ -1003,21 +1028,21 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
         cx: CX_YO,
         mainStroke: 'yo_stem',
         mainW: 3.1,
-        bayPos: [0.8, 4.0],
+        bayPos: [0.8, 5.5],
         bayVertical: true,
         dockX: -3.5,
         dockY: -15.2,
         boltPts: [
-          [0.5, 19.0, -0.4],
-          [0.8, 8.5, -0.4],
-          [1.0, -2.5, -0.4],
-          [0.2, -9.8, -0.4],
+          [0.5, 21.0, -2.80],
+          [0.6, 13.5, -2.80],
+          [0.8, -2.8, -2.80],
+          [0.3, -9.8, -2.80],
         ],
         pinPts: [
-          [0.5, 14.5, 0],
-          [0.9, -6.2, 0],
+          [0.5, 16.0, -2.80],
+          [0.5, -5.5, -2.80],
         ],
-        zifEnds: [0.8, 1.5, 0.7, 10.5],
+        zifEnds: [0.8, 1.8, 0.8, 9.8],
       },
       1
     )
@@ -1034,12 +1059,12 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       stroke: 'yo_bar',
       halfW: 2.65,
       startCode: 26,
-      expBias: [-18, 16, 4],
+      expBias: [-22, 12, 2],
       cinnabarFront: true,
       includeCopper: true,
       boltPts: [
-        [4.5, 10.9, -0.3],
-        [12.2, 11.7, -0.3],
+        [8.4, 11.3, -3.08],
+        [13.4, 11.8, -3.08],
       ],
     })
   );
@@ -1053,15 +1078,15 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       cx: CX_YO,
       groupKey: 'glyph_yo',
       stroke: 'yo_loop',
-      halfW: 2.95,
+      halfW: 2.65,
       startCode: 35,
-      expBias: [-28, -10, 6],
+      expBias: [-26, 6, 2],
       cinnabarFront: false,
       includeCopper: false,
       boltPts: [
-        [-11.8, -9.8, -0.3],
-        [-10.5, -2.6, -0.3],
-        [6.5, -4.2, -0.3],
+        [-11.8, -9.8, -3.08],
+        [-10.5, -2.6, -3.08],
+        [10.2, -5.9, -3.08],
       ],
     }).slice(0, 6)
   );
@@ -1075,7 +1100,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
     category: '「よ」下部ループ / 構造連結',
     swatchColor: '#d4a948',
     assembledPos: [CX_YO, 4, 0],
-    explodeOffset: [-26, -6, -16],
+    explodeOffset: [-28, -2, -22],
     plainAnalogy: '「よ」の縦棒と下の丸ループが交差する部分を内側から補強し、たわみや歪みを防ぐ真鍮ジョイント金具です。',
     summary: 'C3604快削真鍮からCNC削り出したT字補強ガセットブラケット。縦画と下部ループの交差点に発生する曲げモーメントを確実に受け止めます。',
     opticsAndPhysics: ['異種金属（アルミ＋真鍮）の減衰効果により交差点の機械剛性と耐振動性を向上。'],
@@ -1084,10 +1109,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
       const g = new THREE.Group();
-      const b1 = new THREE.Mesh(new THREE.BoxGeometry(6.8, 3.2, 2.2), m.brassGear);
-      b1.position.set(0.6, -2.6, -1.8);
-      const b2 = new THREE.Mesh(new THREE.BoxGeometry(2.8, 8.2, 2.0), m.brassGear);
-      b2.position.set(0.6, -6.5, -1.8);
+      const b1 = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.2, 0.90), m.brassGear);
+      b1.position.set(-4.2, -2.1, -3.10);
+      const b2 = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.2, 0.90), m.brassGear);
+      b2.position.set(5.4, -4.4, -3.10);
       g.add(b1, b2);
       return g;
     },
@@ -1102,7 +1127,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
     category: '「よ」下部ループ / 電力伝送',
     swatchColor: '#d07447',
     assembledPos: [CX_YO, 4, 0],
-    explodeOffset: [-24, -12, -10],
+    explodeOffset: [-28, -2, -14],
     plainAnalogy: '縦画の制御基板から下部ループのLED基板へ、配線トラブルなく確実に電気を届ける直結コネクタ＆銅バーです。',
     summary: 'スタック高2.0mmの高信頼BtoBコネクタとC1020銅バスバー。ループ部LEDアレイへの低抵抗給電と放熱経路の連結を同時に担います。',
     opticsAndPhysics: ['電圧降下 < 8 mV の低抵抗給電により縦画と下部ループの輝度を完全一致。'],
@@ -1110,8 +1135,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
     specs: [{ label: '定格電流', value: '2.5 A / 6極 BtoB' }],
     diagramType: 'welcome_glyph_layer',
     build: (m) => {
-      const g = buildZifConnectorAndFpc(0.6, -2.5, -1.4, 0.2, -10.4, -1.4, m, 'both');
-      g.add(new THREE.Mesh(extrudeRibbonGeo(STROKE_MAP.yo_loop, 1.55, 0.55, -2.15, 0.04, 12, 0), m.copperHeatSpreader));
+      const g = buildZifConnectorAndFpc(-5.4, -7.8, -2.02, -1.4, -7.8, -2.02, m, 'both', false);
+      for (const seg of RENDER_STROKE_MAP.yo_loop) {
+        g.add(new THREE.Mesh(extrudeRibbonGeo(seg, 1.45, 0.44, -2.02, 0.04, 12, 0), m.copperHeatSpreader));
+      }
       return g;
     },
   });
@@ -1133,17 +1160,17 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
         dockX: -5.5,
         dockY: -15.4,
         boltPts: [
-          [-8.5, 10.2, -0.4],
-          [5.2, 12.6, -0.4],
-          [11.8, 2.2, -0.4],
-          [4.2, -9.4, -0.4],
-          [-6.2, -13.6, -0.4],
+          [-9.2, 9.8, -2.80],
+          [5.8, 12.2, -2.80],
+          [9.2, -5.6, -2.80],
+          [0.8, -11.1, -2.80],
+          [-6.2, -11.8, -2.80],
         ],
         pinPts: [
-          [-1.5, 13.4, 0],
-          [9.8, -3.5, 0],
+          [-1.5, 13.4, -2.80],
+          [5.2, -8.5, -2.80],
         ],
-        zifEnds: [11.8, 0.5, 9.6, -4.5],
+        zifEnds: [11.8, -1.0, 11.8, 6.0],
       },
       43
     )
@@ -1164,8 +1191,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       cinnabarFront: true,
       includeCopper: true,
       boltPts: [
-        [-3.5, 23.8, -0.3],
-        [4.2, 20.8, -0.3],
+        [-3.5, 23.8, -3.08],
+        [4.2, 20.8, -3.08],
       ],
     })
   );
@@ -1189,7 +1216,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       nextGenInnovation: '光学グレード石英ロッドによる「見えない構造支持」の工業実装。',
       specs: [{ label: '材質', value: '合成溶融石英 (透過率 99.4%)' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(0.5, 13.0, 0.5, 22.0, 0, 1.05, m, 'quartz'),
+      build: (m) => buildQuartzColumnPart(0.5, 16.98, 0.5, 18.50, 0, 0.95, m, 'quartz'),
     },
     {
       id: 'welcome-u-quartz-brass-collars',
@@ -1200,14 +1227,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」浮遊支持機構 / 精密締結',
       swatchColor: '#d4a948',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-6, 16, 12],
+      explodeOffset: [-6, 18, 4],
       plainAnalogy: '透明な石英の柱が外れたり割れたりしないよう、上下の端をアルミ筐体へ優しくしっかり挟み込む真鍮ソケットです。',
       summary: '石英支柱の上下端をクランプする六角フランジ付きCNC真鍮カラー対。ガラス直接接触による応力集中を回避し、確実な締結剛性を実現します。',
       opticsAndPhysics: ['真鍮の適度な展性により石英ガラスへの局部応力集中を緩和。'],
       nextGenInnovation: '六角工具掛かり付き精密真鍮オプティカルクランプ。',
       specs: [{ label: '材質', value: 'C3604 精密旋削真鍮' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(0.5, 13.0, 0.5, 22.0, 0, 1.05, m, 'collars'),
+      build: (m) => buildQuartzColumnPart(0.5, 16.98, 0.5, 18.50, 0, 0.95, m, 'collars'),
     },
     {
       id: 'welcome-u-quartz-power-wire',
@@ -1218,14 +1245,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」浮遊支持機構 / 電力供給',
       swatchColor: '#c97643',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-6, 19, -8],
+      explodeOffset: [-6, 18, 4],
       plainAnalogy: '浮いている「う」の上の点のLEDを実際に光らせるため、透明な石英柱の中心を貫通する極細の電気配線です。',
       summary: '石英中空マイクロボア内を貫通するφ0.35mm 2芯ポリウレタン二重エナメル銅線。主弧の定電流ドライバ出力を上部クレストLED基板へ直接供給します。',
       opticsAndPhysics: ['断面積 0.096 mm² の純銅線により 350mA 定電流駆動時の電圧降下を 6 mV 未満に抑制。'],
       nextGenInnovation: '構造支柱と電力配線を同軸一体化したクリアハーネス設計。',
       specs: [{ label: '線径', value: 'φ0.35 mm × 2芯 (耐圧1kV)' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(0.5, 13.0, 0.5, 22.0, 0, 1.05, m, 'wire'),
+      build: (m) => buildQuartzColumnPart(0.5, 16.98, 0.5, 18.50, 0, 0.95, m, 'wire'),
     },
     {
       id: 'welcome-u-quartz-oring-seals',
@@ -1236,14 +1263,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」浮遊支持機構 / 防振密閉',
       swatchColor: '#353840',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-6, 17, 16],
+      explodeOffset: [-6, 18, 4],
       plainAnalogy: '真鍮金具と石英ガラスの間に挟んで衝撃を和らげ、内部へのホコリ侵入も防ぐ極小ゴムリングです。',
       summary: '真鍮カラー内径溝へ収まるフッ素ゴム製マイクロOリング対。温度変化によるアルミ・真鍮・石英間の熱膨張差を弾性吸収します。',
       opticsAndPhysics: ['3軸方向の微小変位を弾性支持し石英柱のクラック発生をゼロ化。'],
       nextGenInnovation: '低圧縮永久ひずみFKMマイクロOリング。',
       specs: [{ label: '材質', value: 'FKM フッ素ゴム (硬度60A)' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(0.5, 13.0, 0.5, 22.0, 0, 1.05, m, 'seals'),
+      build: (m) => buildQuartzColumnPart(0.5, 16.98, 0.5, 18.50, 0, 0.95, m, 'seals'),
     },
     // W81 - W84: Additional real arc functional sub-components (curved copper heatpipe, cinnabar edge rail, retainer clips, crest ZIF)
     {
@@ -1255,7 +1282,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」主弧 / 放熱伝導',
       swatchColor: '#d07447',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-8, 2, -12],
+      explodeOffset: [(CX_U / 66) * 26, 6, -11],
       plainAnalogy: '長くカーブした「う」のLED熱を端から端まで素早く均等化して逃がす純銅製の放熱プレートです。',
       summary: '主弧の曲線に沿ってCNC成形された無酸素銅ヒートスプレッダ。上部LEDの熱を下部ドッキング部および背面3Dフィンへ効率的に運びます。',
       opticsAndPhysics: ['熱伝導率 398 W/(m·K) により長い弧全体での温度勾配を 3℃ 以内に均熱化。'],
@@ -1264,7 +1291,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        g.add(new THREE.Mesh(extrudeRibbonGeo(STROKE_MAP.u_arc, 1.9, 0.65, -2.0, 0.04, 14, 0), m.copperHeatSpreader));
+        g.add(new THREE.Mesh(extrudeRibbonGeo(RENDER_STROKE_MAP.u_arc[0], 1.75, 0.22, -1.45, 0, 20, 0), m.copperHeatSpreader));
         return g;
       },
     },
@@ -1277,14 +1304,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」主弧 / 光学エッジ発色',
       swatchColor: '#e65a28',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-10, 6, 26],
+      explodeOffset: [(CX_U / 66) * 26, 6, 33],
       plainAnalogy: '「う」の側面ラインに沿ってシナバーオレンジの光を浮かび上がらせる光学エッジ導光レールです。',
       summary: '主弧導光板の側面光を取り込んでブランドカラーへ変換する立体光学エッジストリップ。正面の純白発光と側面のシナバー発色が立体奥行きを際立たせます。',
       opticsAndPhysics: ['全反射エッジカップリングにより専用LEDを追加せず高効率にエッジ発光。'],
       nextGenInnovation: 'エッジ励起型2色光学ガイド機構。',
       specs: [{ label: '発色波長', value: '610 nm シナバー光学樹脂' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildHollowPerimeterRing(STROKE_MAP.u_arc, 2.98, 0.45, 0.65, 2.02, m.sonyAlphaCinnabar, 0.08),
+      build: (m) => buildHollowPerimeterRing(RENDER_STROKE_MAP.u_arc, 3.1 * 1.13, 0.18, 0.56, 2.92, m.sonyAlphaCinnabar, 0),
     },
     {
       id: 'welcome-u-crest-micro-zif',
@@ -1295,14 +1322,18 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」上部点 / 電気接続',
       swatchColor: '#f1f5f9',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-6, 24, -10],
+      explodeOffset: [-8, 26, -12],
       plainAnalogy: '石英柱から上がってきた電気配線を上の点のLED基板へワンタッチで確実に繋ぐ超小型コネクタです。',
       summary: '0.8mmピッチ2極ポジティブロック式Wire-to-Boardコネクタ。上部クレストのメンテナンス着脱を容易にし、接触不良ゼロで給電を維持します。',
       opticsAndPhysics: ['2点接触バネ端子により振動環境でも低抵抗通電を維持。'],
       nextGenInnovation: '超低背1.4mm高信頼マイクロロック端子。',
       specs: [{ label: 'ピッチ', value: '0.8 mm × 2極 ロック付' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildZifConnectorAndFpc(0.5, 21.8, -1.2, 0.5, 13.4, -1.2, m, 'zif'),
+      build: (m) => {
+        const g = buildZifConnectorAndFpc(0.5, 22.3, -3.08, 0.5, 22.3, -3.08, m, 'zif', false);
+        g.add(buildZifConnectorAndFpc(1.8, 13.1, -2.02, 1.8, 13.1, -2.02, m, 'zif', false));
+        return g;
+      },
     },
     {
       id: 'welcome-u-ti-retainer-clips',
@@ -1313,7 +1344,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「う」主弧 / 光学保持機構',
       swatchColor: '#bac4d1',
       assembledPos: [CX_U, 4, 0],
-      explodeOffset: [-9, 8, 34],
+      explodeOffset: [(CX_U / 66) * 26, 6, 28],
       plainAnalogy: '大きなカーブを描く前面レンズを全周から均等なバネ力で押さえ込み、熱膨張しても割れないよう保持するチタン製クリップです。',
       summary: 'βチタンばね材を精密エッチング曲げ加工した6点リテーナークリップ群。光学レンズへ均一な予圧を与えつつ温度伸縮を逃がします。',
       opticsAndPhysics: ['ばね定数 4.2 N/mm の弾性保持により光学歪み（応力複屈折）を防止。'],
@@ -1323,14 +1354,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       build: (m) =>
         buildDowelPins(
           [
-            [-9.5, 9.2, 2.9],
-            [0.5, 13.5, 2.9],
-            [11.8, 4.2, 2.9],
-            [6.5, -7.8, 2.9],
-            [-5.8, -13.6, 2.9],
+            [-9.5, 9.2, 2.48],
+            [0.5, 13.3, 2.48],
+            [9.5, 10.6, 2.48],
+            [6.5, -7.8, 2.48],
+            [-5.8, -11.8, 2.48],
           ],
+          0.44,
           0.62,
-          0.95,
           m.linkArmSteel,
           'z'
         ),
@@ -1349,20 +1380,20 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
         cx: CX_KO,
         mainStroke: 'ko_bot',
         mainW: 3.1,
-        bayPos: [0.5, -12.6],
+        bayPos: [0.5, -11.7],
         bayVertical: false,
         dockX: 0.0,
         dockY: -15.4,
         boltPts: [
-          [-11.2, -7.8, -0.4],
-          [-2.0, -12.4, -0.4],
-          [10.2, -11.8, -0.4],
+          [-11.8, -5.2, -2.80],
+          [-10.8, -9.0, -2.80],
+          [11.5, -11.4, -2.80],
         ],
         pinPts: [
-          [-7.8, -11.4, 0],
-          [7.8, -12.0, 0],
+          [-8.6, -10.4, -2.80],
+          [8.4, -11.5, -2.80],
         ],
-        zifEnds: [-4.5, -12.4, 5.5, -12.2],
+        zifEnds: [-3.4, -11.7, 4.4, -11.7],
       },
       85
     )
@@ -1379,13 +1410,13 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       stroke: 'ko_top',
       halfW: 3.0,
       startCode: 110,
-      expBias: [10, 22, 6],
+      expBias: [10, 22, 8],
       cinnabarFront: true,
       includeCopper: true,
       boltPts: [
-        [-9.2, 14.8, -0.3],
-        [0.0, 16.2, -0.3],
-        [8.5, 15.0, -0.3],
+        [-9.2, 14.8, -3.08],
+        [0.0, 16.2, -3.08],
+        [8.5, 15.0, -3.08],
       ],
     })
   );
@@ -1400,14 +1431,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上画ハネ / 光学プリズム',
       swatchColor: '#60a5fa',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [18, 22, 18],
+      explodeOffset: [18, 12, 18],
       plainAnalogy: '「こ」の上の線の右端にある折り返し（ハネ）の先まで光が暗くならずに届くよう、光を直角に曲げるガラス製プリズムです。',
       summary: '光学BK7ガラス精密研磨の45°全反射プリズム。上画導光板の終端光を下方ハネ方向へ効率よく偏向し、終端部の輝度落ち込みを完全解消します。',
       opticsAndPhysics: ['臨界角41.1°（n=1.52）を超える45°斜面での全反射により反射率99.9%の無損失偏向を実現。'],
       nextGenInnovation: '文字屈曲部専用の精密マイクロコーナー導光プリズム。',
       specs: [{ label: '材質', value: 'BK7 光学ガラス (n=1.517)' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildOpticalCornerPrism(10.4, 14.2, 0.55, 3.8, -Math.PI * 0.65, m.welcomeOpticalEd),
+      build: (m) => buildOpticalCornerPrism(12.80, 11.70, 0.55, 0.42, -Math.PI * 0.65, m.welcomeOpticalEd, 1.4),
     },
     {
       id: 'welcome-ko-hook-end-cap',
@@ -1418,7 +1449,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上画ハネ / 独立構造',
       swatchColor: '#4b586e',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [20, 18, 8],
+      explodeOffset: [18, 12, 6],
       plainAnalogy: '「こ」の上画の右端ハネ部分を形作り、中のコーナー光学プリズムをしっかり保護する専用エンドキャップです。',
       summary: 'ハネ部分のCNCアルミ独立エンドキャップおよび前面拡散窓。コーナープリズムを所定角度±0.2°で保持します。',
       opticsAndPhysics: ['精密ダボ嵌合によりハネ部と上画の継ぎ目段差を0.02mm以下に抑止。'],
@@ -1426,8 +1457,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '材質', value: 'A6061-T6 + サファイア窓' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildHollowCncChassis(STROKE_MAP.ko_hook, 2.55, 4.8, 0, m.welcomeCoreSlate, m.stainlessMachined);
-        g.add(buildSteppedOpticalLens(STROKE_MAP.ko_hook, 2.15, 2.95, m.welcomeTitaniumFace));
+        const g = buildHollowCncChassis(RENDER_STROKE_MAP.ko_hook, 1.50, 3.61, 0.255, m.welcomeCoreSlate, m.stainlessMachined);
+        g.add(buildSteppedOpticalLens(RENDER_STROKE_MAP.ko_hook, 1.28, 3.38, m.welcomeTitaniumFace));
         return g;
       },
     },
@@ -1441,14 +1472,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 光学石英構造',
       swatchColor: '#dcf0ff',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [4, 6, 4],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '上下に分かれた「こ」の上画を左側で支えつつ、透明だから浮いて見える光学石英ガラスの支柱です。',
       summary: '下画シャーシと上画シャーシを左端で機械連結する光学溶融石英支柱。2本柱による剛構造で上画の傾き・回転を完全防止します。',
       opticsAndPhysics: ['低反射ARコーティング付きφ2.4mm石英ロッドにより背景と同化する高透過外観。'],
       nextGenInnovation: '2柱門型ラーメン構造の透明光学石英フレーム。',
       specs: [{ label: '材質', value: '合成溶融石英 φ2.4 mm' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(-7.6, -11.4, -7.6, 14.8, 0, 1.15, m, 'quartz'),
+      build: (m) => buildQuartzColumnPart(-7.6, -2.6, -7.6, 11.75, 0, 1.05, m, 'quartz'),
     },
     {
       id: 'welcome-ko-quartz-col-right',
@@ -1459,14 +1490,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 光学石英構造',
       swatchColor: '#dcf0ff',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [16, 6, 4],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '「こ」の上画を右側で支えるもう1本の透明石英ガラス支柱です。左右2本で水平をビシッと保ちます。',
       summary: '右端側で上画を機械支持する光学溶融石英支柱。内部マイクロボアにPWM制御信号線を内蔵し、構造支持と配線保護を兼ねます。',
       opticsAndPhysics: ['左右対称2点支持により衝撃時モーメントを均等分担。'],
       nextGenInnovation: '信号導体同軸内蔵の透明石英構造コラム。',
       specs: [{ label: '材質', value: '合成溶融石英 φ2.4 mm' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(7.6, -11.8, 7.6, 15.0, 0, 1.15, m, 'quartz'),
+      build: (m) => buildQuartzColumnPart(7.6, -8.05, 7.6, 11.75, 0, 1.05, m, 'quartz'),
     },
     {
       id: 'welcome-ko-quartz-brass-collars',
@@ -1477,7 +1508,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 精密締結',
       swatchColor: '#d4a948',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [10, 8, 12],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '左右2本の透明石英柱の上下計4箇所をアルミ本体へガッチリ固定する真鍮製の締結カラー金具です。',
       summary: '左右2本の石英コラム上下端を把持する4箇所のCNC真鍮フランジカラー群。精密な垂直度0.05°以内で上画と下画の平行度を保証します。',
       opticsAndPhysics: ['4点均等クランプにより曲げ剛性と耐落下衝撃性能を大幅向上。'],
@@ -1485,8 +1516,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '数量', value: '4個組 (C3604 CNC真鍮)' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildQuartzColumnPart(-7.6, -11.4, -7.6, 14.8, 0, 1.15, m, 'collars');
-        g.add(buildQuartzColumnPart(7.6, -11.8, 7.6, 15.0, 0, 1.15, m, 'collars'));
+        const g = buildQuartzColumnPart(-7.6, -2.6, -7.6, 11.75, 0, 1.05, m, 'collars');
+        g.add(buildQuartzColumnPart(7.6, -8.05, 7.6, 11.75, 0, 1.05, m, 'collars'));
         return g;
       },
     },
@@ -1499,14 +1530,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 電力供給',
       swatchColor: '#c97643',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [2, 6, -8],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '下の制御基板から浮いた上画のLEDへ電気を届ける、左の石英柱の中に隠された極細の電源ペア線です。',
       summary: '左石英コラム中心貫通穴を通る+12V/GND二重エナメル純銅導体ペア。下画の2ch電源から上画LED MCPCBへ低損失給電します。',
       opticsAndPhysics: ['電源線と信号線を左右別コラムへ分離配線し、スイッチングノイズ結合を原理的に遮断。'],
       nextGenInnovation: '電力・信号コラム物理分離レイアウト。',
       specs: [{ label: '系統', value: '12V / GND 給電ペア' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(-7.6, -11.4, -7.6, 14.8, 0, 1.15, m, 'wire'),
+      build: (m) => buildQuartzColumnPart(-7.6, -2.6, -7.6, 11.75, 0, 1.05, m, 'wire'),
     },
     {
       id: 'welcome-ko-right-pwm-bus',
@@ -1517,14 +1548,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 制御信号線',
       swatchColor: '#e2b648',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [18, 6, -8],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '上画の明るさ指令と温度センサー情報を下画の頭脳へ伝える、右の石英柱の中に通した信号線です。',
       summary: '右石英コラム内を貫通する32kHz PWM調光信号＆NTC温度監視フィードバック導体ペア。上画の過熱保護と上下同時フェード同期を実現します。',
       opticsAndPhysics: ['電源線（左柱）と距離15.2mm離隔することで信号クロストークを-60dB以下へ抑制。'],
       nextGenInnovation: 'ノイズフリー上下画同期インテリジェント配線。',
       specs: [{ label: '系統', value: '32kHz PWM + NTC帰還' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildQuartzColumnPart(7.6, -11.8, 7.6, 15.0, 0, 1.15, m, 'wire'),
+      build: (m) => buildQuartzColumnPart(7.6, -8.05, 7.6, 11.75, 0, 1.05, m, 'wire'),
     },
     {
       id: 'welcome-ko-quartz-seals',
@@ -1535,7 +1566,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「こ」上下連結機構 / 防振密閉',
       swatchColor: '#353840',
       assembledPos: [CX_KO, 4, 0],
-      explodeOffset: [10, 4, 16],
+      explodeOffset: [10, 6, 4],
       plainAnalogy: '石英柱と金属の接続部4箇所をクッション保護しつつ密閉する極小ゴムOリング群です。',
       summary: '左右2本柱の上下計4箇所へ配したFKM防振Oリング。熱伸縮差の吸収と上下キャビティ間の防塵防滴封止を担います。',
       opticsAndPhysics: ['4点弾性支持により輸送振動下でも石英ガラスの欠けを完全防止。'],
@@ -1543,8 +1574,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '数量', value: '4個組 (FKM 60A)' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildQuartzColumnPart(-7.6, -11.4, -7.6, 14.8, 0, 1.15, m, 'seals');
-        g.add(buildQuartzColumnPart(7.6, -11.8, 7.6, 15.0, 0, 1.15, m, 'seals'));
+        const g = buildQuartzColumnPart(-7.6, -2.6, -7.6, 11.75, 0, 1.05, m, 'seals');
+        g.add(buildQuartzColumnPart(7.6, -8.05, 7.6, 11.75, 0, 1.05, m, 'seals'));
         return g;
       },
     }
@@ -1562,20 +1593,20 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
         cx: CX_SO,
         mainStroke: 'so_bowl',
         mainW: 3.1,
-        bayPos: [2.2, -13.3],
+        bayPos: [2.2, -11.8],
         bayVertical: false,
         dockX: 2.0,
         dockY: -15.4,
         boltPts: [
-          [-9.5, -4.5, -0.4],
-          [-5.2, -11.5, -0.4],
-          [8.5, -12.8, -0.4],
+          [-6.8, -1.6, -2.80],
+          [-7.2, -10.4, -2.80],
+          [12.4, -11.5, -2.80],
         ],
         pinPts: [
-          [-8.2, -7.8, 0],
-          [4.8, -13.4, 0],
+          [-9.6, -6.8, -2.80],
+          [10.2, -11.5, -2.80],
         ],
-        zifEnds: [-3.5, -12.4, 7.5, -13.0],
+        zifEnds: [-1.8, -11.8, 5.8, -11.8],
       },
       127
     )
@@ -1590,14 +1621,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       cx: CX_SO,
       groupKey: 'glyph_so',
       stroke: 'so_z2',
-      halfW: 2.75,
+      halfW: 2.55,
       startCode: 152,
-      expBias: [22, 18, 6],
+      expBias: [26, 18, 2],
       cinnabarFront: true,
       includeCopper: true,
       boltPts: [
-        [4.5, 17.8, -0.3],
-        [-7.8, 9.4, -0.3],
+        [5.2, 18.2, -3.08],
+        [-6.8, 10.1, -3.08],
       ],
     })
   );
@@ -1612,7 +1643,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 構造・発光',
       swatchColor: '#364152',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [26, 26, 4],
+      explodeOffset: [26, 18, 2],
       plainAnalogy: '「そ」の一番上の横棒を構成し、中のLEDと導光板を収めるCNCアルミ骨格と前面カバーです。',
       summary: '上横画の肉抜きCNCアルミフレームと段付き前面拡散カバー。右端で45°光学コーナープリズムと嵌合し、斜め画へ光を途切れなく接続します。',
       opticsAndPhysics: ['一体CNCリブと前面拡散レンズにより文字最上部まで均一な立体輝度を実現。'],
@@ -1620,8 +1651,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '材質', value: 'A6061-T6 + サファイアレンズ' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildHollowCncChassis(STROKE_MAP.so_z1, 2.75, 4.8, 0, m.welcomeCoreSlate, m.stainlessMachined);
-        g.add(buildSteppedOpticalLens(STROKE_MAP.so_z1, 2.35, 3.05, m.welcomeTitaniumFace));
+        const g = buildHollowCncChassis(RENDER_STROKE_MAP.so_z1, 2.55, 3.61, 0.255, m.welcomeCoreSlate, m.stainlessMachined);
+        g.add(buildSteppedOpticalLens(RENDER_STROKE_MAP.so_z1, 2.15, 3.38, m.welcomeTitaniumFace));
         return g;
       },
     },
@@ -1634,7 +1665,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 構造・発光',
       swatchColor: '#4b586e',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [28, 12, 8],
+      explodeOffset: [26, 18, 2],
       plainAnalogy: '「そ」の真ん中の横棒を構成し、上の斜め画と下の丸い椀部をつなぐ中核アルミ骨格＆カバーです。',
       summary: '中横画の肉抜きCNCアルミ骨格と前面拡散カバー。左端で第2コーナープリズムを受け、中央下部で真鍮ジョイントを介して椀部と強固に連結します。',
       opticsAndPhysics: ['Z字と椀部の荷重と熱を中継する機械・熱の要衝構造。'],
@@ -1642,8 +1673,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '材質', value: 'A6061-T6 + サファイアレンズ' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildHollowCncChassis(STROKE_MAP.so_z3, 2.75, 4.8, 0, m.welcomeCoreSlate, m.stainlessMachined);
-        g.add(buildSteppedOpticalLens(STROKE_MAP.so_z3, 2.35, 3.05, m.welcomeTitaniumFace));
+        const g = buildHollowCncChassis(RENDER_STROKE_MAP.so_z3, 2.55, 3.61, 0.255, m.welcomeCoreSlate, m.stainlessMachined);
+        g.add(buildSteppedOpticalLens(RENDER_STROKE_MAP.so_z3, 2.15, 3.38, m.welcomeTitaniumFace));
         return g;
       },
     },
@@ -1656,14 +1687,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 光学プリズム',
       swatchColor: '#60a5fa',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [32, 26, 20],
+      explodeOffset: [26, 18, 18],
       plainAnalogy: '「そ」の上の鋭い曲がり角で光が途切れて暗くならないよう、光をピタッと鋭角反射させる光学ガラスプリズムです。',
       summary: '上横画から斜め画への鋭角折返し部に収めたBK7全反射光学プリズム。鋭角屈曲による導光ロスを98%以上回収し、角部まで明るく均一発光させます。',
       opticsAndPhysics: ['全反射プリズム斜面が斜め画導光板へ平行光を直接カップリング。'],
       nextGenInnovation: '鋭角漢字・仮名専用マイクロ全反射コーナープリズム。',
       specs: [{ label: '材質', value: 'BK7 光学ガラス' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildOpticalCornerPrism(9.4, 21.0, 0.55, 4.0, -Math.PI * 0.72, m.welcomeOpticalEd),
+      build: (m) => buildOpticalCornerPrism(3.15, 21.15, 0.55, 0.82, -Math.PI * 0.72, m.welcomeOpticalEd, 1.4),
     },
     {
       id: 'welcome-so-z-corner-prism-2',
@@ -1674,14 +1705,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 光学プリズム',
       swatchColor: '#93c5fd',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [16, 12, 20],
+      explodeOffset: [26, 18, 18],
       plainAnalogy: '斜め画から中横画へ折り返す左側の鋭い角に収め、光をスムーズに方向転換させるもう1つの光学プリズムです。',
       summary: '左折返し部のBK7光学全反射コーナープリズム。第1プリズムと対をなし、Z字3画全体の輝度連続性を確保します。',
       opticsAndPhysics: ['臨界角全反射により金属鏡不要で吸収損失ゼロの光路偏向を実現。'],
       nextGenInnovation: 'デュアルプリズムによるZ字導光ムラ完全解消。',
       specs: [{ label: '材質', value: 'BK7 光学ガラス' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildOpticalCornerPrism(-12.6, 6.2, 0.55, 4.0, Math.PI * 0.25, m.welcomeOpticalEd),
+      build: (m) => buildOpticalCornerPrism(-6.10, 6.75, 0.55, 1.00, Math.PI * 0.25, m.welcomeOpticalEd, 1.4),
     },
     {
       id: 'welcome-so-z-horiz-leds',
@@ -1692,7 +1723,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 発光エンジン',
       swatchColor: '#fbbf24',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [26, 20, -6],
+      explodeOffset: [26, 18, -4],
       plainAnalogy: '「そ」の上横画と中横画それぞれに収まり、文字の上半分を鮮やかに照らす専用LED発光基板セットです。',
       summary: 'Z1上横画・Z3中横画それぞれへ最適化した金属コアMCPCB＋CRI97 2835マイクロLEDアレイ。',
       opticsAndPhysics: ['3画独立LED配置により複雑なZ字形状でも輝度均一性92%以上を実現。'],
@@ -1700,8 +1731,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '光源', value: 'CRI97 2835 LED × 2列' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildLedArrayOnMcpcb(STROKE_MAP.so_z1, 1.85, -0.75, m, false);
-        g.add(buildLedArrayOnMcpcb(STROKE_MAP.so_z3, 1.85, -0.75, m, false));
+        const g = buildLedArrayOnMcpcb(RENDER_STROKE_MAP.so_z1, 1.62, -0.45, m, false);
+        g.add(buildLedArrayOnMcpcb(RENDER_STROKE_MAP.so_z3, 1.62, -0.45, m, false));
         return g;
       },
     },
@@ -1714,7 +1745,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」Z字上部 / 放熱背面',
       swatchColor: '#2a3446',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [28, 18, -24],
+      explodeOffset: [26, 18, -32],
       plainAnalogy: 'Z字の上横画と中横画の裏側をカバーしながら3Dフィンで効率よく冷やす放熱プレートです。',
       summary: 'Z1およびZ3ストローク専用の3D冷却フィン一体型AZ91Dマグネシウム背面カバー。',
       opticsAndPhysics: ['上昇気流が上下2段のフィン間を通り抜ける自然煙突対流冷却。'],
@@ -1722,8 +1753,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '材質', value: 'AZ91D マグネシウム合金' }],
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
-        const g = buildFinnedBackplate(STROKE_MAP.so_z1, 2.55, -3.35, m.welcomeMagRear);
-        g.add(buildFinnedBackplate(STROKE_MAP.so_z3, 2.55, -3.35, m.welcomeMagRear));
+        const g = buildFinnedBackplate(RENDER_STROKE_MAP.so_z1, 2.40, -4.56, m.welcomeMagRear);
+        g.add(buildFinnedBackplate(RENDER_STROKE_MAP.so_z3, 2.40, -4.56, m.welcomeMagRear));
         return g;
       },
     },
@@ -1736,7 +1767,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」連結機構 / 構造締結',
       swatchColor: '#d4a948',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [24, 6, -16],
+      explodeOffset: [26, 10, -22],
       plainAnalogy: '上のZ字ユニットの重さを下の椀型ユニットへガッチリ繋ぎ止める、高強度な真鍮製ジョイントブロックです。',
       summary: 'Z字中横画と下部椀部の接続点へ埋め込まれるC3604 CNC真鍮構造ジョイント。M2ボルト4本と位置決めピン2本で強固に締結し、片持ち荷重を安全に支持します。',
       opticsAndPhysics: ['高いせん断強度により「そ」特有の片持ちZ構造のねじれ振動を抑制。'],
@@ -1745,10 +1776,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_glyph_layer',
       build: (m) => {
         const g = new THREE.Group();
-        const blk = new THREE.Mesh(new THREE.BoxGeometry(6.2, 4.4, 3.2), m.brassGear);
-        blk.position.set(2.2, 5.8, -1.6);
+        const blk = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.4, 1.0), m.brassGear);
+        blk.position.set(-2.5, 3.6, -2.95);
         g.add(blk);
-        g.add(buildHexSocketBolts([[0.6, 5.8, -0.6], [3.8, 5.8, -0.6]], 0.55, 3.8, m, 'z'));
+        g.add(buildHexSocketBolts([[-3.6, 3.6, -2.95], [-1.4, 3.6, -2.95]], 0.42, 1.10, m, 'z', -1));
         return g;
       },
     },
@@ -1761,14 +1792,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '「そ」連結機構 / 電力・信号伝送',
       swatchColor: '#c76414',
       assembledPos: [CX_SO, 4, 0],
-      explodeOffset: [24, 8, -10],
+      explodeOffset: [26, 10, -14],
       plainAnalogy: '椀部の制御基板から上のZ字3画すべてのLEDへ電気と調光信号を送り届ける専用フレキ配線＆コネクタです。',
       summary: '真鍮ジョイント内スリットを通ってZ字LED基板と椀部制御基板を結ぶポリイミドFPC＆ZIFコネクタ。外から配線が一切見えないクリーンな電力伝送を実現します。',
       opticsAndPhysics: ['内部シールド配線によりZ字上部からの高周波放射ノイズを封止。'],
       nextGenInnovation: 'ジョイント内蔵型ゼロ露出インターコネクト。',
       specs: [{ label: '極数', value: '8極 0.5mm ZIF + ポリイミドFPC' }],
       diagramType: 'welcome_glyph_layer',
-      build: (m) => buildZifConnectorAndFpc(2.5, 6.4, -1.5, -4.2, 2.6, -1.5, m, 'both'),
+      build: (m) => buildZifConnectorAndFpc(1.8, 6.2, -1.94, -4.6, -0.2, -1.94, m, 'both', false),
     }
   );
 
@@ -1787,7 +1818,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 主構造筐体',
       swatchColor: '#2a3446',
       assembledPos: plPos,
-      explodeOffset: [0, -16, 0],
+      explodeOffset: [0, -20, 0],
       plainAnalogy: '「よ・う・こ・そ」4文字すべてを支え、内部に電源・バッテリー・マイコン・スピーカーを収めるメイン台座ボディです。',
       summary: '幅186mm×奥行28mmのAZ91Dマグネシウム合金CNC削り出し中空シャーシ。内部に基板・電池・スピーカー区画の隔壁リブを備え、高剛性と電磁遮蔽性を兼備します。',
       opticsAndPhysics: ['中空ボックス断面により全幅186mmでの曲げたわみを 0.01 mm 以下に抑制。'],
@@ -1795,14 +1826,35 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '外形寸法', value: '186 × 8.5 × 26 mm' }, { label: '材質', value: 'AZ91D マグネシウム合金' }],
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
-        const g = buildPlinthRoundedSlab(184, 7.6, 25.0, 3.2, 0, -1.0, 0, m.welcomeMagRear, 4.2);
-        // Internal partitioning CNC stiffening ribs inside hollow plinth cavity
-        const ribCount = qualityLevel() >= 2 ? 7 : 4;
-        for (let i = 0; i < ribCount; i++) {
-          const x = -72 + (i / (ribCount - 1)) * 144;
-          const rib = new THREE.Mesh(new THREE.BoxGeometry(1.2, 5.4, 16.2), m.welcomeCoreSlate);
-          rib.position.set(x, -1.2, 0);
-          g.add(rib);
+        const g = new THREE.Group();
+        const addBox = (w: number, h: number, d: number, x: number, y: number, z: number, mat: THREE.Material) => {
+          const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+          mesh.position.set(x, y, z);
+          g.add(mesh);
+        };
+        addBox(184.8, 1.48, 1.40, 0, 1.74, 12.20, m.welcomeMagRear);
+        addBox(184.8, 1.02, 1.40, 0, -4.29, 12.20, m.welcomeMagRear);
+        addBox(4.2, 4.78, 1.40, -90.3, -1.39, 12.20, m.welcomeMagRear);
+        addBox(4.2, 4.78, 1.40, 90.3, -1.39, 12.20, m.welcomeMagRear);
+
+        addBox(184.8, 0.78, 1.40, 0, 2.09, -12.20, m.welcomeMagRear);
+        addBox(184.8, 1.08, 1.40, 0, -4.26, -12.20, m.welcomeMagRear);
+        addBox(26.2, 5.42, 1.40, -79.3, -1.01, -12.20, m.welcomeMagRear);
+        addBox(110.2, 5.42, 1.40, 25.3, -1.01, -12.20, m.welcomeMagRear);
+        addBox(4.8, 5.42, 1.40, 90.0, -1.01, -12.20, m.welcomeMagRear);
+        addBox(7.2, 0.85, 1.40, 84.0, 1.275, -12.20, m.welcomeMagRear);
+        addBox(7.2, 1.27, 1.40, 84.0, -3.085, -12.20, m.welcomeMagRear);
+
+        for (const sx of [-91.7, 91.7]) {
+          addBox(1.40, 7.28, 3.20, sx, -1.16, 9.90, m.welcomeMagRear);
+          addBox(1.40, 7.28, 3.20, sx, -1.16, -9.90, m.welcomeMagRear);
+          addBox(1.40, 0.53, 16.60, sx, 2.215, 0, m.welcomeMagRear);
+          addBox(1.40, 0.85, 16.60, sx, -4.375, 0, m.welcomeMagRear);
+        }
+
+        for (const rx of [-56.0, -35.8, -13.0, 54.5]) {
+          addBox(0.95, 0.70, 6.6, rx, -4.37, 4.9, m.welcomeCoreSlate);
+          addBox(0.95, 0.70, 5.4, rx, -4.37, -4.4, m.welcomeCoreSlate);
         }
         return g;
       },
@@ -1823,7 +1875,21 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       nextGenInnovation: '4文字着脱開口一体レーザー加工ステンレス基準板。',
       specs: [{ label: '平面度', value: '±0.03 mm (SUS304)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildPlinthRoundedSlab(182, 1.35, 23.8, 2.8, 0, 3.2, 0, m.welcomeCoreMid, 0),
+      build: (m) => {
+        const cutouts: PlinthCutout[] = [
+          { kind: 'rect', x: CX_YO - 3.5, z: 0, w: 18.8, d: 10.4 },
+          { kind: 'rect', x: CX_U - 5.5, z: 0, w: 18.8, d: 10.4 },
+          { kind: 'rect', x: CX_KO, z: 0, w: 18.8, d: 10.4 },
+          { kind: 'rect', x: CX_SO + 2.0, z: 0, w: 18.8, d: 10.4 },
+          { kind: 'circle', x: -85, z: 8.8, r: 1.32 },
+          { kind: 'circle', x: 0, z: 8.8, r: 1.32 },
+          { kind: 'circle', x: 85, z: 8.8, r: 1.32 },
+          { kind: 'circle', x: -85, z: -8.8, r: 1.32 },
+          { kind: 'circle', x: 0, z: -8.8, r: 1.32 },
+          { kind: 'circle', x: 85, z: -8.8, r: 1.32 },
+        ];
+        return buildPlinthRoundedSlab(182.6, 1.00, 24.2, 2.8, 0, 3.36, 0, m.welcomeCoreMid, 0, cutouts);
+      },
     },
     {
       id: 'welcome-plinth-bottom-weight',
@@ -1834,14 +1900,23 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 重心安定構造',
       swatchColor: '#64748b',
       assembledPos: plPos,
-      explodeOffset: [0, -34, 0],
+      explodeOffset: [0, -36, 0],
       plainAnalogy: '背の高い立体文字が乗っても絶対にグラついたり倒れたりしないよう、底面を重く安定させるステンレス重り底板です。',
       summary: '厚さ2.4mmのW80Cu20タングステン銅複合・SUS304被覆の高比重底面プレート。実測質量約163gで装置全体の重心を底面近傍へ引き下げ、転倒安定角33°以上を確保すると同時に下方向への放熱も補助します。',
       opticsAndPhysics: ['密度 15.6 g/cm³ のW80Cu20高比重ウェイトにより重心をY軸下方へ下げ、IEC 62368-1 10°転倒試験の3倍超の耐震安定性を実現。'],
       nextGenInnovation: 'W80Cu20高比重カウンターウェイト兼ボトム放熱カバー一体設計。',
       specs: [{ label: '実測質量 / 板厚', value: '163 g / 2.4 mm (W80Cu20複合)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildPlinthRoundedSlab(182, 2.4, 24.0, 2.8, 0, -5.9, 0, m.stainlessMachined, 0),
+      build: (m) => {
+        const cutouts: PlinthCutout[] = [
+          { kind: 'rect', x: 0, z: 0, w: 36.6, d: 11.6 },
+        ];
+        for (let i = 0; i < 8; i++) {
+          const x = -74 + (i / 7) * 148;
+          cutouts.push({ kind: 'circle', x, z: 10.2, r: 1.28 }, { kind: 'circle', x, z: -10.2, r: 1.28 });
+        }
+        return buildPlinthRoundedSlab(182, 2.24, 24.0, 2.8, 0, -6.00, 0, m.stainlessMachined, 0, cutouts);
+      },
     },
     {
       id: 'welcome-plinth-left-endcap',
@@ -1852,7 +1927,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 側面外装・吸気',
       swatchColor: '#cbd5e1',
       assembledPos: plPos,
-      explodeOffset: [-34, -14, 0],
+      explodeOffset: [-30, -20, 0],
       plainAnalogy: '台座の左端を保護しつつ、涼しい外気を内部のヒートシンクへ取り込む通気スリット付きアルミカバーです。',
       summary: 'A6061アルミCNC削り出し左エンドキャップ。側面に3D加工の対流吸気ルーバーを刻み、自然対流冷却の吸気口として機能します。',
       opticsAndPhysics: ['冷気吸気口を低位置・左端に設けることで内部ヒートシンクへの水平ドラフト気流を生成。'],
@@ -1861,13 +1936,13 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const cap = new THREE.Mesh(new THREE.BoxGeometry(5.6, 9.6, 26.2), m.welcomeTitaniumFace);
-        cap.position.set(-93.8, -1.0, 0);
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(4.4, 9.6, 26.0), m.welcomeTitaniumFace);
+        cap.position.set(-94.75, -1.0, 0);
         g.add(cap);
         const slits = qualityLevel() >= 2 ? 5 : 3;
         for (let i = 0; i < slits; i++) {
-          const sl = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.55, 16.0), m.matteBlackAnodized);
-          sl.position.set(-96.5, -3.2 + i * 1.45, 0);
+          const sl = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, 16.0), m.matteBlackAnodized);
+          sl.position.set(-97.0, -3.2 + i * 1.45, 0);
           g.add(sl);
         }
         return g;
@@ -1882,7 +1957,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 側面外装・操作枠',
       swatchColor: '#cbd5e1',
       assembledPos: plPos,
-      explodeOffset: [34, -14, 0],
+      explodeOffset: [38, -20, 0],
       plainAnalogy: '台座の右端を保護し、明るさ調整ダイヤルや電源スイッチを取り付ける操作パネル枠を兼ねたアルミカバーです。',
       summary: '右端CNCアルミエンドキャップ。ロータリーエンコーダー軸受ボアと電源スイッチ貫通スロットを備え、操作荷重をシャーシへ確実に逃がします。',
       opticsAndPhysics: ['右手親指・人差し指で直感的に輝度ダイヤルへアクセスできる人間工学配置。'],
@@ -1891,10 +1966,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const cap = new THREE.Mesh(new THREE.BoxGeometry(5.6, 9.6, 26.2), m.welcomeTitaniumFace);
-        cap.position.set(93.8, -1.0, 0);
-        const bezel = new THREE.Mesh(new THREE.CylinderGeometry(5.2, 5.2, 1.2, qRadialSegs(18, 8)), m.welcomeCoreSlate);
-        bezel.position.set(93.8, 3.8, 0);
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(4.4, 9.6, 26.0), m.welcomeTitaniumFace);
+        cap.position.set(94.75, -1.0, 0);
+        const bezel = new THREE.Mesh(createHollowTubeY(5.12, 1.62, 0.50, qRadialSegs(18, 8)), m.welcomeCoreSlate);
+        bezel.position.set(91.5, 4.17, 0);
         g.add(cap, bezel);
         return g;
       },
@@ -1908,7 +1983,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 前面光学窓',
       swatchColor: '#9ecbe0',
       assembledPos: plPos,
-      explodeOffset: [0, -12, 26],
+      explodeOffset: [0, -15, 24],
       plainAnalogy: '台座前面の光るステータスバーと人感センサーをホコリや傷から守る透明な強化ガラス窓です。',
       summary: 'アルミノシリケート強化ガラス製フロントウィンドウ。内面に可視光透過＋ToF用940nm赤外線透過のデュアルARコーティングを施しています。',
       opticsAndPhysics: ['940nm赤外線透過率95%以上を維持しToF人感測距のS/N比を確保。'],
@@ -1917,8 +1992,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const win = new THREE.Mesh(new THREE.BoxGeometry(176, 3.2, 0.85), m.microlensGlass);
-        win.position.set(0, -0.8, 12.6);
+        const win = new THREE.Mesh(new THREE.BoxGeometry(176, 3.16, 0.72), m.microlensGlass);
+        win.position.set(0, -0.70, 12.52);
         g.add(win);
         return g;
       },
@@ -1932,7 +2007,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 防振・接地',
       swatchColor: '#202328',
       assembledPos: plPos,
-      explodeOffset: [0, -42, 0],
+      explodeOffset: [0, -44, 0],
       plainAnalogy: 'デスクの上で滑らず、スピーカーの音や机の振動も吸収する底面4隅のすべり止めゴム足です。',
       summary: '静摩擦係数1.1以上の高グリップ・シリコーンエラストマー脚×4個。机面との音響カップリング（ビビリ共振）を絶縁します。',
       opticsAndPhysics: ['4点シリコーンアイソレータにより机への固体伝播振動を -22 dB 絶縁。'],
@@ -1941,10 +2016,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const fGeo = new THREE.CylinderGeometry(3.8, 4.2, 1.8, qRadialSegs(14, 8));
-        for (const [fx, fz] of [[-82, 8.5], [82, 8.5], [-82, -8.5], [82, -8.5]]) {
+        const fGeo = new THREE.CylinderGeometry(3.6, 4.0, 0.90, qRadialSegs(14, 8));
+        for (const [fx, fz] of [[-83.5, 8.2], [83.5, 8.2], [-83.5, -8.2], [83.5, -8.2]]) {
           const ft = new THREE.Mesh(fGeo, m.epdmGasket);
-          ft.position.set(fx, -7.2, fz);
+          ft.position.set(fx, -7.65, fz);
           g.add(ft);
         }
         return g;
@@ -1966,7 +2041,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       nextGenInnovation: 'コーナー肉厚最適化シームレス成型ガスケット。',
       specs: [{ label: '保護等級', value: 'IP54 (台座電子室)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildPlinthRoundedSlab(181, 0.55, 23.2, 2.5, 0, 2.45, 0, m.epdmGasket, 2.4),
+      build: (m) => buildPlinthRoundedSlab(182.0, 0.28, 24.0, 2.5, 0, 2.66, 0, m.epdmGasket, 1.8),
     },
     {
       id: 'welcome-plinth-rear-io-bezel',
@@ -1977,7 +2052,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 背面I/O保護',
       swatchColor: '#64748b',
       assembledPos: plPos,
-      explodeOffset: [0, -14, -22],
+      explodeOffset: [0, -20, -22],
       plainAnalogy: '背面のUSB-C充電口やサービス端子の周りを補強し、ケーブル抜き差しで傷まないよう守る金属プレートです。',
       summary: 'USB-C PD 65W開口とリセットピンホールを精密加工した背面アルミベゼル。ケーブルこじり荷重をシャーシへ分散します。',
       opticsAndPhysics: ['金属フランジ接地によりUSB-Cシールドの360°EMCボンドを確保。'],
@@ -1986,9 +2061,15 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const plate = new THREE.Mesh(new THREE.BoxGeometry(36.0, 5.4, 1.2), m.stainlessMachined);
-        plate.position.set(-48.0, -1.0, -12.6);
-        g.add(plate);
+        const addP = (w: number, h: number, x: number, y: number) => {
+          const p = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.90), m.stainlessMachined);
+          p.position.set(x, y, -12.45);
+          g.add(p);
+        };
+        addP(13.25, 5.20, -59.375, -1.00);
+        addP(13.25, 5.20, -36.625, -1.00);
+        addP(9.50, 1.42, -48.0, 0.89);
+        addP(9.50, 0.42, -48.0, -3.39);
         return g;
       },
     },
@@ -2001,7 +2082,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 精密締結',
       swatchColor: '#98a2b0',
       assembledPos: plPos,
-      explodeOffset: [0, -46, 0],
+      explodeOffset: [0, -48, 0],
       plainAnalogy: '底板・シャーシ・天板・両端キャップをガッチリ一体締結する16本のステンレス製トルクス精密ねじです。',
       summary: 'ISO 14583準拠のM3ステンレス・トルクス（ヘクサロビュラ）ねじ16本。高トルク伝達とカムアウト防止により長寿命メンテ性を確保します。',
       opticsAndPhysics: ['全周16点締結により底板ウェイトと中空マグネシウム骨格の共振モードを高周波側へシフト。'],
@@ -2011,10 +2092,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       build: (m) => {
         const pts: Array<[number, number, number]> = [];
         for (let i = 0; i < 8; i++) {
-          const x = -80 + (i / 7) * 160;
-          pts.push([x, -5.8, 9.2], [x, -5.8, -9.2]);
+          const x = -74 + (i / 7) * 148;
+          pts.push([x, -6.00, 10.2], [x, -6.00, -10.2]);
         }
-        return buildHexSocketBolts(pts, 0.85, 4.4, m, 'y');
+        return buildHexSocketBolts(pts, 0.70, 2.12, m, 'y', -1);
       },
     },
     {
@@ -2026,7 +2107,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 精密位置決め',
       swatchColor: '#d4a948',
       assembledPos: plPos,
-      explodeOffset: [0, -2, 0],
+      explodeOffset: [0, -4, 0],
       plainAnalogy: '天板の4文字ソケットと内部のポゴピン基板の位置が絶対にズレないよう合わせる基準ピンです。',
       summary: 'シャーシ・天面基準プレート・4文字ソケット間の相対位置を±0.02mmで固定するH7公差研削ノックピン6本。',
       opticsAndPhysics: ['ポゴピン接点と受電パッドの同軸ズレをゼロ化し安定した大電流接触を保証。'],
@@ -2036,15 +2117,15 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       build: (m) =>
         buildDowelPins(
           [
-            [-84, 1.8, 8.2],
-            [0, 1.8, 8.2],
-            [84, 1.8, 8.2],
-            [-84, 1.8, -8.2],
-            [0, 1.8, -8.2],
-            [84, 1.8, -8.2],
+            [-85, 3.24, 8.8],
+            [0, 3.24, 8.8],
+            [85, 3.24, 8.8],
+            [-85, 3.24, -8.8],
+            [0, 3.24, -8.8],
+            [85, 3.24, -8.8],
           ],
-          0.95,
-          4.8,
+          0.92,
+          1.24,
           m.brassGear,
           'y'
         ),
@@ -2058,7 +2139,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 製品認証銘板',
       swatchColor: '#cbd5e1',
       assembledPos: plPos,
-      explodeOffset: [0, -39, -6],
+      explodeOffset: [0, -40, 0],
       plainAnalogy: '製品型番・シリアル番号・電気安全PSE/CE・無線技適マークを永続刻印した金属スペックプレートです。',
       summary: '底面ザグリポケット内へ貼付される陽極酸化アルミ製トレーサビリティ銘板。Wi-Fi/BLE技適番号と65W USB-PD電気定格をレーザー永久刻印します。',
       opticsAndPhysics: ['ザグリ段差内配置により机面擦れによる印字消えを完全防止。'],
@@ -2067,8 +2148,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const p = new THREE.Mesh(new THREE.BoxGeometry(36.0, 0.45, 11.0), m.welcomeTitaniumFace);
-        p.position.set(0, -6.55, 0);
+        const p = new THREE.Mesh(new THREE.BoxGeometry(36.0, 0.36, 11.0), m.welcomeTitaniumFace);
+        p.position.set(0, -6.90, 0);
         g.add(p);
         return g;
       },
@@ -2082,7 +2163,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 内部補強骨格',
       swatchColor: '#7c8694',
       assembledPos: plPos,
-      explodeOffset: [0, -18, 0],
+      explodeOffset: [0, -33, 0],
       plainAnalogy: '台座の中央を背骨のように貫き、マザーボードと電源基板を正確な高さで浮かせて固定する金属支柱です。',
       summary: '長手方向168mmを貫通するI断面アルミ補強ビームと真鍮製M2.5基板スペーサー柱8本。基板のはんだクラックを防ぎます。',
       opticsAndPhysics: ['断面二次モーメントを2.4倍へ強化し、4文字装着時のたわみを極小化。'],
@@ -2091,13 +2172,13 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const beam = new THREE.Mesh(new THREE.BoxGeometry(168, 1.4, 2.8), m.magnesiumCast);
-        beam.position.set(0, -3.6, 0);
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(166, 0.68, 2.4), m.magnesiumCast);
+        beam.position.set(0, -4.32, 0);
         g.add(beam);
-        const stGeo = new THREE.CylinderGeometry(1.1, 1.1, 3.6, 6);
+        const stGeo = new THREE.CylinderGeometry(0.85, 0.85, 0.68, 6);
         for (let i = 0; i < 8; i++) {
           const st = new THREE.Mesh(stGeo, m.brassGear);
-          st.position.set(-72 + i * 20.5, -2.5, i % 2 === 0 ? 6.5 : -6.5);
+          st.position.set(-72 + i * 20.5, -4.32, i % 2 === 0 ? 9.6 : -9.6);
           g.add(st);
         }
         return g;
@@ -2112,7 +2193,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 通気防塵',
       swatchColor: '#94a3b8',
       assembledPos: plPos,
-      explodeOffset: [-28, -14, 0],
+      explodeOffset: [0, -20, 0],
       plainAnalogy: '冷却用の空気は通しつつ、ホコリや虫が台座の基板室へ入らないように止める極細ステンレス網です。',
       summary: '左右エンドキャップ内側に装着する線径40μmステンレス綾織マイクロメッシュフィルター対。放熱通気と防塵性を両立します。',
       opticsAndPhysics: ['開口率52%の低圧損メッシュにより自然対流気流を阻害せず塵埃を捕集。'],
@@ -2121,10 +2202,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const fL = new THREE.Mesh(new THREE.BoxGeometry(0.45, 5.8, 16.4), m.stainlessMachined);
-        fL.position.set(-90.4, -1.0, 0);
-        const fR = new THREE.Mesh(new THREE.BoxGeometry(0.45, 5.8, 16.4), m.stainlessMachined);
-        fR.position.set(90.4, -1.0, 0);
+        const fL = new THREE.Mesh(new THREE.BoxGeometry(0.42, 5.2, 16.0), m.stainlessMachined);
+        fL.position.set(-90.4, -1.2, 0);
+        const fR = new THREE.Mesh(new THREE.BoxGeometry(0.42, 5.2, 16.0), m.stainlessMachined);
+        fR.position.set(90.4, -1.2, 0);
         g.add(fL, fR);
         return g;
       },
@@ -2149,14 +2230,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
           category: '光学ベンチ台座 / 文字ドッキング機構',
           swatchColor: '#4b586e',
           assembledPos: plPos,
-          explodeOffset: [(d.x / 66) * 14, -2, 0],
+          explodeOffset: [0, -2, 0],
           plainAnalogy: `「${d.ja}」モジュールをピッタリ受け止めてグラつきなく固定する台座側の専用ドッキング溝です。`,
           summary: `「${d.ja}」のダブテールマウントと精密嵌合するCNCアルミ製メス型アリ溝ソケット。バネ式クリックデテントにより確実な装着感を提供します。`,
           opticsAndPhysics: ['60°テーパ両面拘束により全方向ガタつき0.02mm以下の機械保持を実現。'],
           nextGenInnovation: '工具レスワンタッチ着脱ドッキングインターフェース。',
           specs: [{ label: '担当文字', value: `「${d.ja}」専用バイヨネット/アリ溝` }],
           diagramType: 'welcome_optical_plinth',
-          build: (m: V2MaterialLibrary) => buildDovetailMount(d.x, 4.6, 0, 16.2, 3.6, 10.2, m, true),
+          build: (m: V2MaterialLibrary) => buildDovetailMount(d.x, 4.02, 0, 18.2, 2.30, 9.8, m, true),
         },
         {
           id: `welcome-plinth-pogo-receptacle-${d.slug}`,
@@ -2167,14 +2248,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
           category: '光学ベンチ台座 / 文字給電端子',
           swatchColor: '#e2b648',
           assembledPos: plPos,
-          explodeOffset: [(d.x / 66) * 14, -6, 6],
+          explodeOffset: [0, -11, 0],
           plainAnalogy: `台座側から「${d.ja}」のバネ式ピンへ12V電源と光り方の指令を直接手渡す金メッキ端子台です。`,
           summary: `ドッキングソケット底部に埋め込まれた6極金メッキ受電ターゲット基板。ハードゴールド1.0μmめっきパッドが「${d.ja}」側ポゴピンと低抵抗接触します。`,
           opticsAndPhysics: ['耐摩耗硬質金めっきパッドにより5万回着脱後も接触抵抗<25mΩを維持。'],
           nextGenInnovation: '文字挿抜自動検出ピン内蔵スマートドック端子。',
           specs: [{ label: '接点', value: '6極 ハードゴールド1.0μm' }],
           diagramType: 'welcome_optical_plinth',
-          build: (m: V2MaterialLibrary) => buildPogoPinBlock(d.x, 2.2, 0, m, true),
+          build: (m: V2MaterialLibrary) => buildPogoPinBlock(d.x, 1.84, 0, m, true),
         },
       ] as WelcomePartDef[];
     }),
@@ -2189,14 +2270,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 外部電源入力',
       swatchColor: '#98a2b0',
       assembledPos: plPos,
-      explodeOffset: [-18, -14, -24],
+      explodeOffset: [0, -20, -26],
       plainAnalogy: '市販のスマホやPC用USB-C充電器を差し込むだけで「ようこそ」全体へ最大65Wの電力を取り込める充電ポートです。',
       summary: '24ピン完全実装のミッドマウントSUS304シェルUSB-C PD 3.1受電ポート。最大20V/3.25A（65W）受電とUSBファームウェア更新通信の両方に対応します。',
       opticsAndPhysics: ['4点スルーホール金属シェル固定によりケーブル抜去力100N以上の機械耐久を確保。'],
       nextGenInnovation: 'USB-C PD 3.1 PPS対応の汎用ワンケーブル電源入力。',
       specs: [{ label: '定格入力', value: 'USB-C PD 20V / 3.25A (65W)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildUsbCPdReceptacle(-48.0, -1.5, -10.2, m),
+      build: (m) => buildUsbCPdReceptacle(-48.0, -1.50, -10.50, m),
     },
     {
       id: 'welcome-plinth-pd-controller-pcb',
@@ -2207,7 +2288,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / PD電源交渉回路',
       swatchColor: '#1b5e47',
       assembledPos: plPos,
-      explodeOffset: [-18, -16, -16],
+      explodeOffset: [0, -28, 0],
       plainAnalogy: '繋がれたUSB充電器と会話して安全に20Vをもらい、異常な電圧が来たら瞬時に遮断する玄関番チップ基板です。',
       summary: 'CC1/CC2ライン通信を行うUSB-PDコントローラICとバック・トゥ・バック過電圧保護MOSFETを搭載した電源入力サブ基板。',
       opticsAndPhysics: ['24V超の異常サージを 2 μs 以内にゲート遮断し後段のPMIC・バッテリーを保護。'],
@@ -2215,8 +2296,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '過電圧保護', value: '24V OVP / 2μs高速遮断' }],
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
-        const g = buildMiniPcbBoard(11.5, 1.35, 7.6, -48.0, -2.5, -2.6, m);
-        g.add(buildQfnIcPackage(4.0, 0.85, 4.0, -48.0, -1.35, -2.6, m));
+        const g = buildMiniPcbBoard(11.2, 0.90, 7.2, -48.0, -3.20, -2.6, m);
+        g.add(buildQfnIcPackage(3.8, 0.70, 3.8, -48.0, -2.30, -2.6, m));
         return g;
       },
     },
@@ -2229,7 +2310,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 統合電源回路',
       swatchColor: '#15803d',
       assembledPos: plPos,
-      explodeOffset: [-10, -20, -6],
+      explodeOffset: [0, -28, 0],
       plainAnalogy: 'USBや電池の電気を、4文字LED用の12V・スピーカー用の5V・マイコン用の3.3Vへ分けて作る司令塔電源基板です。',
       summary: 'LED駆動12V（最大3.5A）・音響5V（2A）・ロジック3.3V（1.5A）の3系統独立同期降圧PMIC基板。外部電源切断時はゼロ瞬断で内蔵LiFePO4バッテリーへ自動切替します。',
       opticsAndPhysics: ['パワーパス制御により充電しながらの最大輝度点灯とUPS無停電動作を両立。'],
@@ -2237,8 +2318,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '出力系統', value: '12V 3.5A / 5V 2A / 3.3V 1.5A' }],
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
-        const g = buildMiniPcbBoard(21.0, 1.3, 13.0, -24.5, -2.6, 0.6, m);
-        g.add(buildQfnIcPackage(4.8, 0.9, 4.8, -24.5, -1.45, 0.6, m));
+        const g = buildMiniPcbBoard(20.0, 0.95, 12.2, -24.5, -2.80, 0.6, m);
+        g.add(buildQfnIcPackage(4.6, 0.72, 4.6, -24.5, -1.86, 0.6, m));
         return g;
       },
     },
@@ -2251,7 +2332,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 電源平滑部品',
       swatchColor: '#c97643',
       assembledPos: plPos,
-      explodeOffset: [-10, -16, 4],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: '4文字すべてが一斉にパッと光った瞬間でも電圧が落ち込まないよう、電気を一時蓄える大容量タンク部品です。',
       summary: '飽和電流8Aのメタルコンポジットパワーインダクタ3基と超低ESR導電性高分子アルミ固体コンデンサ4本の平滑バンク。',
       opticsAndPhysics: ['ESR < 12 mΩ の固体コンデンサにより全文字同時PWM点灯時の電源ドロップを30mV未満に抑制。'],
@@ -2260,15 +2341,15 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const capGeo = new THREE.CylinderGeometry(1.75, 1.75, 2.5, qRadialSegs(12, 6));
+        const capGeo = new THREE.CylinderGeometry(1.42, 1.42, 1.75, qRadialSegs(12, 6));
         for (let i = 0; i < 4; i++) {
           const cap = new THREE.Mesh(capGeo, m.stainlessMachined);
-          cap.position.set(-32.2 + i * 4.8, -0.8, 4.6);
+          cap.position.set(-31.8 + i * 4.6, -1.32, 4.8);
           g.add(cap);
         }
         for (let i = 0; i < 3; i++) {
-          const ind = new THREE.Mesh(new THREE.BoxGeometry(4.4, 2.2, 4.4), m.welcomeCoreSlate);
-          ind.position.set(-30.8 + i * 6.2, -0.95, -3.2);
+          const ind = new THREE.Mesh(new THREE.BoxGeometry(4.0, 1.75, 3.3), m.welcomeCoreSlate);
+          ind.position.set(-30.4 + i * 5.8, -1.32, -3.7);
           g.add(ind);
         }
         return g;
@@ -2283,7 +2364,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 内蔵電源・無停電',
       swatchColor: '#2563eb',
       assembledPos: plPos,
-      explodeOffset: [-26, -24, 0],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: 'USBケーブルを抜いたり停電したりしても一瞬も消えずに約20分ECO発光を続けられる、燃えにくく超長寿命な薄型安全バッテリーです。',
       summary: '熱暴走耐性に極めて優れたリン酸鉄リチウムイオン（LiFePO4）薄型角形ラミネートセル2直列（6.4V/160mAh・1.02Wh・20C高率放電対応、実体積2.58cc）。充放電3,000サイクル超の長寿命と0ms UPS無停電切替を両立します。',
       opticsAndPhysics: ['オリビン結晶正極により釘刺し・高温下でも酸素放出せず、2.58ccの極薄台座容積内で24時間展示の安全性を確保。'],
@@ -2292,13 +2373,13 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const cellGeo = new THREE.BoxGeometry(30.0, 4.6, 6.6);
+        const cellGeo = new THREE.BoxGeometry(29.6, 3.76, 6.3);
         const c1 = new THREE.Mesh(cellGeo, m.cfaBlue);
-        c1.position.set(-72.0, -2.2, 3.6);
+        c1.position.set(-72.8, -1.20, 3.5);
         const c2 = new THREE.Mesh(cellGeo, m.cfaBlue);
-        c2.position.set(-72.0, -2.2, -3.6);
-        const tab = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2.2, 10.6), m.silverElectrode);
-        tab.position.set(-87.3, -2.2, 0);
+        c2.position.set(-72.8, -1.20, -3.5);
+        const tab = new THREE.Mesh(new THREE.BoxGeometry(0.55, 2.0, 10.2), m.silverElectrode);
+        tab.position.set(-88.0, -1.20, 0);
         g.add(c1, c2, tab);
         return g;
       },
@@ -2312,7 +2393,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 電池安全保護',
       swatchColor: '#353840',
       assembledPos: plPos,
-      explodeOffset: [-26, -28, 4],
+      explodeOffset: [0, -30, 0],
       plainAnalogy: 'バッテリーの過充電・過放電・温度異常を監視して安全を守り、セルをガッチリ保持する難燃ケースです。',
       summary: '2直列セルバランス回路・過充放電遮断IC・NTC温度監視を備えたBMS基板と、UL94 V-0難燃ポリカーボネート製セルクレードル。',
       opticsAndPhysics: ['セル間電圧差を ±10 mV 以内にアクティブバランスしパック寿命を最大化。'],
@@ -2321,9 +2402,9 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const cradle = new THREE.Mesh(new THREE.BoxGeometry(32.0, 1.8, 13.8), m.epdmGasket);
-        cradle.position.set(-72.0, -4.6, 0);
-        const bms = buildMiniPcbBoard(7.8, 1.0, 6.2, -52.0, -2.4, 5.8, m);
+        const cradle = new THREE.Mesh(new THREE.BoxGeometry(31.0, 0.70, 13.6), m.epdmGasket);
+        cradle.position.set(-72.8, -3.55, 0);
+        const bms = buildMiniPcbBoard(7.0, 0.70, 6.0, -51.4, -3.45, 5.8, m);
         g.add(cradle, bms);
         return g;
       },
@@ -2337,7 +2418,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 放熱機構',
       swatchColor: '#98a2b0',
       assembledPos: plPos,
-      explodeOffset: [-6, -24, -12],
+      explodeOffset: [0, -30, 0],
       plainAnalogy: '電源回路とメインマイコンの熱をファン無し・完全無音で冷やし続けるアルミ製の剣山ヒートシンクです。',
       summary: '押出・CNC複合加工のA6063高熱伝導アルミ放熱フィンブロック。左吸気ルーバーからの自然気流でPMIC・アンプの熱を効率放散します。',
       opticsAndPhysics: ['200 W/(m·K)のA6063アルミと最適化フィンピッチにより騒音0 dBの完全静音動作を実現。'],
@@ -2346,14 +2427,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const base = new THREE.Mesh(new THREE.BoxGeometry(17.0, 0.9, 4.4), m.stainlessMachined);
-        base.position.set(-3.5, -3.5, -8.2);
+        const base = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.70, 4.2), m.stainlessMachined);
+        base.position.set(-3.5, -3.45, -8.5);
         g.add(base);
         const fins = qualityLevel() === 0 ? 5 : qualityLevel() === 1 ? 8 : qualityLevel() === 2 ? 12 : 16;
-        const finGeo = new THREE.BoxGeometry(0.55, 2.4, 4.2);
+        const finGeo = new THREE.BoxGeometry(0.55, 2.00, 4.0);
         for (let i = 0; i < fins; i++) {
           const f = new THREE.Mesh(finGeo, m.stainlessMachined);
-          f.position.set(-11.4 + (i / (fins - 1)) * 15.8, -1.85, -8.2);
+          f.position.set(-11.3 + (i / (fins - 1)) * 15.6, -2.10, -8.5);
           g.add(f);
         }
         return g;
@@ -2368,7 +2449,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 熱輸送',
       swatchColor: '#d07447',
       assembledPos: plPos,
-      explodeOffset: [-4, -18, -10],
+      explodeOffset: [0, -25, 0],
       plainAnalogy: '内部の液体が蒸発と凝縮をくり返すことで、銅の何十倍もの速さで熱を放熱フィンへ運ぶ熱輸送パイプです。',
       summary: '焼結銅粉ウィック内蔵のφ4mm扁平銅ヒートパイプ。PMIC基板とメインMCUの熱を瞬時に放熱フィンおよびマグネシウム外装へ輸送します。',
       opticsAndPhysics: ['気液相変化による実効熱伝導率 > 5,000 W/(m·K) でホットスポットを完全均熱化。'],
@@ -2377,8 +2458,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const pipe = new THREE.Mesh(new THREE.BoxGeometry(58.0, 1.0, 2.2), m.copperHeatSpreader);
-        pipe.position.set(1.0, -0.05, -8.2);
+        const pipe = new THREE.Mesh(new THREE.BoxGeometry(58.0, 0.72, 2.0), m.copperHeatSpreader);
+        pipe.position.set(1.0, -0.56, -8.5);
         g.add(pipe);
         return g;
       },
@@ -2392,7 +2473,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 熱インターフェース',
       swatchColor: '#7aa4b8',
       assembledPos: plPos,
-      explodeOffset: [-4, -22, -6],
+      explodeOffset: [0, -31, 0],
       plainAnalogy: '基板の裏側とアルミ放熱体のスキマを埋めて熱を無駄なく伝える絶縁放熱クッションシートです。',
       summary: 'PMIC・MCU・オーディオアンプICの上下面へ貼付する6.0 W/(m·K)高熱伝導シリコーンパッドシート。',
       opticsAndPhysics: ['電気絶縁性を維持したまま熱界面インピーダンスを最小化。'],
@@ -2401,8 +2482,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const pad = new THREE.Mesh(new THREE.BoxGeometry(56.0, 0.55, 11.5), m.thermalPadTim);
-        pad.position.set(2.0, -3.55, 0.5);
+        const pad = new THREE.Mesh(new THREE.BoxGeometry(54.0, 0.44, 10.8), m.thermalPadTim);
+        pad.position.set(1.5, -3.62, 0.6);
         g.add(pad);
         return g;
       },
@@ -2416,7 +2497,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 安全保護',
       swatchColor: '#f1f5f9',
       assembledPos: plPos,
-      explodeOffset: [-14, -18, -14],
+      explodeOffset: [0, -28, 0],
       plainAnalogy: '万が一の故障で過大な電流や異常発熱が起きた時、確実に電気を止めて発火を防ぐ最終安全ブレーカーです。',
       summary: '遮断容量100Aのセラミック管ヒューズと85℃復帰型バイメタルサーマルプロテクタ。ハードウェア独立の二重安全系を構成します。',
       opticsAndPhysics: ['マイコン暴走時にも独立動作する純物理ハードウェア安全遮断機構。'],
@@ -2425,12 +2506,12 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const f = new THREE.Mesh(new THREE.BoxGeometry(5.2, 2.0, 2.2), m.pztCeramic);
-        f.position.set(-39.0, -2.0, -8.2);
-        const cap1 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.15, 2.35), m.silverElectrode);
-        cap1.position.set(-41.2, -2.0, -8.2);
-        const cap2 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.15, 2.35), m.silverElectrode);
-        cap2.position.set(-36.8, -2.0, -8.2);
+        const f = new THREE.Mesh(new THREE.BoxGeometry(5.0, 1.85, 2.0), m.pztCeramic);
+        f.position.set(-39.0, -2.0, -8.8);
+        const cap1 = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.0, 2.15), m.silverElectrode);
+        cap1.position.set(-41.1, -2.0, -8.8);
+        const cap2 = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.0, 2.15), m.silverElectrode);
+        cap2.position.set(-36.9, -2.0, -8.8);
         g.add(f, cap1, cap2);
         return g;
       },
@@ -2444,7 +2525,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 幹線配電',
       swatchColor: '#d07447',
       assembledPos: plPos,
-      explodeOffset: [0, -10, 4],
+      explodeOffset: [0, -16, 0],
       plainAnalogy: '「よ」「う」「こ」「そ」4文字すべてへ電圧低下ゼロで12Vの電気を一気に届ける太い純銅の電力大通りです。',
       summary: '全幅154mmのC1020銅パワーバスバーペア（+12V／GND）。4基のポゴピン受電基板へ直接分岐し、右端の「そ」まで輝度差ゼロの均等給電を実現します。',
       opticsAndPhysics: ['断面積 4.0 mm² の純銅レールにより全幅端でのIR電圧降下を 5 mV 未満へ抑制。'],
@@ -2453,10 +2534,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const b1 = new THREE.Mesh(new THREE.BoxGeometry(156, 0.75, 2.0), m.copperHeatSpreader);
-        b1.position.set(0, 1.05, 2.2);
-        const b2 = new THREE.Mesh(new THREE.BoxGeometry(156, 0.75, 2.0), m.brassGear);
-        b2.position.set(0, 1.05, -2.2);
+        const b1 = new THREE.Mesh(new THREE.BoxGeometry(154, 0.44, 1.8), m.copperHeatSpreader);
+        b1.position.set(0, 1.21, 2.3);
+        const b2 = new THREE.Mesh(new THREE.BoxGeometry(154, 0.44, 1.8), m.brassGear);
+        b2.position.set(0, 1.21, -2.3);
         g.add(b1, b2);
         return g;
       },
@@ -2470,7 +2551,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / EMC対策',
       swatchColor: '#2d343e',
       assembledPos: plPos,
-      explodeOffset: [-12, -16, -12],
+      explodeOffset: [0, -28, 0],
       plainAnalogy: 'USBケーブルがアンテナになって周囲へ電磁ノイズを撒き散らさないよう吸収する黒い磁気リングです。',
       summary: 'Ni-Znフェライトトロイダルコアと大電流コモンモードチョーク。10MHz〜500MHz帯の伝導・放射ノイズを大幅に低減します。',
       opticsAndPhysics: ['コモンモードインピーダンス 600 Ω @ 100MHz によりクリーンなEMC特性を保証。'],
@@ -2479,8 +2560,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const tor = new THREE.Mesh(new THREE.TorusGeometry(2.1, 0.9, 8, qRadialSegs(16, 8)), m.pyroGraphite);
-        tor.position.set(-39.0, -2.0, 5.2);
+        const tor = new THREE.Mesh(new THREE.TorusGeometry(1.85, 0.72, 8, qRadialSegs(16, 8)), m.pyroGraphite);
+        tor.position.set(-39.0, -2.0, 5.4);
         tor.rotation.x = Math.PI * 0.5;
         g.add(tor);
         return g;
@@ -2497,14 +2578,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 中枢制御基板',
       swatchColor: '#1b5e47',
       assembledPos: plPos,
-      explodeOffset: [8, -20, 0],
+      explodeOffset: [0, -28, 0],
       plainAnalogy: '人感センサー・無線・音響・4文字の光の演出すべてを束ねる、装置全体の頭脳マザーボードです。',
       summary: '幅44mm×奥行12mmの6層高密度FR-4マザーボード。ARM Cortex-M7、Wi-Fi 6/BLE、CAN-FD 4ch、オーディオDAC、人感・照度インターフェースを統合します。',
       opticsAndPhysics: ['デジタル部とアナログオーディオ部をグラウンドスリット分離し高音質チャイム再生を実現。'],
       nextGenInnovation: '6層ビルドアップHDIによる超薄型インテリジェント統合制御基板。',
       specs: [{ label: '層構成', value: '6層 FR-4 ENIG金めっき' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildMiniPcbBoard(44.0, 1.3, 12.0, 29.0, -2.6, 1.6, m),
+      build: (m) => buildMiniPcbBoard(44.0, 0.95, 11.8, 29.0, -2.80, 1.5, m),
     },
     {
       id: 'welcome-plinth-cortex-m7-mcu',
@@ -2515,7 +2596,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / メインプロセッサ',
       swatchColor: '#1d2026',
       assembledPos: plPos,
-      explodeOffset: [8, -14, 0],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: '来客の接近を検知して「よ→う→こ→そ」の光のウェーブとチャイム音をリアルタイム計算する中央CPUです。',
       summary: '480MHz動作・倍精度FPU内蔵のARM Cortex-M7プロセッサと音声・点灯パターン格納用128Mbit QSPI NORフラッシュ。',
       opticsAndPhysics: ['1ms周期のCAN-FDブロードキャスト同期により4文字のウェーブ位相ズレ 0.05ms 以内を実現。'],
@@ -2523,8 +2604,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: 'クロック', value: '480 MHz ARM Cortex-M7' }],
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
-        const g = buildQfnIcPackage(7.2, 1.1, 7.2, 20.0, -1.35, 1.6, m);
-        g.add(buildQfnIcPackage(4.2, 0.9, 4.2, 27.5, -1.45, -0.5, m));
+        const g = buildQfnIcPackage(6.8, 0.86, 6.8, 20.0, -1.78, 1.6, m);
+        g.add(buildQfnIcPackage(3.8, 0.76, 3.8, 27.2, -1.84, -0.5, m));
         return g;
       },
     },
@@ -2537,7 +2618,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / ワイヤレス通信',
       swatchColor: '#94a3b8',
       assembledPos: plPos,
-      explodeOffset: [16, -14, -8],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: 'スマホアプリから「ようこそ」の明るさ・光り方・ウェルカム音声をワイヤレスで設定できる無線チップです。',
       summary: '技適認証済み金属シールド一体Wi-Fi 6 / BLE 5.3モジュールと2.4/5GHz帯高利得セラミックアンテナ。',
       opticsAndPhysics: ['フロントガラス開口近傍のアンテナクリアランス配置によりマグネシウム筐体内でも安定通信。'],
@@ -2546,10 +2627,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const mod = new THREE.Mesh(new THREE.BoxGeometry(9.6, 1.6, 7.2), m.midPlateSteel);
-        mod.position.set(36.5, -1.1, 0.2);
-        const ant = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.0, 1.4), m.pztCeramic);
-        ant.position.set(42.5, -1.35, 5.8);
+        const mod = new THREE.Mesh(new THREE.BoxGeometry(9.2, 1.15, 6.6), m.midPlateSteel);
+        mod.position.set(36.8, -1.64, 0.2);
+        const ant = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.85, 1.3), m.pztCeramic);
+        ant.position.set(42.4, -1.79, 5.6);
         g.add(mod, ant);
         return g;
       },
@@ -2563,14 +2644,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 文字間通信バス',
       swatchColor: '#334155',
       assembledPos: plPos,
-      explodeOffset: [4, -15, 6],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: '台座の頭脳から4文字それぞれのマイコンへ、ノイズに強い車載規格のデジタル信号を届ける通信チップです。',
       summary: '最大5MbpsのCAN-FD差動トランシーバーICと120Ωスプリット終端抵抗網。各文字の個別輝度・温度・装着ステータスを双方向ポーリングします。',
       opticsAndPhysics: ['差動信号伝送によりPWM大電流スイッチング環境でもビットエラーレート 10⁻¹² 未満を達成。'],
       nextGenInnovation: '車載ISO 11898-2準拠の超高信頼4文字同期バス。',
       specs: [{ label: '通信速度', value: '5 Mbps CAN-FD 差動バス' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildQfnIcPackage(4.4, 0.9, 3.6, 11.2, -1.45, 3.6, m),
+      build: (m) => buildQfnIcPackage(4.2, 0.76, 3.4, 11.2, -1.84, 3.6, m),
     },
     {
       id: 'welcome-plinth-tof-presence-sensor',
@@ -2581,7 +2662,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 人感自動点灯センサー',
       swatchColor: '#be123c',
       assembledPos: plPos,
-      explodeOffset: [0, -10, 22],
+      explodeOffset: [0, -20, 22],
       plainAnalogy: '人が近づくと赤外線レーザーの反射時間で距離を測り、自動で「よ→う→こ→そ」と光の歓迎演出を始める目玉センサーです。',
       summary: '940nm不可視VCSELレーザーと8×8マルチゾーンSPADアレイ内蔵のToF測距センサー。前面上部IR専用窓へ遮蔽物ゼロで配置し、最大4m先の来客接近・進行方向を検知します。',
       opticsAndPhysics: ['光速 c の飛行時間 t から距離 d = c·t / 2 をミリメートル精度で即時計測。'],
@@ -2591,12 +2672,12 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const mod = new THREE.Mesh(new THREE.BoxGeometry(6.4, 2.2, 2.0), m.icEpoxy);
-        mod.position.set(0, 0.45, 10.6);
-        const tx = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.48, 10).rotateX(Math.PI / 2), m.irLedLens);
-        tx.position.set(-1.5, 0.45, 11.7);
-        const rx = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.48, 10).rotateX(Math.PI / 2), m.siliconSensorDie);
-        rx.position.set(1.5, 0.45, 11.7);
+        const mod = new THREE.Mesh(new THREE.BoxGeometry(6.4, 2.0, 1.8), m.icEpoxy);
+        mod.position.set(0, -0.25, 10.45);
+        const tx = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.44, 10).rotateX(Math.PI / 2), m.irLedLens);
+        tx.position.set(-1.5, -0.25, 11.58);
+        const rx = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.44, 10).rotateX(Math.PI / 2), m.siliconSensorDie);
+        rx.position.set(1.5, -0.25, 11.58);
         g.add(mod, tx, rx);
         return g;
       },
@@ -2610,7 +2691,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 自動調光センサー',
       swatchColor: '#0e94c8',
       assembledPos: plPos,
-      explodeOffset: [10, -10, 20],
+      explodeOffset: [0, -20, 22],
       plainAnalogy: '部屋が明るい昼間はクッキリ明るく、夜はまぶしすぎない優しい明るさへ自動調整してくれる明るさセンサーです。',
       summary: '0.01 lux〜83,000 luxの超広ダイナミックレンジ照度センサー（I²C出力）。ToF横の上部光学窓へ無遮蔽配置し、周囲環境光に応じて4文字の目標輝度を自動最適化します。',
       opticsAndPhysics: ['赤外カット内蔵デュアルフォトダイオードにより太陽光・蛍光灯・LED照明下で正確なルクス計測。'],
@@ -2619,10 +2700,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const pkg = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.8, 1.4), m.pztCeramic);
-        pkg.position.set(12.0, 0.45, 10.8);
-        const lens = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.1, 0.4), m.irCutGlass);
-        lens.position.set(12.0, 0.45, 11.6);
+        const pkg = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.7, 1.3), m.pztCeramic);
+        pkg.position.set(12.0, -0.25, 10.65);
+        const lens = new THREE.Mesh(new THREE.BoxGeometry(1.7, 1.1, 0.36), m.irCutGlass);
+        lens.position.set(12.0, -0.25, 11.50);
         g.add(pkg, lens);
         return g;
       },
@@ -2636,7 +2717,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / ステータス発光',
       swatchColor: '#e65a28',
       assembledPos: plPos,
-      explodeOffset: [0, -12, 18],
+      explodeOffset: [0, -20, 22],
       plainAnalogy: '台座の正面下部を一直線に彩り、上部ToF/照度センサーの視界を一切遮らずに状態を光で伝えるステータスバーです。',
       summary: '全幅174mmのシナバー光学導光バーと背面アドレス指定RGBW LEDストリップ。上部光学窓と垂直分離（1.7mmクリアランス）し、通常時はブランドシナバー点灯、来客検知時に波動発光します。',
       opticsAndPhysics: ['全幅エッジ導光＋マイクロ拡散により連続した1本のレーザーラインのように均一発光。'],
@@ -2645,8 +2726,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const bar = new THREE.Mesh(new THREE.BoxGeometry(174, 1.8, 1.35), m.sonyAlphaCinnabar);
-        bar.position.set(0, -2.9, 11.4);
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(174, 1.10, 1.10), m.sonyAlphaCinnabar);
+        bar.position.set(0, -3.10, 12.25);
         g.add(bar);
         return g;
       },
@@ -2660,14 +2741,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 音響出力',
       swatchColor: '#d8dee6',
       assembledPos: plPos,
-      explodeOffset: [24, -18, 0],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: '人が近づいた時や起動時に、澄んだ心地よいウェルカムチャイム音を奏でる高性能ネオジム小型スピーカーです。',
       summary: 'N52ネオジムマグネットと高剛性カーボン複合振動板を備えた3W超薄型フルレンジスピーカーユニット。ポゴ端子直下に1.5mm離隔配置し、澄んだ倍音のウェルカムチャイムを再生します。',
       opticsAndPhysics: ['高磁束密度N52ネオジム磁気回路により高さ4.5mmの極薄構造でも84 dB/Wの高能率を実現。'],
       nextGenInnovation: '極薄マイクロバスケット＆銅ショートリング低歪み磁気回路。',
       specs: [{ label: '定格出力', value: '3.0 W (4 Ω / 220Hz–18kHz)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildWelcomeSpeakerUnit(68.0, -2.35, 0, m),
+      build: (m) => buildWelcomeSpeakerUnit(68.0, -1.35, 0, m),
     },
     {
       id: 'welcome-plinth-speaker-enclosure',
@@ -2678,7 +2759,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 音響箱設計',
       swatchColor: '#353840',
       assembledPos: plPos,
-      explodeOffset: [24, -24, 4],
+      explodeOffset: [0, -30, 0],
       plainAnalogy: 'スピーカーの音がスカスカにならず豊かに響くように設計された専用の小型スピーカーボックスです。',
       summary: '実効音響容積2.0cc（外形24.0×4.6×17.5mm＋吸音マイクロファイバー充填）の気密ガラス繊維強化ABS音響エンクロージャーと折返しヘルムホルツ共鳴バスレフダクト（Ø2.0×L22.4mm）。背面音波の打ち消しを防ぎ、澄んだウェルカムチャイムを響かせます。',
       opticsAndPhysics: ['実効2.0cc＋Ø2.0×L22.4mm折返しラビリンスによりヘルムホルツ共鳴周波数 f_0 = 440.5 Hz（コンサートピッチA4）へ精密チューニング。'],
@@ -2687,9 +2768,16 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const box = new THREE.Mesh(new THREE.BoxGeometry(24.0, 4.6, 17.5), m.epdmGasket);
-        box.position.set(68.0, -2.7, 0);
-        g.add(box);
+        const addW = (w: number, h: number, d: number, x: number, y: number, z: number) => {
+          const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m.epdmGasket);
+          mesh.position.set(x, y, z);
+          g.add(mesh);
+        };
+        addW(23.0, 0.70, 17.6, 68.0, -3.53, 0);
+        addW(23.0, 3.30, 1.10, 68.0, -1.53, 8.25);
+        addW(23.0, 3.30, 1.10, 68.0, -1.53, -8.25);
+        addW(1.10, 3.30, 15.4, 57.05, -1.53, 0);
+        addW(1.10, 3.30, 15.4, 78.95, -1.53, 0);
         return g;
       },
     },
@@ -2702,14 +2790,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / オーディオ回路',
       swatchColor: '#1d2026',
       assembledPos: plPos,
-      explodeOffset: [20, -15, 8],
+      explodeOffset: [0, -26, 0],
       plainAnalogy: 'マイコンからのデジタル音源をクリアな音に変換し、少ない電力でスピーカーを鳴らす高音質アンプチップです。',
       summary: 'I²Sデジタル直結の24bit/96kHz DAC内蔵・変換効率91%高効率クラスDモノラルアンプIC。S/N比102dBで無音時のホワイトノイズを完全排除します。',
       opticsAndPhysics: ['デジタルI²S入力により基板内アナログ配線長をゼロ化し高周波ノイズ混入を根絶。'],
       nextGenInnovation: 'スマートスピーカー保護（リアルタイム振幅・温度リミッタ）内蔵。',
       specs: [{ label: 'S/N比 / 効率', value: '102 dB / 効率 91%' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildQfnIcPackage(4.2, 0.9, 4.2, 47.0, -1.45, 3.6, m),
+      build: (m) => buildQfnIcPackage(4.0, 0.76, 4.0, 47.5, -1.84, 3.6, m),
     },
     {
       id: 'welcome-plinth-rotary-encoder-dial',
@@ -2727,7 +2815,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       nextGenInnovation: 'カメラダイヤル品質の重厚トルク感・光学式ロータリーHMI。',
       specs: [{ label: '分解能', value: '24クリック/回転 + プッシュSW' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildKnurledRotaryDial(91.5, 5.4, 0, m),
+      build: (m) => buildKnurledRotaryDial(91.5, 5.88, 0, m),
     },
     {
       id: 'welcome-plinth-power-toggle-switch',
@@ -2738,7 +2826,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 物理操作HMI',
       swatchColor: '#e65a28',
       assembledPos: plPos,
-      explodeOffset: [36, -12, -14],
+      explodeOffset: [0, -20, -24],
       plainAnalogy: '主電源のON/OFFと、点灯アニメーションの切替を手元で確実に操作できる物理スイッチです。',
       summary: '金メッキ接点の主電源スライドスイッチと作動荷重2.2Nの防水タクティルモード切替スイッチ。待機消費電力ゼロの完全物理電源遮断にも対応します。',
       opticsAndPhysics: ['明確なクリックスナップ感により背面手探りでも誤操作なく確実操作可能。'],
@@ -2747,10 +2835,10 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
         const g = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(6.4, 2.8, 3.6), m.icEpoxy);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(6.2, 2.6, 3.6), m.icEpoxy);
         body.position.set(84.0, -0.8, -10.8);
-        const lever = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.8, 2.6), m.sonyAlphaCinnabar);
-        lever.position.set(84.0, -0.8, -13.0);
+        const lever = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.8, 1.64), m.sonyAlphaCinnabar);
+        lever.position.set(84.0, -0.8, -13.42);
         g.add(body, lever);
         return g;
       },
@@ -2764,7 +2852,7 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 内部統合配線',
       swatchColor: '#c76414',
       assembledPos: plPos,
-      explodeOffset: [4, -12, 8],
+      explodeOffset: [0, -18, 0],
       plainAnalogy: 'マザーボードと前面センサー・4文字ソケット・右端ダイヤル・スピーカーをスッキリ繋ぐ専用内部ハーネス群です。',
       summary: 'インピーダンス制御ポリイミドFPCとシールド差動ツイストペアハーネス。マグネシウム筐体の配線溝へ整然と収まり、誤配線をゼロ化します。',
       opticsAndPhysics: ['差動ツイストペア＋銅箔シールドによりCAN-FD信号とオーディオ信号の相互干渉を遮断。'],
@@ -2772,8 +2860,8 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       specs: [{ label: '構成', value: 'ポリイミドFPC + ツイストペア' }],
       diagramType: 'welcome_optical_plinth',
       build: (m) => {
-        const g = buildZifConnectorAndFpc(-22.0, -1.6, 5.2, 24.0, -1.6, 5.2, m, 'both');
-        g.add(buildZifConnectorAndFpc(28.0, -1.6, -4.5, 84.0, -1.6, -4.5, m, 'fpc'));
+        const g = buildZifConnectorAndFpc(-22.0, 0.55, 5.4, 24.0, 0.55, 5.4, m, 'both', true);
+        g.add(buildZifConnectorAndFpc(28.0, 0.55, -5.0, 83.5, 0.55, -5.0, m, 'fpc', true));
         return g;
       },
     },
@@ -2786,14 +2874,14 @@ function buildAllWelcome216Defs(): readonly WelcomePartDef[] {
       category: '光学ベンチ台座 / 電磁遮蔽',
       swatchColor: '#94a3b8',
       assembledPos: plPos,
-      explodeOffset: [8, -10, 0],
+      explodeOffset: [0, -24, 0],
       plainAnalogy: 'メインCPUと無線・電源回路の間の電波干渉をシャットアウトし、安定した通信と高音質を守る金属シールド蓋です。',
       summary: '480MHz Cortex-M7と高速メモリ区画を完全被覆する洋白製EMIシールド缶。無線モジュールとオーディオ回路への高調波飛び込みを徹底遮断します。',
       opticsAndPhysics: ['マルチ区画シールド隔壁により480MHzクロック高調波を -34 dB 減衰。'],
       nextGenInnovation: 'マルチキャビティ一体絞り洋白EMIシールドフレーム。',
       specs: [{ label: '遮蔽効果', value: '> 34 dB (30MHz–2.4GHz)' }],
       diagramType: 'welcome_optical_plinth',
-      build: (m) => buildEmiShieldCan(28.0, 2.6, 13.5, 18.0, -0.4, 0, m.midPlateSteel),
+      build: (m) => buildEmiShieldCan(23.6, 1.60, 10.6, 19.6, -1.42, 1.6, m.midPlateSteel, '+y'),
     },
   ];
 

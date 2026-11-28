@@ -259,20 +259,27 @@ export class ArtifactCaptureBridge {
     this.host = host;
   }
 
-  private async waitUnitReady(timeoutMs = 15000): Promise<void> {
+  private async waitUnitReady(timeoutMs = 15000): Promise<boolean> {
     const start = performance.now();
     while (!this.host.isUnitReady() && performance.now() - start < timeoutMs) {
       await new Promise((r) => setTimeout(r, 10));
     }
+    const ready = this.host.isUnitReady();
+    if (!ready) {
+      console.warn(`[ArtifactCaptureBridge] waitUnitReady timed out after ${timeoutMs}ms`);
+    }
+    return ready;
   }
 
-  private async waitSchematicHydrated(timeoutMs = 8000): Promise<void> {
+  private async waitSchematicHydrated(timeoutMs = 8000): Promise<boolean> {
     const start = performance.now();
     while (performance.now() - start < timeoutMs) {
       const content = this.host.appRoot.querySelector('.schematic-stage .exp-diagram-content');
-      if (content && content.querySelector('svg')) break;
+      if (content && content.querySelector('svg')) return true;
       await new Promise((r) => setTimeout(r, 8));
     }
+    console.warn(`[ArtifactCaptureBridge] waitSchematicHydrated timed out after ${timeoutMs}ms`);
+    return false;
   }
 
   private clearAnnotations(): void {

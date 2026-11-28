@@ -113,17 +113,17 @@ export const WELCOME_PLINTH_WAVE_D_DEFS: readonly WelcomeExpansionPartDef[] = [
       const g = new THREE.Group();
       const ql = qualityLevel();
       const shell = new THREE.Mesh(new THREE.BoxGeometry(4.2, 2.6, 0.48), m.stainlessMachined);
-      shell.position.set(-17.5, -1.0, -13.50);
+      shell.position.set(-17.5, -1.0, -13.20);
       const cavity = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.6, 0.24), m.matteBlackAnodized);
-      cavity.position.set(-17.5, -1.0, -13.65);
+      cavity.position.set(-17.5, -1.0, -13.35);
       g.add(shell, cavity);
       if (ql >= 1) {
         const key = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.34, 0.16), m.goldPlating);
-        key.position.set(-17.5, -1.0, -13.68);
+        key.position.set(-17.5, -1.0, -13.38);
         const latchL = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.8, 0.14), m.titaniumRivet);
-        latchL.position.set(-19.2, -1.0, -13.72);
+        latchL.position.set(-19.2, -1.0, -13.42);
         const latchR = latchL.clone();
-        latchR.position.set(-15.8, -1.0, -13.72);
+        latchR.position.set(-15.8, -1.0, -13.42);
         g.add(key, latchL, latchR);
       }
       return g;

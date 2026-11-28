@@ -492,7 +492,7 @@ export const WELCOME_GLYPH_ULTRA_DETAIL_DEFS: readonly WelcomeExpansionPartDef[]
     category: '「こ」モジュール / 石英支柱絶縁保護',
     swatchColor: '#f8fafc',
     assembledPos: [CX_KO, 4, 0],
-    explodeOffset: [16, 6, 4],
+    explodeOffset: [10, 6, 4],
     plainAnalogy: '「こ」の上下を繋ぐ2本の石英柱の裏側を通る極細電源線を、摩擦ゼロで熱にも強いフッ素樹脂チューブで保護する絶縁スリーブ対です。',
     summary: '「こ」左右2本の石英ポスト間（X=-7.0 / +6.0, Y=+1.8, Z=-2.48）へ沿わせた極薄PTFE（壁厚0.15 mm、耐電圧>12 kV）マイクロ保護スリーブ対。',
     opticsAndPhysics: [

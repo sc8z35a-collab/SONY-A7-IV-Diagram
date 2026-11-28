@@ -1,5 +1,5 @@
 area	dir	files	lines	bytes	key_files
-app	src	1	2632	90932	main.ts
+app	src	1	2686	92683	main.ts
 assemblies	src/assemblies	2	2807	97843	lazyExplanations.ts,types.ts
 assemblies	src/assemblies/battery	9	5729	184133	batteryExplanations.ts,batteryParts.ts,batteryPhysicsOverlay.ts,batteryUltra27Explanations.ts
 assemblies	src/assemblies/bionz	10	10710	388363	bionzExplanations.ts,bionzExtraExplanations.ts,bionzExtraParts.ts,bionzParts.ts
@@ -9,7 +9,7 @@ assemblies	src/assemblies/cfexpress	11	11073	408618	cfexpressExplanations.ts,cfe
 assemblies	src/assemblies/drybox	18	8291	343317	dryboxExplanationsA.ts,dryboxExplanationsB.ts,dryboxExplanationsC.ts,dryboxExplanationsD.ts
 assemblies	src/assemblies/evf	11	16290	608304	evfDetailHelpers.ts,evfExplanations.ts,evfMacroDetailEnricher.ts,evfMicroExplanations.ts
 assemblies	src/assemblies/lcd	11	7473	259690	lcdExplanations.ts,lcdMicroExplanations.ts,lcdMicroParts.ts,lcdParts.ts
-assemblies	src/assemblies/lens	10	7883	271005	lensExplanations.ts,lensMicroExplanations.ts,lensMicroParts.ts,lensOpticalSim.ts
+assemblies	src/assemblies/lens	10	7886	271243	lensExplanations.ts,lensMicroExplanations.ts,lensMicroParts.ts,lensOpticalSim.ts
 assemblies	src/assemblies/mainboard	7	3790	131951	mainboardExplanations.ts,mainboardMicroExplanations.ts,mainboardMicroParts.ts,mainboardParts.ts
 assemblies	src/assemblies/mic	13	10648	397133	micExplanations.ts,micParts.ts,micPhysicsOverlay.ts,micUltra30Explanations.ts
 assemblies	src/assemblies/mirai2028	9	9181	291453	miraiFh01Parts.ts,miraiFh02Parts.ts,miraiFh08Parts.ts,miraiFh17Parts.ts
@@ -19,12 +19,12 @@ assemblies	src/assemblies/original	5	2140	78462	originalShared.ts,riimosE1Chassi
 assemblies	src/assemblies/sensor	21	18566	662611	explanations.ts,macroParts.ts,microPixelDeepAuditExplanations.ts,microPixelDeepAuditParts.ts
 assemblies	src/assemblies/sensorFab	33	13266	492825	sensorFabExplanations.ts,sensorFabParts.ts,sensorFabPhysicsOverlay.ts,sensorFabVol1Explanations.ts
 assemblies	src/assemblies/shutter	15	10371	356126	shutterExplanations.ts,shutterMicroExplanations.ts,shutterMicroParts.ts,shutterParts.ts
-assemblies	src/assemblies/welcome	13	14528	858279	welcomeGeometry.ts,welcomeGlyphMetrologyParts.ts,welcomeGlyphPrecisionParts.ts,welcomeGlyphUltraDetailParts.ts
-core	src/core	14	13824	498609	capture_bridge.ts,dispose.ts,fast_proxy_builder.ts,geometry_quality.ts
+assemblies	src/assemblies/welcome	13	15078	881178	welcomeGeometry.ts,welcomeGlyphMetrologyParts.ts,welcomeGlyphPrecisionParts.ts,welcomeGlyphUltraDetailParts.ts
+core	src/core	14	14114	509329	capture_bridge.ts,dispose.ts,fast_proxy_builder.ts,geometry_quality.ts
 data	src/data	23	196000	12223294	battery.json,bionz.json,bionz_v2.json,body.json
 data	src/data/mirai_library	10	10	846360	glossary.json,matrix.json,vol01.json,vol02.json
-engine	src/engine	6	6089	214191	CadHelpers.ts,CadViewport.ts,FastCadGeometry.ts,GpuOptimizer.ts
-playground	src/playground	6	7127	1635145	CadPlaygroundStudio.ts,CameraEngineeringGrader.ts,PartGeometryExtractor.ts,PlyaVerificationPipeline.ts
+engine	src/engine	6	6161	217872	CadHelpers.ts,CadViewport.ts,FastCadGeometry.ts,GpuOptimizer.ts
+playground	src/playground	6	7241	1620014	CadPlaygroundStudio.ts,CameraEngineeringGrader.ts,PartGeometryExtractor.ts,PlyaVerificationPipeline.ts
 scripts	scripts	10	6341	246609	bg.mjs,build_mirai_content.mjs,capture_engine.mjs,dx.mjs
 scripts	scripts/bench	3	1627	67244	benchmark_hyper_before_after.mjs,verify_ultra_motion_and_hud.mjs,verify_v3_kine_fast_ultra_ux.mjs
 scripts	scripts/buchigire_guard	6	3966	145835	gate_and_land.mjs,git_plumbing.mjs,renderers.mjs,safety_scanners.mjs
@@ -32,8 +32,8 @@ scripts	scripts/dx	10	5895	220573	atlas_builder.mjs,audit_and_selftest.mjs,brief
 scripts	scripts/lib	3	661	23970	catalog_worker.mjs,hyper_cache.mjs,validate_worker.mjs
 scripts	scripts/sokutei_core	3	1829	67540	domains.mjs,stats.mjs,telemetry.mjs
 scripts	scripts/spatial_engine	5	3032	112243	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
-styles	src/styles	1	7150	141682	main.css
-ui	src/ui	59	42049	3245941	ExplanationDrawer.ts,LensOpticsStudio.ts,MiraiLibraryStudio.ts,OriginalBlueprintStudio.ts
+styles	src/styles	1	7084	140699	main.css
+ui	src/ui	59	42239	3252627	ExplanationDrawer.ts,LensOpticsStudio.ts,MiraiLibraryStudio.ts,OriginalBlueprintStudio.ts
 ui	src/ui/bionzV2HdSchematics	10	7998	659670	groupA.ts,groupB.ts,groupC.ts,groupD.ts
 ui	src/ui/dryboxHdSchematics	16	8921	747749	groupA.ts,groupB.ts,groupC.ts,groupD.ts
 ui	src/ui/evfHdSchematics	5	3986	317883	evfHdGroup1.ts,evfHdGroup2.ts,evfHdGroup3.ts,index.ts

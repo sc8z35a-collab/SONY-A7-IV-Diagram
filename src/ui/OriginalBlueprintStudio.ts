@@ -117,23 +117,47 @@ export class OriginalBlueprintStudio {
     return this.openState;
   }
 
+  private boundKeyDown = (e: KeyboardEvent) => {
+    if (this.openState && e.key === 'Escape') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      this.close();
+    }
+  };
+
   public open(tab: OriginalStudioTab = 'principles'): void {
     this.ensureDom();
     this.activeTab = tab;
     this.openState = true;
     this.backdrop!.classList.add('is-open');
+    this.backdrop!.setAttribute('aria-hidden', 'false');
     this.renderTab();
   }
 
   public close(): void {
     this.openState = false;
-    this.backdrop?.classList.remove('is-open');
+    if (this.backdrop) {
+      this.backdrop.classList.remove('is-open');
+      this.backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  public dispose(): void {
+    this.close();
+    window.removeEventListener('keydown', this.boundKeyDown);
+    if (this.backdrop) {
+      this.backdrop.remove();
+      this.backdrop = null;
+    }
+    this.bodyEl = null;
+    this.tabBtns.clear();
   }
 
   private ensureDom(): void {
     if (this.backdrop) return;
     const backdrop = document.createElement('div');
     backdrop.className = 'orig-studio-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) this.close();
     });
@@ -194,11 +218,7 @@ export class OriginalBlueprintStudio {
     document.body.appendChild(backdrop);
     this.backdrop = backdrop;
 
-    window.addEventListener('keydown', (e) => {
-      if (this.openState && e.key === 'Escape') {
-        this.close();
-      }
-    });
+    window.addEventListener('keydown', this.boundKeyDown);
   }
 
   private renderTab(): void {

@@ -283,14 +283,17 @@ export function evaluateCustomCamera(
   const computeGroupCenter = (list: PlacedPartSnapshot[]): THREE.Vector3 | null => {
     const len = list.length;
     if (len === 0) return null;
-    let sx = 0, sy = 0, sz = 0;
+    let sx = 0, sy = 0, sz = 0, valid = 0;
     for (let i = 0; i < len; i++) {
       const c = list[i].worldCenter;
+      if (!Number.isFinite(c.x) || !Number.isFinite(c.y) || !Number.isFinite(c.z)) continue;
       sx += c.x;
       sy += c.y;
       sz += c.z;
+      valid++;
     }
-    const inv = 1 / len;
+    if (valid === 0) return null;
+    const inv = 1 / valid;
     return new THREE.Vector3(sx * inv, sy * inv, sz * inv);
   };
 

@@ -116,6 +116,11 @@ export class UnitV2Runtime {
   private ready = false;
   private activeUnitId: string | null = null;
   private activationToken = 0;
+  private inflightActivation: Promise<void> | null = null;
+  private inflightProxyBuild: Promise<void> | null = null;
+  private backgroundProxyToken = 0;
+  private backgroundProxyTimer: number | null = null;
+  private lastBuildFailed = false;
   private activeUnit: OptimizedUnit | null = null;
   private buildResult: UnitBuildResult | null = null;
   // Co-resident STD LITE v2 motion proxy (for ULTRA) and 1-DC FAST proxy (for ULTRA & LITE)
@@ -202,6 +207,15 @@ export class UnitV2Runtime {
 
   public isReady(): boolean {
     return this.active && this.ready;
+  }
+
+  public isBuilding(unitId?: string): boolean {
+    if (!this.inflightActivation) return false;
+    return unitId ? this.activeUnitId === unitId : true;
+  }
+
+  public hasBuildFailed(): boolean {
+    return this.lastBuildFailed;
   }
 
   public getActiveUnitId(): string | null {
@@ -515,18 +529,23 @@ export class UnitV2Runtime {
       hdr[2] = h;
       hdr[3] = isHalf ? 1 : 2;
       const pixels = isHalf ? new Uint16Array(packet, 16) : new Uint8Array(packet, 16);
-      // Drain prior GL error state
-      while (gl.getError() !== gl.NO_ERROR) {}
+      // Drain prior GL error state with strict iteration guard (prevents infinite loop on context loss)
+      for (let g = 0; g < 32 && !gl.isContextLost() && gl.getError() !== gl.NO_ERROR; g++) {
+        // drain
+      }
       this.renderer.readRenderTargetPixels(envRt, 0, 0, w, h, pixels);
       let readOk = gl.getError() === gl.NO_ERROR;
       if (!readOk && isHalf && gl instanceof WebGL2RenderingContext) {
         // WebGL2 spec guarantees (RGBA, FLOAT) readback on RGBA16F attachments
         const prevRt = this.renderer.getRenderTarget();
-        this.renderer.setRenderTarget(envRt);
         const f32 = new Float32Array(w * h * 4);
-        gl.readPixels(0, 0, w, h, gl.RGBA, gl.FLOAT, f32);
-        readOk = gl.getError() === gl.NO_ERROR;
-        this.renderer.setRenderTarget(prevRt);
+        try {
+          this.renderer.setRenderTarget(envRt);
+          gl.readPixels(0, 0, w, h, gl.RGBA, gl.FLOAT, f32);
+          readOk = gl.getError() === gl.NO_ERROR;
+        } finally {
+          this.renderer.setRenderTarget(prevRt);
+        }
         if (readOk) {
           const out16 = pixels as Uint16Array;
           for (let i = 0; i < f32.length; i++) {
@@ -823,7 +842,126 @@ export class UnitV2Runtime {
     _hasLastUltraCamMat = false;
   }
 
+  private cancelPendingBackgroundProxy(): void {
+    this.backgroundProxyToken++;
+    if (this.backgroundProxyTimer !== null) {
+      clearTimeout(this.backgroundProxyTimer);
+      this.backgroundProxyTimer = null;
+    }
+  }
+
+  private scheduleUltraMotionProxyBuild(
+    activationToken: number,
+    unitId: string,
+    camera: THREE.Camera
+  ): void {
+    this.cancelPendingBackgroundProxy();
+    const proxyToken = this.backgroundProxyToken;
+    const isCancelled = () =>
+      proxyToken !== this.backgroundProxyToken ||
+      activationToken !== this.activationToken ||
+      !this.active ||
+      !this.ready ||
+      this.quality !== 'ultra' ||
+      this.activeUnitId !== unitId;
+
+    this.backgroundProxyTimer = window.setTimeout(() => {
+      this.backgroundProxyTimer = null;
+      if (isCancelled()) return;
+
+      const run = (async () => {
+        let candidateProxy: OptimizedUnit | null = null;
+        try {
+          candidateProxy = await loadRegisteredUnit(unitId);
+          if (isCancelled()) return;
+
+          const planes = this.sectionActive ? [this.clippingPlane] : [];
+          const candidateProxyBuilt = await candidateProxy.build('standard_lite', this.cache, {
+            frameBudgetMs: 6.0,
+            synchronous: false,
+            clippingPlanes: planes,
+            subView: this.subView,
+            integratedMode: this.integratedMode,
+            isAborted: isCancelled,
+          });
+          if (isCancelled()) {
+            candidateProxy.dispose(this.cache);
+            candidateProxy = null;
+            return;
+          }
+
+          const currentPlanes = this.sectionActive ? [this.clippingPlane] : [];
+          const fastProxy = buildFastProxyFromLiteResult(unitId, candidateProxyBuilt, this.cache, currentPlanes);
+          if (isCancelled()) {
+            fastProxy?.dispose(this.cache);
+            candidateProxy.dispose(this.cache);
+            candidateProxy = null;
+            return;
+          }
+
+          this.liteProxyUnit = candidateProxy;
+          this.liteProxyBuildResult = candidateProxyBuilt;
+          this.fastProxyBundle = fastProxy;
+          candidateProxy = null;
+
+          this.scene.add(candidateProxyBuilt.rootGroup);
+          this.liteProxyUnit.setClippingPlanes?.(currentPlanes);
+          this.liteProxyUnit.setSubView?.(this.subView);
+          this.liteProxyUnit.updateExplode(this.explodeFactor, true);
+          this.liteProxyUnit.setVisualState(
+            this.selectedId,
+            this.hoveredId,
+            this.hiddenIds,
+            this.isolatedId,
+            this.renderMode
+          );
+          this.liteProxyUnit.setPhysicsVisible?.(false);
+          this.liteProxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+          candidateProxyBuilt.rootGroup.visible = this.motionStage === 'lite';
+
+          if (fastProxy) {
+            this.scene.add(fastProxy.rootGroup);
+            fastProxy.setClippingPlanes(currentPlanes);
+            fastProxy.updateExplode(this.explodeFactor);
+            fastProxy.setVisualState(
+              this.selectedId,
+              this.hoveredId,
+              this.hiddenIds,
+              this.isolatedId,
+              this.renderMode
+            );
+            fastProxy.rootGroup.visible = this.motionStage === 'fast';
+          }
+
+          if (!this.contextLost && !isCancelled()) {
+            const prevLiteVis = candidateProxyBuilt.rootGroup.visible;
+            const prevFastVis = fastProxy ? fastProxy.rootGroup.visible : false;
+            candidateProxyBuilt.rootGroup.visible = true;
+            if (fastProxy) fastProxy.rootGroup.visible = true;
+            this.cache.warmupShaders(this.renderer, this.scene, camera);
+            candidateProxyBuilt.rootGroup.visible = prevLiteVis;
+            if (fastProxy) fastProxy.rootGroup.visible = prevFastVis;
+          }
+          this.kineEngine.invalidate();
+          this.vramMonitor.recordActivePeak(this.renderer);
+        } catch {
+          if (candidateProxy) {
+            candidateProxy.dispose(this.cache);
+          }
+        }
+      })();
+
+      this.inflightProxyBuild = run;
+      void run.finally(() => {
+        if (this.inflightProxyBuild === run) {
+          this.inflightProxyBuild = null;
+        }
+      });
+    }, 90);
+  }
+
   private disposeActiveUnitResources(disposeEnv = true): void {
+    this.cancelPendingBackgroundProxy();
     this.motionStage = 'ultra';
     this.shadersWarmed = false;
     this.kineEngine.invalidate();
@@ -852,10 +990,9 @@ export class UnitV2Runtime {
 
   /**
    * Enter (or switch to) any registered V2/V3 unit:
-   * - Disposes any prior unit and verifies Δg=0, Δt=0 before capturing new baseline
+   * - Serializes abort cleanup of any prior in-flight build so Δg=0, Δt=0, cacheRefs=0 is strictly upheld
    * - Dynamically imports the target unit via registry.ts
-   * - Runs time-sliced quality-tiered build (+ co-resident STD LITE v2 & 1-DC FAST proxies)
-   * - Pre-compiles shaders for ULTRA + LITE + FAST before first visible frame (0 Shader Hitch!)
+   * - Builds active quality tier first for rapid, freeze-free first paint; defers ULTRA motion proxies off critical path
    */
   public async activate(
     unitId: string,
@@ -875,206 +1012,270 @@ export class UnitV2Runtime {
     }
   ): Promise<void> {
     const token = ++this.activationToken;
-    const wasActive = this.active;
-    const reuseSameQualityEnv =
-      wasActive &&
-      !initialState.deferShaderWarmup &&
-      QUALITY_TIER_CONFIG[quality].enableStudioEnv &&
-      this.cachedEnvQuality === quality &&
-      Boolean(this.studioEnvDataTex || this.studioEnvRenderTarget);
+    this.cancelPendingBackgroundProxy();
+    this.lastBuildFailed = false;
 
-    if (!wasActive) {
-      this.savedExternalPixelRatio = this.renderer.getPixelRatio();
-      this.vramMonitor.captureBaseline(this.renderer);
-      this.baselineEnvTexCount = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
-    } else {
-      this.disposeActiveUnitResources(!reuseSameQualityEnv);
-      const retainedEnvTex = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
-      this.vramMonitor.verifyAfterDispose(
-        this.renderer,
-        this.cache,
-        retainedEnvTex - this.baselineEnvTexCount
-      );
-      this.vramMonitor.captureBaseline(this.renderer);
-      this.baselineEnvTexCount = retainedEnvTex;
+    // Wait for any prior in-flight activation/proxy build to finish its abort disposal cleanly
+    const prevAct = this.inflightActivation;
+    const prevProxy = this.inflightProxyBuild;
+    if (prevAct || prevProxy) {
+      await Promise.allSettled([prevAct, prevProxy]);
+      if (token !== this.activationToken) {
+        return;
+      }
     }
 
-    this.active = true;
-    this.ready = false;
-    this.shadersWarmed = false;
-    this.motionStage = quality === 'standard_lite' ? 'lite' : 'ultra';
-    this.activeUnitId = unitId;
-    this.quality = quality;
-    this.explodeFactor = initialState.explode;
-    this.renderMode = initialState.renderMode;
-    this.physicsActive = initialState.physicsActive;
-    this.sectionActive = initialState.sectionActive;
-    this.subView = initialState.subView ?? (unitId === 'lens' ? 1 : 0);
-    this.integratedMode = initialState.integratedMode ?? (unitId === 'integrated' || unitId === 'camera_body');
-    this.selectedId = null;
-    this.hoveredId = null;
-    this.hiddenIds = new Set();
-    this.isolatedId = null;
-    this.frameSampleCount = 0;
-    this.avgFrameTimeMs = 0;
-    this.kineEngine.invalidate();
-    this.ultraPost.resetAccumulation();
-    _hasLastUltraCamMat = false;
+    const runActivation = (async () => {
+      const wasActive = this.active;
+      const reuseSameQualityEnv =
+        wasActive &&
+        !initialState.deferShaderWarmup &&
+        QUALITY_TIER_CONFIG[quality].enableStudioEnv &&
+        this.cachedEnvQuality === quality &&
+        Boolean(this.studioEnvDataTex || this.studioEnvRenderTarget);
 
-    this.perfHud.setModeVisible(true);
-    this.applyQualityRendererCaps(quality);
-
-    // Fetch pre-baked lossless PMREM binary LUT concurrently with unit module import when in ?pp=1 mode!
-    const needEnvFetch =
-      !initialState.deferShaderWarmup &&
-      !reuseSameQualityEnv &&
-      QUALITY_TIER_CONFIG[quality].enableStudioEnv;
-
-    try {
-      const [unit, preloadedEnvTex] = await Promise.all([
-        loadRegisteredUnit(unitId),
-        needEnvFetch ? this.tryFetchPrebakedPmrem(quality) : Promise.resolve(null),
-      ]);
-      if (token !== this.activationToken || !this.active) {
-        preloadedEnvTex?.dispose();
-        return;
+      if (!wasActive) {
+        this.savedExternalPixelRatio = this.renderer.getPixelRatio();
+        this.vramMonitor.captureBaseline(this.renderer);
+        this.baselineEnvTexCount = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
+      } else {
+        this.disposeActiveUnitResources(!reuseSameQualityEnv);
+        const retainedEnvTex = this.studioEnvDataTex || this.studioEnvRenderTarget ? 1 : 0;
+        this.vramMonitor.verifyAfterDispose(
+          this.renderer,
+          this.cache,
+          retainedEnvTex - this.baselineEnvTexCount
+        );
+        this.vramMonitor.captureBaseline(this.renderer);
+        this.baselineEnvTexCount = retainedEnvTex;
       }
 
-      this.setupStudioLighting(quality, Boolean(initialState.deferShaderWarmup), preloadedEnvTex);
+      this.active = true;
+      this.ready = false;
+      this.shadersWarmed = false;
+      this.motionStage = quality === 'standard_lite' ? 'lite' : 'ultra';
+      this.activeUnitId = unitId;
+      this.quality = quality;
+      this.explodeFactor = initialState.explode;
+      this.renderMode = initialState.renderMode;
+      this.physicsActive = initialState.physicsActive;
+      this.sectionActive = initialState.sectionActive;
+      this.subView = initialState.subView ?? (unitId === 'lens' ? 1 : 0);
+      this.integratedMode =
+        initialState.integratedMode ?? (unitId === 'integrated' || unitId === 'camera_body');
+      this.selectedId = null;
+      this.hoveredId = null;
+      this.hiddenIds = new Set();
+      this.isolatedId = null;
+      this.frameSampleCount = 0;
+      this.avgFrameTimeMs = 0;
+      this.kineEngine.invalidate();
+      this.ultraPost.resetAccumulation();
+      _hasLastUltraCamMat = false;
 
-      const planes = initialState.sectionActive ? [this.clippingPlane] : [];
-      const built = await unit.build(quality, this.cache, {
-        frameBudgetMs: 14.0,
-        synchronous: Boolean(initialState.synchronous),
-        clippingPlanes: planes,
-        subView: this.subView,
-        integratedMode: this.integratedMode,
-        isAborted: () => token !== this.activationToken || !this.active,
-      });
+      this.perfHud.setModeVisible(true);
+      this.applyQualityRendererCaps(quality);
 
-      if (token !== this.activationToken || !this.active) {
-        unit.dispose(this.cache);
-        return;
-      }
+      // Fetch pre-baked lossless PMREM binary LUT concurrently with unit module import when in ?pp=1 mode!
+      const needEnvFetch =
+        !initialState.deferShaderWarmup &&
+        !reuseSameQualityEnv &&
+        QUALITY_TIER_CONFIG[quality].enableStudioEnv;
 
-      // When quality === 'ultra', co-build a resident STD LITE v2 motion proxy so normal camera
-      // movement swaps in ~0.001ms with ZERO lag/flash, snapping back to ULTRA on stop
-      // (bypassed during static deterministic captures via skipMotionProxy for 2x faster ULTRA builds!).
-      let proxyUnit: OptimizedUnit | null = null;
-      let proxyBuilt: UnitBuildResult | null = null;
-      if (quality === 'ultra' && !initialState.skipMotionProxy) {
-        const candidateProxy = await loadRegisteredUnit(unitId);
+      let loadedUnit: OptimizedUnit | null = null;
+      try {
+        const [unit, preloadedEnvTex] = await Promise.all([
+          loadRegisteredUnit(unitId),
+          needEnvFetch ? this.tryFetchPrebakedPmrem(quality) : Promise.resolve(null),
+        ]);
         if (token !== this.activationToken || !this.active) {
-          unit.dispose(this.cache);
+          preloadedEnvTex?.dispose();
           return;
         }
-        const candidateProxyBuilt = await candidateProxy.build('standard_lite', this.cache, {
-          frameBudgetMs: 14.0,
+        loadedUnit = unit;
+
+        // Yield once before PMREM/lighting so interactive UI clicks paint immediately
+        if (!initialState.synchronous) {
+          await new Promise<void>((r) => setTimeout(r, 0));
+          if (token !== this.activationToken || !this.active) {
+            preloadedEnvTex?.dispose();
+            return;
+          }
+        }
+
+        this.setupStudioLighting(quality, Boolean(initialState.deferShaderWarmup), preloadedEnvTex);
+
+        const planes = this.sectionActive ? [this.clippingPlane] : [];
+        const built = await unit.build(quality, this.cache, {
+          frameBudgetMs: initialState.synchronous ? 14.0 : 10.0,
           synchronous: Boolean(initialState.synchronous),
           clippingPlanes: planes,
           subView: this.subView,
           integratedMode: this.integratedMode,
           isAborted: () => token !== this.activationToken || !this.active,
         });
+
         if (token !== this.activationToken || !this.active) {
-          candidateProxy.dispose(this.cache);
           unit.dispose(this.cache);
+          loadedUnit = null;
           return;
         }
-        proxyUnit = candidateProxy;
-        proxyBuilt = candidateProxyBuilt;
-      }
 
-      // Derive ultra-light 1-DC 0-texture FAST proxy (<12ms) eagerly for ULTRA (zero-hitch) and lazily for LITE!
-      const fastSource = quality === 'ultra' ? proxyBuilt : null;
-      const fastProxy = fastSource
-        ? buildFastProxyFromLiteResult(unitId, fastSource, this.cache, planes)
-        : null;
+        // For synchronous/capture modes where immediate proxy is requested, build inline;
+        // for interactive UX, defer STD LITE + FAST motion proxies until after first paint to avoid UI freezes!
+        let proxyUnit: OptimizedUnit | null = null;
+        let proxyBuilt: UnitBuildResult | null = null;
+        let fastProxy: FastProxyBundle | null = null;
+        const buildProxiesInline =
+          quality === 'ultra' && !initialState.skipMotionProxy && Boolean(initialState.synchronous);
+        if (buildProxiesInline) {
+          const candidateProxy = await loadRegisteredUnit(unitId);
+          if (token !== this.activationToken || !this.active) {
+            unit.dispose(this.cache);
+            loadedUnit = null;
+            return;
+          }
+          const latestPlanes = this.sectionActive ? [this.clippingPlane] : [];
+          const candidateProxyBuilt = await candidateProxy.build('standard_lite', this.cache, {
+            frameBudgetMs: 14.0,
+            synchronous: true,
+            clippingPlanes: latestPlanes,
+            subView: this.subView,
+            integratedMode: this.integratedMode,
+            isAborted: () => token !== this.activationToken || !this.active,
+          });
+          if (token !== this.activationToken || !this.active) {
+            candidateProxy.dispose(this.cache);
+            unit.dispose(this.cache);
+            loadedUnit = null;
+            return;
+          }
+          proxyUnit = candidateProxy;
+          proxyBuilt = candidateProxyBuilt;
+          fastProxy = buildFastProxyFromLiteResult(unitId, proxyBuilt, this.cache, latestPlanes);
+        }
 
-      this.activeUnit = unit;
-      this.buildResult = built;
-      this.liteProxyUnit = proxyUnit;
-      this.liteProxyBuildResult = proxyBuilt;
-      this.fastProxyBundle = fastProxy;
-      this.partById.clear();
-      for (let i = 0; i < built.parts.length; i++) {
-        this.partById.set(built.parts[i].id, built.parts[i]);
-      }
+        this.activeUnit = unit;
+        loadedUnit = null;
+        this.buildResult = built;
+        this.liteProxyUnit = proxyUnit;
+        this.liteProxyBuildResult = proxyBuilt;
+        this.fastProxyBundle = fastProxy;
+        this.partById.clear();
+        for (let i = 0; i < built.parts.length; i++) {
+          this.partById.set(built.parts[i].id, built.parts[i]);
+        }
 
-      this.scene.add(built.rootGroup);
-      unit.setClippingPlanes?.(planes);
-      unit.setSubView?.(this.subView);
-      unit.updateExplode(this.explodeFactor, true);
-      unit.setVisualState(
-        this.selectedId,
-        this.hoveredId,
-        this.hiddenIds,
-        this.isolatedId,
-        this.renderMode
-      );
-      unit.setPhysicsVisible?.(false);
-      unit.updateExplodeGuides?.(this.explodeFactor, true);
-
-      if (proxyUnit && proxyBuilt) {
-        this.scene.add(proxyBuilt.rootGroup);
-        proxyUnit.setClippingPlanes?.(planes);
-        proxyUnit.setSubView?.(this.subView);
-        proxyUnit.updateExplode(this.explodeFactor, true);
-        proxyUnit.setVisualState(
+        // Re-read live clipping/subView/explode/visual state in case user interacted while building (BUG-48, BUG-49)
+        const activePlanes = this.sectionActive ? [this.clippingPlane] : [];
+        this.scene.add(built.rootGroup);
+        unit.setClippingPlanes?.(activePlanes);
+        unit.setSubView?.(this.subView);
+        unit.updateExplode(this.explodeFactor, true);
+        unit.setVisualState(
           this.selectedId,
           this.hoveredId,
           this.hiddenIds,
           this.isolatedId,
           this.renderMode
         );
-        proxyUnit.setPhysicsVisible?.(false);
-        proxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
-        // Keep proxy visible ONLY during shader pre-compilation so first drag has 0.00ms compile hitch!
-        proxyBuilt.rootGroup.visible = true;
-      }
+        unit.setPhysicsVisible?.(false);
+        unit.updateExplodeGuides?.(this.explodeFactor, true);
 
-      if (fastProxy) {
-        this.scene.add(fastProxy.rootGroup);
-        fastProxy.setClippingPlanes(planes);
-        fastProxy.updateExplode(this.explodeFactor);
-        fastProxy.setVisualState(
-          this.selectedId,
-          this.hoveredId,
-          this.hiddenIds,
-          this.isolatedId,
-          this.renderMode
-        );
-        fastProxy.rootGroup.visible = true;
-      }
+        if (proxyUnit && proxyBuilt) {
+          this.scene.add(proxyBuilt.rootGroup);
+          proxyUnit.setClippingPlanes?.(activePlanes);
+          proxyUnit.setSubView?.(this.subView);
+          proxyUnit.updateExplode(this.explodeFactor, true);
+          proxyUnit.setVisualState(
+            this.selectedId,
+            this.hoveredId,
+            this.hiddenIds,
+            this.isolatedId,
+            this.renderMode
+          );
+          proxyUnit.setPhysicsVisible?.(false);
+          proxyUnit.updateExplodeGuides?.(this.explodeFactor, true);
+          proxyBuilt.rootGroup.visible = true;
+        }
 
-      this.fitUltraShadowRig();
+        if (fastProxy) {
+          this.scene.add(fastProxy.rootGroup);
+          fastProxy.setClippingPlanes(activePlanes);
+          fastProxy.updateExplode(this.explodeFactor);
+          fastProxy.setVisualState(
+            this.selectedId,
+            this.hoveredId,
+            this.hiddenIds,
+            this.isolatedId,
+            this.renderMode
+          );
+          fastProxy.rootGroup.visible = true;
+        }
 
-      // Pre-compile all active shader programs (ULTRA + LITE + FAST) BEFORE first visible frame
-      // (unless explicitly deferred for non-3D capture modes)!
-      if (!this.contextLost && !initialState.deferShaderWarmup) {
-        this.shaderWarmupMs = this.cache.warmupShaders(this.renderer, this.scene, camera);
-        this.shadersWarmed = true;
-      }
+        this.fitUltraShadowRig();
 
-      if (proxyBuilt) {
-        proxyBuilt.rootGroup.visible = false;
-      }
-      if (fastProxy) {
-        fastProxy.rootGroup.visible = false;
-      }
+        if (!initialState.synchronous) {
+          await new Promise<void>((r) => setTimeout(r, 0));
+          if (token !== this.activationToken || !this.active) {
+            this.disposeActiveUnitResources(false);
+            return;
+          }
+        }
 
-      this.ready = true;
-      this.vramMonitor.recordActivePeak(this.renderer);
-      this.callbacks.onBuildComplete(unitId, this.getParts());
-      if (!initialState.skipRenderCallback) {
-        this.callbacks.onRequestRender();
+        if (!this.contextLost && !initialState.deferShaderWarmup) {
+          this.shaderWarmupMs = this.cache.warmupShaders(this.renderer, this.scene, camera);
+          this.shadersWarmed = true;
+        }
+
+        if (proxyBuilt) {
+          proxyBuilt.rootGroup.visible = false;
+        }
+        if (fastProxy) {
+          fastProxy.rootGroup.visible = false;
+        }
+
+        this.ready = true;
+        this.lastBuildFailed = false;
+        this.vramMonitor.recordActivePeak(this.renderer);
+        this.callbacks.onBuildComplete(unitId, this.getParts());
+        if (!initialState.skipRenderCallback) {
+          this.callbacks.onRequestRender();
+        }
+        this.refreshHud(true);
+
+        if (
+          quality === 'ultra' &&
+          !initialState.skipMotionProxy &&
+          !initialState.synchronous &&
+          !initialState.deferShaderWarmup
+        ) {
+          this.scheduleUltraMotionProxyBuild(token, unitId, camera);
+        }
+      } catch (err) {
+        if (loadedUnit && loadedUnit !== this.activeUnit) {
+          loadedUnit.dispose(this.cache);
+        }
+        const isAbortErr = err instanceof Error && /build aborted/i.test(err.message);
+        if (!isAbortErr && token === this.activationToken && this.active) {
+          this.lastBuildFailed = true;
+          console.error(`[UnitV2Runtime:${unitId}] Unit build failed:`, err);
+        }
       }
-      this.refreshHud(true);
-    } catch (err) {
-      if (token === this.activationToken && this.active) {
-        console.error(`[UnitV2Runtime:${unitId}] Unit build failed:`, err);
+    })();
+
+    this.inflightActivation = runActivation;
+    try {
+      await runActivation;
+    } finally {
+      if (this.inflightActivation === runActivation) {
+        this.inflightActivation = null;
       }
     }
+  }
+
+  public adjustExternalVramBaseline(deltaGeometries: number, deltaTextures: number): void {
+    this.vramMonitor.adjustBaselineDelta(deltaGeometries, deltaTextures);
   }
 
   /**
@@ -1086,10 +1287,12 @@ export class UnitV2Runtime {
    */
   public deactivate(): VramLeakVerification | null {
     this.activationToken++;
+    this.cancelPendingBackgroundProxy();
     if (!this.active) return this.vramMonitor.getLastVerification();
 
     this.active = false;
     this.activeUnitId = null;
+    this.lastBuildFailed = false;
     this.perfHud.setModeVisible(false);
     this.disposeActiveUnitResources(true);
     const verification = this.vramMonitor.verifyAfterDispose(
@@ -1128,6 +1331,7 @@ export class UnitV2Runtime {
     const prevSubView = this.subView;
     const prevIntegrated = this.integratedMode;
 
+    const expectedToken = this.activationToken + 1;
     await this.activate(unitId, quality, camera, {
       explode: prevExplode,
       renderMode: prevRenderMode,
@@ -1137,7 +1341,13 @@ export class UnitV2Runtime {
       integratedMode: prevIntegrated,
     });
 
-    if (this.active && this.ready && this.activeUnit && this.activeUnitId === unitId) {
+    if (
+      this.activationToken === expectedToken &&
+      this.active &&
+      this.ready &&
+      this.activeUnit &&
+      this.activeUnitId === unitId
+    ) {
       this.selectedId = prevSelected;
       this.hoveredId = prevHovered;
       this.hiddenIds = prevHidden;

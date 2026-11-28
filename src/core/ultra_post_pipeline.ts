@@ -374,86 +374,93 @@ export class UltraPostPipeline {
     this.renderer.getClearColor(_savedClearColor);
     const prevClearAlpha = this.renderer.getClearAlpha();
 
-    scene.background = null;
-    this.renderer.setRenderTarget(msaa);
-    this.renderer.setClearColor(0x000000, 0);
-    this.renderer.clear(true, true, false);
-    this.renderer.render(scene, camera);
+    try {
+      scene.background = null;
+      this.renderer.setRenderTarget(msaa);
+      this.renderer.setClearColor(0x000000, 0);
+      this.renderer.clear(true, true, false);
+      this.renderer.render(scene, camera);
 
-    // Record TRUE 3D scene draw calls & triangles BEFORE fullscreen post quads overwrite renderer.info.render!
-    this.lastSceneDrawCalls = this.renderer.info.render.calls;
-    this.lastSceneTriangles = this.renderer.info.render.triangles;
+      // Record TRUE 3D scene draw calls & triangles BEFORE fullscreen post quads overwrite renderer.info.render!
+      this.lastSceneDrawCalls = this.renderer.info.render.calls;
+      this.lastSceneTriangles = this.renderer.info.render.triangles;
 
-    // Restore camera & scene background immediately
-    camera.clearViewOffset();
-    scene.background = prevBg;
+      // Restore camera & scene background immediately
+      camera.clearViewOffset();
+      scene.background = prevBg;
 
-    // 3. Optional Load-Guarded F1.2 Optical Focus Bokeh (0 extra scene passes, reuses msaa.depthTexture!)
-    let sampleColorTex: THREE.Texture = msaa.texture;
-    if (
-      this.bokehStatus === 'active' &&
-      bokehRt &&
-      this.bokehMat &&
-      msaa.depthTexture &&
-      focusDist > 0.1
-    ) {
-      const tb0 = typeof performance !== 'undefined' ? performance.now() : 0;
-      const bu = this.bokehMat.uniforms;
-      bu.tColor.value = msaa.texture;
-      bu.tDepth.value = msaa.depthTexture;
-      (bu.uTexelSize.value as THREE.Vector2).set(1 / this.rtWidth, 1 / this.rtHeight);
-      bu.uCameraNear.value = camera.near;
-      bu.uCameraFar.value = camera.far;
-      bu.uFocusDist.value = focusDist;
-      bu.uApertureScale.value = 11.5;
-      bu.uMaxCocPx.value = Math.min(10.0, Math.max(5.5, this.rtHeight * 0.0085));
-      bu.uRotationAngle.value = k * 0.78539816; // Rotate Vogel disk per Halton sample -> 128-tap smoothness!
+      // 3. Optional Load-Guarded F1.2 Optical Focus Bokeh (0 extra scene passes, reuses msaa.depthTexture!)
+      let sampleColorTex: THREE.Texture = msaa.texture;
+      if (
+        this.bokehStatus === 'active' &&
+        bokehRt &&
+        this.bokehMat &&
+        msaa.depthTexture &&
+        focusDist > 0.1
+      ) {
+        const tb0 = typeof performance !== 'undefined' ? performance.now() : 0;
+        const bu = this.bokehMat.uniforms;
+        bu.tColor.value = msaa.texture;
+        bu.tDepth.value = msaa.depthTexture;
+        (bu.uTexelSize.value as THREE.Vector2).set(1 / Math.max(1, this.rtWidth), 1 / Math.max(1, this.rtHeight));
+        bu.uCameraNear.value = camera.near;
+        bu.uCameraFar.value = camera.far;
+        bu.uFocusDist.value = focusDist;
+        bu.uApertureScale.value = 11.5;
+        bu.uMaxCocPx.value = Math.min(10.0, Math.max(5.5, this.rtHeight * 0.0085));
+        bu.uRotationAngle.value = k * 0.78539816; // Rotate Vogel disk per Halton sample -> 128-tap smoothness!
 
-      quad.material = this.bokehMat;
-      this.renderer.setRenderTarget(bokehRt);
-      this.renderer.render(postScene, postCam);
-      const tb1 = typeof performance !== 'undefined' ? performance.now() : 0;
-      this.lastBokehMs = +(tb1 - tb0).toFixed(2);
+        quad.material = this.bokehMat;
+        this.renderer.setRenderTarget(bokehRt);
+        this.renderer.render(postScene, postCam);
+        const tb1 = typeof performance !== 'undefined' ? performance.now() : 0;
+        this.lastBokehMs = +(tb1 - tb0).toFixed(2);
 
-      // Strict "処理負荷があまり変わらない場合限定" guard: auto-bypass if bokeh pass exceeds 6ms!
-      if (this.bokehMode === 'auto' && this.lastBokehMs > 6.0) {
-        this.bokehLoadTripped = true;
-        this.bokehStatus = 'bypassed_load';
-      } else {
-        sampleColorTex = bokehRt.texture;
+        // Strict "処理負荷があまり変わらない場合限定" guard: auto-bypass if bokeh pass exceeds 6ms!
+        if (this.bokehMode === 'auto' && this.lastBokehMs > 6.0) {
+          this.bokehLoadTripped = true;
+          this.bokehStatus = 'bypassed_load';
+        } else {
+          sampleColorTex = bokehRt.texture;
+        }
       }
-    }
 
-    // 4. Premultiplied HDR Ping-Pong Accumulation (skipped directly to Resolve when maxSamplesTarget === 1!)
-    let resolveInputTex: THREE.Texture = sampleColorTex;
-    if (this.maxSamplesTarget > 1 && accA && accB && this.accumMat) {
-      const srcAccum = this.accumReadA ? accA : accB;
-      const dstAccum = this.accumReadA ? accB : accA;
-      const au = this.accumMat.uniforms;
-      au.tPrev.value = srcAccum.texture;
-      au.tCurr.value = sampleColorTex;
-      au.uWeight.value = k === 0 ? 1.0 : 1.0 / (k + 1);
+      // 4. Premultiplied HDR Ping-Pong Accumulation (skipped directly to Resolve when maxSamplesTarget === 1!)
+      let resolveInputTex: THREE.Texture = sampleColorTex;
+      if (this.maxSamplesTarget > 1 && accA && accB && this.accumMat) {
+        const srcAccum = this.accumReadA ? accA : accB;
+        const dstAccum = this.accumReadA ? accB : accA;
+        const au = this.accumMat.uniforms;
+        au.tPrev.value = srcAccum.texture;
+        au.tCurr.value = sampleColorTex;
+        au.uWeight.value = k === 0 ? 1.0 : 1.0 / (k + 1);
 
-      quad.material = this.accumMat;
-      this.renderer.setRenderTarget(dstAccum);
+        quad.material = this.accumMat;
+        this.renderer.setRenderTarget(dstAccum);
+        this.renderer.render(postScene, postCam);
+        this.accumReadA = !this.accumReadA;
+        resolveInputTex = dstAccum.texture;
+      }
+      this.sampleIndex = Math.min(this.maxSamplesTarget, k + 1);
+
+      // 5. Final ACES Filmic + Linear->sRGB + Dither Resolve over pure #FFFFFF studio backdrop!
+      this.renderer.toneMapping = THREE.NoToneMapping;
+      const ru = this.resolveMat.uniforms;
+      ru.tDiffuse.value = resolveInputTex;
+      ru.uExposure.value = prevExp;
+
+      quad.material = this.resolveMat;
+      this.renderer.setRenderTarget(null);
+      this.renderer.setClearColor(_savedClearColor, prevClearAlpha);
       this.renderer.render(postScene, postCam);
-      this.accumReadA = !this.accumReadA;
-      resolveInputTex = dstAccum.texture;
+      return true;
+    } finally {
+      camera.clearViewOffset();
+      scene.background = prevBg;
+      this.renderer.setRenderTarget(null);
+      this.renderer.setClearColor(_savedClearColor, prevClearAlpha);
+      this.renderer.toneMapping = prevTone;
     }
-    this.sampleIndex = Math.min(this.maxSamplesTarget, k + 1);
-
-    // 5. Final ACES Filmic + Linear->sRGB + Dither Resolve over pure #FFFFFF studio backdrop!
-    this.renderer.toneMapping = THREE.NoToneMapping;
-    const ru = this.resolveMat.uniforms;
-    ru.tDiffuse.value = resolveInputTex;
-    ru.uExposure.value = prevExp;
-
-    quad.material = this.resolveMat;
-    this.renderer.setRenderTarget(null);
-    this.renderer.setClearColor(_savedClearColor, prevClearAlpha);
-    this.renderer.render(postScene, postCam);
-    this.renderer.toneMapping = prevTone;
-    return true;
   }
 
   /**
@@ -479,21 +486,25 @@ export class UltraPostPipeline {
     }
 
     const prevTone = this.renderer.toneMapping;
-    this.renderer.toneMapping = THREE.NoToneMapping;
-    this.renderer.setRenderTarget(ft);
-    this.renderer.clear(true, true, false);
-    this.renderer.render(scene, camera);
+    try {
+      this.renderer.toneMapping = THREE.NoToneMapping;
+      this.renderer.setRenderTarget(ft);
+      this.renderer.clear(true, true, false);
+      this.renderer.render(scene, camera);
 
-    // Record TRUE FAST 3D scene draw calls & triangles BEFORE fullscreen blit quad!
-    this.lastSceneDrawCalls = this.renderer.info.render.calls;
-    this.lastSceneTriangles = this.renderer.info.render.triangles;
+      // Record TRUE FAST 3D scene draw calls & triangles BEFORE fullscreen blit quad!
+      this.lastSceneDrawCalls = this.renderer.info.render.calls;
+      this.lastSceneTriangles = this.renderer.info.render.triangles;
 
-    this.blitMat.uniforms.tDiffuse.value = ft.texture;
-    quad.material = this.blitMat;
-    this.renderer.setRenderTarget(null);
-    this.renderer.render(postScene, postCam);
-    this.renderer.toneMapping = prevTone;
-    return true;
+      this.blitMat.uniforms.tDiffuse.value = ft.texture;
+      quad.material = this.blitMat;
+      this.renderer.setRenderTarget(null);
+      this.renderer.render(postScene, postCam);
+      return true;
+    } finally {
+      this.renderer.setRenderTarget(null);
+      this.renderer.toneMapping = prevTone;
+    }
   }
 
   private disposeRenderTargetsOnly(): void {

@@ -1,225 +1,225 @@
 id	code	name	group	pos	size	exp	mat
-welcome-yo-cnc-chassis	W01	よ主骨格 CNC6061アルミ肉抜きシャ	glyph_yo	-66,4,0	7.68,40.22,5.2	-26,6,0	matte_black_anodized
-welcome-yo-mg-finned-backplate	W02	よ背面 AZ91Dマグネシウム3D放熱フ	glyph_yo	-66,4,0	6.74,39.28,2.32	-28.6,4,-28	magnesium_cast
-welcome-yo-sapphire-diffuser-lens	W03	よ前面 段付きサファイア光学拡散カバーレ	glyph_yo	-66,4,0	6.37,38.92,1.45	-27.3,8,30	titanium_machined
-welcome-yo-ip65-silicone-gasket	W04	よ全周IP65 シリコーン防塵防滴Oリン	glyph_yo	-66,4,0	6.62,39.16,0.72	-27.3,7,23	magnesium_cast
-welcome-yo-ti-protective-bezel	W05	よ外周 CNCチタン保護フランジベゼル	glyph_yo	-66,4,0	7.11,39.64,1.05	-28.08,9,36	stainless_machined
-welcome-yo-reflector-sheet	W06	よ98%高反射 マイクロ発泡PET背面反	glyph_yo	-66,4,0	5.25,37.84,0.28	-26,5,5	ic_epoxy_dark
-welcome-yo-pmma-lgp-waveguide	W07	よレーザー微細ドット PMMA光学導光板	glyph_yo	-66,4,0	5.51,38.08,1.25	-26.52,6,12	optical_glass_ed
-welcome-yo-bef-prism-film	W08	よマイクロプリズム集光シート	glyph_yo	-66,4,0	5.44,38.02,0.34	-27.04,7,18	optical_glass_ed
-welcome-yo-led-mcpcb	W09	よ金属コア高放熱アルミ MCPCB 基板	glyph_yo	-66,4,0	5.01,37.6,0.58	-26,4,-5	pcb_textured
-welcome-yo-led-chip-array	W10	よ高演色CRI97 2835マイクロLE	glyph_yo	-66,4,0	1.51,29.79,0.52	-26,5,-1	ic_epoxy_dark
-welcome-yo-thermal-gap-pad	W11	よ高熱伝導 サーマルギャップパッド熱橋シ	glyph_yo	-66,4,0	4.64,37.24,0.42	-26,4,-10	elastomer_rubber
-welcome-yo-local-driver-pcb	W12	よ4層FR-4 ローカル制御ドライバー基	glyph_yo	-66,4,0	4.4,9.4,0.94	-26,3,-15	pcb_textured
-welcome-yo-pwm-driver-mcu	W13	よ16bit PWM定電流LEDドライバ	glyph_yo	-66,4,0	3.46,6.85,0.8	-26,3,-19	solder_silver
-welcome-yo-pogo-contact-block	W14	よ金メッキスプリング式ポゴピン受電	glyph_yo	-66,4,0	10.6,4.18,3.8	-26,-14,0	gold_plating
-welcome-yo-dcdc-power-stage	W15	よ同期整流DC-DC降圧コンバータ	glyph_yo	-66,4,0	6.93,3.4,1.85	-32,-4,-20	matte_black_anodized
-welcome-yo-ptc-mlcc-bank	W16	よリセッタブルPTCヒューズ	glyph_yo	-66,4,0	6.97,1.35,0.68	-20,-5,-21	ic_epoxy_dark
-welcome-yo-tvs-esd-protection	W17	よ静電気±15kV保護 TVSダイオード	glyph_yo	-66,4,0	1.8,7.6,0.94	-18,-2,-23	matte_chassis
-welcome-yo-ntc-thermistor	W18	よ過熱保護 NTCサーミスタ温度監視セン	glyph_yo	-66,4,0	1.4,1.16,1.16	-34,2,-22	copper_coil
-welcome-yo-luminance-photodiode	W19	よ光学輝度フィードバック・シリコンフォト	glyph_yo	-66,4,0	1.8,1.5,0.8	-26,10,8	ic_epoxy_dark
-welcome-yo-emi-shield-can	W20	よニッケルめっき洋白 EMI電磁遮蔽シー	glyph_yo	-66,4,0	4.25,9.25,1.72	-26,4,-24	stainless_machined
-welcome-yo-internal-fpc-zif	W21	よ内部ポリイミドFPCフレキ	glyph_yo	-66,4,0	5.7,11.53,1.53	-22,2,-12	ic_epoxy_dark
-welcome-yo-dovetail-mount	W22	よ台座嵌合 CNCダブテールドッキングマ	glyph_yo	-66,4,0	14.5,4.2,8.6	-26,-10,0	matte_black_anodized
-welcome-yo-antivib-bushing	W23	よ制振エラストマー防振アイソレーションブ	glyph_yo	-66,4,0	15.2,1,9.2	-26,-12,6	elastomer_rubber
-welcome-yo-optical-baffle	W24	よ内部迷光遮断 ブラックアルマイト光学バ	glyph_yo	-66,4,0	5.76,38.32,2.1	-26,6,8	carbon_fiber
-welcome-yo-dowel-pins	W25	よ精密位置決めノックピン群	glyph_yo	-66,4,0	1.84,22.14,6.2	-29.12,6,-14	brass_precision
-welcome-yo-m2-hex-bolts	W26	よM2六角穴付ステンレス締結ボルト	glyph_yo	-66,4,0	2.76,30.71,5.9	-29.9,5,-34	stainless_machined
-welcome-yo-bar-cnc-frame	W27	よ横枝ストローク CNC6061アルミ独	glyph_yo	-66,4,0	19.69,7.46,4.8	-18,16,4	matte_black_anodized
-welcome-yo-bar-optical-front	W28	よ横枝ストローク シナバー光学カラー導光	glyph_yo	-66,4,0	18.47,6.24,1.45	-18.9,19,30	pin_carrier_gloss
-welcome-yo-bar-led-mcpcb	W29	よ横枝ストローク アルミコアMCPCB	glyph_yo	-66,4,0	17.33,5.08,1.15	-18,16,0	pcb_textured
-welcome-yo-bar-lgp-reflector	W30	よ横枝ストローク PMMA光学導光板	glyph_yo	-66,4,0	17.64,5.4,1.86	-18,17,16	optical_glass_ed
-welcome-yo-bar-rear-heatsink	W31	よ横枝ストローク 背面AZ91Dマグネシ	glyph_yo	-66,4,0	18.68,6.45,2.32	-19.08,15,-20	magnesium_cast
-welcome-yo-bar-ip65-gasket	W32	よ横枝ストローク IP65シリコーン防塵	glyph_yo	-66,4,0	18.62,6.4,0.72	-18,18,23	magnesium_cast
-welcome-yo-bar-ti-retainer	W33	よ横枝ストローク チタンCNC保護ベゼル	glyph_yo	-66,4,0	19.04,6.82,0.95	-19.44,20,36	stainless_machined
-welcome-yo-bar-bolts	W34	よ横枝ストローク M2六角穴付締結ボルト	glyph_yo	-66,4,0	9.49,2.54,5.24	-20.16,16,-27	stainless_machined
-welcome-yo-bar-copper-spreader	W35	よ横枝ストローク 無酸素銅サーマルスプレ	glyph_yo	-66,4,0	16.91,4.66,0.65	-18,15,-9	copper_thermal
-welcome-yo-loop-cnc-frame	W36	よ下部ループ CNC6061アルミ独立サ	glyph_yo	-66,4,0	34.84,18.48,4.8	-28,-10,6	matte_black_anodized
-welcome-yo-loop-optical-front	W37	よ下部ループ 段付きサファイア拡散カバー	glyph_yo	-66,4,0	33.34,17.13,1.45	-29.4,-7,32	titanium_machined
-welcome-yo-loop-led-mcpcb	W38	よ下部ループ アルミコアMCPCB	glyph_yo	-66,4,0	31.97,15.39,1.15	-28,-10,2	pcb_textured
-welcome-yo-loop-lgp-reflector	W39	よ下部ループ PMMA光学導光板	glyph_yo	-66,4,0	32.67,16.15,1.86	-28,-9,18	optical_glass_ed
-welcome-yo-loop-rear-heatsink	W40	よ下部ループ 背面AZ91Dマグネシウム	glyph_yo	-66,4,0	33.57,17.37,2.32	-29.68,-11,-18	magnesium_cast
-welcome-yo-loop-ip65-gasket	W41	よ下部ループ IP65シリコーン防塵Oリ	glyph_yo	-66,4,0	33.51,17.31,0.72	-28,-8,25	magnesium_cast
-welcome-yo-loop-brass-bracket	W42	よ主幹〜下部ループ CNC真鍮構造連結ブ	glyph_yo	-66,4,0	6.8,9.6,2.2	-26,-6,-16	brass_precision
-welcome-yo-loop-btob-bus	W43	よ主幹〜ループ基板間 BtoB給電コネク	glyph_yo	-66,4,0	31.28,15.02,1.93	-24,-12,-10	copper_thermal
-welcome-u-cnc-chassis	W44	う主骨格 CNC6061アルミ肉抜きシャ	glyph_u	-21,4,0	30.95,34.43,5.2	-8.27,6,0	matte_black_anodized
-welcome-u-mg-finned-backplate	W45	う背面 AZ91Dマグネシウム3D放熱フ	glyph_u	-21,4,0	29.71,33.63,2.32	-9.1,4,-28	magnesium_cast
-welcome-u-sapphire-diffuser-lens	W46	う前面 段付きサファイア光学拡散カバーレ	glyph_u	-21,4,0	29.34,33.27,1.45	-8.69,8,30	titanium_machined
-welcome-u-ip65-silicone-gasket	W47	う全周IP65 シリコーン防塵防滴Oリン	glyph_u	-21,4,0	29.59,33.51,0.72	-8.69,7,23	magnesium_cast
-welcome-u-ti-protective-bezel	W48	う外周 CNCチタン保護フランジベゼル	glyph_u	-21,4,0	30.07,34,1.05	-8.93,9,36	stainless_machined
-welcome-u-reflector-sheet	W49	う98%高反射 マイクロ発泡PET背面反	glyph_u	-21,4,0	28.1,32.15,0.28	-8.27,5,5	ic_epoxy_dark
-welcome-u-pmma-lgp-waveguide	W50	うレーザー微細ドット PMMA光学導光板	glyph_u	-21,4,0	28.77,32.47,1.25	-8.44,6,12	optical_glass_ed
-welcome-u-bef-prism-film	W51	うマイクロプリズム集光シート	glyph_u	-21,4,0	28.28,32.33,0.34	-8.6,7,18	optical_glass_ed
-welcome-u-led-mcpcb	W52	う金属コア高放熱アルミ MCPCB 基板	glyph_u	-21,4,0	27.86,31.91,0.58	-8.27,4,-5	pcb_textured
-welcome-u-led-chip-array	W53	う高演色CRI97 2835マイクロLE	glyph_u	-21,4,0	18.73,27.19,0.52	-8.27,5,-1	ic_epoxy_dark
-welcome-u-thermal-gap-pad	W54	う高熱伝導 サーマルギャップパッド熱橋シ	glyph_u	-21,4,0	27.21,31.06,0.42	-8.27,4,-10	elastomer_rubber
-welcome-u-local-driver-pcb	W55	う4層FR-4 ローカル制御ドライバー基	glyph_u	-21,4,0	4.4,9.4,0.94	-8.27,3,-15	pcb_textured
-welcome-u-pwm-driver-mcu	W56	う16bit PWM定電流LEDドライバ	glyph_u	-21,4,0	3.46,6.85,0.8	-8.27,3,-19	solder_silver
-welcome-u-pogo-contact-block	W57	う金メッキスプリング式ポゴピン受電	glyph_u	-21,4,0	10.6,4.18,3.8	-8.27,-14,0	gold_plating
-welcome-u-dcdc-power-stage	W58	う同期整流DC-DC降圧コンバータ	glyph_u	-21,4,0	6.93,3.4,1.85	-14.27,-4,-20	matte_black_anodized
-welcome-u-ptc-mlcc-bank	W59	うリセッタブルPTCヒューズ	glyph_u	-21,4,0	6.97,1.35,0.68	-2.27,-5,-21	ic_epoxy_dark
-welcome-u-tvs-esd-protection	W60	う静電気±15kV保護 TVSダイオード	glyph_u	-21,4,0	1.8,7.6,0.94	-0.27,-2,-23	matte_chassis
-welcome-u-ntc-thermistor	W61	う過熱保護 NTCサーミスタ温度監視セン	glyph_u	-21,4,0	1.4,1.16,1.16	-16.27,2,-22	copper_coil
-welcome-u-luminance-photodiode	W62	う光学輝度フィードバック・シリコンフォト	glyph_u	-21,4,0	1.8,1.5,0.8	-8.27,10,8	ic_epoxy_dark
-welcome-u-emi-shield-can	W63	うニッケルめっき洋白 EMI電磁遮蔽シー	glyph_u	-21,4,0	4.25,9.25,1.72	-8.27,4,-24	stainless_machined
-welcome-u-internal-fpc-zif	W64	う内部ポリイミドFPCフレキ	glyph_u	-21,4,0	7.8,7.53,1.53	-4.27,2,-12	ic_epoxy_dark
-welcome-u-dovetail-mount	W65	う台座嵌合 CNCダブテールドッキングマ	glyph_u	-21,4,0	14.5,4.2,8.6	-8.27,-10,0	matte_black_anodized
-welcome-u-antivib-bushing	W66	う制振エラストマー防振アイソレーションブ	glyph_u	-21,4,0	15.2,1,9.2	-8.27,-12,6	elastomer_rubber
-welcome-u-optical-baffle	W67	う内部迷光遮断 ブラックアルマイト光学バ	glyph_u	-21,4,0	28.73,32.66,2.1	-8.27,6,8	carbon_fiber
-welcome-u-dowel-pins	W68	う精密位置決めノックピン群	glyph_u	-21,4,0	12.74,18.34,6.2	-9.26,6,-14	brass_precision
-welcome-u-m2-hex-bolts	W69	うM2六角穴付ステンレス締結ボルト	glyph_u	-21,4,0	22.26,28.11,5.9	-9.51,5,-34	stainless_machined
-welcome-u-crest-cnc-frame	W70	う上部点 CNC6061アルミ独立サブフ	glyph_u	-21,4,0	18.08,10.82,4.8	-8,26,8	matte_black_anodized
-welcome-u-crest-optical-front	W71	う上部点 シナバー光学カラー導光レンズ	glyph_u	-21,4,0	16.83,9.6,1.45	-8.4,29,34	pin_carrier_gloss
-welcome-u-crest-led-mcpcb	W72	う上部点 アルミコアMCPCB	glyph_u	-21,4,0	15.62,8.43,1.15	-8,26,4	pcb_textured
-welcome-u-crest-lgp-reflector	W73	う上部点 PMMA光学導光板	glyph_u	-21,4,0	15.95,8.75,1.86	-8,27,20	optical_glass_ed
-welcome-u-crest-rear-heatsink	W74	う上部点 背面AZ91Dマグネシウム3D	glyph_u	-21,4,0	17.04,9.81,2.32	-8.48,25,-16	magnesium_cast
-welcome-u-crest-ip65-gasket	W75	う上部点 IP65シリコーン防塵Oリング	glyph_u	-21,4,0	16.99,9.76,0.72	-8,28,27	magnesium_cast
-welcome-u-crest-ti-retainer	W76	う上部点 チタンCNC保護ベゼル	glyph_u	-21,4,0	17.43,10.18,0.95	-8.64,30,40	stainless_machined
-welcome-u-crest-bolts	W77	う上部点 M2六角穴付締結ボルト	glyph_u	-21,4,0	9.49,4.74,5.24	-8.96,26,-23	stainless_machined
-welcome-u-crest-copper-spreader	W78	う上部点 無酸素銅サーマルスプレッダ	glyph_u	-21,4,0	15.18,8,0.65	-8,25,-5	copper_thermal
-welcome-u-quartz-support-post	W79	う浮遊点支持・透明溶融石英構造支柱	glyph_u	-21,4,0	1.82,9,2.1	-6,18,4	optical_glass_ed
-welcome-u-quartz-brass-collars	W80	う石英支柱 上下CNC真鍮締結フランジカ	glyph_u	-21,4,0	3.73,9.15,4.3	-6,16,12	brass_precision
-welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.84,10.2,0.36	-6,19,-8	copper_coil
-welcome-u-quartz-oring-seals	W82	う石英支柱 上下エラストマー防振	glyph_u	-21,4,0	3.39,6.58,2.94	-6,17,16	magnesium_cast
-welcome-u-arc-copper-heatpipe	W83	う主弧 湾曲C1020無酸素銅ヒートスプ	glyph_u	-21,4,0	27.45,31.5,0.65	-8,2,-12	copper_thermal
-welcome-u-arc-cinnabar-edge	W84	う主弧 シナバー光学エッジアクセント導光	glyph_u	-21,4,0	29.71,33.64,0.65	-10,6,26	pin_carrier_gloss
-welcome-u-crest-micro-zif	W85	うクレスト基板直結 マイクロ2極ロックコ	glyph_u	-21,4,0	5.6,10.93,1.53	-6,24,-10	ic_epoxy_dark
-welcome-u-ti-retainer-clips	W86	う前面サファイアレンズ固定 チタンばねリ	glyph_u	-21,4,0	22.54,28.34,0.95	-9,8,34	stainless_machined
-welcome-ko-cnc-chassis	W87	こ主骨格 CNC6061アルミ肉抜きシャ	glyph_ko	23,4,0	31.98,15.27,5.2	9.06,6,0	matte_black_anodized
-welcome-ko-mg-finned-backplate	W88	こ背面 AZ91Dマグネシウム3D放熱フ	glyph_ko	23,4,0	31.05,14.31,2.32	9.97,4,-28	magnesium_cast
-welcome-ko-sapphire-diffuser-lens	W89	こ前面 段付きサファイア光学拡散カバーレ	glyph_ko	23,4,0	30.68,13.94,1.45	9.51,8,30	titanium_machined
-welcome-ko-ip65-silicone-gasket	W90	こ全周IP65 シリコーン防塵防滴Oリン	glyph_ko	23,4,0	30.93,14.18,0.72	9.51,7,23	magnesium_cast
-welcome-ko-ti-protective-bezel	W91	こ外周 CNCチタン保護フランジベゼル	glyph_ko	23,4,0	31.41,14.68,1.05	9.79,9,36	stainless_machined
-welcome-ko-reflector-sheet	W92	こ98%高反射 マイクロ発泡PET背面反	glyph_ko	23,4,0	29.59,12.84,0.28	9.06,5,5	ic_epoxy_dark
-welcome-ko-pmma-lgp-waveguide	W93	こレーザー微細ドット PMMA光学導光板	glyph_ko	23,4,0	29.83,13.11,1.25	9.24,6,12	optical_glass_ed
-welcome-ko-bef-prism-film	W94	こマイクロプリズム集光シート	glyph_ko	23,4,0	29.77,13.03,0.34	9.42,7,18	optical_glass_ed
-welcome-ko-led-mcpcb	W95	こ金属コア高放熱アルミ MCPCB 基板	glyph_ko	23,4,0	29.35,12.59,0.58	9.06,4,-5	pcb_textured
-welcome-ko-led-chip-array	W96	こ高演色CRI97 2835マイクロLE	glyph_ko	23,4,0	22.46,7.79,0.52	9.06,5,-1	ic_epoxy_dark
-welcome-ko-thermal-gap-pad	W97	こ高熱伝導 サーマルギャップパッド熱橋シ	glyph_ko	23,4,0	28.98,12.23,0.42	9.06,4,-10	elastomer_rubber
-welcome-ko-local-driver-pcb	W98	こ4層FR-4 ローカル制御ドライバー基	glyph_ko	23,4,0	9.4,4.4,0.94	9.06,3,-15	pcb_textured
-welcome-ko-pwm-driver-mcu	W99	こ16bit PWM定電流LEDドライバ	glyph_ko	23,4,0	6.85,3.46,0.8	9.06,3,-19	solder_silver
-welcome-ko-pogo-contact-block	W100	こ金メッキスプリング式ポゴピン受電	glyph_ko	23,4,0	10.6,4.18,3.8	9.06,-14,0	gold_plating
-welcome-ko-dcdc-power-stage	W101	こ同期整流DC-DC降圧コンバータ	glyph_ko	23,4,0	6.93,3.4,1.85	3.06,-4,-20	matte_black_anodized
-welcome-ko-ptc-mlcc-bank	W102	こリセッタブルPTCヒューズ	glyph_ko	23,4,0	6.97,1.35,0.68	15.06,-5,-21	ic_epoxy_dark
-welcome-ko-tvs-esd-protection	W103	こ静電気±15kV保護 TVSダイオード	glyph_ko	23,4,0	8.1,1.2,0.94	17.06,-2,-23	matte_chassis
-welcome-ko-ntc-thermistor	W104	こ過熱保護 NTCサーミスタ温度監視セン	glyph_ko	23,4,0	1.4,1.16,1.16	1.06,2,-22	copper_coil
-welcome-ko-luminance-photodiode	W105	こ光学輝度フィードバック・シリコンフォト	glyph_ko	23,4,0	1.8,1.5,0.8	9.06,10,8	ic_epoxy_dark
-welcome-ko-emi-shield-can	W106	こニッケルめっき洋白 EMI電磁遮蔽シー	glyph_ko	23,4,0	9.25,4.25,1.72	9.06,4,-24	stainless_machined
-welcome-ko-internal-fpc-zif	W107	こ内部ポリイミドFPCフレキ	glyph_ko	23,4,0	15.6,2.92,1.53	13.06,2,-12	ic_epoxy_dark
-welcome-ko-dovetail-mount	W108	こ台座嵌合 CNCダブテールドッキングマ	glyph_ko	23,4,0	14.5,4.2,8.6	9.06,-10,0	matte_black_anodized
-welcome-ko-antivib-bushing	W109	こ制振エラストマー防振アイソレーションブ	glyph_ko	23,4,0	15.2,1,9.2	9.06,-12,6	elastomer_rubber
-welcome-ko-optical-baffle	W110	こ内部迷光遮断 ブラックアルマイト光学バ	glyph_ko	23,4,0	30.07,13.32,2.1	9.06,6,8	carbon_fiber
-welcome-ko-dowel-pins	W111	こ精密位置決めノックピン群	glyph_ko	23,4,0	17.04,2.04,6.2	10.15,6,-14	brass_precision
-welcome-ko-m2-hex-bolts	W112	こM2六角穴付ステンレス締結ボルト	glyph_ko	23,4,0	23.36,6.51,5.9	10.42,5,-34	stainless_machined
-welcome-ko-top-cnc-frame	W113	こ上画ストローク CNC6061アルミ独	glyph_ko	23,4,0	29.26,8.61,4.8	10,22,6	matte_black_anodized
-welcome-ko-top-optical-front	W114	こ上画ストローク シナバー光学カラー導光	glyph_ko	23,4,0	27.96,7.32,1.45	10.5,25,32	pin_carrier_gloss
-welcome-ko-top-led-mcpcb	W115	こ上画ストローク アルミコアMCPCB	glyph_ko	23,4,0	26.65,6,1.15	10,22,2	pcb_textured
-welcome-ko-top-lgp-reflector	W116	こ上画ストローク PMMA光学導光板	glyph_ko	23,4,0	27.01,6.38,1.86	10,23,18	optical_glass_ed
-welcome-ko-top-rear-heatsink	W117	こ上画ストローク 背面AZ91Dマグネシ	glyph_ko	23,4,0	28.2,7.55,2.32	10.6,21,-18	magnesium_cast
-welcome-ko-top-ip65-gasket	W118	こ上画ストローク IP65シリコーン防塵	glyph_ko	23,4,0	28.14,7.49,0.72	10,24,25	magnesium_cast
-welcome-ko-top-ti-retainer	W119	こ上画ストローク チタンCNC保護ベゼル	glyph_ko	23,4,0	28.61,7.97,0.95	10.8,26,38	stainless_machined
-welcome-ko-top-bolts	W120	こ上画ストローク M2六角穴付締結ボルト	glyph_ko	23,4,0	19.49,3.14,5.24	11.2,22,-25	stainless_machined
-welcome-ko-top-copper-spreader	W121	こ上画ストローク 無酸素銅サーマルスプレ	glyph_ko	23,4,0	26.18,5.5,0.65	10,21,-7	copper_thermal
-welcome-ko-hook-optical-prism	W122	こ上画終端ハネ部 45°全反射光学コーナ	glyph_ko	23,4,0	5.11,5.11,2.2	18,22,18	optical_glass_ed
-welcome-ko-hook-end-cap	W123	こ上画終端ハネ CNCアルミ独立エンドキ	glyph_ko	23,4,0	8.15,10.33,6.19	20,18,8	matte_black_anodized
-welcome-ko-quartz-col-left	W124	こ左・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	1.99,26.2,2.3	4,6,4	optical_glass_ed
-welcome-ko-quartz-col-right	W125	こ右・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	1.99,26.8,2.3	16,6,4	optical_glass_ed
-welcome-ko-quartz-brass-collars	W126	こ左右石英コラム 4点CNC真鍮締結フラ	glyph_ko	23,4,0	19.28,26.95,4.72	10,8,12	brass_precision
-welcome-ko-left-power-bus	W127	こ左コラム内蔵 12V給電ペア極細シール	glyph_ko	23,4,0	0.84,27.4,0.36	2,6,-8	copper_coil
-welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.84,28,0.36	18,6,-8	copper_coil
-welcome-ko-quartz-seals	W129	こ左右石英コラム 防振・防塵エラストマー	glyph_ko	23,4,0	18.86,24.38,3.17	10,4,16	magnesium_cast
-welcome-so-cnc-chassis	W130	そ主骨格 CNC6061アルミ肉抜きシャ	glyph_so	67,4,0	28.98,26.82,5.2	26.39,6,0	matte_black_anodized
-welcome-so-mg-finned-backplate	W131	そ背面 AZ91Dマグネシウム3D放熱フ	glyph_so	67,4,0	27.91,25.91,2.32	29.03,4,-28	magnesium_cast
-welcome-so-sapphire-diffuser-lens	W132	そ前面 段付きサファイア光学拡散カバーレ	glyph_so	67,4,0	27.55,25.55,1.45	27.71,8,30	titanium_machined
-welcome-so-ip65-silicone-gasket	W133	そ全周IP65 シリコーン防塵防滴Oリン	glyph_so	67,4,0	27.79,25.79,0.72	27.71,7,23	magnesium_cast
-welcome-so-ti-protective-bezel	W134	そ外周 CNCチタン保護フランジベゼル	glyph_so	67,4,0	28.28,26.28,1.05	28.51,9,36	stainless_machined
-welcome-so-reflector-sheet	W135	そ98%高反射 マイクロ発泡PET背面反	glyph_so	67,4,0	26.22,24.38,0.28	26.39,5,5	ic_epoxy_dark
-welcome-so-pmma-lgp-waveguide	W136	そレーザー微細ドット PMMA光学導光板	glyph_so	67,4,0	26.89,24.67,1.25	26.92,6,12	optical_glass_ed
-welcome-so-bef-prism-film	W137	そマイクロプリズム集光シート	glyph_so	67,4,0	26.4,24.56,0.34	27.45,7,18	optical_glass_ed
-welcome-so-led-mcpcb	W138	そ金属コア高放熱アルミ MCPCB 基板	glyph_so	67,4,0	25.98,24.13,0.58	26.39,4,-5	pcb_textured
-welcome-so-led-chip-array	W139	そ高演色CRI97 2835マイクロLE	glyph_so	67,4,0	19.14,18.52,0.52	26.39,5,-1	ic_epoxy_dark
-welcome-so-thermal-gap-pad	W140	そ高熱伝導 サーマルギャップパッド熱橋シ	glyph_so	67,4,0	25.84,23.7,0.42	26.39,4,-10	elastomer_rubber
-welcome-so-local-driver-pcb	W141	そ4層FR-4 ローカル制御ドライバー基	glyph_so	67,4,0	9.4,4.4,0.94	26.39,3,-15	pcb_textured
-welcome-so-pwm-driver-mcu	W142	そ16bit PWM定電流LEDドライバ	glyph_so	67,4,0	6.85,3.46,0.8	26.39,3,-19	solder_silver
-welcome-so-pogo-contact-block	W143	そ金メッキスプリング式ポゴピン受電	glyph_so	67,4,0	10.6,4.18,3.8	26.39,-14,0	gold_plating
-welcome-so-dcdc-power-stage	W144	そ同期整流DC-DC降圧コンバータ	glyph_so	67,4,0	6.93,3.4,1.85	20.39,-4,-20	matte_black_anodized
-welcome-so-ptc-mlcc-bank	W145	そリセッタブルPTCヒューズ	glyph_so	67,4,0	6.97,1.35,0.68	32.39,-5,-21	ic_epoxy_dark
-welcome-so-tvs-esd-protection	W146	そ静電気±15kV保護 TVSダイオード	glyph_so	67,4,0	8.1,1.2,0.94	34.39,-2,-23	matte_chassis
-welcome-so-ntc-thermistor	W147	そ過熱保護 NTCサーミスタ温度監視セン	glyph_so	67,4,0	1.4,1.16,1.16	18.39,2,-22	copper_coil
-welcome-so-luminance-photodiode	W148	そ光学輝度フィードバック・シリコンフォト	glyph_so	67,4,0	1.8,1.5,0.8	26.39,10,8	ic_epoxy_dark
-welcome-so-emi-shield-can	W149	そニッケルめっき洋白 EMI電磁遮蔽シー	glyph_so	67,4,0	9.25,4.25,1.72	26.39,4,-24	stainless_machined
-welcome-so-internal-fpc-zif	W150	そ内部ポリイミドFPCフレキ	glyph_so	67,4,0	16.6,3.32,1.53	30.39,2,-12	ic_epoxy_dark
-welcome-so-dovetail-mount	W151	そ台座嵌合 CNCダブテールドッキングマ	glyph_so	67,4,0	14.5,4.2,8.6	26.39,-10,0	matte_black_anodized
-welcome-so-antivib-bushing	W152	そ制振エラストマー防振アイソレーションブ	glyph_so	67,4,0	15.2,1,9.2	26.39,-12,6	elastomer_rubber
-welcome-so-optical-baffle	W153	そ内部迷光遮断 ブラックアルマイト光学バ	glyph_so	67,4,0	26.94,24.93,2.1	26.39,6,8	carbon_fiber
-welcome-so-dowel-pins	W154	そ精密位置決めノックピン群	glyph_so	67,4,0	14.44,7.04,6.2	29.56,6,-14	brass_precision
-welcome-so-m2-hex-bolts	W155	そM2六角穴付ステンレス締結ボルト	glyph_so	67,4,0	19.96,10.21,5.9	30.35,5,-34	stainless_machined
-welcome-so-zdiag-cnc-frame	W156	そZ字斜め画 CNC6061アルミ独立サ	glyph_so	67,4,0	28.76,21.81,4.8	22,18,6	matte_black_anodized
-welcome-so-zdiag-optical-front	W157	そZ字斜め画 シナバー光学カラー導光レン	glyph_so	67,4,0	27.55,20.55,1.45	23.1,21,32	pin_carrier_gloss
-welcome-so-zdiag-led-mcpcb	W158	そZ字斜め画 アルミコアMCPCB	glyph_so	67,4,0	26.39,19.34,1.15	22,18,2	pcb_textured
-welcome-so-zdiag-lgp-reflector	W159	そZ字斜め画 PMMA光学導光板	glyph_so	67,4,0	26.7,19.67,1.86	22,19,18	optical_glass_ed
-welcome-so-zdiag-rear-heatsink	W160	そZ字斜め画 背面AZ91Dマグネシウム	glyph_so	67,4,0	27.76,20.77,2.32	23.32,17,-18	magnesium_cast
-welcome-so-zdiag-ip65-gasket	W161	そZ字斜め画 IP65シリコーン防塵Oリ	glyph_so	67,4,0	27.71,20.71,0.72	22,20,25	magnesium_cast
-welcome-so-zdiag-ti-retainer	W162	そZ字斜め画 チタンCNC保護ベゼル	glyph_so	67,4,0	28.13,21.15,0.95	23.76,22,38	stainless_machined
-welcome-so-zdiag-bolts	W163	そZ字斜め画 M2六角穴付締結ボルト	glyph_so	67,4,0	14.09,10.14,5.24	24.64,18,-25	stainless_machined
-welcome-so-zdiag-copper-spreader	W164	そZ字斜め画 無酸素銅サーマルスプレッダ	glyph_so	67,4,0	25.97,18.9,0.65	22,17,-7	copper_thermal
-welcome-so-z1-top-frame	W165	そZ字上横画 CNC6061アルミ肉抜き	glyph_so	67,4,0	25.35,6.58,6.29	26,26,4	matte_black_anodized
-welcome-so-z3-mid-frame	W166	そZ字中横画 CNC6061アルミ肉抜き	glyph_so	67,4,0	32.8,7.58,6.29	28,12,8	matte_black_anodized
-welcome-so-z-corner-prism-1	W167	そZ字第1鋭角部 45°光学全反射コーナ	glyph_so	67,4,0	5.63,5.63,2.2	32,26,20	optical_glass_ed
-welcome-so-z-corner-prism-2	W168	そZ字第2鋭角部 45°光学全反射コーナ	glyph_so	67,4,0	5.66,5.66,2.2	16,12,20	optical_glass_ed
-welcome-so-z-horiz-leds	W169	そZ字上下横画 アルミコアMCPCB	glyph_so	67,4,0	30.37,19.3,1.15	26,20,-6	pcb_textured
-welcome-so-z-horiz-heatsink	W170	そZ字上下横画 背面AZ91Dマグネシウ	glyph_so	67,4,0	31.73,20.7,2.32	28,18,-24	magnesium_cast
-welcome-so-z-bowl-brass-joint	W171	そZ字〜椀部 CNC真鍮構造連結ジョイン	glyph_so	67,4,0	6.2,4.4,5.06	24,6,-16	brass_precision
-welcome-so-z-bowl-btob-fpc	W172	そZ字〜椀部 基板間BtoB給電コネクタ	glyph_so	67,4,0	12.3,6.36,1.53	24,8,-10	ic_epoxy_dark
-welcome-plinth-mg-chassis	W173	台座メイン CNCマグネシウム合金	optical_plinth	0,-17,0	184.84,7.6,25.84	0,-16,0	magnesium_cast
-welcome-plinth-top-datum-plate	W174	台座天面 ヘアライン加工ステンレス光学基	optical_plinth	0,-17,0	182.59,1.35,24.41	0,-6,0	matte_chassis
-welcome-plinth-bottom-weight	W175	底面 SUS304高比重・転倒防止ウェイ	optical_plinth	0,-17,0	182.84,2.4,24.84	0,-34,0	stainless_machined
-welcome-plinth-left-endcap	W176	左端 CNCアルミエンドキャップ	optical_plinth	0,-17,0	5.9,9.6,26.2	-34,-14,0	titanium_machined
-welcome-plinth-right-endcap	W177	右端 CNCアルミエンドキャップ	optical_plinth	0,-17,0	10.4,10.2,26.2	34,-14,0	titanium_machined
-welcome-plinth-front-glass-window	W178	台座前面 強化ガラス・ステータス導光保護	optical_plinth	0,-17,0	176,3.2,0.85	0,-12,26	optical_glass_ed
-welcome-plinth-rubber-feet	W179	底面4隅 高摩擦シリコーン防振ゴム脚	optical_plinth	0,-17,0	172.27,1.8,25.15	0,-42,0	magnesium_cast
-welcome-plinth-ip54-seal	W180	台座外周 IP54シリコーン防塵防滴シー	optical_plinth	0,-17,0	181,0.55,23.2	0,-9,0	magnesium_cast
-welcome-plinth-rear-io-bezel	W181	背面 I/Oポート強化アルミベゼルプレー	optical_plinth	0,-17,0	36,5.4,1.2	0,-14,-22	stainless_machined
-welcome-plinth-m3-torx-screws	W182	台座全体締結 M3ステンレス・トルクスね	optical_plinth	0,-17,0	162.45,5.27,20.79	0,-46,0	stainless_machined
-welcome-plinth-datum-dowels	W183	台座 精密基準ノックピン群	optical_plinth	0,-17,0	169.85,4.8,18.21	0,-2,0	brass_precision
-welcome-plinth-compliance-plate	W184	底面 レーザー刻印シリアル／CE	optical_plinth	0,-17,0	36,0.45,11	0,-39,-6	titanium_machined
-welcome-plinth-center-beam	W185	内部CNCアルミ補強センタービーム	optical_plinth	0,-17,0	168,3.6,15.2	0,-18,0	magnesium_cast
-welcome-plinth-dust-vent-filters	W186	側面吸排気 マイクロメッシュ防塵ベントフ	optical_plinth	0,-17,0	181.25,5.8,16.4	-28,-14,0	stainless_machined
-welcome-plinth-dock-socket-yo	W187	よ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.79,3.92,10.2	-14.74,-2,0	matte_chassis
-welcome-plinth-pogo-receptacle-yo	W188	よ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	10.6,2.7,3.8	-14.74,-6,6	ic_epoxy_dark
-welcome-plinth-dock-socket-u	W189	う専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.79,3.92,10.2	-5.62,-2,0	matte_chassis
-welcome-plinth-pogo-receptacle-u	W190	う受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	10.6,2.7,3.8	-5.62,-6,6	ic_epoxy_dark
-welcome-plinth-dock-socket-ko	W191	こ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.79,3.92,10.2	4.88,-2,0	matte_chassis
-welcome-plinth-pogo-receptacle-ko	W192	こ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	10.6,2.7,3.8	4.88,-6,6	ic_epoxy_dark
-welcome-plinth-dock-socket-so	W193	そ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.79,3.92,10.2	14.64,-2,0	matte_chassis
-welcome-plinth-pogo-receptacle-so	W194	そ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	10.6,2.7,3.8	14.64,-6,6	ic_epoxy_dark
-welcome-plinth-usbc-pd-port	W195	USB-C PD 65W 受電レセプタク	optical_plinth	0,-17,0	9.2,3.4,7.85	-18,-14,-24	stainless_machined
-welcome-plinth-pd-controller-pcb	W196	USB-C PDネゴシエーションIC	optical_plinth	0,-17,0	11.5,2.8,7.72	-18,-16,-16	pcb_textured
-welcome-plinth-pmic-3rail-board	W197	3系統同期降圧PMIC電源基板	optical_plinth	0,-17,0	21,2.81,13.12	-10,-20,-6	pcb_textured
-welcome-plinth-inductor-cap-bank	W198	大電流シールドパワーインダクタ	optical_plinth	0,-17,0	17.81,2.5,11.75	-10,-16,4	stainless_machined
-welcome-plinth-lifepo4-battery	W199	内蔵 LiFePO4 リン酸鉄リチウム	optical_plinth	0,-17,0	30.6,4.6,13.8	-26,-24,0	cfa_gloss_filter
-welcome-plinth-bms-cradle	W200	バッテリー保護BMS基板	optical_plinth	0,-17,0	39.9,3.6,15.86	-26,-28,4	magnesium_cast
-welcome-plinth-fin-heatsink	W201	静音自然対流 CNCアルミ放熱フィンヒー	optical_plinth	0,-17,0	17,3.3,4.4	-6,-24,-12	stainless_machined
-welcome-plinth-copper-heatpipe	W202	電源基板〜ヒートシンク間 無酸素銅フラッ	optical_plinth	0,-17,0	58,1,2.2	-4,-18,-10	copper_thermal
-welcome-plinth-thermal-sheet	W203	電源・マザーボード密着 高熱伝導サーマル	optical_plinth	0,-17,0	56,0.55,11.5	-4,-22,-6	elastomer_rubber
-welcome-plinth-ceramic-fuse	W204	過電流保護セラミックヒューズ	optical_plinth	0,-17,0	5.4,2.15,2.35	-14,-18,-14	solder_silver
-welcome-plinth-copper-busbar	W205	4文字分配 大電流C1020銅パワーバス	optical_plinth	0,-17,0	156,0.75,6.4	0,-10,4	brass_precision
-welcome-plinth-emi-ferrite	W206	電源ラインEMI抑制 フェライトコア	optical_plinth	0,-17,0	6,1.71,5.2	-12,-16,-12	carbon_fiber
-welcome-plinth-mainboard	W207	メイン6層システム制御マザーボード	optical_plinth	0,-17,0	44,1.57,12.12	8,-20,0	pcb_textured
-welcome-plinth-cortex-m7-mcu	W208	ARM Cortex-M7 メインMCU	optical_plinth	0,-17,0	13.98,1.69,8.01	8,-14,0	ic_epoxy_dark
-welcome-plinth-wifi-ble-module	W209	Wi-Fi 6 / BLE 5.3	optical_plinth	0,-17,0	12.3,1.6,9.9	16,-14,-8	stainless_machined
-welcome-plinth-canfd-transceiver	W210	CAN-FD 4チャネル高速差動トランシ	optical_plinth	0,-17,0	5.13,1.49,3.74	4,-15,6	solder_silver
-welcome-plinth-tof-presence-sensor	W211	前面 ToF赤外線人感近接センサー	optical_plinth	0,-17,0	6.4,2.2,2.34	0,-10,22	ic_epoxy_dark
-welcome-plinth-ambient-lux-sensor	W212	高精度デジタル環境光照度センサー	optical_plinth	0,-17,0	3,1.8,1.7	10,-10,20	ic_epoxy_dark
-welcome-plinth-cinnabar-status-bar	W213	前面シナバーオレンジ・ステータス導光バー	optical_plinth	0,-17,0	174,1.8,1.35	0,-12,18	pin_carrier_gloss
-welcome-plinth-welcome-speaker	W214	超薄型ネオジム磁気回路フルレンジ	optical_plinth	0,-17,0	16.15,5.65,15.91	24,-18,0	matte_black_anodized
-welcome-plinth-speaker-enclosure	W215	音響バスレフ共鳴エンクロージャー	optical_plinth	0,-17,0	24,4.6,17.5	24,-24,4	magnesium_cast
-welcome-plinth-audio-dac-amp	W216	クラスDオーディオアンプIC	optical_plinth	0,-17,0	4.92,1.49,4.35	20,-15,8	solder_silver
-welcome-plinth-rotary-encoder-dial	W217	右端 CNCアルミ・ローレット加工ロータ	optical_plinth	0,-17,0	9.6,7.05,9.6	38,-2,0	stainless_machined
-welcome-plinth-power-toggle-switch	W218	物理メイン電源トグルスイッチ	optical_plinth	0,-17,0	6.4,2.8,5.3	36,-12,-14	ic_epoxy_dark
-welcome-plinth-internal-harness	W219	内部メインポリイミドFPC	optical_plinth	0,-17,0	108.8,2.72,10.72	4,-12,8	polyimide_fpc
-welcome-plinth-main-emi-shield	W220	マザーボード上部 ニッケルめっき洋白	optical_plinth	0,-17,0	28.35,2.95,13.67	8,-10,0	stainless_machined
-welcome-yo-ceramic-dowel-sleeves	W221	よダブテール根元 ジルコニアセラミック断	glyph_yo	-66,4,0	14.25,1.81,0.42	-30,-10,-34	ic_epoxy_dark
+welcome-yo-cnc-chassis	W01	よ主骨格 CNC6061アルミ肉抜きシャ	glyph_yo	-66,4,0	6.62,39.15,3.76	-26,6,0	matte_black_anodized
+welcome-yo-mg-finned-backplate	W02	よ背面 AZ91Dマグネシウム3D放熱フ	glyph_yo	-66,4,0	6.47,39.01,1.58	-28.6,4,-28	magnesium_cast
+welcome-yo-sapphire-diffuser-lens	W03	よ前面 段付きサファイア光学拡散カバーレ	glyph_yo	-66,4,0	5.73,38.28,1.04	-27.3,8,30	titanium_machined
+welcome-yo-ip65-silicone-gasket	W04	よ全周IP65 シリコーン防塵防滴Oリン	glyph_yo	-66,4,0	6.87,39.4,0.32	-27.3,7,23	magnesium_cast
+welcome-yo-ti-protective-bezel	W05	よ外周 CNCチタン保護フランジベゼル	glyph_yo	-66,4,0	6.96,39.49,1.02	-28.08,9,36	stainless_machined
+welcome-yo-reflector-sheet	W06	よ98%高反射 マイクロ発泡PET背面反	glyph_yo	-66,4,0	4.22,36.81,0.26	-26,5,5	ic_epoxy_dark
+welcome-yo-pmma-lgp-waveguide	W07	よレーザー微細ドット PMMA光学導光板	glyph_yo	-66,4,0	4.1,36.7,1.08	-26.52,6,12	optical_glass_ed
+welcome-yo-bef-prism-film	W08	よマイクロプリズム集光シート	glyph_yo	-66,4,0	4.22,36.81,0.3	-27.04,7,18	optical_glass_ed
+welcome-yo-led-mcpcb	W09	よ金属コア高放熱アルミ MCPCB 基板	glyph_yo	-66,4,0	4.57,37.16,0.5	-26,4,-5	pcb_textured
+welcome-yo-led-chip-array	W10	よ高演色CRI97 2835マイクロLE	glyph_yo	-66,4,0	1.41,29.68,0.52	-26,5,-1	ic_epoxy_dark
+welcome-yo-thermal-gap-pad	W11	よ高熱伝導 サーマルギャップパッド熱橋シ	glyph_yo	-66,4,0	4.53,37.11,0.22	-26,4,-10	elastomer_rubber
+welcome-yo-local-driver-pcb	W12	よ4層FR-4 ローカル制御ドライバー基	glyph_yo	-66,4,0	3.2,11.4,0.54	-26,3,-15	pcb_textured
+welcome-yo-pwm-driver-mcu	W13	よ16bit PWM定電流LEDドライバ	glyph_yo	-66,4,0	1.65,3.35,0.48	-26,3,-19	solder_silver
+welcome-yo-pogo-contact-block	W14	よ金メッキスプリング式ポゴピン受電	glyph_yo	-66,4,0	9.6,1.18,3.4	-26,-14,0	ic_epoxy_dark
+welcome-yo-dcdc-power-stage	W15	よ同期整流DC-DC降圧コンバータ	glyph_yo	-66,4,0	1.5,3.17,0.54	-32,-4,-20	solder_silver
+welcome-yo-ptc-mlcc-bank	W16	よリセッタブルPTCヒューズ	glyph_yo	-66,4,0	0.85,2.6,0.42	-20,-5,-21	solder_silver
+welcome-yo-tvs-esd-protection	W17	よ静電気±15kV保護 TVSダイオード	glyph_yo	-66,4,0	1.84,0.85,0.48	-18,-2,-23	matte_chassis
+welcome-yo-ntc-thermistor	W18	よ過熱保護 NTCサーミスタ温度監視セン	glyph_yo	-66,4,0	0.56,0.82,0.59	-34,2,-22	copper_coil
+welcome-yo-luminance-photodiode	W19	よ光学輝度フィードバック・シリコンフォト	glyph_yo	-66,4,0	1.5,1.2,0.75	-26,10,8	ic_epoxy_dark
+welcome-yo-emi-shield-can	W20	よニッケルめっき洋白 EMI電磁遮蔽シー	glyph_yo	-66,4,0	3.6,11.8,1.06	-26,4,-24	stainless_machined
+welcome-yo-internal-fpc-zif	W21	よ内部ポリイミドFPCフレキ	glyph_yo	-66,4,0	2.6,9.39,0.45	-22,2,-12	ic_epoxy_dark
+welcome-yo-dovetail-mount	W22	よ台座嵌合 CNCダブテールドッキングマ	glyph_yo	-66,4,0	11.2,1.3,8.4	-26,-10,0	matte_black_anodized
+welcome-yo-antivib-bushing	W23	よ制振エラストマー防振アイソレーションブ	glyph_yo	-66,4,0	11.2,0.4,8.2	-26,-12,6	elastomer_rubber
+welcome-yo-optical-baffle	W24	よ内部迷光遮断 ブラックアルマイト光学バ	glyph_yo	-66,4,0	5.21,37.78,1.9	-26,6,8	carbon_fiber
+welcome-yo-dowel-pins	W25	よ精密位置決めノックピン群	glyph_yo	-66,4,0	0.92,22.42,2.2	-29.12,6,-14	brass_precision
+welcome-yo-m2-hex-bolts	W26	よM2六角穴付ステンレス締結ボルト	glyph_yo	-66,4,0	1.99,32.29,2.2	-29.9,5,-34	stainless_machined
+welcome-yo-bar-cnc-frame	W27	よ横枝ストローク CNC6061アルミ独	glyph_yo	-66,4,0	12.52,5.79,3.61	-18,16,4	matte_black_anodized
+welcome-yo-bar-optical-front	W28	よ横枝ストローク シナバー光学カラー導光	glyph_yo	-66,4,0	11.85,5.12,1.04	-18.9,19,30	pin_carrier_gloss
+welcome-yo-bar-led-mcpcb	W29	よ横枝ストローク アルミコアMCPCB	glyph_yo	-66,4,0	10.89,4.14,1.12	-18,16,0	pcb_textured
+welcome-yo-bar-lgp-reflector	W30	よ横枝ストローク PMMA光学導光板	glyph_yo	-66,4,0	10.87,4.12,1.5	-18,17,16	optical_glass_ed
+welcome-yo-bar-rear-heatsink	W31	よ横枝ストローク 背面AZ91Dマグネシ	glyph_yo	-66,4,0	12.25,5.52,1.58	-19.08,15,-20	magnesium_cast
+welcome-yo-bar-ip65-gasket	W32	よ横枝ストローク IP65シリコーン防塵	glyph_yo	-66,4,0	12.63,5.91,0.32	-18,18,23	magnesium_cast
+welcome-yo-bar-ti-retainer	W33	よ横枝ストローク チタンCNC保護ベゼル	glyph_yo	-66,4,0	12.74,6.01,0.96	-19.44,20,36	stainless_machined
+welcome-yo-bar-bolts	W34	よ横枝ストローク M2六角穴付締結ボルト	glyph_yo	-66,4,0	6.38,1.88,1.09	-20.16,16,-27	stainless_machined
+welcome-yo-bar-copper-spreader	W35	よ横枝ストローク 無酸素銅サーマルスプレ	glyph_yo	-66,4,0	10.79,4.04,0.65	-18,15,-9	copper_thermal
+welcome-yo-loop-cnc-frame	W36	よ下部ループ CNC6061アルミ独立サ	glyph_yo	-66,4,0	32.67,14.9,3.61	-28,-10,6	matte_black_anodized
+welcome-yo-loop-optical-front	W37	よ下部ループ 段付きサファイア拡散カバー	glyph_yo	-66,4,0	31.99,14.22,1.04	-29.4,-7,32	titanium_machined
+welcome-yo-loop-led-mcpcb	W38	よ下部ループ アルミコアMCPCB	glyph_yo	-66,4,0	31.02,13.21,1.12	-28,-10,2	pcb_textured
+welcome-yo-loop-lgp-reflector	W39	よ下部ループ PMMA光学導光板	glyph_yo	-66,4,0	30.99,13.21,1.5	-28,-9,18	optical_glass_ed
+welcome-yo-loop-rear-heatsink	W40	よ下部ループ 背面AZ91Dマグネシウム	glyph_yo	-66,4,0	32.4,14.63,1.58	-29.68,-11,-18	magnesium_cast
+welcome-yo-loop-ip65-gasket	W41	よ下部ループ IP65シリコーン防塵Oリ	glyph_yo	-66,4,0	32.78,15.02,0.32	-28,-8,25	magnesium_cast
+welcome-yo-loop-brass-bracket	W42	よ主幹〜下部ループ CNC真鍮構造連結ブ	glyph_yo	-66,4,0	12.9,4.5,0.9	-26,-6,-16	brass_precision
+welcome-yo-loop-btob-bus	W43	よ主幹〜ループ基板間 BtoB給電コネク	glyph_yo	-66,4,0	30.42,12.74,0.45	-24,-12,-10	copper_thermal
+welcome-u-cnc-chassis	W44	う主骨格 CNC6061アルミ肉抜きシャ	glyph_u	-21,4,0	29.66,31.21,3.76	-8.27,6,0	matte_black_anodized
+welcome-u-mg-finned-backplate	W45	う背面 AZ91Dマグネシウム3D放熱フ	glyph_u	-21,4,0	29.52,31.06,1.58	-9.1,4,-28	magnesium_cast
+welcome-u-sapphire-diffuser-lens	W46	う前面 段付きサファイア光学拡散カバーレ	glyph_u	-21,4,0	28.78,30.32,1.04	-8.69,8,30	titanium_machined
+welcome-u-ip65-silicone-gasket	W47	う全周IP65 シリコーン防塵防滴Oリン	glyph_u	-21,4,0	29.92,31.47,0.32	-8.69,7,23	magnesium_cast
+welcome-u-ti-protective-bezel	W48	う外周 CNCチタン保護フランジベゼル	glyph_u	-21,4,0	30,31.55,1.02	-8.93,9,36	stainless_machined
+welcome-u-reflector-sheet	W49	う98%高反射 マイクロ発泡PET背面反	glyph_u	-21,4,0	27.29,28.81,0.26	-8.27,5,5	ic_epoxy_dark
+welcome-u-pmma-lgp-waveguide	W50	うレーザー微細ドット PMMA光学導光板	glyph_u	-21,4,0	27.17,28.69,1.08	-8.44,6,12	optical_glass_ed
+welcome-u-bef-prism-film	W51	うマイクロプリズム集光シート	glyph_u	-21,4,0	27.29,28.81,0.3	-8.6,7,18	optical_glass_ed
+welcome-u-led-mcpcb	W52	う金属コア高放熱アルミ MCPCB 基板	glyph_u	-21,4,0	27.64,29.16,0.5	-8.27,4,-5	pcb_textured
+welcome-u-led-chip-array	W53	う高演色CRI97 2835マイクロLE	glyph_u	-21,4,0	18.62,26.09,0.52	-8.27,5,-1	ic_epoxy_dark
+welcome-u-thermal-gap-pad	W54	う高熱伝導 サーマルギャップパッド熱橋シ	glyph_u	-21,4,0	27.6,29.12,0.22	-8.27,4,-10	elastomer_rubber
+welcome-u-local-driver-pcb	W55	う4層FR-4 ローカル制御ドライバー基	glyph_u	-21,4,0	3.2,11.4,0.54	-8.27,3,-15	pcb_textured
+welcome-u-pwm-driver-mcu	W56	う16bit PWM定電流LEDドライバ	glyph_u	-21,4,0	1.65,3.35,0.48	-8.27,3,-19	solder_silver
+welcome-u-pogo-contact-block	W57	う金メッキスプリング式ポゴピン受電	glyph_u	-21,4,0	9.6,1.18,3.4	-8.27,-14,0	ic_epoxy_dark
+welcome-u-dcdc-power-stage	W58	う同期整流DC-DC降圧コンバータ	glyph_u	-21,4,0	1.5,3.17,0.54	-14.27,-4,-20	solder_silver
+welcome-u-ptc-mlcc-bank	W59	うリセッタブルPTCヒューズ	glyph_u	-21,4,0	0.85,2.6,0.42	-2.27,-5,-21	solder_silver
+welcome-u-tvs-esd-protection	W60	う静電気±15kV保護 TVSダイオード	glyph_u	-21,4,0	1.84,0.85,0.48	-0.27,-2,-23	matte_chassis
+welcome-u-ntc-thermistor	W61	う過熱保護 NTCサーミスタ温度監視セン	glyph_u	-21,4,0	0.56,0.82,0.59	-16.27,2,-22	copper_coil
+welcome-u-luminance-photodiode	W62	う光学輝度フィードバック・シリコンフォト	glyph_u	-21,4,0	1.5,1.2,0.75	-8.27,10,8	ic_epoxy_dark
+welcome-u-emi-shield-can	W63	うニッケルめっき洋白 EMI電磁遮蔽シー	glyph_u	-21,4,0	3.6,11.8,1.06	-8.27,4,-24	stainless_machined
+welcome-u-internal-fpc-zif	W64	う内部ポリイミドFPCフレキ	glyph_u	-21,4,0	2.6,8.39,0.45	-4.27,2,-12	ic_epoxy_dark
+welcome-u-dovetail-mount	W65	う台座嵌合 CNCダブテールドッキングマ	glyph_u	-21,4,0	11.2,1.3,8.4	-8.27,-10,0	matte_black_anodized
+welcome-u-antivib-bushing	W66	う制振エラストマー防振アイソレーションブ	glyph_u	-21,4,0	11.2,0.4,8.2	-8.27,-12,6	elastomer_rubber
+welcome-u-optical-baffle	W67	う内部迷光遮断 ブラックアルマイト光学バ	glyph_u	-21,4,0	28.27,29.8,1.9	-8.27,6,8	carbon_fiber
+welcome-u-dowel-pins	W68	う精密位置決めノックピン群	glyph_u	-21,4,0	7.62,22.82,2.2	-9.26,6,-14	brass_precision
+welcome-u-m2-hex-bolts	W69	うM2六角穴付ステンレス締結ボルト	glyph_u	-21,4,0	19.89,25.49,2.2	-9.51,5,-34	stainless_machined
+welcome-u-crest-cnc-frame	W70	う上部点 CNC6061アルミ独立サブフ	glyph_u	-21,4,0	17.04,9.8,3.61	-8,26,8	matte_black_anodized
+welcome-u-crest-optical-front	W71	う上部点 シナバー光学カラー導光レンズ	glyph_u	-21,4,0	16.34,9.12,1.04	-8.4,29,34	pin_carrier_gloss
+welcome-u-crest-led-mcpcb	W72	う上部点 アルミコアMCPCB	glyph_u	-21,4,0	15.32,8.13,1.12	-8,26,4	pcb_textured
+welcome-u-crest-lgp-reflector	W73	う上部点 PMMA光学導光板	glyph_u	-21,4,0	15.29,8.11,1.5	-8,27,20	optical_glass_ed
+welcome-u-crest-rear-heatsink	W74	う上部点 背面AZ91Dマグネシウム3D	glyph_u	-21,4,0	16.77,9.54,1.58	-8.48,25,-16	magnesium_cast
+welcome-u-crest-ip65-gasket	W75	う上部点 IP65シリコーン防塵Oリング	glyph_u	-21,4,0	17.15,9.92,0.32	-8,28,27	magnesium_cast
+welcome-u-crest-ti-retainer	W76	う上部点 チタンCNC保護ベゼル	glyph_u	-21,4,0	17.27,10.03,0.96	-8.64,30,40	stainless_machined
+welcome-u-crest-bolts	W77	う上部点 M2六角穴付締結ボルト	glyph_u	-21,4,0	9.08,4.38,1.09	-8.96,26,-23	stainless_machined
+welcome-u-crest-copper-spreader	W78	う上部点 無酸素銅サーマルスプレッダ	glyph_u	-21,4,0	15.21,8.03,0.65	-8,25,-5	copper_thermal
+welcome-u-quartz-support-post	W79	う浮遊点支持・透明溶融石英構造支柱	glyph_u	-21,4,0	1.72,1.81,2	-6,18,4	optical_glass_ed
+welcome-u-quartz-brass-collars	W80	う石英支柱 上下CNC真鍮締結フランジカ	glyph_u	-21,4,0	2.81,1.96,2.81	-6,16,12	brass_precision
+welcome-u-quartz-power-wire	W81	う石英支柱内蔵 φ0.35mm二重エナメ	glyph_u	-21,4,0	0.68,1.88,0.28	-6,19,-8	copper_coil
+welcome-u-quartz-oring-seals	W82	う石英支柱 上下エラストマー防振	glyph_u	-21,4,0	2.3,1.15,1.99	-6,17,16	magnesium_cast
+welcome-u-arc-copper-heatpipe	W83	う主弧 湾曲C1020無酸素銅ヒートスプ	glyph_u	-21,4,0	27.38,28.9,0.22	-8,2,-12	copper_thermal
+welcome-u-arc-cinnabar-edge	W84	う主弧 シナバー光学エッジアクセント導光	glyph_u	-21,4,0	30.83,32.39,0.56	-10,6,26	pin_carrier_gloss
+welcome-u-crest-micro-zif	W85	うクレスト基板直結 マイクロ2極ロックコ	glyph_u	-21,4,0	3.9,10.59,1.51	-6,24,-10	ic_epoxy_dark
+welcome-u-ti-retainer-clips	W86	う前面サファイアレンズ固定 チタンばねリ	glyph_u	-21,4,0	19.88,25.98,0.62	-9,8,34	stainless_machined
+welcome-ko-cnc-chassis	W87	こ主骨格 CNC6061アルミ肉抜きシャ	glyph_ko	23,4,0	30.79,13.31,3.76	9.06,6,0	matte_black_anodized
+welcome-ko-mg-finned-backplate	W88	こ背面 AZ91Dマグネシウム3D放熱フ	glyph_ko	23,4,0	30.65,13.16,1.58	9.97,4,-28	magnesium_cast
+welcome-ko-sapphire-diffuser-lens	W89	こ前面 段付きサファイア光学拡散カバーレ	glyph_ko	23,4,0	29.93,12.42,1.04	9.51,8,30	titanium_machined
+welcome-ko-ip65-silicone-gasket	W90	こ全周IP65 シリコーン防塵防滴Oリン	glyph_ko	23,4,0	31.04,13.57,0.32	9.51,7,23	magnesium_cast
+welcome-ko-ti-protective-bezel	W91	こ外周 CNCチタン保護フランジベゼル	glyph_ko	23,4,0	31.13,13.66,1.02	9.79,9,36	stainless_machined
+welcome-ko-reflector-sheet	W92	こ98%高反射 マイクロ発泡PET背面反	glyph_ko	23,4,0	28.48,10.9,0.26	9.06,5,5	ic_epoxy_dark
+welcome-ko-pmma-lgp-waveguide	W93	こレーザー微細ドット PMMA光学導光板	glyph_ko	23,4,0	28.36,10.78,1.08	9.24,6,12	optical_glass_ed
+welcome-ko-bef-prism-film	W94	こマイクロプリズム集光シート	glyph_ko	23,4,0	28.48,10.9,0.3	9.42,7,18	optical_glass_ed
+welcome-ko-led-mcpcb	W95	こ金属コア高放熱アルミ MCPCB 基板	glyph_ko	23,4,0	28.82,11.26,0.5	9.06,4,-5	pcb_textured
+welcome-ko-led-chip-array	W96	こ高演色CRI97 2835マイクロLE	glyph_ko	23,4,0	20.21,6.45,0.52	9.06,5,-1	ic_epoxy_dark
+welcome-ko-thermal-gap-pad	W97	こ高熱伝導 サーマルギャップパッド熱橋シ	glyph_ko	23,4,0	28.78,11.21,0.22	9.06,4,-10	elastomer_rubber
+welcome-ko-local-driver-pcb	W98	こ4層FR-4 ローカル制御ドライバー基	glyph_ko	23,4,0	11.4,3.2,0.54	9.06,3,-15	pcb_textured
+welcome-ko-pwm-driver-mcu	W99	こ16bit PWM定電流LEDドライバ	glyph_ko	23,4,0	3.35,1.65,0.48	9.06,3,-19	solder_silver
+welcome-ko-pogo-contact-block	W100	こ金メッキスプリング式ポゴピン受電	glyph_ko	23,4,0	9.6,1.18,3.4	9.06,-14,0	ic_epoxy_dark
+welcome-ko-dcdc-power-stage	W101	こ同期整流DC-DC降圧コンバータ	glyph_ko	23,4,0	3.17,1.5,0.54	3.06,-4,-20	solder_silver
+welcome-ko-ptc-mlcc-bank	W102	こリセッタブルPTCヒューズ	glyph_ko	23,4,0	2.6,0.85,0.42	15.06,-5,-21	solder_silver
+welcome-ko-tvs-esd-protection	W103	こ静電気±15kV保護 TVSダイオード	glyph_ko	23,4,0	0.85,1.84,0.48	17.06,-2,-23	matte_chassis
+welcome-ko-ntc-thermistor	W104	こ過熱保護 NTCサーミスタ温度監視セン	glyph_ko	23,4,0	0.82,0.56,0.59	1.06,2,-22	copper_coil
+welcome-ko-luminance-photodiode	W105	こ光学輝度フィードバック・シリコンフォト	glyph_ko	23,4,0	1.5,1.2,0.75	9.06,10,8	ic_epoxy_dark
+welcome-ko-emi-shield-can	W106	こニッケルめっき洋白 EMI電磁遮蔽シー	glyph_ko	23,4,0	11.8,3.6,1.06	9.06,4,-24	stainless_machined
+welcome-ko-internal-fpc-zif	W107	こ内部ポリイミドFPCフレキ	glyph_ko	23,4,0	10.4,1.5,0.45	13.06,2,-12	ic_epoxy_dark
+welcome-ko-dovetail-mount	W108	こ台座嵌合 CNCダブテールドッキングマ	glyph_ko	23,4,0	11.2,1.3,8.4	9.06,-10,0	matte_black_anodized
+welcome-ko-antivib-bushing	W109	こ制振エラストマー防振アイソレーションブ	glyph_ko	23,4,0	11.2,0.4,8.2	9.06,-12,6	elastomer_rubber
+welcome-ko-optical-baffle	W110	こ内部迷光遮断 ブラックアルマイト光学バ	glyph_ko	23,4,0	29.43,11.89,1.9	9.06,6,8	carbon_fiber
+welcome-ko-dowel-pins	W111	こ精密位置決めノックピン群	glyph_ko	23,4,0	17.92,2.02,2.2	10.15,6,-14	brass_precision
+welcome-ko-m2-hex-bolts	W112	こM2六角穴付ステンレス締結ボルト	glyph_ko	23,4,0	24.79,7.69,2.2	10.42,5,-34	stainless_machined
+welcome-ko-top-cnc-frame	W113	こ上画ストローク CNC6061アルミ独	glyph_ko	23,4,0	28.19,7.55,3.61	10,22,6	matte_black_anodized
+welcome-ko-top-optical-front	W114	こ上画ストローク シナバー光学カラー導光	glyph_ko	23,4,0	27.44,6.81,1.04	10.5,25,32	pin_carrier_gloss
+welcome-ko-top-led-mcpcb	W115	こ上画ストローク アルミコアMCPCB	glyph_ko	23,4,0	26.33,5.68,1.12	10,22,2	pcb_textured
+welcome-ko-top-lgp-reflector	W116	こ上画ストローク PMMA光学導光板	glyph_ko	23,4,0	26.29,5.68,1.5	10,23,18	optical_glass_ed
+welcome-ko-top-rear-heatsink	W117	こ上画ストローク 背面AZ91Dマグネシ	glyph_ko	23,4,0	27.92,7.29,1.58	10.6,21,-18	magnesium_cast
+welcome-ko-top-ip65-gasket	W118	こ上画ストローク IP65シリコーン防塵	glyph_ko	23,4,0	28.31,7.68,0.32	10,24,25	magnesium_cast
+welcome-ko-top-ti-retainer	W119	こ上画ストローク チタンCNC保護ベゼル	glyph_ko	23,4,0	28.45,7.82,0.96	10.8,26,38	stainless_machined
+welcome-ko-top-bolts	W120	こ上画ストローク M2六角穴付締結ボルト	glyph_ko	23,4,0	19.08,2.78,1.09	11.2,22,-25	stainless_machined
+welcome-ko-top-copper-spreader	W121	こ上画ストローク 無酸素銅サーマルスプレ	glyph_ko	23,4,0	26.21,5.59,0.65	10,21,-7	copper_thermal
+welcome-ko-hook-optical-prism	W122	こ上画終端ハネ部 45°全反射光学コーナ	glyph_ko	23,4,0	0.56,0.56,1.4	18,22,18	optical_glass_ed
+welcome-ko-hook-end-cap	W123	こ上画終端ハネ CNCアルミ独立エンドキ	glyph_ko	23,4,0	3.7,4.24,5.47	20,18,8	matte_black_anodized
+welcome-ko-quartz-col-left	W124	こ左・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	2.1,14.35,2.1	4,6,4	optical_glass_ed
+welcome-ko-quartz-col-right	W125	こ右・透明溶融石英構造支柱コラム	glyph_ko	23,4,0	2.1,19.8,2.1	16,6,4	optical_glass_ed
+welcome-ko-quartz-brass-collars	W126	こ左右石英コラム 4点CNC真鍮締結フラ	glyph_ko	23,4,0	18.39,19.76,3.19	10,8,12	brass_precision
+welcome-ko-left-power-bus	W127	こ左コラム内蔵 12V給電ペア極細シール	glyph_ko	23,4,0	0.68,14.23,0.28	2,6,-8	copper_coil
+welcome-ko-right-pwm-bus	W128	こ右コラム内蔵 PWM調光	glyph_ko	23,4,0	0.68,19.68,0.28	18,6,-8	copper_coil
+welcome-ko-quartz-seals	W129	こ左右石英コラム 防振・防塵エラストマー	glyph_ko	23,4,0	18.31,17.59,2.7	10,4,16	magnesium_cast
+welcome-so-cnc-chassis	W130	そ主骨格 CNC6061アルミ肉抜きシャ	glyph_so	67,4,0	27.5,18.5,3.76	26.39,6,0	matte_black_anodized
+welcome-so-mg-finned-backplate	W131	そ背面 AZ91Dマグネシウム3D放熱フ	glyph_so	67,4,0	27.36,18.35,1.58	29.03,4,-28	magnesium_cast
+welcome-so-sapphire-diffuser-lens	W132	そ前面 段付きサファイア光学拡散カバーレ	glyph_so	67,4,0	26.64,17.61,1.04	27.71,8,30	titanium_machined
+welcome-so-ip65-silicone-gasket	W133	そ全周IP65 シリコーン防塵防滴Oリン	glyph_so	67,4,0	27.75,18.76,0.32	27.71,7,23	magnesium_cast
+welcome-so-ti-protective-bezel	W134	そ外周 CNCチタン保護フランジベゼル	glyph_so	67,4,0	27.84,18.84,1.02	28.51,9,36	stainless_machined
+welcome-so-reflector-sheet	W135	そ98%高反射 マイクロ発泡PET背面反	glyph_so	67,4,0	25.18,16.1,0.26	26.39,5,5	ic_epoxy_dark
+welcome-so-pmma-lgp-waveguide	W136	そレーザー微細ドット PMMA光学導光板	glyph_so	67,4,0	25.07,15.98,1.08	26.92,6,12	optical_glass_ed
+welcome-so-bef-prism-film	W137	そマイクロプリズム集光シート	glyph_so	67,4,0	25.18,16.1,0.3	27.45,7,18	optical_glass_ed
+welcome-so-led-mcpcb	W138	そ金属コア高放熱アルミ MCPCB 基板	glyph_so	67,4,0	25.53,16.45,0.5	26.39,4,-5	pcb_textured
+welcome-so-led-chip-array	W139	そ高演色CRI97 2835マイクロLE	glyph_so	67,4,0	19.87,11.49,0.52	26.39,5,-1	ic_epoxy_dark
+welcome-so-thermal-gap-pad	W140	そ高熱伝導 サーマルギャップパッド熱橋シ	glyph_so	67,4,0	25.48,16.41,0.22	26.39,4,-10	elastomer_rubber
+welcome-so-local-driver-pcb	W141	そ4層FR-4 ローカル制御ドライバー基	glyph_so	67,4,0	11.4,3.2,0.54	26.39,3,-15	pcb_textured
+welcome-so-pwm-driver-mcu	W142	そ16bit PWM定電流LEDドライバ	glyph_so	67,4,0	3.35,1.65,0.48	26.39,3,-19	solder_silver
+welcome-so-pogo-contact-block	W143	そ金メッキスプリング式ポゴピン受電	glyph_so	67,4,0	9.6,1.18,3.4	26.39,-14,0	ic_epoxy_dark
+welcome-so-dcdc-power-stage	W144	そ同期整流DC-DC降圧コンバータ	glyph_so	67,4,0	3.17,1.5,0.54	20.39,-4,-20	solder_silver
+welcome-so-ptc-mlcc-bank	W145	そリセッタブルPTCヒューズ	glyph_so	67,4,0	2.6,0.85,0.42	32.39,-5,-21	solder_silver
+welcome-so-tvs-esd-protection	W146	そ静電気±15kV保護 TVSダイオード	glyph_so	67,4,0	0.85,1.84,0.48	34.39,-2,-23	matte_chassis
+welcome-so-ntc-thermistor	W147	そ過熱保護 NTCサーミスタ温度監視セン	glyph_so	67,4,0	0.82,0.56,0.59	18.39,2,-22	copper_coil
+welcome-so-luminance-photodiode	W148	そ光学輝度フィードバック・シリコンフォト	glyph_so	67,4,0	1.5,1.2,0.75	26.39,10,8	ic_epoxy_dark
+welcome-so-emi-shield-can	W149	そニッケルめっき洋白 EMI電磁遮蔽シー	glyph_so	67,4,0	11.8,3.6,1.06	26.39,4,-24	stainless_machined
+welcome-so-internal-fpc-zif	W150	そ内部ポリイミドFPCフレキ	glyph_so	67,4,0	10.2,1.5,0.45	30.39,2,-12	ic_epoxy_dark
+welcome-so-dovetail-mount	W151	そ台座嵌合 CNCダブテールドッキングマ	glyph_so	67,4,0	11.2,1.3,8.4	26.39,-10,0	matte_black_anodized
+welcome-so-antivib-bushing	W152	そ制振エラストマー防振アイソレーションブ	glyph_so	67,4,0	11.2,0.4,8.2	26.39,-12,6	elastomer_rubber
+welcome-so-optical-baffle	W153	そ内部迷光遮断 ブラックアルマイト光学バ	glyph_so	67,4,0	26.14,17.09,1.9	26.39,6,8	carbon_fiber
+welcome-so-dowel-pins	W154	そ精密位置決めノックピン群	glyph_so	67,4,0	20.72,5.62,2.2	29.56,6,-14	brass_precision
+welcome-so-m2-hex-bolts	W155	そM2六角穴付ステンレス締結ボルト	glyph_so	67,4,0	21.09,11.39,2.2	30.35,5,-34	stainless_machined
+welcome-so-zdiag-cnc-frame	W156	そZ字斜め画 CNC6061アルミ独立サ	glyph_so	67,4,0	23.2,17.38,3.61	22,18,6	matte_black_anodized
+welcome-so-zdiag-optical-front	W157	そZ字斜め画 シナバー光学カラー導光レン	glyph_so	67,4,0	22.56,16.72,1.04	23.1,21,32	pin_carrier_gloss
+welcome-so-zdiag-led-mcpcb	W158	そZ字斜め画 アルミコアMCPCB	glyph_so	67,4,0	21.66,15.78,1.12	22,18,2	pcb_textured
+welcome-so-zdiag-lgp-reflector	W159	そZ字斜め画 PMMA光学導光板	glyph_so	67,4,0	21.64,15.76,1.5	22,19,18	optical_glass_ed
+welcome-so-zdiag-rear-heatsink	W160	そZ字斜め画 背面AZ91Dマグネシウム	glyph_so	67,4,0	22.94,17.11,1.58	23.32,17,-18	magnesium_cast
+welcome-so-zdiag-ip65-gasket	W161	そZ字斜め画 IP65シリコーン防塵Oリ	glyph_so	67,4,0	23.3,17.49,0.32	22,20,25	magnesium_cast
+welcome-so-zdiag-ti-retainer	W162	そZ字斜め画 チタンCNC保護ベゼル	glyph_so	67,4,0	23.39,17.59,0.96	23.76,22,38	stainless_machined
+welcome-so-zdiag-bolts	W163	そZ字斜め画 M2六角穴付締結ボルト	glyph_so	67,4,0	13.38,9.48,1.09	24.64,18,-25	stainless_machined
+welcome-so-zdiag-copper-spreader	W164	そZ字斜め画 無酸素銅サーマルスプレッダ	glyph_so	67,4,0	21.56,15.68,0.65	22,17,-7	copper_thermal
+welcome-so-z1-top-frame	W165	そZ字上横画 CNC6061アルミ肉抜き	glyph_so	67,4,0	13.99,5.03,5.47	26,26,4	matte_black_anodized
+welcome-so-z3-mid-frame	W166	そZ字中横画 CNC6061アルミ肉抜き	glyph_so	67,4,0	21.03,5.78,5.47	28,12,8	matte_black_anodized
+welcome-so-z-corner-prism-1	W167	そZ字第1鋭角部 45°光学全反射コーナ	glyph_so	67,4,0	1.15,1.15,1.4	32,26,20	optical_glass_ed
+welcome-so-z-corner-prism-2	W168	そZ字第2鋭角部 45°光学全反射コーナ	glyph_so	67,4,0	1.41,1.41,1.4	16,12,20	optical_glass_ed
+welcome-so-z-horiz-leds	W169	そZ字上下横画 アルミコアMCPCB	glyph_so	67,4,0	26.44,18.21,1.12	26,20,-6	pcb_textured
+welcome-so-z-horiz-heatsink	W170	そZ字上下横画 背面AZ91Dマグネシウ	glyph_so	67,4,0	27.76,19.57,1.58	28,18,-24	magnesium_cast
+welcome-so-z-bowl-brass-joint	W171	そZ字〜椀部 CNC真鍮構造連結ジョイン	glyph_so	67,4,0	3.8,2.4,1.1	24,6,-16	brass_precision
+welcome-so-z-bowl-btob-fpc	W172	そZ字〜椀部 基板間BtoB給電コネクタ	glyph_so	67,4,0	9,7.79,0.45	24,8,-10	ic_epoxy_dark
+welcome-plinth-mg-chassis	W173	台座メイン CNCマグネシウム合金	optical_plinth	0,-17,0	184.8,7.28,25.8	0,-16,0	magnesium_cast
+welcome-plinth-top-datum-plate	W174	台座天面 ヘアライン加工ステンレス光学基	optical_plinth	0,-17,0	182.6,1,24.2	0,-6,0	matte_chassis
+welcome-plinth-bottom-weight	W175	底面 SUS304高比重・転倒防止ウェイ	optical_plinth	0,-17,0	182,2.24,24	0,-34,0	stainless_machined
+welcome-plinth-left-endcap	W176	左端 CNCアルミエンドキャップ	optical_plinth	0,-17,0	4.7,9.6,26	-34,-14,0	titanium_machined
+welcome-plinth-right-endcap	W177	右端 CNCアルミエンドキャップ	optical_plinth	0,-17,0	10.57,10.22,26	34,-14,0	titanium_machined
+welcome-plinth-front-glass-window	W178	台座前面 強化ガラス・ステータス導光保護	optical_plinth	0,-17,0	176,3.16,0.72	0,-12,26	optical_glass_ed
+welcome-plinth-rubber-feet	W179	底面4隅 高摩擦シリコーン防振ゴム脚	optical_plinth	0,-17,0	174.88,0.9,24.16	0,-42,0	magnesium_cast
+welcome-plinth-ip54-seal	W180	台座外周 IP54シリコーン防塵防滴シー	optical_plinth	0,-17,0	182,0.28,24	0,-9,0	magnesium_cast
+welcome-plinth-rear-io-bezel	W181	背面 I/Oポート強化アルミベゼルプレー	optical_plinth	0,-17,0	36,5.2,0.9	0,-14,-22	stainless_machined
+welcome-plinth-m3-torx-screws	W182	台座全体締結 M3ステンレス・トルクスね	optical_plinth	0,-17,0	149.88,2.12,22.24	0,-46,0	stainless_machined
+welcome-plinth-datum-dowels	W183	台座 精密基準ノックピン群	optical_plinth	0,-17,0	171.79,1.24,19.35	0,-2,0	brass_precision
+welcome-plinth-compliance-plate	W184	底面 レーザー刻印シリアル／CE	optical_plinth	0,-17,0	36,0.36,11	0,-39,-6	titanium_machined
+welcome-plinth-center-beam	W185	内部CNCアルミ補強センタービーム	optical_plinth	0,-17,0	166,0.68,20.9	0,-18,0	magnesium_cast
+welcome-plinth-dust-vent-filters	W186	側面吸排気 マイクロメッシュ防塵ベントフ	optical_plinth	0,-17,0	181.22,5.2,16	-28,-14,0	stainless_machined
+welcome-plinth-dock-socket-yo	W187	よ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.2,2.3,9.8	-14.74,-2,0	matte_chassis
+welcome-plinth-pogo-receptacle-yo	W188	よ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	9.6,1.16,3.4	-14.74,-6,6	ic_epoxy_dark
+welcome-plinth-dock-socket-u	W189	う専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.2,2.3,9.8	-5.62,-2,0	matte_chassis
+welcome-plinth-pogo-receptacle-u	W190	う受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	9.6,1.16,3.4	-5.62,-6,6	ic_epoxy_dark
+welcome-plinth-dock-socket-ko	W191	こ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.2,2.3,9.8	4.88,-2,0	matte_chassis
+welcome-plinth-pogo-receptacle-ko	W192	こ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	9.6,1.16,3.4	4.88,-6,6	ic_epoxy_dark
+welcome-plinth-dock-socket-so	W193	そ専用 CNCアリ溝ドッキングソケット	optical_plinth	0,-17,0	18.2,2.3,9.8	14.64,-2,0	matte_chassis
+welcome-plinth-pogo-receptacle-so	W194	そ受電・CAN-FD 金メッキポゴピンレ	optical_plinth	0,-17,0	9.6,1.16,3.4	14.64,-6,6	ic_epoxy_dark
+welcome-plinth-usbc-pd-port	W195	USB-C PD 65W 受電レセプタク	optical_plinth	0,-17,0	9.2,3.2,5.88	-18,-14,-24	stainless_machined
+welcome-plinth-pd-controller-pcb	W196	USB-C PDネゴシエーションIC	optical_plinth	0,-17,0	11.2,1.7,7.2	-18,-16,-16	pcb_textured
+welcome-plinth-pmic-3rail-board	W197	3系統同期降圧PMIC電源基板	optical_plinth	0,-17,0	20,1.77,12.2	-10,-20,-6	pcb_textured
+welcome-plinth-inductor-cap-bank	W198	大電流シールドパワーインダクタ	optical_plinth	0,-17,0	16.57,1.75,11.57	-10,-16,4	stainless_machined
+welcome-plinth-lifepo4-battery	W199	内蔵 LiFePO4 リン酸鉄リチウム	optical_plinth	0,-17,0	30.28,3.76,13.3	-26,-24,0	cfa_gloss_filter
+welcome-plinth-bms-cradle	W200	バッテリー保護BMS基板	optical_plinth	0,-17,0	40.4,0.8,15.6	-26,-28,4	magnesium_cast
+welcome-plinth-fin-heatsink	W201	静音自然対流 CNCアルミ放熱フィンヒー	optical_plinth	0,-17,0	16.8,2.7,4.2	-6,-24,-12	stainless_machined
+welcome-plinth-copper-heatpipe	W202	電源基板〜ヒートシンク間 無酸素銅フラッ	optical_plinth	0,-17,0	58,0.72,2	-4,-18,-10	copper_thermal
+welcome-plinth-thermal-sheet	W203	電源・マザーボード密着 高熱伝導サーマル	optical_plinth	0,-17,0	54,0.44,10.8	-4,-22,-6	elastomer_rubber
+welcome-plinth-ceramic-fuse	W204	過電流保護セラミックヒューズ	optical_plinth	0,-17,0	5.15,2,2.15	-14,-18,-14	solder_silver
+welcome-plinth-copper-busbar	W205	4文字分配 大電流C1020銅パワーバス	optical_plinth	0,-17,0	154,0.44,6.4	0,-10,4	brass_precision
+welcome-plinth-emi-ferrite	W206	電源ラインEMI抑制 フェライトコア	optical_plinth	0,-17,0	5.14,1.44,4.45	-12,-16,-12	carbon_fiber
+welcome-plinth-mainboard	W207	メイン6層システム制御マザーボード	optical_plinth	0,-17,0	44,0.95,11.8	8,-20,0	pcb_textured
+welcome-plinth-cortex-m7-mcu	W208	ARM Cortex-M7 メインMCU	optical_plinth	0,-17,0	12.5,0.87,7.4	8,-14,0	solder_silver
+welcome-plinth-wifi-ble-module	W209	Wi-Fi 6 / BLE 5.3	optical_plinth	0,-17,0	11.6,1.15,9.35	16,-14,-8	stainless_machined
+welcome-plinth-canfd-transceiver	W210	CAN-FD 4チャネル高速差動トランシ	optical_plinth	0,-17,0	4.2,0.76,3.4	4,-15,6	solder_silver
+welcome-plinth-tof-presence-sensor	W211	前面 ToF赤外線人感近接センサー	optical_plinth	0,-17,0	6.4,2,2.25	0,-10,22	ic_epoxy_dark
+welcome-plinth-ambient-lux-sensor	W212	高精度デジタル環境光照度センサー	optical_plinth	0,-17,0	3,1.7,1.68	10,-10,20	ic_epoxy_dark
+welcome-plinth-cinnabar-status-bar	W213	前面シナバーオレンジ・ステータス導光バー	optical_plinth	0,-17,0	174,1.1,1.1	0,-12,18	pin_carrier_gloss
+welcome-plinth-welcome-speaker	W214	超薄型ネオジム磁気回路フルレンジ	optical_plinth	0,-17,0	15,4.37,15	24,-18,0	matte_black_anodized
+welcome-plinth-speaker-enclosure	W215	音響バスレフ共鳴エンクロージャー	optical_plinth	0,-17,0	23,4,17.6	24,-24,4	magnesium_cast
+welcome-plinth-audio-dac-amp	W216	クラスDオーディオアンプIC	optical_plinth	0,-17,0	4,0.76,4	20,-15,8	solder_silver
+welcome-plinth-rotary-encoder-dial	W217	右端 CNCアルミ・ローレット加工ロータ	optical_plinth	0,-17,0	9.36,3.5,9.36	38,-2,0	stainless_machined
+welcome-plinth-power-toggle-switch	W218	物理メイン電源トグルスイッチ	optical_plinth	0,-17,0	6.2,2.6,5.24	36,-12,-14	ic_epoxy_dark
+welcome-plinth-internal-harness	W219	内部メインポリイミドFPC	optical_plinth	0,-17,0	107.2,0.46,12.05	4,-12,8	polyimide_fpc
+welcome-plinth-main-emi-shield	W220	マザーボード上部 ニッケルめっき洋白	optical_plinth	0,-17,0	23.6,1.6,10.6	8,-10,0	stainless_machined
+welcome-yo-ceramic-dowel-sleeves	W221	よダブテール根元 ジルコニアセラミック断	glyph_yo	-66,4,0	8.55,2.41,0.42	-30,-10,-34	ic_epoxy_dark
 welcome-yo-sapphire-stress-collar	W222	よ主幹前面 サファイア窓外周 応力緩和フ	glyph_yo	-66,4,0	6.4,7.6,0.14	-28,8,42	magnesium_cast
 welcome-yo-ntc-test-header	W223	よMCPCB背面 精密0402	glyph_yo	-66,4,0	3.4,5.2,0.46	-28,12,-34	pcb_textured
 welcome-yo-eptfe-breather-desiccant	W224	よIP68 疎水ePTFEブリーザー膜	glyph_yo	-66,4,0	5.53,3.3,0.48	-28,4,-34	stainless_machined
@@ -232,7 +232,7 @@ welcome-ko-quartz-relief-collars	W230	こ上下2筐体連結石英柱 応力緩�
 welcome-ko-hook-specular-wedge	W231	こ上画ハネ角部 45°誘電体高反射マイク	glyph_ko	23,4,0	3.09,3.03,0.48	11,21,-34	stainless_machined
 welcome-ko-eptfe-breather-desiccant	W232	こ下画背面 IP68 疎水ePTFEブリ	glyph_ko	23,4,0	5.53,3.3,0.48	10,4,-34	stainless_machined
 welcome-ko-brass-datum-pins	W233	こ下画ドック座面 C3604精密真鍮基準	glyph_ko	23,4,0	18.84,1.44,0.4	10,4,-34	brass_precision
-welcome-so-prism-silver-backing	W234	そZ字2鋭角プリズム背面 誘電体保護銀ミ	glyph_so	67,4,0	27.18,19.56,0.44	28,18,-34	emi_shield_metal
+welcome-so-prism-silver-backing	W234	そZ字2鋭角プリズム背面 誘電体保護銀ミ	glyph_so	67,4,0	20.73,13.9,0.41	28,18,-34	emi_shield_metal
 welcome-so-joint-strain-keeper	W235	そZ字〜椀部真鍮ジョイント ストレインリ	glyph_so	67,4,0	6.4,2.6,0.44	28,10,-34	stainless_machined
 welcome-so-eptfe-breather-desiccant	W236	そ椀部背面 IP68 疎水ePTFEブリ	glyph_so	67,4,0	5.53,3.3,0.48	29,4,-34	stainless_machined
 welcome-so-bowl-copper-bridge	W237	そ椀部背面 無酸素銅C1020	glyph_so	67,4,0	9.75,2.96,0.44	29,4,-34	copper_thermal
@@ -314,25 +314,25 @@ welcome-plinth-tamper-microswitch	W312	底面アンチタンパー開閉検知 �
 welcome-plinth-usbc-dust-cap	W313	背面USB-Cポート専用 テザー付IP5	optical_plinth	0,-17,0	9.7,2.8,0.53	0,-16,-28	magnesium_cast
 welcome-plinth-iso17025-qr-tag	W314	底面 ISO/IEC 17025光学校正	optical_plinth	0,-17,0	18,0.38,5.2	0,-50,0	titanium_machined
 welcome-plinth-hic-hologram-seal	W315	底面 コバルトフリー湿度インジケータカー	optical_plinth	0,-17,0	14,0.39,4.8	0,-50,0	matte_chassis
-welcome-yo-photodiode-tap-prism	W316	よ輝度帰還フォトダイオード専用	glyph_yo	-66,4,0	1.52,2.25,1.5	-20,10,14	matte_black_anodized
+welcome-yo-photodiode-tap-prism	W316	よ輝度帰還フォトダイオード専用	glyph_yo	-66,4,0	0.87,2.05,1.38	-20,10,14	matte_black_anodized
 welcome-yo-dovetail-wear-strips	W317	よダブテール嵌合面 自己潤滑Turcit	glyph_yo	-66,4,0	13.24,0.28,0.31	0,-5.8,0	brass_precision
-welcome-yo-bar-spring-retainer	W318	よ横枝ストローク シナバーレンズ定圧Be	glyph_yo	-66,4,0	7.38,8.18,0.17	-19,19,46	magnesium_cast
-welcome-yo-loop-sapphire-shims	W319	よ下部ループ前面 サファイア光学窓	glyph_yo	-66,4,0	31.94,9.9,0.24	-29,-7,42	stainless_machined
+welcome-yo-bar-spring-retainer	W318	よ横枝ストローク シナバーレンズ定圧Be	glyph_yo	-66,4,0	6.58,5.66,0.17	-19,19,46	magnesium_cast
+welcome-yo-loop-sapphire-shims	W319	よ下部ループ前面 サファイア光学窓	glyph_yo	-66,4,0	10.3,14.75,0.24	-29,-7,42	stainless_machined
 welcome-yo-loop-emi-bridge	W320	よ主幹〜ループ交差部 積層C1020銅フ	glyph_yo	-66,4,0	5.71,2.04,0.28	-30,-10,-34	copper_thermal
 welcome-u-arc-becu-emi-clips	W321	う主弧背面シーム 5点ベリリウム銅C17	glyph_u	-21,4,0	18.49,27.37,0.37	-9,4,-38	becu_spring
 welcome-u-crest-thermal-shunt	W322	う浮遊上部点背面 高放射率黒色セラミック	glyph_u	-21,4,0	11.22,6.2,0.34	-8.5,25,-34	matte_black_anodized
-welcome-u-sapphire-ar-retainer	W323	う主弧前面 サファイアAR光学窓	glyph_u	-21,4,0	23.24,29.22,0.24	-9,8,46	stainless_machined
+welcome-u-sapphire-ar-retainer	W323	う主弧前面 サファイアAR光学窓	glyph_u	-21,4,0	21.71,27.21,0.24	-9,8,46	stainless_machined
 welcome-u-dovetail-ball-detent	W324	うダブテール根元 Turcite®	glyph_u	-21,4,0	13.24,0.28,0.31	0,-5.8,0	brass_precision
-welcome-u-arc-anti-newton-mask	W325	う主弧LGP〜BEF間 マイクロビーズ拡	glyph_u	-21,4,0	18.14,29.19,0.04	-9,8,40	membrane_translucent
+welcome-u-arc-anti-newton-mask	W325	う主弧LGP〜BEF間 マイクロビーズ拡	glyph_u	-21,4,0	18.18,29.19,0.04	-9,8,40	membrane_translucent
 welcome-ko-becu-emi-fingerstock	W326	こ上画・下画背面 6点ベリリウム銅C17	glyph_ko	23,4,0	20.85,29.55,0.37	10,4,-38	becu_spring
 welcome-ko-dovetail-wear-detent	W327	こダブテール嵌合面 Turcite®	glyph_ko	23,4,0	13.24,0.28,0.31	0,-5.8,0	brass_precision
 welcome-ko-miro-endmirrors-baffle	W328	こ3開放終端 曲線密着 MIRO	glyph_ko	23,4,0	32.63,29.23,1.75	14,12,26	emi_shield_metal
 welcome-ko-upper-thermal-plate	W329	こ浮遊上画背面 無酸素銅C1020	glyph_ko	23,4,0	8.45,3.48,0.42	10.6,21,-34	carbon_fiber
-welcome-ko-lower-sapphire-claws	W330	こ下画前面 サファイア光学窓 外周5点S	glyph_ko	23,4,0	24.32,11.61,0.24	10,4,46	stainless_machined
+welcome-ko-lower-sapphire-claws	W330	こ下画前面 サファイア光学窓 外周5点S	glyph_ko	23,4,0	21.44,9.33,0.24	10,4,46	stainless_machined
 welcome-so-dovetail-wear-detent	W331	そダブテール嵌合面 Turcite®	glyph_so	67,4,0	13.24,0.28,0.31	0,-5.8,0	brass_precision
-welcome-so-miro-endmirrors-spacer	W332	そ両終端 曲線密着 MIRO-SILVE	glyph_so	67,4,0	27.88,17.14,4.36	36,8,36	membrane_translucent
+welcome-so-miro-endmirrors-spacer	W332	そ両終端 曲線密着 MIRO-SILVE	glyph_so	67,4,0	27.9,17.13,4.36	36,8,36	membrane_translucent
 welcome-so-z-flex-copper-shunts	W333	そZ字2鋭角部 可撓C1020積層銅サー	glyph_so	67,4,0	11.75,12.28,0.34	28,18,-34	copper_thermal
-welcome-so-prism-retainer-blocks	W334	そZ字45°コーナープリズム 精密真鍮マ	glyph_so	67,4,0	32.66,17.8,0.65	24,20,42	brass_precision
+welcome-so-prism-retainer-blocks	W334	そZ字45°コーナープリズム 精密真鍮マ	glyph_so	67,4,0	18.32,13.05,0.48	24,20,42	brass_precision
 welcome-so-cantilever-tmd	W335	そ上部Z字片持ち先端 W80Cu20	glyph_so	67,4,0	4.2,2.2,0.68	28,20,-46	elastomer_rubber
 welcome-plinth-spirit-bubble-level	W336	台座天面左 2′/2mm 高精度丸型気泡	optical_plinth	0,-17,0	11,1.18,11	0,-5,0	stainless_machined
 welcome-plinth-invar-vernier-scale	W337	台座天面中央 レーザー刻印 Invar	optical_plinth	0,-17,0	22,0.34,2.6	0,-5,0	titanium_machined
@@ -355,7 +355,7 @@ welcome-plinth-tilt-kickstands	W353	底面後方 展開式8°仰角チルトキ�
 welcome-plinth-cable-trough	W354	底面 埋め込み式USB-C編組ケーブル配	optical_plinth	0,-17,0	22,0.62,3.2	0,-50,0	magnesium_cast
 welcome-plinth-service-block-map	W355	底面 レーザー刻印 電源・CAN-FD	optical_plinth	0,-17,0	28,0.36,5	0,-50,0	matte_chassis
 welcome-plinth-parylene-barrier-frame	W356	メイン基板全周 パリレンC防湿コンフォー	optical_plinth	0,-17,0	24,0.34,0.7	0,-10.5,8	optical_ar_iridescent
-welcome-plinth-dial-lume-ring	W357	ロータリーダイヤル外周 Super	optical_plinth	0,-17,0	11.65,0.48,11.95	38,-2,0	emissive_glow
+welcome-plinth-dial-lume-ring	W357	ロータリーダイヤル外周 Super	optical_plinth	0,-17,0	10.34,0.38,10.61	38,-2,0	emissive_glow
 welcome-plinth-front-glare-visor	W358	前面ガラス上縁 マイクロ面取りグレア防止	optical_plinth	0,-17,0	170,0.44,0.46	0,-16,32	matte_black_anodized
 welcome-plinth-star-ground-link	W359	内部12V/5V/アナログ1点スター接地	optical_plinth	0,-17,0	14,0.42,0.7	0,-9.5,0	copper_thermal
 welcome-plinth-master-metrology-plaque	W360	台座天面中央 WLK-360 JIS	optical_plinth	0,-17,0	13,0.37,2	0,-5,0	matte_black_anodized

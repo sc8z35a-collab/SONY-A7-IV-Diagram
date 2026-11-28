@@ -610,8 +610,10 @@ export class PartGeometryExtractor {
           this.prebakedPack = data.parts as typeof this.prebakedPack;
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.warn('[PartGeometryExtractor] Prebaked template pack load failed; falling back to dynamic extraction:', err);
         this.prebakedPack = null;
+        this.templatePackPromise = null;
       });
     return this.templatePackPromise;
   }

@@ -759,8 +759,8 @@ function normalizeGeometry(
       const gridCells = Math.max(22, Math.min(34, Math.round(Math.sqrt(triCount) * 0.55)));
       const invCell = gridCells / maxDim;
       let cap = 64;
-      const minCap = vCount * 2;
-      while (cap < minCap) cap <<= 1;
+      const minCap = Math.min(1 << 28, Math.max(64, vCount * 2));
+      while (cap < minCap && cap < (1 << 28)) cap *= 2;
       const mask = cap - 1;
       ensureWeldScratch(cap, vCount, false);
       const slots = _weldSlots;
@@ -797,7 +797,7 @@ function normalizeGeometry(
           Math.imul(nBucket, 2654435761);
         let s = h & mask;
         let found = -1;
-        while (true) {
+        for (let probe = 0; probe < cap; probe++) {
           const entry = slots[s];
           if (entry === 0) break;
           const uIdx = entry - 1;
@@ -903,8 +903,8 @@ function normalizeGeometry(
   // (Q=128) and normal (Q=16) match, using reusable flat Int32Arrays (ZERO heap churn!).
   if (!didDecimate && weldVertices && !rawIndex && vCount >= 24) {
     let cap = 64;
-    const minCap = vCount * 2;
-    while (cap < minCap) cap <<= 1;
+    const minCap = Math.min(1 << 28, Math.max(64, vCount * 2));
+    while (cap < minCap && cap < (1 << 28)) cap *= 2;
     const mask = cap - 1;
     ensureWeldScratch(cap, vCount, Boolean(uvArr));
     const slots = _weldSlots;
@@ -928,7 +928,7 @@ function normalizeGeometry(
       h ^= Math.imul(nx, 2654435761) ^ Math.imul(ny, 1597334677) ^ Math.imul(nz, 2246822519);
       let s = h & mask;
       let found = -1;
-      while (true) {
+      for (let probe = 0; probe < cap; probe++) {
         const entry = slots[s];
         if (entry === 0) break;
         const uIdx = entry - 1;
@@ -1277,8 +1277,8 @@ export function decimateMergedGeometryRGBA(
 
   const invCell = Math.max(2, gridCells) / maxDim;
   let cap = 64;
-  const minCap = vCount * 2;
-  while (cap < minCap) cap <<= 1;
+  const minCap = Math.min(1 << 28, Math.max(64, vCount * 2));
+  while (cap < minCap && cap < (1 << 28)) cap *= 2;
   const mask = cap - 1;
   ensureWeldScratch(cap, vCount, false);
   const slots = _weldSlots;
@@ -1331,7 +1331,7 @@ export function decimateMergedGeometryRGBA(
       Math.imul(nBucket, 2654435761);
     let s = h & mask;
     let found = -1;
-    while (true) {
+    for (let probe = 0; probe < cap; probe++) {
       const entry = slots[s];
       if (entry === 0) break;
       const uIdx = entry - 1;
@@ -2021,8 +2021,21 @@ export class CompiledV2Unit implements OptimizedUnit {
       }
     }
 
+    const disposeUnadoptedOverlays = (): void => {
+      if (rawBuild.overlayGroup && !rawBuild.overlayGroup.parent) {
+        disposeObject3D(rawBuild.overlayGroup, null, true);
+      }
+      if (rawBuild.explodeGuides && !rawBuild.explodeGuides.parent) {
+        disposeObject3D(rawBuild.explodeGuides, null, true);
+      }
+    };
+
     if (isAborted()) {
-      if (!retainSharedRaw) disposeTemporaryRawTree(rawBuild.parts, false);
+      if (!retainSharedRaw) {
+        disposeTemporaryRawTree(rawBuild.parts, false);
+        disposeUnadoptedOverlays();
+        rawBuild.onDispose?.();
+      }
       proxy.releaseAll();
       this.dispose(cache);
       throw new Error(`${this.unitId} build aborted`);
@@ -2380,7 +2393,10 @@ export class CompiledV2Unit implements OptimizedUnit {
       if ((pi + 1) % 16 === 0) {
         if (await maybeYield(pi + 1, totalParts + 6)) {
           disposeTempRetess();
-          disposeTemporaryRawTree(rawParts, false);
+          if (!retainSharedRaw) {
+            disposeTemporaryRawTree(rawParts, false);
+            disposeUnadoptedOverlays();
+          }
           proxy.releaseAll();
           this.dispose(cache);
           throw new Error(`${this.unitId} build aborted`);
@@ -2606,7 +2622,10 @@ export class CompiledV2Unit implements OptimizedUnit {
 
     if (await maybeYield(totalParts + 1, totalParts + 6)) {
       disposeTempRetess();
-      disposeTemporaryRawTree(rawParts, false);
+      if (!retainSharedRaw) {
+        disposeTemporaryRawTree(rawParts, false);
+        disposeUnadoptedOverlays();
+      }
       proxy.releaseAll();
       this.dispose(cache);
       throw new Error(`${this.unitId} build aborted`);
@@ -2767,7 +2786,10 @@ export class CompiledV2Unit implements OptimizedUnit {
         if (await maybeYield(totalParts + 2, totalParts + 6)) {
           disposePendingBatchGeos();
           disposeTempRetess();
-          disposeTemporaryRawTree(rawParts, false);
+          if (!retainSharedRaw) {
+            disposeTemporaryRawTree(rawParts, false);
+            disposeUnadoptedOverlays();
+          }
           proxy.releaseAll();
           this.dispose(cache);
           throw new Error(`${this.unitId} build aborted`);
@@ -2993,7 +3015,10 @@ export class CompiledV2Unit implements OptimizedUnit {
       if (await maybeYield(totalParts + 3, totalParts + 6)) {
         disposePendingBatchGeos();
         disposeTempRetess();
-        disposeTemporaryRawTree(rawParts, false);
+        if (!retainSharedRaw) {
+          disposeTemporaryRawTree(rawParts, false);
+          disposeUnadoptedOverlays();
+        }
         proxy.releaseAll();
         this.dispose(cache);
         throw new Error(`${this.unitId} build aborted`);
@@ -3133,7 +3158,10 @@ export class CompiledV2Unit implements OptimizedUnit {
           if (await maybeYield(totalParts + 4, totalParts + 6)) {
             disposePendingBatchGeos();
             disposeTempRetess();
-            disposeTemporaryRawTree(rawParts, false);
+            if (!retainSharedRaw) {
+              disposeTemporaryRawTree(rawParts, false);
+              disposeUnadoptedOverlays();
+            }
             proxy.releaseAll();
             this.dispose(cache);
             throw new Error(`${this.unitId} build aborted`);
