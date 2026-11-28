@@ -208,7 +208,7 @@ export async function runEX14(ctx) {
     }),
     makeTestResult('T225', floatSeals.length === 0 ? 'PASS' : 'FAIL', { metric: 'closed_loop_ok', actual: floatSeals.length === 0 ? 1 : 0, op: '==', limit: 1, sv: 'NX' }),
     makeTestResult('T226', true ? 'PASS' : 'FAIL', { metric: 'seal_comp_pct', actual: 22.0, op: '>=', limit: 12.0, sv: 'CGAL' }),
-    makeTestResult('T227', floatSeals.length === 0 ? 'PASS' : 'FAIL', { metric: 'io_port_sealed', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
+    makeTestResult('T227', floatSeals.length === 0 ? 'PASS' : 'FAIL', { metric: 'io_port_sealed', actual: floatSeals.length === 0 ? 1 : 0, op: '==', limit: 1, sv: 'FCL' }),
     makeTestResult('T228', true ? 'PASS' : 'FAIL', { metric: 'window_sealed', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
     makeTestResult('T229', true ? 'PASS' : 'FAIL', { metric: 'fastener_seal_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),
     makeTestResult('T230', true ? 'PASS' : 'FAIL', { metric: 'vent_eptfe_ok', actual: 1, op: '==', limit: 1, sv: 'FCL' }),

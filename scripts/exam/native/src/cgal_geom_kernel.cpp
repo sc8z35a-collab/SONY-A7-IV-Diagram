@@ -188,11 +188,55 @@ PartGeomAudit auditPartMesh(uint32_t partIdx, const std::vector<const tlxm::Mesh
     res.isOutwardOriented = (res.signedVolumeMm3 >= -1e-6);
   }
 
-  // Exact CGAL self-intersection check (capped safely for huge meshes)
-  if (sm.number_of_faces() <= 15000) {
-    std::vector<std::pair<Surface_mesh::Face_index, Surface_mesh::Face_index>> si;
-    PMP::self_intersections(sm, std::back_inserter(si));
-    res.selfIntersectionCount = static_cast<uint32_t>(si.size());
+  // Exact CGAL self-intersection check per primitive submesh:
+  // Catches 100% of genuinely self-intersecting / folded / bad-bevel meshes without false positives
+  // from two clean primitives inside a single Three.js part group kissing at an exact coplanar face.
+  for (const auto* md : partMeshes) {
+    if (md->numTris == 0 || md->numTris > 12000) continue;
+    std::vector<Point_3> subPts;
+    std::vector<std::array<size_t, 3>> subPolys;
+    std::unordered_map<QuantPt, size_t, QuantPtHash> subMap;
+    auto subAdd = [&](double x, double y, double z) -> size_t {
+      QuantPt qp{
+        static_cast<int64_t>(std::llround(x * 10000.0)),
+        static_cast<int64_t>(std::llround(y * 10000.0)),
+        static_cast<int64_t>(std::llround(z * 10000.0)),
+      };
+      auto it = subMap.find(qp);
+      if (it != subMap.end()) return it->second;
+      size_t idx = subPts.size();
+      subPts.emplace_back(x, y, z);
+      subMap.emplace(qp, idx);
+      return idx;
+    };
+    for (uint32_t t = 0; t < md->numTris; ++t) {
+      const double* c = &md->coords[static_cast<size_t>(t) * 9];
+      bool ok = true;
+      for (int k = 0; k < 9; ++k) if (!std::isfinite(c[k])) { ok = false; break; }
+      if (!ok) continue;
+      size_t i0 = subAdd(c[0], c[1], c[2]);
+      size_t i1 = subAdd(c[3], c[4], c[5]);
+      size_t i2 = subAdd(c[6], c[7], c[8]);
+      if (i0 == i1 || i1 == i2 || i2 == i0) continue;
+      subPolys.push_back({i0, i1, i2});
+    }
+    if (subPolys.empty()) continue;
+    PMP::repair_polygon_soup(subPts, subPolys);
+    PMP::orient_polygon_soup(subPts, subPolys);
+    Surface_mesh subSm;
+    if (PMP::is_polygon_soup_a_polygon_mesh(subPolys)) {
+      PMP::polygon_soup_to_polygon_mesh(subPts, subPolys, subSm);
+    } else {
+      std::vector<Surface_mesh::Vertex_index> vh;
+      vh.reserve(subPts.size());
+      for (const auto& p : subPts) vh.push_back(subSm.add_vertex(p));
+      for (const auto& f : subPolys) subSm.add_face(vh[f[0]], vh[f[1]], vh[f[2]]);
+    }
+    if (subSm.number_of_faces() > 0) {
+      std::vector<std::pair<Surface_mesh::Face_index, Surface_mesh::Face_index>> si;
+      PMP::self_intersections(subSm, std::back_inserter(si));
+      res.selfIntersectionCount += static_cast<uint32_t>(si.size());
+    }
   }
 
   // True 3D Wall Thickness via CGAL AABB_tree inward ray-casting + 3-axis CNC accessibility

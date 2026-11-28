@@ -31,11 +31,11 @@ scripts	scripts/bench	3	1627	67244	benchmark_hyper_before_after.mjs,verify_ultra
 scripts	scripts/buchigire_guard	6	3966	145835	gate_and_land.mjs,git_plumbing.mjs,renderers.mjs,safety_scanners.mjs
 scripts	scripts/dx	10	5895	220573	atlas_builder.mjs,audit_and_selftest.mjs,brief_compiler.mjs,cad_and_svg_compilers.mjs
 scripts	scripts/exam	4	1707	99684	ir_compiler.mjs,scheduler.mjs,test_registry.mjs,tlx1_protocol.mjs
-scripts	scripts/exam/engines	9	2875	178190	cross_solver_lock.mjs,p01_geometry_contact.mjs,p02_fea_multibody.mjs,p03_dfm_dfa_fasteners.mjs
+scripts	scripts/exam/engines	9	2877	178488	cross_solver_lock.mjs,p01_geometry_contact.mjs,p02_fea_multibody.mjs,p03_dfm_dfa_fasteners.mjs
 scripts	scripts/exam/shared	1	368	18642	material_physics_db.mjs
 scripts	scripts/lib	3	661	23970	catalog_worker.mjs,hyper_cache.mjs,validate_worker.mjs
 scripts	scripts/sokutei_core	3	1829	67540	domains.mjs,stats.mjs,telemetry.mjs
-scripts	scripts/spatial_engine	5	3032	112243	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
+scripts	scripts/spatial_engine	5	3122	116480	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
 styles	src/styles	1	7249	143861	main.css
 ui	src/ui	59	42239	3252627	ExplanationDrawer.ts,LensOpticsStudio.ts,MiraiLibraryStudio.ts,OriginalBlueprintStudio.ts
 ui	src/ui/bionzV2HdSchematics	10	7998	659670	groupA.ts,groupB.ts,groupC.ts,groupD.ts

@@ -1,7 +1,13 @@
 # TLX1_MANUAL — THE LAST EXAM V1 (AI-AGENT MACHINE SPECIFICATION)
-> VERSION=1.0 | CMD=`node scripts/exam.mjs` (alias: `npm run exam`, `npm run tlx`, `npm run sim20`)
+> VERSION=1.1 | CMD=`node scripts/exam.mjs` (alias: `npm run exam`, `npm run tlx`, `npm run sim20`)
 > SCOPE=10_PILLARS|36_ENGINES(EX01..EX36)|530_FIXED_TESTS(T001..T530)|16_CROSS_LOCKS(X01..X16)|32_SOLVER_PROBES
-> POLICY=ZERO_FABRICATION|ZERO_PROSE|STRICT_SOLVER_GATE|TAMPER_EVIDENT_RECEIPT
+> POLICY=EXAM_V1_ONLY_VERIFICATION|MANDATORY_FULL_32_TOOL_DOWNLOAD|MAX_LEVEL_UNSKIPPED|ZERO_FABRICATION|TAMPER_EVIDENT_RECEIPT
+
+## 0. MANDATORY_AGENT_POLICY (ABSOLUTE IRON LAW)
+- `VERIFY_SOLE_AUTHORITY`: ALL design/CAD/physics/EDA/thermal/CFD/optics/formal/BOM/visual verification MUST use **ONLY `THE LAST EXAM V1` (`node scripts/exam.mjs`)** at maximum level (all 36 engines, 530 fixed tests, all 4 quality tiers, 16 cross-solver conservation locks, Chrome `pp1.1` + OpenCV vision). Standalone `sp` / `validate_parts` / ad-hoc checks are FORBIDDEN as verification gates.
+- `MANDATORY_FULL_DOWNLOAD`: On any fresh VM or environment, agents MUST run `node scripts/exam.mjs setup` BEFORE any verification to download & build **100% of all 16 external industrial toolchains (`32/32 READY`) + all 4 C++17 native harnesses**. Missing tools trigger `EXIT 5 (SOLVER_MISSING)`; skipping or approximating solvers is strictly forbidden.
+- `MAX_LEVEL_FINAL_PROOF`: `--only=` is permitted only for rapid inner repair loops; final sign-off ALWAYS requires full unskipped `node scripts/exam.mjs --unit=<unitId>` exiting `0` with `TLX1-RECEIPT` + `X_SUM|ok=16/16`.
+- `ACTIVE_21_PHASE_UNITS`: `welcome, original, mount, shutter, body, evf, lcd, lens, mainboard, sensor, camera_body, integrated, mishoe, battery, cfexpress, mic, drybox, bionz, bionz_v2, micro, micro_v2` (excluded: `mirai_2028` [FH], `sensor_fab` [semiconductor fab]).
 
 ## 1. COMMAND_MATRIX
 | INTENT | EXACT_COMMAND |
