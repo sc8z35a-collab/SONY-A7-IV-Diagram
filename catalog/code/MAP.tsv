@@ -25,13 +25,13 @@ data	src/data	23	196000	12223294	battery.json,bionz.json,bionz_v2.json,body.json
 data	src/data/mirai_library	10	10	846360	glossary.json,matrix.json,vol01.json,vol02.json
 engine	src/engine	6	6089	214191	CadHelpers.ts,CadViewport.ts,FastCadGeometry.ts,GpuOptimizer.ts
 playground	src/playground	6	7127	1635145	CadPlaygroundStudio.ts,CameraEngineeringGrader.ts,PartGeometryExtractor.ts,PlyaVerificationPipeline.ts
-scripts	scripts	10	6341	246609	bg.mjs,build_mirai_content.mjs,capture_engine.mjs,dx.mjs
+scripts	scripts	10	6776	263343	bg.mjs,build_mirai_content.mjs,capture_engine.mjs,dx.mjs
 scripts	scripts/bench	3	1627	67244	benchmark_hyper_before_after.mjs,verify_ultra_motion_and_hud.mjs,verify_v3_kine_fast_ultra_ux.mjs
 scripts	scripts/buchigire_guard	6	3966	145835	gate_and_land.mjs,git_plumbing.mjs,renderers.mjs,safety_scanners.mjs
 scripts	scripts/dx	10	5895	220573	atlas_builder.mjs,audit_and_selftest.mjs,brief_compiler.mjs,cad_and_svg_compilers.mjs
-scripts	scripts/lib	3	661	23970	catalog_worker.mjs,hyper_cache.mjs,validate_worker.mjs
+scripts	scripts/lib	3	663	24204	catalog_worker.mjs,hyper_cache.mjs,validate_worker.mjs
 scripts	scripts/sokutei_core	3	1829	67540	domains.mjs,stats.mjs,telemetry.mjs
-scripts	scripts/spatial_engine	5	3032	112243	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
+scripts	scripts/spatial_engine	5	5013	193170	audit_physics.mjs,exact_geometry.mjs,renderers.mjs,scene_extractor.mjs
 styles	src/styles	1	7150	141682	main.css
 ui	src/ui	59	42049	3245941	ExplanationDrawer.ts,LensOpticsStudio.ts,MiraiLibraryStudio.ts,OriginalBlueprintStudio.ts
 ui	src/ui/bionzV2HdSchematics	10	7998	659670	groupA.ts,groupB.ts,groupC.ts,groupD.ts
